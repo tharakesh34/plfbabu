@@ -210,4 +210,30 @@
 		scope="step" parent="basicDao" />
 
 	<bean id="gSTDownloadTaskLet" class="com.pennant.backend.endofday.tasklet.GSTDownload" />
+
+	<bean id="loadAutoKnockOffProcessTasklet" class="com.pennanttech.pff.eod.auto.knockoff.reval.LoadAutoKnockOffProcessDataTasklet"
+		parent="basicDao">
+		<property name="autoKnockOffDAO" ref="autoKnockOffDAO" />
+	</bean>
+
+	<bean id="autoKnockOffProcessItemReader" class="com.pennanttech.pff.eod.auto.knockoff.reval.AutoKnockOffProcessTaskletItemReader"
+		scope="step">
+		<property name="dataSource" ref="dataSource" />
+		<property name="rowMapper">
+			<bean class="com.pennanttech.pff.eod.auto.knockoff.reval.AutoKnockOffProcessRowMapper" />
+		</property>
+	</bean>
+
+	<bean id="autoKnockOffProcessor" class="com.pennanttech.pff.eod.auto.knockoff.reval.AutoKnockOffProcessor" scope="step"
+		parent="basicDao">
+		<property name="autoKnockOffProcessService" ref="autoKnockProcessService" />
+	</bean>
+
+	<bean id="autoKnockOffProcessRowMapper" class="com.pennanttech.pff.eod.auto.knockoff.reval.AutoKnockOffProcessRowMapper"
+		scope="step" />
+
+	<bean id="autoKnockOffProcessItemWriter" class="com.pennanttech.pff.eod.auto.knockoff.reval.AutoKnockOffProcessItemWriter"
+		scope="step" parent="basicDao" />
+
+	<bean id="autoKnockOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.AutoKnockOffDAOImpl" parent="basicDao" />
 </beans>

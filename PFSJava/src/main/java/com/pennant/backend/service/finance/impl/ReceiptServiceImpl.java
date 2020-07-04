@@ -4333,12 +4333,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		financeMain.setUserDetails(userDetails);
 		financeDetail.setUserDetails(userDetails);
 
+		Date appDate = SysParamUtil.getAppDate();
 		receiptData.setBuildProcess("I");
 		rch.setReference(finReference);
 		rch.setExcessAdjustTo(fsi.getExcessAdjustTo());
 		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		rch.setReceiptDate(SysParamUtil.getAppDate());
+		rch.setReceiptDate(appDate);
 		rch.setReceiptPurpose(receiptPurpose);
 		rch.setEffectSchdMethod(fsi.getRecalType());
 		rch.setExcessAdjustTo(fsi.getExcessAdjustTo());
@@ -4354,6 +4355,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		rch.setUserDetails(userDetails);
 		rch.setReceiptDate(rcd.getReceivedDate());
+
+		if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(fsi.getReceiptPurpose()) && fsi.isBckdtdWthOldDues()) {
+			Date derivedDate = getDerivedValueDate(receiptData, fsi, appDate);
+
+			if (derivedDate != null) {
+				rch.setValueDate(derivedDate);
+			}
+		}
+
 		rcd.setValueDate(rch.getValueDate());
 		rch.setRemarks(rcd.getRemarks());
 
@@ -4504,6 +4514,58 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rch.setXcessPayables(xcessPayableList);
 		}
 		return receiptData;
+	}
+
+	/**
+	 * Set the Value date to receipt header to handle old dues adjustment through API in case of back dated dues.
+	 * 
+	 * <p>
+	 * Example:
+	 * </p>
+	 * <p>
+	 * Receipt Date 3rd
+	 * </p>
+	 * <p>
+	 * Schedule Date 5th
+	 * </p>
+	 * <p>
+	 * Value Date 7th
+	 * </p>
+	 * <p>
+	 * In this case system should adjust the dues without charges, so we are changing the value date from 7th to 5th
+	 * </p>
+	 * 
+	 */
+	private Date getDerivedValueDate(FinReceiptData receiptData, FinServiceInstruction fsi, Date appDate) {
+		if (receiptData.getFinanceDetail() != null) {
+			FinScheduleData schData = receiptData.getFinanceDetail().getFinScheduleData();
+			List<FinanceScheduleDetail> list = schData.getFinanceScheduleDetails();
+			Date receivedDate = fsi.getReceiptDetail().getReceivedDate();
+
+			String parm0 = "";
+
+			if (CollectionUtils.isNotEmpty(list)) {
+				for (FinanceScheduleDetail sch : list) {
+					if (appDate.compareTo(sch.getSchDate()) >= 0 && receivedDate.compareTo(sch.getSchDate()) <= 0) {
+						break;
+					}
+					if (!sch.isSchPriPaid() || !sch.isSchPftPaid()) {
+						parm0 = parm0 + sch.getSchDate().toString() + ",";
+					}
+				}
+				if (parm0.length() > 0) {
+					setErrorToFSD(schData, "90356", parm0);
+					return null;
+				}
+
+				for (FinanceScheduleDetail sch : list) {
+					if (appDate.compareTo(sch.getSchDate()) >= 0 && receivedDate.compareTo(sch.getSchDate()) <= 0) {
+						return sch.getSchDate();
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	public FinReceiptData updateAllocationsPaid(FinReceiptData receiptData) {

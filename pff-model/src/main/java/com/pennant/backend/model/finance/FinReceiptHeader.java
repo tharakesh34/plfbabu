@@ -120,6 +120,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String finDivisionDesc;
 	private String entityCode;
 	private String cancelRemarks;
+	private String knockOffType;
 
 	private List<FinReceiptDetail> receiptDetails = new ArrayList<>(1);
 	private List<FinExcessAmount> excessAmounts = new ArrayList<>(1);
@@ -1446,6 +1447,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setCancelRemarks(String cancelRemarks) {
 		this.cancelRemarks = cancelRemarks;
+	}
+
+	public String getKnockOffType() {
+		return knockOffType;
+	}
+
+	public void setKnockOffType(String knockOffType) {
+		this.knockOffType = knockOffType;
 	}
 
 }

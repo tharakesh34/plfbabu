@@ -132,6 +132,8 @@
 								<listheader id="listheader_ReceiptId" label="${c:l('listheader_ReceiptId.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_ReceiptDate" label="${c:l('listheader_ReceiptDate.label')}" sort="auto"
 									hflex="min" />
+								<listheader id="listheader_KnockOffType" visible="false" label="${c:l('listheader_KnockOffType.label')}"
+									sort="auto" hflex="min" />
 								<listheader id="listheader_ReceiptMode" label="${c:l('listheader_ReceiptMode.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_ReceiptPurpose" label="${c:l('listheader_ReceiptPurpose.label')}" sort="auto"

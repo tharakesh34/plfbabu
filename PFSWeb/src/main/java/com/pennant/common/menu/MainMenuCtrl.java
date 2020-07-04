@@ -169,8 +169,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		Treechildren treechildren = new Treechildren();
 		mainMenu.appendChild(treechildren);
 
-		menuBuilder = new TreeMenuBuilder(treechildren, MainMenu.getMenuItems(),
-				userWorkspace.getGrantedAuthoritySet());
+		menuBuilder = new TreeMenuBuilder(treechildren, filterMenus(), userWorkspace.getGrantedAuthoritySet());
 		menuBuilder.render();
 
 		// Collapse all the menu items.
@@ -202,7 +201,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 		logger.trace(Literal.LEAVING);
 	}
-	
+
 	private List<MenuItem> filterMenus() {
 		List<MenuItem> menus = new ArrayList<>();
 

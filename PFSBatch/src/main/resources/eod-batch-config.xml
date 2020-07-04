@@ -124,8 +124,21 @@
 				<chunk reader="collateralRevaluationItemReader" processor="collateralRevaluationProcessor" writer="collateralRevaluationItemWriter"
 					commit-interval="10" />
 			</tasklet>
+			<next on="*" to="autoKnockOffProcess" />
 			<fail on="FAILED" />
+		</step>
+		<step id="autoKnockOffProcess">
+			<tasklet ref="loadAutoKnockOffProcessTasklet" />
+			<next on="*" to="autoKnockOffProcessRender" />
+			<fail on="FAILED" />
+		</step>
+		<step id="autoKnockOffProcessRender">
+			<tasklet>
+				<chunk reader="autoKnockOffProcessItemReader" processor="autoKnockOffProcessor" writer="autoKnockOffProcessItemWriter"
+					commit-interval="10" />
+			</tasklet>
 			<next on="*" to="endOfMonthDecider" />
+			<fail on="FAILED" />
 		</step>
 		<decision id="endOfMonthDecider" decider="endOfMonthDecider">
 			<next on="EndOfMonth" to="retailcibil" />

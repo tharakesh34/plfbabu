@@ -126,6 +126,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.rits.cloning.Cloner;
 
 public class ReceiptCalculator implements Serializable {
@@ -322,7 +323,9 @@ public class ReceiptCalculator implements Serializable {
 		FinScheduleData finScheduleData = receiptData.getFinanceDetail().getFinScheduleData();
 		List<FinanceScheduleDetail> schdDetails = finScheduleData.getFinanceScheduleDetails();
 		if (receiptData.isPresentment()) {
-			return initializePresentment(receiptData);
+			if (!ImplementationConstants.ALLOW_OLDEST_DUE) {
+				return initializePresentment(receiptData);
+			}
 		}
 		finSchdDtls = cloner.deepClone(schdDetails);
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -2340,8 +2343,12 @@ public class ReceiptCalculator implements Serializable {
 			}
 
 			// If Presentment Process, No other schedule should be effected.
-			if (isPresentment && (DateUtility.compare(valueDate, schdDate) != 0)) {
-				continue;
+			if (ImplementationConstants.ALLOW_OLDEST_DUE) {
+				//Adjust Oldest Dues first 
+			} else {
+				if (isPresentment && (DateUtility.compare(valueDate, schdDate) != 0)) {
+					continue;
+				}
 			}
 
 			rch.setSchdIdx(i);
@@ -4363,12 +4370,7 @@ public class ReceiptCalculator implements Serializable {
 		for (int i = 1; i < schdDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = schdDetails.get(i);
 			Date schdDate = curSchd.getSchDate();
-			if (schdDate.compareTo(valueDate) > 0) {
-				break;
-			}
-
-			// If Presentment Process, No other schedule should be effected.
-			if (DateUtility.compare(valueDate, schdDate) != 0) {
+			if (DateUtil.compare(valueDate, schdDate) != 0) {
 				continue;
 			}
 
@@ -4442,6 +4444,24 @@ public class ReceiptCalculator implements Serializable {
 			}
 		}
 		return receiptData;
+	}
+
+	public List<FinODDetails> calPenalty(FinScheduleData finScheduleData, FinReceiptData receiptData, Date valueDate,
+			List<FinODDetails> overdueList) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain fm = finScheduleData.getFinanceMain();
+
+		if (CollectionUtils.isEmpty(overdueList)) {
+			return overdueList;
+		}
+
+		List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
+		String finReference = fm.getFinReference();
+		List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayListByFinRef(finReference, false, "");
+		return latePayMarkingService.calPDOnBackDatePayment(fm, overdueList, valueDate, schdList, repayments, true,
+				true);
+
 	}
 
 	// ******************************************************//

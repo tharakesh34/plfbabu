@@ -102,6 +102,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listheader listheader_PartnerBank;
 	protected Listheader listheader_RecordStatus;
 	protected Listheader listheader_ExcessType;
+	protected Listheader listheader_KnockOffType;
 	protected Listheader listheader_TrnRef;
 	protected Listheader listheader_PayTypeRef;
 	protected Listheader listheader_DepositDate;
@@ -245,6 +246,15 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				|| StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_APPROVER)) {
 			registerField("PaymentType", listheader_ExcessType);
 		}
+		if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFFCAN_MAKER)
+				|| StringUtils.equals(this.module, FinanceConstants.KNOCKOFFCAN_APPROVER)) {
+			registerField("KnockOffType", listheader_KnockOffType);
+			listheader_KnockOffType.setVisible(true);
+		}
+		if (StringUtils.equals("Y", getArgument("enqiryModule"))) {
+			registerField("knockOffType", listheader_KnockOffType);
+			listheader_KnockOffType.setVisible(true);
+		}
 		registerField("recordStatus", listheader_RecordStatus);
 		registerField("receiptModeStatus", listheader_ReceiptModeStatus);
 		registerField("nextRoleCode", listheader_NextRoleCode);
@@ -288,7 +298,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			List<String> filterList = new ArrayList<>();
 			filterList.add(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
 			searchObject.addFilterNotIn("RECEIPTPURPOSE", filterList);
-			searchObject.addWhereClause(" PAYAGAINSTID = 0");
+			//searchObject.addWhereClause(" PAYAGAINSTID = 0");
 		} else if (!enqiryModule) {
 			if (StringUtils.equals(module, FinanceConstants.REALIZATION_APPROVER)
 					|| StringUtils.equals(module, FinanceConstants.RECEIPT_APPROVER)) {
@@ -552,6 +562,15 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 			lc = new Listcell(
 					PennantAppUtil.formateDate(finReceiptHeader.getReceiptDate(), DateFormat.SHORT_DATE.getPattern()));
+			lc.setParent(item);
+
+			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(finReceiptHeader.getKnockOffType())) {
+				lc = new Listcell("Auto");
+			} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(finReceiptHeader.getKnockOffType())) {
+				lc = new Listcell("Manual");
+			} else {
+				lc = new Listcell("");
+			}
 			lc.setParent(item);
 
 			lc = new Listcell(finReceiptHeader.getReceiptMode());

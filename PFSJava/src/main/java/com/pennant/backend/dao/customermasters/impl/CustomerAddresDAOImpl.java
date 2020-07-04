@@ -459,7 +459,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		source.addValue("pinCode", pinCode);
 
 		StringBuilder selectSql = new StringBuilder("SELECT serviceable");
-		selectSql.append(" From PinCodes_View ");
+		selectSql.append(" From PinCodes");
 		selectSql.append(" Where pinCode=:pinCode");
 
 		logger.debug("selectSql: " + selectSql.toString());

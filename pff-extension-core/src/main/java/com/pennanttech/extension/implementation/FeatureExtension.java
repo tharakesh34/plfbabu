@@ -28,6 +28,9 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("ALLOW_AUTO_KNOCK_OFF", true);
 
 		customConstants.put("ALLOW_IND_AS", true);
+
+		customConstants.put("ALLOW_AUTO_KNOCK_OFF", true);
+
 	}
 
 	@Override

@@ -1329,6 +1329,37 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
+	<!--============ AUTOKNOCKOFF Details ============== -->
+	<bean id="autoKnockOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.AutoKnockOffDAOImpl" parent="basicDao" />
+	<bean id="autoKnkOfFeeMappingDAO" class="com.pennant.backend.dao.applicationmaster.impl.AutoKnkOfFeeMappingDAOImpl"
+		parent="basicDao" />
+
+	<bean id="autoKnockOffService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="autoKnockOffServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="autoKnockOffServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.AutoKnockOffServiceImpl">
+		<property name="autoKnockOffDAO" ref="autoKnockOffDAO" />
+		<property name="autoKnkOfFeeMappingDAO" ref="autoKnkOfFeeMappingDAO" />
+		<property name="loanTypeKnockOffDAO" ref="loanTypeKnockOffDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+
 	<!--============ Branch Details ============== -->
 	<bean id="branchDAO" class="com.pennant.backend.dao.applicationmaster.impl.BranchDAOImpl" parent="basicDao" />
 
@@ -4685,7 +4716,13 @@
 		<property name="reasonCodeDAO" ref="reasonCodeDAO" />
 		<property name="advancePaymentService" ref="advancePaymentService" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
-
+		<property name="receiptUploadHeaderDAO" ref="receiptUploadHeaderDAO" />
+		<property name="finTaxDetailsDAO" ref="finTaxDetailsDAO" />
+		<property name="receiptResponseDetailDAO" ref="receiptResponseDetailDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="financeWorkFlowDAO" ref="financeWorkFlowDAO" />
+		<property name="partnerBankDAO" ref="partnerBankDAO" />
+		<property name="finTypePartnerBankDAO" ref="finTypePartnerBankDAO" />
 	</bean>
 
 	<!--============ Finance Excess Amounts Details ============== -->
@@ -5593,7 +5630,6 @@
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="gstRateDAO" ref="gstRateDAO" />
-		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 	</bean>
 
 	<!--================= Holiday Util =================== -->
@@ -11910,4 +11946,60 @@
 
 	<bean id="bpsDAO" class="com.pennanttech.pff.batch.backend.dao.impl.BatchProcessStatusDAOImpl" parent="basicDao" />
 
+	<!--============ LoanTypeKNOCKOFF Details ============== -->
+	<bean id="loanTypeKnockOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.LoanTypeKnockOffDAOImpl"
+		parent="basicDao" />
+
+	<bean id="loanTypeKnockOffService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="loanTypeKnockOffTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="loanTypeKnockOffTarget" class="com.pennant.backend.service.applicationmaster.impl.LoanTypeKnockOffServiceImpl">
+		<property name="loanTypeKnockOffDAO" ref="loanTypeKnockOffDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+	<bean id="eodService" class="com.pennanttech.pff.jobs.EODServiceImpl">
+		<property name="eODConfigDAO" ref="eODConfigDAO" />
+		<property name="bpsService" ref="bpsService" />
+	</bean>
+
+	<bean id="bpsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="bpsServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="bpsServiceTarget" class="com.pennanttech.pff.batch.backend.service.impl.BatchProcessStatusServiceImpl">
+		<property name="bpsDAO" ref="bpsDAO" />
+	</bean>
+
+	<bean id="bpsDAO" class="com.pennanttech.pff.batch.backend.dao.impl.BatchProcessStatusDAOImpl" parent="basicDao" />
 </beans>

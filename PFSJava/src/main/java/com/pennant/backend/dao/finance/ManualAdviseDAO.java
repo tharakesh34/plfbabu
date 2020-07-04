@@ -91,6 +91,8 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	void updateUtilise(long adviseID, BigDecimal amount);
 
+	void updateUtiliseOnly(long adviseID, BigDecimal amount);
+
 	void reverseUtilise(long adviseID, BigDecimal amount);
 
 	Date getPresentmentBounceDueDate(long receiptId);

@@ -27,7 +27,8 @@ public class StepUtil {
 		endOfMonthDecider,
 		retailcibil,
 		corporatecibil,
-		prepareIncomeAMZDetails
+		prepareIncomeAMZDetails,
+		autoKnockOffProcess
 	}
 
 	public static final DataEngineStatus COLLATERAL_REVALUATION = new DataEngineStatus("COLLATERAL_REVALUATION");
@@ -55,6 +56,8 @@ public class StepUtil {
 			"PREPARE_INCOME_AMZ_DETAILS");
 	public static final DataEngineStatus PREPARE_AMORTIZATION_QUEUE = new DataEngineStatus(
 			"PREPARE_AMORTIZATION_QUEUE");
+
+	public static final DataEngineStatus AUTO_KNOCKOFF_PROCESS = new DataEngineStatus("AUTO_KNOCKOFF_PROCESS");
 
 	private StepUtil() {
 		super();

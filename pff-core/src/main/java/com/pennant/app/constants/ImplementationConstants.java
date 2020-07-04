@@ -138,6 +138,8 @@ public class ImplementationConstants {
 		AUTO_EOD_REQUIRED = getValueAsBoolean(extensions, "AUTO_EOD_REQUIRED", false);
 		ALW_ADV_INTEMI_ADVICE_CREATION = getValueAsBoolean(extensions, "ALW_ADV_INTEMI_ADVICE_CREATION", false);
 		ALLOW_IND_AS = getValueAsBoolean(extensions, "ALLOW_IND_AS", false);
+		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
+		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", true);
 
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
@@ -268,7 +270,7 @@ public class ImplementationConstants {
 	public static boolean ALW_ADV_INTEMI_ADVICE_CREATION;
 	public static boolean ALLOW_IND_AS;
 	public static boolean ALLOW_AUTO_KNOCK_OFF;
-
+	public static boolean ALLOW_OLDEST_DUE;
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static
 	 * boolean ALLOW_LV_INITIATION_LOS; public static boolean ALLOW_RCU_INITIATION_LOS;

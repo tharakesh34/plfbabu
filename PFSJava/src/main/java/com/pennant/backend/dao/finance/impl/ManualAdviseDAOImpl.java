@@ -1897,4 +1897,27 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	public long getNewAdviseID() {
 		return getNextId("seqManualAdvise");
 	}
+
+	@Override
+	public void updateUtiliseOnly(long adviseID, BigDecimal amount) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update ManualAdvise");
+		sql.append(" Set PaidAmount = PaidAmount + :PaidNow, BalanceAmt = BalanceAmt - :PaidNow ");
+		sql.append(" Where AdviseID =:AdviseID");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("AdviseID", adviseID);
+		source.addValue("PaidNow", amount);
+
+		int recordCount = this.jdbcTemplate.update(sql.toString(), source);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 }

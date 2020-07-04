@@ -47,7 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
@@ -87,7 +88,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(PostingsEnquiryDialogCtrl.class);
+	private static Logger logger = LogManager.getLogger(PostingsEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -138,7 +139,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * @throws Exception
 	 */
 	public void onCreate$window_PostingsEnquiryDialog(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
+		logger.info(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_PostingsEnquiryDialog);
@@ -183,7 +184,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			MessageUtil.showError(e);
 			this.window_PostingsEnquiryDialog.onClose();
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.info(Literal.LEAVING);
 	}
 
 	/**
@@ -195,7 +196,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * @throws Exception
 	 */
 	public void doShowDialog() throws Exception {
-		logger.debug("Entering");
+		logger.info(Literal.LEAVING);
 
 		try {
 			doCheckEnquiry();
@@ -310,7 +311,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * @throws Exception
 	 */
 	public void onClick$btnPrintAccounting(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.info(Literal.ENTERING);
 		String usrName = getUserWorkspace().getLoggedInUser().getUserName();
 		List<Object> list = null;
 
@@ -340,7 +341,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		}
 
 		ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", enquiry, list, true, 1, usrName, window);
-		logger.debug("Leaving" + event.toString());
+		logger.info(Literal.LEAVING);
 	}
 
 	/**

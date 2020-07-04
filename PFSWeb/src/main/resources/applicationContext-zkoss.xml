@@ -5383,7 +5383,7 @@
 	</bean>
 
 	<!-- Amortization Process -->
-	<bean id="amzBatchAdminCtrl" class="com.pennant.webui.batch.admin.AMZBatchAdminCtrl" parent="basisCtrl" scope="prototype"/>
+	<bean id="amzBatchAdminCtrl" class="com.pennant.webui.batch.admin.AMZBatchAdminCtrl" parent="basisCtrl" scope="prototype" />
 
 	<bean id="eventFeeDetailsDialogCtrl" class="com.pennant.webui.financemanagement.paymentMode.EventFeeDetailsDialogCtrl"
 		parent="basisCtrl" scope="prototype">
@@ -5662,5 +5662,36 @@
 	</bean>
 	<bean id="excessEnquiryDialogCtrl" class="com.pennant.webui.finance.enquiry.ExcessEnquiryDialogCtrl" parent="basisListCtrl"
 		scope="prototype" />
+
+	<!--============ AutoKnockOff Details ============== -->
+
+	<bean id="autoKnockOffListListCtrl" class="com.pennant.webui.applicationmaster.autoknockoff.AutoKnockOffListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="autoKnockOffService" ref="autoKnockOffService" />
+	</bean>
+
+	<bean id="autoKnockOffDialogCtrl" class="com.pennant.webui.applicationmaster.autoknockoff.AutoKnockOffDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="autoKnockOffService" ref="autoKnockOffService" />
+	</bean>
+
+
+	<!--============ LoanTypeKnockOff Details ============== -->
+
+	<bean id="loanTypeKnockOffListCtrl" class="com.pennant.webui.applicationmaster.loantypeKnockoff.LoanTypeKnockOffListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="loanTypeKnockOffService" ref="loanTypeKnockOffService" />
+	</bean>
+
+	<bean id="selectLoanTypeKnockOffDialogCtrl" class="com.pennant.webui.applicationmaster.loantypeKnockoff.SelectLoanTypeKnockOffDialog"
+		parent="basisCtrl" scope="prototype">
+		<property name="loanTypeKnockOffService" ref="loanTypeKnockOffService" />
+	</bean>
+
+	<bean id="loanTypeKnockOffDialogCtrl" class="com.pennant.webui.applicationmaster.loantypeKnockoff.LoanTypeKnockOffDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="loanTypeKnockOffService" ref="loanTypeKnockOffService" />
+	</bean>
+
 
 </beans>

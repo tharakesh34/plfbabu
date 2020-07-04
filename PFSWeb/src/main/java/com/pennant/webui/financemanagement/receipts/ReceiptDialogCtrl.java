@@ -373,7 +373,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Row row_ChequeAcNo;
 	protected Row row_fundingAcNo;
 	protected Row row_remarks;
-
+	protected Row row_knockOff_Type;
 	// Receipt Due Details
 	protected Listbox listBoxPastdues;
 	protected Listbox listBoxSchedule;
@@ -408,6 +408,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Button btnReceipt;
 	protected Button btnChangeReceipt;
 	protected Button btnCalcReceipts;
+	//Auto Knock Off Details
+	protected Textbox knockOffType;
 
 	private RuleService ruleService;
 	private CustomerDetailsService customerDetailsService;
@@ -890,6 +892,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (isKnockOff) {
 			// this.gb_TransactionDetails.setVisible(false);
 			this.gb_InstrumentDetails.setVisible(false);
+			this.row_knockOff_Type.setVisible(true);
 		}
 
 		if (StringUtils.equals(module, FinanceConstants.CLOSURE_MAKER)
@@ -2713,6 +2716,17 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		setBalances();
 		checkByReceiptMode(rch.getReceiptMode(), false);
 		this.valueDate.setValue(rch.getValueDate());
+
+		if (row_knockOff_Type.isVisible()) {
+			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(rch.getKnockOffType())) {
+				this.knockOffType.setValue("Auto");
+			} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(rch.getKnockOffType())) {
+				this.knockOffType.setValue("Manual");
+			} else {
+				this.knockOffType.setValue("");
+			}
+		}
+
 		// Separating Receipt Amounts based on user entry, if exists
 		if (rch.getReceiptDetails() != null && !rch.getReceiptDetails().isEmpty()) {
 			for (int i = 0; i < rch.getReceiptDetails().size(); i++) {
@@ -3764,6 +3778,19 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		header.setReference(this.finReference.getValue());
+
+		if (this.row_knockOff_Type.isVisible()) {
+			if (isKnockOff) {
+				if (this.knockOffType.getValue().equals("Manual")) {
+					header.setKnockOffType(RepayConstants.KNOCKOFF_TYPE_MANUAL);
+				} else if (this.knockOffType.getValue().equals("Auto")) {
+					header.setKnockOffType(RepayConstants.KNOCKOFF_TYPE_AUTO);
+				} else {
+					header.setKnockOffType("");
+				}
+			}
+		}
+
 		try {
 			header.setReceiptPurpose(getComboboxValue(receiptPurpose));
 		} catch (WrongValueException we) {

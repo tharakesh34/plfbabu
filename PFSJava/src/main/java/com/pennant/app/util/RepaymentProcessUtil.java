@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.AssignmentDAO;
 import com.pennant.backend.dao.applicationmaster.AssignmentDealDAO;
@@ -52,6 +53,7 @@ import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
@@ -251,12 +253,16 @@ public class RepaymentProcessUtil {
 		for (FinanceScheduleDetail financeScheduleDetail : scheduleDetails) {
 			Date schdDate = financeScheduleDetail.getSchDate();
 			// Skip if Repayment date after Current Business date
-			if (schdDate.compareTo(valuedate) != 0) {
-				continue;
+			if (!ImplementationConstants.ALLOW_OLDEST_DUE) {
+				if (schdDate.compareTo(valuedate) != 0) {
+					continue;
+				}
+				curSchd = financeScheduleDetail;
+				financeScheduleDetailDAO.updateForRpy(curSchd);
+				break;
 			}
 			curSchd = financeScheduleDetail;
 			financeScheduleDetailDAO.updateForRpy(curSchd);
-			break;
 		}
 
 		doSaveReceipts(rch, null, true);
@@ -1336,7 +1342,11 @@ public class RepaymentProcessUtil {
 							}
 						}
 
-						getManualAdviseDAO().updateUtilise(payAgainstID, payableAmt);
+						if (rcd.isNoReserve()) {
+							getManualAdviseDAO().updateUtiliseOnly(payAgainstID, payableAmt);
+						} else {
+							getManualAdviseDAO().updateUtilise(payAgainstID, payableAmt);
+						}
 
 						// Tax Details Deletion against Receipt Seq ID
 						if (rcd.getReceiptTaxDetail() != null) {
@@ -2175,6 +2185,85 @@ public class RepaymentProcessUtil {
 		}
 
 		return financeScheduleDetail;
+	}
+
+	public void processAutoKnockOff(FinReceiptData receiptData) throws Exception {
+		FinanceDetail financeDetail = receiptData.getFinanceDetail();
+		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
+		FinanceMain fm = scheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> schdDtls = scheduleData.getFinanceScheduleDetails();
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		FinanceProfitDetail profitDetail = scheduleData.getFinPftDeatil();
+
+		Date appDate = SysParamUtil.getAppDate();
+
+		finReceiptHeaderDAO.generatedReceiptID(rch);
+
+		List<Object> returnList = doProcessReceipts(fm, schdDtls, profitDetail, rch, null, scheduleData,
+				rch.getValueDate(), appDate, financeDetail);
+
+		@SuppressWarnings("unchecked")
+		List<FinanceScheduleDetail> scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(0);
+		scheduleData.setFinanceScheduleDetails(scheduleDetails);
+
+		BigDecimal priPaynow = BigDecimal.ZERO;
+
+		for (ReceiptAllocationDetail allocate : rch.getAllocations()) {
+			if (StringUtils.equals(RepayConstants.ALLOCATION_PRI, allocate.getAllocationType())) {
+				priPaynow = allocate.getPaidAmount();
+				break;
+			}
+		}
+
+		// Preparing Total Principal Amount
+		BigDecimal totPriPaid = BigDecimal.ZERO;
+		for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
+			if (rcd.getRepayHeader() == null) {
+				continue;
+			}
+
+			FinRepayHeader repayHeader = rcd.getRepayHeader();
+			List<RepayScheduleDetail> repayScheduleDetails = repayHeader.getRepayScheduleDetails();
+			if (repayScheduleDetails != null && !repayScheduleDetails.isEmpty()) {
+				for (RepayScheduleDetail rpySchd : repayScheduleDetails) {
+					totPriPaid = totPriPaid.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
+				}
+			}
+		}
+
+		fm.setFinRepaymentAmount(fm.getFinRepaymentAmount().add(totPriPaid));
+
+		FinanceScheduleDetail curSchd = null;
+
+		for (FinanceScheduleDetail financeScheduleDetail : scheduleDetails) {
+			Date schdDate = financeScheduleDetail.getSchDate();
+			if (schdDate.compareTo(rch.getValueDate()) > 0) {
+				break;
+			}
+			curSchd = financeScheduleDetail;
+			financeScheduleDetailDAO.updateForRpy(curSchd);
+		}
+
+		doSaveReceipts(rch, null, true);
+
+		Date reqMaxODDate = appDate;
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, rch.getReceiptPurpose())) {
+			reqMaxODDate = rch.getValueDate();
+		}
+		if (!ImplementationConstants.LPP_CALC_SOD) {
+			reqMaxODDate = DateUtility.addDays(reqMaxODDate, -1);
+		}
+		List<FinODDetails> overdueList = getFinODDetailsDAO().getFinODBalByFinRef(fm.getFinReference());
+		if (CollectionUtils.isNotEmpty(overdueList)) {
+			overdueList = receiptCalculator.calPenalty(scheduleData, receiptData, reqMaxODDate, overdueList);
+			finODDetailsDAO.updateList(overdueList);
+		}
+
+		fm = updateStatus(fm, appDate, scheduleDetails, profitDetail, overdueList, rch.getReceiptPurpose(), false);
+
+		financeMainDAO.updatePaymentInEOD(fm);
+		limitManagement.processLoanRepay(fm, customerDetails.getCustomer(), priPaynow, profitDetail.getFinCategory());
 	}
 
 	// ******************************************************//

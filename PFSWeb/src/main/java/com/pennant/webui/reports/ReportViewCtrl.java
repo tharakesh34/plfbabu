@@ -2,7 +2,8 @@ package com.pennant.webui.reports;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Filedownload;
@@ -12,10 +13,11 @@ import org.zkoss.zul.Window;
 
 import com.aspose.words.SaveFormat;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = 7219917076107821148L;
-	private static final Logger logger = Logger.getLogger(ReportViewCtrl.class);
+	private static Logger logger = LogManager.getLogger(ReportViewCtrl.class);
 	private Window window_Report;
 
 	protected Tabbox tabbox;
@@ -43,7 +45,7 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onCreate$window_Report(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.info(Literal.ENTERING + event.toString());
 
 		// Set the page level components.
 		setPageComponents(window_Report);
@@ -136,7 +138,7 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 			}
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.info(Literal.LEAVING + event.toString());
 	}
 
 	public void onClick$btnClose(Event event) {

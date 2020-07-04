@@ -1,6 +1,5 @@
 package com.pennant.webui.financemanagement.presentmentdetail;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -13,6 +12,7 @@ import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.Button;
@@ -27,11 +27,11 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
-import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -76,7 +76,6 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private Media media = null;
 
 	PresentmentImportProcess presentmentImportProcess;
-	List<ValueLabel> defaultPaymentType;
 
 	public ImportPresentmentDetailCtrl() {
 		super();
@@ -102,35 +101,59 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE))
 						? true : false;
 
-		doSetFieldProperties();
+		if (allowInstrumentType) {
+			this.rowInstrumentType.setVisible(true);
+			doSetFieldProperties();
+			grid_Default.setVisible(false);
+			grid_DataEngine.setVisible(true);
+			this.defaultPanelRow.setVisible(false);
+			this.panelRows.setVisible(true);
+		} else {
+			this.rowInstrumentType.setVisible(false);
+			grid_Default.setVisible(true);
+			grid_DataEngine.setVisible(false);
+			this.defaultPanelRow.setVisible(true);
+			this.panelRows.setVisible(false);
+		}
 
+		if (!allowInstrumentType) {
+			if (processExecution == null) {
+				processExecution = new ProcessExecution();
+				createPanel(processExecution, PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT);
+			}
+			processExecution.setProcess(PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT);
+			String status = PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.getStatus();
+			timer.start();
+			processExecution.render();
+
+			if (ExecutionStatus.F.name().equals(status) || ExecutionStatus.I.name().equals(status)) {
+				if (ExecutionStatus.S.name().equals(status) || ExecutionStatus.F.name().equals(status)) {
+					btnSave.setDisabled(false);
+					timer.stop();
+				}
+				btnUpload.setDisabled(false);
+			} else if (ExecutionStatus.F.name().equals(status)) {
+				btnSave.setDisabled(true);
+				btnUpload.setDisabled(true);
+			}
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChange$instrumentType(Event event) throws Exception {
-		logger.debug(Literal.ENTERING);
-		setConfigData();
-		logger.debug(Literal.LEAVING);
-	}
+		logger.debug(Literal.ENTERING + event.toString());
 
-	public void setConfigData() {
-		String instrumentTypeConfigName = "";
-		if (allowInstrumentType) {
-			String instType = "";
+		String instType = "";
 
-			if ("#".equals(getComboboxValue(this.instrumentType))) {
-				return;
-			}
-
-			instType = this.instrumentType.getSelectedItem().getValue();
-			this.txtFileName.setValue("");
-
-			instrumentTypeConfigName = "PRESENTMENT_RESPONSE_";
-			instrumentTypeConfigName = instrumentTypeConfigName.concat(instType);
-
-		} else {
-			instrumentTypeConfigName = "PRESENTMENT_RESPONSE";
+		if ("#".equals(getComboboxValue(this.instrumentType))) {
+			return;
 		}
+
+		instType = this.instrumentType.getSelectedItem().getValue();
+		this.txtFileName.setValue("");
+
+		String instrumentTypeConfigName = "PRESENTMENT_RESPONSE_";
+		instrumentTypeConfigName = instrumentTypeConfigName.concat(instType);
 
 		String configName = SysParamUtil.getValueAsString(instrumentTypeConfigName);
 		if (configName == null) {
@@ -146,30 +169,17 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		PRSENTMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution(configName);
 
 		doFillPanel(config, PRSENTMENT_FILE_IMPORT_STATUS);
+
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
 	 * Set the component level properties.
 	 */
 	private void doSetFieldProperties() {
-
-		this.rowInstrumentType.setVisible(true);
-		grid_Default.setVisible(false);
-		grid_DataEngine.setVisible(true);
-		this.defaultPanelRow.setVisible(false);
-		this.panelRows.setVisible(true);
-
-		if (allowInstrumentType) {
-			fillComboBox(this.instrumentType, "", PennantStaticListUtil.getMandateTypeList(), "");
-		} else {
-			defaultPaymentType = new ArrayList<ValueLabel>(1);
-			defaultPaymentType.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IST,
-					Labels.getLabel("label_Presentment_Default")));
-			fillComboBox(this.instrumentType, Labels.getLabel("label_Presentment_Default"), defaultPaymentType, "");
-			this.instrumentType.setSelectedIndex(1);
-			setConfigData();
-			this.instrumentType.setDisabled(true);
-		}
+		logger.debug(Literal.ENTERING);
+		fillComboBox(this.instrumentType, "", PennantStaticListUtil.getMandateTypeList(), "");
+		logger.debug(Literal.LEAVING);
 
 		if (ImplementationConstants.PRESENTMENT_AUTO_UPLOAD
 				&& (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED)
@@ -193,26 +203,76 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		errorMsg = null;
 		setMedia(event.getMedia());
 
-		String mediaName = media.getName();
-
-		txtFileName.setText(mediaName);
-
-		String prefix = config.getFilePrefixName();
-		String extension = config.getFileExtension();
-
-		if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
-
-			media = null;
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
 			return;
 		}
-		// Validate the file prefix.
-		if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
+		txtFileName.setText(media.getName());
 
-			media = null;
-			return;
+		if (allowInstrumentType) {
+			String mediaName = media.getName();
+			String prefix = config.getFilePrefixName();
+			String extension = config.getFileExtension();
+
+			if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
+				MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
+
+				media = null;
+				return;
+			}
+			// Validate the file prefix.
+			if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
+				MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
+
+				media = null;
+				return;
+			}
+
+		} else {
+			int row_NumberOfCells = 12;
+			Object valu = SysParamUtil.getValue(SMTParameterConstants.PRESENTMENT_RESPONSE_ROW_LENGTH);
+			if (valu != null) {
+				row_NumberOfCells = Integer.parseInt(valu.toString());
+			}
+
+			try {
+				String fileName = StringUtils.lowerCase(media.getName());
+				if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
+					fileImport = null;
+					txtFileName.setText(media.getName());
+					setFileImportData(media.getName().substring(media.getName().lastIndexOf('.')));
+					fileImport.row_NumberOfCells = row_NumberOfCells;
+					fileImport.setExcelMedia(media);
+					fileImport.loadExcelFile(true);
+					renderPannel();
+				} else {
+					throw new Exception("Invalid file format.");
+				}
+
+			} catch (Exception e) {
+				errorMsg = e.getMessage();
+				MessageUtil.showError(e.getMessage());
+			}
 		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void setFileImportData(String contentType) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		if (fileImport == null) {
+			fileImport = presentmentExtractService.getFileExtract(getUserWorkspace().getLoggedInUser().getUserId(),
+					contentType);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void renderPannel() {
+		logger.debug(Literal.ENTERING);
+
+		presentmentExtractService.renderPannel(fileImport);
+		processExecution.render();
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -252,20 +312,48 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		PresentmentDetailService service = (PresentmentDetailService) SpringUtil.getBean("presentmentDetailService");
-		DataSource source = (DataSource) SpringUtil.getBean("dataSource");
-		NotificationService notificationService = (NotificationService) SpringUtil.getBean("notificationService");
+		if (allowInstrumentType) {
+			PresentmentDetailService service = (PresentmentDetailService) SpringUtil
+					.getBean("presentmentDetailService");
+			DataSource source = (DataSource) SpringUtil.getBean("dataSource");
+			NotificationService notificationService = (NotificationService) SpringUtil.getBean("notificationService");
 
-		PresentmentDetailExtract detailExtract = new PresentmentDetailExtract(source, service, notificationService);
-		detailExtract.setInstrumentType(this.instrumentType.getSelectedItem().getValue());
-		detailExtract.setUserDetails(getUserWorkspace().getLoggedInUser());
-		detailExtract.setStatus(PRSENTMENT_FILE_IMPORT_STATUS);
-		detailExtract.setMediaOnly(getMedia());
-		detailExtract.setPresentmentImportProcess(presentmentImportProcess);
+			PresentmentDetailExtract detailExtract = new PresentmentDetailExtract(source, service, notificationService);
+			detailExtract.setInstrumentType(this.instrumentType.getSelectedItem().getValue());
+			detailExtract.setUserDetails(getUserWorkspace().getLoggedInUser());
+			detailExtract.setStatus(PRSENTMENT_FILE_IMPORT_STATUS);
+			detailExtract.setMediaOnly(getMedia());
+			detailExtract.setPresentmentImportProcess(presentmentImportProcess);
 
-		Thread thread = new Thread(detailExtract);
-		thread.start();
-		Thread.sleep(1000);
+			Thread thread = new Thread(detailExtract);
+			thread.start();
+			Thread.sleep(1000);
+		} else {
+			if (processExecution.getChildren() != null) {
+				processExecution.getChildren().clear();
+			}
+			Thread thread = new Thread(fileImport);
+			timer.start();
+			thread.start();
+			Thread.sleep(1000);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void createPanel(ProcessExecution pannel, DataEngineStatus dataEngineStatus) {
+		logger.debug(Literal.ENTERING);
+
+		pannel.setId("Presentment Details");
+		pannel.setBorder("normal");
+		pannel.setTitle("Presentment Details");
+		pannel.setWidth("460px");
+		pannel.setProcess(dataEngineStatus);
+		pannel.render();
+		defaultPanelRow.setStyle("overflow: visible !important");
+		Hbox hbox = new Hbox();
+		hbox.setAlign("center");
+		hbox.appendChild(pannel);
+		defaultPanelRow.appendChild(hbox);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -293,25 +381,28 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onTimer$timer(Event event) {
+		if (allowInstrumentType) {
+			List<Row> rows = this.panelRows.getChildren();
+			for (Row row : rows) {
+				List<Hbox> hboxs = row.getChildren();
+				for (Hbox hbox : hboxs) {
+					List<ProcessExecution> list = hbox.getChildren();
+					for (ProcessExecution pe : list) {
+						String status = pe.getProcess().getStatus();
 
-		List<Row> rows = this.panelRows.getChildren();
-		for (Row row : rows) {
-			List<Hbox> hboxs = row.getChildren();
-			for (Hbox hbox : hboxs) {
-				List<ProcessExecution> list = hbox.getChildren();
-				for (ProcessExecution pe : list) {
-					String status = pe.getProcess().getStatus();
-
-					if (ExecutionStatus.I.name().equals(status)) {
-						this.btnUpload.setDisabled(true);
-						this.btnSave.setDisabled(true);
-					} else {
-						this.btnUpload.setDisabled(false);
-						this.btnSave.setDisabled(false);
+						if (ExecutionStatus.I.name().equals(status)) {
+							this.btnUpload.setDisabled(true);
+							this.btnSave.setDisabled(true);
+						} else {
+							this.btnUpload.setDisabled(false);
+							this.btnSave.setDisabled(false);
+						}
+						pe.render();
 					}
-					pe.render();
 				}
 			}
+		} else {
+			Events.postEvent("onCreate", this.window_ImportPresentmentDetails, event);
 		}
 	}
 
@@ -341,4 +432,5 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	public void setPresentmentImportProcess(PresentmentImportProcess presentmentImportProcess) {
 		this.presentmentImportProcess = presentmentImportProcess;
 	}
+
 }

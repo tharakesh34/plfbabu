@@ -117,10 +117,16 @@ public class RepayConstants {
 	public static final String ALLOCATION_FUT_NPFT = "FUTNPFT";
 	public static final String ALLOCATION_FUT_TDS = "FUTTDS";
 
+	public static final String ALLOCATION_KOEMI = "KOFFEMI";
+	public static final String ALLOCATION_KOLPI = "KOFFLPI";
+
 	// Allocation Methods
 	public static final String ALLOCATIONTYPE_AUTO = "A";
 	public static final String ALLOCATIONTYPE_MANUAL = "M";
 	public static final String ALLOCATIONTYPE_PARK_IN_EXCESS = "PIE";
+
+	public static final String ALLOCTYPE_AUTO = "Auto";
+	public static final String ALLOCTYPE_MANUAL = "Manual";
 
 	// Allocation Types
 	public static final String ALLOCATION_PRI = "PRI";
@@ -143,6 +149,9 @@ public class RepayConstants {
 	public static final String RECEIPTTO_FINANCE = "F";
 	public static final String RECEIPTTO_CUSTOMER = "C";
 	public static final String RECEIPTTO_OTHER = "O";
+
+	public static final String KNOCKOFF_TYPE_AUTO = "A";
+	public static final String KNOCKOFF_TYPE_MANUAL = "M";
 
 	// Receipt Payment Type
 	public static final String PAYTYPE_CASH = "CASH";

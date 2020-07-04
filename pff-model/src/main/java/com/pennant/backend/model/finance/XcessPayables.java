@@ -25,6 +25,7 @@ public class XcessPayables implements Entity {
 	private String taxType = "";
 	private String feeTypeCode = "";
 	private boolean taxApplicable = false;
+	private String finreference;
 
 	public XcessPayables() {
 
@@ -198,6 +199,14 @@ public class XcessPayables implements Entity {
 
 	public void setFeeTypeCode(String feeTypeCode) {
 		this.feeTypeCode = feeTypeCode;
+	}
+
+	public String getFinreference() {
+		return finreference;
+	}
+
+	public void setFinreference(String finreference) {
+		this.finreference = finreference;
 	}
 
 }

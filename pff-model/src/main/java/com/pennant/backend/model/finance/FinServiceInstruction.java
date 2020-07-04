@@ -226,6 +226,9 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	@XmlElement
 	private int grcTerms;
 
+	@XmlElement
+	private boolean bckdtdWthOldDues;
+
 	public int getGrcTerms() {
 		return grcTerms;
 	}
@@ -1284,6 +1287,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 
 	public void setNormalLoanClosure(boolean normalLoanClosure) {
 		this.normalLoanClosure = normalLoanClosure;
+	}
+
+	public boolean isBckdtdWthOldDues() {
+		return bckdtdWthOldDues;
+	}
+
+	public void setBckdtdWthOldDues(boolean bckdtdWthOldDues) {
+		this.bckdtdWthOldDues = bckdtdWthOldDues;
 	}
 
 }

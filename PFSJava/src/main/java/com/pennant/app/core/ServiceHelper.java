@@ -105,17 +105,16 @@ import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
 abstract public class ServiceHelper implements Serializable {
-
 	private static final long serialVersionUID = 4165353615228874397L;
-	private static Logger logger = Logger.getLogger(ServiceHelper.class);
+	protected static Logger logger = Logger.getLogger(ServiceHelper.class.getClass());
 
 	private DataSource dataSource;
 	//customer
-	private CustomerDAO customerDAO;
+	protected CustomerDAO customerDAO;
 	private CustomerStatusCodeDAO customerStatusCodeDAO;
 	private CustomerQueuingDAO customerQueuingDAO;
 	//Loan
-	private FinanceTypeDAO financeTypeDAO;
+	protected FinanceTypeDAO financeTypeDAO;
 	private FinanceMainDAO financeMainDAO;
 	protected FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private RepayInstructionDAO repayInstructionDAO;

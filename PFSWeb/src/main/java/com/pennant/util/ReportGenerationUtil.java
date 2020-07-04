@@ -56,7 +56,8 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
@@ -70,6 +71,7 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportCreationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.webui.finance.enquiry.PostingsEnquiryDialogCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -84,7 +86,7 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 public class ReportGenerationUtil implements Serializable {
 	private static final long serialVersionUID = 7293149519883033383L;
-	private static final Logger logger = Logger.getLogger(ReportGenerationUtil.class);
+	private static Logger logger = LogManager.getLogger(PostingsEnquiryDialogCtrl.class);
 
 	public ReportGenerationUtil() {
 		super();
@@ -93,7 +95,7 @@ public class ReportGenerationUtil implements Serializable {
 	@SuppressWarnings("rawtypes")
 	public static boolean generateReport(String reportName, Object object, List listData, boolean isRegenerate,
 			int reportType, String userName, Window window) throws InterruptedException {
-		logger.info("Generating report " + reportName);
+		logger.info(Literal.ENTERING + reportName);
 
 		return generateReport(reportName, object, listData, isRegenerate, reportType, userName, window, false);
 	}
@@ -102,7 +104,9 @@ public class ReportGenerationUtil implements Serializable {
 	public static boolean generateReport(String reportName, Object object, List listData, boolean isRegenerate,
 			int reportType, String userName, Window window, boolean createExcel) throws InterruptedException {
 		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
-
+		
+		logger.info(reportSrc);
+		
 		if (isRegenerate) {
 			try {
 				createReport(reportName, object, listData, reportSrc, userName, window, createExcel);
@@ -112,7 +116,7 @@ public class ReportGenerationUtil implements Serializable {
 				ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
 			}
 		}
-
+		logger.debug(Literal.LEAVING);
 		return false;
 	}
 
@@ -131,7 +135,8 @@ public class ReportGenerationUtil implements Serializable {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static void createReport(String reportName, Object object, List listData, String reportSrc, String userName,
 			Window dialogWindow, boolean createExcel) throws JRException, InterruptedException {
-		logger.debug("Entering");
+		logger.info(Literal.ENTERING);
+		
 		try {
 			byte[] buf = ReportCreationUtil.reportGeneration(reportName, object, listData, reportSrc, userName,
 					createExcel);

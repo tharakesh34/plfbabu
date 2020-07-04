@@ -223,6 +223,8 @@ import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.AgreementFieldDetails;
+import com.pennant.backend.model.finance.AutoKnockOff;
+import com.pennant.backend.model.finance.AutoKnockOffFeeMapping;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.BulkProcessHeader;
 import com.pennant.backend.model.finance.BulkRateChangeDetails;
@@ -257,6 +259,7 @@ import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinTypeKnockOff;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
@@ -942,7 +945,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("FeeType",
 				new ModuleMapping("FeeType", FeeType.class, new String[] { "FeeTypes", "FeeTypes_AView" }, masterWF,
-						new String[] { "FeeTypeCode", "FeeTypeDesc" }, new Object[][] { { "Active", "0", 1 } }, 300));
+						new String[] { "FeeTypeID", "FeeTypeCode" }, new Object[][] { { "Active", "0", 1 } }, 300));
 
 		ModuleUtil.register("FinanceApplicationCode", new ModuleMapping("FinanceApplicationCode",
 				FinanceApplicationCode.class, new String[] { "BMTFinAppCodes", "BMTFinAppCodes_AView" }, masterWF,
@@ -989,6 +992,31 @@ public class PennantJavaUtil {
 				new ModuleMapping("CommodityBrokerDetail", CommodityBrokerDetail.class,
 						new String[] { "FCMTBrokerDetail", "FCMTBrokerDetail_AView" }, masterWF,
 						new String[] { "BrokerCode", "BrokerCustID", "lovDescBrokerShortName" }, null, 600));
+
+		ModuleUtil.register("AutoKnockOff",
+				new ModuleMapping("AutoKnockOff", AutoKnockOff.class,
+						new String[] { "AUTO_KNOCKOFF", "AUTO_KNOCKOFF_View" }, masterWF,
+						new String[] { "Code", "Description" }, null, 300));
+
+		ModuleUtil.register("AutoKnockOffFeeMapping",
+				new ModuleMapping("AUTO_KNOCKOFF_FEE_TYPES", AutoKnockOffFeeMapping.class,
+						new String[] { "AUTO_KNOCKOFF_FEE_TYPES", "AUTO_KNOCKOFF_FEE_TYPES_View" }, masterWF,
+						new String[] { "PayableName", "PayableDesc" }, null, 300));
+
+		ModuleUtil.register("FinTypeKnockOff",
+				new ModuleMapping("FinTypeKnockOff", FinTypeKnockOff.class,
+						new String[] { "AUTO_KNOCKOFF_LOANTYPES", "AUTO_KNOCKOFF_LOANTYPES_View" }, masterWF,
+						new String[] { "LoanType" }, null, 300));
+
+		ModuleUtil.register("AutoKnockOffData",
+				new ModuleMapping("AutoKnockOff", AutoKnockOff.class,
+						new String[] { "AUTO_KNOCKOFF", "AUTO_KNOCKOFF_AView" }, masterWF,
+						new String[] { "Code", "Description" }, null, 300));
+
+		ModuleUtil.register("KnockoffDays",
+				new ModuleMapping("KnockoffDays", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
+						masterWF, new String[] { "FieldCodeValue", "ValueDesc" },
+						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "KnockoffDays" } }, 400));
 
 		ModuleUtil.register("CommodityDetail",
 				new ModuleMapping("CommodityDetail", CommodityDetail.class,

@@ -1,0 +1,64 @@
+package com.pennanttech.pff.eod.auto.knockoff.reval;
+
+import java.util.Date;
+
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.annotation.BeforeStep;
+import org.springframework.batch.item.database.JdbcCursorItemReader;
+
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.finance.AutoKnockOffExcess;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+
+public class AutoKnockOffProcessTaskletItemReader extends JdbcCursorItemReader<AutoKnockOffExcess> {
+
+	public AutoKnockOffProcessTaskletItemReader() {
+		super.setSql(getSql());
+	}
+
+	private Date valueDate = null;
+
+	@Override
+	public String getSql() {
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" aked.ID, ake.ID ExcessID, ake.FinReference, ake.AmountType, ake.ValueDate");
+		sql.append(", ake.BalanceAmount, aked.KnockOffID, aked.Code, aked.Description, aked.ExecutionDays");
+		sql.append(", aked.FinType, aked.FeeTypeCode, aked.KnockOffOrder, aked.FeeOrder");
+		sql.append(", ake.ExecutionDay, ake.ThresholdValue, aked.FinCcy, ake.PayableId");
+		sql.append(", coalesce(frhCount, 0), coalesce(fmtCount, 0)");
+		sql.append(" From AUTO_KNOCKOFF_EXCESS ake");
+		sql.append(" Inner Join AUTO_KNOCKOFF_EXCESS_DETAILS aked on aked.ExcessId = ake.ID");
+		sql.append(" Left join (select count(*) frhcount, Reference from FinReceiptHeader_Temp rh");
+		sql.append(" Inner join FinReceiptDetail_Temp rd on rd.ReceiptId = rh.ReceiptId");
+		sql.append(" Group by Reference) rh on rh.Reference = ake.FinReference");
+		sql.append(" Left join (select count(*) fmtcount, FinReference from FinanceMain_Temp");
+		sql.append(" Group by FinReference) fmt on ake.FinReference = fmt.FinReference");
+		sql.append(" Where ake.ProcessingFlag = 0");
+		sql.append(" and valueDate = ");
+
+		if (valueDate == null) {
+			sql.append(getValueDate());
+		} else {
+			sql.append(valueDate);
+		}
+
+		sql.append(" order by aked.ID, aked.KnockOffOrder, aked.FeeOrder");
+
+		return sql.toString();
+	}
+
+	private String getValueDate() {
+		return "'" + DateUtil.format(DateUtil.addDays(SysParamUtil.getAppDate(), -1), DateFormat.FULL_DATE) + "'";
+	}
+
+	@BeforeStep
+	public void getInterstepData(StepExecution stepExecution) {
+		super.setSql(getSql());
+		Object mapDate = stepExecution.getExecutionContext().get("VALUE_DATE");
+		valueDate = DateUtil.parse((String) mapDate, DateFormat.FULL_DATE);
+		valueDate = JdbcUtil.getDate(valueDate);
+	}
+}

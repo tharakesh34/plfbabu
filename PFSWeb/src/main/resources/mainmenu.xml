@@ -260,7 +260,15 @@
 				rightName=""/> -->
 			<menuItem id="menu_Item_IRRCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/IRRCode/IRRCodeList.zul"
 				rightName="menuItem_applicationmaster_IRRCode" />
+
+			<menuItem id="menu_Item_LoanTypeKnockOff" zulNavigation="/WEB-INF/pages/ApplicationMaster/LoanTypeKnockOff/LoanTypeKnockOffList.zul"
+				rightName="menu_Item_LoanTypeKnockOff" />
+
+			<menuItem id="menu_Item_AutoKnockoff" zulNavigation="/WEB-INF/pages/ApplicationMaster/AutoKnockOff/AutoKnockOffList.zul"
+				rightName="menu_Item_AutoKnockOff" />
+
 		</menu>
+
 		<menuItem id="menu_Item_LovFieldDetail" zulNavigation="/WEB-INF/pages/SystemMaster/LovFieldDetail/LovFieldDetailList.zul"
 			rightName="menuItem_SystemMaster_LovFieldDetail" />
 
@@ -1191,6 +1199,11 @@
 		<menu id="menu_Category_Receipts">
 			<menuItem id="menu_Item_ReceiptUploadDetails" zulNavigation="/WEB-INF/pages/Reports/ReceiptUploadReportDialog.zul"
 				rightName="menu_Item_ReceiptUploadREPORT" />
+		</menu>
+
+		<menu id="menu_Category_Auto_KnockOff">
+			<menuItem id="menu_Item_AutoKnockoffDetails" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_AutoKnockOff_Reports" />
 		</menu>
 
 		<menu id="menu_Category_SAPGL">

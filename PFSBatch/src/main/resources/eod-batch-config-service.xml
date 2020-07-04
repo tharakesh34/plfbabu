@@ -520,4 +520,27 @@
 
 	<bean id="taxHeaderDetailsDAO" class="com.pennant.backend.dao.finance.impl.TaxHeaderDetailsDAOImpl" parent="sequenceDao" />
 
+	<!-- Entity -->
+	<bean id="entityDAO" class="com.pennant.backend.dao.applicationmaster.impl.EntityDAOImpl" parent="basicDao" />
+
+	<!-- Finance Overdue penalty Rate Details -->
+	<bean id="finODPenaltyRateDAO" class="com.pennant.backend.dao.finance.impl.FinODPenaltyRateDAOImpl" parent="sequenceDao" />
+
+	<!--============ Finance Receipt Header Details ============== -->
+	<bean id="finReceiptHeaderDAO" class="com.pennant.backend.dao.receipts.impl.FinReceiptHeaderDAOImpl" parent="sequenceDao" />
+
+	<bean id="autoKnockOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.AutoKnockOffDAOImpl" parent="basicDao" />
+
+
+	<bean id="autoKnockProcessService" class="com.pennant.app.core.AutoKnockOffProcessService" parent="serviceHelper">
+		<property name="dataSource" ref="dataSource" />
+		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
+		<property name="receiptAllocationDetailDAO" ref="receiptAllocationDetailDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="entityDAO" ref="entityDAO" />
+		<property name="repaymentProcessUtil" ref="repayProcessUtil" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+	</bean>
 </beans>

@@ -215,4 +215,159 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<!-- ST#350 Auto Knock-off Process change logs started-->
+	<changeSet id="ST#350.1" author="vijaya">
+		<createTable tableName="ADTAUTO_KNOCKOFF">
+			<column name="AUDITID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(500)" />
+			<column name="ExecutionDays" type="varchar(100)" />
+			<column name="Active" type="boolean" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#350.2" author="vijaya.a">
+		<createTable tableName="ADTAUTO_KNOCKOFF_FEE_TYPES">
+			<column name="AUDITID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeOrder" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#350.3" author="vijaya.a">
+		<createTable tableName="ADTAUTO_KNOCKOFF_LOANTYPES">
+			<column name="AUDITID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="KnockOffID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LoanType" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffOrder" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#350.4" author="Gopal.p">
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+			<column name="KnockOffType" type="char(1)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#350.5" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="KnockOffType" tableName="ADTFINRECEIPTHEADER" defaultValue="M" />
+	</changeSet>
+
+	<changeSet id="ST#350.5" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINRECEIPTHEADER add constraint DK_ADTRECEIPTHEADER_KOF default 'M' for KnockOffType;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#350.6" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINRECEIPTHEADER set KnockOffType='M';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#350.7" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="KnockOffType" tableName="ADTFINRECEIPTHEADER" defaultValue="" />
+	</changeSet>
+
+	<changeSet id="ST#350.7" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINRECEIPTHEADER add constraint DK_ADTRECEIPTHEADER_KOF default '' for KnockOffType;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<!-- ST#350 Auto Knock-off Process change logs end-->
 </databaseChangeLog>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_AutoKnockOffDialog" border="normal" apply="${autoKnockOffDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+		<borderlayout id="borderlayoutAutoKnockOff">
+			<north>
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew" visible="false" tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnEdit" visible="false" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnDelete" visible="false" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnSave" visible="false" tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnCancel" visible="false" tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						</toolbar>
+						<!-- SEARCH AREA -->
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_AutoKnockOffDialog.title')}" sclass="label-heading" />
+						</toolbar>
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" visible="false" />
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false">
+				<vlayout>
+					<groupbox id="gb_basicDetails" sclass="gb-dialog">
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+							</columns>
+							<rows>
+								<row id="row0">
+									<label id="label_KnockOffCode" value="${c:l('label_AutoKnockOffDialog_KnockOffCode.value')}" />
+									<hbox>
+										<space id="space_KnockOffCode" spacing="2px" sclass="mandatory" />
+										<uppercasebox id="knockOffCode" maxlength="50" width="250px" />
+									</hbox>
+									<label id="label_Description" value="${c:l('label_AutoKnockOffDialog_Description.value')}" />
+									<hbox>
+										<space id="space_Description" spacing="2px" sclass="mandatory" />
+										<textbox id="description" maxlength="50" width="250px" />
+									</hbox>
+								</row>
+								<row id="row1">
+
+									<label id="label_ExecutionDays" value="${c:l('label_AutoKnockOffDialog_ExecutionDays.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="executionDays" width="300px" readonly="true" sclass="mandatory" />
+										<button id="btnExecutionDays" tooltiptext="${c:l('btnExecutionDays.tooltiptext')}" image="/images/icons/LOVSearch.png" />
+									</hbox>
+
+									<label id="label_Active" value="${c:l('label_AutoKnockOffDialog_Active.value')}" />
+									<hbox>
+										<space id="space_Active" spacing="2px" />
+										<checkbox id="active" checked="false" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_AutoKnockOffFeeMapping" sclass="gb-dialog">
+						<div sclass="z-toolbar" height="auto">
+							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
+								<toolbar align="start" sclass="toolbar-start" width="300px">
+								</toolbar>
+								<toolbar align="center" sclass="toolbar-center">
+								</toolbar>
+								<toolbar align="end" sclass="toolbar-end">
+									<button id="btnNew_FeePayables" label="${c:l('label_New')}" tooltiptext="${c:l('button_AutoKnockOffList_NewAutoKnockOff.tooltiptext')}"
+										sclass="z-toolbarbutton" autodisable="btnNew_FeePayables" />
+								</toolbar>
+								<space width="2px" />
+							</hbox>
+						</div>
+						<listbox id="listBoxKnockOffPayables" multiple="true" style="border:none" width="100%" sizedByContent="true"
+							span="true" emptyMessage="${c:l('listbox.emptyMessage')}">
+							<listhead sizable="true">
+								<listheader id="listheader_KnockOffOrder" label="${c:l('listheader_KnockOffOrder.label')}" width="20%"
+									sort="false" hflex="min" />
+								<listheader id="listheader_Payables" label="${c:l('listheader_AutoKnockOff_FeesCharges.label')}"
+									width="20%" sort="false" hflex="min" />
+								<listheader id="listheader_RecordStatus" label="${c:l('label_AutoKnockOffList_RecordStatus.value')}"
+									width="20%" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}" width="20%"
+									hflex="min" />
+								<listheader id="listheader_Delete" width="20%" sort="auto" hflex="min" />
+							</listhead>
+						</listbox>
+						<!-- <paging id="pagingAutoKnockOffFeeMappingList" /> -->
+					</groupbox>
+				</vlayout>
+			</center>
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+
+			</south>
+		</borderlayout>
+	</window>
+</zk>

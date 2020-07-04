@@ -250,6 +250,11 @@
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="assignmentDAO" ref="assignmentDAO" />
+		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
+		<property name="assignmentDealDAO" ref="assignmentDealDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
 
 	<!-- Finance Overdue penalty Rate Details -->
@@ -427,6 +432,7 @@
 		<property name="assignmentDealDAO" ref="assignmentDealDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 	</bean>
 
 	<bean id="assignmentDAO" class="com.pennant.backend.dao.applicationmaster.impl.AssignmentDAOImpl" parent="sequenceDao" />
@@ -804,7 +810,6 @@
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 	</bean>
 
 	<bean id="freemarkerMailConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean" />

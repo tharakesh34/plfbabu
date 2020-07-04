@@ -343,6 +343,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Button btnReceipt;
 	protected Button btnChangeReceipt;
 	protected Button btnCalcReceipts;
+	//Auto Knock Off Details
+	protected Textbox knockOffType;
 
 	private RuleService ruleService;
 	private CustomerDetailsService customerDetailsService;
@@ -1192,6 +1194,14 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.postBranch.setValue(rch.getPostBranch(), rch.getPostBranchDesc());
 		this.cashierBranch.setValue(rch.getCashierBranch(), rch.getCashierBranchDesc());
 		this.finDivision.setValue(rch.getFinDivision(), rch.getFinDivisionDesc());
+
+		if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(rch.getKnockOffType())) {
+			this.knockOffType.setValue("Auto");
+		} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(rch.getKnockOffType())) {
+			this.knockOffType.setValue("Manual");
+		} else {
+			this.knockOffType.setValue("");
+		}
 
 		if (rch.getReasonCode() != null && rch.getReasonCode() != 0) {
 			setEarlySettlementReasonData(rch.getReasonCode());
