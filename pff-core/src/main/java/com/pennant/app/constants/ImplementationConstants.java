@@ -139,7 +139,7 @@ public class ImplementationConstants {
 		ALW_ADV_INTEMI_ADVICE_CREATION = getValueAsBoolean(extensions, "ALW_ADV_INTEMI_ADVICE_CREATION", false);
 		ALLOW_IND_AS = getValueAsBoolean(extensions, "ALLOW_IND_AS", false);
 		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
-		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", true);
+		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", false);
 
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
