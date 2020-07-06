@@ -1465,4 +1465,47 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="ST#53" author="pavankalyan.s">
+		<createTable tableName="FINEXCESSAMOUNT_SNAPSHOT">
+			<column name="APPDATE" type="datetime" />
+			<column name="EXCESSID" type="BIGINT" />
+			<column name="CUSTID" type="BIGINT" />
+			<column name="FINREFERENCE" type="VARCHAR(20)" />
+			<column name="AMOUNTTYPE" type="VARCHAR(8)" />
+			<column name="AMOUNT" type="DECIMAL(18,0)" />
+			<column name="UTILISEDAMT" type="DECIMAL(18,0)" />
+			<column name="RESERVEDAMT" type="DECIMAL(18,0)" />
+			<column name="BALANCEAMT" type="DECIMAL(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#53.0" author="pavankalyan.s" dbms="mssql">
+		<addNotNullConstraint tableName="FINEXCESSAMOUNT_SNAPSHOT" columnName="APPDATE" columnDataType="datetime" />
+		<addNotNullConstraint tableName="FINEXCESSAMOUNT_SNAPSHOT" columnName="EXCESSID" columnDataType="BIGINT" />
+		<addNotNullConstraint tableName="FINEXCESSAMOUNT_SNAPSHOT" columnName="CUSTID" columnDataType="BIGINT" />
+	</changeSet>
+
+	<changeSet id="ST#53.1" author="pavankalyan.s">
+		<addPrimaryKey tableName="FINEXCESSAMOUNT_SNAPSHOT" constraintName="PK_FINEXCESSAMOUNT_SNAPSHOT"
+			columnNames="APPDATE, EXCESSID, CUSTID" />
+	</changeSet>
+
+	<changeSet id="ST#53.2" author="pavankalyan.s" dbms="oracle,mssql">
+		<sql>
+		<![CDATA[
+			update FINPFTDETAILS_SNAPSHOT set APPDATE=APPDATE-1;
+			update FINODDETAILS_SNAPSHOT set APPDATE=APPDATE-1;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#53.3" author="pavankalyan.s" dbms="postgresql">
+		<sql>
+		<![CDATA[
+			update plf.FINPFTDETAILS_SNAPSHOT set APPDATE=((APPDATE) - INTERVAL '1 DAY');
+			update plf.FINODDETAILS_SNAPSHOT set APPDATE=((APPDATE) - INTERVAL '1 DAY');
+		]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
