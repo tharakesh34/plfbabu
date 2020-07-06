@@ -1500,6 +1500,11 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="ST#53.3_pre" author="pavankalyan.s" dbms="postgresql">
+		<dropPrimaryKey constraintName="PK_FINPFTDETAILS_SNAPSHOT" tableName="FINPFTDETAILS_SNAPSHOT" />
+		<dropPrimaryKey constraintName="PK_FINODDETAILS_SNAPSHOT" tableName="FINODDETAILS_SNAPSHOT" />
+	</changeSet>
+
 	<changeSet id="ST#53.3" author="pavankalyan.s" dbms="postgresql">
 		<sql>
 		<![CDATA[
@@ -1508,4 +1513,11 @@
 		]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="ST#53.3_post" author="pavankalyan.s" dbms="postgresql">
+		<addPrimaryKey columnNames="appdate, finreference" constraintName="PK_FINPFTDETAILS_SNAPSHOT" tableName="FINPFTDETAILS_SNAPSHOT" />
+		<addPrimaryKey columnNames="appdate, finreference, finodschddate, finodfor" constraintName="PK_FINODDETAILS_SNAPSHOT"
+			tableName="FINODDETAILS_SNAPSHOT" />
+	</changeSet>
+
 </databaseChangeLog>

@@ -7132,7 +7132,7 @@
 	<changeSet id="ST#350.57_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'RECEIPTDETAILS_VIEW');
+				select deps_save_and_drop_dependencies ('plf', 'receiptdetails_view');
 			]]>
 		</sql>
 	</changeSet>
@@ -7251,7 +7251,7 @@
 	<changeSet id="ST#350.57_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'RECEIPTDETAILS_VIEW');
+				select deps_restore_dependencies ('plf', 'receiptdetails_view');
 			]]>
 		</sql>
 	</changeSet>
