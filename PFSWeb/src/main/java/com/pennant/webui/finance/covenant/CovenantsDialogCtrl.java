@@ -1151,9 +1151,9 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.covenantType.setConstraint("");
 		this.description.setConstraint("");
 		this.mandRole.setConstraint("");
-		this.receivableDate.setConstraint("");
 		this.covenantGraceDays.setConstraint("");
 		this.covenantNextFrequencyDate.setConstraint("");
+		this.documentRecievedDate.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1728,6 +1728,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			this.extendedDate.setDisabled(true);
 			this.extendedDate.setText(null);
 			this.btnCovenantReceived.setDisabled(true);
+			this.alertsRequired.setChecked(false);
+			this.alertType.setSelectedIndex(0);
 		}
 	}
 
@@ -2143,6 +2145,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.pdd.setChecked(false);
 		this.otc.setChecked(false);
 		this.mandRole.setValue(null);
+		this.alwWaiver.setChecked(false);
+		this.internalUse.setChecked(false);
 	}
 
 	public void covenantTypeDetails(CovenantType covenantType) {

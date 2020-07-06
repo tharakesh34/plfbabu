@@ -201,7 +201,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				covenantTypeData.setMandatoryRole(getStringValue(record, "MandatoryRole"));
 				covenantTypeData.setOtc(getBooleanValue(record, "AlwOtc"));
 				covenantTypeData.setDocumentReceived(getBooleanValue(record, "DocumentReceived"));
-				covenantTypeData.setDocumentReceivedDate(
+				covenantTypeData.setReceivableDate(
 						DateUtility.getDate(getStringValue(record, "ReceivableDate"), "E MMM dd HH:mm:ss Z yyy"));
 				covenantTypeData.setFrequency(getStringValue(record, "Frequency"));
 				covenantTypeData.setAlertsRequired(getBooleanValue(record, "AlertsRequired"));
@@ -213,17 +213,24 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				covenantTypeData.setAdditionalField1(getStringValue(record, "Remarks"));
 				covenantTypeData.setAdditionalField2(getStringValue(record, "AdditionaliField2"));
 				covenantTypeData.setAdditionalField3(getStringValue(record, "AdditionaliField3"));
+				covenantTypeData.setPdd(getBooleanValue(record, "Pdd"));
+				covenantTypeData.setExtendedDate(DateUtility.getDate(getStringValue(record, "extendedDate"), "E MMM dd HH:mm:ss Z yyy"));
 
 				CovenantType covenantType = covenantTypeDAO.getCovenantTypeId(covenantTypeData.getCode(),
 						covenantTypeData.getCategory(), "");
 
 				if (covenantType == null) {
 					throw new AppException("Invalid covenantType Code : " + covenantTypeData.getCategory()
-							+ "And  Covenant Type : " + covenantTypeData.getCode());
+							+ " And  Covenant Type : " + covenantTypeData.getCode());
 				}
-				covenantTypeData.setAlertToRoles(covenantType.getAlertToRoles());
 				covenantTypeData.setCovenantType(covenantType.getCovenantType());
 				covenantTypeData.setCovenantTypeDescription(covenantType.getDescription());
+				if (StringUtils.isBlank(covenantTypeData.getDescription())) {
+					covenantTypeData.setDescription(covenantType.getDescription());
+				}
+				if(!StringUtils.equals(covenantTypeData.getAlertType(), "Customer")){
+					covenantTypeData.setAlertToRoles(covenantType.getAlertToRoles());
+				}
 				if (covenantTypeData.getGraceDays() == 0) {
 					covenantTypeData.setGraceDays(covenantType.getGraceDays());
 				}
@@ -268,6 +275,11 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				if (StringUtils.isBlank(covenantTypeData.getMandatoryRole()) && !covenantTypeData.isPdd()
 						&& !covenantTypeData.isOtc()) {
 					throw new AppException("Please select either PDD or OTC or Mandatory Role");
+				}
+				if(covenantTypeData.isPdd()){
+					covenantTypeData.setDocumentReceived(false);
+				}else{
+					covenantTypeData.setAllowPostPonement(false);
 				}
 				if (covenantTypeData.isDocumentReceived() && StringUtils.isBlank(covenantTypeData.getFrequency())) {
 					throw new AppException("Covenant Frequency Type is Mandatory");
@@ -362,6 +374,13 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 					}
 				}
 
+				if (covenantTypeData.isAllowPostPonement()) {
+					if (covenantTypeData.getExtendedDate() == null) {
+						throw new AppException("Extended date is mandatory.");
+					} else if (DateUtility.compare(covenantTypeData.getExtendedDate(), appDate) > 0) {
+						throw new AppException(" Future Date is not allowed For Extended Date");
+					}
+				}
 				if (covenantTypeData.isAllowWaiver()) {
 					covenantTypeData.setReceivableDate(null);
 					covenantTypeData.setDocumentReceived(false);
