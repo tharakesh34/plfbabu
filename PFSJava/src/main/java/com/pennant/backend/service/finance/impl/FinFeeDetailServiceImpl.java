@@ -309,10 +309,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				continue;
 			}
 
-			if (BigDecimal.ZERO.compareTo(fee.getCalculatedAmount()) == 0) {
-				continue;
-			}
-
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;

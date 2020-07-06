@@ -580,9 +580,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal totalPaid = BigDecimal.ZERO;
 		this.gb_FeeDetail.setVisible(true);
 		for (FinFeeDetail fee : feeDetails) {
-			if (fee.getCalculatedAmount().compareTo(BigDecimal.ZERO) == 0) {
-				continue;
-			}
 
 			item = new Listitem();
 
