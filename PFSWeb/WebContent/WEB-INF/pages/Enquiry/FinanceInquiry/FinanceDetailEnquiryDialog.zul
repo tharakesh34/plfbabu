@@ -632,6 +632,13 @@
 													<combobox id="planEmiMethod" width="250px" readonly="true" />
 												</hbox>
 											</row>
+											<row>
+												<label id="label_FinanceMainDialog_AlwPlannedGraceEmiHoliday" value="${c:l('label_FinanceMainDialog_AlwPlannedGraceEmiHoliday.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="alwPlannedEmiHolidayInGrace" checked="false" />
+												</hbox>
+											</row>
 											<row id="row_MaxPlanEmi" visible="false">
 												<label id="label_FinanceMainDialog_MaxPlanEmiPerAnnum" value="${c:l('label_FinanceMainDialog_MaxPlanEmiPerAnnum.value')}" />
 												<hbox>

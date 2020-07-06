@@ -529,6 +529,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected ExtendedCombobox employeeName;
 	protected Row row_odAllowTDS;
 	protected Checkbox odTDSApplicable;
+	protected Checkbox alwPlannedEmiHolidayInGrace;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -1564,9 +1565,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		this.reasons.setText(data);
+
 		if (details.size() > 0) {
 			this.cancelRemarks.setText(details.get(0).getRemarks());
 		}
+
+		this.alwPlannedEmiHolidayInGrace.setChecked(aFinanceMain.isPlanEMIHAlwInGrace());
 
 		logger.debug("Leaving");
 	}
@@ -2159,7 +2163,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.downPayAccount.setReadonly(true);
 		this.allowRevolving.setDisabled(true);
 		this.odTDSApplicable.setDisabled(true);
-
+		this.alwPlannedEmiHolidayInGrace.setDisabled(true);
 	}
 
 	/** ========================================================= */

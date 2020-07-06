@@ -2220,12 +2220,15 @@ public class ReceiptCalculator implements Serializable {
 		movement.setAdviseID(allocate.getAllocationTo());
 		movement.setMovementDate(valueDate);
 		movement.setMovementAmount(allocate.getPaidNow());
+
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
 			movement.setPaidAmount(allocate.getPaidNow().subtract(allocate.getPaidGST()));
+			movement.setWaivedAmount(allocate.getWaivedNow().subtract(allocate.getWaivedGST()));
 		} else {
 			movement.setPaidAmount(allocate.getPaidNow());
+			movement.setWaivedAmount(allocate.getWaivedNow());
 		}
-		movement.setWaivedAmount(allocate.getWaivedNow());
+
 		movement.setFeeTypeCode(allocate.getFeeTypeCode());
 
 		// GST Paid amounts
@@ -2877,7 +2880,7 @@ public class ReceiptCalculator implements Serializable {
 
 			odBal = odBal.subtract(odWaiveNow);
 
-			allocate.setWaivedAvailable(allocate.getWaivedAvailable().subtract(odWaiveNow));
+			//allocate.setWaivedAvailable(allocate.getWaivedAvailable().subtract(odWaiveNow));
 			if (balAmount.compareTo(BigDecimal.ZERO) > 0) {
 				if (balAmount.compareTo(odBal) >= 0) {
 					odPayNow = odBal;
@@ -4106,7 +4109,16 @@ public class ReceiptCalculator implements Serializable {
 		// taking the inclusive type here because we are doing reverse
 		// calculation here)
 		if (allocate.getDueGST().compareTo(BigDecimal.ZERO) > 0) {
-			calAllocationGST(detail, paidNow, allocate, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+			if (paidNow.compareTo(BigDecimal.ZERO) > 0) {
+				calAllocationPaidGST(detail, paidNow, allocate, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+			}
+
+			if (waivedNow.compareTo(BigDecimal.ZERO) > 0) {
+				String taxType = allocate.getTaxType();
+				allocate.setTaxType(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+				calAllocationWaiverGST(detail, waivedNow, allocate);
+				allocate.setTaxType(taxType);
+			}
 		}
 
 		// Set the balances
