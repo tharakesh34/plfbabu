@@ -7295,7 +7295,7 @@
 	<changeSet id="ST#350.62_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'AUTO_KNOCKOFF_LOANTYPES_LView');
+				select deps_save_and_drop_dependencies ('plf', 'auto_knockoff_loantypes_lview');
 			]]>
 		</sql>
 	</changeSet>
@@ -7321,7 +7321,7 @@
 	<changeSet id="ST#350.62_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'AUTO_KNOCKOFF_LOANTYPES_LView');
+				select deps_restore_dependencies ('plf', 'auto_knockoff_loantypes_lview');
 			]]>
 		</sql>
 	</changeSet>
