@@ -215,7 +215,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				covenantTypeData.setAdditionalField3(getStringValue(record, "AdditionaliField3"));
 				covenantTypeData.setPdd(getBooleanValue(record, "Pdd"));
 				covenantTypeData.setExtendedDate(DateUtility.getDate(getStringValue(record, "extendedDate"), "E MMM dd HH:mm:ss Z yyy"));
-
+				covenantTypeData.setAlertToRoles(getStringValue(record, "AlertRoles"));
 				CovenantType covenantType = covenantTypeDAO.getCovenantTypeId(covenantTypeData.getCode(),
 						covenantTypeData.getCategory(), "");
 
@@ -228,7 +228,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				if (StringUtils.isBlank(covenantTypeData.getDescription())) {
 					covenantTypeData.setDescription(covenantType.getDescription());
 				}
-				if(!StringUtils.equals(covenantTypeData.getAlertType(), "Customer")){
+				if(!StringUtils.equals(covenantTypeData.getAlertType(), "Customer") && StringUtils.isBlank(covenantTypeData.getAlertToRoles())){
 					covenantTypeData.setAlertToRoles(covenantType.getAlertToRoles());
 				}
 				if (covenantTypeData.getGraceDays() == 0) {

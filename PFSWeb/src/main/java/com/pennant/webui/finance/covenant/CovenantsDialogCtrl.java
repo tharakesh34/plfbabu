@@ -1616,6 +1616,13 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			this.covenantType.setValue("");
 			this.covenantType.setDescription("");
 		} else {
+			this.covenantType.setButtonDisabled(true);
+			this.covenantType.setObject(null);
+			this.covenantType.setValue("");
+			this.description.setValue("");
+			this.covenantType.setDescription("");
+			this.alwWaiver.setChecked(false);
+			this.internalUse.setChecked(false);
 			doSetCovenantTypeProperties(category);
 		}
 	}
