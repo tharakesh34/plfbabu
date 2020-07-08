@@ -7641,4 +7641,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#912.2" author="murthy.y">
+		<sql>
+			<![CDATA[
+				DELETE 	FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT='EXPENSE';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

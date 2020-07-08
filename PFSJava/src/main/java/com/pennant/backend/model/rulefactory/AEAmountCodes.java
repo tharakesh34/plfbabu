@@ -228,9 +228,6 @@ public class AEAmountCodes implements Serializable {
 	//OEM Subvention amount code
 	private BigDecimal oemSbvAmount = BigDecimal.ZERO;
 
-	// INDAS Expense Upload
-	private BigDecimal expense = BigDecimal.ZERO;
-
 	public AEAmountCodes() {
 		super();
 	}
@@ -1643,14 +1640,6 @@ public class AEAmountCodes implements Serializable {
 
 	public void setPastCpzChg(BigDecimal pastCpzChg) {
 		this.pastCpzChg = pastCpzChg;
-	}
-
-	public BigDecimal getExpense() {
-		return expense;
-	}
-
-	public void setExpense(BigDecimal expense) {
-		this.expense = expense;
 	}
 
 }

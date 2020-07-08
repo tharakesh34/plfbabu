@@ -179,10 +179,10 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	@Override
-	public long saveFinExpenseMovements(FinExpenseMovements finExpenseMovements) {
-		long expensId = finExpenseMovementsDAO.saveFinExpenseMovements(finExpenseMovements);
+	public long saveFinExpenseMovements(FinExpenseMovements expense) {
+		long expensId = finExpenseMovementsDAO.saveFinExpenseMovements(expense);
 
-		FinanceMain fm = finExpenseMovements.getFinanceMain();
+		FinanceMain fm = expense.getFinanceMain();
 
 		long accountingID = AccountingConfigCache.getAccountSetID(fm.getFinType(),
 				AccountEventConstants.ACCEVENT_EXPENSE, FinanceConstants.MODULEID_FINTYPE);
@@ -205,11 +205,12 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		}
 
 		amountCodes.setFinType(fm.getFinType());
-		amountCodes.setExpense(finExpenseMovements.getTransactionAmount());
 
-		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+		aeEvent.getDataMap().put(expense.getExpenseTypeCode() + "_AMT", expense.getTransactionAmount());
 
 		postingsPreparationUtil.postAccounting(aeEvent);
+		
+		//postingsPreparationUtil.postReversalsByLinkedTranID(linkedTranId)
 
 		return expensId;
 	}

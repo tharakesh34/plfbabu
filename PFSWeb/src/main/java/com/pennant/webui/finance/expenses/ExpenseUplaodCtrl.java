@@ -415,6 +415,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			uploadFinExpenses.setUploadId(uploadId);
 			uploadFinExpenses.setFinReference(finReference);
 			uploadFinExpenses.setType(appendOrOverride);
+			uploadFinExpenses.setExpenseTypeCode(expenseTypeCode);
 
 			valid = validateCommonData(uploadFinExpenses, expenseTypeCode, percentage, amountValue, valid, reason);
 			reason = uploadFinExpenses.getReason();
@@ -509,6 +510,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			uploadFinExpense.setUploadId(uploadId);
 			uploadFinExpense.setFinType(finType);
 			uploadFinExpense.setType(appendOrOverride);
+			uploadFinExpense.setExpenseTypeCode(expenseTypeCode);
 
 			if (StringUtils.isNotBlank(fromDate)) {
 				try {
@@ -658,7 +660,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			} else {
 				reason = reason + "| Percentage is mandatory.";
 			}
-		} else if (!StringUtils.isBlank(percentage)) {
+		} else if (StringUtils.isNotBlank(percentage) && new BigDecimal(percentage).compareTo(BigDecimal.ZERO) > 0) {
 			try {
 				percentageValue = new BigDecimal(percentage);
 
@@ -942,7 +944,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 			if (CollectionUtils.isNotEmpty(expenses)) {
 				this.uploadHeaderService.saveUploadFinExpenses(expenses);
-				
+
 				List<FinanceMain> finances;
 				for (UploadFinExpenses expense : expenses) {
 					long finExpenseId = expense.getExpenseId();
@@ -959,13 +961,13 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 						if (CollectionUtils.isNotEmpty(finances)) {
 							for (FinanceMain fm : finances) {
-								processFinExpenseDetails(fm, expense, finExpenseId); 
+								processFinExpenseDetails(fm, expense, finExpenseId);
 							}
 						}
 					} else if (PennantConstants.EXPENSE_UPLOAD_LOAN.equals(selectedModuleType)) {
 						FinanceMain fm = this.uploadHeaderService.getFinancesByFinReference(expense.getFinReference());
 
-						processFinExpenseDetails(fm, expense, finExpenseId); 
+						processFinExpenseDetails(fm, expense, finExpenseId);
 					}
 				}
 			}
@@ -1061,7 +1063,8 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		finExpenseMovements.setTransactionType(uploadDetail.getType());
 		finExpenseMovements.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		finExpenseMovements.setTransactionDate(transactionDate);
-		
+		finExpenseMovements.setExpenseTypeCode(uploadDetail.getExpenseTypeCode());
+
 		finExpenseMovements.setFinanceMain(fm);
 		this.uploadHeaderService.saveFinExpenseMovements(finExpenseMovements);
 

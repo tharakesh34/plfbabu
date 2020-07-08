@@ -49,7 +49,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.finance.FinanceMain;
 
 public class FinExpenseMovements implements Serializable {
@@ -67,6 +66,7 @@ public class FinExpenseMovements implements Serializable {
 	private String fileName;
 	private long lastMntBy;
 	private FinanceMain financeMain;
+	private String expenseTypeCode;
 
 	public FinExpenseMovements() {
 		super();
@@ -78,6 +78,7 @@ public class FinExpenseMovements implements Serializable {
 		excludeFields.add("fileName");
 		excludeFields.add("lastMntBy");
 		excludeFields.add("financeMain");
+		excludeFields.add("expenseTypeCode");
 
 		return excludeFields;
 	}
@@ -176,6 +177,14 @@ public class FinExpenseMovements implements Serializable {
 
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
+	}
+
+	public String getExpenseTypeCode() {
+		return expenseTypeCode;
+	}
+
+	public void setExpenseTypeCode(String expenseTypeCode) {
+		this.expenseTypeCode = expenseTypeCode;
 	}
 
 }

@@ -90,6 +90,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -114,6 +115,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -188,9 +190,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 	protected Listbox amountCodeListbox; // auto wired
 	protected Listbox feeCodeListbox; // auto wired
+	protected Listbox expenseCodeListbox; // auto wired
 	protected Listbox operator; // auto wired
 	protected Button btnCopyTo;
 	protected Tab tab_Fee;
+	protected Tab tab_expense;
 
 	protected Grid grid_Basicdetails;
 	protected Column column_CustomerData;
@@ -283,6 +287,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		int listboxHeight = borderLayoutHeight - dialogHeight;
 		this.amountCodeListbox.setHeight((listboxHeight + 15) + "px");
 		this.feeCodeListbox.setHeight((listboxHeight + 15) + "px");
+		this.expenseCodeListbox.setHeight((listboxHeight + 15) + "px");
 		this.amountRule.setHeight((listboxHeight + 40) + "px");
 		this.operator.setHeight((listboxHeight + 15) + "px");
 
@@ -697,6 +702,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 		btnCancel.setVisible(false);
 
+		tab_expense.setVisible(ImplementationConstants.ALLOW_IND_AS);
+
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aTransactionEntry);
@@ -928,6 +935,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.column_CustomerData.setWidth("0%");
 			this.amountCodeListbox.setVisible(false);
 			this.feeCodeListbox.setVisible(false);
+			this.expenseCodeListbox.setVisible(false);
 			this.column_RULE.setWidth("100%");
 			this.column_Operators.setWidth("0%");
 			this.operator.setVisible(false);
@@ -936,6 +944,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.column_CustomerData.setWidth("30%");
 			this.amountCodeListbox.setVisible(true);
 			this.feeCodeListbox.setVisible(true);
+			this.expenseCodeListbox.setVisible(true);
 			this.column_RULE.setWidth("50%");
 			this.column_Operators.setWidth("20%");
 			this.operator.setVisible(true);
@@ -980,6 +989,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.column_CustomerData.setWidth("0%");
 		this.amountCodeListbox.setVisible(false);
 		this.feeCodeListbox.setVisible(false);
+		this.expenseCodeListbox.setVisible(false);
 		this.column_RULE.setWidth("100%");
 		this.column_Operators.setWidth("0%");
 		this.operator.setVisible(false);
@@ -1537,11 +1547,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 * 
 	 * @param allowedevent
 	 */
-	private void getFeeCodes(String allowedevent) {
-		logger.debug("Entering");
+	private void getFeeCodes() {
+		logger.debug(Literal.ENTERING);
 
 		this.feeCodeListbox.getItems().clear();
-		List<FeeType> feeRulesList = new ArrayList<FeeType>();
+
 		JdbcSearchObject<FeeType> searchObj = new JdbcSearchObject<FeeType>(FeeType.class);
 		searchObj.addTabelName("FeeTypes");
 		searchObj.addFilter(new Filter("Active", 1, Filter.OP_EQUAL));
@@ -1550,9 +1560,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		list.add(RepayConstants.ALLOCATION_BOUNCE);
 		list.add(RepayConstants.ALLOCATION_ODC);
 		list.add(RepayConstants.ALLOCATION_LPFT);
+
 		searchObj.addFilter(Filter.notIn("FeeTypeCode", list));
 
-		feeRulesList = this.pagedListService.getBySearchObject(searchObj);
+		List<FeeType> feeRulesList = this.pagedListService.getBySearchObject(searchObj);
 
 		Listitem item = null;
 		Listgroup group = null;
@@ -1561,21 +1572,17 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		Map<String, String> feeMap = fillAccountingDetails();
 		List<String> feeMapKeys = new ArrayList<>(feeMap.keySet());
 
-		for (int i = 0; i < feeRulesList.size(); i++) {
-			String feeTypeCode = feeRulesList.get(i).getFeeTypeCode();
-			String feeTypeDesc = feeRulesList.get(i).getFeeTypeDesc();
+		for (FeeType feeType : feeRulesList) {
+			String feeTypeCode = feeType.getFeeTypeCode();
+			String feeTypeDesc = feeType.getFeeTypeDesc();
 
 			group = new Listgroup(feeTypeCode);
 			this.feeCodeListbox.appendChild(group);
 			group.setOpen(false);
 
-			String ruleCode = "";
-			String ruleCodeDesc = "";
-
-			for (int j = 0; j < feeMapKeys.size(); j++) {
-
-				ruleCode = feeTypeCode + feeMapKeys.get(j);
-				ruleCodeDesc = feeTypeDesc + feeMap.get(feeMapKeys.get(j));
+			for (String feeCode : feeMapKeys) {
+				String ruleCode = feeTypeCode + feeCode;
+				String ruleCodeDesc = feeTypeDesc + feeCode;
 
 				item = new Listitem();
 				lc = new Listcell(ruleCode);
@@ -1591,7 +1598,47 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void getExpenseCodes() {
+		logger.debug(Literal.ENTERING);
+
+		this.expenseCodeListbox.getItems().clear();
+
+		JdbcSearchObject<ExpenseType> searchObj = new JdbcSearchObject<ExpenseType>(ExpenseType.class);
+		searchObj.addTabelName("ExpenseTypes");
+		searchObj.addFilter(new Filter("Active", 1, Filter.OP_EQUAL));
+
+		List<ExpenseType> feeRulesList = this.pagedListService.getBySearchObject(searchObj);
+
+		Listitem item = null;
+		Listgroup group = null;
+		Listcell lc = null;
+
+		for (ExpenseType expenseType : feeRulesList) {
+			String code = expenseType.getExpenseTypeCode();
+			String decription = expenseType.getExpenseTypeDesc();
+
+			group = new Listgroup(code);
+			this.expenseCodeListbox.appendChild(group);
+			group.setOpen(false);
+
+			String amountCode = code + "_AMT";
+			item = new Listitem();
+			lc = new Listcell(amountCode);
+
+			if (!amountcodes.contains(amountCode)) {
+				amountcodes.add(amountCode);
+			}
+
+			lc.setParent(item);
+			lc = new Listcell(decription);
+			lc.setParent(item);
+			this.expenseCodeListbox.appendChild(item);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1645,8 +1692,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			feeMap.put("_TDS_N", Labels.getLabel("label_TransactionEntryDialog_N_TDS"));
 			feeMap.put("_TDS_P", Labels.getLabel("label_TransactionEntryDialog_P_TDS"));
 		}
-		
-		if(ImplementationConstants.ALLOW_IND_AS) {
+
+		if (ImplementationConstants.ALLOW_IND_AS) {
 			feeMap.put("_IND_AS_AMZ", Labels.getLabel("label_TransactionEntryDialog_AMZ_INDAS"));
 		}
 
@@ -2005,15 +2052,13 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	}
 
 	private void doCheckRuleDecider() {
-		logger.debug("Entering");
 		this.amountcodes.clear();
 		getAmountCodes(getTransactionEntry().getLovDescEventCodeName());
-		//if(StringUtils.isNotBlank(getTransactionEntry().getFeeCode())){
-		getFeeCodes(getTransactionEntry().getLovDescEventCodeName());
-		//}else{
-		//this.tab_Fee.setVisible(false);
-		//}
-		logger.debug("Leaving");
+		getFeeCodes();
+		if (ImplementationConstants.ALLOW_IND_AS) {
+			getExpenseCodes();
+		}
+
 	}
 
 	// ******************************************************//
