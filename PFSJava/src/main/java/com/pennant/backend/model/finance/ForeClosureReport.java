@@ -20,6 +20,7 @@ public class ForeClosureReport implements Serializable {
 
 	private String finReference;
 	private BigDecimal finAmount = BigDecimal.ZERO;
+	private BigDecimal finAssetValue = BigDecimal.ZERO;
 	private String disbursalDate;
 	private String chrgTillDate;
 	private BigDecimal outstandingPri = BigDecimal.ZERO;
@@ -98,6 +99,14 @@ public class ForeClosureReport implements Serializable {
 
 	public void setFinAmount(BigDecimal finAmount) {
 		this.finAmount = finAmount;
+	}
+	
+	public BigDecimal getFinAssetValue() {
+		return finAssetValue;
+	}
+
+	public void setFinAssetValue(BigDecimal finAssetValue) {
+		this.finAssetValue = finAssetValue;
 	}
 
 	public BigDecimal getOutstandingPri() {
