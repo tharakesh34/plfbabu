@@ -7531,4 +7531,114 @@
 		</sql>
 	</changeSet>
 	
+	 <changeSet id="ST#1002.1" author="yelladas.n">
+		<comment>KnockOff Cancel Maker</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='ReceiptKnockOffCancel';
+				INSERT INTO ReportList VALUES ('ReceiptKnockOffCancel', 'ReceiptKnockOffCancel','listheader_ReceiptId.label,listheader_ReceiptDate.label,listheader_ReceiptMode.label,listheader_ReceiptPurpose.label,listheader_CustomerCIF.label,listheader_FinType.label,listheader_FinReference.label,listheader_PayTypeRef.label,listheader_ReceiptAmount.label,listheader_PartnerBank.label','ReceiptID,ReceiptDate,ReceiptMode,ReceiptPurpose,CustCIF,FinType,Reference,TransactionRef,ReceiptAmount,partnerBankCode','Long,Date,String,String,String,String,String,String,BigDecimal,String',' ','ReportList10','KnockOff Cancel Maker & Approver', 'Loan Management',1,1000,CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
+			]]>
+        </sql>	
+	</changeSet>
+	
+	<changeSet id="ST#1002.2" author="yelladas.n">
+	    <comment>Interface Configuration</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='InterfaceConfiguration';
+				INSERT INTO ReportList VALUES ('InterfaceConfiguration', 'InterfaceConfiguration','listheader_ExtInterfaceConfigurationList_Code.label,listheader_ExtInterfaceConfigurationList_Description.label,listheader_ExtInterfaceConfigurationList_Type.label,listheader_ExtInterfaceConfigurationList_NotificationType.label,listheader_ExtInterfaceConfigurationList_active.label','code,description,type,notificationType,active','String,String,String,int,boolean',' ','ReportList05',' Interface Configuration', 'Enquiry',1,1000,CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
+			]]>	
+		</sql>	
+	</changeSet>
+	
+	<changeSet id="ST#1002.3" author="satyanarayana.g">
+	    <comment>GST Rates</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='GSTRate';
+				INSERT INTO ReportList VALUES ('GSTRate', 'GSTRate','listheader_FromState.label,listheader_ToState.label,listheader_TaxType.label,listheader_Amount.label,listheader_Percentage.label,listheader_CalcOn.label,listheader_Active.label','fromState,toState,taxType,amount,percentage,calcOn,active','String,String,String,BigDecimal,BigDecimal,String,boolean',' ','ReportList07',' GST Rates', 'Application Masters',1,1000,CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0); 
+			]]>	
+		</sql>	
+	</changeSet>
+	
+	<changeSet id="ST#1002.4" author="satyanarayana.g">
+		<comment>Amortization Method Rule</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='AmortizationMethodRule';
+				INSERT INTO ReportList VALUES ('AmortizationMethodRule', 'AmortizationMethodRule','listheader_RuleModule.label,listheader_RuleEvent.label,listheader_RuleCode.label,listheader_RuleCodeDesc.label','ruleModule,ruleEvent,ruleCode,ruleCodeDesc','String,String,String,String',' ','ReportList04','Amortization Method Rule', 'Amortization',1,1000,CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0); 
+			]]>
+        </sql>	
+	</changeSet>
+	
+	<changeSet id="ST#1002.5" author="satyanarayana.g">
+	    <comment>Covenant Types</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='CovenantType';
+				INSERT INTO ReportList VALUES ('CovenantType', 'CovenantType','listheader_Covenant_Code.label,listheader_Description.label,listheader_Category.label,listheader_DocType.label','code,description,category,docType','String,String,String,String',' ','ReportList04',' Covenant Types', 'Application Masters',1,1000,CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0); 
+			]]>	
+		</sql>	
+	</changeSet>
+	
+	<changeSet id="ST#1002.6" author="yelladas.n">
+		<comment>Sourcing Vendor</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='SVDM';
+				INSERT INTO ReportList VALUES ('SVDM', 'SVDM','label_VehicleDealerSearch_DealerName.value,label_VehicleDealerSearch_Email.value,label_VehicleDealerSearch_DealerTelephone.value,listheader_DealerProvince.label,label_VehicleDealerSearch_DealerCity.value,label_VehicleDealerSearch_Active.value','dealerName,email,dealerTelephone,dealerProvince,dealerCity,active','String,String,String,String,String,String',' ','ReportList06','Sourcing Vendor', 'Application Masters',1,1000,CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
+			]]>
+		</sql>	
+	</changeSet>
+	
+	<changeSet id="ST#1002.7" author="arun.d">
+		<comment>Verification Rule</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='VerificationRule';
+				INSERT INTO ReportList VALUES ('VerificationRule', 'Rule', 'listheader_RuleCode.label,listheader_RuleCodeDesc.label','ruleCode,ruleCodeDesc','String,String', ' ', 'ReportList02', 'Verification Rule',  'Rules factory', 1, 1001, CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1002.8" author="arun.d">
+		<comment>Bounce Reason Rules</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='BOUNCE';
+				INSERT INTO ReportList VALUES ('BOUNCE', 'Rule', 'listheader_RuleEvent.label,listheader_RuleCode.label,listheader_RuleCodeDesc.label','ruleEvent,ruleCode,ruleCodeDesc','String,String,String', ' ', 'ReportList03', 'Bounce Reason Rules',  'Rules factory', 1, 1001, CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1002.9" author="arun.d">
+		<comment>Commitment WorkFlow</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='CommitmentWorkFlow';
+				INSERT INTO ReportList VALUES ('CommitmentWorkFlow', 'FinanceWorkFlow', 'listheader_Commitment.label,listheader_ScreenCode.label,listheader_WorkFlowType.label','commitmentTypeDesc,screenCode,workFlowType','String,String,String', ' ', 'ReportList03', 'Commitment WorkFlow',  'Solution factory', 1, 1001, CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1002.10" author="satyanarayana.g">
+		<comment>CD Schemes</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='CDScheme';
+				INSERT INTO ReportList VALUES ('CDScheme', 'Promotion', 'listheader_SchemeList_LoanType.label,listheader_SchemeList_SchemeCode.label,listheader_SchemeList_SchemeDesc.label,listheader_SchemeList_SchemeID.label,listheader_SchemeList_SchemeStartDate.label,listheader_SchemeList_SchemeEndDate.label,listheader_SchemeList_Tenor.label,listheader_PromotionActive.label','finType,promotionCode,promotionDesc,ReferenceId,startDate,endDate,Tenor,active','String,String,String,long,Date,Date,int,boolean', ' ', 'ReportList08', 'CD Schemes',  'Solution factory', 1, 1001, CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1002.11" author="satyanarayana.g">
+		<comment>CD Loan Types</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='CDType';
+				INSERT INTO ReportList VALUES ('CDType', 'FinanceType', 'listheader_FinType.label,listheader_FinTypeDesc.label,listheader_FinCcy.label,listheader_FinDaysCalType.label,listheader_FinSchdMthd.label,listheader_FinDivision.label','finType,finTypeDesc,finCcy,finDaysCalType,finSchdMthd,finDivision','String,String,String,String,String,String', ' ', 'ReportList06', 'CD Loan Types ',  'Solution factory', 1, 1001, CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
