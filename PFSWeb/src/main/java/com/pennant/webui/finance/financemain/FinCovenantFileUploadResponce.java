@@ -212,10 +212,9 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				covenantTypeData.setAllowPostPonement(getBooleanValue(record, "AlwPostpone"));
 				covenantTypeData.setAdditionalField1(getStringValue(record, "Remarks"));
 				covenantTypeData.setAdditionalField2(getStringValue(record, "AdditionaliField2"));
-				covenantTypeData.setAdditionalField3(getStringValue(record, "AdditionaliField3"));
+				covenantTypeData.setAdditionalField3((int)Double.parseDouble(getStringValue(record, "AdditionaliField3"))+"");
 				covenantTypeData.setPdd(getBooleanValue(record, "Pdd"));
 				covenantTypeData.setExtendedDate(DateUtility.getDate(getStringValue(record, "extendedDate"), "E MMM dd HH:mm:ss Z yyy"));
-				covenantTypeData.setAlertToRoles(getStringValue(record, "AlertRoles"));
 				CovenantType covenantType = covenantTypeDAO.getCovenantTypeId(covenantTypeData.getCode(),
 						covenantTypeData.getCategory(), "");
 
@@ -228,7 +227,12 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				if (StringUtils.isBlank(covenantTypeData.getDescription())) {
 					covenantTypeData.setDescription(covenantType.getDescription());
 				}
-				if(!StringUtils.equals(covenantTypeData.getAlertType(), "Customer") && StringUtils.isBlank(covenantTypeData.getAlertToRoles())){
+				if(!StringUtils.equals(covenantTypeData.getAlertType(), "Customer")){
+					if(StringUtils.isBlank(getStringValue(record, "AlertRoles"))){
+						covenantTypeData.setAlertToRoles(covenantType.getAlertToRoles());
+					}else{
+						covenantTypeData.setAlertToRoles(getStringValue(record, "AlertRoles"));
+					}
 					covenantTypeData.setAlertToRoles(covenantType.getAlertToRoles());
 				}
 				if (covenantTypeData.getGraceDays() == 0) {
@@ -276,6 +280,20 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 						&& !covenantTypeData.isOtc()) {
 					throw new AppException("Please select either PDD or OTC or Mandatory Role");
 				}
+				if (StringUtils.isNotBlank(covenantTypeData.getMandatoryRole()) && covenantTypeData.isPdd()
+						&& covenantTypeData.isOtc()) {
+					throw new AppException("only one should be selected either PDD or OTC or Mandatory Role");
+				}
+				if (StringUtils.isNotBlank(covenantTypeData.getMandatoryRole()) && covenantTypeData.isPdd()) {
+					throw new AppException("Please select either PDD or Mandatory Role");
+				}
+				if (StringUtils.isNotBlank(covenantTypeData.getMandatoryRole()) && covenantTypeData.isOtc()) {
+					throw new AppException("Please select either OTC or Mandatory Role");
+				}
+				if (covenantTypeData.isPdd() && covenantTypeData.isOtc()) {
+					throw new AppException("Please select either PDD or OTC ");
+				}
+				
 				if(covenantTypeData.isPdd()){
 					covenantTypeData.setDocumentReceived(false);
 				}else{
