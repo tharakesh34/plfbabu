@@ -1182,108 +1182,19 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * @throws Exception
 	 */
 	public void executeAccounting() throws Exception {
-		logger.debug("Entering");
-		BigDecimal amount = BigDecimal.ZERO;
-		String key = null;
-		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
+		logger.debug(Literal.ENTERING);
+
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PAYMTINS);
-		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		if (amountCodes == null) {
-			amountCodes = new AEAmountCodes();
-		}
-		amountCodes.setFinType(financeMain.getFinType());
-		aeEvent.setBranch(financeMain.getFinBranch());
-		aeEvent.setCustID(financeMain.getCustID());
 
-		PaymentInstruction paymentInstruction = this.paymentHeader.getPaymentInstruction();
-
-		if (paymentInstruction != null) {
-			amountCodes.setPartnerBankAc(paymentInstruction.getPartnerBankAc());
-			amountCodes.setPartnerBankAcType(paymentInstruction.getPartnerBankAcType());
-		}
-
-		// GST parameters
-		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
-
-		aeEvent.setCcy(financeMain.getFinCcy());
-		aeEvent.setFinReference(financeMain.getFinReference());
-		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-
-		BigDecimal excessAmount = BigDecimal.ZERO;
-		BigDecimal emiInAdavance = BigDecimal.ZERO;
-		Map<String, Object> eventMapping = aeEvent.getDataMap();
-		for (PaymentDetail paymentDetail : getPaymentDetailList()) {
-			if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
-				amount = paymentDetail.getAmount();
-				key = paymentDetail.getFeeTypeCode() + "_P";
-				if (eventMapping.containsKey(key)) {
-					amount = amount.add((BigDecimal) eventMapping.get(key));
-				}
-				eventMapping.put(key, amount);
-
-				if (paymentDetail.getPaymentTaxDetail() != null) {
-
-					PaymentTaxDetail tax = paymentDetail.getPaymentTaxDetail();
-
-					//CGST
-					BigDecimal gstAmount = BigDecimal.ZERO;
-					if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_CGST_P")) {
-						gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_CGST_P");
-					}
-					eventMapping.put(paymentDetail.getFeeTypeCode() + "_CGST_P", gstAmount.add(tax.getPaidCGST()));
-
-					//SGST
-					gstAmount = BigDecimal.ZERO;
-					if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_SGST_P")) {
-						gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_SGST_P");
-					}
-					eventMapping.put(paymentDetail.getFeeTypeCode() + "_SGST_P", gstAmount.add(tax.getPaidSGST()));
-
-					//UGST
-					gstAmount = BigDecimal.ZERO;
-					if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_UGST_P")) {
-						gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_UGST_P");
-					}
-					eventMapping.put(paymentDetail.getFeeTypeCode() + "_UGST_P", gstAmount.add(tax.getPaidUGST()));
-
-					//IGST
-					gstAmount = BigDecimal.ZERO;
-					if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_IGST_P")) {
-						gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_IGST_P");
-					}
-					eventMapping.put(paymentDetail.getFeeTypeCode() + "_IGST_P", gstAmount.add(tax.getPaidIGST()));
-				}
-
-			} else if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(paymentDetail.getAmountType())) {
-				excessAmount = excessAmount.add(paymentDetail.getAmount());
-			} else if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(paymentDetail.getAmountType())) {
-				emiInAdavance = emiInAdavance.add(paymentDetail.getAmount());
-			}
-		}
-		eventMapping.put("pi_excessAmount", excessAmount);
-		eventMapping.put("pi_emiInAdvance", emiInAdavance);
-		eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
-		aeEvent.setDataMap(eventMapping);
-
-		if (gstExecutionMap != null) {
-			for (String mapkey : gstExecutionMap.keySet()) {
-				if (StringUtils.isNotBlank(mapkey)) {
-					aeEvent.getDataMap().put(mapkey, gstExecutionMap.get(mapkey));
-				}
-			}
-		}
-
-		aeEvent.getAcSetIDList().add(accountsetId);
-		List<ReturnDataSet> returnSetEntries = postingsPreparationUtil.getAccounting(aeEvent).getReturnDataSet();
-		accountingSetEntries.addAll(returnSetEntries);
+		paymentHeaderService.executeAccountingProcess(aeEvent, this.paymentHeader);
+		postingsPreparationUtil.getAccounting(aeEvent);
 
 		if (accountingDetailDialogCtrl != null) {
-			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
+			accountingDetailDialogCtrl.doFillAccounting(aeEvent.getReturnDataSet());
 			isAccountingExecuted = true;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/***************************************************

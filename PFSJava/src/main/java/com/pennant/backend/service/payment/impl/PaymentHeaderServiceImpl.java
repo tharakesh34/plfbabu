@@ -58,6 +58,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
@@ -67,12 +68,10 @@ import com.pennant.backend.dao.payment.PaymentTaxDetailDAO;
 import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
-import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.payment.PaymentTaxDetail;
@@ -89,6 +88,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -724,6 +724,130 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		return auditDetails;
 	}
 
+	@Override
+	public void executeAccountingProcess(AEEvent aeEvent, PaymentHeader paymentHeader) {
+		logger.debug(Literal.ENTERING);
+
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PAYMTINS);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+
+		if (amountCodes == null) {
+			amountCodes = new AEAmountCodes();
+		}
+
+		FinanceMain financeMain = paymentHeaderDAO.getFinanceDetails(paymentHeader.getFinReference());
+		amountCodes.setFinType(financeMain.getFinType());
+		aeEvent.setBranch(financeMain.getFinBranch());
+		aeEvent.setCustID(financeMain.getCustID());
+
+		PaymentInstruction paymentInstruction = paymentHeader.getPaymentInstruction();
+
+		if (paymentInstruction != null) {
+			amountCodes.setPartnerBankAc(paymentInstruction.getPartnerBankAc());
+			amountCodes.setPartnerBankAcType(paymentInstruction.getPartnerBankAcType());
+			aeEvent.setValueDate(paymentInstruction.getPostDate());
+		}
+
+		// GST parameters
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
+
+		aeEvent.setCcy(financeMain.getFinCcy());
+		aeEvent.setFinReference(financeMain.getFinReference());
+		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+
+		BigDecimal excessAmount = BigDecimal.ZERO;
+		BigDecimal emiInAdavance = BigDecimal.ZERO;
+		BigDecimal cashCtrl = BigDecimal.ZERO;
+		BigDecimal dsf = BigDecimal.ZERO;
+
+		Map<String, Object> eventMapping = aeEvent.getDataMap();
+
+		for (PaymentDetail paymentDetail : paymentHeader.getPaymentDetailList()) {
+			String amountType = paymentDetail.getAmountType();
+
+			switch (amountType) {
+			case "2":
+				BigDecimal payableAmount = BigDecimal.ZERO;
+				String feeTypeCode = paymentDetail.getFeeTypeCode();
+				if (eventMapping.containsKey(feeTypeCode + "_P")) {
+					payableAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_P");
+				}
+				eventMapping.put(feeTypeCode + "_P", payableAmount.add(paymentDetail.getAmount()));
+				if (paymentDetail.getPaymentTaxDetail() != null) {
+
+					PaymentTaxDetail tax = paymentDetail.getPaymentTaxDetail();
+
+					//CGST
+					BigDecimal gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_CGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CGST_P");
+					}
+					eventMapping.put(feeTypeCode + "_CGST_P", gstAmount.add(tax.getPaidCGST()));
+
+					//SGST
+					gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_SGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_SGST_P");
+					}
+					eventMapping.put(feeTypeCode + "_SGST_P", gstAmount.add(tax.getPaidSGST()));
+
+					//UGST
+					gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_UGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_UGST_P");
+					}
+					eventMapping.put(feeTypeCode + "_UGST_P", gstAmount.add(tax.getPaidUGST()));
+
+					//IGST
+					gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_IGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_IGST_P");
+					}
+					eventMapping.put(feeTypeCode + "_IGST_P", gstAmount.add(tax.getPaidIGST()));
+				}
+
+			case RepayConstants.EXAMOUNTTYPE_EXCESS:
+				excessAmount = excessAmount.add(paymentDetail.getAmount());
+				break;
+			case RepayConstants.EXAMOUNTTYPE_EMIINADV:
+				emiInAdavance = emiInAdavance.add(paymentDetail.getAmount());
+				break;
+			case RepayConstants.EXAMOUNTTYPE_CASHCLT:
+				cashCtrl = cashCtrl.add(paymentDetail.getAmount());
+				break;
+			case RepayConstants.EXAMOUNTTYPE_DSF:
+				dsf = dsf.add(paymentDetail.getAmount());
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		eventMapping.put("pi_excessAmount", excessAmount);
+		eventMapping.put("pi_emiInAdvance", emiInAdavance);
+		eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
+		eventMapping.put("CASHCLT_P", cashCtrl);
+		eventMapping.put("DSF_P", dsf);
+
+		aeEvent.setDataMap(eventMapping);
+
+		if (gstExecutionMap != null) {
+			for (String mapkey : gstExecutionMap.keySet()) {
+				if (StringUtils.isNotBlank(mapkey)) {
+					aeEvent.getDataMap().put(mapkey, gstExecutionMap.get(mapkey));
+				}
+			}
+		}
+
+		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
+				AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
+
+		aeEvent.getAcSetIDList().add(accountsetId);
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	/**
 	 * Method for Execute posting Details on Core Banking Side
 	 * 
@@ -733,126 +857,20 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	 * @throws AccountNotFoundException
 	 */
 	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date appDate) throws InterfaceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AEEvent aeEvent = new AEEvent();
 		PaymentHeader paymentHeader = new PaymentHeader();
 		BeanUtils.copyProperties((PaymentHeader) auditHeader.getAuditDetail().getModelData(), paymentHeader);
 
 		if (paymentHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PAYMTINS);
-			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-			if (amountCodes == null) {
-				amountCodes = new AEAmountCodes();
-			}
-			FinanceMain financeMain = getPaymentHeaderDAO().getFinanceDetails(paymentHeader.getFinReference());
-			amountCodes.setFinType(financeMain.getFinType());
-			aeEvent.setBranch(financeMain.getFinBranch());
-			aeEvent.setCustID(financeMain.getCustID());
-
-			PaymentInstruction paymentInstruction = paymentHeader.getPaymentInstruction();
-			if (paymentInstruction != null) {
-				amountCodes.setPartnerBankAc(paymentInstruction.getPartnerBankAc());
-				amountCodes.setPartnerBankAcType(paymentInstruction.getPartnerBankAcType());
-				aeEvent.setValueDate(paymentInstruction.getPostDate());
-			}
-
-			// GST parameters
-			String highPriorityState = null;
-			String highPriorityCountry = null;
-
-			// Fetch High priority Address
-			CustomerAddres addres = getCustomerAddresDAO().getHighPriorityCustAddr(financeMain.getCustID(), "");
-			if (addres != null) {
-				highPriorityState = addres.getCustAddrProvince();
-				highPriorityCountry = addres.getCustAddrCountry();
-			}
-
-			// Set Tax Details if Already exists
-			FinanceTaxDetail taxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeMain.getFinReference(),
-					"");
-			Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(
-					financeMain.getFinBranch(), financeMain.getFinBranch(), highPriorityState, highPriorityCountry,
-					taxDetail, financeMain.getFinBranch());
-
-			aeEvent.setCcy(financeMain.getFinCcy());
-			aeEvent.setFinReference(financeMain.getFinReference());
-			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-
-			BigDecimal excessAmount = BigDecimal.ZERO;
-			BigDecimal emiInAdavance = BigDecimal.ZERO;
-			Map<String, Object> eventMapping = aeEvent.getDataMap();
-			for (PaymentDetail paymentDetail : paymentHeader.getPaymentDetailList()) {
-				if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
-					BigDecimal payableAmount = BigDecimal.ZERO;
-					if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_P")) {
-						payableAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_P");
-					}
-					eventMapping.put(paymentDetail.getFeeTypeCode() + "_P",
-							payableAmount.add(paymentDetail.getAmount()));
-
-					if (paymentDetail.getPaymentTaxDetail() != null) {
-
-						PaymentTaxDetail tax = paymentDetail.getPaymentTaxDetail();
-
-						//CGST
-						BigDecimal gstAmount = BigDecimal.ZERO;
-						if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_CGST_P")) {
-							gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_CGST_P");
-						}
-						eventMapping.put(paymentDetail.getFeeTypeCode() + "_CGST_P", gstAmount.add(tax.getPaidCGST()));
-
-						//SGST
-						gstAmount = BigDecimal.ZERO;
-						if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_SGST_P")) {
-							gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_SGST_P");
-						}
-						eventMapping.put(paymentDetail.getFeeTypeCode() + "_SGST_P", gstAmount.add(tax.getPaidSGST()));
-
-						//UGST
-						gstAmount = BigDecimal.ZERO;
-						if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_UGST_P")) {
-							gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_UGST_P");
-						}
-						eventMapping.put(paymentDetail.getFeeTypeCode() + "_UGST_P", gstAmount.add(tax.getPaidUGST()));
-
-						//IGST
-						gstAmount = BigDecimal.ZERO;
-						if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_IGST_P")) {
-							gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_IGST_P");
-						}
-						eventMapping.put(paymentDetail.getFeeTypeCode() + "_IGST_P", gstAmount.add(tax.getPaidIGST()));
-
-					}
-				} else if ("E".equals(paymentDetail.getAmountType())) {
-					excessAmount = excessAmount.add(paymentDetail.getAmount());
-				} else if ("A".equals(paymentDetail.getAmountType())) {
-					emiInAdavance = emiInAdavance.add(paymentDetail.getAmount());
-				}
-			}
-			eventMapping.put("pi_excessAmount", excessAmount);
-			eventMapping.put("pi_emiInAdvance", emiInAdavance);
-			eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
-			aeEvent.setDataMap(eventMapping);
-
-			if (gstExecutionMap != null) {
-				for (String mapkey : gstExecutionMap.keySet()) {
-					if (StringUtils.isNotBlank(mapkey)) {
-						aeEvent.getDataMap().put(mapkey, gstExecutionMap.get(mapkey));
-					}
-				}
-			}
-
-			long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-					AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
-
-			aeEvent.getAcSetIDList().add(accountsetId);
-
-			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
+			executeAccountingProcess(aeEvent, paymentHeader);
+			postingsPreparationUtil.postAccounting(aeEvent);
 		}
+
 		paymentHeader.setLinkedTranId(aeEvent.getLinkedTranId());
 		auditHeader.getAuditDetail().setModelData(paymentHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 

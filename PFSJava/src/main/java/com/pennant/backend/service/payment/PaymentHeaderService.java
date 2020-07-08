@@ -50,6 +50,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.payment.PaymentHeader;
+import com.pennant.backend.model.rulefactory.AEEvent;
 
 public interface PaymentHeaderService {
 
@@ -76,4 +77,6 @@ public interface PaymentHeaderService {
 	List<ManualAdvise> getManualAdviseForEnquiry(String finReference);
 
 	PaymentInstruction getPaymentInstruction(long paymentId);
+
+	void executeAccountingProcess(AEEvent aeEvent, PaymentHeader paymentHeader);
 }
