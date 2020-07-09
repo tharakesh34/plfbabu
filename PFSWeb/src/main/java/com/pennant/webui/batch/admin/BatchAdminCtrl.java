@@ -48,6 +48,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.CollateralStructureDAO;
@@ -407,12 +408,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 		//Auto-Approval if it is in Progress.
 		String status = null;
-		
+
 		if (QDP == null) {
 			QDP = "QDP";
 			status = batchProcessStatusService.getBatchStatus(QDP);
 		}
-		
+
 		if (StringUtils.equals("I", status)) {
 			MessageUtil.showError("Auto Approval of Disbursements is InProcess..");
 			return;
@@ -806,6 +807,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		appendRow(Step.retailcibil.name(), StepUtil.CIBIL_EXTRACT_RETAIL.getName());
 		appendRow(Step.corporatecibil.name(), StepUtil.CIBIL_EXTRACT_CORPORATE.getName());
 
+		if (ImplementationConstants.ALLOW_AUTO_KNOCK_OFF) {
+			appendRow(Step.autoKnockOffProcess.name(), StepUtil.AUTO_KNOCKOFF_PROCESS.getName());
+		}
 	}
 
 	private boolean isServiceExists(Class<?> requiredType) {
