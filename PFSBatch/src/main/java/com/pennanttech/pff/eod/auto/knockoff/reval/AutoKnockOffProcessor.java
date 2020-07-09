@@ -82,8 +82,7 @@ public class AutoKnockOffProcessor extends BasicDao<AutoKnockOffExcess>
 
 		BigDecimal thresholdAmount = new BigDecimal(knockOffData.getThresholdValue());
 
-		int formatter = CurrencyUtil.getFormat(excessDetails.getFinCcy());
-		thresholdAmount = PennantApplicationUtil.unFormateAmount(thresholdAmount, formatter);
+		thresholdAmount = PennantApplicationUtil.unFormateAmount(thresholdAmount, 2);
 
 		if (knockOffData.getBalanceAmount().compareTo(thresholdAmount) < 0) {
 			excessDetails.setReason("Payable amount less than threshold ");

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 
 import com.pennant.backend.model.finance.AutoKnockOffExcess;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -33,13 +34,14 @@ public class AutoKnockOffProcessItemWriter extends BasicDao<AutoKnockOffExcess>
 				continue;
 			} else {
 				knockOffExcess.add(key);
-				updateExcessData(autoKnockOffs);
+				updateExcessData(autoKnockOffExcess);
 				updateExcessDetails(autoKnockOffExcess.getExcessDetails());
 			}
 		}
+
 	}
 
-	private void updateExcessData(List<? extends AutoKnockOffExcess> processList) {
+	private void updateExcessData(AutoKnockOffExcess koProcess) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Update");
@@ -50,22 +52,16 @@ public class AutoKnockOffProcessItemWriter extends BasicDao<AutoKnockOffExcess>
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+			jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
 
 				@Override
-				public void setValues(PreparedStatement ps, int i) throws SQLException {
-					AutoKnockOffExcess koProcess = processList.get(i);
+				public void setValues(PreparedStatement ps) throws SQLException {
 					int index = 1;
 
 					ps.setInt(index++, 1);
 					ps.setBigDecimal(index++, koProcess.getTotalUtilizedAmnt());
 
 					ps.setLong(index, koProcess.getID());
-				}
-
-				@Override
-				public int getBatchSize() {
-					return processList.size();
 				}
 			});
 		} catch (DataAccessException e) {
