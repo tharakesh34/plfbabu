@@ -841,13 +841,16 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 
 		for (Covenant covenant : list) {
 			if (DateUtility.compare(appDate, covenant.getNextFrequencyDate()) > 0) {
-				String[] errParam = new String[2];
-				errParam[0] = StringUtils.trimToEmpty(covenant.getDocTypeName());
-				errParam[1] = DateUtil.format(covenant.getNextFrequencyDate(), DateFormat.LONG_DATE);
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("ADM004", errParam)));
+				List<CovenantDocument> covenantDocuments = covenantsDAO.getCovenantDocuments(covenant.getId(),
+						TableType.BOTH_TAB);
+				if (covenantDocuments.isEmpty()) {
+					String[] errParam = new String[2];
+					errParam[0] = StringUtils.trimToEmpty(covenant.getDocTypeName());
+					errParam[1] = DateUtil.format(covenant.getNextFrequencyDate(), DateFormat.LONG_DATE);
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("ADM004", errParam)));
+				}
 			}
 		}
-
 		return errorDetails;
 	}
 
