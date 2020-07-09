@@ -85,6 +85,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.ErrorUtil;
@@ -130,54 +131,54 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_TransactionEntryDialog; // autowired
-	protected Intbox transOrder; // autowired
-	protected Textbox transDesc; // autowired
-	protected Combobox debitcredit; // autowired
-	protected Checkbox shadowPosting; // autowired
-	protected Combobox account; // autowired
-	protected Textbox accountType; // autowired
-	protected Textbox accountBranch; // autowired
-	protected Textbox accountSubHeadRule; // autowired
-	protected Textbox transcationCode; // autowired
-	protected Textbox rvsTransactionCode; // autowired
-	protected Codemirror amountRule; // autowired
-	protected Textbox eventCode; // autowired
-	protected Textbox accountSetCode; // autowired
-	protected Textbox accountSetCodeName; // autowired
-	protected Textbox lovDescEventCodeName; // autowired
-	protected Checkbox entryByInvestment; // autowired
+	protected Window window_TransactionEntryDialog;
+	protected Intbox transOrder;
+	protected Textbox transDesc;
+	protected Combobox debitcredit;
+	protected Checkbox shadowPosting;
+	protected Combobox account;
+	protected Textbox accountType;
+	protected Textbox accountBranch;
+	protected Textbox accountSubHeadRule;
+	protected Textbox transcationCode;
+	protected Textbox rvsTransactionCode;
+	protected Codemirror amountRule;
+	protected Textbox eventCode;
+	protected Textbox accountSetCode;
+	protected Textbox accountSetCodeName;
+	protected Textbox lovDescEventCodeName;
+	protected Checkbox entryByInvestment;
 	protected Label label_TransactionEntryDialog_EntryByInvestment;
-	protected Hbox hbox_entryByInvestment; // autowired
-	protected Checkbox openNewFinAc; // autowired
-	protected Row row_OpenNewFinAc; // autowired
+	protected Hbox hbox_entryByInvestment;
+	protected Checkbox openNewFinAc;
+	protected Row row_OpenNewFinAc;
 
 	protected Label label_TransactionEntryDialog_PostToCore;
 	protected Hbox hbox_PostToCore;
 
-	protected Radio postToCore; // autowired
-	protected Radio postToERP; // autowired
+	protected Radio postToCore;
+	protected Radio postToERP;
 
-	protected Row row_Account; // autowired
+	protected Row row_Account;
 
 	// not auto wired vars
-	private TransactionEntry transactionEntry; // overhanded per param
+	private TransactionEntry transactionEntry; 
 
 	private transient boolean validationOn;
 
-	protected Button btnSearchAccountType; // autowire
+	protected Button btnSearchAccountType; 
 	protected Textbox lovDescAccountTypeName;
 
-	protected Button btnSearchAccountBranch; // autowire
+	protected Button btnSearchAccountBranch; 
 	protected Textbox lovDescAccountBranchName;
 
-	protected Button btnSearchAccountSubHeadRule; // autowire
+	protected Button btnSearchAccountSubHeadRule; 
 	protected Textbox lovDescAccountSubHeadRuleName;
 
-	protected Button btnSearchTranscationCode; // autowire
+	protected Button btnSearchTranscationCode; 
 	protected Textbox lovDescTranscationCodeName;
 
-	protected Button btnSearchRvsTransactionCode; // autowire
+	protected Button btnSearchRvsTransactionCode; 
 	protected Textbox lovDescRvsTransactionCodeName;
 
 	// ServiceDAOs / Domain Classes
@@ -188,10 +189,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private transient AccountingSetDialogCtrl accountingSetDialogCtrl;
 	private List<TransactionEntry> transactionEntryList;
 
-	protected Listbox amountCodeListbox; // auto wired
-	protected Listbox feeCodeListbox; // auto wired
-	protected Listbox expenseCodeListbox; // auto wired
-	protected Listbox operator; // auto wired
+	protected Listbox amountCodeListbox; 
+	protected Listbox feeCodeListbox; 
+	protected Listbox expenseCodeListbox; 
+	protected Listbox operator; 
 	protected Button btnCopyTo;
 	protected Tab tab_Fee;
 	protected Tab tab_expense;
@@ -702,7 +703,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 		btnCancel.setVisible(false);
 
-		tab_expense.setVisible(ImplementationConstants.ALLOW_IND_AS);
+		tab_expense.setVisible(ImplementationConstants.ALLOW_IND_AS
+				&& AccountEventConstants.ACCEVENT_EXPENSE.equals(eventCode.getValue()));
 
 		try {
 			// fill the components with the data
@@ -1624,7 +1626,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.expenseCodeListbox.appendChild(group);
 			group.setOpen(false);
 
-			String amountCode = code + "_AMT";
+			String amountCode = code + "_AMZ_N";
 			item = new Listitem();
 			lc = new Listcell(amountCode);
 
@@ -1633,7 +1635,21 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			}
 
 			lc.setParent(item);
-			lc = new Listcell(decription);
+			lc = new Listcell(decription+" "+Labels.getLabel("label_TransactionEntryDialog_Expense_AMZ_N"));
+			lc.setParent(item);
+			this.expenseCodeListbox.appendChild(item);
+			
+			
+			amountCode = code + "_AMZ";
+			item = new Listitem();
+			lc = new Listcell(amountCode);
+
+			if (!amountcodes.contains(amountCode)) {
+				amountcodes.add(amountCode);
+			}
+
+			lc.setParent(item);
+			lc = new Listcell(decription+" "+Labels.getLabel("label_TransactionEntryDialog_Expense_AMZ"));
 			lc.setParent(item);
 			this.expenseCodeListbox.appendChild(item);
 		}
@@ -1694,7 +1710,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		}
 
 		if (ImplementationConstants.ALLOW_IND_AS) {
-			feeMap.put("_IND_AS_AMZ", Labels.getLabel("label_TransactionEntryDialog_AMZ_INDAS"));
+			feeMap.put("_AMZ", Labels.getLabel("label_TransactionEntryDialog_Fee_AMZ"));
 		}
 
 		return feeMap;
@@ -2055,7 +2071,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.amountcodes.clear();
 		getAmountCodes(getTransactionEntry().getLovDescEventCodeName());
 		getFeeCodes();
-		if (ImplementationConstants.ALLOW_IND_AS) {
+		if (tab_expense.isVisible()) {
 			getExpenseCodes();
 		}
 
