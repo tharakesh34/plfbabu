@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -27,6 +28,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
+
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -284,6 +286,13 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 		Space space;
 		boolean isReadOnly = isReadOnly("button_AutoKnockOffDialog_btnNewPayable");
 
+		String recordType = mapping.getRecordType();
+		String recordStatus = mapping.getRecordStatus();
+
+		if (!(mapping.isNew()) || (recordStatus != null || "".equals(recordStatus))) {
+			isReadOnly = true;
+		}
+
 		//Order IntBox
 		listCell = new Listcell();
 		hbox = new Hbox();
@@ -314,7 +323,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 
 			SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
 			FeeType feeType = (FeeType) searchProcessor.getResults(search).get(0);
-			
+
 			fees.setValue(String.valueOf(feeType.getFeeTypeID()));
 			fees.setDescription(feeType.getFeeTypeCode());
 			fees.setObject(feeType);
@@ -330,10 +339,10 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 		listCell.appendChild(hbox);
 		listCell.setParent(listItem);
 
-		listCell = new Listcell(mapping.getRecordStatus());
+		listCell = new Listcell(recordStatus);
 		listCell.setParent(listItem);
 
-		listCell = new Listcell(mapping.getRecordType());
+		listCell = new Listcell(recordType);
 		listCell.setParent(listItem);
 
 		// Delete action
@@ -344,7 +353,13 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 		Button button = new Button();
 		button.setSclass("z-toolbarbutton");
 		button.setLabel("Delete");
-		button.setDisabled(isReadOnly);
+
+		if ("DELETE".equalsIgnoreCase(recordType)) {
+			button.setDisabled(true);
+		} else {
+			button.setDisabled(isReadOnly("button_AutoKnockOffDialog_btnNewPayable"));
+		}
+
 		listCell.appendChild(button);
 		listCell.setParent(listItem);
 		button.addForward("onClick", self, "onClickAutoknockButtonDelete", listItem);
@@ -725,11 +740,11 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 		if (mapping.isNewRecord()) {
 			listBoxKnockOffPayables.removeItemAt(item.getIndex());
 		} else {
-			
-			if("Approved".equals(mapping.getRecordStatus())){
+
+			if ("Approved".equals(mapping.getRecordStatus())) {
 				mapping.setNewRecord(true);
 			}
-			
+
 			mapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			if ((item.getIndex() == 0) && (item.getNextSibling() == null)) {
 				MessageUtil.showError("At Least single FeeType details required connot be Delete ");

@@ -63,7 +63,7 @@
 									<checkbox id="appToFlexiLoans" checked="false" /> -->
 								<label id="label_AutoKnockOffList_Active" value="${c:l('label_AutoKnockOffList_Active.value')}" />
 									<listbox id="sortOperator_Active" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<checkbox id="active" checked="false" />
+									<checkbox id="active" checked="true" />
 								</row>
 								<row>
 									<label id="label_AutoKnockOffList_RecordStatus" value="${c:l('label_AutoKnockOffList_RecordStatus.value')}" />
