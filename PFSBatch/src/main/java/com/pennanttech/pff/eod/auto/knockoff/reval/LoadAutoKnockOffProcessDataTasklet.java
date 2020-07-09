@@ -37,12 +37,7 @@ public class LoadAutoKnockOffProcessDataTasklet extends BasicDao<AutoKnockOff> i
 			return RepeatStatus.FINISHED;
 		}
 
-		/**
-		 * Deriving the value date by reducing 1 day from application date, since the application date already changed
-		 * for the current EOD.
-		 */
 		Date valueDate = SysParamUtil.getAppDate();
-		valueDate = DateUtility.addDays(valueDate, -1);
 
 		/**
 		 * Deleting records with the value date to handle failure case.

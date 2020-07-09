@@ -51,7 +51,7 @@ public class AutoKnockOffProcessTaskletItemReader extends JdbcCursorItemReader<A
 	}
 
 	private String getValueDate() {
-		return "'" + DateUtil.format(DateUtil.addDays(SysParamUtil.getAppDate(), -1), DateFormat.FULL_DATE) + "'";
+		return "'" + DateUtil.format(SysParamUtil.getAppDate(), DateFormat.FULL_DATE) + "'";
 	}
 
 	@BeforeStep
