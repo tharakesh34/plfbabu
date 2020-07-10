@@ -59,6 +59,7 @@ import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
@@ -84,7 +85,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -797,7 +797,7 @@ public class AccountEngineExecution implements Serializable {
 			addZeroifNotContains(dataMap, feeCode + "_IGST_AF");
 			addZeroifNotContains(dataMap, feeCode + "_CGST_AF");
 
-			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ)) {
+			if (ImplementationConstants.ALLOW_TDS_ON_FEE) {
 				addZeroifNotContains(dataMap, feeCode + "_TDS_N");
 				addZeroifNotContains(dataMap, feeCode + "_TDS_P");
 			}

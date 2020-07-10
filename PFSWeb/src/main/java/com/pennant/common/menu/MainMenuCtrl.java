@@ -43,7 +43,6 @@
 package com.pennant.common.menu;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +76,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.menu.MainMenu;
+import com.pennanttech.pennapps.web.menu.Menu;
 import com.pennanttech.pennapps.web.menu.MenuItem;
 import com.pennanttech.pennapps.web.menu.TreeMenuBuilder;
 import com.pennanttech.pennapps.web.util.ComponentUtil;
@@ -169,7 +169,9 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		Treechildren treechildren = new Treechildren();
 		mainMenu.appendChild(treechildren);
 
-		menuBuilder = new TreeMenuBuilder(treechildren, filterMenus(), userWorkspace.getGrantedAuthoritySet());
+		filterMenus(MainMenu.getMenuItems());
+		menuBuilder = new TreeMenuBuilder(treechildren, MainMenu.getMenuItems(),
+				userWorkspace.getGrantedAuthoritySet());
 		menuBuilder.render();
 
 		// Collapse all the menu items.
@@ -202,37 +204,50 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		logger.trace(Literal.LEAVING);
 	}
 
-	private List<MenuItem> filterMenus() {
-		List<MenuItem> menus = new ArrayList<>();
-
-		for (MenuItem menuItem : MainMenu.getMenuItems()) {
-			String menuId = menuItem.getId();
-
-			switch (menuId) {
-			case "menu_Item_LoanTypeKnockOff":
-			case "menu_Item_AutoKnockoff":
-				if (!ImplementationConstants.ALLOW_AUTO_KNOCK_OFF) {
-					continue;
-				}
-				break;
-			case "menu_Item_AmortizationMethodRule":
-			case "menu_Item_AMZProcess":
-			case "menu_Item_FeeAmzReferenceReport":
-			case "menu_Item_FeeAmzLoanTypeReport":
-			case "menu_Item_CalAvgPOS":
-			case "menu_Item_IncomeAmortization":
-				if (!ImplementationConstants.ALLOW_IND_AS) {
-					continue;
-				}
-				break;
-
-			default:
-				break;
+	private void filterMenus(List<MenuItem> list) {
+		for (MenuItem menuItem : list) {
+			if (menuItem instanceof Menu) {
+				filterMenus(((Menu) menuItem).getItems());
+			} else {
+				if (!isAllowedMenu(menuItem))
+					menuItem.setRightName("#Pennant#");
 			}
-
-			menus.add(menuItem);
 		}
-		return menus;
+	}
+
+	private boolean isAllowedMenu(MenuItem menuItem) {
+		String menuId = menuItem.getId();
+
+		switch (menuId) {
+		case "menu_Item_LoanTypeKnockOff":
+		case "menu_Item_AutoKnockoff":
+		case "menu_Category_Auto_KnockOff":
+		case "menu_Item_AutoKnockoffDetails":
+			return ImplementationConstants.ALLOW_AUTO_KNOCK_OFF;
+		case "menu_Category_IncomeAmortization":
+		case "menu_Item_AmortizationMethodRule":
+		case "menu_Item_AMZProcess":
+		case "menu_Item_FeeAmzReferenceReport":
+		case "menu_Item_FeeAmzLoanTypeReport":
+		case "menu_Item_CalAvgPOS":
+		case "menu_Item_IncomeAmortization":
+		case "menu_Item_ExpenseUpload":
+			return ImplementationConstants.ALLOW_IND_AS;
+		case "menu_Item_OverDraftFinanceType":
+			return ImplementationConstants.ALLOW_OD_LOANS;
+		case "menu_Item_CDFinanceType":
+		case "menu_Item_CDSchemes":
+			return ImplementationConstants.ALLOW_CD_LOANS;
+		case "menu_Item_Sampling":
+			return ImplementationConstants.ALLOW_SAMPLING;
+		case "menu_Item_School":
+		case "menu_Item_School_IncomeExpense":
+			return ImplementationConstants.ALLOW_SCHOOL_ORG;
+
+		default:
+			break;
+		}
+		return true;
 	}
 
 	/**

@@ -899,7 +899,7 @@
 									</rows>
 								</grid>
 							</groupbox>
-							<groupbox>
+							<groupbox id="grcAdvIntAndEMIReq" visible="false">
 								<caption
 									label="${c:l('label_FinanceTypeDialog_AdvanceInterest')}" />
 								<grid sclass="GridLayoutNoBorder"
@@ -1690,7 +1690,7 @@
 										</rows>
 									</grid>
 								</groupbox>
-								<groupbox>
+								<groupbox id="advIntAndEMIReq" visible="false">
 									<caption
 										label="${c:l('label_FinanceTypeDialog_EMI_AdvanceInterest')}" />
 									<grid sclass="GridLayoutNoBorder"
@@ -1764,7 +1764,7 @@
 										</rows>
 									</grid>
 								</groupbox>
-								<groupbox>
+								<groupbox id="dsfAndCashCtlReq" visible="false">
 									<caption
 										label="${c:l('label_FinanceTypeDialog_DebutServiceCashCollateral')}" />
 									<grid sclass="GridLayoutNoBorder"

@@ -613,6 +613,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox advStage;
 	protected Checkbox dsfReq;
 	protected Checkbox cashCollateralReq;
+	protected Groupbox dsfAndCashCtlReq;
+	protected Groupbox grcAdvIntAndEMIReq;
+	protected Groupbox advIntAndEMIReq;
 	//tasks # >>End Advance EMI and DSF
 
 	private List<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
@@ -629,6 +632,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	@Override
 	protected void doSetProperties() {
 		super.pageRightName = "FinanceTypeDialog";
+
+		this.grcAdvIntAndEMIReq.setVisible(ImplementationConstants.ALLOW_ADV_INT_EMI);
+		this.advIntAndEMIReq.setVisible(ImplementationConstants.ALLOW_ADV_INT_EMI);
+		this.dsfAndCashCtlReq.setVisible(ImplementationConstants.ALLOW_DSF_CASHCLT);
 	}
 
 	// Component Events
@@ -2843,7 +2850,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		if (!isOverdraft && !consumerDurable) {
 			try {
 				aFinanceType.setSchdOnPMTCal(this.schdOnPMTCal.isChecked());

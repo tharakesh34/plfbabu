@@ -2088,7 +2088,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
 		//TDSApplicable Visiblitly based on Financetype Selection
 		if (financeType.isTdsApplicable()) {
-			this.row_odAllowTDS.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ));
+			this.row_odAllowTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
 			this.hbox_tdsApplicable.setVisible(true);
 			this.tDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
 			this.label_FinanceMainDialog_TDSApplicable.setVisible(true);

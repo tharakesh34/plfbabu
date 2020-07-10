@@ -3538,9 +3538,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
 
-		boolean allowODTaxDeduction = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ);
-		this.row_odAllowTDS.setVisible(allowODTaxDeduction);
-		if (allowODTaxDeduction) {
+		this.row_odAllowTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
+		if (ImplementationConstants.ALLOW_TDS_ON_FEE) {
 			if (aFinanceMain.isNew() && aFinanceMain.isTDSApplicable()) {
 				this.odTDSApplicable.setChecked(true);
 			} else {
@@ -3558,7 +3557,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		doSetTdsDetails();
 
 		if (aFinanceMain.isNew()) {
-			if (financeType.isTdsApplicable() && SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ)) {
+			if (financeType.isTdsApplicable() && ImplementationConstants.ALLOW_TDS_ON_FEE) {
 				this.row_odAllowTDS.setVisible(true);
 			} else {
 				this.row_odAllowTDS.setVisible(false);
@@ -4510,7 +4509,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			if (!hbox_tdsApplicable.isVisible()) {
 				this.row_secondaryAccount.setVisible(false);
-				this.row_odAllowTDS.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ));
+				this.row_odAllowTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
 			}
 		}
 
@@ -4839,7 +4838,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (onLoadProcess) {
 			FinanceDetail fd = new FinanceDetail();
 			BeanUtils.copyProperties(this.financeDetail, fd);
-			dataMap = spreadSheetService.prepareDataMap(fd,creditReviewDetail);
+			dataMap = spreadSheetService.prepareDataMap(fd, creditReviewDetail);
 			if (dataMap.containsKey("spreadsheet")) {
 				SpreadSheet spreadSheet = (SpreadSheet) dataMap.get("spreadsheet");
 				Sessions.getCurrent().setAttribute("ss", spreadSheet);
@@ -7038,7 +7037,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(validationReq));
 		}
-		
+
 		if (financeSpreadSheetCtrl != null) {
 			financeSpreadSheetCtrl.setSpreedSheetData(aFinanceDetail);
 		}
@@ -9690,10 +9689,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void doSetODTdsDetails(boolean isChecked) {
 		logger.debug(Literal.ENTERING);
 
-		boolean allowODTaxDeduction = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ);
-
-		this.row_odAllowTDS.setVisible(allowODTaxDeduction);
-		if (allowODTaxDeduction && isChecked) {
+		this.row_odAllowTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
+		if (ImplementationConstants.ALLOW_TDS_ON_FEE && isChecked) {
 			this.odTDSApplicable.setChecked(isChecked);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_tDSApplicable"), this.odTDSApplicable);
 		} else {
@@ -22397,11 +22394,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setdMSService(DMSService dMSService) {
 		this.dMSService = dMSService;
 	}
-	
+
 	public FinanceSpreadSheetCtrl getFinanceSpreadSheetCtrl() {
 		return financeSpreadSheetCtrl;
 	}
-	
+
 	public void setFinanceSpreadSheetCtrl(FinanceSpreadSheetCtrl financeSpreadSheetCtrl) {
 		this.financeSpreadSheetCtrl = financeSpreadSheetCtrl;
 	}

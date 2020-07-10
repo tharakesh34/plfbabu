@@ -109,7 +109,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -162,23 +161,23 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	protected Row row_Account;
 
 	// not auto wired vars
-	private TransactionEntry transactionEntry; 
+	private TransactionEntry transactionEntry;
 
 	private transient boolean validationOn;
 
-	protected Button btnSearchAccountType; 
+	protected Button btnSearchAccountType;
 	protected Textbox lovDescAccountTypeName;
 
-	protected Button btnSearchAccountBranch; 
+	protected Button btnSearchAccountBranch;
 	protected Textbox lovDescAccountBranchName;
 
-	protected Button btnSearchAccountSubHeadRule; 
+	protected Button btnSearchAccountSubHeadRule;
 	protected Textbox lovDescAccountSubHeadRuleName;
 
-	protected Button btnSearchTranscationCode; 
+	protected Button btnSearchTranscationCode;
 	protected Textbox lovDescTranscationCodeName;
 
-	protected Button btnSearchRvsTransactionCode; 
+	protected Button btnSearchRvsTransactionCode;
 	protected Textbox lovDescRvsTransactionCodeName;
 
 	// ServiceDAOs / Domain Classes
@@ -189,10 +188,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private transient AccountingSetDialogCtrl accountingSetDialogCtrl;
 	private List<TransactionEntry> transactionEntryList;
 
-	protected Listbox amountCodeListbox; 
-	protected Listbox feeCodeListbox; 
-	protected Listbox expenseCodeListbox; 
-	protected Listbox operator; 
+	protected Listbox amountCodeListbox;
+	protected Listbox feeCodeListbox;
+	protected Listbox expenseCodeListbox;
+	protected Listbox operator;
 	protected Button btnCopyTo;
 	protected Tab tab_Fee;
 	protected Tab tab_expense;
@@ -1635,11 +1634,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			}
 
 			lc.setParent(item);
-			lc = new Listcell(decription+" "+Labels.getLabel("label_TransactionEntryDialog_Expense_AMZ_N"));
+			lc = new Listcell(decription + " " + Labels.getLabel("label_TransactionEntryDialog_Expense_AMZ_N"));
 			lc.setParent(item);
 			this.expenseCodeListbox.appendChild(item);
-			
-			
+
 			amountCode = code + "_AMZ";
 			item = new Listitem();
 			lc = new Listcell(amountCode);
@@ -1649,7 +1647,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			}
 
 			lc.setParent(item);
-			lc = new Listcell(decription+" "+Labels.getLabel("label_TransactionEntryDialog_Expense_AMZ"));
+			lc = new Listcell(decription + " " + Labels.getLabel("label_TransactionEntryDialog_Expense_AMZ"));
 			lc.setParent(item);
 			this.expenseCodeListbox.appendChild(item);
 		}
@@ -1704,7 +1702,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		feeMap.put("_IGST_W", Labels.getLabel("label_TransactionEntryDialog_W_IGST"));
 
 		// TDS
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ)) {
+		if (ImplementationConstants.ALLOW_TDS_ON_FEE) {
 			feeMap.put("_TDS_N", Labels.getLabel("label_TransactionEntryDialog_N_TDS"));
 			feeMap.put("_TDS_P", Labels.getLabel("label_TransactionEntryDialog_P_TDS"));
 		}

@@ -7649,4 +7649,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#880" author="murthy.y">
+		<comment>Moved the SMTPARAMETERS to Implimentation Constants</comment>
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ALLOW_OD_TAX_DED_REQ';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

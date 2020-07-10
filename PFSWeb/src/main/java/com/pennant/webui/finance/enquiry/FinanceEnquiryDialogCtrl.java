@@ -1526,7 +1526,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.row_downPayBank.setVisible(false);
 		}
 
-		if (aFinanceMain.isTDSApplicable() && SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ)) {
+		if (aFinanceMain.isTDSApplicable() && ImplementationConstants.ALLOW_TDS_ON_FEE) {
 			this.row_odAllowTDS.setVisible(true);
 			this.odTDSApplicable.setChecked(getFinScheduleData().getFinODPenaltyRate().isoDTDSReq());
 		} else {

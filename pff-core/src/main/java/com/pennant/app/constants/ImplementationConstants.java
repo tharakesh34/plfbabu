@@ -140,6 +140,13 @@ public class ImplementationConstants {
 		ALLOW_IND_AS = getValueAsBoolean(extensions, "ALLOW_IND_AS", false);
 		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
 		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", false);
+		ALLOW_DSF_CASHCLT = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", false);
+		ALLOW_ADV_INT_EMI = getValueAsBoolean(extensions, "ALLOW_ADV_INT_EMI", false);
+		ALLOW_TDS_ON_FEE = getValueAsBoolean(extensions, "ALLOW_TDS_ON_FEE", false);
+		ALLOW_OD_LOANS = getValueAsBoolean(extensions, "ALLOW_OD_LOANS", false);
+		ALLOW_CD_LOANS = getValueAsBoolean(extensions, "ALLOW_CD_LOANS", false);
+		ALLOW_SCHOOL_ORG = getValueAsBoolean(extensions, "ALLOW_SCHOOL_ORG", false);
+		ALLOW_SAMPLING = getValueAsBoolean(extensions, "ALLOW_SAMPLING", false);
 
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
@@ -271,6 +278,13 @@ public class ImplementationConstants {
 	public static boolean ALLOW_IND_AS;
 	public static boolean ALLOW_AUTO_KNOCK_OFF;
 	public static boolean ALLOW_OLDEST_DUE;
+	public static boolean ALLOW_DSF_CASHCLT;
+	public static boolean ALLOW_ADV_INT_EMI;
+	public static boolean ALLOW_TDS_ON_FEE;
+	public static boolean ALLOW_CD_LOANS;
+	public static boolean ALLOW_OD_LOANS;
+	public static boolean ALLOW_SAMPLING;
+	public static boolean ALLOW_SCHOOL_ORG;
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static
 	 * boolean ALLOW_LV_INITIATION_LOS; public static boolean ALLOW_RCU_INITIATION_LOS;

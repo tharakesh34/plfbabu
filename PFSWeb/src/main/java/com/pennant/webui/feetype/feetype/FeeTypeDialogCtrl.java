@@ -65,6 +65,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -78,7 +79,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -184,7 +184,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Space space_HostFeeTypeCode;
 	protected Textbox hostFeeTypeCode;
 	private boolean dueCreationReq = false;
-	private boolean allowODTaxDeduction = false;
 	protected Checkbox amortzReq;
 	private Boolean feeTypeEnquiry = false;
 
@@ -478,7 +477,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		logger.debug("Entering");
 
 		dueCreationReq = SysParamUtil.isAllowed("ALLOW_MANUAL_ADV_DUE_CREATION");
-		allowODTaxDeduction = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ);
 
 		// Empty sent any required attributes
 		this.feeTypeCode.setMaxlength(8);
@@ -502,7 +500,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.dueAccSet.setMandatoryStyle(true);
 
 		this.row_DueAccReq.setVisible(dueCreationReq);
-		this.row_Tds.setVisible(allowODTaxDeduction);
+		this.row_Tds.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);

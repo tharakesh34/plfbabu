@@ -1647,17 +1647,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
 		}
 
-		boolean allowFeeOnTds = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ);
-
-		if (allowFeeOnTds) {
-			this.listheader_FeeDetailList_RemainingTDS.setVisible(true);
-			this.listheader_FeeDetailList_PaidTDS.setVisible(true);
-			this.listheader_FeeDetailList_NetTdsAmount.setVisible(true);
-		} else {
-			this.listheader_FeeDetailList_RemainingTDS.setVisible(false);
-			this.listheader_FeeDetailList_PaidTDS.setVisible(false);
-			this.listheader_FeeDetailList_NetTdsAmount.setVisible(false);
-		}
+		this.listheader_FeeDetailList_RemainingTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
+		this.listheader_FeeDetailList_PaidTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
+		this.listheader_FeeDetailList_NetTdsAmount.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
 
 		boolean isDisbServ = false;
 		if (StringUtils.equals(this.moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
