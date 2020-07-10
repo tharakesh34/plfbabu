@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.batch.item.ItemProcessor;
 
 import com.pennant.app.core.AutoKnockOffProcessService;
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.AutoKnockOffData;
 import com.pennant.backend.model.finance.AutoKnockOffExcess;
 import com.pennant.backend.model.finance.AutoKnockOffFeeMapping;

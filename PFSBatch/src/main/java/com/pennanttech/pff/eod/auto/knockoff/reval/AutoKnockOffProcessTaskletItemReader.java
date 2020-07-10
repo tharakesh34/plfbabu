@@ -1,14 +1,9 @@
 package com.pennanttech.pff.eod.auto.knockoff.reval;
 
-import java.util.Date;
-
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.AutoKnockOffExcess;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
@@ -18,7 +13,7 @@ public class AutoKnockOffProcessTaskletItemReader extends JdbcCursorItemReader<A
 		super.setSql(getSql());
 	}
 
-	private Date valueDate = null;
+	private String valueDate = null;
 
 	@Override
 	public String getSql() {
@@ -40,25 +35,17 @@ public class AutoKnockOffProcessTaskletItemReader extends JdbcCursorItemReader<A
 		sql.append(" and valueDate = ");
 
 		if (valueDate == null) {
-			sql.append(getValueDate());
-		} else {
-			sql.append(valueDate);
+			getValueDate();
 		}
 
+		sql.append(valueDate);
 		sql.append(" order by aked.ID, aked.KnockOffOrder, aked.FeeOrder");
 
 		return sql.toString();
 	}
 
-	private String getValueDate() {
-		return "'" + DateUtil.format(SysParamUtil.getAppDate(), DateFormat.FULL_DATE) + "'";
+	private void getValueDate() {
+		valueDate = "'" + DateUtil.format(SysParamUtil.getAppDate(), DateFormat.FULL_DATE) + "'";
 	}
 
-	@BeforeStep
-	public void getInterstepData(StepExecution stepExecution) {
-		super.setSql(getSql());
-		Object mapDate = stepExecution.getExecutionContext().get("VALUE_DATE");
-		valueDate = DateUtil.parse((String) mapDate, DateFormat.FULL_DATE);
-		valueDate = JdbcUtil.getDate(valueDate);
-	}
 }

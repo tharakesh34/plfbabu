@@ -12,7 +12,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.AutoKnockOffDAO;
 import com.pennant.backend.model.finance.AutoKnockOff;
@@ -65,7 +64,6 @@ public class LoadAutoKnockOffProcessDataTasklet extends BasicDao<AutoKnockOff> i
 		long totalRecords = autoKnockOffDAO.logKnockOffDetails(valueDate, executionDay);
 
 		StepUtil.AUTO_KNOCKOFF_PROCESS.setTotalRecords(totalRecords);
-		context.getStepContext().getStepExecution().getExecutionContext().put("VALUE_DATE", valueDate);
 
 		logger.debug(Literal.LEAVING);
 		return RepeatStatus.FINISHED;
