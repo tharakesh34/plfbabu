@@ -632,10 +632,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	@Override
 	protected void doSetProperties() {
 		super.pageRightName = "FinanceTypeDialog";
-
-		this.grcAdvIntAndEMIReq.setVisible(ImplementationConstants.ALLOW_ADV_INT_EMI);
-		this.advIntAndEMIReq.setVisible(ImplementationConstants.ALLOW_ADV_INT_EMI);
-		this.dsfAndCashCtlReq.setVisible(ImplementationConstants.ALLOW_DSF_CASHCLT);
 	}
 
 	// Component Events
@@ -1089,6 +1085,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinanceTypeDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinanceTypeDialog_btnSave"));
+		
+		if (!isOverdraft && !consumerDurable) {
+			this.grcAdvIntAndEMIReq.setVisible(ImplementationConstants.ALLOW_ADV_INT_EMI);
+			this.advIntAndEMIReq.setVisible(ImplementationConstants.ALLOW_ADV_INT_EMI);
+			this.dsfAndCashCtlReq.setVisible(ImplementationConstants.ALLOW_DSF_CASHCLT);
+		}
+		
 		logger.debug("Leaving");
 	}
 
