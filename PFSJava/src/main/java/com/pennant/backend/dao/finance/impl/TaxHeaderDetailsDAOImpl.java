@@ -299,6 +299,11 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 	public void update(TaxHeader taxHeader, String type) {
 		logger.debug(Literal.ENTERING);
 		// Prepare the SQL, ensure primary key will not be updated.
+
+		if (taxHeader.getHeaderId() <= 0) {
+			return;
+		}
+
 		StringBuilder sql = new StringBuilder(" Update TAX_Header");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set HeaderId = :HeaderId,");
