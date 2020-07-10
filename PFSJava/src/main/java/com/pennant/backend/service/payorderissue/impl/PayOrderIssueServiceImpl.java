@@ -93,6 +93,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.external.BankAccountValidationService;
 
 /**
  * Service implementation for methods that depends on <b>PayOrderIssueHeader</b>.<br>
@@ -124,9 +125,10 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	@Autowired
 	private PostingsDAO postingsDAO;
 	private PaymentsProcessService paymentsProcessService;
-
 	@Autowired
 	private PennyDropDAO pennyDropDAO;
+	@Autowired(required = false)
+	private transient BankAccountValidationService bankAccountValidationService;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -717,12 +719,14 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 								usrLanguage));
 					}
 				}
-
-				int count = pennyDropDAO.getPennyDropCount(finAdvancePay.getBeneficiaryAccNo(),
-						finAdvancePay.getiFSC());
-				if (count == 0) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41020", errParm, valueParm), usrLanguage));
+				
+				if (bankAccountValidationService != null) {
+					int count = pennyDropDAO.getPennyDropCount(finAdvancePay.getBeneficiaryAccNo(),
+							finAdvancePay.getiFSC());
+					if (count == 0) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41020", errParm, valueParm), usrLanguage));
+					}
 				}
 			}
 
