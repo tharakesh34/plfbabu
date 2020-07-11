@@ -120,15 +120,17 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/RulesFactory/TransactionEntry/transactionEntryDialog.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/RulesFactory/TransactionEntry/transactionEntryDialog.zul file.
  */
 public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private static final long serialVersionUID = 4345607610334573882L;
 	private static final Logger logger = Logger.getLogger(TransactionEntryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting autowired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_TransactionEntryDialog;
 	protected Intbox transOrder;
@@ -211,7 +213,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 	protected Radiogroup chargeType;
 
-	//protected Combobox ruleDecider;
+	// protected Combobox ruleDecider;
 	protected Groupbox gb_RuleCode;
 	private String userRole = "";
 	private boolean isGSTApplicable = false;
@@ -232,8 +234,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected TransactionEntry object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected TransactionEntry
+	 * object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -333,7 +336,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A
+	 * right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -674,7 +678,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param aTransactionEntry
 	 * @throws InterruptedException
@@ -702,8 +707,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 		btnCancel.setVisible(false);
 
+		String lovDescEventCodeName2 = aTransactionEntry.getLovDescEventCodeName();
 		tab_expense.setVisible(ImplementationConstants.ALLOW_IND_AS
-				&& AccountEventConstants.ACCEVENT_EXPENSE.equals(eventCode.getValue()));
+				&& AccountEventConstants.ACCEVENT_EXPENSE.equals(lovDescEventCodeName2)
+				|| AccountEventConstants.ACCEVENT_INDAS.equals(lovDescEventCodeName2));
 
 		try {
 			// fill the components with the data
@@ -760,7 +767,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	}
 
 	/**
-	 * Sets the Validation by setting the accordingly constraints to the LOVFields.
+	 * Sets the Validation by setting the accordingly constraints to the
+	 * LOVFields.
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
@@ -1135,7 +1143,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		errParm[0] = PennantJavaUtil.getLabel("label_FeeTranEvent") + ":" + valueParm[0] + " "
 				+ PennantJavaUtil.getLabel("label_AccountingSetDialog_AccountSetCode.value") + ":" + valueParm[1];
 		errParm[1] = PennantJavaUtil.getLabel("label_TransactionEntryDialog_TransOrder.value") + ":" + valueParm[2];
-		//getAccountingSetDialogCtrl().getTransactionEntryList();
+		// getAccountingSetDialogCtrl().getTransactionEntryList();
 		if (getAccountingSetDialogCtrl().getTransactionEntryList() != null
 				&& getAccountingSetDialogCtrl().getTransactionEntryList().size() > 0) {
 			for (int i = 0; i < getAccountingSetDialogCtrl().getTransactionEntryList().size(); i++) {
@@ -1277,7 +1285,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	}
 
 	/**
-	 * Method for Maintaining Derived Transaction Entry Details for Modified entry
+	 * Method for Maintaining Derived Transaction Entry Details for Modified
+	 * entry
 	 * 
 	 * @return
 	 */
@@ -1289,7 +1298,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 		if (StringUtils.equals(aTransactionEntry.getPostToSys(), AccountConstants.POSTTOSYS_GLNPL)) {
 
-			// If System posting entry from T24 to ERp modification, then existing derived entry should be removed.
+			// If System posting entry from T24 to ERp modification, then
+			// existing derived entry should be removed.
 			if (transactionEntry != null
 					&& StringUtils.equals(transactionEntry.getPostToSys(), AccountConstants.POSTTOSYS_CORE)) {
 				// Creating New Derived Entry
@@ -1321,7 +1331,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			}
 		}
 
-		// Adding PFF Clearing Account Transaction Entry on Selection System Entry
+		// Adding PFF Clearing Account Transaction Entry on Selection System
+		// Entry
 		if (isNewRec) {
 
 			// Creating New Derived Entry
@@ -1557,6 +1568,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		searchObj.addTabelName("FeeTypes");
 		searchObj.addFilter(new Filter("Active", 1, Filter.OP_EQUAL));
 
+		if (ImplementationConstants.ALLOW_IND_AS) {
+			searchObj.addFilter(new Filter("AmortzReq", 1, Filter.OP_EQUAL));
+		}
+
 		ArrayList<String> list = new ArrayList<>();
 		list.add(RepayConstants.ALLOCATION_BOUNCE);
 		list.add(RepayConstants.ALLOCATION_ODC);
@@ -1610,6 +1625,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		JdbcSearchObject<ExpenseType> searchObj = new JdbcSearchObject<ExpenseType>(ExpenseType.class);
 		searchObj.addTabelName("ExpenseTypes");
 		searchObj.addFilter(new Filter("Active", 1, Filter.OP_EQUAL));
+		searchObj.addFilter(new Filter("AmortReq", 1, Filter.OP_EQUAL));
 
 		List<ExpenseType> feeRulesList = this.pagedListService.getBySearchObject(searchObj);
 
@@ -1625,31 +1641,36 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.expenseCodeListbox.appendChild(group);
 			group.setOpen(false);
 
-			String amountCode = code + "_AMZ_N";
-			item = new Listitem();
-			lc = new Listcell(amountCode);
+			if (AccountEventConstants.ACCEVENT_EXPENSE.equals(this.eventCode.getValue())) {
+				String amountCode = code + "_AMZ_N";
+				item = new Listitem();
+				lc = new Listcell(amountCode);
 
-			if (!amountcodes.contains(amountCode)) {
-				amountcodes.add(amountCode);
+				if (!amountcodes.contains(amountCode)) {
+					amountcodes.add(amountCode);
+				}
+
+				lc.setParent(item);
+				lc = new Listcell(decription + " " + Labels.getLabel("label_TransactionEntryDialog_Expense_AMZ_N"));
+				lc.setParent(item);
+				this.expenseCodeListbox.appendChild(item);
 			}
 
-			lc.setParent(item);
-			lc = new Listcell(decription + " " + Labels.getLabel("label_TransactionEntryDialog_Expense_AMZ_N"));
-			lc.setParent(item);
-			this.expenseCodeListbox.appendChild(item);
+			if (AccountEventConstants.ACCEVENT_INDAS.equals(this.eventCode.getValue())) {
+				String amountCode = code + "_AMZ";
+				item = new Listitem();
+				lc = new Listcell(amountCode);
 
-			amountCode = code + "_AMZ";
-			item = new Listitem();
-			lc = new Listcell(amountCode);
+				if (!amountcodes.contains(amountCode)) {
+					amountcodes.add(amountCode);
+				}
 
-			if (!amountcodes.contains(amountCode)) {
-				amountcodes.add(amountCode);
+				lc.setParent(item);
+				lc = new Listcell(decription + " " + Labels.getLabel("label_TransactionEntryDialog_Expense_AMZ"));
+				lc.setParent(item);
+				this.expenseCodeListbox.appendChild(item);
 			}
 
-			lc.setParent(item);
-			lc = new Listcell(decription + " " + Labels.getLabel("label_TransactionEntryDialog_Expense_AMZ"));
-			lc.setParent(item);
-			this.expenseCodeListbox.appendChild(item);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1661,8 +1682,13 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 * @return
 	 */
 	private Map<String, String> fillAccountingDetails() {
-
 		Map<String, String> feeMap = new HashMap<>();
+
+		if (ImplementationConstants.ALLOW_IND_AS
+				&& AccountEventConstants.ACCEVENT_INDAS.equals(this.eventCode.getValue())) {
+			feeMap.put("_AMZ", Labels.getLabel("label_TransactionEntryDialog_Fee_AMZ"));
+			return feeMap;
+		}
 
 		feeMap.put("_N", Labels.getLabel("label_TransactionEntryDialog_N"));
 		feeMap.put("_W", Labels.getLabel("label_TransactionEntryDialog_FeeWaiver"));
@@ -1670,7 +1696,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		feeMap.put("_AF", Labels.getLabel("label_TransactionEntryDialog_FeeAF"));
 		feeMap.put("_SCH", Labels.getLabel("label_TransactionEntryDialog_FeeSF"));
 
-		//GST Fields 
+		// GST Fields
 		feeMap.put("_CGST_C", Labels.getLabel("label_TransactionEntryDialog_CGST"));
 		feeMap.put("_CGST_N", Labels.getLabel("label_TransactionEntryDialog_CGST"));
 		feeMap.put("_CGST_P", Labels.getLabel("label_TransactionEntryDialog_CGST"));
@@ -1695,7 +1721,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		feeMap.put("_IGST_SCH", Labels.getLabel("label_TransactionEntryDialog_IGST"));
 		feeMap.put("_IGST_AF", Labels.getLabel("label_TransactionEntryDialog_IGST"));
 
-		//Waivers
+		// Waivers
 		feeMap.put("_CGST_W", Labels.getLabel("label_TransactionEntryDialog_W_CGST"));
 		feeMap.put("_SGST_W", Labels.getLabel("label_TransactionEntryDialog_W_SGST"));
 		feeMap.put("_UGST_W", Labels.getLabel("label_TransactionEntryDialog_W_UGST"));
@@ -1705,10 +1731,6 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		if (ImplementationConstants.ALLOW_TDS_ON_FEE) {
 			feeMap.put("_TDS_N", Labels.getLabel("label_TransactionEntryDialog_N_TDS"));
 			feeMap.put("_TDS_P", Labels.getLabel("label_TransactionEntryDialog_P_TDS"));
-		}
-
-		if (ImplementationConstants.ALLOW_IND_AS) {
-			feeMap.put("_AMZ", Labels.getLabel("label_TransactionEntryDialog_Fee_AMZ"));
 		}
 
 		return feeMap;
@@ -1987,9 +2009,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 		this.openNewFinAc.setChecked(false);
 		this.row_OpenNewFinAc.setVisible(false);
-		//this.btnSearchAccountType.setDisabled(true);
+		// this.btnSearchAccountType.setDisabled(true);
 		this.btnSearchSystemIntAccount.setDisabled(true);
-		//this.btnSearchAccountSubHeadRule.setDisabled(true);
+		// this.btnSearchAccountSubHeadRule.setDisabled(true);
 		this.lovDescAccountTypeName.setValue("");
 		this.spAccountType.setSclass("");
 

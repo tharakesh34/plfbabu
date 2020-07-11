@@ -66,6 +66,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * @author chaitanya.ch
@@ -85,7 +86,7 @@ public class PostingsPreparationUtil implements Serializable {
 	private AccountProcessUtil accountProcessUtil;
 	private CommitmentDAO commitmentDAO;
 	private CommitmentMovementDAO commitmentMovementDAO;
-	//private FinanceCancellationProcess	financeCancellationProcess;
+	// private FinanceCancellationProcess financeCancellationProcess;
 	private FinanceTypeDAO financeTypeDAO;
 	private FinTypeAccountingDAO finTypeAccountingDAO;
 	private DivisionDetailDAO divisionDetailDAO;
@@ -121,7 +122,8 @@ public class PostingsPreparationUtil implements Serializable {
 	}
 
 	/**
-	 * Method To Process Finance Disbursement Cancellation posting IN PostingsPreparationUtil.java
+	 * Method To Process Finance Disbursement Cancellation posting IN
+	 * PostingsPreparationUtil.java
 	 * 
 	 * @param finReference
 	 * @return boolean
@@ -166,7 +168,7 @@ public class PostingsPreparationUtil implements Serializable {
 		aeEvent.setLinkedTranId(linkedTranId);
 
 		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
-		//FIXME: PV: Prepare Return Data Set
+		// FIXME: PV: Prepare Return Data Set
 
 		getPostingsDAO().saveBatch(returnDatasetList, true);
 		getAccountProcessUtil().procAccountUpdate(returnDatasetList);
@@ -193,7 +195,8 @@ public class PostingsPreparationUtil implements Serializable {
 
 			if (commitment != null && commitment.isRevolving()) {
 
-				//Remove Commitment Details & Movement Details from Workflow which are in maintenance
+				// Remove Commitment Details & Movement Details from Workflow
+				// which are in maintenance
 				if (aeEvent.isEOD()) {
 					Commitment tempcommitment = getCommitmentDAO().getCommitmentByRef(aeEvent.getCmtReference(),
 							"_Temp");
@@ -224,14 +227,16 @@ public class PostingsPreparationUtil implements Serializable {
 
 		aeEvent = postingsExecProcess(aeEvent);
 
-		//FIXME: PV 05MAY17 Update Commitment Movement
+		// FIXME: PV 05MAY17 Update Commitment Movement
 
 		/*
 		 * if (cmtEventExecuted && (Boolean) returnList.get(0) && ((BigDecimal)
 		 * executingMap.get("ae_rpPri")).compareTo(BigDecimal.ZERO) > 0) {
-		 * getCommitmentDAO().updateCommitmentAmounts(commitment.getCmtReference(), ((BigDecimal)
-		 * executingMap.get("ae_rpPri")).negate(), commitment.getCmtExpDate()); CommitmentMovement cmtMovement =
-		 * prepareCommitMovement(commitment, (Long) returnList.get(1), executingMap); if (cmtMovement != null) {
+		 * getCommitmentDAO().updateCommitmentAmounts(commitment.getCmtReference
+		 * (), ((BigDecimal) executingMap.get("ae_rpPri")).negate(),
+		 * commitment.getCmtExpDate()); CommitmentMovement cmtMovement =
+		 * prepareCommitMovement(commitment, (Long) returnList.get(1),
+		 * executingMap); if (cmtMovement != null) {
 		 * getCommitmentMovementDAO().save(cmtMovement, ""); } }
 		 */
 		logger.debug("Leaving");
@@ -261,7 +266,7 @@ public class PostingsPreparationUtil implements Serializable {
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_NEWCMT);
 
-		//FIXME: PV dates to be set properly
+		// FIXME: PV dates to be set properly
 		aeEvent.setAppDate(dateAppDate);
 		aeEvent.setValueDate(dateAppDate);
 		aeEvent.setAppValueDate(dateAppDate);
@@ -294,7 +299,8 @@ public class PostingsPreparationUtil implements Serializable {
 	}
 
 	/**
-	 * Method for Add a Movement Entry for Commitment Repayment Event, if Only for Revolving Commitment
+	 * Method for Add a Movement Entry for Commitment Repayment Event, if Only
+	 * for Revolving Commitment
 	 * 
 	 * @param commitment
 	 * @param dataSet
@@ -349,7 +355,8 @@ public class PostingsPreparationUtil implements Serializable {
 
 		List<ReturnDataSet> list = aeEvent.getReturnDataSet();
 
-		//Method for Checking for Reverse Calculations Based upon Negative Amounts
+		// Method for Checking for Reverse Calculations Based upon Negative
+		// Amounts
 		for (ReturnDataSet returnDataSet : list) {
 			returnDataSet.setLinkedTranId(aeEvent.getLinkedTranId());
 			returnDataSet.setUserBranch(aeEvent.getPostingUserBranch());
@@ -375,7 +382,7 @@ public class PostingsPreparationUtil implements Serializable {
 		if (!list.isEmpty()) {
 			if (aeEvent.isPostingSucess()) {
 				getPostingsDAO().saveBatch(list, true);
-				//getAccountProcessUtil().updateAccountInfo(list);
+				// getAccountProcessUtil().updateAccountInfo(list);
 			}
 		}
 
@@ -384,25 +391,32 @@ public class PostingsPreparationUtil implements Serializable {
 	}
 
 	/**
-	 * Method To Process Finance Disbursement Cancellation posting IN PostingsPreparationUtil.java
+	 * Method To Process Finance Disbursement Cancellation posting IN
+	 * PostingsPreparationUtil.java
 	 * 
 	 * @param finReference
 	 * @return boolean
 	 */
 	private List<Object> procFinCanclPostings(String finReference, String linkedTranId) {
 		logger.debug("Entering");
-		boolean postingSuccess = true;// interface not implemented for postings so after developed need to change as false
+		boolean postingSuccess = true;// interface not implemented for postings
+										// so after developed need to change as
+										// false
 		String errorMsg = null;
 
 		List<Object> returnList = new ArrayList<Object>();
 		/*
-		 * try { // Call To Finance Disbursement Cancellation posting interface List<FinanceCancellation> list =
-		 * getFinanceCancellationProcess().fetchCancelledFinancePostings( finReference, linkedTranId); if (list != null
-		 * && list.size() > 0) { FinanceCancellation cancellation = list.get(0); //Check For errors if
-		 * (StringUtils.isBlank(cancellation.getDsRspErrD())) { if (!StringUtils.equals(cancellation.getDsReqLnkTID(),
-		 * "XXXX")) { updateCancelledPosting(list); } postingSuccess = true; } } } catch (InterfaceException e) {
-		 * logger.debug(e); errorMsg = e.getErrorMessage(); } catch (Exception e) { logger.debug(e); errorMsg =
-		 * e.getMessage(); }
+		 * try { // Call To Finance Disbursement Cancellation posting interface
+		 * List<FinanceCancellation> list =
+		 * getFinanceCancellationProcess().fetchCancelledFinancePostings(
+		 * finReference, linkedTranId); if (list != null && list.size() > 0) {
+		 * FinanceCancellation cancellation = list.get(0); //Check For errors if
+		 * (StringUtils.isBlank(cancellation.getDsRspErrD())) { if
+		 * (!StringUtils.equals(cancellation.getDsReqLnkTID(), "XXXX")) {
+		 * updateCancelledPosting(list); } postingSuccess = true; } } } catch
+		 * (InterfaceException e) { logger.debug(e); errorMsg =
+		 * e.getErrorMessage(); } catch (Exception e) { logger.debug(e);
+		 * errorMsg = e.getMessage(); }
 		 * 
 		 * returnList.add(postingSuccess); returnList.add(errorMsg);
 		 * 
@@ -412,27 +426,36 @@ public class PostingsPreparationUtil implements Serializable {
 	}
 
 	/**
-	 * To Update Posting with the Response from the Finance Disbursement Cancellation Interface. <br>
+	 * To Update Posting with the Response from the Finance Disbursement
+	 * Cancellation Interface. <br>
 	 * IN PostingsPreparationUtil.java
 	 * 
 	 * @param financeCancellations
 	 *//*
-		 * private void updateCancelledPosting(List<FinanceCancellation> financeCancellations) {
-		 * logger.debug("Entering");
+		 * private void updateCancelledPosting(List<FinanceCancellation>
+		 * financeCancellations) { logger.debug("Entering");
 		 * 
-		 * // Create object for postings(Posting table object) List<ReturnDataSet> returnDataSets = new
-		 * ArrayList<ReturnDataSet>(financeCancellations.size()); ReturnDataSet dataSet = null; for (FinanceCancellation
-		 * finCanl : financeCancellations) { dataSet = new ReturnDataSet();
+		 * // Create object for postings(Posting table object)
+		 * List<ReturnDataSet> returnDataSets = new
+		 * ArrayList<ReturnDataSet>(financeCancellations.size()); ReturnDataSet
+		 * dataSet = null; for (FinanceCancellation finCanl :
+		 * financeCancellations) { dataSet = new ReturnDataSet();
 		 * dataSet.setLinkedTranId(Long.parseLong(finCanl.getDsRspLnkTID()));
-		 * dataSet.setPostref(finCanl.getDsRspPostRef()); dataSet.setFinReference(finCanl.getDsRspFinRef());
-		 * dataSet.setFinEvent(finCanl.getDsRspFinEvent()); dataSet.setPostDate(DateUtility.convertDateFromAS400(new
-		 * BigDecimal(finCanl.getDsRspPOD()))); dataSet.setAccount(finCanl.getDsRspAB() + finCanl.getDsRspAN() +
-		 * finCanl.getDsRspAS()); dataSet.setPostStatus(finCanl.getDsRspStatus());
-		 * dataSet.setErrorId(finCanl.getDsRspErr()); dataSet.setErrorMsg(finCanl.getDsRspErrD());
+		 * dataSet.setPostref(finCanl.getDsRspPostRef());
+		 * dataSet.setFinReference(finCanl.getDsRspFinRef());
+		 * dataSet.setFinEvent(finCanl.getDsRspFinEvent());
+		 * dataSet.setPostDate(DateUtility.convertDateFromAS400(new
+		 * BigDecimal(finCanl.getDsRspPOD())));
+		 * dataSet.setAccount(finCanl.getDsRspAB() + finCanl.getDsRspAN() +
+		 * finCanl.getDsRspAS());
+		 * dataSet.setPostStatus(finCanl.getDsRspStatus());
+		 * dataSet.setErrorId(finCanl.getDsRspErr());
+		 * dataSet.setErrorMsg(finCanl.getDsRspErrD());
 		 * returnDataSets.add(dataSet); }
 		 * 
-		 * if (!returnDataSets.isEmpty()) { getPostingsDAO().updateBatch(returnDataSets, ""); } logger.debug("Leaving");
-		 * }
+		 * if (!returnDataSets.isEmpty()) {
+		 * getPostingsDAO().updateBatch(returnDataSets, ""); }
+		 * logger.debug("Leaving"); }
 		 */
 
 	/**
@@ -463,7 +486,7 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Entering");
 		List<JVPostingEntry> entryList = new ArrayList<JVPostingEntry>();
 
-		//Accounting Entries		
+		// Accounting Entries
 		JVPostingEntry internalAcEntryOne = null;
 		JVPostingEntry internalAcEntryTwo = null;
 
@@ -560,7 +583,7 @@ public class PostingsPreparationUtil implements Serializable {
 		ReturnDataSet returnDataSet = null;
 		for (JVPostingEntry jvPostingEntry : jvPostingEntryList) {
 			returnDataSet = new ReturnDataSet();
-			//Set Object Data of ReturnDataSet(s)
+			// Set Object Data of ReturnDataSet(s)
 			returnDataSet.setFinReference(String.valueOf(jVPosting.getBatchReference()));
 			returnDataSet.setAccount(jvPostingEntry.getAccount());
 			returnDataSet.setAcCcy(jvPostingEntry.getAccCCy());
@@ -616,13 +639,14 @@ public class PostingsPreparationUtil implements Serializable {
 			list.add(returnDataSet);
 		}
 
-		//FIXME: PV: 05MAY17 needs to fill return dataset
+		// FIXME: PV: 05MAY17 needs to fill return dataset
 		logger.debug("Leaving");
 		return list;
 	}
 
 	/**
-	 * Method to Prepare the accounting entries and save the postings to the Postings and accounts table
+	 * Method to Prepare the accounting entries and save the postings to the
+	 * Postings and accounts table
 	 * 
 	 * @param aeEvent
 	 * @param dataMap
@@ -652,14 +676,15 @@ public class PostingsPreparationUtil implements Serializable {
 
 		getPostingsDAO().saveBatch(returnDatasetList, isNewTranID);
 
-		//getAccountProcessUtil().procAccountUpdate(returnDatasetList);
+		// getAccountProcessUtil().procAccountUpdate(returnDatasetList);
 
 		logger.debug("Leaving");
 		return aeEvent;
 	}
 
 	/**
-	 * Method to Prepare the accounting entries and save the postings to the Postings and accounts table
+	 * Method to Prepare the accounting entries and save the postings to the
+	 * Postings and accounts table
 	 * 
 	 * @param aeEvent
 	 * @param dataMap
@@ -673,7 +698,8 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Entering");
 
 		/*
-		 * if (aeEvent.getLinkedTranId() <= 0) { aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId()); }
+		 * if (aeEvent.getLinkedTranId() <= 0) {
+		 * aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId()); }
 		 */
 		getEngineExecution().getAccEngineExecResults(aeEvent);
 
@@ -753,6 +779,19 @@ public class PostingsPreparationUtil implements Serializable {
 
 		logger.debug("Leaving");
 		return returnDataSets;
+	}
+
+	public long reversalByLinkedTranID(long linkedTranId) {
+		logger.debug(Literal.ENTERING);
+
+		long newLinkedTranID = getPostingsDAO().getLinkedTransId();
+
+		List<ReturnDataSet> returnDataSets = postingsDAO.getPostingsByLinkTransId(linkedTranId);
+
+		engineExecution.getReversePostings(returnDataSets, newLinkedTranID);
+
+		logger.debug(Literal.ENTERING);
+		return newLinkedTranID;
 	}
 
 	/**
@@ -914,10 +953,12 @@ public class PostingsPreparationUtil implements Serializable {
 	}
 
 	/*
-	 * public void setFinanceCancellationProcess(FinanceCancellationProcess financeCancellationProcess) {
-	 * this.financeCancellationProcess = financeCancellationProcess; }
+	 * public void setFinanceCancellationProcess(FinanceCancellationProcess
+	 * financeCancellationProcess) { this.financeCancellationProcess =
+	 * financeCancellationProcess; }
 	 * 
-	 * public FinanceCancellationProcess getFinanceCancellationProcess() { return financeCancellationProcess; }
+	 * public FinanceCancellationProcess getFinanceCancellationProcess() {
+	 * return financeCancellationProcess; }
 	 */
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {

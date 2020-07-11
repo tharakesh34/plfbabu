@@ -52,4 +52,8 @@ public interface FinExpenseMovementsDAO {
 
 	List<FinExpenseMovements> getFinExpenseMovementById(String financeRef, long finExpenseId);
 
+	List<FinExpenseMovements> getFinExpenseMovements(String financeRef, long expenseTypeID);
+
+	void updateRevLinkedTranID(long id, long revLinkedTranID);
+
 }

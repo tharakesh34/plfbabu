@@ -106,8 +106,9 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
-	 * selected Customer object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * zul-file is called with a parameter for a selected Customer object in a
+	 * Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -287,9 +288,10 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * This Method/Event for getting the uploaded document should be comma separated values and then read the document
-	 * and setting the values to the Lead VO and added those vos to the List and it also shows the information about
-	 * where we go the wrong data
+	 * This Method/Event for getting the uploaded document should be comma
+	 * separated values and then read the document and setting the values to the
+	 * Lead VO and added those vos to the List and it also shows the information
+	 * about where we go the wrong data
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -356,7 +358,8 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * entry point of program, reading whole excel and calling other methods to prepare jsonObject.
+	 * entry point of program, reading whole excel and calling other methods to
+	 * prepare jsonObject.
 	 * 
 	 * @return String
 	 * @throws Exception
@@ -420,7 +423,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			valid = validateCommonData(uploadFinExpenses, expenseTypeCode, percentage, amountValue, valid, reason);
 			reason = uploadFinExpenses.getReason();
 
-			//FinReference
+			// FinReference
 			if (StringUtils.isBlank(finReference)) {
 				if (valid) {
 					valid = false;
@@ -557,7 +560,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			uploadFinExpense.setFinApprovalStartDate(financeStartDate);
 			uploadFinExpense.setFinApprovalEndDate(financeEndDate);
 
-			//Loan Type validation
+			// Loan Type validation
 			if (StringUtils.isBlank(uploadFinExpense.getFinType())) {
 				if (valid) {
 					reason = "Loan Type is mandatory.";
@@ -593,7 +596,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 				}
 			}
 
-			//validate the common data
+			// validate the common data
 			valid = validateCommonData(uploadFinExpense, expenseTypeCode, percentage, amountValue, valid, reason);
 			reason = uploadFinExpense.getReason();
 
@@ -617,12 +620,12 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		BigDecimal percentageValue = new BigDecimal(percentage.equals("") ? "0" : percentage);
 		BigDecimal amountValue = new BigDecimal(amount.equals("") ? "0" : amount);
 
-		//AppendOrOverride
+		// AppendOrOverride
 		String type = uploadFinExpenses.getType();
 		if (!(PennantConstants.EXPENSE_UPLOAD_ADD.equalsIgnoreCase(type)
 				|| PennantConstants.EXPENSE_UPLOAD_OVERRIDE.equalsIgnoreCase(type))) {
 
-			uploadFinExpenses.setType("E"); //default value for Type
+			uploadFinExpenses.setType("E"); // default value for Type
 
 			if (valid) {
 				reason = "Append/Override is mandatory, it should be (A) or (O).";
@@ -652,7 +655,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			uploadFinExpenses.setPercentage(BigDecimal.ZERO);
 		}
 
-		//Percentage
+		// Percentage
 		if (StringUtils.isBlank(percentage) && StringUtils.isBlank(amount)) {
 			if (valid) {
 				reason = "Either Percentage or Amount is mandatory.";
@@ -714,7 +717,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			}
 		}
 
-		//Expense Type Code
+		// Expense Type Code
 		if (StringUtils.isBlank(expenseType)) {
 			if (valid) {
 				valid = false;
@@ -894,7 +897,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		ExcelFileImport fileImport = new ExcelFileImport(media, PathUtil.getPath(getFolderPath()));
 
-		//Reading excel data and returning as a workbook
+		// Reading excel data and returning as a workbook
 		Workbook workbook = fileImport.writeFile();
 
 		if (workbook == null) {
@@ -939,7 +942,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 			long uploadId = this.uploadHeaderService.save(auploadHeader);
 
-			//Process the UploadFinExpenses
+			// Process the UploadFinExpenses
 			List<UploadFinExpenses> expenses = processUploadFinExpenses(workbook, selectedModuleType, uploadId);
 
 			if (CollectionUtils.isNotEmpty(expenses)) {
@@ -950,7 +953,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 					long finExpenseId = expense.getExpenseId();
 					if (StringUtils.isNotBlank(expense.getReason())
 							|| (finExpenseId == 0 || finExpenseId == Long.MIN_VALUE)) {
-						continue; //if data is not entered correctly
+						continue; // if data is not entered correctly
 					}
 
 					if (PennantConstants.EXPENSE_UPLOAD_LOANTYPE.equals(selectedModuleType)) {
@@ -978,7 +981,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 			Clients.showNotification("Data imported successfully.", "info", null, null, -1);
 
-			//Create backup file
+			// Create backup file
 			fileImport.backUpFile();
 
 			this.statusGrid.setVisible(true);
@@ -1016,11 +1019,11 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 			if (fm.getFinAssetValue() != null && fm.getFinAssetValue().compareTo(BigDecimal.ZERO) != 0) {
 				BigDecimal percentage = uploadDetail.getPercentage();
-				//formatting the amount
+				// formatting the amount
 				txnAmount = PennantAppUtil.formateAmount(fm.getFinAssetValue(), formatter);
-				//calculating percentage
+				// calculating percentage
 				txnAmount = (percentage.multiply(txnAmount)).divide(new BigDecimal(100));
-				//un-formatting the amount
+				// un-formatting the amount
 				txnAmount = PennantAppUtil.unFormateAmount(txnAmount, formatter);
 			} else {
 				return;
@@ -1063,6 +1066,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		finExpenseMovements.setTransactionType(uploadDetail.getType());
 		finExpenseMovements.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		finExpenseMovements.setTransactionDate(transactionDate);
+		finExpenseMovements.setExpenseTypeID(uploadDetail.getExpenseId());
 		finExpenseMovements.setExpenseTypeCode(uploadDetail.getExpenseTypeCode());
 
 		finExpenseMovements.setFinanceMain(fm);

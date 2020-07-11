@@ -139,7 +139,8 @@ public class ProjectedAmortizationService {
 
 	/**
 	 * 1. Income / Expense Amortization Calculation Based on Method </br>
-	 * 2. Interest Method - All Finances with interest greater than ZERO except FLEXI Finance types </br>
+	 * 2. Interest Method - All Finances with interest greater than ZERO except
+	 * FLEXI Finance types </br>
 	 * 3. Opening Principal Balance Method - ZERO Interest Finances </br>
 	 * 4. Straight Line Method - FLEXI/OD Finances and Floating rate type </br>
 	 * 
@@ -266,8 +267,9 @@ public class ProjectedAmortizationService {
 			totalProfit = totalProfit.add(curSchd.getProfitCalc());
 
 			/**
-			 * Calculate ACCRUAL from current month onwards (OR) Calculation from finance start date (back dated
-			 * finances : prvProjAccrual is null)
+			 * Calculate ACCRUAL from current month onwards (OR) Calculation
+			 * from finance start date (back dated finances : prvProjAccrual is
+			 * null)
 			 */
 			if (prvProjAccrual != null && !calFromFinStartDate && curSchdDate.compareTo(appDateMonthStart) < 0) {
 				continue;
@@ -322,7 +324,7 @@ public class ProjectedAmortizationService {
 				BigDecimal prvPOSAmz = BigDecimal.ZERO;
 				BigDecimal posAmz = BigDecimal.ZERO;
 
-				// Customer Profitability RFT 
+				// Customer Profitability RFT
 				BigDecimal schdAvgPOS = BigDecimal.ZERO;
 				BigDecimal curAvgPOS = BigDecimal.ZERO;
 				BigDecimal prvAvgPOS = BigDecimal.ZERO;
@@ -352,7 +354,8 @@ public class ProjectedAmortizationService {
 				Date nextMonthStart = DateUtil.addDays(curMonthEnd, 1);
 				Date curMonthStart = DateUtil.getMonthStart(curMonthEnd);
 
-				// Schedules between Previous MonthEnd and CurMonthEnd and past dated finances( Weekly..)
+				// Schedules between Previous MonthEnd and CurMonthEnd and past
+				// dated finances( Weekly..)
 				if ((prvSchdDate.compareTo(curMonthStart) >= 0 && curSchdDate.compareTo(curMonthEnd) <= 0)
 						|| prvProjAccrual == null) {
 
@@ -367,7 +370,8 @@ public class ProjectedAmortizationService {
 					}
 				}
 
-				// multiple months between two schedules (Quarterly, Half Yearly ..)
+				// multiple months between two schedules (Quarterly, Half Yearly
+				// ..)
 				if (curMonthEnd.compareTo(curSchdDate) < 0) {
 
 					int days = DateUtil.getDaysBetween(nextMonthStart, curMonthStart);
@@ -381,7 +385,7 @@ public class ProjectedAmortizationService {
 
 				} else {
 
-					// Calculation From CurSchdDate to Current MonthEnd 
+					// Calculation From CurSchdDate to Current MonthEnd
 					if (curMonthEnd.compareTo(prvSchdDate) >= 0 && curMonthEnd.compareTo(nextSchdDate) < 0) {
 
 						int days = DateUtil.getDaysBetween(nextMonthStart, curSchdDate);
@@ -413,7 +417,8 @@ public class ProjectedAmortizationService {
 				posAmz = schdPOSAmz.add(prvPOSAmz).add(curPOSAmz).add(prjAcc.getPOSAccrued());
 				avgPOS = schdAvgPOS.add(prvAvgPOS).add(curAvgPOS).add(prjAcc.getAvgPOS());
 
-				// Adjust remaining profit to maturity MonthEnd to avoid rounding issues
+				// Adjust remaining profit to maturity MonthEnd to avoid
+				// rounding issues
 				if (DateUtil.getMonthEnd(maturityDate).compareTo(curMonthEnd) == 0
 						&& curSchdDate.compareTo(maturityDate) == 0 && !isPartialPay) {
 
@@ -448,7 +453,8 @@ public class ProjectedAmortizationService {
 				}
 				// END
 
-				// START : Remove current month end from list, 2nd one is to handle Quarterly, Half Yearly (Maturity month end).. 
+				// START : Remove current month end from list, 2nd one is to
+				// handle Quarterly, Half Yearly (Maturity month end)..
 				if (curMonthEnd.compareTo(nextSchdDate) < 0 || curSchdDate.compareTo(maturityDate) == 0) {
 
 					// No of Days and Cumulative Days
@@ -472,7 +478,8 @@ public class ProjectedAmortizationService {
 						prjAcc.setAvgPOS(monthlyAvgPOS);
 					}
 
-					// calculate AMZ percentage for Partial Settlement on month end
+					// calculate AMZ percentage for Partial Settlement on month
+					// end
 					if (isPartialPayOnMonthEnd) {
 
 						prjAcc.setPartialPaidAmt(curSchd.getPartialPaidAmt());
@@ -621,14 +628,17 @@ public class ProjectedAmortizationService {
 	 * Method for calculate AMZ Percentage based on AMZ method </br>
 	 * 
 	 * 1. Interest Method : </br>
-	 * -- Percentage calculated on unamortized profit (Total Profit - Previous Month Cumulative Profit) </br>
+	 * -- Percentage calculated on unamortized profit (Total Profit - Previous
+	 * Month Cumulative Profit) </br>
 	 * 
 	 * 2. Opening Principal Balance Method : </br>
-	 * -- Percentage calculated on unamortized POS (Total POS - Previous Month Cumulative POS) </br>
+	 * -- Percentage calculated on unamortized POS (Total POS - Previous Month
+	 * Cumulative POS) </br>
 	 * 
 	 * 3. StraightLine Method : </br>
 	 * -- AMZ percentage is ZERO for Partial Settlements </br>
-	 * -- Calc. Percentage is Cumulative Percentage not Monthly like Interest and Principal Methods. </br>
+	 * -- Calc. Percentage is Cumulative Percentage not Monthly like Interest
+	 * and Principal Methods. </br>
 	 *
 	 *
 	 * @param finEODEvent
@@ -706,7 +716,8 @@ public class ProjectedAmortizationService {
 
 			for (ProjectedAccrual projAccrual : projAccList) {
 
-				// AMZ percentage is ZERO for partial settlement entries, AMZ Percentage is Cumulative Not Monthly.
+				// AMZ percentage is ZERO for partial settlement entries, AMZ
+				// Percentage is Cumulative Not Monthly.
 				amzPercentage = calDayAMZPercentage(finMain, projAccrual.getCumulativeDays(), projAccrual.isMonthEnd());
 				projAccrual.setAMZPercentage(amzPercentage);
 			}
@@ -911,7 +922,6 @@ public class ProjectedAmortizationService {
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INDAS);
 
-		
 		aeEvent.getAcSetIDList().add(accountingSetId);
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 
@@ -922,7 +932,7 @@ public class ProjectedAmortizationService {
 		}
 
 		amountCodes.setFinType(fm.getFinType());
-		
+
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		for (ProjectedAmortization amz : finEODEvent.getIncomeAMZList()) {
 			aeEvent.setBranch(amz.getFinBranch());
@@ -931,7 +941,7 @@ public class ProjectedAmortizationService {
 			aeEvent.setFinReference(amz.getFinReference());
 			aeEvent.setEntityCode(amz.getEntityCode());
 			aeEvent.setFinType(amz.getFinType());
-			dataMap.put(amz.getFeeTypeCode() + "_IND_AS_AMZ", amz.getAmortizedAmount());
+			dataMap.put(amz.getFeeTypeCode() + "_AMZ", amz.getAmortizedAmount());
 			aeEvent.setDataMap(dataMap);
 			postingsPreparationUtil.postAccounting(aeEvent);
 		}
@@ -979,7 +989,7 @@ public class ProjectedAmortizationService {
 			projIncomeAMZ.setAmortizedAmount(amortizedAmount);
 			projIncomeAMZ.setCumulativeAmount(BigDecimal.ZERO);
 			projIncomeAMZ.setUnAmortizedAmount(incomeAMZ.getActualAmount());
-			
+
 			projIncomeAMZ.setFinType(incomeAMZ.getFinType());
 			projIncomeAMZ.setFinBranch(incomeAMZ.getFinBranch());
 			projIncomeAMZ.setFinCcy(incomeAMZ.getFinCcy());
@@ -1093,7 +1103,7 @@ public class ProjectedAmortizationService {
 					projIncomeAMZ.setCumulativeAmount(cumAmount);
 					projIncomeAMZ.setUnAmortizedAmount(incomeAMZ.getActualAmount().subtract(cumAmount));
 				}
-				
+
 				projIncomeAMZ.setFinType(incomeAMZ.getFinType());
 				projIncomeAMZ.setFinBranch(incomeAMZ.getFinBranch());
 				projIncomeAMZ.setFinCcy(incomeAMZ.getFinCcy());
@@ -1106,7 +1116,8 @@ public class ProjectedAmortizationService {
 	}
 
 	/**
-	 * This Method used to calculate the future amortizations based on previous cumulative </br>
+	 * This Method used to calculate the future amortizations based on previous
+	 * cumulative </br>
 	 * 
 	 * @param incomeAMZ
 	 * @param curMonthEnd
@@ -1129,7 +1140,7 @@ public class ProjectedAmortizationService {
 
 		} else {
 
-			// run only on month end 
+			// run only on month end
 			prvAMZAmt = incomeAMZ.getCurMonthAmz();
 			prvCumAmount = incomeAMZ.getAmortizedAmount();
 			prvUnAMZAmount = incomeAMZ.getUnAmortizedAmount();
@@ -1156,7 +1167,8 @@ public class ProjectedAmortizationService {
 						&& incomeAMZ.getReferenceID() == curProjIncomeAMZ.getReferenceID()
 						&& StringUtils.equals(incomeAMZ.getIncomeType(), curProjIncomeAMZ.getIncomeType())) {
 
-					// PrvMonthAmz setting : EOM - Required, EOD - First run Required (EOM_ON_EOD : true).
+					// PrvMonthAmz setting : EOM - Required, EOD - First run
+					// Required (EOM_ON_EOD : true).
 					if (curMonthEnd.compareTo(incomeAMZ.getMonthEndDate()) != 0) {
 						incomeAMZ.setPrvMonthAmz(incomeAMZ.getCurMonthAmz());
 					}
@@ -1192,7 +1204,8 @@ public class ProjectedAmortizationService {
 	/**
 	 * calculate Amortization for Income and Expense based on AMZPerentage </br>
 	 * 
-	 * For Interest and Open Principal Balance methods calculate Monthly AMZ. </br>
+	 * For Interest and Open Principal Balance methods calculate Monthly AMZ.
+	 * </br>
 	 * 
 	 * For Straight Line Method calculate Cumulative AMZ. </br>
 	 * 
@@ -1399,7 +1412,8 @@ public class ProjectedAmortizationService {
 					}
 				}
 
-				// multiple months between two schedules (Quarterly, Half Yearly ..)
+				// multiple months between two schedules (Quarterly, Half Yearly
+				// ..)
 				if (curMonthEnd.compareTo(curSchdDate) < 0) {
 
 					int days = DateUtil.getDaysBetween(nextMonthStart, curMonthStart);
@@ -1407,7 +1421,7 @@ public class ProjectedAmortizationService {
 					noOfDays = noOfDays + days;
 
 				} else {
-					// Calculation From CurSchdDate to Current MonthEnd 
+					// Calculation From CurSchdDate to Current MonthEnd
 					if (curMonthEnd.compareTo(prvSchdDate) >= 0 && curMonthEnd.compareTo(nextSchdDate) < 0) {
 
 						int days = DateUtil.getDaysBetween(nextMonthStart, curSchdDate);
@@ -1470,6 +1484,5 @@ public class ProjectedAmortizationService {
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
-	
-	
+
 }

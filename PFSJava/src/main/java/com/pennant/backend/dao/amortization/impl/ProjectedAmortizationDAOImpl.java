@@ -99,15 +99,23 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	public List<ProjectedAmortization> getIncomeAMZDetailsByRef(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" amz.FinReference, amz.CustID, amz.FinType, fe.FeeTypeCode, ReferenceID, IncomeTypeID, IncomeType");
-		sql.append(", CalculatedOn, CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate");
-		sql.append(", AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, amz.Active");
-		sql.append(", e.EntityCode, fm.FinBranch, fm.FinCcy");
+		StringBuilder sql = new StringBuilder("Select * from (");
+		sql.append(" Select amz.FinReference, amz.CustID, amz.FinType, fe.FeeTypeCode, ReferenceID");
+		sql.append(", IncomeTypeID, IncomeType, CalculatedOn, CalcFactor, Amount, ActualAmount, AMZMethod");
+		sql.append(", MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz");
+		sql.append(", amz.Active, e.EntityCode, fm.FinBranch, fm.FinCcy");
 		sql.append(" from IncomeAmortization amz");
 		sql.append(" Inner join FinanceMain fm on fm.FinReference = amz.FinReference");
-		sql.append(" Inner join FeeTypes fe on fe.FeeTypeID = amz.IncomeTypeID");
-		sql.append(" inner join RmtFinanceTypes ft on ft.Fintype = fm.Fintype");
+		sql.append(" Inner join FeeTypes fe on fe.FeeTypeID = amz.IncomeTypeID and IncomeType = ? ");
+		sql.append(" union all");
+		sql.append(" Select amz.FinReference, amz.CustID, amz.FinType, fe.ExpenseTypeCode FeeTypeCode, ReferenceID");
+		sql.append(", IncomeTypeID, IncomeType, CalculatedOn, CalcFactor, Amount, ActualAmount, AMZMethod");
+		sql.append(", MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz");
+		sql.append(", amz.Active, e.EntityCode, fm.FinBranch, fm.FinCcy");
+		sql.append(" from IncomeAmortization amz");
+		sql.append(" Inner join FinanceMain fm on fm.FinReference = amz.FinReference");
+		sql.append(" Inner join ExpenseTypes fe on fe.ExpenseTypeID = amz.IncomeTypeID and IncomeType = ?) amz");
+		sql.append(" inner join RmtFinanceTypes ft on ft.Fintype = amz.Fintype");
 		sql.append(" inner join SmtDivisionDetail d on d.DivisionCode = ft.FinDivision");
 		sql.append(" inner join entity e on e.EntityCode = d.EntityCode");
 		sql.append(" Where amz.FinReference = ?");
@@ -118,7 +126,9 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setString(1, finReference);
+					ps.setString(1, AmortizationConstants.AMZ_INCOMETYPE_FEE);
+					ps.setString(2, AmortizationConstants.AMZ_INCOMETYPE_EXPENSE);
+					ps.setString(3, finReference);
 				}
 			}, new RowMapper<ProjectedAmortization>() {
 				@Override
@@ -171,7 +181,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			// 
+			//
 		}
 		return null;
 	}

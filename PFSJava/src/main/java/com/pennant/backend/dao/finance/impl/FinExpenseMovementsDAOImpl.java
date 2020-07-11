@@ -43,17 +43,23 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinExpenseMovementsDAO;
 import com.pennant.backend.model.expenses.FinExpenseMovements;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>UploadHeader model</b> class.<br>
@@ -78,43 +84,110 @@ public class FinExpenseMovementsDAOImpl extends SequenceDao<FinExpenseMovements>
 		}
 
 		sql.append(" Insert Into FinExpenseMovements");
-		sql.append(
-				" (FinExpenseMovemntId, FinExpenseId, FinReference, ModeType, UploadId, TransactionAmount, TransactionType, LastMntOn, TransactionDate)");
-		sql.append(
-				" Values(:FinExpenseMovemntId, :FinExpenseId, :FinReference, :ModeType, :UploadId, :TransactionAmount, :TransactionType, :LastMntOn, :TransactionDate)");
+		sql.append(" (FinExpenseMovemntId, FinExpenseId, FinReference, ModeType, UploadId");
+		sql.append(", TransactionAmount, TransactionType, LastMntOn");
+		sql.append(", TransactionDate, LinkedTranId, RevLinkedTranID)");
+		sql.append(" values");
+		sql.append(" (:FinExpenseMovemntId, :FinExpenseId, :FinReference, :ModeType, :UploadId");
+		sql.append(", :TransactionAmount, :TransactionType, :LastMntOn");
+		sql.append(", :TransactionDate, :LinkedTranId, :RevLinkedTranId)");
 
-		logger.debug("sql: " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finExpenseMovements);
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return finExpenseMovements.getFinExpenseMovemntId();
 	}
 
 	@Override
 	public List<FinExpenseMovements> getFinExpenseMovementById(String financeRef, long finExpenseId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		FinExpenseMovements finExpenseMovements = new FinExpenseMovements();
-		finExpenseMovements.setFinReference(financeRef);
-		finExpenseMovements.setFinExpenseId(finExpenseId);
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT m.ModeType, m.TransactionType, m.TransactionDate, m.TransactionAmount");
+		sql.append(", h.FileName, h.LastMntBy");
+		sql.append(" From FinExpenseMovements m");
+		sql.append(" inner join UploadHeader h on h.uploadId = m.UploadId");
+		sql.append(" Where m.FinReference = ? and m.FinExpenseID = ?");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" SELECT T1.modetype,T1.transactiontype,T1.transactiondate,T1.transactionamount,T2.fileName,T2.lastmntby");
+		logger.trace(Literal.SQL + sql.toString());
 
-		selectSql.append(" From finexpensemovements T1");
-		selectSql.append(" Inner join uploadheader T2 on T2.uploadid=T1.uploadid");
-		selectSql.append(" Where T1.FinReference = :FinReference And T1.FINEXPENSEID = :FinExpenseId");
+		try {
+			return this.jdbcOperations.query(sql.toString(), new Object[] { financeRef, finExpenseId },
+					new RowMapper<FinExpenseMovements>() {
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finExpenseMovements);
-		RowMapper<FinExpenseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinExpenseMovements.class);
-		logger.debug("Leaving");
+						@Override
+						public FinExpenseMovements mapRow(ResultSet rs, int arg1) throws SQLException {
+							FinExpenseMovements movement = new FinExpenseMovements();
+							movement.setModeType(rs.getString("ModeType"));
+							movement.setTransactionType(rs.getString("TransactionType"));
+							movement.setTransactionDate(JdbcUtil.getDate(rs.getDate("TransactionDate")));
+							movement.setTransactionAmount(rs.getBigDecimal("TransactionAmount"));
+							movement.setFileName(rs.getString("FileName"));
+							movement.setLastMntBy(rs.getLong("LastMntBy"));
+							return movement;
+						}
+					});
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return new ArrayList<>();
+	}
+
+	@Override
+	public List<FinExpenseMovements> getFinExpenseMovements(String financeRef, long expenseTypeID) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select m.FinExpenseMovemntID, m.LinkedTranID");
+		sql.append(" From FinExpenseDetails ed");
+		sql.append(" inner join FinExpenseMovements m on m.FinExpenseId = ed.FinExpenseId");
+		sql.append(" Where ed.FinReference = ? and ed.ExpenseTypeID = ? and RevLinkedTranID is NULL");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new Object[] { financeRef, expenseTypeID },
+					new RowMapper<FinExpenseMovements>() {
+
+						@Override
+						public FinExpenseMovements mapRow(ResultSet rs, int arg1) throws SQLException {
+							FinExpenseMovements movement = new FinExpenseMovements();
+							movement.setFinExpenseMovemntId(rs.getLong("FinExpenseMovemntID"));
+							movement.setLinkedTranId(rs.getLong("LinkedTranID"));
+							return movement;
+						}
+					});
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return new ArrayList<>();
+	}
+
+	@Override
+	public void updateRevLinkedTranID(long id, long revLinkedTranID) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" update FinExpenseMovements set RevLinkedTranID = ?");
+		sql.append(" Where FinExpenseMovemntID = ?");
+
+		this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setLong(1, revLinkedTranID);
+				ps.setLong(2, id);
+
+			}
+		});
+
+		logger.trace(Literal.SQL + sql.toString());
+
 	}
 }

@@ -67,6 +67,9 @@ public class FinExpenseMovements implements Serializable {
 	private long lastMntBy;
 	private FinanceMain financeMain;
 	private String expenseTypeCode;
+	private long expenseTypeID;
+	private Long LinkedTranId;
+	private Long RevLinkedTranId;
 
 	public FinExpenseMovements() {
 		super();
@@ -79,6 +82,7 @@ public class FinExpenseMovements implements Serializable {
 		excludeFields.add("lastMntBy");
 		excludeFields.add("financeMain");
 		excludeFields.add("expenseTypeCode");
+		excludeFields.add("expenseTypeID");
 
 		return excludeFields;
 	}
@@ -185,6 +189,30 @@ public class FinExpenseMovements implements Serializable {
 
 	public void setExpenseTypeCode(String expenseTypeCode) {
 		this.expenseTypeCode = expenseTypeCode;
+	}
+
+	public long getExpenseTypeID() {
+		return expenseTypeID;
+	}
+
+	public void setExpenseTypeID(long expenseTypeID) {
+		this.expenseTypeID = expenseTypeID;
+	}
+
+	public Long getLinkedTranId() {
+		return LinkedTranId;
+	}
+
+	public void setLinkedTranId(Long linkedTranId) {
+		LinkedTranId = linkedTranId;
+	}
+
+	public Long getRevLinkedTranId() {
+		return RevLinkedTranId;
+	}
+
+	public void setRevLinkedTranId(Long revLinkedTranId) {
+		RevLinkedTranId = revLinkedTranId;
 	}
 
 }

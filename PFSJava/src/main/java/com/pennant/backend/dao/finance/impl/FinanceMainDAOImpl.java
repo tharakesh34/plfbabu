@@ -111,7 +111,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the new FinanceMain
+	 * This method set the Work Flow id based on the module name and return the
+	 * new FinanceMain
 	 * 
 	 * @return FinanceMain
 	 */
@@ -137,8 +138,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * This method get the module from method getFinanceMain() and set the new record flag as true and return
-	 * FinanceMain()
+	 * This method get the module from method getFinanceMain() and set the new
+	 * record flag as true and return FinanceMain()
 	 * 
 	 * @return FinanceMain
 	 */
@@ -153,7 +154,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * Method to get all the first task owner roles of the work flow's which are used for finance.
+	 * Method to get all the first task owner roles of the work flow's which are
+	 * used for finance.
 	 */
 	@Override
 	public List<String> getFinanceWorlflowFirstTaskOwners(String event, String moduleName) {
@@ -955,8 +957,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * This method updates the Record FinanceMain or FinanceMain_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Finance Main Detail by key FinReference and Version
+	 * This method updates the Record FinanceMain or FinanceMain_Temp. if Record
+	 * not updated then throws DataAccessException with error 41004. update
+	 * Finance Main Detail by key FinReference and Version
 	 * 
 	 * @param Finance
 	 *            Main Detail (financeMain)
@@ -2014,7 +2017,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * Method for Fetching List of Limit Reference Details utilized for Finances in Rollover Functionality
+	 * Method for Fetching List of Limit Reference Details utilized for Finances
+	 * in Rollover Functionality
 	 */
 	@Override
 	public List<String> getRollOverLimitRefList() {
@@ -2033,7 +2037,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * Method for Fetching List of Limit Reference Details utilized for Finances in Rollover Functionality
+	 * Method for Fetching List of Limit Reference Details utilized for Finances
+	 * in Rollover Functionality
 	 */
 	@Override
 	public List<String> getRollOverFinTypeList(String limitRef) {
@@ -2054,7 +2059,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * Method for Fetching List of Rollover Date Details utilized for Finances in Rollover Functionality
+	 * Method for Fetching List of Rollover Date Details utilized for Finances
+	 * in Rollover Functionality
 	 */
 	@Override
 	public List<Date> getRollOverDateList(String limitRef, String finType) {
@@ -2116,17 +2122,21 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		financeMain.setId(reference);
 		StringBuilder selectSql = new StringBuilder("select  *  FROM ");
 		/*
-		 * StringBuilder selectSql = new StringBuilder("select  FinReference, GrcPeriodEndDate, FinRepaymentAmount," );
-		 * selectSql.
-		 * append(" DisbAccountid, RepayAccountid, FinAccount, FinCustPftAccount, FinCommitmentRef, FinLimitRef," );
-		 * selectSql. append(
+		 * StringBuilder selectSql = new
+		 * StringBuilder("select  FinReference, GrcPeriodEndDate, FinRepaymentAmount,"
+		 * ); selectSql.
+		 * append(" DisbAccountid, RepayAccountid, FinAccount, FinCustPftAccount, FinCommitmentRef, FinLimitRef,"
+		 * ); selectSql. append(
 		 * " FinCcy, FinBranch, CustId, FinAmount, FeeChargeAmt, DownPayment, DownPayBank, DownPaySupl, DownPayAccount, SecurityDeposit, FinType, "
 		 * ); selectSql. append(
 		 * " FinStartDate,GraceTerms, NumberOfTerms, NextGrcPftDate, NextRepayDate, LastRepayPftDate, NextRepayPftDate, "
-		 * ); selectSql. append(" LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, FinCurrAssetValue,FinRepayMethod, "
-		 * ); selectSql. append(" RecordType, Version, ProfitDaysBasis , FeeChargeAmt, FinStatus, FinStsReason," );
-		 * selectSql.
-		 * append(" InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, SecurityDeposit, MaturityDate " );
+		 * ); selectSql.
+		 * append(" LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, FinCurrAssetValue,FinRepayMethod, "
+		 * ); selectSql.
+		 * append(" RecordType, Version, ProfitDaysBasis , FeeChargeAmt, FinStatus, FinStsReason,"
+		 * ); selectSql.
+		 * append(" InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, SecurityDeposit, MaturityDate "
+		 * );
 		 */
 		if (isRejectFinance) {
 			selectSql.append(" RejectFinancemain");
@@ -2991,7 +3001,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/***
-	 * Method to get the finassetValue for the comparison with teh current asset value in the odMaintenance
+	 * Method to get the finassetValue for the comparison with teh current asset
+	 * value in the odMaintenance
 	 */
 	@Override
 	public BigDecimal getFinAssetValue(String finReference) {
@@ -3575,10 +3586,12 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, FinAssetValue, FinCurrAssetValue, FinCcy");
-		sql.append(" from FinanceMain");
-		sql.append(" WHERE  FinType = ? And (ClosingStatus is null or ClosingStatus <> ?)");
-		sql.append(" And FinApprovedDate >= ? And FinApprovedDate <= ?");
+		sql.append(
+				" fm.FinReference, fm.FinAssetValue, fm.FinCurrAssetValue, fm.FinCcy, fm.FinBranch, fm.FinType, e.EntityCode");
+		sql.append(" from FinanceMain fm,SMTDivisionDetail e");
+		sql.append(" inner join  RMTFinanceTypes ft on e.DivisionCode = ft.FinDivision and ft.FinType= ?");
+		sql.append(" WHERE  fm.FinType = ? And (ClosingStatus is null or ClosingStatus <> ?)");
+		sql.append(" And fm.FinApprovedDate >= ? And fm.FinApprovedDate <= ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -3587,6 +3600,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
 					int index = 1;
+					ps.setString(index++, finType);
 					ps.setString(index++, finType);
 					ps.setString(index++, "C");
 					ps.setDate(index++, JdbcUtil.getDate(finApprovalStartDate));
@@ -3601,6 +3615,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
 					fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
 					fm.setFinCcy(rs.getString("FinCcy"));
+					fm.setFinBranch(rs.getString("FinBranch"));
+					fm.setFinType(rs.getString("FinType"));
+					fm.setEntityCode(rs.getString("EntityCode"));
 
 					return fm;
 				}
@@ -3709,13 +3726,19 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		// Fields Required based on source data
 		/*
 		 * //Planned EMI selectSql.
-		 * append(" PlanEMIHAlw, PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz," );
+		 * append(" PlanEMIHAlw, PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz,"
+		 * );
 		 * 
-		 * //Unplanned EMI selectSql. append(" UnPlanEMIHLockPeriod , UnPlanEMICpz, MaxUnplannedEmi, ");
+		 * //Unplanned EMI selectSql.
+		 * append(" UnPlanEMIHLockPeriod , UnPlanEMICpz, MaxUnplannedEmi, ");
 		 * 
-		 * //Reage selectSql. append(" ReAgeCpz, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, " );
+		 * //Reage selectSql.
+		 * append(" ReAgeCpz, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, "
+		 * );
 		 * 
-		 * //Drolpline Loan selectSql. append("DroppingMethod, DroplineFrq,FirstDroplineDate,PftServicingODLimit, " );
+		 * //Drolpline Loan selectSql.
+		 * append("DroppingMethod, DroplineFrq,FirstDroplineDate,PftServicingODLimit, "
+		 * );
 		 */
 
 		selectSql.append(" From FinanceMain");
@@ -5985,7 +6008,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
 			fm.setCpzAtGraceEnd(rs.getBoolean("CpzAtGraceEnd"));
 			fm.setDownPayment(rs.getBigDecimal("DownPayment"));
-			//fm.setGraceFlatAmount(rs.getBigDecimal("GraceFlatAmount")); //(Not available in Bean)
+			// fm.setGraceFlatAmount(rs.getBigDecimal("GraceFlatAmount"));
+			// //(Not available in Bean)
 			fm.setReqRepayAmount(rs.getBigDecimal("ReqRepayAmount"));
 			fm.setTotalProfit(rs.getBigDecimal("TotalProfit"));
 			fm.setTotalCpz(rs.getBigDecimal("TotalCpz"));
@@ -6131,7 +6155,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setFinStsReason(rs.getString("FinStsReason"));
 				fm.setConnector(rs.getLong("Connector"));
 				fm.setSamplingRequired(rs.getBoolean("samplingRequired"));
-				//fm.setLimitApproved(rs.getString("LimitApproved"));  //(Not available in Bean)
+				// fm.setLimitApproved(rs.getString("LimitApproved")); //(Not
+				// available in Bean)
 				fm.setNextUserId(rs.getString("NextUserId"));
 				fm.setVanCode(rs.getString("VanCode"));
 				fm.setFinLimitRef(rs.getString("FinLimitRef"));
@@ -6140,7 +6165,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setDdaReferenceNo(rs.getString("DdaReferenceNo"));
 				fm.setAvailedUnPlanEmi(rs.getInt("AvailedUnPlanEmi"));
 				fm.setLegalRequired(rs.getBoolean("legalRequired"));
-				//fm.setCreditInsAmt(rs.getBigDecimal("CreditInsAmt"));  //(Not available in Bean)
+				// fm.setCreditInsAmt(rs.getBigDecimal("CreditInsAmt")); //(Not
+				// available in Bean)
 				fm.setBlacklisted(rs.getBoolean("Blacklisted"));
 				fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
 				fm.setFirstDroplineDate(rs.getTimestamp("FirstDroplineDate"));
@@ -6165,12 +6191,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setUnPlanEMIHLockPeriod(rs.getInt("UnPlanEMIHLockPeriod"));
 				fm.setTdsEndDate(rs.getTimestamp("TdsEndDate"));
 				fm.setPriority(rs.getInt("Priority"));
-				//fm.setDiscrepancy(rs.getString("Discrepancy"));  //(Not available in Bean)
+				// fm.setDiscrepancy(rs.getString("Discrepancy")); //(Not
+				// available in Bean)
 				fm.setDeviationApproval(rs.getBoolean("DeviationApproval"));
 				fm.setScheduleMaintained(rs.getBoolean("ScheduleMaintained"));
 				fm.setFinPurpose(rs.getString("FinPurpose"));
 				fm.setScheduleRegenerated(rs.getBoolean("ScheduleRegenerated"));
-				//fm.setSecurityCollateral(rs.getString("SecurityCollateral")); //(Not available in Bean)
+				// fm.setSecurityCollateral(rs.getString("SecurityCollateral"));
+				// //(Not available in Bean)
 				fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
 				fm.setMaxUnplannedEmi(rs.getInt("MaxUnplannedEmi"));
 				fm.setDsaCode(rs.getString("DsaCode"));
@@ -6202,8 +6230,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				fm.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
-				//fm.setLovDescFinMaxAmt(rs.getBigDecimal("LovDescFinMaxAmt"));  //(Not available in Bean)
-				//	fm.setLovDescFinMinAmount(rs.getBigDecimal("LovDescFinMinAmount")); //(Not available in Bean)
+				// fm.setLovDescFinMaxAmt(rs.getBigDecimal("LovDescFinMaxAmt"));
+				// //(Not available in Bean)
+				// fm.setLovDescFinMinAmount(rs.getBigDecimal("LovDescFinMinAmount"));
+				// //(Not available in Bean)
 				fm.setLovDescFinBranchName(rs.getString("LovDescFinBranchName"));
 
 				if (!wIf) {
@@ -6257,7 +6287,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			//logger.error(Literal.EXCEPTION, e);
+			// logger.error(Literal.EXCEPTION, e);
 		}
 		return null;
 	}
