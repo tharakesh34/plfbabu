@@ -7657,5 +7657,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+		
+	<changeSet id="ST#1008" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table FinExpenseMovements add column LinkedTranId bigint;
+				alter table FinExpenseMovements add column RevLinkedTranId bigint;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
