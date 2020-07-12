@@ -20,4 +20,6 @@ public interface FinanceMaintenanceService {
 	AuditHeader doApprove(AuditHeader aAuditHeader)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException;
 
+	boolean isFinActive(String finReference);
+
 }

@@ -87,6 +87,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 			sql.append(", custcob");
 			sql.append(", custgendercode");
 			sql.append(", c.custcrcpr");
+			sql.append(", c.custsalutationcode");
 			sql.append(", lcm.code legalconstitution");
 			sql.append(", bcm.code businesscategory");
 			sql.append(", cc.custctgtype lovdesccustctgtype");
@@ -132,6 +133,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 					customer.setCustCOB(rs.getString("custcob"));
 					customer.setCustGenderCode(rs.getString("custgendercode"));
 					customer.setCustCRCPR(rs.getString("custcrcpr"));
+					customer.setCustSalutationCode(rs.getString("custsalutationcode"));
 					customer.setLegalconstitution(rs.getString("legalconstitution"));
 					customer.setBusinesscategory(rs.getString("businesscategory"));
 					customer.setLovDescCustCtgType(rs.getString("lovdesccustctgtype"));
@@ -268,6 +270,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		sql.append(", CustAddrLine1");
 		sql.append(", CustAddrLine2");
 		sql.append(", sm.code CustAddrProvince");
+		sql.append(", sm.description LovDescCustAddrProvinceName");
 		sql.append(", CustAddrZIP");
 		sql.append(", CustAddrCountry");
 		sql.append(" from CustomerAddresses ca");
@@ -410,6 +413,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 					finEnqy.setOwnership(rs.getString("OWNERSHIP"));
 					finEnqy.setNumberOfTerms(rs.getInt("NUMBEROFTERMS"));
 					finEnqy.setSvAmount(rs.getBigDecimal("CUSTINCOME"));
+					finEnqy.setMaturityDate(rs.getDate("MATURITYDATE"));
 					return finEnqy;
 				}
 			});

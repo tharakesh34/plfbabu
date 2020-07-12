@@ -13,13 +13,13 @@ import org.apache.commons.lang.StringUtils;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -926,10 +926,17 @@ public class FinanceDataDefaulting {
 
 			//Next Profit Review Date
 			if (isValidOtherFrq && finMain.getNextRepayRvwDate() == null) {
-				Date nextRpyRvwDate = FrequencyUtil
-						.getNextDate(finMain.getRepayRvwFrq(), 1, finMain.getCalGrcEndDate(),
-								HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
-						.getNextFrequencyDate();
+				Date nextRpyRvwDate = null;
+				if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+					nextRpyRvwDate = FrequencyUtil.getNextDate(finMain.getRepayRvwFrq(), 1, finMain.getCalGrcEndDate(),
+							HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
+				} else {
+					nextRpyRvwDate = FrequencyUtil
+							.getNextDate(finMain.getRepayRvwFrq(), 1, finMain.getCalGrcEndDate(),
+									HolidayHandlerTypes.MOVE_NONE, false, 0)
+							.getNextFrequencyDate();
+				}
+
 				nextRpyRvwDate = DateUtility
 						.getDBDate(DateUtility.format(nextRpyRvwDate, PennantConstants.DBDateFormat));
 

@@ -6779,10 +6779,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//
 				this.gracePftRvwFrq.setDisabled(checked ? isReadOnly("FinanceMainDialog_gracePftRvwFrq") : true);
 				if (this.allowGrace.isChecked()) {
-					this.nextGrcPftRvwDate_two.setValue(FrequencyUtil
-							.getNextDate(this.gracePftRvwFrq.getValue(), 1, this.finStartDate.getValue(),
-									HolidayHandlerTypes.MOVE_NONE, false, finType.getFddLockPeriod())
-							.getNextFrequencyDate());
+					if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+						this.nextGrcPftRvwDate_two.setValue(FrequencyUtil
+								.getNextDate(this.gracePftRvwFrq.getValue(), 1, this.finStartDate.getValue(),
+										HolidayHandlerTypes.MOVE_NONE, false, finType.getFddLockPeriod())
+								.getNextFrequencyDate());
+					} else {
+						this.nextGrcPftRvwDate_two.setValue(FrequencyUtil.getNextDate(this.gracePftRvwFrq.getValue(), 1,
+								this.finStartDate.getValue(), HolidayHandlerTypes.MOVE_NONE, false, 0)
+								.getNextFrequencyDate());
+					}
 					if (this.nextGrcPftRvwDate_two.getValue() != null
 							&& this.nextGrcPftRvwDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
 						this.nextGrcPftRvwDate_two.setValue(this.gracePeriodEndDate_two.getValue());
@@ -10951,8 +10957,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			financeMain.setRepayRvwFrq(finRvwFrq);
 		}
 		if (StringUtils.isNotEmpty(finRvwFrq) && FrequencyUtil.validateFrequency(finRvwFrq) == null) {
-			financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(finRvwFrq, 1, financeMain.getFinStartDate(), "A",
-					false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+			if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+				financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(finRvwFrq, 1, financeMain.getFinStartDate(),
+						"A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+			} else {
+				financeMain.setNextRepayRvwDate(
+						FrequencyUtil.getNextDate(finRvwFrq, 1, financeMain.getFinStartDate(), "A", false, 0)
+								.getNextFrequencyDate());
+			}
 		}
 
 		this.repayRvwFrq.setDisabled(isReadOnly("FinanceMainDialog_repayRvwFrq"));
@@ -10995,8 +11007,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			financeMain.setGrcPftRvwFrq(finGrcRvwFrq);
 		}
 		if (StringUtils.isNotEmpty(finGrcRvwFrq) && FrequencyUtil.validateFrequency(finGrcRvwFrq) == null) {
-			financeMain.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(finGrcRvwFrq, 1, financeMain.getFinStartDate(),
-					"A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+			if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+				financeMain
+						.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(finGrcRvwFrq, 1, financeMain.getFinStartDate(),
+								"A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+			} else {
+				financeMain.setNextGrcPftRvwDate(
+						FrequencyUtil.getNextDate(finGrcRvwFrq, 1, financeMain.getFinStartDate(), "A", false, 0)
+								.getNextFrequencyDate());
+			}
 		}
 
 		this.gracePftRvwFrq.setDisabled(isReadOnly("FinanceMainDialog_gracePftRvwFrq"));
@@ -12231,14 +12250,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Date financeDate = null;
 
 		try {
-			if (isBranchanged || StringUtils.isBlank(this.finReference.getValue())) {
+			if (isBranchanged) {
+				if (financeType.isFinIsGenRef()) {
+					this.finReference
+							.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain, financeType)));
+				} else if (StringUtils.isBlank(this.finReference.getValue())) {
+					this.finReference
+							.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain, financeType)));
+				}
+				isBranchanged = false;
+			} else if (StringUtils.isBlank(this.finReference.getValue())) {
 				this.finReference
 						.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain, financeType)));
-				isBranchanged = false;
 			}
+
 			aFinanceMain.setFinReference(this.finReference.getValue());
 			aFinanceSchData.setFinReference(this.finReference.getValue());
-
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -13272,10 +13299,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.oldVar_nextRepayPftDate = this.nextRepayPftDate_two.getValue();
 				}
 				if (StringUtils.isNotEmpty(this.repayRvwFrq.getValue())) {
-					this.nextRepayRvwDate_two.setValue(FrequencyUtil
-							.getNextDate(this.repayRvwFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
-									HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
-							.getNextFrequencyDate());
+					if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+						this.nextRepayRvwDate_two.setValue(FrequencyUtil
+								.getNextDate(this.repayRvwFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
+										HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+								.getNextFrequencyDate());
+					} else {
+						this.nextRepayRvwDate_two.setValue(FrequencyUtil.getNextDate(this.repayRvwFrq.getValue(), 1,
+								this.gracePeriodEndDate_two.getValue(), HolidayHandlerTypes.MOVE_NONE, false, 0)
+								.getNextFrequencyDate());
+					}
+
 					this.oldVar_nextRepayRvwDate = this.nextRepayRvwDate_two.getValue();
 				}
 			}
@@ -15563,10 +15597,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					&& FrequencyUtil.validateFrequency(this.gracePftRvwFrq.getValue()) == null) {
 
 				if (this.nextGrcPftRvwDate.getValue() == null) {
-					this.nextGrcPftRvwDate_two.setValue(FrequencyUtil
-							.getNextDate(this.gracePftRvwFrq.getValue(), 1, this.finStartDate.getValue(),
-									HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
-							.getNextFrequencyDate());
+					if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+						this.nextGrcPftRvwDate_two.setValue(FrequencyUtil
+								.getNextDate(this.gracePftRvwFrq.getValue(), 1, this.finStartDate.getValue(),
+										HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+								.getNextFrequencyDate());
+					} else {
+						this.nextGrcPftRvwDate_two.setValue(FrequencyUtil.getNextDate(this.gracePftRvwFrq.getValue(), 1,
+								this.finStartDate.getValue(), HolidayHandlerTypes.MOVE_NONE, false, 0)
+								.getNextFrequencyDate());
+					}
 				} else {
 					this.nextGrcPftRvwDate_two.setValue(this.nextGrcPftRvwDate.getValue());
 				}
@@ -15988,11 +16028,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 												this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
 										.getNextFrequencyDate());
 			} else {
-				this.nextRepayRvwDate_two.setValue(FrequencyUtil
-						.getNextDate(this.repayRvwFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
-								HolidayHandlerTypes.MOVE_NONE, false,
-								this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
-						.getNextFrequencyDate());
+				if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+					this.nextRepayRvwDate_two.setValue(FrequencyUtil
+							.getNextDate(this.repayRvwFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
+									HolidayHandlerTypes.MOVE_NONE, false,
+									this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
+							.getNextFrequencyDate());
+				} else {
+					this.nextRepayRvwDate_two.setValue(FrequencyUtil.getNextDate(this.repayRvwFrq.getValue(), 1,
+							this.gracePeriodEndDate_two.getValue(), HolidayHandlerTypes.MOVE_NONE, false, 0)
+							.getNextFrequencyDate());
+				}
 			}
 		}
 		if (this.nextRepayRvwDate.getValue() != null) {

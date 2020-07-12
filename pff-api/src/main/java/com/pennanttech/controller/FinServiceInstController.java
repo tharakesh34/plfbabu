@@ -2103,11 +2103,18 @@ public class FinServiceInstController extends SummaryDetailService {
 					financeMain.getGrcPeriodEndDate(), HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod)
 					.getNextFrequencyDate());
 
-			financeMain.setNextRepayRvwDate(FrequencyUtil
-					.getNextDate(finScheduleData.getFinanceMain().getRepayRvwFrq(), 1,
-							financeMain.getGrcPeriodEndDate(), HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod)
-					.getNextFrequencyDate());
-
+			if ((fddLockPeriod != 0) && !ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+				financeMain.setNextRepayRvwDate(FrequencyUtil
+						.getNextDate(finScheduleData.getFinanceMain().getRepayRvwFrq(), 1,
+								financeMain.getGrcPeriodEndDate(), HolidayHandlerTypes.MOVE_NONE, false, 0)
+						.getNextFrequencyDate());
+			} else {
+				financeMain.setNextRepayRvwDate(FrequencyUtil
+						.getNextDate(finScheduleData.getFinanceMain().getRepayRvwFrq(), 1,
+								financeMain.getGrcPeriodEndDate(), HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod)
+						.getNextFrequencyDate());
+			}
+			
 			financeMain.setNextRepayPftDate(FrequencyUtil
 					.getNextDate(finScheduleData.getFinanceMain().getRepayPftFrq(), 1,
 							financeMain.getGrcPeriodEndDate(), HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod)

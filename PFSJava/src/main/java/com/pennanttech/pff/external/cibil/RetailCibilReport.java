@@ -484,7 +484,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 			cell.setCellValue(DateUtil.format(finance.getLatestRpyDate(), DATE_FORMAT));
 
 			/* Date Closed */
-			row.createCell(40);
+			cell = row.createCell(40);
+			cell.setCellValue(DateUtil.format(finance.getMaturityDate(), DATE_FORMAT));
 
 			/* Date Reported */
 			cell = row.createCell(41);

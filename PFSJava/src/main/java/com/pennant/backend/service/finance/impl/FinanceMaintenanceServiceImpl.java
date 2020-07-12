@@ -511,6 +511,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		logger.debug("Leaving");
 		return auditHeader;
 	}
+	@Override
+	public boolean isFinActive(String finReference){
+		return getFinanceMainDAO().isFinActive(finReference);
+		
+	}
 
 	private List<AuditDetail> setGuarantorDetailAuditData(FinanceDetail financeDetail, String auditTranType,
 			String method) {

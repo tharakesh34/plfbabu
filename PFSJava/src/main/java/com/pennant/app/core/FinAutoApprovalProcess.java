@@ -46,6 +46,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -412,6 +413,10 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 			fddLockPeriod = 0;
 		}
 
+		if (!ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+			fddLockPeriod = 0;
+		}
+
 		// grace period details
 		if (financeMain.isAllowGrcPeriod()) {
 
@@ -438,8 +443,16 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 				Date baseDate = DateUtility.addDays(financeMain.getFinStartDate(), rateDetail.getLockingPeriod());
 
 				// Next Grace profit Review Date
-				financeMain.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(financeMain.getGrcPftRvwFrq(), 1, baseDate,
-						HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+				if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+					financeMain
+							.setNextGrcPftRvwDate(FrequencyUtil
+									.getNextDate(financeMain.getGrcPftRvwFrq(), 1, baseDate,
+											HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+									.getNextFrequencyDate());
+				} else {
+					financeMain.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(financeMain.getGrcPftRvwFrq(), 1,
+							baseDate, HolidayHandlerTypes.MOVE_NONE, false, 0).getNextFrequencyDate());
+				}
 				financeMain.setNextGrcPftRvwDate(DateUtility
 						.getDate(DateUtility.format(financeMain.getNextGrcPftRvwDate(), PennantConstants.dateFormat)));
 				if (financeMain.getNextGrcPftRvwDate().after(financeMain.getGrcPeriodEndDate())) {

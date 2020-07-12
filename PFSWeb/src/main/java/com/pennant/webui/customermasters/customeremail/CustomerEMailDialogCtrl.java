@@ -452,7 +452,8 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		}
 
 		try {
-			aCustomerEMail.setCustEMail(this.custEMail.getValue());
+			aCustomerEMail.setCustEMail(StringUtils.trimToEmpty(this.custEMail.getValue()));
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

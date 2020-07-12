@@ -53,6 +53,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.FrequencyDetails;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
@@ -65,6 +66,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class ScheduleGenerator {
@@ -208,6 +210,8 @@ public class ScheduleGenerator {
 			newSchdAfter = newGraceEnd;
 			financeMain.setEventFromDate(newSchdAfter);
 		}
+
+		newSchdAfter = newGraceEnd;
 
 		FinanceScheduleDetail prvSchdGrcEnd = null;
 		boolean repayRateReset = false;
@@ -410,8 +414,19 @@ public class ScheduleGenerator {
 		Date evtFromDate = finMain.getEventFromDate();
 		Date evtToDate = finMain.getEventToDate();
 
-		scheduleData = getSchedule(scheduleData, frequency, evtFromDate, evtToDate, CalculationConstants.SCHDFLAG_RVW,
-				false);
+		if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+
+			Date fddLockPeriodDate = DateUtility.addDays(evtFromDate, scheduleData.getFinanceType().getFddLockPeriod());
+			fddLockPeriodDate = DateUtility.addDays(fddLockPeriodDate, 1);
+
+			boolean isFrqDate = FrequencyUtil.isFrqDate(frequency, fddLockPeriodDate);
+
+			scheduleData = getSchedule(scheduleData, frequency, fddLockPeriodDate, evtToDate,
+					CalculationConstants.SCHDFLAG_RVW, false, isFrqDate);
+		} else {
+			scheduleData = getSchedule(scheduleData, frequency, evtFromDate, evtToDate,
+					CalculationConstants.SCHDFLAG_RVW, false, true);
+		}
 
 		List<Date> schdDateKeyList = new ArrayList<Date>(scheduleData.getScheduleMap().keySet());
 		Collections.sort(schdDateKeyList);
@@ -594,20 +609,20 @@ public class ScheduleGenerator {
 
 			// Load Grace period profit dates
 			finScheduleData = getSchedule(finScheduleData, financeMain.getGrcPftFrq(), financeMain.getNextGrcPftDate(),
-					financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_PFT, false);
+					financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_PFT, false, true);
 
 			// Load Grace period profit review dates
 			if (financeMain.isAllowGrcPftRvw()) {
 				finScheduleData = getSchedule(finScheduleData, financeMain.getGrcPftRvwFrq(),
 						financeMain.getNextGrcPftRvwDate(), financeMain.getGrcPeriodEndDate(),
-						CalculationConstants.SCHDFLAG_RVW, false);
+						CalculationConstants.SCHDFLAG_RVW, false, true);
 			}
 
 			// Load Grace period capitalization dates
 			if (financeMain.isAllowGrcCpz()) {
 				finScheduleData = getSchedule(finScheduleData, financeMain.getGrcCpzFrq(),
 						financeMain.getNextGrcCpzDate(), financeMain.getGrcPeriodEndDate(),
-						CalculationConstants.SCHDFLAG_CPZ, false);
+						CalculationConstants.SCHDFLAG_CPZ, false, true);
 			}
 		}
 
@@ -642,24 +657,24 @@ public class ScheduleGenerator {
 		// Load Repay profit dates
 		if (StringUtils.isNotBlank(financeMain.getRepayPftFrq())) {
 			finScheduleData = getSchedule(finScheduleData, financeMain.getRepayPftFrq(),
-					financeMain.getNextRepayPftDate(), derivedMDT, CalculationConstants.SCHDFLAG_PFT, false);
+					financeMain.getNextRepayPftDate(), derivedMDT, CalculationConstants.SCHDFLAG_PFT, false, true);
 		}
 
 		// Load Repay profit review dates
 		if (financeMain.isAllowRepayRvw()) {
 			finScheduleData = getSchedule(finScheduleData, financeMain.getRepayRvwFrq(),
-					financeMain.getNextRepayRvwDate(), derivedMDT, CalculationConstants.SCHDFLAG_RVW, false);
+					financeMain.getNextRepayRvwDate(), derivedMDT, CalculationConstants.SCHDFLAG_RVW, false, true);
 		}
 
 		// Load Repay capitalize dates
 		if (financeMain.isAllowRepayCpz()) {
 			finScheduleData = getSchedule(finScheduleData, financeMain.getRepayCpzFrq(),
-					financeMain.getNextRepayCpzDate(), derivedMDT, CalculationConstants.SCHDFLAG_CPZ, false);
+					financeMain.getNextRepayCpzDate(), derivedMDT, CalculationConstants.SCHDFLAG_CPZ, false, true);
 		}
 
 		// Load Repayment dates
 		finScheduleData = getSchedule(finScheduleData, financeMain.getRepayFrq(), financeMain.getNextRepayDate(),
-				derivedMDT, CalculationConstants.SCHDFLAG_RPY, false);
+				derivedMDT, CalculationConstants.SCHDFLAG_RPY, false, true);
 
 		finScheduleData.setFinanceMain(financeMain);
 
@@ -674,18 +689,18 @@ public class ScheduleGenerator {
 
 		// Load Grace period profit dates
 		finScheduleData = getSchedule(finScheduleData, financeMain.getGrcPftFrq(), newSchdAfter,
-				financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_PFT, false);
+				financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_PFT, false, true);
 
 		// Load Grace period profit review dates
 		if (financeMain.isAllowGrcPftRvw()) {
 			finScheduleData = getSchedule(finScheduleData, financeMain.getGrcPftRvwFrq(), newSchdAfter,
-					financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_RVW, true);
+					financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_RVW, true, true);
 		}
 
 		// Load Grace period capitalization dates
 		if (financeMain.isAllowGrcCpz()) {
 			finScheduleData = getSchedule(finScheduleData, financeMain.getGrcCpzFrq(), newSchdAfter,
-					financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_CPZ, true);
+					financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_CPZ, true, true);
 		}
 
 		// To Check schedule date is found with grace period end date
@@ -707,26 +722,26 @@ public class ScheduleGenerator {
 		if (StringUtils.isNotBlank(financeMain.getRepayPftFrq())) {
 			finScheduleData = getSchedule(finScheduleData, financeMain.getRepayPftFrq(),
 					financeMain.getNextRepayPftDate(), financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_PFT,
-					false);
+					false, true);
 		}
 
 		// Load Repay profit review dates
 		if (financeMain.isAllowRepayRvw()) {
 			finScheduleData = getSchedule(finScheduleData, financeMain.getRepayRvwFrq(),
 					financeMain.getNextRepayRvwDate(), financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RVW,
-					false);
+					false, true);
 		}
 
 		// Load Repay capitalize dates
 		if (financeMain.isAllowRepayCpz()) {
 			finScheduleData = getSchedule(finScheduleData, financeMain.getRepayCpzFrq(),
 					financeMain.getNextRepayCpzDate(), financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_CPZ,
-					false);
+					false, true);
 		}
 
 		// Load Repayment dates
 		finScheduleData = getSchedule(finScheduleData, financeMain.getRepayFrq(), financeMain.getNextRepayDate(),
-				financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RPY, false);
+				financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RPY, false, true);
 
 		finScheduleData.setFinanceMain(financeMain);
 
@@ -774,24 +789,24 @@ public class ScheduleGenerator {
 
 			// Load Grace period profit dates
 			finScheduleData = getSchedule(finScheduleData, serviceInst.getGrcPftFrq(), grcStartDate,
-					financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_PFT, false);
+					financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_PFT, false, true);
 
 			// Load Repayment dates during grace period
 			if (financeMain.isAllowGrcRepay()) {
 				finScheduleData = getSchedule(finScheduleData, serviceInst.getGrcPftFrq(), grcStartDate,
-						financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_RPY, false);
+						financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_RPY, false, true);
 			}
 
 			// Load Grace period profit review dates
 			if (financeMain.isAllowGrcPftRvw()) {
 				finScheduleData = getSchedule(finScheduleData, serviceInst.getGrcRvwFrq(), grcStartDate,
-						financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_RVW, false);
+						financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_RVW, false, true);
 			}
 
 			// Load Grace period capitalization dates
 			if (financeMain.isAllowGrcCpz()) {
 				finScheduleData = getSchedule(finScheduleData, serviceInst.getGrcCpzFrq(), grcStartDate,
-						financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_CPZ, false);
+						financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_CPZ, false, true);
 			}
 
 			// To Check schedule date is found with grace period end date
@@ -843,7 +858,7 @@ public class ScheduleGenerator {
 			recalFrom = DateUtility.getDBDate(DateUtility.format(recalFrom, PennantConstants.DBDateFormat));
 
 			finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayPftFrq(), recalFrom,
-					financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_PFT, false);
+					financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_PFT, false, true);
 		}
 
 		// Load Repay profit review dates
@@ -869,11 +884,11 @@ public class ScheduleGenerator {
 				recalFrom = DateUtility.getDBDate(DateUtility.format(recalFrom, PennantConstants.DBDateFormat));
 
 				finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayRvwFrq(), recalFrom,
-						financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RVW, false);
+						financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RVW, false, true);
 			} else {
 
 				finScheduleData = getSchedule(finScheduleData, financeMain.getRepayRvwFrq(), startCalFrom,
-						financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RVW, false);
+						financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RVW, false, true);
 			}
 		}
 
@@ -897,12 +912,12 @@ public class ScheduleGenerator {
 			recalFrom = DateUtility.getDBDate(DateUtility.format(recalFrom, PennantConstants.DBDateFormat));
 
 			finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayCpzFrq(), recalFrom,
-					financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_CPZ, false);
+					financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_CPZ, false, true);
 		}
 
 		// Load Repayment dates
 		finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayFrq(), rpyStartDate,
-				financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RPY, false);
+				financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RPY, false, true);
 
 		finScheduleData.setFinanceMain(financeMain);
 
@@ -945,13 +960,14 @@ public class ScheduleGenerator {
 	}
 
 	private static FinScheduleData getSchedule(FinScheduleData finScheduleData, String frequency, Date startDate,
-			Date endDate, int scheduleFlag, boolean reCheckFlags) {
+			Date endDate, int scheduleFlag, boolean reCheckFlags, boolean includeStartDate) {
 		logger.debug("Entering");
 
 		//TODO: As of now reCheckFlags code is incorporated only for capitalizations. The same can be incorporated on need basis
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		FrequencyDetails frequencyDetails = FrequencyUtil.getTerms(frequency, startDate, endDate, true, true);
+		FrequencyDetails frequencyDetails = FrequencyUtil.getTerms(frequency, startDate, endDate, includeStartDate,
+				true);
 
 		if (frequencyDetails.getErrorDetails() != null) {
 			logger.warn("Schedule Error: on condition --->  Validate frequency:" + frequency);

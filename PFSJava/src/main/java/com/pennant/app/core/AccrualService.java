@@ -607,6 +607,7 @@ public class AccrualService extends ServiceHelper {
 	private static boolean isHoliday(String bpiOrHoliday) {
 		if (StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_HOLIDAY)
 				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_POSTPONE)
+				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_MORTEMIHOLIDAY)
 				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_UNPLANNED)) {
 			return true;
 		} else {

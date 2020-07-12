@@ -76,6 +76,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -2066,16 +2067,17 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		boolean isNew = false;
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		if (this.userAction.getSelectedItem() != null) {
-			if ("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-					|| "Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-					|| this.userAction.getSelectedItem().getLabel().contains("Reject")
-					|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")
-					|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
+		Radio selectedUserAction = this.userAction.getSelectedItem();
+		if (selectedUserAction != null) {
+			if ("Save".equalsIgnoreCase(selectedUserAction.getLabel())
+					|| "Cancel".equalsIgnoreCase(selectedUserAction.getLabel())
+					|| selectedUserAction.getLabel().contains("Reject")
+					|| selectedUserAction.getLabel().contains("Resubmit")
+					|| selectedUserAction.getLabel().contains("Decline")) {
 				recSave = true;
 				aFinanceDetail.setActionSave(true);
 			}
-			aFinanceDetail.setUserAction(this.userAction.getSelectedItem().getLabel());
+			aFinanceDetail.setUserAction(selectedUserAction.getLabel());
 		}
 
 		aFinanceDetail.setAccountingEventCode(eventCode);
@@ -2090,6 +2092,21 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// force validation, if on, than execute by component.getValue()
 		// fill the financeMain object with the components data
 		doWriteComponentsToBean(aFinanceDetail);
+
+		if (selectedUserAction != null) {
+			if (!("Cancel".equalsIgnoreCase(selectedUserAction.getLabel())
+					|| selectedUserAction.getLabel().contains("Reject")
+					|| selectedUserAction.getLabel().contains("Resubmit")
+					|| selectedUserAction.getLabel().contains("Decline"))) {
+
+				boolean isActive = getFinanceMaintenanceService().isFinActive(aFinanceMain.getFinReference());
+				if (!isActive) {
+					MessageUtil
+							.showError("Loan is in inactive state. Please check and cancel the basic details action.");
+					return;
+				}
+			}
+		}
 
 		// Extended Fields
 		if (aFinanceDetail.getExtendedFieldHeader() != null) {
@@ -2332,7 +2349,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				Clients.showNotification(msg, "info", null, null, -1);
 
 				// Mail Alert Notification for Customer/Dealer/Provider...etc
-				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+				if (!"Save".equalsIgnoreCase(selectedUserAction.getLabel())) {
 
 					FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 					Notification notification = new Notification();

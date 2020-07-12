@@ -4417,6 +4417,7 @@ public class ScheduleCalculator {
 			if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)
 					|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_POSTPONE)
 					|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_REAGE)
+					|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_MORTEMIHOLIDAY)
 					|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_UNPLANNED)) {
 				curSchd.setProfitSchd(curSchd.getSchdPftPaid());
 				curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
@@ -4681,9 +4682,7 @@ public class ScheduleCalculator {
 							}
 							curSchd.setProfitCalc(calInt);
 							BigDecimal newProfit = prvSchd.getProfitBalance().add(curSchd.getProfitCalc());
-							if (!cpzPOSIntact) {
-								newProfit = newProfit.subtract(prvSchd.getCpzAmount());
-							}
+							newProfit = newProfit.subtract(prvSchd.getCpzAmount()).add(prvSchd.getCpzBalance());
 							curSchd.setProfitSchd(newProfit);
 
 							curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
@@ -4728,6 +4727,7 @@ public class ScheduleCalculator {
 							|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_POSTPONE)
 							|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_REAGE)
 							|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_STRTPRDHLD)
+							|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_MORTEMIHOLIDAY)
 							|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_UNPLANNED)) {
 
 						curSchd.setProfitSchd(curSchd.getSchdPftPaid());
@@ -4883,6 +4883,7 @@ public class ScheduleCalculator {
 					|| FinanceConstants.FLAG_POSTPONE.equals(bpiOrHoliday)
 					|| FinanceConstants.FLAG_REAGE.equals(bpiOrHoliday)
 					|| FinanceConstants.FLAG_STRTPRDHLD.equals(bpiOrHoliday)
+					|| FinanceConstants.FLAG_MORTEMIHOLIDAY.equals(bpiOrHoliday)
 					|| FinanceConstants.FLAG_UNPLANNED.equals(bpiOrHoliday)) {
 				curSchd.setProfitSchd(curSchd.getSchdPftPaid());
 				curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
@@ -5287,13 +5288,8 @@ public class ScheduleCalculator {
 
 		BigDecimal profitBalance = BigDecimal.ZERO;
 
-		if (cpzPOSIntact) {
-			profitBalance = prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(curSchd.getProfitSchd());
-		} else {
-			profitBalance = prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(prvSchd.getCpzAmount())
-					.subtract(curSchd.getProfitSchd());
-		}
-
+		profitBalance = prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(prvSchd.getCpzAmount())
+				.add(prvSchd.getCpzBalance()).subtract(curSchd.getProfitSchd());
 		return profitBalance;
 	}
 
@@ -5314,10 +5310,9 @@ public class ScheduleCalculator {
 			closingBal = closingBal.subtract(curSchd.getPrincipalSchd());
 		}
 
-		if (!cpzPOSIntact) {
+		if (!cpzPOSIntact || StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_MORTEMIHOLIDAY)) {
 			closingBal = closingBal.add(curSchd.getCpzAmount());
 		}
-
 		return closingBal;
 	}
 
@@ -5352,10 +5347,7 @@ public class ScheduleCalculator {
 				newProfit = curSchd.getProfitSchd();
 			} else {
 				newProfit = prvSchd.getProfitBalance().add(curSchd.getProfitCalc());
-
-				if (!cpzPOSIntact) {
-					newProfit = newProfit.subtract(prvSchd.getCpzAmount());
-				}
+				newProfit = newProfit.subtract(prvSchd.getCpzAmount()).add(prvSchd.getCpzBalance());
 
 				if (curSchd.getProfitSchd().compareTo(newProfit) > 0) {
 					curSchd.setPrincipalSchd(
@@ -5369,10 +5361,7 @@ public class ScheduleCalculator {
 				newProfit = curSchd.getProfitSchd();
 			} else {
 				newProfit = prvSchd.getProfitBalance().add(curSchd.getProfitCalc());
-
-				if (!cpzPOSIntact) {
-					newProfit = newProfit.subtract(prvSchd.getCpzAmount());
-				}
+				newProfit = newProfit.subtract(prvSchd.getCpzAmount()).add(prvSchd.getCpzBalance());
 			}
 		}
 
@@ -6242,6 +6231,8 @@ public class ScheduleCalculator {
 				} else {
 					instAmt = presentValue.divide(BigDecimal.valueOf(terms), 0, RoundingMode.HALF_DOWN);
 				}
+				instAmt = CalculationUtil.roundAmount(instAmt, finMain.getCalRoundingMode(),
+						finMain.getRoundingTarget());
 			}
 
 			Date startFrom = finMain.getNextRepayPftDate();
@@ -7417,6 +7408,7 @@ public class ScheduleCalculator {
 				if (FinanceConstants.FLAG_HOLIDAY.equals(bpiOrHoliday)
 						|| FinanceConstants.FLAG_POSTPONE.equals(bpiOrHoliday)
 						|| FinanceConstants.FLAG_STRTPRDHLD.equals(bpiOrHoliday)
+						|| FinanceConstants.FLAG_MORTEMIHOLIDAY.equals(bpiOrHoliday)
 						|| FinanceConstants.FLAG_UNPLANNED.equals(bpiOrHoliday)) {
 
 					if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(receiptPurpose)) {
@@ -9047,15 +9039,14 @@ public class ScheduleCalculator {
 			if (ImplementationConstants.DFT_CPZ_RESET_ON_RECAL_LOCK || curSchd.isRecalLock()) {
 				// Do Nothing
 			} else {
-				if (cpzResetReq) {
-					curSchd.setCpzAmount(curSchd.getProfitBalance());
-				}
-				if (cpzPOSIntact) {
-					curSchd.setCpzBalance(curSchd.getCpzAmount());
+				curSchd.setCpzAmount(curSchd.getProfitBalance());
+				if (!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_MORTEMIHOLIDAY)) {
+					curSchd.setCpzBalance(curSchd.getProfitBalance());
+				} else {
+					curSchd.setCpzBalance(BigDecimal.ZERO);
 				}
 			}
-
-		} else {
+		} else if (!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_MORTEMIHOLIDAY)) {
 
 			// Resetting Capitalize amount in cae Capitalize Not exists
 			curSchd.setCpzAmount(BigDecimal.ZERO);
@@ -9080,6 +9071,8 @@ public class ScheduleCalculator {
 			} else {
 				curSchd.setCpzBalance(BigDecimal.ZERO);
 			}
+		} else {
+			curSchd.setCpzBalance(BigDecimal.ZERO);
 		}
 
 		if (curSchd.getCpzBalance().compareTo(BigDecimal.ZERO) < 0) {

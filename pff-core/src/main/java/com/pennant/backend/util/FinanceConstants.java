@@ -346,6 +346,7 @@ public class FinanceConstants {
 	public static final String FLAG_30DAYS_FIXED = "Z";
 	public static final String FLAG_GLMINPFT = "M";
 	public static final String FLAG_STRTPRDHLD = "E";
+	public static final String FLAG_MORTEMIHOLIDAY = "X";
 
 	// Recording Fee Type
 	public static final String RECFEETYPE_CASH = "Cash";

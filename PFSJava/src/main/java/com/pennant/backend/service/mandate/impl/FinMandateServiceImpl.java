@@ -476,6 +476,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	private boolean isHoliday(String bpiOrHoliday, String bpiTreatment) {
 		if (StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_HOLIDAY)
 				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_POSTPONE)
+				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_MORTEMIHOLIDAY)
 				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_UNPLANNED)
 				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_BPI)) {
 

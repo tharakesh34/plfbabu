@@ -112,8 +112,8 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 					.getFinStepDetailListByFinRef(finScheduleData.getFinReference(), "", false));
 		}
 
-		financeMain.setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		financeMain.setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+		//financeMain.setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		//financeMain.setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 		finSchData = ScheduleCalculator.addDisbursement(finScheduleData, amount, addFeeFinance, alwAssetUtilize);
 
 		// Plan EMI Holidays Resetting after Add Disbursement

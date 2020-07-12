@@ -1929,7 +1929,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 
-		if (StringUtils.isBlank(frequency)) {
+		if (StringUtils.isBlank(frequency) || StringUtils.equals(baseRate, finServiceInst.getBaseRate())) {
 			if (resetByOldRate) {
 				setRatesOnSchedule(oldRateSchd, finScheduleData, finServiceInst);
 			}
@@ -1946,7 +1946,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			// Setting Rates between From date and To date
 			if (DateUtility.compare(schdDate, evtFromDate) >= 0 && DateUtility.compare(schdDate, evtToDate) <= 0) {
-				if (curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate() || curSchd.isCpzOnSchDate()) {
+				if (curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate() || curSchd.isCpzOnSchDate()
+						|| curSchd.isDisbOnSchDate()) {
 					curSchd.setRvwOnSchDate(false);
 					schdMap.put(schdDate, curSchd);
 
@@ -1990,6 +1991,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		finScheduleData.setScheduleMap(schdMap);
+		frequency = resetFrqByEventDate(frequency, evtFromDate);
 		finScheduleData = ScheduleGenerator.setRvwDatesOnRateFrq(finScheduleData, frequency);
 		sortSchdDetails(finScheduleData.getFinanceScheduleDetails());
 		if (resetByOldRate) {
@@ -1997,6 +1999,38 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		return finScheduleData;
+	}
+
+	private String resetFrqByEventDate(String frequency, Date eventFromDate) {
+
+		String mnth = "";
+		String frqCode = FrequencyUtil.getFrequencyCode(frequency);
+
+		if (FrequencyCodeTypes.FRQ_QUARTERLY.equals(frqCode) || FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(frqCode)
+				|| FrequencyCodeTypes.FRQ_BIMONTHLY.equals(frqCode)) {
+			mnth = FrequencyUtil.getMonthFrqValue(
+					DateUtility.format(eventFromDate, PennantConstants.DBDateFormat).split("-")[1], frqCode);
+		} else if (FrequencyCodeTypes.FRQ_YEARLY.equals(frqCode) || FrequencyCodeTypes.FRQ_2YEARLY.equals(frqCode)
+				|| FrequencyCodeTypes.FRQ_3YEARLY.equals(frqCode)) {
+			mnth = DateUtility.format(eventFromDate, PennantConstants.DBDateFormat).split("-")[1];
+		} else {
+			mnth = "00";
+		}
+		mnth = frqCode.concat(mnth);
+
+		String day = StringUtils.substring(frequency, 3, 5);
+		//day = DateUtility.format(eventFromDate, PennantConstants.DBDateFormat).split("-")[2];
+
+		if (FrequencyCodeTypes.FRQ_DAILY.equals(frqCode)) {
+			day = "00";
+		} else if (FrequencyCodeTypes.FRQ_WEEKLY.equals(frqCode)) {
+			day = StringUtils.leftPad(String.valueOf(Integer.parseInt(day) % 7), 2, "0");
+		} else if (FrequencyCodeTypes.FRQ_FORTNIGHTLY.equals(frqCode)) {
+			day = StringUtils.leftPad(String.valueOf(Integer.parseInt(day) % 14), 2, "0");
+		}
+		frequency = mnth.concat(day);
+
+		return frequency;
 	}
 
 	private void setRatesOnSchedule(FinanceScheduleDetail oldRateSchd, FinScheduleData scheduleData,

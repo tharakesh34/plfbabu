@@ -27,6 +27,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
@@ -622,8 +623,17 @@ public class ExtFinanceUploadService {
 		if (finType.isFinIsRvwAlw()) {
 			financeMain.setAllowRepayRvw(finType.isFinIsRvwAlw());
 			financeMain.setRepayRvwFrq(finType.getFinRvwFrq());
-			financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(financeMain.getRepayRvwFrq(), 1,
-					financeMain.getGrcPeriodEndDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
+
+			if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+				financeMain.setNextRepayRvwDate(
+						FrequencyUtil.getNextDate(financeMain.getRepayRvwFrq(), 1, financeMain.getGrcPeriodEndDate(),
+								"A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
+			} else {
+				financeMain.setNextRepayRvwDate(FrequencyUtil
+						.getNextDate(financeMain.getRepayRvwFrq(), 1, financeMain.getGrcPeriodEndDate(), "A", false, 0)
+						.getNextFrequencyDate());
+			}
+
 			financeMain.setNextRepayRvwDate(DateUtility
 					.getDate(DateUtility.format(financeMain.getNextRepayRvwDate(), PennantConstants.dateFormat)));
 		} else {
@@ -751,8 +761,15 @@ public class ExtFinanceUploadService {
 			financeMain.setGrcPftRvwFrq(finType.getFinGrcRvwFrq());
 
 			// Next Grace profit Review Date
-			financeMain.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(financeMain.getGrcPftRvwFrq(), 1,
-					financeMain.getFinStartDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
+			if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+				financeMain.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(financeMain.getGrcPftRvwFrq(), 1,
+						financeMain.getFinStartDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
+			} else {
+				financeMain.setNextGrcPftRvwDate(FrequencyUtil
+						.getNextDate(financeMain.getGrcPftRvwFrq(), 1, financeMain.getFinStartDate(), "A", false, 0)
+						.getNextFrequencyDate());
+			}
+
 			financeMain.setNextGrcPftRvwDate(DateUtility
 					.getDate(DateUtility.format(financeMain.getNextGrcPftRvwDate(), PennantConstants.dateFormat)));
 			if (financeMain.getNextGrcPftRvwDate().after(financeMain.getGrcPeriodEndDate())) {
@@ -1062,8 +1079,17 @@ public class ExtFinanceUploadService {
 		if (finType.isFinIsRvwAlw()) {
 			financeMain.setAllowRepayRvw(finType.isFinIsRvwAlw());
 			financeMain.setRepayRvwFrq(finType.getFinRvwFrq());
-			financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(financeMain.getRepayRvwFrq(), 1,
-					financeMain.getGrcPeriodEndDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
+
+			if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+				financeMain.setNextRepayRvwDate(
+						FrequencyUtil.getNextDate(financeMain.getRepayRvwFrq(), 1, financeMain.getGrcPeriodEndDate(),
+								"A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
+			} else {
+				financeMain.setNextRepayRvwDate(FrequencyUtil
+						.getNextDate(financeMain.getRepayRvwFrq(), 1, financeMain.getGrcPeriodEndDate(), "A", false, 0)
+						.getNextFrequencyDate());
+			}
+
 			financeMain.setNextRepayRvwDate(DateUtility
 					.getDate(DateUtility.format(financeMain.getNextRepayRvwDate(), PennantConstants.dateFormat)));
 		} else {

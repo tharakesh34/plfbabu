@@ -52,7 +52,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 
@@ -121,8 +122,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> implements FeeWaiverHeaderService {
-
-	private static Logger logger = Logger.getLogger(FeeWaiverHeaderServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(FeeWaiverHeaderServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FeeWaiverHeaderDAO feeWaiverHeaderDAO;
@@ -835,6 +835,26 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 			if (!financeMain.isFinIsActive()) {
 				financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
+				financeDetail = allocateWaiverToSchduleDetails(feeWaiverHeader, financeDetail, aeEvent, true);
+				isSchdUpdated = true;
+			}
+		}
+
+		// Loan Status Modifications
+		if (isSchdUpdated && financeDetail != null) {
+
+			// Profit Details
+			FinanceProfitDetail pftDetail = profitDetailsDAO.getFinProfitDetailsById(finReference);
+
+			// Overdue Details
+			List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(finReference);
+
+			financeMain = repayPostingUtil.updateStatus(financeMain, SysParamUtil.getAppDate(),
+					financeDetail.getFinScheduleData().getFinanceScheduleDetails(), pftDetail, overdueList, null,
+					false);
+
+			if (!financeMain.isFinIsActive()) {
+				financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
 			}
 		}
 		logger.debug("Leaving");
@@ -1098,7 +1118,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				schDetail.setSchdPftPaid(schDetail.getSchdPftPaid().add(profitBal));
 				schDetail.setSchPftPaid(true);
 
-				BigDecimal tds = curwaivedAmt.multiply(tdsPerc);
+				BigDecimal tds = profitBal.multiply(tdsPerc);
 				tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
 				tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
 

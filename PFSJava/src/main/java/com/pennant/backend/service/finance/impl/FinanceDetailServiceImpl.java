@@ -11455,9 +11455,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeMain.setGrcPftRvwFrq(financeType.getFinGrcRvwFrq());
 			if (StringUtils.isNotEmpty(financeType.getFinGrcRvwFrq())
 					&& FrequencyUtil.validateFrequency(financeType.getFinGrcRvwFrq()) == null) {
-				financeMain.setNextGrcPftRvwDate(
-						FrequencyUtil.getNextDate(financeType.getFinGrcRvwFrq(), 1, financeMain.getFinStartDate(), "A",
-								false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+				if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+					financeMain.setNextGrcPftRvwDate(
+							FrequencyUtil.getNextDate(financeType.getFinGrcRvwFrq(), 1, financeMain.getFinStartDate(),
+									"A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+				} else {
+					financeMain.setNextGrcPftRvwDate(FrequencyUtil
+							.getNextDate(financeType.getFinGrcRvwFrq(), 1, financeMain.getFinStartDate(), "A", false, 0)
+							.getNextFrequencyDate());
+				}
 			}
 			financeMain.setAllowGrcCpz(financeType.isFinGrcIsIntCpz());
 			financeMain.setGrcCpzFrq(financeType.getFinGrcCpzFrq());
@@ -11491,9 +11497,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			if (StringUtils.isNotEmpty(finGrcRvwFrq) && FrequencyUtil.validateFrequency(finGrcRvwFrq) == null) {
-				financeMain
-						.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(finGrcRvwFrq, 1, financeMain.getFinStartDate(),
-								"A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+				if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+					financeMain.setNextGrcPftRvwDate(
+							FrequencyUtil.getNextDate(finGrcRvwFrq, 1, financeMain.getFinStartDate(), "A", false,
+									financeType.getFddLockPeriod()).getNextFrequencyDate());
+				} else {
+					financeMain.setNextGrcPftRvwDate(
+							FrequencyUtil.getNextDate(finGrcRvwFrq, 1, financeMain.getFinStartDate(), "A", false, 0)
+									.getNextFrequencyDate());
+				}
 			}
 
 			financeMain.setAllowGrcCpz(financeType.isFinGrcIsIntCpz());
@@ -11563,8 +11575,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeMain.setRateChgAnyDay(financeType.isRateChgAnyDay());
 
 		if (StringUtils.isNotEmpty(finRvwFrq) && FrequencyUtil.validateFrequency(finRvwFrq) == null) {
-			financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(finRvwFrq, 1, financeMain.getFinStartDate(), "A",
-					false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+			if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+				financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(finRvwFrq, 1, financeMain.getFinStartDate(), "A",
+						false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+			} else {
+				financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(finRvwFrq, 1, financeMain.getFinStartDate(), "A",
+						false, 0).getNextFrequencyDate());
+			}
 		}
 
 		financeMain.setAllowRepayCpz(financeType.isFinIsIntCpz());

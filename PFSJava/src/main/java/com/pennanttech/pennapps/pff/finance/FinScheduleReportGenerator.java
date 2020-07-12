@@ -319,6 +319,8 @@ public class FinScheduleReportGenerator {
 					label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
 				} else if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_UNPLANNED)) {
 					label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+				} else if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_MORTEMIHOLIDAY)) {
+					label = Labels.getLabel("label_listcell_MortEMIHoliday.label");
 				} else if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_REAGE)) {
 					label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 				}

@@ -20,9 +20,11 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.northconcepts.datapipeline.core.Record;
 import com.northconcepts.datapipeline.csv.CSVWriter;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -433,7 +435,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				/* Borrower Office DUNS Number */
 				addField(record, "999999999");
 
-				setAddressDetails(address, phoneList, record);
+				setAddressDetails(address, phoneList, record, false);
 
 				writer.write(record);
 			}
@@ -954,7 +956,15 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				/* Account Status */
 				if (StringUtils.isEmpty(closingstatus)) {
 					addField(record, "01");
+				} else if ("M".equals(closingstatus)) {
+					addField(record, "02");
+				} else if ("C".equals(closingstatus)) {
+					addField(record, "03");
+				} else if ("E".equals(closingstatus)) {
+					addField(record, "03");
 				} else if ("W".equals(closingstatus)) {
+					addField(record, "05");
+				} else {
 					addField(record, "05");
 				}
 
@@ -1086,19 +1096,22 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				if (guarantorType == 1 || guarantorType == 3) {
 					addField(record, customer.getBusinesscategory());
 				} else {
-					addField(record, "");
+					addField(record, "07");
 				}
 
 				/* Business /Industry Type */
 				if (guarantorType == 1 || guarantorType == 3) {
 					addField(record, customer.getCustIndustry());
 				} else {
-					addField(record, "");
+					addField(record, "11");
 				}
 
-				/* Guarantor Entity Name */
+				/* Guarantor Pan */
+				addField(record, customer.getCustCRCPR());
+
+				/* Guarantor Name */
 				if (guarantorType == 1 || guarantorType == 3) {
-					addField(record, "");
+					addField(record, customer.getCustShrtName());
 				} else {
 					addField(record, "");
 				}
@@ -1110,7 +1123,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 							|| title.equalsIgnoreCase("Dr")) {
 						addField(record, title);
 					} else {
-						addField(record, "");
+						addField(record, title);
 					}
 				} else {
 					addField(record, "");
@@ -1138,141 +1151,9 @@ public class CorporateCibilReport extends BasicDao<Object> {
 					addField(record, "");
 				}
 
-				/* Gender */
-				if (guarantorType == 2 || guarantorType == 4) {
-					if ("M".equals(customer.getCustGenderCode())) {
-						addField(record, "01");
-					} else if ("F".equals(customer.getCustGenderCode())) {
-						addField(record, "01");
-					} else {
-						addField(record, "");
-					}
-				} else {
-					addField(record, "");
-				}
-
-				/* Company Registration number */
-				if (guarantorType == 1 || guarantorType == 3) {
-					addField(record, customer.getCustTradeLicenceNum());
-				} else {
-					addField(record, "");
-				}
-
-				/* Date of Incorporation */
-				if (guarantorType == 1 || guarantorType == 3) {
-					addField(record, DateUtil.format(customer.getCustDOB(), DATE_FORMAT));
-				} else {
-					addField(record, "");
-				}
-
-				/* Date of Birth */
-				if (guarantorType == 2 || guarantorType == 4) {
-					addField(record, DateUtil.format(customer.getCustDOB(), DATE_FORMAT));
-				} else {
-					addField(record, "");
-				}
-
-				String pan = null;
-				String voterId = null;
-				String passPortNumber = null;
-				String drivingLicenceId = null;
-				String uid = null;
-				String rationCardNo = null;
-				String corporateIdNum = null;
-				String directorIdNumber = null;
-				String taxIdNumber = null;
-				String serviceTax = null;
-
-				String docCategory;
-				for (CustomerDocument document : documents) {
-					docCategory = document.getCustDocCategory();
-
-					if (StringUtils.equals(docCategory, MasterDefUtil.getDocCode(DocType.PAN))) {
-						pan = document.getCustDocTitle();
-					} else if (StringUtils.equals(docCategory, MasterDefUtil.getDocCode(DocType.VOTER_ID))) {
-						voterId = document.getCustDocTitle();
-					} else if (StringUtils.equals(docCategory, MasterDefUtil.getDocCode(DocType.PASSPORT))) {
-						passPortNumber = document.getCustDocTitle();
-					} else if (StringUtils.equals(docCategory, MasterDefUtil.getDocCode(DocType.DRIVING_LICENCE))) {
-						drivingLicenceId = document.getCustDocTitle();
-					} else if (StringUtils.equals(docCategory, MasterDefUtil.getDocCode(DocType.AADHAAR))) {
-						uid = document.getCustDocTitle();
-					} else if (StringUtils.equals(docCategory, MasterDefUtil.getDocCode(DocType.RATION_CARD))) {
-						rationCardNo = document.getCustDocTitle();
-					} else if (StringUtils.equals(docCategory, MasterDefUtil.getDocCode(DocType.CORPORATE_ID_NUMBER))) {
-						corporateIdNum = document.getCustDocTitle();
-					} else if (StringUtils.equals(docCategory,
-							MasterDefUtil.getDocCode(DocType.DIRECTOR_IDENTIFICATION_NUMBER))) {
-						directorIdNumber = document.getCustDocTitle();
-					} else if (StringUtils.equals(docCategory,
-							MasterDefUtil.getDocCode(DocType.TAX_IDENTIFICATION_NUMBER))) {
-						taxIdNumber = document.getCustDocTitle();
-					} else if (StringUtils.equals(docCategory, MasterDefUtil.getDocCode(DocType.SERVICE_TAX_REG_NO))) {
-						serviceTax = document.getCustDocTitle();
-					}
-				}
-
-				/* pan */
-				if (pan == null) {
-					pan = customer.getCustCRCPR();
-				}
-				addField(record, pan);
-
-				/* VoterId */
-				if (guarantorType == 2 || guarantorType == 4) {
-					addField(record, voterId);
-				} else {
-					addField(record, "");
-				}
-
-				/* passport Number */
-				if (guarantorType == 2 || guarantorType == 4) {
-					addField(record, passPortNumber);
-				} else {
-					addField(record, "");
-				}
-
-				/* Driving Licence ID */
-				if (guarantorType == 2 || guarantorType == 4) {
-					addField(record, drivingLicenceId);
-				} else {
-					addField(record, "");
-				}
-
-				/* UID */
-				if (guarantorType == 2 || guarantorType == 4) {
-					addField(record, uid);
-				} else {
-					addField(record, "");
-				}
-
-				/* Ration Card No */
-				if (guarantorType == 2 || guarantorType == 4) {
-					addField(record, rationCardNo);
-				} else {
-					addField(record, "");
-				}
-
-				/* CIN */
-				addField(record, corporateIdNum);
-
-				/* DIN */
-				if (guarantorType == 2 || guarantorType == 4) {
-					addField(record, directorIdNumber);
-				} else {
-					addField(record, "");
-				}
-
-				/* TIN */
-				addField(record, taxIdNumber);
-
-				/* Service Tax */
-				addField(record, serviceTax);
-
-				/* Other ID */
-				addField(record, "");
-
+				/* Address */
 				CustomerAddres custAddress = null;
+
 				for (CustomerAddres addres : addressList) {
 					if (StringUtils.equals(String.valueOf(addres.getCustAddrPriority()),
 							PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
@@ -1282,10 +1163,16 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				}
 
 				if (custAddress == null) {
+					for (CustomerAddres addres : addressList) {
+						custAddress = addres;
+					}
+				}
+
+				if (custAddress == null) {
 					custAddress = new CustomerAddres();
 				}
 
-				setAddressDetails(custAddress, customerPhoneNumbers, record);
+				setAddressDetails(custAddress, customerPhoneNumbers, record, true);
 
 				/* Filler */
 				addField(record, "");
@@ -1461,7 +1348,9 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		return amount == null ? BigDecimal.ZERO : amount;
 	}
 
-	private void setAddressDetails(CustomerAddres address, List<CustomerPhoneNumber> phoneList, Record record) {
+	private void setAddressDetails(CustomerAddres address, List<CustomerPhoneNumber> phoneList, Record record,
+			boolean isGuarantor) {
+
 		/* Address Line 1 */
 		addField(record, StringUtils.trimToNull(address.getCustAddrHNbr()));
 
@@ -1478,13 +1367,22 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		addField(record, address.getCustDistrict());
 
 		/* State/Union Territory */
+
 		addField(record, address.getCustAddrProvince());
 
 		/* Pin Code */
 		addField(record, address.getCustAddrZIP());
 
 		/* Country */
-		addField(record, "079");
+		if (isGuarantor) {
+			if ("INR".equals(SysParamUtil.getAppCurrency())) {
+				addField(record, "INDIA");
+			} else {
+				addField(record, CurrencyUtil.getCcyDesc(SysParamUtil.getAppCurrency()));
+			}
+		} else {
+			addField(record, "079");
+		}
 
 		CustomerPhoneNumber customerPhoneNumber = null;
 		for (CustomerPhoneNumber custPhNo : phoneList) {
