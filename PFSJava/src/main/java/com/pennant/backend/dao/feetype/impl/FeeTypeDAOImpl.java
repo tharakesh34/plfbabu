@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.feetype.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -349,28 +351,41 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	 */
 	@Override
 	public FeeType getTaxDetailByCode(final String feeTypeCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		FeeType feeType = new FeeType();
-		feeType.setFeeTypeCode(feeTypeCode);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" TaxComponent, TaxApplicable, AmortzReq, AccountSetId");
+		sql.append(", FeeTypeCode, FeeTypeDesc, Refundable");
+		sql.append(" From FeeTypes");
+		sql.append(" Where FeeTypeCode = ?");
 
-		StringBuilder selectSql = new StringBuilder(
-				" Select TaxComponent, TaxApplicable, AmortzReq, AccountSetId, FeeTypeCode, FeeTypeDesc,refundable");
-		selectSql.append(" From FeeTypes Where FeeTypeCode = :FeeTypeCode");
-
-		logger.debug("sql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
-		RowMapper<FeeType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeType.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			feeType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { feeTypeCode },
+					new RowMapper<FeeType>() {
+
+						@Override
+						public FeeType mapRow(ResultSet rs, int arg1) throws SQLException {
+							FeeType f = new FeeType();
+
+							f.setTaxComponent(rs.getString("TaxComponent"));
+							f.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+							f.setAmortzReq(rs.getBoolean("AmortzReq"));
+							f.setAccountSetId(rs.getLong("AccountSetId"));
+							f.setFeeTypeCode(rs.getString("FeeTypeCode"));
+							f.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+							f.setrefundable(rs.getBoolean("Refundable"));
+
+							return f;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			feeType = null;
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
-		logger.debug("Leaving");
-		return feeType;
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	@Override

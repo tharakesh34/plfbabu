@@ -688,9 +688,6 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	public void doSave() {
 		logger.debug(Literal.ENTERING);
 
-		List<Long> includeList = new ArrayList<>();
-		List<Long> excludeList = new ArrayList<>();
-
 		final PresentmentHeader aPresentmentHeader = new PresentmentHeader();
 		BeanUtils.copyProperties(this.presentmentHeader, aPresentmentHeader);
 
@@ -710,15 +707,17 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		}
 
 		if ("Approve".equals(userAction)) {
-			excludeList = this.presentmentDetailService
+			List<Long> excludeList = this.presentmentDetailService
 					.getExcludePresentmentDetailIdList(this.presentmentHeader.getId(), true);
+			aPresentmentHeader.setExcludeList(excludeList);
 		}
 
+		aPresentmentHeader.setPartnerBankId(partnerBankId);
+		aPresentmentHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
+		aPresentmentHeader.setUserAction(userAction);
+
 		try {
-			boolean isPDC = MandateConstants.TYPE_PDC.equals(aPresentmentHeader.getMandateType());
-			this.presentmentDetailService.updatePresentmentDetails(excludeList, includeList, userAction,
-					aPresentmentHeader.getId(), partnerBankId, getUserWorkspace().getLoggedInUser(), isPDC,
-					presentmentHeader.getReference(), presentmentHeader.getPartnerAcctNumber());
+			this.presentmentDetailService.updatePresentmentDetails(aPresentmentHeader);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);

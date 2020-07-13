@@ -59,10 +59,6 @@ public interface PresentmentDetailService {
 	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove,
 			String type);
 
-	void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction, long presentmentId,
-			long partnerBankId, LoggedInUser loggedInUser, boolean isPDC, String presentmentRef,
-			String partnerBankAccNum) throws Exception;
-
 	PresentmentDetail presentmentCancellation(String presentmentRef, String bounceCode) throws Exception;
 
 	void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId,
@@ -75,8 +71,6 @@ public interface PresentmentDetailService {
 	void updateFinanceDetails(String presentmentRef);
 
 	long getSeqNumber(String tableNme);
-
-	void processReceipts(PresentmentDetail detail, LoggedInUser userDetails) throws Exception;
 
 	String getPaymenyMode(String presentmentRef);
 
@@ -104,4 +98,6 @@ public interface PresentmentDetailService {
 	List<Long> getIncludeList(long id);
 
 	List<Long> getExcludeList(long id);
+
+	void updatePresentmentDetails(PresentmentHeader presentmentHeader);
 }

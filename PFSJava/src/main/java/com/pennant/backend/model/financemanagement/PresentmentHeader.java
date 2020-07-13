@@ -43,7 +43,9 @@
 package com.pennant.backend.model.financemanagement;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -108,6 +110,13 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	private PresentmentHeader befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	private List<Long> includeList = new ArrayList<>();
+	private List<Long> excludeList = new ArrayList<>();
+
+	public PresentmentHeader(long id) {
+		super();
+		this.setId(id);
+	}
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -115,11 +124,6 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	public PresentmentHeader() {
 		super();
-	}
-
-	public PresentmentHeader(long id) {
-		super();
-		this.setId(id);
 	}
 
 	public String getReference() {
@@ -390,6 +394,22 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	public void setEmandateSource(String emandateSource) {
 		this.emandateSource = emandateSource;
+	}
+
+	public List<Long> getIncludeList() {
+		return includeList;
+	}
+
+	public void setIncludeList(List<Long> includeList) {
+		this.includeList = includeList;
+	}
+
+	public List<Long> getExcludeList() {
+		return excludeList;
+	}
+
+	public void setExcludeList(List<Long> excludeList) {
+		this.excludeList = excludeList;
 	}
 
 }

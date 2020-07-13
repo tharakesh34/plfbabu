@@ -80,6 +80,7 @@ public class PresentmentJobService extends AbstractInterface {
 
 		try {
 			logger.info("Presentment Extraction Process Started...... ");
+
 			presentmentDetailService.savePresentmentDetails(header); // extraction
 			List<PresentmentHeader> headerList = presentmentDetailService.getPresenmentHeaderList(header.getFromDate(),
 					header.getToDate(), RepayConstants.PEXC_EXTRACT);
@@ -87,33 +88,43 @@ public class PresentmentJobService extends AbstractInterface {
 
 			for (PresentmentHeader presentmentHeader : headerList) {
 				long id = presentmentHeader.getId();
+
 				List<Long> includeList = presentmentDetailService.getIncludeList(id);
+				presentmentHeader.setIncludeList(includeList);
+
 				logger.info("No of Records in Include List  : {}", includeList.size());
 
+				boolean searchIncludeList = presentmentDetailService.searchIncludeList(id, 0);
+
+				if (!searchIncludeList) {
+					logger.info("No Records are there to Create Presentment Batch : {}", includeList.size());
+					return;
+				}
+
 				List<Long> excludeList = presentmentDetailService.getExcludeList(id);
+				presentmentHeader.setExcludeList(excludeList);
+
 				logger.info("No of Records in Exclude List  : {}", excludeList.size());
 
 				Presentment partnerBank = getPartnerBankId(presentmentHeader.getLoanType());
-				boolean isPDC = presentmentHeader.getMandateType().equals(MandateConstants.TYPE_PDC);
-				boolean searchIncludeList = presentmentDetailService.searchIncludeList(id, 0);
 
-				if (searchIncludeList) {
-					logger.info("Presentment Batch Creation Process Started...... ");
-					long partnerBankId = partnerBank.getPartnerBankId();
-					String reference = presentmentHeader.getReference();
-					String accountNo = partnerBank.getAccountNo();
+				logger.info("Presentment Batch Creation Process Started...... ");
 
-					presentmentDetailService.updatePresentmentDetails(excludeList, includeList, STATUS_SUBMIT, id,
-							partnerBankId, loggedInUser, isPDC, reference, accountNo); // Presentment batch creation
-					logger.info("No of Presentment Records Created  : {}", includeList.size());
+				presentmentHeader.setPartnerAcctNumber(partnerBank.getAccountNo());
+				presentmentHeader.setPartnerBankId(partnerBank.getPartnerBankId());
+				presentmentHeader.setUserDetails(loggedInUser);
 
-					logger.info("Presentment Batch Approval Process...... ");
-					presentmentDetailService.updatePresentmentDetails(excludeList, includeList, STATUS_APPROVE, id,
-							partnerBankId, loggedInUser, isPDC, reference, accountNo); // Presentment batch approval
-					logger.info("No of Presentment Records Approved  : {}", includeList.size());
-				} else {
-					logger.info("No Records are there to Create Presentment Batch : {}", includeList.size());
-				}
+				presentmentHeader.setUserAction(STATUS_SUBMIT);
+				presentmentDetailService.updatePresentmentDetails(presentmentHeader);
+
+				logger.info("No of Presentment Records Created  : {}", includeList.size());
+
+				logger.info("Presentment Batch Approval Process...... ");
+
+				presentmentHeader.setUserAction(STATUS_APPROVE);
+				presentmentDetailService.updatePresentmentDetails(presentmentHeader);
+				logger.info("No of Presentment Records Approved  : {}", includeList.size());
+
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -394,24 +405,23 @@ public class PresentmentJobService extends AbstractInterface {
 
 	public Presentment getPartnerBankId(String finType) {
 		logger.debug(Literal.ENTERING);
-		StringBuilder sql = null;
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("PartnerBankID, AccountNo");
+		sql.append(" From PresentmentPartnerBank");
+		sql.append(" Where FinType = ?");
 		try {
-			sql = new StringBuilder("Select partnerbankid, accountno ");
-			sql.append("from  presentmentpartnerbank where fintype = :finType ");
+			return namedJdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { finType },
+					new RowMapper<Presentment>() {
+						@Override
+						public Presentment mapRow(ResultSet rs, int rowNum) throws SQLException {
+							Presentment p = new Presentment();
+							p.setPartnerBankId(rs.getLong("PartnerBankID"));
+							p.setAccountNo(rs.getString("AccountNo"));
+							return p;
+						}
 
-			MapSqlParameterSource source = new MapSqlParameterSource();
-			source.addValue("finType", finType);
-
-			return namedJdbcTemplate.queryForObject(sql.toString(), source, new RowMapper<Presentment>() {
-
-				@Override
-				public Presentment mapRow(ResultSet rs, int rowNum) throws SQLException {
-					Presentment presentment = new Presentment();
-					presentment.setPartnerBankId(rs.getLong("partnerbankid"));
-					presentment.setAccountNo(rs.getString("accountno"));
-					return presentment;
-				}
-			});
+					});
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

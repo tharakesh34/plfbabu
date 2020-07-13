@@ -95,4 +95,6 @@ public interface FinanceTypeDAO {
 	List<FinanceType> getAutoRejectionDays();
 
 	String getFinTypeByReference(String finref);
+
+	String getRepayHierarchy(String finType);
 }

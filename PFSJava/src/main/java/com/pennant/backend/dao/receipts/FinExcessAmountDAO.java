@@ -7,6 +7,7 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 
 public interface FinExcessAmountDAO {
 
@@ -74,4 +75,5 @@ public interface FinExcessAmountDAO {
 
 	FinExcessAmount getFinExcessAmount(String finreference, long receiptId);
 
+	void batchUpdateExcessAmount(List<PresentmentDetail> presentmentDetails);
 }

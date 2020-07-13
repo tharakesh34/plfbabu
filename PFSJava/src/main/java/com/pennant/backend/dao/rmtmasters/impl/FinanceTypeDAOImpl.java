@@ -89,83 +89,303 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 */
 	@Override
 	public FinanceType getFinanceTypeByID(final String id, String type) {
-		logger.debug("Entering");
-		FinanceType financeType = new FinanceType();
-		financeType.setId(id);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder(
-				"SELECT FinType, Product,FinCategory, FinTypeDesc, FinCcy, FinDaysCalType,");
-		sql.append(" FinAcType, FinContingentAcType, FinBankContingentAcType, FinProvisionAcType,FinSuspAcType,");
-		sql.append(" FinIsGenRef, FinMaxAmount, FinMinAmount,FinIsOpenNewFinAc, FinDftStmtFrq,FinIsAlwMD, ");
-		sql.append(" FinSchdMthd, FInIsAlwGrace,FinHistRetension, EqualRepayment, SchdOnPMTCal, FinRateType, ");
-		sql.append(" FinBaseRate,FinSplRate,FinIntRate, FInMinRate, FinMaxRate, FinDftIntFrq,  FinIsIntCpz,");
-		sql.append(" FinCpzFrq,  FinIsRvwAlw, FinRvwFrq,  FinGrcRateType, FinGrcBaseRate,");
-		sql.append(" FinGrcSplRate, FinGrcIntRate, FInGrcMinRate, FinGrcMaxRate,FinGrcDftIntFrq,");
-		sql.append(" FinGrcIsIntCpz, FinGrcCpzFrq, FinGrcIsRvwAlw, FinGrcRvwFrq, FinMinTerm,");
-		sql.append(" FinMaxTerm, FinDftTerms, FinRpyFrq,  finRepayMethod, FinIsAlwPartialRpy,");
-		sql.append(" FinIsAlwDifferment,FinMaxDifferment, FinIsAlwEarlyRpy, FinIsAlwEarlySettle,");
-		sql.append(" FinODRpyTries, AlwPlanDeferment,PlanDeferCount ,");
-		sql.append(
-				" FinIsDwPayRequired,  FinRvwRateApplFor, FinAlwRateChangeAnyDate, FinIsIntCpzAtGrcEnd, FinIsRateRvwAtGrcEnd,");
-		sql.append(
-				" FinSchCalCodeOnRvw, FinAssetType , FinDepositRestrictedTo,FinAEBuyOrInception,FinAESellOrMaturity,FinIsActive,PftPayAcType,");
-		sql.append(" FinIsOpenPftPayAcc,FinGrcSchdMthd,FinIsAlwGrcRepay,FinMargin,FinGrcMargin,");
-		sql.append(" FinScheduleOn,FinGrcScheduleOn,FinCommitmentReq,FinCollateralReq,");
-		sql.append(" FinDepreciationReq,FinDepreciationFrq, ");
-		sql.append(" AllowRIAInvestment , OverrideLimit , LimitRequired ,");
-		sql.append(" FinCommitmentOvrride , FinCollateralOvrride ,FinRepayPftOnFrq, FinPftUnChanged,ManualSchedule, ");
-		sql.append(
-				" ApplyODPenalty , ODIncGrcDays , ODChargeType , ODGraceDays , ODChargeCalOn , ODChargeAmtOrPerc , ODAllowWaiver , ODMaxWaiverPerc, ODMinCapAmount, ODMinCapAmount, FinDivision, ");
-		sql.append(
-				" StepFinance , SteppingMandatory , AlwManualSteps , AlwdStepPolicies, DftStepPolicy, StartDate, EndDate,");
-		sql.append(" AllowDownpayPgm,Remarks,AlwEarlyPayMethods,");
-		sql.append(" PastduePftCalMthd,PastduePftMargin,AlwAdvanceRent,");
-		sql.append(
-				" GrcAdvBaseRate , GrcAdvMargin , GrcAdvPftRate, RpyAdvBaseRate , RpyAdvMargin , RpyAdvPftRate, RollOverFinance,RollOverFrq,");
-		sql.append(" DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb, TdsApplicable, CollateralType, ");
-		sql.append(
-				" ApplyGrcPricing, GrcPricingMethod, ApplyRpyPricing, RpyPricingMethod, RpyHierarchy, DroplineOD, DroppingMethod ,RateChgAnyDay, ");
-		sql.append(
-				" AlwBPI , BpiTreatment , PftDueSchOn , PlanEMIHAlw , AlwPlannedEmiInGrc , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , ");
-		sql.append(
-				" PlanEMIHLockPeriod , PlanEMICpz , UnPlanEMIHLockPeriod , UnPlanEMICpz , ReAgeCpz, FddLockPeriod, AlwdRpyMethods,AlwReage,AlwUnPlanEmiHoliday, ");
-		sql.append(
-				" MaxUnplannedEmi, MaxReAgeHolidays, RoundingMode, RoundingTarget, FrequencyDays,alwMaxDisbCheckReq,quickDisb,AutoApprove, ProfitCenterID, ProductCategory, DeveloperFinance, CostOfFunds,");
-		sql.append(
-				" chequeCaptureReq, FinLTVCheck, PartiallySecured, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode, AlwZeroIntAcc,");
-		sql.append(" AutoRejectionDays, TaxNoMand, PutCallRequired");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinType, Product, FinCategory, FinTypeDesc, FinCcy, FinDaysCalType, FinAcType");
+		sql.append(", FinContingentAcType, FinBankContingentAcType, FinProvisionAcType, FinSuspAcType");
+		sql.append(", FinIsGenRef, FinMaxAmount, FinMinAmount, FinIsOpenNewFinAc, FinDftStmtFrq, FinIsAlwMD");
+		sql.append(", FinSchdMthd, FInIsAlwGrace, FinHistRetension, EqualRepayment, SchdOnPMTCal, FinRateType");
+		sql.append(", FinBaseRate, FinSplRate, FinIntRate, FInMinRate, FinMaxRate, FinDftIntFrq, FinIsIntCpz");
+		sql.append(", FinCpzFrq, FinIsRvwAlw, FinRvwFrq, FinGrcRateType, FinGrcBaseRate, FinGrcSplRate");
+		sql.append(", FinGrcIntRate, FInGrcMinRate, FinGrcMaxRate, FinGrcDftIntFrq, FinGrcIsIntCpz");
+		sql.append(", FinGrcCpzFrq, FinGrcIsRvwAlw, FinGrcRvwFrq, FinMinTerm, FinMaxTerm, FinDftTerms");
+		sql.append(", FinRpyFrq, FinRepayMethod, FinIsAlwPartialRpy, FinIsAlwDifferment, FinMaxDifferment");
+		sql.append(", FinIsAlwEarlyRpy, FinIsAlwEarlySettle, FinODRpyTries, AlwPlanDeferment, PlanDeferCount");
+		sql.append(", FinIsDwPayRequired, FinRvwRateApplFor, FinAlwRateChangeAnyDate, FinIsIntCpzAtGrcEnd");
+		sql.append(", FinIsRateRvwAtGrcEnd, FinSchCalCodeOnRvw, FinAssetType, FinDepositRestrictedTo");
+		sql.append(", FinAEBuyOrInception, FinAESellOrMaturity, FinIsActive, PftPayAcType, FinIsOpenPftPayAcc");
+		sql.append(", FinGrcSchdMthd, FinIsAlwGrcRepay, FinMargin, FinGrcMargin, FinScheduleOn, FinGrcScheduleOn");
+		sql.append(", FinCommitmentReq, FinCollateralReq, FinDepreciationReq, FinDepreciationFrq, AllowRIAInvestment");
+		sql.append(", OverrideLimit, LimitRequired, FinCommitmentOvrride, FinCollateralOvrride, FinRepayPftOnFrq");
+		sql.append(", FinPftUnChanged, ManualSchedule, ApplyODPenalty, ODIncGrcDays, ODChargeType");
+		sql.append(", ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
+		sql.append(", ODMinCapAmount, ODMinCapAmount, FinDivision, StepFinance, SteppingMandatory");
+		sql.append(", AlwManualSteps, AlwdStepPolicies, DftStepPolicy, StartDate, EndDate, AllowDownpayPgm");
+		sql.append(", Remarks, AlwEarlyPayMethods, PastduePftCalMthd, PastduePftMargin, AlwAdvanceRent");
+		sql.append(", GrcAdvBaseRate, GrcAdvMargin, GrcAdvPftRate, RpyAdvBaseRate, RpyAdvMargin, RpyAdvPftRate");
+		sql.append(", RollOverFinance, RollOverFrq, DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb");
+		sql.append(", TdsApplicable, CollateralType, ApplyGrcPricing, GrcPricingMethod, ApplyRpyPricing");
+		sql.append(", RpyPricingMethod, RpyHierarchy, DroplineOD, DroppingMethod, RateChgAnyDay, AlwBPI");
+		sql.append(", BpiTreatment, PftDueSchOn, PlanEMIHAlw, AlwPlannedEmiInGrc, PlanEMIHMethod, PlanEMIHMaxPerYear");
+		sql.append(", PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz, UnPlanEMIHLockPeriod, UnPlanEMICpz");
+		sql.append(", ReAgeCpz, FddLockPeriod, AlwdRpyMethods, AlwReage, AlwUnPlanEmiHoliday, MaxUnplannedEmi");
+		sql.append(", MaxReAgeHolidays, RoundingMode, RoundingTarget, FrequencyDays, AlwMaxDisbCheckReq");
+		sql.append(", QuickDisb, AutoApprove, ProfitCenterID, ProductCategory, DeveloperFinance, CostOfFunds");
+		sql.append(", ChequeCaptureReq, FinLTVCheck, PartiallySecured, BpiPftDaysBasis, AlwHybridRate");
+		sql.append(", FixedRateTenor, EligibilityMethods, ODRuleCode, AlwZeroIntAcc, AutoRejectionDays");
+		sql.append(", TaxNoMand, PutCallRequired, GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms");
+		sql.append(", GrcAdvDefaultTerms, AdvIntersetReq, AdvType, AdvMaxTerms, AdvMinTerms, AdvDefaultTerms");
+		sql.append(", AdvStage, DsfReq, CashCollateralReq, TdsAllowToModify, TdsApplicableTo, AlwVan");
+		sql.append(", VanAllocationMethod, AllowDrawingPower, AllowRevolving, AlwSanctionAmt");
+		sql.append(", AlwSanctionAmtOverride, SanBsdSchdle");
 
-		sql.append(", GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms, GrcAdvDefaultTerms");
-		sql.append(", AdvIntersetReq, AdvType, AdvMaxTerms, AdvMinTerms, AdvDefaultTerms");
-		sql.append(
-				", AdvStage, DsfReq, CashCollateralReq  , TdsAllowToModify , TdsApplicableTo, AlwVan, VanAllocationMethod, AllowDrawingPower, AllowRevolving, AlwSanctionAmt, AlwSanctionAmtOverride, SanBsdSchdle");
-
-		if (type.contains("View")) {
-			sql.append(
-					", FinCategoryDesc, DownPayRuleCode, DownPayRuleDesc, lovDescFinContingentAcTypeName,lovDescFinBankContAcTypeName,lovDescFinProvisionAcTypeName,lovDescFinAcTypeName");
-			sql.append(
-					", lovDescPftPayAcTypeName, lovDescFinSuspAcTypeName, lovDescFinDivisionName,lovDescPromoFinTypeDesc, ProfitCenterCode, ProfitCenterDesc, LovDescEntityCode ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", FinCategoryDesc, DownPayRuleCode, DownPayRuleDesc, LovDescFinContingentAcTypeName");
+			sql.append(", LovDescFinBankContAcTypeName, LovDescFinProvisionAcTypeName, LovDescFinAcTypeName");
+			sql.append(", LovDescPftPayAcTypeName, LovDescFinSuspAcTypeName, LovDescFinDivisionName");
+			sql.append(", LovDescPromoFinTypeDesc, ProfitcenterCode, ProfitCenterDesc, LovDescEntityCode");
 		}
 
-		sql.append(" , Version, LastMntBy, LastMntOn, RecordStatus");
-		sql.append(" , RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-
-		sql.append(" FROM RMTFinanceTypes");
+		sql.append(", Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From RMTFinanceTypes");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinType = :FinType");
+		sql.append("  Where FinType = ?");
 
-		logger.debug("selectListSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
-		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			financeType = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
+					new RowMapper<FinanceType>() {
+						@Override
+						public FinanceType mapRow(ResultSet rs, int rowNum) throws SQLException {
+							FinanceType ft = new FinanceType();
+
+							ft.setFinType(rs.getString("FinType"));
+							ft.setProduct(rs.getString("Product"));
+							ft.setFinCategory(rs.getString("FinCategory"));
+							ft.setFinTypeDesc(rs.getString("FinTypeDesc"));
+							ft.setFinCcy(rs.getString("FinCcy"));
+							ft.setFinDaysCalType(rs.getString("FinDaysCalType"));
+							ft.setFinAcType(rs.getString("FinAcType"));
+							ft.setFinContingentAcType(rs.getString("FinContingentAcType"));
+							ft.setFinBankContingentAcType(rs.getString("FinBankContingentAcType"));
+							ft.setFinProvisionAcType(rs.getString("FinProvisionAcType"));
+							ft.setFinSuspAcType(rs.getString("FinSuspAcType"));
+							ft.setFinIsGenRef(rs.getBoolean("FinIsGenRef"));
+							ft.setFinMaxAmount(rs.getBigDecimal("FinMaxAmount"));
+							ft.setFinMinAmount(rs.getBigDecimal("FinMinAmount"));
+							ft.setFinIsOpenNewFinAc(rs.getBoolean("FinIsOpenNewFinAc"));
+							ft.setFinDftStmtFrq(rs.getString("FinDftStmtFrq"));
+							ft.setFinIsAlwMD(rs.getBoolean("FinIsAlwMD"));
+							ft.setFinSchdMthd(rs.getString("FinSchdMthd"));
+							ft.setFInIsAlwGrace(rs.getBoolean("FInIsAlwGrace"));
+							ft.setFinHistRetension(rs.getInt("FinHistRetension"));
+							ft.setEqualRepayment(rs.getBoolean("EqualRepayment"));
+							ft.setSchdOnPMTCal(rs.getBoolean("SchdOnPMTCal"));
+							ft.setFinRateType(rs.getString("FinRateType"));
+							ft.setFinBaseRate(rs.getString("FinBaseRate"));
+							ft.setFinSplRate(rs.getString("FinSplRate"));
+							ft.setFinIntRate(rs.getBigDecimal("FinIntRate"));
+							ft.setFInMinRate(rs.getBigDecimal("FInMinRate"));
+							ft.setFinMaxRate(rs.getBigDecimal("FinMaxRate"));
+							ft.setFinDftIntFrq(rs.getString("FinDftIntFrq"));
+							ft.setFinIsIntCpz(rs.getBoolean("FinIsIntCpz"));
+							ft.setFinCpzFrq(rs.getString("FinCpzFrq"));
+							ft.setFinIsRvwAlw(rs.getBoolean("FinIsRvwAlw"));
+							ft.setFinRvwFrq(rs.getString("FinRvwFrq"));
+							ft.setFinGrcRateType(rs.getString("FinGrcRateType"));
+							ft.setFinGrcBaseRate(rs.getString("FinGrcBaseRate"));
+							ft.setFinGrcSplRate(rs.getString("FinGrcSplRate"));
+							ft.setFinGrcIntRate(rs.getBigDecimal("FinGrcIntRate"));
+							ft.setFInGrcMinRate(rs.getBigDecimal("FInGrcMinRate"));
+							ft.setFinGrcMaxRate(rs.getBigDecimal("FinGrcMaxRate"));
+							ft.setFinGrcDftIntFrq(rs.getString("FinGrcDftIntFrq"));
+							ft.setFinGrcIsIntCpz(rs.getBoolean("FinGrcIsIntCpz"));
+							ft.setFinGrcCpzFrq(rs.getString("FinGrcCpzFrq"));
+							ft.setFinGrcIsRvwAlw(rs.getBoolean("FinGrcIsRvwAlw"));
+							ft.setFinGrcRvwFrq(rs.getString("FinGrcRvwFrq"));
+							ft.setFinMinTerm(rs.getInt("FinMinTerm"));
+							ft.setFinMaxTerm(rs.getInt("FinMaxTerm"));
+							ft.setFinDftTerms(rs.getInt("FinDftTerms"));
+							ft.setFinRpyFrq(rs.getString("FinRpyFrq"));
+							ft.setFinRepayMethod(rs.getString("FinRepayMethod"));
+							ft.setFinIsAlwPartialRpy(rs.getBoolean("FinIsAlwPartialRpy"));
+							ft.setFinIsAlwDifferment(rs.getBoolean("FinIsAlwDifferment"));
+							ft.setFinMaxDifferment(rs.getInt("FinMaxDifferment"));
+							ft.setFinIsAlwEarlyRpy(rs.getBoolean("FinIsAlwEarlyRpy"));
+							ft.setFinIsAlwEarlySettle(rs.getBoolean("FinIsAlwEarlySettle"));
+							ft.setFinODRpyTries(rs.getInt("FinODRpyTries"));
+							ft.setAlwPlanDeferment(rs.getBoolean("AlwPlanDeferment"));
+							ft.setPlanDeferCount(rs.getInt("PlanDeferCount"));
+							ft.setFinIsDwPayRequired(rs.getBoolean("FinIsDwPayRequired"));
+							ft.setFinRvwRateApplFor(rs.getString("FinRvwRateApplFor"));
+							ft.setFinAlwRateChangeAnyDate(rs.getBoolean("FinAlwRateChangeAnyDate"));
+							ft.setFinIsIntCpzAtGrcEnd(rs.getBoolean("FinIsIntCpzAtGrcEnd"));
+							ft.setFinIsRateRvwAtGrcEnd(rs.getBoolean("FinIsRateRvwAtGrcEnd"));
+							ft.setFinSchCalCodeOnRvw(rs.getString("FinSchCalCodeOnRvw"));
+							ft.setFinAssetType(rs.getString("FinAssetType"));
+							ft.setFinDepositRestrictedTo(rs.getString("FinDepositRestrictedTo"));
+							ft.setFinAEBuyOrInception(rs.getInt("FinAEBuyOrInception"));
+							ft.setFinAESellOrMaturity(rs.getInt("FinAESellOrMaturity"));
+							ft.setFinIsActive(rs.getBoolean("FinIsActive"));
+							ft.setPftPayAcType(rs.getString("PftPayAcType"));
+							ft.setFinIsOpenPftPayAcc(rs.getBoolean("FinIsOpenPftPayAcc"));
+							ft.setFinGrcSchdMthd(rs.getString("FinGrcSchdMthd"));
+							ft.setFinIsAlwGrcRepay(rs.getBoolean("FinIsAlwGrcRepay"));
+							ft.setFinMargin(rs.getBigDecimal("FinMargin"));
+							ft.setFinGrcMargin(rs.getBigDecimal("FinGrcMargin"));
+							ft.setFinScheduleOn(rs.getString("FinScheduleOn"));
+							ft.setFinGrcScheduleOn(rs.getString("FinGrcScheduleOn"));
+							ft.setFinCommitmentReq(rs.getBoolean("FinCommitmentReq"));
+							ft.setFinCollateralReq(rs.getBoolean("FinCollateralReq"));
+							ft.setFinDepreciationReq(rs.getBoolean("FinDepreciationReq"));
+							ft.setFinDepreciationFrq(rs.getString("FinDepreciationFrq"));
+							ft.setAllowRIAInvestment(rs.getBoolean("AllowRIAInvestment"));
+							ft.setOverrideLimit(rs.getBoolean("OverrideLimit"));
+							ft.setLimitRequired(rs.getBoolean("LimitRequired"));
+							ft.setFinCommitmentOvrride(rs.getBoolean("FinCommitmentOvrride"));
+							ft.setFinCollateralOvrride(rs.getBoolean("FinCollateralOvrride"));
+							ft.setFinRepayPftOnFrq(rs.getBoolean("FinRepayPftOnFrq"));
+							ft.setFinPftUnChanged(rs.getBoolean("FinPftUnChanged"));
+							ft.setManualSchedule(rs.getBoolean("ManualSchedule"));
+							ft.setApplyODPenalty(rs.getBoolean("ApplyODPenalty"));
+							ft.setODIncGrcDays(rs.getBoolean("ODIncGrcDays"));
+							ft.setODChargeType(rs.getString("ODChargeType"));
+							ft.setODGraceDays(rs.getInt("ODGraceDays"));
+							ft.setODChargeCalOn(rs.getString("ODChargeCalOn"));
+							ft.setODChargeAmtOrPerc(rs.getBigDecimal("ODChargeAmtOrPerc"));
+							ft.setODAllowWaiver(rs.getBoolean("ODAllowWaiver"));
+							ft.setODMaxWaiverPerc(rs.getBigDecimal("ODMaxWaiverPerc"));
+							ft.setODMinCapAmount(rs.getBigDecimal("ODMinCapAmount"));
+							ft.setFinDivision(rs.getString("FinDivision"));
+							ft.setStepFinance(rs.getBoolean("StepFinance"));
+							ft.setSteppingMandatory(rs.getBoolean("SteppingMandatory"));
+							ft.setAlwManualSteps(rs.getBoolean("AlwManualSteps"));
+							ft.setAlwdStepPolicies(rs.getString("AlwdStepPolicies"));
+							ft.setDftStepPolicy(rs.getString("DftStepPolicy"));
+							ft.setStartDate(rs.getTimestamp("StartDate"));
+							ft.setEndDate(rs.getTimestamp("EndDate"));
+							ft.setAllowDownpayPgm(rs.getBoolean("AllowDownpayPgm"));
+							ft.setRemarks(rs.getString("Remarks"));
+							ft.setAlwEarlyPayMethods(rs.getString("AlwEarlyPayMethods"));
+							ft.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
+							ft.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
+							ft.setAlwAdvanceRent(rs.getBoolean("AlwAdvanceRent"));
+							ft.setGrcAdvBaseRate(rs.getString("GrcAdvBaseRate"));
+							ft.setGrcAdvMargin(rs.getBigDecimal("GrcAdvMargin"));
+							ft.setGrcAdvPftRate(rs.getBigDecimal("GrcAdvPftRate"));
+							ft.setRpyAdvBaseRate(rs.getString("RpyAdvBaseRate"));
+							ft.setRpyAdvMargin(rs.getBigDecimal("RpyAdvMargin"));
+							ft.setRpyAdvPftRate(rs.getBigDecimal("RpyAdvPftRate"));
+							ft.setRollOverFinance(rs.getBoolean("RollOverFinance"));
+							ft.setRollOverFrq(rs.getString("RollOverFrq"));
+							ft.setDownPayRule(rs.getLong("DownPayRule"));
+							ft.setFinSuspTrigger(rs.getString("FinSuspTrigger"));
+							ft.setFinSuspRemarks(rs.getString("FinSuspRemarks"));
+							ft.setAlwMultiPartyDisb(rs.getBoolean("AlwMultiPartyDisb"));
+							ft.setTdsApplicable(rs.getBoolean("TdsApplicable"));
+							ft.setCollateralType(rs.getString("CollateralType"));
+							ft.setApplyGrcPricing(rs.getBoolean("ApplyGrcPricing"));
+							ft.setGrcPricingMethod(rs.getLong("GrcPricingMethod"));
+							ft.setApplyRpyPricing(rs.getBoolean("ApplyRpyPricing"));
+							ft.setRpyPricingMethod(rs.getLong("RpyPricingMethod"));
+							ft.setRpyHierarchy(rs.getString("RpyHierarchy"));
+							ft.setDroplineOD(rs.getBoolean("DroplineOD"));
+							ft.setDroppingMethod(rs.getString("DroppingMethod"));
+							ft.setRateChgAnyDay(rs.getBoolean("RateChgAnyDay"));
+							ft.setAlwBPI(rs.getBoolean("AlwBPI"));
+							ft.setBpiTreatment(rs.getString("BpiTreatment"));
+							ft.setPftDueSchOn(rs.getString("PftDueSchOn"));
+							ft.setPlanEMIHAlw(rs.getBoolean("PlanEMIHAlw"));
+							ft.setalwPlannedEmiInGrc(rs.getBoolean("AlwPlannedEmiInGrc"));
+							ft.setPlanEMIHMethod(rs.getString("PlanEMIHMethod"));
+							ft.setPlanEMIHMaxPerYear(rs.getInt("PlanEMIHMaxPerYear"));
+							ft.setPlanEMIHMax(rs.getInt("PlanEMIHMax"));
+							ft.setPlanEMIHLockPeriod(rs.getInt("PlanEMIHLockPeriod"));
+							ft.setPlanEMICpz(rs.getBoolean("PlanEMICpz"));
+							ft.setUnPlanEMIHLockPeriod(rs.getInt("UnPlanEMIHLockPeriod"));
+							ft.setUnPlanEMICpz(rs.getBoolean("UnPlanEMICpz"));
+							ft.setReAgeCpz(rs.getBoolean("ReAgeCpz"));
+							ft.setFddLockPeriod(rs.getInt("FddLockPeriod"));
+							ft.setAlwdRpyMethods(rs.getString("AlwdRpyMethods"));
+							ft.setAlwReage(rs.getBoolean("AlwReage"));
+							ft.setAlwUnPlanEmiHoliday(rs.getBoolean("AlwUnPlanEmiHoliday"));
+							ft.setMaxUnplannedEmi(rs.getInt("MaxUnplannedEmi"));
+							ft.setMaxReAgeHolidays(rs.getInt("MaxReAgeHolidays"));
+							ft.setRoundingMode(rs.getString("RoundingMode"));
+							ft.setRoundingTarget(rs.getInt("RoundingTarget"));
+							ft.setFrequencyDays(rs.getString("FrequencyDays"));
+							ft.setAlwMaxDisbCheckReq(rs.getBoolean("AlwMaxDisbCheckReq"));
+							ft.setQuickDisb(rs.getBoolean("QuickDisb"));
+							ft.setAutoApprove(rs.getBoolean("AutoApprove"));
+							ft.setProfitCenterID(rs.getLong("ProfitCenterID"));
+							ft.setProductCategory(rs.getString("ProductCategory"));
+							ft.setDeveloperFinance(rs.getBoolean("DeveloperFinance"));
+							ft.setCostOfFunds(rs.getString("CostOfFunds"));
+							ft.setChequeCaptureReq(rs.getBoolean("ChequeCaptureReq"));
+							ft.setFinLTVCheck(rs.getString("FinLTVCheck"));
+							ft.setPartiallySecured(rs.getBoolean("PartiallySecured"));
+							ft.setBpiPftDaysBasis(rs.getString("BpiPftDaysBasis"));
+							ft.setAlwHybridRate(rs.getBoolean("AlwHybridRate"));
+							ft.setFixedRateTenor(rs.getInt("FixedRateTenor"));
+							ft.setEligibilityMethods(rs.getString("EligibilityMethods"));
+							ft.setODRuleCode(rs.getString("ODRuleCode"));
+							ft.setAlwZeroIntAcc(rs.getBoolean("AlwZeroIntAcc"));
+							ft.setAutoRejectionDays(rs.getInt("AutoRejectionDays"));
+							ft.setTaxNoMand(rs.getBoolean("TaxNoMand"));
+							ft.setPutCallRequired(rs.getBoolean("PutCallRequired"));
+							ft.setGrcAdvIntersetReq(rs.getBoolean("GrcAdvIntersetReq"));
+							ft.setGrcAdvType(rs.getString("GrcAdvType"));
+							ft.setGrcAdvMinTerms(rs.getInt("GrcAdvMinTerms"));
+							ft.setGrcAdvMaxTerms(rs.getInt("GrcAdvMaxTerms"));
+							ft.setGrcAdvDefaultTerms(rs.getInt("GrcAdvDefaultTerms"));
+							ft.setAdvIntersetReq(rs.getBoolean("AdvIntersetReq"));
+							ft.setAdvType(rs.getString("AdvType"));
+							ft.setAdvMaxTerms(rs.getInt("AdvMaxTerms"));
+							ft.setAdvMinTerms(rs.getInt("AdvMinTerms"));
+							ft.setAdvDefaultTerms(rs.getInt("AdvDefaultTerms"));
+							ft.setAdvStage(rs.getString("AdvStage"));
+							ft.setDsfReq(rs.getBoolean("DsfReq"));
+							ft.setCashCollateralReq(rs.getBoolean("CashCollateralReq"));
+							ft.setTdsAllowToModify(rs.getBoolean("TdsAllowToModify"));
+							ft.setTdsApplicableTo(rs.getString("TdsApplicableTo"));
+							ft.setAlwVan(rs.getBoolean("AlwVan"));
+							ft.setVanAllocationMethod(rs.getString("VanAllocationMethod"));
+							ft.setAllowDrawingPower(rs.getBoolean("AllowDrawingPower"));
+							ft.setAllowRevolving(rs.getBoolean("AllowRevolving"));
+							ft.setAlwSanctionAmt(rs.getBoolean("AlwSanctionAmt"));
+							ft.setAlwSanctionAmtOverride(rs.getBoolean("AlwSanctionAmtOverride"));
+							ft.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
+
+							if (StringUtils.trimToEmpty(type).contains("View")) {
+								ft.setFinCategoryDesc(rs.getString("FinCategoryDesc"));
+								ft.setDownPayRuleCode(rs.getString("DownPayRuleCode"));
+								ft.setDownPayRuleDesc(rs.getString("DownPayRuleDesc"));
+								ft.setLovDescFinContingentAcTypeName(rs.getString("LovDescFinContingentAcTypeName"));
+								ft.setLovDescFinBankContAcTypeName(rs.getString("LovDescFinBankContAcTypeName"));
+								ft.setLovDescFinProvisionAcTypeName(rs.getString("LovDescFinProvisionAcTypeName"));
+								ft.setLovDescFinAcTypeName(rs.getString("LovDescFinAcTypeName"));
+								ft.setLovDescPftPayAcTypeName(rs.getString("LovDescPftPayAcTypeName"));
+								ft.setLovDescFinSuspAcTypeName(rs.getString("LovDescFinSuspAcTypeName"));
+								ft.setLovDescFinDivisionName(rs.getString("LovDescFinDivisionName"));
+								ft.setLovDescPromoFinTypeDesc(rs.getString("LovDescPromoFinTypeDesc"));
+								ft.setProfitcenterCode(rs.getString("ProfitcenterCode"));
+								ft.setProfitCenterDesc(rs.getString("ProfitCenterDesc"));
+								ft.setLovDescEntityCode(rs.getString("LovDescEntityCode"));
+							}
+
+							ft.setVersion(rs.getInt("Version"));
+							ft.setLastMntBy(rs.getLong("LastMntBy"));
+							ft.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							ft.setRecordStatus(rs.getString("RecordStatus"));
+							ft.setRoleCode(rs.getString("RoleCode"));
+							ft.setNextRoleCode(rs.getString("NextRoleCode"));
+							ft.setTaskId(rs.getString("TaskId"));
+							ft.setNextTaskId(rs.getString("NextTaskId"));
+							ft.setRecordType(rs.getString("RecordType"));
+							ft.setWorkflowId(rs.getLong("WorkflowId"));
+
+							return ft;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeType = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return financeType;
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**
@@ -1193,5 +1413,25 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.debug("Leaving");
 		return loanType;
 
+	}
+
+	@Override
+	public String getRepayHierarchy(String finType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" RpyHierarchy");
+		sql.append(" From RMTFinanceTypes");
+		sql.append(" Where FinType = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finType }, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 }

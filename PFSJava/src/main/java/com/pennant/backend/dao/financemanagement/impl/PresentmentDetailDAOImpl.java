@@ -630,11 +630,12 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	@Override
 	public void updatePresentmentDetials(long presentmentId, List<Long> list, int mnualExclude) {
 		logger.debug(Literal.ENTERING);
-		StringBuilder sql = null;
 
-		sql = new StringBuilder();
-		sql.append(
-				" UPDATE PRESENTMENTDETAILS Set EXCLUDEREASON = :EXCLUDEREASON Where PRESENTMENTID = :PRESENTMENTID AND  ID = :ID");
+		StringBuilder sql = new StringBuilder("Update");
+		sql.append(" PresentmentDetails");
+		sql.append(" Set ExcludeReason = :EXCLUDEREASON");
+		sql.append(" Where PresentmentID = :PRESENTMENTID and ID = :ID");
+
 		logger.trace(Literal.SQL + sql.toString());
 
 		//Fix related Bulk-Processing in case of list having huge records IN operator is not working.
@@ -857,51 +858,97 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public List<PresentmentDetail> getPresentmentDetail(long presentmentId, boolean includeData) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" Select T.id, T.presentmentId, T.finReference, T.schDate, T.mandateId, T.schAmtDue, T.schPriDue, T.schPftDue, T.schFeeDue, T.schInsDue, ");
-		sql.append(
-				" T.schPenaltyDue, T.advanceAmt, T.excessID, T.adviseAmt, T.presentmentAmt, T.Emino, T.status, T.presentmentRef, T.ecsReturn, T.receiptID, T.excludeReason,");
-		sql.append(
-				" T.Version, T.LastMntOn, T.LastMntBy,T.RecordStatus, T.RoleCode, T.NextRoleCode, T.TaskId, T.NextTaskId, T.RecordType, T.WorkflowId ");
-		if (includeData) {
-			sql.append(",PB.Accountno,PB.actype ");
-		}
-		sql.append(" From PRESENTMENTDETAILS T INNER JOIN PRESENTMENTHEADER PH ON PH.ID=T.PRESENTMENTID ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" t.Id, t.PresentmentId, t.FinReference, t.SchDate, t.MandateId, t.SchAmtDue, t.SchPriDue");
+		sql.append(", t.SchPftDue, t.SchFeeDue, t.SchInsDue, t.SchPenaltyDue, t.AdvanceAmt, t.ExcessID");
+		sql.append(", t.AdviseAmt, t.PresentmentAmt, t.EmiNo, t.Status, t.PresentmentRef, t.EcsReturn");
+		sql.append(", t.ReceiptID, t.ExcludeReason, t.Version, t.LastMntOn, t.LastMntBy, t.RecordStatus");
+		sql.append(", t.RoleCode, t.NextRoleCode, t.TaskId, t.NextTaskId, t.RecordType, t.WorkflowId");
 
 		if (includeData) {
-			sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID ");
-		}
-		sql.append(" WHERE T.PresentmentId = :PresentmentId");
-		if (includeData) {
-			sql.append(
-					" AND (T.ExcludeReason = :PEXC_EMIINCLUDE or T.ExcludeReason = :PEXC_EMIINADVANCE ) AND T.Status <> :Status ");
+			sql.append(", pb.AccountNo, pb.AcType");
 		}
 
-		// Execute the SQL, binding the arguments.
+		sql.append(" From PresentmentDetails t");
+
+		if (includeData) {
+			sql.append(" inner join PresentmentHeader ph on ph.ID = t.PresentmentID");
+			sql.append(" inner join PartnerBanks pb on pb.PartnerBankID = ph.PartnerBankID ");
+		}
+
+		sql.append(" Where t.PresentmentId = ?");
+
+		if (includeData) {
+			sql.append(" and (t.ExcludeReason = ? or t.ExcludeReason = ?) and t.Status <> ?");
+		}
+
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("PresentmentId", presentmentId);
-		if (includeData) {
-			source.addValue("PEXC_EMIINCLUDE", RepayConstants.PEXC_EMIINCLUDE);
-			source.addValue("PEXC_EMIINADVANCE", RepayConstants.PEXC_EMIINADVANCE);
-			source.addValue("Status", RepayConstants.PEXC_APPROV);
-		}
-
-		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
 		try {
-			return this.jdbcTemplate.query(sql.toString(), source, rowMapper);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+
+					ps.setLong(index++, presentmentId);
+
+					if (includeData) {
+						ps.setInt(index++, RepayConstants.PEXC_EMIINCLUDE);
+						ps.setInt(index++, RepayConstants.PEXC_EMIINADVANCE);
+						ps.setString(index++, RepayConstants.PEXC_APPROV);
+					}
+				}
+			}, new RowMapper<PresentmentDetail>() {
+				@Override
+				public PresentmentDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					PresentmentDetail pd = new PresentmentDetail();
+
+					pd.setId(rs.getLong("Id"));
+					pd.setPresentmentId(rs.getLong("PresentmentId"));
+					pd.setFinReference(rs.getString("FinReference"));
+					pd.setSchDate(rs.getTimestamp("SchDate"));
+					pd.setMandateId(rs.getLong("MandateId"));
+					pd.setSchAmtDue(rs.getBigDecimal("SchAmtDue"));
+					pd.setSchPriDue(rs.getBigDecimal("SchPriDue"));
+					pd.setSchPftDue(rs.getBigDecimal("SchPftDue"));
+					pd.setSchFeeDue(rs.getBigDecimal("SchFeeDue"));
+					pd.setSchInsDue(rs.getBigDecimal("SchInsDue"));
+					pd.setSchPenaltyDue(rs.getBigDecimal("SchPenaltyDue"));
+					pd.setAdvanceAmt(rs.getBigDecimal("AdvanceAmt"));
+					pd.setExcessID(rs.getLong("ExcessID"));
+					pd.setAdviseAmt(rs.getBigDecimal("AdviseAmt"));
+					pd.setPresentmentAmt(rs.getBigDecimal("PresentmentAmt"));
+					pd.setEmiNo(rs.getInt("EmiNo"));
+					pd.setStatus(rs.getString("Status"));
+					pd.setPresentmentRef(rs.getString("PresentmentRef"));
+					pd.setEcsReturn(rs.getString("EcsReturn"));
+					pd.setReceiptID(rs.getLong("ReceiptID"));
+					pd.setExcludeReason(rs.getInt("ExcludeReason"));
+					pd.setVersion(rs.getInt("Version"));
+					pd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					pd.setLastMntBy(rs.getLong("LastMntBy"));
+					pd.setRecordStatus(rs.getString("RecordStatus"));
+					pd.setRoleCode(rs.getString("RoleCode"));
+					pd.setNextRoleCode(rs.getString("NextRoleCode"));
+					pd.setTaskId(rs.getString("TaskId"));
+					pd.setNextTaskId(rs.getString("NextTaskId"));
+					pd.setRecordType(rs.getString("RecordType"));
+					pd.setWorkflowId(rs.getLong("WorkflowId"));
+
+					if (includeData) {
+						pd.setAccountNo(rs.getString("AccountNo"));
+						pd.setAcType(rs.getString("AcType"));
+					}
+
+					return pd;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return null;
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -1108,7 +1155,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(", tDSAmount, excludeReason, emiNo, status, version, lastMntBy, lastMntOn, recordStatus");
 		sql.append(", roleCode, nextRoleCode, taskId, nextTaskId, recordType, workflowId, presentmentRef");
 		sql.append(", ecsReturn, receiptID, errorCode, errorDesc, manualAdviseId");
-		sql.append(" from presentmentdetails");
+		sql.append(" From presentmentdetails");
 		sql.append(" where PresentmentId = ? and ExcludeReason = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -1588,52 +1635,59 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public boolean searchIncludeList(long presentmentId, int excludereason) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select count(*) ");
 		sql.append(" From PRESENTMENTDETAILS");
-		sql.append(" where PresentmentId = :PresentmentId");
-		sql.append(" And ExcludeReason = :ExcludeReason");
-		// Execute the SQL, binding the arguments.
+		sql.append(" Where PresentmentId = ?");
+		sql.append(" and ExcludeReason = ?");
+
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("PresentmentId", presentmentId);
-		source.addValue("ExcludeReason", excludereason);
-		int count = 0;
 		try {
-			count = jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { presentmentId, excludereason },
+					Integer.class) > 0 ? true : false;
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		if (count > 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
 	@Override
 	public List<Long> getExcludePresentmentDetailIdList(long presentmentId, boolean isExclude) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select  ID ");
-		sql.append(" From PRESENTMENTDETAILS");
-		sql.append(" where PresentmentId = :PresentmentId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ID");
+		sql.append(" From PresentmentDetails");
+		sql.append(" Where PresentmentId = ?");
+
 		if (isExclude) {
-			sql.append(" And ExcludeReason != 0");
+			sql.append(" and ExcludeReason != ?");
 		}
-		// Execute the SQL, binding the arguments.
+
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("PresentmentId", presentmentId);
 		try {
-			return jdbcTemplate.queryForList(sql.toString(), source, Long.class);
+			return jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, presentmentId);
+
+					if (isExclude) {
+						ps.setInt(index, 0);
+					}
+				}
+			}, new RowMapper<Long>() {
+
+				@Override
+				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+					return rs.getLong("ID");
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}

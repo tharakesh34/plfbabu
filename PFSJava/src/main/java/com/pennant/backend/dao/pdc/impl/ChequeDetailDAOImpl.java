@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.pdc.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -342,4 +345,39 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public void batchUpdateChequeStatus(List<Long> chequeDetailsId, String chequestatus) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update");
+		sql.append(" CHEQUEDETAIL");
+		sql.append(" Set Chequestatus = :Chequestatus");
+		sql.append(" where ChequeDetailsId = :ChequeDetailsId");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					int index = 1;
+					long id = chequeDetailsId.get(i);
+
+					ps.setString(index++, chequestatus);
+
+					ps.setLong(index, id);
+				}
+
+				@Override
+				public int getBatchSize() {
+					return chequeDetailsId.size();
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 }

@@ -54,6 +54,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -66,6 +67,7 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;
@@ -500,6 +502,40 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
+	}
+
+	@Override
+	public void batchUpdateExcessAmount(List<PresentmentDetail> presentmentDetails) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Update FinExcessAmount Set ReservedAmt = ReservedAmt - :AdvanceAmount,");
+		sql.append(" BalanceAmt = BalanceAmt + :AdvanceAmount");
+		sql.append(" Where ExcessID = :ExcessID");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					int index = 1;
+					PresentmentDetail pd = presentmentDetails.get(i);
+					ps.setBigDecimal(index++, pd.getAdvanceAmt());
+					ps.setLong(index, pd.getExcessID());
+				}
+
+				@Override
+				public int getBatchSize() {
+					return presentmentDetails.size();
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override

@@ -64,6 +64,7 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements FinanceSuspHeadDAO {
 	private static Logger logger = Logger.getLogger(FinanceSuspHeadDAOImpl.class);
@@ -133,29 +134,23 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 
 	@Override
 	public Date getFinSuspDate(String finReference) {
-		logger.debug("Entering");
-		FinanceSuspHead financeSuspHead = new FinanceSuspHead();
-		financeSuspHead.setFinReference(finReference);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinSuspDate From FinSuspHead");
-		selectSql.append(" Where FinReference =:FinReference and FinIsInSusp = 1");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinSuspDate");
+		sql.append(" From FinSuspHead");
+		sql.append(" Where FinReference = ? and FinIsInSusp = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspHead);
-		RowMapper<FinanceSuspHead> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceSuspHead.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			financeSuspHead = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, 1 }, Date.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.trace(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		if (financeSuspHead != null) {
-			return financeSuspHead.getFinSuspDate();
-		} else {
-			return null;
-		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	@Override

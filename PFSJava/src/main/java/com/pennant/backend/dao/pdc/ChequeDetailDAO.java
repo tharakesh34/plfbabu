@@ -66,4 +66,6 @@ public interface ChequeDetailDAO {
 
 	void updateChequeStatus(long chequeDetailsId, String status);
 
+	void batchUpdateChequeStatus(List<Long> chequeDetailsId, String chequestatus);
+
 }

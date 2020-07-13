@@ -107,6 +107,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String advStage;
 	private Date grcPeriodEndDate;
 	private BigDecimal advAdjusted = BigDecimal.ZERO;
+	private Date appDate;
 
 	public String getMandateStatus() {
 		return mandateStatus;
@@ -530,6 +531,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setPartnerBankId(long partnerBankId) {
 		this.partnerBankId = partnerBankId;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
 	}
 
 }

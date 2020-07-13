@@ -1582,33 +1582,39 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	@Override
-	public FinanceScheduleDetail getPrvSchd(String finReference, Date curBussDate) {
-		logger.debug("Entering");
+	public FinanceScheduleDetail getPrvSchd(String finRef, Date curBussDate) {
+		logger.debug(Literal.ENTERING);
 
-		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
-		financeScheduleDetail.setFinReference(finReference);
-		financeScheduleDetail.setSchDate(curBussDate);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" SchDate, RepayAmount, PartialPaidAmt");
+		sql.append(" From FinScheduleDetails");
+		sql.append(" Where FinReference = ? and SchDate = ");
+		sql.append("(select max(SchDate)");
+		sql.append(" From FinScheduleDetails");
+		sql.append(" Where FinReference = ? and SchDate <= ?)");
 
-		StringBuilder selectSql = new StringBuilder(" select SchDate, REPAYAMOUNT, PARTIALPAIDAMT ");
-		selectSql.append("from FinScheduleDetails where FinReference = :FinReference AND ");
-		selectSql.append(
-				" SchDate = (select max(SchDate) from FinScheduleDetails where FinReference = :FinReference and schdate <= :SchDate ) ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
-		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceScheduleDetail.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			financeScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return jdbcOperations.queryForObject(sql.toString(),
+					new Object[] { finRef, curBussDate, finRef, curBussDate }, new RowMapper<FinanceScheduleDetail>() {
+
+						@Override
+						public FinanceScheduleDetail mapRow(ResultSet rs, int arg1) throws SQLException {
+							FinanceScheduleDetail fsd = new FinanceScheduleDetail();
+							fsd.setSchDate(rs.getDate("SchDate"));
+							fsd.setRepayAmount(rs.getBigDecimal("RepayAmount"));
+							fsd.setPartialPaidAmt(rs.getBigDecimal("PartialPaidAmt"));
+
+							return fsd;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeScheduleDetail = null;
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return financeScheduleDetail;
+		return null;
 	}
 
 	@Override

@@ -2877,4 +2877,35 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		}
 
 	}
+
+	@Override
+	public Customer getCustomerForPresentment(long id) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustGroupID");
+		sql.append(" From Customers");
+		sql.append(" Where CustId = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<Customer>() {
+
+				@Override
+				public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Customer c = new Customer();
+					c.setCustID(rs.getLong("CustID"));
+					c.setCustGroupID(rs.getLong("CustGroupID"));
+
+					return c;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
 }
