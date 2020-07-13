@@ -5865,25 +5865,19 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public List<UserPendingCases> getUserPendingCasesDetails(long usrId, String rolecode) {
+	public List<UserPendingCases> getUserPendingCasesDetails(long usrId, String roleCodes) {
 		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource source = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder(" SELECT t1.finreference, t1.recordstatus");
 		sql.append(" ,t1.rolecode, t2.roledesc FROM financemain_temp t1");
 		sql.append("  JOIN secroles t2 ON t1.nextrolecode=t2.rolecd");
-		if (!rolecode.contains(",")) {
-			sql.append(" Where t1.nextrolecode in( :rolecd)");
-			source.addValue("rolecd", rolecode);
-		} else {
-			sql.append(" Where t1.nextrolecode  in( :rolecd1, :rolecd2)");
-			source.addValue("rolecd1", rolecode.split(",")[0]);
-			source.addValue("rolecd2", rolecode.split(",")[1]);
-		}
+		sql.append(" Where t1.nextrolecode = :rolecd");
 
 		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("usrId", usrId);
-		source.addValue("rolecd", rolecode);
+		source.addValue("rolecd", roleCodes);
 		RowMapper<UserPendingCases> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(UserPendingCases.class);
 		logger.debug(Literal.LEAVING);

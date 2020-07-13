@@ -1,0 +1,41 @@
+package com.pennanttech.ws.model.login;
+
+import java.io.Serializable;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
+import com.pennant.backend.model.WSReturnStatus;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+public class UserRolesResponse implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	@XmlElement
+	private String roleCodes;
+	@XmlElement
+	private WSReturnStatus returnStatus;
+
+	public UserRolesResponse() {
+		super();
+	}
+
+	public String getRoleCodes() {
+		return roleCodes;
+	}
+
+	public void setRoleCodes(String roleCodes) {
+		this.roleCodes = roleCodes;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
+}

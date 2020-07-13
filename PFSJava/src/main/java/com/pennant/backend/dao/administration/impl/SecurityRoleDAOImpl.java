@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.dao.administration.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -410,5 +411,33 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		}
 		logger.debug(Literal.LEAVING);
 		return exists;
+	}
+
+	@Override
+	public List<String> getSecurityRoleByUserId(long userId, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select rol.roleCd");
+		sql.append(" from SecUsers u");
+		sql.append(" left join rmtbranches b on b.branchcode = u.UsrBranchCode");
+		sql.append(" inner join SecuserOPerations uop on uop.usrId = u.usrId");
+		sql.append(" inner join secOPerationRoles opr on opr.oprid = uop.oprid");
+		sql.append(" inner join secRoles rol on rol.roleId = opr.roleId");
+		sql.append(" where u.usrID = :usrID");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("usrID", userId);
+
+		try {
+			return jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 }

@@ -2,7 +2,9 @@ package com.pennanttech.controller;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
@@ -11,14 +13,17 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.pennant.app.util.APIHeader;
+import com.pennant.backend.dao.administration.SecurityRoleDAO;
 import com.pennant.backend.dao.sessionvalidation.SessionValidationDAO;
 import com.pennant.backend.model.SecLoginlog;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.sessionvalidation.SessionValidation;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.framework.security.core.service.UserService;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.ws.model.login.LoginRequest;
 import com.pennanttech.ws.model.login.LoginResponse;
+import com.pennanttech.ws.model.login.UserRolesResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class LoginController {
@@ -27,9 +32,11 @@ public class LoginController {
 
 	private SessionValidationDAO sessionValidationDAO;
 	private transient UserService userService;
+	private SecurityRoleDAO securityRoleDAO;
 
 	public LoginResponse validateLogin(LoginRequest loginRequest) {
-		logger.debug("ENTERING");
+		logger.debug(Literal.ENTERING);
+		
 		LoginResponse response = new LoginResponse();
 
 		try {
@@ -57,7 +64,7 @@ public class LoginController {
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
-		logger.debug("LEAVING");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -123,6 +130,45 @@ public class LoginController {
 		 */
 		return userRights;
 	}
+	
+	public UserRolesResponse getRoles(LoginRequest loginRequest) {
+		logger.debug(Literal.ENTERING);
+
+		UserRolesResponse response = new UserRolesResponse();
+		StringBuilder secRoles = new StringBuilder();
+		try {
+			SecurityUser user = userService.getUserByLogin(StringUtils.upperCase(loginRequest.getUsrName()));
+			if (user != null) {
+				List<String> securityRoleList = securityRoleDAO.getSecurityRoleByUserId(user.getUsrID(), "");
+				if (CollectionUtils.isNotEmpty(securityRoleList)) {
+					for (String role : securityRoleList) {
+						secRoles.append(role + ",");
+					}
+					if (secRoles.length() > 0) {
+						secRoles.toString().trim();
+						secRoles.deleteCharAt(secRoles.length() - 1);
+					}
+					response.setRoleCodes(secRoles.toString().trim());
+					response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				} else {
+					String[] valueParm = new String[1];
+					valueParm[0] = "no roles found with userName :" + loginRequest.getUsrName();
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30550", valueParm));
+					return response;
+				}
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = "userName :" + loginRequest.getUsrName();
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90501", valueParm));
+				return response;
+			}
+
+		} catch (Exception e) {
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
 
 	public void setSessionValidationDAO(SessionValidationDAO sessionValidationDAO) {
 		this.sessionValidationDAO = sessionValidationDAO;
@@ -130,6 +176,10 @@ public class LoginController {
 
 	public void setUserService(UserService userService) {
 		this.userService = userService;
+	}
+	
+	public void setSecurityRoleDAO(SecurityRoleDAO securityRoleDAO) {
+		this.securityRoleDAO = securityRoleDAO;
 	}
 
 }

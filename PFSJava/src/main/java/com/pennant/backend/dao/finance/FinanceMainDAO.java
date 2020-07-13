@@ -420,7 +420,7 @@ public interface FinanceMainDAO {
 
 	void updateCustChange(long newCustId, long mandateId, String finReference, String type);
 
-	List<UserPendingCases> getUserPendingCasesDetails(long userID, String roleCode);
+	List<UserPendingCases> getUserPendingCasesDetails(long userID, String roleCodes);
 
 	Long getCustomerIdByFin(String FinReference);
 
