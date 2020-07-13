@@ -3985,7 +3985,7 @@
 	<changeSet id="29" author="PrasadRaju">
 		<sql>
 			<![CDATA[
-							Update PLF_Tables set table_description='The BMTRejectCodes_Temp table holds all under processing information relevant to the reject reasons.' where table_name ='bmtrejectcodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTRejectCodes_Temp table holds all under processing information relevant to the reject reasons.' where table_name ='bmtrejectcodes_temp' and table_description is null ;
 				Update PLF_Tables set table_description='The BMTREPAYMETHOD table holds all information relevant to the loan repayment methods.' where table_name ='bmtrepaymethod' and table_description is null ;
 				Update PLF_Tables set table_description='The BMTRepayMethod_Temp table holds all under processing information relevant to the loan repayment methods.' where table_name ='bmtrepaymethod_temp' and table_description is null ;
 				Update PLF_Tables set table_description='The BMTSALUTATIONS table holds all information relevant to the salutations by gender.' where table_name ='bmtsalutations' and table_description is null ;
@@ -4072,7 +4072,7 @@
 				Update PLF_Tables set table_description='The FINODDETAILS table holds all overdue details of the loan including history. For each overdue schedule one record will be present.' where table_name ='finoddetails' and table_description is null ;
 				Update PLF_Tables set table_description='The FINODPENALTYRATES table holds the penalty rates applied for loan in case of OD. Each loan will have at least one record. If any changes in the applied rates then additional record will come' where table_name ='finodpenaltyrates' and table_description is null ;
 				Update PLF_Tables set table_description='The FinODPenaltyRates_Temp table holds under processing penalty rates applied for loan in case of OD. Each loan will have at least one record. If any changes in the applied rates then additional record will come' where table_name ='finodpenaltyrates_temp' and table_description is null ;
-				Update PLF_Tables set table_description='The FINPFTDETAILS table holds the loan level summary like loan amount, profit amount, fee and charges, accounts,… etc' where table_name ='finpftdetails' and table_description is null ;
+				Update PLF_Tables set table_description='The FINPFTDETAILS table holds the loan level summary like loan amount, profit amount, fee and charges, accounts, etc' where table_name ='finpftdetails' and table_description is null ;
 				Update PLF_Tables set table_description='The FINPFTDETAILS_SNAPSHOT table holds the every month loan profit details table snapshot for analytics, reports and analyse the data issues' where table_name ='finpftdetails_snapshot' and table_description is null ;
 				Update PLF_Tables set table_description='The FINPROVISIONS table holds the provision details of loan. One record for loan will be present in the table.' where table_name ='finprovisions' and table_description is null ;
 				Update PLF_Tables set table_description='The FinProvisions_Temp table holds under processing provision details of loan. One record for loan will be present in the table.' where table_name ='finprovisions_temp' and table_description is null ;
@@ -4096,7 +4096,6 @@
 			
 				Update PLF_Tables set table_description='FinSchFrqInsurance_Temp table holds all under processing information relevant to the shcdule frequencies for insurances.' where table_name ='finschfrqinsurance_temp' and table_description is null ;
 				Update PLF_Tables set table_description='The FINSTAGEACCOUNTINGLOG table holds the log of stage accounting in the loan origination.' where table_name ='finstageaccountinglog' and table_description is null ;
-				Update PLF_Tables set table_description='The FINSTATUSDETAIL table holds the Loan status change movements like loan moved from normal to 10 Days, 30Days, 90Days, back to 60days,… etc. Every loan will have minimum one record and new record with movement date added when ever status changes.' where table_name ='finstatusdetail' and table_description is null ;
 				Update PLF_Tables set table_description='The FINSTEPPOLICYDETAIL table holds the policy definition used for Step Schedules to increase or decrease interest.' where table_name ='finsteppolicydetail' and table_description is null ;
 				Update PLF_Tables set table_description='The FinStepPolicyDetail_Temp table holds under processing policy definition used for Step Schedules to increase or decrease interest.' where table_name ='finsteppolicydetail_temp' and table_description is null ;
 				Update PLF_Tables set table_description='The FINSUSPDETAIL table holds the suspense movement details like how much profit transferred from income to suspense a/c and vice versa. If loan never went to suspense then this table will not record for that loan. When a loan went to suspense, released' where table_name ='finsuspdetail' and table_description is null ;
@@ -4210,9 +4209,7 @@
 				Update PLF_Tables set table_description='The VasStructure table holds all information relevant to the vas product details like fees, validations and External Field representations.' where table_name ='vasstructure' and table_description is null ;
 				Update PLF_Tables set table_description='The VasStructure_Temp table holds all under processing information relevant to the vas product details like fees, validations and External Field representations.' where table_name ='vasstructure_temp' and table_description is null ;
 				Update PLF_Tables set table_description='The WIFCUSTOMERINCOMES table holds the customer income and expense details for enquiry' where table_name ='wifcustomerincomes' and table_description is null ;
-				Update PLF_Tables set table_description='The WIFCUSTOMERS table holds the customer basic information for enquiry' where table_name ='wifcustomers' and table_description is null ;
-				Update PLF_Tables set table_description='The WIFFINANCEMAIN table holds the loan level summary like loan amount, profit amount, fee and charges, accounts,… etc for enquiry' where table_name ='wiffinancemain' and table_description is null ;
-				Update PLF_Tables set table_description='The WIFFinanceMain_Temp table holds under processing loan level summary like loan amount, profit amount, fee and charges, accounts,… etc for enquiry' where table_name ='wiffinancemain_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFCUSTOMERS table holds the customer basic information for enquiry' where table_name ='wifcustomers' and table_description is null ;				
 				Update PLF_Tables set table_description='The WIFFINDISBURSEMENTDETAILS table holds the disbursement details of the loan. For each disbursement one record will be presented for enquiry.' where table_name ='wiffindisbursementdetails' and table_description is null ;
 				Update PLF_Tables set table_description='The WIFFinDisbursementDetails_Temp table holds under processing disbursement details of the loan. For each disbursement one record will be presented for enquiry.' where table_name ='wiffindisbursementdetails_temp' and table_description is null ;
 				Update PLF_Tables set table_description='The WIFFINFEECHARGES table holds the fee and charges calculated, waived and paid by the customer for enquiry.' where table_name ='wiffinfeecharges' and table_description is null ;
@@ -4243,15 +4240,15 @@
 				]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="32" author="PrasadRaju">
+
+	<changeSet id="32" author="PrasadRaju">
 		<sql>
 			<![CDATA[	
 				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('PUSH_PULL_CONTROL','transaction','new',0,null,'keerthi.p',current_timestamp,0,null,null,null);
 				]]>
 		</sql>
 	</changeSet>
-	
+
 
 	<changeSet id="33" author="PrasadRaju">
 		<sql>
@@ -4260,8 +4257,8 @@
 				]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="34" author="PrasadRaju">
+
+	<changeSet id="34" author="PrasadRaju">
 		<sql>
 			<![CDATA[	
 				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS)  values ('AUTO_KNOCKOFF_PAYABLES','transaction','new',0,null,'Vijaya.A',current_timestamp,0,null,null,null);
@@ -4288,6 +4285,18 @@
 				]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="35" author="PrasadRaju">
+		<sql>
+			<![CDATA[	
+				
+				Update PLF_Tables set table_description='The FINSTATUSDETAIL table holds the Loan status change movements like loan moved from normal to 10 Days, 30Days, 90Days, back to 60days, etc. Every loan will have minimum one record and new record with movement date added when ever status changes.' where table_name ='finstatusdetail' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFINANCEMAIN table holds the loan level summary like loan amount, profit amount, fee and charges, accounts, etc for enquiry' where table_name ='wiffinancemain' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFinanceMain_Temp table holds under processing loan level summary like loan amount, profit amount, fee and charges, accounts, etc for enquiry' where table_name ='wiffinancemain_temp' and table_description is null ;
+				
+				]]>
+		</sql>
+	</changeSet>
+
 
 </databaseChangeLog>
