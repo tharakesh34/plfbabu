@@ -7488,7 +7488,7 @@
 	</changeSet>
 
 	<!-- ST#350 Auto Knock-off Process change logs end -->
-	
+
 	<changeSet id="ST#714.02" author="thirupathi.m">
 		<sql>
 			<![CDATA[	
@@ -7530,37 +7530,37 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	 <changeSet id="ST#1002.1" author="yelladas.n">
+
+	<changeSet id="ST#1002.1" author="yelladas.n">
 		<comment>KnockOff Cancel Maker</comment>
 		<sql>
 			<![CDATA[
 				Delete from reportList where code ='ReceiptKnockOffCancel';
 				INSERT INTO ReportList VALUES ('ReceiptKnockOffCancel', 'ReceiptKnockOffCancel','listheader_ReceiptId.label,listheader_ReceiptDate.label,listheader_ReceiptMode.label,listheader_ReceiptPurpose.label,listheader_CustomerCIF.label,listheader_FinType.label,listheader_FinReference.label,listheader_PayTypeRef.label,listheader_ReceiptAmount.label,listheader_PartnerBank.label','ReceiptID,ReceiptDate,ReceiptMode,ReceiptPurpose,CustCIF,FinType,Reference,TransactionRef,ReceiptAmount,partnerBankCode','Long,Date,String,String,String,String,String,String,BigDecimal,String',' ','ReportList10','KnockOff Cancel Maker & Approver', 'Loan Management',1,1000,CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
 			]]>
-        </sql>	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1002.2" author="yelladas.n">
-	    <comment>Interface Configuration</comment>
+		<comment>Interface Configuration</comment>
 		<sql>
 			<![CDATA[
 				Delete from reportList where code ='InterfaceConfiguration';
 				INSERT INTO ReportList VALUES ('InterfaceConfiguration', 'InterfaceConfiguration','listheader_ExtInterfaceConfigurationList_Code.label,listheader_ExtInterfaceConfigurationList_Description.label,listheader_ExtInterfaceConfigurationList_Type.label,listheader_ExtInterfaceConfigurationList_NotificationType.label,listheader_ExtInterfaceConfigurationList_active.label','code,description,type,notificationType,active','String,String,String,int,boolean',' ','ReportList05',' Interface Configuration', 'Enquiry',1,1000,CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
-			]]>	
-		</sql>	
+			]]>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1002.3" author="satyanarayana.g">
-	    <comment>GST Rates</comment>
+		<comment>GST Rates</comment>
 		<sql>
 			<![CDATA[
 				Delete from reportList where code ='GSTRate';
 				INSERT INTO ReportList VALUES ('GSTRate', 'GSTRate','listheader_FromState.label,listheader_ToState.label,listheader_TaxType.label,listheader_Amount.label,listheader_Percentage.label,listheader_CalcOn.label,listheader_Active.label','fromState,toState,taxType,amount,percentage,calcOn,active','String,String,String,BigDecimal,BigDecimal,String,boolean',' ','ReportList07',' GST Rates', 'Application Masters',1,1000,CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0); 
-			]]>	
-		</sql>	
+			]]>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1002.4" author="satyanarayana.g">
 		<comment>Amortization Method Rule</comment>
 		<sql>
@@ -7568,19 +7568,19 @@
 				Delete from reportList where code ='AmortizationMethodRule';
 				INSERT INTO ReportList VALUES ('AmortizationMethodRule', 'AmortizationMethodRule','listheader_RuleModule.label,listheader_RuleEvent.label,listheader_RuleCode.label,listheader_RuleCodeDesc.label','ruleModule,ruleEvent,ruleCode,ruleCodeDesc','String,String,String,String',' ','ReportList04','Amortization Method Rule', 'Amortization',1,1000,CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0); 
 			]]>
-        </sql>	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1002.5" author="satyanarayana.g">
-	    <comment>Covenant Types</comment>
+		<comment>Covenant Types</comment>
 		<sql>
 			<![CDATA[
 				Delete from reportList where code ='CovenantType';
 				INSERT INTO ReportList VALUES ('CovenantType', 'CovenantType','listheader_Covenant_Code.label,listheader_Description.label,listheader_Category.label,listheader_DocType.label','code,description,category,docType','String,String,String,String',' ','ReportList04',' Covenant Types', 'Application Masters',1,1000,CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0); 
-			]]>	
-		</sql>	
+			]]>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1002.6" author="yelladas.n">
 		<comment>Sourcing Vendor</comment>
 		<sql>
@@ -7588,9 +7588,9 @@
 				Delete from reportList where code ='SVDM';
 				INSERT INTO ReportList VALUES ('SVDM', 'SVDM','label_VehicleDealerSearch_DealerName.value,label_VehicleDealerSearch_Email.value,label_VehicleDealerSearch_DealerTelephone.value,listheader_DealerProvince.label,label_VehicleDealerSearch_DealerCity.value,label_VehicleDealerSearch_Active.value','dealerName,email,dealerTelephone,dealerProvince,dealerCity,active','String,String,String,String,String,String',' ','ReportList06','Sourcing Vendor', 'Application Masters',1,1000,CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
 			]]>
-		</sql>	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1002.7" author="arun.d">
 		<comment>Verification Rule</comment>
 		<sql>
@@ -7600,7 +7600,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1002.8" author="arun.d">
 		<comment>Bounce Reason Rules</comment>
 		<sql>
@@ -7610,7 +7610,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1002.9" author="arun.d">
 		<comment>Commitment WorkFlow</comment>
 		<sql>
@@ -7620,7 +7620,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1002.10" author="satyanarayana.g">
 		<comment>CD Schemes</comment>
 		<sql>
@@ -7630,7 +7630,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1002.11" author="satyanarayana.g">
 		<comment>CD Loan Types</comment>
 		<sql>
@@ -7640,7 +7640,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#912.2" author="murthy.y">
 		<sql>
 			<![CDATA[
@@ -7648,7 +7648,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#880" author="murthy.y">
 		<comment>Moved the SMTPARAMETERS to Implimentation Constants</comment>
 		<sql>
@@ -7657,12 +7657,21 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#1008" author="saisandeep.b">
 		<sql>
 			<![CDATA[
 				alter table FinExpenseMovements add column LinkedTranId bigint;
 				alter table FinExpenseMovements add column RevLinkedTranId bigint;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#941.3" author="Gopal.p">
+		<comment>Moved the SMTPARAMETERS to Implimentation Constants</comment>
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'ALLOW_FDD_ON_RVW_DATE';
 			]]>
 		</sql>
 	</changeSet>
