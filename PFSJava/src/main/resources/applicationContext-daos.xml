@@ -8382,6 +8382,7 @@
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="customerDAO" ref="customerDAO"/>
 	</bean>
 
 	<!-- AccountMapping -->
