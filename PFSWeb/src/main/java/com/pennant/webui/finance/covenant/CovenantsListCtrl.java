@@ -175,10 +175,6 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		return dataEngineConfig;
 	}
 
-	private DataEngineStatus dataEngineStatus = new DataEngineStatus(PennantConstants.NEWCOVENANTS_UPLOADBY_REFERENCE);
-
-	private static final String COVENANTS_UPLOADBY_REFERENCE = "NEWCOVENANTS_UPLOADBY_REFERENCE";
-
 	public CovenantsListCtrl() {
 		super();
 	}
@@ -273,7 +269,6 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if (arguments.containsKey("module")) {
 				module = (String) arguments.get("module");
 			}
-			loadConfig();
 			doEdit();
 
 			doCheckRights();
@@ -1020,6 +1015,9 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		try {
 			try {
 
+				DataEngineStatus dataEngineStatus = new DataEngineStatus(
+						PennantConstants.NEWCOVENANTS_UPLOADBY_REFERENCE);
+
 				List<Covenant> responceData = finCovenantFileUploadResponce.covenantFileUploadResponceData(this.userId,
 						dataEngineStatus, file, media, false, allowedRoles.split(";"), documentData, financedetail);
 
@@ -1069,7 +1067,14 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		// Clear the file name.
+		try {
+			if (config == null) {
+				this.config = dataEngineConfig.getConfigurationByName("NEWCOVENANTS_UPLOADBY_REFERENCE");
+			}
+			if (config == null) {
+				return;
+			}
+			// Clear the file name.
 		this.fileName.setText("");
 
 		// Get the media of the selected file.
@@ -1102,17 +1107,12 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		this.fileName.setText(mediaName);
 		this.btnImport.setDisabled(false);
-	}
-
-	private void loadConfig() throws Exception {
-		if (config == null) {
-			List<ValueLabel> menuList = new ArrayList<>();
-			this.config = dataEngineConfig.getConfigurationByName(COVENANTS_UPLOADBY_REFERENCE);
-			dataEngineStatus = dataEngineConfig.getLatestExecution(COVENANTS_UPLOADBY_REFERENCE);
-			ValueLabel valueLabel = new ValueLabel(COVENANTS_UPLOADBY_REFERENCE, "Covenant Upload By Reference");
-			menuList.add(valueLabel);
+		} catch (Exception e) {
+			MessageUtil.showError(e.getMessage());
+			return;
 		}
 	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

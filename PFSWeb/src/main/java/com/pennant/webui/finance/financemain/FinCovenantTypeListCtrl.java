@@ -142,10 +142,6 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private long userId;
 	private Configuration config;
 
-	private DataEngineStatus dataEngineStatus = new DataEngineStatus(PennantConstants.COVENANTS_UPLOADBY_REFERENCE);
-
-	private static final String COVENANTS_UPLOADBY_REFERENCE = "COVENANTS_UPLOADBY_REFERENCE";
-
 	@Autowired(required = false)
 	private transient FinCovenantFileUploadResponce finCovenantFileUploadResponce;
 
@@ -263,7 +259,6 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			doEdit();
 			doCheckRights();
 			doSetFieldProperties();
-			loadConfig();
 			doShowDialog();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -645,16 +640,6 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 	}
 
-	private void loadConfig() throws Exception {
-		if (config == null) {
-			List<ValueLabel> menuList = new ArrayList<>();
-			this.config = dataEngineConfig.getConfigurationByName(COVENANTS_UPLOADBY_REFERENCE);
-			dataEngineStatus = dataEngineConfig.getLatestExecution(COVENANTS_UPLOADBY_REFERENCE);
-			ValueLabel valueLabel = new ValueLabel(COVENANTS_UPLOADBY_REFERENCE, "Covenant Upload By Reference");
-			menuList.add(valueLabel);
-		}
-	}
-
 	public void onClick$btnImport(Event event) throws InterruptedException {
 		this.btnImport.setDisabled(true);
 		if (media == null) {
@@ -664,6 +649,8 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		try {
 			try {
+				DataEngineStatus dataEngineStatus = new DataEngineStatus(PennantConstants.COVENANTS_UPLOADBY_REFERENCE);
+
 				List<DocumentType> documentData = finCovenantTypeService.getPddOtcList();
 				finCovenantTypeData = finCovenantFileUploadResponce.finCovenantFileUploadResponceData(this.userId,
 						dataEngineStatus, file, media, false, allowedRoles.split(";"), documentData);
@@ -712,39 +699,50 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
-		// Clear the file name.
-		this.fileName.setText("");
+		try {
+			if (config == null) {
+				this.config = dataEngineConfig.getConfigurationByName("COVENANTS_UPLOADBY_REFERENCE");
+			}
+			if (config == null) {
+				return;
+			}
+			// Clear the file name.
+			this.fileName.setText("");
 
-		// Get the media of the selected file.
-		media = event.getMedia();
+			// Get the media of the selected file.
+			media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+				return;
+			}
+			String mediaName = media.getName();
+
+			// Get the selected configuration details.
+			String prefix = config.getFilePrefixName();
+			String extension = config.getFileExtension();
+
+			// Validate the file extension.
+			if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
+				MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
+
+				media = null;
+				return;
+			}
+
+			// Validate the file prefix.
+			if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
+				MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
+
+				media = null;
+				return;
+			}
+
+			this.fileName.setText(mediaName);
+			this.btnImport.setDisabled(false);
+		} catch (Exception e) {
+			MessageUtil.showError(e.getMessage());
 			return;
 		}
-		String mediaName = media.getName();
-
-		// Get the selected configuration details.
-		String prefix = config.getFilePrefixName();
-		String extension = config.getFileExtension();
-
-		// Validate the file extension.
-		if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
-
-			media = null;
-			return;
-		}
-
-		// Validate the file prefix.
-		if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
-
-			media = null;
-			return;
-		}
-
-		this.fileName.setText(mediaName);
-		this.btnImport.setDisabled(false);
 	}
 
 	// ******************************************************//
