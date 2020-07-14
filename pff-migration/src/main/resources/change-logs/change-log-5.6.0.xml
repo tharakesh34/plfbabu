@@ -5333,7 +5333,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+<!-- 
 	<changeSet id="ST#350.41" author="gopal.p">
 		<comment>Fee Type configuration for the chooses Auto-knock-off</comment>
 		<sql>
@@ -5346,7 +5346,7 @@
 				UPDATE SEQFEETYPES SET SEQNO  = (SELECT MAX(FEETYPEID) FROM FEETYPES_VIEW);
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="ST#350.42" author="Gopal.p">
 		<addColumn tableName="FINRECEIPTHEADER">
@@ -7658,13 +7658,17 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1008" author="saisandeep.b">
-		<sql>
-			<![CDATA[
-				alter table FinExpenseMovements add column LinkedTranId bigint;
-				alter table FinExpenseMovements add column RevLinkedTranId bigint;
-			]]>
-		</sql>
+	<changeSet id="ST#1008.1" author="saisandeep.b">
+		<addColumn tableName="FinExpenseMovements">
+			<column name="LinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	
+	<changeSet id="ST#1008.2" author="saisandeep.b">
+		<addColumn tableName="FinExpenseMovements">
+			<column name="RevLinkedTranId" type="bigint" />
+		</addColumn>
 	</changeSet>
 
 	<changeSet id="ST#941.3" author="Gopal.p">
@@ -7675,7 +7679,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="DE#1023" author="vijaya.a">
 		<sql>
 			<![CDATA[
