@@ -1596,8 +1596,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { finRef, curBussDate, finRef, curBussDate }, new RowMapper<FinanceScheduleDetail>() {
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finRef, finRef, curBussDate },
+					new RowMapper<FinanceScheduleDetail>() {
 
 						@Override
 						public FinanceScheduleDetail mapRow(ResultSet rs, int arg1) throws SQLException {
