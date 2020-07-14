@@ -140,7 +140,7 @@ public class ImplementationConstants {
 		ALLOW_IND_AS = getValueAsBoolean(extensions, "ALLOW_IND_AS", false);
 		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
 		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", false);
-		ALLOW_DSF_CASHCLT = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", false);
+		ALLOW_DSF_CASHCLT = getValueAsBoolean(extensions, "ALLOW_DSF_CASHCLT", false);
 		ALLOW_ADV_INT_EMI = getValueAsBoolean(extensions, "ALLOW_ADV_INT_EMI", false);
 		ALLOW_TDS_ON_FEE = getValueAsBoolean(extensions, "ALLOW_TDS_ON_FEE", false);
 		ALLOW_OD_LOANS = getValueAsBoolean(extensions, "ALLOW_OD_LOANS", false);
