@@ -375,4 +375,12 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="DE#1028" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update Dedupfields set FieldName = 'CustCompName' where FieldDesc = 'Company Name' and QueryModule = 'SMEBlacklist';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
