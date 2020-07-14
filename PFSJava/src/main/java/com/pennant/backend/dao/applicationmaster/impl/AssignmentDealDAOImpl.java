@@ -42,12 +42,17 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -583,24 +588,51 @@ public class AssignmentDealDAOImpl extends SequenceDao<AssignmentDeal> implement
 
 	@Override
 	public List<AssignmentDealExcludedFee> getApprovedAssignmentDealExcludedFeeList(long dealId) {
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("DealId", dealId);
-		RowMapper<AssignmentDealExcludedFee> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AssignmentDealExcludedFee.class);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, DealId, FeeTypeId, FeeTypeCode, FeeTypeCode, Version, LastMntOn, LastMntBy");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from AssDealExcludedFee_AView");
+		sql.append(" Where DealId = ?");
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" Id, DealId, FeeTypeId, FeeTypeCode, FeeTypeCode,");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From AssDealExcludedFee_AView"); //TODO if you change table name change View name also
-		sql.append(" Where DealId = :DealId");
-
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index, dealId);
+				}
+			}, new RowMapper<AssignmentDealExcludedFee>() {
+				@Override
+				public AssignmentDealExcludedFee mapRow(ResultSet rs, int rowNum) throws SQLException {
+					AssignmentDealExcludedFee adf = new AssignmentDealExcludedFee();
 
+					adf.setId(rs.getLong("Id"));
+					adf.setDealId(rs.getLong("DealId"));
+					adf.setFeeTypeId(rs.getLong("FeeTypeId"));
+					adf.setFeeTypeCode(rs.getString("FeeTypeCode"));
+					adf.setVersion(rs.getInt("Version"));
+					adf.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					adf.setLastMntBy(rs.getLong("LastMntBy"));
+					adf.setRecordStatus(rs.getString("RecordStatus"));
+					adf.setRoleCode(rs.getString("RoleCode"));
+					adf.setNextRoleCode(rs.getString("NextRoleCode"));
+					adf.setTaskId(rs.getString("TaskId"));
+					adf.setNextTaskId(rs.getString("NextTaskId"));
+					adf.setRecordType(rs.getString("RecordType"));
+					adf.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return adf;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 }

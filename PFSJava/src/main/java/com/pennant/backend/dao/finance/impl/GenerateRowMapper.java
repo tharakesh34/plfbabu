@@ -174,7 +174,7 @@ public class GenerateRowMapper {
 		}
 
 		if (field == null) {
-			System.out.println();
+			System.out.println(fieldName);
 		}
 
 		return field.getType();

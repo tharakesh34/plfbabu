@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -53,8 +55,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-
+import org.apache.commons.lang.StringUtils;
 import com.pennant.backend.dao.applicationmaster.AssignmentDAO;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -78,38 +79,61 @@ public class AssignmentDAOImpl extends SequenceDao<Assignment> implements Assign
 	public Assignment getAssignment(long id, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, description, dealid, loanType, disbDate, sharingPercentage, ");
-		sql.append("   gst, opexFeeType, ");
-		sql.append(" active, ");
-		if (type.contains("View")) {
-			sql.append("dealcode, dealcodedesc, loantypedesc, EntityCode,");
-		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From Assignment");
-		sql.append(type);
-		sql.append(" Where id = :id");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, Description, DealId, LoanType, DisbDate, SharingPercentage, Gst, OpexFeeType");
+		sql.append(", Active");
 
-		// Execute the SQL, binding the arguments.
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", DealCode, DealCodeDesc, LoanTypeDesc, EntityCode");
+		}
+
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from Assignment");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where id = ?");
+
 		logger.trace(Literal.SQL + sql.toString());
 
-		Assignment assignment = new Assignment();
-		assignment.setId(id);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(assignment);
-		RowMapper<Assignment> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Assignment.class);
-
 		try {
-			assignment = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<Assignment>() {
+				@Override
+				public Assignment mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Assignment a = new Assignment();
+
+					a.setId(rs.getLong("Id"));
+					a.setDescription(rs.getString("Description"));
+					a.setDealId(rs.getLong("DealId"));
+					a.setLoanType(rs.getString("LoanType"));
+					a.setDisbDate(rs.getTimestamp("DisbDate"));
+					a.setSharingPercentage(rs.getBigDecimal("SharingPercentage"));
+					a.setGst(rs.getBoolean("Gst"));
+					a.setOpexFeeType(rs.getString("OpexFeeType"));
+					a.setActive(rs.getBoolean("Active"));
+					a.setDealCode(rs.getString("DealCode"));
+					a.setDealCodeDesc(rs.getString("DealCodeDesc"));
+					a.setLoanTypeDesc(rs.getString("LoanTypeDesc"));
+					a.setEntityCode(rs.getString("EntityCode"));
+					a.setVersion(rs.getInt("Version"));
+					a.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					a.setLastMntBy(rs.getLong("LastMntBy"));
+					a.setRecordStatus(rs.getString("RecordStatus"));
+					a.setRoleCode(rs.getString("RoleCode"));
+					a.setNextRoleCode(rs.getString("NextRoleCode"));
+					a.setTaskId(rs.getString("TaskId"));
+					a.setNextTaskId(rs.getString("NextTaskId"));
+					a.setRecordType(rs.getString("RecordType"));
+					a.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return a;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			assignment = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return assignment;
+		return null;
 	}
 
 	@Override

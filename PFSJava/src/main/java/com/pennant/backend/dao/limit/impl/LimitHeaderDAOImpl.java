@@ -1,5 +1,7 @@
 package com.pennant.backend.dao.limit.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -71,41 +73,79 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 	@Override
 	public LimitHeader getLimitHeaderByCustomerId(final long customerId, String type) {
-
 		logger.debug(Literal.ENTERING);
-		LimitHeader limitHeader = getLimitHeader();
 
-		limitHeader.setCustomerId(customerId);
-
-		StringBuilder sql = new StringBuilder(
-				"select HeaderId,  CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" HeaderId, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate");
 		sql.append(", LimitStructureCode, LimitSetupRemarks, Active, Rebuild, ValidateMaturityDate");
-
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(" , ShowLimitsIn,QueryDesc,GroupName,CustGrpRO1,ResponsibleBranchName,StructureName");
-
-			sql.append(",CustShrtName, custCoreBank , custDftBranch , CustDftBranchName , custSalutationCode ");
-			sql.append(",CustCIF, CustFName, CustMName, CustFullName, CustGrpCode, GroupName ");
+			sql.append(", ShowLimitsIn, QueryDesc, GroupName, ResponsibleBranchName, StructureName, CustShrtName");
+			sql.append(", CustCoreBank, CustDftBranch, CustDftBranchName, CustSalutationCode, CustCIF");
+			sql.append(", CustFName, CustMName, CustFullName, CustGrpCode, GroupName, CustGrpRO1");
 		}
-		sql.append(" From LimitHeader");
-		sql.append(StringUtils.trimToEmpty(type));
 
-		sql.append(" where CustomerId = :CustomerId");
+		sql.append(" from LimitHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" where CustomerId = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitHeader);
-		RowMapper<LimitHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitHeader.class);
 
 		try {
-			limitHeader = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			limitHeader = null;
-		}
-		logger.debug(Literal.LEAVING);
-		return limitHeader;
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { customerId },
+					new RowMapper<LimitHeader>() {
+						@Override
+						public LimitHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
+							LimitHeader lh = new LimitHeader();
 
+							lh.setHeaderId(rs.getLong("HeaderId"));
+							lh.setCustomerId(rs.getLong("CustomerId"));
+							lh.setResponsibleBranch(rs.getString("ResponsibleBranch"));
+							lh.setLimitCcy(rs.getString("LimitCcy"));
+							lh.setLimitExpiryDate(rs.getTimestamp("LimitExpiryDate"));
+							lh.setLimitRvwDate(rs.getTimestamp("LimitRvwDate"));
+							lh.setLimitStructureCode(rs.getString("LimitStructureCode"));
+							lh.setLimitSetupRemarks(rs.getString("LimitSetupRemarks"));
+							lh.setActive(rs.getBoolean("Active"));
+							lh.setRebuild(rs.getBoolean("Rebuild"));
+							lh.setValidateMaturityDate(rs.getBoolean("ValidateMaturityDate"));
+							lh.setRecordStatus(rs.getString("RecordStatus"));
+							lh.setRoleCode(rs.getString("RoleCode"));
+							lh.setNextRoleCode(rs.getString("NextRoleCode"));
+							lh.setTaskId(rs.getString("TaskId"));
+							lh.setNextTaskId(rs.getString("NextTaskId"));
+							lh.setRecordType(rs.getString("RecordType"));
+							lh.setWorkflowId(rs.getLong("WorkflowId"));
+
+							if (StringUtils.trimToEmpty(type).contains("View")) {
+								lh.setShowLimitsIn(rs.getString("ShowLimitsIn"));
+								lh.setQueryDesc(rs.getString("QueryDesc"));
+								lh.setGroupName(rs.getString("GroupName"));
+								lh.setResponsibleBranchName(rs.getString("ResponsibleBranchName"));
+								lh.setStructureName(rs.getString("StructureName"));
+								lh.setCustShrtName(rs.getString("CustShrtName"));
+								lh.setCustCoreBank(rs.getString("CustCoreBank"));
+								lh.setCustDftBranch(rs.getString("CustDftBranch"));
+								lh.setCustDftBranchName(rs.getString("CustDftBranchName"));
+								lh.setCustSalutationCode(rs.getString("CustSalutationCode"));
+								lh.setCustCIF(rs.getString("CustCIF"));
+								lh.setCustFName(rs.getString("CustFName"));
+								lh.setCustMName(rs.getString("CustMName"));
+								lh.setCustFullName(rs.getString("CustFullName"));
+								lh.setCustGrpCode(rs.getString("CustGrpCode"));
+								//lh.setCustGrpRO1(rs.getString("CustGrpRO1"));	
+							}
+
+							return lh;
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**
@@ -119,37 +159,73 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 */
 	@Override
 	public LimitHeader getLimitHeaderByCustomerGroupCode(final long groupCode, String type) {
-
 		logger.debug(Literal.ENTERING);
-		LimitHeader limitHeader = getLimitHeader();
 
-		limitHeader.setCustomerGroup(groupCode);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" HeaderId, CustomerGroup, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate");
+		sql.append(", LimitStructureCode, LimitSetupRemarks, Active, Rebuild, ValidateMaturityDate");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		StringBuilder sql = new StringBuilder("select HeaderId,  CustomerGroup, ResponsibleBranch, LimitCcy ");
-		sql.append(
-				",LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks, Active, Rebuild, ValidateMaturityDate");
-		sql.append(",RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(" , ShowLimitsIn, QueryDesc, CustGrpRO1, ResponsibleBranchName, StructureName ");
-			sql.append(", CustCIF, CustFName, CustMName, CustFullName, CustGrpCode, GroupName ");
+			sql.append(", ShowLimitsIn, QueryDesc, ResponsibleBranchName, StructureName, CustCIF, CustFName");
+			sql.append(", CustMName, CustFullName, CustGrpCode, GroupName, CustGrpRO1");
 		}
-		sql.append(" From LimitHeader");
+
+		sql.append(" from LimitHeader");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" where CustomerGroup = :CustomerGroup");
+		sql.append(" where CustomerGroup = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitHeader);
-		RowMapper<LimitHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitHeader.class);
 
 		try {
-			limitHeader = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			limitHeader = null;
-		}
-		logger.debug(Literal.LEAVING);
-		return limitHeader;
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { groupCode },
+					new RowMapper<LimitHeader>() {
+						@Override
+						public LimitHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
+							LimitHeader lh = new LimitHeader();
 
+							lh.setHeaderId(rs.getLong("HeaderId"));
+							lh.setCustomerGroup(rs.getLong("CustomerGroup"));
+							lh.setResponsibleBranch(rs.getString("ResponsibleBranch"));
+							lh.setLimitCcy(rs.getString("LimitCcy"));
+							lh.setLimitExpiryDate(rs.getTimestamp("LimitExpiryDate"));
+							lh.setLimitRvwDate(rs.getTimestamp("LimitRvwDate"));
+							lh.setLimitStructureCode(rs.getString("LimitStructureCode"));
+							lh.setLimitSetupRemarks(rs.getString("LimitSetupRemarks"));
+							lh.setActive(rs.getBoolean("Active"));
+							lh.setRebuild(rs.getBoolean("Rebuild"));
+							lh.setValidateMaturityDate(rs.getBoolean("ValidateMaturityDate"));
+							lh.setRecordStatus(rs.getString("RecordStatus"));
+							lh.setRoleCode(rs.getString("RoleCode"));
+							lh.setNextRoleCode(rs.getString("NextRoleCode"));
+							lh.setTaskId(rs.getString("TaskId"));
+							lh.setNextTaskId(rs.getString("NextTaskId"));
+							lh.setRecordType(rs.getString("RecordType"));
+							lh.setWorkflowId(rs.getLong("WorkflowId"));
+
+							if (StringUtils.trimToEmpty(type).contains("View")) {
+								lh.setShowLimitsIn(rs.getString("ShowLimitsIn"));
+								lh.setQueryDesc(rs.getString("QueryDesc"));
+								lh.setResponsibleBranchName(rs.getString("ResponsibleBranchName"));
+								lh.setStructureName(rs.getString("StructureName"));
+								lh.setCustCIF(rs.getString("CustCIF"));
+								lh.setCustFName(rs.getString("CustFName"));
+								lh.setCustMName(rs.getString("CustMName"));
+								lh.setCustFullName(rs.getString("CustFullName"));
+								lh.setCustGrpCode(rs.getString("CustGrpCode"));
+								lh.setGroupName(rs.getString("GroupName"));
+								//lh.setCustGrpRO1(rs.getString("CustGrpRO1"));
+							}
+
+							return lh;
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	@Override
