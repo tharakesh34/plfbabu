@@ -73,6 +73,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortization>
 		implements ProjectedAmortizationDAO {
@@ -106,7 +107,8 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		sql.append(", amz.Active, e.EntityCode, fm.FinBranch, fm.FinCcy");
 		sql.append(" from IncomeAmortization amz");
 		sql.append(" Inner join FinanceMain fm on fm.FinReference = amz.FinReference");
-		sql.append(" Inner join FeeTypes fe on fe.FeeTypeID = amz.IncomeTypeID and IncomeType = ? ");
+		sql.append(" Inner join FeeTypes fe on fe.FeeTypeID = amz.IncomeTypeID and IncomeType = ?");
+		sql.append(getIncomeAMZDetailsCommonJoins());
 		sql.append(" union all");
 		sql.append(" Select amz.FinReference, amz.CustID, amz.FinType, fe.ExpenseTypeCode FeeTypeCode, ReferenceID");
 		sql.append(", IncomeTypeID, IncomeType, CalculatedOn, CalcFactor, Amount, ActualAmount, AMZMethod");
@@ -114,11 +116,9 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		sql.append(", amz.Active, e.EntityCode, fm.FinBranch, fm.FinCcy");
 		sql.append(" from IncomeAmortization amz");
 		sql.append(" Inner join FinanceMain fm on fm.FinReference = amz.FinReference");
-		sql.append(" Inner join ExpenseTypes fe on fe.ExpenseTypeID = amz.IncomeTypeID and IncomeType = ?) amz");
-		sql.append(" inner join RmtFinanceTypes ft on ft.Fintype = amz.Fintype");
-		sql.append(" inner join SmtDivisionDetail d on d.DivisionCode = ft.FinDivision");
-		sql.append(" inner join entity e on e.EntityCode = d.EntityCode");
-		sql.append(" Where amz.FinReference = ?");
+		sql.append(" Inner join ExpenseTypes fe on fe.ExpenseTypeID = amz.IncomeTypeID and IncomeType = ?");
+		sql.append(getIncomeAMZDetailsCommonJoins());
+		sql.append(") amz Where amz.FinReference = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -166,6 +166,15 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
+	}
+
+	private String getIncomeAMZDetailsCommonJoins() {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Inner join RmtFinanceTypes ft on ft.Fintype = amz.Fintype");
+		sql.append(" Inner join SmtDivisionDetail d on d.DivisionCode = ft.FinDivision");
+		sql.append(" Inner join Entity e on e.EntityCode = d.EntityCode");
+
+		return sql.toString();
 	}
 
 	@Override
@@ -774,7 +783,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		source.addValue("RowCount", noOfRows);
 		source.addValue("ThreadId", threadId);
 		source.addValue("EodDate", date);
-		source.addValue("AcThreadId", 0);
+		source.addValue("AcThreadId", "0");
 
 		try {
 			if (noOfRows == 0) {
@@ -1074,9 +1083,9 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		amortizationQueuing.setEodProcess(isEOMProcess);
 		amortizationQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 
-		amortizationQueuing.setStartTime(DateUtility.getSysDate());
+		amortizationQueuing.setStartTime(DateUtil.getSysDate());
 
-		Date curMonthStart = DateUtility.getMonthStart(amzMonth);
+		Date curMonthStart = DateUtil.getMonthStart(amzMonth);
 		amortizationQueuing.setMonthEndDate(curMonthStart);
 
 		StringBuilder sql = new StringBuilder();
@@ -1138,7 +1147,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		source.addValue("Progress", progress);
-		source.addValue("EndTime", DateUtility.getSysDate());
+		source.addValue("EndTime", DateUtil.getSysDate());
 
 		StringBuilder updateSql = new StringBuilder("Update AmortizationQueuing set");
 		updateSql.append(" EndTime = :EndTime, Progress = :Progress");

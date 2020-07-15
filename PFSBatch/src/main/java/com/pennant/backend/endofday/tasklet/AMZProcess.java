@@ -80,6 +80,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class AMZProcess implements Tasklet {
 	private Logger logger = LogManager.getLogger(AMZProcess.class);
@@ -120,8 +121,8 @@ public class AMZProcess implements Tasklet {
 		cursorItemReader.setPreparedStatementSetter(new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setLong(1, threadId);
-				ps.setInt(2, AmortizationConstants.PROGRESS_WAIT);
+				ps.setString(1, String.valueOf(threadId));
+				ps.setString(2, String.valueOf(AmortizationConstants.PROGRESS_WAIT));
 			}
 		});
 
@@ -130,7 +131,7 @@ public class AMZProcess implements Tasklet {
 
 		Date amzMonth = (Date) context.getStepContext().getJobExecutionContext()
 				.get(AmortizationConstants.AMZ_MONTHEND);
-		Date amzMonthStart = DateUtility.getMonthStart(amzMonth);
+		Date amzMonthStart = DateUtil.getMonthStart(amzMonth);
 
 		while ((amortizationQueuing = cursorItemReader.read()) != null) {
 			status.setProcessedRecords(processedCount++);
