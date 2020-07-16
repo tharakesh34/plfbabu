@@ -1219,8 +1219,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		financeDetail = validateInstructions(financeDetail, moduleDefiner, eventCode);
 
 		if (fsi.getValueDate() == null) {
-			fsi.setValueDate(fsi.getReceivedDate());
-			fsi.getReceiptDetail().setValueDate(fsi.getReceivedDate());
+			fsi.setValueDate(fsi.getReceiptDetail().getReceivedDate());
+			fsi.getReceiptDetail().setValueDate(fsi.getReceiptDetail().getReceivedDate());
 		}
 
 		FinReceiptData receiptData = receiptService.doReceiptValidations(financeDetail, moduleDefiner);
