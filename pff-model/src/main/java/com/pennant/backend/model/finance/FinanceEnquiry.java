@@ -136,6 +136,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private boolean sanBsdSchdle;
 	private long promotionSeqId;
 	private BigDecimal cbAmount;
+	private BigDecimal totalCpz;
 
 	public FinanceEnquiry() {
 
@@ -175,6 +176,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 		excludeFields.add("totalPftPaid");
 		excludeFields.add("excessAmount");
 		excludeFields.add("excessAmtPaid");
+		excludeFields.add("totalCpz");
 		return excludeFields;
 	}
 
@@ -796,6 +798,14 @@ public class FinanceEnquiry implements java.io.Serializable {
 
 	public void setCbAmount(BigDecimal cbAmount) {
 		this.cbAmount = cbAmount;
+	}
+
+	public BigDecimal getTotalCpz() {
+		return totalCpz;
+	}
+
+	public void setTotalCpz(BigDecimal totalCpz) {
+		this.totalCpz = totalCpz;
 	}
 
 }

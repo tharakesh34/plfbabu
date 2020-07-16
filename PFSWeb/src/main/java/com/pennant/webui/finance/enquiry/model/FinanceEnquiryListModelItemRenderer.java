@@ -68,7 +68,7 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 				curFinAmountValue = BigDecimal.ZERO;
 			} else {
 				curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
-						.add(enquiry.getInsuranceAmt()).subtract(enquiry.getDownPayment())
+						.add(enquiry.getInsuranceAmt()).add(enquiry.getTotalCpz()).subtract(enquiry.getDownPayment())
 						.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount());
 			}
 			lc = new Listcell(
