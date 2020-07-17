@@ -139,8 +139,7 @@ public class ProjectedAmortizationService {
 
 	/**
 	 * 1. Income / Expense Amortization Calculation Based on Method </br>
-	 * 2. Interest Method - All Finances with interest greater than ZERO except
-	 * FLEXI Finance types </br>
+	 * 2. Interest Method - All Finances with interest greater than ZERO except FLEXI Finance types </br>
 	 * 3. Opening Principal Balance Method - ZERO Interest Finances </br>
 	 * 4. Straight Line Method - FLEXI/OD Finances and Floating rate type </br>
 	 * 
@@ -267,9 +266,8 @@ public class ProjectedAmortizationService {
 			totalProfit = totalProfit.add(curSchd.getProfitCalc());
 
 			/**
-			 * Calculate ACCRUAL from current month onwards (OR) Calculation
-			 * from finance start date (back dated finances : prvProjAccrual is
-			 * null)
+			 * Calculate ACCRUAL from current month onwards (OR) Calculation from finance start date (back dated
+			 * finances : prvProjAccrual is null)
 			 */
 			if (prvProjAccrual != null && !calFromFinStartDate && curSchdDate.compareTo(appDateMonthStart) < 0) {
 				continue;
@@ -628,17 +626,14 @@ public class ProjectedAmortizationService {
 	 * Method for calculate AMZ Percentage based on AMZ method </br>
 	 * 
 	 * 1. Interest Method : </br>
-	 * -- Percentage calculated on unamortized profit (Total Profit - Previous
-	 * Month Cumulative Profit) </br>
+	 * -- Percentage calculated on unamortized profit (Total Profit - Previous Month Cumulative Profit) </br>
 	 * 
 	 * 2. Opening Principal Balance Method : </br>
-	 * -- Percentage calculated on unamortized POS (Total POS - Previous Month
-	 * Cumulative POS) </br>
+	 * -- Percentage calculated on unamortized POS (Total POS - Previous Month Cumulative POS) </br>
 	 * 
 	 * 3. StraightLine Method : </br>
 	 * -- AMZ percentage is ZERO for Partial Settlements </br>
-	 * -- Calc. Percentage is Cumulative Percentage not Monthly like Interest
-	 * and Principal Methods. </br>
+	 * -- Calc. Percentage is Cumulative Percentage not Monthly like Interest and Principal Methods. </br>
 	 *
 	 *
 	 * @param finEODEvent
@@ -879,10 +874,13 @@ public class ProjectedAmortizationService {
 		int count = 0;
 		// insert new finance fees
 		count = this.projectedAmortizationDAO.prepareAMZFeeDetails(monthEndDate, appDate);
-		this.projectedAmortizationDAO.updateActualAmount(appDate);
+
+		this.projectedAmortizationDAO.updateActualAmount(appDate, AmortizationConstants.AMZ_INCOMETYPE_FEE);
 
 		// insert new finance expenses
 		count = count + this.projectedAmortizationDAO.prepareAMZExpenseDetails(monthEndDate, appDate);
+
+		this.projectedAmortizationDAO.updateActualAmount(appDate, AmortizationConstants.AMZ_INCOMETYPE_EXPENSE);
 
 		StepUtil.PREPARE_INCOME_AMZ_DETAILS.setTotalRecords(count);
 		StepUtil.PREPARE_INCOME_AMZ_DETAILS.setProcessedRecords(count);
@@ -933,8 +931,8 @@ public class ProjectedAmortizationService {
 
 		amountCodes.setFinType(fm.getFinType());
 
-		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		for (ProjectedAmortization amz : finEODEvent.getIncomeAMZList()) {
+			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 			aeEvent.setBranch(amz.getFinBranch());
 			aeEvent.setCcy(amz.getFinCcy());
 			aeEvent.setCustID(amz.getCustID());
@@ -1116,8 +1114,7 @@ public class ProjectedAmortizationService {
 	}
 
 	/**
-	 * This Method used to calculate the future amortizations based on previous
-	 * cumulative </br>
+	 * This Method used to calculate the future amortizations based on previous cumulative </br>
 	 * 
 	 * @param incomeAMZ
 	 * @param curMonthEnd
@@ -1204,8 +1201,7 @@ public class ProjectedAmortizationService {
 	/**
 	 * calculate Amortization for Income and Expense based on AMZPerentage </br>
 	 * 
-	 * For Interest and Open Principal Balance methods calculate Monthly AMZ.
-	 * </br>
+	 * For Interest and Open Principal Balance methods calculate Monthly AMZ. </br>
 	 * 
 	 * For Straight Line Method calculate Cumulative AMZ. </br>
 	 * 

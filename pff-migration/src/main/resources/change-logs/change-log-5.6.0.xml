@@ -5333,20 +5333,18 @@
 			]]>
 		</sql>
 	</changeSet>
-<!-- 
-	<changeSet id="ST#350.41" author="gopal.p">
-		<comment>Fee Type configuration for the chooses Auto-knock-off</comment>
-		<sql>
-			<![CDATA[
-				Delete from FEETYPES where FEETYPECODE = 'KOFF_EMI';
-				Delete from FEETYPES where FEETYPECODE = 'KOFF_LPI';
-				UPDATE SEQFEETYPES SET SEQNO  = (SELECT MAX(FEETYPEID) FROM FEETYPES_VIEW);
-				Insert into FEETYPES (FEETYPEID, FEETYPECODE, FEETYPEDESC, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, MANUALADVICE, ACCOUNTSETID, ADVISETYPE, HOSTFEETYPECODE, TAXCOMPONENT, AMORTZREQ, TAXAPPLICABLE) values ((SELECT MAX(FEETYPEID)+1 FROM FEETYPES), 'KOFF_EMI', 	'Fee Code for Auto knockoff EMI', 	1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0, 0, 0, '', null, 0, 0);
-				Insert into FEETYPES (FEETYPEID, FEETYPECODE, FEETYPEDESC, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, MANUALADVICE, ACCOUNTSETID, ADVISETYPE, HOSTFEETYPECODE, TAXCOMPONENT, AMORTZREQ, TAXAPPLICABLE) values ((SELECT MAX(FEETYPEID)+1 FROM FEETYPES), 'KOFF_LPI', 	'Fee Code for Auto knockoff LPI', 	1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0, 0, 0, '', null, 0, 0);
-				UPDATE SEQFEETYPES SET SEQNO  = (SELECT MAX(FEETYPEID) FROM FEETYPES_VIEW);
-			]]>
-		</sql>
-	</changeSet> -->
+	<!-- <changeSet id="ST#350.41" author="gopal.p"> <comment>Fee Type configuration for the chooses Auto-knock-off</comment> 
+		<sql> <![CDATA[ Delete from FEETYPES where FEETYPECODE = 'KOFF_EMI'; Delete from FEETYPES where FEETYPECODE = 'KOFF_LPI'; 
+		UPDATE SEQFEETYPES SET SEQNO = (SELECT MAX(FEETYPEID) FROM FEETYPES_VIEW); Insert into FEETYPES (FEETYPEID, FEETYPECODE, 
+		FEETYPEDESC, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, 
+		WORKFLOWID, MANUALADVICE, ACCOUNTSETID, ADVISETYPE, HOSTFEETYPECODE, TAXCOMPONENT, AMORTZREQ, TAXAPPLICABLE) values ((SELECT 
+		MAX(FEETYPEID)+1 FROM FEETYPES), 'KOFF_EMI', 'Fee Code for Auto knockoff EMI', 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', 
+		null, null, null, null, null, 0, 0, 0, 0, '', null, 0, 0); Insert into FEETYPES (FEETYPEID, FEETYPECODE, FEETYPEDESC, ACTIVE, 
+		VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, MANUALADVICE, 
+		ACCOUNTSETID, ADVISETYPE, HOSTFEETYPECODE, TAXCOMPONENT, AMORTZREQ, TAXAPPLICABLE) values ((SELECT MAX(FEETYPEID)+1 FROM 
+		FEETYPES), 'KOFF_LPI', 'Fee Code for Auto knockoff LPI', 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, 
+		null, 0, 0, 0, 0, '', null, 0, 0); UPDATE SEQFEETYPES SET SEQNO = (SELECT MAX(FEETYPEID) FROM FEETYPES_VIEW); ]]> </sql> 
+		</changeSet> -->
 
 	<changeSet id="ST#350.42" author="Gopal.p">
 		<addColumn tableName="FINRECEIPTHEADER">
@@ -7663,8 +7661,8 @@
 			<column name="LinkedTranId" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="ST#1008.2" author="saisandeep.b">
 		<addColumn tableName="FinExpenseMovements">
 			<column name="RevLinkedTranId" type="bigint" />
@@ -7711,7 +7709,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1002.12_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7719,7 +7717,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1002.12" author="satyanarayana.g">
 		<createView viewName="FORECLOSURE_TVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -7758,7 +7756,7 @@
 					]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#1002.12_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7826,12 +7824,12 @@
 					  T5.CUSTTYPECTG,
 					  COALESCE(T9.NOINST,0) NOINST,
 					  T1.TOTALCPZ
-					  FROM plf.FINANCEMAIN T1
-				INNER JOIN plf.RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
-				INNER JOIN plf.CUSTOMERS T3 ON T1.CUSTID = T3.CUSTID
-				INNER JOIN plf.RMTBRANCHES T4 ON T1.FINBRANCH = T4.BRANCHCODE
-				INNER JOIN plf.RMTCUSTTYPES T5 ON T3.CUSTTYPECODE = T5.CUSTTYPECODE
-				LEFT JOIN plf.FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+					  FROM FINANCEMAIN T1
+				INNER JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+				INNER JOIN CUSTOMERS T3 ON T1.CUSTID = T3.CUSTID
+				INNER JOIN RMTBRANCHES T4 ON T1.FINBRANCH = T4.BRANCHCODE
+				INNER JOIN RMTCUSTTYPES T5 ON T3.CUSTTYPECODE = T5.CUSTTYPECODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
 			]]>
 		</createView>
 	</changeSet>
@@ -7847,17 +7845,17 @@
 	<changeSet id="DE#989" author="vijaya.a">
 		<sql>
 			<![CDATA[
-				Delete from plf.REPORTFILTERFIELDS where reportid in (select reportid from plf.reportconfiguration where menuitemcode='menu_Item_ExpenseLoanTypeReport');
-				Delete from plf.REPORTFILTERFIELDS where reportid in (select reportid from plf.reportconfiguration where menuitemcode='menu_Item_ExpenseLoanLevelReport');
+				Delete from REPORTFILTERFIELDS where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_ExpenseLoanTypeReport');
+				Delete from REPORTFILTERFIELDS where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_ExpenseLoanLevelReport');
 				
-				Delete from plf.reportconfiguration where menuitemcode='menu_Item_ExpenseLoanTypeReport';
-				Delete from plf.reportconfiguration where menuitemcode='menu_Item_ExpenseLoanLevelReport';
+				Delete from reportconfiguration where menuitemcode='menu_Item_ExpenseLoanTypeReport';
+				Delete from reportconfiguration where menuitemcode='menu_Item_ExpenseLoanLevelReport';
 				
-				Insert into plf.REPORTCONFIGURATION  values ((select max(reportid)+1 from plf.reportconfiguration),'Excel: Expense Loan Type Report','Expense Loan Type Report',1,'ExpenseReport_LoanType','dataSource',1,'menu_Item_ExpenseLoanTypeReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,0,0);
-				Insert into plf.REPORTCONFIGURATION  values ((select max(reportid)+1 from plf.reportconfiguration),'Excel: Expense Loan Level Report','Expense Loan Level Report',1,'ExpenseReport_LoanLevel','dataSource',1,'menu_Item_ExpenseLoanLevelReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,0,0);
+				Insert into REPORTCONFIGURATION  values ((select max(reportid)+1 from reportconfiguration),'Excel: Expense Loan Type Report','Expense Loan Type Report',1,'ExpenseReport_LoanType','dataSource',1,'menu_Item_ExpenseLoanTypeReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,0,0);
+				Insert into REPORTCONFIGURATION  values ((select max(reportid)+1 from reportconfiguration),'Excel: Expense Loan Level Report','Expense Loan Level Report',1,'ExpenseReport_LoanLevel','dataSource',1,'menu_Item_ExpenseLoanLevelReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,0,0);
 				
-				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_ExpenseLoanTypeReport'),1,'File Name','LOVSEARCH','File Name','T.FILENAME',null,'LoanTypeExpenseUpload','getFileName','getFileName',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
-				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_ExpenseLoanLevelReport'),1,'File Name','LOVSEARCH','File Name','T.FILENAME',null,'LoanLevelExpenseUpload','getFileName','getFileName',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_ExpenseLoanTypeReport'),1,'File Name','LOVSEARCH','File Name','T.FILENAME',null,'LoanTypeExpenseUpload','getFileName','getFileName',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_ExpenseLoanLevelReport'),1,'File Name','LOVSEARCH','File Name','T.FILENAME',null,'LoanLevelExpenseUpload','getFileName','getFileName',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 			]]>
 		</sql>
 	</changeSet>
@@ -7877,8 +7875,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="DE#989.2" author="vijaya.a">
+
+	<changeSet id="DE#989.2" author="vijaya.a">
 		<sql>
 			<![CDATA[
 				UPDATE SEQSECRIGHTS set SeqNo = (Select max(RightId) from SecRights);

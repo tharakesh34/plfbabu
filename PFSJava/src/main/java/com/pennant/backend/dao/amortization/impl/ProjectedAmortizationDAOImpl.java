@@ -851,7 +851,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 * @return
 	 */
 	@Override
-	public void updateActualAmount(Date appDate) {
+	public void updateActualAmount(Date appDate, String incomeType) {
 		StringBuilder sql = new StringBuilder();
 
 		if (App.DATABASE == Database.POSTGRES) {
@@ -897,7 +897,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CalculatedOn", appDate);
-		source.addValue("IncomeType", AmortizationConstants.AMZ_INCOMETYPE_FEE);
+		source.addValue("IncomeType", incomeType);
 
 		this.jdbcTemplate.update(sql.toString(), source);
 	}

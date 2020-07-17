@@ -134,7 +134,7 @@ public interface ProjectedAmortizationDAO {
 
 	int prepareAMZExpenseDetails(Date monthEndDate, Date appDate);
 
-	void updateActualAmount(Date appDate);
+	void updateActualAmount(Date appDate, String incomeType);
 
 	void deleteFutureProjAMZByMonthEnd(Date curMonthEnd);
 

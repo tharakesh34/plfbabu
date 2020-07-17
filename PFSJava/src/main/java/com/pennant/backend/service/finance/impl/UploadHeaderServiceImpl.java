@@ -96,13 +96,13 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>FinancePurposeDetail</b>.<br>
+ * Service implementation for methods that depends on <b>FinancePurposeDetail</b>.<br>
  * 
  */
 public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implements UploadHeaderService {
@@ -205,9 +205,16 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 
 		amountCodes.setFinType(fm.getFinType());
 
+		aeEvent.getDataMap().putAll(amountCodes.getDeclaredFieldValues());
+
 		aeEvent.getDataMap().put(expense.getExpenseTypeCode() + "_AMZ_N", expense.getTransactionAmount());
 
 		postingsPreparationUtil.postAccounting(aeEvent);
+
+		if (CollectionUtils.isEmpty(aeEvent.getReturnDataSet())) {
+			throw new AppException(
+					"Accounting configuration is invalid for the event :" + AccountEventConstants.ACCEVENT_EXPENSE);
+		}
 
 		long linkedTranId = aeEvent.getLinkedTranId();
 		expense.setLinkedTranId(linkedTranId);
@@ -593,10 +600,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -628,10 +633,9 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getUploadHeaderDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getUploadHeaderDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
