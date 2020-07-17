@@ -229,6 +229,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		case "menu_Item_AMZProcess":
 		case "menu_Item_FeeAmzReferenceReport":
 		case "menu_Item_FeeAmzLoanTypeReport":
+		case "menu_Item_ExpenseLoanTypeReport":
+		case "menu_Item_ExpenseLoanLevelReport":
 		case "menu_Item_CalAvgPOS":
 		case "menu_Item_IncomeAmortization":
 		case "menu_Item_ExpenseUpload":

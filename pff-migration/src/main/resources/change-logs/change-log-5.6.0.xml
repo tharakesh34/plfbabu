@@ -7844,4 +7844,54 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="DE#989" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete from plf.REPORTFILTERFIELDS where reportid in (select reportid from plf.reportconfiguration where menuitemcode='menu_Item_ExpenseLoanTypeReport');
+				Delete from plf.REPORTFILTERFIELDS where reportid in (select reportid from plf.reportconfiguration where menuitemcode='menu_Item_ExpenseLoanLevelReport');
+				
+				Delete from plf.reportconfiguration where menuitemcode='menu_Item_ExpenseLoanTypeReport';
+				Delete from plf.reportconfiguration where menuitemcode='menu_Item_ExpenseLoanLevelReport';
+				
+				Insert into plf.REPORTCONFIGURATION  values ((select max(reportid)+1 from plf.reportconfiguration),'Excel: Expense Loan Type Report','Expense Loan Type Report',1,'ExpenseReport_LoanType','dataSource',1,'menu_Item_ExpenseLoanTypeReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,0,0);
+				Insert into plf.REPORTCONFIGURATION  values ((select max(reportid)+1 from plf.reportconfiguration),'Excel: Expense Loan Level Report','Expense Loan Level Report',1,'ExpenseReport_LoanLevel','dataSource',1,'menu_Item_ExpenseLoanLevelReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,0,0);
+				
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_ExpenseLoanTypeReport'),1,'File Name','LOVSEARCH','File Name','T.FILENAME',null,'LoanTypeExpenseUpload','getFileName','getFileName',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_ExpenseLoanLevelReport'),1,'File Name','LOVSEARCH','File Name','T.FILENAME',null,'LoanLevelExpenseUpload','getFileName','getFileName',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#989.1" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS set SeqNo = (Select max(RightId) from SecRights);
+				UPDATE SEQSECGROUPRIGHTS set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+
+				INSERT into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menu_Item_ExpenseLoanTypeReport','MENU',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ExpenseUpload_Maker'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_ExpenseLoanTypeReport'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ExpenseUpload_Approver'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_ExpenseLoanTypeReport'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+				UPDATE SEQSECRIGHTS set SeqNo = (Select max(RightId) from SecRights);
+				UPDATE SEQSECGROUPRIGHTS set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+			]]>
+		</sql>
+	</changeSet>
+	
+		<changeSet id="DE#989.2" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS set SeqNo = (Select max(RightId) from SecRights);
+				UPDATE SEQSECGROUPRIGHTS set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+
+				INSERT into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menu_Item_ExpenseLoanLevelReport','MENU',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ExpenseUpload_Maker'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_ExpenseLoanLevelReport'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ExpenseUpload_Approver'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_ExpenseLoanLevelReport'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+				UPDATE SEQSECRIGHTS set SeqNo = (Select max(RightId) from SecRights);
+				UPDATE SEQSECGROUPRIGHTS set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
