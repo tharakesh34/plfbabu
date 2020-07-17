@@ -120,17 +120,15 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/RulesFactory/TransactionEntry/transactionEntryDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/RulesFactory/TransactionEntry/transactionEntryDialog.zul file.
  */
 public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private static final long serialVersionUID = 4345607610334573882L;
 	private static final Logger logger = Logger.getLogger(TransactionEntryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_TransactionEntryDialog;
 	protected Intbox transOrder;
@@ -234,9 +232,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected TransactionEntry
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected TransactionEntry object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -336,8 +333,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -678,8 +674,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aTransactionEntry
 	 * @throws InterruptedException
@@ -767,8 +762,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	}
 
 	/**
-	 * Sets the Validation by setting the accordingly constraints to the
-	 * LOVFields.
+	 * Sets the Validation by setting the accordingly constraints to the LOVFields.
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
@@ -1285,8 +1279,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	}
 
 	/**
-	 * Method for Maintaining Derived Transaction Entry Details for Modified
-	 * entry
+	 * Method for Maintaining Derived Transaction Entry Details for Modified entry
 	 * 
 	 * @return
 	 */
@@ -1568,7 +1561,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		searchObj.addTabelName("FeeTypes");
 		searchObj.addFilter(new Filter("Active", 1, Filter.OP_EQUAL));
 
-		if (ImplementationConstants.ALLOW_IND_AS) {
+		String event = this.eventCode.getValue();
+		if (ImplementationConstants.ALLOW_IND_AS && AccountEventConstants.ACCEVENT_INDAS.equals(event)) {
 			searchObj.addFilter(new Filter("AmortzReq", 1, Filter.OP_EQUAL));
 		}
 
@@ -1576,6 +1570,13 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		list.add(RepayConstants.ALLOCATION_BOUNCE);
 		list.add(RepayConstants.ALLOCATION_ODC);
 		list.add(RepayConstants.ALLOCATION_LPFT);
+		list.add("KOFF_EMI");
+		list.add("KOFF_LPI");
+		
+		if (!ImplementationConstants.ALLOW_DSF_CASHCLT) {
+			list.add("CASHCLT");
+			list.add("DSF");
+		}
 
 		searchObj.addFilter(Filter.notIn("FeeTypeCode", list));
 
