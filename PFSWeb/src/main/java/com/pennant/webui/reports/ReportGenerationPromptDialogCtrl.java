@@ -129,6 +129,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
@@ -2379,17 +2380,17 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_FeeAmzReferenceReport")
 				|| StringUtils.equals(reportMenuCode, "menu_Item_FeeAmzLoanTypeReport")) {
 
-			StringBuilder whereCond1 = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
-			StringBuilder whereCond2 = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
-			StringBuilder whereCond = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
+			StringBuilder whereCond1 = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
+			StringBuilder whereCond2 = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
+			StringBuilder whereCond = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 
-			/*
-			 * whereCond.append(" and MonthEndDate > (last_DAY(add_months('" + mnthEndDate +
-			 * "',-3))) AND  MonthEndDate <= (last_DAY(add_months('" + mnthEndDate + "',-1)))");
-			 * whereCond1.append("and MonthEndDate = (last_DAY(add_months('" + mnthEndDate + "',-1)))");
-			 * whereCond2.append(" and (MonthEndDate >= (last_DAY('" + mnthEndDate +
-			 * "')) AND MonthEndDate <= (last_DAY(add_months('" + mnthEndDate + "',14))))");
-			 */
+			ReportFilterFields rff = reportConfiguration.getListReportFieldsDetails().get(2);
+			Component component = dymanicFieldsRows.getFellow(Long.toString(rff.getFieldID()));
+			Date value = ((Datebox) component).getValue();
+
+			whereCond = getWhereClauseForAMZ(whereCond, DateUtil.addMonths(value, -2), value);
+			whereCond1 = getWhereClauseForAMZ(whereCond1, DateUtil.addMonths(value, -1), value);
+			whereCond2 = getWhereClauseForAMZ(whereCond2, value, DateUtil.addMonths(value, 15));
 
 			doShowReport("where".equals(whereCond.toString().trim()) ? "" : whereCond.toString(),
 					"where".equals(whereCond2.toString().trim()) ? "" : whereCond2.toString(), null, null,
@@ -2524,6 +2525,24 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		}
 
 		logger.debug("Leaving" + event.toString());
+	}
+
+	private StringBuilder getWhereClauseForAMZ(StringBuilder whereCond, Date fromDate, Date toDate) {
+		String where = whereCond.toString();
+
+		if (!where.contains("MONTHENDDATE")) {
+			return whereCond;
+		}
+
+		where = where.replace(where.split("and")[2], "");
+
+		StringBuilder whereCondition = new StringBuilder(where);
+		whereCondition.append(" MONTHENDDATE >= '");
+		whereCondition.append(DateUtil.format(fromDate, "yyyy-MM-dd")).append("'");
+		whereCondition.append(" and MONTHENDDATE <= '");
+		whereCondition.append(DateUtil.format(toDate, "yyyy-MM-dd")).append("'");
+
+		return whereCondition;
 	}
 
 	/**
