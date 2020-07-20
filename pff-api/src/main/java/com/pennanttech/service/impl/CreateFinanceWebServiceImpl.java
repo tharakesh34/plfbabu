@@ -2,6 +2,7 @@ package com.pennanttech.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -1309,8 +1310,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		logger.debug(Literal.ENTERING);
 
 		UserPendingCasesResponse response = new UserPendingCasesResponse();
-		List<UserPendingCases> userPendingList;
-		long userID =0;
+		List<UserPendingCases> responseList = new ArrayList<>();
+		List<String> list = new ArrayList<>();
+		long userID = 0;
+
 		if (StringUtils.isBlank(loanStage.getUserLogin())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "userLogin";
@@ -1339,28 +1342,28 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				return response;
 			}
 		}
-		List<String> dbCodes = userDAO.getRoleCodes(loanStage.getRoleCode());
-		boolean flag = false;
-		if (CollectionUtils.isNotEmpty(dbCodes)) {
-			if (loanStage.getRoleCode().contains(",")) {
-				if ((loanStage.getRoleCode().contains(dbCodes.get(0)))
-						&& (loanStage.getRoleCode().contains(dbCodes.get(1)))) {
-					flag = true;
+		String roleCode = loanStage.getRoleCode();
+		if (roleCode.contains(",")) {
+			String[] arrRoleCode = roleCode.split(",");
+			list = Arrays.asList(arrRoleCode);
+			if (CollectionUtils.isEmpty(list)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "rolecode :" + loanStage.getRoleCode();
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+				return response;
+			} else {
+				List<UserPendingCases> userPendingList = new ArrayList<>();
+				for (String role : list) {
+					userPendingList = financeMainDAO.getUserPendingCasesDetails(userID, role);
+					responseList.addAll(userPendingList);
 				}
-			} else if (loanStage.getRoleCode().equals(dbCodes.get(0))) {
-				flag = true;
-			}
-			if (flag) {
-				userPendingList = financeMainDAO.getUserPendingCasesDetails(userID,
-						loanStage.getRoleCode());
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-				response.setUserPendingList(userPendingList);
+				response.setUserPendingList(responseList);
 			}
 		} else {
-			String[] valueParm = new String[1];
-			valueParm[0] = "rolecode :"+loanStage.getRoleCode();
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));//no records found
-			return response;
+			responseList = financeMainDAO.getUserPendingCasesDetails(userID, roleCode);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			response.setUserPendingList(responseList);
 		}
 
 		logger.debug(Literal.LEAVING);
