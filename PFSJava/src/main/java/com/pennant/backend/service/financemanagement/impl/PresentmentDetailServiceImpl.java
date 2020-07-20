@@ -164,7 +164,6 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		for (List<Long> list : idList) {
 			presentmentDetailDAO.updatePresentmentIdAsZero(list);
 		}
-		idList.clear();
 	}
 
 	@Override
