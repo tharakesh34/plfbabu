@@ -753,8 +753,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.dbdRetained.setChecked(aPromotion.isDbdRtnd());
 			this.mbdRetained.setChecked(aPromotion.isMbdRtnd());
 			this.knockOffOverDueAmountWithCashBackAmount.setChecked(aPromotion.isKnckOffDueAmt());
-			onCheckdbd();
-			onCheckmbd();
+			onCheck$mbdRetained();
+			onCheck$dbdRetained();
 			FeeType dbdFeeType = setFeeTypeData(aPromotion.getDbdFeeTypId());
 			FeeType mbdFeeType = setFeeTypeData(aPromotion.getMbdFeeTypId());
 			FeeType dbdAndMbdFeeType = setFeeTypeData(aPromotion.getDbdAndMbdFeeTypId());
@@ -1230,7 +1230,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			}
 			try {
 				if (this.manufacturerCashbackToTheCustomer.getValue() != null) {
-					if (this.manufacturerCashbackToTheCustomer.getValue() < this.cashBackFromTheManufacturer
+					if (!this.manufacturerCashbackToTheCustomer.isReadonly() && this.manufacturerCashbackToTheCustomer.getValue() < this.cashBackFromTheManufacturer
 							.getValue()) {
 						throw new WrongValueException(this.manufacturerCashbackToTheCustomer,
 								Labels.getLabel("label_CDSchemeDialog_ManufacturerCashbackToTheCustomer.value")
