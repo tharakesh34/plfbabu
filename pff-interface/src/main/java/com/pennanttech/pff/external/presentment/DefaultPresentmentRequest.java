@@ -36,7 +36,7 @@ import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.PresentmentRequest;
 
 public class DefaultPresentmentRequest extends AbstractInterface implements PresentmentRequest {
-	private static final Logger logger = Logger.getLogger(DefaultPresentmentRequest.class);
+	protected static final Logger logger = Logger.getLogger(DefaultPresentmentRequest.class);
 
 	private static final String STATUS = "STATUS";
 
@@ -115,7 +115,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	 * 
 	 * @throws Exception
 	 */
-	public void prepareRequestFile(long presentmentId, String presentmentRef, String bankAccNo) throws Exception {
+	protected void prepareRequestFile(long presentmentId, String presentmentRef, String bankAccNo) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -571,7 +571,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		logger.debug(Literal.LEAVING);
 	}
 
-	private Map<String, String> getPaymenyMode(long presentmentId) {
+	protected Map<String, String> getPaymenyMode(long presentmentId) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
@@ -627,7 +627,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	}
 
 	// For Presentment schedule date populated in PDC Download
-	private Date getScheduleDate(long presentmentId) {
+	protected Date getScheduleDate(long presentmentId) {
 		Date schDate = null;
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select Distinct SchDate from PRESENTMENTDETAILS Where PresentmentId = :presentmentId");
