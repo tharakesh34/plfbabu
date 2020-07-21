@@ -696,7 +696,8 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		boolean isListContainsPDC = false;
 		if (chequeDetailList != null && !chequeDetailList.isEmpty()) {
 			for (ChequeDetail chequeDetail : chequeDetailList) {
-				if (StringUtils.equals(chequeDetail.getChequeType(), FinanceConstants.REPAYMTH_PDC)) {
+				if (StringUtils.equals(chequeDetail.getChequeType(), FinanceConstants.REPAYMTH_PDC)
+						|| StringUtils.equals(chequeDetail.getChequeType(), FinanceConstants.REPAYMTH_UDC)) {
 					isListContainsPDC = true;
 				}
 				if (chequeDetail.isNew() && chequeDetailDAO.isDuplicateKey(chequeDetail.getChequeDetailsID(),
