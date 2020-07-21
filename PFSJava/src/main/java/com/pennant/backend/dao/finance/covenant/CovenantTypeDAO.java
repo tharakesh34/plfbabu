@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.finance.covenant;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennanttech.pff.core.TableType;
@@ -53,5 +55,7 @@ public interface CovenantTypeDAO extends BasicCrudDao<CovenantType> {
 	boolean isDuplicateKey(CovenantType covenantType, TableType tableType);
 
 	CovenantType getCovenantTypeId(String covenanttype, String category, String type);
+
+	List<String> getRules();
 
 }

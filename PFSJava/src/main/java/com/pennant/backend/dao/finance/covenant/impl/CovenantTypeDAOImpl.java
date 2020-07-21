@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.finance.covenant.impl;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -266,4 +268,18 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 		return covenant;
 	}
 
+	@Override
+	public List<String> getRules() {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("Select rolecd from  operation_roles_view");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+	}
 }
