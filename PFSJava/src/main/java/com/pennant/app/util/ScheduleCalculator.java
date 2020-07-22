@@ -66,6 +66,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
+import org.apache.commons.collections.CollectionUtils;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
@@ -9103,9 +9104,6 @@ public class ScheduleCalculator {
 			fsData.getFinanceMain().setCalculateRepay(true);
 		}
 
-		Date newMDT = fsData.getFinanceScheduleDetails()
-				.get(fsData.getFinanceScheduleDetails().size() - 1 - fm.getAdvTerms()).getSchDate();
-
 		if (fm.getRecalFromDate().compareTo(fm.getGrcPeriodEndDate()) <= 0) {
 			List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
 
@@ -9123,8 +9121,59 @@ public class ScheduleCalculator {
 			fsData.getFinanceMain().setRecalSchdMethod(fsData.getFinanceMain().getScheduleMethod());
 		}
 
-		if (!StringUtils.equals(fsData.getFinanceMain().getRecalSchdMethod(), "PFT")) {
+		Date newMDT = fsData.getFinanceScheduleDetails()
+				.get(fsData.getFinanceScheduleDetails().size() - 1 - fm.getAdvTerms()).getSchDate();
+
+		if (!StringUtils.equals(fsData.getFinanceMain().getRecalSchdMethod(), CalculationConstants.SCHMTHD_PFT)) {
 			if (StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
+
+				Date maturityDate = fm.getMaturityDate();
+
+				for (int i = fsData.getFinanceScheduleDetails().size() - 1; i >= 0; i--) {
+					FinanceScheduleDetail schDetail = fsData.getFinanceScheduleDetails().get(i);
+
+					if (DateUtility.compare(maturityDate, schDetail.getSchDate()) == 0) {
+
+						if (!FrequencyUtil.isFrqDate(fm.getRepayFrq(), schDetail.getSchDate())) {
+
+							List<Calendar> scheduleDatesList = FrequencyUtil.getNextDate(fm.getRepayFrq(),
+									fm.getAdjTerms(), maturityDate, HolidayHandlerTypes.MOVE_NONE, false)
+									.getScheduleList();
+
+							Date lastFrqDate = null;
+							if (CollectionUtils.isNotEmpty(scheduleDatesList)) {
+								Calendar calendar = scheduleDatesList.get(scheduleDatesList.size() - 1);
+								lastFrqDate = DateUtility.getDBDate(
+										DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
+							}
+
+							Calendar calLastFrqDate = Calendar.getInstance();
+							calLastFrqDate.setTime(lastFrqDate);
+
+							int day = DateUtility.getDay(maturityDate);
+							int maxdays = calLastFrqDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+							if (day > maxdays) {
+								calLastFrqDate.set(calLastFrqDate.get(Calendar.YEAR),
+										calLastFrqDate.get(Calendar.MONTH), maxdays);
+							} else {
+								calLastFrqDate.set(calLastFrqDate.get(Calendar.YEAR),
+										calLastFrqDate.get(Calendar.MONTH), day);
+							}
+
+							newMDT = DateUtility.getDBDate(
+									DateUtility.format(calLastFrqDate.getTime(), PennantConstants.DBDateFormat));
+							schDetail.setSchDate(newMDT);
+
+							sortSchdDetails(fsData.getFinanceScheduleDetails());
+
+							fsData.getFinanceMain().setMaturityDate(newMDT);
+							fsData.getFinanceMain().setCalMaturity(newMDT);
+							fsData.getFinanceMain().setReqMaturity(newMDT);
+						}
+						break;
+					}
+				}
 				fsData = setRpyInstructDetails(fsData, fsData.getFinanceMain().getRecalFromDate(), newMDT,
 						BigDecimal.ONE, fsData.getFinanceMain().getRecalSchdMethod());
 			}
@@ -9135,19 +9184,38 @@ public class ScheduleCalculator {
 			Date maturityDate = fm.getMaturityDate();
 
 			for (int i = fsData.getFinanceScheduleDetails().size() - 1; i >= 0; i--) {
-
 				FinanceScheduleDetail schDetail = fsData.getFinanceScheduleDetails().get(i);
 
 				if (DateUtility.compare(maturityDate, schDetail.getSchDate()) == 0) {
 
 					if (!FrequencyUtil.isFrqDate(fm.getRepayFrq(), schDetail.getSchDate())) {
 
-						Calendar date = Calendar.getInstance();
-						date.setTime(maturityDate);
-						date.add(Calendar.MONTH, fm.getAdjTerms());
+						List<Calendar> scheduleDatesList = FrequencyUtil.getNextDate(fm.getRepayFrq(), fm.getAdjTerms(),
+								maturityDate, HolidayHandlerTypes.MOVE_NONE, false).getScheduleList();
+
+						Date lastFrqDate = null;
+						if (CollectionUtils.isNotEmpty(scheduleDatesList)) {
+							Calendar calendar = scheduleDatesList.get(scheduleDatesList.size() - 1);
+							lastFrqDate = DateUtility
+									.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
+						}
+
+						Calendar calLastFrqDate = Calendar.getInstance();
+						calLastFrqDate.setTime(lastFrqDate);
+
+						int day = DateUtility.getDay(maturityDate);
+						int maxdays = calLastFrqDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+						if (day > maxdays) {
+							calLastFrqDate.set(calLastFrqDate.get(Calendar.YEAR), calLastFrqDate.get(Calendar.MONTH),
+									maxdays);
+						} else {
+							calLastFrqDate.set(calLastFrqDate.get(Calendar.YEAR), calLastFrqDate.get(Calendar.MONTH),
+									day);
+						}
 
 						Date derivedMaturityDate = DateUtility
-								.getDBDate(DateUtility.format(date.getTime(), PennantConstants.DBDateFormat));
+								.getDBDate(DateUtility.format(calLastFrqDate.getTime(), PennantConstants.DBDateFormat));
 						schDetail.setSchDate(derivedMaturityDate);
 
 						sortSchdDetails(fsData.getFinanceScheduleDetails());
