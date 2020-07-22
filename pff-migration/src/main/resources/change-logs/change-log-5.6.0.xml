@@ -7891,5 +7891,15 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="DE#1066" author="swamy.p">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_COLUMN set RuleForValue = 'if((AlwOtc == '''')){Result = 0;  return;}
+ 				else {Result = AlwOtc;  return;}' where name = 'AlwOtc' and tableid in 
+ 				(SELECT id from DATA_ENGINE_TABLE where configid in 
+ 				(SELECT id from DATA_ENGINE_CONFIG where name = 'COVENANTS_UPLOADBY_REFERENCE'));
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
