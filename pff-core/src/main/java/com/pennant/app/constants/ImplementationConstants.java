@@ -148,6 +148,7 @@ public class ImplementationConstants {
 		ALLOW_SCHOOL_ORG = getValueAsBoolean(extensions, "ALLOW_SCHOOL_ORG", false);
 		ALLOW_SAMPLING = getValueAsBoolean(extensions, "ALLOW_SAMPLING", false);
 		ALLOW_FDD_ON_RVW_DATE = getValueAsBoolean(extensions, "ALLOW_FDD_ON_RVW_DATE", false);
+		ALLOW_EOD_INTERVAL_VALIDATION = getValueAsBoolean(extensions, "ALLOW_EOD_INTERVAL_VALIDATION", false);
 
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
@@ -287,6 +288,7 @@ public class ImplementationConstants {
 	public static boolean ALLOW_SAMPLING;
 	public static boolean ALLOW_SCHOOL_ORG;
 	public static boolean ALLOW_FDD_ON_RVW_DATE;
+	public static boolean ALLOW_EOD_INTERVAL_VALIDATION;
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static
 	 * boolean ALLOW_LV_INITIATION_LOS; public static boolean ALLOW_RCU_INITIATION_LOS;

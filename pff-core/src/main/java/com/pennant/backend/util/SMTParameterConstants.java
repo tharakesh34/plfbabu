@@ -336,4 +336,6 @@ public class SMTParameterConstants {
 	public static final String ALLOW_EOD_START_ON_SAME_DAY = "ALLOW_EOD_START_ON_SAME_DAY";
 	public static final String ALLOW_MULITIPLE_EODS_ON_SAME_DAY = "ALLOW_MULITIPLE_EODS_ON_SAME_DAY";
 	public static final String AUTO_KNOCKOFF_THRESHOLD = "AUTO_KNOCKOFF_THRESHOLD";
+
+	public static final String EOD_INTERVAL_TIME = "EOD_INTERVAL_TIME";
 }
