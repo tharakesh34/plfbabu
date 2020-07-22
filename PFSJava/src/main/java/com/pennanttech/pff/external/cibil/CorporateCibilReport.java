@@ -500,14 +500,14 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			if (relatedType == 1 || relatedType == 3) {
 				addField(record, customer.getBusinesscategory());
 			} else {
-				addField(record, "");
+				addField(record, "07");
 			}
 
 			/* Business / Industry Type */
 			if (relatedType == 1 || relatedType == 3) {
 				addField(record, customer.getCustIndustry());
 			} else {
-				addField(record, "");
+				addField(record, "11");
 			}
 
 			/* Individual Name prefix */
@@ -791,7 +791,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 					currentBalance = BigDecimal.ZERO;
 				}
 
-				addField(record, currentBalance);
+				addField(record, currentBalance(loan));
 
 				/* Notional Amount of Out-standing Restructured Contract */
 				addField(record, "");
@@ -945,7 +945,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				}
 
 				/* High Credit */
-				addField(record, loan.getFinAssetValue());
+				addField(record, "");
 
 				/* Installment Amount */
 				addField(record, "");
@@ -961,7 +961,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				} else if ("C".equals(closingstatus)) {
 					addField(record, "03");
 				} else if ("E".equals(closingstatus)) {
-					addField(record, "03");
+					addField(record, "04");
 				} else if ("W".equals(closingstatus)) {
 					addField(record, "05");
 				} else {
@@ -1146,7 +1146,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 						name.append(" ");
 						name.append(lastName);
 					}
-					addField(record, name.toString());
+					addField(record, customer.getCustShrtName());
 				} else {
 					addField(record, "");
 				}
@@ -1374,15 +1374,8 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		addField(record, address.getCustAddrZIP());
 
 		/* Country */
-		if (isGuarantor) {
-			if ("INR".equals(SysParamUtil.getAppCurrency())) {
-				addField(record, "INDIA");
-			} else {
-				addField(record, CurrencyUtil.getCcyDesc(SysParamUtil.getAppCurrency()));
-			}
-		} else {
-			addField(record, "079");
-		}
+
+		addField(record, "079");
 
 		CustomerPhoneNumber customerPhoneNumber = null;
 		for (CustomerPhoneNumber custPhNo : phoneList) {
@@ -1472,5 +1465,36 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		value = value.setScale(0, BigDecimal.ROUND_DOWN);
 
 		addField(record, value.toString());
+	}
+
+	private BigDecimal currentBalance(FinanceEnquiry customerFinance) {
+		int odDays = Integer.parseInt(getOdDays(customerFinance.getCurODDays()));
+		BigDecimal currentBalance = BigDecimal.ZERO;
+		String closingstatus = StringUtils.trimToEmpty(customerFinance.getClosingStatus());
+		if (odDays > 0) {
+			BigDecimal futureSchedulePrincipal = getAmount(customerFinance.getFutureSchedulePrin());
+			BigDecimal installmentDue = getAmount(customerFinance.getInstalmentDue());
+			BigDecimal installmentPaid = getAmount(customerFinance.getInstalmentPaid());
+			BigDecimal bounceDue = getAmount(customerFinance.getBounceDue());
+			BigDecimal bouncePaid = getAmount(customerFinance.getBouncePaid());
+			BigDecimal penaltyDue = getAmount(customerFinance.getLatePaymentPenaltyDue());
+			BigDecimal penaltyPaid = getAmount(customerFinance.getLatePaymentPenaltyPaid());
+			BigDecimal ExcessAmount = getAmount(customerFinance.getExcessAmount());
+			BigDecimal ExcessAmountPaid = getAmount(customerFinance.getExcessAmtPaid());
+			currentBalance = futureSchedulePrincipal
+					.add(installmentDue.subtract(installmentPaid).add(bounceDue.subtract(bouncePaid)
+							.add(penaltyDue.subtract(penaltyPaid).subtract(ExcessAmount.subtract(ExcessAmountPaid)))));
+
+		} else {
+			currentBalance = getAmount(customerFinance.getFutureSchedulePrin());
+		}
+		if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
+			currentBalance = BigDecimal.ZERO;
+		}
+		// and overdue amount should be 0
+		if (StringUtils.equals("C", closingstatus)) {
+			currentBalance = BigDecimal.ZERO;
+		}
+		return currentBalance;
 	}
 }
