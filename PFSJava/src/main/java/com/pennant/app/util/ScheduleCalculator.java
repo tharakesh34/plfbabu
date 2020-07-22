@@ -4633,6 +4633,7 @@ public class ScheduleCalculator {
 				curSchd.setClosingBalance(BigDecimal.ZERO);
 				curSchd.setProfitBalance(BigDecimal.ZERO);
 				curSchd.setCpzAmount(BigDecimal.ZERO);
+				curSchd.setCpzBalance(BigDecimal.ZERO);
 			}
 
 			// LAST REPAYMENT DATE
