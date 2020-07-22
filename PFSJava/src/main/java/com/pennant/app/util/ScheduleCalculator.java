@@ -9130,10 +9130,42 @@ public class ScheduleCalculator {
 			}
 		}
 
+		if (StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)) {
+
+			Date maturityDate = fm.getMaturityDate();
+
+			for (int i = fsData.getFinanceScheduleDetails().size() - 1; i >= 0; i--) {
+
+				FinanceScheduleDetail schDetail = fsData.getFinanceScheduleDetails().get(i);
+
+				if (DateUtility.compare(maturityDate, schDetail.getSchDate()) == 0) {
+
+					if (!FrequencyUtil.isFrqDate(fm.getRepayFrq(), schDetail.getSchDate())) {
+
+						Calendar date = Calendar.getInstance();
+						date.setTime(maturityDate);
+						date.add(Calendar.MONTH, fm.getAdjTerms());
+
+						Date derivedMaturityDate = DateUtility
+								.getDBDate(DateUtility.format(date.getTime(), PennantConstants.DBDateFormat));
+						schDetail.setSchDate(derivedMaturityDate);
+
+						sortSchdDetails(fsData.getFinanceScheduleDetails());
+
+						fm.setMaturityDate(derivedMaturityDate);
+						fm.setCalMaturity(derivedMaturityDate);
+						fm.setReqMaturity(derivedMaturityDate);
+					} else {
+						schDetail.setRepayOnSchDate(false);
+					}
+
+					break;
+				}
+			}
+		}
+
 		int idxLast = fsData.getFinanceScheduleDetails().size() - 1;
-
 		fm.setRecalToDate(fsData.getFinanceScheduleDetails().get(idxLast).getSchDate());
-
 		fsData = calSchdProcess(fsData, false, false);
 
 		if (isAdjTerms) {
