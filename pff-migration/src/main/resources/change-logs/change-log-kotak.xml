@@ -5519,8 +5519,8 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 				zAu.send(new zk.Event(kramanUrl, "onChange", {"value":kramanUrlVal}), 10);' Where Fieldname = 'KRAMANCASEID';
 			]]>
 		</sql>
-</changeSet>
-	
+	</changeSet>
+
 	<changeSet id="180" author="Durgaprasad G">
 		<sql>
 		  <![CDATA[
@@ -5528,7 +5528,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		  	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="181" author="Durgaprasad G">
 		<sql>
 		  <![CDATA[
@@ -5537,7 +5537,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		  	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="182" author="Durgaprasad G">
 		<sql>
 		  <![CDATA[
@@ -5545,7 +5545,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		  	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="183" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -5553,15 +5553,15 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="184" author="Dheerendra" >
-		<createSequence sequenceName="SEQ_INTERFACE_OGL" startValue="1"   incrementBy="1"/>
+
+	<changeSet id="184" author="Dheerendra">
+		<createSequence sequenceName="SEQ_INTERFACE_OGL" startValue="1" incrementBy="1" />
 	</changeSet>
-	
-	<changeSet id="185" author="Dheerendra" >
-		<createSequence sequenceName="SEQ_INTERFACE_GLEMSEXPOSURE" startValue="1" incrementBy="1"/>
+
+	<changeSet id="185" author="Dheerendra">
+		<createSequence sequenceName="SEQ_INTERFACE_GLEMSEXPOSURE" startValue="1" incrementBy="1" />
 	</changeSet>
-	
+
 	<changeSet id="186" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -5689,7 +5689,6 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 
 		</createView>
 	</changeSet>
-	
 	<changeSet id="190" author="G Durga Prasad">
 		<sql>
 			<![CDATA[
@@ -5697,7 +5696,6 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-	
 	<changeSet id="191" author="G Durga Prasad">
 		<sql>
 			<![CDATA[
@@ -5715,7 +5713,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-<changeSet id="192" author="meena.a">
+   <changeSet id="192" author="meena.a">
 	<createView viewName="CIBIL_CUSTOMER_LOANS_VIEW" replaceIfExists="true">
 	     	         <![CDATA[
 	
@@ -5761,22 +5759,4 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	
 		</createView>
 </changeSet> 
-    
-	<changeSet id="193" author="Durgaprasad G">
-		<sql>
-		  <![CDATA[
-				 update  SMTPARAMETERS set SYSPARMVALUE = 'Y' Where SYSPARMCODE = 'ALW_FDD_ON_RVW_DATE';
-		  	]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="195" author="Gopalaswamy.M">
-		<sql>
-			 <![CDATA[
-				Delete from SMTPARAMETERS where SYSPARMCODE = 'EOD_INTERVAL_TIME';
-				Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) 
-				values ('EOD_INTERVAL_TIME', 'Allow consecutive eod only after eod interval time.', 'String', 1, '20', 2, 0, null, null, 'Allow consecutive eod only after eod interval time.', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
-			 ]]>
-		</sql>
-	</changeSet>
 </databaseChangeLog>
