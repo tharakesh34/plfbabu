@@ -958,7 +958,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="30" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -966,7 +966,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet author="satyanarayana.g" id="30">
 		<sql>
 			<![CDATA[
@@ -975,7 +975,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="31" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -983,7 +983,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="32" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -1007,7 +1007,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="35" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -1044,7 +1044,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="36" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -1052,7 +1052,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="37" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -1064,7 +1064,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="38" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -1074,7 +1074,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="39" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -1082,7 +1082,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="40" author="Keerthi.P">
 		<createTable tableName="RestrictedProfile">
 			<column name="key" type="BIGINT">
@@ -1091,7 +1091,7 @@
 			<column name="value" type="varchar(500)"></column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="41" author="Keerthi.P">
 		<createTable tableName="CautiousProfile">
 			<column name="key" type="BIGINT">
@@ -1100,7 +1100,7 @@
 			<column name="value" type="varchar(500)"></column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="42" author="Keerthi.P">
 		<sql>
 			<![CDATA[
@@ -1131,7 +1131,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="43" author="Keerthi.P">
 		<sql>
 			<![CDATA[
@@ -1163,15 +1163,15 @@
 				]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="44" author="vijaya.a">
 		<renameColumn tableName="RESTRICTEDPROFILE" oldColumnName="Key" newColumnName="Key1" />
 	</changeSet>
-	
+
 	<changeSet id="45" author="vijaya.a">
 		<renameColumn tableName="CAUTIOUSPROFILE" oldColumnName="Key" newColumnName="Key1" />
 	</changeSet>
-	
+
 	<changeSet id="46" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -1185,7 +1185,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="47" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -1201,7 +1201,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="49" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -1209,8 +1209,8 @@
 				Update SMTParameters set SysParmValue = 'Y' where SysParmCode = 'HOLD_DISB_INST_POST'; 
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="50" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -1218,8 +1218,8 @@
 				Insert into BMTAmountCodes values('REPAY', 0, 'bounceChargePaid', 'Bounce charges Paid', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0); 
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="51" author="swamy.p">
 		<sql>
             <![CDATA[
@@ -1234,7 +1234,7 @@
 	  		 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="52" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -1321,5 +1321,5 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 </databaseChangeLog>

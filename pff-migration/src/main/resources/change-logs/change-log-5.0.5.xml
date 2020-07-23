@@ -1386,54 +1386,19 @@
 			</column>
 		</createTable>
 	</changeSet>
-<!-- 
-	<changeSet id="145" author="aditya.a">
-		<comment>Adding closeddate field</comment>
-		<createView viewName="RPT_soa_loan_view" replaceIfExists="true">
-			Select FM.FinReference,
-			FM.FInAssetValue LoanAmount,
-			FM.RepayBaseRate PLRRate,
-			FM.repaymargin Variance,
-			FM.EffectiveRateOfReturn IRR,
-			FP.CURREDUCINGRATE ROI,
-			FP.NOINST Tenure,
-			TotalPriPaid EMIReceivedPri ,
-			TotalPftPaid EMIReceivedPft,
-			0.00 PreferredCardLimit,
-			PRVRPYSCHPRI PrevInstAmtPri,
-			PRVRPYSCHPFT PrevInstAmtPft,
-			Case when FM.repayRateBasis ='R' then 'Reducing'
-			when FM.repayRateBasis ='F' then 'Flat'
-			when FM.repayRateBasis ='C' then 'Flat Converting to Reduce' else '' end intRateType,
-			FP.latestDisbDate LastDisbursalDate,
-			FP.FirstRepayDate FirstDueDate,
-			FM.MaturityDate EndInstallmentDate,
-			'0.00/ 0' AdvInstAmt,
-			FM.FinIsActive,
-			FM.closingstatus,
-			FM.closeddate,
-			FP.Futureinst FutureInstNo,
-			FP.totalpriSchd FuturePri1,
-			FP.tdSchdPri FuturePri2,
-			FP.totalPftSchd FutureRpyPft1,
-			FP.tdSchdPft FutureRpyPft2,
-			FP.totchargespaid Charge_coll_cust,
-			FP.UpFrontFee Upfront_int_cust,
-			0 Int_paid_Dealer_upfront,
-			0 Pre_emi_Int_Paid,
-			'' Repo_Status,'' Repo_Date,
-			'' Sale_Date,'' Release_Date,
-			FP.LATESTRPYDATE,
-			C.ccyMinorccyunits,
-			ccyEditField,Coalesce(FP.totalpftcpz,0) totalpftcpz
-			From FinanceMain FM inner join
-			FinPftDetails FP on FP.FinReference = FM.FinReference inner join
-			rmtfinancetypes RF on RF.fintype = FM.fintype inner join
-			RMTCURRENCIES C on C.ccycode= FP.finccy
-		</createView>
-	</changeSet>
-
- -->	<changeSet id="146_pre" author="aditya.a" dbms="postgresql">
+	<!-- <changeSet id="145" author="aditya.a"> <comment>Adding closeddate field</comment> <createView viewName="RPT_soa_loan_view" 
+		replaceIfExists="true"> Select FM.FinReference, FM.FInAssetValue LoanAmount, FM.RepayBaseRate PLRRate, FM.repaymargin Variance, 
+		FM.EffectiveRateOfReturn IRR, FP.CURREDUCINGRATE ROI, FP.NOINST Tenure, TotalPriPaid EMIReceivedPri , TotalPftPaid EMIReceivedPft, 
+		0.00 PreferredCardLimit, PRVRPYSCHPRI PrevInstAmtPri, PRVRPYSCHPFT PrevInstAmtPft, Case when FM.repayRateBasis ='R' then 
+		'Reducing' when FM.repayRateBasis ='F' then 'Flat' when FM.repayRateBasis ='C' then 'Flat Converting to Reduce' else '' end 
+		intRateType, FP.latestDisbDate LastDisbursalDate, FP.FirstRepayDate FirstDueDate, FM.MaturityDate EndInstallmentDate, '0.00/ 
+		0' AdvInstAmt, FM.FinIsActive, FM.closingstatus, FM.closeddate, FP.Futureinst FutureInstNo, FP.totalpriSchd FuturePri1, FP.tdSchdPri 
+		FuturePri2, FP.totalPftSchd FutureRpyPft1, FP.tdSchdPft FutureRpyPft2, FP.totchargespaid Charge_coll_cust, FP.UpFrontFee 
+		Upfront_int_cust, 0 Int_paid_Dealer_upfront, 0 Pre_emi_Int_Paid, '' Repo_Status,'' Repo_Date, '' Sale_Date,'' Release_Date, 
+		FP.LATESTRPYDATE, C.ccyMinorccyunits, ccyEditField,Coalesce(FP.totalpftcpz,0) totalpftcpz From FinanceMain FM inner join 
+		FinPftDetails FP on FP.FinReference = FM.FinReference inner join rmtfinancetypes RF on RF.fintype = FM.fintype inner join 
+		RMTCURRENCIES C on C.ccycode= FP.finccy </createView> </changeSet> -->
+	<changeSet id="146_pre" author="aditya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments');

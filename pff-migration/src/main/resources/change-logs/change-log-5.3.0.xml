@@ -115,7 +115,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#616_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -213,12 +213,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#50" author="aditya.a" dbms="postgresql">
 		<dropNotNullConstraint tableName="FINANCEMAIN" columnName="REFERRALID" columnDataType="VARCHAR(10)" />
 		<dropNotNullConstraint tableName="FINANCEMAIN_TEMP" columnName="REFERRALID" columnDataType="VARCHAR(10)" />
 	</changeSet>
-	
+
 	<changeSet id="DE#50" author="aditya.a" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -227,11 +227,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#699" author="vijaya.a">
-		<dropForeignKeyConstraint baseTableName="COVENANT_DOCUMENTS" constraintName="FK_COVENANT_DOCUMENTS_DID"/>
+		<dropForeignKeyConstraint baseTableName="COVENANT_DOCUMENTS" constraintName="FK_COVENANT_DOCUMENTS_DID" />
 	</changeSet>
-	
+
 	<changeSet id="DE#710" author="Manoj.P">
 		<createView viewName="Int_Mandate_Request_view" replaceIfExists="true">
 		<![CDATA[
@@ -334,7 +334,7 @@
 		        ]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="DE#24_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -342,7 +342,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#24" author="vijaya.a">
 		<createView viewName="MANUALADVISE_LOVVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -356,10 +356,10 @@
 				  	cast(round(RESERVEDAMT / 100, 2) as numeric(36,2)) RESERVEDAMT,
 				  	cast(round(BALANCEAMT / 100, 2) as numeric(36,2)) BALANCEAMT
 					FROM MANUALADVISE_AVIEW where holdDue=0
-			]]>	
+			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="DE#24_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -375,7 +375,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#1028" author="vijaya.a">
 		<sql>
 			<![CDATA[
