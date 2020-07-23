@@ -1215,14 +1215,15 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// Method for validate instruction details
 		FinanceDetail financeDetail = new FinanceDetail();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		finScheduleData.setFinServiceInstruction(fsi);
-		financeDetail = validateInstructions(financeDetail, moduleDefiner, eventCode);
 
 		if (fsi.getValueDate() == null) {
 			fsi.setValueDate(fsi.getReceiptDetail().getReceivedDate());
 			fsi.getReceiptDetail().setValueDate(fsi.getReceiptDetail().getReceivedDate());
 		}
 
+		fsi.setReceivedDate(fsi.getReceiptDetail().getReceivedDate());
+		finScheduleData.setFinServiceInstruction(fsi);
+		financeDetail = validateInstructions(financeDetail, moduleDefiner, eventCode);
 		FinReceiptData receiptData = receiptService.doReceiptValidations(financeDetail, moduleDefiner);
 		financeDetail = receiptData.getFinanceDetail();
 		finScheduleData = financeDetail.getFinScheduleData();
