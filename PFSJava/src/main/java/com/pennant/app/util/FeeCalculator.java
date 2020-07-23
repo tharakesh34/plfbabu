@@ -94,6 +94,7 @@ public class FeeCalculator implements Serializable {
 			finFeeDetail.setFeeScheduleMethod(finTypeFee.getFeeScheduleMethod());
 			finFeeDetail.setCalculationType(finTypeFee.getCalculationType());
 			finFeeDetail.setRuleCode(finTypeFee.getRuleCode());
+			finFeeDetail.setTdsReq(finTypeFee.isTdsReq());
 
 			BigDecimal finAmount = CalculationUtil.roundAmount(finTypeFee.getAmount(), financeMain.getCalRoundingMode(),
 					financeMain.getRoundingTarget());

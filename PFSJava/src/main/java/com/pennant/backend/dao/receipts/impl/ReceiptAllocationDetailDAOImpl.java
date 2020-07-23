@@ -83,6 +83,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ReceiptAllocationid, ReceiptID, AllocationID, AllocationType, AllocationTo");
 		sql.append(", PaidAmount, WaivedAmount, WaiverAccepted, PaidGST, TotalDue, WaivedGST, TaxHeaderId");
+		sql.append(", TdsDue, TdsPaid, TdsWaived");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", TypeDesc");
@@ -117,7 +118,10 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 					rad.setPaidGST(rs.getBigDecimal("PaidGST"));
 					rad.setTotalDue(rs.getBigDecimal("TotalDue"));
 					rad.setWaivedGST(rs.getBigDecimal("WaivedGST"));
-					rad.setTaxHeaderId(rs.getLong("TaxHeaderId"));
+					rad.setTaxHeaderId(rs.getLong("TaxHeaderId"));//TdsDue,TdsPaid,TdsWaived
+					rad.setTdsDue(rs.getBigDecimal("TdsDue"));
+					rad.setTdsPaid(rs.getBigDecimal("TdsPaid"));
+					rad.setTdsWaived(rs.getBigDecimal("TdsWaived"));
 
 					if (StringUtils.trimToEmpty(type).contains("View")) {
 						rad.setTypeDesc(rs.getString("TypeDesc"));
@@ -165,9 +169,11 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		sql.append("Insert Into ReceiptAllocationDetail");
 		sql.append(tableType.getSuffix());
 		sql.append("(ReceiptAllocationid, ReceiptID, AllocationID, AllocationType, AllocationTo");
-		sql.append(", PaidAmount, WaivedAmount, WaiverAccepted, PaidGST, TotalDue, WaivedGST, TaxHeaderId)");
+		sql.append(
+				", PaidAmount, WaivedAmount, WaiverAccepted, PaidGST, TotalDue, WaivedGST, TaxHeaderId,TdsDue,TdsPaid,TdsWaived)");
 		sql.append(" Values(:ReceiptAllocationid, :ReceiptID, :AllocationID, :AllocationType, :AllocationTo");
-		sql.append(", :PaidAmount, :WaivedAmount, :WaiverAccepted, :PaidGST, :TotalDue, :WaivedGST, :TaxHeaderId)");
+		sql.append(
+				", :PaidAmount, :WaivedAmount, :WaiverAccepted, :PaidGST, :TotalDue, :WaivedGST, :TaxHeaderId,:TdsDue,:TdsPaid,:TdsWaived)");
 
 		logger.debug(Literal.SQL + sql.toString());
 

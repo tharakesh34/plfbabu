@@ -520,12 +520,18 @@
 													hflex="min" />
 												<listheader label="${c:l('listheader_ReceiptDialog_CurrentReceivableGST.label')}" align="right"
 													sort="false" hflex="min" />
+												<listheader label="${c:l('listheader_ReceiptDialog_TDS.label')}"  id="listheader_ReceiptDialog_TDS" align="right"
+													sort="false" hflex="min" visible="false" />
 												<listheader label="${c:l('listheader_ReceiptDialog_CurrentReceivable.label')}" align="right"
 													sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_ReceiptDialog_PaidAmount.label')}" align="right" sort="false"
 													hflex="min" />
+												<listheader label="${c:l('listheader_ReceiptDialog_NetPaid.label')}" align="right" sort="false"
+													hflex="min" />
 												<listheader label="${c:l('listheader_ReceiptDialog_PaidGST.label')}" align="right" sort="false"
 													hflex="min" />
+												<listheader label="${c:l('listheader_ReceiptDialog_PaidTDS.label')}" id="listheader_ReceiptDialog_PaidTDS" align="right" sort="false"
+													hflex="min"  visible="false"/>
 												<listheader label="${c:l('listheader_ReceiptDialog_WaivedAmount.label')}" align="right" sort="false"
 													hflex="min" />
 												<listheader label="${c:l('listheader_ReceiptDialog_BalanceDueAmount.label')}" align="right" sort="false"

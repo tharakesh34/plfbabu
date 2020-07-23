@@ -634,7 +634,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		sql.append(", WorkflowId, ModuleId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent");
+			sql.append(", FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent, TdsReq");
 		}
 
 		sql.append(" from FinTypeFees");
@@ -690,6 +690,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 				fsd.setRuleDesc(rs.getString("RuleDesc"));
 				fsd.setTaxApplicable(rs.getBoolean("TaxApplicable"));
 				fsd.setTaxComponent(rs.getString("TaxComponent"));
+				fsd.setTdsReq(rs.getBoolean("TdsReq"));
 			}
 
 			return fsd;

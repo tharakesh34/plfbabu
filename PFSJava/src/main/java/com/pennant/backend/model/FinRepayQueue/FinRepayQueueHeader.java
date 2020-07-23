@@ -47,6 +47,7 @@ public class FinRepayQueueHeader {
 
 	// Advise Amount
 	private BigDecimal adviseAmount = BigDecimal.ZERO;
+	private BigDecimal feeTds = BigDecimal.ZERO;
 
 	private String payType;
 	private String postBranch;
@@ -437,6 +438,14 @@ public class FinRepayQueueHeader {
 
 	public void setAdviseAmount(BigDecimal adviseAmount) {
 		this.adviseAmount = adviseAmount;
+	}
+
+	public BigDecimal getFeeTds() {
+		return feeTds;
+	}
+
+	public void setFeeTds(BigDecimal feeTds) {
+		this.feeTds = feeTds;
 	}
 
 }

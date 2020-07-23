@@ -293,6 +293,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			if (CollectionUtils.isNotEmpty(allocations)) {
 				for (ReceiptAllocationDetail allocation : allocations) {
+					allocation.setTotalPaid(allocation.getPaidAmount().add(allocation.getTdsPaid()));
 					long headerId = allocation.getTaxHeaderId();
 					if (headerId > 0) {
 						List<Taxes> taxDetails = getTaxHeaderDetailsDAO().getTaxDetailById(headerId, type);
@@ -1595,7 +1596,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Execute Accounting Details Process
 		// =======================================
-		if (receiptData.getReceiptHeader().getReceiptID() > 0) {
+		if (receiptData.getReceiptHeader().getReceiptID() > 0
+				&& StringUtils.isEmpty(receiptData.getReceiptHeader().getPrvReceiptPurpose())) {
 			receiptData = recalculateReceipt(receiptData);
 			if (receiptData.getErrorDetails().size() > 0) {
 				auditHeader.setErrorList(receiptData.getErrorDetails());
@@ -4590,11 +4592,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		BigDecimal emiWaivedAmt = BigDecimal.ZERO;
 		BigDecimal fiWaivedAmt = BigDecimal.ZERO;
 		boolean emiFound = false;
-		int npftIdx = -1;
 		int priIdx = -1;
-		int tdsIdx = -1;
 		int pftIdx = -1;
-		int fnPftIdx = -1;
+		int fPftIdx = -1;
 		int emiInx = -1;
 
 		for (int i = 0; i < ulAllocations.size(); i++) {
@@ -4624,9 +4624,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				String allocationType = allocate.getAllocationType();
 
 				switch (allocationType) {
-				case RepayConstants.ALLOCATION_NPFT:
+				case RepayConstants.ALLOCATION_PFT:
 					alcType = "I";
-					npftIdx = j;
+					pftIdx = j;
 					break;
 				case RepayConstants.ALLOCATION_PRI:
 					alcType = "P";
@@ -4644,9 +4644,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				case RepayConstants.ALLOCATION_FUT_PFT:
 					alcType = "FI";
 					fnpftPaid = allocate.getTotalDue();
-					break;
-				case RepayConstants.ALLOCATION_FUT_NPFT:
-					fnPftIdx = j;
+					fPftIdx = j;
 					break;
 				case RepayConstants.ALLOCATION_FUT_PRI:
 					alcType = "FP";
@@ -4654,12 +4652,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				case RepayConstants.ALLOCATION_EMI:
 					alcType = "EM";
 					emiInx = j;
-					break;
-				case RepayConstants.ALLOCATION_TDS:
-					tdsIdx = j;
-					break;
-				case RepayConstants.ALLOCATION_PFT:
-					pftIdx = j;
 					break;
 				case RepayConstants.ALLOCATION_MANADV:
 					alcType = "M";
@@ -4699,39 +4691,25 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					return receiptData;
 				}
 
-				allocate.setTotalPaid(ulAlc.getPaidAmount());
 				allocate.setPaidAmount(ulAlc.getPaidAmount());
 				allocate.setWaivedAmount(ulAlc.getWaivedAmount());
 			}
 		}
 
 		if (priIdx >= 0 && priPaid.compareTo(BigDecimal.ZERO) > 0) {
-			allocationsList.get(priIdx).setTotalPaid(priPaid);
 			allocationsList.get(priIdx).setPaidAmount(priPaid);
 		}
 
-		if (npftIdx >= 0 && npftPaid.compareTo(BigDecimal.ZERO) > 0) {
-			allocationsList.get(npftIdx).setTotalPaid(npftPaid);
-			allocationsList.get(npftIdx).setPaidAmount(npftPaid);
-		}
-
 		if (pftIdx >= 0 && pftPaid.compareTo(BigDecimal.ZERO) > 0) {
-			allocationsList.get(pftIdx).setTotalPaid(pftPaid);
-			allocationsList.get(pftIdx).setPaidAmount(pftPaid);
+			allocationsList.get(pftIdx).setPaidAmount(npftPaid);
+			allocationsList.get(pftIdx).setTdsPaid(pftPaid.subtract(npftPaid));
 		}
 
-		if (tdsIdx >= 0 && (pftPaid.subtract(npftPaid)).compareTo(BigDecimal.ZERO) > 0) {
-			allocationsList.get(tdsIdx).setTotalPaid(pftPaid.subtract(npftPaid));
-			allocationsList.get(tdsIdx).setPaidAmount(pftPaid.subtract(npftPaid));
-		}
-
-		if (fnPftIdx >= 0 && FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(rch.getReceiptPurpose())) {
-			allocationsList.get(fnPftIdx).setTotalPaid(fnpftPaid);
-			allocationsList.get(fnPftIdx).setPaidAmount(fnpftPaid);
-			allocationsList.get(fnPftIdx).setWaivedAmount(fiWaivedAmt);
+		if (fPftIdx >= 0 && FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+			allocationsList.get(fPftIdx).setPaidAmount(fnpftPaid);
+			allocationsList.get(fPftIdx).setWaivedAmount(fiWaivedAmt);
 		}
 		if (emiInx >= 0 && !emiFound && FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(rch.getReceiptPurpose())) {
-			allocationsList.get(emiInx).setTotalPaid(emiPaidAmt);
 			allocationsList.get(emiInx).setPaidAmount(emiPaidAmt);
 			allocationsList.get(emiInx).setWaivedAmount(emiWaivedAmt);
 		}
@@ -5244,6 +5222,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<ReceiptAllocationDetail> allocations = allocationDetailDAO.getAllocationsByReceiptID(receiptId, "_View");
 		if (CollectionUtils.isNotEmpty(allocations)) {
 			for (ReceiptAllocationDetail receiptAllocationDetail : allocations) {
+				receiptAllocationDetail.setTotalPaid(
+						receiptAllocationDetail.getPaidAmount().add(receiptAllocationDetail.getTdsPaid()));
+				receiptAllocationDetail
+						.setTotRecv(receiptAllocationDetail.getTotalDue().add(receiptAllocationDetail.getTdsDue()));
 				if (receiptAllocationDetail.getTaxHeaderId() != 0) {
 					List<Taxes> taxDetailById = taxHeaderDetailsDAO
 							.getTaxDetailById(receiptAllocationDetail.getTaxHeaderId(), "_View");
@@ -5514,6 +5496,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			allocate.setBalance(allocate.getTotalDue());
 			allocate.setWaivedAmount(BigDecimal.ZERO);
 			allocate.setWaivedGST(BigDecimal.ZERO);
+			allocate.setTdsPaid(BigDecimal.ZERO);
 		}
 		receiptCalculator.initiateReceipt(recData, false);
 		recData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(finSchdDtls);

@@ -103,6 +103,7 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	private String taxComponent;
 
 	private boolean alwPreIncomization;
+	private boolean tdsReq;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -125,6 +126,7 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 		excludeFields.add("ruleDesc");
 		excludeFields.add("taxApplicable");
 		excludeFields.add("taxComponent");
+		excludeFields.add("tdsReq");
 
 		return excludeFields;
 	}
@@ -368,5 +370,13 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 
 	public void setReferenceId(long referenceId) {
 		this.referenceId = referenceId;
+	}
+
+	public boolean isTdsReq() {
+		return tdsReq;
+	}
+
+	public void setTdsReq(boolean tdsReq) {
+		this.tdsReq = tdsReq;
 	}
 }

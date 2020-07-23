@@ -487,7 +487,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				" PaidCGST = PaidCGST + :PaidCGST, PaidSGST = PaidSGST + :PaidSGST, PaidUGST = PaidUGST + :PaidUGST, PaidIGST = PaidIGST + :PaidIGST,");
 		sql.append(
 				" WaivedCGST = WaivedCGST + :WaivedCGST, WaivedSGST = WaivedSGST + :WaivedSGST, WaivedUGST = WaivedUGST + :WaivedUGST, WaivedIGST = WaivedIGST + :WaivedIGST,");
-		sql.append(" WaivedCESS = WaivedCESS + :WaivedCESS,  PaidCESS = PaidCESS + :PaidCESS ");
+		sql.append(
+				" WaivedCESS = WaivedCESS + :WaivedCESS,  PaidCESS = PaidCESS + :PaidCESS, TdsPaid = TdsPaid + :TdsPaid ");
 		sql.append(" WHERE AdviseID = :AdviseID ");
 
 		// Execute the SQL, binding the arguments.
@@ -506,10 +507,10 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(
 				" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status, ReceiptID, ReceiptSeqID,PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaiverID,");
-		sql.append(" WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, TaxHeaderId)");
+		sql.append(" WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, TaxHeaderId, TdsPaid)");
 		sql.append(
 				" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status, :ReceiptID, :ReceiptSeqID,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST, :WaiverID,");
-		sql.append(" :WaivedCGST, :WaivedSGST, :WaivedUGST, :WaivedIGST, :TaxHeaderId)");
+		sql.append(" :WaivedCGST, :WaivedSGST, :WaivedUGST, :WaivedIGST, :TaxHeaderId, :TdsPaid)");
 
 		// Get the identity sequence number.
 		if (movement.getMovementID() <= 0) {

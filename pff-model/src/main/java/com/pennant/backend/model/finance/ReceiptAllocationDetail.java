@@ -38,6 +38,11 @@ public class ReceiptAllocationDetail implements Serializable {
 	private BigDecimal paidIGST = BigDecimal.ZERO;
 	private BigDecimal paidUGST = BigDecimal.ZERO;
 
+	private BigDecimal percCGST = BigDecimal.ZERO;
+	private BigDecimal percSGST = BigDecimal.ZERO;
+	private BigDecimal percIGST = BigDecimal.ZERO;
+	private BigDecimal percUGST = BigDecimal.ZERO;
+
 	private BigDecimal paidNow = BigDecimal.ZERO;
 	private BigDecimal waivedNow = BigDecimal.ZERO;
 
@@ -47,6 +52,12 @@ public class ReceiptAllocationDetail implements Serializable {
 	private BigDecimal waivedIGST = BigDecimal.ZERO;
 	private BigDecimal waivedUGST = BigDecimal.ZERO;
 	private BigDecimal waivedGST = BigDecimal.ZERO;
+
+	//Waiver GST fields
+	private BigDecimal dueCGST = BigDecimal.ZERO;
+	private BigDecimal dueSGST = BigDecimal.ZERO;
+	private BigDecimal dueIGST = BigDecimal.ZERO;
+	private BigDecimal dueUGST = BigDecimal.ZERO;
 
 	//In Process Allocation along with GST and TDS
 	private BigDecimal inProcess = BigDecimal.ZERO;
@@ -66,6 +77,13 @@ public class ReceiptAllocationDetail implements Serializable {
 	private int dispayOrder = 0;
 	private BigDecimal tdsPaidNow = BigDecimal.ZERO;
 	private BigDecimal tdsWaivedNow = BigDecimal.ZERO;
+
+	private BigDecimal tdsDue = BigDecimal.ZERO;
+	private BigDecimal tdsPaid = BigDecimal.ZERO;
+	private BigDecimal tdsWaived = BigDecimal.ZERO;
+
+	private boolean isTdsReq = false;
+	private BigDecimal percTds = BigDecimal.ZERO;
 
 	public ReceiptAllocationDetail() {
 		super();
@@ -397,6 +415,110 @@ public class ReceiptAllocationDetail implements Serializable {
 
 	public void setTdsWaivedNow(BigDecimal tdsWaivedNow) {
 		this.tdsWaivedNow = tdsWaivedNow;
+	}
+
+	public BigDecimal getTdsDue() {
+		return tdsDue;
+	}
+
+	public void setTdsDue(BigDecimal tdsDue) {
+		this.tdsDue = tdsDue;
+	}
+
+	public BigDecimal getTdsPaid() {
+		return tdsPaid;
+	}
+
+	public void setTdsPaid(BigDecimal tdsPaid) {
+		this.tdsPaid = tdsPaid;
+	}
+
+	public BigDecimal getTdsWaived() {
+		return tdsWaived;
+	}
+
+	public void setTdsWaived(BigDecimal tdsWaived) {
+		this.tdsWaived = tdsWaived;
+	}
+
+	public BigDecimal getPercCGST() {
+		return percCGST;
+	}
+
+	public void setPercCGST(BigDecimal percCGST) {
+		this.percCGST = percCGST;
+	}
+
+	public BigDecimal getPercSGST() {
+		return percSGST;
+	}
+
+	public void setPercSGST(BigDecimal percSGST) {
+		this.percSGST = percSGST;
+	}
+
+	public BigDecimal getPercIGST() {
+		return percIGST;
+	}
+
+	public void setPercIGST(BigDecimal percIGST) {
+		this.percIGST = percIGST;
+	}
+
+	public BigDecimal getPercUGST() {
+		return percUGST;
+	}
+
+	public void setPercUGST(BigDecimal percUGST) {
+		this.percUGST = percUGST;
+	}
+
+	public boolean isTdsReq() {
+		return isTdsReq;
+	}
+
+	public void setTdsReq(boolean isTdsReq) {
+		this.isTdsReq = isTdsReq;
+	}
+
+	public BigDecimal getPercTds() {
+		return percTds;
+	}
+
+	public void setPercTds(BigDecimal percTds) {
+		this.percTds = percTds;
+	}
+
+	public BigDecimal getDueCGST() {
+		return dueCGST;
+	}
+
+	public void setDueCGST(BigDecimal dueCGST) {
+		this.dueCGST = dueCGST;
+	}
+
+	public BigDecimal getDueSGST() {
+		return dueSGST;
+	}
+
+	public void setDueSGST(BigDecimal dueSGST) {
+		this.dueSGST = dueSGST;
+	}
+
+	public BigDecimal getDueIGST() {
+		return dueIGST;
+	}
+
+	public void setDueIGST(BigDecimal dueIGST) {
+		this.dueIGST = dueIGST;
+	}
+
+	public BigDecimal getDueUGST() {
+		return dueUGST;
+	}
+
+	public void setDueUGST(BigDecimal dueUGST) {
+		this.dueUGST = dueUGST;
 	}
 
 }

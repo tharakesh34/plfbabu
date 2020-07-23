@@ -818,6 +818,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setPaymentType(rpyQueueHeader.getPayType());
 		amountCodes.setCashAcExecuted(rpyQueueHeader.isStageAccExecuted() ? "Y" : "N");
 		aeEvent.setPostDate(postDate);
+		amountCodes.setFeeTds(rpyQueueHeader.getFeeTds());
 		aeEvent.setEntityCode(financeMain.getLovDescEntityCode());
 		if (overdueEvent != null) {
 			aeEvent.setLinkedTranId(overdueEvent.getLinkedTranId());

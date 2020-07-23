@@ -355,7 +355,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" TaxComponent, TaxApplicable, AmortzReq, AccountSetId");
-		sql.append(", FeeTypeCode, FeeTypeDesc, Refundable");
+		sql.append(", FeeTypeCode, FeeTypeDesc, Refundable, TdsReq");
 		sql.append(" From FeeTypes");
 		sql.append(" Where FeeTypeCode = ?");
 
@@ -376,6 +376,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 							f.setFeeTypeCode(rs.getString("FeeTypeCode"));
 							f.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
 							f.setrefundable(rs.getBoolean("Refundable"));
+							f.setTdsReq(rs.getBoolean("TdsReq"));
 
 							return f;
 						}

@@ -81,6 +81,7 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal suplRentPay = BigDecimal.ZERO;
 	private BigDecimal incrCostPay = BigDecimal.ZERO;
 	private BigDecimal woPayAmt = BigDecimal.ZERO;
+	private BigDecimal feeTds = BigDecimal.ZERO;
 	private int ODDays = 0;
 	private int daysFromFullyPaid = 0;
 	private int ODInst = 0;
@@ -1640,6 +1641,14 @@ public class AEAmountCodes implements Serializable {
 
 	public void setPastCpzChg(BigDecimal pastCpzChg) {
 		this.pastCpzChg = pastCpzChg;
+	}
+
+	public BigDecimal getFeeTds() {
+		return feeTds;
+	}
+
+	public void setFeeTds(BigDecimal feeTds) {
+		this.feeTds = feeTds;
 	}
 
 }

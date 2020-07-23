@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="bharat.r">
+		<addColumn tableName="ReceiptAllocationDetail_Temp">
+			<column name="TDSDUE" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="1.1" author="bharat.r">
+		<addColumn tableName="ReceiptAllocationDetail_Temp">
+			<column name="TDSPAID" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="1.2" author="bharat.r">
+		<addColumn tableName="ReceiptAllocationDetail_Temp">
+			<column name="TDSWAIVED" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="1.3" author="bharat.r">
+		<addColumn tableName="ReceiptAllocationDetail">
+			<column name="TDSDUE" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="1.4" author="bharat.r">
+		<addColumn tableName="ReceiptAllocationDetail">
+			<column name="TDSPAID" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="1.5" author="bharat.r">
+		<addColumn tableName="ReceiptAllocationDetail">
+			<column name="TDSWAIVED" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="1.6" author="bharat.r">
+		<sql>
+			<![CDATA[
+				UPDATE RECEIPTALLOCATIONDETAIL_TEMP SET TDSDUE = 0;
+				UPDATE RECEIPTALLOCATIONDETAIL_TEMP SET TDSPAID = 0;
+				UPDATE RECEIPTALLOCATIONDETAIL_TEMP SET TDSWAIVED = 0;
+				
+				UPDATE RECEIPTALLOCATIONDETAIL SET TDSDUE = 0;
+				UPDATE RECEIPTALLOCATIONDETAIL SET TDSPAID = 0;
+				UPDATE RECEIPTALLOCATIONDETAIL SET TDSWAIVED = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.7" author="bharat.r" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE RECEIPTALLOCATIONDETAIL_TEMP ADD CONSTRAINT DF_REPTALDT_TEMP_TDSDUE DEFAULT 0 FOR TDSDUE;
+				ALTER TABLE RECEIPTALLOCATIONDETAIL_TEMP ADD CONSTRAINT DF_REPTALDT_TEMP_TDSPAID DEFAULT 0 FOR TDSPAID;
+				ALTER TABLE RECEIPTALLOCATIONDETAIL_TEMP ADD CONSTRAINT DF_REPTALDT_TEMP_TDSWAIVED DEFAULT 0 FOR TDSWAIVED;
+				
+				ALTER TABLE RECEIPTALLOCATIONDETAIL ADD CONSTRAINT DF_REPTALDT_TDSDUE DEFAULT 0 FOR TDSDUE;
+				ALTER TABLE RECEIPTALLOCATIONDETAIL ADD CONSTRAINT DF_REPTALDT_TDSPAID DEFAULT 0 FOR TDSPAID;
+				ALTER TABLE RECEIPTALLOCATIONDETAIL ADD CONSTRAINT DF_REPTALDT_TDSWAIVED DEFAULT 0 FOR TDSWAIVED;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.7" author="bharat.r" dbms="postgresql, oracle">
+		<addDefaultValue columnName="TDSDUE" tableName="RECEIPTALLOCATIONDETAIL_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="TDSPAID" tableName="RECEIPTALLOCATIONDETAIL_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="TDSWAIVED" tableName="RECEIPTALLOCATIONDETAIL_TEMP" defaultValue="0" />
+
+		<addDefaultValue columnName="TDSDUE" tableName="RECEIPTALLOCATIONDETAIL" defaultValue="0" />
+		<addDefaultValue columnName="TDSPAID" tableName="RECEIPTALLOCATIONDETAIL" defaultValue="0" />
+		<addDefaultValue columnName="TDSWAIVED" tableName="RECEIPTALLOCATIONDETAIL" defaultValue="0" />
+	</changeSet>
+
+
+	<changeSet id="1.8" author="bharat.r">
+		<createView viewName="receiptallocationdetail_view" replaceIfExists="true">
+			<![CDATA[
+				SELECT
+				    T1.RECEIPTALLOCATIONID,
+				    T1.RECEIPTID,
+				    T1.ALLOCATIONID,
+				    T1.ALLOCATIONTYPE,
+				    T1.ALLOCATIONTO,
+				    T1.PAIDAMOUNT,
+				    T1.WAIVEDAMOUNT,
+				    COALESCE(T3.FEETYPEDESC, T5.FEETYPEDESC) TYPEDESC,
+				    T1.PAIDGST,
+				    T1.WAIVEDREQAMOUNT,
+				    T1.WAIVERACCEPTED,
+				    T1.TOTALDUE,
+				    T1.WAIVEDGST,
+				    T1.TAXHEADERID,
+				    T1.TDSDUE,
+				    T1.TDSPAID,
+				    T1.TDSWAIVED
+				FROM RECEIPTALLOCATIONDETAIL_TEMP T1
+    			LEFT JOIN FINFEEDETAIL T2 ON T1.ALLOCATIONTO = T2.FEEID AND T1.ALLOCATIONTYPE = 'FEE'
+     			LEFT JOIN FEETYPES T3 ON T2.FEETYPEID = T3.FEETYPEID
+     			LEFT JOIN MANUALADVISE T4 ON T1.ALLOCATIONTO = T4.ADVISEID AND T1.ALLOCATIONTYPE = 'MANADV'
+    			LEFT JOIN FEETYPES T5 ON  T4.FEETYPEID = T5.FEETYPEID
+				UNION ALL
+				 SELECT T1.RECEIPTALLOCATIONID,
+				    T1.RECEIPTID,
+				    T1.ALLOCATIONID,
+				    T1.ALLOCATIONTYPE,
+				    T1.ALLOCATIONTO,
+				    T1.PAIDAMOUNT,
+				    T1.WAIVEDAMOUNT,
+				    COALESCE(T3.FEETYPEDESC, T5.FEETYPEDESC) TYPEDESC,
+				    T1.PAIDGST,
+				    T1.WAIVEDREQAMOUNT,
+				    T1.WAIVERACCEPTED,
+				    T1.TOTALDUE,
+				    T1.WAIVEDGST,
+				    T1.TAXHEADERID,
+					T1.TDSDUE,
+					T1.TDSPAID,
+					T1.TDSWAIVED
+   				FROM RECEIPTALLOCATIONDETAIL T1
+     			LEFT JOIN FINFEEDETAIL T2 ON T1.ALLOCATIONTO = T2.FEEID AND T1.ALLOCATIONTYPE = 'FEE'
+     			LEFT JOIN FEETYPES T3 ON T2.FEETYPEID = T3.FEETYPEID
+     			LEFT JOIN MANUALADVISE T4 ON T1.ALLOCATIONTO = T4.ADVISEID AND T1.ALLOCATIONTYPE = 'MANADV'
+   				LEFT JOIN FEETYPES T5 ON  T4.FEETYPEID = T5.FEETYPEID
+				WHERE  NOT EXISTS (SELECT 1 FROM RECEIPTALLOCATIONDETAIL_TEMP WHERE RECEIPTALLOCATIONDETAIL_TEMP.RECEIPTID = T1.RECEIPTID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="1.9" author="bharat.r">
+		<createView viewName="receiptallocationdetail_aview" replaceIfExists="true">
+			<![CDATA[
+				 SELECT 
+					T1.RECEIPTALLOCATIONID,
+				    T1.RECEIPTID,
+				    T1.ALLOCATIONID,
+				    T1.ALLOCATIONTYPE,
+				    T1.ALLOCATIONTO,
+				    T1.PAIDAMOUNT,
+				    T1.WAIVEDAMOUNT,
+				    COALESCE(T3.FEETYPEDESC, T5.FEETYPEDESC) TYPEDESC,
+				    T1.PAIDGST,
+				    T1.WAIVEDREQAMOUNT,
+				    T1.WAIVERACCEPTED,
+				    T1.TOTALDUE,
+				    T1.WAIVEDGST,
+				    T1.TAXHEADERID,
+					T1.TDSDUE,
+					T1.TDSPAID,
+					T1.TDSWAIVED
+   			     FROM RECEIPTALLOCATIONDETAIL T1
+			     LEFT JOIN FINFEEDETAIL T2 ON T1.ALLOCATIONTO = T2.FEEID AND T1.ALLOCATIONTYPE= 'FEE'
+			     LEFT JOIN FEETYPES T3 ON T2.FEETYPEID = T3.FEETYPEID
+			     LEFT JOIN MANUALADVISE T4 ON T1.ALLOCATIONTO = T4.ADVISEID AND T1.ALLOCATIONTYPE = 'MANADV'
+			     LEFT JOIN FEETYPES T5 ON T4.FEETYPEID = T5.FEETYPEID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="1.10" author="bharat.r">
+		<addColumn tableName="ManualAdviseMovements_Temp">
+			<column name="TDSPAID" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="1.11" author="bharat.r">
+		<addColumn tableName="ManualAdviseMovements">
+			<column name="TDSPAID" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="1.12" author="bharat.r">
+		<sql>
+			<![CDATA[
+				UPDATE MANUALADVISEMOVEMENTS SET TDSPAID = 0;
+				UPDATE MANUALADVISEMOVEMENTS_TEMP SET TDSPAID = 0;				
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.13" author="bharat.r" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE MANUALADVISEMOVEMENTS_TEMP ADD CONSTRAINT DF_MNADMMT_TEMP_TDSPAID DEFAULT 0 FOR TDSPAID;
+				ALTER TABLE MANUALADVISEMOVEMENTS ADD CONSTRAINT DF_MNADMMT_TDSPAID DEFAULT 0 FOR TDSPAID;		
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.13" author="bharat.r" dbms="postgresql, oracle">
+		<addDefaultValue columnName="TDSPAID" tableName="MANUALADVISEMOVEMENTS" defaultValue="0" />
+		<addDefaultValue columnName="TDSPAID" tableName="MANUALADVISEMOVEMENTS_TEMP" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="1.14" author="bharat.r">
+		<createView viewName="fintypefees_aview" replaceIfExists="true">
+			<![CDATA[
+				  SELECT t1.fintype,
+				    t1.originationfee,
+				    t1.finevent,
+				    t1.feetypeid,
+				    t1.feeorder,
+				    t1.feeschedulemethod,
+				    t1.calculationtype,
+				    t1.rulecode,
+				    t1.amount,
+				    t1.percentage,
+				    t1.calculateon,
+				    t1.alwdeviation,
+				    t1.maxwaiverperc,
+				    t1.alwmodifyfee,
+				    t1.alwmodifyfeeschdmthd,
+				    t1.active,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t1.moduleid,
+				    t1.alwpreincomization,
+				    t2.feetypecode,
+				    t2.feetypedesc,
+				    t2.taxapplicable,
+				    t2.taxcomponent,
+				    t3.rulecodedesc ruledesc,
+				    t1.referenceid,
+					t2.tdsReq
+				   FROM fintypefees t1
+				     INNER JOIN feetypes t2 ON  t1.feetypeid = t2.feetypeid
+				     LEFT JOIN rules t3 ON  t1.rulecode = t3.rulecode and t3.rulemodule = 'FEES' and t1.finevent = t3.ruleevent
+			]]>
+		</createView>
+	</changeSet>
+	<changeSet id="1.15" author="bharat.r">
+		<createView viewName="fintypefees_view" replaceIfExists="true">
+			<![CDATA[
+				  SELECT t1.fintype,
+				    t1.originationfee,
+				    t1.finevent,
+				    t1.feetypeid,
+				    t1.feeorder,
+				    t1.feeschedulemethod,
+				    t1.calculationtype,
+				    t1.rulecode,
+				    t1.amount,
+				    t1.percentage,
+				    t1.calculateon,
+				    t1.alwdeviation,
+				    t1.maxwaiverperc,
+				    t1.alwmodifyfee,
+				    t1.alwmodifyfeeschdmthd,
+				    t1.active,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t1.moduleid,
+				    t1.alwpreincomization,
+				    t2.feetypecode,
+				    t2.feetypedesc,
+				    t2.taxapplicable,
+				    t2.taxcomponent,
+				    t3.rulecodedesc ruledesc,
+				    t1.referenceid,
+					t2.tdsReq
+				   FROM fintypefees_temp t1
+				     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+				     LEFT JOIN rules t3 ON  t1.rulecode = t3.rulecode and t3.rulemodule =  'FEES' and t1.finevent = t3.ruleevent
+				UNION ALL
+				 SELECT t1.fintype,
+				    t1.originationfee,
+				    t1.finevent,
+				    t1.feetypeid,
+				    t1.feeorder,
+				    t1.feeschedulemethod,
+				    t1.calculationtype,
+				    t1.rulecode,
+				    t1.amount,
+				    t1.percentage,
+				    t1.calculateon,
+				    t1.alwdeviation,
+				    t1.maxwaiverperc,
+				    t1.alwmodifyfee,
+				    t1.alwmodifyfeeschdmthd,
+				    t1.active,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t1.moduleid,
+				    t1.alwpreincomization,
+				    t2.feetypecode,
+				    t2.feetypedesc,
+				    t2.taxapplicable,
+				    t2.taxcomponent,
+				    t3.rulecodedesc ruledesc,
+				    t1.referenceid,
+					t2.tdsReq
+				   FROM fintypefees t1
+				     INNER JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+				     LEFT JOIN rules t3 ON  t1.rulecode = t3.rulecode  AND t3.rulemodule = 'FEES' and t1.finevent = t3.ruleevent
+				  WHERE NOT EXISTS (SELECT 1
+				           FROM fintypefees_temp f
+				          WHERE f.fintype = t1.fintype and f.finevent = t1.finevent and f.feetypeid = t1.feetypeid and f.originationfee = t1.originationfee)
+			]]>
+		</createView>
+	</changeSet>
+
+</databaseChangeLog>

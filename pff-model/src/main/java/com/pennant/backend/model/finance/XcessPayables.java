@@ -25,6 +25,8 @@ public class XcessPayables implements Entity {
 	private String taxType = "";
 	private String feeTypeCode = "";
 	private boolean taxApplicable = false;
+	private boolean tdsApplicable = false;
+	private BigDecimal tdsAmount = BigDecimal.ZERO;
 	private String finreference;
 
 	public XcessPayables() {
@@ -199,6 +201,22 @@ public class XcessPayables implements Entity {
 
 	public void setFeeTypeCode(String feeTypeCode) {
 		this.feeTypeCode = feeTypeCode;
+	}
+
+	public boolean isTdsApplicable() {
+		return tdsApplicable;
+	}
+
+	public void setTdsApplicable(boolean tdsApplicable) {
+		this.tdsApplicable = tdsApplicable;
+	}
+
+	public BigDecimal getTdsAmount() {
+		return tdsAmount;
+	}
+
+	public void setTdsAmount(BigDecimal tdsAmount) {
+		this.tdsAmount = tdsAmount;
 	}
 
 	public String getFinreference() {

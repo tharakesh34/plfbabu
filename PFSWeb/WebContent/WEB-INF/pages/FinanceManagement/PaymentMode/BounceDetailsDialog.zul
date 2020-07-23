@@ -35,12 +35,18 @@
 							sort="none" hflex="min" style="text-align:left;" />
 						<listheader id="listheader_GSTReceivable" label="${c:l('listheader_BounceDetails_GSTReceivable.label')}"
 							sort="none" hflex="min" style="text-align:left;" />
+						<listheader label="${c:l('listheader_ReceiptDialog_TDS.label')}"
+						    sort="none" hflex="min" style="text-align:left;" />
 						<listheader id="listheader_CurrentReceivable" label="${c:l('listheader_CurrentReceivable.label')}"
 							sort="none" hflex="min" style="text-align:left;" />
 						<listheader id="listheader_PaidAmount" label="${c:l('listheader_PaidAmount.label')}" sort="none" hflex="min"
 							style="text-align:left;" />
+						<listheader label="${c:l('listheader_ReceiptDialog_NetPaid.label')}" 
+							sort="none" hflex="min" style="text-align:left;" />
 						<listheader id="listheader_PaidGST" label="${c:l('listheader_BounceDetails_PaidGST.label')}" sort="none"
 							hflex="min" style="text-align:left;" />
+							<listheader label="${c:l('listheader_ReceiptDialog_PaidTDS.label')}" 
+   									sort="none" hflex="min" style="text-align:left;" />
 						<listheader id="listheader_WaivedAmount" label="${c:l('listheader_BounceDetails_WaivedAmount.label')}"
 							sort="none" hflex="min" style="text-align:left;" />
 						<listheader id="listheader_BalanceDueAmount" label="${c:l('listheader_BalanceDueAmount.label')}" sort="none"

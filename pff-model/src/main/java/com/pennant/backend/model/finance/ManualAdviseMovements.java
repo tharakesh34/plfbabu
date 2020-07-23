@@ -31,6 +31,8 @@ public class ManualAdviseMovements implements Serializable {
 	private BigDecimal waivedUGST = BigDecimal.ZERO;
 	private BigDecimal waivedIGST = BigDecimal.ZERO;
 
+	private BigDecimal tdsPaid = BigDecimal.ZERO;
+
 	private boolean taxApplicable;
 	private String taxComponent;
 	private int adviseType;
@@ -260,6 +262,14 @@ public class ManualAdviseMovements implements Serializable {
 
 	public void setTaxHeader(TaxHeader taxHeader) {
 		this.taxHeader = taxHeader;
+	}
+
+	public BigDecimal getTdsPaid() {
+		return tdsPaid;
+	}
+
+	public void setTdsPaid(BigDecimal tdsPaid) {
+		this.tdsPaid = tdsPaid;
 	}
 
 }

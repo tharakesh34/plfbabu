@@ -408,7 +408,8 @@ public class RepaymentProcessUtil {
 				extDataMap.put((xcessPayable.getFeeTypeCode() + "_CGST_P"), xcessPayable.getPaidCGST());
 				extDataMap.put((xcessPayable.getFeeTypeCode() + "_SGST_P"), xcessPayable.getPaidSGST());
 				extDataMap.put((xcessPayable.getFeeTypeCode() + "_UGST_P"), xcessPayable.getPaidUGST());
-				extDataMap.put((xcessPayable.getFeeTypeCode() + "_IGST_P"), xcessPayable.getPaidIGST());
+				extDataMap.put((xcessPayable.getFeeTypeCode() + "_IGST_P"), xcessPayable.getPaidUGST());
+				extDataMap.put((xcessPayable.getFeeTypeCode() + "_TDS"), xcessPayable.getTdsAmount());
 			}
 
 			totXcessAmount = totXcessAmount.add(xcessPayable.getTotPaidNow());
@@ -887,6 +888,7 @@ public class RepaymentProcessUtil {
 			ManualAdviseMovements movement = movements.get(m);
 
 			BigDecimal amount = BigDecimal.ZERO;
+			BigDecimal tdsPaid = movement.getTdsPaid();
 			String keyCode = null;
 
 			if (StringUtils.isEmpty(movement.getFeeTypeCode())
@@ -904,7 +906,8 @@ public class RepaymentProcessUtil {
 					if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(bounceFee.getTaxComponent())) {
 						BigDecimal gst = movement.getPaidCGST().add(movement.getPaidSGST()).add(movement.getPaidIGST())
 								.add(movement.getPaidUGST());
-						movementMap.put("bounceChargePaid", amount.add(movement.getPaidAmount().subtract(gst)));
+						movementMap.put("bounceChargePaid",
+								amount.add(movement.getPaidAmount().subtract(gst)).add(movement.getTdsPaid()));
 
 						BigDecimal waiverGst = movement.getWaivedCGST().add(movement.getWaivedSGST())
 								.add(movement.getWaivedIGST()).add(movement.getWaivedUGST());
@@ -916,7 +919,8 @@ public class RepaymentProcessUtil {
 								amount.add(movement.getWaivedAmount().subtract(waiverGst)));
 
 					} else {
-						movementMap.put("bounceChargePaid", amount.add(movement.getPaidAmount()));
+						movementMap.put("bounceChargePaid",
+								amount.add(movement.getPaidAmount()).add(movement.getTdsPaid()));
 						amount = BigDecimal.ZERO;
 						if (movementMap.containsKey("bounceChargeWaived")) {
 							amount = movementMap.get("bounceChargeWaived");
@@ -938,7 +942,8 @@ public class RepaymentProcessUtil {
 				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(manualAdvise.getTaxComponent())) {
 					BigDecimal gst = movement.getPaidCGST().add(movement.getPaidSGST()).add(movement.getPaidIGST())
 							.add(movement.getPaidUGST());
-					movementMap.put(keyCode + "_P", amount.add(movement.getPaidAmount().subtract(gst)));
+					movementMap.put(keyCode + "_P",
+							amount.add(movement.getPaidAmount().subtract(gst)).add(movement.getTdsPaid()));
 
 					BigDecimal waiverGst = movement.getWaivedCGST().add(movement.getWaivedSGST())
 							.add(movement.getWaivedIGST()).add(movement.getWaivedUGST());
@@ -950,7 +955,7 @@ public class RepaymentProcessUtil {
 					movementMap.put(movement.getFeeTypeCode() + "_W",
 							amount.add(movement.getWaivedAmount().subtract(waiverGst)));
 				} else {
-					movementMap.put(keyCode + "_P", amount.add(movement.getPaidAmount()));
+					movementMap.put(keyCode + "_P", amount.add(movement.getPaidAmount()).add(movement.getTdsPaid()));
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_W")) {
 						amount = movementMap.get(keyCode + "_W");
@@ -1009,6 +1014,11 @@ public class RepaymentProcessUtil {
 				amount = movementMap.get(keyCode + "_UGST_W");
 			}
 			movementMap.put(keyCode + "_UGST_W", amount.add(movement.getWaivedUGST()));
+
+			if (movementMap.containsKey(keyCode + "_TDS_P")) {
+				amount = movementMap.get(keyCode + "_TDS_P");
+			}
+			movementMap.put(keyCode + "_TDS_P", amount.add(movement.getTdsPaid()));
 		}
 		addZeroifNotContains(movementMap, "bounceChargePaid");
 		addZeroifNotContains(movementMap, "bounceCharge_CGST_P");
@@ -1142,11 +1152,13 @@ public class RepaymentProcessUtil {
 								for (ManualAdviseMovements movement : rcd.getAdvMovements()) {
 									if (allocation.getAllocationTo() == movement.getAdviseID()) {
 										//Paid Details
-										advise.setPaidAmount(advise.getPaidAmount().add(movement.getPaidAmount()));
+										advise.setPaidAmount(advise.getPaidAmount()
+												.add(movement.getPaidAmount().add(movement.getTdsPaid())));
 										advise.setPaidCGST(advise.getPaidCGST().add(movement.getPaidCGST()));
 										advise.setPaidSGST(advise.getPaidSGST().add(movement.getPaidSGST()));
 										advise.setPaidIGST(advise.getPaidIGST().add(movement.getPaidIGST()));
 										advise.setPaidUGST(advise.getPaidUGST().add(movement.getPaidUGST()));
+										advise.setTdsPaid(advise.getTdsPaid().add(movement.getTdsPaid()));
 
 										//Waiver Details
 										advise.setWaivedAmount(
@@ -1206,11 +1218,13 @@ public class RepaymentProcessUtil {
 										 */
 
 										//Paid Details
-										advise.setPaidAmount(movement.getPaidAmount());
+										advise.setPaidAmount(advise.getPaidAmount()
+												.add(movement.getPaidAmount().add(movement.getTdsPaid())));
 										advise.setPaidCGST(movement.getPaidCGST());
 										advise.setPaidSGST(movement.getPaidSGST());
 										advise.setPaidIGST(movement.getPaidIGST());
 										advise.setPaidUGST(movement.getPaidUGST());
+										advise.setTdsPaid(advise.getTdsPaid().add(movement.getTdsPaid()));
 
 										//Waiver Details
 										advise.setWaivedAmount(movement.getWaivedAmount());
@@ -1411,9 +1425,7 @@ public class RepaymentProcessUtil {
 			rph.setFinEvent(rch.getReceiptPurpose());
 			if (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
 				int recordCount = 0;
-				if ((StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
-						|| StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_DD))
-						&& StringUtils.equals(rch.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+				if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
 					recordCount = getFinExcessAmountDAO().updateExcessReserveByRef(rch.getReference(),
 							rch.getExcessAdjustTo(), rph.getExcessAmount());
 				} else {
@@ -1429,8 +1441,7 @@ public class RepaymentProcessUtil {
 					excess.setUtilisedAmt(BigDecimal.ZERO);
 					excess.setBalanceAmt(rph.getExcessAmount());
 					excess.setReservedAmt(BigDecimal.ZERO);
-					if (StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
-							|| StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_DD)) {
+					if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
 						excess.setBalanceAmt(BigDecimal.ZERO);
 						excess.setReservedAmt(rph.getExcessAmount());
 						excess.setAmount(rph.getExcessAmount());
@@ -1834,31 +1845,30 @@ public class RepaymentProcessUtil {
 						|| StringUtils.equals(allocType, RepayConstants.ALLOCATION_FUT_PFT)) {
 					rpyQueueHeader.setProfit(rpyQueueHeader.getProfit().add(paidNow));
 					rpyQueueHeader.setPftWaived(rpyQueueHeader.getPftWaived().add(waivedNow));
+					rpyQueueHeader.setTds(rpyQueueHeader.getTds().add(rad.getTdsPaid()));
 					if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_FUT_PFT)) {
-						rpyQueueHeader.setFutProfit(paidNow);
-						rpyQueueHeader.setFutPftWaived(waivedNow);
-					}
-				} else if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_TDS)
-						|| StringUtils.equals(allocType, RepayConstants.ALLOCATION_FUT_TDS)) {
-					rpyQueueHeader.setTds(rpyQueueHeader.getTds().add(paidNow));
-					if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_FUT_TDS)) {
-						rpyQueueHeader.setFutTds(paidNow);
+						rpyQueueHeader.setFutTds(rad.getTdsPaid());
 					}
 				} else if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_LPFT)) {
 					rpyQueueHeader.setLateProfit(rpyQueueHeader.getLateProfit().add(paidNow));
 					rpyQueueHeader.setLatePftWaived(rpyQueueHeader.getLatePftWaived().add(waivedNow));
+					rpyQueueHeader.setFeeTds(rpyQueueHeader.getFeeTds().add(rad.getTdsPaid()));
 				} else if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_ODC)) {
 					rpyQueueHeader.setPenalty(rpyQueueHeader.getPenalty().add(paidNow));
 					rpyQueueHeader.setPenaltyWaived(rpyQueueHeader.getPenaltyWaived().add(waivedNow));
+					extDataMap.put("LPP" + "_TDS", rad.getTdsPaid());
+					//rpyQueueHeader.setFeeTds(rpyQueueHeader.getFeeTds().add(rad.getTdsPaid()));
 				} else if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_FEE)) {
 					rpyQueueHeader.setFee(rpyQueueHeader.getFee().add(paidNow));
 					rpyQueueHeader.setFeeWaived(rpyQueueHeader.getFeeWaived().add(waivedNow));
+					//rpyQueueHeader.setFeeTds(rpyQueueHeader.getFeeTds().add(rad.getTdsPaid()));
 				} else if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_INS)) {
 					rpyQueueHeader.setInsurance(rpyQueueHeader.getInsurance().add(paidNow));
 					rpyQueueHeader.setInsWaived(rpyQueueHeader.getInsWaived().add(waivedNow));
 				} else if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_MANADV)
 						|| StringUtils.equals(allocType, RepayConstants.ALLOCATION_BOUNCE)) {
 					rpyQueueHeader.setAdviseAmount(rpyQueueHeader.getAdviseAmount().add(paidNow).add(waivedNow));
+					//rpyQueueHeader.setFeeTds(rpyQueueHeader.getFeeTds().add(rad.getTdsPaid()));
 
 				}
 			}

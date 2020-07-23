@@ -385,6 +385,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Listheader listheader_LimitChange;
 	protected Listheader listheader_AvailableLimit;
 	protected Listheader listheader_ODLimit;
+	protected Listheader listheader_ReceiptDialog_TDS;
+	protected Listheader listheader_ReceiptDialog_PaidTDS;
 
 	// Effective Schedule Tab Details
 	protected Label finSchType;
@@ -1118,8 +1120,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 			if (!receiptData.isCalReq()) {
 				for (ReceiptAllocationDetail allocate : receiptData.getAllocList()) {
-					allocate.setTotalPaid(allocate.getPaidAmount());
-					allocate.setTotRecv(allocate.getTotalDue());
+					allocate.setTotalPaid(allocate.getPaidAmount().add(allocate.getTdsPaid()));
+					allocate.setTotRecv(allocate.getTotalDue().add(allocate.getTdsDue()));
 					if (allocate.getAllocationTo() == 0) {
 						allocate.setTypeDesc(
 								Labels.getLabel("label_RecceiptDialog_AllocationType_" + allocate.getAllocationType()));
@@ -1729,8 +1731,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	private void changeWaiver() {
 		receiptData = getReceiptCalculator().changeAllocations(receiptData);
-		doFillAllocationDetail();
 		setBalances();
+		doFillAllocationDetail();
 	}
 
 	/**
@@ -1738,14 +1740,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	private void changePaid() {
 		receiptData = getReceiptCalculator().setTotals(receiptData, 0);
-		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
-		receiptData.getReceiptHeader().setAllocationsSummary(allocationList);
-
-		try {
-			setSummaryData(true);
-		} catch (IllegalAccessException | InvocationTargetException | InterruptedException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
 		setBalances();
 		doFillAllocationDetail();
 	}
@@ -2935,6 +2929,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		this.listBoxPastdues.getItems().clear();
 
+		if (receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()) {
+			listheader_ReceiptDialog_TDS.setVisible(true);
+			listheader_ReceiptDialog_PaidTDS.setVisible(true);
+		}
+
 		// Get Receipt Purpose to Make Waiver amount Editable
 		String label = Labels.getLabel("label_RecceiptDialog_AllocationType_");
 		boolean isManAdv = false;
@@ -2990,6 +2989,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			lc.setStyle("font-weight:bold;color: #191a1c;");
 			lc.setParent(item);
 
+			lc = new Listcell();
+			lc.setStyle("font-weight:bold;color: #191a1c;");
+			lc.setParent(item);
+
 			lc = new Listcell(PennantApplicationUtil.amountFormate(receiptData.getRemBal(), formatter));
 
 			lc.setId("ExcessAmount");
@@ -3025,9 +3028,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// FIXME: PV. Pending code to get in process allocations
 		addAmountCell(item, allocate.getInProcess(), ("AllocateInProess_" + idx), true);
 		addAmountCell(item, allocate.getDueGST(), ("AllocateCurGST_" + idx), true);
+		addAmountCell(item, allocate.getTdsDue(), ("AllocateTDSDue_" + idx), true);
 		addAmountCell(item, allocate.getTotalDue(), ("AllocateCurDue_" + idx), true);
 
-		// Editable Amount - Total Paid
 		lc = new Listcell();
 		CurrencyBox allocationPaid = new CurrencyBox();
 		allocationPaid.setStyle("text-align:right;");
@@ -3037,18 +3040,27 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		allocationPaid.setValue(PennantApplicationUtil.formateAmount(allocate.getTotalPaid(), formatter));
 		allocationPaid.addForward("onFulfill", this.window_ReceiptDialog, "onAllocatePaidChange", idx);
 		allocationPaid.setReadonly(true);
-
-		/*
-		 * if (RepayConstants.ALLOCATION_FEE.equals(allocate.getAllocationType()) &&
-		 * RepayConstants.ALLOCATIONTYPE_MANUAL.equals(allocationtype)) { allocate.setPaidAmount(allocate.getTotRecv());
-		 * allocationPaid.setValue(PennantApplicationUtil.formateAmount(allocate.getTotRecv(), formatter)); }
-		 */
-
 		lc.appendChild(allocationPaid);
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
+		// Editable Amount - Total Paid
+		lc = new Listcell();
+		CurrencyBox allocationNetPaid = new CurrencyBox();
+		allocationNetPaid.setStyle("text-align:right;");
+		allocationNetPaid.setBalUnvisible(true, true);
+		setProps(allocationNetPaid, false, formatter, 120);
+		allocationNetPaid.setId("AllocateNetPaid_" + idx);
+		allocationNetPaid.setValue(PennantApplicationUtil.formateAmount(allocate.getPaidAmount(), formatter));
+		allocationNetPaid.addForward("onFulfill", this.window_ReceiptDialog, "onAllocateNetPaidChange", idx);
+		allocationNetPaid.setReadonly(true);
+
+		lc.appendChild(allocationNetPaid);
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+
 		addAmountCell(item, allocate.getPaidGST(), ("PaidGST_" + idx), true);
+		addAmountCell(item, allocate.getTdsPaid(), ("PaidTDS_" + idx), true);
 
 		lc = new Listcell();
 		CurrencyBox allocationWaived = new CurrencyBox();
@@ -3074,8 +3086,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		if (allocate.isEditable() && StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)) {
-			// allocationPaid.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
+		if (StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)) {
+			allocationNetPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_PaidAmount"));
 			allocationPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_PaidAmount"));
 		}
 
@@ -3146,11 +3158,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal totDue = BigDecimal.ZERO;
 		BigDecimal totGST = BigDecimal.ZERO;
 		BigDecimal inProc = BigDecimal.ZERO;
+		BigDecimal totPaid = BigDecimal.ZERO;
 		BigDecimal paid = BigDecimal.ZERO;
 		BigDecimal paidGST = BigDecimal.ZERO;
 		BigDecimal waived = BigDecimal.ZERO;
 		BigDecimal waivedGST = BigDecimal.ZERO;
 		BigDecimal gstAmount = BigDecimal.ZERO;
+		BigDecimal tdsPaid = BigDecimal.ZERO;
+		BigDecimal tdsDue = BigDecimal.ZERO;
 
 		List<ReceiptAllocationDetail> allocList = receiptData.getReceiptHeader().getAllocationsSummary();
 
@@ -3160,27 +3175,18 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		for (ReceiptAllocationDetail allocate : allocList) {
 
-			if (allocate.isEditable()) {
+			if (!RepayConstants.ALLOCATION_EMI.equals(allocate.getAllocationType())) {
 				totRecv = totRecv.add(allocate.getTotRecv());
 				totGST = totGST.add(allocate.getDueGST());
 				totDue = totDue.add(allocate.getTotalDue());
 				inProc = inProc.add(allocate.getInProcess());
+				totPaid = totPaid.add(allocate.getTotalPaid());
 				paid = paid.add(allocate.getPaidAmount());
 				paidGST = paidGST.add(allocate.getPaidGST());
 				waived = waived.add(allocate.getWaivedAmount());
+				tdsDue = tdsDue.add(allocate.getTdsDue());
+				tdsPaid = tdsPaid.add(allocate.getTdsPaid());
 
-				/*
-				 * if (allocate.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0 &&
-				 * FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate. getTaxType())) { TaxAmountSplit taxSplit
-				 * = new TaxAmountSplit(); taxSplit.setAmount(allocate.getWaivedAmount());
-				 * taxSplit.setTaxType(allocate.getTaxType()); taxSplit =
-				 * getReceiptCalculator().getGST(receiptData.getFinanceDetail(), taxSplit); waived =
-				 * waived.add(taxSplit.gettGST()); gstAmount = gstAmount.add(taxSplit.gettGST()); }
-				 * 
-				 * //Waiver GST only for Exclusive cases if
-				 * (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate. getTaxType())) { waivedGST =
-				 * waivedGST.add(allocate.getWaivedGST()); }
-				 */
 			}
 
 		}
@@ -3188,9 +3194,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		addAmountCell(item, totRecv, null, true);
 		addAmountCell(item, inProc, null, true);
 		addAmountCell(item, totGST, null, true);
+		addAmountCell(item, tdsDue, null, true);
 		addAmountCell(item, totDue, null, true);
+		addAmountCell(item, totPaid, null, true);
 		addAmountCell(item, paid, null, true);
 		addAmountCell(item, paidGST, null, true);
+		addAmountCell(item, tdsPaid, null, true);
 		addAmountCell(item, waived.subtract(gstAmount), null, true);
 		addAmountCell(item, totDue.subtract(paid).subtract(waived), null, true);
 
@@ -3216,12 +3225,170 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		CurrencyBox allocationPaid = (CurrencyBox) this.listBoxPastdues.getFellow(id);
 
 		BigDecimal paidAmount = PennantApplicationUtil.unFormateAmount(allocationPaid.getValidateValue(), formatter);
-		BigDecimal dueAmount = rch.getAllocationsSummary().get(idx).getTotalDue();
+		BigDecimal dueAmount = allocate.getTotRecv().subtract(allocate.getInProcess());
+		if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, allocate.getTaxType())) {
+			dueAmount = dueAmount.add(allocate.getDueGST());
+		}
 		BigDecimal waivedAmount = rch.getAllocationsSummary().get(idx).getWaivedAmount();
 		if (paidAmount.compareTo(dueAmount.subtract(waivedAmount)) > 0) {
 			paidAmount = dueAmount.subtract(waivedAmount);
 		}
 
+		allocate.setTotalPaid(paidAmount);
+
+		BigDecimal excGst = getReceiptCalculator().getExclusiveGSTAmount(allocate, paidAmount);
+
+		BigDecimal tds = getReceiptCalculator()
+				.getTDSAmount(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain(), excGst);
+
+		if (allocate.isSubListAvailable()) {
+			getReceiptCalculator().splitAllocSummary(receiptData, idx);
+		} else {
+			if (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_EMI)) {
+				allocateEmi(paidAmount);
+			} else if (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_PFT)) {
+				allocateNPft(paidAmount);
+			} else if (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_PRI)) {
+				allocatePRI(paidAmount);
+			} else {
+				for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
+					if (allocteDtl.getAllocationType().equals(allocate.getAllocationType())
+							&& allocteDtl.getAllocationTo() == allocate.getAllocationTo()) {
+						allocteDtl.setTotalPaid(paidAmount);
+						allocteDtl.setPaidAmount(paidAmount.subtract(tds));
+						allocteDtl.setTdsPaid(tds);
+						// GST Calculation(always paid amount we are taking the
+						// inclusive type here because we are doing reverse
+						// calculation here)
+						if (allocteDtl.getDueGST().compareTo(BigDecimal.ZERO) > 0) {
+							allocteDtl.setPaidCGST(BigDecimal.ZERO);
+							allocteDtl.setPaidSGST(BigDecimal.ZERO);
+							allocteDtl.setPaidUGST(BigDecimal.ZERO);
+							allocteDtl.setPaidIGST(BigDecimal.ZERO);
+							allocteDtl.setPaidGST(BigDecimal.ZERO);
+							getReceiptCalculator().calAllocationGST(financeDetail, paidAmount, allocteDtl,
+									FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+						}
+					}
+				}
+			}
+		}
+
+		changePaid();
+
+		// if no extra balance or partial pay disable excessAdjustTo
+		if (this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) <= 0 || receiptPurposeCtg == 1) {
+			this.excessAdjustTo.setSelectedIndex(0);
+			this.excessAdjustTo.setDisabled(true);
+		} else {
+			this.excessAdjustTo.setDisabled(false);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void allocatePft(BigDecimal paidAmount) {
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		BigDecimal pft = receiptCalculator.getPftAmount(receiptData.getFinanceDetail().getFinScheduleData(),
+				paidAmount);
+		BigDecimal pri = BigDecimal.ZERO;
+		for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
+			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PRI)) {
+				pri = allocteDtl.getPaidAmount();
+			}
+			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PFT)) {
+				if (pft.compareTo(allocteDtl.getTotalDue().add(allocteDtl.getTdsDue())
+						.subtract(allocteDtl.getWaivedAmount())) > 0) {
+					pft = allocteDtl.getTotalDue().subtract(allocteDtl.getWaivedAmount());
+				}
+				allocteDtl.setTotalPaid(pft);
+				allocteDtl.setPaidAmount(paidAmount);
+				allocteDtl.setTdsPaid(pft.subtract(paidAmount));
+			}
+
+		}
+		for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
+			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_EMI)) {
+				allocteDtl.setTotalPaid(pri.add(paidAmount));
+				allocteDtl.setPaidAmount(pri.add(paidAmount));
+				break;
+			}
+
+		}
+
+	}
+
+	private void allocateNPft(BigDecimal paidAmount) {
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		BigDecimal netPft = receiptCalculator.getNetProfit(receiptData, paidAmount);
+		BigDecimal pri = BigDecimal.ZERO;
+		for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
+			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PRI)) {
+				pri = allocteDtl.getPaidAmount();
+			}
+			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PFT)) {
+				if (netPft.compareTo(allocteDtl.getTotalDue().subtract(allocteDtl.getWaivedAmount())) > 0) {
+					netPft = allocteDtl.getTotalDue().subtract(allocteDtl.getWaivedAmount());
+				}
+				allocteDtl.setTotalPaid(paidAmount);
+				allocteDtl.setPaidAmount(netPft);
+				allocteDtl.setTdsPaid(paidAmount.subtract(netPft));
+			}
+
+		}
+		for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
+			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_EMI)) {
+				allocteDtl.setTotalPaid(pri.add(netPft));
+				allocteDtl.setPaidAmount(pri.add(netPft));
+				break;
+			}
+
+		}
+
+	}
+
+	private void allocatePRI(BigDecimal paidAmount) {
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		BigDecimal npft = BigDecimal.ZERO;
+		for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
+			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PRI)) {
+				allocteDtl.setTotalPaid(paidAmount);
+				allocteDtl.setPaidAmount(paidAmount);
+			}
+			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PFT)) {
+				npft = allocteDtl.getPaidAmount();
+			}
+		}
+		for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
+			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_EMI)) {
+				allocteDtl.setTotalPaid(npft.add(paidAmount));
+				allocteDtl.setPaidAmount(npft.add(paidAmount));
+				break;
+			}
+
+		}
+
+	}
+
+	public void onAllocateNetPaidChange(ForwardEvent event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		// FIXME: PV: CODE REVIEW PENDING
+		int idx = (int) event.getData();
+		String id = "AllocateNetPaid_" + idx;
+
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+
+		ReceiptAllocationDetail allocate = rch.getAllocationsSummary().get(idx);
+
+		CurrencyBox allocationPaid = (CurrencyBox) this.listBoxPastdues.getFellow(id);
+
+		BigDecimal paidAmount = PennantApplicationUtil.unFormateAmount(allocationPaid.getValidateValue(), formatter);
+		BigDecimal dueAmount = rch.getAllocationsSummary().get(idx).getTotalDue();
+		BigDecimal waivedAmount = rch.getAllocationsSummary().get(idx).getWaivedAmount();
+		if (paidAmount.compareTo(dueAmount.subtract(waivedAmount)) > 0) {
+			paidAmount = dueAmount.subtract(waivedAmount);
+		}
+		BigDecimal totalPaid = getReceiptCalculator().getPaidAmount(allocate, paidAmount);
 		allocate.setTotalPaid(paidAmount);
 		allocate.setPaidAmount(paidAmount);
 		//allocate.setPaidAmount(allocate.getTotRecv());
@@ -3230,27 +3397,48 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (StringUtils.isNotBlank(allocate.getTaxType())) {
 			// always paid amount we are taking the inclusive type here because
 			// we are doing reverse calculation here
-			getReceiptCalculator().calAllocationGST(financeDetail, paidAmount, allocate,
-					FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+			allocate.setPaidCGST(BigDecimal.ZERO);
+			allocate.setPaidSGST(BigDecimal.ZERO);
+			allocate.setPaidUGST(BigDecimal.ZERO);
+			allocate.setPaidIGST(BigDecimal.ZERO);
+			allocate.setPaidGST(BigDecimal.ZERO);
+			getReceiptCalculator().calAllocationPaidGST(financeDetail, totalPaid, allocate,
+					FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE);
+		}
+
+		BigDecimal tdsPaidNow = BigDecimal.ZERO;
+		if (allocate.isTdsReq()) {
+			tdsPaidNow = getReceiptCalculator().getTDSAmount(financeDetail.getFinScheduleData().getFinanceMain(),
+					totalPaid);
+			allocate.setTdsPaid(tdsPaidNow);
+			allocate.setTotalPaid(totalPaid.add(tdsPaidNow));
 		}
 
 		if (allocate.isSubListAvailable()) {
-			getReceiptCalculator().splitAllocSummary(receiptData, idx);
+			getReceiptCalculator().splitNetAllocSummary(receiptData, idx);
 		} else {
 			if (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_EMI)) {
 				allocateEmi(paidAmount);
+			} else if (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_PFT)) {
+				allocatePft(paidAmount);
+			} else if (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_PRI)) {
+				allocatePRI(paidAmount);
 			} else {
 				for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
 					if (allocteDtl.getAllocationType().equals(allocate.getAllocationType())
 							&& allocteDtl.getAllocationTo() == allocate.getAllocationTo()) {
-						allocteDtl.setTotalPaid(paidAmount);
+						allocteDtl.setTotalPaid(paidAmount.add(tdsPaidNow));
 						allocteDtl.setPaidAmount(paidAmount);
-
-						// GST Calculation(always paid amount we are taking the
-						// inclusive type here because we are doing reverse
-						// calculation here)
-						getReceiptCalculator().calAllocationGST(financeDetail, paidAmount, allocteDtl,
-								FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+						allocteDtl.setTdsPaid(tdsPaidNow);
+						if (allocteDtl.getDueGST().compareTo(BigDecimal.ZERO) > 0) {
+							allocteDtl.setPaidCGST(BigDecimal.ZERO);
+							allocteDtl.setPaidSGST(BigDecimal.ZERO);
+							allocteDtl.setPaidUGST(BigDecimal.ZERO);
+							allocteDtl.setPaidIGST(BigDecimal.ZERO);
+							allocteDtl.setPaidGST(BigDecimal.ZERO);
+							getReceiptCalculator().calAllocationPaidGST(financeDetail, totalPaid, allocteDtl,
+									FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE);
+						}
 					}
 				}
 			}
@@ -3278,26 +3466,16 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					emiSplit[1] = allocteDtl.getTotalDue().subtract(allocteDtl.getWaivedAmount());
 				}
 				allocteDtl.setTotalPaid(emiSplit[1]);
-				allocteDtl.setPaidAmount(emiSplit[1]);
+				allocteDtl.setPaidAmount(emiSplit[2]);
+				allocteDtl.setTdsPaid(emiSplit[1].subtract(emiSplit[2]));
 			}
 
-			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_NPFT)) {
-				if (emiSplit[2].compareTo(allocteDtl.getTotalDue().subtract(allocteDtl.getWaivedAmount())) > 0) {
-					emiSplit[2] = allocteDtl.getTotalDue().subtract(allocteDtl.getWaivedAmount());
-				}
-				allocteDtl.setTotalPaid(emiSplit[2]);
-				allocteDtl.setPaidAmount(emiSplit[2]);
-			}
 			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PRI)) {
 				if (emiSplit[0].compareTo(allocteDtl.getTotalDue().subtract(allocteDtl.getWaivedAmount())) > 0) {
 					emiSplit[0] = allocteDtl.getTotalDue().subtract(allocteDtl.getWaivedAmount());
 				}
 				allocteDtl.setTotalPaid(emiSplit[0]);
 				allocteDtl.setPaidAmount(emiSplit[0]);
-			}
-			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_TDS)) {
-				allocteDtl.setTotalPaid(emiSplit[1].subtract(emiSplit[2]));
-				allocteDtl.setPaidAmount(emiSplit[1].subtract(emiSplit[2]));
 			}
 			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_EMI)) {
 				allocteDtl.setTotalPaid(paidAmount);
@@ -3332,7 +3510,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				formatter);
 
 		BigDecimal dueAmount = allocate.getTotalDue();
-		;
 
 		if (waivedAmount.compareTo(dueAmount) > 0) {
 			waivedAmount = dueAmount;
@@ -3341,33 +3518,47 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		adjustWaiver(allocate, waivedAmount);
 
+		BigDecimal totalPaid = getReceiptCalculator().getPaidAmount(allocate, allocate.getPaidAmount());
+
+		if (StringUtils.isNotBlank(allocate.getTaxType())) {
+			// always paid amount we are taking the inclusive type here because
+			// we are doing reverse calculation here
+			getReceiptCalculator().calAllocationPaidGST(financeDetail, totalPaid, allocate,
+					FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE);
+		}
+
+		BigDecimal tdsPaidNow = BigDecimal.ZERO;
+		if (allocate.isTdsReq()) {
+			tdsPaidNow = getReceiptCalculator().getTDSAmount(financeDetail.getFinScheduleData().getFinanceMain(),
+					totalPaid);
+			allocate.setTdsPaid(tdsPaidNow);
+			allocate.setTotalPaid(totalPaid.add(tdsPaidNow));
+		}
+
 		if (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_PRI)) {
 			isEmiWaived = true;
-			priWaived = allocate.getWaivedAmount();
 		}
 
 		if (allocate.isSubListAvailable()) {
-			getReceiptCalculator().splitAllocSummary(receiptData, idx);
+			getReceiptCalculator().splitNetAllocSummary(receiptData, idx);
 		} else {
 			for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
 				if (allocteDtl.getAllocationType().equals(allocate.getAllocationType())
 						&& allocteDtl.getAllocationTo() == allocate.getAllocationTo()) {
+					allocteDtl.setPaidCGST(BigDecimal.ZERO);
+					allocteDtl.setPaidSGST(BigDecimal.ZERO);
+					allocteDtl.setPaidIGST(BigDecimal.ZERO);
+					allocteDtl.setPaidUGST(BigDecimal.ZERO);
+					allocteDtl.setPaidGST(BigDecimal.ZERO);
+					// Waiver GST
+					allocteDtl.setWaivedCGST(BigDecimal.ZERO);
+					allocteDtl.setWaivedSGST(BigDecimal.ZERO);
+					allocteDtl.setWaivedIGST(BigDecimal.ZERO);
+					allocteDtl.setWaivedUGST(BigDecimal.ZERO);
+					allocteDtl.setWaivedGST(BigDecimal.ZERO);
 					allocteDtl.setWaivedAmount(allocate.getWaivedAmount());
 					allocteDtl.setPaidAmount(allocate.getPaidAmount());
 					allocteDtl.setTotalPaid(allocate.getTotalPaid());
-					// Paid GST
-					allocteDtl.setPaidCGST(allocate.getPaidCGST());
-					allocteDtl.setPaidSGST(allocate.getPaidSGST());
-					allocteDtl.setPaidIGST(allocate.getPaidIGST());
-					allocteDtl.setPaidUGST(allocate.getPaidUGST());
-					allocteDtl.setPaidGST(allocate.getPaidGST());
-					// Waiver GST
-					allocteDtl.setWaivedCGST(allocate.getWaivedCGST());
-					allocteDtl.setWaivedSGST(allocate.getWaivedSGST());
-					allocteDtl.setWaivedIGST(allocate.getWaivedIGST());
-					allocteDtl.setWaivedUGST(allocate.getWaivedUGST());
-					allocteDtl.setWaivedGST(allocate.getWaivedGST());
-					break;
 				}
 			}
 		}
@@ -3376,80 +3567,60 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			FinScheduleData fsd = receiptData.getFinanceDetail().getFinScheduleData();
 			List<FinanceScheduleDetail> schdDtls = fsd.getFinanceScheduleDetails();
 			FinanceScheduleDetail lastSchd = schdDtls.get(schdDtls.size() - 1);
-			BigDecimal npftWaived = BigDecimal.ZERO;
-			BigDecimal tdsWaived = BigDecimal.ZERO;
 			if (lastSchd.isTDSApplicable()) {
-				tdsWaived = getReceiptCalculator().getTDS(fsd.getFinanceMain(), waivedAmount);
-				npftWaived = waivedAmount.subtract(tdsWaived);
+				BigDecimal pftNow = receiptCalculator.getNetOffTDS(
+						receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain(), allocate.getPaidAmount());
+				allocate.setTotalPaid(pftNow);
+				allocate.setTdsPaid(pftNow.subtract(allocate.getPaidAmount()));
 			} else {
-				npftWaived = waivedAmount;
-			}
-			for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
-				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_FUT_NPFT)) {
-					adjustWaiver(allocteDtl, npftWaived);
-				}
-				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_FUT_TDS)) {
-					adjustWaiver(allocteDtl, tdsWaived);
-				}
-			}
-			for (ReceiptAllocationDetail allocteDtl : rch.getAllocationsSummary()) {
-				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_FUT_NPFT)) {
-					adjustWaiver(allocteDtl, npftWaived);
-				}
-				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_FUT_TDS)) {
-					adjustWaiver(allocteDtl, tdsWaived);
-				}
+				allocate.setTotalPaid(allocate.getPaidAmount());
+				allocate.setTdsPaid(BigDecimal.ZERO);
 			}
 		}
 
 		if (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_PFT)) {
-			BigDecimal npftWaived = receiptCalculator.getNetProfit(receiptData, allocate.getWaivedAmount());
-			for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
-				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_NPFT)) {
-					isEmiWaived = true;
-					netPftWaived = npftWaived;
-					adjustWaiver(allocteDtl, npftWaived);
-				}
-				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_TDS)) {
-					adjustWaiver(allocteDtl, waivedAmount.subtract(npftWaived));
-				}
-			}
-			for (ReceiptAllocationDetail allocteDtl : rch.getAllocationsSummary()) {
-				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_NPFT)) {
-					isEmiWaived = true;
-					netPftWaived = npftWaived;
-					adjustWaiver(allocteDtl, npftWaived);
-				}
-				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_TDS)) {
-					adjustWaiver(allocteDtl, waivedAmount.subtract(npftWaived));
-				}
-			}
+			BigDecimal pftPaid = receiptCalculator.getPftAmount(receiptData.getFinanceDetail().getFinScheduleData(),
+					allocate.getPaidAmount());
+			isEmiWaived = true;
+			allocate.setTotalPaid(pftPaid);
+			allocate.setTdsPaid(pftPaid.subtract(allocate.getPaidAmount()));
+
 		}
 		// Adjusting emi waiver
 		if (isEmiWaived) {
+			BigDecimal paid = BigDecimal.ZERO;
+			BigDecimal totPaid = BigDecimal.ZERO;
 			for (ReceiptAllocationDetail allocteDtl : rch.getAllocationsSummary()) {
 				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PRI)) {
-					priWaived = allocteDtl.getWaivedAmount();
+					paid = paid.add(allocteDtl.getPaidAmount());
+					totPaid = totPaid.add(allocteDtl.getTotalPaid());
 				}
-				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_NPFT)) {
-					netPftWaived = allocteDtl.getWaivedAmount();
+				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PFT)) {
+					paid = paid.add(allocteDtl.getPaidAmount());
+					totPaid = totPaid.add(allocteDtl.getTotalPaid());
 				}
 				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_EMI)) {
-					allocteDtl.setWaivedAmount(BigDecimal.ZERO);
-					adjustWaiver(allocteDtl, allocteDtl.getWaivedAmount().add(priWaived.add(netPftWaived)));
+					allocteDtl.setPaidAmount(paid);
+					allocteDtl.setTotalPaid(totPaid);
+					allocteDtl.setWaivedAmount(waivedAmount);
 					break;
 				}
 			}
+			paid = BigDecimal.ZERO;
+			totPaid = BigDecimal.ZERO;
 			for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
 				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PRI)) {
-					priWaived = allocteDtl.getWaivedAmount();
+					paid = paid.add(allocteDtl.getPaidAmount());
+					totPaid = totPaid.add(allocteDtl.getTotalPaid());
 				}
-				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_NPFT)) {
-					netPftWaived = allocteDtl.getWaivedAmount();
+				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PFT)) {
+					paid = paid.add(allocteDtl.getPaidAmount());
+					totPaid = totPaid.add(allocteDtl.getTotalPaid());
 				}
 				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_EMI)) {
-					allocteDtl.setWaivedAmount(BigDecimal.ZERO);
-					adjustWaiver(allocteDtl, allocteDtl.getWaivedAmount().add(priWaived.add(netPftWaived)));
+					allocteDtl.setPaidAmount(paid);
+					allocteDtl.setTotalPaid(totPaid);
+					allocteDtl.setWaivedAmount(waivedAmount);
 					break;
 				}
 			}
@@ -3471,40 +3642,24 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal waivedAmount = allocate.getWaivedAmount();
 
 		dueAmount = allocate.getTotalDue();
-		paidAmount = allocate.getTotalPaid();
-		BigDecimal balAmount = dueAmount.subtract(paidAmount).subtract(waivedAmount);
-
-		if (waivedAmount.compareTo(BigDecimal.ZERO) > 0) {
-			if (balAmount.compareTo(BigDecimal.ZERO) == 0 && paidAmount.compareTo(BigDecimal.ZERO) > 0) {
-				paidAmount = paidAmount.add(waivedAmount);
-			}
-			waivedAmount = BigDecimal.ZERO;
-		}
-		balAmount = dueAmount.subtract(paidAmount).subtract(waivedAmount);
-		if (waiverNow.compareTo(balAmount) > 0) {
-			paidAmount = paidAmount.subtract(waiverNow.subtract(balAmount));
-		}
-
-		// Calculate the Paid GST values for allocations
-		if (paidAmount.compareTo(BigDecimal.ZERO) > 0 && StringUtils.isNotBlank(allocate.getTaxType())) {
-			getReceiptCalculator().calAllocationPaidGST(financeDetail, paidAmount, allocate,
-					FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+		paidAmount = allocate.getPaidAmount();
+		BigDecimal balAmount = dueAmount.subtract(waivedAmount);
+		if (balAmount.compareTo(BigDecimal.ZERO) == 0) {
+			allocate.setPaidAmount(BigDecimal.ZERO);
+			allocate.setTotalPaid(BigDecimal.ZERO);
+			allocate.setTdsPaid(BigDecimal.ZERO);
 		} else {
-			allocate.setPaidCGST(BigDecimal.ZERO);
-			allocate.setPaidSGST(BigDecimal.ZERO);
-			allocate.setPaidUGST(BigDecimal.ZERO);
-			allocate.setPaidIGST(BigDecimal.ZERO);
-			allocate.setPaidGST(BigDecimal.ZERO);
+			if (balAmount.compareTo(paidAmount) <= 0) {
+				paidAmount = balAmount;
+				allocate.setWaivedAmount(waiverNow);
+				allocate.setPaidAmount(paidAmount);
+			}
 		}
 
 		// Calculate the Waiver GST values for allocations
 		if (waiverNow.compareTo(BigDecimal.ZERO) > 0) {
 			getReceiptCalculator().calAllocationWaiverGST(financeDetail, waiverNow, allocate);
 		}
-
-		allocate.setTotalPaid(paidAmount);
-		allocate.setWaivedAmount(waiverNow);
-		allocate.setPaidAmount(paidAmount);
 
 		return allocate;
 	}

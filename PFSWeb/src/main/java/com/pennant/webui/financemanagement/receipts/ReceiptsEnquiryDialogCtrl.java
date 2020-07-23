@@ -1328,8 +1328,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_TDS)
 					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_NPFT)
 					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_PRI)
-					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FUT_TDS)
-					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FUT_PFT)) {
+					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FUT_TDS)) {
 				paidAmount = BigDecimal.ZERO;
 			} else {
 				paidAmount = rad.getPaidAmount();
@@ -1348,8 +1347,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						masterCodeFiler);
 			}
 			addBoldTextCell(item, allocDesc, rad.isSubListAvailable(), i);
-
-			addAmountCell(item, rad.getTotalDue(), ("AllocateDue_" + i), false);
+			BigDecimal totalDue = rad.getTotalDue();
+			addAmountCell(item, totalDue, ("AllocateDue_" + i), false);
 			addAmountCell(item, rad.getPaidAmount(), ("AllocatePaid_" + i), false);
 
 			this.listBoxPastdues.appendChild(item);
@@ -2284,14 +2283,14 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// Customer (Allocated)
 
 		BigDecimal partPayAmount = receiptCalculator.getPartPaymentAmount(receiptData);
-		BigDecimal remainingBal = partPayAmount.subtract(rch.getTotalFees().getTotalPaid());
+		BigDecimal remainingBal = partPayAmount.subtract(rch.getTotalFees().getPaidAmount());
 		rch.setPartPayAmount(partPayAmount);
 		rch.setBalAmount(remainingBal);
 
 		receiptData.setRemBal(remainingBal);
 		receiptData.setTotReceiptAmount(rch.getReceiptAmount());
-		BigDecimal remBalAfterAllocation = rch.getReceiptAmount().subtract(pd.getTotalPaid())
-				.subtract(adv.getTotalPaid()).subtract(fee.getTotalPaid());
+		BigDecimal remBalAfterAllocation = rch.getReceiptAmount().subtract(pd.getPaidAmount())
+				.subtract(adv.getPaidAmount()).subtract(fee.getPaidAmount());
 		if (remBalAfterAllocation.compareTo(BigDecimal.ZERO) <= 0) {
 			remBalAfterAllocation = BigDecimal.ZERO;
 			this.excessAdjustTo.setDisabled(true);
