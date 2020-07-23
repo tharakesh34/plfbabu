@@ -354,6 +354,8 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 					finEnqy.setOwnership(rs.getString("OWNERSHIP"));
 					finEnqy.setNumberOfTerms(rs.getInt("NUMBEROFTERMS"));
 					finEnqy.setSvAmount(rs.getBigDecimal("CUSTINCOME"));
+					finEnqy.setMaturityDate(rs.getDate("MATURITYDATE"));
+					finEnqy.setRepayProfitRate(rs.getBigDecimal("CURREDUCINGRATE"));
 
 					return finEnqy;
 				}
