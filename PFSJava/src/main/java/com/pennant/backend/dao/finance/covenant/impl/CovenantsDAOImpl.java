@@ -502,7 +502,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" c.Frequency, NextFrequencyDate, CovenantTypeCode, CovenantTypeDescription, ct.DocType");
-		sql.append(", DocTypeName,c.id ");
+		sql.append(", DocTypeName, c.id ");
 		sql.append(" from covenants_aview c");
 		sql.append(" inner join COVENANT_TYPES_AVIEW ct on ct.id = c.covenantTypeId");
 		sql.append(" left join COVENANT_DOCUMENTS cd on cd.CovenantId = c.id");
