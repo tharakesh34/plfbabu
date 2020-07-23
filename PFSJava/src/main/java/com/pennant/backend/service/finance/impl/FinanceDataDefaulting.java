@@ -590,6 +590,29 @@ public class FinanceDataDefaulting {
 		finMain.setShariaStatus(PennantConstants.SHARIA_STATUS_NOTREQUIRED);
 		finMain.setCalRoundingMode(financeType.getRoundingMode());
 		finMain.setRoundingTarget(financeType.getRoundingTarget());
+
+		// tasks # >>Start Advance EMI and DSF
+		if (financeType.isGrcAdvIntersetReq()) {
+			finMain.setGrcAdvType(financeType.getGrcAdvType());
+			finMain.setGrcAdvTerms(financeType.getGrcAdvDefaultTerms());
+		} else {
+			finMain.setGrcAdvType(PennantConstants.List_Select);
+			finMain.setGrcAdvTerms(0);
+		}
+
+		if (financeType.isCashCollateralReq()) {
+			if (financeType.isAdvIntersetReq()) {
+				finMain.setAdvType(financeType.getAdvType());
+				finMain.setAdvTerms(financeType.getAdvDefaultTerms());
+				finMain.setAdvStage(financeType.getAdvStage());
+			} else {
+				finMain.setAdvType(PennantConstants.List_Select);
+				finMain.setAdvTerms(0);
+				finMain.setAdvStage(PennantConstants.List_Select);
+			}
+		}
+		// tasks # >>End Advance EMI and DSF
+
 	}
 
 	/*
@@ -928,13 +951,13 @@ public class FinanceDataDefaulting {
 			if (isValidOtherFrq && finMain.getNextRepayRvwDate() == null) {
 				Date nextRpyRvwDate = null;
 				if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
-					nextRpyRvwDate = FrequencyUtil.getNextDate(finMain.getRepayRvwFrq(), 1, finMain.getCalGrcEndDate(),
-							HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
-				} else {
 					nextRpyRvwDate = FrequencyUtil
 							.getNextDate(finMain.getRepayRvwFrq(), 1, finMain.getCalGrcEndDate(),
-									HolidayHandlerTypes.MOVE_NONE, false, 0)
+									HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
 							.getNextFrequencyDate();
+				} else {
+					nextRpyRvwDate = FrequencyUtil.getNextDate(finMain.getRepayRvwFrq(), 1, finMain.getCalGrcEndDate(),
+							HolidayHandlerTypes.MOVE_NONE, false, 0).getNextFrequencyDate();
 				}
 
 				nextRpyRvwDate = DateUtility
