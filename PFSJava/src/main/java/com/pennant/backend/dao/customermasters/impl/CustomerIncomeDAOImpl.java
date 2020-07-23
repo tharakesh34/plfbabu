@@ -105,7 +105,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 
 		StringBuilder query = new StringBuilder();
 		if (type.contains("view")) {
-			query.append(" select id,custid, income, incometype, incomeExpense, category, margin,");
+			query.append(" select id, custid, income, incometype, incomeExpense, category, margin,");
 			query.append(" incometypedesc, categorydesc, ");
 			query.append(" custcif, custshrtname, toccy, ");
 			query.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
