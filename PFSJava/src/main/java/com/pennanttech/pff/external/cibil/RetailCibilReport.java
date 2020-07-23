@@ -489,7 +489,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 			/* Date Reported */
 			cell = row.createCell(41);
-			cell.setCellValue(DateUtil.format(finance.getFinStartDate(), DATE_FORMAT));
+			cell.setCellValue(SysParamUtil.getAppDate(DATE_FORMAT));
 
 			/* High Credit/Sanctioned Amount */
 			cell = row.createCell(42);
@@ -506,6 +506,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 			/* Number Of Days PastDue */
 			cell = row.createCell(45);
 			cell.setCellValue(finance.getCurODDays());
+
+			/* Rate of Interest */
+			cell = row.createCell(58);
+			cell.setCellValue(String.valueOf(finance.getRepayProfitRate()));
 
 			/* Repayment Tenure */
 			cell = row.createCell(59);
@@ -538,9 +542,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 		/* Type of Collateral */
 		row.createCell(55);
-
-		/* Rate of Interest */
-		row.createCell(58);
 
 		/* Payment Frequency */
 		row.createCell(64);
