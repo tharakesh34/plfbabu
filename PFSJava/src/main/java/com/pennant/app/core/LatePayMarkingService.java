@@ -360,7 +360,6 @@ public class LatePayMarkingService extends ServiceHelper {
 			return;
 		}
 		Date maxValuDate = penaltyCalDate;
-		fod.setFinODTillDate(penaltyCalDate);
 		fod.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 
 		fod.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
@@ -411,6 +410,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		if (ImplementationConstants.LP_MARK_FIRSTDAY && isEODprocess) {
 			odtCaldate = DateUtility.addDays(penaltyCalDate, 1);
 		}
+		fod.setFinODTillDate(odtCaldate);
 		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), odtCaldate));
 
 		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
