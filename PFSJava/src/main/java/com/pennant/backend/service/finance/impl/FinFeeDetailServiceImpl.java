@@ -260,6 +260,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				taxHeader.setLastMntBy(finFeeDetail.getLastMntBy());
 				taxHeader.setLastMntOn(finFeeDetail.getLastMntOn());
 				taxHeader.setRecordStatus(finFeeDetail.getRecordStatus());
+				if (finFeeDetail.getTaxHeaderId() > 0) {
+					taxHeader.setHeaderId(finFeeDetail.getTaxHeaderId());
+				}
 				TaxHeader txHeader = getTaxHeaderDetailsService().saveOrUpdate(taxHeader, tableType, auditTranType);
 				finFeeDetail.setTaxHeaderId(txHeader.getHeaderId());
 			}
