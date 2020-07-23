@@ -519,10 +519,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				FinanceConstants.MODULE_NAME, procEdtEvent, TableType.TEMP_TAB.getSuffix()));
 
 		// Receipt Header Details
-		FinReceiptHeader finReceiptHeader = finReceiptHeaderDAO.getReceiptHeaderByRef(finReference, "R",
+		List<FinReceiptHeader> finReceiptHeaderList = finReceiptHeaderDAO.getReceiptHeaderByRef(finReference, "R",
 				TableType.TEMP_TAB.getSuffix());
-		receiptData.setReceiptHeader(finReceiptHeader);
+		FinReceiptHeader finReceiptHeader = new FinReceiptHeader();
 
+		if (CollectionUtils.isNotEmpty(finReceiptHeaderList)) {
+			finReceiptHeader = finReceiptHeaderList.get(0);
+		}
+
+		receiptData.setReceiptHeader(finReceiptHeader);
 		// Fetch Receipt Detail List
 		if (finReceiptHeader == null) {
 			return receiptData;

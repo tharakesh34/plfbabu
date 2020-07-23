@@ -91,7 +91,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
-	public FinReceiptHeader getReceiptHeaderByRef(String finReference, String rcdMaintainSts, String type) {
+	public List<FinReceiptHeader> getReceiptHeaderByRef(String finReference, String rcdMaintainSts, String type) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = getSqlQuery(type);
@@ -102,13 +102,13 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, rcdMaintainSts },
+			return this.jdbcOperations.query(sql.toString(), new Object[] { finReference, rcdMaintainSts },
 					rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.ENTERING, e);
 		}
 		logger.debug(Literal.LEAVING);
-		return null;
+		return new ArrayList<>();
 	}
 
 	@Override

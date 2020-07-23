@@ -13,7 +13,7 @@ import com.pennanttech.pff.core.TableType;
 
 public interface FinReceiptHeaderDAO {
 
-	FinReceiptHeader getReceiptHeaderByRef(String finReference, String rcdMaintainSts, String type);
+	List<FinReceiptHeader> getReceiptHeaderByRef(String finReference, String rcdMaintainSts, String type);
 
 	long save(FinReceiptHeader receiptHeader, TableType tableType);
 
