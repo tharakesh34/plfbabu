@@ -845,7 +845,7 @@
 		<menuItem id="menu_Item_ExpenseLoanTypeReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 			rightName="menu_Item_ExpenseLoanTypeReport" />
 		<menuItem id="menu_Item_ExpenseLoanLevelReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-			rightName="menu_Item_ExpenseLoanLevelReport" />	
+			rightName="menu_Item_ExpenseLoanLevelReport" />
 		<!-- <menuItem id="menu_Item_CalAvgPOS" zulNavigation="/WEB-INF/pages/Amortization/CalAvgPOS.zul" rightName="menuItem_CustProfitability_CalAvgPOS"/> -->
 		<!-- <menuItem id="menu_Item_IncomeAmortization" zulNavigation="/WEB-INF/pages/Amortization/IncomeAmortization.zul" rightName="menuItem_Amortization_IncomeAmortization"/> -->
 	</menu>
