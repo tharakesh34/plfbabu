@@ -144,9 +144,9 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (rpdList == null) {
 				rpdList = getFinanceRepaymentsDAO().getByFinRefAndSchdDate(finReference, odDate);
 			}
-			
+
 			String pftDaysBasis = financeMain.getProfitDaysBasis();
-			if(StringUtils.equals(pftDaysBasis, CalculationConstants.IDB_BY_PERIOD)){
+			if (StringUtils.equals(pftDaysBasis, CalculationConstants.IDB_BY_PERIOD)) {
 				pftDaysBasis = CalculationConstants.IDB_ACT_365LEAP;
 			}
 

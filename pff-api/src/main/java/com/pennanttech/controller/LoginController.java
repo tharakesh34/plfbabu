@@ -36,7 +36,7 @@ public class LoginController {
 
 	public LoginResponse validateLogin(LoginRequest loginRequest) {
 		logger.debug(Literal.ENTERING);
-		
+
 		LoginResponse response = new LoginResponse();
 
 		try {
@@ -130,7 +130,7 @@ public class LoginController {
 		 */
 		return userRights;
 	}
-	
+
 	public UserRolesResponse getRoles(LoginRequest loginRequest) {
 		logger.debug(Literal.ENTERING);
 
@@ -177,7 +177,7 @@ public class LoginController {
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
-	
+
 	public void setSecurityRoleDAO(SecurityRoleDAO securityRoleDAO) {
 		this.securityRoleDAO = securityRoleDAO;
 	}

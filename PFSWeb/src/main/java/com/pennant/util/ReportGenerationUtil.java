@@ -104,9 +104,9 @@ public class ReportGenerationUtil implements Serializable {
 	public static boolean generateReport(String reportName, Object object, List listData, boolean isRegenerate,
 			int reportType, String userName, Window window, boolean createExcel) throws InterruptedException {
 		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
-		
+
 		logger.info(reportSrc);
-		
+
 		if (isRegenerate) {
 			try {
 				createReport(reportName, object, listData, reportSrc, userName, window, createExcel);
@@ -136,7 +136,7 @@ public class ReportGenerationUtil implements Serializable {
 	private static void createReport(String reportName, Object object, List listData, String reportSrc, String userName,
 			Window dialogWindow, boolean createExcel) throws JRException, InterruptedException {
 		logger.info(Literal.ENTERING);
-		
+
 		try {
 			byte[] buf = ReportCreationUtil.reportGeneration(reportName, object, listData, reportSrc, userName,
 					createExcel);

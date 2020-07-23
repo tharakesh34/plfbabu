@@ -531,7 +531,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 					c.setCovenantTypeDescription(rs.getString("CovenantTypeDescription"));
 					c.setDocType(rs.getString("DocType"));
 					c.setDocTypeName(rs.getString("DocTypeName"));
-                    c.setId(rs.getLong("id"));
+					c.setId(rs.getLong("id"));
 					return c;
 				}
 			});

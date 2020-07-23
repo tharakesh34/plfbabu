@@ -905,7 +905,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					this.llDate.setValue(new Date(this.disbDate.getValue()));
 				}
 
-			}	
+			}
 		} else {
 			this.llDate.setValue(aFinAdvnancePayments.getLlDate());
 		}

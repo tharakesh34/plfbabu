@@ -57,7 +57,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.pennant.app.util.DateUtility;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class PFSBatchAdmin  {
+public class PFSBatchAdmin {
 	private static final Logger logger = Logger.getLogger(PFSBatchAdmin.class);
 
 	private static PFSBatchAdmin instance = null;

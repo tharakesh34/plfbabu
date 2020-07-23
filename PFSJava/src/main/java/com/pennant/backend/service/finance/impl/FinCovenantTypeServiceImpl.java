@@ -466,7 +466,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 	public List<FinCovenantType> getFinCovenantDocTypeByFinRef(String id, String type, boolean isEnquiry) {
 		return getFinCovenantTypeDAO().getFinCovenantDocTypeByFinRef(id, type, isEnquiry);
 	}
-	
+
 	@Override
 	public List<DocumentType> getPddOtcList() {
 		return getFinCovenantTypeDAO().getPddOtcList();

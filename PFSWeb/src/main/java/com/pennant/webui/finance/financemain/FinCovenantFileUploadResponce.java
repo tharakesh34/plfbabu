@@ -52,14 +52,14 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 	@Autowired
 	CovenantTypeDAO covenantTypeDAO;
 	FinanceDetail financeDetail;
-	boolean isExists= false;
+	boolean isExists = false;
 	private transient List<Property> listFrequency = AppStaticList.getFrequencies();
 	private transient List<Property> listAlertType = AppStaticList.getAlertsFor();
 
 	public CovenantTypeDAO getCovenantTypeDAO() {
 		return covenantTypeDAO;
 	}
-   
+
 	public void setCovenantTypeDAO(CovenantTypeDAO covenantTypeDAO) {
 		this.covenantTypeDAO = covenantTypeDAO;
 	}
@@ -113,6 +113,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 
 		return finCovenantType;
 	}
+
 	public List<Covenant> covenantFileUploadResponceData(Object... params) throws Exception {
 		long userId = (Long) params[0];
 		DataEngineStatus status = (DataEngineStatus) params[1];
@@ -151,7 +152,8 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 		do {
 			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
 				if (status.getStatus().equals("F")) {
-					MessageUtil.showError(status.getRemarks().equals("") ? "DATA NOT EXIST IN FILE " :status.getRemarks() );
+					MessageUtil.showError(
+							status.getRemarks().equals("") ? "DATA NOT EXIST IN FILE " : status.getRemarks());
 				}
 				break;
 			}
@@ -227,8 +229,8 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 					throw new AppException("Invalid covenantType Code : " + covenantTypeData.getCategory()
 							+ " And  Covenant Type : " + covenantTypeData.getCode());
 				}
-				covenantTypeData.setCovenantType(StringUtils.isEmpty(getStringValue(record, "CovenantType"))
-						? "" : (int) Double.parseDouble(getStringValue(record, "CovenantType")) + "");
+				covenantTypeData.setCovenantType(StringUtils.isEmpty(getStringValue(record, "CovenantType")) ? ""
+						: (int) Double.parseDouble(getStringValue(record, "CovenantType")) + "");
 				covenantTypeData.setCovenantTypeDescription(covenantType.getDescription());
 				if (StringUtils.isBlank(covenantType.getAllowedPaymentModes())) {
 					covenantTypeData.setAllowedPaymentModes("");
@@ -266,8 +268,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				covenantTypeData.setCovenantTypeId(covenantType.getId());
 				covenantTypeData.setId(Long.MIN_VALUE);
 
-				DocumentType docType = finCovenantTypeDAO
-						.isCovenantTypeExists(covenantTypeData.getCovenantType());
+				DocumentType docType = finCovenantTypeDAO.isCovenantTypeExists(covenantTypeData.getCovenantType());
 				if (docType != null) {
 					covenantTypeData.setCovenantTypeDescription(docType.getDocTypeDesc());
 				}
@@ -503,8 +504,8 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 			} else {
 				FinCovenantType finCovenantTypeData = new FinCovenantType();
 
-				finCovenantTypeData.setCovenantType(StringUtils.isEmpty(getStringValue(record, "CovenantType"))
-						? "" : (int) Double.parseDouble(getStringValue(record, "CovenantType")) + "");
+				finCovenantTypeData.setCovenantType(StringUtils.isEmpty(getStringValue(record, "CovenantType")) ? ""
+						: (int) Double.parseDouble(getStringValue(record, "CovenantType")) + "");
 				finCovenantTypeData.setDescription(getStringValue(record, "Description"));
 				finCovenantTypeData.setMandRole(getStringValue(record, "MandRole"));
 				finCovenantTypeData.setAlwWaiver(getBooleanValue(record, "AlwWaiver"));
@@ -513,8 +514,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				finCovenantTypeData.setAlwOtc(getBooleanValue(record, "AlwOtc"));
 				finCovenantTypeData.setInternalUse(getBooleanValue(record, "IsInternal"));
 
-				DocumentType docType = finCovenantTypeDAO
-						.isCovenantTypeExists(finCovenantTypeData.getCovenantType());
+				DocumentType docType = finCovenantTypeDAO.isCovenantTypeExists(finCovenantTypeData.getCovenantType());
 				if (docType == null) {
 					throw new AppException("Invalid covenantType : " + (String) record.getValue("CovenantType"));
 				} else {

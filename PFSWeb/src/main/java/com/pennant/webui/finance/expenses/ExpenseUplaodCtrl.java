@@ -106,9 +106,8 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Customer object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -288,10 +287,9 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * This Method/Event for getting the uploaded document should be comma
-	 * separated values and then read the document and setting the values to the
-	 * Lead VO and added those vos to the List and it also shows the information
-	 * about where we go the wrong data
+	 * This Method/Event for getting the uploaded document should be comma separated values and then read the document
+	 * and setting the values to the Lead VO and added those vos to the List and it also shows the information about
+	 * where we go the wrong data
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -358,8 +356,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * entry point of program, reading whole excel and calling other methods to
-	 * prepare jsonObject.
+	 * entry point of program, reading whole excel and calling other methods to prepare jsonObject.
 	 * 
 	 * @return String
 	 * @throws Exception

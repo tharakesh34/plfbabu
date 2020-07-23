@@ -152,20 +152,20 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 
 			for (ReceiptAllocationDetail rad : allocationDtls) {
 				String alloctaionTo = "";
-				
+
 				if (StringUtils.isEmpty(rad.getFeeTypeCode())) {
 					alloctaionTo = rad.getAllocationType();
 				} else {
 					alloctaionTo = rad.getFeeTypeCode();
 				}
-				
+
 				String feeMap = "";
 				if (RepayConstants.ALLOCATION_KOEMI.equalsIgnoreCase(feeMapping.getFeeTypeCode())) {
 					feeMap = RepayConstants.ALLOCATION_EMI;
 				} else {
 					feeMap = feeMapping.getFeeTypeCode();
 				}
-				
+
 				if (alloctaionTo.equalsIgnoreCase(feeMap)) {
 					BigDecimal totDue = rad.getTotalDue();
 					BigDecimal paidAmount = rad.getTotalPaid();

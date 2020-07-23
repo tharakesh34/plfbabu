@@ -102,8 +102,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
 
 		try {
-			return this.jdbcOperations.query(sql.toString(), new Object[] { finReference, rcdMaintainSts },
-					rowMapper);
+			return this.jdbcOperations.query(sql.toString(), new Object[] { finReference, rcdMaintainSts }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.ENTERING, e);
 		}

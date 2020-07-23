@@ -457,7 +457,8 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 				sql.append(" CovenantTypeDesc,MandRoleDesc,");
 			}
 		}
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
 		sql.append(", WorkflowId");
 		sql.append(" From FinCovenantType");
 		sql.append(StringUtils.trimToEmpty(type));

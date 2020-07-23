@@ -11576,11 +11576,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		if (StringUtils.isNotEmpty(finRvwFrq) && FrequencyUtil.validateFrequency(finRvwFrq) == null) {
 			if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
-				financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(finRvwFrq, 1, financeMain.getFinStartDate(), "A",
-						false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+				financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(finRvwFrq, 1, financeMain.getFinStartDate(),
+						"A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
 			} else {
-				financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(finRvwFrq, 1, financeMain.getFinStartDate(), "A",
-						false, 0).getNextFrequencyDate());
+				financeMain.setNextRepayRvwDate(
+						FrequencyUtil.getNextDate(finRvwFrq, 1, financeMain.getFinStartDate(), "A", false, 0)
+								.getNextFrequencyDate());
 			}
 		}
 

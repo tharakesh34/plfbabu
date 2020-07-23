@@ -1572,7 +1572,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		list.add(RepayConstants.ALLOCATION_LPFT);
 		list.add("KOFF_EMI");
 		list.add("KOFF_LPI");
-		
+
 		if (!ImplementationConstants.ALLOW_DSF_CASHCLT) {
 			list.add("CASHCLT");
 			list.add("DSF");

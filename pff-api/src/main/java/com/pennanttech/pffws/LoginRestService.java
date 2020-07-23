@@ -15,7 +15,7 @@ public interface LoginRestService {
 	@POST
 	@Path("/loginservice/userValidate")
 	public LoginResponse userValidation(LoginRequest loginRequest) throws ServiceException;
-	
+
 	@POST
 	@Path("/loginservice/getUserRoles")
 	public UserRolesResponse getUserRoles(LoginRequest loginRequest) throws ServiceException;

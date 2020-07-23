@@ -1230,8 +1230,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			}
 			try {
 				if (this.manufacturerCashbackToTheCustomer.getValue() != null) {
-					if (!this.manufacturerCashbackToTheCustomer.isReadonly() && this.manufacturerCashbackToTheCustomer.getValue() < this.cashBackFromTheManufacturer
-							.getValue()) {
+					if (!this.manufacturerCashbackToTheCustomer.isReadonly() && this.manufacturerCashbackToTheCustomer
+							.getValue() < this.cashBackFromTheManufacturer.getValue()) {
 						throw new WrongValueException(this.manufacturerCashbackToTheCustomer,
 								Labels.getLabel("label_CDSchemeDialog_ManufacturerCashbackToTheCustomer.value")
 										+ " should be greater than or equal to "

@@ -1639,7 +1639,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 				String[] valueParm = new String[1];
 				valueParm[0] = customerIncomeDetail.getCif();
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
-			}else{
+			} else {
 				customerIncomeDetail.getCustomerIncome().setCustId(customer.getCustID());
 			}
 		}

@@ -16,24 +16,24 @@ public class AutoKnockOffListModelItemRender implements ListitemRenderer<AutoKno
 	public AutoKnockOffListModelItemRender() {
 		super();
 	}
-	
+
 	@Override
 	public void render(Listitem item, AutoKnockOff knockOff, int index) throws Exception {
 
 		Listcell lc;
 		lc = new Listcell(knockOff.getCode());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(knockOff.getDescription());
 		lc.setParent(item);
-		
+
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
 		cbActive.setDisabled(true);
 		cbActive.setChecked(knockOff.isActive());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-		
+
 		lc = new Listcell(knockOff.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(knockOff.getRecordType()));

@@ -795,7 +795,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				if (StringUtils.equals("C", closingstatus)) {
 					currentBalance = BigDecimal.ZERO;
 				}
-				
+
 				addField(record, currentBalance(loan));
 
 				/* Notional Amount of Out-standing Restructured Contract */
@@ -1096,7 +1096,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				}
 
 				addField(record, String.valueOf(guarantorType));
-				
+
 				/* Business Category */
 				if (guarantorType == 1 || guarantorType == 3) {
 					addField(record, customer.getBusinesscategory());
@@ -1482,9 +1482,9 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		return amount == null ? BigDecimal.ZERO : amount;
 	}
 
-	private void setAddressDetails(CustomerAddres address, List<CustomerPhoneNumber> phoneList, Record record, boolean isGuarantor) {
-		
-		
+	private void setAddressDetails(CustomerAddres address, List<CustomerPhoneNumber> phoneList, Record record,
+			boolean isGuarantor) {
+
 		/* Address Line 1 */
 		addField(record, StringUtils.trimToNull(address.getCustAddrHNbr()));
 
@@ -1508,10 +1508,9 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		addField(record, address.getCustAddrZIP());
 
 		/* Country */
-		
-			addField(record, "079");
-		
-		
+
+		addField(record, "079");
+
 		CustomerPhoneNumber customerPhoneNumber = null;
 		for (CustomerPhoneNumber custPhNo : phoneList) {
 			if (address.getCustAddrPriority() == custPhNo.getPhoneTypePriority()) {
@@ -1601,6 +1600,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 		addField(record, value.toString());
 	}
+
 	private BigDecimal currentBalance(FinanceEnquiry customerFinance) {
 		int odDays = Integer.parseInt(getOdDays(customerFinance.getCurODDays()));
 		BigDecimal currentBalance = BigDecimal.ZERO;

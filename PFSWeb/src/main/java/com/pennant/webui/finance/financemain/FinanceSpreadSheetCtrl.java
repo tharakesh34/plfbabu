@@ -476,7 +476,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		}
 		return null;
 	}
-	
+
 	public void setSpreedSheetData(FinanceDetail aFinanceDetail) {
 		logger.debug(Literal.ENTERING);
 
@@ -497,7 +497,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}

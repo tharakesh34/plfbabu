@@ -26,7 +26,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class LoanTypeKnockOffListCtrl extends GFCBaseListCtrl<FinTypeKnockOff>{
+public class LoanTypeKnockOffListCtrl extends GFCBaseListCtrl<FinTypeKnockOff> {
 	private static final Logger logger = LogManager.getLogger(LoanTypeKnockOffListCtrl.class);
 
 	private static final long serialVersionUID = 1L;
@@ -47,8 +47,8 @@ public class LoanTypeKnockOffListCtrl extends GFCBaseListCtrl<FinTypeKnockOff>{
 	protected Button button_LoanTypeKnockOffList_LoanTypeKnockOffSearch;
 
 	// Search Fields
-	protected Textbox vendor; 
-	protected Checkbox active; 
+	protected Textbox vendor;
+	protected Checkbox active;
 	protected Textbox loanType;
 	protected Textbox description;
 	protected Checkbox appToFlexiLoans;
@@ -81,15 +81,17 @@ public class LoanTypeKnockOffListCtrl extends GFCBaseListCtrl<FinTypeKnockOff>{
 	 */
 	public void onCreate$window_LoanTypeKnockOffList(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		setPageComponents(window_LoanTypeKnockOffList, borderLayout_LoanTypeKnockOffList, listBoxLoanTypeKnockOff,
 				pagingLoanTypeKnockOffList);
 		setItemRender(new LoanTypeKnockOffModelItemRender());
 
 		registerButton(button_LoanTypeKnockOffList_LoanTypeKnockOffSearch);
-		registerButton(button_LoanTypeKnockOffList_NewLoanTypeKnockOff, "button_LoanTypeKnockOffList_NewLoanTypeKnockOff", true);
-		registerField("LoanType", listheader_LoanType, SortOrder.NONE, loanType, sortOperator_LoanType, Operators.STRING);
-		
+		registerButton(button_LoanTypeKnockOffList_NewLoanTypeKnockOff,
+				"button_LoanTypeKnockOffList_NewLoanTypeKnockOff", true);
+		registerField("LoanType", listheader_LoanType, SortOrder.NONE, loanType, sortOperator_LoanType,
+				Operators.STRING);
+
 		doRenderPage();
 		search();
 	}
@@ -138,7 +140,7 @@ public class LoanTypeKnockOffListCtrl extends GFCBaseListCtrl<FinTypeKnockOff>{
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -156,16 +158,16 @@ public class LoanTypeKnockOffListCtrl extends GFCBaseListCtrl<FinTypeKnockOff>{
 		Listitem selectedItem = this.listBoxLoanTypeKnockOff.getSelectedItem();
 		final FinTypeKnockOff data = (FinTypeKnockOff) selectedItem.getAttribute("data");
 		List<FinTypeKnockOff> finKnockOff = loanTypeKnockOffService.getKnockOffMappingById(data.getLoanType());
-		
+
 		if (finKnockOff.size() == 0) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
+
 		FinTypeKnockOff finTypeKnockOff = new FinTypeKnockOff();
 		BeanUtils.copyProperties(finKnockOff.get(0), finTypeKnockOff);
 		finTypeKnockOff.setLoanTypeKonckOffMapping(finKnockOff);
-		
+
 		if (isWorkFlowEnabled() && finTypeKnockOff.getWorkflowId() == 0) {
 			finTypeKnockOff.setWorkflowId(getWorkFlowId());
 		}
@@ -175,16 +177,15 @@ public class LoanTypeKnockOffListCtrl extends GFCBaseListCtrl<FinTypeKnockOff>{
 		arg.put("loanTypeKnockOffListCtrl", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/LoanTypeKnockOff/LoanTypeKnockOffDialog.zul", null,
-					arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/LoanTypeKnockOff/LoanTypeKnockOffDialog.zul",
+					null, arg);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.

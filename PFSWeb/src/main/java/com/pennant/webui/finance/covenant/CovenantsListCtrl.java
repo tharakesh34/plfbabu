@@ -1075,38 +1075,38 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 				return;
 			}
 			// Clear the file name.
-		this.fileName.setText("");
+			this.fileName.setText("");
 
-		// Get the media of the selected file.
-		media = event.getMedia();
+			// Get the media of the selected file.
+			media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
-			return;
-		}
-		String mediaName = media.getName();
+			if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+				return;
+			}
+			String mediaName = media.getName();
 
-		// Get the selected configuration details.
-		String prefix = config.getFilePrefixName();
-		String extension = config.getFileExtension();
+			// Get the selected configuration details.
+			String prefix = config.getFilePrefixName();
+			String extension = config.getFileExtension();
 
-		// Validate the file extension.
-		if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
+			// Validate the file extension.
+			if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
+				MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
 
-			media = null;
-			return;
-		}
+				media = null;
+				return;
+			}
 
-		// Validate the file prefix.
-		if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
+			// Validate the file prefix.
+			if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
+				MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
 
-			media = null;
-			return;
-		}
+				media = null;
+				return;
+			}
 
-		this.fileName.setText(mediaName);
-		this.btnImport.setDisabled(false);
+			this.fileName.setText(mediaName);
+			this.btnImport.setDisabled(false);
 		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
 			return;

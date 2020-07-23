@@ -70,6 +70,6 @@ public interface SecurityRoleDAO {
 	List<SecurityRole> getSecurityRolesByRoleCodes(List<String> strings);
 
 	boolean isDuplicateKey(long roleApp, String roleCode, TableType tableType);
-	
-	List<String> getSecurityRoleByUserId(long userId , String type);
+
+	List<String> getSecurityRoleByUserId(long userId, String type);
 }

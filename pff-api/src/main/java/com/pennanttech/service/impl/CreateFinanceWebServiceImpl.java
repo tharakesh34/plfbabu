@@ -1629,5 +1629,5 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
 		this.securityUserDAO = securityUserDAO;
 	}
-	
+
 }

@@ -272,7 +272,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			mandate.setTaskId("");
 			mandate.setNextTaskId("");
 			mandate.setWorkflowId(0);
-			boolean isApproved= false;
+			boolean isApproved = false;
 			if (StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_APPROVED)) {
 				isApproved = true;
 			}
@@ -281,12 +281,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				mandate.setStatus(MandateConstants.STATUS_APPROVED);
 			} else if (!StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
 				mandate.setStatus(MandateConstants.STATUS_NEW);
-			} 
-			
-			if(isApproved) {
+			}
+
+			if (isApproved) {
 				mandate.setStatus(MandateConstants.STATUS_APPROVED);
 			}
-			
+
 			if (StringUtils.equals(mandate.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
 				if (mandate.isApproveMandate()) {
 					mandate.setStatus(MandateConstants.STATUS_APPROVED);

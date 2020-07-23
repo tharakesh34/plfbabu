@@ -49,7 +49,7 @@ public class LoginWebServiceImpl implements LoginRestService, LoginSoapService {
 		logger.debug(Literal.LEAVING);
 		return response;
 	}
-	
+
 	@Autowired
 	public void setLoginController(LoginController loginController) {
 		this.loginController = loginController;

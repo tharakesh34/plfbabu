@@ -1212,7 +1212,7 @@ public class FeeDetailService {
 	private String getUniqueID(FinFeeDetail finFeeDetail) {
 		return StringUtils.trimToEmpty(finFeeDetail.getFinEvent()) + "_" + String.valueOf(finFeeDetail.getFeeTypeID());
 	}
-	
+
 	public List<FinFeeDetail> getFinFeeDetailUpdateList() {
 		return this.finFeeDetailList;
 	}
@@ -1290,7 +1290,7 @@ public class FeeDetailService {
 	public void setFinFeeDetailList(List<FinFeeDetail> finFeeDetailList) {
 		this.finFeeDetailList = finFeeDetailList;
 	}
-	
+
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}

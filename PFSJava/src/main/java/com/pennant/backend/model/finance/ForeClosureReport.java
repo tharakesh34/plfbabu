@@ -100,7 +100,7 @@ public class ForeClosureReport implements Serializable {
 	public void setFinAmount(BigDecimal finAmount) {
 		this.finAmount = finAmount;
 	}
-	
+
 	public BigDecimal getFinAssetValue() {
 		return finAssetValue;
 	}
