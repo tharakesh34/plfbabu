@@ -59,7 +59,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.amazonaws.event.DeliveryMode.Check;
 import com.pennant.backend.model.applicationmaster.BusinessVertical;
 import com.pennant.backend.service.applicationmaster.BusinessVerticalService;
 import com.pennant.webui.applicationmaster.businessvertical.model.BusinessVerticalListModelItemRenderer;

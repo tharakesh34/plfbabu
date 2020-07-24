@@ -43,8 +43,6 @@
 package com.pennant.webui.applicationmaster.clusterhierarchey.model;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
