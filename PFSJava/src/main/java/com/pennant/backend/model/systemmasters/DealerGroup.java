@@ -1,8 +1,6 @@
 package com.pennant.backend.model.systemmasters;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
