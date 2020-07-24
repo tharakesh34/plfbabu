@@ -8,7 +8,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pff.mmfl.cd.model.ConsumerProduct;
 import com.pennanttech.pff.mmfl.cd.model.MerchantDetails;
 
 public class MerchantDetailsListModelItemRenderer implements ListitemRenderer<MerchantDetails>, Serializable {

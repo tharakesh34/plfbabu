@@ -15,15 +15,12 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.CurrencyBox;
-import com.pennant.component.Uppercasebox;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.mmfl.cd.model.MerchantDetails;
-import com.pennanttech.pff.mmfl.cd.service.ConsumerProductService;
 import com.pennanttech.pff.mmfl.cd.service.MerchantDetailsService;
 
 public class MerchantDetailsListCtrl extends GFCBaseListCtrl<MerchantDetails> {

@@ -24,7 +24,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.commodity.model.CommodityType;
 import com.pennanttech.pff.commodity.service.CommodityTypeService;
-import com.pennanttech.pff.commodity.webui.CommodityTypeListModelItemRenderer;
 import com.pennanttech.pff.staticlist.AppStaticList;
 
 public class CommodityTypeListCtrl extends GFCBaseListCtrl<CommodityType> {

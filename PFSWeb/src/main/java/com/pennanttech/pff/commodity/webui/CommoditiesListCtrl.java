@@ -23,7 +23,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.commodity.model.Commodity;
 import com.pennanttech.pff.commodity.service.CommoditiesService;
-import com.pennanttech.pff.commodity.webui.CommoditiesListModelItemRenderer;
 
 public class CommoditiesListCtrl extends GFCBaseListCtrl<Commodity> {
 	private static final long serialVersionUID = 1L;
