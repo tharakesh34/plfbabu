@@ -42,11 +42,8 @@
 */
 package com.pennant.backend.service.externalinterface;
 
-import java.util.List;
-
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
-import com.pennant.backend.model.externalinterface.InterfaceServiceLog;
 
 public interface InterfaceConfigurationService {
 
