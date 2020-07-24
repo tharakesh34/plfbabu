@@ -42,11 +42,8 @@
 */
 package com.pennant.backend.dao.externalinterface;
 
-import java.util.List;
-
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
-import com.pennant.backend.model.externalinterface.InterfaceServiceLog;
 import com.pennanttech.pff.core.TableType;
 
 public interface InterfaceConfigurationDAO extends BasicCrudDao<InterfaceConfiguration> {

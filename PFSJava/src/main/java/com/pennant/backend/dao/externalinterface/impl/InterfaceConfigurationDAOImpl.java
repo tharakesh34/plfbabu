@@ -42,12 +42,9 @@
 */
 package com.pennant.backend.dao.externalinterface.impl;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -56,8 +53,6 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.externalinterface.InterfaceConfigurationDAO;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
-import com.pennant.backend.model.externalinterface.InterfaceServiceLog;
-import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
