@@ -15,7 +15,6 @@ import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
