@@ -63,7 +63,6 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
 import com.pennant.backend.service.externalinterface.InterfaceConfigurationService;
 import com.pennant.webui.externalinterface.InterfaceConfiguration.model.InterfaceConfigurationListModelItemRenderer;
-import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
