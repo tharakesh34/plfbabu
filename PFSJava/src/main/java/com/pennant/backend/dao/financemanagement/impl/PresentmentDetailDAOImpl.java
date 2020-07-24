@@ -55,6 +55,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.rococoa.ObjCObjectByReference;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -580,51 +581,106 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			String type) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, PresentmentId, FinReference, PresentmentRef, SchDate, MandateId, SchAmtDue");
+		sql.append(", SchPriDue, SchPftDue, SchFeeDue, SchInsDue, SchPenaltyDue, AdvanceAmt, ExcessID");
+		sql.append(", AdviseAmt, PresentmentAmt, TDSAmount, ExcludeReason, BounceID, EmiNo, Status");
+		sql.append(", ErrorCode, ErrorDesc, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		sql = new StringBuilder();
-		sql.append(
-				" SELECT Id, PresentmentId, FinReference, PresentmentRef, SchDate, MandateId, SchAmtDue, schPriDue, schPftDue, schFeeDue,");
-		sql.append(
-				" schInsDue, schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, tDSAmount, excludeReason, bounceID, emiNo, status,");
-		sql.append(" ErrorCode, ErrorDesc, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		if (type.contains("View")) {
-			sql.append(" ,mandateType ,finTypeDesc, finType, customerName ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", MandateType, FinTypeDesc, FinType, CustomerName");
 		}
-		sql.append(" From PresentmentDetails");
-		sql.append(type);
-		sql.append(" Where PresentmentId = :PresentmentId ");
+
+		sql.append(" from PresentmentDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where PresentmentId = ?");
+
 		if (isExclude) {
 			if (isApprove) {
-				sql.append("AND ExcludeReason = :ExcludeReason AND (Status = :IMPORTSTATUS OR Status = :FAILEDSTATUS)");
+				sql.append(" and ExcludeReason = ? and (Status = ? or Status = ?)");
 			} else {
-				sql.append("AND ExcludeReason = :ExcludeReason");
+				sql.append(" and ExcludeReason = ?");
 			}
 		} else {
-			sql.append("AND ExcludeReason <> :ExcludeReason ");
+			sql.append(" and ExcludeReason <> ?");
 		}
-		// Execute the SQL, binding the arguments.
+
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("PresentmentId", presentmentId);
-		source.addValue("ExcludeReason", 0);
-		source.addValue("IMPORTSTATUS", RepayConstants.PEXC_IMPORT);
-		source.addValue("FAILEDSTATUS", RepayConstants.PEXC_FAILURE);
 		try {
-			RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(PresentmentDetail.class);
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug(Literal.LEAVING);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, presentmentId);
+					if (isExclude) {
+						if (isApprove) {
+							ps.setInt(index++, 0);
+							ps.setString(index++, RepayConstants.PEXC_IMPORT);
+							ps.setString(index++, RepayConstants.PEXC_FAILURE);
+						} else {
+							ps.setInt(index++, 0);
+						}
+					} else {
+						ps.setInt(index++, 0);
+					}
+				}
+			}, new RowMapper<PresentmentDetail>() {
+				@Override
+				public PresentmentDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					PresentmentDetail pd = new PresentmentDetail();
+
+					pd.setId(rs.getLong("Id"));
+					pd.setPresentmentId(rs.getLong("PresentmentId"));
+					pd.setFinReference(rs.getString("FinReference"));
+					pd.setPresentmentRef(rs.getString("PresentmentRef"));
+					pd.setSchDate(rs.getTimestamp("SchDate"));
+					pd.setMandateId(rs.getLong("MandateId"));
+					pd.setSchAmtDue(rs.getBigDecimal("SchAmtDue"));
+					pd.setSchPriDue(rs.getBigDecimal("SchPriDue"));
+					pd.setSchPftDue(rs.getBigDecimal("SchPftDue"));
+					pd.setSchFeeDue(rs.getBigDecimal("SchFeeDue"));
+					pd.setSchInsDue(rs.getBigDecimal("SchInsDue"));
+					pd.setSchPenaltyDue(rs.getBigDecimal("SchPenaltyDue"));
+					pd.setAdvanceAmt(rs.getBigDecimal("AdvanceAmt"));
+					pd.setExcessID(rs.getLong("ExcessID"));
+					pd.setAdviseAmt(rs.getBigDecimal("AdviseAmt"));
+					pd.setPresentmentAmt(rs.getBigDecimal("PresentmentAmt"));
+					pd.settDSAmount(rs.getBigDecimal("TDSAmount"));
+					pd.setExcludeReason(rs.getInt("ExcludeReason"));
+					pd.setBounceID(rs.getLong("BounceID"));
+					pd.setEmiNo(rs.getInt("EmiNo"));
+					pd.setStatus(rs.getString("Status"));
+					pd.setErrorCode(rs.getString("ErrorCode"));
+					pd.setErrorDesc(rs.getString("ErrorDesc"));
+					pd.setVersion(rs.getInt("Version"));
+					pd.setLastMntBy(rs.getLong("LastMntBy"));
+					pd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					pd.setRecordStatus(rs.getString("RecordStatus"));
+					pd.setRoleCode(rs.getString("RoleCode"));
+					pd.setNextRoleCode(rs.getString("NextRoleCode"));
+					pd.setTaskId(rs.getString("TaskId"));
+					pd.setNextTaskId(rs.getString("NextTaskId"));
+					pd.setRecordType(rs.getString("RecordType"));
+					pd.setWorkflowId(rs.getLong("WorkflowId"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						pd.setMandateType(rs.getString("MandateType"));
+						pd.setFinTypeDesc(rs.getString("FinTypeDesc"));
+						pd.setFinType(rs.getString("FinType"));
+						pd.setCustomerName(rs.getString("CustomerName"));
+					}
+
+					return pd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -829,29 +885,33 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	@Override
 	public PresentmentDetail getPresentmentDetail(String presentmentRef, String type) {
 		logger.debug(Literal.ENTERING);
-		PresentmentDetail prest = null;
-		StringBuilder sql = new StringBuilder("select");
-		sql.append(" id, presentmentId, finReference, schDate, mandateId, schAmtDue, schPriDue, schPftDue");
-		sql.append(", schFeeDue, schInsDue, schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt");
-		sql.append(", tDSAmount, excludeReason, emiNo, status, version, lastMntBy, lastMntOn, recordStatus");
-		sql.append(", roleCode, nextRoleCode, taskId, nextTaskId, recordType, workflowId, presentmentRef");
-		sql.append(", ecsReturn, receiptID, errorCode, errorDesc, manualAdviseId");
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, PresentmentId, FinReference, SchDate, MandateId, SchAmtDue, SchPriDue, SchPftDue");
+		sql.append(", SchFeeDue, SchInsDue, SchPenaltyDue, AdvanceAmt, ExcessID, AdviseAmt, PresentmentAmt");
+		sql.append(", TDSAmount, ExcludeReason, EmiNo, Status, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PresentmentRef");
+		sql.append(", EcsReturn, ReceiptID, ErrorCode, ErrorDesc, ManualAdviseId");
+
 		if (StringUtils.containsIgnoreCase(type, "View")) {
 			sql.append(", MandateType");
 		}
-		sql.append(" from presentmentdetails");
-		sql.append(type);
-		sql.append("  where presentmentRef = ?");
 
+		sql.append(" From PresentmentDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("  where PresentmentRef = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+		
 		PresentmentDetailRowMapper rowMapper = new PresentmentDetailRowMapper(type);
+	
 		try {
-			prest = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { presentmentRef }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { presentmentRef }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
-		return prest;
-
+		return null;
 	}
 
 	@Override
@@ -1125,23 +1185,23 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	@Override
 	public String getPaymenyMode(String presentmentRef) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("PresentmentRef", presentmentRef);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" MandateType");
+		sql.append(" From Presentmentheader ph");
+		sql.append(" Inner Join PresentmentDetails pd on pd.PresentmentId = ph.Id");
+		sql.append(" Where pd.PresentmentRef = ?");
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select mandatetype from presentmentheader PH ");
-		sql.append(" Inner Join presentmentdetails PD ON PD.presentmentid = PH.id ");
-		sql.append(" Where PD.presentmentref = :PresentmentRef ");
-		logger.debug("selectSql: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { presentmentRef }, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
+			logger.warn(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

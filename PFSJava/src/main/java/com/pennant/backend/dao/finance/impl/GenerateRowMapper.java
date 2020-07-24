@@ -4,22 +4,26 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.finance.ProjectedAccrual;
+import com.pennant.backend.model.applicationmaster.BounceReason;
 
 public class GenerateRowMapper {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new ProjectedAccrual();
-	private static String tableName = "ProjectedAccruals";
-	private static String whereClause = " Where FinReference = ? AND AccruedOn >= ?";
-	private static String varibaleName = "pamz";
-	private static boolean list = true;
+	private static Object object = new BounceReason();
+	private static String tableName = "BounceReasons";
+	private static String whereClause = "Where ReturnCode = ?";
+	private static String varibaleName = "br";
+	private static boolean list = false;
 
 	private static String getSelectQuery() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("FinReference, AccruedOn, AMZPercentage, PartialAMZPerc, MonthEnd");
-		//sql.append(" Where FinReference = :FinReference AND AccruedOn >= :AccruedOn");
-		//sql.append(" ORDER BY AccruedOn");
+		sql.append(" bounceID, bounceCode, reasonType, category, reason, action, ");
+		sql.append(" ruleID, returnCode, active, ");
+	//	if (type.contains("View")) {
+			sql.append(" ruleCode, ruleCodeDesc,");
+		//}
+		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
+		sql.append(" NextTaskId, RecordType, WorkflowId ");
 		return sql.toString();
 	}
 

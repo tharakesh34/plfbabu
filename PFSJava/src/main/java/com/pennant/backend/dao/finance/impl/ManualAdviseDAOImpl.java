@@ -799,7 +799,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ReceiptSeqID, AdviseID, ReservedAmt");
 		sql.append(" from ManualAdviseReserve");
-		sql.append(" Where ReceiptSeqID = ? and AdviseID= ?");
+		sql.append(" Where ReceiptSeqID = ? and AdviseID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
