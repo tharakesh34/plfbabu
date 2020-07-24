@@ -48,9 +48,6 @@ import java.util.List;
  * 
  */
 
-import java.util.Map;
-
-import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
 import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
 import com.pennant.backend.model.finance.financialsummary.RecommendationNotesConfiguration;
 
