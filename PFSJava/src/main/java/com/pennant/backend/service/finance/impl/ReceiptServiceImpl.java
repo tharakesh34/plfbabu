@@ -1761,55 +1761,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Overdue Details updation , if Value Date is Back dated.
 		scheduleData.setFinanceScheduleDetails(schdList);
+		Date reqMaxODDate = curBusDate;
 		List<FinODDetails> overdueList = null;
-		if (DateUtility.compare(valueDate, curBusDate) != 0) {
-			Date reqMaxODDate = curBusDate;
-			if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(rch.getReceiptPurpose())) {
-				reqMaxODDate = valueDate;
-			}
-			if (!ImplementationConstants.LPP_CALC_SOD) {
-				reqMaxODDate = DateUtility.addDays(valueDate, -1);
-			}
-			overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
-			boolean isSave = false;
-			if (overdueList == null || overdueList.isEmpty()) {
-				isSave = true;
-			}
 
-			overdueList = calCurDatePenalties(scheduleData, receiptData, reqMaxODDate);
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, rch.getReceiptPurpose())) {
+			reqMaxODDate = rch.getValueDate();
+		}
 
-			if (overdueList != null && !overdueList.isEmpty()) {
-				if (isSave) {
-					getFinODDetailsDAO().saveList(overdueList);
-				} else {
-					getFinODDetailsDAO().updateList(overdueList);
-				}
-			}
-		} else {
-			overdueList = getFinODDetailsDAO().getFinODBalByFinRef(rch.getReference());
-			List<FinanceScheduleDetail> schedules = scheduleData.getFinanceScheduleDetails();
-			for (FinanceScheduleDetail curSchd : schedules) {
-				for (FinODDetails fod : overdueList) {
-					if (DateUtility.compare(curSchd.getSchDate(), fod.getFinODSchdDate()) == 0) {
-						fod.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
-						fod.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
-						fod.setFinCurODAmt(fod.getFinCurODPft().add(fod.getFinCurODPri()));
-						if (fod.getFinCurODAmt().compareTo(BigDecimal.ZERO) <= 0) {
-							fod.setFinCurODDays(0);
-							fod.setFinODTillDate(valueDate);
-						}
-						// TODO ###124902 - New field to be included for future
-						// use which stores the last payment date. This needs to
-						// be worked.
-						fod.setFinLMdfDate(curBusDate);
-					}
-				}
-			}
+		if (!ImplementationConstants.LPP_CALC_SOD) {
+			reqMaxODDate = DateUtility.addDays(valueDate, -1);
+		}
+		overdueList = finODDetailsDAO.getFinODBalByFinRef(financeMain.getFinReference());
 
-			// update current overdue list
-			if (overdueList != null && !overdueList.isEmpty()) {
-				getFinODDetailsDAO().updateODDetails(overdueList);
-			}
+		overdueList = calPenalty(scheduleData, receiptData, reqMaxODDate, overdueList);
+		if (overdueList != null && !overdueList.isEmpty()) {
+			finODDetailsDAO.updateList(overdueList);
 		}
 
 		tranType = PennantConstants.TRAN_UPD;
@@ -2069,6 +2035,24 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		logger.debug("Leaving");
 
 		return auditHeader;
+	}
+
+	public List<FinODDetails> calPenalty(FinScheduleData schData, FinReceiptData receiptData, Date valueDate,
+			List<FinODDetails> odList) {
+		logger.debug(Literal.ENTERING);
+
+		if (CollectionUtils.isEmpty(odList)) {
+			return odList;
+		}
+
+		FinanceMain fm = schData.getFinanceMain();
+		List<FinanceScheduleDetail> schdList = schData.getFinanceScheduleDetails();
+		String finReference = fm.getFinReference();
+		List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayListByFinRef(finReference, false, "");
+		odList = latePayMarkingService.calPDOnBackDatePayment(fm, odList, valueDate, schdList, repayments, true, true);
+
+		logger.debug(Literal.LEAVING);
+		return odList;
 	}
 
 	/**

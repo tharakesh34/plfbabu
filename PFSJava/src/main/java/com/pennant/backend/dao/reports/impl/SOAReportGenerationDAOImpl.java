@@ -296,7 +296,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(
 				" Select T1.FinReference, T1.PostDate, T1.AdviseAmount, T1.AdviseType, T1.ReceiptId, T1.BounceId, T1.Adviseid, T1.FeeTypeId, T1.BalanceAmt,");
 		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T2.FeeTypeDesc, T1.ValueDate,T2.TaxComponent,");
-		selectSql.append(" T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST, T1.PaidCESS");
+		selectSql.append(" T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST");
 		selectSql.append(" FROM ManualAdvise T1");
 		selectSql.append(" Left Join FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId");
 		selectSql.append(" Where FinReference = :FinReference");
@@ -329,23 +329,23 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		List<ManualAdviseMovements> manualAdviseMovementsList;
 
-		StringBuilder selectSql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 
-		selectSql.append(" SELECT T1.Movementdate, T1.movementamount, T1.WaivedAmount, F.FEETYPEDESC, T2.ValueDate");
-		selectSql.append(" ,T1.Adviseid, T1.Taxheaderid");
-		selectSql.append(" FROM ManualAdviseMovements T1 INNER JOIN ");
-		selectSql.append(" ManualAdvise T2 on T1.Adviseid = T2.Adviseid LEFT JOIN ");
-		selectSql.append(" FEETYPES F ON F.FEETYPEID = T2.FEETYPEID ");
-		selectSql.append(" WHERE T2.WaivedAmount > 0 ");
-		selectSql.append(" And  T2.FinReference = :FinReference");
+		sql.append("Select T1.Movementdate, T1.movementamount, F.TaxComponent");
+		sql.append(", T1.WaivedAmount, T1.TaxHeaderId");
+		sql.append(", F.FEETYPEDESC, T2.ValueDate");
+		sql.append(" FROM ManualAdviseMovements T1");
+		sql.append(" INNER JOIN ManualAdvise T2 on T1.Adviseid = T2.Adviseid");
+		sql.append(" LEFT JOIN FEETYPES F ON F.FEETYPEID = T2.FEETYPEID");
+		sql.append(" WHERE T2.WaivedAmount > 0 And T2.FinReference = :FinReference");
 
-		logger.trace(Literal.SQL + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ManualAdviseMovements.class);
 
 		try {
-			manualAdviseMovementsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			manualAdviseMovementsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			manualAdviseMovementsList = new ArrayList<ManualAdviseMovements>();
 		}

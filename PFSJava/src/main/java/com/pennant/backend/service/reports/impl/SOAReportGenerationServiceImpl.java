@@ -97,6 +97,7 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rmtmasters.Promotion;
@@ -177,7 +178,25 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	}
 
 	private List<ManualAdviseMovements> getManualAdviseMovements(String finReference) {
-		return this.soaReportGenerationDAO.getManualAdviseMovements(finReference);
+		List<ManualAdviseMovements> list = soaReportGenerationDAO.getManualAdviseMovements(finReference);
+		if (CollectionUtils.isEmpty(list)) {
+			return list;
+		}
+
+		for (ManualAdviseMovements ma : list) {
+			Long taxHeaderId = ma.getTaxHeaderId();
+
+			if (taxHeaderId != null && taxHeaderId > 0) {
+				TaxHeader taxHeader = taxHeaderDetailsDAO.getTaxHeaderDetailsById(taxHeaderId, "");
+				if (taxHeader != null) {
+					List<Taxes> taxDetails = taxHeaderDetailsDAO.getTaxDetailById(taxHeader.getHeaderId(), "");
+					taxHeader.setTaxDetails(taxDetails);
+					ma.setTaxHeader(taxHeader);
+				}
+			}
+		}
+
+		return list;
 	}
 
 	private List<ReceiptAllocationDetail> getReceiptAllocationDetailsList(String finReference) {
@@ -1337,32 +1356,33 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			//Manual Advise Movement List 
 			if (manualAdviseMovementsList != null && !manualAdviseMovementsList.isEmpty()) {
-				for (ManualAdvise advise : manualAdviseList) {
-					for (ManualAdviseMovements manualAdviseMovements : manualAdviseMovementsList) {
-						if (advise.getAdviseID() == manualAdviseMovements.getAdviseID()) {
-							if (manualAdviseMovements.getWaivedAmount().compareTo(BigDecimal.ZERO) <= 0) {
-								continue;
-							}
-							soaTranReport = new SOATransactionReport();
-							manualAdviseMovementEvent = "Waived Amount ";
-							if (StringUtils.isNotBlank(manualAdviseMovements.getFeeTypeDesc())) {
-								manualAdviseMovementEvent = manualAdviseMovementEvent
-										.concat(manualAdviseMovements.getFeeTypeDesc());
-							} else {
-								manualAdviseMovementEvent = manualAdviseMovementEvent.concat("Bounce");
-							}
-							soaTranReport.setEvent(manualAdviseMovementEvent.concat(finRef));
-							soaTranReport.setTransactionDate(manualAdviseMovements.getMovementDate());
-							soaTranReport.setValueDate(manualAdviseMovements.getValueDate());
-							BigDecimal waivedGst = getGstAmount(manualAdviseMovementEvent, manualAdviseMovements,
-									advise);
-							soaTranReport.setCreditAmount(manualAdviseMovements.getWaivedAmount().add(waivedGst));
-							soaTranReport.setDebitAmount(BigDecimal.ZERO);
-							soaTranReport.setPriority(15);
+				for (ManualAdviseMovements ma : manualAdviseMovementsList) {
 
-							soaTransactionReports.add(soaTranReport);
-						}
+					if (ma.getWaivedAmount().compareTo(BigDecimal.ZERO) <= 0) {
+						continue;
 					}
+					soaTranReport = new SOATransactionReport();
+					manualAdviseMovementEvent = "Waived Amount ";
+					if (StringUtils.isNotBlank(ma.getFeeTypeDesc())) {
+						manualAdviseMovementEvent = manualAdviseMovementEvent.concat(ma.getFeeTypeDesc());
+					} else {
+						manualAdviseMovementEvent = manualAdviseMovementEvent.concat("Bounce");
+						if (bounceFeeType == null) {
+							bounceFeeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
+						}
+						ma.setTaxComponent(bounceFeeType.getTaxComponent());
+					}
+					soaTranReport.setEvent(manualAdviseMovementEvent.concat(finRef));
+					soaTranReport.setTransactionDate(ma.getMovementDate());
+					soaTranReport.setValueDate(ma.getValueDate());
+					soaTranReport.setCreditAmount(ma.getWaivedAmount());
+					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(ma.getTaxComponent())) {
+						soaTranReport.setCreditAmount(ma.getWaivedAmount().add(getWaivedGST(ma.getTaxHeader())));
+					}
+					soaTranReport.setDebitAmount(BigDecimal.ZERO);
+					soaTranReport.setPriority(15);
+
+					soaTransactionReports.add(soaTranReport);
 				}
 			}
 
@@ -2026,6 +2046,44 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		logger.debug("Leaving");
 		return soaTransactionReports;
+	}
+
+	private BigDecimal getWaivedGST(TaxHeader taxHeader) {
+		BigDecimal waivedGST = BigDecimal.ZERO;
+		if (taxHeader == null || CollectionUtils.isEmpty(taxHeader.getTaxDetails())) {
+			return waivedGST;
+		}
+
+		BigDecimal cgstWaived = BigDecimal.ZERO;
+		BigDecimal sgstWaived = BigDecimal.ZERO;
+		BigDecimal igstWaived = BigDecimal.ZERO;
+		BigDecimal ugstWaived = BigDecimal.ZERO;
+		BigDecimal cessWaived = BigDecimal.ZERO;
+
+		for (Taxes taxes : taxHeader.getTaxDetails()) {
+			switch (taxes.getTaxType()) {
+			case RuleConstants.CODE_CGST:
+				cgstWaived = cgstWaived.add(taxes.getWaivedTax());
+				break;
+			case RuleConstants.CODE_SGST:
+				sgstWaived = sgstWaived.add(taxes.getWaivedTax());
+				break;
+			case RuleConstants.CODE_UGST:
+				ugstWaived = ugstWaived.add(taxes.getWaivedTax());
+				break;
+			case RuleConstants.CODE_IGST:
+				igstWaived = igstWaived.add(taxes.getWaivedTax());
+				break;
+			case RuleConstants.CODE_CESS:
+				cessWaived = cessWaived.add(taxes.getWaivedTax());
+				break;
+			default:
+				break;
+			}
+		}
+
+		waivedGST = cgstWaived.add(sgstWaived).add(ugstWaived).add(igstWaived).add(cessWaived);
+		return waivedGST;
 	}
 
 	@Override
