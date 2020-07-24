@@ -44,7 +44,6 @@ package com.pennant.backend.dao.finance.financialSummary;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
-import com.pennant.backend.model.finance.psl.PSLDetail;
 
 public interface SynopsisDetailsDAO extends BasicCrudDao<SynopsisDetails> {
 
