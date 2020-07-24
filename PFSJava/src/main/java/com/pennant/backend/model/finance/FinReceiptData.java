@@ -52,7 +52,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.Repayments.FinanceRepayments;
-import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
