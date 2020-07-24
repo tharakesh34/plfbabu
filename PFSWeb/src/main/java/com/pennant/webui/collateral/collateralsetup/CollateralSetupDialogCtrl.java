@@ -133,7 +133,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.component.Uppercasebox;
-import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;

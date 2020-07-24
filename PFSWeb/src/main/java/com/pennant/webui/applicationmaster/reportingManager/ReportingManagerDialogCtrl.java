@@ -17,9 +17,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.jdbc.search.Search;
-import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.administration.ReportingManager;
@@ -41,6 +38,9 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
