@@ -24,7 +24,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.app.receiptuploadqueue.ReceiptUploadQueuing;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.dao.receiptUpload.ProjectedRUDAO;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
