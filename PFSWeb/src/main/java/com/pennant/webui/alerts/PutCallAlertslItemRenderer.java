@@ -1,7 +1,6 @@
 package com.pennant.webui.alerts;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,11 +8,10 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.finance.finoption.FinOption;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.staticlist.AppStaticList;
 
 public class PutCallAlertslItemRenderer implements ListitemRenderer<FinOption>, Serializable {
