@@ -6187,4 +6187,13 @@
 		<dropForeignKeyConstraint baseTableName="RMTBRANCHES" constraintName="FK_BRANCHES_CLUSTERID" />
 	</changeSet>
 
+	<changeSet id="DE#1091" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_column set name = 'TRANSACTIONREF', skip = 0 where StartIndex = 4 and name =  'TRANSACTIONUTRNO' and tableid in (select id from data_engine_table where configid in (select id from data_engine_config where name = 'DISB_AXIS_IMPORT'));
+				update data_engine_column set name = 'REMARKS' where StartIndex = 11 and name =  'TRANSACTIONREF' and tableid in (select id from data_engine_table where configid in (select id from data_engine_config where name = 'DISB_AXIS_IMPORT'));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
