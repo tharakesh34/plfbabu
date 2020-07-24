@@ -1434,4 +1434,5 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
+
 }
