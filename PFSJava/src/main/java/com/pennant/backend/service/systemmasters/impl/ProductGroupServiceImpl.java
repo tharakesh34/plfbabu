@@ -1,6 +1,5 @@
 package com.pennant.backend.service.systemmasters.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -9,7 +8,6 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.ProductGroupDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.systemmasters.DealerGroup;
 import com.pennant.backend.model.systemmasters.ProductGroup;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.ProductGroupService;
