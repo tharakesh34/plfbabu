@@ -103,9 +103,9 @@ import com.pennant.webui.finance.enquiry.model.BulkChangeDialoglItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/SchdlRepayment/SchdlRepaymentDialog.zul
