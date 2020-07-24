@@ -37,9 +37,9 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.collateral.collateralsetup.CollateralSetupDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> {
 

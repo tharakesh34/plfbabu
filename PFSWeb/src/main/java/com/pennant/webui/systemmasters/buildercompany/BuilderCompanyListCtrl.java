@@ -62,7 +62,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.systemmasters.BuilderCompany;
 import com.pennant.backend.service.systemmasters.BuilderCompanyService;
-import com.pennant.component.Uppercasebox;
 import com.pennant.webui.systemmasters.buildercompany.model.BuilderCompanyListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;

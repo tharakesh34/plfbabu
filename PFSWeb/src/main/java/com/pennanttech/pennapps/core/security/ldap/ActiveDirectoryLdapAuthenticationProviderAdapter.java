@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.security.authentication.AuthenticationProvider;
 
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.security.ldap.ActiveDirectoryLdapAuthenticationProvider;
 
 public class ActiveDirectoryLdapAuthenticationProviderAdapter {
 	private AuthenticationProvider ldapAuthenticationProvider;
