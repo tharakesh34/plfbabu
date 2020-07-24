@@ -427,4 +427,6 @@ public interface FinanceMainDAO {
 	FinanceMain getEHFinanceMain(String finReference);
 
 	void updateEHFinanceMain(FinanceMain financeMain);
+
+	String getFinBranch(String finReference);
 }

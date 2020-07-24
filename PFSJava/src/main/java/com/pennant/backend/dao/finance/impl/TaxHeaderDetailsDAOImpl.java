@@ -22,6 +22,7 @@ import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -62,7 +63,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" HeaderId, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(" HeaderId, InvoiceID, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" from TAX_Header");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -78,6 +79,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 							TaxHeader th = new TaxHeader();
 
 							th.setHeaderId(rs.getLong("HeaderId"));
+							th.setInvoiceID(JdbcUtil.getLong(rs.getObject("InvoiceID")));
 							th.setVersion(rs.getInt("Version"));
 							th.setLastMntOn(rs.getTimestamp("LastMntOn"));
 							th.setLastMntBy(rs.getLong("LastMntBy"));
@@ -235,10 +237,10 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 
 		StringBuilder sql = new StringBuilder("Insert Into TAX_Header");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (HeaderId,");
+		sql.append(" (HeaderId, InvoiceID, ");
 		sql.append(" Version,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
-		sql.append(" Values(:HeaderId,");
+		sql.append(" Values(:HeaderId, :InvoiceID, ");
 		sql.append(" :Version,:LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
 
@@ -268,10 +270,9 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(taxes);
-		int recordCount = 0;
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -306,7 +307,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 
 		StringBuilder sql = new StringBuilder(" Update TAX_Header");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set HeaderId = :HeaderId,");
+		sql.append(" Set HeaderId = :HeaderId, InvoiceID=:InvoiceID, ");
 		sql.append(
 				" Version= :Version, LastMntBy= :LastMntBy, LastMntOn= :LastMntOn, RecordStatus= :RecordStatus, RoleCode= :RoleCode, NextRoleCode= :NextRoleCode, TaskId= :TaskId, NextTaskId= :NextTaskId");
 		sql.append(" Where HeaderId = :HeaderId");

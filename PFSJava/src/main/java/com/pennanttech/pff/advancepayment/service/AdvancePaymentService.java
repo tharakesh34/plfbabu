@@ -309,7 +309,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		dataMap.put("bounceCharge_UGST", BigDecimal.ZERO);
 		dataMap.put("bounceCharge_SGST", BigDecimal.ZERO);
 		dataMap.put("bounceCharge_IGST", BigDecimal.ZERO);
-		dataMap.put("bounceCharge_IGST", BigDecimal.ZERO);
+		dataMap.put("bounceCharge_CESS", BigDecimal.ZERO);
 
 		dataMap.put("fromState", "");
 		dataMap.put("fromUnionTerritory", false);

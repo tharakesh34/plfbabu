@@ -97,19 +97,20 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
-import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FeePaymentDetail;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
+import com.pennant.backend.model.finance.TaxHeader;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -1657,13 +1658,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 
 		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
-			Map<String, BigDecimal> taxPercentages = getTaxPercentages();
 
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
-				finFeeDetail.setCgst(taxPercentages.get(RuleConstants.CODE_CGST));
-				finFeeDetail.setIgst(taxPercentages.get(RuleConstants.CODE_IGST));
-				finFeeDetail.setSgst(taxPercentages.get(RuleConstants.CODE_SGST));
-				finFeeDetail.setUgst(taxPercentages.get(RuleConstants.CODE_UGST));
 
 				if (!finFeeDetail.isRcdVisible()
 						|| (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())
@@ -1678,11 +1674,19 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 							.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()));
 				}
 
-				FinTaxDetails finTaxDetail = finFeeDetail.getFinTaxDetails();
-				if (finTaxDetail == null) {
-					finTaxDetail = new FinTaxDetails();
-				}
+				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+				BigDecimal totNetGST = BigDecimal.ZERO;
+				BigDecimal totPaidGST = BigDecimal.ZERO;
+				BigDecimal totRemGST = BigDecimal.ZERO;
 
+				if (taxHeader != null && CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
+					for (int i = 0; i < taxHeader.getTaxDetails().size(); i++) {
+						Taxes tax = taxHeader.getTaxDetails().get(i);
+						totNetGST = totNetGST.add(tax.getNetTax());
+						totPaidGST = totPaidGST.add(tax.getPaidTax());
+						totRemGST = totRemGST.add(tax.getRemFeeTax());
+					}
+				}
 				Listitem item = new Listitem();
 				Listcell lc;
 				String taxComponent = null;
@@ -1785,7 +1789,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				netFeeGstBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				netFeeGstBox.setDisabled(true);
 				netFeeGstBox.setId(getComponentId(FEE_UNIQUEID_NET_GST, finFeeDetail));
-				netFeeGstBox.setValue(PennantApplicationUtil.formateAmount(finTaxDetail.getNetTGST(), formatter));
+				netFeeGstBox.setValue(PennantApplicationUtil.formateAmount(totNetGST, formatter));
 				lc = new Listcell();
 				lc.appendChild(netFeeGstBox);
 				lc.setStyle("text-align:right;");
@@ -1847,7 +1851,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				paidGSTBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				paidGSTBox.setDisabled(true);
 				paidGSTBox.setId(getComponentId(FEE_UNIQUEID_PAID_GST, finFeeDetail));
-				paidGSTBox.setValue(PennantApplicationUtil.formateAmount(finTaxDetail.getPaidTGST(), formatter));
+				paidGSTBox.setValue(PennantApplicationUtil.formateAmount(totPaidGST, formatter));
 				lc = new Listcell();
 				lc.setStyle("text-align:right;");
 				lc.appendChild(paidGSTBox);
@@ -1910,7 +1914,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				remainingGSTBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				remainingGSTBox.setDisabled(true);
 				remainingGSTBox.setId(getComponentId(FEE_UNIQUEID_REMAININ_GST, finFeeDetail));
-				remainingGSTBox.setValue(PennantApplicationUtil.formateAmount(finTaxDetail.getRemFeeTGST(), formatter));
+				remainingGSTBox.setValue(PennantApplicationUtil.formateAmount(totRemGST, formatter));
 				lc = new Listcell();
 				lc.setStyle("text-align:right;");
 				lc.appendChild(remainingGSTBox);
@@ -2929,10 +2933,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, getTaxPercentages());
 		}
 
-		/*
-		 * for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-		 * this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap); }
-		 */
 		getCalculatedTdsOnFees(getFinFeeDetailList(), financeDetail.getFinScheduleData());
 
 		feeDetailService.setFeeAmount(getFinanceDetail().getModuleDefiner(), finScheduleData, getFinFeeDetailList());

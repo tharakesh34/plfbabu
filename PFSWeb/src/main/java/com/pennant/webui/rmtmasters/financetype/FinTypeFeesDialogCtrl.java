@@ -72,7 +72,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;

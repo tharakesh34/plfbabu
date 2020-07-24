@@ -56,6 +56,8 @@ import org.apache.commons.lang.StringUtils;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
+import com.pennant.backend.model.finance.FinTaxIncomeDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 
@@ -943,4 +945,27 @@ public class CalculationUtil implements Serializable {
 		pv = roundAmount(pv, roundingMode, roundingTarget);
 		return pv;
 	}
+
+	public static BigDecimal getTotalGST(FinTaxIncomeDetail taxIncome) {
+		BigDecimal totoGSTAmount = BigDecimal.ZERO;
+		totoGSTAmount = totoGSTAmount.add(taxIncome.getCGST());
+		totoGSTAmount = totoGSTAmount.add(taxIncome.getSGST());
+		totoGSTAmount = totoGSTAmount.add(taxIncome.getUGST());
+		totoGSTAmount = totoGSTAmount.add(taxIncome.getIGST());
+		totoGSTAmount = totoGSTAmount.add(taxIncome.getCESS());
+
+		return totoGSTAmount;
+	}
+
+	public static BigDecimal getTotalPaidGST(ManualAdvise manualAdvise) {
+		BigDecimal totPaidGSTAmount = BigDecimal.ZERO;
+		totPaidGSTAmount = totPaidGSTAmount.add(manualAdvise.getPaidCGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(manualAdvise.getPaidSGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(manualAdvise.getPaidUGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(manualAdvise.getPaidIGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(manualAdvise.getPaidCESS());
+
+		return totPaidGSTAmount;
+	}
+
 }

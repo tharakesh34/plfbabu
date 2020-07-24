@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.finance;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennanttech.pff.core.TableType;
@@ -66,5 +68,7 @@ public interface FinanceTaxDetailDAO extends BasicCrudDao<FinanceTaxDetail> {
 	void deleteFinTaxDetails(FinanceTaxDetail financeTaxDetail, TableType tableType);
 
 	int getFinTaxDetailsCount(String finReference);
+
+	List<FinanceTaxDetail> getGSTNumberAndCustCIF(long taxCustId, String taxNumber, String type);
 
 }

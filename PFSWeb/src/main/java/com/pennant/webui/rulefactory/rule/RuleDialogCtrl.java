@@ -74,7 +74,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
 import com.pennant.backend.model.rulefactory.JSRuleReturnType;
 import com.pennant.backend.model.rulefactory.Rule;

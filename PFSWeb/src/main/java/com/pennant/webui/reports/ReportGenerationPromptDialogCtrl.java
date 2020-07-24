@@ -46,6 +46,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -2447,6 +2448,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 								PennantConstants.DBDateFormat);
 						toDate = DateUtility.format(DateUtility.getDate(fromDateArray[1]),
 								PennantConstants.DBDateFormat);
+						if (fromDate != null && toDate != null) {
+							boolean validateInput = validateGstInvoiceReportInputs(fromDate, toDate);
+							if (!validateInput) {
+								return;
+							}
+						}
+
 					} else if (template.getFieldID() == 5) {
 						// Invoice Type
 						if (StringUtils.isNotBlank(template.getFieldValue())) {
@@ -3002,6 +3010,29 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			logger.error("Exception: ", exp);
 		}
 		logger.debug("Leaving ");
+	}
+
+	private boolean validateGstInvoiceReportInputs(String fromDate, String toDate) throws ParseException {
+		boolean isValidInput = true;
+		Date fromDateValue = DateUtil.parse(fromDate, "yyyy-MM-dd");
+		Date toDateValue = DateUtil.parse(toDate, "yyyy-MM-dd");
+
+		long diffDays = DateUtility.getDaysBetween(fromDateValue, toDateValue);
+
+		boolean toDateExceedFlag = false;
+
+		if (DateUtility.compare(toDateValue, SysParamUtil.getAppDate()) > 0) {
+			toDateExceedFlag = true;
+		}
+		if (diffDays > 31) {
+			MessageUtil.showMessage(Labels.getLabel("info.invoice_toDate_fromDate_diff_days")); //TODO validate message
+			isValidInput = false;
+		} else if (toDateExceedFlag) {
+			MessageUtil.showMessage(Labels.getLabel("info.invoice_toDate_exceed_businessDate") + " "
+					+ SysParamUtil.getAppDate("dd/MM/yyy"));
+			isValidInput = false;
+		}
+		return isValidInput;
 	}
 
 	// GETTERS AND SETTERS

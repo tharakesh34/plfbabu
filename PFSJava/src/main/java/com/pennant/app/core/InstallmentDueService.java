@@ -22,6 +22,8 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.InvoiceDetail;
+import com.pennant.backend.model.finance.ScheduleDueTaxDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -85,12 +87,12 @@ public class InstallmentDueService extends ServiceHelper {
 		BigDecimal dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
 		Date valueDate = custEODEvent.getEodValueDate();
 		if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
-			finEODEvent.setFinFeeScheduleDetails(getFinFeeScheduleDetailDAO().getFeeSchdTPost(finReference, valueDate));
+			finEODEvent.setFinFeeScheduleDetails(finFeeScheduleDetailDAO.getFeeSchdTPost(finReference, valueDate));
 		}
 
 		dueAmount = curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid());
 		if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
-			finEODEvent.setFinSchFrqInsurances(getFinInsurancesDAO().getInsSchdToPost(finReference, valueDate));
+			finEODEvent.setFinSchFrqInsurances(finInsurancesDAO.getInsSchdToPost(finReference, valueDate));
 		}
 
 		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
@@ -150,15 +152,16 @@ public class InstallmentDueService extends ServiceHelper {
 		//Postings Process and save all postings related to finance for one time accounts update
 
 		aeEvent = postAccountingEOD(aeEvent);
+		fm.setEodValueDate(valueDate);
 
-		if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && aeEvent.getLinkedTranId() > 0) {
+		long linkedTranId = aeEvent.getLinkedTranId();
+		if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && linkedTranId > 0) {
 			FinanceDetail financeDetail = new FinanceDetail();
 			financeDetail.getFinScheduleData().setFinanceMain(finEODEvent.getFinanceMain());
 			financeDetail.getFinScheduleData().setFinanceType(finEODEvent.getFinType());
 			financeDetail.setFinanceTaxDetail(null);
 			financeDetail.setCustomerDetails(null);
-			gstInvoiceTxnService.createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail,
-					curSchd.getProfitSchd(), PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
+			createInovice(financeDetail, curSchd, linkedTranId);
 		}
 
 		//Accrual posted on the installment due postings
@@ -172,6 +175,68 @@ public class InstallmentDueService extends ServiceHelper {
 
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void createInovice(FinanceDetail financeDetail, FinanceScheduleDetail curSchd, long linkedTranId) {
+		BigDecimal pftAmount = BigDecimal.ZERO;
+		BigDecimal priAmount = BigDecimal.ZERO;
+
+		switch (ImplementationConstants.GST_SCHD_CAL_ON) {
+		case FinanceConstants.GST_SCHD_CAL_ON_PFT:
+			pftAmount = curSchd.getProfitSchd();
+			priAmount = curSchd.getPrincipalSchd();
+			break;
+		case FinanceConstants.GST_SCHD_CAL_ON_PRI:
+			priAmount = curSchd.getPrincipalSchd();
+			break;
+		case FinanceConstants.GST_SCHD_CAL_ON_EMI:
+			pftAmount = curSchd.getProfitSchd();
+			break;
+		default:
+			break;
+		}
+
+		InvoiceDetail invoiceDetail = new InvoiceDetail();
+		invoiceDetail.setLinkedTranId(linkedTranId);
+		invoiceDetail.setFinanceDetail(financeDetail);
+		invoiceDetail.setPftAmount(pftAmount);
+		invoiceDetail.setPriAmount(priAmount);
+		invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
+
+		Long invoiceID = gstInvoiceTxnService.schdDueTaxInovicePrepration(invoiceDetail);
+
+		saveDueTaxDetail(curSchd, invoiceID);
+	}
+
+	/**
+	 * Method for saving Schedule Due Tax Details
+	 */
+	private void saveDueTaxDetail(FinanceScheduleDetail curSchd, Long invoiceID) {
+		ScheduleDueTaxDetail dueTaxDetail = new ScheduleDueTaxDetail();
+		dueTaxDetail.setFinReference(curSchd.getFinReference());
+		dueTaxDetail.setSchDate(curSchd.getSchDate());
+		dueTaxDetail.setTaxType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
+		dueTaxDetail.setTaxCalcOn(ImplementationConstants.GST_SCHD_CAL_ON);
+
+		BigDecimal invoiceAmt = BigDecimal.ZERO;
+		switch (ImplementationConstants.GST_SCHD_CAL_ON) {
+		case FinanceConstants.GST_SCHD_CAL_ON_PFT:
+			invoiceAmt = curSchd.getProfitSchd();
+			break;
+		case FinanceConstants.GST_SCHD_CAL_ON_PRI:
+			invoiceAmt = curSchd.getPrincipalSchd();
+			break;
+		case FinanceConstants.GST_SCHD_CAL_ON_EMI:
+			invoiceAmt = curSchd.getPrincipalSchd().add(curSchd.getProfitSchd());
+			break;
+		default:
+			break;
+		}
+
+		dueTaxDetail.setAmount(invoiceAmt);
+		dueTaxDetail.setInvoiceID(invoiceID);
+
+		financeScheduleDetailDAO.saveSchDueTaxDetail(dueTaxDetail);
 	}
 
 	/**
@@ -334,9 +399,10 @@ public class InstallmentDueService extends ServiceHelper {
 				if (SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ)) {
 					profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(amountCodes.getInstpft()));
 				}
-				if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && aeEvent.getLinkedTranId() > 0) {
-					gstInvoiceTxnService.createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail,
-							curSchd.getProfitSchd(), PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
+
+				long linkedTranId = aeEvent.getLinkedTranId();
+				if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && linkedTranId > 0) {
+					createInovice(financeDetail, curSchd, linkedTranId);
 				}
 			} else {
 				aeEvent = engineExecution.getAccEngineExecResults(aeEvent);

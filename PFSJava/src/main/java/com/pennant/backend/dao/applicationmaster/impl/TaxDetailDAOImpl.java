@@ -347,4 +347,63 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 
 		return count;
 	}
+
+	@Override
+	public List<TaxDetail> getTaxDetailsbyEntityCode(String statecode, String type, String entityCode) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select id, country, stateCode, entityCode, taxCode, addressLine1, ");
+		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode, hsnNumber, natureService, ");
+
+		if (type.contains("View")) {
+			sql.append(" cityName, countryName, provinceName, entityDesc, GstInAvailable,");
+		}
+
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, ");
+		sql.append(" NextTaskId, RecordType, WorkflowId");
+		sql.append(" From TAXDETAIL");
+		sql.append(type);
+		sql.append(" Where StateCode = :StateCode and EntityCode = :EntityCode");
+
+		source.addValue("StateCode", statecode);
+		source.addValue("EntityCode", entityCode);
+
+		RowMapper<TaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDetail.class);
+
+		logger.debug("selectSql: " + sql.toString());
+		logger.debug("Leaving");
+
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+
+	}
+
+	@Override
+	public int getStateAndEntityCodeCount(String entityCode, String stateCode, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select count(*) From TAXDETAIL");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ENTITYCODE = :ENTITYCODE And StateCode = :StateCode");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("ENTITYCODE", entityCode);
+		source.addValue("StateCode", stateCode);
+
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		logger.debug("Leaving");
+
+		return count;
+	}
 }

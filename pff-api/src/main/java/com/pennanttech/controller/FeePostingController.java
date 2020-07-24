@@ -14,23 +14,23 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.APIHeader;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.fees.FeePostings;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
-import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.TaxHeader;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.service.fees.feepostings.FeePostingService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
@@ -40,6 +40,7 @@ import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
@@ -48,6 +49,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.finance.TaxDetail;
 import com.pennanttech.ws.model.manualAdvice.ManualAdviseResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
@@ -126,7 +128,7 @@ public class FeePostingController {
 
 		userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		manualAdvise.setVersion(1);
-		manualAdvise.setPostDate(DateUtility.getAppDate());
+		manualAdvise.setPostDate(SysParamUtil.getAppDate());
 		manualAdvise.setUserDetails(userDetails);
 		manualAdvise.setLastMntBy(userDetails.getUserId());
 		manualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -310,23 +312,54 @@ public class FeePostingController {
 				taxComponent = Labels.getLabel("label_FeeTypeDialog_Inclusive");
 			}
 
-			if (finFeeDetail.getFinTaxDetails() != null) {
-				FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
+			if (finFeeDetail.getTaxHeader() != null) {
+				TaxDetail taxDetail = new TaxDetail();
+
+				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
 				BigDecimal totalGstAmount = BigDecimal.ZERO;
 				BigDecimal totalAmount = BigDecimal.ZERO;
+				Taxes cgstTax = new Taxes();
+				Taxes sgstTax = new Taxes();
+				Taxes igstTax = new Taxes();
+				Taxes ugstTax = new Taxes();
+				Taxes cessTax = new Taxes();
+				if (taxHeader != null) {
+					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+					if (CollectionUtils.isNotEmpty(taxDetails)) {
+						for (Taxes taxes : taxDetails) {
+							if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+								cgstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+								sgstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+								igstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+								ugstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+								cessTax = taxes;
+							}
+						}
+					}
+				}
 
 				//Total GST Amount 
-				totalGstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetIGST())
-						.add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetUGST());
-				finTaxDetails.setNetTGST(totalGstAmount);
+				totalGstAmount = cgstTax.getNetTax().add(sgstTax.getNetTax()).add(igstTax.getNetTax())
+						.add(ugstTax.getNetTax()).add(cessTax.getNetTax());
+
+				taxDetail.setNetCGST(cgstTax.getNetTax());
+				taxDetail.setNetSGST(sgstTax.getNetTax());
+				taxDetail.setNetIGST(igstTax.getNetTax());
+				taxDetail.setNetUGST(ugstTax.getNetTax());
+				taxDetail.setNetCESS(cessTax.getNetTax());
+				taxDetail.setNetTGST(totalGstAmount);
 
 				//Total Amount include GST
 				totalAmount = finFeeDetail.getNetAmountOriginal().add(totalGstAmount);
-				finTaxDetails.setTotal(totalAmount);
+				taxDetail.setTotal(totalAmount);
 
-				finTaxDetails.setAdviseAmount(finFeeDetail.getNetAmountOriginal());
-				finTaxDetails.setGstType(taxComponent);
-				response.setFinTaxDetails(finTaxDetails);
+				taxDetail.setAdviseAmount(finFeeDetail.getNetAmountOriginal());
+				taxDetail.setGstType(taxComponent);
+				response.setTaxDetail(taxDetail);
 
 			}
 		}
@@ -368,7 +401,7 @@ public class FeePostingController {
 		feePostings.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		feePostings.setNewRecord(true);
 		feePostings.setVersion(1);
-		feePostings.setPostDate(DateUtility.getAppDate());
+		feePostings.setPostDate(SysParamUtil.getAppDate());
 		feePostings.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		feePostings.setLastMntBy(userDetails.getUserId());
 		feePostings.setLastMntOn(new Timestamp(System.currentTimeMillis()));

@@ -52,6 +52,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceWriteoff;
+import com.pennant.backend.model.finance.ScheduleDueTaxDetail;
 import com.pennant.backend.model.finance.ScheduleMapDetails;
 
 public interface FinanceScheduleDetailDAO {
@@ -158,6 +159,10 @@ public interface FinanceScheduleDetailDAO {
 	int getDueBucket(String finReference);
 
 	List<FinanceScheduleDetail> getDueSchedulesByFacilityRef(String finReference, Date valueDate);
+
+	void saveSchDueTaxDetail(ScheduleDueTaxDetail dueTaxDetail);
+
+	Long getSchdDueInvoiceID(String finReference, Date schdate);
 
 	void updateTDSChange(List<FinanceScheduleDetail> schdList);
 

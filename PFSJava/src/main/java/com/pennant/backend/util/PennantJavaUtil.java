@@ -221,7 +221,6 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
 import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.fees.FeePostings;
-import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.AgreementFieldDetails;
 import com.pennant.backend.model.finance.AutoKnockOff;
 import com.pennant.backend.model.finance.AutoKnockOffFeeMapping;
@@ -241,6 +240,7 @@ import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.EtihadCreditBureauDetail;
 import com.pennant.backend.model.finance.FacilityType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -1178,7 +1178,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("CustomerAddres",
 				new ModuleMapping("CustomerAddres", CustomerAddres.class,
 						new String[] { "CustomerAddresses", "CustomerAddresses_AView" }, null,
-						new String[] { "CustID", "CustAddrHNbr" }, null, 300));
+						new String[] { "CustID", "CustAddrHNbr", "CustAddrType", "CustAddrPriority" }, null, 600));
 
 		ModuleUtil.register("CustomerAdditionalDetail",
 				new ModuleMapping("CustomerAdditionalDetail", CustomerAdditionalDetail.class,

@@ -62,7 +62,7 @@ public class FinReceiptDetail implements Serializable {
 	private String feeTypeDesc;
 	private boolean noReserve;
 	private String receiptPurpose;
-	private ReceiptTaxDetail receiptTaxDetail;
+	private ManualAdviseMovements payAdvMovement;
 	private List<FinRepayHeader> repayHeaders = new ArrayList<FinRepayHeader>(1);
 	private FinRepayHeader repayHeader = new FinRepayHeader();
 	private List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>(1);
@@ -112,6 +112,7 @@ public class FinReceiptDetail implements Serializable {
 		excludeFields.add("advMovements");
 		excludeFields.add("dueAmount");
 		excludeFields.add("payOrder");
+		excludeFields.add("payAdvMovement");
 		return excludeFields;
 	}
 
@@ -411,14 +412,6 @@ public class FinReceiptDetail implements Serializable {
 		this.receiptPurpose = receiptPurpose;
 	}
 
-	public ReceiptTaxDetail getReceiptTaxDetail() {
-		return receiptTaxDetail;
-	}
-
-	public void setReceiptTaxDetail(ReceiptTaxDetail receiptTaxDetail) {
-		this.receiptTaxDetail = receiptTaxDetail;
-	}
-
 	public BigDecimal getPartialPaidAMount() {
 		return partialPaidAMount;
 	}
@@ -441,5 +434,13 @@ public class FinReceiptDetail implements Serializable {
 
 	public void setRepayHeader(FinRepayHeader repayHeader) {
 		this.repayHeader = repayHeader;
+	}
+
+	public ManualAdviseMovements getPayAdvMovement() {
+		return payAdvMovement;
+	}
+
+	public void setPayAdvMovement(ManualAdviseMovements payAdvMovement) {
+		this.payAdvMovement = payAdvMovement;
 	}
 }

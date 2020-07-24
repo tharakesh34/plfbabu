@@ -60,7 +60,7 @@ public interface GSTInvoiceTxnDAO {
 
 	List<GSTInvoiceTxn> getGSTInvoiceTxnList();
 
-	long getSeqNoFromSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice);
+	SeqGSTInvoice getSeqNoFromSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice);
 
 	SeqGSTInvoice getSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice);
 

@@ -1,25 +1,15 @@
 package com.pennant.app.core;
 
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.accounts.AccountsDAO;
 import com.pennant.backend.dao.accounts.AccountsHistoryDAO;

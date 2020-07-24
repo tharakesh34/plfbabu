@@ -701,13 +701,25 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 
 			if (StringUtils.isNotBlank(taxNumber)) {
 				//if GST Number is already exist or not
-				int count = getFinanceTaxDetailDAO().getGSTNumberCount(custId, taxNumber, "_View");
-				if (count != 0) {
-					String[] parameters = new String[2];
-					parameters[0] = PennantJavaUtil.getLabel("label_FinanceTaxDetailDialog_TaxNumber.value") + ": ";
-					parameters[1] = taxNumber;
-					auditDetail.setErrorDetail(ErrorUtil
-							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null)));
+				List<FinanceTaxDetail> financeTaxDetails = getFinanceTaxDetailDAO().getGSTNumberAndCustCIF(custId,
+						taxNumber, "_View");
+
+				if (!financeTaxDetails.isEmpty()) {
+					for (FinanceTaxDetail finTaxDetail : financeTaxDetails) {
+						if (finTaxDetail.getTaxNumber() != null) {
+							String custCIF = customerDAO.getCustomerIdCIF(finTaxDetail.getTaxCustId());
+
+							String[] parameters = new String[4];
+							parameters[0] = PennantJavaUtil.getLabel("label_FinanceTaxDetailDialog_TaxNumber.value")
+									+ ": ";
+							parameters[1] = taxNumber;
+							parameters[2] = PennantJavaUtil.getLabel("label_FinTaxDetails_CustCIF") + ": ";
+							parameters[3] = custCIF;
+
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "GSTD001", parameters, null)));
+						}
+					}
 				}
 
 				Province province = this.provinceDAO.getProvinceById(financeTaxDetail.getCountry(),
@@ -719,9 +731,10 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 					Object modelObj = auditDetail.getModelData();
 					if (modelObj instanceof CustomerDetails) {
 						panNumber = ((CustomerDetails) modelObj).getCustomer().getCustCRCPR();
+					} else {
+						panNumber = customerDAO.getCustCRCPRById(custId, "");
 					}
 				}
-
 				if (StringUtils.isNotBlank(gstStateCode)) { //if GST State Code is not available
 					if (!StringUtils.equalsIgnoreCase(gstStateCode, taxNumber.substring(0, 2))) {
 						auditDetail.setErrorDetail(ErrorUtil

@@ -637,8 +637,18 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		if (BigDecimal.ZERO.compareTo(totalDues) > 0) {
 			totalDues = BigDecimal.ZERO;
 		}
-
 		this.receiptDues.setValue(PennantApplicationUtil.formateAmount(totalDues, formatter));
+
+		if (isKnockOff) {
+			BigDecimal receiptDues = this.receiptDues.getActualValue();
+			BigDecimal knockOffAmount = this.receiptAmount.getActualValue();
+			String receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
+			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptPurpose)
+					&& knockOffAmount.compareTo(receiptDues) > 0) {
+				MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff"));
+				return;
+			}
+		}
 
 		this.receiptDues.setDisabled(true);
 		this.btnProceed.setDisabled(false);

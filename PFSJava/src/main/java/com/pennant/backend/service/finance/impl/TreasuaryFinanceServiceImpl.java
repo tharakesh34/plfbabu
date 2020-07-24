@@ -323,10 +323,6 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			auditDetails.addAll(auditDetail);
 		}
 
-		saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), false, tableType);
-		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false,
-				"_Temp");
-
 		return auditDetails;
 	}
 
@@ -1484,10 +1480,8 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 
 			listDeletion(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), tableType, isWIF);
 			listSave(financeDetail.getFinScheduleData(), tableType, isWIF, 0, 0);
-			saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), isWIF, tableType);
 		} else {
 			listSave(financeDetail.getFinScheduleData(), tableType, isWIF, 0, 0);
-			saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), isWIF, tableType);
 		}
 
 		logger.debug("Leaving ");

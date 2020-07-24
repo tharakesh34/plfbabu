@@ -2,42 +2,51 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
+
 	<window>
-		<window id="window_SelectFeeReceiptList" title="${c:l('window_SelectFeeReceiptList.title')}" style="align:start;"
-			border="normal" apply="${selectFeeReceiptListCtrl}" width="650px" height="260px" sizable="false" closable="true">
+		<window id="window_SelectFeeReceiptList"
+			title="${c:l('window_SelectFeeReceiptList.title')}"
+			style="align:start;" border="normal"
+			apply="${selectFeeReceiptListCtrl}" width="650px" height="150px"
+			sizable="false" closable="true">
 
 			<borderlayout id="borderlayoutSelectFintypeDialog">
-				<center border="none" autoscroll="true">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-						<columns>
-							<column width="150px" />
-							<column width="60px" />
-							<column width="105px" />
-							<column />
-						</columns>
-						<rows>
-							<row id="recAgainstRow" spans="1,3">
-								<label id="label_FeeReceiptList_RecAgainst" value="${c:l('label_FeeReceiptList_RecAgainst.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<combobox id="recAgainst" width="122px" />
-								</hbox>
-							</row>
-							<!--<row id="finDivisionRow" spans="1,3"> <label id="label_FeeReceiptList_FinDivision" value="${c:l('label_FeeReceiptList_FinDivision.value')}" 
-								/> <extendedcombobox id="finDivision" /> </row> <row spans="1,3"> <label id="label_FeeReceiptList_PostBranch" value="${c:l('label_FeeReceiptList_PostBranch.value')}" 
-								/> <extendedcombobox id="branchCode" /> </row> <row spans="1,3"> <label id="label_FeeReceiptList_CashierBranch" value="${c:l('label_FeeReceiptList_CashierBranch.value')}" 
-								/> <extendedcombobox id="branchCode" /> </row> <row id="finTypeRow" spans="1,3"> <label id="label_FeeReceiptList_FinType" 
-								value="${c:l('label_FeeReceiptList_FinType.value')}" /> <extendedcombobox id="finType" /> </row> -->
-							<row id="proceedButtonRow" spans="2,1,1">
-								<space />
-								<button id="btnProceed" style="float:right;" label="${c:l('label_FeeReceiptList_btnProceed.value')}"
-									tooltiptext="${c:l('label_FeeReceiptList_btnProceed.tooltiptext')}" />
-							</row>
-						</rows>
-					</grid>
+				<center border="none" autoscroll="false">
+					<groupbox id="gb_basicDetails">
+						<caption label="${c:l('gp_basicDetails')}" />
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="220px" />
+								<column />
+							</columns>
+							<rows>
+								<row id="recAgainstRow" spans="1,3">
+									<label
+										id="label_FeeReceiptList_RecAgainst"
+										value="${c:l('label_FeeReceiptList_RecAgainst.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<combobox id="recAgainst"
+											width="122px" />
+									</hbox>
+								</row>
+								<row id="proceedButtonRow">
+									<space />
+									<button id="btnProceed"
+										label="${c:l('label_FeeReceiptList_btnProceed.value')}"
+										tooltiptext="${c:l('label_FeeReceiptList_btnProceed.tooltiptext')}" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
 				</center>
 			</borderlayout>
 		</window>

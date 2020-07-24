@@ -11,6 +11,7 @@ public class FinTaxReceivable {
 	private BigDecimal SGST = BigDecimal.ZERO;
 	private BigDecimal UGST = BigDecimal.ZERO;
 	private BigDecimal IGST = BigDecimal.ZERO;
+	private BigDecimal CESS = BigDecimal.ZERO;
 
 	public String getFinReference() {
 		return finReference;
@@ -66,6 +67,14 @@ public class FinTaxReceivable {
 
 	public void setIGST(BigDecimal iGST) {
 		IGST = iGST;
+	}
+
+	public BigDecimal getCESS() {
+		return CESS;
+	}
+
+	public void setCESS(BigDecimal cESS) {
+		CESS = cESS;
 	}
 
 }

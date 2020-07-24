@@ -743,6 +743,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+		} else {
+			aBranch.setClusterId(null);
 		}
 
 		doRemoveValidation();

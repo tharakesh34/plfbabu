@@ -40,22 +40,44 @@
  */
 package com.pennant.backend.model.finance;
 
-public class SeqGSTInvoice {
+import java.io.Serializable;
 
-	private String gstStateCode;
-	private String transactionType = "D";
+public class SeqGSTInvoice implements Serializable {
+	private static final long serialVersionUID = -6959008927453360500L;
+
+	private long ID;
+	private String entityCode;
+	private String stateCode;
+	private String transactionType;
+	private String monthYear;
 	private long seqNo = 0;
 
 	public SeqGSTInvoice() {
 		super();
 	}
 
-	public String getGstStateCode() {
-		return gstStateCode;
+	public long getID() {
+		return ID;
 	}
 
-	public void setGstStateCode(String gstStateCode) {
-		this.gstStateCode = gstStateCode;
+	public void setID(long iD) {
+		ID = iD;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+
+	public String getStateCode() {
+		return stateCode;
+	}
+
+	public void setStateCode(String stateCode) {
+		this.stateCode = stateCode;
 	}
 
 	public String getTransactionType() {
@@ -66,6 +88,14 @@ public class SeqGSTInvoice {
 		this.transactionType = transactionType;
 	}
 
+	public String getMonthYear() {
+		return monthYear;
+	}
+
+	public void setMonthYear(String monthYear) {
+		this.monthYear = monthYear;
+	}
+
 	public long getSeqNo() {
 		return seqNo;
 	}
@@ -73,4 +103,5 @@ public class SeqGSTInvoice {
 	public void setSeqNo(long seqNo) {
 		this.seqNo = seqNo;
 	}
+
 }

@@ -8,7 +8,6 @@ import java.util.Date;
  * Receipt cancellation also.
  */
 public class FinTaxIncomeDetail {
-
 	private long repayID;
 	private String taxFor;
 	private BigDecimal receivedAmount = BigDecimal.ZERO;
@@ -16,6 +15,7 @@ public class FinTaxIncomeDetail {
 	private BigDecimal SGST = BigDecimal.ZERO;
 	private BigDecimal UGST = BigDecimal.ZERO;
 	private BigDecimal IGST = BigDecimal.ZERO;
+	private BigDecimal CESS = BigDecimal.ZERO;
 
 	// SOA Related Fields
 	private String finReference;
@@ -100,6 +100,14 @@ public class FinTaxIncomeDetail {
 
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
+	}
+
+	public BigDecimal getCESS() {
+		return CESS;
+	}
+
+	public void setCESS(BigDecimal cESS) {
+		CESS = cESS;
 	}
 
 }

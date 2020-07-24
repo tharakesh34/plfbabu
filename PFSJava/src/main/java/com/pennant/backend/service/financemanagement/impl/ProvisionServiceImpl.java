@@ -212,14 +212,6 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 			}
 
 		}
-		// Save Fee Charges List
-		//=======================================
-		if (StringUtils.isNotBlank(tableType)) {
-			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),
-					FinanceConstants.FINSER_EVENT_PROVISION, false, tableType);
-		}
-		saveFeeChargeList(financeDetail.getFinScheduleData(), FinanceConstants.FINSER_EVENT_PROVISION, false,
-				tableType);
 
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
@@ -344,10 +336,6 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		//Provision Postings Process
 		Date dateValueDate = DateUtility.getAppValueDate();
 		getProvisionCalculationUtil().processProvCalculations(provision, dateValueDate, false, true, false);
-
-		//Fee Charge Details
-		//=======================================
-		saveFeeChargeList(financeDetail.getFinScheduleData(), FinanceConstants.FINSER_EVENT_PROVISION, false, "");
 
 		// set Check list details Audit
 		//=======================================

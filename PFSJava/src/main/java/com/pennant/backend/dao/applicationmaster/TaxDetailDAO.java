@@ -78,4 +78,8 @@ public interface TaxDetailDAO extends BasicCrudDao<TaxDetail> {
 
 	int getGSTNumberCount(String entityCode, String taxCode, String string);
 
+	List<TaxDetail> getTaxDetailsbyEntityCode(String statecode, String type, String entityCode);
+
+	int getStateAndEntityCodeCount(String entityCode, String gstStateCode, String type);
+
 }

@@ -213,7 +213,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(", ContactPersonName, EmailID, PhoneNumber, SalariedCustomer, CustSuspSts, CustSuspDate");
 		sql.append(", CustSuspTrigger, ApplicationNo, Dnd, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CasteId");
-		sql.append(", ReligionId, SubCategory, MarginDeviation");
+		sql.append(", ReligionId, SubCategory, MarginDeviation, ResidentialStatus");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescCustTypeCodeName, LovDescCustMaritalStsName, LovDescCustEmpStsName");
@@ -383,6 +383,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 					c.setReligionId(rs.getLong("ReligionId"));
 					c.setSubCategory(rs.getString("SubCategory"));
 					c.setMarginDeviation(rs.getBoolean("MarginDeviation"));
+					c.setResidentialStatus(rs.getString("ResidentialStatus"));
 
 					if (StringUtils.trimToEmpty(type).contains("View")) {
 						c.setLovDescCustTypeCodeName(rs.getString("LovDescCustTypeCodeName"));
@@ -568,7 +569,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		insertSql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		insertSql.append(" ,CasteId, ReligionId, SubCategory,MarginDeviation )");
+		insertSql.append(" ,CasteId, ReligionId, SubCategory,MarginDeviation, ResidentialStatus  )");
 		insertSql.append(
 				" Values(:CustID, :CustCIF, :CustCoreBank, :CustCtgCode, :CustTypeCode, :CustSalutationCode, :CustFName, :CustMName,");
 		insertSql.append(
@@ -604,7 +605,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				" :JointCust, :JointCustName, :JointCustDob, :custRelation, :ContactPersonName, :EmailID, :PhoneNumber, :SalariedCustomer, :ApplicationNo, :Dnd,");
 		insertSql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
-		insertSql.append(" ,:CasteId, :ReligionId, :SubCategory, :MarginDeviation )");
+		insertSql.append(" ,:CasteId, :ReligionId, :SubCategory, :MarginDeviation, :ResidentialStatus)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
@@ -704,7 +705,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		updateSql.append(
 				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(
-				" ,CasteId = :CasteId, ReligionId = :ReligionId, SubCategory = :SubCategory, ApplicationNo = :ApplicationNo, Dnd = :Dnd ");
+				" ,CasteId = :CasteId, ReligionId = :ReligionId, SubCategory = :SubCategory, ApplicationNo = :ApplicationNo, Dnd = :Dnd, ResidentialStatus = :ResidentialStatus");
 		updateSql.append(" Where CustID =:CustID");
 
 		if (!type.endsWith("_Temp")) {
@@ -2879,6 +2880,31 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	@Override
+	public String getCustomerIdCIF(Long custId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select CustCIF");
+		sql.append(" from Customers");
+		sql.append(" where custId = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { custId }, new RowMapper<String>() {
+
+				@Override
+				public String mapRow(ResultSet rs, int arg1) throws SQLException {
+					return rs.getString("CustCIF");
+				}
+			});
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e.getCause());
+		}
+		return null;
+	}
+
+	@Override
 	public Customer getCustomerForPresentment(long id) {
 		logger.debug(Literal.ENTERING);
 
@@ -2908,4 +2934,5 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
+
 }

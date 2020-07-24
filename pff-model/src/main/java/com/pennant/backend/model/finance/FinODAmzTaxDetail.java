@@ -20,6 +20,9 @@ public class FinODAmzTaxDetail implements Serializable {
 	private BigDecimal UGST = BigDecimal.ZERO;
 	private BigDecimal IGST = BigDecimal.ZERO;
 	private BigDecimal TotalGST = BigDecimal.ZERO;
+	private BigDecimal paidAmount = BigDecimal.ZERO;
+	private BigDecimal waivedAmount = BigDecimal.ZERO;
+	private Long invoiceID;
 
 	public FinODAmzTaxDetail() {
 
@@ -123,6 +126,30 @@ public class FinODAmzTaxDetail implements Serializable {
 
 	public void setPostDate(Date postDate) {
 		this.postDate = postDate;
+	}
+
+	public BigDecimal getPaidAmount() {
+		return paidAmount;
+	}
+
+	public void setPaidAmount(BigDecimal paidAmount) {
+		this.paidAmount = paidAmount;
+	}
+
+	public BigDecimal getWaivedAmount() {
+		return waivedAmount;
+	}
+
+	public void setWaivedAmount(BigDecimal waivedAmount) {
+		this.waivedAmount = waivedAmount;
+	}
+
+	public Long getInvoiceID() {
+		return invoiceID;
+	}
+
+	public void setInvoiceID(Long invoiceID) {
+		this.invoiceID = invoiceID;
 	}
 
 }

@@ -418,15 +418,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		}
 
-		// Save Fee Charges List
-		//=======================================
-		if (tableType == TableType.TEMP_TAB) {
-			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(),
-					false, tableType.getSuffix());
-		}
-		saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), false,
-				tableType.getSuffix());
-
 		// set Finance Check List audit details to auditDetails
 		//=======================================
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
@@ -967,10 +958,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			auditDetails.addAll(details);
 			listDocDeletion(financeDetail, "_Temp");
 		}
-
-		//Fee Charge Details
-		//=======================================
-		saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), false, "");
 
 		// set Check list details Audit
 		//=======================================

@@ -27,7 +27,7 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 	public TaxHeader saveOrUpdate(TaxHeader taxHeader, String tableType, String auditTranType) {
 		logger.debug("Entering");
 
-		if (taxHeader.isNew()) {
+		if (taxHeader.isNewRecord()) {
 			getTaxHeaderDetailsDAO().save(taxHeader, tableType);
 		} else {
 			getTaxHeaderDetailsDAO().update(taxHeader, tableType);
@@ -36,9 +36,8 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 		if (taxHeader.getTaxDetails() != null) {
 			if (CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
 				for (Taxes taxes : taxHeader.getTaxDetails()) {
-					//taxHeaderDetailsDAO.getTaxDetailById(taxes.getId(), tableType);
 					taxes.setWorkflowId(0);
-					taxes.setNewRecord(taxHeader.isNew());
+					taxes.setNewRecord(taxHeader.isNewRecord());
 					taxes.setRecordType(taxHeader.getRecordType());
 					taxes.setRecordStatus(taxHeader.getRecordStatus());
 					taxes.setLastMntBy(taxHeader.getLastMntBy());
@@ -86,7 +85,7 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 				if (CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
 					for (Taxes taxes : taxHeader.getTaxDetails()) {
 						//taxHeaderDetailsDAO.getTaxDetailById(taxes.getId(), tableType);
-						taxes.setNewRecord(taxHeader.isNew());
+						taxes.setNewRecord(taxHeader.isNewRecord());
 						taxes.setWorkflowId(0);
 						taxes.setRecordType(taxHeader.getRecordType());
 						taxes.setRecordStatus(taxHeader.getRecordStatus());
@@ -182,7 +181,7 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(taxDetail.getRecordType())) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (taxDetail.isNew()) {
+					} else if (taxDetail.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;

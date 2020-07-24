@@ -38,6 +38,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -60,29 +62,35 @@ import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
+import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
-import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.OverdueTaxMovement;
+import com.pennant.backend.model.finance.TaxHeader;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.rits.cloning.Cloner;
 
 public class OverDueRecoveryPostingsUtil implements Serializable {
 	private static final long serialVersionUID = 6161809223570900644L;
@@ -99,6 +107,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
 	private FinanceTypeDAO financeTypeDAO;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
+	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 
 	/**
 	 * Default constructor
@@ -128,8 +137,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		// EOD Repayments should pass the value date as schedule for which
 		// Repayment is processing
 		AEAmountCodes amountCodes = null;
-		if (aeEvent == null) {
 
+		if (aeEvent == null) {
 			aeEvent = new AEEvent();
 			aeEvent.setAeAmountCodes(new AEAmountCodes());
 			amountCodes = aeEvent.getAeAmountCodes();
@@ -166,7 +175,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		// LPP Receivable Amounts setting for Accounting difference
 		FinTaxReceivable taxRcv = getFinODAmzTaxDetailDAO().getFinTaxReceivable(financeMain.getFinReference(), "LPP");
 		if (taxRcv != null) {
-
 			if (taxRcv.getReceivableAmount()
 					.compareTo(amountCodes.getPenaltyPaid().add(amountCodes.getPenaltyWaived())) < 0) {
 				amountCodes.setPenaltyRcv(taxRcv.getReceivableAmount());
@@ -197,47 +205,99 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
 		}
 
+		BigDecimal cgstPaid = BigDecimal.ZERO;
+		BigDecimal sgstPaid = BigDecimal.ZERO;
+		BigDecimal igstPaid = BigDecimal.ZERO;
+		BigDecimal ugstPaid = BigDecimal.ZERO;
+		BigDecimal cessPaid = BigDecimal.ZERO;
+
+		BigDecimal cgstWaived = BigDecimal.ZERO;
+		BigDecimal sgstWaived = BigDecimal.ZERO;
+		BigDecimal igstWaived = BigDecimal.ZERO;
+		BigDecimal ugstWaived = BigDecimal.ZERO;
+		BigDecimal cessWaived = BigDecimal.ZERO;
+
+		TaxHeader taxHeader = movement.getTaxHeader();
+		if (taxHeader != null && CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
+			for (Taxes taxes : taxHeader.getTaxDetails()) {
+				switch (taxes.getTaxType()) {
+				case RuleConstants.CODE_CGST:
+					cgstPaid = cgstPaid.add(taxes.getPaidTax());
+					cgstWaived = cgstWaived.add(taxes.getWaivedTax());
+					break;
+				case RuleConstants.CODE_SGST:
+					sgstPaid = sgstPaid.add(taxes.getPaidTax());
+					sgstWaived = sgstWaived.add(taxes.getWaivedTax());
+					break;
+				case RuleConstants.CODE_UGST:
+					ugstPaid = ugstPaid.add(taxes.getPaidTax());
+					ugstWaived = ugstWaived.add(taxes.getWaivedTax());
+					break;
+				case RuleConstants.CODE_IGST:
+					igstPaid = igstPaid.add(taxes.getPaidTax());
+					igstWaived = igstWaived.add(taxes.getWaivedTax());
+					break;
+				case RuleConstants.CODE_CESS:
+					cessPaid = cessPaid.add(taxes.getPaidTax());
+					cessWaived = cessWaived.add(taxes.getWaivedTax());
+					break;
+
+				default:
+					break;
+				}
+			}
+		}
+
 		// GST Field Details
-		dataMap.put("LPP_CGST_P", movement.getPaidCGST());
-		dataMap.put("LPP_SGST_P", movement.getPaidSGST());
-		dataMap.put("LPP_UGST_P", movement.getPaidUGST());
-		dataMap.put("LPP_IGST_P", movement.getPaidIGST());
+		dataMap.put("LPP_CGST_P", cgstPaid);
+		dataMap.put("LPP_SGST_P", sgstPaid);
+		dataMap.put("LPP_IGST_P", igstPaid);
+		dataMap.put("LPP_UGST_P", ugstPaid);
+		dataMap.put("LPP_CESS_P", cessPaid);
 
 		//GST Waivers Details
-		dataMap.put("LPP_CGST_W", rpyQueueHeader.getPenaltyWaiverCGST());
-		dataMap.put("LPP_SGST_W", rpyQueueHeader.getPenaltyWaiverSGST());
-		dataMap.put("LPP_UGST_W", rpyQueueHeader.getPenaltyWaiverUGST());
-		dataMap.put("LPP_IGST_W", rpyQueueHeader.getPenaltyWaiverIGST());
+		dataMap.put("LPP_CGST_W", cgstWaived);
+		dataMap.put("LPP_SGST_W", sgstWaived);
+		dataMap.put("LPP_UGST_W", ugstWaived);
+		dataMap.put("LPP_IGST_W", igstWaived);
+		dataMap.put("LPP_CESS_W", cessWaived);
 
 		if (taxRcv != null) {
-			if (taxRcv.getCGST().compareTo(movement.getPaidCGST()) < 0) {
+			if (taxRcv.getCGST().compareTo(cgstPaid) < 0) {
 				dataMap.put("LPP_CGST_R", taxRcv.getCGST());
 			} else {
-				dataMap.put("LPP_CGST_R", movement.getPaidCGST());
+				dataMap.put("LPP_CGST_R", cgstPaid);
 			}
 
-			if (taxRcv.getSGST().compareTo(movement.getPaidSGST()) < 0) {
+			if (taxRcv.getSGST().compareTo(sgstPaid) < 0) {
 				dataMap.put("LPP_SGST_R", taxRcv.getSGST());
 			} else {
-				dataMap.put("LPP_SGST_R", movement.getPaidSGST());
+				dataMap.put("LPP_SGST_R", sgstPaid);
 			}
 
-			if (taxRcv.getUGST().compareTo(movement.getPaidUGST()) < 0) {
+			if (taxRcv.getUGST().compareTo(ugstPaid) < 0) {
 				dataMap.put("LPP_UGST_R", taxRcv.getUGST());
 			} else {
-				dataMap.put("LPP_UGST_R", movement.getPaidUGST());
+				dataMap.put("LPP_UGST_R", ugstPaid);
 			}
 
-			if (taxRcv.getIGST().compareTo(movement.getPaidIGST()) < 0) {
+			if (taxRcv.getIGST().compareTo(igstPaid) < 0) {
 				dataMap.put("LPP_IGST_R", taxRcv.getIGST());
 			} else {
-				dataMap.put("LPP_IGST_R", movement.getPaidIGST());
+				dataMap.put("LPP_IGST_R", igstPaid);
+			}
+
+			if (taxRcv.getCESS().compareTo(cessPaid) < 0) {
+				dataMap.put("LPP_CESS_R", taxRcv.getCESS());
+			} else {
+				dataMap.put("LPP_CESS_R", cessPaid);
 			}
 		} else {
 			addZeroifNotContains(dataMap, "LPP_CGST_R");
 			addZeroifNotContains(dataMap, "LPP_SGST_R");
 			addZeroifNotContains(dataMap, "LPP_UGST_R");
 			addZeroifNotContains(dataMap, "LPP_IGST_R");
+			addZeroifNotContains(dataMap, "LPP_CESS_R");
 		}
 
 		if (rpyQueueHeader.getProfit().compareTo(BigDecimal.ZERO) == 0
@@ -278,10 +338,11 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
 		if (StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
 			movement.setPaidAmount(movement.getPaidAmount().subtract(amountCodes.getPenaltyRcv()));
-			movement.setPaidCGST(movement.getPaidCGST().subtract(new BigDecimal(dataMap.get("LPP_CGST_R").toString())));
-			movement.setPaidSGST(movement.getPaidSGST().subtract(new BigDecimal(dataMap.get("LPP_SGST_R").toString())));
-			movement.setPaidUGST(movement.getPaidUGST().subtract(new BigDecimal(dataMap.get("LPP_UGST_R").toString())));
-			movement.setPaidIGST(movement.getPaidIGST().subtract(new BigDecimal(dataMap.get("LPP_IGST_R").toString())));
+			cgstPaid = cgstPaid.subtract(new BigDecimal(dataMap.get("LPP_CGST_R").toString()));
+			sgstPaid = sgstPaid.subtract(new BigDecimal(dataMap.get("LPP_SGST_R").toString()));
+			igstPaid = igstPaid.subtract(new BigDecimal(dataMap.get("LPP_IGST_R").toString()));
+			ugstPaid = ugstPaid.subtract(new BigDecimal(dataMap.get("LPP_UGST_R").toString()));
+			cessPaid = cessPaid.subtract(new BigDecimal(dataMap.get("LPP_CESS_R").toString()));
 
 			// Update Receivable Tax details to make future postings correctly
 			if (taxRcv != null) {
@@ -290,6 +351,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				taxRcv.setSGST(taxRcv.getSGST().subtract(new BigDecimal(dataMap.get("LPP_SGST_R").toString())));
 				taxRcv.setUGST(taxRcv.getUGST().subtract(new BigDecimal(dataMap.get("LPP_UGST_R").toString())));
 				taxRcv.setIGST(taxRcv.getIGST().subtract(new BigDecimal(dataMap.get("LPP_IGST_R").toString())));
+				taxRcv.setCESS(taxRcv.getCESS().subtract(new BigDecimal(dataMap.get("LPP_CESS_R").toString())));
 
 				getFinODAmzTaxDetailDAO().updateTaxReceivable(taxRcv);
 			}
@@ -306,24 +368,28 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			advMovements.add(movement);
 
 			FinanceDetail financeDetail = new FinanceDetail();
-			FinScheduleData finScheduleData = new FinScheduleData();
-			finScheduleData.setFinanceMain(financeMain);
-			FinanceType financeType = financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "");
-			finScheduleData.setFinanceType(financeType);
-			financeDetail.setFinScheduleData(finScheduleData);
-			this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, null,
-					advMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false, false);
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+
+			InvoiceDetail invoiceDetail = new InvoiceDetail();
+			invoiceDetail.setLinkedTranId(aeEvent.getLinkedTranId());
+			invoiceDetail.setFinanceDetail(financeDetail);
+			invoiceDetail.setMovements(advMovements);
+			invoiceDetail.setWaiver(false);
+			invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
+
+			this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
 
 			// Saving Tax Income Details
 			FinTaxIncomeDetail taxIncome = new FinTaxIncomeDetail();
 			taxIncome.setRepayID(rpyQueueHeader.getReceiptId());
 			taxIncome.setTaxFor("LPP");
 			taxIncome.setReceivedAmount(movement.getPaidAmount());
-			taxIncome.setCGST(movement.getPaidCGST());
-			taxIncome.setSGST(movement.getPaidSGST());
-			taxIncome.setUGST(movement.getPaidUGST());
-			taxIncome.setIGST(movement.getPaidIGST());
-			getFinODAmzTaxDetailDAO().saveTaxIncome(taxIncome);
+			taxIncome.setCGST(cgstPaid);
+			taxIncome.setSGST(sgstPaid);
+			taxIncome.setUGST(ugstPaid);
+			taxIncome.setIGST(igstPaid);
+			taxIncome.setCESS(cessPaid);
+			finODAmzTaxDetailDAO.saveTaxIncome(taxIncome);
 
 			returnList.add(taxIncome);
 
@@ -331,8 +397,189 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			returnList.add(null);
 		}
 
+		// Method for Creating Invoice Details for the Waived amount against Created Due invoices
+		prepareTaxMovement(rpyQueueHeader, financeMain, movement, aeEvent.getLinkedTranId());
+
 		logger.debug("Leaving");
 		return returnList;
+	}
+
+	/**
+	 * Method for Preparing Credit Invoice details for the waived amount & Tax Movements saving
+	 * 
+	 * @param rpyQueueHeader
+	 * @param financeMain
+	 * @param advMov
+	 * @param linkedTranID
+	 */
+	private void prepareTaxMovement(FinRepayQueueHeader rpyQueueHeader, FinanceMain financeMain,
+			ManualAdviseMovements advMov, long linkedTranID) {
+
+		// Prepare GST Details based on Invoice ID which was incomized
+		List<OverdueTaxMovement> odTaxMovList = new ArrayList<>();
+		List<FinODAmzTaxDetail> dueTaxList = finODAmzTaxDetailDAO.getODTaxList(financeMain.getFinReference());
+
+		// Sorting Due Tax details based on Valuedate
+		dueTaxList = sortDueTaxDetails(dueTaxList);
+		OverdueTaxMovement movement = null;
+		List<FinODAmzTaxDetail> updateDueList = new ArrayList<>();
+
+		for (FinRepayQueue queue : rpyQueueHeader.getQueueList()) {
+
+			BigDecimal lppPaid = queue.getPenaltyPayNow();
+			BigDecimal lppWaived = queue.getWaivedAmount();
+
+			// if No Waiver Amount & Paid Amounts on the schedule date
+			if (lppPaid.compareTo(BigDecimal.ZERO) == 0 && lppWaived.compareTo(BigDecimal.ZERO) == 0) {
+				continue;
+			}
+
+			// Looping Due Details and adjust based on balance Amount
+			for (FinODAmzTaxDetail taxDetail : dueTaxList) {
+
+				BigDecimal balAmount = taxDetail.getAmount().subtract(taxDetail.getPaidAmount())
+						.subtract(taxDetail.getWaivedAmount());
+				if (balAmount.compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
+				}
+
+				movement = new OverdueTaxMovement();
+				movement.setInvoiceID(taxDetail.getInvoiceID());
+				movement.setValueDate(taxDetail.getValueDate());
+				movement.setSchDate(queue.getRpyDate());
+				movement.setFinReference(queue.getFinReference());
+				movement.setTaxFor(taxDetail.getTaxFor());
+
+				if (balAmount.compareTo(queue.getPenaltyPayNow()) > 0) {
+					movement.setPaidAmount(queue.getPenaltyPayNow());
+				} else {
+					movement.setPaidAmount(balAmount);
+				}
+
+				balAmount = balAmount.subtract(movement.getPaidAmount());
+				lppPaid = lppPaid.subtract(movement.getPaidAmount());
+				taxDetail.setPaidAmount(taxDetail.getPaidAmount().add(movement.getPaidAmount()));
+
+				if (balAmount.compareTo(queue.getWaivedAmount()) > 0) {
+					movement.setWaivedAmount(queue.getWaivedAmount());
+				} else {
+					movement.setWaivedAmount(balAmount);
+				}
+				taxDetail.setWaivedAmount(taxDetail.getWaivedAmount().add(movement.getWaivedAmount()));
+				lppWaived = lppWaived.subtract(movement.getWaivedAmount());
+
+				updateDueList.add(taxDetail);
+
+				// Tax Header Preparation
+				if (queue.getTaxHeader() != null) {
+					Cloner cloner = new Cloner();
+					TaxHeader taxHeader = cloner.deepClone(queue.getTaxHeader());
+					taxHeader.setHeaderId(0);
+					if (CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
+
+						for (Taxes taxes : taxHeader.getTaxDetails()) {
+							BigDecimal paidAmount = movement.getPaidAmount();
+							BigDecimal waivedAmount = movement.getWaivedAmount();
+							if (StringUtils.equals(advMov.getTaxComponent(),
+									FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
+								if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
+									paidAmount = GSTCalculator.getInclusiveAmount(paidAmount, taxes.getTaxPerc());
+								}
+								if (waivedAmount.compareTo(BigDecimal.ZERO) > 0) {
+									waivedAmount = GSTCalculator.getInclusiveAmount(waivedAmount, taxes.getTaxPerc());
+								}
+							}
+
+							if (movement.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
+								taxes.setPaidTax(
+										GSTCalculator.getExclusiveTax(movement.getPaidAmount(), taxes.getTaxPerc()));
+							} else {
+								taxes.setPaidTax(BigDecimal.ZERO);
+							}
+							if (movement.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
+								taxes.setWaivedTax(
+										GSTCalculator.getExclusiveTax(movement.getWaivedAmount(), taxes.getTaxPerc()));
+							} else {
+								taxes.setWaivedTax(BigDecimal.ZERO);
+							}
+						}
+					}
+					movement.setTaxHeader(taxHeader);
+				}
+
+				odTaxMovList.add(movement);
+				if (lppPaid.compareTo(BigDecimal.ZERO) == 0 && lppWaived.compareTo(BigDecimal.ZERO) == 0) {
+					break;
+				}
+			}
+		}
+
+		// If Amount was incomized on month end then waivers should be created as Credit invoice
+		if (!odTaxMovList.isEmpty()) {
+			if (rpyQueueHeader.isLppAmzReqonME()) {
+
+				FinanceDetail financeDetail = new FinanceDetail();
+				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+
+				for (OverdueTaxMovement taxMovement : odTaxMovList) {
+
+					advMov.setMovementAmount(taxMovement.getPaidAmount().add(taxMovement.getWaivedAmount()));
+					advMov.setPaidAmount(taxMovement.getPaidAmount());
+					advMov.setWaivedAmount(taxMovement.getWaivedAmount());
+					advMov.setTaxHeader(taxMovement.getTaxHeader());
+					advMov.setDebitInvoiceId(taxMovement.getInvoiceID());
+
+					List<ManualAdviseMovements> advMovements = new ArrayList<>();
+					advMovements.add(advMov);
+
+					InvoiceDetail invoiceDetail = new InvoiceDetail();
+					invoiceDetail.setLinkedTranId(linkedTranID);
+					invoiceDetail.setFinanceDetail(financeDetail);
+					invoiceDetail.setMovements(advMovements);
+					invoiceDetail.setWaiver(true);
+					invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
+
+					long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
+
+					if (taxMovement.getTaxHeader() != null) {
+						taxMovement.getTaxHeader().setInvoiceID(invoiceID);
+					}
+				}
+			}
+
+			// Updating OD Due tax details
+			if (!updateDueList.isEmpty()) {
+				finODAmzTaxDetailDAO.updateODTaxDueList(updateDueList);
+			}
+
+			// Saving Overdue Tax Movements
+			for (OverdueTaxMovement taxMovement : odTaxMovList) {
+				if (taxMovement.getTaxHeader() != null) {
+					long headerId = taxHeaderDetailsDAO.save(taxMovement.getTaxHeader(), "");
+					if (CollectionUtils.isNotEmpty(taxMovement.getTaxHeader().getTaxDetails())) {
+						for (Taxes taxes : taxMovement.getTaxHeader().getTaxDetails()) {
+							taxes.setReferenceId(headerId);
+						}
+						taxHeaderDetailsDAO.saveTaxes(taxMovement.getTaxHeader().getTaxDetails(), "");
+					}
+					taxMovement.setTaxHeaderId(headerId);
+				}
+			}
+			finODAmzTaxDetailDAO.saveTaxList(odTaxMovList);
+		}
+
+	}
+
+	private List<FinODAmzTaxDetail> sortDueTaxDetails(List<FinODAmzTaxDetail> dueTaxList) {
+		if (dueTaxList != null && dueTaxList.size() > 0) {
+			Collections.sort(dueTaxList, new Comparator<FinODAmzTaxDetail>() {
+				@Override
+				public int compare(FinODAmzTaxDetail detail1, FinODAmzTaxDetail detail2) {
+					return DateUtility.compare(detail1.getValueDate(), detail2.getValueDate());
+				}
+			});
+		}
+		return dueTaxList;
 	}
 
 	private void addZeroifNotContains(Map<String, Object> dataMap, String key) {
@@ -1069,6 +1316,10 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
+	}
+
+	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
+		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
 	}
 
 }

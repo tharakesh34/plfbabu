@@ -1,0 +1,2872 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="Vinay">
+		<addColumn tableName="Customers_Temp">
+			<column name="ResidentialStatus" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="2" author="Vinay">
+		<addColumn tableName="Customers">
+			<column name="ResidentialStatus" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="3" author="Vinay">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerDialog_residentialStatus','CustomerDialog',0,1000,CURRENT_TIMESTAMP,'','','','','','',0 FROM SEQSECRIGHTS WHERE 0=0;
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerDialog_residentialStatus'), 1, 0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+	
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="4_pre.0" author="Vinay" dbms="postgresql">
+		<sql>
+		<![CDATA[
+			select deps_save_and_drop_dependencies('plf','customers_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="4" author="Vinay">
+		<createView viewName="customers_view" replaceIfExists="true">
+		<![CDATA[
+			 SELECT t1.custid,
+			    t1.custcif,
+			    t1.custcorebank,
+			    t1.custctgcode,
+			    t1.custtypecode,
+			    t1.custsalutationcode,
+			    t1.custfname,
+			    t1.custmname,
+			    t1.custlname,
+			    t1.custshrtname,
+			    t1.custfnamelcllng,
+			    t1.custmnamelcllng,
+			    t1.custlnamelcllng,
+			    t1.custshrtnamelcllng,
+			    t1.custdftbranch,
+			    t1.custgendercode,
+			    t1.custdob,
+			    t1.custpob,
+			    t1.custcob,
+			    t1.custpassportno,
+			    t1.custmothermaiden,
+			    t1.custisminor,
+			    t1.custreferedby,
+			    t1.custdsa,
+			    t1.custdsadept,
+			    t1.custro1,
+			    t1.custro2,
+			    t1.custgroupid,
+			    t1.custsts,
+			    t1.custstschgdate,
+			    t1.custgroupsts,
+			    t1.custisblocked,
+			    t1.custisactive,
+			    t1.custisclosed,
+			    t1.custinactivereason,
+			    t1.custisdecease,
+			    t1.custisdormant,
+			    t1.custisdelinquent,
+			    t1.custistradefincust,
+			    t1.custtradelicencenum,
+			    t1.custtradelicenceexpiry,
+			    t1.custpassportexpiry,
+			    t1.custvisanum,
+			    t1.custvisaexpiry,
+			    t1.custisstaff,
+			    t1.custstaffid,
+			    t1.custindustry,
+			    t1.custsector,
+			    t1.custsubsector,
+			    t1.custprofession,
+			    t1.custtotalincome,
+			    t1.custmaritalsts,
+			    t1.custempsts,
+			    t1.custsegment,
+			    t1.custsubsegment,
+			    t1.custisblacklisted,
+			    t1.custblrsncode,
+			    t1.custisrejected,
+			    t1.custrejectedrsn,
+			    t1.custbaseccy,
+			    t1.custlng,
+			    t1.custparentcountry,
+			    t1.custresdcountry,
+			    t1.custriskcountry,
+			    t1.custnationality,
+			    t1.custclosedon,
+			    t1.custstmtfrq,
+			    t1.custisstmtcombined,
+			    t1.custstmtlastdate,
+			    t1.custstmtnextdate,
+			    t1.custstmtdispatchmode,
+			    t1.custfirstbusinessdate,
+			    t1.custaddlvar81,
+			    t1.custaddlvar82,
+			    t1.custaddlvar83,
+			    t1.custaddlvar84,
+			    t1.custaddlvar85,
+			    t1.custaddlvar86,
+			    t1.custaddlvar87,
+			    t1.custaddlvar88,
+			    t1.custaddlvar89,
+			    t1.custaddldate1,
+			    t1.custaddldate2,
+			    t1.custaddldate3,
+			    t1.custaddldate4,
+			    t1.custaddldate5,
+			    t1.custaddlvar1,
+			    t1.custaddlvar2,
+			    t1.custaddlvar3,
+			    t1.custaddlvar4,
+			    t1.custaddlvar5,
+			    t1.custaddlvar6,
+			    t1.custaddlvar7,
+			    t1.custaddlvar8,
+			    t1.custaddlvar9,
+			    t1.custaddlvar10,
+			    t1.custaddlvar11,
+			    t1.custaddldec1,
+			    t1.custaddldec2,
+			    t1.custaddldec3,
+			    t1.custaddldec4,
+			    t1.custaddldec5,
+			    t1.custaddlint1,
+			    t1.custaddlint2,
+			    t1.custaddlint3,
+			    t1.custaddlint4,
+			    t1.custaddlint5,
+			    t1.custsourceid,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.custtypedesc lovdesccusttypecodename,
+			    t3.maritalstsdesc lovdesccustmaritalstsname,
+			    t4.empstsdesc lovdesccustempstsname,
+			    t6.custstsdescription lovdesccuststsname,
+			    t7.industrydesc lovdesccustindustryname,
+			    t8.sectordesc lovdesccustsectorname,
+			    t9.subsectordesc lovdesccustsubsectorname,
+			    t10.professiondesc lovdesccustprofessionname,
+			    t11.countrydesc lovdesccustcobname,
+			    t20.segmentdesc lovdesccustsegmentname,
+			    t12.nationalitydesc lovdesccustnationalityname,
+			    t13.genderdesc lovdesccustgendercodename,
+			    t14.deptdesc lovdesccustdsadeptname,
+			    t15.dealername lovdesccustro1name,
+			    t15.dealercity lovdesccustro1city,
+			    t16.grpstsdescription lovdesccustgroupstsname,
+			    t17.branchdesc lovdesccustdftbranchname,
+			    t17.bankrefno branchrefno,
+			    t17.branchswiftbrncde custswiftbrncode,
+			    t18.custctgdesc lovdesccustctgcodename,
+			    t2.custtypectg lovdesccustctgtype,
+			    t19.saluationdesc lovdesccustsalutationcodename,
+			    t21.countrydesc lovdesccustparentcountryname,
+			    t22.countrydesc lovdesccustresdcountryname,
+			    t23.countrydesc lovdesccustriskcountryname,
+			    t24.rofficerdesc lovdesccustro2name,
+			    t25.blrsndesc lovdesccustblrsncodename,
+			    t26.rejectdesc lovdesccustrejectedrsnname,
+			    t27.custgrpdesc lovdesccustgroupidname,
+			    t28.subsegmentdesc lovdesccustsubsegmentname,
+			    t29.lngdesc lovdesccustlngname,
+			    t30.dispatchmodedesc lovdescdispatchmodedescname,
+			    t1.dedupfound,
+			    t1.skipdedup,
+			    t1.custtotalexpense,
+			    t1.custblacklistdate,
+			    t1.noofdependents,
+			    t1.custcrcpr,
+			    t1.jointcust,
+			    t1.jointcustname,
+			    t1.jointcustdob,
+			    t27.custgrpcode lovdesccustgroupcode,
+			    t1.custrelation,
+			    t1.contactpersonname,
+			    t1.phonenumber,
+			    t1.emailid,
+			    t1.salariedcustomer,
+			    t31.targetdesc lovdesctargetname,
+			    t1.custsuspsts,
+			    t1.custsuspdate,
+			    t1.custsusptrigger,
+			    t1.subcategory,
+			    t1.casteid,
+			    t1.religionid,
+			    t32.castecode,
+			    t32.castedesc,
+			    t33.religioncode,
+			    t33.religiondesc,
+			    COALESCE(t34.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) lovdescrequeststage,
+			    t1.margindeviation,
+			    t1.applicationno,
+			    t17.branchprovince,
+			    t1.dnd,
+			    t1.ResidentialStatus
+			   FROM customers_temp t1
+			     LEFT JOIN rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+			     LEFT JOIN bmtmaritalstatuscodes t3 ON t1.custmaritalsts = t3.maritalstscode
+			     LEFT JOIN bmtempstscodes t4 ON t1.custempsts = t4.empstscode
+			     LEFT JOIN bmtcuststatuscodes t6 ON t1.custsts = t6.custstscode
+			     LEFT JOIN bmtindustries t7 ON t1.custindustry = t7.industrycode
+			     LEFT JOIN bmtsectors t8 ON t1.custsector = t8.sectorcode
+			     LEFT JOIN bmtsubsectors t9 ON t1.custsector = t9.sectorcode AND t1.custsubsector = t9.subsectorcode
+			     LEFT JOIN bmtprofessions t10 ON t1.custprofession = t10.professioncode
+			     LEFT JOIN bmtcountries t11 ON t1.custcob = t11.countrycode
+			     LEFT JOIN bmtnationalitycodes t12 ON t1.custnationality = t12.nationalitycode
+			     LEFT JOIN bmtgenders t13 ON t1.custgendercode = t13.gendercode
+			     LEFT JOIN bmtdepartments t14 ON t1.custdsadept = t14.deptcode
+			     LEFT JOIN amtvehicledealer t15 ON t1.custro1 = t15.dealerid
+			     LEFT JOIN bmtgrpstatuscodes t16 ON t1.custgroupsts = t16.grpstscode
+			     LEFT JOIN rmtbranches t17 ON t1.custdftbranch = t17.branchcode
+			     LEFT JOIN bmtcustcategories t18 ON t1.custctgcode = t18.custctgcode
+			     LEFT JOIN bmtsalutations t19 ON t1.custsalutationcode = t19.salutationcode
+			     LEFT JOIN bmtsegments t20 ON t1.custsegment = t20.segmentcode
+			     LEFT JOIN bmtcountries t21 ON t1.custparentcountry = t21.countrycode
+			     LEFT JOIN bmtcountries t22 ON t1.custresdcountry = t22.countrycode
+			     LEFT JOIN bmtcountries t23 ON t1.custriskcountry = t23.countrycode
+			     LEFT JOIN relationshipofficers t24 ON t1.custro2 = t24.rofficercode
+			     LEFT JOIN bmtblacklistrsncodes t25 ON t1.custblrsncode = t25.blrsncode
+			     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn = t26.rejectcode
+			     LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
+			     LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
+			     LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
+			     LEFT JOIN bmtdispatchmodes t30 ON t1.custstmtdispatchmode = t30.dispatchmodecode
+			     LEFT JOIN targetdetails t31 ON t1.custaddlvar82 = t31.targetcode
+			     LEFT JOIN secroles t34 ON t1.nextrolecode = t34.rolecd
+			     LEFT JOIN caste t32 ON t1.casteid = t32.casteid
+			     LEFT JOIN religion t33 ON t1.religionid = t33.religionid
+			UNION ALL
+				 SELECT t1.custid,
+				    t1.custcif,
+				    t1.custcorebank,
+				    t1.custctgcode,
+				    t1.custtypecode,
+				    t1.custsalutationcode,
+				    t1.custfname,
+				    t1.custmname,
+				    t1.custlname,
+				    t1.custshrtname,
+				    t1.custfnamelcllng,
+				    t1.custmnamelcllng,
+				    t1.custlnamelcllng,
+				    t1.custshrtnamelcllng,
+				    t1.custdftbranch,
+				    t1.custgendercode,
+				    t1.custdob,
+				    t1.custpob,
+				    t1.custcob,
+				    t1.custpassportno,
+				    t1.custmothermaiden,
+				    t1.custisminor,
+				    t1.custreferedby,
+				    t1.custdsa,
+				    t1.custdsadept,
+				    t1.custro1,
+				    t1.custro2,
+				    t1.custgroupid,
+				    t1.custsts,
+				    t1.custstschgdate,
+				    t1.custgroupsts,
+				    t1.custisblocked,
+				    t1.custisactive,
+				    t1.custisclosed,
+				    t1.custinactivereason,
+				    t1.custisdecease,
+				    t1.custisdormant,
+				    t1.custisdelinquent,
+				    t1.custistradefincust,
+				    t1.custtradelicencenum,
+				    t1.custtradelicenceexpiry,
+				    t1.custpassportexpiry,
+				    t1.custvisanum,
+				    t1.custvisaexpiry,
+				    t1.custisstaff,
+				    t1.custstaffid,
+				    t1.custindustry,
+				    t1.custsector,
+				    t1.custsubsector,
+				    t1.custprofession,
+				    t1.custtotalincome,
+				    t1.custmaritalsts,
+				    t1.custempsts,
+				    t1.custsegment,
+				    t1.custsubsegment,
+				    t1.custisblacklisted,
+				    t1.custblrsncode,
+				    t1.custisrejected,
+				    t1.custrejectedrsn,
+				    t1.custbaseccy,
+				    t1.custlng,
+				    t1.custparentcountry,
+				    t1.custresdcountry,
+				    t1.custriskcountry,
+				    t1.custnationality,
+				    t1.custclosedon,
+				    t1.custstmtfrq,
+				    t1.custisstmtcombined,
+				    t1.custstmtlastdate,
+				    t1.custstmtnextdate,
+				    t1.custstmtdispatchmode,
+				    t1.custfirstbusinessdate,
+				    t1.custaddlvar81,
+				    t1.custaddlvar82,
+				    t1.custaddlvar83,
+				    t1.custaddlvar84,
+				    t1.custaddlvar85,
+				    t1.custaddlvar86,
+				    t1.custaddlvar87,
+				    t1.custaddlvar88,
+				    t1.custaddlvar89,
+				    t1.custaddldate1,
+				    t1.custaddldate2,
+				    t1.custaddldate3,
+				    t1.custaddldate4,
+				    t1.custaddldate5,
+				    t1.custaddlvar1,
+				    t1.custaddlvar2,
+				    t1.custaddlvar3,
+				    t1.custaddlvar4,
+				    t1.custaddlvar5,
+				    t1.custaddlvar6,
+				    t1.custaddlvar7,
+				    t1.custaddlvar8,
+				    t1.custaddlvar9,
+				    t1.custaddlvar10,
+				    t1.custaddlvar11,
+				    t1.custaddldec1,
+				    t1.custaddldec2,
+				    t1.custaddldec3,
+				    t1.custaddldec4,
+				    t1.custaddldec5,
+				    t1.custaddlint1,
+				    t1.custaddlint2,
+				    t1.custaddlint3,
+				    t1.custaddlint4,
+				    t1.custaddlint5,
+				    t1.custsourceid,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.custtypedesc lovdesccusttypecodename,
+				    t3.maritalstsdesc lovdesccustmaritalstsname,
+				    t4.empstsdesc lovdesccustempstsname,
+				    t6.custstsdescription lovdesccuststsname,
+				    t7.industrydesc lovdesccustindustryname,
+				    t8.sectordesc lovdesccustsectorname,
+				    t9.subsectordesc lovdesccustsubsectorname,
+				    t10.professiondesc lovdesccustprofessionname,
+				    t11.countrydesc lovdesccustcobname,
+				    t20.segmentdesc lovdesccustsegmentname,
+				    t12.nationalitydesc lovdesccustnationalityname,
+				    t13.genderdesc lovdesccustgendercodename,
+				    t14.deptdesc lovdesccustdsadeptname,
+				    t15.dealername lovdesccustro1name,
+				    t15.dealercity lovdesccustro1city,
+				    t16.grpstsdescription lovdesccustgroupstsname,
+				    t17.branchdesc lovdesccustdftbranchname,
+				    t17.bankrefno branchrefno,
+				    t17.branchswiftbrncde custswiftbrncode,
+				    t18.custctgdesc lovdesccustctgcodename,
+				    t2.custtypectg lovdesccustctgtype,
+				    t19.saluationdesc lovdesccustsalutationcodename,
+				    t21.countrydesc lovdesccustparentcountryname,
+				    t22.countrydesc lovdesccustresdcountryname,
+				    t23.countrydesc lovdesccustriskcountryname,
+				    t24.rofficerdesc lovdesccustro2name,
+				    t25.blrsndesc lovdesccustblrsncodename,
+				    t26.rejectdesc lovdesccustrejectedrsnname,
+				    t27.custgrpdesc lovdesccustgroupidname,
+				    t28.subsegmentdesc lovdesccustsubsegmentname,
+				    t29.lngdesc lovdesccustlngname,
+				    t30.dispatchmodedesc lovdescdispatchmodedescname,
+				    t1.dedupfound,
+				    t1.skipdedup,
+				    t1.custtotalexpense,
+				    t1.custblacklistdate,
+				    t1.noofdependents,
+				    t1.custcrcpr,
+				    t1.jointcust,
+				    t1.jointcustname,
+				    t1.jointcustdob,
+				    t27.custgrpcode lovdesccustgroupcode,
+				    t1.custrelation,
+				    t1.contactpersonname,
+				    t1.phonenumber,
+				    t1.emailid,
+				    t1.salariedcustomer,
+				    t31.targetdesc lovdesctargetname,
+				    t1.custsuspsts,
+				    t1.custsuspdate,
+				    t1.custsusptrigger,
+				    t1.subcategory,
+				    t1.casteid,
+				    t1.religionid,
+				    t32.castecode,
+				    t32.castedesc,
+				    t33.religioncode,
+				    t33.religiondesc,
+				    COALESCE(t34.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) lovdescrequeststage,
+				    t1.margindeviation,
+				    t1.applicationno,
+				    t17.branchprovince,
+				    t1.dnd,
+				    t1.ResidentialStatus
+				   FROM customers t1
+				     LEFT JOIN rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+				     LEFT JOIN bmtmaritalstatuscodes t3 ON t1.custmaritalsts = t3.maritalstscode
+				     LEFT JOIN bmtempstscodes t4 ON t1.custempsts = t4.empstscode
+				     LEFT JOIN bmtcuststatuscodes t6 ON t1.custsts = t6.custstscode
+				     LEFT JOIN bmtindustries t7 ON t1.custindustry = t7.industrycode
+				     LEFT JOIN bmtsectors t8 ON t1.custsector = t8.sectorcode
+				     LEFT JOIN bmtsubsectors t9 ON t1.custsector = t9.sectorcode AND t1.custsubsector = t9.subsectorcode
+				     LEFT JOIN bmtprofessions t10 ON t1.custprofession = t10.professioncode
+				     LEFT JOIN bmtcountries t11 ON t1.custcob = t11.countrycode
+				     LEFT JOIN bmtnationalitycodes t12 ON t1.custnationality = t12.nationalitycode
+				     LEFT JOIN bmtgenders t13 ON t1.custgendercode = t13.gendercode
+				     LEFT JOIN bmtdepartments t14 ON t1.custdsadept = t14.deptcode
+				     LEFT JOIN amtvehicledealer t15 ON t1.custro1 = t15.dealerid
+				     LEFT JOIN bmtgrpstatuscodes t16 ON t1.custgroupsts = t16.grpstscode
+				     LEFT JOIN rmtbranches t17 ON t1.custdftbranch = t17.branchcode
+				     LEFT JOIN bmtcustcategories t18 ON t1.custctgcode = t18.custctgcode
+				     LEFT JOIN bmtsalutations t19 ON t1.custsalutationcode = t19.salutationcode
+				     LEFT JOIN bmtsegments t20 ON t1.custsegment = t20.segmentcode
+				     LEFT JOIN bmtcountries t21 ON t1.custparentcountry = t21.countrycode
+				     LEFT JOIN bmtcountries t22 ON t1.custresdcountry = t22.countrycode
+				     LEFT JOIN bmtcountries t23 ON t1.custriskcountry = t23.countrycode
+				     LEFT JOIN relationshipofficers t24 ON t1.custro2 = t24.rofficercode
+				     LEFT JOIN bmtblacklistrsncodes t25 ON t1.custblrsncode = t25.blrsncode
+				     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn = t26.rejectcode
+				     LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
+				     LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
+				     LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
+				     LEFT JOIN bmtdispatchmodes t30 ON t1.custstmtdispatchmode = t30.dispatchmodecode
+				     LEFT JOIN targetdetails t31 ON t1.custaddlvar82 = t31.targetcode
+				     LEFT JOIN secroles t34 ON t1.nextrolecode = t34.rolecd
+				     LEFT JOIN caste t32 ON t1.casteid = t32.casteid
+				     LEFT JOIN religion t33 ON t1.religionid = t33.religionid
+				  WHERE NOT (EXISTS ( SELECT 1 AS expr1
+				           FROM customers_temp
+				          WHERE customers_temp.custid = t1.custid))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="4_post" author="Vinay" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plf','customers_view');
+		</sql>
+	</changeSet>
+
+	<changeSet id="5" author="Vinay">
+		<createView viewName="customers_tview" replaceIfExists="true">
+			<![CDATA[
+			SELECT t1.custid,
+			    t1.custcif,
+			    t1.custcorebank,
+			    t1.custctgcode,
+			    t1.custtypecode,
+			    t1.custsalutationcode,
+			    t1.custfname,
+			    t1.custmname,
+			    t1.custlname,
+			    t1.custshrtname,
+			    t1.custfnamelcllng,
+			    t1.custmnamelcllng,
+			    t1.custlnamelcllng,
+			    t1.custshrtnamelcllng,
+			    t1.custdftbranch,
+			    t1.custgendercode,
+			    t1.custdob,
+			    t1.custpob,
+			    t1.custcob,
+			    t1.custpassportno,
+			    t1.custmothermaiden,
+			    t1.custisminor,
+			    t1.custreferedby,
+			    t1.custdsa,
+			    t1.custdsadept,
+			    t1.custro1,
+			    t1.custro2,
+			    t1.custgroupid,
+			    t1.custsts,
+			    t1.custstschgdate,
+			    t1.custgroupsts,
+			    t1.custisblocked,
+			    t1.custisactive,
+			    t1.custisclosed,
+			    t1.custinactivereason,
+			    t1.custisdecease,
+			    t1.custisdormant,
+			    t1.custisdelinquent,
+			    t1.custistradefincust,
+			    t1.custtradelicencenum,
+			    t1.custtradelicenceexpiry,
+			    t1.custpassportexpiry,
+			    t1.custvisanum,
+			    t1.custvisaexpiry,
+			    t1.custisstaff,
+			    t1.custstaffid,
+			    t1.custindustry,
+			    t1.custsector,
+			    t1.custsubsector,
+			    t1.custprofession,
+			    t1.custtotalincome,
+			    t1.custmaritalsts,
+			    t1.custempsts,
+			    t1.custsegment,
+			    t1.custsubsegment,
+			    t1.custisblacklisted,
+			    t1.custblrsncode,
+			    t1.custisrejected,
+			    t1.custrejectedrsn,
+			    t1.custbaseccy,
+			    t1.custlng,
+			    t1.custparentcountry,
+			    t1.custresdcountry,
+			    t1.custriskcountry,
+			    t1.custnationality,
+			    t1.custclosedon,
+			    t1.custstmtfrq,
+			    t1.custisstmtcombined,
+			    t1.custstmtlastdate,
+			    t1.custstmtnextdate,
+			    t1.custstmtdispatchmode,
+			    t1.custfirstbusinessdate,
+			    t1.custaddlvar81,
+			    t1.custaddlvar82,
+			    t1.custaddlvar83,
+			    t1.custaddlvar84,
+			    t1.custaddlvar85,
+			    t1.custaddlvar86,
+			    t1.custaddlvar87,
+			    t1.custaddlvar88,
+			    t1.custaddlvar89,
+			    t1.custaddldate1,
+			    t1.custaddldate2,
+			    t1.custaddldate3,
+			    t1.custaddldate4,
+			    t1.custaddldate5,
+			    t1.custaddlvar1,
+			    t1.custaddlvar2,
+			    t1.custaddlvar3,
+			    t1.custaddlvar4,
+			    t1.custaddlvar5,
+			    t1.custaddlvar6,
+			    t1.custaddlvar7,
+			    t1.custaddlvar8,
+			    t1.custaddlvar9,
+			    t1.custaddlvar10,
+			    t1.custaddlvar11,
+			    t1.custaddldec1,
+			    t1.custaddldec2,
+			    t1.custaddldec3,
+			    t1.custaddldec4,
+			    t1.custaddldec5,
+			    t1.custaddlint1,
+			    t1.custaddlint2,
+			    t1.custaddlint3,
+			    t1.custaddlint4,
+			    t1.custaddlint5,
+			    t1.custsourceid,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.custtypedesc lovdesccusttypecodename,
+			    t3.maritalstsdesc lovdesccustmaritalstsname,
+			    t4.empstsdesc lovdesccustempstsname,
+			    t6.custstsdescription lovdesccuststsname,
+			    t7.industrydesc lovdesccustindustryname,
+			    t8.sectordesc lovdesccustsectorname,
+			    t9.subsectordesc lovdesccustsubsectorname,
+			    t10.professiondesc lovdesccustprofessionname,
+			    t11.countrydesc lovdesccustcobname,
+			    t20.segmentdesc lovdesccustsegmentname,
+			    t12.nationalitydesc lovdesccustnationalityname,
+			    t13.genderdesc lovdesccustgendercodename,
+			    t14.deptdesc lovdesccustdsadeptname,
+			    t15.dealername lovdesccustro1name,
+			    t15.dealercity lovdesccustro1city,
+			    t16.grpstsdescription lovdesccustgroupstsname,
+			    t17.branchdesc lovdesccustdftbranchname,
+			    t17.bankrefno branchrefno,
+			    t17.branchswiftbrncde custswiftbrncode,
+			    t18.custctgdesc lovdesccustctgcodename,
+			    t2.custtypectg lovdesccustctgtype,
+			    t19.saluationdesc lovdesccustsalutationcodename,
+			    t21.countrydesc lovdesccustparentcountryname,
+			    t22.countrydesc lovdesccustresdcountryname,
+			    t23.countrydesc lovdesccustriskcountryname,
+			    t24.rofficerdesc lovdesccustro2name,
+			    t25.blrsndesc lovdesccustblrsncodename,
+			    t26.rejectdesc lovdesccustrejectedrsnname,
+			    t27.custgrpdesc lovdesccustgroupidname,
+			    t28.subsegmentdesc lovdesccustsubsegmentname,
+			    t29.lngdesc lovdesccustlngname,
+			    t30.dispatchmodedesc lovdescdispatchmodedescname,
+			    t1.dedupfound,
+			    t1.skipdedup,
+			    t1.custtotalexpense,
+			    t1.custblacklistdate,
+			    t1.noofdependents,
+			    t1.custcrcpr,
+			    t1.jointcust,
+			    t1.jointcustname,
+			    t1.jointcustdob,
+			    t27.custgrpcode lovdesccustgroupcode,
+			    t1.contactpersonname,
+			    t1.phonenumber,
+			    t1.emailid,
+			    t1.salariedcustomer,
+			    t31.targetdesc lovdesctargetname,
+			    t1.custrelation,
+			    t1.custsuspsts,
+			    t1.custsuspdate,
+			    t1.custsusptrigger,
+			    t1.subcategory,
+			    t1.casteid,
+			    t1.religionid,
+			    t32.castecode,
+			    t32.castedesc,
+			    t33.religioncode,
+			    t33.religiondesc,
+			    COALESCE(t34.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) lovdescrequeststage,
+			    t1.margindeviation,
+			    t1.applicationno,
+			    t17.branchprovince,
+			    t1.dnd,
+			    t1.ResidentialStatus
+			   FROM customers_temp t1
+			     LEFT JOIN rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+			     LEFT JOIN bmtmaritalstatuscodes t3 ON t1.custmaritalsts = t3.maritalstscode
+			     LEFT JOIN bmtempstscodes t4 ON t1.custempsts = t4.empstscode
+			     LEFT JOIN bmtcuststatuscodes t6 ON t1.custsts = t6.custstscode
+			     LEFT JOIN bmtindustries t7 ON t1.custindustry = t7.industrycode
+			     LEFT JOIN bmtsectors t8 ON t1.custsector = t8.sectorcode
+			     LEFT JOIN bmtsubsectors t9 ON t1.custsector = t9.sectorcode AND t1.custsubsector = t9.subsectorcode
+			     LEFT JOIN bmtprofessions t10 ON t1.custprofession = t10.professioncode
+			     LEFT JOIN bmtcountries t11 ON t1.custcob = t11.countrycode
+			     LEFT JOIN bmtnationalitycodes t12 ON t1.custnationality = t12.nationalitycode
+			     LEFT JOIN bmtgenders t13 ON t1.custgendercode = t13.gendercode
+			     LEFT JOIN bmtdepartments t14 ON t1.custdsadept = t14.deptcode
+			     LEFT JOIN amtvehicledealer t15 ON t1.custro1 = t15.dealerid
+			     LEFT JOIN bmtgrpstatuscodes t16 ON t1.custgroupsts = t16.grpstscode
+			     LEFT JOIN rmtbranches t17 ON t1.custdftbranch = t17.branchcode
+			     LEFT JOIN bmtcustcategories t18 ON t1.custctgcode = t18.custctgcode
+			     LEFT JOIN bmtsalutations t19 ON t1.custsalutationcode = t19.salutationcode
+			     LEFT JOIN bmtsegments t20 ON t1.custsegment = t20.segmentcode
+			     LEFT JOIN bmtcountries t21 ON t1.custparentcountry = t21.countrycode
+			     LEFT JOIN bmtcountries t22 ON t1.custresdcountry = t22.countrycode
+			     LEFT JOIN bmtcountries t23 ON t1.custriskcountry = t23.countrycode
+			     LEFT JOIN relationshipofficers t24 ON t1.custro2 = t24.rofficercode
+			     LEFT JOIN bmtblacklistrsncodes t25 ON t1.custblrsncode = t25.blrsncode
+			     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn = t26.rejectcode
+			     LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
+			     LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
+			     LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
+			     LEFT JOIN bmtdispatchmodes t30 ON t1.custstmtdispatchmode = t30.dispatchmodecode
+			     LEFT JOIN targetdetails t31 ON t1.custaddlvar82 = t31.targetcode
+			     LEFT JOIN caste t32 ON t1.casteid = t32.casteid
+			     LEFT JOIN religion t33 ON t1.religionid = t33.religionid
+			     LEFT JOIN secroles t34 ON t1.nextrolecode = t34.rolecd
+			     ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="6" author="Vinay">
+		<createView viewName="customers_aview" replaceIfExists="true">
+			<![CDATA[
+			SELECT t1.custid,
+			    t1.custcif,
+			    t1.custcorebank,
+			    t1.custctgcode,
+			    t1.custtypecode,
+			    t1.custsalutationcode,
+			    t1.custfname,
+			    t1.custmname,
+			    t1.custlname,
+			    t1.custshrtname,
+			    t1.custfnamelcllng,
+			    t1.custmnamelcllng,
+			    t1.custlnamelcllng,
+			    t1.custshrtnamelcllng,
+			    t1.custdftbranch,
+			    t1.custgendercode,
+			    t1.custdob,
+			    t1.custpob,
+			    t1.custcob,
+			    t1.custpassportno,
+			    t1.custmothermaiden,
+			    t1.custisminor,
+			    t1.custreferedby,
+			    t1.custdsa,
+			    t1.custdsadept,
+			    t1.custro1,
+			    t1.custro2,
+			    t1.custgroupid,
+			    t1.custsts,
+			    t1.custstschgdate,
+			    t1.custgroupsts,
+			    t1.custisblocked,
+			    t1.custisactive,
+			    t1.custisclosed,
+			    t1.custinactivereason,
+			    t1.custisdecease,
+			    t1.custisdormant,
+			    t1.custisdelinquent,
+			    t1.custistradefincust,
+			    t1.custtradelicencenum,
+			    t1.custtradelicenceexpiry,
+			    t1.custpassportexpiry,
+			    t1.custvisanum,
+			    t1.custvisaexpiry,
+			    t1.custisstaff,
+			    t1.custstaffid,
+			    t1.custindustry,
+			    t1.custsector,
+			    t1.custsubsector,
+			    t1.custprofession,
+			    t1.custtotalincome,
+			    t1.custmaritalsts,
+			    t1.custempsts,
+			    t1.custsegment,
+			    t1.custsubsegment,
+			    t1.custisblacklisted,
+			    t1.custblrsncode,
+			    t1.custisrejected,
+			    t1.custrejectedrsn,
+			    t1.custbaseccy,
+			    t1.custlng,
+			    t1.custparentcountry,
+			    t1.custresdcountry,
+			    t1.custriskcountry,
+			    t1.custnationality,
+			    t1.custclosedon,
+			    t1.custstmtfrq,
+			    t1.custisstmtcombined,
+			    t1.custstmtlastdate,
+			    t1.custstmtnextdate,
+			    t1.custstmtdispatchmode,
+			    t1.custfirstbusinessdate,
+			    t1.custaddlvar81,
+			    t1.custaddlvar82,
+			    t1.custaddlvar83,
+			    t1.custaddlvar84,
+			    t1.custaddlvar85,
+			    t1.custaddlvar86,
+			    t1.custaddlvar87,
+			    t1.custaddlvar88,
+			    t1.custaddlvar89,
+			    t1.custaddldate1,
+			    t1.custaddldate2,
+			    t1.custaddldate3,
+			    t1.custaddldate4,
+			    t1.custaddldate5,
+			    t1.custaddlvar1,
+			    t1.custaddlvar2,
+			    t1.custaddlvar3,
+			    t1.custaddlvar4,
+			    t1.custaddlvar5,
+			    t1.custaddlvar6,
+			    t1.custaddlvar7,
+			    t1.custaddlvar8,
+			    t1.custaddlvar9,
+			    t1.custaddlvar10,
+			    t1.custaddlvar11,
+			    t1.custaddldec1,
+			    t1.custaddldec2,
+			    t1.custaddldec3,
+			    t1.custaddldec4,
+			    t1.custaddldec5,
+			    t1.custaddlint1,
+			    t1.custaddlint2,
+			    t1.custaddlint3,
+			    t1.custaddlint4,
+			    t1.custaddlint5,
+			    t1.version,
+			    t1.custsourceid,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.custtypedesc lovdesccusttypecodename,
+			    t3.maritalstsdesc lovdesccustmaritalstsname,
+			    t4.empstsdesc lovdesccustempstsname,
+			    t6.custstsdescription lovdesccuststsname,
+			    t7.industrydesc lovdesccustindustryname,
+			    t8.sectordesc lovdesccustsectorname,
+			    t9.subsectordesc lovdesccustsubsectorname,
+			    t10.professiondesc lovdesccustprofessionname,
+			    t11.countrydesc lovdesccustcobname,
+			    t20.segmentdesc lovdesccustsegmentname,
+			    t12.nationalitydesc lovdesccustnationalityname,
+			    t13.genderdesc lovdesccustgendercodename,
+			    t14.deptdesc lovdesccustdsadeptname,
+			    t15.dealername lovdesccustro1name,
+			    t15.dealercity lovdesccustro1city,
+			    t16.grpstsdescription lovdesccustgroupstsname,
+			    t17.branchdesc lovdesccustdftbranchname,
+			    t17.bankrefno branchrefno,
+			    t17.branchswiftbrncde custswiftbrncode,
+			    t18.custctgdesc lovdesccustctgcodename,
+			    t2.custtypectg lovdesccustctgtype,
+			    t19.saluationdesc lovdesccustsalutationcodename,
+			    t21.countrydesc lovdesccustparentcountryname,
+			    t22.countrydesc lovdesccustresdcountryname,
+			    t23.countrydesc lovdesccustriskcountryname,
+			    t24.rofficerdesc lovdesccustro2name,
+			    t25.blrsndesc lovdesccustblrsncodename,
+			    t26.rejectdesc lovdesccustrejectedrsnname,
+			    t27.custgrpdesc lovdesccustgroupidname,
+			    t28.subsegmentdesc lovdesccustsubsegmentname,
+			    t29.lngdesc lovdesccustlngname,
+			    t30.dispatchmodedesc lovdescdispatchmodedescname,
+			    t1.dedupfound,
+			    t1.skipdedup,
+			    t1.custtotalexpense,
+			    t1.custblacklistdate,
+			    t1.noofdependents,
+			    t1.custcrcpr,
+			    t1.jointcust,
+			    t1.jointcustname,
+			    t1.jointcustdob,
+			    t27.custgrpcode lovdesccustgroupcode,
+			    t1.custrelation,
+			    t1.contactpersonname,
+			    t1.phonenumber,
+			    t1.emailid,
+			    t1.salariedcustomer,
+			    t31.targetdesc lovdesctargetname,
+			    t1.custsuspsts,
+			    t1.custsuspdate,
+			    t1.custsusptrigger,
+			    t1.subcategory,
+			    t1.casteid,
+			    t1.religionid,
+			    t32.castecode,
+			    t32.castedesc,
+			    t33.religioncode,
+			    t33.religiondesc,
+			    COALESCE(t34.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) lovdescrequeststage,
+			    t1.margindeviation,
+			    t1.applicationno,
+			    t17.branchprovince,
+			    t1.dnd,
+			    t1.ResidentialStatus
+			   FROM customers t1
+			     LEFT JOIN rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+			     LEFT JOIN bmtmaritalstatuscodes t3 ON t1.custmaritalsts = t3.maritalstscode
+			     LEFT JOIN bmtempstscodes t4 ON t1.custempsts = t4.empstscode
+			     LEFT JOIN bmtcuststatuscodes t6 ON t1.custsts = t6.custstscode
+			     LEFT JOIN bmtindustries t7 ON t1.custindustry = t7.industrycode
+			     LEFT JOIN bmtsectors t8 ON t1.custsector = t8.sectorcode
+			     LEFT JOIN bmtsubsectors t9 ON t1.custsector = t9.sectorcode AND t1.custsubsector = t9.subsectorcode
+			     LEFT JOIN bmtprofessions t10 ON t1.custprofession = t10.professioncode
+			     LEFT JOIN bmtcountries t11 ON t1.custcob = t11.countrycode
+			     LEFT JOIN bmtnationalitycodes t12 ON t1.custnationality = t12.nationalitycode
+			     LEFT JOIN bmtgenders t13 ON t1.custgendercode = t13.gendercode
+			     LEFT JOIN bmtdepartments t14 ON t1.custdsadept = t14.deptcode
+			     LEFT JOIN amtvehicledealer t15 ON t1.custro1 = t15.dealerid
+			     LEFT JOIN bmtgrpstatuscodes t16 ON t1.custgroupsts = t16.grpstscode
+			     LEFT JOIN rmtbranches t17 ON t1.custdftbranch = t17.branchcode
+			     LEFT JOIN bmtcustcategories t18 ON t1.custctgcode = t18.custctgcode
+			     LEFT JOIN bmtsalutations t19 ON t1.custsalutationcode = t19.salutationcode
+			     LEFT JOIN bmtsegments t20 ON t1.custsegment = t20.segmentcode
+			     LEFT JOIN bmtcountries t21 ON t1.custparentcountry = t21.countrycode
+			     LEFT JOIN bmtcountries t22 ON t1.custresdcountry = t22.countrycode
+			     LEFT JOIN bmtcountries t23 ON t1.custriskcountry = t23.countrycode
+			     LEFT JOIN relationshipofficers t24 ON t1.custro2 = t24.rofficercode
+			     LEFT JOIN bmtblacklistrsncodes t25 ON t1.custblrsncode = t25.blrsncode
+			     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn = t26.rejectcode
+			     LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
+			     LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
+			     LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
+			     LEFT JOIN bmtdispatchmodes t30 ON t1.custstmtdispatchmode = t30.dispatchmodecode
+			     LEFT JOIN targetdetails t31 ON t1.custaddlvar82 = t31.targetcode
+			     LEFT JOIN caste t32 ON t1.casteid = t32.casteid
+			     LEFT JOIN religion t33 ON t1.religionid = t33.religionid
+			     LEFT JOIN secroles t34 ON t1.nextrolecode = t34.rolecd
+			 			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="7" author="Vinay">
+		<addColumn tableName="FinTaxDetail_Temp">
+			<column name="AddressDetail" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="8" author="Vinay">
+		<addColumn tableName="FinTaxDetail">
+			<column name="AddressDetail" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="9" author="Vinay">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+	
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTaxDetailDialog_AddressDetail','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,'','','','','','',0 FROM SEQSECRIGHTS WHERE 0=0;
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddressDetail'), 1, 0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+	
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT
+				MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="10" author="Vinay">
+		<createView viewName="fintaxdetail_view" replaceIfExists="true">
+			<![CDATA[
+			 	SELECT t1.finreference,
+			    t1.applicablefor,
+			    t1.taxcustid,
+			    t1.taxexempted,
+			    t1.taxnumber,
+			    t1.addrline1,
+			    t1.addrline2,
+			    t1.addrline3,
+			    t1.addrline4,
+			    t1.country,
+			    t1.province,
+			    t1.city,
+			    t1.pincode,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.countrydesc countryname,
+			    t3.cpprovincename provincename,
+			    t4.pccityname cityname,
+			    t5.areaname pincodename,
+			    t6.custcif,
+			    t6.custshrtname,
+			    t1.sezcertificateno,
+			    t1.sezvaluedate,
+			    t1.AddressDetail
+			   FROM fintaxdetail_temp t1
+			     LEFT JOIN bmtcountries t2 ON t1.country = t2.countrycode
+			     LEFT JOIN rmtcountryvsprovince t3 ON t1.province = t3.cpprovince AND t1.country = t3.cpcountry
+			     LEFT JOIN rmtprovincevscity t4 ON t1.city = t4.pccity AND t1.province = t4.pcprovince AND t1.country = t4.pccountry
+			     LEFT JOIN pincodes t5 ON t1.pincode = t5.pincode AND t1.city = t5.city
+			     JOIN customers t6 ON t1.taxcustid = t6.custid
+			UNION ALL
+			 SELECT t1.finreference,
+			    t1.applicablefor,
+			    t1.taxcustid,
+			    t1.taxexempted,
+			    t1.taxnumber,
+			    t1.addrline1,
+			    t1.addrline2,
+			    t1.addrline3,
+			    t1.addrline4,
+			    t1.country,
+			    t1.province,
+			    t1.city,
+			    t1.pincode,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.countrydesc countryname,
+			    t3.cpprovincename provincename,
+			    t4.pccityname cityname,
+			    t5.areaname pincodename,
+			    t6.custcif,
+			    t6.custshrtname,
+			    t1.sezcertificateno,
+			    t1.sezvaluedate,
+			    t1.AddressDetail
+			   FROM fintaxdetail t1
+			     LEFT JOIN bmtcountries t2 ON t1.country = t2.countrycode
+			     LEFT JOIN rmtcountryvsprovince t3 ON t1.province = t3.cpprovince AND t1.country = t3.cpcountry
+			     LEFT JOIN rmtprovincevscity t4 ON t1.city = t4.pccity AND t1.province = t4.pcprovince AND t1.country = t4.pccountry
+			     LEFT JOIN pincodes t5 ON t1.pincode = t5.pincode AND t1.city = t5.city
+			     JOIN customers t6 ON t1.taxcustid = t6.custid
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM fintaxdetail_temp
+			          WHERE fintaxdetail_temp.finreference = t1.finreference))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="11" author="Vinay">
+		<createView viewName="fintaxdetail_tview" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.finreference,
+				    t1.applicablefor,
+				    t1.taxcustid,
+				    t1.taxexempted,
+				    t1.taxnumber,
+				    t1.addrline1,
+				    t1.addrline2,
+				    t1.addrline3,
+				    t1.addrline4,
+				    t1.country,
+				    t1.province,
+				    t1.city,
+				    t1.pincode,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.countrydesc countryname,
+				    t3.cpprovincename provincename,
+				    t4.pccityname cityname,
+				    t5.areaname pincodename,
+				    t6.custcif,
+				    t6.custshrtname,
+				    t1.sezcertificateno,
+				    t1.sezvaluedate,
+				    t1.AddressDetail
+				   FROM fintaxdetail_temp t1
+				     LEFT JOIN bmtcountries t2 ON t1.country = t2.countrycode
+				     LEFT JOIN rmtcountryvsprovince t3 ON t1.province = t3.cpprovince AND t1.country = t3.cpcountry
+				     LEFT JOIN rmtprovincevscity t4 ON t1.city = t4.pccity AND t1.province = t4.pcprovince AND t1.country = t4.pccountry
+				     LEFT JOIN pincodes t5 ON t1.pincode = t5.pincode AND t1.city = t5.city
+				     JOIN customers t6 ON t1.taxcustid = t6.custid
+				  ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="13" author="Vinay">
+		<createView viewName="fintaxdetail_aview" replaceIfExists="true">
+			<![CDATA[
+			 SELECT t1.finreference,
+			    t1.applicablefor,
+			    t1.taxcustid,
+			    t1.taxexempted,
+			    t1.taxnumber,
+			    t1.addrline1,
+			    t1.addrline2,
+			    t1.addrline3,
+			    t1.addrline4,
+			    t1.country,
+			    t1.province,
+			    t1.city,
+			    t1.pincode,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.countrydesc countryname,
+			    t3.cpprovincename provincename,
+			    t4.pccityname cityname,
+			    t5.areaname pincodename,
+			    t6.custcif,
+			    t6.custshrtname,
+			    t1.sezcertificateno,
+			    t1.sezvaluedate,
+			    t1.AddressDetail
+			   FROM fintaxdetail t1
+			     LEFT JOIN bmtcountries t2 ON t1.country = t2.countrycode
+			     LEFT JOIN rmtcountryvsprovince t3 ON t1.province = t3.cpprovince AND t1.country = t3.cpcountry
+			     LEFT JOIN rmtprovincevscity t4 ON t1.city = t4.pccity AND t1.province = t4.pcprovince AND t1.country = t4.pccountry
+			     LEFT JOIN pincodes t5 ON t1.pincode = t5.pincode AND t1.city = t5.city
+			     JOIN customers t6 ON t1.taxcustid = t6.custid
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="14" author="Vinay">
+		<sql>
+			<![CDATA[
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'GST' and RBFLDNAME = 'residentialStatus';
+				Insert into RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) values ('GSTRULE', 'GST', 'residentialStatus', 'Customer Residential Status', 'nvarchar', 8, '0', '1', ' ', 'static, global', '');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="15" author="Vinay">
+		<addColumn tableName="AdviseDueTaxDetail">
+			<column name="InvoiceID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="16" author="Vinay">
+		<addColumn tableName="GST_Invoice_Txn">
+			<column name="DueInvoiceID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="17" author="siva.m">
+		<addColumn tableName="GST_Invoice_Txn_Details">
+			<column name="CESS_RATE" type="decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="17.0" author="siva.m">
+		<addColumn tableName="GST_Invoice_Txn_Details">
+			<column name="CESS_AMT" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="17.1_Pre" author="siva.m">
+		<sql>
+			<![CDATA[
+				update GST_Invoice_Txn_Details set CESS_RATE=0;
+				update GST_Invoice_Txn_Details set CESS_AMT=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="17.1" author="siva.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE GST_INVOICE_TXN_DETAILS ADD CONSTRAINT DF_GST_INVOICE_TXN_DETAILS_CR DEFAULT 0 FOR CESS_RATE;
+				ALTER TABLE GST_INVOICE_TXN_DETAILS ADD CONSTRAINT DF_GST_INVOICE_TXN_DETAILS_CA DEFAULT 0 FOR CESS_AMT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="17.1" author="siva.m" dbms="postgresql, oracle">
+		<addDefaultValue columnName="CESS_RATE" tableName="GST_INVOICE_TXN_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="CESS_AMT" tableName="GST_INVOICE_TXN_DETAILS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="18" author="siva.m">
+		<addColumn tableName="FinTaxReceivable">
+			<column name="CESS" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="18.1_Pre" author="siva.m">
+		<sql>
+			<![CDATA[
+				update FINTAXRECEIVABLE set CESS=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="18.1" author="siva.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINTAXRECEIVABLE ADD CONSTRAINT DF_FINTAXRECEIVABLE_CESS DEFAULT 0 FOR CESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="18.1" author="siva.m" dbms="postgresql, oracle">
+		<addDefaultValue columnName="CESS" tableName="FINTAXRECEIVABLE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="19" author="siva.m">
+		<addColumn tableName="FinTaxIncomeDetail">
+			<column name="CESS" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="19.1_Pre" author="siva.m">
+		<sql>
+			<![CDATA[
+				update FINTAXINCOMEDETAIL set CESS=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="19.1" author="siva.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINTAXINCOMEDETAIL ADD CONSTRAINT DF_FINTAXINCOMEDETAIL_CESS DEFAULT 0 FOR CESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="19.1" author="siva.m" dbms="postgresql, oracle">
+		<addDefaultValue columnName="CESS" tableName="FINTAXINCOMEDETAIL" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="20" author="siva.m">
+		<addColumn tableName="TAX_Header">
+			<column name="InvoiceID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="20.0" author="siva.m">
+		<addColumn tableName="TAX_Header_Temp">
+			<column name="InvoiceID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="21" author="siva.m">
+		<createView viewName="tax_header_aview" replaceIfExists="true">
+			<![CDATA[
+					SELECT t1.headerid,
+				    t1.InvoiceID,
+				    t1.version,
+				    t1.lastmnton,
+				    t1.lastmntby,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid
+				   FROM tax_header t1
+			   ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="22" author="siva.m">
+		<createView viewName="tax_header_tview" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.headerid,
+				    t1.InvoiceID,
+				    t1.version,
+				    t1.lastmnton,
+				    t1.lastmntby,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid
+				   FROM tax_header_temp t1
+				  ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="23" author="siva.m">
+		<createView viewName="tax_header_view" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.headerid,
+					t1.InvoiceID,
+				    t1.version,
+				    t1.lastmnton,
+				    t1.lastmntby,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid
+				   FROM tax_header_temp t1
+				UNION ALL
+				 SELECT t1.headerid,
+				 	t1.InvoiceID,
+				    t1.version,
+				    t1.lastmnton,
+				    t1.lastmntby,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid
+				   FROM tax_header t1
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM tax_header_temp
+				          WHERE tax_header_temp.headerid = t1.headerid))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="24" author="siva.m">
+		<addColumn tableName="PaymentDetails">
+			<column name="TaxHeaderId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="24.0" author="siva.m">
+		<addColumn tableName="PaymentDetails_Temp">
+			<column name="TaxHeaderId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="25" author="siva.m">
+		<createView viewName="paymentdetails_aview" replaceIfExists="true">
+			<![CDATA[
+				 SELECT t1.paymentdetailid,
+				    t1.paymentid,
+				    t1.amounttype,
+				    t1.amount,
+				    t1.referenceid,
+				    t1.TaxHeaderId,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid
+				   FROM paymentdetails t1
+				  ]]>
+		</createView>
+	</changeSet>
+	<changeSet id="26" author="siva.m">
+		<createView viewName="paymentdetails_view" replaceIfExists="true">
+			<![CDATA[
+				 SELECT t1.paymentdetailid,
+				    t1.paymentid,
+				    t1.amounttype,
+				    t1.amount,
+				    t1.referenceid,
+				    t1.TaxHeaderId,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    ft.feetypedesc,
+				    ft.feetypecode
+				   FROM paymentdetails_temp t1
+				     LEFT JOIN manualadvise_temp ma ON t1.referenceid = ma.adviseid
+				     LEFT JOIN feetypes_temp ft ON ma.feetypeid = ft.feetypeid
+				UNION ALL
+				 SELECT t1.paymentdetailid,
+				    t1.paymentid,
+				    t1.amounttype,
+				    t1.amount,
+				    t1.referenceid,
+				    t1.TaxHeaderId,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    ft.feetypedesc,
+				    ft.feetypecode
+				   FROM paymentdetails t1
+				     LEFT JOIN manualadvise ma ON t1.referenceid = ma.adviseid
+				     LEFT JOIN feetypes ft ON ma.feetypeid = ft.feetypeid
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM paymentdetails_temp
+				          WHERE paymentdetails_temp.paymentdetailid = t1.paymentdetailid))
+				  ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="27" author="siva.m">
+		<createTable tableName="ScheduleDueTaxDetails">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="TaxType" type="char(1)" />
+			<column name="TaxCalcOn" type="char(1)" />
+			<column name="Amount" type="decimal(18,0)" />
+			<column name="InvoiceID" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="27.1" author="siva.m">
+		<addPrimaryKey tableName="ScheduleDueTaxDetails" columnNames="ID" constraintName="PK_ScheduleDueTaxDetails" />
+	</changeSet>
+
+	<changeSet id="27.2" author="siva.m">
+		<createIndex tableName="ScheduleDueTaxDetails" indexName="IDX_SDUE_TD_FR_SDATE" unique="true">
+			<column name="FinReference" />
+			<column name="SchDate" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="27.3" author="siva.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE SCHEDULEDUETAXDETAILS ADD CONSTRAINT DF_SCHEDULEDUETAXDETAILS_AMOUNT DEFAULT 0 FOR AMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="27.3" author="siva.m" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AMOUNT" tableName="SCHEDULEDUETAXDETAILS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="28" author="siva.m">
+		<addColumn tableName="FinRepayScheduleDetail">
+			<column name="LppTaxHeaderId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="28.0" author="siva.m">
+		<addColumn tableName="FinRepayScheduleDetail">
+			<column name="LpiTaxHeaderId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="28.1" author="siva.m">
+		<addColumn tableName="FinRepayScheduleDetail_Temp">
+			<column name="LppTaxHeaderId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="28.2" author="siva.m">
+		<addColumn tableName="FinRepayScheduleDetail_Temp">
+			<column name="LpiTaxHeaderId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="29" author="siva.m">
+		<addColumn tableName="FinODAmzTaxDetail">
+			<column name="PaidAmount" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="29.1" author="siva.m">
+		<addColumn tableName="FinODAmzTaxDetail">
+			<column name="WaivedAmount" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="29.2" author="siva.m">
+		<addColumn tableName="FinODAmzTaxDetail">
+			<column name="InvoiceID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="29.3_Pre" author="siva.m">
+		<sql>
+			<![CDATA[
+				update FinODAmzTaxDetail set PAIDAMOUNT=0;
+				update FinODAmzTaxDetail set WAIVEDAMOUNT=0;
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="29.3" author="siva.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINODAMZTAXDETAIL ADD CONSTRAINT DF_FINODAMZTAXDETAILT_PA DEFAULT 0 FOR PAIDAMOUNT;
+				ALTER TABLE FINODAMZTAXDETAIL ADD CONSTRAINT DF_FINODAMZTAXDETAILT_WA DEFAULT 0 FOR WAIVEDAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="29.4" author="siva.m" dbms="postgresql, oracle">
+		<addDefaultValue columnName="PaidAmount" tableName="FinODAmzTaxDetail" defaultValue="0" />
+		<addDefaultValue columnName="WaivedAmount" tableName="FinODAmzTaxDetail" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="30" author="siva.m">
+		<createTable tableName="OverdueTaxMovements">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="InvoiceID" type="bigint" />
+			<column name="ValueDate" type="datetime" />
+			<column name="SchDate" type="datetime" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="TaxFor" type="varchar(3)" />
+			<column name="PaidAmount" type="decimal(18,0)" />
+			<column name="WaivedAmount" type="decimal(18,0)" />
+			<column name="TaxHeaderId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="30.1" author="siva.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE OVERDUETAXMOVEMENTS ADD CONSTRAINT DF_OVERDUETAXMOVEMENTS_PA DEFAULT 0 FOR PAIDAMOUNT;
+				ALTER TABLE OVERDUETAXMOVEMENTS ADD CONSTRAINT DF_OVERDUETAXMOVEMENTS_WA DEFAULT 0 FOR WAIVEDAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="30.1" author="siva.m" dbms="postgresql, oracle">
+		<addDefaultValue columnName="PaidAmount" tableName="OverdueTaxMovements" defaultValue="0" />
+		<addDefaultValue columnName="WaivedAmount" tableName="OverdueTaxMovements" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="31" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				update reportfilterfields set fielddbname='T.customerid' where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport') and fieldid=1;
+				update reportfilterfields set fielddbname='T.loanaccountno' where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport') and fieldid=2;
+				update reportfilterfields set fielddbname='T.invoicedate' where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport') and fieldid=4;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="32" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CGST' and RBFLDNAME = 'residentialStatus';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'SGST' and RBFLDNAME = 'residentialStatus';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'UGST' and RBFLDNAME = 'residentialStatus';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'IGST' and RBFLDNAME = 'residentialStatus';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CESS' and RBFLDNAME = 'residentialStatus';
+				
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CGST' and RBFLDNAME = 'customerUnRegistered';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'SGST' and RBFLDNAME = 'customerUnRegistered';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'UGST' and RBFLDNAME = 'customerUnRegistered';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'IGST' and RBFLDNAME = 'customerUnRegistered';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CESS' and RBFLDNAME = 'customerUnRegistered';
+				
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CESS' and RBFLDNAME = 'fromState';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CESS' and RBFLDNAME = 'toState';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CESS' and RBFLDNAME = 'fromStateGstExempted';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CESS' and RBFLDNAME = 'toStateGstExempted';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CESS' and RBFLDNAME = 'fromUnionTerritory';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CESS' and RBFLDNAME = 'toUnionTerritory';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CESS' and RBFLDNAME = 'gstExempted';
+				Delete from RBFIELDDETAILS where RBMODULE = 'GSTRULE' and RBEVENT = 'CESS' and RBFLDNAME = 'sezCertificateNo';
+				
+				Delete from Rules where RuleModule='GSTRULE' and RULECODE = 'CESS';
+				
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','CGST','residentialStatus','Residential Status','nchar',1,'0','1',' ','static,global','  '); 
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','IGST','residentialStatus','Residential Status','nchar',1,'0','1',' ','static,global','  '); 
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','SGST','residentialStatus','Residential Status','nchar',1,'0','1',' ','static,global','  ');
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','UGST','residentialStatus','Residential Status','nchar',1,'0','1',' ','static,global','  ');
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','CESS','residentialStatus','Residential Status','nchar',1,'0','1',' ','static,global','  ');
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','CGST','customerUnRegistered','Customer UnRegistered','nchar',1,'0','1',' ','static,global','  '); 
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','IGST','customerUnRegistered','Customer UnRegistered','nchar',1,'0','1',' ','static,global','  '); 
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','SGST','customerUnRegistered','Customer UnRegistered','nchar',1,'0','1',' ','static,global','  ');
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','UGST','customerUnRegistered','Customer UnRegistered','nchar',1,'0','1',' ','static,global','  ');
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','CESS','customerUnRegistered','Customer UnRegistered','nchar',1,'0','1',' ','static,global','  ');
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','CESS','fromState','From State','nchar',1,'0','1',' ','static,global','  ');
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','CESS','toState','To State','nchar',1,'0','1',' ','static,global','  ');
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','CESS','fromStateGstExempted','From State Gst Exempted','nchar',1,'0','1',' ','static,global','  ');
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','CESS','toStateGstExempted','To State Gst Exempted','nchar',1,'0','1',' ','static,global','  ');
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','CESS','fromUnionTerritory','From State Union Territory','nchar',1,'0','1',' ','static,global','  ');
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','CESS','toUnionTerritory','To State Union Territory','nchar',1,'0','1',' ','static,global','  ');
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','CESS','gstExempted','Gst Exempted','nchar',1,'0','1',' ','static,global','  ');
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('GSTRULE','CESS','sezCertificateNo','Sez Certificate No','nchar',1,'0','1',' ','static,global','  ');
+		   	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="33" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				update SeqRules set SeqNo = (select max(RuleId)+1 from Rules);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="34" author="Varaprasad.K">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)" />
+			<column name="RuleModule">GSTRULE</column>
+			<column name="RULEEVENT">CESS</column>
+			<column name="RULECODE">CESS</column>
+			<column name="RULECODEDESC">CESS</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == '12') {Result = 4 ; return; } else {Result = 4 ; return; }]]></column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|fromState| |==|STATICTEXT|12| |1|0|1|1|1|4| |~)|~(|else|0|0|0|1|1|4| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">D</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">5</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp" />
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">fromState</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+	<changeSet id="35" author="Varaprasad.K">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == '12') {Result = 4 ; return; } else {Result = 4 ; return; }]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|fromState| |==|STATICTEXT|12| |1|0|1|1|1|4| |~)|~(|else|0|0|0|1|1|4| |~)|]]></column>
+			<where> RuleModule='GSTRULE' and RULECODE = 'CESS' AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="36" author="Varaprasad.K">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == '12') {Result = 4 ; return; } else {Result = 4 ; return; }]]></column>
+			<where> RuleModule='GSTRULE' and RULECODE = 'CESS' AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="37" author="Varaprasad.K">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (fromState == '12') {Result = 4 ; return; } else {Result = 4 ; return; }]]></column>
+			<where> RuleModule='GSTRULE' and RULECODE = 'CESS' AND ACTIVE=1</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="38.2" author="Varaprasad.K">
+		<sql>
+		   <![CDATA[
+				UPDATE SEQFEETYPES SET SEQNO = (SELECT MAX(FEETYPEID)+1 FROM FEETYPES);
+				Delete from FEETYPES where FeeTypeCode='PRINC';
+				Delete from FEETYPES where FeeTypeCode = 'INSTINC';
+	
+				Insert into FEETYPES (feetypeid, feetypecode, feetypedesc, active, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, manualadvice, accountsetid, advisetype, hostfeetypecode, taxcomponent, amortzreq, taxapplicable, refundable, dueaccreq, dueaccset, tdsreq) values
+				 ((Select SeqNo + 1 from SeqFeeTypes), 'PRINC', 'Principle Amount', '1', 2, 1000, Current_TimeStamp, 'Approved', '', '', '', '', '', 0, '0', null, 1, '', '#',  0, 0, 0, 0, 0, 0);
+	          
+			
+	            UPDATE SEQFEETYPES SET SEQNO = (SELECT MAX(FEETYPEID)+1 FROM FEETYPES);
+				Insert into FEETYPES (feetypeid, feetypecode, feetypedesc, active, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, manualadvice, accountsetid, advisetype, hostfeetypecode, taxcomponent, amortzreq, taxapplicable, refundable, dueaccreq, dueaccset, tdsreq) values ((Select SeqNo + 1 from SeqFeeTypes), 'INSTINC', 'Interest Due', '1', 2, 1000, Current_TimeStamp, 'Approved', '', '', '', '', '', 0, '0', null, 1, '', '#',  0, 0, 0, 0, 0, 0);
+				UPDATE SEQFEETYPES SET SEQNO = (SELECT MAX(FEETYPEID)+1 FROM FEETYPES);
+		  ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="39" author="Varaprasad.K">
+		<sql>
+		   <![CDATA[
+				delete from smtparameters where sysparmcode ='FEETYPE_PFT_EXEMPTED';
+				delete from smtparameters where sysparmcode='FEETYPE_PRI_EXEMPTED';
+	
+				Insert into SMTPARAMETERS values ('FEETYPE_PFT_EXEMPTED', 'Interest Amount', 'String', 1, 'INSTINC', 8, 0, null, null, 'Interest Amount', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				Insert into SMTPARAMETERS values ('FEETYPE_PRI_EXEMPTED', 'Principal Amount', 'String', 1, 'PRINC', 8, 0, null, null, 'Principal Amount', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+		 ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="40" author="Varaprasad.K">
+		<sql>
+		 <![CDATA[
+			update reportfilterfields set mandatory=0 WHERE REPORTID= (select REPORTID from reportconfiguration where reportname='GST Invoice Report') and fieldName = 'CustCIF';
+			update reportfilterfields set mandatory=1 WHERE REPORTID= (select REPORTID from reportconfiguration where reportname='GST Invoice Report') and fieldName = 'Date';
+			update reportconfiguration set alwmultiformat=0 WHERE reportname='GST Invoice Report';
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="41" author="Varaprasad.K">
+		<addColumn tableName="Seq_GST_Invoice">
+			<column name="seqResetOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="42" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				update Seq_GST_Invoice set seqResetOn=(select CAST(sysparmvalue AS DATE) from smtparameters where sysparmcode='APP_DATE')
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="43_pre" author="Varaprasad.K">
+		<dropPrimaryKey tableName="BMTAMOUNTCODES" />
+	</changeSet>
+
+	<changeSet id="43.0_pre" author="Varaprasad.K" dbms="oracle">
+		<sql>
+			<![CDATA[
+				drop index IX_ALWEVNT_AMTCD ;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="43" author="Varaprasad.K">
+		<modifyDataType tableName="BMTAMOUNTCODES" columnName="amountcode" newDataType="varchar(30)" />
+	</changeSet>
+
+	<changeSet id="43.0_post" author="Varaprasad.K" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_ALWEVNT_AMTCD ON BMTAMOUNTCODES (NLSSORT("AMOUNTCODE",'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="43.1" author="Varaprasad.K" dbms="postgresql,mssql">
+		<addNotNullConstraint tableName="BMTAMOUNTCODES" columnName="amountcode" columnDataType="varchar(30)" />
+	</changeSet>
+
+	<changeSet id="43_post" author="Varaprasad.K">
+		<addPrimaryKey tableName="BMTAMOUNTCODES" columnNames="AllowedEvent, AllowedRIA, AmountCode"
+			constraintName="PK_BMTAMOUNTCODES" />
+	</changeSet>
+
+	<changeSet id="44" author="Varaprasad.K">
+		<comment>Bounce Charges CESS accounting Configuration parameters</comment>
+		<sql>
+			<![CDATA[
+				delete from BMTAMOUNTCODES where allowedevent ='REPAY' and amountcode='bounceCharge_CESS_P';
+				delete from BMTAMOUNTCODES where allowedevent ='REPAY' and amountcode='bounceCharge_CESS_N';
+				delete from BMTAMOUNTCODES where allowedevent ='REPAY' and amountcode='bounceCharge_CESS_W';
+				delete from BMTAMOUNTCODES where allowedevent ='REPAY' and amountcode='bounceCharge_CESS_SCH';
+				delete from BMTAMOUNTCODES where allowedevent ='REPAY' and amountcode='bounceCharge_CESS_AF';
+	
+				delete from BMTAMOUNTCODES where allowedevent ='EARLYSTL' and amountcode='bounceCharge_CESS_P';
+				delete from BMTAMOUNTCODES where allowedevent ='EARLYSTL' and amountcode='bounceCharge_CESS_N';
+				delete from BMTAMOUNTCODES where allowedevent ='EARLYSTL' and amountcode='bounceCharge_CESS_W';
+				delete from BMTAMOUNTCODES where allowedevent ='EARLYSTL' and amountcode='bounceCharge_CESS_SCH';
+				delete from BMTAMOUNTCODES where allowedevent ='EARLYSTL' and amountcode='bounceCharge_CESS_AF';
+	
+				delete from BMTAMOUNTCODES where allowedevent ='EARLYPAY' and amountcode='bounceCharge_CESS_P';
+				delete from BMTAMOUNTCODES where allowedevent ='EARLYPAY' and amountcode='bounceCharge_CESS_N';
+				delete from BMTAMOUNTCODES where allowedevent ='EARLYPAY' and amountcode='bounceCharge_CESS_W';
+				delete from BMTAMOUNTCODES where allowedevent ='EARLYPAY' and amountcode='bounceCharge_CESS_SCH';
+				delete from BMTAMOUNTCODES where allowedevent ='EARLYPAY' and amountcode='bounceCharge_CESS_AF';
+	
+	
+				insert into BMTAMOUNTCODES values('REPAY',  0, 'bounceCharge_CESS_P', 'Bounce charge CESS PAID Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				insert into BMTAMOUNTCODES values('REPAY', 0, 'bounceCharge_CESS_N', 'Bounce charge CESS NET Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				insert into BMTAMOUNTCODES values('REPAY', 0, 'bounceCharge_CESS_W', 'Bounce charge CESS WAIVER Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				insert into BMTAMOUNTCODES values('REPAY', 0, 'bounceCharge_CESS_SCH', 'Bounce charge CESS SCHEDULE Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				insert into BMTAMOUNTCODES values('REPAY', 0, 'bounceCharge_CESS_AF', 'Bounce charge CESS AF Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+	
+				insert into BMTAMOUNTCODES values('EARLYSTL', 0, 'bounceCharge_CESS_P', 'Bounce charge CESS PAID Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				insert into BMTAMOUNTCODES values('EARLYSTL', 0, 'bounceCharge_CESS_N', 'Bounce charge CESS NET Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				insert into BMTAMOUNTCODES values('EARLYSTL', 0, 'bounceCharge_CESS_W', 'Bounce charge CESS WAIVER Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				insert into BMTAMOUNTCODES values('EARLYSTL', 0, 'bounceCharge_CESS_SCH', 'Bounce charge CESS SCHEDULE Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				insert into BMTAMOUNTCODES values('EARLYSTL', 0, 'bounceCharge_CESS_AF', 'Bounce charge CESS AF Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+	
+				insert into BMTAMOUNTCODES values('EARLYPAY', 0, 'bounceCharge_CESS_P', 'Bounce charge CESS PAID Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0); 
+				insert into BMTAMOUNTCODES values('EARLYPAY', 0, 'bounceCharge_CESS_N', 'Bounce charge CESS NET Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				insert into BMTAMOUNTCODES values('EARLYPAY', 0, 'bounceCharge_CESS_W', 'Bounce charge CESS WAIVER Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				insert into BMTAMOUNTCODES values('EARLYPAY', 0, 'bounceCharge_CESS_SCH', 'Bounce charge CESS SCHEDULE Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				insert into BMTAMOUNTCODES values('EARLYPAY', 0, 'bounceCharge_CESS_AF', 'Bounce charge CESS AF Waived', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="45" author="Varaprasad.K">
+		<sql>
+		   <![CDATA[
+			Delete from ErrorDetails where Code='GSTD001'; 
+			INSERT INTO ErrorDetails VALUES('GSTD001', 'EN', 'E', '{0} already exists {1}.', '', 'Approved', '', '', '', '', '', 0, NUll, 1000, 0);
+		 ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="46" author="Varaprasad.K">
+		<createTable tableName="GST_INVOICE_SEQUENCES">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="EntityCode" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="StateCode" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TransactionType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="MonthYear" type="char(4)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="bigint" defaultValue="0" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="47" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				insert into GST_INVOICE_SEQUENCES (EntityCode, StateCode, TransactionType, MonthYear) select distinct EntityCode, StateCode, TransactionType, MonthYear from (
+				select SUBSTRING(EntityCode, 1, 2) EntityCode, SUBSTRING(Taxcode, 1, 2) StateCode, 'D' TransactionType, (select SUBSTRING(SysParmValue, 6, 2) || SUBSTRING(SysParmValue, 3, 2) MonthYear from smtparameters where sysparmcode='APP_DATE') MonthYear from TAXDETAIL
+				union all
+				select SUBSTRING(EntityCode, 1, 2) EntityCode, SUBSTRING(Taxcode, 1, 2) StateCode , 'C' TransactionType, (select SUBSTRING(SysParmValue, 6, 2) || SUBSTRING(SysParmValue, 3, 2) MonthYear from smtparameters where sysparmcode='APP_DATE') MonthYear from TAXDETAIL
+				union all
+				select SUBSTRING(EntityCode, 1, 2) EntityCode, SUBSTRING(Taxcode, 1, 2) StateCode, 'B' TransactionType, (select SUBSTRING(SysParmValue, 6, 2) || SUBSTRING(SysParmValue, 3, 2) MonthYear from smtparameters where sysparmcode='APP_DATE') MonthYear from TAXDETAIL
+				union all
+				select SUBSTRING(EntityCode, 1, 2) EntityCode, SUBSTRING(Taxcode, 1, 2) StateCode, 'W' TransactionType, (select SUBSTRING(SysParmValue, 6, 2) || SUBSTRING(SysParmValue, 3, 2) MonthYear from smtparameters where sysparmcode='APP_DATE') MonthYear from TAXDETAIL) T
+				order by EntityCode, StateCode, MonthYear;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="47" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+				insert into GST_INVOICE_SEQUENCES (EntityCode, StateCode, TransactionType, MonthYear) select distinct EntityCode, StateCode, TransactionType, MonthYear from (
+				select SUBSTRING(EntityCode, 1, 2) EntityCode, SUBSTRING(Taxcode, 1, 2) StateCode, 'D' TransactionType, (select SUBSTRING(SysParmValue, 6, 2) + SUBSTRING(SysParmValue, 3, 2) MonthYear from smtparameters where sysparmcode='APP_DATE') MonthYear from TAXDETAIL
+				union all
+				select SUBSTRING(EntityCode, 1, 2) EntityCode, SUBSTRING(Taxcode, 1, 2) StateCode , 'C' TransactionType, (select SUBSTRING(SysParmValue, 6, 2) + SUBSTRING(SysParmValue, 3, 2) MonthYear from smtparameters where sysparmcode='APP_DATE') MonthYear from TAXDETAIL
+				union all
+				select SUBSTRING(EntityCode, 1, 2) EntityCode, SUBSTRING(Taxcode, 1, 2) StateCode, 'B' TransactionType, (select SUBSTRING(SysParmValue, 6, 2) + SUBSTRING(SysParmValue, 3, 2) MonthYear from smtparameters where sysparmcode='APP_DATE') MonthYear from TAXDETAIL
+				union all
+				select SUBSTRING(EntityCode, 1, 2) EntityCode, SUBSTRING(Taxcode, 1, 2) StateCode, 'W' TransactionType, (select SUBSTRING(SysParmValue, 6, 2) + SUBSTRING(SysParmValue, 3, 2) MonthYear from smtparameters where sysparmcode='APP_DATE') MonthYear from TAXDETAIL) T
+				order by EntityCode, StateCode, MonthYear;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="47" author="Varaprasad.K" dbms="oracle">
+		<sql>
+			<![CDATA[
+				insert into GST_INVOICE_SEQUENCES (EntityCode, StateCode, TransactionType, MonthYear) select distinct EntityCode, StateCode, TransactionType, MonthYear from (
+				select SUBSTR(EntityCode, 1, 2) EntityCode, SUBSTR(Taxcode, 1, 2) StateCode, 'D' TransactionType, (select SUBSTR(SysParmValue, 6, 2) || SUBSTR(SysParmValue, 3, 2) MonthYear from smtparameters where sysparmcode='APP_DATE') MonthYear from TAXDETAIL
+				union all
+				select SUBSTR(EntityCode, 1, 2) EntityCode, SUBSTR(Taxcode, 1, 2) StateCode , 'C' TransactionType, (select SUBSTR(SysParmValue, 6, 2) || SUBSTR(SysParmValue, 3, 2) MonthYear from smtparameters where sysparmcode='APP_DATE') MonthYear from TAXDETAIL
+				union all
+				select SUBSTR(EntityCode, 1, 2) EntityCode, SUBSTR(Taxcode, 1, 2) StateCode, 'B' TransactionType, (select SUBSTR(SysParmValue, 6, 2) || SUBSTR(SysParmValue, 3, 2) MonthYear from smtparameters where sysparmcode='APP_DATE') MonthYear from TAXDETAIL
+				union all
+				select SUBSTR(EntityCode, 1, 2) EntityCode, SUBSTR(Taxcode, 1, 2) StateCode, 'W' TransactionType, (select SUBSTR(SysParmValue, 6, 2) || SUBSTR(SysParmValue, 3, 2) MonthYear from smtparameters where sysparmcode='APP_DATE') MonthYear from TAXDETAIL) T
+				order by EntityCode, StateCode, MonthYear;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="48" author="Varaprasad.K">
+		<createTable tableName="GST_INVOICE_SEQUENCE_TEMP">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="EntityCode" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="StateCode" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TransactionType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="MonthYear" type="char(4)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="48.1" author="Vinay" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE GST_INVOICE_SEQUENCE_TEMP ADD CONSTRAINT DF_GST_INVOICE_SEQNCES_TEMP_SEQNO DEFAULT 0 FOR SEQNO;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="48.1" author="Vinay" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SeqNo" tableName="GST_INVOICE_SEQUENCE_TEMP" defaultValue="0" />
+	</changeSet>
+
+
+	<changeSet id="49" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				insert into GST_INVOICE_SEQUENCE_TEMP (EntityCode, StateCode, MonthYear, TransactionType, SeqNo)
+				select EntityCode, StateCode, MonthYear, TransactionType, cast(max(SeqNo) as bigint) SeqNo from (
+				select SUBSTRING(InvoiceNo, 1, 2) EntityCode, SUBSTRING(InvoiceNo, 3, 2) StateCode
+				, SUBSTRING(InvoiceNo, 5, 2) || SUBSTRING(InvoiceNo, 7, 2) MonthYear, SUBSTRING(InvoiceNo, 9, 1) TransactionType, SUBSTRING(InvoiceNo, 10) SeqNo 
+				from GST_INVOICE_TXN )T group by EntityCode, StateCode, MonthYear, TransactionType
+				order by EntityCode, StateCode, TransactionType;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="49" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+				insert into GST_INVOICE_SEQUENCE_TEMP (EntityCode, StateCode, MonthYear, TransactionType, SeqNo)
+				select EntityCode, StateCode, MonthYear, TransactionType, cast(max(SeqNo) as bigint) SeqNo from (
+				select SUBSTRING(InvoiceNo, 1, 2) EntityCode, SUBSTRING(InvoiceNo, 3, 2) StateCode
+				, SUBSTRING(InvoiceNo, 5, 2) + SUBSTRING(InvoiceNo, 7, 2) MonthYear, SUBSTRING(InvoiceNo, 9, 1) TransactionType, SUBSTRING(InvoiceNo, 10, len(InvoiceNo)-8) SeqNo 
+				from GST_INVOICE_TXN )T group by EntityCode, StateCode, MonthYear, TransactionType
+				order by EntityCode, StateCode, TransactionType;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="49" author="Varaprasad.K" dbms="oracle">
+		<sql>
+			<![CDATA[
+				insert into GST_INVOICE_SEQUENCE_TEMP (EntityCode, StateCode, MonthYear, TransactionType, SeqNo)
+				select * from(select EntityCode, StateCode, MonthYear, TransactionType, cast(max(SeqNo) as number(19)) SeqNo from (
+				select SUBSTR(InvoiceNo, 1, 2) EntityCode, SUBSTR(InvoiceNo, 3, 2) StateCode
+				, SUBSTR(InvoiceNo, 5, 2) || SUBSTR(InvoiceNo, 7, 2) MonthYear, SUBSTR(InvoiceNo, 9, 1) TransactionType, SUBSTR(InvoiceNo, 10, length(rtrim(InvoiceNo))-8) SeqNo 
+				from GST_INVOICE_TXN )T group by EntityCode, StateCode, MonthYear, TransactionType
+				order by EntityCode, StateCode, TransactionType);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="50" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				delete from GST_INVOICE_SEQUENCE_TEMP where Id not in (
+				select ID from GST_INVOICE_SEQUENCE_TEMP GS
+				inner Join (select Max(SeqNo) SeqNo, EntityCode, StateCode, TransactionType from GST_INVOICE_SEQUENCE_TEMP
+				group by EntityCode, StateCode, TransactionType) T ON T.EntityCode = GS.EntityCode AND T.StateCode = GS.StateCode and T.SeqNo = GS.SeqNo and T.TransactionType=GS.TransactionType);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="51" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				update GST_INVOICE_SEQUENCES set MonthYear = GST.MonthYear, SeqNo = GST.SeqNo
+				from GST_INVOICE_SEQUENCE_TEMP GST
+				where GST.EntityCode = GST_INVOICE_SEQUENCES.EntityCode AND GST.StateCode = GST_INVOICE_SEQUENCES.StateCode and GST.TransactionType=GST_INVOICE_SEQUENCES.TransactionType;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="51" author="Varaprasad.K" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO GST_INVOICE_SEQUENCES GSEQ
+				USING(SELECT EntityCode,MONTHYEAR,SEQNO,StateCode,TransactionType FROM GST_INVOICE_SEQUENCE_TEMP)GST
+				ON(GST.EntityCode = GSEQ.EntityCode AND GST.StateCode = GSEQ.StateCode and GST.TransactionType=GSEQ.TransactionType)
+				WHEN MATCHED THEN UPDATE SET MonthYear = GST.MonthYear, SeqNo = GST.SeqNo;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="51" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+				update GS set GS.MonthYear = GST.MonthYear, GS.SeqNo = GST.SeqNo from GST_INVOICE_SEQUENCES GS
+				INNER JOIN GST_INVOICE_SEQUENCE_TEMP GST ON GST.EntityCode = GS.EntityCode AND GST.StateCode = GS.StateCode and GST.TransactionType=GS.TransactionType;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="51.1" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+				MERGE INTO GST_INVOICE_SEQUENCES GSEQ
+				USING(SELECT EntityCode,MONTHYEAR,SEQNO,StateCode,TransactionType FROM GST_INVOICE_SEQUENCE_TEMP)GST
+				ON(GST.EntityCode = GSEQ.EntityCode AND GST.StateCode = GSEQ.StateCode and GST.TransactionType=GSEQ.TransactionType)
+				WHEN MATCHED THEN UPDATE SET MonthYear = GST.MonthYear, SeqNo = GST.SeqNo;
+				
+				]]>
+		</sql>
+	</changeSet>
+
+	<!-- Migration Scripts started -->
+	<changeSet id="100" author="murthy.y">
+		<createTable tableName="tax_details_stg1">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="REFERENCEID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="TAXTYPE" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TAXPERC " type="decimal(5,2)" />
+			<column name="ACTUALTAX" type="decimal(18,0)" />
+			<column name="PAIDTAX" type="decimal(18,0)" />
+			<column name="NETTAX" type="decimal(18,0)" />
+			<column name="REMFEETAX" type="decimal(18,0)" />
+			<column name="WAIVEDTAX " type="decimal(18,0)" />
+			<column name="version" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON " type="datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FEEID" type="bigint" />
+			<column name="MOVEMENTID" type="bigint" />
+			<column name="RPYSCHD_REPAYID" type="bigint" />
+			<column name="RPYSCHD_REPAYSCHID" type="bigint" />
+			<column name="TAX_HEADER_ID" type="bigint" />
+			<column name="TAX_DETAIL_ID" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="100.1" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE tax_details_stg1 ADD CONSTRAINT DF_tax_details_stg1_refid DEFAULT 0 FOR REFERENCEID;
+				ALTER TABLE tax_details_stg1 ADD CONSTRAINT DF_tax_details_stg1_movid DEFAULT 0 FOR MOVEMENTID;
+				ALTER TABLE tax_details_stg1 ADD CONSTRAINT DF_tax_details_stg1_rpyschdid DEFAULT 0 FOR RPYSCHD_REPAYID;
+				ALTER TABLE tax_details_stg1 ADD CONSTRAINT DF_tax_details_stg1_reschdid DEFAULT 0 FOR RPYSCHD_REPAYSCHID;
+				ALTER TABLE tax_details_stg1 ADD CONSTRAINT DF_tax_details_stg1_hdrid DEFAULT 0 FOR TAX_HEADER_ID;
+				ALTER TABLE tax_details_stg1 ADD CONSTRAINT DF_tax_details_stg1_dtlid DEFAULT 0 FOR TAX_DETAIL_ID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.1" author="murthy.y" dbms="postgresql, oracle">
+		<addDefaultValue columnName="REFERENCEID" tableName="tax_details_stg1" defaultValue="0" />
+		<addDefaultValue columnName="MOVEMENTID" tableName="tax_details_stg1" defaultValue="0" />
+		<addDefaultValue columnName="RPYSCHD_REPAYID" tableName="tax_details_stg1" defaultValue="0" />
+		<addDefaultValue columnName="RPYSCHD_REPAYSCHID" tableName="tax_details_stg1" defaultValue="0" />
+		<addDefaultValue columnName="TAX_HEADER_ID" tableName="tax_details_stg1" defaultValue="0" />
+		<addDefaultValue columnName="TAX_DETAIL_ID" tableName="tax_details_stg1" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="100.2" author="murthy.y">
+		<sql>
+			<![CDATA[
+						insert into tax_details_stg1 Select row_number() over( order by feeid), 0 referenceid, taxtype, taxperc, actualtax,paidtax ,nettax ,remfeetax ,waivedtax , version,lastmntby ,lastmnton,  recordstatus , rolecode , nextrolecode , taskid , nexttaskid , recordtype ,  workflowid,feeid,0 MOVEmentid,0 repayid,0 REPAYSCHID,0 tax_header_id,0 tax_detail_id
+								from (
+								Select row_number() over( order by fintaxid) id,0 referenceid,'CGST' taxtype, 9 taxperc,
+								actualcgst actualtax, paidcgst paidtax ,netcgst  nettax ,remfeecgst remfeetax ,
+								waivedcgst waivedtax , version,lastmntby ,lastmnton,  recordstatus ,
+									rolecode , nextrolecode , taskid , nexttaskid , recordtype ,  workflowid,feeid
+								from fintaxdetails T1 where actualcgst!=0 union all
+								Select row_number() over( order by fintaxid),0 referenceid,'IGST' taxtype, 18 taxperc,
+								actualigst actualtax, paidigst paidtax ,netigst  nettax ,remfeeigst remfeetax ,
+								waivedigst waivedtax , version,lastmntby ,lastmnton,  recordstatus ,
+									rolecode , nextrolecode , taskid , nexttaskid , recordtype ,  workflowid,feeid
+								from fintaxdetails T1 where actualigst!=0 union all
+								Select row_number() over( order by fintaxid),0 referenceid,'UGST' taxtype, 9 taxperc,
+								actualugst actualtax, paidugst paidtax ,netugst  nettax ,remfeeugst remfeetax ,
+								waivedugst waivedtax , version,lastmntby ,lastmnton,  recordstatus ,
+									rolecode , nextrolecode , taskid , nexttaskid , recordtype ,  workflowid,feeid
+								from fintaxdetails T1 where actualugst!=0 union all
+								Select row_number() over( order by fintaxid),0 referenceid,'SGST' taxtype, 9 taxperc,
+								actualsgst actualtax, paidsgst paidtax ,netsgst  nettax ,remfeesgst remfeetax ,
+								waivedsgst waivedtax , version,lastmntby ,lastmnton,  recordstatus ,
+									rolecode , nextrolecode , taskid , nexttaskid , recordtype ,  workflowid,feeid
+								from fintaxdetails T1 where actualsgst!=0) T order by feeid;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.3" author="murthy.y" dbms="postgresql">
+		<sql>
+				<![CDATA[
+					Update tax_details_stg1 cd set referenceid =t2.referenceid from 
+					(Select feeid,row_number() over( order by feeid) referenceid from (
+						select distinct feeid from tax_details_stg1)T
+					) t2
+					where cd.feeid = t2.feeid;	
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.4" author="murthy.y" dbms="oracle">
+		<sql>
+				<![CDATA[
+					MERGE INTO tax_details_stg1 cd
+					USING (Select feeid,row_number() over( order by feeid) referenceid from (
+					select distinct feeid from tax_details_stg1)T
+					) t2
+					ON (cd.feeid = t2.feeid)
+					WHEN MATCHED THEN Update set  referenceid =t2.referenceid;
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.4" author="murthy.y" dbms="mssql">
+		<sql>
+				<![CDATA[
+					MERGE INTO tax_details_stg1 cd
+					USING (Select feeid,row_number() over( order by feeid) referenceid from (
+					select distinct feeid from tax_details_stg1)T
+					) t2
+					ON (cd.feeid = t2.feeid)
+					WHEN MATCHED THEN Update set  referenceid =t2.referenceid;
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.5" author="murthy.y">
+		<sql>
+				<![CDATA[
+						insert into tax_details_stg1 Select row_number() over( order by MOVEmentid)+(select max(id) from tax_details_stg1), 0 referenceid, taxtype, taxperc, actualtax,paidtax ,nettax ,remfeetax ,waivedtax , version1,lastmntby ,lastmnton,  recordstatus , rolecode , nextrolecode , taskid , nexttaskid , recordtype ,  workflowid,0 feeid,MOVEmentid,0 repayid,0 REPAYSCHID,0 tax_header_id,0 tax_detail_id
+							from (
+							Select row_number() over( order by MOVEmentid) id,0 referenceid,'CGST' taxtype, 9 taxperc,
+							0 actualtax, paidcgst paidtax ,0  nettax ,0 remfeetax ,
+							waivedcgst waivedtax ,0 version1,0 lastmntby ,current_timestamp lastmnton,''  recordstatus ,
+								'' rolecode ,'' nextrolecode ,'' taskid , '' nexttaskid ,'' recordtype , 0 workflowid,0 feeid, MOVEmentid
+							from manualadvisemovements T1 where paidcgst!=0 union all
+							Select row_number() over( order by MOVEmentid),0 referenceid,'IGST' taxtype, 18 taxperc,
+							0 actualtax, paidigst paidtax ,0  nettax ,0 remfeetax ,
+							waivedigst waivedtax ,0 version1,0 lastmntby ,current_timestamp lastmnton,''  recordstatus ,
+								'' rolecode ,'' nextrolecode ,'' taskid , '' nexttaskid ,'' recordtype , 0 workflowid,0 feeid, MOVEmentid
+							from manualadvisemovements T1 where paidigst!=0 union all
+							Select row_number() over( order by MOVEmentid),0 referenceid,'UGST' taxtype, 9 taxperc,
+							0 actualtax, paidugst paidtax ,0  nettax ,0 remfeetax ,
+							waivedugst waivedtax ,0 version1,0 lastmntby ,current_timestamp lastmnton,''  recordstatus ,
+								'' rolecode ,'' nextrolecode ,'' taskid , '' nexttaskid ,'' recordtype , 0 workflowid,0 feeid, MOVEmentid
+							from manualadvisemovements T1 where paidugst!=0 union all
+							Select row_number() over( order by MOVEmentid),0 referenceid,'SGST' taxtype, 9 taxperc,
+							0 actualtax, paidsgst paidtax ,0  nettax ,0 remfeetax ,
+							waivedsgst waivedtax ,0 version1,0 lastmntby ,current_timestamp lastmnton,''  recordstatus ,
+								'' rolecode ,'' nextrolecode ,'' taskid , '' nexttaskid ,'' recordtype , 0 workflowid,0 feeid, MOVEmentid
+							from manualadvisemovements T1 where paidsgst!=0) T order by MOVEmentid;
+					]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.6" author="murthy.y" dbms="postgresql">
+		<sql>
+				<![CDATA[
+					Update tax_details_stg1 cd set referenceid =t2.referenceid + (select max(referenceid) from tax_details_stg1) from 
+							(Select MOVEmentid,row_number() over( order by MOVEmentid) referenceid from (
+							select distinct MOVEmentid from tax_details_stg1 where MOVEmentid!=0 or MOVEmentid is not null )T
+							) t2
+					where cd.MOVEmentid = t2.MOVEmentid and (cd.MOVEmentid!=0 );	
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.6" author="murthy.y" dbms="oracle">
+		<sql>
+				<![CDATA[
+					MERGE INTO tax_details_stg1 cd
+					USING (Select MOVEmentid,row_number() over( order by MOVEmentid) referenceid from (
+					select distinct MOVEmentid from tax_details_stg1 where MOVEmentid!=0 or MOVEmentid is not null )T
+						) t2
+						ON (cd.MOVEmentid = t2.MOVEmentid and (cd.MOVEmentid!=0 ))
+					WHEN MATCHED THEN UPDATE set referenceid =t2.referenceid + (select max(referenceid) from tax_details_stg1);
+				]]>
+
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.6" author="murthy.y" dbms="mssql">
+		<sql>
+				<![CDATA[
+					MERGE INTO tax_details_stg1 cd
+					USING (Select MOVEmentid,row_number() over( order by MOVEmentid) referenceid from (
+					select distinct MOVEmentid from tax_details_stg1 where MOVEmentid!=0 or MOVEmentid is not null )T
+						) t2
+						ON (cd.MOVEmentid = t2.MOVEmentid and (cd.MOVEmentid!=0 ))
+					WHEN MATCHED THEN UPDATE set referenceid =t2.referenceid + (select max(referenceid) from tax_details_stg1);
+				]]>
+
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.8" author="murthy.y">
+		<sql>
+				<![CDATA[
+						insert into tax_details_stg1
+						Select row_number() over( order by MOVEmentid)+(select max(id) from tax_details_stg1), 0 referenceid, taxtype, taxperc,
+						actualtax,paidtax ,nettax ,remfeetax ,waivedtax , version1,lastmntby ,lastmnton,  recordstatus ,
+							rolecode , nextrolecode , taskid , nexttaskid , recordtype ,  workflowid,feeid,MOVEmentid,repayid,REPAYSCHID,0 tax_header_id,0 tax_detail_id
+							from (
+						Select row_number() over( order by repayid,REPAYSCHID) id,0 referenceid,'CGST' taxtype, 9 taxperc,
+						0 actualtax, paidpenaltycgst paidtax ,0  nettax ,0 remfeetax ,
+						penaltywaivercgst waivedtax ,0 version1,0 lastmntby ,current_timestamp lastmnton,''  recordstatus ,
+							'' rolecode ,'' nextrolecode ,'' taskid , '' nexttaskid ,'' recordtype , 0 workflowid,0 feeid, 0 MOVEmentid,repayid,REPAYSCHID
+						from finrepayscheduledetail T1 where paidpenaltycgst!=0 
+						union all
+						Select row_number() over( order by repayid,REPAYSCHID),0 referenceid,'IGST' taxtype, 18 taxperc,
+						0 actualtax, paidpenaltyigst paidtax ,0  nettax ,0 remfeetax ,
+						penaltywaiverigst waivedtax ,0 version1,0 lastmntby ,current_timestamp lastmnton,''  recordstatus ,
+							'' rolecode ,'' nextrolecode ,'' taskid , '' nexttaskid ,'' recordtype , 0 workflowid,0 feeid, 0 MOVEmentid,repayid,REPAYSCHID
+						from finrepayscheduledetail T1 where paidpenaltyigst!=0 
+						union all
+						Select row_number() over( order by repayid,REPAYSCHID),0 referenceid,'UGST' taxtype, 9 taxperc,
+						0 actualtax, paidpenaltyugst paidtax ,0  nettax ,0 remfeetax ,
+						penaltywaiverugst waivedtax ,0 version1,0 lastmntby ,current_timestamp lastmnton,''  recordstatus ,
+							'' rolecode ,'' nextrolecode ,'' taskid , '' nexttaskid ,'' recordtype , 0 workflowid,0 feeid, 0 MOVEmentid,repayid,REPAYSCHID
+						from finrepayscheduledetail T1 where paidpenaltyugst!=0 
+						union all
+						Select row_number() over( order by repayid,REPAYSCHID),0 referenceid,'SGST' taxtype, 9 taxperc,
+						0 actualtax, paidpenaltysgst paidtax ,0  nettax ,0 remfeetax ,
+						penaltywaiversgst waivedtax ,0 version1,0 lastmntby ,current_timestamp lastmnton,''  recordstatus ,
+							'' rolecode ,'' nextrolecode ,'' taskid , '' nexttaskid ,'' recordtype , 0 workflowid,0 feeid, 0 MOVEmentid,repayid,REPAYSCHID
+						from finrepayscheduledetail T1 where paidpenaltysgst!=0) T order by repayid,REPAYSCHID;
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.9" author="murthy.y" dbms="postgresql">
+		<sql>
+				<![CDATA[
+					Update tax_details_stg1 cd set referenceid =t2.referenceid + (select max(referenceid) from tax_details_stg1) from 
+					(Select RPYSCHD_repayid,RPYSCHD_REPAYSCHID,row_number() over( order by RPYSCHD_repayid,RPYSCHD_REPAYSCHID) referenceid from (
+					 select distinct RPYSCHD_repayid,RPYSCHD_REPAYSCHID from tax_details_stg1 
+					 where (RPYSCHD_repayid!=0 or RPYSCHD_repayid is not null) and (RPYSCHD_REPAYSCHID!=0 or RPYSCHD_REPAYSCHID is not null) )T
+							) t2
+					where cd.RPYSCHD_repayid = t2.RPYSCHD_repayid and cd.RPYSCHD_REPAYSCHID = t2.RPYSCHD_REPAYSCHID and (cd.RPYSCHD_repayid!=0 ) and CD.RPYSCHD_REPAYSCHID!=0;
+				]]>
+
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.9" author="murthy.y" dbms="oracle">
+		<sql>
+				<![CDATA[
+						MERGE INTO tax_details_stg1 cd
+						USING (Select RPYSCHD_repayid,RPYSCHD_REPAYSCHID,row_number() over( order by RPYSCHD_repayid,RPYSCHD_REPAYSCHID) referenceid from (
+						select distinct RPYSCHD_repayid,RPYSCHD_REPAYSCHID from tax_details_stg1 
+						where (RPYSCHD_repayid!=0 or RPYSCHD_repayid is not null) and (RPYSCHD_REPAYSCHID!=0 or RPYSCHD_REPAYSCHID is not null) )T
+						) t2
+						ON (cd.RPYSCHD_repayid = t2.RPYSCHD_repayid and cd.RPYSCHD_REPAYSCHID = t2.RPYSCHD_REPAYSCHID and (cd.RPYSCHD_repayid!=0 ) and CD.RPYSCHD_REPAYSCHID!=0)
+						WHEN MATCHED THEN
+						UPDATE SET referenceid =t2.referenceid + (select max(referenceid) from tax_details_stg1); 
+					]]>
+
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.9" author="murthy.y" dbms="mssql">
+		<sql>
+				<![CDATA[
+						MERGE INTO tax_details_stg1 cd
+						USING (Select RPYSCHD_repayid,RPYSCHD_REPAYSCHID,row_number() over( order by RPYSCHD_repayid,RPYSCHD_REPAYSCHID) referenceid from (
+						select distinct RPYSCHD_repayid,RPYSCHD_REPAYSCHID from tax_details_stg1 
+						where (RPYSCHD_repayid!=0 or RPYSCHD_repayid is not null) and (RPYSCHD_REPAYSCHID!=0 or RPYSCHD_REPAYSCHID is not null) )T
+						) t2
+						ON (cd.RPYSCHD_repayid = t2.RPYSCHD_repayid and cd.RPYSCHD_REPAYSCHID = t2.RPYSCHD_REPAYSCHID and (cd.RPYSCHD_repayid!=0 ) and CD.RPYSCHD_REPAYSCHID!=0)
+						WHEN MATCHED THEN
+						UPDATE SET referenceid =t2.referenceid + (select max(referenceid) from tax_details_stg1); 
+					]]>
+
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.10" author="murthy.y" dbms="postgresql">
+		<sql>
+				<![CDATA[
+					Update  tax_details_stg1 cd set tax_header_id = new_referenceid from (
+					Select distinct referenceid +(select max(headerid) from (select headerid from tax_header 
+                                                         union select headerid from tax_header_Temp)T) +1000 new_referenceid,   
+                                                         referenceid old_referenceid
+					from tax_details_stg1 order by referenceid)T2 where cd.referenceid = T2.old_referenceid;
+				]]>
+
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.10" author="murthy.y" dbms="oracle">
+		<sql>
+				<![CDATA[
+					MERGE INTO tax_details_stg1 cd
+					USING (Select distinct referenceid +(select max(headerid) from (select headerid from tax_header 
+																	 union select headerid from tax_header_Temp)T) +1000 new_referenceid,   
+																	 referenceid old_referenceid
+					from tax_details_stg1 order by referenceid)T2 
+					ON (cd.referenceid = T2.old_referenceid)
+					WHEN MATCHED THEN
+					UPDATE SET tax_header_id = new_referenceid;
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.10" author="murthy.y" dbms="mssql">
+		<sql>
+				<![CDATA[
+					MERGE INTO tax_details_stg1 cd
+					USING (Select distinct referenceid +(select max(headerid) from (select headerid from tax_header 
+																	 union select headerid from tax_header_Temp)T) +1000 new_referenceid,   
+																	 referenceid old_referenceid
+					from tax_details_stg1 order by referenceid)T2 
+					ON (cd.referenceid = T2.old_referenceid)
+					WHEN MATCHED THEN
+					UPDATE SET tax_header_id = new_referenceid;
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.11" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				SELECT setval('Seqtax_header', (select coalesce(max(tax_header_id),0)+1000 from tax_details_stg1));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.11" author="murthy.y" dbms="mssql">
+		<sql splitStatements="false">
+			<![CDATA[
+				DECLARE @Seq VARCHAR(10)
+				SELECT @Seq = CAST(MAX(ISNULL(tax_header_id, 0)) AS VARCHAR(MAX)) + 1000 FROM tax_details_stg1
+
+				DECLARE @SQL VARCHAR(4000) ;
+				SET @SQL = '
+				ALTER SEQUENCE Seqtax_header
+				RESTART WITH ' + @Seq +  '
+				INCREMENT BY 1
+				MINVALUE -9223372036854775808
+				MAXVALUE 9223372036854775807;'
+				
+				EXEC(@SQL)
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.11" author="murthy.y" dbms="oracle">
+		<sql splitStatements="false">
+			<![CDATA[
+				declare st varchar2(200);
+ 				nu number;
+				begin
+					select coalesce(max(tax_header_id),0)+1000 into nu from tax_details_stg1;
+					st:= 'ALTER SEQUENCE Seqtax_header RESTART START WITH ' ||nu ;
+					execute immediate st;
+				end;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.12" author="murthy.y" dbms="postgresql">
+		<sql>
+				<![CDATA[
+					Update  tax_details_stg1 cd set tax_detail_id = new_tax_detailid from (
+					Select distinct id +(select max(id) from (select id from tax_details 
+                                                         union select id from tax_details_Temp)T) +1000 new_tax_detailid,   
+                                                         id old_tax_detailid
+					from tax_details_stg1 order by id)T2 where cd.id = T2.old_tax_detailid;
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.12" author="murthy.y" dbms="oracle">
+		<sql>
+				<![CDATA[
+					MERGE INTO tax_details_stg1 cd
+					using(  Select distinct id +(select max(id) from (select id from tax_details 
+																	 union select id from tax_details_Temp)T) +1000 new_tax_detailid,   
+																	 id old_tax_detailid
+					from tax_details_stg1 order by id)T2 
+					ON (cd.id = T2.old_tax_detailid)
+					WHEN MATCHED THEN
+					UPDATE SET tax_detail_id = new_tax_detailid;
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.12" author="murthy.y" dbms="mssql">
+		<sql>
+				<![CDATA[
+					MERGE INTO tax_details_stg1 cd
+					using(  Select distinct id +(select max(id) from (select id from tax_details 
+																	 union select id from tax_details_Temp)T) +1000 new_tax_detailid,   
+																	 id old_tax_detailid
+					from tax_details_stg1 order by id)T2 
+					ON (cd.id = T2.old_tax_detailid)
+					WHEN MATCHED THEN
+					UPDATE SET tax_detail_id = new_tax_detailid;
+				]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="100.13" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				SELECT setval('SeqTax_Details', (select coalesce(max(tax_detail_id),0)+1000 from tax_details_stg1));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.13" author="murthy.y" dbms="mssql">
+		<sql splitStatements="false">
+			<![CDATA[
+				DECLARE @Seq1 VARCHAR(10)
+				SELECT @Seq1 = CAST(MAX(ISNULL(tax_detail_id, 0)) AS VARCHAR(MAX)) + 1000 FROM tax_details_stg1
+				
+				DECLARE @SQL1 VARCHAR(4000) ;
+				SET @SQL1 = '
+				ALTER Seq1UENCE Seq1Tax_Details
+				RESTART WITH ' + @Seq1 +  '
+				INCREMENT BY 1
+				MINVALUE -9223372036854775808
+				MAXVALUE 9223372036854775807;'
+				
+				EXEC(@SQL1)
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.13" author="murthy.y" dbms="oracle">
+		<sql splitStatements="false">
+			<![CDATA[
+				declare st varchar2(200);
+						nu number;
+				begin
+				   select coalesce(max(tax_detail_id),0)+1000 into nu from tax_details_stg1;
+				   st:= 'ALTER SEQUENCE SeqTax_Details RESTART START WITH ' ||nu ;
+					  execute immediate st;
+				end;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.14" author="murthy.y">
+		<sql>
+			<![CDATA[
+				insert into tax_header select distinct tax_header_id,0 version1,0 lastmntby ,current_timestamp lastmnton,''  recordstatus ,'' rolecode ,'' nextrolecode ,'' taskid , '' nexttaskid ,'' recordtype , 0 workflowid,0 invoiceid
+                from tax_details_stg1 order by tax_header_id;	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.15" author="murthy.y">
+		<sql>
+			<![CDATA[
+				insert into tax_details Select distinct tax_detail_id,tax_header_id referenceid,taxtype,  taxperc, actualtax, paidtax , nettax ,remfeetax , waivedtax , version,lastmntby ,lastmnton,  recordstatus , rolecode , nextrolecode , taskid , nexttaskid , recordtype ,  workflowid from tax_details_stg1 T1 ;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.16" author="murthy.y" dbms="postgresql,mssql">
+		<sql>
+			<![CDATA[
+				Update finfeedetail set taxheaderid = T1.tax_header_id  from tax_details_stg1 T1
+				where T1.feeid = finfeedetail.feeid;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.16" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				update FinFeeDetail m set (m.taxheaderid) = (select T1.tax_header_id from tax_details_stg1 t1 where T1.feeid = m.feeid);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.17" author="murthy.y" dbms="postgresql,mssql">
+		<sql>
+			<![CDATA[
+				Update manualadvisemovements set taxheaderid = T1.tax_header_id  from tax_details_stg1 T1
+				where T1.MOVEmentid = manualadvisemovements.MOVEmentid;
+	
+				Update finrepayscheduledetail set taxheaderid = T1.tax_header_id  from tax_details_stg1 T1
+				where T1.RPYSCHD_repayid = finrepayscheduledetail.repayid and  T1.RPYSCHD_REPAYSCHID = finrepayscheduledetail.REPAYSCHID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.17" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				update manualadvisemovements m  set (m.taxheaderid) = (select T1.tax_header_id from tax_details_stg1 t1 where T1.MOVEmentid = m.MOVEmentid);
+    
+				update finrepayscheduledetail m set (m.taxheaderid) = (select T1.tax_header_id from tax_details_stg1 t1  where T1.RPYSCHD_repayid = m.repayid and  T1.RPYSCHD_REPAYSCHID = m.REPAYSCHID);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.18" author="murthy.y">
+		<addUniqueConstraint columnNames="id, referenceid " constraintName="UK_taxdetail" tableName="tax_details" />
+	</changeSet>
+
+	<changeSet id="100.19" author="murthy.y">
+		<createIndex tableName="tax_details" indexName="ix_taxdetail_bv">
+			<column name="referenceid" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="100.20" author="murthy.y">
+		<dropPrimaryKey tableName="GST_Invoice_Txn" />
+	</changeSet>
+
+	<changeSet id="100.21_pre" author="murthy.y">
+		<dropForeignKeyConstraint baseTableName="gst_invoice_txn_details" constraintName="fk_gst_invoice_txn_invoiceid" />
+	</changeSet>
+
+	<changeSet id="100.21" author="murthy.y">
+		<dropUniqueConstraint tableName="GST_Invoice_Txn" uniqueColumns="InvoiceId" constraintName="uk_gst_invoice_txn_invoiceid" />
+	</changeSet>
+
+	<changeSet id="100.22" author="murthy.y">
+		<addPrimaryKey tableName="GST_Invoice_Txn" columnNames="InvoiceId" constraintName="PK_GST_Invoice_Txn_InvoiceId" />
+	</changeSet>
+
+	<changeSet id="100.22.3" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update gst_invoice_txn_details set InvoiceId = null where InvoiceId <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.22.4" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_gst_invoice_txn_invoiceid" referencedTableName="GST_Invoice_Txn"
+			baseColumnNames="InvoiceID" baseTableName="gst_invoice_txn_details" referencedColumnNames="InvoiceId" />
+	</changeSet>
+
+	<changeSet id="100.23.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update TAX_Header_Temp set InvoiceId = null where InvoiceId <=0;
+				update TAX_Header set InvoiceId = null where InvoiceId <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.23.2" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_TH_InvID" referencedTableName="GST_Invoice_Txn"
+			baseColumnNames="InvoiceID" baseTableName="TAX_Header" referencedColumnNames="InvoiceId" />
+	</changeSet>
+
+	<changeSet id="100.24" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update AdviseDueTaxDetail set InvoiceId = null where InvoiceId <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.24.1" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_ADTD_InvID" referencedTableName="GST_Invoice_Txn"
+			baseColumnNames="InvoiceID" baseTableName="AdviseDueTaxDetail" referencedColumnNames="InvoiceId" />
+	</changeSet>
+
+	<changeSet id="100.25" author="murthy.y">
+		<dropNotNullConstraint tableName="FinFeeDetail_Temp" columnName="TaxHeaderId" columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="100.25.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update FinFeeDetail_Temp set TaxHeaderId = null where TaxHeaderId <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.25.2_pre" author="murthy.y">
+		<sql>
+			<![CDATA[
+				delete from  FinFeeDetail_Temp where TaxHeaderId not in (select HeaderId from tax_header_temp);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.25.2" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_FFD_T_TH_T_THID" referencedTableName="TAX_Header_Temp"
+			baseColumnNames="TaxHeaderId" baseTableName="FinFeeDetail_Temp" referencedColumnNames="HeaderID" />
+	</changeSet>
+
+	<changeSet id="100.25.3" author="Manoj.P">
+		<dropForeignKeyConstraint baseTableName="FinFeeDetail_Temp" constraintName="FK_FFD_T_TH_T_THID" />
+	</changeSet>
+
+	<changeSet id="100.26" author="murthy.y">
+		<dropNotNullConstraint tableName="FinFeeDetail" columnName="TaxHeaderId" columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="100.26.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update FinFeeDetail set TaxHeaderId = null where TaxHeaderId <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.26.2" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_FFD_TH_THID" referencedTableName="TAX_Header"
+			baseColumnNames="TaxHeaderId" baseTableName="FinFeeDetail" referencedColumnNames="HeaderID" />
+	</changeSet>
+
+	<changeSet id="100.27" author="murthy.y">
+		<dropNotNullConstraint tableName="ManualadviseMovements" columnName="TaxHeaderId"
+			columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="100.27.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update ManualadviseMovements set TaxHeaderId = null where TaxHeaderId <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.28" author="murthy.y">
+		<dropNotNullConstraint tableName="ManualadviseMovements_Temp" columnName="TaxHeaderId"
+			columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="100.28.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update ManualadviseMovements_Temp set TaxHeaderId = null where TaxHeaderId <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.29" author="murthy.y">
+		<dropNotNullConstraint tableName="Finrepayscheduledetail" columnName="TaxHeaderId"
+			columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="100.29.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update Finrepayscheduledetail set TaxHeaderId = null where TaxHeaderId <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.29.2" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_FRSCHD_TH_THID" referencedTableName="TAX_Header"
+			baseColumnNames="TaxHeaderId" baseTableName="Finrepayscheduledetail" referencedColumnNames="HeaderID" />
+	</changeSet>
+
+	<changeSet id="100.30" author="murthy.y">
+		<dropNotNullConstraint tableName="Finrepayscheduledetail_Temp" columnName="TaxHeaderId"
+			columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="100.30.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update Finrepayscheduledetail_Temp set TaxHeaderId = null where TaxHeaderId <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.30.2" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_FRSCHD_T_TH_T_THID" referencedTableName="TAX_Header_Temp"
+			baseColumnNames="TaxHeaderId" baseTableName="Finrepayscheduledetail_Temp" referencedColumnNames="HeaderID" />
+	</changeSet>
+
+	<changeSet id="100.31.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update OverdueTaxMovements set TaxHeaderId = null where TaxHeaderId <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.31.2" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_OTM_TH_THID" referencedTableName="TAX_Header"
+			baseColumnNames="TaxHeaderId" baseTableName="OverdueTaxMovements" referencedColumnNames="HeaderID" />
+	</changeSet>
+
+	<changeSet id="100.32" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update ScheduleDueTaxDetails set InvoiceID = null where InvoiceID <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.32.1" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_SDTD_InvID" referencedTableName="GST_Invoice_Txn"
+			baseColumnNames="InvoiceID" baseTableName="ScheduleDueTaxDetails" referencedColumnNames="InvoiceId" />
+	</changeSet>
+
+	<changeSet id="100.33" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update FinODAmzTaxDetail set InvoiceID = null where InvoiceID <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="100.33.1" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_FODAMZTD_InvID" referencedTableName="GST_Invoice_Txn"
+			baseColumnNames="InvoiceID" baseTableName="FinODAmzTaxDetail" referencedColumnNames="InvoiceId" />
+	</changeSet>
+
+	<changeSet id="101" author="Varaprasad.K">
+		<createView viewName="PaymentDetails_View" replaceIfExists="true">
+			<![CDATA[
+				 SELECT t1.paymentdetailid,
+					    t1.paymentid,
+					    t1.amounttype,
+					    t1.amount,
+					    t1.referenceid,
+						t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t1.TaxHeaderId,
+					    t3.FeeTypeCode,
+						t3.FeeTypeDesc,
+						t3.taxComponent
+					   FROM paymentdetails_temp T1	
+					   Left Join ManualAdvise T2 ON  T1.REFERENCEID = T2.AdviseID And T1.AMOUNTTYPE = '2'
+					   Left join feetypes T3  ON T3.feetypeid =T2.feetypeid
+					UNION ALL
+					 SELECT t1.paymentdetailid,
+					    t1.paymentid,
+					    t1.amounttype,
+					    t1.amount,
+					    t1.referenceid,
+						t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t1.TaxHeaderId,
+					    t3.FeeTypeCode,
+						t3.FeeTypeDesc,
+						t3.taxComponent
+					 FROM paymentdetails t1
+					   Left Join ManualAdvise T2 ON  T1.REFERENCEID = T2.AdviseID And T1.AMOUNTTYPE = '2'
+					   Left join feetypes T3  ON T3.feetypeid =T2.feetypeid
+					 WHERE NOT (EXISTS ( SELECT 1
+					           FROM paymentdetails_temp
+					          WHERE paymentdetails_temp.paymentdetailid = t1.paymentdetailid))
+				  ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="102" author="Varaprasad.K">
+		<createView viewName="PaymentDetails_AView" replaceIfExists="true">
+			<![CDATA[
+				  SELECT  t1.paymentdetailid,
+						   t1.paymentid,
+						   t1.amounttype,
+						   t1.amount,
+						   t1.referenceid,
+						   t1.version,
+						   t1.lastmntby,
+						   t1.lastmnton,
+						   t1.recordstatus,
+						   t1.rolecode,
+						   t1.nextrolecode,
+						   t1.taskid,
+						   t1.nexttaskid,
+						   t1.recordtype,
+						   t1.workflowid,
+						   t1.TaxHeaderId,
+						   t3.FeeTypeCode,
+						   t3.FeeTypeDesc,
+						   t3.taxComponent
+					FROM paymentdetails t1
+					 Left Join ManualAdvise T2 ON  T1.REFERENCEID = T2.AdviseID And T1.AMOUNTTYPE = '2'
+					 Left join feetypes T3  ON T3.feetypeid =T2.feetypeid
+				  ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="103.1" author="Varaprasad.K">
+		<sql>
+		   <![CDATA[
+				UPDATE SEQFEETYPES SET SEQNO = (SELECT MAX(FEETYPEID)+1 FROM FEETYPES);
+				Delete from FEETYPES where FeeTypeCode='FPRINC';
+				Delete from FEETYPES where FeeTypeCode = 'FINSTINC';
+	
+				Insert into FEETYPES  (feetypeid, feetypecode, feetypedesc, active, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, manualadvice, accountsetid, advisetype, hostfeetypecode, taxcomponent, amortzreq, taxapplicable, refundable, dueaccreq, dueaccset, tdsreq) values 
+				((Select SeqNo + 1 from SeqFeeTypes), 'FPRINC', 'Future Principle Amount', '1', 2, 1000, Current_TimeStamp, 'Approved', '', '', '', '', '', 0, '0', null, 1, '', '#',  0, 0, 0, 0, 0, 0);
+				
+	            
+			
+	            UPDATE SEQFEETYPES SET SEQNO = (SELECT MAX(FEETYPEID)+1 FROM FEETYPES);
+				
+				Insert into FEETYPES (feetypeid, feetypecode, feetypedesc, active, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, manualadvice, accountsetid, advisetype, hostfeetypecode, taxcomponent, amortzreq, taxapplicable, refundable, dueaccreq, dueaccset, tdsreq) values 
+				((Select SeqNo + 1 from SeqFeeTypes), 'FINSTINC', 'Future Profit Amount', '1', 2, 1000, Current_TimeStamp, 'Approved', '', '', '', '', '', 0, '0', null, 1, '', '#',  0, 0, 0, 0, 0, 0);
+				UPDATE SEQFEETYPES SET SEQNO = (SELECT MAX(FEETYPEID)+1 FROM FEETYPES);
+		  ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="104" author="Varaprasad.K">
+		<sql>
+		   <![CDATA[
+				delete from smtparameters where sysparmcode ='FEETYPE_FPFT_EXEMPTED';
+				delete from smtparameters where sysparmcode='FEETYPE_FPRI_EXEMPTED';
+	
+				Insert into SMTPARAMETERS values ('FEETYPE_FPFT_EXEMPTED', 'Future Profit Amount', 'String', 1, 'FINSTINC', 8, 0, null, null, 'Future Profit Amount', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				Insert into SMTPARAMETERS values ('FEETYPE_FPRI_EXEMPTED', 'Future Principal Amount', 'String', 1, 'FPRINC', 8, 0, null, null, 'Future Principal Amount', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+		 ]]>
+		</sql>
+	</changeSet>
+
+
+</databaseChangeLog>

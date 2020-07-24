@@ -494,4 +494,13 @@ public class FinanceConstants {
 
 	// SELLOFF
 	public static final String CLOSE_STATUS_SELLOFF = "O";
+
+	// Schedule Tax Invoice Calculated On
+	// 1. I : Calculation on Interest Amount
+	// 2. P : Calculation on Principal Amount
+	// 3. E : Calculation on EMI(Principal + Interest) Amount
+	public static final String GST_SCHD_CAL_ON_PFT = "I";
+	public static final String GST_SCHD_CAL_ON_PRI = "P";
+	public static final String GST_SCHD_CAL_ON_EMI = "E";
+
 }

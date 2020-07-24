@@ -87,7 +87,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.fees.FeePostings;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.partnerbank.PartnerBank;

@@ -53,6 +53,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.finance.TaxHeader;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -85,7 +86,10 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 	private String feeTypeDesc;
 	private boolean taxApplicable = false;
 	private String taxComponent;
-	private PaymentTaxDetail paymentTaxDetail;
+
+	private Long taxHeaderId;
+	private TaxHeader taxHeader;
+
 	private boolean apiRequest = false; //Refund Uploads
 	private String finSource;
 
@@ -115,6 +119,7 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("taxComponent");
 		excludeFields.add("taxApplicable");
 		excludeFields.add("finSource");
+		excludeFields.add("taxHeader");
 		return excludeFields;
 	}
 
@@ -258,14 +263,6 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 		this.taxComponent = taxComponent;
 	}
 
-	public PaymentTaxDetail getPaymentTaxDetail() {
-		return paymentTaxDetail;
-	}
-
-	public void setPaymentTaxDetail(PaymentTaxDetail paymentTaxDetail) {
-		this.paymentTaxDetail = paymentTaxDetail;
-	}
-
 	public boolean isApiRequest() {
 		return apiRequest;
 	}
@@ -280,5 +277,21 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setFinSource(String finSource) {
 		this.finSource = finSource;
+	}
+
+	public Long getTaxHeaderId() {
+		return taxHeaderId;
+	}
+
+	public void setTaxHeaderId(Long taxHeaderId) {
+		this.taxHeaderId = taxHeaderId;
+	}
+
+	public TaxHeader getTaxHeader() {
+		return taxHeader;
+	}
+
+	public void setTaxHeader(TaxHeader taxHeader) {
+		this.taxHeader = taxHeader;
 	}
 }

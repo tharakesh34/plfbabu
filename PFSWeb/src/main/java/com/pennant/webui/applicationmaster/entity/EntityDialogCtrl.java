@@ -192,24 +192,28 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		this.country.setValueColumn("CountryCode");
 		this.country.setDescColumn("CountryDesc");
 		this.country.setValidateColumns(new String[] { "CountryCode" });
+		this.country.setTextBoxWidth(180);
 
 		this.stateCode.setMandatoryStyle(true);
 		this.stateCode.setModuleName("Province");
 		this.stateCode.setValueColumn("CPProvince");
 		this.stateCode.setDescColumn("CPProvinceName");
 		this.stateCode.setValidateColumns(new String[] { "CPProvince" });
+		this.stateCode.setTextBoxWidth(180);
 
 		this.cityCode.setMandatoryStyle(true);
 		this.cityCode.setModuleName("City");
 		this.cityCode.setValueColumn("PCCity");
 		this.cityCode.setDescColumn("PCCityName");
 		this.cityCode.setValidateColumns(new String[] { "PCCity" });
+		this.cityCode.setTextBoxWidth(180);
 
 		this.pinCode.setMandatoryStyle(true);
 		this.pinCode.setModuleName("PinCode");
 		this.pinCode.setValueColumn("PinCode");
 		this.pinCode.setDescColumn("City");
 		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		this.pinCode.setTextBoxWidth(180);
 
 		this.entityCode.setMaxlength(8);
 		this.entityDesc.setMaxlength(50);

@@ -37,11 +37,13 @@ public class ReceiptAllocationDetail implements Serializable {
 	private BigDecimal paidSGST = BigDecimal.ZERO;
 	private BigDecimal paidIGST = BigDecimal.ZERO;
 	private BigDecimal paidUGST = BigDecimal.ZERO;
+	private BigDecimal paidCESS = BigDecimal.ZERO;
 
 	private BigDecimal percCGST = BigDecimal.ZERO;
 	private BigDecimal percSGST = BigDecimal.ZERO;
 	private BigDecimal percIGST = BigDecimal.ZERO;
 	private BigDecimal percUGST = BigDecimal.ZERO;
+	private BigDecimal percCESS = BigDecimal.ZERO;
 
 	private BigDecimal paidNow = BigDecimal.ZERO;
 	private BigDecimal waivedNow = BigDecimal.ZERO;
@@ -51,6 +53,7 @@ public class ReceiptAllocationDetail implements Serializable {
 	private BigDecimal waivedSGST = BigDecimal.ZERO;
 	private BigDecimal waivedIGST = BigDecimal.ZERO;
 	private BigDecimal waivedUGST = BigDecimal.ZERO;
+	private BigDecimal waivedCESS = BigDecimal.ZERO;
 	private BigDecimal waivedGST = BigDecimal.ZERO;
 
 	//Waiver GST fields
@@ -58,6 +61,7 @@ public class ReceiptAllocationDetail implements Serializable {
 	private BigDecimal dueSGST = BigDecimal.ZERO;
 	private BigDecimal dueIGST = BigDecimal.ZERO;
 	private BigDecimal dueUGST = BigDecimal.ZERO;
+	private BigDecimal dueCESS = BigDecimal.ZERO;
 
 	//In Process Allocation along with GST and TDS
 	private BigDecimal inProcess = BigDecimal.ZERO;
@@ -489,6 +493,30 @@ public class ReceiptAllocationDetail implements Serializable {
 		this.percTds = percTds;
 	}
 
+	public BigDecimal getPaidCESS() {
+		return paidCESS;
+	}
+
+	public void setPaidCESS(BigDecimal paidCESS) {
+		this.paidCESS = paidCESS;
+	}
+
+	public BigDecimal getWaivedCESS() {
+		return waivedCESS;
+	}
+
+	public void setWaivedCESS(BigDecimal waivedCESS) {
+		this.waivedCESS = waivedCESS;
+	}
+
+	public BigDecimal getPercCESS() {
+		return percCESS;
+	}
+
+	public void setPercCESS(BigDecimal percCESS) {
+		this.percCESS = percCESS;
+	}
+
 	public BigDecimal getDueCGST() {
 		return dueCGST;
 	}
@@ -519,6 +547,14 @@ public class ReceiptAllocationDetail implements Serializable {
 
 	public void setDueUGST(BigDecimal dueUGST) {
 		this.dueUGST = dueUGST;
+	}
+
+	public BigDecimal getDueCESS() {
+		return dueCESS;
+	}
+
+	public void setDueCESS(BigDecimal dueCESS) {
+		this.dueCESS = dueCESS;
 	}
 
 }

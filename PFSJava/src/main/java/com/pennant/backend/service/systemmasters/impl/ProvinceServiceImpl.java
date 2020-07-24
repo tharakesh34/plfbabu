@@ -44,14 +44,17 @@
 package com.pennant.backend.service.systemmasters.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
@@ -68,6 +71,7 @@ import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -265,47 +269,61 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	 * 
 	 * @param taxDetail
 	 */
-	private void saveSeqGstInvoice(Province province) {
+	@Override
+	public void saveSeqGstInvoice(Province province) {
 
-		if (StringUtils.isBlank(province.getTaxStateCode())) {
+		if (StringUtils.isBlank(province.getTaxStateCode()) || CollectionUtils.isEmpty(province.getTaxDetailList())) {
 			return;
 		}
 
-		SeqGSTInvoice seqGstInvoice = new SeqGSTInvoice();
-		seqGstInvoice.setSeqNo(0);
-		seqGstInvoice.setGstStateCode(province.getTaxStateCode());
+		Date appDate = SysParamUtil.getAppDate();
+		for (TaxDetail taxDetail : province.getTaxDetailList()) {
+			SeqGSTInvoice seqGstInvoice = new SeqGSTInvoice();
+			if (province.getTaxStateCode().length() > 2) {
+				seqGstInvoice.setStateCode(province.getTaxStateCode().substring(0, 2));
+			} else {
+				seqGstInvoice.setStateCode(province.getTaxStateCode());
+			}
+			if (taxDetail.getEntityCode().length() > 2) {
+				seqGstInvoice.setEntityCode(taxDetail.getEntityCode().substring(0, 2));
+			} else {
+				seqGstInvoice.setEntityCode(taxDetail.getEntityCode());
+			}
 
-		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
-		SeqGSTInvoice seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
+			String currentMontYear = DateUtil.format(appDate, "MMYY");
+			seqGstInvoice.setMonthYear(currentMontYear);
 
-		if (seqGstInvoiceTemp == null) {
-			gstInvoiceTxnDAO.deleteSeqGSTInvoice(seqGstInvoice);
-			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
+			seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
+			SeqGSTInvoice seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
+			if (seqGstInvoiceTemp == null) {
+				gstInvoiceTxnDAO.deleteSeqGSTInvoice(seqGstInvoice);
+				gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
+			}
+
+			seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
+			seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
+			if (seqGstInvoiceTemp == null) {
+				gstInvoiceTxnDAO.deleteSeqGSTInvoice(seqGstInvoice);
+				gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
+			}
+
+			seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
+			seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
+
+			if (seqGstInvoiceTemp == null) {
+				gstInvoiceTxnDAO.deleteSeqGSTInvoice(seqGstInvoice);
+				gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
+			}
+
+			seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED_TAX_CREDIT);
+			seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
+
+			if (seqGstInvoiceTemp == null) {
+				gstInvoiceTxnDAO.deleteSeqGSTInvoice(seqGstInvoice);
+				gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
+			}
 		}
 
-		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
-		seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
-
-		if (seqGstInvoiceTemp == null) {
-			gstInvoiceTxnDAO.deleteSeqGSTInvoice(seqGstInvoice);
-			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
-		}
-
-		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
-		seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
-
-		if (seqGstInvoiceTemp == null) {
-			gstInvoiceTxnDAO.deleteSeqGSTInvoice(seqGstInvoice);
-			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
-		}
-
-		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED_TAX_CREDIT);
-		seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
-
-		if (seqGstInvoiceTemp == null) {
-			gstInvoiceTxnDAO.deleteSeqGSTInvoice(seqGstInvoice);
-			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
-		}
 	}
 
 	/**
@@ -790,6 +808,26 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		logger.debug("Leaving");
 
 		return businessArea;
+	}
+
+	/**
+	 * getApprovedProvinceById fetch the details by using ProvinceDAO's getProvinceById method . with parameter id and
+	 * type as blank. it fetches the approved records from the RMTCountryVsProvince.
+	 * 
+	 * @param id
+	 *            (String)
+	 * @return Province
+	 */
+	public Province getApprovedProvinceByEntityCode(String cPCountry, String cPProvince, String entityCode) {
+
+		Province province = getProvinceDAO().getProvinceById(cPCountry, cPProvince, "_AView");
+
+		if (province != null) {
+			province.setTaxDetailList(
+					taxDetailService.getTaxDetailsbyEntityCode(province.getCPProvince(), entityCode, "_AView"));
+		}
+
+		return province;
 	}
 
 	@Override

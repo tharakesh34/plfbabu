@@ -4,10 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class AdviseDueTaxDetail implements Serializable {
-
 	private static final long serialVersionUID = -5722811453434523809L;
 
-	private long adviseID;
+	private long adviseID = 0;
 	private String taxType;
 	private BigDecimal amount = BigDecimal.ZERO;
 	private BigDecimal CGST = BigDecimal.ZERO;
@@ -16,6 +15,7 @@ public class AdviseDueTaxDetail implements Serializable {
 	private BigDecimal IGST = BigDecimal.ZERO;
 	private BigDecimal CESS = BigDecimal.ZERO;
 	private BigDecimal TotalGST = BigDecimal.ZERO;
+	private Long invoiceID;
 
 	public AdviseDueTaxDetail() {
 
@@ -95,6 +95,14 @@ public class AdviseDueTaxDetail implements Serializable {
 
 	public void setCESS(BigDecimal cESS) {
 		CESS = cESS;
+	}
+
+	public Long getInvoiceID() {
+		return invoiceID;
+	}
+
+	public void setInvoiceID(Long invoiceID) {
+		this.invoiceID = invoiceID;
 	}
 
 }

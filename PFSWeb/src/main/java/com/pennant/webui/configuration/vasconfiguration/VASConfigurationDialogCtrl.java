@@ -104,7 +104,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.vasproducttype.VASProductType;

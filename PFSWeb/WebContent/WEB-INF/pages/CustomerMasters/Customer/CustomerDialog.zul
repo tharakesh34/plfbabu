@@ -144,6 +144,13 @@
 													</hbox>
 												</row>
 												<row>
+													<label id="label_ResidentialStatus" value="${c:l('label_CustomerDialog_ResidentialStatus.value')}" />
+													<hbox>
+														<space id="space_ResidentialStatus" spacing="2px" />
+														<combobox id="residentialStatus"  width="155px" />
+													</hbox>
+												</row>
+												<row>
 													<label id="label_CustomerDialog_CustNationality" value="${c:l('label_CustomerDialog_CustNationality.value')}" />
 													<extendedcombobox id="custNationality" />
 													<label id="label_CustomerDialog_CustRO1" value="${c:l('label_CustomerDialog_CustRO1.value')}" />

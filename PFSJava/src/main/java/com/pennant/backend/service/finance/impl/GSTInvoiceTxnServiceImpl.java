@@ -3,37 +3,39 @@ package com.pennant.backend.service.finance.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
+import com.pennant.backend.dao.applicationmaster.EntityDAO;
+import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
+import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinFeeDetail;
-import com.pennant.backend.model.finance.FinTaxDetails;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GSTInvoiceTxn;
 import com.pennant.backend.model.finance.GSTInvoiceTxnDetails;
+import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.TaxHeader;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.systemmasters.Province;
-import com.pennant.backend.service.applicationmaster.EntityService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.customermasters.CustomerService;
-import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.backend.util.FinanceConstants;
@@ -44,16 +46,15 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
-	private static final Logger logger = Logger.getLogger(GSTInvoiceTxnServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(GSTInvoiceTxnServiceImpl.class);
 
 	private GSTInvoiceTxnDAO gstInvoiceTxnDAO;
-	private EntityService entityService;
+	private EntityDAO entityDAO;
 	private ProvinceService provinceService;
-
-	// GST Invoice preparation
-	private transient CustomerDetailsService customerDetailsService;
-	private transient CustomerService customerService;
-	private transient FinanceTaxDetailService financeTaxDetailService;
+	private ProvinceDAO provinceDAO;
+	private CustomerAddresDAO customerAddresDAO;
+	private CustomerDAO customerDAO;
+	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private BranchDAO branchDAO;
 	private FinanceMainDAO financeMainDAO;
 
@@ -61,518 +62,589 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		super();
 	}
 
-	/**
-	 * preparing GST Invoice Details and insert data into GST Invoice related tables
-	 * 
-	 * @param aeEvent
-	 * @param financeDetail
-	 */
 	@Override
-	public void gstInvoicePreparation(long linkedTranId, FinanceDetail financeDetail,
-			List<FinFeeDetail> finFeeDetailsList, List<ManualAdviseMovements> movements, String invoiceType,
-			boolean origination, boolean isWaiver) {
-		logger.debug(Literal.ENTERING);
+	public Long feeTaxInvoicePreparation(InvoiceDetail invoiceDetail) {
+		long linkedTranId = invoiceDetail.getLinkedTranId();
+		String invoiceType = invoiceDetail.getInvoiceType();
+		FinanceDetail financeDetail = invoiceDetail.getFinanceDetail();
+		List<FinFeeDetail> finFeeDetailsList = invoiceDetail.getFinFeeDetailsList();
+		boolean origination = invoiceDetail.isOrigination();
+		boolean isWaiver = invoiceDetail.isWaiver();
+		boolean dbInvSetReq = invoiceDetail.isDbInvSetReq();
 
-		if (CollectionUtils.isEmpty(finFeeDetailsList) && CollectionUtils.isEmpty(movements) && financeDetail == null) {
-			return;
-		} else {
+		if (financeDetail == null || CollectionUtils.isEmpty(finFeeDetailsList)) {
+			logger.warn("Fee Details not avilabe for the Linked Transaction ID  {} and Invoice Type {}", linkedTranId,
+					invoiceType);
+			return null;
+		}
 
-			BigDecimal invoiceAmout = BigDecimal.ZERO;
-			List<GSTInvoiceTxnDetails> gstInvoiceTxnDetails = new ArrayList<GSTInvoiceTxnDetails>();
-			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-			FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
-			String finReference = financeMain.getFinReference();
+		GSTInvoiceTxn gstInvTxnHeader = getGSTTransaction(invoiceType, linkedTranId, financeDetail);
+		if (gstInvTxnHeader == null) {
+			logger.warn("GSTInvTxnHeader empty for the Linked Transaction ID  {} and Invoice Type {}", linkedTranId,
+					invoiceType);
+			return null;
+		}
 
-			// Tax Details fetching
-			if (financeDetail.getFinanceTaxDetail() == null) {
-				financeDetail.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(finReference));
+		BigDecimal invoiceAmout = BigDecimal.ZERO;
+		List<GSTInvoiceTxnDetails> gstInvoiceTxnDetails = new ArrayList<GSTInvoiceTxnDetails>();
+
+		// Invoice Transaction details preparation for Fee Details if any exists
+		GSTInvoiceTxnDetails gstInvTxn = null;
+		long dueInvoiceID = 0;
+		for (FinFeeDetail feeDetail : finFeeDetailsList) {
+			if (!feeDetail.isTaxApplicable() || StringUtils.isBlank(feeDetail.getFeeTypeCode())) {
+				continue;
+			}
+			if (!origination && feeDetail.isOriginationFee()) {
+				continue;
 			}
 
-			// Invoice Transaction Preparation
-			GSTInvoiceTxn gstInvoiceTxn = new GSTInvoiceTxn();
-			gstInvoiceTxn.setTransactionID(linkedTranId);
-			gstInvoiceTxn.setInvoiceType(invoiceType);
-			gstInvoiceTxn.setInvoice_Status(PennantConstants.GST_INVOICE_STATUS_INITIATED);
-			gstInvoiceTxn.setInvoiceDate(DateUtility.getAppDate()); //Need to confirm either it is system date or application date
-
-			Entity entity = null;
-			if (StringUtils.isNotBlank(financeMain.getLovDescEntityCode())) {
-				entity = this.entityService.getApprovedEntity(financeMain.getLovDescEntityCode());
+			if (isWaiver) {
+				if (BigDecimal.ZERO.compareTo(feeDetail.getWaivedAmount()) == 0) {
+					continue;
+				}
 			} else {
-				entity = this.entityService.getEntityByFinDivision(financeType.getFinDivision(), "_Aview");
+				if (BigDecimal.ZERO.compareTo(feeDetail.getNetAmountOriginal()) == 0) {
+					continue;
+				}
 			}
 
-			if (entity == null) {
-				return; // write this case as a error message
+			TaxHeader taxHeader = feeDetail.getTaxHeader();
+			if (taxHeader == null || CollectionUtils.isEmpty(taxHeader.getTaxDetails())) {
+				continue;
+			}
+			Taxes cgstTax = new Taxes();
+			Taxes sgstTax = new Taxes();
+			Taxes igstTax = new Taxes();
+			Taxes ugstTax = new Taxes();
+			Taxes cessTax = new Taxes();
+
+			List<Taxes> taxDetails = taxHeader.getTaxDetails();
+			if (CollectionUtils.isNotEmpty(taxDetails)) {
+				for (Taxes taxes : taxDetails) {
+					if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+						cgstTax = taxes;
+					} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+						sgstTax = taxes;
+					} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+						igstTax = taxes;
+					} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+						ugstTax = taxes;
+					} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+						cessTax = taxes;
+					}
+				}
 			}
 
-			gstInvoiceTxn.setCompanyCode(entity.getEntityCode());
-			gstInvoiceTxn.setCompanyName(entity.getEntityDesc());
-			gstInvoiceTxn.setPanNumber(entity.getPANNumber());
-			gstInvoiceTxn.setLoanAccountNo(finReference);
+			gstInvTxn = new GSTInvoiceTxnDetails();
+			gstInvTxn.setFeeCode(feeDetail.getFeeTypeCode());
+			gstInvTxn.setFeeDescription(feeDetail.getFeeTypeDesc());
+			gstInvTxn.setCGST_RATE(cgstTax.getTaxPerc());
+			gstInvTxn.setIGST_RATE(igstTax.getTaxPerc());
+			gstInvTxn.setSGST_RATE(sgstTax.getTaxPerc());
+			gstInvTxn.setUGST_RATE(ugstTax.getTaxPerc());
+			gstInvTxn.setCESS_RATE(cessTax.getTaxPerc());
 
-			// Checking Finance Branch exist or not
-			if (StringUtils.isBlank(financeMain.getFinBranch())) {
-				FinanceMain financeMainTemp = financeMainDAO.getFinanceMainForBatch(finReference);
-				if (financeMainTemp == null || StringUtils.isBlank(financeMainTemp.getFinBranch())) {
-					return; // write this case as a error message
+			if (isWaiver) {
+
+				BigDecimal gstAmount = cgstTax.getWaivedTax().add(sgstTax.getWaivedTax()).add(igstTax.getWaivedTax())
+						.add(ugstTax.getWaivedTax()).add(cessTax.getWaivedTax());
+				if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
+				}
+
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(feeDetail.getTaxComponent())) {
+					gstInvTxn.setFeeAmount(feeDetail.getWaivedAmount().subtract(gstAmount)); //Fee Amount with out GST
 				} else {
-					financeMain.setFinBranch(financeMainTemp.getFinBranch());
-				}
-			}
-			Branch fromBranch = branchDAO.getBranchById(financeMain.getFinBranch(), "_AView");
-
-			if (fromBranch == null) {
-				return; // write this case as a error message
-			}
-
-			Province companyProvince = this.provinceService.getApprovedProvinceById(fromBranch.getBranchCountry(),
-					fromBranch.getBranchProvince());
-			// Province companyProvince = this.provinceService.getApprovedProvinceById(entity.getCountry(), entity.getStateCode());
-
-			if (companyProvince != null) {
-
-				if (StringUtils.isBlank(companyProvince.getCPProvince())
-						|| StringUtils.isBlank(companyProvince.getCPProvinceName())) {
-					return; // write this case as a error message
+					gstInvTxn.setFeeAmount(feeDetail.getWaivedAmount()); //Fee Amount with out GST
 				}
 
-				if (CollectionUtils.isNotEmpty(companyProvince.getTaxDetailList())) {
-					TaxDetail taxDetail = companyProvince.getTaxDetailList().get(0);
+				gstInvTxn.setCGST_AMT(cgstTax.getWaivedTax());
+				gstInvTxn.setSGST_AMT(sgstTax.getWaivedTax());
+				gstInvTxn.setIGST_AMT(igstTax.getWaivedTax());
+				gstInvTxn.setUGST_AMT(ugstTax.getWaivedTax());
+				gstInvTxn.setCESS_AMT(cessTax.getWaivedTax());
+				invoiceAmout = invoiceAmout.add(gstAmount);
 
-					if (SysParamUtil.isAllowed(SMTParameterConstants.INVOICE_ADDRESS_ENTITY_BASIS)) {
+			} else {
 
-						if (StringUtils.isBlank(taxDetail.getHsnNumber())
-								|| StringUtils.isBlank(taxDetail.getNatureService())
-								|| StringUtils.isBlank(taxDetail.getPinCode())
-								|| StringUtils.isBlank(taxDetail.getAddressLine1())
-								|| StringUtils.isBlank(taxDetail.getTaxCode())) {
-							return; // write this case as a error message
-						}
-						gstInvoiceTxn.setCompany_State_Code(companyProvince.getCPProvince());
-						gstInvoiceTxn.setCompany_State_Name(companyProvince.getCPProvinceName());
-						gstInvoiceTxn.setCompany_Address1(taxDetail.getAddressLine1());
-						gstInvoiceTxn.setCompany_PINCode(taxDetail.getPinCode());
-						gstInvoiceTxn.setCompany_Address2(taxDetail.getAddressLine2());
-						gstInvoiceTxn.setCompany_Address3(taxDetail.getAddressLine3());
-					} else {
-						if (StringUtils.isBlank(taxDetail.getHsnNumber())
-								|| StringUtils.isBlank(taxDetail.getNatureService())
-								|| StringUtils.isBlank(fromBranch.getPinCode())
-								|| StringUtils.isBlank(fromBranch.getBranchAddrHNbr())
-								|| StringUtils.isBlank(taxDetail.getTaxCode())
-								|| StringUtils.isBlank(fromBranch.getLovDescBranchProvinceName())) {
-							return; // write this case as a error message
-						}
+				BigDecimal gstAmount = BigDecimal.ZERO;
+				if (origination || StringUtils.equals(RepayConstants.ALLOCATION_ODC, feeDetail.getFeeTypeCode())) {
 
-						String address1 = fromBranch.getBranchAddrHNbr();
-
-						if (StringUtils.isNotBlank(fromBranch.getBranchFlatNbr())) {
-							address1 = address1 + ", " + fromBranch.getBranchFlatNbr();
-						}
-						if (StringUtils.isNotBlank(fromBranch.getBranchAddrStreet())) {
-							address1 = address1 + ", " + fromBranch.getBranchAddrStreet();
-						}
-
-						gstInvoiceTxn.setCompany_Address1(address1);
-						gstInvoiceTxn.setCompany_Address2(fromBranch.getBranchAddrLine1());
-						gstInvoiceTxn.setCompany_Address3(fromBranch.getBranchAddrLine2());
-						gstInvoiceTxn.setCompany_PINCode(fromBranch.getPinCode());
-						gstInvoiceTxn.setCompany_State_Code(fromBranch.getBranchProvince());
-						gstInvoiceTxn.setCompany_State_Name(fromBranch.getLovDescBranchProvinceName());
+					gstAmount = cgstTax.getNetTax().add(sgstTax.getNetTax()).add(igstTax.getNetTax())
+							.add(ugstTax.getNetTax()).add(cessTax.getNetTax());
+					if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
+						continue;
 					}
 
-					gstInvoiceTxn.setCompany_GSTIN(taxDetail.getTaxCode());
-					gstInvoiceTxn.setHsnNumber(taxDetail.getHsnNumber());
-					gstInvoiceTxn.setNatureService(taxDetail.getNatureService());
+					gstInvTxn.setFeeAmount(feeDetail.getNetAmountOriginal()); //Fee Amount with out GST
+					gstInvTxn.setCGST_AMT(cgstTax.getNetTax());
+					gstInvTxn.setSGST_AMT(sgstTax.getNetTax());
+					gstInvTxn.setIGST_AMT(igstTax.getNetTax());
+					gstInvTxn.setUGST_AMT(ugstTax.getNetTax());
+					gstInvTxn.setCESS_AMT(cessTax.getNetTax());
+
 				} else {
-					return; // write this case as a error message
+
+					gstAmount = cgstTax.getPaidTax().add(sgstTax.getPaidTax()).add(igstTax.getPaidTax())
+							.add(ugstTax.getPaidTax()).add(cessTax.getPaidTax());
+					if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
+						continue;
+					}
+
+					gstInvTxn.setFeeAmount(feeDetail.getPaidAmountOriginal());
+					gstInvTxn.setCGST_AMT(cgstTax.getPaidTax());
+					gstInvTxn.setSGST_AMT(sgstTax.getPaidTax());
+					gstInvTxn.setIGST_AMT(igstTax.getPaidTax());
+					gstInvTxn.setUGST_AMT(ugstTax.getPaidTax());
+					gstInvTxn.setCESS_AMT(cessTax.getPaidTax());
 				}
+				invoiceAmout = invoiceAmout.add(gstAmount);
 			}
 
-			FinanceTaxDetail finTaxDetail = financeDetail.getFinanceTaxDetail();
-			Province customerProvince = null;
-			String country = "";
-			String province = "";
+			if (dbInvSetReq && taxHeader.getInvoiceID() > 0) {
+				dueInvoiceID = taxHeader.getInvoiceID();
+			}
 
-			// If tax Details Exists on against Finance
-			if (finTaxDetail != null && StringUtils.isNotBlank(finTaxDetail.getApplicableFor())
-					&& !PennantConstants.List_Select.equals(finTaxDetail.getApplicableFor())) {
-				country = finTaxDetail.getCountry();
-				province = finTaxDetail.getProvince();
-				gstInvoiceTxn.setCustomerID(finTaxDetail.getCustCIF());
-				gstInvoiceTxn.setCustomerName(finTaxDetail.getCustShrtName());
-				gstInvoiceTxn.setCustomerGSTIN(finTaxDetail.getTaxNumber());
-				gstInvoiceTxn.setCustomerAddress(finTaxDetail.getAddrLine1());
-			} else {
+			gstInvoiceTxnDetails.add(gstInvTxn);
+		}
 
-				if (financeDetail.getCustomerDetails() == null) {
-					financeDetail.setCustomerDetails(this.customerDetailsService
-							.getCustomerDetailsById(financeMain.getCustID(), true, "_AView"));
-				}
-				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-				if (CollectionUtils.isNotEmpty(addressList)) {
-					for (CustomerAddres customerAddres : addressList) {
-						if (customerAddres.getCustAddrPriority() != Integer
-								.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-							continue;
-						}
-						country = customerAddres.getCustAddrCountry();
-						province = customerAddres.getCustAddrProvince();
+		if (CollectionUtils.isEmpty(gstInvoiceTxnDetails)) {
+			return null;
+		}
 
-						Customer cust = financeDetail.getCustomerDetails().getCustomer();
-						if (cust == null) {
-							cust = this.customerService.getApprovedCustomerById(financeMain.getCustID());
-						}
+		gstInvTxnHeader.setDueInvoiceId(dueInvoiceID);
+		gstInvTxnHeader.setInvoice_Amt(invoiceAmout);
+		gstInvTxnHeader.setGstInvoiceTxnDetailsList(gstInvoiceTxnDetails);
 
-						if (cust == null) {
-							return; // write this case as a error message
-						}
-						gstInvoiceTxn.setCustomerID(cust.getCustCIF());
-						gstInvoiceTxn.setCustomerName(cust.getCustShrtName());
+		Long invoiceId = this.gstInvoiceTxnDAO.save(gstInvTxnHeader);
 
-						//Preparing customer Address
-						prepareCustAddress(gstInvoiceTxn, customerAddres);
+		logger.debug(Literal.LEAVING);
+		return invoiceId;
+	}
 
+	@Override
+	public Long advTaxInvoicePreparation(InvoiceDetail invoiceDetail) {
+		logger.debug(Literal.ENTERING);
+
+		long linkedTranId = invoiceDetail.getLinkedTranId();
+		FinanceDetail financeDetail = invoiceDetail.getFinanceDetail();
+
+		List<ManualAdviseMovements> movements = invoiceDetail.getMovements();
+		String invoiceType = invoiceDetail.getInvoiceType();
+		boolean isWaiver = invoiceDetail.isWaiver();
+
+		if (CollectionUtils.isEmpty(movements)) {
+			logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+					+ " --> Movement Entries are empty.");
+			return null;
+		}
+
+		if (financeDetail == null) {
+			logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+					+ " --> Loan Details are empty.");
+			return null;
+		}
+
+		GSTInvoiceTxn gstInvTxnHeader = getGSTTransaction(invoiceType, linkedTranId, financeDetail);
+		if (gstInvTxnHeader == null) {
+			logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+					+ " --> GST transaction Details are empty.");
+			return null;
+		}
+
+		BigDecimal invoiceAmout = BigDecimal.ZERO;
+		List<GSTInvoiceTxnDetails> gstInvoiceTxnDetails = new ArrayList<GSTInvoiceTxnDetails>();
+		Long dbInvoiceID = null;
+
+		// Invoice Transaction details preparation for Fee Details if any exists
+		for (ManualAdviseMovements movement : movements) {
+
+			if (movement == null) {
+				continue;
+			}
+
+			if (StringUtils.isBlank(movement.getFeeTypeCode())) {
+				continue;
+			}
+
+			TaxHeader taxHeader = movement.getTaxHeader();
+			if (taxHeader == null || CollectionUtils.isEmpty(taxHeader.getTaxDetails())) {
+				continue;
+			}
+
+			Taxes cgstTax = new Taxes();
+			Taxes sgstTax = new Taxes();
+			Taxes igstTax = new Taxes();
+			Taxes ugstTax = new Taxes();
+			Taxes cessTax = new Taxes();
+			List<Taxes> taxDetails = taxHeader.getTaxDetails();
+			if (CollectionUtils.isNotEmpty(taxDetails)) {
+				for (Taxes taxes : taxDetails) {
+					switch (taxes.getTaxType()) {
+					case RuleConstants.CODE_CGST:
+						cgstTax = taxes;
+						break;
+					case RuleConstants.CODE_SGST:
+						sgstTax = taxes;
+						break;
+					case RuleConstants.CODE_IGST:
+						igstTax = taxes;
+						break;
+					case RuleConstants.CODE_UGST:
+						ugstTax = taxes;
+						break;
+					case RuleConstants.CODE_CESS:
+						cessTax = taxes;
+						break;
+					default:
 						break;
 					}
 				}
 			}
 
-			customerProvince = this.provinceService.getApprovedProvinceById(country, province);
+			GSTInvoiceTxnDetails gstInvTxn = new GSTInvoiceTxnDetails();
+			gstInvTxn.setFeeCode(movement.getFeeTypeCode());
+			gstInvTxn.setFeeDescription(movement.getFeeTypeDesc());
+			gstInvTxn.setCGST_RATE(cgstTax.getTaxPerc());
+			gstInvTxn.setSGST_RATE(sgstTax.getTaxPerc());
+			gstInvTxn.setIGST_RATE(igstTax.getTaxPerc());
+			gstInvTxn.setUGST_RATE(ugstTax.getTaxPerc());
+			gstInvTxn.setCESS_RATE(cessTax.getTaxPerc());
 
-			if (customerProvince == null) {
-				return; // write this case as a error message
-			}
+			if (isWaiver) {
+				BigDecimal gstAmount = cgstTax.getWaivedTax().add(sgstTax.getWaivedTax()).add(igstTax.getWaivedTax())
+						.add(ugstTax.getWaivedTax()).add(cessTax.getWaivedTax());
 
-			gstInvoiceTxn.setCustomerStateCode(customerProvince.getTaxStateCode());
-			gstInvoiceTxn.setCustomerStateName(customerProvince.getCPProvinceName());
-
-			// Invoice Transaction details preparation for Fee Details if any exists
-			if (CollectionUtils.isNotEmpty(finFeeDetailsList)) { // Fees
-				for (FinFeeDetail feeDetail : finFeeDetailsList) {
-
-					if (!feeDetail.isTaxApplicable() || StringUtils.isBlank(feeDetail.getFeeTypeCode())) {
-						continue;
-					}
-
-					if (origination) {
-						if ((!isWaiver && BigDecimal.ZERO.compareTo(feeDetail.getNetAmountOriginal()) == 0)
-								|| (isWaiver && BigDecimal.ZERO.compareTo(feeDetail.getWaivedAmount()) == 0)) {
-							continue;
-						}
-					} else {
-						if (feeDetail.isOriginationFee()) {
-							continue;
-						}
-						if ((!isWaiver && BigDecimal.ZERO.compareTo(feeDetail.getNetAmountOriginal()) == 0)
-								|| (isWaiver && BigDecimal.ZERO.compareTo(feeDetail.getWaivedAmount()) == 0)) {
-							continue;
-						}
-					}
-					FinTaxDetails finTaxDetails = feeDetail.getFinTaxDetails();
-					if (finTaxDetails != null) {
-
-						GSTInvoiceTxnDetails feeTran = new GSTInvoiceTxnDetails();
-						feeTran.setFeeCode(feeDetail.getFeeTypeCode());
-						feeTran.setFeeDescription(feeDetail.getFeeTypeDesc());
-						feeTran.setCGST_RATE(feeDetail.getCgst());
-						feeTran.setIGST_RATE(feeDetail.getIgst());
-						feeTran.setSGST_RATE(feeDetail.getSgst());
-						feeTran.setUGST_RATE(feeDetail.getUgst());
-
-						if (isWaiver) {
-							BigDecimal gstAmount = finTaxDetails.getWaivedCGST().add(finTaxDetails.getWaivedIGST())
-									.add(finTaxDetails.getWaivedSGST()).add(finTaxDetails.getWaivedUGST());
-							if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
-								continue;
-							}
-							if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(feeDetail.getTaxComponent())) {
-								feeTran.setFeeAmount(feeDetail.getWaivedAmount().subtract(gstAmount)); //Fee Amount with out GST
-							} else {
-								feeTran.setFeeAmount(feeDetail.getWaivedAmount()); //Fee Amount with out GST
-							}
-							feeTran.setCGST_AMT(finTaxDetails.getWaivedCGST());
-							feeTran.setIGST_AMT(finTaxDetails.getWaivedIGST());
-							feeTran.setSGST_AMT(finTaxDetails.getWaivedSGST());
-							feeTran.setUGST_AMT(finTaxDetails.getWaivedUGST());
-							invoiceAmout = invoiceAmout.add(gstAmount);
-						} else {
-
-							BigDecimal gstAmount = BigDecimal.ZERO;
-							if (origination
-									|| StringUtils.equals(RepayConstants.ALLOCATION_ODC, feeDetail.getFeeTypeCode())) {
-
-								gstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetIGST())
-										.add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetUGST());
-								if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
-									continue;
-								}
-
-								feeTran.setFeeAmount(feeDetail.getNetAmountOriginal()); //Fee Amount with out GST
-								feeTran.setCGST_AMT(finTaxDetails.getNetCGST());
-								feeTran.setIGST_AMT(finTaxDetails.getNetIGST());
-								feeTran.setSGST_AMT(finTaxDetails.getNetSGST());
-								feeTran.setUGST_AMT(finTaxDetails.getNetUGST());
-							} else {
-
-								gstAmount = finTaxDetails.getPaidCGST().add(finTaxDetails.getPaidIGST())
-										.add(finTaxDetails.getPaidSGST()).add(finTaxDetails.getPaidUGST());
-								if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
-									continue;
-								}
-
-								feeTran.setFeeAmount(feeDetail.getPaidAmountOriginal());
-								feeTran.setCGST_AMT(finTaxDetails.getPaidCGST());
-								feeTran.setIGST_AMT(finTaxDetails.getPaidIGST());
-								feeTran.setSGST_AMT(finTaxDetails.getPaidSGST());
-								feeTran.setUGST_AMT(finTaxDetails.getPaidUGST());
-							}
-							invoiceAmout = invoiceAmout.add(gstAmount);
-						}
-
-						gstInvoiceTxnDetails.add(feeTran);
-					}
+				if (BigDecimal.ZERO.compareTo(movement.getWaivedAmount()) == 0
+						|| BigDecimal.ZERO.compareTo(gstAmount) == 0) {
+					continue;
 				}
 
-				// Invoice Transaction details preparation for Manual/Receivable advise Details if any exists
-			} else if (CollectionUtils.isNotEmpty(movements)) { // Receivable Advise
-				Map<String, BigDecimal> taxPercmap = GSTCalculator.getTaxPercentages(finReference);
-
-				BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
-				BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
-				BigDecimal ugstPerc = taxPercmap.get(RuleConstants.CODE_UGST);
-				BigDecimal igstPerc = taxPercmap.get(RuleConstants.CODE_IGST);
-
-				for (ManualAdviseMovements movement : movements) {
-
-					if (movement != null && StringUtils.isNotBlank(movement.getFeeTypeCode())) {
-
-						GSTInvoiceTxnDetails advTran = new GSTInvoiceTxnDetails();
-						advTran.setFeeCode(movement.getFeeTypeCode());
-						advTran.setFeeDescription(movement.getFeeTypeDesc());
-						advTran.setCGST_RATE(cgstPerc);
-						advTran.setSGST_RATE(sgstPerc);
-						advTran.setIGST_RATE(igstPerc);
-						advTran.setUGST_RATE(ugstPerc);
-
-						if (isWaiver) {
-
-							BigDecimal gstAmount = movement.getWaivedCGST().add(movement.getWaivedIGST())
-									.add(movement.getWaivedSGST()).add(movement.getWaivedUGST());
-
-							if (BigDecimal.ZERO.compareTo(movement.getWaivedAmount()) == 0
-									|| BigDecimal.ZERO.compareTo(gstAmount) == 0) {
-								continue;
-							}
-
-							if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(movement.getTaxComponent())) {
-								advTran.setFeeAmount(movement.getWaivedAmount().subtract(gstAmount)); //Fee Amount with out GST
-							} else {
-								advTran.setFeeAmount(movement.getWaivedAmount()); //Fee Amount with out GST
-							}
-
-							advTran.setCGST_AMT(movement.getWaivedCGST());
-							advTran.setIGST_AMT(movement.getWaivedIGST());
-							advTran.setSGST_AMT(movement.getWaivedSGST());
-							advTran.setUGST_AMT(movement.getWaivedUGST());
-
-							invoiceAmout = invoiceAmout.add(gstAmount);
-						} else {
-
-							BigDecimal gstAmount = movement.getPaidCGST().add(movement.getPaidIGST())
-									.add(movement.getPaidSGST()).add(movement.getPaidUGST());
-
-							if (BigDecimal.ZERO.compareTo(movement.getPaidAmount()) == 0
-									|| BigDecimal.ZERO.compareTo(gstAmount) == 0) {
-								continue;
-							}
-
-							if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(movement.getTaxComponent())) {
-								advTran.setFeeAmount(movement.getPaidAmount().subtract(gstAmount)); //Fee Amount with out GST
-							} else {
-								advTran.setFeeAmount(movement.getPaidAmount()); //Fee Amount with out GST
-							}
-
-							advTran.setCGST_AMT(movement.getPaidCGST());
-							advTran.setIGST_AMT(movement.getPaidIGST());
-							advTran.setSGST_AMT(movement.getPaidSGST());
-							advTran.setUGST_AMT(movement.getPaidUGST());
-
-							invoiceAmout = invoiceAmout.add(gstAmount);
-						}
-
-						gstInvoiceTxnDetails.add(advTran);
-					}
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(movement.getTaxComponent())) {
+					gstInvTxn.setFeeAmount(movement.getWaivedAmount().subtract(gstAmount));
+				} else {
+					gstInvTxn.setFeeAmount(movement.getWaivedAmount());
 				}
+
+				gstInvTxn.setCGST_AMT(cgstTax.getWaivedTax());
+				gstInvTxn.setSGST_AMT(sgstTax.getWaivedTax());
+				gstInvTxn.setIGST_AMT(igstTax.getWaivedTax());
+				gstInvTxn.setUGST_AMT(ugstTax.getWaivedTax());
+				gstInvTxn.setCESS_AMT(cessTax.getWaivedTax());
+
+				invoiceAmout = invoiceAmout.add(gstAmount);
+			} else {
+
+				BigDecimal gstAmount = cgstTax.getPaidTax().add(sgstTax.getPaidTax()).add(igstTax.getPaidTax())
+						.add(ugstTax.getPaidTax()).add(cessTax.getPaidTax());
+
+				if (BigDecimal.ZERO.compareTo(movement.getPaidAmount()) == 0
+						|| BigDecimal.ZERO.compareTo(gstAmount) == 0) {
+					continue;
+				}
+
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(movement.getTaxComponent())) {
+					gstInvTxn.setFeeAmount(movement.getPaidAmount().subtract(gstAmount)); //Fee Amount with out GST
+				} else {
+					gstInvTxn.setFeeAmount(movement.getPaidAmount()); //Fee Amount with out GST
+				}
+
+				gstInvTxn.setCGST_AMT(cgstTax.getPaidTax());
+				gstInvTxn.setSGST_AMT(sgstTax.getPaidTax());
+				gstInvTxn.setIGST_AMT(igstTax.getPaidTax());
+				gstInvTxn.setUGST_AMT(ugstTax.getPaidTax());
+				gstInvTxn.setCESS_AMT(cessTax.getPaidTax());
+
+				invoiceAmout = invoiceAmout.add(gstAmount);
 			}
 
-			if (CollectionUtils.isEmpty(gstInvoiceTxnDetails)) {
-				return;
+			if (movement.getDebitInvoiceId() != null && movement.getDebitInvoiceId() > 0) {
+				dbInvoiceID = movement.getDebitInvoiceId();
 			}
 
-			gstInvoiceTxn.setInvoice_Amt(invoiceAmout);
-			gstInvoiceTxn.setGstInvoiceTxnDetailsList(gstInvoiceTxnDetails);
-
-			this.gstInvoiceTxnDAO.save(gstInvoiceTxn);
+			gstInvoiceTxnDetails.add(gstInvTxn);
 		}
+
+		if (CollectionUtils.isEmpty(gstInvoiceTxnDetails)) {
+			return null;
+		}
+
+		gstInvTxnHeader.setDueInvoiceId(dbInvoiceID);
+		gstInvTxnHeader.setInvoice_Amt(invoiceAmout);
+		gstInvTxnHeader.setGstInvoiceTxnDetailsList(gstInvoiceTxnDetails);
+
+		Long invoiceId = this.gstInvoiceTxnDAO.save(gstInvTxnHeader);
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private String prepareCustAddress(GSTInvoiceTxn gstInvoiceTxn, CustomerAddres customerAddres) {
-		String custAddress = "";
-
-		if (StringUtils.isNotBlank(customerAddres.getCustAddrHNbr())) {
-			custAddress = customerAddres.getCustAddrHNbr();
-		}
-
-		if (StringUtils.isNotBlank(customerAddres.getCustFlatNbr())) {
-			if (StringUtils.isBlank(custAddress)) {
-				custAddress = custAddress.concat(customerAddres.getCustFlatNbr());
-			} else {
-				custAddress = custAddress + ", " + customerAddres.getCustFlatNbr();
-			}
-		}
-
-		if (StringUtils.isNotBlank(customerAddres.getCustAddrStreet())) {
-			if (StringUtils.isBlank(custAddress)) {
-				custAddress = custAddress.concat(customerAddres.getCustAddrStreet());
-			} else {
-				custAddress = custAddress + ", " + customerAddres.getCustAddrStreet();
-			}
-		}
-
-		if (StringUtils.isNotBlank(customerAddres.getLovDescCustAddrCityName())) {
-			if (StringUtils.isBlank(custAddress)) {
-				custAddress = custAddress.concat(customerAddres.getLovDescCustAddrCityName());
-			} else {
-				custAddress = custAddress + ", " + customerAddres.getLovDescCustAddrCityName();
-			}
-		}
-
-		if (StringUtils.isNotBlank(customerAddres.getLovDescCustAddrProvinceName())) {
-			if (StringUtils.isBlank(custAddress)) {
-				custAddress = custAddress.concat(customerAddres.getLovDescCustAddrProvinceName());
-			} else {
-				custAddress = custAddress + ", " + customerAddres.getLovDescCustAddrProvinceName();
-			}
-		}
-
-		if (StringUtils.isNotBlank(customerAddres.getLovDescCustAddrCountryName())) {
-			if (StringUtils.isBlank(custAddress)) {
-				custAddress = custAddress.concat(customerAddres.getLovDescCustAddrCountryName());
-			} else {
-				custAddress = custAddress + ", " + customerAddres.getLovDescCustAddrCountryName();
-			}
-		}
-
-		if (StringUtils.isNotBlank(customerAddres.getCustPOBox())) {
-			if (StringUtils.isBlank(custAddress)) {
-				custAddress = custAddress.concat(customerAddres.getCustPOBox());
-			} else {
-				custAddress = custAddress + ", " + customerAddres.getCustPOBox();
-			}
-		}
-
-		gstInvoiceTxn.setCustomerAddress(custAddress);
-		return custAddress;
+		return invoiceId;
 	}
 
 	@Override
-	public void createProfitScheduleInovice(long linkedTranId, FinanceDetail financeDetail, BigDecimal invoiceAmout,
-			String invoiceType) {
+	public Long schdDueTaxInovicePrepration(InvoiceDetail invoiceDetail) {
 		logger.debug(Literal.ENTERING);
 
-		String feeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_EXEMPTED);
+		long linkedTranId = invoiceDetail.getLinkedTranId();
+		FinanceDetail financeDetail = invoiceDetail.getFinanceDetail();
+		BigDecimal pftAmount = invoiceDetail.getPftAmount();
+		BigDecimal priAmount = invoiceDetail.getPriAmount();
+		BigDecimal fpriAmount = invoiceDetail.getFpriAmount();
+		BigDecimal fpftAmount = invoiceDetail.getFpftAmount();
+		String invoiceType = invoiceDetail.getInvoiceType();
+		Long dbInvoiceID = invoiceDetail.getDbInvoiceID();
 
-		if (StringUtils.isBlank(feeCode) || financeDetail == null) {
-			return;
+		String pftInvFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_PFT_EXEMPTED);
+		String priInvFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_PRI_EXEMPTED);
+		String fpftInvFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_FPFT_EXEMPTED);
+		String fpriInvFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_FPRI_EXEMPTED);
+
+		if (StringUtils.isBlank(pftInvFeeCode)) {
+			logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+					+ " --> Fee Code is empty.");
+			return null;
+		}
+		if (StringUtils.isBlank(priInvFeeCode)) {
+			logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+					+ " --> Fee Code is empty.");
+			return null;
+		}
+		if (StringUtils.isBlank(fpftInvFeeCode)) {
+			logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+					+ " --> Fee Code is empty.");
+			return null;
+		}
+		if (StringUtils.isBlank(fpriInvFeeCode)) {
+			logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+					+ " --> Fee Code is empty.");
+			return null;
+		}
+
+		if (financeDetail == null) {
+			logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+					+ " --> Loan Details are empty.");
+			return null;
+		}
+
+		GSTInvoiceTxn gstInvTxnHeader = getGSTTransaction(invoiceType, linkedTranId, financeDetail);
+		if (gstInvTxnHeader == null) {
+			logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+					+ " --> GST transaction Details are empty.");
+			return null;
 		}
 
 		List<GSTInvoiceTxnDetails> gstInvoiceTxnDetails = new ArrayList<GSTInvoiceTxnDetails>();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
-		String finReference = financeMain.getFinReference();
 
-		if (StringUtils.isBlank(finReference) || financeMain == null || financeType == null) {
-			return; // write this case as a error message
+		if (pftAmount.compareTo(BigDecimal.ZERO) > 0) {
+			GSTInvoiceTxnDetails gstInvTxn = new GSTInvoiceTxnDetails();
+			gstInvTxn.setFeeCode(pftInvFeeCode);
+			gstInvTxn.setFeeDescription(pftInvFeeCode);
+			gstInvTxn.setFeeAmount(pftAmount);
+			gstInvTxn.setCGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setIGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setSGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setUGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setCESS_RATE(BigDecimal.ZERO);
+			gstInvTxn.setCGST_AMT(BigDecimal.ZERO);
+			gstInvTxn.setIGST_AMT(BigDecimal.ZERO);
+			gstInvTxn.setSGST_AMT(BigDecimal.ZERO);
+			gstInvTxn.setCESS_AMT(BigDecimal.ZERO);
+			gstInvoiceTxnDetails.add(gstInvTxn);
 		}
+
+		if (priAmount.compareTo(BigDecimal.ZERO) > 0) {
+			GSTInvoiceTxnDetails gstInvTxn = new GSTInvoiceTxnDetails();
+			gstInvTxn.setFeeCode(priInvFeeCode);
+			gstInvTxn.setFeeDescription(priInvFeeCode);
+			gstInvTxn.setFeeAmount(priAmount);
+			gstInvTxn.setCGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setIGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setSGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setUGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setCESS_RATE(BigDecimal.ZERO);
+			gstInvTxn.setCGST_AMT(BigDecimal.ZERO);
+			gstInvTxn.setIGST_AMT(BigDecimal.ZERO);
+			gstInvTxn.setSGST_AMT(BigDecimal.ZERO);
+			gstInvTxn.setCESS_AMT(BigDecimal.ZERO);
+			gstInvoiceTxnDetails.add(gstInvTxn);
+		}
+		if (fpftAmount.compareTo(BigDecimal.ZERO) > 0) {
+			GSTInvoiceTxnDetails gstInvTxn = new GSTInvoiceTxnDetails();
+			gstInvTxn.setFeeCode(fpftInvFeeCode);
+			gstInvTxn.setFeeDescription(fpftInvFeeCode);
+			gstInvTxn.setFeeAmount(fpftAmount);
+			gstInvTxn.setCGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setIGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setSGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setUGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setCESS_RATE(BigDecimal.ZERO);
+			gstInvTxn.setCGST_AMT(BigDecimal.ZERO);
+			gstInvTxn.setIGST_AMT(BigDecimal.ZERO);
+			gstInvTxn.setSGST_AMT(BigDecimal.ZERO);
+			gstInvTxn.setCESS_AMT(BigDecimal.ZERO);
+			gstInvoiceTxnDetails.add(gstInvTxn);
+		}
+
+		if (fpriAmount.compareTo(BigDecimal.ZERO) > 0) {
+			GSTInvoiceTxnDetails gstInvTxn = new GSTInvoiceTxnDetails();
+			gstInvTxn.setFeeCode(fpriInvFeeCode);
+			gstInvTxn.setFeeDescription(fpriInvFeeCode);
+			gstInvTxn.setFeeAmount(fpriAmount);
+			gstInvTxn.setCGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setIGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setSGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setUGST_RATE(BigDecimal.ZERO);
+			gstInvTxn.setCESS_RATE(BigDecimal.ZERO);
+			gstInvTxn.setCGST_AMT(BigDecimal.ZERO);
+			gstInvTxn.setIGST_AMT(BigDecimal.ZERO);
+			gstInvTxn.setSGST_AMT(BigDecimal.ZERO);
+			gstInvTxn.setCESS_AMT(BigDecimal.ZERO);
+			gstInvoiceTxnDetails.add(gstInvTxn);
+		}
+
+		gstInvTxnHeader.setDueInvoiceId(dbInvoiceID);
+		if (fpriAmount.compareTo(BigDecimal.ZERO) > 0) {
+			gstInvTxnHeader.setInvoice_Amt(fpftAmount.add(fpriAmount));
+		} else {
+			gstInvTxnHeader.setInvoice_Amt(pftAmount.add(priAmount));
+		}
+
+		gstInvTxnHeader.setGstInvoiceTxnDetailsList(gstInvoiceTxnDetails);
+
+		long invoiceId = this.gstInvoiceTxnDAO.save(gstInvTxnHeader);
+
+		logger.debug(Literal.LEAVING);
+		return invoiceId;
+	}
+
+	/**
+	 * Method for Preparation of GST Transaction header details
+	 * 
+	 * @param invoiceType
+	 * @param linkedTranId
+	 * @param financeDetail
+	 * @return
+	 */
+	private GSTInvoiceTxn getGSTTransaction(String invoiceType, long linkedTranId, FinanceDetail financeDetail) {
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		FinanceType financeType = finScheduleData.getFinanceType();
+		String finReference = financeMain.getFinReference();
 
 		// Tax Details fetching
 		if (financeDetail.getFinanceTaxDetail() == null) {
-			financeDetail.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(finReference));
+			financeDetail.setFinanceTaxDetail(financeTaxDetailDAO.getFinanceTaxDetail(finReference, "_AView"));
 		}
 
 		// Invoice Transaction Preparation
-		GSTInvoiceTxn gstInvoiceTxn = new GSTInvoiceTxn();
-		gstInvoiceTxn.setTransactionID(linkedTranId);
-		gstInvoiceTxn.setInvoiceType(invoiceType);
-		gstInvoiceTxn.setInvoice_Status(PennantConstants.GST_INVOICE_STATUS_INITIATED);
-		gstInvoiceTxn.setInvoiceDate(DateUtility.getAppDate());
+		GSTInvoiceTxn invoice = new GSTInvoiceTxn();
+		invoice.setTransactionID(linkedTranId);
+		invoice.setInvoiceType(invoiceType);
+		invoice.setInvoice_Status(PennantConstants.GST_INVOICE_STATUS_INITIATED);
+
+		if (financeMain.getEodValueDate() != null) {
+			invoice.setInvoiceDate(financeMain.getEodValueDate());
+		} else {
+			invoice.setInvoiceDate(SysParamUtil.getAppDate()); //Need to confirm either it is system date or application date
+		}
+
 		Entity entity = null;
 		if (StringUtils.isNotBlank(financeMain.getLovDescEntityCode())) {
-			entity = this.entityService.getApprovedEntity(financeMain.getLovDescEntityCode());
+			entity = this.entityDAO.getEntity(financeMain.getLovDescEntityCode(), "_AView");
 		} else {
-			entity = this.entityService.getEntityByFinDivision(financeType.getFinDivision(), "_Aview");
+			if (financeType != null) {
+				entity = this.entityDAO.getEntityByFinDivision(financeType.getFinDivision(), "_AView");
+			} else {
+				entity = this.entityDAO.getEntityByFinType(financeMain.getFinType(), "_AView");
+			}
 		}
 
 		if (entity == null) {
-			return; // write this case as a error message
+			logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+					+ " --> Entity Details are empty.");
+			return null; // write this case as a error message
 		}
-		gstInvoiceTxn.setCompanyCode(entity.getEntityCode());
-		gstInvoiceTxn.setCompanyName(entity.getEntityDesc());
-		gstInvoiceTxn.setPanNumber(entity.getPANNumber());
-		gstInvoiceTxn.setLoanAccountNo(finReference);
 
-		// Checking Finance Branch exist or not 
+		String entityCode = entity.getEntityCode();
+		invoice.setCompanyCode(entityCode);
+		invoice.setCompanyName(entity.getEntityDesc());
+		invoice.setPanNumber(entity.getPANNumber());
+		invoice.setLoanAccountNo(finReference);
+
+		// Checking Finance Branch exist or not
 		if (StringUtils.isBlank(financeMain.getFinBranch())) {
-			FinanceMain financeMainTemp = financeMainDAO.getFinanceMainForBatch(finReference);
-			if (financeMainTemp == null || StringUtils.isBlank(financeMainTemp.getFinBranch())) {
-				return; // write this case as a error message
-			} else {
-				financeMain.setFinBranch(financeMainTemp.getFinBranch());
+			String loanBranch = financeMainDAO.getFinBranch(finReference);
+			if (StringUtils.isBlank(loanBranch)) {
+				logger.warn("Fin Brance not avilabe for FinReference {}", finReference);
+
+				logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+						+ " --> Loan branch is empty.");
+				return null; // write this case as a error message
 			}
+			financeMain.setFinBranch(loanBranch);
 		}
-		Branch fromBranch = branchDAO.getBranchById(financeMain.getFinBranch(), "");
+
+		Branch fromBranch = branchDAO.getBranchById(financeMain.getFinBranch(), "_AView");
 
 		if (fromBranch == null) {
-			return; // write this case as a error message
+			logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+					+ " --> Branch details are Empty.");
+			return null; // write this case as a error message
 		}
 
-		// Check whether State level Tax Details exists or not
-		Province companyProvince = this.provinceService.getApprovedProvinceById(fromBranch.getBranchCountry(),
-				fromBranch.getBranchProvince());
+		String branchCountry = fromBranch.getBranchCountry();
+		String branchProvince = fromBranch.getBranchProvince();
+		Province companyProvince = this.provinceService.getApprovedProvinceById(branchCountry, branchProvince);
+
+		companyProvince = this.provinceService.getApprovedProvinceByEntityCode(branchCountry, branchProvince,
+				entityCode);
 
 		if (companyProvince != null) {
-
-			if (StringUtils.isBlank(companyProvince.getCPProvince())
-					|| StringUtils.isBlank(companyProvince.getCPProvinceName())) {
-				return; // write this case as a error message
+			String cpProvince = companyProvince.getCPProvince();
+			String cpProvinceName = companyProvince.getCPProvinceName();
+			if (StringUtils.isBlank(cpProvince) || StringUtils.isBlank(cpProvinceName)) {
+				return null;
 			}
 
-			gstInvoiceTxn.setCompany_State_Code(companyProvince.getCPProvince());
-			gstInvoiceTxn.setCompany_State_Name(companyProvince.getCPProvinceName());
+			List<TaxDetail> taxDetailList = companyProvince.getTaxDetailList();
+			if (CollectionUtils.isEmpty(taxDetailList)) {
+				return null;
+			}
 
-			if (CollectionUtils.isNotEmpty(companyProvince.getTaxDetailList())) {
-				TaxDetail taxDetail = companyProvince.getTaxDetailList().get(0);
+			TaxDetail taxDetail = taxDetailList.get(0);
 
-				if (StringUtils.isBlank(taxDetail.getHsnNumber()) || StringUtils.isBlank(taxDetail.getNatureService())
-						|| StringUtils.isBlank(taxDetail.getPinCode())
-						|| StringUtils.isBlank(taxDetail.getAddressLine1())
-						|| StringUtils.isBlank(taxDetail.getTaxCode())) {
-					return; // write this case as a error message
+			invoice.setCompany_GSTIN(taxDetail.getTaxCode());
+			invoice.setHsnNumber(taxDetail.getHsnNumber());
+			invoice.setNatureService(taxDetail.getNatureService());
+
+			String city = fromBranch.getLovDescBranchCityName();
+			if (SysParamUtil.isAllowed(SMTParameterConstants.INVOICE_ADDRESS_ENTITY_BASIS)) {
+				if (StringUtils.isBlank(cpProvince) || StringUtils.isBlank(cpProvinceName)) {
+					return null; // write this case as a error message
 				}
 
-				gstInvoiceTxn.setCompany_GSTIN(taxDetail.getTaxCode());
-				gstInvoiceTxn.setCompany_Address1(taxDetail.getAddressLine1());
-				gstInvoiceTxn.setCompany_Address2(taxDetail.getAddressLine2());
-				gstInvoiceTxn.setCompany_Address3(taxDetail.getAddressLine3());
-				gstInvoiceTxn.setCompany_PINCode(taxDetail.getPinCode());
-				gstInvoiceTxn.setHsnNumber(taxDetail.getHsnNumber());
-				gstInvoiceTxn.setNatureService(taxDetail.getNatureService());
+				TaxDetail taxDtl = taxDetailList.get(0);
+
+				invoice.setCompany_State_Code(cpProvince);
+				invoice.setCompany_State_Name(cpProvinceName);
+				invoice.setCompany_Address1(taxDtl.getAddressLine1());
+				invoice.setCompany_Address2(taxDtl.getAddressLine2());
+				invoice.setCompany_Address3(getCommaSeperate(taxDtl.getAddressLine3(), city));
+				invoice.setCompany_PINCode(taxDtl.getPinCode());
+
 			} else {
-				return; // write this case as a error message
+
+				String hoseNumber = fromBranch.getBranchAddrHNbr();
+				String flatNumber = fromBranch.getBranchFlatNbr();
+				String street = fromBranch.getBranchAddrStreet();
+				String addrLine2 = fromBranch.getBranchAddrLine2();
+
+				invoice.setCompany_Address1(getCommaSeperate(hoseNumber, flatNumber, street));
+				invoice.setCompany_Address2(fromBranch.getBranchAddrLine1());
+				invoice.setCompany_Address3(getCommaSeperate(addrLine2, city));
+				invoice.setCompany_PINCode(fromBranch.getPinCode());
+				invoice.setCompany_State_Code(branchProvince);
+				invoice.setCompany_State_Name(fromBranch.getLovDescBranchProvinceName());
+
 			}
 		}
 
@@ -582,104 +654,126 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		String province = "";
 
 		// If tax Details Exists on against Finance
-		if (finTaxDetail != null && StringUtils.isNotBlank(finTaxDetail.getApplicableFor())
-				&& !PennantConstants.List_Select.equals(finTaxDetail.getApplicableFor())) {
+		if (finTaxDetail != null && !PennantConstants.List_Select.equals(finTaxDetail.getApplicableFor())) {
 			country = finTaxDetail.getCountry();
 			province = finTaxDetail.getProvince();
-			gstInvoiceTxn.setCustomerID(finTaxDetail.getCustCIF());
-			gstInvoiceTxn.setCustomerName(finTaxDetail.getCustShrtName());
-			gstInvoiceTxn.setCustomerGSTIN(finTaxDetail.getTaxNumber());
-			gstInvoiceTxn.setCustomerAddress(finTaxDetail.getAddrLine1());
+			invoice.setCustomerID(finTaxDetail.getCustCIF());
+			invoice.setCustomerName(finTaxDetail.getCustShrtName());
+			invoice.setCustomerGSTIN(finTaxDetail.getTaxNumber());
+			invoice.setCustomerAddress(getAddress(finTaxDetail));
 		} else {
-
-			if (financeDetail.getCustomerDetails() == null) {
-				financeDetail.setCustomerDetails(
-						this.customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_AView"));
-			}
-
-			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-
-			if (CollectionUtils.isNotEmpty(addressList)) {
-				for (CustomerAddres customerAddres : addressList) {
-					if (customerAddres.getCustAddrPriority() != Integer
-							.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-						continue;
+			CustomerAddres address = null;
+			if (financeDetail.getCustomerDetails() != null) {
+				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+				if (CollectionUtils.isNotEmpty(addressList)) {
+					for (CustomerAddres customerAddres : addressList) {
+						if (customerAddres.getCustAddrPriority() != Integer
+								.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+							continue;
+						}
+						address = customerAddres;
+						break;
 					}
-					country = customerAddres.getCustAddrCountry();
-					province = customerAddres.getCustAddrProvince();
-
-					Customer cust = financeDetail.getCustomerDetails().getCustomer();
-					if (cust == null) {
-						cust = this.customerService.getApprovedCustomerById(financeMain.getCustID());
-					}
-
-					if (cust == null) {
-						return; // write this case as a error message
-					}
-					gstInvoiceTxn.setCustomerID(cust.getCustCIF());
-					gstInvoiceTxn.setCustomerName(cust.getCustShrtName());
-
-					//Preparing customer Address
-					prepareCustAddress(gstInvoiceTxn, customerAddres);
-
-					break;
 				}
+			} else {
+				address = customerAddresDAO.getHighPriorityCustAddr(financeMain.getCustID(), "_AView");
 			}
+
+			if (address == null) {
+				logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+						+ " --> Customer Address Details are Empty.");
+				return null; // write this case as a error message
+			}
+
+			country = address.getCustAddrCountry();
+			province = address.getCustAddrProvince();
+
+			Customer cust = null;
+			if (financeDetail.getCustomerDetails() != null
+					&& financeDetail.getCustomerDetails().getCustomer() != null) {
+				cust = financeDetail.getCustomerDetails().getCustomer();
+			}
+			if (cust == null) {
+				cust = this.customerDAO.checkCustomerByID(financeMain.getCustID(), "");
+			}
+
+			if (cust == null) {
+				logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+						+ " --> Customer Details are Empty.");
+				return null; // write this case as a error message
+			}
+			invoice.setCustomerID(cust.getCustCIF());
+			invoice.setCustomerName(cust.getCustShrtName());
+
+			//Preparing customer Address
+			invoice.setCustomerAddress(prepareCustAddress(address));
+
 		}
 
-		customerProvince = this.provinceService.getApprovedProvinceById(country, province);
-
+		customerProvince = this.provinceDAO.getProvinceById(country, province, "_AView");
 		if (customerProvince == null) {
-			return; // write this case as a error message
+			logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+					+ " --> Customer Address Province Details are Empty.");
+			return null; // write this case as a error message
 		}
 
-		gstInvoiceTxn.setCustomerStateCode(customerProvince.getTaxStateCode());
-		gstInvoiceTxn.setCustomerStateName(customerProvince.getCPProvinceName());
-		gstInvoiceTxn.setInvoice_Amt(invoiceAmout);
+		invoice.setCustomerStateCode(customerProvince.getTaxStateCode());
+		invoice.setCustomerStateName(customerProvince.getCPProvinceName());
 
-		GSTInvoiceTxnDetails feeTran = new GSTInvoiceTxnDetails();
-		feeTran.setFeeCode(feeCode);
-		feeTran.setFeeDescription(feeCode);
-		feeTran.setFeeAmount(invoiceAmout);
-		feeTran.setCGST_RATE(BigDecimal.ZERO);
-		feeTran.setIGST_RATE(BigDecimal.ZERO);
-		feeTran.setSGST_RATE(BigDecimal.ZERO);
-		feeTran.setUGST_RATE(BigDecimal.ZERO);
-		feeTran.setCGST_AMT(BigDecimal.ZERO);
-		feeTran.setIGST_AMT(BigDecimal.ZERO);
-		feeTran.setSGST_AMT(BigDecimal.ZERO);
-		feeTran.setUGST_AMT(BigDecimal.ZERO);
-		gstInvoiceTxnDetails.add(feeTran);
+		return invoice;
+	}
 
-		gstInvoiceTxn.setGstInvoiceTxnDetailsList(gstInvoiceTxnDetails);
+	private String getCommaSeperate(String... values) {
+		StringBuilder address = new StringBuilder();
 
-		this.gstInvoiceTxnDAO.save(gstInvoiceTxn);
+		for (String value : values) {
+			value = StringUtils.trimToNull(value);
 
-		logger.debug(Literal.LEAVING);
+			if (value == null) {
+				continue;
+			}
+
+			if (address.length() > 0) {
+				address.append(", ");
+			}
+
+			address.append(value);
+		}
+		return address.toString();
+	}
+
+	private String getAddress(FinanceTaxDetail finTaxDetail) {
+		String addrLine1 = StringUtils.trimToEmpty(finTaxDetail.getAddrLine1());
+		String addrLine2 = StringUtils.trimToNull(finTaxDetail.getAddrLine2());
+		String addrLine3 = StringUtils.trimToNull(finTaxDetail.getAddrLine3());
+		String addrLine4 = StringUtils.trimToNull(finTaxDetail.getAddrLine4());
+		String city = StringUtils.trimToNull(finTaxDetail.getCityName());
+		String pinnCode = StringUtils.trimToNull(finTaxDetail.getPinCode());
+
+		return getCommaSeperate(addrLine1, addrLine2, addrLine3, addrLine4, city, pinnCode);
+
+	}
+
+	/**
+	 * Method for preparing Customer Address for Invoice Report Generation
+	 * 
+	 * @param gstInvoiceTxn
+	 * @param customerAddres
+	 * @return
+	 */
+	private String prepareCustAddress(CustomerAddres customerAddres) {
+		String houseNumber = customerAddres.getCustAddrHNbr();
+		String flanNumber = customerAddres.getCustFlatNbr();
+		String street = customerAddres.getCustAddrStreet();
+		String city = customerAddres.getLovDescCustAddrCityName();
+		String province = customerAddres.getLovDescCustAddrProvinceName();
+		String country = customerAddres.getLovDescCustAddrCountryName();
+		String postBox = customerAddres.getCustPOBox();
+		return getCommaSeperate(houseNumber, flanNumber, street, city, province, country, postBox);
 	}
 
 	public void setGstInvoiceTxnDAO(GSTInvoiceTxnDAO gstInvoiceTxnDAO) {
 		this.gstInvoiceTxnDAO = gstInvoiceTxnDAO;
-	}
-
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
-	}
-
-	public void setProvinceService(ProvinceService provinceService) {
-		this.provinceService = provinceService;
-	}
-
-	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
-		this.financeTaxDetailService = financeTaxDetailService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
-	public void setCustomerService(CustomerService customerService) {
-		this.customerService = customerService;
 	}
 
 	public void setBranchDAO(BranchDAO branchDAO) {
@@ -688,5 +782,29 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
+		this.customerAddresDAO = customerAddresDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
+	}
+
+	public void setEntityDAO(EntityDAO entityDAO) {
+		this.entityDAO = entityDAO;
+	}
+
+	public void setProvinceDAO(ProvinceDAO provinceDAO) {
+		this.provinceDAO = provinceDAO;
+	}
+
+	public void setProvinceService(ProvinceService provinceService) {
+		this.provinceService = provinceService;
 	}
 }

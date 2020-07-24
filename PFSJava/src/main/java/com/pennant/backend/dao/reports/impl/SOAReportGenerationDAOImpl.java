@@ -296,7 +296,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(
 				" Select T1.FinReference, T1.PostDate, T1.AdviseAmount, T1.AdviseType, T1.ReceiptId, T1.BounceId, T1.Adviseid, T1.FeeTypeId, T1.BalanceAmt,");
 		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T2.FeeTypeDesc, T1.ValueDate,T2.TaxComponent,");
-		selectSql.append(" T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST");
+		selectSql.append(" T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST, T1.PaidCESS");
 		selectSql.append(" FROM ManualAdvise T1");
 		selectSql.append(" Left Join FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId");
 		selectSql.append(" Where FinReference = :FinReference");
@@ -332,6 +332,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" SELECT T1.Movementdate, T1.movementamount, T1.WaivedAmount, F.FEETYPEDESC, T2.ValueDate");
+		selectSql.append(" ,T1.Adviseid, T1.Taxheaderid");
 		selectSql.append(" FROM ManualAdviseMovements T1 INNER JOIN ");
 		selectSql.append(" ManualAdvise T2 on T1.Adviseid = T2.Adviseid LEFT JOIN ");
 		selectSql.append(" FEETYPES F ON F.FEETYPEID = T2.FEETYPEID ");

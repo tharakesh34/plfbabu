@@ -3006,6 +3006,24 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
 	}
 
+	/***
+	 * Method to get the Loan branch against the Reference
+	 */
+	@Override
+	public String getFinBranch(String finReference) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder sql = new StringBuilder("Select FinBranch");
+		sql.append(" From FinanceMain");
+		sql.append(" Where FinReference =:FinReference");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+	}
+
 	@Override
 	public BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference) {
 		logger.debug(Literal.ENTERING);
@@ -4781,7 +4799,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select fm.FinReference, fm.FinCCY, fm.finbranch FinBranch, cu.custdftbranch CustBranch");
-		sql.append(", ca.custaddrprovince CustProvince, ca.custaddrcountry CustCountry");
+		sql.append(", ca.custaddrprovince CustProvince, ca.custaddrcountry CustCountry, cu.ResidentialStatus ");
 
 		if (TableType.MAIN_TAB == tableType) {
 			sql.append(" from FinanceMain fm");
@@ -4817,6 +4835,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					map.put("CustBranch", rs.getString("CustBranch"));
 					map.put("CustProvince", rs.getString("CustProvince"));
 					map.put("CustCountry", rs.getString("CustCountry"));
+					map.put("ResidentialStatus", rs.getString("ResidentialStatus"));
 					return map;
 				}
 			});
@@ -4833,7 +4852,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select cu.custdftbranch CustBranch");
-		sql.append(", ca.custaddrprovince CustProvince, ca.custaddrcountry CustCountry");
+		sql.append(", ca.custaddrprovince CustProvince, ca.custaddrcountry CustCountry, ResidentialStatus");
 
 		if (TableType.MAIN_TAB == tableType) {
 			sql.append(" from Customers cu");
@@ -4861,6 +4880,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					map.put("CustBranch", rs.getString("CustBranch"));
 					map.put("CustProvince", rs.getString("CustProvince"));
 					map.put("CustCountry", rs.getString("CustCountry"));
+					map.put("ResidentialStatus", rs.getString("ResidentialStatus"));
 					return map;
 				}
 			});

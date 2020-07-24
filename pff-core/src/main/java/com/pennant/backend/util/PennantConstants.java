@@ -826,6 +826,10 @@ public class PennantConstants {
 	public static final String FEETYPE_BOUNCE = "BOUNCE";
 	public static final String FEETYPE_ODC = "ODC";
 	public static final String FEETYPE_EXEMPTED = "EXEMPTED_FEE";
+	public static final String FEETYPE_PFT_EXEMPTED = "FEETYPE_PFT_EXEMPTED";
+	public static final String FEETYPE_PRI_EXEMPTED = "FEETYPE_PRI_EXEMPTED";
+	public static final String FEETYPE_FPFT_EXEMPTED = "FEETYPE_FPFT_EXEMPTED";
+	public static final String FEETYPE_FPRI_EXEMPTED = "FEETYPE_FPRI_EXEMPTED";
 
 	public static final String COLLATERAL_LTV_CHECK_DISBAMT = "LTVDISBAMT";
 	public static final String COLLATERAL_LTV_CHECK_FINAMT = "LTVFINAMT";

@@ -73,6 +73,7 @@ import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
@@ -96,8 +97,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AdviseID, AdviseType, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID");
 		sql.append(", ReceiptID, PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt");
-		sql.append(", BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST");
-		sql.append(", WaivedIGST, WaivedCESS, PaidCESS, FinSource, DueCreation");
+		sql.append(
+				", BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST, WaivedUGST");
+		sql.append(", WaivedIGST, WaivedCESS, FinSource, DueCreation");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent, TDSReq");
@@ -137,12 +139,12 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 							manualAdvise.setPaidSGST(rs.getBigDecimal("PaidSGST"));
 							manualAdvise.setPaidUGST(rs.getBigDecimal("PaidUGST"));
 							manualAdvise.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+							manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
 							manualAdvise.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
 							manualAdvise.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
 							manualAdvise.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
 							manualAdvise.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
 							manualAdvise.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
-							manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
 							manualAdvise.setFinSource(rs.getString("FinSource"));
 							manualAdvise.setDueCreation(rs.getBoolean("DueCreation"));
 
@@ -184,8 +186,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AdviseID, AdviseType, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID");
 		sql.append(", ReceiptID, PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt");
-		sql.append(", BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST");
-		sql.append(", WaivedIGST, WaivedCESS, PaidCESS, DueCreation");
+		sql.append(
+				", BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST, WaivedUGST");
+		sql.append(", WaivedIGST, WaivedCESS, DueCreation");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc");
 			sql.append(", TaxApplicable, TaxComponent, FinSource, TDSReq");
@@ -224,12 +227,13 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 							manualAdvise.setPaidSGST(rs.getBigDecimal("PaidSGST"));
 							manualAdvise.setPaidUGST(rs.getBigDecimal("PaidUGST"));
 							manualAdvise.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+							manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
 							manualAdvise.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
 							manualAdvise.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
 							manualAdvise.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
 							manualAdvise.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
 							manualAdvise.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
-							manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
+
 							manualAdvise.setDueCreation(rs.getBoolean("DueCreation"));
 
 							if (type.contains("View")) {
@@ -275,7 +279,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append("(adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
 		sql.append(
 				" paidAmount, waivedAmount, remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST,");
-		sql.append(" WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS, PaidCESS, FinSource,");
+		sql.append(" PaidCESS, WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS, FinSource,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,DueCreation,LinkedTranId,HoldDue)");
 		sql.append(" values(");
@@ -283,7 +287,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				" :adviseID, :adviseType, :finReference, :feeTypeID, :sequence, :adviseAmount, :BounceID, :ReceiptID,");
 		sql.append(
 				" :paidAmount, :waivedAmount, :remarks, :ValueDate, :PostDate, :ReservedAmt, :BalanceAmt,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST,");
-		sql.append(" :WaivedCGST, :WaivedSGST, :WaivedUGST, :WaivedIGST, :WaivedCESS, :PaidCESS, :FinSource,");
+		sql.append(" :PaidCESS, :WaivedCGST, :WaivedSGST, :WaivedUGST, :WaivedIGST, :WaivedCESS, :FinSource,");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:DueCreation,:LinkedTranId, :HoldDue)");
 
@@ -318,9 +322,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" waivedAmount = :waivedAmount, remarks = :remarks,BounceID=:BounceID, ReceiptID=:ReceiptID, ");
 		sql.append(" ValueDate=:ValueDate, PostDate=:PostDate, ReservedAmt=:ReservedAmt, BalanceAmt=:BalanceAmt, ");
 		sql.append(
-				" PaidCGST=:PaidCGST, PaidSGST=:PaidSGST, PaidUGST=:PaidUGST, PaidIGST=:PaidIGST, FinSource=:FinSource,");
+				" PaidCGST=:PaidCGST, PaidSGST=:PaidSGST, PaidUGST=:PaidUGST, PaidIGST=:PaidIGST, PaidCESS =:PaidCESS, FinSource=:FinSource,");
 		sql.append(
-				" WaivedCGST = :WaivedCGST, WaivedSGST = :WaivedSGST, WaivedIGST = :WaivedIGST, WaivedUGST = :WaivedUGST,WaivedCESS =:WaivedCESS, PaidCESS =:PaidCESS,");
+				" WaivedCGST = :WaivedCGST, WaivedSGST = :WaivedSGST, WaivedIGST = :WaivedIGST, WaivedUGST = :WaivedUGST, WaivedCESS =:WaivedCESS,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(
@@ -394,8 +398,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt");
-		sql.append(", BounceID, ReceiptID, PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST");
-		sql.append(", WaivedUGST, WaivedIGST, WaivedCESS, PaidCESS, FinSource, DueCreation");
+		sql.append(", BounceID, ReceiptID, PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST");
+		sql.append(", WaivedUGST, WaivedIGST, WaivedCESS, FinSource, DueCreation");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc");
@@ -433,12 +437,12 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 					manualAdvise.setPaidSGST(rs.getBigDecimal("PaidSGST"));
 					manualAdvise.setPaidUGST(rs.getBigDecimal("PaidUGST"));
 					manualAdvise.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+					manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
 					manualAdvise.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
 					manualAdvise.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
 					manualAdvise.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
 					manualAdvise.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
 					manualAdvise.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
-					manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
 					manualAdvise.setFinSource(rs.getString("FinSource"));
 					manualAdvise.setDueCreation(rs.getBoolean("DueCreation"));
 
@@ -484,11 +488,10 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(
 				" set  PaidAmount = PaidAmount + :PaidAmount, WaivedAmount = WaivedAmount+:WaivedAmount,ReservedAmt = ReservedAmt+:ReservedAmt,BalanceAmt = BalanceAmt+:BalanceAmt,");
 		sql.append(
-				" PaidCGST = PaidCGST + :PaidCGST, PaidSGST = PaidSGST + :PaidSGST, PaidUGST = PaidUGST + :PaidUGST, PaidIGST = PaidIGST + :PaidIGST,");
+				" PaidCGST = PaidCGST + :PaidCGST, PaidSGST = PaidSGST + :PaidSGST, PaidUGST = PaidUGST + :PaidUGST, PaidIGST = PaidIGST + :PaidIGST, PaidCESS = PaidCESS + :PaidCESS,");
 		sql.append(
 				" WaivedCGST = WaivedCGST + :WaivedCGST, WaivedSGST = WaivedSGST + :WaivedSGST, WaivedUGST = WaivedUGST + :WaivedUGST, WaivedIGST = WaivedIGST + :WaivedIGST,");
-		sql.append(
-				" WaivedCESS = WaivedCESS + :WaivedCESS,  PaidCESS = PaidCESS + :PaidCESS, TdsPaid = TdsPaid + :TdsPaid ");
+		sql.append(" WaivedCESS = WaivedCESS + :WaivedCESS, TdsPaid= TdsPaid + :TdsPaid ");
 		sql.append(" WHERE AdviseID = :AdviseID ");
 
 		// Execute the SQL, binding the arguments.
@@ -506,11 +509,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder(" insert into ManualAdviseMovements");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(
-				" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status, ReceiptID, ReceiptSeqID,PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaiverID,");
-		sql.append(" WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, TaxHeaderId, TdsPaid)");
+				" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status, ReceiptID, ReceiptSeqID, WaiverID, TaxHeaderId)");
 		sql.append(
-				" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status, :ReceiptID, :ReceiptSeqID,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST, :WaiverID,");
-		sql.append(" :WaivedCGST, :WaivedSGST, :WaivedUGST, :WaivedIGST, :TaxHeaderId, :TdsPaid)");
+				" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status, :ReceiptID, :ReceiptSeqID, :WaiverID, :TaxHeaderId)");
 
 		// Get the identity sequence number.
 		if (movement.getMovementID() <= 0) {
@@ -530,8 +531,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
-		sql.append(", Status, ReceiptID, ReceiptSeqID, PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST");
-		sql.append(", WaivedSGST, WaivedUGST, WaivedIGST, TaxHeaderId");
+		sql.append(", Status, ReceiptID, ReceiptSeqID, TaxHeaderId");
 		sql.append(" From ManualAdviseMovements");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where ReceiptID = ?");
@@ -559,15 +559,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 					manualAdviseMovements.setStatus(rs.getString("Status"));
 					manualAdviseMovements.setReceiptID(rs.getLong("ReceiptID"));
 					manualAdviseMovements.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-					manualAdviseMovements.setPaidCGST(rs.getBigDecimal("PaidCGST"));
-					manualAdviseMovements.setPaidSGST(rs.getBigDecimal("PaidSGST"));
-					manualAdviseMovements.setPaidUGST(rs.getBigDecimal("PaidUGST"));
-					manualAdviseMovements.setPaidIGST(rs.getBigDecimal("PaidIGST"));
-					manualAdviseMovements.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
-					manualAdviseMovements.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
-					manualAdviseMovements.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
-					manualAdviseMovements.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
-					manualAdviseMovements.setTaxHeaderId(rs.getLong("TaxHeaderId"));
+					manualAdviseMovements.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
 
 					return manualAdviseMovements;
 				}
@@ -613,7 +605,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 					manualAdviseMovements.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
 					manualAdviseMovements.setStatus(rs.getString("Status"));
 					manualAdviseMovements.setReceiptMode(rs.getString("ReceiptMode"));
-					manualAdviseMovements.setTaxHeaderId(rs.getLong("TaxHeaderId"));
+					manualAdviseMovements.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
 
 					return manualAdviseMovements;
 				}
@@ -652,8 +644,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
-		sql.append(", Status, ReceiptID, ReceiptSeqID, PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST");
-		sql.append(", WaivedSGST, WaivedUGST, WaivedIGST, TaxHeaderId");
+		sql.append(", Status, ReceiptID, ReceiptSeqID, TaxHeaderId");
 
 		if (StringUtils.contains(type, "View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent");
@@ -696,15 +687,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 					ManualAdviseMovements.setStatus(rs.getString("Status"));
 					ManualAdviseMovements.setReceiptID(rs.getLong("ReceiptID"));
 					ManualAdviseMovements.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-					ManualAdviseMovements.setPaidCGST(rs.getBigDecimal("PaidCGST"));
-					ManualAdviseMovements.setPaidSGST(rs.getBigDecimal("PaidSGST"));
-					ManualAdviseMovements.setPaidUGST(rs.getBigDecimal("PaidUGST"));
-					ManualAdviseMovements.setPaidIGST(rs.getBigDecimal("PaidIGST"));
-					ManualAdviseMovements.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
-					ManualAdviseMovements.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
-					ManualAdviseMovements.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
-					ManualAdviseMovements.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
-					ManualAdviseMovements.setTaxHeaderId(rs.getLong("TaxHeaderId"));
+					ManualAdviseMovements.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
 
 					if (StringUtils.contains(type, "View")) {
 						ManualAdviseMovements.setFeeTypeCode(rs.getString("FeeTypeCode"));
@@ -799,7 +782,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ReceiptSeqID, AdviseID, ReservedAmt");
 		sql.append(" from ManualAdviseReserve");
-		sql.append(" Where ReceiptSeqID = ? and AdviseID = ?");
+		sql.append(" Where ReceiptSeqID = ? and AdviseID= ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -1090,8 +1073,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		selectSql.append(
 				" T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence, T1.AdviseAmount, T1.BounceID, T1.ReceiptID,");
 		selectSql.append(
-				" T1.PaidAmount, T1.WaivedAmount, T1.ValueDate, T1.PostDate, T1.ReservedAmt, T1.BalanceAmt,T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST, T1.FinSource,");
-		selectSql.append(" T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST, T1.DueCreation ");
+				" T1.PaidAmount, T1.WaivedAmount, T1.ValueDate, T1.PostDate, T1.ReservedAmt, T1.BalanceAmt,T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST, T1.PaidCESS, T1.FinSource,");
+		selectSql.append(" T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST, T1.WaivedCESS, T1.DueCreation ");
 		selectSql.append(" From ManualAdvise T1 ");
 		selectSql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -1161,8 +1144,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AdviseID, AdviseType, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID");
 		sql.append(", ReceiptID, PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt");
-		sql.append(", BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST");
-		sql.append(", WaivedIGST, WaivedCESS, PaidCESS, DueCreation");
+		sql.append(
+				", BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST, WaivedUGST");
+		sql.append(", WaivedIGST, WaivedCESS, DueCreation");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, taxApplicable, taxComponent, tdsReq");
@@ -1207,12 +1191,12 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 					manualAdvise.setPaidSGST(rs.getBigDecimal("PaidSGST"));
 					manualAdvise.setPaidUGST(rs.getBigDecimal("PaidUGST"));
 					manualAdvise.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+					manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
 					manualAdvise.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
 					manualAdvise.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
 					manualAdvise.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
 					manualAdvise.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
 					manualAdvise.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
-					manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
 					manualAdvise.setDueCreation(rs.getBoolean("DueCreation"));
 
 					if (type.contains("View")) {
@@ -1258,8 +1242,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder selectSql = new StringBuilder(
 				" Select T2.MovementID, T2.AdviseID, T2.MovementDate, T2.MovementAmount, T2.PaidAmount, ");
 		selectSql.append(
-				" T2.WaivedAmount, T2.Status, T2.ReceiptID, T2.ReceiptSeqID, T2.PaidCGST, T2.PaidSGST, T2.PaidUGST, T2.PaidIGST ");
-		selectSql.append(" T2.WaivedCGST, T2.WaivedSGST, T2.WaivedUGST, T2.WaivedIGST, T2.TaxHeaderId");
+				" T2.WaivedAmount, T2.Status, T2.ReceiptID, T2.ReceiptSeqID, T2.PaidCGST, T2.PaidSGST, T2.PaidUGST, T2.PaidIGST, T2.PaidCESS ");
+		selectSql.append(" T2.WaivedCGST, T2.WaivedSGST, T2.WaivedUGST, T2.WaivedIGST, T2.WaivedCESS, T2.TaxHeaderId");
 		selectSql.append(" From ManualAdvise");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" T1");
@@ -1304,9 +1288,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(
 				" MA.Version, MA.LastMntOn, MA.LastMntBy,MA.RecordStatus, MA.RoleCode, MA.NextRoleCode, MA.TaskId, MA.NextTaskId, MA.RecordType, MA.WorkflowId,");
 		sql.append(" FT.feetypecode, FT.FeeTypeDesc, coalesce(FT.TaxApplicable, 0) TaxApplicable, FT.TaxComponent,");
-		sql.append(" MA.WaivedCGST, MA.WaivedSGST, MA.WaivedUGST, MA.WaivedIGST, MA.DUECREATION,");
-		sql.append(" MA.Remarks, MA.PaidCGST, MA.PaidSGST, MA.PaidUGST, MA.PaidIGST,");
-		sql.append(" MA.PaidCESS, MA.FinSource,  MA.WaivedCESS, MA.LinkedTranId");
+		sql.append(" MA.WaivedCGST, MA.WaivedSGST, MA.WaivedUGST, MA.WaivedIGST, MA.WaivedCESS, MA.DUECREATION");
 		sql.append(" From MANUALADVISE_Aview  MA");
 		sql.append(" Left join FEETYPES FT on MA.FEETYPEID = FT.FEETYPEID");
 		sql.append(
@@ -1592,8 +1574,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt");
-		sql.append(", BounceID, ReceiptID, PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST");
-		sql.append(", WaivedUGST, WaivedIGST, DueCreation");
+		sql.append(", BounceID, ReceiptID, PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST");
+		sql.append(", WaivedUGST, WaivedIGST, WaivedCESS, DueCreation");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, taxApplicable, taxComponent, tdsReq ");
@@ -1630,10 +1612,12 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 					manualAdvise.setPaidSGST(rs.getBigDecimal("PaidSGST"));
 					manualAdvise.setPaidUGST(rs.getBigDecimal("PaidUGST"));
 					manualAdvise.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+					manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
 					manualAdvise.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
 					manualAdvise.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
 					manualAdvise.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
 					manualAdvise.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
+					manualAdvise.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
 					manualAdvise.setDueCreation(rs.getBoolean("DueCreation"));
 
 					if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -1731,8 +1715,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
-		sql.append(", Status, ReceiptID, ReceiptSeqID, PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST");
-		sql.append(", WaivedSGST, WaivedUGST, WaivedIGST");
+		sql.append(", Status, ReceiptID, ReceiptSeqID, TaxHeaderId ");
 
 		if (StringUtils.contains(type, "View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent");
@@ -1766,14 +1749,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 					manualAdviseMovements.setStatus(rs.getString("Status"));
 					manualAdviseMovements.setReceiptID(rs.getLong("ReceiptID"));
 					manualAdviseMovements.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-					manualAdviseMovements.setPaidCGST(rs.getBigDecimal("PaidCGST"));
-					manualAdviseMovements.setPaidSGST(rs.getBigDecimal("PaidSGST"));
-					manualAdviseMovements.setPaidUGST(rs.getBigDecimal("PaidUGST"));
-					manualAdviseMovements.setPaidIGST(rs.getBigDecimal("PaidIGST"));
-					manualAdviseMovements.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
-					manualAdviseMovements.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
-					manualAdviseMovements.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
-					manualAdviseMovements.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
+					manualAdviseMovements.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
 
 					if (StringUtils.contains(type, "View")) {
 						manualAdviseMovements.setFeeTypeCode(rs.getString("FeeTypeCode"));
@@ -1791,6 +1767,61 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
+
+	}
+
+	@Override
+	public ManualAdviseMovements getAdvMovByReceiptSeq(long receiptID, long receiptSeqID, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
+		sql.append(", Status, ReceiptID, ReceiptSeqID, TaxHeaderId ");
+
+		if (StringUtils.contains(type, "View")) {
+			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent");
+		}
+
+		sql.append(" from ManualAdviseMovements");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("  Where ReceiptID = ? and ReceiptSeqID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID, receiptSeqID },
+					new RowMapper<ManualAdviseMovements>() {
+						@Override
+						public ManualAdviseMovements mapRow(ResultSet rs, int rowNum) throws SQLException {
+							ManualAdviseMovements movement = new ManualAdviseMovements();
+
+							movement.setMovementID(rs.getLong("MovementID"));
+							movement.setAdviseID(rs.getLong("AdviseID"));
+							movement.setMovementDate(rs.getTimestamp("MovementDate"));
+							movement.setMovementAmount(rs.getBigDecimal("MovementAmount"));
+							movement.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+							movement.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+							movement.setStatus(rs.getString("Status"));
+							movement.setReceiptID(rs.getLong("ReceiptID"));
+							movement.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+							movement.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+
+							if (StringUtils.contains(type, "View")) {
+								movement.setFeeTypeCode(rs.getString("FeeTypeCode"));
+								movement.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+								movement.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+								movement.setTaxComponent(rs.getString("TaxComponent"));
+							}
+
+							return movement;
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 
 	}
 
@@ -1818,8 +1849,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Insert Into AdviseDueTaxDetail");
-		insertSql.append(" (AdviseID, Amount, TaxType , CGST , SGST , UGST , IGST , CESS, TotalGST)");
-		insertSql.append(" Values( :AdviseID, :Amount, :TaxType , :CGST , :SGST , :UGST , :IGST , :CESS, :TotalGST)");
+		insertSql.append(" (AdviseID, Amount, TaxType , CGST , SGST , UGST , IGST , CESS, TotalGST, InvoiceID)");
+		insertSql.append(
+				" Values( :AdviseID, :Amount, :TaxType , :CGST , :SGST , :UGST , :IGST , :CESS, :TotalGST, :InvoiceID)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dueTaxDetail);
@@ -1886,6 +1918,29 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.LEAVING);
 		return taxDetail;
+	}
+
+	@Override
+	public long getDebitInvoiceID(long adviseID) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("AdviseID", adviseID);
+
+		StringBuilder selectSql = new StringBuilder(" Select InvoiceID  From AdviseDueTaxDetail");
+		selectSql.append(" Where AdviseID = :AdviseID ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		long debitInvoiceID = 0;
+		try {
+			debitInvoiceID = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			debitInvoiceID = 0;
+		}
+
+		logger.debug("Leaving");
+		return debitInvoiceID;
 	}
 
 	/**

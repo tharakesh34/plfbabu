@@ -83,7 +83,6 @@ import com.pennant.backend.dao.applicationmaster.ReasonCodeDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
-import com.pennant.backend.dao.finance.FinTaxDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
@@ -100,7 +99,6 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
-import com.pennant.backend.dao.receipts.ReceiptTaxDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
@@ -122,10 +120,10 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
-import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -137,7 +135,6 @@ import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
-import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -148,7 +145,6 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
-import com.pennant.backend.model.finance.ReceiptTaxDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
@@ -185,6 +181,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -210,7 +207,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
-	private ReceiptTaxDetailDAO receiptTaxDetailDAO;
 	private ReceiptAllocationDetailDAO allocationDetailDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private RepaymentProcessUtil repayProcessUtil;
@@ -235,7 +231,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private AccountingSetDAO accountingSetDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private ReceiptUploadHeaderDAO receiptUploadHeaderDAO;
-	private FinTaxDetailsDAO finTaxDetailsDAO;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 	private ReceiptUploadHeaderService receiptUploadHeaderService;
 	private ReasonCodeDAO reasonCodeDAO;
@@ -279,9 +274,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (receiptDetailList != null && !receiptDetailList.isEmpty()) {
 			for (FinReceiptDetail receiptDetail : receiptDetailList) {
 				if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
-					ReceiptTaxDetail taxDetail = receiptTaxDetailDAO.getTaxDetailByID(receiptDetail.getReceiptSeqID(),
-							"");
-					receiptDetail.setReceiptTaxDetail(taxDetail);
+					ManualAdviseMovements advMov = manualAdviseDAO.getAdvMovByReceiptSeq(receiptID,
+							receiptDetail.getReceiptSeqID(), StringUtils.equals(type, "_View") ? "_Temp" : "");
+					if (advMov != null) {
+						receiptDetail.setPayAdvMovement(advMov);
+					}
+
 				}
 			}
 		}
@@ -443,8 +441,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (CollectionUtils.isNotEmpty(scheduleData.getFinFeeDetailList())) {
 			for (FinFeeDetail finFeeDetail : scheduleData.getFinFeeDetailList()) {
-				//Fin Tax Details
-				finFeeDetail.setFinTaxDetails(getFinTaxDetailsDAO().getFinTaxByFeeID(finFeeDetail.getFeeID(), type));
 				//Tax Details
 				long headerId = finFeeDetail.getTaxHeaderId();
 				if (headerId > 0) {
@@ -543,9 +539,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (receiptDetailList != null && !receiptDetailList.isEmpty()) {
 			for (FinReceiptDetail receiptDetail : receiptDetailList) {
 				if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
-					ReceiptTaxDetail taxDetail = receiptTaxDetailDAO.getTaxDetailByID(receiptDetail.getReceiptSeqID(),
+					ManualAdviseMovements advMov = manualAdviseDAO.getAdvMovByReceiptSeq(
+							receiptDetail.getReceiptSeqID(), receiptDetail.getReceiptSeqID(),
 							TableType.TEMP_TAB.getSuffix());
-					receiptDetail.setReceiptTaxDetail(taxDetail);
+
+					if (advMov.getTaxHeaderId() != null && advMov.getTaxHeaderId() > 0) {
+						TaxHeader header = taxHeaderDetailsDAO.getTaxHeaderDetailsById(advMov.getTaxHeaderId(),
+								TableType.TEMP_TAB.getSuffix());
+						if (header != null) {
+							header.setTaxDetails(taxHeaderDetailsDAO.getTaxDetailById(advMov.getTaxHeaderId(),
+									TableType.TEMP_TAB.getSuffix()));
+						}
+						advMov.setTaxHeader(header);
+					}
+					receiptDetail.setPayAdvMovement(advMov);
 				}
 			}
 		}
@@ -584,6 +591,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			int advisetype = Integer.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
 			receiptDetail.setAdvMovements(manualAdviseDAO.getAdvMovementsByReceiptSeq(receiptDetail.getReceiptID(),
 					receiptDetail.getReceiptSeqID(), advisetype, "_TView"));
+
+			for (ManualAdviseMovements advMov : receiptDetail.getAdvMovements()) {
+				if (advMov.getTaxHeaderId() > 0) {
+					TaxHeader header = taxHeaderDetailsDAO.getTaxHeaderDetailsById(advMov.getTaxHeaderId(),
+							TableType.TEMP_TAB.getSuffix());
+					if (header != null) {
+						header.setTaxDetails(taxHeaderDetailsDAO.getTaxDetailById(advMov.getTaxHeaderId(),
+								TableType.TEMP_TAB.getSuffix()));
+					}
+					advMov.setTaxHeader(header);
+				}
+			}
 
 			// Excess Reserve Amounts
 			excessReserves.addAll(finExcessAmountDAO.getExcessReserveList(receiptDetail.getReceiptSeqID()));
@@ -673,10 +692,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
-		if (!PennantConstants.RCD_STATUS_RESUBMITTED.equalsIgnoreCase(receiptHeader.getRecordStatus())
-				&& !PennantConstants.RCD_STATUS_SAVED.equalsIgnoreCase(receiptHeader.getRecordStatus())) {
+
+		String recordStatus = receiptHeader.getRecordStatus();
+		if (!PennantConstants.RCD_STATUS_RESUBMITTED.equalsIgnoreCase(recordStatus)
+				&& !PennantConstants.RCD_STATUS_SAVED.equalsIgnoreCase(recordStatus)) {
 			changeStatus = true;
 		}
+
 		if (StringUtils.equals(FinanceConstants.DEPOSIT_MAKER, receiptHeader.getRoleCode()) && changeStatus) {
 			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_INITIATED);
 		} else if (StringUtils.equals(FinanceConstants.DEPOSIT_APPROVER, receiptHeader.getRoleCode()) && changeStatus) {
@@ -749,9 +771,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				// Delete Save Receipt Detail List by Reference
 				finReceiptDetailDAO.deleteByReceiptID(receiptID, tableType);
 
-				// Delete Saved Receipt Tax Detail List by ReceiptID
-				receiptTaxDetailDAO.deleteByReceiptID(receiptID, tableType);
-
 				// Delete and Save FinRepayHeader Detail list by Reference
 				financeRepaymentsDAO.deleteByRef(finReference, tableType);
 
@@ -801,11 +820,22 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (!rd.isDelRecord()) {
 				receiptSeqID = finReceiptDetailDAO.save(rd, tableType);
 
-				// Tax Details saving against Receipt
-				if (rd.getReceiptTaxDetail() != null) {
-					rd.getReceiptTaxDetail().setReceiptSeqID(receiptSeqID);
-					rd.getReceiptTaxDetail().setReceiptID(receiptID);
-					receiptTaxDetailDAO.save(rd.getReceiptTaxDetail(), tableType);
+				if (rd.getPayAdvMovement() != null) {
+					if (rd.getPayAdvMovement().getTaxHeader() != null
+							&& CollectionUtils.isNotEmpty(rd.getPayAdvMovement().getTaxHeader().getTaxDetails())) {
+						List<Taxes> taxDetails = rd.getPayAdvMovement().getTaxHeader().getTaxDetails();
+						Long headerId = taxHeaderDetailsDAO.save(rd.getPayAdvMovement().getTaxHeader(),
+								TableType.TEMP_TAB.getSuffix());
+						for (Taxes taxes : taxDetails) {
+							taxes.setReferenceId(headerId);
+						}
+						getTaxHeaderDetailsDAO().saveTaxes(taxDetails, TableType.TEMP_TAB.getSuffix());
+						rd.getPayAdvMovement().setTaxHeaderId(headerId);
+					}
+
+					rd.getPayAdvMovement().setReceiptID(receiptID);
+					rd.getPayAdvMovement().setReceiptSeqID(receiptSeqID);
+					manualAdviseDAO.saveMovement(rd.getPayAdvMovement(), TableType.TEMP_TAB.getSuffix());
 				}
 			}
 
@@ -870,10 +900,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						rd.getPayAgainstID());
 
 				BigDecimal payableAmt = rd.getAmount();
-				if (rd.getReceiptTaxDetail() != null) {
-					if (StringUtils.equals(rd.getReceiptTaxDetail().getTaxComponent(),
-							FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-						payableAmt = payableAmt.subtract(rd.getReceiptTaxDetail().getTotalGST());
+				if (rd.getPayAdvMovement() != null) {
+					if (rd.getPayAdvMovement().getTaxHeader() != null
+							&& CollectionUtils.isNotEmpty(rd.getPayAdvMovement().getTaxHeader().getTaxDetails())) {
+						List<Taxes> taxDetails = rd.getPayAdvMovement().getTaxHeader().getTaxDetails();
+						for (Taxes taxes : taxDetails) {
+							if (StringUtils.equals(taxes.getTaxType(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+								payableAmt = payableAmt.subtract(taxes.getPaidTax());
+							}
+						}
 					}
 				}
 
@@ -945,8 +980,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				if (StringUtils.isNotBlank(allocation.getTaxType())) {
 					if (allocation.getTaxHeader() != null
 							&& CollectionUtils.isNotEmpty(allocation.getTaxHeader().getTaxDetails())) {
-						List<Taxes> taxDetails = allocation.getTaxHeader().getTaxDetails();
+
+						TaxHeader taxHeader = allocation.getTaxHeader();
+						taxHeader.setLastMntBy(receiptHeader.getLastMntBy());
+						taxHeader.setLastMntOn(receiptHeader.getLastMntOn());
+						taxHeader.setRecordStatus(recordStatus);
+						taxHeader.setRecordType(receiptHeader.getRecordType());
+						taxHeader.setVersion(receiptHeader.getVersion());
+						taxHeader.setWorkflowId(receiptHeader.getWorkflowId());
+						taxHeader.setTaskId(receiptHeader.getTaskId());
+						taxHeader.setNextTaskId(receiptHeader.getNextTaskId());
+						taxHeader.setRoleCode(receiptHeader.getRoleCode());
+						taxHeader.setNextRoleCode(receiptHeader.getNextRoleCode());
 						long headerId = getTaxHeaderDetailsDAO().save(allocation.getTaxHeader(), tableType.getSuffix());
+
+						List<Taxes> taxDetails = taxHeader.getTaxDetails();
 						for (Taxes taxes : taxDetails) {
 							taxes.setReferenceId(headerId);
 						}
@@ -959,8 +1007,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		allocationDetailDAO.saveAllocations(receiptHeader.getAllocations(), tableType);
 
 		if (FinanceConstants.DEPOSIT_APPROVER.equals(receiptHeader.getRoleCode())
-				&& !(PennantConstants.RCD_STATUS_SAVED.equals(receiptHeader.getRecordStatus())
-						|| PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus()))) {
+				&& !(PennantConstants.RCD_STATUS_SAVED.equals(recordStatus)
+						|| PennantConstants.RCD_STATUS_RESUBMITTED.equals(recordStatus))) {
 			executeAccounting(rceiptData);
 		}
 
@@ -1113,7 +1161,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (CollectionUtils.isNotEmpty(oldFeedetails)) {
 			for (FinFeeDetail finFeeDetail : oldFeedetails) {
 				finFeeScheduleDetailDAO.deleteFeeScheduleBatch(finFeeDetail.getFeeID(), false, "_Temp");
-				finTaxDetailsDAO.deleteByFeeID(finFeeDetail.getFeeID(), "_Temp");
 				finFeeDetail.setFinReference(finReference);
 				finFeeDetailDAO.delete(finFeeDetail, false, "_Temp");
 				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
@@ -1164,11 +1211,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						}
 					}
 					finFeeDetail.setFeeID(finFeeDetailDAO.save(finFeeDetail, false, tableType));
-
-					FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
-					finTaxDetails.setFeeID(finFeeDetail.getFeeID());
-
-					finTaxDetailsDAO.save(finTaxDetails, tableType);
 				}
 
 				if (CollectionUtils.isNotEmpty(finFeeDetail.getFinFeeScheduleDetailList())) {
@@ -1193,8 +1235,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<FinFeeDetail> oldFeedetails = receiptData.getFinFeeDetails();
 		if (CollectionUtils.isNotEmpty(oldFeedetails)) {
 			for (FinFeeDetail finFeeDetail : oldFeedetails) {
-				finFeeScheduleDetailDAO.deleteFeeScheduleBatch(finFeeDetail.getFeeID(), false, "_Temp");
-				finTaxDetailsDAO.deleteByFeeID(finFeeDetail.getFeeID(), "_Temp");
+				if (CollectionUtils.isNotEmpty(finFeeDetail.getFinFeeScheduleDetailList())) {
+					finFeeScheduleDetailDAO.deleteFeeScheduleBatch(finFeeDetail.getFeeID(), false, "_Temp");
+				}
 				finFeeDetailDAO.delete(finFeeDetail, false, "_Temp");
 				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
 				if (finFeeDetail.getTaxHeaderId() > 0) {
@@ -1249,11 +1292,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					}
 				}
 				finFeeDetailDAO.save(finFeeDetail, false, tableType);
-
-				FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
-				finTaxDetails.setFeeID(finFeeDetail.getFeeID());
-
-				finTaxDetailsDAO.save(finTaxDetails, tableType);
 			}
 
 			List<FinFeeScheduleDetail> finFeeScheduleDetailList = finFeeDetail.getFinFeeScheduleDetailList();
@@ -1380,15 +1418,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		// Bounce reason Code
-		/*
-		 * ManualAdvise advise = manualAdviseDAO .getManualAdviseByReceiptId(receiptData.getReceiptHeader().
-		 * getReceiptID(), "_Temp"); if (advise != null) { manualAdviseDAO.delete(advise, TableType.TEMP_TAB); }
-		 */
-
-		// Tax Details Deletion against Receipt ID
-		receiptTaxDetailDAO.deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
-
 		// Delete Save Receipt Detail List by Reference
 		finReceiptDetailDAO.deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
 
@@ -1424,7 +1453,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (CollectionUtils.isNotEmpty(oldFeedetails)) {
 			for (FinFeeDetail finFeeDetail : oldFeedetails) {
 				finFeeScheduleDetailDAO.deleteFeeScheduleBatch(finFeeDetail.getFeeID(), false, "_Temp");
-				finTaxDetailsDAO.deleteByFeeID(finFeeDetail.getFeeID(), "_Temp");
 				finFeeDetailDAO.delete(finFeeDetail, false, "_Temp");
 			}
 		}
@@ -1892,9 +1920,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			// Delete and Save FinRepayHeader Detail list by Reference
 			financeRepaymentsDAO.deleteByRef(finReference, TableType.TEMP_TAB);
 
-			// Tax Details Deletion against Receipt ID
-			receiptTaxDetailDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
-
 			// Delete Save Receipt Detail List by Reference
 			finReceiptDetailDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
 
@@ -2216,8 +2241,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					bounce.setAdviseID(this.manualAdviseDAO.getNewAdviseID());
 				}
 
-				AEEvent aeEvent = executeDueAccounting(rceiptData.getFinanceDetail(), receiptHeader.getBounceDate(),
-						bounce, auditHeader.getAuditBranchCode(), RepayConstants.ALLOCATION_BOUNCE);
+				AEEvent aeEvent = executeBounceDueAccounting(financeMain, receiptHeader.getBounceDate(), bounce,
+						auditHeader.getAuditBranchCode(), RepayConstants.ALLOCATION_BOUNCE);
 				if (aeEvent != null && StringUtils.isNotEmpty(aeEvent.getErrorMessage())) {
 					ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 					errorDetails.add(new ErrorDetail("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
@@ -2225,55 +2250,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					logger.debug("Leaving");
 					return auditHeader;
 				}
-
-				// GST Invoice Preparation
-				if (aeEvent != null && gstInvoiceTxnService != null) {
-					long postingSeqId = aeEvent.getLinkedTranId();
-					ManualAdvise advise = receiptHeader.getManualAdvise();
-
-					ManualAdviseMovements adviseMovements = new ManualAdviseMovements();
-					adviseMovements.setFeeTypeCode(advise.getFeeTypeCode());
-					adviseMovements.setFeeTypeDesc(advise.getFeeTypeDesc());
-					adviseMovements.setMovementAmount(advise.getAdviseAmount());
-					adviseMovements.setPaidCGST(advise.getPaidCGST());
-					adviseMovements.setPaidSGST(advise.getPaidSGST());
-					adviseMovements.setPaidIGST(advise.getPaidIGST());
-					adviseMovements.setPaidUGST(advise.getPaidUGST());
-					adviseMovements.setWaivedAmount(advise.getWaivedAmount());
-
-					BigDecimal gst = advise.getPaidCGST().add(advise.getPaidSGST()).add(advise.getPaidIGST())
-							.add(advise.getPaidUGST());
-
-					adviseMovements.setPaidAmount(advise.getAdviseAmount().subtract(gst));
-
-					List<ManualAdviseMovements> advMovementsTemp = new ArrayList<ManualAdviseMovements>();
-					advMovementsTemp.add(adviseMovements);
-
-					FinanceDetail financeDetailTemp = rceiptData.getFinanceDetail();
-					String finReference = "";
-					if (financeDetailTemp == null) {
-						financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
-						finReference = financeDetailTemp.getFinScheduleData().getFinanceMain().getFinReference();
-					}
-
-					gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetailTemp, null, advMovementsTemp,
-							PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, false, false);
-
-					// Waiver GST Invoice Preparation
-					if (advise.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0 && advise.isTaxApplicable()) {
-
-						GSTCalculator.waiverAdviseCalc(finReference, adviseMovements);
-
-						List<ManualAdviseMovements> waiverMovements = new ArrayList<ManualAdviseMovements>();
-						waiverMovements.add(adviseMovements);
-
-						// GST Invoice for Manual Advise Waivers
-						if (CollectionUtils.isNotEmpty(waiverMovements)) {
-							this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetailTemp, null,
-									waiverMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false, true);
-						}
-					}
-				}
+				receiptHeader.getManualAdvise().setLinkedTranId(aeEvent.getLinkedTranId());
 			}
 		}
 
@@ -2314,6 +2291,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Bounce reason Code
 		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)) {
 			if (receiptHeader.getManualAdvise() != null) {
+				receiptHeader.getManualAdvise().setDueCreation(true);
 				manualAdviseDAO.save(receiptHeader.getManualAdvise(), TableType.MAIN_TAB);
 			}
 		}
@@ -2353,7 +2331,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (CollectionUtils.isNotEmpty(oldFeedetails)) {
 				for (FinFeeDetail finFeeDetail : oldFeedetails) {
 					finFeeScheduleDetailDAO.deleteFeeScheduleBatch(finFeeDetail.getFeeID(), false, "_Temp");
-					finTaxDetailsDAO.deleteByFeeID(finFeeDetail.getFeeID(), "_Temp");
 					finFeeDetailDAO.delete(finFeeDetail, false, "_Temp");
 				}
 			}
@@ -6587,10 +6564,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
 	}
 
-	public void setReceiptTaxDetailDAO(ReceiptTaxDetailDAO receiptTaxDetailDAO) {
-		this.receiptTaxDetailDAO = receiptTaxDetailDAO;
-	}
-
 	public void setAllocationDetailDAO(ReceiptAllocationDetailDAO allocationDetailDAO) {
 		this.allocationDetailDAO = allocationDetailDAO;
 	}
@@ -6682,6 +6655,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptData.getReceiptHeader().setReceiptDetails(rcdList);
 		int receiptPurposeCtg = getReceiptCalculator().setReceiptCategory(rch.getReceiptPurpose());
 
+		Map<String, BigDecimal> taxPercMap = null;
+
 		// Create a new Receipt Detail for every type of excess/payable
 		for (int i = 0; i < xcessPayables.size(); i++) {
 			XcessPayables payable = xcessPayables.get(i);
@@ -6726,14 +6701,41 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			// rcd.setReceiptSeqID(getReceiptSeqID(rcd));
 
 			if (payable.getPaidGST().compareTo(BigDecimal.ZERO) > 0) {
-				ReceiptTaxDetail taxDetail = new ReceiptTaxDetail();
-				taxDetail.setTaxComponent(payable.getTaxType());
-				taxDetail.setTotalGST(payable.getPaidGST());
-				taxDetail.setPaidCGST(payable.getPaidCGST());
-				taxDetail.setPaidSGST(payable.getPaidSGST());
-				taxDetail.setPaidUGST(payable.getPaidUGST());
-				taxDetail.setPaidIGST(payable.getPaidIGST());
-				rcd.setReceiptTaxDetail(taxDetail);
+				ManualAdviseMovements payAdvMovement = new ManualAdviseMovements();
+
+				payAdvMovement.setAdviseID(payable.getPayableID());
+				payAdvMovement.setMovementDate(rcd.getReceivedDate());
+				payAdvMovement.setMovementAmount(payable.getTotPaidNow());
+				payAdvMovement.setTaxComponent(payable.getTaxType());
+				payAdvMovement.setPaidAmount(payable.getPaidNow());
+				payAdvMovement.setFeeTypeCode(payable.getFeeTypeCode());
+
+				//GST Calculations
+				if (StringUtils.isNotBlank(payable.getTaxType())) {
+
+					if (taxPercMap == null) {
+						taxPercMap = GSTCalculator.getTaxPercentages(rch.getReference());
+					}
+
+					TaxHeader taxHeader = new TaxHeader();
+					taxHeader.setNewRecord(true);
+					taxHeader.setRecordType(PennantConstants.RCD_ADD);
+					taxHeader.setVersion(taxHeader.getVersion() + 1);
+					taxHeader.getTaxDetails().add(getTaxDetail(RuleConstants.CODE_CGST,
+							taxPercMap.get(RuleConstants.CODE_CGST), payable.getPaidCGST()));
+					taxHeader.getTaxDetails().add(getTaxDetail(RuleConstants.CODE_SGST,
+							taxPercMap.get(RuleConstants.CODE_SGST), payable.getPaidSGST()));
+					taxHeader.getTaxDetails().add(getTaxDetail(RuleConstants.CODE_IGST,
+							taxPercMap.get(RuleConstants.CODE_IGST), payable.getPaidIGST()));
+					taxHeader.getTaxDetails().add(getTaxDetail(RuleConstants.CODE_UGST,
+							taxPercMap.get(RuleConstants.CODE_UGST), payable.getPaidUGST()));
+					taxHeader.getTaxDetails().add(getTaxDetail(RuleConstants.CODE_CESS,
+							taxPercMap.get(RuleConstants.CODE_CESS), payable.getPaidCESS()));
+					payAdvMovement.setTaxHeader(taxHeader);
+				} else {
+					payAdvMovement.setTaxHeader(null);
+				}
+				rcd.setPayAdvMovement(payAdvMovement);
 			}
 
 			if (rcd.getReceiptSeqID() <= 0) {
@@ -6747,6 +6749,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		rch.setReceiptDetails(rcdList);
 		return receiptData;
+	}
+
+	private Taxes getTaxDetail(String taxType, BigDecimal taxPerc, BigDecimal taxAmount) {
+		Taxes taxes = new Taxes();
+		taxes.setTaxType(taxType);
+		taxes.setTaxPerc(taxPerc);
+		taxes.setNetTax(taxAmount);
+		taxes.setActualTax(taxAmount);
+		return taxes;
 	}
 
 	@Override
@@ -6887,15 +6898,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		logger.debug("Entering");
 		finReceiptHeaderDAO.batchUpdateMultiReceiptLog(finReceiptQueueList);
 		logger.debug("Leaving");
-	}
-
-	public FinTaxDetailsDAO getFinTaxDetailsDAO() {
-		return finTaxDetailsDAO;
-	}
-
-	@Autowired
-	public void setFinTaxDetailsDAO(FinTaxDetailsDAO finTaxDetailsDAO) {
-		this.finTaxDetailsDAO = finTaxDetailsDAO;
 	}
 
 	@Override

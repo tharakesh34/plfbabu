@@ -203,6 +203,7 @@ import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -227,7 +228,6 @@ import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
-import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -247,6 +247,8 @@ import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceHeader;
 import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.finance.TATDetail;
+import com.pennant.backend.model.finance.TaxHeader;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
@@ -2910,12 +2912,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		/* Stop append GST Details tab for retail customers */
 		CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
-		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customerDetails.getCustomer().getCustCtgCode())
-				&& !SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)) {
-			return;
-		}
+		/*
+		 * if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customerDetails.getCustomer().getCustCtgCode()) &&
+		 * !SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)) { return; }
+		 */
 		if (onLoad) {
-			createTab(AssetConstants.UNIQUE_ID_TAX, false);
+			createTab(AssetConstants.UNIQUE_ID_TAX, true);
 		} else {
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_TAX));
@@ -4522,7 +4524,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		doFillEnquiryList(getFinBasicDetails());
 
 		// tasks #1152 Business Vertical Tagged with Loan
-		if (aFinanceMain.getBusinessVertical() != null) {
+		if (aFinanceMain.getBusinessVertical() != null && aFinanceMain.getBusinessVertical() > 0) {
 			this.businessVertical
 					.setValue(aFinanceMain.getBusinessVerticalCode() + " - " + aFinanceMain.getBusinessVerticalDesc());
 			this.businessVertical.setAttribute("Id", aFinanceMain.getBusinessVertical());
@@ -14856,16 +14858,30 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			prepareFeeRulesMap(aeEvent.getAeAmountCodes(), dataMap);
 
-			// GST Added
-			// String branch =
-			// getUserWorkspace().getLoggedInUser().getBranchCode();
+			String custDftBranch = null;
+			String custResdSts = null;
+			String highPriorityState = null;
+			String highPriorityCountry = null;
+			if (getFinanceDetail().getCustomerDetails() != null) {
+				custDftBranch = getFinanceDetail().getCustomerDetails().getCustomer().getCustDftBranch();
+				custResdSts = getFinanceDetail().getCustomerDetails().getCustomer().getResidentialStatus();
 
-			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
+				List<CustomerAddres> addressList = getFinanceDetail().getCustomerDetails().getAddressList();
+				if (CollectionUtils.isNotEmpty(addressList)) {
+					for (CustomerAddres customerAddres : addressList) {
+						if (customerAddres.getCustAddrPriority() == Integer
+								.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+							highPriorityState = customerAddres.getCustAddrProvince();
+							highPriorityCountry = customerAddres.getCustAddrCountry();
+							break;
+						}
+					}
+				}
+			}
 
-			/*
-			 * Map<String, Object> gstExecutionMap = getFinanceDetailService().prepareGstMappingDetails(
-			 * getFinanceDetail(), branch);
-			 */
+			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinBranch(), custDftBranch,
+					highPriorityState, custResdSts, highPriorityCountry, getFinanceDetail().getFinanceTaxDetail());
+
 			if (gstExecutionMap != null) {
 				for (String key : gstExecutionMap.keySet()) {
 					if (StringUtils.isNotBlank(key)) {
@@ -15056,9 +15072,33 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				continue;
 			}
 
+			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+			Taxes cgstTax = new Taxes();
+			Taxes sgstTax = new Taxes();
+			Taxes igstTax = new Taxes();
+			Taxes ugstTax = new Taxes();
+			Taxes cessTax = new Taxes();
+			if (taxHeader != null) {
+				List<Taxes> taxDetails = taxHeader.getTaxDetails();
+				if (CollectionUtils.isNotEmpty(taxDetails)) {
+					for (Taxes taxes : taxDetails) {
+						if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+							cgstTax = taxes;
+						} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+							sgstTax = taxes;
+						} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+							igstTax = taxes;
+						} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+							ugstTax = taxes;
+						} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+							cessTax = taxes;
+						}
+					}
+				}
+			}
+
 			feeRule = new FeeRule();
 			// GST Waiver Changes
-			FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
 			String feeTypeCode = finFeeDetail.getFeeTypeCode();
 
 			feeRule.setFeeCode(feeTypeCode);
@@ -15072,7 +15112,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			// GST Waiver Changes
 			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-				dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
+				dataMap.put(feeTypeCode + "_W",
+						finFeeDetail.getWaivedAmount().subtract(cgstTax.getWaivedTax().add(sgstTax.getWaivedTax())
+								.add(igstTax.getWaivedTax()).add(ugstTax.getWaivedTax()).add(cessTax.getWaivedTax())));
 			} else {
 				dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
 			}
@@ -15083,38 +15125,43 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			dataMap.put(feeTypeCode + "_N", finFeeDetail.getNetAmount());
 
 			// Calculated Amount
-			dataMap.put(feeTypeCode + "_CGST_C", finTaxDetails.getActualCGST());
-			dataMap.put(feeTypeCode + "_SGST_C", finTaxDetails.getActualSGST());
-			dataMap.put(feeTypeCode + "_IGST_C", finTaxDetails.getActualIGST());
-			dataMap.put(feeTypeCode + "_UGST_C", finTaxDetails.getActualUGST());
+			dataMap.put(feeTypeCode + "_CGST_C", cgstTax.getActualTax());
+			dataMap.put(feeTypeCode + "_SGST_C", sgstTax.getActualTax());
+			dataMap.put(feeTypeCode + "_IGST_C", igstTax.getActualTax());
+			dataMap.put(feeTypeCode + "_UGST_C", ugstTax.getActualTax());
+			dataMap.put(feeTypeCode + "_CESS_C", cessTax.getActualTax());
 
 			// Paid Amount
-			dataMap.put(feeTypeCode + "_CGST_P", finTaxDetails.getPaidCGST());
-			dataMap.put(feeTypeCode + "_SGST_P", finTaxDetails.getPaidSGST());
-			dataMap.put(feeTypeCode + "_IGST_P", finTaxDetails.getPaidIGST());
-			dataMap.put(feeTypeCode + "_UGST_P", finTaxDetails.getPaidUGST());
+			dataMap.put(feeTypeCode + "_CGST_P", cgstTax.getPaidTax());
+			dataMap.put(feeTypeCode + "_SGST_P", sgstTax.getPaidTax());
+			dataMap.put(feeTypeCode + "_IGST_P", igstTax.getPaidTax());
+			dataMap.put(feeTypeCode + "_UGST_P", ugstTax.getPaidTax());
+			dataMap.put(feeTypeCode + "_CESS_P", cessTax.getPaidTax());
 
 			// Net Amount
-			dataMap.put(feeTypeCode + "_CGST_N", finTaxDetails.getNetCGST());
-			dataMap.put(feeTypeCode + "_SGST_N", finTaxDetails.getNetSGST());
-			dataMap.put(feeTypeCode + "_IGST_N", finTaxDetails.getNetIGST());
-			dataMap.put(feeTypeCode + "_UGST_N", finTaxDetails.getNetUGST());
+			dataMap.put(feeTypeCode + "_CGST_N", cgstTax.getNetTax());
+			dataMap.put(feeTypeCode + "_SGST_N", sgstTax.getNetTax());
+			dataMap.put(feeTypeCode + "_IGST_N", igstTax.getNetTax());
+			dataMap.put(feeTypeCode + "_UGST_N", ugstTax.getNetTax());
+			dataMap.put(feeTypeCode + "_CESS_N", cessTax.getNetTax());
 
 			// Waiver GST Amounts (GST Waiver Changes)
-			dataMap.put(feeTypeCode + "_CGST_W", finTaxDetails.getWaivedCGST());
-			dataMap.put(feeTypeCode + "_SGST_W", finTaxDetails.getWaivedSGST());
-			dataMap.put(feeTypeCode + "_IGST_W", finTaxDetails.getWaivedIGST());
-			dataMap.put(feeTypeCode + "_UGST_W", finTaxDetails.getWaivedUGST());
+			dataMap.put(feeTypeCode + "_CGST_W", cgstTax.getWaivedTax());
+			dataMap.put(feeTypeCode + "_SGST_W", sgstTax.getWaivedTax());
+			dataMap.put(feeTypeCode + "_IGST_W", igstTax.getWaivedTax());
+			dataMap.put(feeTypeCode + "_UGST_W", ugstTax.getWaivedTax());
+			dataMap.put(feeTypeCode + "_CESS_W", cessTax.getWaivedTax());
 
 			if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
 					|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
 					|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
 				dataMap.put(feeTypeCode + "_SCH", finFeeDetail.getRemainingFeeOriginal());
 				// GST
-				dataMap.put(feeTypeCode + "_CGST_SCH", finTaxDetails.getRemFeeCGST());
-				dataMap.put(feeTypeCode + "_SGST_SCH", finTaxDetails.getRemFeeSGST());
-				dataMap.put(feeTypeCode + "_IGST_SCH", finTaxDetails.getRemFeeIGST());
-				dataMap.put(feeTypeCode + "_UGST_SCH", finTaxDetails.getRemFeeUGST());
+				dataMap.put(feeTypeCode + "_CGST_SCH", cgstTax.getRemFeeTax());
+				dataMap.put(feeTypeCode + "_SGST_SCH", sgstTax.getRemFeeTax());
+				dataMap.put(feeTypeCode + "_IGST_SCH", igstTax.getRemFeeTax());
+				dataMap.put(feeTypeCode + "_UGST_SCH", ugstTax.getRemFeeTax());
+				dataMap.put(feeTypeCode + "_CESS_SCH", cessTax.getRemFeeTax());
 			} else {
 				dataMap.put(feeTypeCode + "_SCH", 0);
 				// GST
@@ -15122,15 +15169,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				dataMap.put(feeTypeCode + "_SGST_SCH", 0);
 				dataMap.put(feeTypeCode + "_IGST_SCH", 0);
 				dataMap.put(feeTypeCode + "_UGST_SCH", 0);
+				dataMap.put(feeTypeCode + "_CESS_SCH", 0);
 			}
 
 			if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
 				dataMap.put(feeTypeCode + "_AF", finFeeDetail.getRemainingFeeOriginal());
 				// GST
-				dataMap.put(feeTypeCode + "_CGST_AF", finTaxDetails.getRemFeeCGST());
-				dataMap.put(feeTypeCode + "_SGST_AF", finTaxDetails.getRemFeeSGST());
-				dataMap.put(feeTypeCode + "_IGST_AF", finTaxDetails.getRemFeeIGST());
-				dataMap.put(feeTypeCode + "_UGST_AF", finTaxDetails.getRemFeeUGST());
+				dataMap.put(feeTypeCode + "_CGST_AF", cgstTax.getRemFeeTax());
+				dataMap.put(feeTypeCode + "_SGST_AF", sgstTax.getRemFeeTax());
+				dataMap.put(feeTypeCode + "_IGST_AF", igstTax.getRemFeeTax());
+				dataMap.put(feeTypeCode + "_UGST_AF", ugstTax.getRemFeeTax());
+				dataMap.put(feeTypeCode + "_CESS_AF", cessTax.getRemFeeTax());
 			} else {
 				dataMap.put(feeTypeCode + "_AF", 0);
 				// GST
@@ -15138,6 +15187,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				dataMap.put(feeTypeCode + "_SGST_AF", 0);
 				dataMap.put(feeTypeCode + "_IGST_AF", 0);
 				dataMap.put(feeTypeCode + "_UGST_AF", 0);
+				dataMap.put(feeTypeCode + "_CESS_AF", 0);
 			}
 
 			if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {

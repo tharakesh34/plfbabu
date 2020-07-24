@@ -78,6 +78,7 @@ public class GSTInvoiceTxn implements Entity {
 
 	private String invoice_Status;
 	private String invoiceType = "D";
+	private Long dueInvoiceId;
 
 	private List<GSTInvoiceTxnDetails> gstInvoiceTxnDetailsList = new ArrayList<GSTInvoiceTxnDetails>();
 
@@ -312,5 +313,13 @@ public class GSTInvoiceTxn implements Entity {
 
 	public void setInvoiceId(long invoiceId) {
 		this.invoiceId = invoiceId;
+	}
+
+	public Long getDueInvoiceId() {
+		return dueInvoiceId;
+	}
+
+	public void setDueInvoiceId(Long dueInvoiceId) {
+		this.dueInvoiceId = dueInvoiceId;
 	}
 }

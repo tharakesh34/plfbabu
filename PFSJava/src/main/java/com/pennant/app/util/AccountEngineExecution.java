@@ -771,31 +771,37 @@ public class AccountEngineExecution implements Serializable {
 			addZeroifNotContains(dataMap, feeCode + "_SGST_N");
 			addZeroifNotContains(dataMap, feeCode + "_IGST_N");
 			addZeroifNotContains(dataMap, feeCode + "_CGST_N");
+			addZeroifNotContains(dataMap, feeCode + "_CESS_N");
 
 			addZeroifNotContains(dataMap, feeCode + "_UGST_C");
 			addZeroifNotContains(dataMap, feeCode + "_SGST_C");
 			addZeroifNotContains(dataMap, feeCode + "_IGST_C");
 			addZeroifNotContains(dataMap, feeCode + "_CGST_C");
+			addZeroifNotContains(dataMap, feeCode + "_CESS_C");
 
 			addZeroifNotContains(dataMap, feeCode + "_UGST_P");
 			addZeroifNotContains(dataMap, feeCode + "_SGST_P");
 			addZeroifNotContains(dataMap, feeCode + "_IGST_P");
 			addZeroifNotContains(dataMap, feeCode + "_CGST_P");
+			addZeroifNotContains(dataMap, feeCode + "_CESS_P");
 
 			addZeroifNotContains(dataMap, feeCode + "_UGST_W");
 			addZeroifNotContains(dataMap, feeCode + "_SGST_W");
 			addZeroifNotContains(dataMap, feeCode + "_IGST_W");
 			addZeroifNotContains(dataMap, feeCode + "_CGST_W");
+			addZeroifNotContains(dataMap, feeCode + "_CESS_W");
 
 			addZeroifNotContains(dataMap, feeCode + "_UGST_SCH");
 			addZeroifNotContains(dataMap, feeCode + "_SGST_SCH");
 			addZeroifNotContains(dataMap, feeCode + "_IGST_SCH");
 			addZeroifNotContains(dataMap, feeCode + "_CGST_SCH");
+			addZeroifNotContains(dataMap, feeCode + "_CESS_SCH");
 
 			addZeroifNotContains(dataMap, feeCode + "_UGST_AF");
 			addZeroifNotContains(dataMap, feeCode + "_SGST_AF");
 			addZeroifNotContains(dataMap, feeCode + "_IGST_AF");
 			addZeroifNotContains(dataMap, feeCode + "_CGST_AF");
+			addZeroifNotContains(dataMap, feeCode + "_CESS_AF");
 
 			if (ImplementationConstants.ALLOW_TDS_ON_FEE) {
 				addZeroifNotContains(dataMap, feeCode + "_TDS_N");

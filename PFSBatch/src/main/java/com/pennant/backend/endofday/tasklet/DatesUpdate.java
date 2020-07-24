@@ -47,10 +47,10 @@ public class DatesUpdate implements Tasklet {
 			}
 		}
 
-		/* GST invoice Sequences set it to 0 in month end */
-		if (valueDate.compareTo(DateUtil.getMonthEnd(valueDate)) == 0) {
-			this.gstInvoiceTxnDAO.updateSeqNo();
-		}
+		/*
+		 * GST invoice Sequences set it to 0 in month end if (valueDate.compareTo(DateUtil.getMonthStart(valueDate)) ==
+		 * 0) { this.gstInvoiceTxnDAO.updateSeqNo(); }
+		 */
 
 		BatchUtil.setExecutionStatus(context, StepUtil.DATES_UPDATE);
 		StepUtil.DATES_UPDATE.setTotalRecords(1);

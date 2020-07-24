@@ -77,11 +77,6 @@ public class SelectFeeReceiptListCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	protected Window window_SelectFeeReceiptList;
 	protected Combobox recAgainst;
-	//protected ExtendedCombobox finDivision;
-	//protected ExtendedCombobox entityCode;
-	//protected ExtendedCombobox finType;
-	//protected ExtendedCombobox postBranch;
-	//protected ExtendedCombobox cashierBranch;
 	protected Button btnProceed;
 
 	private FeeReceiptListCtrl feeReceiptListCtrl;
@@ -153,41 +148,6 @@ public class SelectFeeReceiptListCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		//Fin Division
-		//		this.finDivision.setModuleName("DivisionDetail");
-		//		this.finDivision.setValueColumn("DivisionCode");
-		//		this.finDivision.setDescColumn("DivisionCodeDesc");
-		//		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
-		//		this.finDivision.setMandatoryStyle(true);
-
-		//Post Branch
-		//this.postBranch.setModuleName("Branch");
-		//this.postBranch.setValueColumn("BranchCode");
-		//this.postBranch.setDescColumn("BranchDesc");
-		//this.postBranch.setValidateColumns(new String[] { "BranchCode" });
-		//this.postBranch.setMandatoryStyle(true);
-
-		//Post Branch
-		//this.cashierBranch.setModuleName("Branch");
-		//this.cashierBranch.setValueColumn("BranchCode");
-		//this.cashierBranch.setDescColumn("BranchDesc");
-		//this.cashierBranch.setValidateColumns(new String[] { "BranchCode" });
-		//this.cashierBranch.setMandatoryStyle(true);
-
-		//EntityCode
-		//this.entityCode.setMandatoryStyle(true);
-		//this.entityCode.setModuleName("Entity");
-		//this.entityCode.setValueColumn("EntityCode");
-		//this.entityCode.setDescColumn("EntityDesc");
-		//this.entityCode.setValidateColumns(new String[] { "EntityCode" });
-
-		// Finance Type
-		//this.finType.setModuleName("FinanceType");
-		//this.finType.setValueColumn("FinType");
-		//this.finType.setDescColumn("FinTypeDesc");
-		//this.finType.setValidateColumns(new String[] { "FinType", "FinCategory", "FinTypeDesc" });
-		//this.finType.setMandatoryStyle(true);
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -246,12 +206,6 @@ public class SelectFeeReceiptListCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					Labels.getLabel("label_FeeReceiptList_RecAgainst.value")));
 		}
 
-		//		this.finDivision.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_FinDivision.value"), null, true, true));
-
-		//this.postBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_PostBranch.value"), null, true, true));
-		//this.cashierBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_CashierBranch.value"), null, true, true));
-		//this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptList_FinType.value"), null, true, true));
-
 		logger.debug("Leaving");
 	}
 
@@ -260,11 +214,7 @@ public class SelectFeeReceiptListCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	private void doRemoveValidation() {
 		logger.debug("Entering");
-
 		this.recAgainst.setConstraint("");
-		//this.finDivision.setConstraint("");
-		//this.finType.setErrorMessage("");
-
 		logger.debug("Leaving");
 	}
 
@@ -283,28 +233,6 @@ public class SelectFeeReceiptListCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (isValidComboValue(this.recAgainst, Labels.getLabel("label_FeeReceiptList_RecAgainst.value"))) {
 				receiptHeader.setRecAgainst(getComboboxValue(this.recAgainst));
 			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		//Finance Type
-		try {
-			//this.finType.getValidatedValue();
-			//receiptHeader.setFinType(this.finType.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		//Fin Division
-		try {
-			//receiptHeader.setFinDivision(this.finDivision.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		//Entity Code
-		try {
-			//receiptHeader.setEntityCode(this.entityCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

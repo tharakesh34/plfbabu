@@ -42,11 +42,18 @@
 */
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -76,7 +83,8 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 	public FinanceTaxDetail getFinanceTaxDetail(String finReference, String type) {
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" finReference, applicableFor, TaxCustId, taxExempted, taxNumber, addrLine1, addrLine2");
-		sql.append(", addrLine3, addrLine4, country, province, city, pinCode, sezCertificateNo , sezValueDate");
+		sql.append(
+				", addrLine3, addrLine4, country, province, city, pinCode, sezCertificateNo , sezValueDate, AddressDetail");
 		if (type.contains("View")) {
 			sql.append(", countryName, provinceName, cityName, pinCodeName, custCIF, custShrtName");
 		}
@@ -110,13 +118,14 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		StringBuilder sql = new StringBuilder(" insert into FinTaxDetail");
 		sql.append(tableType.getSuffix());
 		sql.append("(finReference, applicableFor,TaxCustId, taxExempted, taxNumber, addrLine1, addrLine2, ");
-		sql.append("addrLine3, addrLine4, country, province, city, pinCode, sezCertificateNo , sezValueDate ,");
+		sql.append(
+				"addrLine3, addrLine4, country, province, city, pinCode, sezCertificateNo , sezValueDate , AddressDetail, ");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :finReference, :applicableFor,:TaxCustId, :taxExempted, :taxNumber, :addrLine1, :addrLine2, ");
 		sql.append(
-				" :addrLine3, :addrLine4, :country, :province, :city, :pinCode,  :sezCertificateNo , :sezValueDate ,");
+				" :addrLine3, :addrLine4, :country, :province, :city, :pinCode,  :sezCertificateNo , :sezValueDate , :AddressDetail, ");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -146,7 +155,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		sql.append(" addrLine1 = :addrLine1, addrLine2 = :addrLine2, addrLine3 = :addrLine3, ");
 		sql.append(" addrLine4 = :addrLine4, country = :country, province = :province, ");
 		sql.append(
-				" city = :city, pinCode = :pinCode, sezCertificateNo = :sezCertificateNo , sezValueDate = :sezValueDate,");
+				" city = :city, pinCode = :pinCode, sezCertificateNo = :sezCertificateNo , sezValueDate = :sezValueDate, AddressDetail = :AddressDetail, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -221,6 +230,44 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		logger.debug("Leaving");
 
 		return count;
+	}
+
+	@Override
+	public List<FinanceTaxDetail> getGSTNumberAndCustCIF(long taxCustId, String taxNumber, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" TaxCustId, TaxNumber");
+		sql.append(" From FinTaxDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where TaxCustId <> ? And TaxNumber = ?");
+		logger.debug("selectSql: " + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, taxCustId);
+					ps.setString(index++, taxNumber);
+				}
+			}, new RowMapper<FinanceTaxDetail>() {
+				@Override
+				public FinanceTaxDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinanceTaxDetail gd = new FinanceTaxDetail();
+
+					gd.setTaxCustId(rs.getLong("TaxCustId"));
+					gd.setTaxNumber(rs.getString("TaxNumber"));
+
+					return gd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	public boolean isReferenceExists(String finReference, String custCif) {

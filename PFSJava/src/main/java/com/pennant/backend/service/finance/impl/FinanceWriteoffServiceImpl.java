@@ -377,15 +377,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			listSave(scheduleData, tableType.getSuffix(), 0);
 		}
 
-		// Save Fee Charges List
-		//=======================================
-		if (tableType == TableType.TEMP_TAB) {
-			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),
-					header.getFinanceDetail().getModuleDefiner(), false, tableType.getSuffix());
-		}
-		saveFeeChargeList(header.getFinanceDetail().getFinScheduleData(), header.getFinanceDetail().getModuleDefiner(),
-				false, tableType.getSuffix());
-
 		// Save Document Details
 		if (header.getFinanceDetail().getDocumentDetailsList() != null
 				&& header.getFinanceDetail().getDocumentDetailsList().size() > 0) {
@@ -648,11 +639,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		//=======================================
 		listDeletion(finReference, "");
 		listSave(scheduleData, "", 0);
-
-		// Save Fee Charges List
-		//=======================================
-		saveFeeChargeList(header.getFinanceDetail().getFinScheduleData(), header.getFinanceDetail().getModuleDefiner(),
-				false, "");
 
 		// Save Document Details
 		if (header.getFinanceDetail().getDocumentDetailsList() != null

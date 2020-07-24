@@ -73,6 +73,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceWriteoff;
+import com.pennant.backend.model.finance.ScheduleDueTaxDetail;
 import com.pennant.backend.model.finance.ScheduleMapDetails;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;
@@ -1873,6 +1874,54 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+	}
+
+	/**
+	 * Method for Save Due Tax details against Loan Reference and Schedule Date
+	 */
+	@Override
+	public void saveSchDueTaxDetail(ScheduleDueTaxDetail dueTaxDetail) {
+		logger.debug("Entering");
+
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append(" Insert Into ScheduleDueTaxDetails ");
+		insertSql.append(" (FinReference, SchDate, TaxType , TaxCalcOn , Amount , InvoiceID)");
+		insertSql.append(" Values( :FinReference, :SchDate, :TaxType , :TaxCalcOn , :Amount , :InvoiceID)");
+		logger.debug("insertSql: " + insertSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dueTaxDetail);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+
+		logger.debug("Leaving");
+
+	}
+
+	/**
+	 * Method for Fetching Invoice ID for the Due schedule
+	 */
+	@Override
+	public Long getSchdDueInvoiceID(String finReference, Date schdate) {
+		logger.debug(Literal.ENTERING);
+		Long invoiceID = null;
+		try {
+			MapSqlParameterSource source = new MapSqlParameterSource();
+			source.addValue("FinReference", finReference);
+			source.addValue("SchDate", schdate);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append(" Select InvoiceID From ScheduleDueTaxDetails");
+			sql.append(" Where FinReference = :FinReference AND SchDate =:SchDate ");
+
+			logger.trace(Literal.SQL + sql.toString());
+
+			invoiceID = this.jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return invoiceID;
+
 	}
 
 	@Override

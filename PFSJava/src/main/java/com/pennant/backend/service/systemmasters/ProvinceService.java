@@ -68,4 +68,8 @@ public interface ProvinceService {
 
 	Province getProvince(String code);
 
+	Province getApprovedProvinceByEntityCode(String branchCountry, String branchProvince, String entityCode);
+
+	public void saveSeqGstInvoice(Province province);
+
 }

@@ -115,6 +115,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 
 	private String sezCertificateNo;
 	private Date sezValueDate;
+	private String addressDetail;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -368,6 +369,14 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 
 	public void setSezValueDate(Date sezValueDate) {
 		this.sezValueDate = sezValueDate;
+	}
+
+	public String getAddressDetail() {
+		return addressDetail;
+	}
+
+	public void setAddressDetail(String addressDetail) {
+		this.addressDetail = addressDetail;
 	}
 
 }

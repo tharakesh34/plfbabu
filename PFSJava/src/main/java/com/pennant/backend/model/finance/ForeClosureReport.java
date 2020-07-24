@@ -41,6 +41,7 @@ public class ForeClosureReport implements Serializable {
 	private BigDecimal totalRefunds = BigDecimal.ZERO;
 	private BigDecimal netReceivable = BigDecimal.ZERO;
 	private BigDecimal manualAdviceAmt = BigDecimal.ZERO;
+	private BigDecimal latePayInterestAmt = BigDecimal.ZERO;
 	private String total;
 	private String entityDesc;
 	private String productDesc;
@@ -459,6 +460,14 @@ public class ForeClosureReport implements Serializable {
 
 	public void setActPercentage(BigDecimal actPercentage) {
 		this.actPercentage = actPercentage;
+	}
+
+	public BigDecimal getLatePayInterestAmt() {
+		return latePayInterestAmt;
+	}
+
+	public void setLatePayInterestAmt(BigDecimal latePayInterestAmt) {
+		this.latePayInterestAmt = latePayInterestAmt;
 	}
 
 }

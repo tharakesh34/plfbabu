@@ -56,7 +56,6 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 
 public interface FinFeeDetailService {
@@ -114,11 +113,6 @@ public interface FinFeeDetailService {
 
 	void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail,
 			Map<String, BigDecimal> taxPercentages);
-
-	Map<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch, String highPriorityState,
-			String highPriorityCountry, FinanceTaxDetail taxDetail, String branchCode);
-
-	Map<String, Object> prepareGstMapping(String fromStateCOde, String toStateCode);
 
 	boolean getFeeTypeId(long feeTypeId, String finType, int moduelId, boolean originationFee);
 

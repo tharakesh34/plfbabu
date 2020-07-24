@@ -52,35 +52,42 @@ import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
-import com.pennant.backend.dao.payment.PaymentTaxDetailDAO;
 import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.finance.TaxHeader;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
-import com.pennant.backend.model.payment.PaymentTaxDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.InstrumentwiseLimitService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
+import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.payment.PaymentDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.service.payment.PaymentInstructionService;
@@ -89,6 +96,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -108,10 +116,13 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	private PaymentDetailService paymentDetailService;
 	private PaymentInstructionService paymentInstructionService;
 	private transient PostingsPreparationUtil postingsPreparationUtil;
-	private PaymentTaxDetailDAO paymentTaxDetailDAO;
+	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 	private FinFeeDetailService finFeeDetailService;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private CustomerAddresDAO customerAddresDAO;
+	private ManualAdviseDAO manualAdviseDAO;
+	private GSTInvoiceTxnService gstInvoiceTxnService;
+
 	//IMPS Splitting
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
@@ -184,9 +195,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			auditHeader.setAuditReference(String.valueOf(paymentHeader.getPaymentId()));
 		} else {
 			getPaymentHeaderDAO().update(paymentHeader, tableType);
-
-			// Payment Tax Details for Payables
-			getPaymentTaxDetailDAO().deleteByPaymentID(paymentHeader.getPaymentId(), tableType);
 		}
 
 		// PaymentHeader
@@ -269,8 +277,14 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		if (list != null) {
 			paymentHeader.setPaymentDetailList(list);
 			for (PaymentDetail paymentDetail : list) {
-				paymentDetail.setPaymentTaxDetail(
-						getPaymentTaxDetailDAO().getTaxDetailByID(paymentDetail.getPaymentDetailId(), "_View"));
+				if (paymentDetail.getTaxHeaderId() != null) {
+					paymentDetail.setTaxHeader(
+							taxHeaderDetailsDAO.getTaxHeaderDetailsById(paymentDetail.getTaxHeaderId(), "_View"));
+				}
+				if (paymentDetail.getTaxHeader() != null) {
+					paymentDetail.getTaxHeader().setTaxDetails(
+							taxHeaderDetailsDAO.getTaxDetailById(paymentDetail.getTaxHeaderId(), "_View"));
+				}
 			}
 		}
 
@@ -347,7 +361,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		// Processing Accounting Details
 		if (StringUtils.equals(paymentHeader.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-			auditHeader = executeAccountingProcess(auditHeader, DateUtility.getAppDate());
+			auditHeader = executeAccountingProcess(auditHeader, SysParamUtil.getAppDate());
 		}
 
 		BeanUtils.copyProperties((PaymentHeader) auditHeader.getAuditDetail().getModelData(), paymentHeader);
@@ -474,7 +488,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 							}
 							paymentInstr.setPaymentInstructionId(Long.MIN_VALUE);
 							paymentInstr.setNewRecord(true);
-							paymentInstr.setPostDate(DateUtility.getAppDate());
+							paymentInstr.setPostDate(SysParamUtil.getAppDate());
 							totAmount = totAmount.add(instrumentwiseLimit.getMaxAmtPerInstruction());
 
 							auditDetailTemp.setModelData(paymentInstr);
@@ -482,7 +496,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 							finalPaymentsList.add(auditDetailTemp);
 						}
 					} else {
-						paymentInstruction.setPostDate(DateUtility.getAppDate());
+						paymentInstruction.setPostDate(SysParamUtil.getAppDate());
 						finalPaymentsList.add(auditDetail);
 					}
 				} else {
@@ -673,9 +687,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		// Payment Tax Details for Payables
-		getPaymentTaxDetailDAO().deleteByPaymentID(paymentHeader.getPaymentId(), tableType);
-
 		// PaymentDetails
 		if (paymentHeader.getPaymentDetailList() != null && !paymentHeader.getPaymentDetailList().isEmpty()) {
 			auditDetails.addAll(this.paymentDetailService.delete(paymentHeader.getPaymentDetailList(), tableType,
@@ -763,6 +774,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		Map<String, Object> eventMapping = aeEvent.getDataMap();
 
 		for (PaymentDetail paymentDetail : paymentHeader.getPaymentDetailList()) {
+
 			String amountType = paymentDetail.getAmountType();
 
 			switch (amountType) {
@@ -773,38 +785,72 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 					payableAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_P");
 				}
 				eventMapping.put(feeTypeCode + "_P", payableAmount.add(paymentDetail.getAmount()));
-				if (paymentDetail.getPaymentTaxDetail() != null) {
 
-					PaymentTaxDetail tax = paymentDetail.getPaymentTaxDetail();
-
-					//CGST
-					BigDecimal gstAmount = BigDecimal.ZERO;
-					if (eventMapping.containsKey(feeTypeCode + "_CGST_P")) {
-						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CGST_P");
-					}
-					eventMapping.put(feeTypeCode + "_CGST_P", gstAmount.add(tax.getPaidCGST()));
-
-					//SGST
-					gstAmount = BigDecimal.ZERO;
-					if (eventMapping.containsKey(feeTypeCode + "_SGST_P")) {
-						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_SGST_P");
-					}
-					eventMapping.put(feeTypeCode + "_SGST_P", gstAmount.add(tax.getPaidSGST()));
-
-					//UGST
-					gstAmount = BigDecimal.ZERO;
-					if (eventMapping.containsKey(feeTypeCode + "_UGST_P")) {
-						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_UGST_P");
-					}
-					eventMapping.put(feeTypeCode + "_UGST_P", gstAmount.add(tax.getPaidUGST()));
-
-					//IGST
-					gstAmount = BigDecimal.ZERO;
-					if (eventMapping.containsKey(feeTypeCode + "_IGST_P")) {
-						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_IGST_P");
-					}
-					eventMapping.put(feeTypeCode + "_IGST_P", gstAmount.add(tax.getPaidIGST()));
+				//GST Calculations
+				TaxHeader taxHeader = paymentDetail.getTaxHeader();
+				Taxes cgstTax = null;
+				Taxes sgstTax = null;
+				Taxes igstTax = null;
+				Taxes ugstTax = null;
+				Taxes cessTax = null;
+				if (taxHeader == null) {
+					taxHeader = new TaxHeader();
+					taxHeader.setNewRecord(true);
+					taxHeader.setRecordType(PennantConstants.RCD_ADD);
+					taxHeader.setVersion(taxHeader.getVersion() + 1);
+					paymentDetail.setTaxHeader(taxHeader);
 				}
+				List<Taxes> taxDetails = taxHeader.getTaxDetails();
+				if (CollectionUtils.isNotEmpty(taxDetails)) {
+					for (Taxes taxes : taxDetails) {
+						if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+							cgstTax = taxes;
+						} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+							sgstTax = taxes;
+						} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+							igstTax = taxes;
+						} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+							ugstTax = taxes;
+						} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+							cessTax = taxes;
+						}
+					}
+				}
+
+				//CGST
+				BigDecimal gstAmount = BigDecimal.ZERO;
+				if (eventMapping.containsKey(feeTypeCode + "_CGST_P")) {
+					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CGST_P");
+				}
+				eventMapping.put(feeTypeCode + "_CGST_P", gstAmount.add(cgstTax.getPaidTax()));
+
+				//SGST
+				gstAmount = BigDecimal.ZERO;
+				if (eventMapping.containsKey(feeTypeCode + "_SGST_P")) {
+					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_SGST_P");
+				}
+				eventMapping.put(feeTypeCode + "_SGST_P", gstAmount.add(sgstTax.getPaidTax()));
+
+				//UGST
+				gstAmount = BigDecimal.ZERO;
+				if (eventMapping.containsKey(feeTypeCode + "_UGST_P")) {
+					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_UGST_P");
+				}
+				eventMapping.put(feeTypeCode + "_UGST_P", gstAmount.add(ugstTax.getPaidTax()));
+
+				//IGST
+				gstAmount = BigDecimal.ZERO;
+				if (eventMapping.containsKey(feeTypeCode + "_IGST_P")) {
+					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_IGST_P");
+				}
+				eventMapping.put(feeTypeCode + "_IGST_P", gstAmount.add(igstTax.getPaidTax()));
+
+				//CESS
+				gstAmount = BigDecimal.ZERO;
+				if (eventMapping.containsKey(feeTypeCode + "_CESS_P")) {
+					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CESS_P");
+				}
+				eventMapping.put(feeTypeCode + "_CESS_P", gstAmount.add(cessTax.getPaidTax()));
 
 			case RepayConstants.EXAMOUNTTYPE_EXCESS:
 				excessAmount = excessAmount.add(paymentDetail.getAmount());
@@ -822,30 +868,29 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			default:
 				break;
 			}
-		}
 
-		eventMapping.put("pi_excessAmount", excessAmount);
-		eventMapping.put("pi_emiInAdvance", emiInAdavance);
-		eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
-		eventMapping.put("CASHCLT_P", cashCtrl);
-		eventMapping.put("DSF_P", dsf);
+			eventMapping.put("pi_emiInAdvance", emiInAdavance);
+			eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
+			eventMapping.put("CASHCLT_P", cashCtrl);
+			eventMapping.put("DSF_P", dsf);
 
-		aeEvent.setDataMap(eventMapping);
+			aeEvent.setDataMap(eventMapping);
 
-		if (gstExecutionMap != null) {
-			for (String mapkey : gstExecutionMap.keySet()) {
-				if (StringUtils.isNotBlank(mapkey)) {
-					aeEvent.getDataMap().put(mapkey, gstExecutionMap.get(mapkey));
+			if (gstExecutionMap != null) {
+				for (String mapkey : gstExecutionMap.keySet()) {
+					if (StringUtils.isNotBlank(mapkey)) {
+						aeEvent.getDataMap().put(mapkey, gstExecutionMap.get(mapkey));
+					}
 				}
 			}
+
+			long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
+					AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
+
+			aeEvent.getAcSetIDList().add(accountsetId);
+
+			logger.debug(Literal.LEAVING);
 		}
-
-		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-				AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
-
-		aeEvent.getAcSetIDList().add(accountsetId);
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -865,26 +910,125 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		if (paymentHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			executeAccountingProcess(aeEvent, paymentHeader);
+
+			List<ManualAdviseMovements> movements = new ArrayList<ManualAdviseMovements>();
+
+			for (PaymentDetail paymentDetail : paymentHeader.getPaymentDetailList()) {
+				if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+					ManualAdviseMovements advMov = prepareAdviseRefund(paymentDetail);
+					if (advMov != null) {
+						movements.add(advMov);
+					}
+				}
+			}
+
 			postingsPreparationUtil.postAccounting(aeEvent);
+
+			if (aeEvent.getLinkedTranId() > 0 && aeEvent.isPostingSucess() && !movements.isEmpty()) {
+				List<ManualAdviseMovements> waiverMovements = new ArrayList<>();
+
+				FinanceMain financeMain = getPaymentHeaderDAO().getFinanceDetails(paymentHeader.getFinReference());
+
+				FinanceDetail financeDetail = new FinanceDetail();
+				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+
+				InvoiceDetail invoiceDetail = new InvoiceDetail();
+				invoiceDetail.setLinkedTranId(aeEvent.getLinkedTranId());
+				invoiceDetail.setFinanceDetail(financeDetail);
+				invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
+				invoiceDetail.setWaiver(false);
+
+				for (ManualAdviseMovements advMov : movements) {
+					waiverMovements.add(advMov);
+					invoiceDetail.setMovements(waiverMovements);
+					long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
+
+					if (advMov.getTaxHeader() != null) {
+						advMov.getTaxHeader().setInvoiceID(invoiceID);
+					}
+					waiverMovements.clear();
+				}
+			}
+
 		}
 
 		paymentHeader.setLinkedTranId(aeEvent.getLinkedTranId());
 		auditHeader.getAuditDetail().setModelData(paymentHeader);
 		logger.debug(Literal.LEAVING);
+
+		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	private ManualAdviseMovements prepareAdviseRefund(PaymentDetail paymentDetail) {
+		logger.debug(Literal.ENTERING);
+
+		//GST Calculations
+		TaxHeader taxHeader = paymentDetail.getTaxHeader();
+		if (taxHeader == null || taxHeader.getTaxDetails().isEmpty()) {
+			logger.debug(Literal.LEAVING);
+			return null;
+		}
+		List<Taxes> taxDetails = taxHeader.getTaxDetails();
+		BigDecimal totGSTAmount = BigDecimal.ZERO;
+		if (CollectionUtils.isNotEmpty(taxDetails)) {
+			for (Taxes taxes : taxDetails) {
+				totGSTAmount = totGSTAmount.add(taxes.getPaidTax());
+			}
+		}
+
+		if (totGSTAmount.compareTo(BigDecimal.ZERO) <= 0) {
+			logger.debug(Literal.LEAVING);
+			return null;
+		}
+
+		// Fetch Advise Details
+		ManualAdvise advise = manualAdviseDAO.getManualAdviseById(paymentDetail.getReferenceId(), "_AView");
+		ManualAdviseMovements movement = new ManualAdviseMovements();
+		if (totGSTAmount.compareTo(BigDecimal.ZERO) > 0) {
+			movement.setAdviseID(advise.getAdviseID());
+			movement.setMovementDate(SysParamUtil.getAppDate());
+			movement.setMovementAmount(paymentDetail.getAmount());
+			movement.setPaidAmount(BigDecimal.ZERO);
+			movement.setWaivedAmount(paymentDetail.getAmount());
+			movement.setReceiptID(0);
+			movement.setReceiptSeqID(0);
+			movement.setFeeTypeCode(advise.getFeeTypeCode());
+			movement.setFeeTypeDesc(advise.getFeeTypeDesc());
+			movement.setTaxApplicable(advise.isTaxApplicable());
+			movement.setTaxComponent(advise.getTaxComponent());
+
+			if (taxHeader != null) {
+
+				// Setting of Debit Invoice ID
+				movement.setDebitInvoiceId(manualAdviseDAO.getDebitInvoiceID(advise.getAdviseID()));
+
+				movement.setTaxHeaderId(taxHeader.getHeaderId());
+				movement.setTaxHeader(taxHeader);
+			}
+
+			manualAdviseDAO.saveMovement(movement, "");
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		// GST Invoice data resetting based on Accounting Process
+		if (SysParamUtil.isAllowed("GST_INV_ON_DUE") && advise.isDueCreation()) {
+			return movement;
+		}
+
+		return null;
+	}
+
+	@Override
+	public boolean getPaymentHeadersByFinReference(String finReference, String type) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
 	public PaymentInstruction getPaymentInstruction(long paymentId) {
 		return this.paymentInstructionService.getPaymentInstruction(paymentId);
-	}
-
-	public PaymentTaxDetailDAO getPaymentTaxDetailDAO() {
-		return paymentTaxDetailDAO;
-	}
-
-	public void setPaymentTaxDetailDAO(PaymentTaxDetailDAO paymentTaxDetailDAO) {
-		this.paymentTaxDetailDAO = paymentTaxDetailDAO;
 	}
 
 	public FinFeeDetailService getFinFeeDetailService() {
@@ -927,9 +1071,20 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		this.instrumentwiseLimitService = instrumentwiseLimitService;
 	}
 
-	@Override
-	public boolean getPaymentHeadersByFinReference(String finReference, String type) {
-		// TODO Auto-generated method stub
-		return false;
+	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
+		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
 	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	public GSTInvoiceTxnService getGstInvoiceTxnService() {
+		return gstInvoiceTxnService;
+	}
+
+	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
+		this.gstInvoiceTxnService = gstInvoiceTxnService;
+	}
+
 }

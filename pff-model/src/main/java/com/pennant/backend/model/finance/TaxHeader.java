@@ -49,14 +49,13 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class TaxHeader extends AbstractWorkflowEntity implements Entity {
-
+public class TaxHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	private long headerId = Long.MIN_VALUE;
+	private Long invoiceID;
 	private List<Taxes> taxDetails = new ArrayList<Taxes>();
 	private boolean newRecord;
 	private TaxHeader befImage;
@@ -79,17 +78,10 @@ public class TaxHeader extends AbstractWorkflowEntity implements Entity {
 		this.headerId = headerId;
 	}
 
-	@Override
-	public boolean isNew() {
-		return newRecord;
-	}
-
-	@Override
 	public long getId() {
 		return headerId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.headerId = id;
 
@@ -131,6 +123,14 @@ public class TaxHeader extends AbstractWorkflowEntity implements Entity {
 		Set<String> excludeFields = new HashSet<String>();
 
 		return excludeFields;
+	}
+
+	public Long getInvoiceID() {
+		return invoiceID;
+	}
+
+	public void setInvoiceID(Long invoiceID) {
+		this.invoiceID = invoiceID;
 	}
 
 }

@@ -3,6 +3,8 @@ package com.pennant.backend.model.FinRepayQueue;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.pennant.backend.model.finance.TaxHeader;
+
 public class FinRepayQueue {
 
 	private String finReference;
@@ -74,16 +76,6 @@ public class FinRepayQueue {
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
 	private BigDecimal penaltyPayNow = BigDecimal.ZERO;
 	private BigDecimal penaltyBal = BigDecimal.ZERO;
-	private BigDecimal paidPenaltyCGST = BigDecimal.ZERO;
-	private BigDecimal paidPenaltySGST = BigDecimal.ZERO;
-	private BigDecimal paidPenaltyUGST = BigDecimal.ZERO;
-	private BigDecimal paidPenaltyIGST = BigDecimal.ZERO;
-
-	//Waiver GST
-	private BigDecimal penaltyWaiverCGST = BigDecimal.ZERO;
-	private BigDecimal penaltyWaiverSGST = BigDecimal.ZERO;
-	private BigDecimal penaltyWaiverUGST = BigDecimal.ZERO;
-	private BigDecimal penaltyWaiverIGST = BigDecimal.ZERO;
 
 	// late pay profit calculations
 	private BigDecimal schdRate = BigDecimal.ZERO;
@@ -94,6 +86,8 @@ public class FinRepayQueue {
 	//Advised profit Rates
 	private BigDecimal advProfit = BigDecimal.ZERO;
 	private BigDecimal rebate = BigDecimal.ZERO;
+	
+	private TaxHeader taxHeader;
 
 	public FinRepayQueue() {
 
@@ -583,68 +577,12 @@ public class FinRepayQueue {
 		this.schdTdsPayNow = schdTdsPayNow;
 	}
 
-	public BigDecimal getPaidPenaltyCGST() {
-		return paidPenaltyCGST;
+	public TaxHeader getTaxHeader() {
+		return taxHeader;
 	}
 
-	public void setPaidPenaltyCGST(BigDecimal paidPenaltyCGST) {
-		this.paidPenaltyCGST = paidPenaltyCGST;
-	}
-
-	public BigDecimal getPaidPenaltySGST() {
-		return paidPenaltySGST;
-	}
-
-	public void setPaidPenaltySGST(BigDecimal paidPenaltySGST) {
-		this.paidPenaltySGST = paidPenaltySGST;
-	}
-
-	public BigDecimal getPaidPenaltyUGST() {
-		return paidPenaltyUGST;
-	}
-
-	public void setPaidPenaltyUGST(BigDecimal paidPenaltyUGST) {
-		this.paidPenaltyUGST = paidPenaltyUGST;
-	}
-
-	public BigDecimal getPaidPenaltyIGST() {
-		return paidPenaltyIGST;
-	}
-
-	public void setPaidPenaltyIGST(BigDecimal paidPenaltyIGST) {
-		this.paidPenaltyIGST = paidPenaltyIGST;
-	}
-
-	public BigDecimal getPenaltyWaiverCGST() {
-		return penaltyWaiverCGST;
-	}
-
-	public void setPenaltyWaiverCGST(BigDecimal penaltyWaiverCGST) {
-		this.penaltyWaiverCGST = penaltyWaiverCGST;
-	}
-
-	public BigDecimal getPenaltyWaiverSGST() {
-		return penaltyWaiverSGST;
-	}
-
-	public void setPenaltyWaiverSGST(BigDecimal penaltyWaiverSGST) {
-		this.penaltyWaiverSGST = penaltyWaiverSGST;
-	}
-
-	public BigDecimal getPenaltyWaiverUGST() {
-		return penaltyWaiverUGST;
-	}
-
-	public void setPenaltyWaiverUGST(BigDecimal penaltyWaiverUGST) {
-		this.penaltyWaiverUGST = penaltyWaiverUGST;
-	}
-
-	public BigDecimal getPenaltyWaiverIGST() {
-		return penaltyWaiverIGST;
-	}
-
-	public void setPenaltyWaiverIGST(BigDecimal penaltyWaiverIGST) {
-		this.penaltyWaiverIGST = penaltyWaiverIGST;
+	public void setTaxHeader(TaxHeader taxHeader) {
+		this.taxHeader = taxHeader;
 	}
 
 }

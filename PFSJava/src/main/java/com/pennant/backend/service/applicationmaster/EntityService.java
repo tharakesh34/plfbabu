@@ -59,5 +59,4 @@ public interface EntityService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	Entity getEntityByFinDivision(String divisionCode, String type);
 }

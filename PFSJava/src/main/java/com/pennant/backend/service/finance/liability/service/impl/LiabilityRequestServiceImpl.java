@@ -56,9 +56,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
@@ -235,14 +235,6 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 			getLiabilityRequestDAO().update(liabilityRequest, tableType);
 		}
 
-		// Save Fee Charges List
-		//=======================================
-		if (StringUtils.isNotBlank(tableType)) {
-			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), liabilityRequest.getFinEvent(),
-					false, tableType);
-		}
-		saveFeeChargeList(financeDetail.getFinScheduleData(), liabilityRequest.getFinEvent(), false, tableType);
-
 		// set Finance Check List audit details to auditDetails
 		//=======================================
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
@@ -398,10 +390,6 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 			}
 		}
 
-		//Fee Charge Details
-		//=======================================
-		saveFeeChargeList(financeDetail.getFinScheduleData(), liabilityRequest.getFinEvent(), false, "");
-
 		// set Check list details Audit
 		//=======================================
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
@@ -429,7 +417,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		// Liability Request deletion
 		getLiabilityRequestDAO().delete(liabilityRequest, "_Temp");
 		if (StringUtils.equals(liabilityRequest.getFinEvent(), FinanceConstants.FINSER_EVENT_INSCLAIM)) {
-			Date curDate = DateUtility.getAppDate();
+			Date curDate = SysParamUtil.getAppDate();
 			FinanceSuspHead finSuspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(financeMain.getFinReference(),
 					"");
 			boolean isSaveRcd = false;

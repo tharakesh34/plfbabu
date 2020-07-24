@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 
 public class AEEvent implements Serializable {
 	private static final long serialVersionUID = 853801780166711631L;
@@ -60,6 +61,9 @@ public class AEEvent implements Serializable {
 	private boolean uAmzExists = false;
 	private boolean cpzChgExists = false;
 	private boolean bpiIncomized = false;
+	
+	// Advise Movement
+	private ManualAdviseMovements movement;
 
 	//Cash Management
 	private String postingType = AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
@@ -398,6 +402,14 @@ public class AEEvent implements Serializable {
 
 	public void setBpiIncomized(boolean bpiIncomized) {
 		this.bpiIncomized = bpiIncomized;
+	}
+
+	public ManualAdviseMovements getMovement() {
+		return movement;
+	}
+
+	public void setMovement(ManualAdviseMovements movement) {
+		this.movement = movement;
 	}
 
 }

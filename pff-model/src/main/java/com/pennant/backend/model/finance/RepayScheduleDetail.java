@@ -87,6 +87,9 @@ public class RepayScheduleDetail implements Serializable {
 	private BigDecimal schdIncrCostPayNow = BigDecimal.ZERO;
 	private BigDecimal schdIncrCostWaivedNow = BigDecimal.ZERO;
 
+	private Long lppTaxHeaderId;
+	private Long lpiTaxHeaderId;
+
 	private BigDecimal refundMax = BigDecimal.ZERO;
 	private BigDecimal refundReq = BigDecimal.ZERO;
 	private int daysLate = 0;
@@ -102,17 +105,6 @@ public class RepayScheduleDetail implements Serializable {
 	private BigDecimal maxWaiver = BigDecimal.ZERO;
 	private BigDecimal waivedAmt = BigDecimal.ZERO;
 
-	private BigDecimal paidPenaltyCGST = BigDecimal.ZERO;
-	private BigDecimal paidPenaltySGST = BigDecimal.ZERO;
-	private BigDecimal paidPenaltyUGST = BigDecimal.ZERO;
-	private BigDecimal paidPenaltyIGST = BigDecimal.ZERO;
-
-	// Waiver GST Fields
-	private BigDecimal penaltyWaiverCGST = BigDecimal.ZERO;
-	private BigDecimal penaltyWaiverSGST = BigDecimal.ZERO;
-	private BigDecimal penaltyWaiverUGST = BigDecimal.ZERO;
-	private BigDecimal penaltyWaiverIGST = BigDecimal.ZERO;
-
 	private String chargeType = "";
 	private long linkedTranId = 0;
 	private long repayID = 0;// Only setting from Repay Header
@@ -121,7 +113,7 @@ public class RepayScheduleDetail implements Serializable {
 
 	// Profit waiver
 	private long waiverId;
-	private long taxHeaderId = 0;
+	private Long taxHeaderId;
 	private TaxHeader taxHeader;
 
 	public RepayScheduleDetail() {
@@ -584,76 +576,12 @@ public class RepayScheduleDetail implements Serializable {
 		this.tdsSchdPayNow = tdsSchdPayNow;
 	}
 
-	public BigDecimal getPaidPenaltyCGST() {
-		return paidPenaltyCGST;
-	}
-
-	public void setPaidPenaltyCGST(BigDecimal paidPenaltyCGST) {
-		this.paidPenaltyCGST = paidPenaltyCGST;
-	}
-
-	public BigDecimal getPaidPenaltySGST() {
-		return paidPenaltySGST;
-	}
-
-	public void setPaidPenaltySGST(BigDecimal paidPenaltySGST) {
-		this.paidPenaltySGST = paidPenaltySGST;
-	}
-
-	public BigDecimal getPaidPenaltyUGST() {
-		return paidPenaltyUGST;
-	}
-
-	public void setPaidPenaltyUGST(BigDecimal paidPenaltyUGST) {
-		this.paidPenaltyUGST = paidPenaltyUGST;
-	}
-
-	public BigDecimal getPaidPenaltyIGST() {
-		return paidPenaltyIGST;
-	}
-
-	public void setPaidPenaltyIGST(BigDecimal paidPenaltyIGST) {
-		this.paidPenaltyIGST = paidPenaltyIGST;
-	}
-
 	public Date getValueDate() {
 		return valueDate;
 	}
 
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
-	}
-
-	public BigDecimal getPenaltyWaiverCGST() {
-		return penaltyWaiverCGST;
-	}
-
-	public void setPenaltyWaiverCGST(BigDecimal penaltyWaiverCGST) {
-		this.penaltyWaiverCGST = penaltyWaiverCGST;
-	}
-
-	public BigDecimal getPenaltyWaiverSGST() {
-		return penaltyWaiverSGST;
-	}
-
-	public void setPenaltyWaiverSGST(BigDecimal penaltyWaiverSGST) {
-		this.penaltyWaiverSGST = penaltyWaiverSGST;
-	}
-
-	public BigDecimal getPenaltyWaiverUGST() {
-		return penaltyWaiverUGST;
-	}
-
-	public void setPenaltyWaiverUGST(BigDecimal penaltyWaiverUGST) {
-		this.penaltyWaiverUGST = penaltyWaiverUGST;
-	}
-
-	public BigDecimal getPenaltyWaiverIGST() {
-		return penaltyWaiverIGST;
-	}
-
-	public void setPenaltyWaiverIGST(BigDecimal penaltyWaiverIGST) {
-		this.penaltyWaiverIGST = penaltyWaiverIGST;
 	}
 
 	public long getWaiverId() {
@@ -664,11 +592,11 @@ public class RepayScheduleDetail implements Serializable {
 		this.waiverId = waiverId;
 	}
 
-	public long getTaxHeaderId() {
+	public Long getTaxHeaderId() {
 		return taxHeaderId;
 	}
 
-	public void setTaxHeaderId(long taxHeaderId) {
+	public void setTaxHeaderId(Long taxHeaderId) {
 		this.taxHeaderId = taxHeaderId;
 	}
 
@@ -678,6 +606,22 @@ public class RepayScheduleDetail implements Serializable {
 
 	public void setTaxHeader(TaxHeader taxHeader) {
 		this.taxHeader = taxHeader;
+	}
+
+	public Long getLppTaxHeaderId() {
+		return lppTaxHeaderId;
+	}
+
+	public void setLppTaxHeaderId(Long lppTaxHeaderId) {
+		this.lppTaxHeaderId = lppTaxHeaderId;
+	}
+
+	public Long getLpiTaxHeaderId() {
+		return lpiTaxHeaderId;
+	}
+
+	public void setLpiTaxHeaderId(Long lpiTaxHeaderId) {
+		this.lpiTaxHeaderId = lpiTaxHeaderId;
 	}
 
 }

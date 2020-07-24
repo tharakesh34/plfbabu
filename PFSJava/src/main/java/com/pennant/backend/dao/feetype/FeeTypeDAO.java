@@ -45,7 +45,7 @@ package com.pennant.backend.dao.feetype;
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennanttech.pff.core.TableType;
 
 public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
@@ -83,4 +83,6 @@ public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
 	List<FeeType> getManualAdviseFeeType(int adviceType, String type);
 
 	long getFeeTypeId(String feeTypeCode);
+
+	boolean isFeeTypeAmortzReq(String feeTypeCode);
 }

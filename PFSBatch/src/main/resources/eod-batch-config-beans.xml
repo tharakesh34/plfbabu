@@ -250,6 +250,7 @@
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 		<property name="assignmentDAO" ref="assignmentDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 		<property name="assignmentDealDAO" ref="assignmentDealDAO" />
@@ -385,6 +386,7 @@
 	<bean id="nPABucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPABucketDAOImpl" parent="sequenceDao" />
 	<bean id="receiptAllocationDetailDAO" class="com.pennant.backend.dao.receipts.impl.ReceiptAllocationDetailDAOImpl"
 		parent="sequenceDao" />
+
 	<bean id="repayProcessUtil" class="com.pennant.app.util.RepaymentProcessUtil" scope="prototype">
 		<property name="repayPostingUtil" ref="repayPostingUtil" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
@@ -404,10 +406,13 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
-		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="assignmentDAO" ref="assignmentDAO" />
+		<property name="assignmentDealDAO" ref="assignmentDealDAO" />
 	</bean>
 	<bean id="repayPostingUtil" class="com.pennant.app.util.RepaymentPostingsUtil" scope="prototype">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -589,14 +594,14 @@
 	</bean>
 	<bean name="gstInvoiceTxnServiceTarget" class="com.pennant.backend.service.finance.impl.GSTInvoiceTxnServiceImpl">
 		<property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
-		<property name="entityService" ref="entityService" />
-		<property name="provinceService" ref="provinceService" />
-		<!-- GST Invoice Changes -->
-		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
-		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="customerService" ref="customerService" />
+		<property name="entityDAO" ref="entityDAO" />
+		<property name="provinceDAO" ref="provinceDAO" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		<property name="customerDAO" ref="customerDAO" />
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="provinceService" ref="provinceService" />
 	</bean>
 
 	<bean id="entityService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -801,15 +806,13 @@
 	<bean name="receiptCalculator" class="com.pennant.app.util.ReceiptCalculator" scope="prototype">
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="feeCalculator" ref="feeCalculator" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 	</bean>
 
 	<bean id="freemarkerMailConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean" />
@@ -853,9 +856,6 @@
 		<constructor-arg ref="ruleExecutionUtil" />
 		<constructor-arg ref="gstRateDAO" />
 	</bean>
-
-	<!-- GST FinTaxDetails -->
-	<bean id="finTaxDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinTaxDetailsDAOImpl" parent="sequenceDao" />
 
 	<!-- GSTRate -->
 	<bean id="gstRateDAO" class="com.pennant.backend.dao.rmtmasters.impl.GSTRateDAOImpl" parent="sequenceDao" />

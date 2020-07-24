@@ -96,7 +96,6 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -109,6 +108,8 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.finance.TaxHeader;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.XcessPayables;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -126,6 +127,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
@@ -256,9 +258,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	private StageAccountingDetailDialogCtrl stageAccountingDetailDialogCtrl = null;
 	private FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl = null;
 	protected FinanceMainListCtrl financeMainListCtrl = null; // over handed per
-																// parameters
+	// parameters
 	protected ReceiptListCtrl receiptListCtrl = null; // over handed per
-														// parameters
+	// parameters
 	protected ExtendedFieldCtrl extendedFieldCtrl = null;
 
 	private FinReceiptData receiptData = null;
@@ -1273,7 +1275,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		lc.setParent(item);
 
 		// Balance Due AMount
-		addAmountCell(item, allocate.getTotRecv(), ("AllocateBalDue_" + idx), true);
+		addAmountCell(item, allocate.getTotRecv().add(allocate.getDueGST()), ("AllocateBalDue_" + idx), true);
 
 		// if (allocate.isEditable()){
 		this.listBoxPastdues.appendChild(item);
@@ -1342,10 +1344,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		BigDecimal paid = BigDecimal.ZERO;
 		BigDecimal waived = BigDecimal.ZERO;
 		for (ReceiptAllocationDetail allocate : receiptData.getReceiptHeader().getAllocationsSummary()) {
-
+			if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_EMI)
+					|| StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_PFT)) {
+				allocate.setEditable(true);
+			}
 			if (allocate.isEditable()) {
 				totRecv = totRecv.add(allocate.getTotRecv());
-				totDue = totDue.add(allocate.getTotRecv());
+				totDue = totDue.add(allocate.getTotRecv().add(allocate.getTotalPaid()));
 				inProc = inProc.add(allocate.getInProcess());
 				paid = paid.add(allocate.getPaidAmount());
 				waived = waived.add(allocate.getWaivedAmount());
@@ -1795,38 +1800,64 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				} else {
 					extDataMap.put(receiptDetail.getFeeTypeCode() + "_P", receiptDetail.getAmount());
 				}
-				if (receiptDetail.getReceiptTaxDetail() != null) {
+				if (receiptDetail.getPayAdvMovement() != null) {
+
+					TaxHeader taxHeader = receiptDetail.getPayAdvMovement().getTaxHeader();
+					Taxes cgstTax = new Taxes();
+					Taxes sgstTax = new Taxes();
+					Taxes igstTax = new Taxes();
+					Taxes ugstTax = new Taxes();
+					Taxes cessTax = new Taxes();
+					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+					if (taxHeader != null && CollectionUtils.isNotEmpty(taxDetails)) {
+						for (Taxes taxes : taxDetails) {
+							if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+								cgstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+								sgstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+								igstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+								ugstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+								cessTax = taxes;
+							}
+						}
+					}
+
 					if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_CGST_P")) {
 						extDataMap.put(receiptDetail.getFeeTypeCode() + "_CGST_P",
-								extDataMap.get(receiptDetail.getFeeTypeCode() + "_CGST_P")
-										.add(receiptDetail.getReceiptTaxDetail().getPaidCGST()));
+								extDataMap.get(receiptDetail.getFeeTypeCode() + "_CGST_P").add(cgstTax.getPaidTax()));
 					} else {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_CGST_P",
-								receiptDetail.getReceiptTaxDetail().getPaidCGST());
+						extDataMap.put(receiptDetail.getFeeTypeCode() + "_CGST_P", cgstTax.getPaidTax());
 					}
+
 					if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_SGST_P")) {
 						extDataMap.put(receiptDetail.getFeeTypeCode() + "_SGST_P",
-								extDataMap.get(receiptDetail.getFeeTypeCode() + "_SGST_P")
-										.add(receiptDetail.getReceiptTaxDetail().getPaidSGST()));
+								extDataMap.get(receiptDetail.getFeeTypeCode() + "_SGST_P").add(sgstTax.getPaidTax()));
 					} else {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_SGST_P",
-								receiptDetail.getReceiptTaxDetail().getPaidSGST());
+						extDataMap.put(receiptDetail.getFeeTypeCode() + "_SGST_P", sgstTax.getPaidTax());
 					}
+
 					if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_UGST_P")) {
 						extDataMap.put(receiptDetail.getFeeTypeCode() + "_UGST_P",
-								extDataMap.get(receiptDetail.getFeeTypeCode() + "_UGST_P")
-										.add(receiptDetail.getReceiptTaxDetail().getPaidUGST()));
+								extDataMap.get(receiptDetail.getFeeTypeCode() + "_UGST_P").add(ugstTax.getPaidTax()));
 					} else {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_UGST_P",
-								receiptDetail.getReceiptTaxDetail().getPaidUGST());
+						extDataMap.put(receiptDetail.getFeeTypeCode() + "_UGST_P", ugstTax.getPaidTax());
 					}
+
 					if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_IGST_P")) {
 						extDataMap.put(receiptDetail.getFeeTypeCode() + "_IGST_P",
-								extDataMap.get(receiptDetail.getFeeTypeCode() + "_IGST_P")
-										.add(receiptDetail.getReceiptTaxDetail().getPaidIGST()));
+								extDataMap.get(receiptDetail.getFeeTypeCode() + "_IGST_P").add(igstTax.getPaidTax()));
 					} else {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_IGST_P",
-								receiptDetail.getReceiptTaxDetail().getPaidIGST());
+						extDataMap.put(receiptDetail.getFeeTypeCode() + "_IGST_P", igstTax.getPaidTax());
+					}
+
+					if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_CESS_P")) {
+						extDataMap.put(receiptDetail.getFeeTypeCode() + "_CESS_P",
+								extDataMap.get(receiptDetail.getFeeTypeCode() + "_CESS_P").add(cessTax.getPaidTax()));
+					} else {
+						extDataMap.put(receiptDetail.getFeeTypeCode() + "_CESS_P", cessTax.getPaidTax());
 					}
 				}
 			}
@@ -1919,12 +1950,14 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			BigDecimal penaltySGSTPaid = BigDecimal.ZERO;
 			BigDecimal penaltyIGSTPaid = BigDecimal.ZERO;
 			BigDecimal penaltyUGSTPaid = BigDecimal.ZERO;
+			BigDecimal penaltyCESSPaid = BigDecimal.ZERO;
 
 			//Penality Waiver GST Details
 			BigDecimal penaltyCGSTWaived = BigDecimal.ZERO;
 			BigDecimal penaltySGSTWaived = BigDecimal.ZERO;
 			BigDecimal penaltyIGSTWaived = BigDecimal.ZERO;
 			BigDecimal penaltyUGSTWaived = BigDecimal.ZERO;
+			BigDecimal penaltyCESSWaived = BigDecimal.ZERO;
 
 			for (RepayScheduleDetail rsd : repaySchdList) {
 
@@ -1939,18 +1972,30 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				// Penalties
 				amountCodes.setPenaltyPaid(amountCodes.getPenaltyPaid().add(rsd.getPenaltyPayNow()));
-				amountCodes.setPenaltyWaived(amountCodes.getPenaltyWaived().add(rsd.getWaivedAmt())); //Check here once for Exclusive GST case 
+				amountCodes.setPenaltyWaived(amountCodes.getPenaltyWaived().add(rsd.getWaivedAmt())); //Check here once for Exclusive GST case
 
-				penaltyCGSTPaid = penaltyCGSTPaid.add(rsd.getPaidPenaltyCGST());
-				penaltySGSTPaid = penaltySGSTPaid.add(rsd.getPaidPenaltySGST());
-				penaltyIGSTPaid = penaltyIGSTPaid.add(rsd.getPaidPenaltyIGST());
-				penaltyUGSTPaid = penaltyUGSTPaid.add(rsd.getPaidPenaltyUGST());
-
-				//Waivers GST
-				penaltyCGSTWaived = penaltyCGSTWaived.add(rsd.getPenaltyWaiverCGST());
-				penaltySGSTWaived = penaltySGSTWaived.add(rsd.getPenaltyWaiverSGST());
-				penaltyIGSTWaived = penaltyIGSTWaived.add(rsd.getPenaltyWaiverIGST());
-				penaltyUGSTWaived = penaltyUGSTWaived.add(rsd.getPenaltyWaiverUGST());
+				TaxHeader taxHeader = rsd.getTaxHeader();
+				List<Taxes> taxDetails = taxHeader.getTaxDetails();
+				if (taxHeader != null && CollectionUtils.isNotEmpty(taxDetails)) {
+					for (Taxes taxes : taxDetails) {
+						if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+							penaltyCGSTPaid = penaltyCGSTPaid.add(taxes.getPaidTax());
+							penaltyCGSTWaived = penaltyCGSTWaived.add(taxes.getWaivedTax());
+						} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+							penaltySGSTPaid = penaltySGSTPaid.add(taxes.getPaidTax());
+							penaltySGSTWaived = penaltySGSTWaived.add(taxes.getWaivedTax());
+						} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+							penaltyIGSTPaid = penaltyIGSTPaid.add(taxes.getPaidTax());
+							penaltyIGSTWaived = penaltyIGSTWaived.add(taxes.getWaivedTax());
+						} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+							penaltyUGSTPaid = penaltyUGSTPaid.add(taxes.getPaidTax());
+							penaltyUGSTWaived = penaltyUGSTWaived.add(taxes.getWaivedTax());
+						} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+							penaltyCESSPaid = penaltyCESSPaid.add(taxes.getPaidTax());
+							penaltyCESSWaived = penaltyCESSWaived.add(taxes.getWaivedTax());
+						}
+					}
+				}
 
 				// Fee Details
 				amountCodes.setSchFeePay(amountCodes.getSchFeePay().add(rsd.getSchdFeePayNow()));
@@ -2311,12 +2356,14 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				aeEvent.getDataMap().put("LPP_SGST_P", penaltySGSTPaid);
 				aeEvent.getDataMap().put("LPP_UGST_P", penaltyIGSTPaid);
 				aeEvent.getDataMap().put("LPP_IGST_P", penaltyUGSTPaid);
+				aeEvent.getDataMap().put("LPP_CESS_P", penaltyCESSPaid);
 
 				//GST Waivers Details
 				aeEvent.getDataMap().put("LPP_CGST_W", penaltyCGSTWaived);
 				aeEvent.getDataMap().put("LPP_SGST_W", penaltySGSTWaived);
 				aeEvent.getDataMap().put("LPP_UGST_W", penaltyUGSTWaived);
 				aeEvent.getDataMap().put("LPP_IGST_W", penaltyIGSTWaived);
+				aeEvent.getDataMap().put("LPP_CESS_W", penaltyCESSWaived);
 
 				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 				returnSetEntries.addAll(aeEvent.getReturnDataSet());
@@ -2382,56 +2429,91 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 						keyCode = movement.getFeeTypeCode();
 					}
 
+					TaxHeader taxHeader = movement.getTaxHeader();
+					Taxes cgstTax = new Taxes();
+					Taxes sgstTax = new Taxes();
+					Taxes igstTax = new Taxes();
+					Taxes ugstTax = new Taxes();
+					Taxes cessTax = new Taxes();
+					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+					if (taxHeader != null && CollectionUtils.isNotEmpty(taxDetails)) {
+						for (Taxes taxes : taxDetails) {
+							if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+								cgstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+								sgstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+								igstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+								ugstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+								cessTax = taxes;
+							}
+						}
+					}
+
 					// Tax Details
 					//Paid GST Details
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_CGST_P")) {
 						amount = movementMap.get(keyCode + "_CGST_P");
 					}
-					movementMap.put(keyCode + "_CGST_P", amount.add(movement.getPaidCGST()));
+					movementMap.put(keyCode + "_CGST_P", amount.add(cgstTax.getPaidTax()));
 
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_SGST_P")) {
 						amount = movementMap.get(keyCode + "_SGST_P");
 					}
-					movementMap.put(keyCode + "_SGST_P", amount.add(movement.getPaidSGST()));
+					movementMap.put(keyCode + "_SGST_P", amount.add(sgstTax.getPaidTax()));
 
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_IGST_P")) {
 						amount = movementMap.get(keyCode + "_IGST_P");
 					}
-					movementMap.put(keyCode + "_IGST_P", amount.add(movement.getPaidIGST()));
+					movementMap.put(keyCode + "_IGST_P", amount.add(igstTax.getPaidTax()));
 
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_UGST_P")) {
 						amount = movementMap.get(keyCode + "_UGST_P");
 					}
-					movementMap.put(keyCode + "_UGST_P", amount.add(movement.getPaidUGST()));
+					movementMap.put(keyCode + "_UGST_P", amount.add(ugstTax.getPaidTax()));
+
+					amount = BigDecimal.ZERO;
+					if (movementMap.containsKey(keyCode + "_CESS_P")) {
+						amount = movementMap.get(keyCode + "_CESS_P");
+					}
+					movementMap.put(keyCode + "_CESS_P", amount.add(cessTax.getPaidTax()));
 
 					//Waiver GST Details
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_CGST_W")) {
 						amount = movementMap.get(keyCode + "_CGST_W");
 					}
-					movementMap.put(keyCode + "_CGST_W", amount.add(movement.getWaivedCGST()));
+					movementMap.put(keyCode + "_CGST_W", amount.add(cgstTax.getWaivedTax()));
 
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_SGST_W")) {
 						amount = movementMap.get(keyCode + "_SGST_W");
 					}
-					movementMap.put(keyCode + "_SGST_W", amount.add(movement.getWaivedSGST()));
+					movementMap.put(keyCode + "_SGST_W", amount.add(sgstTax.getWaivedTax()));
 
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_IGST_W")) {
 						amount = movementMap.get(keyCode + "_IGST_W");
 					}
-					movementMap.put(keyCode + "_IGST_W", amount.add(movement.getWaivedIGST()));
+					movementMap.put(keyCode + "_IGST_W", amount.add(igstTax.getWaivedTax()));
 
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_UGST_W")) {
 						amount = movementMap.get(keyCode + "_UGST_W");
 					}
-					movementMap.put(keyCode + "_UGST_W", amount.add(movement.getWaivedUGST()));
+					movementMap.put(keyCode + "_UGST_W", amount.add(ugstTax.getWaivedTax()));
+
+					amount = BigDecimal.ZERO;
+					if (movementMap.containsKey(keyCode + "_CESS_W")) {
+						amount = movementMap.get(keyCode + "_CESS_W");
+					}
+					movementMap.put(keyCode + "_CESS_W", amount.add(cessTax.getWaivedTax()));
 				}
 
 				// Accounting Postings Process Execution
@@ -2454,6 +2536,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				addZeroifNotContains(movementMap, "bounceCharge_IGST_P");
 				addZeroifNotContains(movementMap, "bounceCharge_SGST_P");
 				addZeroifNotContains(movementMap, "bounceCharge_UGST_P");
+				addZeroifNotContains(movementMap, "bounceCharge_CESS_P");
 
 				// Assignment Percentage
 				excludeFees = null;
@@ -2563,12 +2646,39 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				if (!finFeeDetail.isRcdVisible()) {
 					continue;
 				}
-				FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
+				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+				Taxes cgstTax = new Taxes();
+				Taxes sgstTax = new Taxes();
+				Taxes igstTax = new Taxes();
+				Taxes ugstTax = new Taxes();
+				Taxes cessTax = new Taxes();
+				if (taxHeader != null) {
+					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+					if (CollectionUtils.isNotEmpty(taxDetails)) {
+						for (Taxes taxes : taxDetails) {
+							if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+								cgstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+								sgstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+								igstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+								ugstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+								cessTax = taxes;
+							}
+						}
+					}
+				}
+
 				String feeTypeCode = finFeeDetail.getFeeTypeCode();
 				dataMap.put(feeTypeCode + "_C", finFeeDetail.getActualAmount());
 				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
 					dataMap.put(feeTypeCode + "_W",
-							finFeeDetail.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
+							finFeeDetail.getWaivedAmount()
+									.subtract(cgstTax.getWaivedTax().add(sgstTax.getWaivedTax())
+											.add(igstTax.getWaivedTax()).add(ugstTax.getWaivedTax())
+											.add(cessTax.getWaivedTax())));
 				} else {
 					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
 				}
@@ -2587,28 +2697,32 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				dataMap.put(payType + feeTypeCode + "_P", finFeeDetail.getPaidAmountOriginal());
 
 				// Calculated Amount
-				dataMap.put(feeTypeCode + "_CGST_C", finTaxDetails.getActualCGST());
-				dataMap.put(feeTypeCode + "_SGST_C", finTaxDetails.getActualSGST());
-				dataMap.put(feeTypeCode + "_IGST_C", finTaxDetails.getActualIGST());
-				dataMap.put(feeTypeCode + "_UGST_C", finTaxDetails.getActualUGST());
+				dataMap.put(feeTypeCode + "_CGST_C", cgstTax.getActualTax());
+				dataMap.put(feeTypeCode + "_SGST_C", sgstTax.getActualTax());
+				dataMap.put(feeTypeCode + "_IGST_C", igstTax.getActualTax());
+				dataMap.put(feeTypeCode + "_UGST_C", ugstTax.getActualTax());
+				dataMap.put(feeTypeCode + "_CESS_C", cessTax.getActualTax());
 
 				// Paid Amount
-				dataMap.put(feeTypeCode + "_CGST_P", finTaxDetails.getPaidCGST());
-				dataMap.put(feeTypeCode + "_SGST_P", finTaxDetails.getPaidSGST());
-				dataMap.put(feeTypeCode + "_IGST_P", finTaxDetails.getPaidIGST());
-				dataMap.put(feeTypeCode + "_UGST_P", finTaxDetails.getPaidUGST());
+				dataMap.put(feeTypeCode + "_CGST_P", cgstTax.getPaidTax());
+				dataMap.put(feeTypeCode + "_SGST_P", sgstTax.getPaidTax());
+				dataMap.put(feeTypeCode + "_IGST_P", igstTax.getPaidTax());
+				dataMap.put(feeTypeCode + "_UGST_P", ugstTax.getPaidTax());
+				dataMap.put(feeTypeCode + "_CESS_P", cessTax.getPaidTax());
 
 				// Net Amount
-				dataMap.put(feeTypeCode + "_CGST_N", finTaxDetails.getNetCGST());
-				dataMap.put(feeTypeCode + "_SGST_N", finTaxDetails.getNetSGST());
-				dataMap.put(feeTypeCode + "_IGST_N", finTaxDetails.getNetIGST());
-				dataMap.put(feeTypeCode + "_UGST_N", finTaxDetails.getNetUGST());
+				dataMap.put(feeTypeCode + "_CGST_N", cgstTax.getNetTax());
+				dataMap.put(feeTypeCode + "_SGST_N", sgstTax.getNetTax());
+				dataMap.put(feeTypeCode + "_IGST_N", igstTax.getNetTax());
+				dataMap.put(feeTypeCode + "_UGST_N", ugstTax.getNetTax());
+				dataMap.put(feeTypeCode + "_CESS_N", cessTax.getNetTax());
 
-				//Waiver GST Amounts 
-				dataMap.put(feeTypeCode + "_CGST_W", finTaxDetails.getWaivedCGST());
-				dataMap.put(feeTypeCode + "_SGST_W", finTaxDetails.getWaivedSGST());
-				dataMap.put(feeTypeCode + "_IGST_W", finTaxDetails.getWaivedIGST());
-				dataMap.put(feeTypeCode + "_UGST_W", finTaxDetails.getWaivedUGST());
+				// Waiver GST Amounts (GST Waiver Changes)
+				dataMap.put(feeTypeCode + "_CGST_W", cgstTax.getWaivedTax());
+				dataMap.put(feeTypeCode + "_SGST_W", sgstTax.getWaivedTax());
+				dataMap.put(feeTypeCode + "_IGST_W", igstTax.getWaivedTax());
+				dataMap.put(feeTypeCode + "_UGST_W", ugstTax.getWaivedTax());
+				dataMap.put(feeTypeCode + "_CESS_W", cessTax.getWaivedTax());
 			}
 		}
 
@@ -3490,7 +3604,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				tempReceiptData.setForeClosureEnq(true);
 				setOrgReceiptData(tempReceiptData);
 				receiptAllocationDetails = tempReceiptData.getReceiptHeader().getAllocationsSummary();
-
 				BigDecimal receivableAmt = BigDecimal.ZERO;
 				BigDecimal bncCharge = BigDecimal.ZERO;
 				BigDecimal profitAmt = BigDecimal.ZERO;
@@ -3510,34 +3623,44 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					// Late Payment Charges
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_ODC)) {
-						closureReport.setLatePayCharges(
+						closureReport.setLatePayCharges(PennantApplicationUtil.formateAmount(
+								receiptAllocationDetail.getTotRecv().add(receiptAllocationDetail.getDueGST()),
+								formatter));
+					}
+
+					// Late Payment Interest Amount
+					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
+							RepayConstants.ALLOCATION_LPFT)) {
+						closureReport.setLatePayInterestAmt(
 								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter));
 					}
 
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_BOUNCE)) {
-						bncCharge = receiptAllocationDetail.getTotRecv();
+						bncCharge = receiptAllocationDetail.getTotRecv().add(receiptAllocationDetail.getDueGST());
 					}
 					//Issue Fixed 141089
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_MANADV)) {
-						receivableAmt = receivableAmt.add(receiptAllocationDetail.getTotRecv());
+						receivableAmt = receivableAmt
+								.add(receiptAllocationDetail.getTotRecv().add(receiptAllocationDetail.getDueGST()));
 					}
 
 					// Interest for the month
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_FUT_PFT)) {
-						closureReport.setInstForTheMonth(
-								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter));
+						closureReport.setInstForTheMonth(PennantApplicationUtil.formateAmount(
+								receiptAllocationDetail.getTotRecv().add(receiptAllocationDetail.getDueGST()),
+								formatter));
 					}
 
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_PFT)) {
-						profitAmt = receiptAllocationDetail.getTotRecv();
+						profitAmt = receiptAllocationDetail.getTotRecv().add(receiptAllocationDetail.getDueGST());
 					}
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_PRI)) {
-						principleAmt = receiptAllocationDetail.getTotRecv();
+						principleAmt = receiptAllocationDetail.getTotRecv().add(receiptAllocationDetail.getDueGST());
 					}
 
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
@@ -3550,8 +3673,11 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_FEE)) {
-						closureReport.setForeClosFees(closureReport.getForeClosFees().add(
-								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter)));
+						closureReport.setForeClosFees(closureReport.getForeClosFees()
+								.add(PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(),
+										formatter))
+								.add(PennantApplicationUtil.formateAmount(receiptAllocationDetail.getDueGST(),
+										formatter)));
 					}
 
 				}
@@ -3592,9 +3718,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				// bounce charges + Outstanding Principle + Interest For the
 				// Month + Foreclosure Charges
 				// -TDS - Total Waiver)
-				closureReport.setTotalDues(closureReport.getLatePayCharges().add(closureReport.getPendingInsts())
-						.add(closureReport.getCheqBncCharges()).add(closureReport.getOutstandingPri())
-						.add(closureReport.getInstForTheMonth())
+				closureReport.setTotalDues(closureReport.getLatePayCharges().add(closureReport.getLatePayInterestAmt())
+						.add(closureReport.getPendingInsts()).add(closureReport.getCheqBncCharges())
+						.add(closureReport.getOutstandingPri()).add(closureReport.getInstForTheMonth())
 						.add(closureReport.getForeClosFees().add(closureReport.getManualAdviceAmt()))
 						.subtract(closureReport.getTds()).subtract(closureReport.getTotWaiver()));
 				if (noOfIntDays > 0) {

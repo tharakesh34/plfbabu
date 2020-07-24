@@ -35,16 +35,6 @@ public class FinRepayQueueHeader {
 	private BigDecimal manAdvPaid = BigDecimal.ZERO;
 	private BigDecimal manAdvWaived = BigDecimal.ZERO;
 
-	private BigDecimal paidPenaltyCGST = BigDecimal.ZERO;
-	private BigDecimal paidPenaltySGST = BigDecimal.ZERO;
-	private BigDecimal paidPenaltyUGST = BigDecimal.ZERO;
-	private BigDecimal paidPenaltyIGST = BigDecimal.ZERO;
-
-	private BigDecimal penaltyWaiverCGST = BigDecimal.ZERO;
-	private BigDecimal penaltyWaiverSGST = BigDecimal.ZERO;
-	private BigDecimal penaltyWaiverUGST = BigDecimal.ZERO;
-	private BigDecimal penaltyWaiverIGST = BigDecimal.ZERO;
-
 	// Advise Amount
 	private BigDecimal adviseAmount = BigDecimal.ZERO;
 	private BigDecimal feeTds = BigDecimal.ZERO;
@@ -56,13 +46,13 @@ public class FinRepayQueueHeader {
 	private String partnerBankAcType;
 	private boolean pftChgAccReq;
 	private long receiptId;
-	private boolean cashTranExecuted = false;
 	private boolean stageAccExecuted = false;
 
 	private Map<String, BigDecimal> extDataMap = null;
 	private Map<String, Object> gstExecutionMap = null;
 	private List<FinRepayQueue> queueList = null;
 	private long repayID;
+	private boolean lppAmzReqonME = false;
 
 	public FinRepayQueueHeader() {
 
@@ -360,38 +350,6 @@ public class FinRepayQueueHeader {
 		this.gstExecutionMap = gstExecutionMap;
 	}
 
-	public BigDecimal getPaidPenaltyCGST() {
-		return paidPenaltyCGST;
-	}
-
-	public void setPaidPenaltyCGST(BigDecimal paidPenaltyCGST) {
-		this.paidPenaltyCGST = paidPenaltyCGST;
-	}
-
-	public BigDecimal getPaidPenaltySGST() {
-		return paidPenaltySGST;
-	}
-
-	public void setPaidPenaltySGST(BigDecimal paidPenaltySGST) {
-		this.paidPenaltySGST = paidPenaltySGST;
-	}
-
-	public BigDecimal getPaidPenaltyUGST() {
-		return paidPenaltyUGST;
-	}
-
-	public void setPaidPenaltyUGST(BigDecimal paidPenaltyUGST) {
-		this.paidPenaltyUGST = paidPenaltyUGST;
-	}
-
-	public BigDecimal getPaidPenaltyIGST() {
-		return paidPenaltyIGST;
-	}
-
-	public void setPaidPenaltyIGST(BigDecimal paidPenaltyIGST) {
-		this.paidPenaltyIGST = paidPenaltyIGST;
-	}
-
 	public long getRepayID() {
 		return repayID;
 	}
@@ -400,37 +358,14 @@ public class FinRepayQueueHeader {
 		this.repayID = repayID;
 	}
 
-	public BigDecimal getPenaltyWaiverCGST() {
-		return penaltyWaiverCGST;
+	public boolean isLppAmzReqonME() {
+		return lppAmzReqonME;
 	}
 
-	public void setPenaltyWaiverCGST(BigDecimal penaltyWaiverCGST) {
-		this.penaltyWaiverCGST = penaltyWaiverCGST;
+	public void setLppAmzReqonME(boolean lppAmzReqonME) {
+		this.lppAmzReqonME = lppAmzReqonME;
 	}
 
-	public BigDecimal getPenaltyWaiverSGST() {
-		return penaltyWaiverSGST;
-	}
-
-	public void setPenaltyWaiverSGST(BigDecimal penaltyWaiverSGST) {
-		this.penaltyWaiverSGST = penaltyWaiverSGST;
-	}
-
-	public BigDecimal getPenaltyWaiverUGST() {
-		return penaltyWaiverUGST;
-	}
-
-	public void setPenaltyWaiverUGST(BigDecimal penaltyWaiverUGST) {
-		this.penaltyWaiverUGST = penaltyWaiverUGST;
-	}
-
-	public BigDecimal getPenaltyWaiverIGST() {
-		return penaltyWaiverIGST;
-	}
-
-	public void setPenaltyWaiverIGST(BigDecimal penaltyWaiverIGST) {
-		this.penaltyWaiverIGST = penaltyWaiverIGST;
-	}
 
 	public BigDecimal getAdviseAmount() {
 		return adviseAmount;

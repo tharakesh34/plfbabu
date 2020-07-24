@@ -20,7 +20,6 @@ import com.pennant.backend.dao.rmtmasters.GSTRateDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.Branch;
-import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.GSTRate;
@@ -48,11 +47,6 @@ public class GSTCalculator {
 	private static final BigDecimal HUNDRED = new BigDecimal(100);
 	private static String TAX_ROUNDING_MODE;
 	private static int TAX_ROUNDING_TARGET;
-	private static BigDecimal TDS_PERCENTAGE = BigDecimal.ZERO;
-	private static String TAX_ROUND_MODE = null;
-	private static String TDS_ROUND_MODE = null;
-	private static int TDS_ROUNDING_TARGET = 0;
-	private static BigDecimal TDS_MULTIPLIER = BigDecimal.ZERO;
 
 	private static String CALCULATE_GST_ON_GSTRATE_MASTER_PARAM = null;
 	private static boolean CALCULATE_GST_ON_GSTRATE_MASTER = false;
@@ -170,13 +164,14 @@ public class GSTCalculator {
 		taxPercentages.put(RuleConstants.CODE_IGST, BigDecimal.ZERO);
 		taxPercentages.put(RuleConstants.CODE_SGST, BigDecimal.ZERO);
 		taxPercentages.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
-		taxPercentages.put(RuleConstants.CODE_TOTAL_GST, BigDecimal.ZERO);
 		taxPercentages.put(RuleConstants.CODE_CESS, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_TOTAL_GST, BigDecimal.ZERO);
 
 		Map<String, Object> dataMap = null;
 		String custBranch = null;
 		String custProvince = null;
 		String custCountry = null;
+		String custResdSts = null;
 
 		if (custId > 0) {
 			dataMap = financeMainDAO.getGSTDataMap(custId, TableType.MAIN_TAB);
@@ -200,11 +195,15 @@ public class GSTCalculator {
 			if (dataMap.get("CustCountry") != null) {
 				custCountry = dataMap.get("CustCountry").toString();
 			}
+
+			if (dataMap.get("ResidentialStatus") != null) {
+				custResdSts = dataMap.get("ResidentialStatus").toString();
+			}
 		} else {
 			custBranch = userBranch;
 		}
 
-		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custCountry, financeTaxDetail);
+		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custResdSts, custCountry, financeTaxDetail);
 		String ruleCode;
 		BigDecimal totalGST = BigDecimal.ZERO;
 		if (isGSTCalculationOnMaster()) {
@@ -238,7 +237,6 @@ public class GSTCalculator {
 
 		}
 
-		taxPercentages.put("TOTALGST", totalGST);
 		taxPercentages.put(RuleConstants.CODE_TOTAL_GST, totalGST);
 
 		return taxPercentages;
@@ -271,52 +269,6 @@ public class GSTCalculator {
 		Map<String, Object> dataMap = getGSTDataMap(finReference);
 
 		String finCCY = (Object) dataMap.get("FinCCY") == null ? "" : String.valueOf((Object) dataMap.get("FinCCY"));
-
-		//Setting fromState default val as empty, if fromState is not available in datamap or fromState val is not available in data map
-		if (dataMap.containsKey("fromState")) {
-			Object fromStateVal = dataMap.get("fromState");
-			if (fromStateVal != null && StringUtils.isBlank(fromStateVal.toString())) {
-				dataMap.put("fromState", "");
-			}
-		} else {
-			dataMap.put("fromState", "");
-		}
-
-		if (dataMap.containsKey("toUnionTerritory")) {
-			Object toUnionTerritory = dataMap.get("toUnionTerritory");
-			if (toUnionTerritory != null && StringUtils.isBlank(toUnionTerritory.toString())) {
-				dataMap.put("toUnionTerritory", false);
-			}
-		} else {
-			dataMap.put("toUnionTerritory", false);
-		}
-
-		if (dataMap.containsKey("toState")) {
-			Object toStateVal = dataMap.get("toState");
-			if (toStateVal != null && StringUtils.isBlank(toStateVal.toString())) {
-				dataMap.put("toState", "");
-			}
-		} else {
-			dataMap.put("toState", "");
-		}
-
-		if (dataMap.containsKey("fromUnionTerritory")) {
-			Object fromUnionTerritory = dataMap.get("fromUnionTerritory");
-			if (fromUnionTerritory != null && StringUtils.isBlank(fromUnionTerritory.toString())) {
-				dataMap.put("fromUnionTerritory", false);
-			}
-		} else {
-			dataMap.put("fromUnionTerritory", false);
-		}
-
-		if (dataMap.containsKey("toState")) {
-			Object toStateVal = dataMap.get("toState");
-			if (toStateVal != null && StringUtils.isBlank(toStateVal.toString())) {
-				dataMap.put("toState", "");
-			}
-		} else {
-			dataMap.put("toState", "");
-		}
 
 		String ruleCode;
 		BigDecimal totalGST = BigDecimal.ZERO;
@@ -352,7 +304,6 @@ public class GSTCalculator {
 
 			}
 		}
-		gstPercentages.put("TOTALGST", totalGST);
 		gstPercentages.put(RuleConstants.CODE_TOTAL_GST, totalGST);
 
 		return gstPercentages;
@@ -388,9 +339,13 @@ public class GSTCalculator {
 				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
 				totalTaxPerc = totalTaxPerc.add(taxPerc);
 				taxPercMap.put(RuleConstants.CODE_UGST, taxPerc);
+			} else if (StringUtils.equals(RuleConstants.CODE_CESS, rule.getRuleCode())) {
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+				totalTaxPerc = totalTaxPerc.add(taxPerc);
+				taxPercMap.put(RuleConstants.CODE_CESS, taxPerc);
 			}
 		}
-		taxPercMap.put("TOTALGST", totalTaxPerc);
+		taxPercMap.put(RuleConstants.CODE_TOTAL_GST, totalTaxPerc);
 
 		return taxPercMap;
 	}
@@ -410,15 +365,17 @@ public class GSTCalculator {
 		String custBranch = (String) dataMap.computeIfAbsent("CustBranch", ft -> "");
 		String custProvince = (String) dataMap.computeIfAbsent("CustProvince", ft -> "");
 		String custCountry = (String) dataMap.computeIfAbsent("CustCountry", ft -> "");
+		String custResdSts = (Object) dataMap.get("ResidentialStatus") == null ? ""
+				: String.valueOf((Object) dataMap.get("ResidentialStatus"));
 
 		FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finReference, "_View");
 
-		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custCountry, financeTaxDetail);
+		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custResdSts, custCountry, financeTaxDetail);
 		return dataMap;
 	}
 
 	public static Map<String, Object> getGSTDataMap(String finBranch, String custBranch, String custState,
-			String custCountry, FinanceTaxDetail taxDetail) {
+			String custResdType, String custCountry, FinanceTaxDetail taxDetail) {
 
 		HashMap<String, Object> gstExecutionMap = new HashMap<>();
 		boolean gstExempted = false;
@@ -444,6 +401,7 @@ public class GSTCalculator {
 		String toStateCode = "";
 		String toCountryCode = "";
 		boolean sezCustomer = false;
+		boolean gstNumber = true;
 
 		if (taxDetail != null && StringUtils.isNotBlank(taxDetail.getApplicableFor())
 				&& !PennantConstants.List_Select.equals(taxDetail.getApplicableFor())
@@ -453,6 +411,9 @@ public class GSTCalculator {
 			gstExempted = taxDetail.isTaxExempted();
 			if (StringUtils.isNotBlank(taxDetail.getSezCertificateNo())) {
 				sezCustomer = true;
+			}
+			if (StringUtils.isNotBlank(taxDetail.getTaxNumber())) {
+				gstNumber = false;
 			}
 		} else {
 			toStateCode = custState;
@@ -479,6 +440,8 @@ public class GSTCalculator {
 
 		gstExecutionMap.put("gstExempted", gstExempted);
 		gstExecutionMap.put("sezCertificateNo", sezCustomer);
+		gstExecutionMap.put("residentialStatus", custResdType);
+		gstExecutionMap.put("customerUnRegistered", gstNumber);
 
 		return gstExecutionMap;
 	}
@@ -571,30 +534,6 @@ public class GSTCalculator {
 		GSTCalculator.gstRateDAO = gstRateDAO;
 	}
 
-	/**
-	 * Advise Waiver Calculation
-	 * 
-	 * @param finReference
-	 * @param movement
-	 */
-	public static void waiverAdviseCalc(String finReference, ManualAdviseMovements movement) {
-		TaxAmountSplit taxSplit = null;
-		Map<String, BigDecimal> taxPercentages = getTaxPercentages(finReference);
-		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(movement.getTaxComponent())) {
-			taxSplit = getExclusiveGST(movement.getPaidAmount(), taxPercentages);
-		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(movement.getTaxComponent())) {
-			taxSplit = getInclusiveGST(movement.getPaidAmount(), taxPercentages);
-		} else {
-			return;
-		}
-		if (taxSplit != null) {
-			movement.setWaivedCGST(taxSplit.getcGST());
-			movement.setWaivedSGST(taxSplit.getsGST());
-			movement.setWaivedIGST(taxSplit.getiGST());
-			movement.setWaivedUGST(taxSplit.getuGST());
-		}
-	}
-
 	public static BigDecimal calGstTaxAmount(BigDecimal actTaxAmount, BigDecimal gstPerc, BigDecimal totalGSTPerc) {
 		BigDecimal gstAmount = BigDecimal.ZERO;
 
@@ -604,40 +543,6 @@ public class GSTCalculator {
 		}
 
 		return gstAmount;
-	}
-
-	public static BigDecimal getTDS(BigDecimal amount) {
-		initilizeSMPParameters();
-
-		BigDecimal tds = amount.multiply(TDS_PERCENTAGE);
-		tds = tds.divide(HUNDRED, 9, RoundingMode.HALF_UP);
-		tds = CalculationUtil.roundAmount(tds, TDS_ROUND_MODE, TDS_ROUNDING_TARGET);
-		return tds;
-	}
-
-	public static BigDecimal getNetTDS(BigDecimal amount) {
-		initilizeSMPParameters();
-
-		BigDecimal netAmount = amount.multiply(TDS_MULTIPLIER);
-		netAmount = CalculationUtil.roundAmount(netAmount, TAX_ROUND_MODE, TDS_ROUNDING_TARGET);
-
-		return netAmount;
-	}
-
-	private static void initilizeSMPParameters() {
-		if (StringUtils.isEmpty(TAX_ROUND_MODE) || StringUtils.isEmpty(TDS_ROUND_MODE)) {
-			TAX_ROUND_MODE = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
-			TDS_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
-
-			TDS_ROUND_MODE = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-			TDS_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
-			TDS_PERCENTAGE = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-			TDS_MULTIPLIER = HUNDRED.divide(HUNDRED.subtract(TDS_PERCENTAGE), 20, RoundingMode.HALF_DOWN);
-
-			TAX_ROUND_MODE = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
-			TDS_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
-
-		}
 	}
 
 }

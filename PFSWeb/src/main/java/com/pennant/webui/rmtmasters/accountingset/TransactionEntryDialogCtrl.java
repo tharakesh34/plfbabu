@@ -96,7 +96,7 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AmountCode;
@@ -1722,11 +1722,18 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		feeMap.put("_IGST_SCH", Labels.getLabel("label_TransactionEntryDialog_IGST"));
 		feeMap.put("_IGST_AF", Labels.getLabel("label_TransactionEntryDialog_IGST"));
 
-		// Waivers
+		feeMap.put("_CESS_C", Labels.getLabel("label_TransactionEntryDialog_CESS"));
+		feeMap.put("_CESS_N", Labels.getLabel("label_TransactionEntryDialog_CESS"));
+		feeMap.put("_CESS_P", Labels.getLabel("label_TransactionEntryDialog_CESS"));
+		feeMap.put("_CESS_SCH", Labels.getLabel("label_TransactionEntryDialog_CESS"));
+		feeMap.put("_CESS_AF", Labels.getLabel("label_TransactionEntryDialog_CESS"));
+
+		//Waivers
 		feeMap.put("_CGST_W", Labels.getLabel("label_TransactionEntryDialog_W_CGST"));
 		feeMap.put("_SGST_W", Labels.getLabel("label_TransactionEntryDialog_W_SGST"));
 		feeMap.put("_UGST_W", Labels.getLabel("label_TransactionEntryDialog_W_UGST"));
 		feeMap.put("_IGST_W", Labels.getLabel("label_TransactionEntryDialog_W_IGST"));
+		feeMap.put("_CESS_W", Labels.getLabel("label_TransactionEntryDialog_W_IGST"));
 
 		// TDS
 		if (ImplementationConstants.ALLOW_TDS_ON_FEE) {

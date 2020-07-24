@@ -337,15 +337,6 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 			getFinanceSuspHeadDAO().update(financeSuspHead, tableType);
 		}
 
-		// Save Fee Charges List
-		//=======================================
-		if (StringUtils.isNotBlank(tableType)) {
-			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),
-					financeSuspHead.getFinanceDetail().getModuleDefiner(), false, tableType);
-		}
-		saveFeeChargeList(financeSuspHead.getFinanceDetail().getFinScheduleData(),
-				financeSuspHead.getFinanceDetail().getModuleDefiner(), false, tableType);
-
 		// Save Document Details
 		if (financeSuspHead.getFinanceDetail().getDocumentDetailsList() != null
 				&& financeSuspHead.getFinanceDetail().getDocumentDetailsList().size() > 0) {
@@ -470,11 +461,6 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 				getFinanceSuspHeadDAO().update(financeSuspHead, "");
 			}
 		}
-
-		// Save Fee Charges List
-		//=======================================
-		saveFeeChargeList(financeSuspHead.getFinanceDetail().getFinScheduleData(),
-				financeSuspHead.getFinanceDetail().getModuleDefiner(), false, "");
 
 		// Save Document Details
 		if (financeSuspHead.getFinanceDetail().getDocumentDetailsList() != null

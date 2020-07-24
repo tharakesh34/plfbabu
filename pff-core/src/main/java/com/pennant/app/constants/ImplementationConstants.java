@@ -137,6 +137,7 @@ public class ImplementationConstants {
 		VALIDATE_BENFICIARY_ACCOUNT = getValueAsBoolean(extensions, "VALIDATE_BENFICIARY_ACCOUNT", false);
 		AUTO_EOD_REQUIRED = getValueAsBoolean(extensions, "AUTO_EOD_REQUIRED", false);
 		ALW_ADV_INTEMI_ADVICE_CREATION = getValueAsBoolean(extensions, "ALW_ADV_INTEMI_ADVICE_CREATION", false);
+		TAX_DFT_CR_INV_REQ = getValueAsBoolean(extensions, "TAX_DFT_CR_INV_REQ", false);
 		ALLOW_IND_AS = getValueAsBoolean(extensions, "ALLOW_IND_AS", false);
 		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
 		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", false);
@@ -167,6 +168,7 @@ public class ImplementationConstants {
 		CLIENTTYPE = getValueAsString(extensions, "CLIENTTYPE", "NBFC");
 		COLLATERAL_ADJ = getValueAsString(extensions, "COLLATERAL_ADJ", "NO_ADJ");
 		LPP_GST_DUE_ON = getValueAsString(extensions, "LPP_GST_DUE_ON", "A");
+		GST_SCHD_CAL_ON = getValueAsString(extensions, "GST_SCHD_CAL_ON", "I");
 		ALLOW_AMOIUNT_INTEGRAL_PART = getValueAsString(extensions, "ALLOW_AMOIUNT_INTEGRAL_PART", "Y");
 	}
 
@@ -276,6 +278,7 @@ public class ImplementationConstants {
 	public static boolean VALIDATE_BENFICIARY_ACCOUNT;
 	public static boolean AUTO_EOD_REQUIRED;
 	public static boolean ALW_ADV_INTEMI_ADVICE_CREATION;
+	public static boolean TAX_DFT_CR_INV_REQ = false;
 	public static boolean ALLOW_IND_AS;
 	public static boolean ALLOW_AUTO_KNOCK_OFF;
 	public static boolean ALLOW_OLDEST_DUE;
@@ -302,7 +305,19 @@ public class ImplementationConstants {
 	public static String BANK;
 	public static String CLIENTTYPE;
 	public static String COLLATERAL_ADJ;
-	public static String LPP_GST_DUE_ON;
+
+	/**
+	 * GST Invoice Due basis/Receipt Basis
+	 * <p>
+	 * If Due Basis creation , means LPP created as fixed amount and same should be accrued on creation date then
+	 * PARAMTER = "D"
+	 * <p>
+	 * If Accrual Basis Creation, means LPP is calculated on daily basis then Accrual postings happen on Month End --
+	 * PARAMTER = "A"
+	 */
+	public static String LPP_GST_DUE_ON = "A";
+
+	public static String GST_SCHD_CAL_ON = "I";
 	public static String ALLOW_AMOIUNT_INTEGRAL_PART;
 
 	private static Map<String, Object> getFeatureExtensions() {

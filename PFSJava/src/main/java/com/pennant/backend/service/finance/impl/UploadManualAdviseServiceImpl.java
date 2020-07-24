@@ -30,7 +30,7 @@ import com.pennant.backend.dao.manualadviseupload.UploadManualAdviseDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.UploadHeader;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.service.GenericService;

@@ -46,10 +46,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#50" author="aditya.a" dbms="postgresql">
 		<dropNotNullConstraint tableName="ADTFINANCEMAIN" columnName="REFERRALID" columnDataType="VARCHAR(10)" />
 	</changeSet>
-	
-	
+
+
 </databaseChangeLog>

@@ -68,6 +68,7 @@ import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
@@ -283,7 +284,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append("Select FeeID, FeeOrder, CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, RemainingFee");
 		sql.append(", VasReference, Status, Refundable");
 		sql.append(", ActualAmountOriginal, PaidAmountOriginal, NetAmount");
-		sql.append(", ActPercentage, WaivedGST, ReferenceId");
+		sql.append(", ActPercentage, WaivedGST, ReferenceId, TaxHeaderId ");
 		sql.append(", PaidTDS, RemTDS, NetTDS");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent");
@@ -963,7 +964,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			fd.setInstructionUID(rs.getLong("InstructionUID"));
 			fd.setWaivedGST(rs.getBigDecimal("WaivedGST"));
 			fd.setReferenceId(rs.getLong("ReferenceId"));
-			fd.setTaxHeaderId(rs.getLong("TaxHeaderId"));
+			fd.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
 			fd.setVersion(rs.getInt("Version"));
 			fd.setLastMntBy(rs.getLong("LastMntBy"));
 			fd.setLastMntOn(rs.getTimestamp("LastMntOn"));

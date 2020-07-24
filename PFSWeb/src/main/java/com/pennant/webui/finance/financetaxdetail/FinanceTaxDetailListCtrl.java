@@ -62,6 +62,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.finance.financetaxdetail.model.FinanceTaxDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -118,6 +119,14 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	 */
 	public FinanceTaxDetailListCtrl() {
 		super();
+	}
+
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+		if (!enqiryModule) {
+			this.searchObject.addFilterNotEqual("recordType", PennantConstants.RECORD_TYPE_NEW);
+		}
 	}
 
 	@Override

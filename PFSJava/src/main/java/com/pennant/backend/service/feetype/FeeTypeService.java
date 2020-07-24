@@ -44,7 +44,7 @@
 package com.pennant.backend.service.feetype;
 
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 
 public interface FeeTypeService {
 

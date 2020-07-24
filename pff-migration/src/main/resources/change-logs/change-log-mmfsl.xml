@@ -97,84 +97,84 @@
 
 	<changeSet id="1.4" author="vijaya.a">
 		<createView viewName="CD_Manufacturers_VIEW" replaceIfExists="true">
-			  SELECT t1.manufacturerId,
-    			t1.name,
-   				t1.description,
-    			t1.channel,
-          		t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Manufacturers_Temp t1
+			SELECT t1.manufacturerId,
+			t1.name,
+			t1.description,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Manufacturers_Temp t1
 			UNION ALL
- 			SELECT t1.manufacturerId,
-    			t1.name,
-   				t1.description,
-    			t1.channel,
-         		t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   				FROM CD_Manufacturers t1
-  			WHERE NOT (EXISTS ( SELECT 1
-            FROM CD_Manufacturers_Temp
-            WHERE CD_Manufacturers_Temp.manufacturerId = t1.manufacturerId))
+			SELECT t1.manufacturerId,
+			t1.name,
+			t1.description,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Manufacturers t1
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM CD_Manufacturers_Temp
+			WHERE CD_Manufacturers_Temp.manufacturerId = t1.manufacturerId))
 		</createView>
 	</changeSet>
 
 	<changeSet id="1.5" author="vijaya.a">
 		<createView viewName="CD_Manufacturers_AVIEW" replaceIfExists="true">
-			  SELECT t1.manufacturerId,
-    			t1.name,
-   				t1.description,
-    			t1.channel,     
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			  FROM CD_Manufacturers t1
+			SELECT t1.manufacturerId,
+			t1.name,
+			t1.description,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Manufacturers t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="1.6" author="vijaya.a">
 		<createView viewName="CD_Manufacturers_TVIEW" replaceIfExists="true">
-			  SELECT t1.manufacturerId,
-    			t1.name,
-   				t1.description,
-    			t1.channel,     
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			  FROM CD_Manufacturers_Temp t1
+			SELECT t1.manufacturerId,
+			t1.name,
+			t1.description,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Manufacturers_Temp t1
 		</createView>
 	</changeSet>
 
@@ -267,104 +267,104 @@
 
 	<changeSet id="2.5" author="vijaya.a">
 		<createView viewName="CD_Products_VIEW" replaceIfExists="true">
-			  SELECT t1.productId,
-    			t1.modelId,
-   				t1.modelDescription,
-    			t1.manufacturerId,     
-    			t1.assetDescription,
-    			t1.minAmount,
-    			t1.maxAmount,
-    			t1.modelStatus,
-    			t1.channel,
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Products_Temp t1
+			SELECT t1.productId,
+			t1.modelId,
+			t1.modelDescription,
+			t1.manufacturerId,
+			t1.assetDescription,
+			t1.minAmount,
+			t1.maxAmount,
+			t1.modelStatus,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Products_Temp t1
 			UNION ALL
- 			SELECT t1.productId,
-    			t1.modelId,
-   				t1.modelDescription,
-    			t1.manufacturerId,     
-    			t1.assetDescription,
-    			t1.minAmount,
-    			t1.maxAmount,
-    			t1.modelStatus,
-    			t1.channel,
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   				FROM CD_Products t1
-  			WHERE NOT (EXISTS ( SELECT 1
-            FROM CD_Products_Temp
-            WHERE CD_Products_Temp.productId = t1.productId))
+			SELECT t1.productId,
+			t1.modelId,
+			t1.modelDescription,
+			t1.manufacturerId,
+			t1.assetDescription,
+			t1.minAmount,
+			t1.maxAmount,
+			t1.modelStatus,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Products t1
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM CD_Products_Temp
+			WHERE CD_Products_Temp.productId = t1.productId))
 		</createView>
 	</changeSet>
 
 	<changeSet id="2.6" author="vijaya.a">
 		<createView viewName="CD_Products_AVIEW" replaceIfExists="true">
-			  SELECT t1.productId,
-    			t1.modelId,
-   				t1.modelDescription,
-    			t1.manufacturerId,     
-    			t1.assetDescription,
-    			t1.minAmount,
-    			t1.maxAmount,
-    			t1.modelStatus,
-    			t1.channel,
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			  FROM CD_Products t1
+			SELECT t1.productId,
+			t1.modelId,
+			t1.modelDescription,
+			t1.manufacturerId,
+			t1.assetDescription,
+			t1.minAmount,
+			t1.maxAmount,
+			t1.modelStatus,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Products t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="2.7" author="vijaya.a">
 		<createView viewName="CD_Products_TVIEW" replaceIfExists="true">
-			  SELECT t1.productId,
-    			t1.modelId,
-   				t1.modelDescription,
-    			t1.manufacturerId,     
-    			t1.assetDescription,
-    			t1.minAmount,
-    			t1.maxAmount,
-    			t1.modelStatus,
-    			t1.channel,
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			  FROM CD_Products_Temp t1
+			SELECT t1.productId,
+			t1.modelId,
+			t1.modelDescription,
+			t1.manufacturerId,
+			t1.assetDescription,
+			t1.minAmount,
+			t1.maxAmount,
+			t1.modelStatus,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Products_Temp t1
 		</createView>
 	</changeSet>
 
@@ -510,152 +510,152 @@
 
 	<changeSet id="3.4" author="vijaya.a">
 		<createView viewName="CD_Merchants_VIEW" replaceIfExists="true">
-			  SELECT t1.merchantId,
-    			t1.merchantName,
-   				t1.storeId,
-    			t1.storeName,     
-    			t1.storeAddressLine1,
-    			t1.storeAddressLine2,
-    			t1.storeAddressLine3,
-    			t1.storeCity,
-    			t1.storeState,
-         		t1.storeCountry,
-         		t1.cityName,
-          		t1.stateName,
-          		t1.countryName,
-    			t1.pOSID,
-    			t1.avgTranPerMnth,
-    			t1.avgTranAmtPerMnth,
-    			t1.tranAmtPerTran,
-    			t1.tranAmtPerDay,
-    			t1.allowRefund,
-    			t1.peakTransPerDay,
-    			t1.channel,
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Merchants_Temp t1
+			SELECT t1.merchantId,
+			t1.merchantName,
+			t1.storeId,
+			t1.storeName,
+			t1.storeAddressLine1,
+			t1.storeAddressLine2,
+			t1.storeAddressLine3,
+			t1.storeCity,
+			t1.storeState,
+			t1.storeCountry,
+			t1.cityName,
+			t1.stateName,
+			t1.countryName,
+			t1.pOSID,
+			t1.avgTranPerMnth,
+			t1.avgTranAmtPerMnth,
+			t1.tranAmtPerTran,
+			t1.tranAmtPerDay,
+			t1.allowRefund,
+			t1.peakTransPerDay,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Merchants_Temp t1
 			UNION ALL
- 			SELECT t1.merchantId,
-    			t1.merchantName,
-   				t1.storeId,
-    			t1.storeName,     
-    			t1.storeAddressLine1,
-    			t1.storeAddressLine2,
-    			t1.storeAddressLine3,
-    			t1.storeCity,
-    			t1.storeState,
-    			t1.storeCountry,
-         		t1.cityName,
-          		t1.stateName,
-          		t1.countryName,
-    			t1.pOSID,
-    			t1.avgTranPerMnth,
-    			t1.avgTranAmtPerMnth,
-    			t1.tranAmtPerTran,
-    			t1.tranAmtPerDay,
-    			t1.allowRefund,
-    			t1.peakTransPerDay,
-    			t1.channel,
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Merchants t1
-  			WHERE NOT (EXISTS ( SELECT 1
-            FROM CD_Merchants_Temp
-            WHERE CD_Merchants_Temp.merchantId = t1.merchantId))
+			SELECT t1.merchantId,
+			t1.merchantName,
+			t1.storeId,
+			t1.storeName,
+			t1.storeAddressLine1,
+			t1.storeAddressLine2,
+			t1.storeAddressLine3,
+			t1.storeCity,
+			t1.storeState,
+			t1.storeCountry,
+			t1.cityName,
+			t1.stateName,
+			t1.countryName,
+			t1.pOSID,
+			t1.avgTranPerMnth,
+			t1.avgTranAmtPerMnth,
+			t1.tranAmtPerTran,
+			t1.tranAmtPerDay,
+			t1.allowRefund,
+			t1.peakTransPerDay,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Merchants t1
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM CD_Merchants_Temp
+			WHERE CD_Merchants_Temp.merchantId = t1.merchantId))
 		</createView>
 	</changeSet>
 
 	<changeSet id="3.5" author="vijaya.a">
 		<createView viewName="CD_Merchants_AVIEW" replaceIfExists="true">
-			  SELECT t1.merchantId,
-    			t1.merchantName,
-   				t1.storeId,
-    			t1.storeName,     
-    			t1.storeAddressLine1,
-    			t1.storeAddressLine2,
-    			t1.storeAddressLine3,
-    			t1.storeCity,
-    			t1.storeState,
-    			t1.storeCountry,
-         		t1.cityName,
-          		t1.stateName,
-          		t1.countryName,
-    			t1.pOSID,
-    			t1.avgTranPerMnth,
-    			t1.avgTranAmtPerMnth,
-    			t1.tranAmtPerTran,
-    			t1.tranAmtPerDay,
-    			t1.allowRefund,
-    			t1.peakTransPerDay,
-    			t1.channel,
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Merchants t1
+			SELECT t1.merchantId,
+			t1.merchantName,
+			t1.storeId,
+			t1.storeName,
+			t1.storeAddressLine1,
+			t1.storeAddressLine2,
+			t1.storeAddressLine3,
+			t1.storeCity,
+			t1.storeState,
+			t1.storeCountry,
+			t1.cityName,
+			t1.stateName,
+			t1.countryName,
+			t1.pOSID,
+			t1.avgTranPerMnth,
+			t1.avgTranAmtPerMnth,
+			t1.tranAmtPerTran,
+			t1.tranAmtPerDay,
+			t1.allowRefund,
+			t1.peakTransPerDay,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Merchants t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="3.6" author="vijaya.a">
 		<createView viewName="CD_Merchants_TVIEW" replaceIfExists="true">
-			  SELECT t1.merchantId,
-    			t1.merchantName,
-   				t1.storeId,
-    			t1.storeName,     
-    			t1.storeAddressLine1,
-    			t1.storeAddressLine2,
-    			t1.storeAddressLine3,
-    			t1.storeCity,
-    			t1.storeState,
-    			t1.storeCountry,
-          		t1.cityName,
-          		t1.stateName,
-          		t1.countryName,
-    			t1.pOSID,
-    			t1.avgTranPerMnth,
-    			t1.avgTranAmtPerMnth,
-    			t1.tranAmtPerTran,
-    			t1.tranAmtPerDay,
-    			t1.allowRefund,
-    			t1.peakTransPerDay,
-    			t1.channel,
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Merchants_Temp t1
+			SELECT t1.merchantId,
+			t1.merchantName,
+			t1.storeId,
+			t1.storeName,
+			t1.storeAddressLine1,
+			t1.storeAddressLine2,
+			t1.storeAddressLine3,
+			t1.storeCity,
+			t1.storeState,
+			t1.storeCountry,
+			t1.cityName,
+			t1.stateName,
+			t1.countryName,
+			t1.pOSID,
+			t1.avgTranPerMnth,
+			t1.avgTranAmtPerMnth,
+			t1.tranAmtPerTran,
+			t1.tranAmtPerDay,
+			t1.allowRefund,
+			t1.peakTransPerDay,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Merchants_Temp t1
 		</createView>
 	</changeSet>
 
@@ -1008,84 +1008,84 @@
 
 	<changeSet id="7.4" author="Nageswar.p">
 		<createView viewName="CD_DealerMapping_VIEW" replaceIfExists="true">
-			  SELECT t1.dealerMapId,
-    			t1.MerchantId,
-   				t1.storeId,
-    			t1.dealerCode,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			   FROM CD_DealerMapping_Temp t1
+			SELECT t1.dealerMapId,
+			t1.MerchantId,
+			t1.storeId,
+			t1.dealerCode,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerMapping_Temp t1
 			UNION ALL
- 			SELECT t1.dealerMapId,
-    			t1.MerchantId,
-   				t1.storeId,
-    			t1.dealerCode,
-    			t1.active,    
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerMapping t1
-  			WHERE NOT (EXISTS (SELECT 1
-            FROM CD_DealerMapping_Temp 
-            WHERE CD_DealerMapping_Temp.dealerMapId = t1.dealerMapId))
+			SELECT t1.dealerMapId,
+			t1.MerchantId,
+			t1.storeId,
+			t1.dealerCode,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerMapping t1
+			WHERE NOT (EXISTS (SELECT 1
+			FROM CD_DealerMapping_Temp
+			WHERE CD_DealerMapping_Temp.dealerMapId = t1.dealerMapId))
 		</createView>
 	</changeSet>
 
 	<changeSet id="7.5" author="Nageswar.p">
 		<createView viewName="CD_DealerMapping_AVIEW" replaceIfExists="true">
-			  SELECT t1.dealerMapId,
-    			t1.MerchantId,
-   				t1.storeId,
-    			t1.dealerCode,
-    			t1.active,   
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerMapping t1
+			SELECT t1.dealerMapId,
+			t1.MerchantId,
+			t1.storeId,
+			t1.dealerCode,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerMapping t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="7.6" author="Nageswar.p">
 		<createView viewName="CD_DealerMapping_TVIEW" replaceIfExists="true">
-			  SELECT t1.dealerMapId,
-    			t1.MerchantId,
-   				t1.storeId,
-    			t1.dealerCode,
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerMapping_Temp t1
+			SELECT t1.dealerMapId,
+			t1.MerchantId,
+			t1.storeId,
+			t1.dealerCode,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerMapping_Temp t1
 		</createView>
 	</changeSet>
 
@@ -1172,84 +1172,84 @@
 
 	<changeSet id="8.4" author="Shahbaj.b">
 		<createView viewName="CD_DealerGroup_VIEW" replaceIfExists="true">
-			  SELECT t1.dealerGroupId,
-    			t1.dealercode,
-   				t1.dealercategoryid,
-    			t1.channel,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerGroup_Temp t1
+			SELECT t1.dealerGroupId,
+			t1.dealercode,
+			t1.dealercategoryid,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerGroup_Temp t1
 			UNION ALL
- 			SELECT t1.dealerGroupId,
-    			t1.dealercode,
-   				t1.dealercategoryid,
-    			t1.channel,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerGroup t1
-  			WHERE NOT (EXISTS ( SELECT 1
-            FROM CD_DealerGroup_Temp
-            WHERE CD_DealerGroup_Temp.dealerGroupId = t1.dealerGroupId))
+			SELECT t1.dealerGroupId,
+			t1.dealercode,
+			t1.dealercategoryid,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerGroup t1
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM CD_DealerGroup_Temp
+			WHERE CD_DealerGroup_Temp.dealerGroupId = t1.dealerGroupId))
 		</createView>
 	</changeSet>
 
 	<changeSet id="8.5" author="Shahbaj.b">
 		<createView viewName="CD_DealerGroup_AVIEW" replaceIfExists="true">
-			  SELECT t1.dealerGroupId,
-    			t1.dealercode,
-   				t1.dealercategoryid,
-    			t1.channel,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerGroup t1
+			SELECT t1.dealerGroupId,
+			t1.dealercode,
+			t1.dealercategoryid,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerGroup t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="8.6" author="Shahbaj.b">
 		<createView viewName="CD_DealerGroup_TVIEW" replaceIfExists="true">
-			 SELECT t1.dealerGroupId,
-    			t1.dealercode,
-   				t1.dealercategoryid,
-    			t1.channel,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerGroup_Temp t1
+			SELECT t1.dealerGroupId,
+			t1.dealercode,
+			t1.dealercategoryid,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerGroup_Temp t1
 		</createView>
 	</changeSet>
 
@@ -1389,84 +1389,84 @@
 
 	<changeSet id="9.4" author="Shahbaj.b">
 		<createView viewName="ProductGroup_VIEW" replaceIfExists="true">
-			 SELECT t1.productGroupId,
-    			t1.modelId,
-   				t1.productcategoryid,
-    			t1.channel,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM ProductGroup_Temp t1
+			SELECT t1.productGroupId,
+			t1.modelId,
+			t1.productcategoryid,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM ProductGroup_Temp t1
 			UNION ALL
- 			SELECT t1.productGroupId,
-    			t1.modelId,
-   				t1.productcategoryid,
-    			t1.channel,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM ProductGroup t1
-  			WHERE NOT (EXISTS ( SELECT 1
-            FROM ProductGroup_Temp
-            WHERE ProductGroup_Temp.productGroupId = t1.productGroupId))
+			SELECT t1.productGroupId,
+			t1.modelId,
+			t1.productcategoryid,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM ProductGroup t1
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM ProductGroup_Temp
+			WHERE ProductGroup_Temp.productGroupId = t1.productGroupId))
 		</createView>
 	</changeSet>
 
 	<changeSet id="9.5" author="Shahbaj.b">
 		<createView viewName="ProductGroup_AVIEW" replaceIfExists="true">
-			  SELECT t1.productGroupId,
-    			t1.modelId,
-   				t1.productcategoryid,
-    			t1.channel,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM ProductGroup t1
+			SELECT t1.productGroupId,
+			t1.modelId,
+			t1.productcategoryid,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM ProductGroup t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="9.6" author="Shahbaj.b">
 		<createView viewName="ProductGroup_TVIEW" replaceIfExists="true">
-			 SELECT t1.productGroupId,
-    			t1.modelId,
-   				t1.productcategoryid,
-    			t1.channel,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM ProductGroup_Temp t1
+			SELECT t1.productGroupId,
+			t1.modelId,
+			t1.productcategoryid,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM ProductGroup_Temp t1
 		</createView>
 	</changeSet>
 
@@ -1604,80 +1604,80 @@
 
 	<changeSet id="10.4" author="vijaya.a">
 		<createView viewName="CD_Scheme_DealerGroup_VIEW" replaceIfExists="true">
-			SELECT t1.schemeDealerGroupId, 
-				t1.promotionId,
-				t1.dealerGroupCode,
-   				t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Scheme_DealerGroup_Temp t1
+			SELECT t1.schemeDealerGroupId,
+			t1.promotionId,
+			t1.dealerGroupCode,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Scheme_DealerGroup_Temp t1
 			UNION ALL
- 			SELECT t1.schemeDealerGroupId, 
-				t1.promotionId,
-    			t1.dealerGroupCode,
-   				t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Scheme_DealerGroup t1
-  			WHERE NOT (EXISTS ( SELECT 1
-            FROM CD_Scheme_DealerGroup_Temp
-            WHERE CD_Scheme_DealerGroup_Temp.promotionId = t1.promotionId))
+			SELECT t1.schemeDealerGroupId,
+			t1.promotionId,
+			t1.dealerGroupCode,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Scheme_DealerGroup t1
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM CD_Scheme_DealerGroup_Temp
+			WHERE CD_Scheme_DealerGroup_Temp.promotionId = t1.promotionId))
 		</createView>
 	</changeSet>
 
 	<changeSet id="10.5" author="vijaya.a">
 		<createView viewName="CD_Scheme_DealerGroup_AVIEW" replaceIfExists="true">
-			SELECT t1.schemeDealerGroupId, 
-				t1.promotionId,
-    			t1.dealerGroupCode,
-   				t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Scheme_DealerGroup t1
+			SELECT t1.schemeDealerGroupId,
+			t1.promotionId,
+			t1.dealerGroupCode,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Scheme_DealerGroup t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="10.6" author="vijaya.a">
 		<createView viewName="CD_Scheme_DealerGroup_TVIEW" replaceIfExists="true">
-			  SELECT t1.schemeDealerGroupId, 
-				t1.promotionId,
-    			t1.dealerGroupCode,
-   				t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Scheme_DealerGroup_Temp t1
+			SELECT t1.schemeDealerGroupId,
+			t1.promotionId,
+			t1.dealerGroupCode,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Scheme_DealerGroup_Temp t1
 		</createView>
 	</changeSet>
 
@@ -1743,52 +1743,52 @@
 
 	<changeSet id="10.1" author="Nageswar.p">
 		<createView viewName="CD_DealerMapping_VIEW" replaceIfExists="true">
- 			SELECT t1.dealerMapId,
-    			t1.MerchantId,
-   				t1.storeId,
-    			t1.dealerCode,
-    			t1.active,
-          		t2.merchantName,
-          		t2.storeName As storeName,
-          		t2.storeCity As storeCity,
-          		t2.STOREADDRESSLINE1 As storeAddress,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerMapping_Temp t1 
-         	left outer  Join Cd_Merchants t2 on t1.storeId = t2.storeId
+			SELECT t1.dealerMapId,
+			t1.MerchantId,
+			t1.storeId,
+			t1.dealerCode,
+			t1.active,
+			t2.merchantName,
+			t2.storeName As storeName,
+			t2.storeCity As storeCity,
+			t2.STOREADDRESSLINE1 As storeAddress,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerMapping_Temp t1
+			left outer Join Cd_Merchants t2 on t1.storeId = t2.storeId
 			UNION ALL
- 			SELECT t1.dealerMapId,
-    			t1.MerchantId,
-   				t1.storeId,
-    			t1.dealerCode,
-    			t1.active,  
-          		t2.merchantName,
-          		t2.storeName As storeName,
-          		t2.storeCity As storeCity,
-          		t2.STOREADDRESSLINE1 As storeAddress,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerMapping t1 
-        	left outer Join Cd_Merchants t2 on  t1.storeId = t2.storeId
-  			WHERE NOT (EXISTS (SELECT 1
-            FROM CD_DealerMapping_Temp  
-            WHERE CD_DealerMapping_Temp.dealerMapId = t1.dealerMapId))
+			SELECT t1.dealerMapId,
+			t1.MerchantId,
+			t1.storeId,
+			t1.dealerCode,
+			t1.active,
+			t2.merchantName,
+			t2.storeName As storeName,
+			t2.storeCity As storeCity,
+			t2.STOREADDRESSLINE1 As storeAddress,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerMapping t1
+			left outer Join Cd_Merchants t2 on t1.storeId = t2.storeId
+			WHERE NOT (EXISTS (SELECT 1
+			FROM CD_DealerMapping_Temp
+			WHERE CD_DealerMapping_Temp.dealerMapId = t1.dealerMapId))
 		</createView>
 	</changeSet>
 
@@ -1870,83 +1870,83 @@
 	<changeSet id="11.4" author="vijaya.a">
 		<createView viewName="CD_Scheme_ProductGroup_VIEW" replaceIfExists="true">
 			SELECT t1.schemeProductGroupId,
-				t1.promotionId,
-    			t1.productGroupCode,
-    			t1.pOSVendor,
-   				t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Scheme_ProductGroup_Temp t1
+			t1.promotionId,
+			t1.productGroupCode,
+			t1.pOSVendor,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Scheme_ProductGroup_Temp t1
 			UNION ALL
- 			SELECT t1.schemeProductGroupId,
-				t1.promotionId,
-    			t1.productGroupCode,
-    			t1.pOSVendor,
-   				t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Scheme_ProductGroup t1
-  			WHERE NOT (EXISTS ( SELECT 1
-            FROM CD_Scheme_ProductGroup_Temp
-            WHERE CD_Scheme_ProductGroup_Temp.schemeProductGroupId = t1.schemeProductGroupId))
+			SELECT t1.schemeProductGroupId,
+			t1.promotionId,
+			t1.productGroupCode,
+			t1.pOSVendor,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Scheme_ProductGroup t1
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM CD_Scheme_ProductGroup_Temp
+			WHERE CD_Scheme_ProductGroup_Temp.schemeProductGroupId = t1.schemeProductGroupId))
 		</createView>
 	</changeSet>
 
 	<changeSet id="11.5" author="vijaya.a">
 		<createView viewName="CD_Scheme_ProductGroup_AVIEW" replaceIfExists="true">
 			SELECT t1.schemeProductGroupId,
-				t1.promotionId,
-    			t1.productGroupCode,
-    			t1.pOSVendor,
-   				t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Scheme_ProductGroup t1
+			t1.promotionId,
+			t1.productGroupCode,
+			t1.pOSVendor,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Scheme_ProductGroup t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="11.6" author="vijaya.a">
 		<createView viewName="CD_Scheme_ProductGroup_TVIEW" replaceIfExists="true">
-			  SELECT t1.schemeProductGroupId,
-				t1.promotionId,
-    			t1.productGroupCode,
-    			t1.pOSVendor,
-   				t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Scheme_ProductGroup_Temp t1
+			SELECT t1.schemeProductGroupId,
+			t1.promotionId,
+			t1.productGroupCode,
+			t1.pOSVendor,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Scheme_ProductGroup_Temp t1
 		</createView>
 	</changeSet>
 
@@ -2093,92 +2093,92 @@
 
 	<changeSet id="11.4" author="Nageswar.p">
 		<createView viewName="TransactionMapping_VIEW" replaceIfExists="true">
-			 SELECT t1.Id,
-    			t1.POSId,
-   				t1.DealerCode,
-    			t1.DealerName,
-    			t1.MID,
-    			t1.TID,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM TransactionMapping_Temp t1
+			SELECT t1.Id,
+			t1.POSId,
+			t1.DealerCode,
+			t1.DealerName,
+			t1.MID,
+			t1.TID,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM TransactionMapping_Temp t1
 			UNION ALL
- 			SELECT t1.Id,
-    			t1.POSId,
-   				t1.DealerCode,
-    			t1.DealerName,
-    			t1.MID,
-    			t1.TID,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM TransactionMapping t1
-  			WHERE NOT (EXISTS ( SELECT 1
-            FROM TransactionMapping_Temp
-            WHERE TransactionMapping_Temp.Id = t1.Id))
+			SELECT t1.Id,
+			t1.POSId,
+			t1.DealerCode,
+			t1.DealerName,
+			t1.MID,
+			t1.TID,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM TransactionMapping t1
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM TransactionMapping_Temp
+			WHERE TransactionMapping_Temp.Id = t1.Id))
 		</createView>
 	</changeSet>
 
 	<changeSet id="11.5" author="Nageswar.b">
 		<createView viewName="TransactionMapping_AVIEW" replaceIfExists="true">
-			  SELECT t1.Id,
-    			t1.POSId,
-   				t1.DealerCode,
-    			t1.DealerName,
-    			t1.MID,
-    			t1.TID,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM TransactionMapping t1
+			SELECT t1.Id,
+			t1.POSId,
+			t1.DealerCode,
+			t1.DealerName,
+			t1.MID,
+			t1.TID,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM TransactionMapping t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="11.6" author="Nageswar.p">
 		<createView viewName="TransactionMapping_TVIEW" replaceIfExists="true">
-			 SELECT t1.Id,
-    			t1.POSId,
-   				t1.DealerCode,
-    			t1.DealerName,
-    			t1.MID,
-    			t1.TID,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM TransactionMapping_Temp t1
+			SELECT t1.Id,
+			t1.POSId,
+			t1.DealerCode,
+			t1.DealerName,
+			t1.MID,
+			t1.TID,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM TransactionMapping_Temp t1
 		</createView>
 	</changeSet>
 	<changeSet id="11.7" author="Nageswar.p">
@@ -2381,25 +2381,25 @@
 
 	<changeSet id="15" author="vijaya.a">
 		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
-			SELECT DISTINCT(DS.ID), 
-				DC.NAME, 
-			  	DC.UPLOADPATH FILELOCATION, 
-			  	DS.FILENAME, 
-			  	DS.ENDTIME, 
-			  	DS.STATUS, 
-			  	DC.Id As ConfigId,
-			  	DC.PostEvent,
-				SR.HOSTREFERENCE, 
-				SR.CUSTOMERREF, 
-				SR.TRANSACTIONAMOUNT,
-				SR.TRANSACTIONDATETIME, 
-				SR.MERCHANTNAME, 
-				SR.TERMINALID, 
-				SR.MANUFACTUREID,
-				SR.REQUESTBATCHID, 
-				SR.ID As SettlementId
+			SELECT DISTINCT(DS.ID),
+			DC.NAME,
+			DC.UPLOADPATH FILELOCATION,
+			DS.FILENAME,
+			DS.ENDTIME,
+			DS.STATUS,
+			DC.Id As ConfigId,
+			DC.PostEvent,
+			SR.HOSTREFERENCE,
+			SR.CUSTOMERREF,
+			SR.TRANSACTIONAMOUNT,
+			SR.TRANSACTIONDATETIME,
+			SR.MERCHANTNAME,
+			SR.TERMINALID,
+			SR.MANUFACTUREID,
+			SR.REQUESTBATCHID,
+			SR.ID As SettlementId
 			FROM DATA_ENGINE_CONFIG DC
-			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME 
+			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME
 			INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
 		</createView>
 	</changeSet>
@@ -2569,258 +2569,258 @@
 
 	<changeSet id="29" author="vijaya.a">
 		<createView viewName="TransactionMapping_VIEW" replaceIfExists="true">
-			 SELECT t1.Id,
-    			t1.POSId,
-   				t1.DealerCode,
-    			t1.DealerName,
-    			t1.MID,
-    			t1.TID,
-    			t1.MobileNumber1,
-    			t1.MobileNumber2,
-    			t1.MobileNumber3,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM TransactionMapping_Temp t1
+			SELECT t1.Id,
+			t1.POSId,
+			t1.DealerCode,
+			t1.DealerName,
+			t1.MID,
+			t1.TID,
+			t1.MobileNumber1,
+			t1.MobileNumber2,
+			t1.MobileNumber3,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM TransactionMapping_Temp t1
 			UNION ALL
- 			SELECT t1.Id,
-    			t1.POSId,
-   				t1.DealerCode,
-    			t1.DealerName,
-    			t1.MID,
-    			t1.TID,
-    			t1.MobileNumber1,
-    			t1.MobileNumber2,
-    			t1.MobileNumber3,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM TransactionMapping t1
-  			WHERE NOT (EXISTS ( SELECT 1
-            FROM TransactionMapping_Temp
-            WHERE TransactionMapping_Temp.Id = t1.Id))
+			SELECT t1.Id,
+			t1.POSId,
+			t1.DealerCode,
+			t1.DealerName,
+			t1.MID,
+			t1.TID,
+			t1.MobileNumber1,
+			t1.MobileNumber2,
+			t1.MobileNumber3,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM TransactionMapping t1
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM TransactionMapping_Temp
+			WHERE TransactionMapping_Temp.Id = t1.Id))
 		</createView>
 	</changeSet>
 
 	<changeSet id="30" author="vijaya.a">
 		<createView viewName="TransactionMapping_AVIEW" replaceIfExists="true">
-			  SELECT t1.Id,
-    			t1.POSId,
-   				t1.DealerCode,
-    			t1.DealerName,
-    			t1.MID,
-    			t1.TID,
-    			t1.MobileNumber1,
-    			t1.MobileNumber2,
-    			t1.MobileNumber3,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM TransactionMapping t1
+			SELECT t1.Id,
+			t1.POSId,
+			t1.DealerCode,
+			t1.DealerName,
+			t1.MID,
+			t1.TID,
+			t1.MobileNumber1,
+			t1.MobileNumber2,
+			t1.MobileNumber3,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM TransactionMapping t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="31" author="vijaya.a">
 		<createView viewName="TransactionMapping_TVIEW" replaceIfExists="true">
-			 SELECT t1.Id,
-    			t1.POSId,
-   				t1.DealerCode,
-    			t1.DealerName,
-    			t1.MID,
-    			t1.TID,
-    			t1.MobileNumber1,
-    			t1.MobileNumber2,
-    			t1.MobileNumber3,
-    			t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM TransactionMapping_Temp t1
+			SELECT t1.Id,
+			t1.POSId,
+			t1.DealerCode,
+			t1.DealerName,
+			t1.MID,
+			t1.TID,
+			t1.MobileNumber1,
+			t1.MobileNumber2,
+			t1.MobileNumber3,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM TransactionMapping_Temp t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="32" author="vijaya.a">
 		<createView viewName="CD_Merchants_VIEW" replaceIfExists="true">
-			  SELECT t1.merchantId,
-    			t1.merchantName,
-   				t1.storeId,
-    			t1.storeName,     
-    			t1.storeAddressLine1,
-    			t1.storeAddressLine2,
-    			t1.storeAddressLine3,
-    			t1.storeCity,
-    			t1.storeState,
-         		t1.storeCountry,
-         		t1.cityName,
-          		t1.stateName,
-          		t1.countryName,
-    			t1.pOSID,
-    			t1.avgTranPerMnth,
-    			t1.avgTranAmtPerMnth,
-    			t1.tranAmtPerTran,
-    			t1.tranAmtPerDay,
-    			t1.allowRefund,
-    			t1.peakTransPerDay,
-    			t1.channel,
-    			t1.Pincode,
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Merchants_Temp t1
+			SELECT t1.merchantId,
+			t1.merchantName,
+			t1.storeId,
+			t1.storeName,
+			t1.storeAddressLine1,
+			t1.storeAddressLine2,
+			t1.storeAddressLine3,
+			t1.storeCity,
+			t1.storeState,
+			t1.storeCountry,
+			t1.cityName,
+			t1.stateName,
+			t1.countryName,
+			t1.pOSID,
+			t1.avgTranPerMnth,
+			t1.avgTranAmtPerMnth,
+			t1.tranAmtPerTran,
+			t1.tranAmtPerDay,
+			t1.allowRefund,
+			t1.peakTransPerDay,
+			t1.channel,
+			t1.Pincode,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Merchants_Temp t1
 			UNION ALL
- 			SELECT t1.merchantId,
-    			t1.merchantName,
-   				t1.storeId,
-    			t1.storeName,     
-    			t1.storeAddressLine1,
-    			t1.storeAddressLine2,
-    			t1.storeAddressLine3,
-    			t1.storeCity,
-    			t1.storeState,
-    			t1.storeCountry,
-         		t1.cityName,
-          		t1.stateName,
-          		t1.countryName,
-    			t1.pOSID,
-    			t1.avgTranPerMnth,
-    			t1.avgTranAmtPerMnth,
-    			t1.tranAmtPerTran,
-    			t1.tranAmtPerDay,
-    			t1.allowRefund,
-    			t1.peakTransPerDay,
-    			t1.channel,
-    			t1.Pincode,
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Merchants t1
-  			WHERE NOT (EXISTS ( SELECT 1
-            FROM CD_Merchants_Temp
-            WHERE CD_Merchants_Temp.merchantId = t1.merchantId))
+			SELECT t1.merchantId,
+			t1.merchantName,
+			t1.storeId,
+			t1.storeName,
+			t1.storeAddressLine1,
+			t1.storeAddressLine2,
+			t1.storeAddressLine3,
+			t1.storeCity,
+			t1.storeState,
+			t1.storeCountry,
+			t1.cityName,
+			t1.stateName,
+			t1.countryName,
+			t1.pOSID,
+			t1.avgTranPerMnth,
+			t1.avgTranAmtPerMnth,
+			t1.tranAmtPerTran,
+			t1.tranAmtPerDay,
+			t1.allowRefund,
+			t1.peakTransPerDay,
+			t1.channel,
+			t1.Pincode,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Merchants t1
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM CD_Merchants_Temp
+			WHERE CD_Merchants_Temp.merchantId = t1.merchantId))
 		</createView>
 	</changeSet>
 
 	<changeSet id="33" author="vijaya.a">
 		<createView viewName="CD_Merchants_AVIEW" replaceIfExists="true">
-			  SELECT t1.merchantId,
-    			t1.merchantName,
-   				t1.storeId,
-    			t1.storeName,     
-    			t1.storeAddressLine1,
-    			t1.storeAddressLine2,
-    			t1.storeAddressLine3,
-    			t1.storeCity,
-    			t1.storeState,
-    			t1.storeCountry,
-         		t1.cityName,
-          		t1.stateName,
-          		t1.countryName,
-    			t1.pOSID,
-    			t1.avgTranPerMnth,
-    			t1.avgTranAmtPerMnth,
-    			t1.tranAmtPerTran,
-    			t1.tranAmtPerDay,
-    			t1.allowRefund,
-    			t1.peakTransPerDay,
-    			t1.channel,
-    			t1.Pincode,
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Merchants t1
+			SELECT t1.merchantId,
+			t1.merchantName,
+			t1.storeId,
+			t1.storeName,
+			t1.storeAddressLine1,
+			t1.storeAddressLine2,
+			t1.storeAddressLine3,
+			t1.storeCity,
+			t1.storeState,
+			t1.storeCountry,
+			t1.cityName,
+			t1.stateName,
+			t1.countryName,
+			t1.pOSID,
+			t1.avgTranPerMnth,
+			t1.avgTranAmtPerMnth,
+			t1.tranAmtPerTran,
+			t1.tranAmtPerDay,
+			t1.allowRefund,
+			t1.peakTransPerDay,
+			t1.channel,
+			t1.Pincode,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Merchants t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="34" author="vijaya.a">
 		<createView viewName="CD_Merchants_TVIEW" replaceIfExists="true">
-			  SELECT t1.merchantId,
-    			t1.merchantName,
-   				t1.storeId,
-    			t1.storeName,     
-    			t1.storeAddressLine1,
-    			t1.storeAddressLine2,
-    			t1.storeAddressLine3,
-    			t1.storeCity,
-    			t1.storeState,
-    			t1.storeCountry,
-          		t1.cityName,
-          		t1.stateName,
-          		t1.countryName,
-    			t1.pOSID,
-    			t1.avgTranPerMnth,
-    			t1.avgTranAmtPerMnth,
-    			t1.tranAmtPerTran,
-    			t1.tranAmtPerDay,
-    			t1.allowRefund,
-    			t1.peakTransPerDay,
-    			t1.channel,
-    			t1.active,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Merchants_Temp t1
+			SELECT t1.merchantId,
+			t1.merchantName,
+			t1.storeId,
+			t1.storeName,
+			t1.storeAddressLine1,
+			t1.storeAddressLine2,
+			t1.storeAddressLine3,
+			t1.storeCity,
+			t1.storeState,
+			t1.storeCountry,
+			t1.cityName,
+			t1.stateName,
+			t1.countryName,
+			t1.pOSID,
+			t1.avgTranPerMnth,
+			t1.avgTranAmtPerMnth,
+			t1.tranAmtPerTran,
+			t1.tranAmtPerDay,
+			t1.allowRefund,
+			t1.peakTransPerDay,
+			t1.channel,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Merchants_Temp t1
 		</createView>
 	</changeSet>
 
@@ -2908,12 +2908,14 @@
 
 	<changeSet id="44" author="naga.g" dbms="oracle">
 		<createView viewName="SCHEMEMASTER_VIEW" replaceIfExists="true">
-		    select pm.promotioncode,pm.promotiondesc,pm.TENOR,CONCAT(to_char(pm.ACTUALINTERESTRATE,'99.99'), '%') ACTUALINTERESTRATE ,pm.ADVEMITERMS,pm.STARTDATE,pm.enddate,
-            pm.FINMINAMOUNT/100 FINMINAMOUNT,pm.FINMAXAMOUNT/100 FINMAXAMOUNT ,pm.remarks,pm.ACTIVE,pm.SPECIALSCHEME,CASE  when fp1.Amount>0 then fp1.Amount/100 Else fp1.percentage  END ProseeFee, 
-            CASE  when fp2.Amount>0 then fp2.Amount Else  fp2.percentage END DBDFEE ,pm.LASTMNTON
-            from promotions pm 
-            left join fintypefees_aview fp1 on pm.promotionCode = fp1.finType and fp1.moduleid=2 and fp1.FeeTypeID = 134 
-            left join fintypefees_aview fp2 on pm.promotionCode = fp2.finType and fp2.moduleid=2 and fp2.FeeTypeID = 133;
+			select pm.promotioncode,pm.promotiondesc,pm.TENOR,CONCAT(to_char(pm.ACTUALINTERESTRATE,'99.99'), '%') ACTUALINTERESTRATE
+			,pm.ADVEMITERMS,pm.STARTDATE,pm.enddate,
+			pm.FINMINAMOUNT/100 FINMINAMOUNT,pm.FINMAXAMOUNT/100 FINMAXAMOUNT ,pm.remarks,pm.ACTIVE,pm.SPECIALSCHEME,CASE when fp1.Amount>0 then
+			fp1.Amount/100 Else fp1.percentage END ProseeFee,
+			CASE when fp2.Amount>0 then fp2.Amount Else fp2.percentage END DBDFEE ,pm.LASTMNTON
+			from promotions pm
+			left join fintypefees_aview fp1 on pm.promotionCode = fp1.finType and fp1.moduleid=2 and fp1.FeeTypeID = 134
+			left join fintypefees_aview fp2 on pm.promotionCode = fp2.finType and fp2.moduleid=2 and fp2.FeeTypeID = 133;
 		</createView>
 	</changeSet>
 	<changeSet id="45.0" author="naga.g" dbms="oracle">
@@ -2950,24 +2952,24 @@
 
 	<changeSet id="48" author="vijaya.a">
 		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
-			SELECT DISTINCT(SR.REQUESTBATCHID), 
-        		DC.ID, 
-				DC.NAME, 
-			  	DC.UPLOADPATH FILELOCATION, 
-			  	DS.FILENAME, 
-			  	DS.ENDTIME, 
-			  	DS.STATUS, 
-			  	DC.Id As ConfigId,
-			  	DC.PostEvent,
-				'' As HOSTREFERENCE , 
-				SR.CUSTOMERREF, 
-				SR.TRANSACTIONAMOUNT,
-				SR.TRANSACTIONDATETIME, 
-				SR.MERCHANTNAME, 
-				SR.TERMINALID, 
-				SR.MANUFACTUREID
+			SELECT DISTINCT(SR.REQUESTBATCHID),
+			DC.ID,
+			DC.NAME,
+			DC.UPLOADPATH FILELOCATION,
+			DS.FILENAME,
+			DS.ENDTIME,
+			DS.STATUS,
+			DC.Id As ConfigId,
+			DC.PostEvent,
+			'' As HOSTREFERENCE ,
+			SR.CUSTOMERREF,
+			SR.TRANSACTIONAMOUNT,
+			SR.TRANSACTIONDATETIME,
+			SR.MERCHANTNAME,
+			SR.TERMINALID,
+			SR.MANUFACTUREID
 			FROM DATA_ENGINE_CONFIG DC
-			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME 
+			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME
 			INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
 		</createView>
 	</changeSet>
@@ -3001,23 +3003,23 @@
 	</changeSet>
 	<changeSet id="53" author="naga.g">
 		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
-			SELECT DISTINCT(SR.REQUESTBATCHID), 
-        		DC.ID, 
-				DC.NAME, 
-			  	DC.UPLOADPATH FILELOCATION, 
-			  	DS.FILENAME, 
-			  	DS.ENDTIME, 
-			  	DS.STATUS, 
-			  	DC.Id As ConfigId,
-			  	DC.PostEvent,
-				'' As HOSTREFERENCE , 
-				SR.TRANSACTIONAMOUNT,
-				SR.TRANSACTIONDATETIME, 
-				SR.MERCHANTNAME, 
-				SR.TERMINALID, 
-				SR.MANUFACTUREID
+			SELECT DISTINCT(SR.REQUESTBATCHID),
+			DC.ID,
+			DC.NAME,
+			DC.UPLOADPATH FILELOCATION,
+			DS.FILENAME,
+			DS.ENDTIME,
+			DS.STATUS,
+			DC.Id As ConfigId,
+			DC.PostEvent,
+			'' As HOSTREFERENCE ,
+			SR.TRANSACTIONAMOUNT,
+			SR.TRANSACTIONDATETIME,
+			SR.MERCHANTNAME,
+			SR.TERMINALID,
+			SR.MANUFACTUREID
 			FROM DATA_ENGINE_CONFIG DC
-			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME 
+			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME
 			INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
 		</createView>
 	</changeSet>
@@ -3071,36 +3073,36 @@
 	</changeSet>
 	<changeSet id="59" author="naga.g">
 		<createView viewName="FINODPENALTYRATES_VIEW" replaceIfExists="true">
-			 SELECT finreference,
-			    fineffectdate,
-			    applyodpenalty,
-			    odincgrcdays,
-			    odchargetype,
-			    odgracedays,
-			    odchargecalon,
-			    odchargeamtorperc,
-			    odallowwaiver,
-			    odmaxwaiverperc,
-			    odrulecode,
-			    ODMinCapAmount
-			  FROM finodpenaltyrates_temp
-			  UNION
-			  SELECT finreference,
-			    fineffectdate,
-			    applyodpenalty,
-			    odincgrcdays,
-			    odchargetype,
-			    odgracedays,
-			    odchargecalon,
-			    odchargeamtorperc,
-			    odallowwaiver,
-			    odmaxwaiverperc,
-			    odrulecode,
-			    ODMinCapAmount
-			  FROM finodpenaltyrates
-			  WHERE NOT (EXISTS
-			    ( SELECT 1 FROM finodpenaltyrates_temp WHERE finodpenaltyrates_temp.finreference = finodpenaltyrates.finreference
-			    ))
+			SELECT finreference,
+			fineffectdate,
+			applyodpenalty,
+			odincgrcdays,
+			odchargetype,
+			odgracedays,
+			odchargecalon,
+			odchargeamtorperc,
+			odallowwaiver,
+			odmaxwaiverperc,
+			odrulecode,
+			ODMinCapAmount
+			FROM finodpenaltyrates_temp
+			UNION
+			SELECT finreference,
+			fineffectdate,
+			applyodpenalty,
+			odincgrcdays,
+			odchargetype,
+			odgracedays,
+			odchargecalon,
+			odchargeamtorperc,
+			odallowwaiver,
+			odmaxwaiverperc,
+			odrulecode,
+			ODMinCapAmount
+			FROM finodpenaltyrates
+			WHERE NOT (EXISTS
+			( SELECT 1 FROM finodpenaltyrates_temp WHERE finodpenaltyrates_temp.finreference = finodpenaltyrates.finreference
+			))
 		</createView>
 	</changeSet>
 	<changeSet id="60" author="naga.g">
@@ -3131,15 +3133,23 @@
 	</changeSet>
 	<changeSet id="61" author="naga.g">
 		<createView viewName="SCHEMEMASTER_VIEW" replaceIfExists="true">
-		    select pm.promotioncode,pm.promotiondesc,pm.TENOR,CONCAT(to_char(pm.ACTUALINTERESTRATE,'99.99'), '%') ACTUALINTERESTRATE,pm.ADVEMITERMS,pm.STARTDATE,pm.enddate,pm.FINMINAMOUNT/100 FINMINAMOUNT,
-			pm.FINMAXAMOUNT/100 FINMAXAMOUNT , pm.remarks, to_char('0') Active,pm.SPECIALSCHEME,CASE when fp1.Amount is null then 0 when fp1.Amount>0 then fp1.Amount/100  when fp1.percentage is null then 0   else fp1.percentage   END ProseeFee,CONCAT(to_char(CASE when fp2.Amount is null then 0 when fp2.Amount>0 then fp2.Amount Else fp2.percentage  END,'09.99'),'%') AS DBDFEE ,to_char('1') IS_PF_SCHEME,to_char('A') Action,pm.LASTMNTON from promotions pm 
-			left join fintypefees_aview fp1 on pm.promotionCode = fp1.finType and fp1.moduleid=2 and fp1.FeeTypeID in(select feetypeid from feetypes where feetypecode in ('MMFLPROC'))
-			left join fintypefees_aview fp2 on pm.promotionCode = fp2.finType and fp2.moduleid=2 and fp2.FeeTypeID in(select feetypeid from feetypes where feetypecode in ('MMFLDBD'))
+			select pm.promotioncode,pm.promotiondesc,pm.TENOR,CONCAT(to_char(pm.ACTUALINTERESTRATE,'99.99'), '%')
+			ACTUALINTERESTRATE,pm.ADVEMITERMS,pm.STARTDATE,pm.enddate,pm.FINMINAMOUNT/100 FINMINAMOUNT,
+			pm.FINMAXAMOUNT/100
+			FINMAXAMOUNT , pm.remarks, to_char('0') Active,pm.SPECIALSCHEME,CASE when fp1.Amount is null then 0 when fp1.Amount>0
+			then fp1.Amount/100 when fp1.percentage is null then 0 else fp1.percentage END ProseeFee,CONCAT(to_char(CASE when
+			fp2.Amount is null then 0 when fp2.Amount>0 then fp2.Amount Else fp2.percentage END,'09.99'),'%') AS DBDFEE
+			,to_char('1') IS_PF_SCHEME,to_char('A') Action,pm.LASTMNTON from promotions pm
+			left join fintypefees_aview fp1 on pm.promotionCode = fp1.finType and fp1.moduleid=2 and fp1.FeeTypeID in(select
+			feetypeid from feetypes where feetypecode in ('MMFLPROC'))
+			left join fintypefees_aview fp2 on pm.promotionCode =
+			fp2.finType and fp2.moduleid=2 and fp2.FeeTypeID in(select feetypeid from feetypes where feetypecode in ('MMFLDBD'))
 		</createView>
 	</changeSet>
 	<changeSet id="62" author="naga.g">
 		<createView viewName="SETTLEMENT_REQ_DOWNLOAD_VIEW" replaceIfExists="true">
-		     select t1.requestbatchid,t1.hostreference,t1.customerref,t1.transactionamount/100 as transactionamount ,t1.transactiondatetime,t1.merchantname,t1.terminalid,t1.manufactureid FROM settlement_request t1
+			select t1.requestbatchid,t1.hostreference,t1.customerref,t1.transactionamount/100 as transactionamount
+			,t1.transactiondatetime,t1.merchantname,t1.terminalid,t1.manufactureid FROM settlement_request t1
 		</createView>
 	</changeSet>
 	<changeSet id="63" author="naga.g">
@@ -3217,10 +3227,17 @@
 	</changeSet>
 	<changeSet id="67" author="naga.g">
 		<createView viewName="SCHEMEMASTER_VIEW" replaceIfExists="true">
-		   select pm.promotioncode, pm.promotiondesc, pm.TENOR, CONCAT(to_char(pm.ACTUALINTERESTRATE,'99.99'), '%') ACTUALINTERESTRATE, pm.ADVEMITERMS, CONCAT(to_char(CASE when fp2.Amount is null then 0 when fp2.Amount>0 then fp2.Amount/100 Else fp2.percentage  END,'09.99'),'%') AS DBDFEE, pm.STARTDATE, pm.enddate, pm.FINMINAMOUNT/100 FINMINAMOUNT,pm.FINMAXAMOUNT/100 FINMAXAMOUNT , 
-           CASE when fp1.Amount is null then 0 when fp1.Amount>0 then fp1.Amount/100  when fp1.percentage is null then 0   else fp1.percentage   END ProseeFee,pm.remarks,to_char('A') Action,to_char('0') Active,pm.SPECIALSCHEME,to_char('1') IS_PF_SCHEME,pm.LASTMNTON from promotions pm 
-           left join fintypefees_aview fp1 on pm.promotionCode = fp1.finType and fp1.moduleid=2 and fp1.FeeTypeID in(select feetypeid from feetypes where feetypecode in ('MMFLPROC'))
-           left join fintypefees_aview fp2 on pm.promotionCode = fp2.finType and fp2.moduleid=2 and fp2.FeeTypeID in(select feetypeid from feetypes where feetypecode in ('MMFLDBD'))
+			select pm.promotioncode, pm.promotiondesc, pm.TENOR, CONCAT(to_char(pm.ACTUALINTERESTRATE,'99.99'), '%')
+			ACTUALINTERESTRATE, pm.ADVEMITERMS, CONCAT(to_char(CASE when fp2.Amount is null then 0 when fp2.Amount>0 then
+			fp2.Amount/100 Else fp2.percentage END,'09.99'),'%') AS DBDFEE, pm.STARTDATE, pm.enddate, pm.FINMINAMOUNT/100
+			FINMINAMOUNT,pm.FINMAXAMOUNT/100 FINMAXAMOUNT ,
+			CASE when fp1.Amount is null then 0 when fp1.Amount>0 then fp1.Amount/100 when fp1.percentage is null then 0 else
+			fp1.percentage END ProseeFee,pm.remarks,to_char('A') Action,to_char('0') Active,pm.SPECIALSCHEME,to_char('1')
+			IS_PF_SCHEME,pm.LASTMNTON from promotions pm
+			left join fintypefees_aview fp1 on pm.promotionCode = fp1.finType and fp1.moduleid=2 and fp1.FeeTypeID in(select
+			feetypeid from feetypes where feetypecode in ('MMFLPROC'))
+			left join fintypefees_aview fp2 on pm.promotionCode = fp2.finType and fp2.moduleid=2 and fp2.FeeTypeID in(select
+			feetypeid from feetypes where feetypecode in ('MMFLDBD'))
 		</createView>
 	</changeSet>
 
@@ -3920,15 +3937,25 @@
 	</changeSet>
 	<changeSet id="94" author="naga.g">
 		<createView viewName="SCHEMEMASTER_VIEW" replaceIfExists="true">
-		  select pm.promotioncode, pm.promotiondesc, pm.TENOR, CONCAT(to_char(pm.ACTUALINTERESTRATE,'09.99'), '%') ACTUALINTERESTRATE, pm.ADVEMITERMS, CONCAT(to_char(CASE when fp2.Amount is null then 0 when fp2.Amount>0 then fp2.Amount/100 Else fp2.percentage  END,'09.99'),'%') AS DBDFEE, pm.STARTDATE, pm.enddate, pm.FINMINAMOUNT/100 FINMINAMOUNT,pm.FINMAXAMOUNT/100 FINMAXAMOUNT , 
-           CASE when fp1.Amount is null then 0 when fp1.Amount>0 then fp1.Amount/100  when fp1.percentage is null then 0   else fp1.percentage   END ProseeFee,SUBSTR(pm.remarks,1,20) remarks ,to_char('A') Action,to_char('0') Active,pm.SPECIALSCHEME,to_char('1') IS_PF_SCHEME,pm.LASTMNTON from promotions pm 
-           left join fintypefees_aview fp1 on pm.promotionCode = fp1.finType and fp1.moduleid=2 and fp1.FeeTypeID in(select feetypeid from feetypes where feetypecode in ('MMFLPROC'))
-           left join fintypefees_aview fp2 on pm.promotionCode = fp2.finType and fp2.moduleid=2 and fp2.FeeTypeID in(select feetypeid from feetypes where feetypecode in ('MMFLDBD'))
+			select pm.promotioncode, pm.promotiondesc, pm.TENOR, CONCAT(to_char(pm.ACTUALINTERESTRATE,'09.99'), '%')
+			ACTUALINTERESTRATE, pm.ADVEMITERMS, CONCAT(to_char(CASE when fp2.Amount is null then 0 when fp2.Amount>0 then
+			fp2.Amount/100 Else fp2.percentage END,'09.99'),'%') AS DBDFEE, pm.STARTDATE, pm.enddate, pm.FINMINAMOUNT/100
+			FINMINAMOUNT,pm.FINMAXAMOUNT/100 FINMAXAMOUNT ,
+			CASE when fp1.Amount is null then 0 when fp1.Amount>0 then fp1.Amount/100 when fp1.percentage is null then 0 else
+			fp1.percentage END ProseeFee,SUBSTR(pm.remarks,1,20) remarks ,to_char('A') Action,to_char('0')
+			Active,pm.SPECIALSCHEME,to_char('1') IS_PF_SCHEME,pm.LASTMNTON from promotions pm
+			left join fintypefees_aview fp1 on pm.promotionCode = fp1.finType and fp1.moduleid=2 and fp1.FeeTypeID in(select
+			feetypeid from feetypes where feetypecode in ('MMFLPROC'))
+			left join fintypefees_aview fp2 on pm.promotionCode = fp2.finType and fp2.moduleid=2 and fp2.FeeTypeID in(select
+			feetypeid from feetypes where feetypecode in ('MMFLDBD'))
 		</createView>
 	</changeSet>
 	<changeSet id="95" author="naga.g">
 		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
-		 SELECT DISTINCT(SR.REQUESTBATCHID),DC.ID,DC.NAME,DC.UPLOADPATH FILELOCATION,DS.FILENAME,DS.ENDTIME,DS.STATUS,DC.Id As ConfigId,DC.PostEvent,'' As HOSTREFERENCE ,'' AS TRANSACTIONAMOUNT,SR.MERCHANTNAME,SR.TERMINALID,SR.MANUFACTUREID FROM DATA_ENGINE_CONFIG DC INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
+			SELECT DISTINCT(SR.REQUESTBATCHID),DC.ID,DC.NAME,DC.UPLOADPATH FILELOCATION,DS.FILENAME,DS.ENDTIME,DS.STATUS,DC.Id As
+			ConfigId,DC.PostEvent,'' As HOSTREFERENCE ,'' AS TRANSACTIONAMOUNT,SR.MERCHANTNAME,SR.TERMINALID,SR.MANUFACTUREID
+			FROM DATA_ENGINE_CONFIG DC INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME INNER JOIN SETTLEMENT_REQUEST SR ON
+			SR.REQUESTBATCHID=DS.ID
 		</createView>
 	</changeSet>
 	<changeSet id="96" author="naga.g" dbms="oracle">
@@ -4050,7 +4077,11 @@
 	</changeSet>
 	<changeSet id="99" author="naga.g">
 		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
-			SELECT DISTINCT(SR.REQUESTBATCHID),DC.ID,DC.NAME,DC.UPLOADPATH FILELOCATION,DS.FILENAME,DS.ENDTIME,DS.STATUS,DC.Id As ConfigId,DC.PostEvent,'' As HOSTREFERENCE ,'' AS TRANSACTIONAMOUNT,SR.TRANSACTIONDATETIME,SR.MERCHANTNAME,SR.TERMINALID,SR.MANUFACTUREID FROM DATA_ENGINE_CONFIG DC INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
+			SELECT
+			DISTINCT(SR.REQUESTBATCHID),DC.ID,DC.NAME,DC.UPLOADPATH FILELOCATION,DS.FILENAME,DS.ENDTIME,DS.STATUS,DC.Id As
+			ConfigId,DC.PostEvent,'' As HOSTREFERENCE ,'' AS
+			TRANSACTIONAMOUNT,SR.TRANSACTIONDATETIME,SR.MERCHANTNAME,SR.TERMINALID,SR.MANUFACTUREID FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
 		</createView>
 	</changeSet>
 	<changeSet id="100" author="obireddy.y">
@@ -4291,40 +4322,40 @@
 
 	<changeSet id="117" author="sudheer.t">
 		<createView viewName="CD_Scheme_DealerGroup_VIEW" replaceIfExists="true">
-			SELECT t1.schemeDealerGroupId, 
-				t1.promotionId,
-				t1.dealerGroupCode,
-   				t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Scheme_DealerGroup_Temp t1
+			SELECT t1.schemeDealerGroupId,
+			t1.promotionId,
+			t1.dealerGroupCode,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Scheme_DealerGroup_Temp t1
 			UNION ALL
- 			SELECT t1.schemeDealerGroupId, 
-				t1.promotionId,
-    			t1.dealerGroupCode,
-   				t1.active,     
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_Scheme_DealerGroup t1
-  			WHERE NOT (EXISTS ( SELECT 1
-            FROM CD_Scheme_DealerGroup_Temp
-            WHERE CD_Scheme_DealerGroup_Temp.schemeDealerGroupId = t1.schemeDealerGroupId))
+			SELECT t1.schemeDealerGroupId,
+			t1.promotionId,
+			t1.dealerGroupCode,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_Scheme_DealerGroup t1
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM CD_Scheme_DealerGroup_Temp
+			WHERE CD_Scheme_DealerGroup_Temp.schemeDealerGroupId = t1.schemeDealerGroupId))
 		</createView>
 	</changeSet>
 	<changeSet id="118" author="Durgaprasad G" dbms="oracle">
@@ -4364,156 +4395,156 @@
 
 	<changeSet id="123" author="naga.g">
 		<createView viewName="CD_DEALERMAPPING_VIEW" replaceIfExists="true">
-		     SELECT t1.dealerMapId,
-    			t1.MerchantId,
-   				t1.storeId,
-    			t1.dealerCode,
-    			t1.active,
-          		t2.merchantName,
-          		t2.storeName As storeName,
-          		t2.storeCity As storeCity,
-          		t2.STOREADDRESSLINE1 As storeAddress,
-                t2.posid,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerMapping_Temp t1 
-         	left outer  Join Cd_Merchants t2 on t1.storeId = t2.storeId  and t1.posid = t2.posid
+			SELECT t1.dealerMapId,
+			t1.MerchantId,
+			t1.storeId,
+			t1.dealerCode,
+			t1.active,
+			t2.merchantName,
+			t2.storeName As storeName,
+			t2.storeCity As storeCity,
+			t2.STOREADDRESSLINE1 As storeAddress,
+			t2.posid,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerMapping_Temp t1
+			left outer Join Cd_Merchants t2 on t1.storeId = t2.storeId and t1.posid = t2.posid
 			UNION ALL
- 			SELECT t1.dealerMapId,
-    			t1.MerchantId,
-   				t1.storeId,
-    			t1.dealerCode,
-    			t1.active,  
-          		t2.merchantName,
-          		t2.storeName As storeName,
-          		t2.storeCity As storeCity,
-          		t2.STOREADDRESSLINE1 As storeAddress,
-                t2.posid,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerMapping t1 
-        	left outer Join Cd_Merchants t2 on  t1.storeId = t2.storeId  and t1.posid = t2.posid
-  			WHERE NOT (EXISTS (SELECT 1
-            FROM CD_DealerMapping_Temp  
-            WHERE CD_DealerMapping_Temp.dealerMapId = t1.dealerMapId))
+			SELECT t1.dealerMapId,
+			t1.MerchantId,
+			t1.storeId,
+			t1.dealerCode,
+			t1.active,
+			t2.merchantName,
+			t2.storeName As storeName,
+			t2.storeCity As storeCity,
+			t2.STOREADDRESSLINE1 As storeAddress,
+			t2.posid,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerMapping t1
+			left outer Join Cd_Merchants t2 on t1.storeId = t2.storeId and t1.posid = t2.posid
+			WHERE NOT (EXISTS (SELECT 1
+			FROM CD_DealerMapping_Temp
+			WHERE CD_DealerMapping_Temp.dealerMapId = t1.dealerMapId))
 		</createView>
 	</changeSet>
 
 	<changeSet id="124" author="naga.g">
 		<createView viewName="CD_DEALERMAPPING_AVIEW" replaceIfExists="true">
 			SELECT t1.dealerMapId,
-    			t1.MerchantId,
-   				t1.storeId,
-    			t1.dealerCode,
-    			t1.posid,
-    			t1.active,   
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerMapping t1
+			t1.MerchantId,
+			t1.storeId,
+			t1.dealerCode,
+			t1.posid,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerMapping t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="125" author="naga.g">
 		<createView viewName="CD_DEALERMAPPING_TVIEW" replaceIfExists="true">
 			SELECT t1.dealerMapId,
-    			t1.MerchantId,
-   				t1.storeId,
-    			t1.dealerCode,
-    			t1.posid,
-    			t1.active,   
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerMapping_Temp t1
+			t1.MerchantId,
+			t1.storeId,
+			t1.dealerCode,
+			t1.posid,
+			t1.active,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerMapping_Temp t1
 		</createView>
 	</changeSet>
 
 	<changeSet id="126" author="naga.g">
 		<createView viewName="CD_DEALERMAPPING_VIEW" replaceIfExists="true">
-		      SELECT t1.dealerMapId,
-    			t1.MerchantId,
-   				t1.storeId,
-    			t1.dealerCode,
-    			t1.active,
-          		t2.merchantName,
-          		t2.storeName As storeName,
-          		t2.storeCity As storeCity,
-          		t2.STOREADDRESSLINE1 As storeAddress,
-                (CASE 
-						when t2.posid  is null then 0
-						else t2.posid  end) AS posid ,
-               
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerMapping_Temp t1 
-         	left outer  Join Cd_Merchants t2 on t1.storeId = t2.storeId  and t1.posid = t2.posid
+			SELECT t1.dealerMapId,
+			t1.MerchantId,
+			t1.storeId,
+			t1.dealerCode,
+			t1.active,
+			t2.merchantName,
+			t2.storeName As storeName,
+			t2.storeCity As storeCity,
+			t2.STOREADDRESSLINE1 As storeAddress,
+			(CASE
+			when t2.posid is null then 0
+			else t2.posid end) AS posid ,
+
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerMapping_Temp t1
+			left outer Join Cd_Merchants t2 on t1.storeId = t2.storeId and t1.posid = t2.posid
 			UNION ALL
- 			SELECT t1.dealerMapId,
-    			t1.MerchantId,
-   				t1.storeId,
-    			t1.dealerCode,
-    			t1.active,  
-          		t2.merchantName,
-          		t2.storeName As storeName,
-          		t2.storeCity As storeCity,
-          		t2.STOREADDRESSLINE1 As storeAddress,
-                 (CASE 
-						when t2.posid  is null then 0
-						else t2.posid  end) AS posid ,
-    			t1.version,
-    			t1.lastmntby,
-    			t1.lastmnton,
-    			t1.recordstatus,
-   				t1.rolecode,
-    			t1.nextrolecode,
-    			t1.taskid,
-    			t1.nexttaskid,
-    			t1.recordtype,
-    			t1.workflowid
-   			FROM CD_DealerMapping t1 
-        	left outer Join Cd_Merchants t2 on  t1.storeId = t2.storeId  and t1.posid = t2.posid
-  			WHERE NOT (EXISTS (SELECT 1
-            FROM CD_DealerMapping_Temp  
-            WHERE CD_DealerMapping_Temp.dealerMapId = t1.dealerMapId))
+			SELECT t1.dealerMapId,
+			t1.MerchantId,
+			t1.storeId,
+			t1.dealerCode,
+			t1.active,
+			t2.merchantName,
+			t2.storeName As storeName,
+			t2.storeCity As storeCity,
+			t2.STOREADDRESSLINE1 As storeAddress,
+			(CASE
+			when t2.posid is null then 0
+			else t2.posid end) AS posid ,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid
+			FROM CD_DealerMapping t1
+			left outer Join Cd_Merchants t2 on t1.storeId = t2.storeId and t1.posid = t2.posid
+			WHERE NOT (EXISTS (SELECT 1
+			FROM CD_DealerMapping_Temp
+			WHERE CD_DealerMapping_Temp.dealerMapId = t1.dealerMapId))
 		</createView>
 	</changeSet>
 	<changeSet id="127" author="naga.g" dbms="oracle">
@@ -4626,7 +4657,8 @@
 			BD.BANKSHORTCODE
 			BANKCODE,
 			BD.BANKNAME,
-			case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+			case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END
+			BRANCHCODE,
 			case when
 			LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
 			CUST.CUSTCIF,
@@ -4634,37 +4666,48 @@
 			CUST.CustCoreBank,
 			FT.FINTYPEDESC FINTYPE ,
 			FIN.FINREFERENCE ,
-			COALESCE((SELECT SUM(TotalAmount) from (Select
+			COALESCE((SELECT SUM(TotalAmount) from
+			(Select
 			MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount
 			FROM FINSCHEDULEDETAILS FSD
-			INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE
+			INNER JOIN FINANCEMAIN FM ON
+			FM.FINREFERENCE
 			=FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID
 			GROUP BY FM.FINREFERENCE)T)/CCYMINORCCYUNITS, 0) CUST_EMI,
 			COALESCE((SELECT
-			SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount FROM FINSCHEDULEDETAILS FSD WHERE
-			(REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID =
+			SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount FROM FINSCHEDULEDETAILS
+			FSD WHERE
+			(REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE
+			MANDATEID =
 			M.MANDATEID) GROUP BY FINREFERENCE)T)/CCYMINORCCYUNITS, 0) EMI,
-			CASE M.OPENMANDATE WHEN 1 THEN 'New Open ECS' ELSE 'No
+			CASE M.OPENMANDATE WHEN 1 THEN 'New Open
+			ECS' ELSE 'No
 			Open ECS' END OPENMANDATE,
 			M.ACCNUMBER,
-			CASE WHEN M.ACCTYPE = '10' then 'Savings Account' WHEN M.ACCTYPE = '11' then
+			CASE WHEN M.ACCTYPE = '10' then 'Savings Account' WHEN M.ACCTYPE =
+			'11' then
 			'Current Account' WHEN M.ACCTYPE = '11' then
 			'Cash Credit Account' ELSE M.ACCTYPE END ACCTYPE,
 			M.ACCHOLDERNAME,
 			BB.MICR,
 			BB.IFSC,
 			BB.ADDOFBRANCH,
-			(select MIN(FIRSTREPAYDATE) from FINPFTDETAILS where FINREFERENCE IN (SELECT
+			(select MIN(FIRSTREPAYDATE) from FINPFTDETAILS where FINREFERENCE IN
+			(SELECT
 			FINREFERENCE FROM FINANCEMAIN WHERE
 			MANDATEID=M.MANDATEID)) FIRSTDUEDATE,
-			(select MAX(SCHDATE) from FINSCHEDULEDETAILS
+			(select MAX(SCHDATE) from
+			FINSCHEDULEDETAILS
 			where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT
-			FINREFERENCE FROM FINANCEMAIN WHERE
+			FINREFERENCE FROM
+			FINANCEMAIN WHERE
 			MANDATEID=M.MANDATEID)) EMIENDDATE,
 			COALESCE (M.MAXLIMIT/CCYMINORCCYUNITS, 0) MAXLIMIT,
 			COALESCE((SELECT
-			SUM(MANDATEDEBITAMOUNT) from (Select MAX(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE
-			(REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE
+			SUM(MANDATEDEBITAMOUNT) from (Select MAX(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM
+			FINSCHEDULEDETAILS WHERE
+			(REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM
+			FINANCEMAIN WHERE
 			MANDATEID=M.MANDATEID)
 			GROUP BY FINREFERENCE)T), 0)/CCYMINORCCYUNITS DEBITAMOUNT,
 			FIN.NumberOfTerms,
@@ -4686,7 +4729,8 @@
 			M.LASTMNTON,
 			BB.BranchDesc BANK_BRANCH_NAME
 			FROM MANDATES M
-			INNER JOIN BANKBRANCHES BB ON
+			INNER JOIN BANKBRANCHES BB
+			ON
 			BB.BANKBRANCHID = M.BANKBRANCHID
 			INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE
 			INNER JOIN CUSTOMERS CUST ON
@@ -5354,7 +5398,11 @@
 
 	<changeSet id="170" author="naga.g">
 		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
-			SELECT DISTINCT(SR.REQUESTBATCHID),DC.ID,DC.NAME,DC.UPLOADPATH FILELOCATION,DS.FILENAME,DS.ENDTIME,DS.STATUS,DC.Id As ConfigId,DC.PostEvent,'' As HOSTREFERENCE ,'' AS TRANSACTIONAMOUNT,SR.TRANSACTIONDATETIME,SR.MERCHANTNAME FROM DATA_ENGINE_CONFIG DC INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
+			SELECT
+			DISTINCT(SR.REQUESTBATCHID),DC.ID,DC.NAME,DC.UPLOADPATH FILELOCATION,DS.FILENAME,DS.ENDTIME,DS.STATUS,DC.Id As
+			ConfigId,DC.PostEvent,'' As HOSTREFERENCE ,'' AS TRANSACTIONAMOUNT,SR.TRANSACTIONDATETIME,SR.MERCHANTNAME FROM
+			DATA_ENGINE_CONFIG DC INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME INNER JOIN SETTLEMENT_REQUEST SR ON
+			SR.REQUESTBATCHID=DS.ID
 		</createView>
 	</changeSet>
 
@@ -5530,7 +5578,7 @@
 		]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="178" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -5538,7 +5586,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="179" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -5546,7 +5594,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="180" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -5556,7 +5604,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="181" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -5564,7 +5612,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="182" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -5572,7 +5620,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="183" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -5590,7 +5638,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="184" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -5598,15 +5646,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="185" author="vijaya.a">
 		<sql>
 			<![CDATA[
 				update data_engine_config set FilePrefixName = 'Presentment_REQUEST_', FileNameFormat = '${ddMMYYYYHms}' where Name = 'PRESENTMENT_REQUEST';
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="186" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -5614,7 +5662,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="187" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -5626,7 +5674,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="188" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -5635,7 +5683,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="189" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -5643,7 +5691,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="190" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -5654,7 +5702,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="191" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -5662,7 +5710,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="192" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -5670,7 +5718,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="193" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -5691,7 +5739,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="194" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -5699,7 +5747,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="195" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -5707,7 +5755,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="196" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -5763,7 +5811,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#737.1.0_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6133,10 +6181,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="197" author="naga.g">
-		 <dropForeignKeyConstraint baseTableName="RMTBRANCHES_TEMP" constraintName="FK_BRANCHES_TEMP_CLUSTERID" />
-		 <dropForeignKeyConstraint baseTableName="RMTBRANCHES" constraintName="FK_BRANCHES_CLUSTERID" />
+		<dropForeignKeyConstraint baseTableName="RMTBRANCHES_TEMP" constraintName="FK_BRANCHES_TEMP_CLUSTERID" />
+		<dropForeignKeyConstraint baseTableName="RMTBRANCHES" constraintName="FK_BRANCHES_CLUSTERID" />
 	</changeSet>
-	
+
 </databaseChangeLog>

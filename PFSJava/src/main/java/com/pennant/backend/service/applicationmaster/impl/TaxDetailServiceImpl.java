@@ -401,6 +401,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 		String gstStateCode = "";
 
 		if (StringUtils.isNotBlank(taxCode)) {
+
 			// if GST Number is already exist or not
 			int count = taxDetailDAO.getGSTNumberCount(entityCode, taxCode, "_View");
 			if (count != 0) {
@@ -415,6 +416,32 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 
 			if (province != null) {
 				gstStateCode = province.getTaxStateCode();
+				// if entitycode and state is already exist or not
+				if (taxDetail.getBefImage() != null) {
+					if (!StringUtils.equals(taxDetail.getBefImage().getStateCode(), taxDetail.getStateCode())
+							|| !StringUtils.equals(taxDetail.getBefImage().getEntityCode(), entityCode)) {
+
+						int dupEntityCodeCount = taxDetailDAO.getStateAndEntityCodeCount(entityCode,
+								taxDetail.getStateCode(), "_View");
+						if (dupEntityCodeCount != 0) {
+
+							String[] valueParm = new String[2];
+							String[] parameters = new String[2];
+
+							valueParm[0] = entityCode;
+							valueParm[1] = taxDetail.getStateCode();
+
+							parameters[0] = PennantJavaUtil.getLabel("label_TaxDetailDialog_StateCode.value") + ":"
+									+ valueParm[0] + " and ";
+							parameters[1] = PennantJavaUtil.getLabel("label_TaxDetailDialog_EntityCode.value") + ":"
+									+ valueParm[1];
+
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null)));
+						}
+					}
+				}
+
 			}
 
 			Entity entity = this.entityDAO.getEntity(entityCode, "");
@@ -445,6 +472,11 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	@Override
 	public List<TaxDetail> getTaxDetailbystateCode(String Statecode, String type) {
 		return getTaxDetailDAO().getTaxDetailbystateCode(Statecode, type);
+	}
+
+	@Override
+	public List<TaxDetail> getTaxDetailsbyEntityCode(String Statecode, String entityCode, String type) {
+		return getTaxDetailDAO().getTaxDetailsbyEntityCode(Statecode, type, entityCode);
 	}
 
 	public ProvinceDAO getProvinceDAO() {

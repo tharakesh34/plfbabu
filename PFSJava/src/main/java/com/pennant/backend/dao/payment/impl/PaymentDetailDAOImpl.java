@@ -80,12 +80,12 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" paymentDetailId, paymentId, amountType, amount, referenceId, ");
+		sql.append(" paymentDetailId, paymentId, amountType, amount, referenceId, TaxHeaderId");
 		if (type.contains("View")) {
-			sql.append("paymentDetailId, paymentId, amountType, amount, referenceId, amountType,referenceId,");
+			sql.append(", PaymentDetailId, paymentId, amountType, amount, referenceId, amountType,referenceId");
 		}
 		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From PaymentDetails");
 		sql.append(type);
 		sql.append(" Where paymentDetailId = :paymentDetailId");
@@ -116,11 +116,11 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into PaymentDetails");
 		sql.append(tableType.getSuffix());
-		sql.append(" (PaymentDetailId, PaymentId, AmountType, Amount, ReferenceId");
+		sql.append(" (PaymentDetailId, PaymentId, AmountType, Amount, ReferenceId, TaxHeaderId");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :PaymentDetailId, :PaymentId, :AmountType, :Amount, :ReferenceId");
+		sql.append(" :PaymentDetailId, :PaymentId, :AmountType, :Amount, :ReferenceId, :TaxHeaderId ");
 		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
 		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -148,7 +148,8 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update PaymentDetails");
 		sql.append(tableType.getSuffix());
-		sql.append(" set paymentId = :paymentId, amount = :amount, referenceId = :referenceId");
+		sql.append(
+				" set paymentId = :paymentId, amount = :amount, referenceId = :referenceId, TaxHeaderId=:TaxHeaderId ");
 		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
 		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -263,10 +264,11 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select PaymentDetailId, PaymentId, AmountType, Amount, ReferenceId, Version, LastMntOn");
+		sql.append(
+				"Select PaymentDetailId, PaymentId, AmountType, Amount, ReferenceId, TaxHeaderId, Version, LastMntOn");
 		sql.append(", LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc");
+			sql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent");
 		}
 		sql.append(" From PaymentDetails");
 		sql.append(type);

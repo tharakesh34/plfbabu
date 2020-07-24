@@ -208,5 +208,8 @@ public interface CustomerDAO {
 
 	Long getCustomerIdByCIF(String custCIF);
 
+	String getCustomerIdCIF(Long custId);
+
 	Customer getCustomerForPresentment(long id);
+
 }

@@ -22,6 +22,7 @@ public class XcessPayables implements Entity {
 	private BigDecimal paidSGST = BigDecimal.ZERO;
 	private BigDecimal paidIGST = BigDecimal.ZERO;
 	private BigDecimal paidUGST = BigDecimal.ZERO;
+	private BigDecimal paidCESS = BigDecimal.ZERO;
 	private String taxType = "";
 	private String feeTypeCode = "";
 	private boolean taxApplicable = false;
@@ -217,6 +218,14 @@ public class XcessPayables implements Entity {
 
 	public void setTdsAmount(BigDecimal tdsAmount) {
 		this.tdsAmount = tdsAmount;
+	}
+
+	public BigDecimal getPaidCESS() {
+		return paidCESS;
+	}
+
+	public void setPaidCESS(BigDecimal paidCESS) {
+		this.paidCESS = paidCESS;
 	}
 
 	public String getFinreference() {

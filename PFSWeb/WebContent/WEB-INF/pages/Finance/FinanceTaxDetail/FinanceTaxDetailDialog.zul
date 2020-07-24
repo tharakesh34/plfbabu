@@ -82,6 +82,10 @@
 										<uppercasebox id="taxNumber" width="180px" />
 									</hbox>
 								</row>
+								<row>
+									<label value="${c:l('label_FinanceTaxDetailDialog_AddressDetails.value')}" />
+									<extendedcombobox id="addressDetail" />
+								</row>
 								<row id="row2">
 									<label id="label_AddrLine1" value="${c:l('label_FinanceTaxDetailDialog_AddrLine1.value')}" />
 									<hbox>

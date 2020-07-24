@@ -47,7 +47,6 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -55,7 +54,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FeeType table</b>.<br>
  *
  */
-public class FeeType extends AbstractWorkflowEntity implements Entity {
+public class FeeType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	//FIXME GDP: Copied from java. We need to remove this bean from java.
@@ -85,6 +84,7 @@ public class FeeType extends AbstractWorkflowEntity implements Entity {
 	private Long dueAccSet;
 	private String dueAcctSetCode;
 	private String dueAcctSetCodeName;
+	private boolean tdsReq;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -294,6 +294,14 @@ public class FeeType extends AbstractWorkflowEntity implements Entity {
 
 	public void setDueAcctSetCodeName(String dueAcctSetCodeName) {
 		this.dueAcctSetCodeName = dueAcctSetCodeName;
+	}
+
+	public boolean isTdsReq() {
+		return tdsReq;
+	}
+
+	public void setTdsReq(boolean tdsReq) {
+		this.tdsReq = tdsReq;
 	}
 
 }

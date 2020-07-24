@@ -59,7 +59,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -459,6 +459,28 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		logger.debug(Literal.LEAVING);
 		return feeTypeId;
+	}
+
+	@Override
+	public boolean isFeeTypeAmortzReq(String feeTypeCode) {
+		logger.debug(Literal.ENTERING);
+
+		boolean isAmortzReq = false;
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT AmortzReq From FeeTypes");
+		selectSql.append(" WHERE FeeTypeCode = :FeeTypeCode ");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FeeTypeCode", feeTypeCode);
+
+		try {
+			isAmortzReq = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Boolean.class);
+		} catch (EmptyResultDataAccessException e) {
+		}
+
+		logger.debug(Literal.LEAVING);
+		return isAmortzReq;
 	}
 
 }

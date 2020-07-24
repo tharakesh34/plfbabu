@@ -67,7 +67,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.core.SnapshotService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
@@ -91,7 +90,6 @@ public class MicroEOD implements Tasklet {
 	private PlatformTransactionManager transactionManager;
 	private DataSource dataSource;
 	private CustomerDAO customerDAO;
-	private SnapshotService snapshotService;
 
 	// ##_0.2
 	private static final String CUSTOMER_SQL = "Select CustID, LoanExist, LimitRebuild from CustomerQueuing  Where ThreadID = ? and Progress= ?";
@@ -181,7 +179,6 @@ public class MicroEOD implements Tasklet {
 
 				//update  end
 				customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_SUCCESS);
-				snapshotService.doSnapshotPreparation(appDate, custId);
 
 				//commit
 				transactionManager.commit(txStatus);
@@ -270,11 +267,6 @@ public class MicroEOD implements Tasklet {
 	@Autowired
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
-	}
-
-	@Autowired
-	public void setSnapshotService(SnapshotService snapshotService) {
-		this.snapshotService = snapshotService;
 	}
 
 }

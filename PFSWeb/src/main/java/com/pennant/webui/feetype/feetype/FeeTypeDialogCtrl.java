@@ -70,7 +70,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.feetype.FeeTypeService;
@@ -580,12 +580,16 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		}
 
-		String feeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_EXEMPTED);
+		String pftInvFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_PFT_EXEMPTED);
+		String priInvFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_PRI_EXEMPTED);
 
 		if (StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)
 				|| StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)
 				|| StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)
-				|| (StringUtils.isNotBlank(feeCode) && StringUtils.equals(aFeeType.getFeeTypeCode(), feeCode))) {
+				|| (StringUtils.isNotBlank(pftInvFeeCode)
+						&& StringUtils.equals(aFeeType.getFeeTypeCode(), pftInvFeeCode))
+				|| (StringUtils.isNotBlank(priInvFeeCode)
+						&& StringUtils.equals(aFeeType.getFeeTypeCode(), priInvFeeCode))) {
 
 			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
 				this.row1.setVisible(false);

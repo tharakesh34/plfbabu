@@ -326,16 +326,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("DivisionCode", divisionCode);
 
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" entityCode, entityDesc, pANNumber, country, stateCode, cityCode, ");
-		sql.append(
-				" pinCode,entityAddrLine1,entityAddrLine2,entityAddrHNbr,entityFlatNbr,entityAddrStreet,entityPOBox,active,gstinAvailable,");
-		if (type.contains("View")) {
-			sql.append(" countryname,ProvinceName,CItyName,pincodename,");
-		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,cINNumber");
-		sql.append(" From Entity");
+		StringBuilder sql = new StringBuilder("SELECT entityCode, entityDesc, pANNumber From Entity");
 		sql.append(type);
 		sql.append(" Where entityCode = (Select EntityCode from SMTDivisionDetail where DivisionCode = :DivisionCode)");
 
@@ -352,5 +343,31 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 
 		logger.debug(Literal.LEAVING);
 		return entity;
+	}
+
+	@Override
+	public Entity getEntityByFinType(String finType, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("SELECT entityCode, entityDesc, PANNumber From Entity");
+		sql.append(type);
+		sql.append(" Where EntityCode = (Select D.EntityCode From RMTFinanceTypes F ");
+		sql.append(" INNER JOIN SMTDivisionDetail D ON D.DivisionCode = F.FinDivision Where FinType = :FinType ) ");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinType", finType);
+
+		logger.debug("sql: " + sql.toString());
+		RowMapper<Entity> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Entity.class);
+		Entity entity = null;
+		try {
+			entity = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			entity = null;
+		}
+		logger.debug("Leaving");
+		return entity;
+
 	}
 }

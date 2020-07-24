@@ -59,6 +59,8 @@ public class GSTInvoiceTxnDetails {
 	private BigDecimal UGST_AMT = BigDecimal.ZERO;
 	private BigDecimal SGST_RATE = BigDecimal.ZERO;
 	private BigDecimal SGST_AMT = BigDecimal.ZERO;
+	private BigDecimal CESS_RATE = BigDecimal.ZERO;
+	private BigDecimal CESS_AMT = BigDecimal.ZERO;
 
 	public GSTInvoiceTxnDetails() {
 		super();
@@ -174,6 +176,22 @@ public class GSTInvoiceTxnDetails {
 
 	public void setInvoiceId(long invoiceId) {
 		this.invoiceId = invoiceId;
+	}
+
+	public BigDecimal getCESS_RATE() {
+		return CESS_RATE;
+	}
+
+	public void setCESS_RATE(BigDecimal cESS_RATE) {
+		CESS_RATE = cESS_RATE;
+	}
+
+	public BigDecimal getCESS_AMT() {
+		return CESS_AMT;
+	}
+
+	public void setCESS_AMT(BigDecimal cESS_AMT) {
+		CESS_AMT = cESS_AMT;
 	}
 
 }

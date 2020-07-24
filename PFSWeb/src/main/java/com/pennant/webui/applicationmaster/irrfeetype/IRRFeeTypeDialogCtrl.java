@@ -62,7 +62,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.applicationmaster.IRRFeeType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.service.applicationmaster.IRRCodeService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;

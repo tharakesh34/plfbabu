@@ -166,16 +166,20 @@
 
 	<changeSet id="12" author="Durgaprasad G" dbms="oracle">
 		<createView viewName="OGL_VIEW" replaceIfExists="true">
-			SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,P.Account glaccount,P.DrOrCr,P.AcCcy ,
+			SELECT P.POSTDATE ,P.LinkedTranId,
+			P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,P.Account glaccount,P.DrOrCr,P.AcCcy ,
 			CASE
-			WHEN P.drorcr = 'D' THEN (P.POSTAMOUNT/CCYMINORCCYUNITS )*-1
-					ELSE P.POSTAMOUNT/CCYMINORCCYUNITS 
-					END postAmount
+			WHEN
+			P.drorcr = 'D' THEN (P.POSTAMOUNT/CCYMINORCCYUNITS )*-1
+			ELSE P.POSTAMOUNT/CCYMINORCCYUNITS
+			END postAmount
 			from postings P
-			inner join financemain FM on  P.FINREFERENCE = FM.FINREFERENCE
-			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
-			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
-			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
+			inner join financemain FM on P.FINREFERENCE = FM.FINREFERENCE
+			inner join RMTFINANCETYPES FT
+			ON FT.FinType = FM.FinType
+			inner JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner join RMTCurrencies
+			CCY on P.AcCcy = CCY.ccycode
 			WHERE P.POSTAMOUNT >0 ORDER BY FINDIVISION,FINBRANCH,ACCOUNT,AcCcy
 		</createView>
 	</changeSet>
@@ -3339,72 +3343,72 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 
 	<changeSet id="66" author="dheerendra.d">
 		<createView viewName="EXTINTERFACECONF_VIEW" replaceIfExists="true">
-	SELECT		T1.Id,
-			 T1.Code, 
-			 T1.Description, 
-			 T1.Type, 
-			 T1.NotificationType, 
-			 T1.errorCodes, 
-			 T1.active,
-			 T1.Version ,
-			 T1.LastMntBy, 
-			 T1.LastMntOn,
-			 T1.RecordStatus,
-			 T1.RoleCode,
-			 T1.NextRoleCode,
-			 T1.TaskId,
-			 T1.NextTaskId,
-			 T1.RecordType, 
-			 T1.WorkflowId
-			FROM    	EXTINTERFACECONF_TEMP T1 
-			
-			UNION ALL
-			
-			SELECT	T1.Id,
-			   T1.Code,
-			   T1.Description, 
-			   T1.Type, 
-			   T1.NotificationType, 
-			   T1.errorCodes,
-			   T1.active, 
-			   T1.Version , 
-			   T1.LastMntBy, 
-			   T1.LastMntOn,
-			   T1.RecordStatus, 
-			   T1.RoleCode, 
-			   T1.NextRoleCode, 
-			   T1.TaskId,
-			   T1.NextTaskId,
-			   T1.RecordType, 
-			   T1.WorkflowId
-			FROM    	ExtInterfaceConf T1 
-			WHERE     NOT EXISTS (SELECT 1 FROM EXTINTERFACECONF_TEMP WHERE Id = T1.Id);
+			SELECT T1.Id,
+			T1.Code,
+			T1.Description,
+			T1.Type,
+			T1.NotificationType,
+			T1.errorCodes,
+			T1.active,
+			T1.Version ,
+			T1.LastMntBy,
+			T1.LastMntOn,
+			T1.RecordStatus,
+			T1.RoleCode,
+			T1.NextRoleCode,
+			T1.TaskId,
+			T1.NextTaskId,
+			T1.RecordType,
+			T1.WorkflowId
+			FROM EXTINTERFACECONF_TEMP T1
 
-</createView>
+			UNION ALL
+
+			SELECT T1.Id,
+			T1.Code,
+			T1.Description,
+			T1.Type,
+			T1.NotificationType,
+			T1.errorCodes,
+			T1.active,
+			T1.Version ,
+			T1.LastMntBy,
+			T1.LastMntOn,
+			T1.RecordStatus,
+			T1.RoleCode,
+			T1.NextRoleCode,
+			T1.TaskId,
+			T1.NextTaskId,
+			T1.RecordType,
+			T1.WorkflowId
+			FROM ExtInterfaceConf T1
+			WHERE NOT EXISTS (SELECT 1 FROM EXTINTERFACECONF_TEMP WHERE Id = T1.Id);
+
+		</createView>
 	</changeSet>
 
 	<changeSet id="67" author="dheerendra.d">
 		<createView viewName="EXTINTERFACECONF_AVIEW" replaceIfExists="true">
-		 SELECT		T1.Id, 
-					T1.Code, 
-					T1.Description, 
-					T1.Type,
-					T1.NotificationType,
-					T1.errorCodes,
-					T1.active,
-					T1.Version , 
-					T1.LastMntBy, 
-					T1.LastMntOn,
-					T1.RecordStatus, 
-					T1.RoleCode, 
-					T1.NextRoleCode, 
-					T1.TaskId, 
-					T1.NextTaskId, 
-					T1.RecordType, 
-					T1.WorkflowId
-		FROM    	ExtInterfaceConf T1;
+			SELECT T1.Id,
+			T1.Code,
+			T1.Description,
+			T1.Type,
+			T1.NotificationType,
+			T1.errorCodes,
+			T1.active,
+			T1.Version ,
+			T1.LastMntBy,
+			T1.LastMntOn,
+			T1.RecordStatus,
+			T1.RoleCode,
+			T1.NextRoleCode,
+			T1.TaskId,
+			T1.NextTaskId,
+			T1.RecordType,
+			T1.WorkflowId
+			FROM ExtInterfaceConf T1;
 
-</createView>
+		</createView>
 	</changeSet>
 
 	<changeSet id="68" author="dheerendra.d">
@@ -3829,9 +3833,10 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	</changeSet>
 	<changeSet id="80" author="Saikiran.V">
 		<createView viewName="PAYMENTTRANSACTION_PVIEW">
-				select PH.FinReference, PT.TranModule, PH.PaymentId ,PT.TranStatus, PT.TransactionId, PT.TranReference, PT.TranBatch, PT.StatusCode, PT.StatusDesc
-					from PaymentTransaction PT Inner Join PaymentHeader PH on PT.PAYMENTID= PH.PAYMENTID and PT.TranModule='PYMT';
-			</createView>
+			select PH.FinReference, PT.TranModule, PH.PaymentId ,PT.TranStatus, PT.TransactionId, PT.TranReference, PT.TranBatch,
+			PT.StatusCode, PT.StatusDesc
+			from PaymentTransaction PT Inner Join PaymentHeader PH on PT.PAYMENTID= PH.PAYMENTID and PT.TranModule='PYMT';
+		</createView>
 	</changeSet>
 	<changeSet id="81" author="Saikiran.v">
 		<sql>
@@ -3855,69 +3860,69 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 
 	<changeSet id="84" author="dheerendra.d">
 		<createView viewName="EXTINTERFACECONF_VIEW" replaceIfExists="true">
-              SELECT	T1.Id, 
-			          T1.Code, 
-			          T1.Description, 
-			          T1.Type, 
-			          T1.NotificationType,
-					  T1.errorCodes, 
-					  T1.active, 
-			          T1.CONTACTSDETAIL,	
-					  T1.Version , 
-					  T1.LastMntBy, 
-					  T1.LastMntOn,
-					  T1.RecordStatus, 
-					  T1.RoleCode, 
-					  T1.NextRoleCode, 
-					  T1.TaskId, 
-					  T1.NextTaskId, 
-					  T1.RecordType, 
-					  T1.WorkflowId
-				FROM    EXTINTERFACECONF_TEMP T1 
-             UNION ALL
-          	  SELECT	T1.Id, T1.Code, 
-			            T1.Description, 
-			            T1.Type, 
-			            T1.NotificationType,
-			            T1.errorCodes, 
-			            T1.active	, 
-			            T1.CONTACTSDETAIL,
-						T1.Version , 
-						T1.LastMntBy, 
-						T1.LastMntOn,
-						T1.RecordStatus, 
-						T1.RoleCode, 
-						T1.NextRoleCode, 
-						T1.TaskId, 
-						T1.NextTaskId, 
-						T1.RecordType, 
-						T1.WorkflowId
-			FROM    	ExtInterfaceConf T1 
-			WHERE    NOT EXISTS (SELECT 1 FROM EXTINTERFACECONF_TEMP WHERE Id = T1.Id)
-        </createView>
+			SELECT T1.Id,
+			T1.Code,
+			T1.Description,
+			T1.Type,
+			T1.NotificationType,
+			T1.errorCodes,
+			T1.active,
+			T1.CONTACTSDETAIL,
+			T1.Version ,
+			T1.LastMntBy,
+			T1.LastMntOn,
+			T1.RecordStatus,
+			T1.RoleCode,
+			T1.NextRoleCode,
+			T1.TaskId,
+			T1.NextTaskId,
+			T1.RecordType,
+			T1.WorkflowId
+			FROM EXTINTERFACECONF_TEMP T1
+			UNION ALL
+			SELECT T1.Id, T1.Code,
+			T1.Description,
+			T1.Type,
+			T1.NotificationType,
+			T1.errorCodes,
+			T1.active ,
+			T1.CONTACTSDETAIL,
+			T1.Version ,
+			T1.LastMntBy,
+			T1.LastMntOn,
+			T1.RecordStatus,
+			T1.RoleCode,
+			T1.NextRoleCode,
+			T1.TaskId,
+			T1.NextTaskId,
+			T1.RecordType,
+			T1.WorkflowId
+			FROM ExtInterfaceConf T1
+			WHERE NOT EXISTS (SELECT 1 FROM EXTINTERFACECONF_TEMP WHERE Id = T1.Id)
+		</createView>
 	</changeSet>
 
 	<changeSet id="85" author="dheerendra.d">
 		<createView viewName="EXTINTERFACECONF_AVIEW" replaceIfExists="true">
-    		 SELECT		 T1.Id, 
-			    		 T1.Code, 
-			    		 T1.Description, 
-			    		 T1.Type, 
-			    		 T1.NotificationType, 
-			    		 T1.errorCodes, 
-			    		 T1.active,  
-			    		 T1.CONTACTSDETAIL,		
-						 T1.Version , 
-						 T1.LastMntBy, 
-						 T1.LastMntOn,
-						 T1.RecordStatus, 
-						 T1.RoleCode, 
-						 T1.NextRoleCode, 
-						 T1.TaskId, 
-						 T1.NextTaskId, 
-						 T1.RecordType, 
-						 T1.WorkflowId
-			FROM    	ExtInterfaceConf T1
+			SELECT T1.Id,
+			T1.Code,
+			T1.Description,
+			T1.Type,
+			T1.NotificationType,
+			T1.errorCodes,
+			T1.active,
+			T1.CONTACTSDETAIL,
+			T1.Version ,
+			T1.LastMntBy,
+			T1.LastMntOn,
+			T1.RecordStatus,
+			T1.RoleCode,
+			T1.NextRoleCode,
+			T1.TaskId,
+			T1.NextTaskId,
+			T1.RecordType,
+			T1.WorkflowId
+			FROM ExtInterfaceConf T1
 		</createView>
 	</changeSet>
 
@@ -3954,23 +3959,23 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	</changeSet>
 	<changeSet id="88" author="Saikiran.V" dbms="oracle">
 		<createView viewName="DEMAND_ALERT_VIEW" replaceIfExists="true">
-				SELECT  FM.FINREFERENCE,
-				FM.CUSTID,
-				CEM.CUSTEMAIL,
-				FM.FINAMOUNT ,
-				FSD.PRINCIPALSCHD,
-				FSD.PROFITSCHD,
-				FSD.REPAYAMOUNT,
-				FSD.SCHDATE,
-				FSD.TDSAMOUNT,
-				(CASE 
-					when FM.VANCODE  is null then ' '
-					else FM.VANCODE  end) VANCODE 
-				FROM  FINANCEMAIN FM 
-				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
-				INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
-				where  CUS.dnd= 0 and  CEM.CUSTEMAILPRIORITY=5 and  (SCHDATE = sysdate+2 OR SCHDATE =sysdate+5)		
+			SELECT FM.FINREFERENCE,
+			FM.CUSTID,
+			CEM.CUSTEMAIL,
+			FM.FINAMOUNT ,
+			FSD.PRINCIPALSCHD,
+			FSD.PROFITSCHD,
+			FSD.REPAYAMOUNT,
+			FSD.SCHDATE,
+			FSD.TDSAMOUNT,
+			(CASE
+			when FM.VANCODE is null then ' '
+			else FM.VANCODE end) VANCODE
+			FROM FINANCEMAIN FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID
+			INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+			where CUS.dnd= 0 and CEM.CUSTEMAILPRIORITY=5 and (SCHDATE = sysdate+2 OR SCHDATE =sysdate+5)
 		</createView>
 	</changeSet>
 	<changeSet id="89" author="Saikiran.V" dbms="oracle">
@@ -3999,25 +4004,26 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	</changeSet>
 	<changeSet id="90" author="Saikiran.V" dbms="oracle">
 		<createView viewName="OVER_ALERT_VIEW" replaceIfExists="true">
-				select
-				CUS.CUSTID ,
-				CEM.CUSTEMAIL,
-				FM.FINREFERENCE,
-				FM.FINAMOUNT ,
-				FSD.PRINCIPALSCHD,
-				FSD.PROFITSCHD,
-				FSD.REPAYAMOUNT,
-				FSD.SCHDATE,
-				FOD.TOTPENALTYBAL,
-				(CASE 
-					when FM.VANCODE  is null then ' '
-					else FM.VANCODE  end) VANCODE 
-				FROM  FINANCEMAIN FM 
-				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
-				INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
-				INNER JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
-				where  CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5  and SCHDATE >= sysdate+3 AND FSD.PRINCIPALSCHD+FSD.PROFITSCHD > 50000 AND SCHDPRIPAID = 0 AND SCHDPFTPAID = 0
+			select
+			CUS.CUSTID ,
+			CEM.CUSTEMAIL,
+			FM.FINREFERENCE,
+			FM.FINAMOUNT ,
+			FSD.PRINCIPALSCHD,
+			FSD.PROFITSCHD,
+			FSD.REPAYAMOUNT,
+			FSD.SCHDATE,
+			FOD.TOTPENALTYBAL,
+			(CASE
+			when FM.VANCODE is null then ' '
+			else FM.VANCODE end) VANCODE
+			FROM FINANCEMAIN FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID
+			INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+			INNER JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
+			where CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 and SCHDATE >= sysdate+3 AND FSD.PRINCIPALSCHD+FSD.PROFITSCHD > 50000 AND
+			SCHDPRIPAID = 0 AND SCHDPFTPAID = 0
 		</createView>
 	</changeSet>
 	<changeSet id="91" author="Saikiran.V" dbms="oracle">
@@ -4042,18 +4048,18 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	</changeSet>
 	<changeSet id="92" author="Saikiran.V" dbms="oracle">
 		<createView viewName="RECEIPTADVICE_ALERT_VIEW" replaceIfExists="true">
-				SELECT  FM.FINREFERENCE,
-				FM.CUSTID,
-				CEM.CUSTEMAIL,
-				FRH.receiptAmount,
-				FRH.receiptDate,
-				FRH.receiptId
-				FROM  FINANCEMAIN FM 
-				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
-				INNER JOIN FINRECEIPTHEADER FRH ON FM.FINREFERENCE=FRH.REFERENCE
-				INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
-				WHERE CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 and  FRH.RECEIPTDATE=sysdate
+			SELECT FM.FINREFERENCE,
+			FM.CUSTID,
+			CEM.CUSTEMAIL,
+			FRH.receiptAmount,
+			FRH.receiptDate,
+			FRH.receiptId
+			FROM FINANCEMAIN FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID
+			INNER JOIN FINRECEIPTHEADER FRH ON FM.FINREFERENCE=FRH.REFERENCE
+			INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID
+			WHERE CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 and FRH.RECEIPTDATE=sysdate
 		</createView>
 	</changeSet>
 	<changeSet id="93" author="Saikiran.V" dbms="oracle">
@@ -4085,23 +4091,23 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	</changeSet>
 	<changeSet id="94" author="Saikiran.V" dbms="oracle">
 		<createView viewName="MATURITY_DATE_ALERT_VIEW" replaceIfExists="true">
-					SELECT  FM.FINREFERENCE,
-					FM.CUSTID,
-					CEM.CUSTEMAIL,
-					CS.CustShrtName,
-					CS.CustCif ,
-					(CASE 
-					when FM.VANCODE  is null then ' '
-					else FM.VANCODE  end) VANCODE ,
-					FM.MaturityDate,
-					FM.finAmount,
-					MA.amtPayable
-					FROM  FINANCEMAIN FM 
-					INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-					INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
-					Left JOIN (select finreference,sum(paidamount) amtPayable from ManualAdvise where Advisetype = 2
-					group by finreference ) MA on MA.finreference=FM.finreference 
-					WHERE CS.DND=0  and CEM.CUSTEMAILPRIORITY=5  and  MATURITYDATE= add_months(sysdate,-1)
+			SELECT FM.FINREFERENCE,
+			FM.CUSTID,
+			CEM.CUSTEMAIL,
+			CS.CustShrtName,
+			CS.CustCif ,
+			(CASE
+			when FM.VANCODE is null then ' '
+			else FM.VANCODE end) VANCODE ,
+			FM.MaturityDate,
+			FM.finAmount,
+			MA.amtPayable
+			FROM FINANCEMAIN FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID
+			Left JOIN (select finreference,sum(paidamount) amtPayable from ManualAdvise where Advisetype = 2
+			group by finreference ) MA on MA.finreference=FM.finreference
+			WHERE CS.DND=0 and CEM.CUSTEMAILPRIORITY=5 and MATURITYDATE= add_months(sysdate,-1)
 		</createView>
 	</changeSet>
 	<changeSet id="95" author="Saikiran.V" dbms="oracle">
@@ -4125,15 +4131,15 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	</changeSet>
 	<changeSet id="96" author="Saikiran.V" dbms="oracle">
 		<createView viewName="SOA_ALERT_VIEW" replaceIfExists="true">
-				Select FINREFERENCE,
-				FM.CUSTID,
-				CEM.CUSTEMAIL,
-				FINSTARTDATE finStartDate ,
-				sysdate toDate
-				from financemain FM
-				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-				INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
-				where CS.dnd=0  and CEM.CUSTEMAILPRIORITY=5  and to_char(sysdate)= to_char(ADD_MONTHS((LAST_DAY(SYSDATE)+1),-1),'dd-mm-yy')
+			Select FINREFERENCE,
+			FM.CUSTID,
+			CEM.CUSTEMAIL,
+			FINSTARTDATE finStartDate ,
+			sysdate toDate
+			from financemain FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID
+			where CS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 and to_char(sysdate)= to_char(ADD_MONTHS((LAST_DAY(SYSDATE)+1),-1),'dd-mm-yy')
 		</createView>
 	</changeSet>
 	<changeSet id="97" author="Saikiran.V" dbms="oracle">
@@ -4172,13 +4178,16 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	</changeSet>
 	<changeSet id="99" author="Saikiran.V" dbms="oracle">
 		<createView viewName="TDS_ALERT_VIEW" replaceIfExists="true">
-				select to_char(FSD.schDate,'MON''YY') tdsMonth,CEM.CUSTEMAIL,TDSAMOUNT,FSD.TDSAPPLICABLE,TDSPAID,FSD.FINREFERENCE,FM.FINASSETVALUE  from FINSCHEDULEDETAILS FSD
-				INNER join financeMain FM On FM.FINREFERENCE=FSD.FINREFERENCE
-				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
-				   Where  	     	CUS.dnd= 0  and CEM.CUSTEMAILPRIORITY=5  and FSD.TDSAPPLICABLE = 1 and (to_char(schDate) = to_char(sysdate+45 ,'dd-mm-yy') OR
-                                    to_char(schDate) = to_char(sysdate+30 ,'dd-mm-yy') OR 
-                                    to_char(schDate) = to_char(sysdate+15 ,'dd-mm-yy') )
+			select to_char(FSD.schDate,'MON''YY')
+			tdsMonth,CEM.CUSTEMAIL,TDSAMOUNT,FSD.TDSAPPLICABLE,TDSPAID,FSD.FINREFERENCE,FM.FINASSETVALUE from FINSCHEDULEDETAILS
+			FSD
+			INNER join financeMain FM On FM.FINREFERENCE=FSD.FINREFERENCE
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID
+			Where CUS.dnd= 0 and CEM.CUSTEMAILPRIORITY=5 and FSD.TDSAPPLICABLE = 1 and (to_char(schDate) = to_char(sysdate+45
+			,'dd-mm-yy') OR
+			to_char(schDate) = to_char(sysdate+30 ,'dd-mm-yy') OR
+			to_char(schDate) = to_char(sysdate+15 ,'dd-mm-yy') )
 		</createView>
 	</changeSet>
 	<changeSet id="100" author="Saikiran.V" dbms="oracle">
@@ -4306,12 +4315,12 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 
 	<changeSet id="105" author="Saikiran.V" dbms="oracle">
 		<createView viewName="REPAYMENT_ALERT_VIEW" replaceIfExists="true">
-				select  T1.FinReference, T1.LogKey, T1.EventAction, T1.SchdlRecal, T1.PostDate, T1.ReversalCompleted , CEM.custEmail
-				from FinLogEntryDetail T1
-				INNER JOIN FINANCEMAIN FM ON FM.FinReference=T1.FinReference 
-				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-				INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
-				Where CS.dnd=0 and PostDate = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')
+			select T1.FinReference, T1.LogKey, T1.EventAction, T1.SchdlRecal, T1.PostDate, T1.ReversalCompleted , CEM.custEmail
+			from FinLogEntryDetail T1
+			INNER JOIN FINANCEMAIN FM ON FM.FinReference=T1.FinReference
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID
+			Where CS.dnd=0 and PostDate = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')
 		</createView>
 	</changeSet>
 
@@ -4371,116 +4380,121 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	</changeSet>
 	<changeSet id="107" author="Saikiran.V" dbms="oracle">
 		<createView viewName="DEMAND_ALERT_VIEW" replaceIfExists="true">
-				SELECT  FM.FINREFERENCE,
-				FM.CUSTID,
-				CEM.CUSTEMAIL,
-				FM.FINAMOUNT ,
-				FSD.PRINCIPALSCHD,
-				FSD.PROFITSCHD,
-				FSD.REPAYAMOUNT,
-				FSD.SCHDATE,
-				FSD.TDSAMOUNT,
-				(CASE 
-					when FM.VANCODE  is null then ' '
-					else FM.VANCODE  end) VANCODE 
-				FROM  FINANCEMAIN FM 
-				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
-				INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
-				where  CUS.dnd= 0 and  CEM.CUSTEMAILPRIORITY=5 
-				and  SCHDATE = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+2 
-				OR SCHDATE =to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+5     
+			SELECT FM.FINREFERENCE,
+			FM.CUSTID,
+			CEM.CUSTEMAIL,
+			FM.FINAMOUNT ,
+			FSD.PRINCIPALSCHD,
+			FSD.PROFITSCHD,
+			FSD.REPAYAMOUNT,
+			FSD.SCHDATE,
+			FSD.TDSAMOUNT,
+			(CASE
+			when FM.VANCODE is null then ' '
+			else FM.VANCODE end) VANCODE
+			FROM FINANCEMAIN FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID
+			INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+			where CUS.dnd= 0 and CEM.CUSTEMAILPRIORITY=5
+			and SCHDATE = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+2
+			OR SCHDATE =to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+5
 		</createView>
 	</changeSet>
 	<changeSet id="108" author="Saikiran.V" dbms="oracle">
 		<createView viewName="OVER_ALERT_VIEW" replaceIfExists="true">
-				select
-				CUS.CUSTID ,
-				CEM.CUSTEMAIL,
-				FM.FINREFERENCE,
-				FM.FINAMOUNT ,
-				FSD.PRINCIPALSCHD,
-				FSD.PROFITSCHD,
-				FSD.REPAYAMOUNT,
-				FSD.SCHDATE,
-				FOD.TOTPENALTYBAL,
-				(CASE 
-					when FM.VANCODE  is null then ' '
-					else FM.VANCODE  end) VANCODE 
-				FROM  FINANCEMAIN FM 
-				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
-				INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
-				INNER JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
-				where  CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5  and 
-        SCHDATE >=  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+3 AND
-        FSD.PRINCIPALSCHD+FSD.PROFITSCHD > 50000
-        AND SCHDPRIPAID = 0 AND SCHDPFTPAID = 0
+			select
+			CUS.CUSTID ,
+			CEM.CUSTEMAIL,
+			FM.FINREFERENCE,
+			FM.FINAMOUNT ,
+			FSD.PRINCIPALSCHD,
+			FSD.PROFITSCHD,
+			FSD.REPAYAMOUNT,
+			FSD.SCHDATE,
+			FOD.TOTPENALTYBAL,
+			(CASE
+			when FM.VANCODE is null then ' '
+			else FM.VANCODE end) VANCODE
+			FROM FINANCEMAIN FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID
+			INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+			INNER JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
+			where CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 and
+			SCHDATE >= to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+3 AND
+			FSD.PRINCIPALSCHD+FSD.PROFITSCHD > 50000
+			AND SCHDPRIPAID = 0 AND SCHDPFTPAID = 0
 		</createView>
 	</changeSet>
 	<changeSet id="109" author="Saikiran.V" dbms="oracle">
 		<createView viewName="RECEIPTADVICE_ALERT_VIEW" replaceIfExists="true">
-				SELECT  FM.FINREFERENCE,
-				FM.CUSTID,
-				CEM.CUSTEMAIL,
-				FRH.receiptAmount,
-				FRH.receiptDate,
-				FRH.receiptId
-				FROM  FINANCEMAIN FM 
-				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
-				INNER JOIN FINRECEIPTHEADER FRH ON FM.FINREFERENCE=FRH.REFERENCE
-				INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
-				WHERE CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 and 
-        FRH.RECEIPTDATE=to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')
+			SELECT FM.FINREFERENCE,
+			FM.CUSTID,
+			CEM.CUSTEMAIL,
+			FRH.receiptAmount,
+			FRH.receiptDate,
+			FRH.receiptId
+			FROM FINANCEMAIN FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID
+			INNER JOIN FINRECEIPTHEADER FRH ON FM.FINREFERENCE=FRH.REFERENCE
+			INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID
+			WHERE CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 and
+			FRH.RECEIPTDATE=to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')
 		</createView>
 	</changeSet>
 	<changeSet id="110" author="Saikiran.V" dbms="oracle">
 		<createView viewName="MATURITY_DATE_ALERT_VIEW" replaceIfExists="true">
-					SELECT  FM.FINREFERENCE,
-					FM.CUSTID,
-					CEM.CUSTEMAIL,
-					CS.CustShrtName,
-					CS.CustCif ,
-					(CASE 
-					when FM.VANCODE  is null then ' '
-					else FM.VANCODE  end) VANCODE ,
-					FM.MaturityDate,
-					FM.finAmount,
-					MA.amtPayable
-					FROM  FINANCEMAIN FM 
-					INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-					INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
-					Left JOIN (select finreference,sum(paidamount) amtPayable from ManualAdvise where Advisetype = 2
-					group by finreference ) MA on MA.finreference=FM.finreference 
-					WHERE CS.DND=0  and CEM.CUSTEMAILPRIORITY=5  and  
-          MATURITYDATE= add_months(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'),-1)
-     
+			SELECT FM.FINREFERENCE,
+			FM.CUSTID,
+			CEM.CUSTEMAIL,
+			CS.CustShrtName,
+			CS.CustCif ,
+			(CASE
+			when FM.VANCODE is null then ' '
+			else FM.VANCODE end) VANCODE ,
+			FM.MaturityDate,
+			FM.finAmount,
+			MA.amtPayable
+			FROM FINANCEMAIN FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID
+			Left JOIN (select finreference,sum(paidamount) amtPayable from ManualAdvise where Advisetype = 2
+			group by finreference ) MA on MA.finreference=FM.finreference
+			WHERE CS.DND=0 and CEM.CUSTEMAILPRIORITY=5 and
+			MATURITYDATE= add_months(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'),-1)
+
 		</createView>
 	</changeSet>
 	<changeSet id="111" author="Saikiran.V" dbms="oracle">
 		<createView viewName="SOA_ALERT_VIEW" replaceIfExists="true">
-				Select FINREFERENCE,
-				FM.CUSTID,
-				CEM.CUSTEMAIL,
-				FINSTARTDATE finStartDate ,
-				to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd') toDate
-				from financemain FM
-				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-				INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
-				where CS.dnd=0  and CEM.CUSTEMAILPRIORITY=5  and 
-          MATURITYDATE= add_months(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'),-1)
+			Select FINREFERENCE,
+			FM.CUSTID,
+			CEM.CUSTEMAIL,
+			FINSTARTDATE finStartDate ,
+			to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd') toDate
+			from financemain FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID
+			where CS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 and
+			MATURITYDATE= add_months(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'),-1)
 		</createView>
 	</changeSet>
 	<changeSet id="112" author="Saikiran.V" dbms="oracle">
 		<createView viewName="TDS_ALERT_VIEW" replaceIfExists="true">
-					select to_char(FSD.schDate,'MON''YY') tdsMonth,CEM.CUSTEMAIL,TDSAMOUNT,FSD.TDSAPPLICABLE,TDSPAID,FSD.FINREFERENCE,FM.FINASSETVALUE  from FINSCHEDULEDETAILS FSD
-				INNER join financeMain FM On FM.FINREFERENCE=FSD.FINREFERENCE
-				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
-				   Where  	     	CUS.dnd= 0  and CEM.CUSTEMAILPRIORITY=5  and FSD.TDSAPPLICABLE = 1 and (to_char(schDate) = to_char(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+45 ,'dd-mm-yy') OR
-                                    to_char(schDate) = to_char(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+30 ,'dd-mm-yy') OR 
-                                    to_char(schDate) = to_char(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+15 ,'dd-mm-yy') )
+			select to_char(FSD.schDate,'MON''YY')
+			tdsMonth,CEM.CUSTEMAIL,TDSAMOUNT,FSD.TDSAPPLICABLE,TDSPAID,FSD.FINREFERENCE,FM.FINASSETVALUE from FINSCHEDULEDETAILS
+			FSD
+			INNER join financeMain FM On FM.FINREFERENCE=FSD.FINREFERENCE
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID
+			Where CUS.dnd= 0 and CEM.CUSTEMAILPRIORITY=5 and FSD.TDSAPPLICABLE = 1 and (to_char(schDate) = to_char(to_date((select
+			SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+45 ,'dd-mm-yy') OR
+			to_char(schDate) = to_char(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+30
+			,'dd-mm-yy') OR
+			to_char(schDate) = to_char(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+15
+			,'dd-mm-yy') )
 		</createView>
 	</changeSet>
 	<changeSet id="113" author="Saikiran.V">
@@ -4595,36 +4609,36 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	<changeSet id="122" author="Durga Prasad G">
 		<createView viewName="OVER_ALERT_VIEW" replaceIfExists="true">
 			select
-					CUS.CUSTID ,
-					CEM.CUSTEMAIL,
-					FM.FINREFERENCE,
-					FM.FINAMOUNT ,
-					FSD.PRINCIPALSCHD,
-					FSD.PROFITSCHD,
-					FSD.REPAYAMOUNT,
-					FSD.SCHDATE,
-	        (CASE 
-						when FOD.TOTPENALTYBAL  is null then 0
-						else FOD.TOTPENALTYBAL  end) TOTPENALTYBAL,
-					(CASE 
-						when FM.VANCODE  is null then ' '
-						else FM.VANCODE  end) VANCODE 
-					FROM  FINANCEMAIN FM 
-					INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-					INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
-					INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
-					LEFT JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
-					where  CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 
-	        AND (
-	        (SCHDATE =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+3) OR
-	        (SCHDATE =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+6) OR
-	        (SCHDATE =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+9) OR
-	        (SCHDATE =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+12) OR
-	        (SCHDATE =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+15) OR
-	        (SCHDATE =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+18)
-	        )
-	        AND  FSD.PRINCIPALSCHD+FSD.PROFITSCHD > 50000
-	        AND FSD.SCHDPRIPAID = 0 AND FSD.SCHDPFTPAID = 0
+			CUS.CUSTID ,
+			CEM.CUSTEMAIL,
+			FM.FINREFERENCE,
+			FM.FINAMOUNT ,
+			FSD.PRINCIPALSCHD,
+			FSD.PROFITSCHD,
+			FSD.REPAYAMOUNT,
+			FSD.SCHDATE,
+			(CASE
+			when FOD.TOTPENALTYBAL is null then 0
+			else FOD.TOTPENALTYBAL end) TOTPENALTYBAL,
+			(CASE
+			when FM.VANCODE is null then ' '
+			else FM.VANCODE end) VANCODE
+			FROM FINANCEMAIN FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID
+			INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+			LEFT JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
+			where CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5
+			AND (
+			(SCHDATE = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+3) OR
+			(SCHDATE = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+6) OR
+			(SCHDATE = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+9) OR
+			(SCHDATE = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+12) OR
+			(SCHDATE = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+15) OR
+			(SCHDATE = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+18)
+			)
+			AND FSD.PRINCIPALSCHD+FSD.PROFITSCHD > 50000
+			AND FSD.SCHDPRIPAID = 0 AND FSD.SCHDPFTPAID = 0
 		</createView>
 	</changeSet>
 
@@ -4637,45 +4651,46 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 
 	<changeSet id="124" author="Durga Prasad G" dbms="oracle">
 		<createView viewName="RPT_FINGUARANTORDTLS_PVT_VIEW" replaceIfExists="true">
-			Select "FINREFERENCE","CO_GUR1","CO_GUR2","CO_GUR3" from (
-	          Select row_number() over(partition by fj.Finreference order by fj.Finreference) row_num,fj.Finreference,fj.GUARANTORCIFNAME
-	          from FinGuarantorsDetails fj inner join financemain fm on fm.finreference=fj.finreference
-	          inner join customers c on c.custid = fm.custid)
-	          Pivot(max(GUARANTORCIFNAME) For row_num in (1 as CO_GUR1,2 as CO_GUR2,3 as CO_GUR3))
+			Select
+			"FINREFERENCE","CO_GUR1","CO_GUR2","CO_GUR3" from (
+			Select row_number() over(partition by fj.Finreference order by fj.Finreference) row_num,fj.Finreference,fj.GUARANTORCIFNAME
+			from FinGuarantorsDetails fj inner join financemain fm on fm.finreference=fj.finreference
+			inner join customers c on c.custid = fm.custid)
+			Pivot(max(GUARANTORCIFNAME) For row_num in (1 as CO_GUR1,2 as CO_GUR2,3 as CO_GUR3))
 		</createView>
 	</changeSet>
 	<changeSet id="125" author="Durga Prasad G">
 		<createView viewName="OVER_ALERT_VIEW" replaceIfExists="true">
 			select
-					CUS.CUSTID ,
-					CEM.CUSTEMAIL,
-					FM.FINREFERENCE,
-					FM.FINAMOUNT ,
-					FSD.PRINCIPALSCHD,
-					FSD.PROFITSCHD,
-					FSD.REPAYAMOUNT,
-					FSD.SCHDATE,
-	        (CASE 
-						when FOD.TOTPENALTYBAL  is null then 0
-						else FOD.TOTPENALTYBAL  end) TOTPENALTYBAL,
-					(CASE 
-						when FM.VANCODE  is null then ' '
-						else FM.VANCODE  end) VANCODE 
-					FROM  FINANCEMAIN FM 
-					INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-					INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
-					INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
-					LEFT JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
-					where  CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 
-	        AND (
-	        (SCHDATE+3 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
-	        (SCHDATE+6 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
-	        (SCHDATE+9 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
-	        (SCHDATE+12 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
-	        (SCHDATE+15 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
-	        (SCHDATE+18 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'))
-	        )
-	        AND  (FSD.PRINCIPALSCHD-FSD.SCHDPRIPAID)+(FSD.PROFITSCHD-FSD.SCHDPFTPAID) > 50000;
+			CUS.CUSTID ,
+			CEM.CUSTEMAIL,
+			FM.FINREFERENCE,
+			FM.FINAMOUNT ,
+			FSD.PRINCIPALSCHD,
+			FSD.PROFITSCHD,
+			FSD.REPAYAMOUNT,
+			FSD.SCHDATE,
+			(CASE
+			when FOD.TOTPENALTYBAL is null then 0
+			else FOD.TOTPENALTYBAL end) TOTPENALTYBAL,
+			(CASE
+			when FM.VANCODE is null then ' '
+			else FM.VANCODE end) VANCODE
+			FROM FINANCEMAIN FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID
+			INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+			LEFT JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
+			where CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5
+			AND (
+			(SCHDATE+3 = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			(SCHDATE+6 = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			(SCHDATE+9 = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			(SCHDATE+12 = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			(SCHDATE+15 = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			(SCHDATE+18 = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'))
+			)
+			AND (FSD.PRINCIPALSCHD-FSD.SCHDPRIPAID)+(FSD.PROFITSCHD-FSD.SCHDPFTPAID) > 50000;
 		</createView>
 	</changeSet>
 
@@ -4763,86 +4778,86 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 
 	<changeSet id="134" author="DurgaPrasad.G">
 		<createView viewName="MATURITY_DATE_ALERT_VIEW" replaceIfExists="true">
-			 SELECT  FM.FINREFERENCE,
-						FM.CUSTID,
-						CEM.CUSTEMAIL,
-						CS.CustShrtName,
-						CS.CustCif ,
-						(CASE 
-						when FM.VANCODE  is null then '  '
-						else FM.VANCODE  end) VANCODE ,
-						FM.MaturityDate,
-						FM.finAmount,
-	          
-	          			(CASE 
-						when MA.amtPayable  is null then 0
-						else MA.amtPayable  end) amtPayable 
-						FROM  FINANCEMAIN FM 
-						INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-						INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
-						Left JOIN (select finreference,sum(paidamount) amtPayable from ManualAdvise where Advisetype = 2
-						group by finreference ) MA on MA.finreference=FM.finreference 
-						WHERE CS.DND=0  and CEM.CUSTEMAILPRIORITY=5  and  
-	          MATURITYDATE= add_months(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'),-1)
+			SELECT FM.FINREFERENCE,
+			FM.CUSTID,
+			CEM.CUSTEMAIL,
+			CS.CustShrtName,
+			CS.CustCif ,
+			(CASE
+			when FM.VANCODE is null then ' '
+			else FM.VANCODE end) VANCODE ,
+			FM.MaturityDate,
+			FM.finAmount,
+
+			(CASE
+			when MA.amtPayable is null then 0
+			else MA.amtPayable end) amtPayable
+			FROM FINANCEMAIN FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID
+			Left JOIN (select finreference,sum(paidamount) amtPayable from ManualAdvise where Advisetype = 2
+			group by finreference ) MA on MA.finreference=FM.finreference
+			WHERE CS.DND=0 and CEM.CUSTEMAILPRIORITY=5 and
+			MATURITYDATE= add_months(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'),-1)
 		</createView>
 	</changeSet>
 
 	<changeSet id="135" author="Durga Prasad G">
 		<createView viewName="DEMAND_ALERT_VIEW" replaceIfExists="true">
-	  				SELECT  FM.FINREFERENCE,
-					FM.CUSTID,
-					CEM.CUSTEMAIL,
-					FM.FINAMOUNT ,
-					FSD.PRINCIPALSCHD,
-					FSD.PROFITSCHD,
-					FSD.REPAYAMOUNT,
-					FSD.SCHDATE,
-					FSD.TDSAMOUNT,
-					(CASE 
-						when FM.VANCODE  is null then ' '
-						else FM.VANCODE  end) VANCODE 
-					FROM  FINANCEMAIN FM 
-					INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-					INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
-					INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
-					where  CUS.dnd= 0 and  CEM.CUSTEMAILPRIORITY=5 and FSD.REPAYAMOUNT > 0
-					and  SCHDATE = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+2 
-					OR SCHDATE =to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+5
+			SELECT FM.FINREFERENCE,
+			FM.CUSTID,
+			CEM.CUSTEMAIL,
+			FM.FINAMOUNT ,
+			FSD.PRINCIPALSCHD,
+			FSD.PROFITSCHD,
+			FSD.REPAYAMOUNT,
+			FSD.SCHDATE,
+			FSD.TDSAMOUNT,
+			(CASE
+			when FM.VANCODE is null then ' '
+			else FM.VANCODE end) VANCODE
+			FROM FINANCEMAIN FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID
+			INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+			where CUS.dnd= 0 and CEM.CUSTEMAILPRIORITY=5 and FSD.REPAYAMOUNT > 0
+			and SCHDATE = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+2
+			OR SCHDATE =to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+5
 		</createView>
 	</changeSet>
 
 	<changeSet id="136" author="Durga Prasad G">
 		<createView viewName="OVER_ALERT_VIEW" replaceIfExists="true">
-					select
-							CUS.CUSTID ,
-							CEM.CUSTEMAIL,
-							FM.FINREFERENCE,
-							FM.FINAMOUNT ,
-							FSD.PRINCIPALSCHD,
-							FSD.PROFITSCHD,
-							FSD.SCHDATE,
-							(CASE 
-								when FOD.TOTPENALTYBAL  is null then 0
-								else FOD.TOTPENALTYBAL  end) TOTPENALTYBAL,
-							(CASE 
-								when FM.VANCODE  is null then ' '
-								else FM.VANCODE  end) VANCODE,
-							FSD.PRINCIPALSCHD+FSD.PROFITSCHD+TOTPENALTYBAL REPAYAMOUNT
-							FROM  FINANCEMAIN FM 
-							INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
-							INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
-							INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
-							LEFT JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
-							where  CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 
-			        AND (
-			        (SCHDATE+3 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
-			        (SCHDATE+6 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
-			        (SCHDATE+9 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
-			        (SCHDATE+12 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
-			        (SCHDATE+15 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
-			        (SCHDATE+18 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'))
-			        )
-			        AND  (FSD.PRINCIPALSCHD-FSD.SCHDPRIPAID)+(FSD.PROFITSCHD-FSD.SCHDPFTPAID) > 50000
+			select
+			CUS.CUSTID ,
+			CEM.CUSTEMAIL,
+			FM.FINREFERENCE,
+			FM.FINAMOUNT ,
+			FSD.PRINCIPALSCHD,
+			FSD.PROFITSCHD,
+			FSD.SCHDATE,
+			(CASE
+			when FOD.TOTPENALTYBAL is null then 0
+			else FOD.TOTPENALTYBAL end) TOTPENALTYBAL,
+			(CASE
+			when FM.VANCODE is null then ' '
+			else FM.VANCODE end) VANCODE,
+			FSD.PRINCIPALSCHD+FSD.PROFITSCHD+TOTPENALTYBAL REPAYAMOUNT
+			FROM FINANCEMAIN FM
+			INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID
+			INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID
+			INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+			LEFT JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
+			where CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5
+			AND (
+			(SCHDATE+3 = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			(SCHDATE+6 = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			(SCHDATE+9 = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			(SCHDATE+12 = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			(SCHDATE+15 = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			(SCHDATE+18 = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'))
+			)
+			AND (FSD.PRINCIPALSCHD-FSD.SCHDPRIPAID)+(FSD.PROFITSCHD-FSD.SCHDPFTPAID) > 50000
 		</createView>
 	</changeSet>
 
@@ -5371,7 +5386,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 						where  CUS.dnd= 0 and  CEM.CUSTEMAILPRIORITY=5 and FSD.REPAYAMOUNT > 0
 						and  (SCHDATE = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+2 
 						OR SCHDATE =to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+5)
-			 ]]> 
+			 ]]>
 		</createView>
 	</changeSet>
 
@@ -5458,8 +5473,8 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 						T1.EODDATE
 				 FROM   ExtInterfaceConf T1 
 				 WHERE  NOT EXISTS (SELECT 1 FROM EXTINTERFACECONF_TEMP WHERE Id = T1.Id)
-			 ]]>		
-        </createView>
+			 ]]>
+		</createView>
 	</changeSet>
 
 	<changeSet id="176" author="meena.a">
@@ -5486,7 +5501,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 						 T1.EODDATE
 					     FROM    	
 						 ExtInterfaceConf T1
-			 ]]>			 
+			 ]]>
 		</createView>
 	</changeSet>
 
@@ -5573,119 +5588,149 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	<changeSet id="187" author="Dheerendra">
 		<createView viewName="OGL_VIEW" replaceIfExists="true">
 			SELECT * FROM
-    		(SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
-			P.Account glaccount, am.hostaccount hostglaccount,
-			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount 
+			(SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
+			P.Account glaccount,
+			am.hostaccount hostglaccount,
+			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount
 			from postings P
-			inner join financemain FM on  P.FINREFERENCE = FM.FINREFERENCE
-			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
-			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
-			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
+			inner join financemain FM on P.FINREFERENCE = FM.FINREFERENCE
+			inner join RMTFINANCETYPES FT ON FT.FinType =
+			FM.FinType
+			inner JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner join RMTCurrencies CCY on P.AcCcy =
+			CCY.ccycode
 			left join accountmapping am on P.ACCOUNT = am.ACCOUNT
-			WHERE P.POSTAMOUNT >0 and FinEvent != 'JVPOST'  
- 			union ALL 
- 			SELECT P.POSTDATE ,P.LinkedTranId, fm.finreference,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
-			P.Account glaccount, am.hostaccount hostglaccount,
-			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount 
-			from postings P inner JOIN jvpostings jv ON 
-    		cast(jv.BatchReference as varchar(20)) = p.finreference 
-       		inner JOIN financemain fm ON fm.finreference = jv.reference
+			WHERE P.POSTAMOUNT >0 and FinEvent != 'JVPOST'
+			union ALL
+			SELECT P.POSTDATE ,P.LinkedTranId, fm.finreference,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
+			P.Account glaccount,
+			am.hostaccount hostglaccount,
+			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount
+			from postings P inner JOIN jvpostings jv ON
+			cast(jv.BatchReference as varchar(20)) = p.finreference
+			inner JOIN financemain fm ON fm.finreference = jv.reference
 			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
-			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner
+			JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
 			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
-			left join accountmapping am on P.ACCOUNT = am.ACCOUNT
-			WHERE P.POSTAMOUNT >0  and FinEvent = 'JVPOST'  
-      		) T       ORDER BY FINDIVISION,FINBRANCH,GLACCOUNT,AcCcy
+			left
+			join accountmapping am on P.ACCOUNT = am.ACCOUNT
+			WHERE P.POSTAMOUNT >0 and FinEvent = 'JVPOST'
+			) T ORDER BY FINDIVISION,FINBRANCH,GLACCOUNT,AcCcy
 		</createView>
 	</changeSet>
 	<changeSet id="188" author="Dheerendra">
 		<createView viewName="OGL_VIEW" replaceIfExists="true">
-		    SELECT * FROM
-    		(SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
-			P.Account glaccount, am.hostaccount hostglaccount,
-			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount 
+			SELECT * FROM
+			(SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
+			P.Account glaccount,
+			am.hostaccount hostglaccount,
+			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount
 			from postings P
-			inner join financemain FM on  P.FINREFERENCE = FM.FINREFERENCE
-			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
-			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
-			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
+			inner join financemain FM on P.FINREFERENCE = FM.FINREFERENCE
+			inner join RMTFINANCETYPES FT ON FT.FinType =
+			FM.FinType
+			inner JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner join RMTCurrencies CCY on P.AcCcy =
+			CCY.ccycode
 			left join accountmapping am on P.ACCOUNT = am.ACCOUNT
-			WHERE P.POSTAMOUNT >0 and FinEvent != 'JVPOST'  
- 			union ALL 
- 			SELECT P.POSTDATE ,P.LinkedTranId, fm.finreference,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
-			P.Account glaccount, am.hostaccount hostglaccount,
-			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount 
-			from postings P inner JOIN jvpostings jv ON 
-    		cast(jv.BatchReference as varchar(20)) = p.finreference 
-       		inner JOIN financemain fm ON fm.finreference = jv.reference
+			WHERE P.POSTAMOUNT >0 and FinEvent != 'JVPOST'
+			union ALL
+			SELECT P.POSTDATE ,P.LinkedTranId, fm.finreference,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
+			P.Account glaccount,
+			am.hostaccount hostglaccount,
+			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount
+			from postings P inner JOIN jvpostings jv ON
+			cast(jv.BatchReference as varchar(20)) = p.finreference
+			inner JOIN financemain fm ON fm.finreference = jv.reference
 			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
-			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner
+			JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
 			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
-			left join accountmapping am on P.ACCOUNT = am.ACCOUNT
-			WHERE P.POSTAMOUNT >0  and FinEvent = 'JVPOST'  
-      		UNION ALL
-      		SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
-			P.Account glaccount, am.hostaccount hostglaccount,
-			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount 
+			left
+			join accountmapping am on P.ACCOUNT = am.ACCOUNT
+			WHERE P.POSTAMOUNT >0 and FinEvent = 'JVPOST'
+			UNION ALL
+			SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
+			P.Account glaccount,
+			am.hostaccount hostglaccount,
+			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount
 			from postings P
-			inner join FINANCEMAIN_TEMP FM on  P.FINREFERENCE = FM.FINREFERENCE
-			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
-			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
-			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
+			inner join FINANCEMAIN_TEMP FM on P.FINREFERENCE = FM.FINREFERENCE
+			inner join RMTFINANCETYPES FT ON
+			FT.FinType = FM.FinType
+			inner JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner join RMTCurrencies CCY
+			on P.AcCcy = CCY.ccycode
 			left join accountmapping am on P.ACCOUNT = am.ACCOUNT
-			WHERE P.POSTAMOUNT >0 and FinEvent = 'FEEPAY'  
-      		) T       ORDER BY FINDIVISION,FINBRANCH,GLACCOUNT,AcCcy
+			WHERE P.POSTAMOUNT >0 and FinEvent =
+			'FEEPAY'
+			) T ORDER BY FINDIVISION,FINBRANCH,GLACCOUNT,AcCcy
 		</createView>
 	</changeSet>
 	<changeSet id="189" author="Dheerendra">
 		<createView viewName="OGL_VIEW" replaceIfExists="true">
 			SELECT * FROM
-    		(SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
-			P.Account glaccount, am.hostaccount hostglaccount,
-			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount 
+			(SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
+			P.Account glaccount,
+			am.hostaccount hostglaccount,
+			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount
 			from postings P
-			inner join financemain FM on  P.FINREFERENCE = FM.FINREFERENCE
-			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
-			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
-			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
+			inner join financemain FM on P.FINREFERENCE = FM.FINREFERENCE
+			inner join RMTFINANCETYPES FT ON FT.FinType =
+			FM.FinType
+			inner JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner join RMTCurrencies CCY on P.AcCcy =
+			CCY.ccycode
 			left join accountmapping am on P.ACCOUNT = am.ACCOUNT
-			WHERE P.POSTAMOUNT >0 and FinEvent != 'JVPOST'  and FinEvent != 'MANFEE'
- 			union ALL 
- 			SELECT P.POSTDATE ,P.LinkedTranId, fm.finreference,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
-			P.Account glaccount, am.hostaccount hostglaccount,
-			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount 
-			from postings P inner JOIN jvpostings jv ON 
-    		cast(jv.BatchReference as varchar(20)) = p.finreference 
-       		inner JOIN financemain fm ON fm.finreference = jv.reference
+			WHERE P.POSTAMOUNT >0 and FinEvent != 'JVPOST' and
+			FinEvent != 'MANFEE'
+			union ALL
+			SELECT P.POSTDATE ,P.LinkedTranId, fm.finreference,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
+			P.Account glaccount,
+			am.hostaccount hostglaccount,
+			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount
+			from postings P inner JOIN jvpostings jv ON
+			cast(jv.BatchReference as varchar(20)) = p.finreference
+			inner JOIN financemain fm ON fm.finreference = jv.reference
 			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
-			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner
+			JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
 			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
-			left join accountmapping am on P.ACCOUNT = am.ACCOUNT
-			WHERE P.POSTAMOUNT >0  and FinEvent = 'JVPOST'  
-      		UNION ALL
-      		SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
-			P.Account glaccount, am.hostaccount hostglaccount,
-			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount 
+			left
+			join accountmapping am on P.ACCOUNT = am.ACCOUNT
+			WHERE P.POSTAMOUNT >0 and FinEvent = 'JVPOST'
+			UNION ALL
+			SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
+			P.Account glaccount,
+			am.hostaccount hostglaccount,
+			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount
 			from postings P
-			inner join FINANCEMAIN_TEMP FM on  P.FINREFERENCE = FM.FINREFERENCE
-			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
-			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
-			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
+			inner join FINANCEMAIN_TEMP FM on P.FINREFERENCE = FM.FINREFERENCE
+			inner join RMTFINANCETYPES FT ON
+			FT.FinType = FM.FinType
+			inner JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner join RMTCurrencies CCY
+			on P.AcCcy = CCY.ccycode
 			left join accountmapping am on P.ACCOUNT = am.ACCOUNT
-			WHERE P.POSTAMOUNT >0 and FinEvent = 'FEEPAY'  
-       		UNION ALL
-      		SELECT P.POSTDATE ,P.LinkedTranId, fm.finreference,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
-			P.Account glaccount, am.hostaccount hostglaccount,
-			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount 
-			from postings P inner JOIN FEEPOSTINGS fe ON 
-    		cast(fe.postid as varchar(20)) = p.finreference 
-    		inner JOIN financemain fm ON fm.finreference = fe.reference
+			WHERE P.POSTAMOUNT >0 and FinEvent =
+			'FEEPAY'
+			UNION ALL
+			SELECT P.POSTDATE ,P.LinkedTranId, fm.finreference,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
+			P.Account glaccount,
+			am.hostaccount hostglaccount,
+			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount
+			from postings P inner JOIN FEEPOSTINGS fe ON
+			cast(fe.postid as varchar(20)) = p.finreference
+			inner JOIN financemain fm ON fm.finreference = fe.reference
 			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
-			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner
+			JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
 			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
-			left join accountmapping am on P.ACCOUNT = am.ACCOUNT
-			WHERE P.POSTAMOUNT >0  and FinEvent = 'MANFEE'
-    	) T       ORDER BY FINDIVISION,FINBRANCH,GLACCOUNT,AcCcy
+			left
+			join accountmapping am on P.ACCOUNT = am.ACCOUNT
+			WHERE P.POSTAMOUNT >0 and FinEvent = 'MANFEE'
+			) T ORDER BY FINDIVISION,FINBRANCH,GLACCOUNT,AcCcy
 
 		</createView>
 	</changeSet>
@@ -5713,50 +5758,4 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-   <changeSet id="192" author="meena.a">
-	<createView viewName="CIBIL_CUSTOMER_LOANS_VIEW" replaceIfExists="true">
-	     	         <![CDATA[
-	
-		      SELECT
-				AT.SEGMENT_TYPE,  
-				CU.CUSTID,
-				AT.CODE FINTYPE,
-				FM.FINREFERENCE, 
-				FM.FINSTARTDATE,
-				FM.FINAPPROVEDDATE,
-				PD.LATESTRPYDATE,
-				FM.REPAYFRQ,
-				UDF_CONVERTCURRENCY(FINASSETVALUE, FM.FINCCY, 'INR') FINASSETVALUE,
-				UDF_CONVERTCURRENCY(PD.TOTALPRIBAL, FM.FINCCY, 'INR') FUTURE_SCHEDULE_PRIN,
-				UDF_CONVERTCURRENCY((PD.ODPRINCIPAL + PD.ODPROFIT), FM.FINCCY, 'INR') INSTALMENT_DUE,
-				UDF_CONVERTCURRENCY((PD.TOTALPFTPAID + PD.TOTALPRIPAID), FM.FINCCY, 'INR') INSTALMENT_PAID,
-				UDF_CONVERTCURRENCY(BOUNCE_DUE, FM.FINCCY, 'INR') BOUNCE_DUE,
-				UDF_CONVERTCURRENCY(BOUNCE_PAID, FM.FINCCY, 'INR') BOUNCE_PAID,
-				UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_DUE, FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_DUE,
-				UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_PAID,FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_PAID,
-				UDF_CONVERTCURRENCY(TOTALPRISCHD, FM.FINCCY, 'INR') TOTAL_PRI_SCHD,
-				UDF_CONVERTCURRENCY(TOTALPRIPAID, FM.FINCCY, 'INR') TOTAL_PRI_PAID,
-				UDF_CONVERTCURRENCY(TOTALPFTSCHD, FM.FINCCY, 'INR') TOTAL_PFT_SCHD,
-				UDF_CONVERTCURRENCY(TOTALPFTPAID, FM.FINCCY, 'INR') TOTAL_PFT_PAID,
-				UDF_CONVERTCURRENCY(EXCESS_AMOUNT, FM.FINCCY, 'INR') EXCESS_AMOUNT,
-				UDF_CONVERTCURRENCY(EXCESS_AMT_PAID, FM.FINCCY, 'INR') EXCESS_AMT_PAID,
-				PD.CURODDAYS,
-				FM.CLOSINGSTATUS,
-				CU.OWNERSHIP,
-			    FM.NUMBEROFTERMS,
-			    FM.MATURITYDATE,
-				UDF_CONVERTCURRENCY(CUSTINCOME, FM.FINCCY, 'INR') CUSTINCOME
-				FROM  FINANCEMAIN FM 
-				INNER JOIN CIBIL_CUSTOMER_EXTRACT CU ON  CU.FINREFERENCE = FM.FINREFERENCE 
-				INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE
-				INNER JOIN CIBIL_ACCOUNT_TYPES_MAPPING ATM ON ATM.FIN_TYPE = FM.FINTYPE
-				INNER JOIN CIBIL_ACCOUNT_TYPES AT ON AT.CODE = ATM.CODE AND AT.SEGMENT_TYPE = ATM.SEGMENT_TYPE
-				LEFT JOIN (SELECT MA.FINREFERENCE, SUM(COALESCE(MA.ADVISEAMOUNT,0)- COALESCE(MA.PAIDAMOUNT,0)- COALESCE(MA.WAIVEDAMOUNT,0)) BOUNCE_DUE, SUM(MA.PAIDAMOUNT) BOUNCE_PAID FROM MANUALADVISE  MA  WHERE BOUNCEID > 0 GROUP BY MA.FINREFERENCE) MA ON MA.FINREFERENCE = FM.FINREFERENCE
-				LEFT JOIN (SELECT FINREFERENCE, SUM(TOTPENALTYBAL) LATE_PAYMENT_PENALTY_DUE, SUM(TOTPENALTYPAID) LATE_PAYMENT_PENALTY_PAID FROM FINODDETAILS GROUP BY FINREFERENCE) FO ON FO.FINREFERENCE = FM.FINREFERENCE
-				LEFT JOIN (SELECT FINREFERENCE, SUM(AMOUNT) EXCESS_AMOUNT, SUM (COALESCE(UTILISEDAMT,0)+ COALESCE(RESERVEDAMT,0)) EXCESS_AMT_PAID FROM FINEXCESSAMOUNT  GROUP BY FINREFERENCE) FE ON FE.FINREFERENCE = FM.FINREFERENCE
-				LEFT JOIN  (SELECT CUSTID, COALESCE(SUM(CUSTINCOME), 0) CUSTINCOME FROM CUSTOMERINCOMES GROUP BY CUSTID) CI ON CI.CUSTID = CU.CUSTID
-            ]]>
-	
-		</createView>
-</changeSet> 
 </databaseChangeLog>

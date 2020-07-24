@@ -3555,7 +3555,6 @@ public class CreateFinanceController extends SummaryDetailService {
 						tax.setId(Long.MIN_VALUE);
 					}
 				}
-				feeDetail.getFinTaxDetails().setFinTaxID(Long.MIN_VALUE);
 			}
 
 			for (FinAdvancePayments finAdvancePayments : finDetail.getAdvancePaymentsList()) {

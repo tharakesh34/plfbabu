@@ -45,13 +45,15 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -64,16 +66,19 @@ import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 import com.pennant.backend.model.finance.FinODDetails;
-import com.pennant.backend.model.finance.FinTaxDetails;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
+import com.pennant.backend.model.finance.TaxHeader;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.FinFeeDetailService;
@@ -86,15 +91,13 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LatePayDueCreationService extends ServiceHelper {
 	private static final long serialVersionUID = 6161809223570900644L;
-	private static Logger logger = Logger.getLogger(LatePayDueCreationService.class);
+	private static Logger logger = LogManager.getLogger(LatePayDueCreationService.class);
 
 	private FinFeeDetailService finFeeDetailService;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private CustomerAddresDAO customerAddresDAO;
 	private FeeTypeDAO feeTypeDAO;
 	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
-
-	//GST Invoice Report changes
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 
 	public LatePayDueCreationService() {
@@ -102,12 +105,13 @@ public class LatePayDueCreationService extends ServiceHelper {
 	}
 
 	public CustEODEvent processLatePayAccrual(CustEODEvent custEODEvent) throws Exception {
-		logger.debug(" Entering ");
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		// Post LPP / LPI Accruals on Application Extended Month End OR Application Month End OR Daily
 		boolean isAmzPostToday = false;
-		if (custEODEvent.getEodDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodDate())) == 0) {
+		Date eodDate = custEODEvent.getEodDate();
+
+		if (eodDate.compareTo(DateUtility.getMonthEnd(eodDate)) == 0) {
 			isAmzPostToday = true;
 		}
 
@@ -116,121 +120,90 @@ public class LatePayDueCreationService extends ServiceHelper {
 				postLatePayAccruals(finEODEvent, custEODEvent);
 			}
 		}
-		logger.debug(" Leaving ");
+
 		return custEODEvent;
 	}
 
-	/**
-	 * @param financeMain
-	 * @param resultSet
-	 * @throws Exception
-	 */
 	public void postLatePayAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
-		logger.debug(" Entering ");
+		long custID = custEODEvent.getCustomer().getCustID();
 
 		String lppEventCode = AccountEventConstants.ACCEVENT_LPPAMZ;
 		String lpiEventCode = AccountEventConstants.ACCEVENT_LPIAMZ;
-		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
-		FinanceMain main = finEODEvent.getFinanceMain();
 
-		long lppAccountingID = getAccountingID(main, lppEventCode);
-		long lpiAccountingID = getAccountingID(main, lpiEventCode);
+		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
+		FinanceMain fm = finEODEvent.getFinanceMain();
+
+		List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
+
+		long lppAccountingID = getAccountingID(fm, lppEventCode);
+		long lpiAccountingID = getAccountingID(fm, lpiEventCode);
 
 		if (lppAccountingID == Long.MIN_VALUE && lpiAccountingID == Long.MIN_VALUE) {
 			return;
 		}
 
-		// Setting LPI Amount from Overdue Details for LPI amortization
-		Map<String, Object> gstExecutionMap = null;
-		Map<String, BigDecimal> taxPercmap = null;
-		FeeType lpiFeeType = null;
-		FeeType lppFeeType = null;
+		logger.info("Processing Late Payment accrual for the customer ID {} started", custID);
 
-		//Prepare Finance Detail
 		FinanceDetail detail = new FinanceDetail();
-		detail.getFinScheduleData().setFinanceMain(main);
-		detail.getFinScheduleData().setFinanceType(finEODEvent.getFinType());
+		FinScheduleData finScheduleData = detail.getFinScheduleData();
+
+		finScheduleData.setFinanceMain(fm);
+		finScheduleData.setFinanceType(finEODEvent.getFinType());
+
 		prepareFinanceDetail(detail, custEODEvent);
 
-		if (StringUtils.equals(ImplementationConstants.LPP_GST_DUE_ON, "A")) {
+		Map<String, Object> gstDataMap = null;
+		Map<String, BigDecimal> taxPercmap = null;
 
-			if (!finEODEvent.getFinODDetails().isEmpty()) {
+		FeeType lppFeeType = null;
+		BigDecimal lppAmount = BigDecimal.ZERO;
+		BigDecimal lppAmz = BigDecimal.ZERO;
+		BigDecimal lppGSTAmount = BigDecimal.ZERO;
+		BigDecimal lppGSTAmz = BigDecimal.ZERO;
+		BigDecimal lppTillLBD = finPftDetail.getLppTillLBD();
+		BigDecimal lppGSTTillLBD = finPftDetail.getGstLppTillLBD();
 
-				List<FinODDetails> odList = finEODEvent.getFinODDetails();
-				BigDecimal lppAmount = BigDecimal.ZERO;
-				BigDecimal lpiAmount = BigDecimal.ZERO;
-				for (int i = 0; i < odList.size(); i++) {
-					lppAmount = lppAmount.add(odList.get(i).getTotPenaltyAmt());
-					lpiAmount = lpiAmount.add(odList.get(i).getLPIAmt());
-				}
+		FeeType lpiFeeType = null;
+		BigDecimal lpiAmount = BigDecimal.ZERO;
+		BigDecimal lpiAmz = BigDecimal.ZERO;
+		BigDecimal lpiGSTAmount = BigDecimal.ZERO;
+		BigDecimal lpiGSTAmz = BigDecimal.ZERO;
+		BigDecimal lpiTillLBD = finPftDetail.getLpiTillLBD();
+		BigDecimal lpiGSTTillLBD = finPftDetail.getGstLpiTillLBD();
 
-				// GST parameters for State wise Account Number building
-				gstExecutionMap = GSTCalculator.getGSTDataMap(main.getFinReference());
+		if (ImplementationConstants.LPP_GST_DUE_ON.equals("A") && CollectionUtils.isNotEmpty(odDetails)) {
+			for (FinODDetails od : odDetails) {
+				lppAmount = lppAmount.add(od.getTotPenaltyAmt());
+				lpiAmount = lpiAmount.add(od.getLPIAmt());
+			}
 
-				finPftDetail.setLpiAmount(lpiAmount);
-				finPftDetail.setLppAmount(lppAmount);
+			if (lppAmount.compareTo(BigDecimal.ZERO) > 0 || lpiAmount.compareTo(BigDecimal.ZERO) > 0) {
+				gstDataMap = GSTCalculator.getGSTDataMap(fm.getFinReference());
+				taxPercmap = GSTCalculator.getTaxPercentages(gstDataMap, fm.getFinCcy());
+			}
 
-				// Calculate GSTAmount 
-				boolean gstCalReq = false;
+			if (lppAmount.compareTo(BigDecimal.ZERO) > 0) {
+				lppFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+				lppGSTAmount = calculateGST(lppAmount, lppFeeType, taxPercmap);
+			}
 
-				// LPI GST Amount calculation
-				if (finPftDetail.getLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
-					lpiFeeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_LPFT);
-					if (lpiFeeType != null) {
-						if (lpiFeeType.isTaxApplicable()) {
-							gstCalReq = true;
-						}
-						if (!lpiFeeType.isAmortzReq()) {
-							finPftDetail.setLpiAmount(BigDecimal.ZERO);
-						}
-					} else {
-						finPftDetail.setLpiAmount(BigDecimal.ZERO);
-					}
-				}
-
-				// LPP GST Amount calculation
-				if (finPftDetail.getLppAmount().compareTo(BigDecimal.ZERO) > 0) {
-					lppFeeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
-					if (lppFeeType != null) {
-						if (lppFeeType.isTaxApplicable()) {
-							gstCalReq = true;
-						}
-						if (!lppFeeType.isAmortzReq()) {
-							finPftDetail.setLppAmount(BigDecimal.ZERO);
-						}
-					} else {
-						finPftDetail.setLppAmount(BigDecimal.ZERO);
-					}
-				}
-
-				// IF GST Calculation Required for LPI or LPP 
-				if (gstCalReq) {
-
-					taxPercmap = GSTCalculator.getTaxPercentages(gstExecutionMap, main.getFinCcy());
-
-					// Calculate LPI GST Amount
-					if (finPftDetail.getLpiAmount().compareTo(BigDecimal.ZERO) > 0 && lpiFeeType != null
-							&& lpiFeeType.isTaxApplicable() && lpiFeeType.isAmortzReq()) {
-						BigDecimal gstAmount = getTotalTaxAmount(taxPercmap, finPftDetail.getLpiAmount(),
-								lpiFeeType.getTaxComponent());
-						finPftDetail.setGstLpiAmount(gstAmount);
-					}
-
-					// Calculate LPP GST Amount
-					if (finPftDetail.getLppAmount().compareTo(BigDecimal.ZERO) > 0 && lppFeeType != null
-							&& lppFeeType.isTaxApplicable() && lppFeeType.isAmortzReq()) {
-						BigDecimal gstAmount = getTotalTaxAmount(taxPercmap, finPftDetail.getLppAmount(),
-								lppFeeType.getTaxComponent());
-						finPftDetail.setGstLppAmount(gstAmount);
-					}
-				}
+			if (lpiAmount.compareTo(BigDecimal.ZERO) > 0) {
+				lpiFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_LPFT);
+				lpiGSTAmount = calculateGST(lpiAmount, lpiFeeType, taxPercmap);
 			}
 		}
+
+		finPftDetail.setLppAmount(lppAmount);
+		finPftDetail.setGstLpiAmount(lpiGSTAmount);
+
+		finPftDetail.setLpiAmount(lpiAmount);
+		finPftDetail.setGstLppAmount(lppGSTAmount);
 
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = new AEAmountCodes();
 
-		aeEvent.setFinReference(finPftDetail.getFinReference());
+		String finReference = finPftDetail.getFinReference();
+		aeEvent.setFinReference(finReference);
 		aeEvent.setPostDate(custEODEvent.getEodValueDate());
 		aeEvent.setValueDate(custEODEvent.getEodValueDate());
 		aeEvent.setSchdDate(custEODEvent.getEodValueDate());
@@ -242,336 +215,285 @@ public class LatePayDueCreationService extends ServiceHelper {
 		// Finance Fields
 		amountCodes.setFinType(finPftDetail.getFinType());
 
-		// LPI Amortization calculation
-		if (finPftDetail.getLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
-			amountCodes.setdLPIAmz(finPftDetail.getLpiAmount().subtract(finPftDetail.getLpiTillLBD()));
+		/* LPI Amortization calculation */
+		if (lpiAmount.compareTo(BigDecimal.ZERO) > 0) {
+			lpiAmz = lpiAmount.subtract(lpiTillLBD);
+			amountCodes.setdLPIAmz(lpiAmz);
 
 			// Calculate GST Amount on LPI Amount 
-			if (finPftDetail.getGstLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
-				amountCodes.setdGSTLPIAmz(finPftDetail.getGstLpiAmount().subtract(finPftDetail.getGstLpiTillLBD()));
+			if (lpiGSTAmount.compareTo(BigDecimal.ZERO) > 0) {
+				lpiGSTAmz = lpiGSTAmount.subtract(lpiGSTTillLBD);
+				amountCodes.setdGSTLPIAmz(lpiGSTAmz);
 			}
 		}
 
-		// LPP Amortization calculation
-		if (finPftDetail.getLppAmount().compareTo(BigDecimal.ZERO) > 0) {
-			amountCodes.setdLPPAmz(finPftDetail.getLppAmount().subtract(finPftDetail.getLppTillLBD()));
+		/* LPP Amortization calculation */
+		if (lppAmount.compareTo(BigDecimal.ZERO) > 0) {
+			lppAmz = lppAmount.subtract(lppTillLBD);
+			amountCodes.setdLPPAmz(lppAmz);
 
 			// Calculate GST Amount on LPP Amount 
-			if (finPftDetail.getGstLppAmount().compareTo(BigDecimal.ZERO) > 0) {
-				amountCodes.setdGSTLPPAmz(finPftDetail.getGstLppAmount().subtract(finPftDetail.getGstLppTillLBD()));
+			if (lppGSTAmount.compareTo(BigDecimal.ZERO) > 0) {
+				lppGSTAmz = lppGSTAmount.subtract(lppGSTTillLBD);
+				amountCodes.setdGSTLPPAmz(lppGSTAmz);
 			}
 		}
+
 		aeEvent.setAeAmountCodes(amountCodes);
 		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
 
-		if (gstExecutionMap != null) {
-			for (String key : gstExecutionMap.keySet()) {
+		if (gstDataMap != null) {
+			for (String key : gstDataMap.keySet()) {
 				if (StringUtils.isNotBlank(key)) {
-					aeEvent.getDataMap().put(key, gstExecutionMap.get(key));
+					aeEvent.getDataMap().put(key, gstDataMap.get(key));
 				}
 			}
 		}
 
 		// LPI GST Amount for Postings
-		Map<String, BigDecimal> calGstMap = null;
-		boolean addGSTInvoice = false;
+		Map<String, BigDecimal> calGstMap = new HashMap<>();
+		Long lppDueInvoiceId = null;
+		Long lpiDueInvoiceId = null;
 
-		if (StringUtils.equals(ImplementationConstants.LPP_GST_DUE_ON, "A")) {
-			calGstMap = new HashMap<>();
+		FinODAmzTaxDetail lppTaxDetail = null;
+		FinODAmzTaxDetail lpiTaxDetail = null;
 
-			if (aeEvent.getAeAmountCodes().getdGSTLPIAmz().compareTo(BigDecimal.ZERO) > 0 && lpiFeeType != null
-					&& lpiFeeType.isTaxApplicable()) {
-
-				if (taxPercmap == null) {
-					detail.getFinScheduleData().setFinanceMain(main);
-					taxPercmap = GSTCalculator.getTaxPercentages(gstExecutionMap, main.getFinCcy());
-				}
-
-				FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, aeEvent.getAeAmountCodes().getdGSTLPIAmz(),
-						lpiFeeType.getTaxComponent());
-				taxDetail.setFinReference(finPftDetail.getFinReference());
-				taxDetail.setTaxFor("LPI");
-				taxDetail.setAmount(aeEvent.getAeAmountCodes().getdLPIAmz());
-				taxDetail.setValueDate(DateUtility.addDays(custEODEvent.getEodValueDate(), -1));
-				taxDetail.setPostDate(new Timestamp(System.currentTimeMillis()));
-
-				calGstMap.put("LPI_CGST_R", taxDetail.getCGST());
-				calGstMap.put("LPI_SGST_R", taxDetail.getSGST());
-				calGstMap.put("LPI_UGST_R", taxDetail.getUGST());
-				calGstMap.put("LPI_IGST_R", taxDetail.getIGST());
-
-				// Save Tax Details
-				getFinODAmzTaxDetailDAO().save(taxDetail);
-
-				String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
-				if (StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
-					addGSTInvoice = true;
-				}
-
-			} else {
-				addZeroifNotContains(calGstMap, "LPI_CGST_R");
-				addZeroifNotContains(calGstMap, "LPI_SGST_R");
-				addZeroifNotContains(calGstMap, "LPI_UGST_R");
-				addZeroifNotContains(calGstMap, "LPI_IGST_R");
+		if (ImplementationConstants.LPP_GST_DUE_ON.equals("A")) {
+			if (lpiGSTAmz.compareTo(BigDecimal.ZERO) > 0 && lpiGSTAmount.compareTo(BigDecimal.ZERO) > 0) {
+				lpiTaxDetail = getTaxDetail(taxPercmap, lpiGSTAmz, lpiFeeType.getTaxComponent());
+				lpiTaxDetail.setFinReference(finReference);
+				lpiTaxDetail.setTaxFor("LPI");
+				lpiTaxDetail.setAmount(lpiAmz);
+				lpiTaxDetail.setValueDate(DateUtility.addDays(custEODEvent.getEodValueDate(), -1));
+				lpiTaxDetail.setPostDate(new Timestamp(System.currentTimeMillis()));
 			}
 
-			// LPP GST Amount for Postings
-			if (aeEvent.getAeAmountCodes().getdGSTLPPAmz().compareTo(BigDecimal.ZERO) > 0 && lppFeeType != null
-					&& lppFeeType.isTaxApplicable()) {
-
-				if (taxPercmap == null) {
-					detail.getFinScheduleData().setFinanceMain(main);
-					taxPercmap = GSTCalculator.getTaxPercentages(gstExecutionMap, main.getFinCcy());
-				}
-
-				FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, aeEvent.getAeAmountCodes().getdGSTLPPAmz(),
-						lppFeeType.getTaxComponent());
-				taxDetail.setFinReference(finPftDetail.getFinReference());
-				taxDetail.setTaxFor("LPP");
-				taxDetail.setAmount(aeEvent.getAeAmountCodes().getdLPPAmz());
-				taxDetail.setValueDate(DateUtility.addDays(custEODEvent.getEodValueDate(), -1));
-				taxDetail.setPostDate(new Timestamp(System.currentTimeMillis()));
-
-				calGstMap.put("LPP_CGST_R", taxDetail.getCGST());
-				calGstMap.put("LPP_SGST_R", taxDetail.getSGST());
-				calGstMap.put("LPP_UGST_R", taxDetail.getUGST());
-				calGstMap.put("LPP_IGST_R", taxDetail.getIGST());
-
-				// Save Tax Details
-				getFinODAmzTaxDetailDAO().save(taxDetail);
-
-				String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
-				if (StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
-					addGSTInvoice = true;
-				}
-			} else {
-				addZeroifNotContains(calGstMap, "LPP_CGST_R");
-				addZeroifNotContains(calGstMap, "LPP_SGST_R");
-				addZeroifNotContains(calGstMap, "LPP_UGST_R");
-				addZeroifNotContains(calGstMap, "LPP_IGST_R");
-			}
-
-			// GST Details
-			if (calGstMap != null) {
-				aeEvent.getDataMap().putAll(calGstMap);
+			if (lppGSTAmz.compareTo(BigDecimal.ZERO) > 0 && lppGSTAmount.compareTo(BigDecimal.ZERO) > 0) {
+				lppTaxDetail = getTaxDetail(taxPercmap, lppGSTAmz, lppFeeType.getTaxComponent());
+				lppTaxDetail.setFinReference(finReference);
+				lppTaxDetail.setTaxFor("LPP");
+				lppTaxDetail.setAmount(lppAmz);
+				lppTaxDetail.setValueDate(DateUtility.addDays(custEODEvent.getEodValueDate(), -1));
+				lppTaxDetail.setPostDate(new Timestamp(System.currentTimeMillis()));
 			}
 		}
 
+		if (lpiTaxDetail == null) {
+			addZeroifNotContains(calGstMap, "LPI_CGST_R");
+			addZeroifNotContains(calGstMap, "LPI_SGST_R");
+			addZeroifNotContains(calGstMap, "LPI_UGST_R");
+			addZeroifNotContains(calGstMap, "LPI_IGST_R");
+		} else {
+			calGstMap.put("LPI_CGST_R", lpiTaxDetail.getCGST());
+			calGstMap.put("LPI_SGST_R", lpiTaxDetail.getSGST());
+			calGstMap.put("LPI_UGST_R", lpiTaxDetail.getUGST());
+			calGstMap.put("LPI_IGST_R", lpiTaxDetail.getIGST());
+		}
+
+		if (lppTaxDetail == null) {
+			addZeroifNotContains(calGstMap, "LPP_CGST_R");
+			addZeroifNotContains(calGstMap, "LPP_SGST_R");
+			addZeroifNotContains(calGstMap, "LPP_UGST_R");
+			addZeroifNotContains(calGstMap, "LPP_IGST_R");
+		} else {
+			calGstMap.put("LPP_CGST_R", lppTaxDetail.getCGST());
+			calGstMap.put("LPP_SGST_R", lppTaxDetail.getSGST());
+			calGstMap.put("LPP_UGST_R", lppTaxDetail.getUGST());
+			calGstMap.put("LPP_IGST_R", lppTaxDetail.getIGST());
+		}
+
+		aeEvent.getDataMap().putAll(calGstMap);
+
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
+
+		long linkedTranId = 0;
 		if (lppAccountingID != Long.MIN_VALUE) {
 			aeEvent.getAcSetIDList().add(lppAccountingID);
-
-			//Postings Process and save all postings related to finance for one time accounts update
 			aeEvent.setAccountingEvent(lppEventCode);
 			aeEvent = postAccountingEOD(aeEvent);
+
+			linkedTranId = aeEvent.getLinkedTranId();
 			finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 
-			//GST Invoice Preparation
-			if (aeEvent.getLinkedTranId() > 0) {
-
-				// LPP Receivable Data Update for Future Accounting
-				if (aeEvent.getAeAmountCodes().getdLPPAmz().compareTo(BigDecimal.ZERO) > 0) {
-
-					// Save Tax Receivable Details
-					FinTaxReceivable taxRcv = getFinODAmzTaxDetailDAO()
-							.getFinTaxReceivable(finPftDetail.getFinReference(), "LPP");
-					boolean isSave = false;
-					if (taxRcv == null) {
-						taxRcv = new FinTaxReceivable();
-						taxRcv.setFinReference(finPftDetail.getFinReference());
-						taxRcv.setTaxFor("LPP");
-						isSave = true;
-					}
-
-					if (calGstMap != null) {
-						taxRcv.setCGST(taxRcv.getCGST().add(calGstMap.get("LPP_CGST_R")));
-						taxRcv.setSGST(taxRcv.getSGST().add(calGstMap.get("LPP_SGST_R")));
-						taxRcv.setUGST(taxRcv.getUGST().add(calGstMap.get("LPP_UGST_R")));
-						taxRcv.setIGST(taxRcv.getIGST().add(calGstMap.get("LPP_IGST_R")));
-					}
-
-					taxRcv.setReceivableAmount(
-							taxRcv.getReceivableAmount().add(aeEvent.getAeAmountCodes().getdLPPAmz()));
-
-					if (isSave) {
-						getFinODAmzTaxDetailDAO().saveTaxReceivable(taxRcv);
-					} else {
-						getFinODAmzTaxDetailDAO().updateTaxReceivable(taxRcv);
-					}
-				}
-
-				// GST Invoice Generation
-				if (addGSTInvoice) {
-
-					List<FinFeeDetail> feesList = prepareFeesList(lppFeeType, null, taxPercmap, calGstMap, aeEvent);
-
-					if (CollectionUtils.isNotEmpty(feesList)) {
-						this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), detail, feesList,
-								null, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false, false);
-					}
-				}
+			if (linkedTranId > 0 && lppAmz.compareTo(BigDecimal.ZERO) > 0) {
+				saveOrUpdateReceivable(aeEvent, calGstMap, "LPP");
 			}
 		}
 
 		if (lpiAccountingID != Long.MIN_VALUE) {
 			aeEvent.getAcSetIDList().add(lpiAccountingID);
-			aeEvent.getReturnDataSet().clear();
-
-			//Postings Process and save all postings related to finance for one time accounts update
 			aeEvent.setAccountingEvent(lpiEventCode);
 			aeEvent = postAccountingEOD(aeEvent);
+
+			linkedTranId = aeEvent.getLinkedTranId();
 			finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 
-			//GST Invoice Preparation
-			if (aeEvent.getLinkedTranId() > 0) {
-
-				// LPP Receivable Data Update for Future Accounting
-				if (aeEvent.getAeAmountCodes().getdLPIAmz().compareTo(BigDecimal.ZERO) > 0) {
-
-					// Save Tax Receivable Details
-					FinTaxReceivable taxRcv = getFinODAmzTaxDetailDAO()
-							.getFinTaxReceivable(finPftDetail.getFinReference(), "LPI");
-					boolean isSave = false;
-					if (taxRcv == null) {
-						taxRcv = new FinTaxReceivable();
-						taxRcv.setFinReference(finPftDetail.getFinReference());
-						taxRcv.setTaxFor("LPI");
-						isSave = true;
-					}
-
-					if (calGstMap != null) {
-						taxRcv.setCGST(taxRcv.getCGST().add(calGstMap.get("LPI_CGST_R")));
-						taxRcv.setSGST(taxRcv.getSGST().add(calGstMap.get("LPI_SGST_R")));
-						taxRcv.setUGST(taxRcv.getUGST().add(calGstMap.get("LPI_UGST_R")));
-						taxRcv.setIGST(taxRcv.getIGST().add(calGstMap.get("LPI_IGST_R")));
-					}
-
-					taxRcv.setReceivableAmount(
-							taxRcv.getReceivableAmount().add(aeEvent.getAeAmountCodes().getdLPIAmz()));
-
-					if (isSave) {
-						getFinODAmzTaxDetailDAO().saveTaxReceivable(taxRcv);
-					} else {
-						getFinODAmzTaxDetailDAO().updateTaxReceivable(taxRcv);
-					}
-				}
-
-				// GST Invoice Generation
-				if (addGSTInvoice) {
-					List<FinFeeDetail> feesList = prepareFeesList(null, lpiFeeType, taxPercmap, calGstMap, aeEvent);
-					if (CollectionUtils.isNotEmpty(feesList)) {
-						this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), detail, feesList,
-								null, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false, false);
-					}
-				}
+			if (linkedTranId > 0 && lpiAmz.compareTo(BigDecimal.ZERO) > 0) {
+				saveOrUpdateReceivable(aeEvent, calGstMap, "LPI");
 			}
+		}
+
+		if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("GST_INV_ON_DUE"))) {
+			List<FinFeeDetail> feesList = getFeeDetail(lppFeeType, taxPercmap, calGstMap, aeEvent);
+
+			InvoiceDetail invoiceDetail = new InvoiceDetail();
+			invoiceDetail.setLinkedTranId(linkedTranId);
+			invoiceDetail.setFinanceDetail(detail);
+			invoiceDetail.setFinFeeDetailsList(feesList);
+			invoiceDetail.setOrigination(false);
+			invoiceDetail.setWaiver(false);
+			invoiceDetail.setDbInvSetReq(false);
+
+			if (CollectionUtils.isNotEmpty(feesList)) {
+				invoiceDetail.setFinFeeDetailsList(feesList);
+				invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
+				lppDueInvoiceId = gstInvoiceTxnService.feeTaxInvoicePreparation(invoiceDetail);
+			}
+
+			feesList = getFeeDetail(lpiFeeType, taxPercmap, calGstMap, aeEvent);
+
+			if (CollectionUtils.isNotEmpty(feesList)) {
+				invoiceDetail.setFinFeeDetailsList(feesList);
+				invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
+				lpiDueInvoiceId = gstInvoiceTxnService.feeTaxInvoicePreparation(invoiceDetail);
+			}
+		}
+
+		// Save LPP Tax Details
+		if (lpiTaxDetail != null) {
+			lpiTaxDetail.setInvoiceID(lpiDueInvoiceId);
+			finODAmzTaxDetailDAO.save(lpiTaxDetail);
+		}
+
+		if (lppTaxDetail != null) {
+			lppTaxDetail.setInvoiceID(lppDueInvoiceId);
+			finODAmzTaxDetailDAO.save(lppTaxDetail);
 		}
 
 		finEODEvent.setUpdLBDPostings(true);
 
 		// LPP & LPI Due Amount , Which is already marked as Income/Receivable should be updated
-		finPftDetail.setLppTillLBD(finPftDetail.getLppTillLBD().add(aeEvent.getAeAmountCodes().getdLPPAmz()));
-		finPftDetail.setGstLppTillLBD(finPftDetail.getGstLppTillLBD().add(aeEvent.getAeAmountCodes().getdGSTLPPAmz()));
-		finPftDetail.setLpiTillLBD(finPftDetail.getLpiTillLBD().add(aeEvent.getAeAmountCodes().getdLPIAmz()));
-		finPftDetail.setGstLpiTillLBD(finPftDetail.getGstLpiTillLBD().add(aeEvent.getAeAmountCodes().getdGSTLPIAmz()));
+		finPftDetail.setLppTillLBD(lppTillLBD.add(lppAmz));
+		finPftDetail.setGstLppTillLBD(lppGSTTillLBD.add(lppGSTAmz));
+		finPftDetail.setLpiTillLBD(lpiTillLBD.add(lpiAmz));
+		finPftDetail.setGstLpiTillLBD(lpiGSTTillLBD.add(lpiGSTAmz));
 
-		logger.debug(" Leaving ");
+		logger.info("Processing Late Payment accrual for the customer ID {} completed.", custID);
 	}
 
-	private List<FinFeeDetail> prepareFeesList(FeeType lppFeeType, FeeType lpiFeeType,
-			Map<String, BigDecimal> taxPercMap, Map<String, BigDecimal> calGstMap, AEEvent aeEvent) {
-		logger.debug(Literal.ENTERING);
+	private void saveOrUpdateReceivable(AEEvent aeEvent, Map<String, BigDecimal> calGstMap, String feeTypeCode) {
+		// LPP Receivable Data Update for Future Accounting
+		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
+		String finReference = aeEvent.getFinReference();
 
-		List<FinFeeDetail> finFeeDetailsList = new ArrayList<FinFeeDetail>();
-		FinFeeDetail finFeeDetail = null;
+		BigDecimal amzAmount = BigDecimal.ZERO;
 
-		//LPP Fees
-		if (lppFeeType != null) {
-			finFeeDetail = new FinFeeDetail();
-			FinTaxDetails finTaxDetails = new FinTaxDetails();
-			finFeeDetail.setFinTaxDetails(finTaxDetails);
-
-			finFeeDetail.setFeeTypeCode(lppFeeType.getFeeTypeCode());
-			finFeeDetail.setFeeTypeDesc(lppFeeType.getFeeTypeDesc());
-			finFeeDetail.setTaxApplicable(true);
-			finFeeDetail.setOriginationFee(false);
-			finFeeDetail.setNetAmountOriginal(aeEvent.getAeAmountCodes().getdLPPAmz());
-
-			if (taxPercMap != null && calGstMap != null) {
-				finFeeDetail.setCgst(taxPercMap.get(RuleConstants.CODE_CGST));
-				finFeeDetail.setSgst(taxPercMap.get(RuleConstants.CODE_SGST));
-				finFeeDetail.setIgst(taxPercMap.get(RuleConstants.CODE_IGST));
-				finFeeDetail.setUgst(taxPercMap.get(RuleConstants.CODE_UGST));
-
-				finTaxDetails.setNetCGST(calGstMap.get("LPP_CGST_R"));
-				finTaxDetails.setNetSGST(calGstMap.get("LPP_SGST_R"));
-				finTaxDetails.setNetIGST(calGstMap.get("LPP_IGST_R"));
-				finTaxDetails.setNetUGST(calGstMap.get("LPP_UGST_R"));
-
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(lppFeeType.getTaxComponent())) {
-					BigDecimal gstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetSGST())
-							.add(finTaxDetails.getNetIGST()).add(finTaxDetails.getNetUGST());
-					finFeeDetail.setNetAmountOriginal(aeEvent.getAeAmountCodes().getdLPPAmz().subtract(gstAmount));
-				}
-			}
-
-			finFeeDetailsList.add(finFeeDetail);
+		FinTaxReceivable taxRcv = finODAmzTaxDetailDAO.getFinTaxReceivable(finReference, feeTypeCode);
+		boolean isSave = false;
+		if (taxRcv == null) {
+			taxRcv = new FinTaxReceivable();
+			taxRcv.setFinReference(finReference);
+			taxRcv.setTaxFor(feeTypeCode);
+			isSave = true;
 		}
 
-		//LPI Fees
-
-		if (lpiFeeType != null) {
-			finFeeDetail = new FinFeeDetail();
-			FinTaxDetails finTaxDetails = new FinTaxDetails();
-			finFeeDetail.setFinTaxDetails(finTaxDetails);
-
-			finFeeDetail.setFeeTypeCode(lpiFeeType.getFeeTypeCode());
-			finFeeDetail.setFeeTypeDesc(lpiFeeType.getFeeTypeDesc());
-			finFeeDetail.setTaxApplicable(true);
-			finFeeDetail.setOriginationFee(false);
-			finFeeDetail.setNetAmountOriginal(aeEvent.getAeAmountCodes().getdLPIAmz());
-
-			if (taxPercMap != null && calGstMap != null) {
-				finFeeDetail.setCgst(taxPercMap.get(RuleConstants.CODE_CGST));
-				finFeeDetail.setSgst(taxPercMap.get(RuleConstants.CODE_SGST));
-				finFeeDetail.setIgst(taxPercMap.get(RuleConstants.CODE_IGST));
-				finFeeDetail.setUgst(taxPercMap.get(RuleConstants.CODE_UGST));
-
-				finTaxDetails.setNetCGST(calGstMap.get("LPI_CGST_R"));
-				finTaxDetails.setNetSGST(calGstMap.get("LPI_SGST_R"));
-				finTaxDetails.setNetIGST(calGstMap.get("LPI_IGST_R"));
-				finTaxDetails.setNetUGST(calGstMap.get("LPI_UGST_R"));
-
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(lpiFeeType.getTaxComponent())) {
-					BigDecimal gstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetSGST())
-							.add(finTaxDetails.getNetIGST()).add(finTaxDetails.getNetUGST());
-					finFeeDetail.setNetAmountOriginal(aeEvent.getAeAmountCodes().getdLPIAmz().subtract(gstAmount));
-				}
-			}
-
-			finFeeDetailsList.add(finFeeDetail);
+		if ("LPI".equals(feeTypeCode)) {
+			amzAmount = aeAmountCodes.getdLPIAmz();
+			taxRcv.setCGST(taxRcv.getCGST().add(calGstMap.get("LPI_CGST_R")));
+			taxRcv.setSGST(taxRcv.getSGST().add(calGstMap.get("LPI_SGST_R")));
+			taxRcv.setUGST(taxRcv.getUGST().add(calGstMap.get("LPI_UGST_R")));
+			taxRcv.setIGST(taxRcv.getIGST().add(calGstMap.get("LPI_IGST_R")));
+		} else {
+			amzAmount = aeAmountCodes.getdLPPAmz();
+			taxRcv.setCGST(taxRcv.getCGST().add(calGstMap.get("LPP_CGST_R")));
+			taxRcv.setSGST(taxRcv.getSGST().add(calGstMap.get("LPP_SGST_R")));
+			taxRcv.setUGST(taxRcv.getUGST().add(calGstMap.get("LPP_UGST_R")));
+			taxRcv.setIGST(taxRcv.getIGST().add(calGstMap.get("LPP_IGST_R")));
 		}
 
-		logger.debug(Literal.LEAVING);
-		return finFeeDetailsList;
+		taxRcv.setReceivableAmount(taxRcv.getReceivableAmount().add(amzAmount));
+
+		if (isSave) {
+			finODAmzTaxDetailDAO.saveTaxReceivable(taxRcv);
+		} else {
+			finODAmzTaxDetailDAO.updateTaxReceivable(taxRcv);
+		}
+
 	}
 
-	/**
-	 * Method for Prepare FianceDetail for GST Invoice Report Preparation
-	 * 
-	 * @param financeDetail
-	 * @param custEODEvent
-	 */
+	private List<FinFeeDetail> getFeeDetail(FeeType feeType, Map<String, BigDecimal> taxPercMap,
+			Map<String, BigDecimal> calGstMap, AEEvent aeEvent) {
+		List<FinFeeDetail> list = new ArrayList<>();
+
+		if (feeType == null || taxPercMap == null) {
+			return list;
+		}
+
+		FinFeeDetail fee = new FinFeeDetail();
+
+		TaxHeader taxHeader = new TaxHeader();
+		fee.setTaxHeader(taxHeader);
+		fee.setFeeTypeCode(feeType.getFeeTypeCode());
+		fee.setFeeTypeDesc(feeType.getFeeTypeDesc());
+		fee.setTaxApplicable(true);
+		fee.setOriginationFee(false);
+		fee.setNetAmountOriginal(aeEvent.getAeAmountCodes().getdLPPAmz());
+
+		Taxes cgstTax = new Taxes();
+		Taxes sgstTax = new Taxes();
+		Taxes igstTax = new Taxes();
+		Taxes ugstTax = new Taxes();
+		Taxes cessTax = new Taxes();
+
+		cgstTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_CGST));
+		sgstTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_SGST));
+		igstTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_IGST));
+		ugstTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_UGST));
+		cessTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_CESS));
+
+		if (RepayConstants.ALLOCATION_ODC.equals(feeType.getFeeTypeCode())) {
+			cgstTax.setNetTax(calGstMap.get("LPP_CGST_R"));
+			sgstTax.setNetTax(calGstMap.get("LPP_SGST_R"));
+			igstTax.setNetTax(calGstMap.get("LPP_IGST_R"));
+			ugstTax.setNetTax(calGstMap.get("LPP_UGST_R"));
+			cessTax.setNetTax(calGstMap.get("LPP_CESS_R"));
+		} else {
+			cgstTax.setNetTax(calGstMap.get("LPI_CGST_R"));
+			sgstTax.setNetTax(calGstMap.get("LPI_SGST_R"));
+			igstTax.setNetTax(calGstMap.get("LPI_IGST_R"));
+			ugstTax.setNetTax(calGstMap.get("LPI_UGST_R"));
+			cessTax.setNetTax(calGstMap.get("LPI_CESS_R"));
+		}
+
+		taxHeader.getTaxDetails().add(cgstTax);
+		taxHeader.getTaxDetails().add(sgstTax);
+		taxHeader.getTaxDetails().add(igstTax);
+		taxHeader.getTaxDetails().add(ugstTax);
+		taxHeader.getTaxDetails().add(cessTax);
+
+		if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(feeType.getTaxComponent())) {
+			BigDecimal gstAmount = cgstTax.getNetTax().add(sgstTax.getNetTax()).add(igstTax.getNetTax())
+					.add(ugstTax.getNetTax()).add(cessTax.getNetTax());
+			fee.setNetAmountOriginal(aeEvent.getAeAmountCodes().getdLPPAmz().subtract(gstAmount));
+		}
+
+		list.add(fee);
+
+		return list;
+
+	}
+
 	private void prepareFinanceDetail(FinanceDetail financeDetail, CustEODEvent custEODEvent) {
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
-		// Set Tax Details if Already exists
 		if (financeDetail.getFinanceTaxDetail() == null) {
-			financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO()
-					.getFinanceTaxDetail(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), ""));
+			String finReference = financeMain.getFinReference();
+			financeDetail.setFinanceTaxDetail(financeTaxDetailDAO.getFinanceTaxDetail(finReference, ""));
 		}
 
-		CustomerAddres addres = getCustomerAddresDAO()
-				.getHighPriorityCustAddr(financeDetail.getFinScheduleData().getFinanceMain().getCustID(), "_AView");
+		CustomerAddres addres = customerAddresDAO.getHighPriorityCustAddr(financeMain.getCustID(), "_AView");
+
 		if (addres != null) {
 			CustomerDetails customerDetails = new CustomerDetails();
 			List<CustomerAddres> addressList = new ArrayList<CustomerAddres>();
@@ -648,18 +570,23 @@ public class LatePayDueCreationService extends ServiceHelper {
 		return taxDetail;
 	}
 
-	/**
-	 * Method for Setting default Value to Zero
-	 * 
-	 * @param dataMap
-	 * @param key
-	 */
 	private void addZeroifNotContains(Map<String, BigDecimal> dataMap, String key) {
 		if (dataMap != null) {
 			if (!dataMap.containsKey(key)) {
 				dataMap.put(key, BigDecimal.ZERO);
 			}
 		}
+	}
+
+	private BigDecimal calculateGST(BigDecimal amount, FeeType feeType, Map<String, BigDecimal> taxPercmap) {
+		BigDecimal gstAmount = BigDecimal.ZERO;
+
+		if (feeType == null || !(feeType.isTaxApplicable() && feeType.isAmortzReq())) {
+			return gstAmount;
+		}
+
+		return getTotalTaxAmount(taxPercmap, amount, feeType.getTaxComponent());
+
 	}
 
 	public FeeTypeDAO getFeeTypeDAO() {

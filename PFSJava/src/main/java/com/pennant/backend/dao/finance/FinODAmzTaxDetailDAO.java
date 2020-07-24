@@ -48,6 +48,7 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinTaxReceivable;
+import com.pennant.backend.model.finance.OverdueTaxMovement;
 
 public interface FinODAmzTaxDetailDAO {
 
@@ -68,5 +69,11 @@ public interface FinODAmzTaxDetailDAO {
 	List<FinODAmzTaxDetail> getFinODAmzTaxDetail(String finReference);
 
 	List<FinTaxIncomeDetail> getFinTaxIncomeList(String finReference, String type);
+
+	List<FinODAmzTaxDetail> getODTaxList(String finReference);
+
+	void updateODTaxDueList(List<FinODAmzTaxDetail> updateDueList);
+
+	void saveTaxList(List<OverdueTaxMovement> taxMovements);
 
 }

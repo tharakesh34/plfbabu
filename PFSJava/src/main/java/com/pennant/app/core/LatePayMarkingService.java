@@ -62,18 +62,20 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
-import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
+import com.pennant.backend.model.finance.TaxHeader;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.util.FinanceConstants;
@@ -729,8 +731,16 @@ public class LatePayMarkingService extends ServiceHelper {
 			if (addGSTInvoice) {
 				List<FinFeeDetail> feesList = prepareFeesList(lppFeeType, taxPercmap, calGstMap, penaltyDue);
 				if (CollectionUtils.isNotEmpty(feesList)) {
-					this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), detail, feesList, null,
-							PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false, false);
+					InvoiceDetail invoiceDetail = new InvoiceDetail();
+					invoiceDetail.setLinkedTranId(aeEvent.getLinkedTranId());
+					invoiceDetail.setFinanceDetail(detail);
+					invoiceDetail.setFinFeeDetailsList(feesList);
+					invoiceDetail.setOrigination(false);
+					invoiceDetail.setWaiver(false);
+					invoiceDetail.setDbInvSetReq(false);
+					invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
+
+					this.gstInvoiceTxnService.feeTaxInvoicePreparation(invoiceDetail);
 				}
 			}
 		}
@@ -858,38 +868,52 @@ public class LatePayMarkingService extends ServiceHelper {
 		List<FinFeeDetail> finFeeDetailsList = new ArrayList<FinFeeDetail>();
 		FinFeeDetail finFeeDetail = null;
 
-		//LPP Fees
-		if (lppFeeType != null) {
-			finFeeDetail = new FinFeeDetail();
-			FinTaxDetails finTaxDetails = new FinTaxDetails();
-			finFeeDetail.setFinTaxDetails(finTaxDetails);
-
-			finFeeDetail.setFeeTypeCode(lppFeeType.getFeeTypeCode());
-			finFeeDetail.setFeeTypeDesc(lppFeeType.getFeeTypeDesc());
-			finFeeDetail.setTaxApplicable(true);
-			finFeeDetail.setOriginationFee(false);
-			finFeeDetail.setNetAmountOriginal(penaltyDue);
-
-			if (taxPercMap != null && calGstMap != null) {
-				finFeeDetail.setCgst(taxPercMap.get(RuleConstants.CODE_CGST));
-				finFeeDetail.setSgst(taxPercMap.get(RuleConstants.CODE_SGST));
-				finFeeDetail.setIgst(taxPercMap.get(RuleConstants.CODE_IGST));
-				finFeeDetail.setUgst(taxPercMap.get(RuleConstants.CODE_UGST));
-
-				finTaxDetails.setNetCGST(calGstMap.get("LPP_CGST_R"));
-				finTaxDetails.setNetSGST(calGstMap.get("LPP_SGST_R"));
-				finTaxDetails.setNetIGST(calGstMap.get("LPP_IGST_R"));
-				finTaxDetails.setNetUGST(calGstMap.get("LPP_UGST_R"));
-
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(lppFeeType.getTaxComponent())) {
-					BigDecimal gstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetSGST())
-							.add(finTaxDetails.getNetIGST()).add(finTaxDetails.getNetUGST());
-					finFeeDetail.setNetAmountOriginal(penaltyDue.subtract(gstAmount));
-				}
-			}
-
-			finFeeDetailsList.add(finFeeDetail);
+		if (lppFeeType == null || (taxPercMap == null || calGstMap == null)) {
+			return finFeeDetailsList;
 		}
+
+		finFeeDetail = new FinFeeDetail();
+		TaxHeader taxHeader = new TaxHeader();
+		finFeeDetail.setTaxHeader(taxHeader);
+
+		finFeeDetail.setFeeTypeCode(lppFeeType.getFeeTypeCode());
+		finFeeDetail.setFeeTypeDesc(lppFeeType.getFeeTypeDesc());
+		finFeeDetail.setTaxApplicable(true);
+		finFeeDetail.setOriginationFee(false);
+		finFeeDetail.setNetAmountOriginal(penaltyDue);
+
+		Taxes cgstTax = new Taxes();
+		Taxes sgstTax = new Taxes();
+		Taxes igstTax = new Taxes();
+		Taxes ugstTax = new Taxes();
+		Taxes cessTax = new Taxes();
+
+		// FIXME Duplicate Code
+		cgstTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_CGST));
+		sgstTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_SGST));
+		igstTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_IGST));
+		ugstTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_UGST));
+		cessTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_CESS));
+
+		cgstTax.setNetTax(calGstMap.get("LPP_CGST_R"));
+		sgstTax.setNetTax(calGstMap.get("LPP_SGST_R"));
+		igstTax.setNetTax(calGstMap.get("LPP_IGST_R"));
+		ugstTax.setNetTax(calGstMap.get("LPP_UGST_R"));
+		cessTax.setNetTax(calGstMap.get("LPP_CESS_R"));
+
+		taxHeader.getTaxDetails().add(cgstTax);
+		taxHeader.getTaxDetails().add(sgstTax);
+		taxHeader.getTaxDetails().add(igstTax);
+		taxHeader.getTaxDetails().add(ugstTax);
+		taxHeader.getTaxDetails().add(cessTax);
+
+		if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(lppFeeType.getTaxComponent())) {
+			BigDecimal gstAmount = cgstTax.getNetTax().add(sgstTax.getNetTax()).add(igstTax.getNetTax())
+					.add(ugstTax.getNetTax()).add(cessTax.getNetTax());
+			finFeeDetail.setNetAmountOriginal(penaltyDue.subtract(gstAmount));
+		}
+
+		finFeeDetailsList.add(finFeeDetail);
 
 		logger.debug(Literal.LEAVING);
 		return finFeeDetailsList;

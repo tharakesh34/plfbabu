@@ -781,6 +781,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	//QDP AutoApprove Changes.
 	private boolean autoApprove = false;
+	private Date eodValueDate;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -993,7 +994,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("osPriBal");
 		excludeFields.add("rateChange");
 		excludeFields.add("appDate");
-
+		excludeFields.add("eodValueDate");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -4673,6 +4674,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setAppDate(Date appDate) {
 		this.appDate = appDate;
+	}
+
+	public Date getEodValueDate() {
+		return eodValueDate;
+	}
+
+	public void setEodValueDate(Date eodValueDate) {
+		this.eodValueDate = eodValueDate;
 	}
 
 }

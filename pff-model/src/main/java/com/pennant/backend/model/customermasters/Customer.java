@@ -366,6 +366,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String primaryIdName;
 	private BigDecimal industryMargin;
 	private String subIndustry;
+	private String residentialStatus;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -2201,6 +2202,14 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setSubIndustry(String subIndustry) {
 		this.subIndustry = subIndustry;
+	}
+
+	public String getResidentialStatus() {
+		return residentialStatus;
+	}
+
+	public void setResidentialStatus(String residentialStatus) {
+		this.residentialStatus = residentialStatus;
 	}
 
 }

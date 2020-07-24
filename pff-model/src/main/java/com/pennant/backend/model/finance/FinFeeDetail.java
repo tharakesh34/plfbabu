@@ -133,14 +133,10 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	@SuppressWarnings("unused")
 	private FinFeeDetail validateFinFeeDetail = this;
 	private transient List<FinFeeScheduleDetail> finFeeScheduleDetailList = new ArrayList<>(1);
-	private FinTaxDetails finTaxDetails = new FinTaxDetails();
 	private boolean taxApplicable;
 	private String taxComponent;
 	private BigDecimal feeAmz;
-	private BigDecimal igst = BigDecimal.ZERO;
-	private BigDecimal ugst = BigDecimal.ZERO;
-	private BigDecimal sgst = BigDecimal.ZERO;
-	private BigDecimal cgst = BigDecimal.ZERO;
+
 	@XmlElement
 	private List<FinFeeReceipt> finFeeReceipts = new ArrayList<>(1);
 	private boolean feeModified = false;
@@ -157,7 +153,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 
 	// Waivers Gst values
 	private BigDecimal waivedGST = BigDecimal.ZERO;
-	private long taxHeaderId = 0;
+	private Long taxHeaderId;
 	private TaxHeader taxHeader;
 
 	public FinFeeDetail() {
@@ -186,11 +182,6 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("schdDate");
 		excludeFields.add("taxPercent");
 
-		excludeFields.add("finTaxDetails");
-		excludeFields.add("igst");
-		excludeFields.add("ugst");
-		excludeFields.add("sgst");
-		excludeFields.add("cgst");
 		excludeFields.add("feeModified");
 		excludeFields.add("alwPreIncomization");
 		excludeFields.add("finFeeReceipts");
@@ -527,14 +518,6 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		this.postDate = postDate;
 	}
 
-	public FinTaxDetails getFinTaxDetails() {
-		return finTaxDetails;
-	}
-
-	public void setFinTaxDetails(FinTaxDetails finTaxDetails) {
-		this.finTaxDetails = finTaxDetails;
-	}
-
 	public boolean isTaxApplicable() {
 		return taxApplicable;
 	}
@@ -557,14 +540,6 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 
 	public void setFeeAmz(BigDecimal feeAmz) {
 		this.feeAmz = feeAmz;
-	}
-
-	public BigDecimal getIgst() {
-		return igst;
-	}
-
-	public void setIgst(BigDecimal igst) {
-		this.igst = igst;
 	}
 
 	public BigDecimal getActualAmountOriginal() {
@@ -637,30 +612,6 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 
 	public void setRemainingFeeGST(BigDecimal remainingFeeGST) {
 		this.remainingFeeGST = remainingFeeGST;
-	}
-
-	public BigDecimal getUgst() {
-		return ugst;
-	}
-
-	public void setUgst(BigDecimal ugst) {
-		this.ugst = ugst;
-	}
-
-	public BigDecimal getSgst() {
-		return sgst;
-	}
-
-	public void setSgst(BigDecimal sgst) {
-		this.sgst = sgst;
-	}
-
-	public BigDecimal getCgst() {
-		return cgst;
-	}
-
-	public void setCgst(BigDecimal cgst) {
-		this.cgst = cgst;
 	}
 
 	public BigDecimal getTaxPercent() {
@@ -759,11 +710,11 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		this.taxHeader = taxHeader;
 	}
 
-	public long getTaxHeaderId() {
+	public Long getTaxHeaderId() {
 		return taxHeaderId;
 	}
 
-	public void setTaxHeaderId(long taxHeaderId) {
+	public void setTaxHeaderId(Long taxHeaderId) {
 		this.taxHeaderId = taxHeaderId;
 	}
 

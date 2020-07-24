@@ -121,8 +121,8 @@ abstract public class ServiceHelper implements Serializable {
 	private FinanceDisbursementDAO financeDisbursementDAO;
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
-	private FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
-	private FinInsurancesDAO finInsurancesDAO;
+	protected FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
+	protected FinInsurancesDAO finInsurancesDAO;
 	private PresentmentDetailDAO presentmentDetailDAO;
 	protected FinServiceInstrutionDAO finServiceInstructionDAO;
 	//accounting

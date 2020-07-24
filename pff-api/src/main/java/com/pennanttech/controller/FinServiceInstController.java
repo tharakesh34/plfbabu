@@ -86,7 +86,6 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
-import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -204,9 +203,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		if (financeDetail != null) {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
-			for (FinFeeDetail fees : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
-				fees.setFinTaxDetails(new FinTaxDetails());
-			}
 			financeMain.setEventFromDate(finServiceInst.getFromDate());
 			financeMain.setEventToDate(finServiceInst.getToDate());
 			financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
@@ -2862,8 +2858,8 @@ public class FinServiceInstController extends SummaryDetailService {
 								isFeeCodeFound = true;
 								finPaidAMount = feeDetail.getPaidAmount();
 								actualAmount = feeDetail.getActualAmount();
-								Map<String, Object> gstExecutionMap = this.finFeeDetailService
-										.prepareGstMapping(finServInst.getFromBranch(), finServInst.getToBranch());
+								Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(
+										finServInst.getFromBranch(), finServInst.getToBranch(), null, null, null, null);
 								if (finTypeFee.isTaxApplicable() && !gstExecutionMap.containsKey("fromState")) {
 									String[] valueParm = new String[1];
 									valueParm[0] = " GST not configured ";

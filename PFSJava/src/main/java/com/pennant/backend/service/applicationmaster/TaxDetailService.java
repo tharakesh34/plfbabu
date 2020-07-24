@@ -65,4 +65,6 @@ public interface TaxDetailService {
 	List<TaxDetail> getTaxDetailbystateCode(String Statecode, String type);
 
 	AuditDetail validation(AuditDetail auditDetail, String usrLanguage);
+
+	List<TaxDetail> getTaxDetailsbyEntityCode(String cpProvince, String entityCode, String string);
 }

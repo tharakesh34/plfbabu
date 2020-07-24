@@ -229,6 +229,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Textbox custMiddleName; // autowired
 	protected Textbox custLastName; // autowired
 	protected Textbox custArabicName; // autowired
+	protected Combobox residentialStatus; // autowired
 	protected Space space_CustArabicName; // autowired
 	protected Textbox motherMaidenName; // autowired
 	protected ExtendedCombobox custLng; // autowired
@@ -1291,6 +1292,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.custGroupId.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustGroupCode()),
 					StringUtils.trimToEmpty(aCustomer.getLovDesccustGroupIDName()));
 			this.custGroupId.setAttribute("CustGroupId", aCustomer.getCustGroupID());
+			fillComboBox(this.residentialStatus, aCustomer.getResidentialStatus(),
+					PennantStaticListUtil.getResidentialStsList(), ",MN,PIO,");
+		} else {
+			fillComboBox(this.residentialStatus, PennantConstants.RESIDENT,
+					PennantStaticListUtil.getResidentialStsList(), ",MN,PIO,");
 		}
 		this.dnd.setChecked(aCustomer.isDnd());
 
@@ -1827,6 +1833,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			aCustomer.setCasteId(0);
 			aCustomer.setReligionId(0);
 			aCustomer.setSubCategory(null);
+		}
+
+		try {
+			aCustomer.setResidentialStatus(getComboboxValue(this.residentialStatus));
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
 
 		this.basicDetails.setSelected(true);
@@ -3024,6 +3036,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.additionalIncome.setReadonly(isReadOnly("CustomerDialog_additionalIncome"));
 			this.noOfDependents.setReadonly(isReadOnly("CustomerDialog_noOfDependents"));
 			this.custMaritalSts.setDisabled(isReadOnly("CustomerDialog_custMaritalSts"));
+			this.residentialStatus.setDisabled(isReadOnly("CustomerDialog_residentialStatus"));
 
 			if (isRetailCustomer) {
 				readOnlyComponent(isReadOnly("CustomerDialog_btn_GenerateCibil"), this.btn_GenerateCibil);
@@ -3072,6 +3085,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custSegment.setReadonly(true);
 		this.custCOB.setReadonly(true);
 		this.custMaritalSts.setDisabled(true);
+		this.residentialStatus.setDisabled(true);
 		this.custSalutationCode.setDisabled(true);
 		this.custDOB.setDisabled(true);
 		this.custGenderCode.setDisabled(true);

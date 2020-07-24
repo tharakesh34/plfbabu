@@ -12,41 +12,27 @@ public class ManualAdviseMovements implements Serializable {
 	private long receiptID = Long.MIN_VALUE;
 	private long receiptSeqID = Long.MIN_VALUE;
 	private String feeTypeCode;
-	private String feeTypeDesc; // Used in SOA and GST Invoice
+	private String feeTypeDesc;
 	private Date movementDate;
 	private BigDecimal movementAmount = BigDecimal.ZERO;
 	private BigDecimal paidAmount = BigDecimal.ZERO;
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
-	private String status;
-
-	// GST Paid Fields
-	private BigDecimal paidCGST = BigDecimal.ZERO;
-	private BigDecimal paidSGST = BigDecimal.ZERO;
-	private BigDecimal paidUGST = BigDecimal.ZERO;
-	private BigDecimal paidIGST = BigDecimal.ZERO;
-
-	// GST Waiver Fields
-	private BigDecimal waivedCGST = BigDecimal.ZERO;
-	private BigDecimal waivedSGST = BigDecimal.ZERO;
-	private BigDecimal waivedUGST = BigDecimal.ZERO;
-	private BigDecimal waivedIGST = BigDecimal.ZERO;
-
 	private BigDecimal tdsPaid = BigDecimal.ZERO;
+	private String status;
 
 	private boolean taxApplicable;
 	private String taxComponent;
 	private int adviseType;
 
-	// Enquiry Purpose
 	private String receiptMode;
-	// ### 24-05-2018 SOA Merging from Bajaj to QC
 	private Date valueDate;
 	private long waiverID = Long.MIN_VALUE;
 
-	private long taxHeaderId = 0;
+	private Long taxHeaderId;
+	private Long debitInvoiceId;
 	private TaxHeader taxHeader;
-
-	// Getters and Setters
+	private Date schDate;
+	private boolean lppAmzReqonME;
 
 	public long getMovementID() {
 		return movementID;
@@ -144,38 +130,6 @@ public class ManualAdviseMovements implements Serializable {
 		this.feeTypeDesc = feeTypeDesc;
 	}
 
-	public BigDecimal getPaidCGST() {
-		return paidCGST;
-	}
-
-	public void setPaidCGST(BigDecimal paidCGST) {
-		this.paidCGST = paidCGST;
-	}
-
-	public BigDecimal getPaidSGST() {
-		return paidSGST;
-	}
-
-	public void setPaidSGST(BigDecimal paidSGST) {
-		this.paidSGST = paidSGST;
-	}
-
-	public BigDecimal getPaidUGST() {
-		return paidUGST;
-	}
-
-	public void setPaidUGST(BigDecimal paidUGST) {
-		this.paidUGST = paidUGST;
-	}
-
-	public BigDecimal getPaidIGST() {
-		return paidIGST;
-	}
-
-	public void setPaidIGST(BigDecimal paidIGST) {
-		this.paidIGST = paidIGST;
-	}
-
 	public Date getValueDate() {
 		return valueDate;
 	}
@@ -216,43 +170,11 @@ public class ManualAdviseMovements implements Serializable {
 		this.adviseType = adviseType;
 	}
 
-	public BigDecimal getWaivedCGST() {
-		return waivedCGST;
-	}
-
-	public void setWaivedCGST(BigDecimal waivedCGST) {
-		this.waivedCGST = waivedCGST;
-	}
-
-	public BigDecimal getWaivedSGST() {
-		return waivedSGST;
-	}
-
-	public void setWaivedSGST(BigDecimal waivedSGST) {
-		this.waivedSGST = waivedSGST;
-	}
-
-	public BigDecimal getWaivedUGST() {
-		return waivedUGST;
-	}
-
-	public void setWaivedUGST(BigDecimal waivedUGST) {
-		this.waivedUGST = waivedUGST;
-	}
-
-	public BigDecimal getWaivedIGST() {
-		return waivedIGST;
-	}
-
-	public void setWaivedIGST(BigDecimal waivedIGST) {
-		this.waivedIGST = waivedIGST;
-	}
-
-	public long getTaxHeaderId() {
+	public Long getTaxHeaderId() {
 		return taxHeaderId;
 	}
 
-	public void setTaxHeaderId(long taxHeaderId) {
+	public void setTaxHeaderId(Long taxHeaderId) {
 		this.taxHeaderId = taxHeaderId;
 	}
 
@@ -270,6 +192,30 @@ public class ManualAdviseMovements implements Serializable {
 
 	public void setTdsPaid(BigDecimal tdsPaid) {
 		this.tdsPaid = tdsPaid;
+	}
+
+	public Long getDebitInvoiceId() {
+		return debitInvoiceId;
+	}
+
+	public void setDebitInvoiceId(Long debitInvoiceId) {
+		this.debitInvoiceId = debitInvoiceId;
+	}
+
+	public Date getSchDate() {
+		return schDate;
+	}
+
+	public void setSchDate(Date schDate) {
+		this.schDate = schDate;
+	}
+
+	public boolean isLppAmzReqonME() {
+		return lppAmzReqonME;
+	}
+
+	public void setLppAmzReqonME(boolean lppAmzReqonME) {
+		this.lppAmzReqonME = lppAmzReqonME;
 	}
 
 }

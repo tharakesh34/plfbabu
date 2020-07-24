@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.finance.FinTaxDetails;
+import com.pennanttech.ws.model.finance.TaxDetail;
 
 @XmlType(propOrder = { "adviseId", "finTaxDetails", "returnStatus" })
 @XmlRootElement(name = "ManualAdviseResponse")
@@ -18,7 +18,7 @@ public class ManualAdviseResponse {
 	private long adviseId = Long.MIN_VALUE;
 
 	@XmlElement(name = "finGSTDetail")
-	private FinTaxDetails finTaxDetails;
+	private TaxDetail taxDetail;
 
 	@XmlElement
 	private WSReturnStatus returnStatus;
@@ -31,12 +31,12 @@ public class ManualAdviseResponse {
 		this.adviseId = adviseId;
 	}
 
-	public FinTaxDetails getFinTaxDetails() {
-		return finTaxDetails;
+	public TaxDetail getTaxDetail() {
+		return taxDetail;
 	}
 
-	public void setFinTaxDetails(FinTaxDetails finTaxDetails) {
-		this.finTaxDetails = finTaxDetails;
+	public void setTaxDetail(TaxDetail taxDetail) {
+		this.taxDetail = taxDetail;
 	}
 
 	public WSReturnStatus getReturnStatus() {

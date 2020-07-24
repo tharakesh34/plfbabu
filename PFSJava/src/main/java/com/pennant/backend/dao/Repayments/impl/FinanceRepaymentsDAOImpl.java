@@ -67,6 +67,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -520,9 +521,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 				" SchdIncrCostPaid, SchdIncrCostBal, SchdIncrCostPayNow, PftSchdWaivedNow , LatePftSchdWaivedNow, ");
 		insertSql.append(
 				" PriSchdWaivedNow, SchdFeeWaivedNow, SchdInsWaivedNow, SchdSuplRentWaivedNow, SchdIncrCostWaivedNow,");
-		insertSql.append(" PaidPenaltyCGST, PaidPenaltySGST, PaidPenaltyUGST, PaidPenaltyIGST,");
-		insertSql.append(
-				" PenaltyWaiverCGST, PenaltyWaiverSGST, PenaltyWaiverUGST, PenaltyWaiverIGST, TaxHeaderId, WaiverId) ");
+		insertSql.append(" TaxHeaderId, WaiverId) ");
 		insertSql.append(
 				" Values(:RepayID,:RepaySchID, :FinReference , :SchDate , :SchdFor , :LinkedTranId , :ProfitSchdBal , :PrincipalSchdBal , ");
 		insertSql.append(
@@ -537,9 +536,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 				" :SchdIncrCostPaid, :SchdIncrCostBal, :SchdIncrCostPayNow, :PftSchdWaivedNow , :LatePftSchdWaivedNow, ");
 		insertSql.append(
 				" :PriSchdWaivedNow, :SchdFeeWaivedNow, :SchdInsWaivedNow, :SchdSuplRentWaivedNow, :SchdIncrCostWaivedNow,");
-		insertSql.append(" :PaidPenaltyCGST, :PaidPenaltySGST, :PaidPenaltyUGST, :PaidPenaltyIGST,");
-		insertSql.append(
-				" :PenaltyWaiverCGST, :PenaltyWaiverSGST, :PenaltyWaiverUGST, :PenaltyWaiverIGST, :TaxHeaderId, :WaiverId) ");
+		insertSql.append(" :TaxHeaderId, :WaiverId) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(repaySchdList.toArray());
@@ -957,16 +954,8 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			frs.setSchdInsWaivedNow(rs.getBigDecimal("SchdInsWaivedNow"));
 			frs.setSchdSuplRentWaivedNow(rs.getBigDecimal("SchdSuplRentWaivedNow"));
 			frs.setSchdIncrCostWaivedNow(rs.getBigDecimal("SchdIncrCostWaivedNow"));
-			frs.setPaidPenaltyCGST(rs.getBigDecimal("PaidPenaltyCGST"));
-			frs.setPaidPenaltySGST(rs.getBigDecimal("PaidPenaltySGST"));
-			frs.setPaidPenaltyUGST(rs.getBigDecimal("PaidPenaltyUGST"));
-			frs.setPaidPenaltyIGST(rs.getBigDecimal("PaidPenaltyIGST"));
-			frs.setPenaltyWaiverCGST(rs.getBigDecimal("PenaltyWaiverCGST"));
-			frs.setPenaltyWaiverSGST(rs.getBigDecimal("PenaltyWaiverSGST"));
-			frs.setPenaltyWaiverUGST(rs.getBigDecimal("PenaltyWaiverUGST"));
-			frs.setPenaltyWaiverIGST(rs.getBigDecimal("PenaltyWaiverIGST"));
-			frs.setTaxHeaderId(rs.getLong("TaxHeaderId"));
-			frs.setWaiverId(rs.getLong("WaiverId"));
+			frs.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
+			frs.setWaiverId(JdbcUtil.getLong(rs.getObject("WaiverId")));
 
 			return frs;
 		}

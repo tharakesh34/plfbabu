@@ -46,10 +46,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -100,6 +102,8 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.TaxHeader;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -115,6 +119,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
@@ -204,7 +209,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private transient FeeReceiptService feeReceiptService;
 	private AccountingSetService accountingSetService;
 	private AccountEngineExecution engineExecution;
-	private boolean feesExists = false;
 
 	private Label label_FeeReceiptDialog_FundingAccount;
 
@@ -570,7 +574,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Listitem item;
 
 		this.listBoxFeeDetail.getItems().clear();
-		feesExists = false;
 
 		if (feeDetails == null) {
 			return;
@@ -581,6 +584,9 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.gb_FeeDetail.setVisible(true);
 		for (FinFeeDetail fee : feeDetails) {
 
+			if (totalPaid.compareTo(BigDecimal.ZERO) > 0) {
+				doFillSummaryDetails(totalPaid, finFormatter);
+			}
 			item = new Listitem();
 
 			lc = new Listcell(
@@ -608,7 +614,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (totalPaid.compareTo(BigDecimal.ZERO) > 0) {
-			feesExists = true;
 			doFillSummaryDetails(totalPaid, finFormatter);
 		}
 		logger.debug(Literal.LEAVING);
@@ -721,10 +726,12 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private void checkByReceiptMode(String recMode, boolean isUserAction) {
 		logger.debug("Entering");
 
+		Date appDate = SysParamUtil.getAppDate();
+
 		if (isUserAction) {
 			this.receiptAmount.setValue(BigDecimal.ZERO);
 			this.favourNo.setValue("");
-			this.valueDate.setValue(DateUtility.getAppDate());
+			this.valueDate.setValue(appDate);
 			this.bankCode.setValue("");
 			this.bankCode.setDescription("");
 			this.bankCode.setObject(null);
@@ -737,7 +744,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.fundingAccount.setValue("");
 			this.fundingAccount.setDescription("");
 			this.fundingAccount.setObject(null);
-			this.receivedDate.setValue(DateUtility.getAppDate());
+			this.receivedDate.setValue(appDate);
 			this.remarks.setValue("");
 		}
 
@@ -781,9 +788,9 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							.setValue(Labels.getLabel("label_FeeReceiptDialog_ChequeFavourNo.value"));
 
 					if (isUserAction) {
-						this.depositDate.setValue(DateUtility.getAppDate());
-						this.receivedDate.setValue(DateUtility.getAppDate());
-						this.valueDate.setValue(DateUtility.getAppDate());
+						this.depositDate.setValue(appDate);
+						this.receivedDate.setValue(appDate);
+						this.valueDate.setValue(appDate);
 					}
 
 				} else {
@@ -792,8 +799,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							.setValue(Labels.getLabel("label_FeeReceiptDialog_DDFavourNo.value"));
 
 					if (isUserAction) {
-						this.depositDate.setValue(DateUtility.getAppDate());
-						this.valueDate.setValue(DateUtility.getAppDate());
+						this.depositDate.setValue(appDate);
+						this.valueDate.setValue(appDate);
 					}
 				}
 
@@ -812,7 +819,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.label_FeeReceiptDialog_FundingAccount.setVisible(false);
 				this.fundingAccount.setVisible(false);
 				if (isUserAction) {
-					this.receivedDate.setValue(DateUtility.getAppDate());
+					this.receivedDate.setValue(appDate);
 				}
 
 			} else {
@@ -851,13 +858,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							|| "Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 							|| "Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()))) {
 				recReject = true;
-			}
-
-			// If Fee Details not exists against Reference , not allowed to proceed further
-			if (!feesExists) {
-				/*
-				 * MessageUtil.showError(Labels.getLabel("label_FeeReceiptDialog_NoFees.value")); return;
-				 */
 			}
 
 			if (!recReject) {
@@ -899,19 +899,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					}
 					receiptDetail.setReceivedDate(this.receivedDate.getValue());
 
-					//For Upfront Fees we don't want to save the FinRepay Headers
-					//					if (receiptDetail.getRepayHeaders().isEmpty()) {
-					//						FinRepayHeader repayHeader = new FinRepayHeader();
-					//						repayHeader.setFinReference(this.finReference.getValue());
-					//						repayHeader.setValueDate(this.receivedDate.getValue());
-					//						repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
-					//						repayHeader.setRepayAmount(header.getReceiptAmount());
-					//
-					//						receiptDetail.getRepayHeaders().add(repayHeader);
-					//					} else {
-					//						receiptDetail.getRepayHeaders().get(0).setValueDate(this.receivedDate.getValue());
-					//						receiptDetail.getRepayHeaders().get(0).setRepayAmount(header.getReceiptAmount());
-					//					}
 				}
 			}
 
@@ -1361,28 +1348,77 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
 
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmountOriginal());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmountOriginal());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.getNetAmount());
+				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+				Taxes cgstTax = new Taxes();
+				Taxes sgstTax = new Taxes();
+				Taxes igstTax = new Taxes();
+				Taxes ugstTax = new Taxes();
+				Taxes cessTax = new Taxes();
+				if (taxHeader != null) {
+					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+					if (CollectionUtils.isNotEmpty(taxDetails)) {
+						for (Taxes taxes : taxDetails) {
+							if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+								cgstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+								sgstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+								igstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+								ugstTax = taxes;
+							} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+								cessTax = taxes;
+							}
+						}
+					}
+				}
+
+				String feeTypeCode = finFeeDetail.getFeeTypeCode();
+				dataMap.put(feeTypeCode + "_C", finFeeDetail.getActualAmountOriginal());
+
+				// GST Waiver Changes
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
+					dataMap.put(feeTypeCode + "_W",
+							finFeeDetail.getWaivedAmount()
+									.subtract(cgstTax.getWaivedTax().add(sgstTax.getWaivedTax())
+											.add(igstTax.getWaivedTax()).add(ugstTax.getWaivedTax())
+											.add(cessTax.getWaivedTax())));
+				} else {
+					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
+				}
+
+				dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmountOriginal());
+
+				// GST
+				dataMap.put(feeTypeCode + "_N", finFeeDetail.getNetAmount());
 
 				// Calculated Amount
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_C", finFeeDetail.getFinTaxDetails().getActualCGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_C", finFeeDetail.getFinTaxDetails().getActualSGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_C", finFeeDetail.getFinTaxDetails().getActualIGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_C", finFeeDetail.getFinTaxDetails().getActualUGST());
+				dataMap.put(feeTypeCode + "_CGST_C", cgstTax.getActualTax());
+				dataMap.put(feeTypeCode + "_SGST_C", sgstTax.getActualTax());
+				dataMap.put(feeTypeCode + "_IGST_C", igstTax.getActualTax());
+				dataMap.put(feeTypeCode + "_UGST_C", ugstTax.getActualTax());
+				dataMap.put(feeTypeCode + "_CESS_C", cessTax.getActualTax());
 
 				// Paid Amount
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_P", finFeeDetail.getFinTaxDetails().getPaidCGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_P", finFeeDetail.getFinTaxDetails().getPaidSGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_P", finFeeDetail.getFinTaxDetails().getPaidIGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_P", finFeeDetail.getFinTaxDetails().getPaidUGST());
+				dataMap.put(feeTypeCode + "_CGST_P", cgstTax.getPaidTax());
+				dataMap.put(feeTypeCode + "_SGST_P", sgstTax.getPaidTax());
+				dataMap.put(feeTypeCode + "_IGST_P", igstTax.getPaidTax());
+				dataMap.put(feeTypeCode + "_UGST_P", ugstTax.getPaidTax());
+				dataMap.put(feeTypeCode + "_CESS_P", cessTax.getPaidTax());
 
 				// Net Amount
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_N", finFeeDetail.getFinTaxDetails().getNetCGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_N", finFeeDetail.getFinTaxDetails().getNetSGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_N", finFeeDetail.getFinTaxDetails().getNetIGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_N", finFeeDetail.getFinTaxDetails().getNetUGST());
+				dataMap.put(feeTypeCode + "_CGST_N", cgstTax.getNetTax());
+				dataMap.put(feeTypeCode + "_SGST_N", sgstTax.getNetTax());
+				dataMap.put(feeTypeCode + "_IGST_N", igstTax.getNetTax());
+				dataMap.put(feeTypeCode + "_UGST_N", ugstTax.getNetTax());
+				dataMap.put(feeTypeCode + "_CESS_N", cessTax.getNetTax());
+
+				// Waiver GST Amounts (GST Waiver Changes)
+				dataMap.put(feeTypeCode + "_CGST_W", cgstTax.getWaivedTax());
+				dataMap.put(feeTypeCode + "_SGST_W", sgstTax.getWaivedTax());
+				dataMap.put(feeTypeCode + "_IGST_W", igstTax.getWaivedTax());
+				dataMap.put(feeTypeCode + "_UGST_W", ugstTax.getWaivedTax());
+				dataMap.put(feeTypeCode + "_CESS_W", cessTax.getWaivedTax());
 			}
 		}
 		logger.debug(Literal.LEAVING);

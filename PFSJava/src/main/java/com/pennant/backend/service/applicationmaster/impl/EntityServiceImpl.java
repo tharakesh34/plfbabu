@@ -212,11 +212,6 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 		return getEntityDAO().getEntity(entityCode, "_AView");
 	}
 
-	@Override
-	public Entity getEntityByFinDivision(String divisionCode, String type) {
-		return getEntityDAO().getEntityByFinDivision(divisionCode, type);
-	}
-
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do

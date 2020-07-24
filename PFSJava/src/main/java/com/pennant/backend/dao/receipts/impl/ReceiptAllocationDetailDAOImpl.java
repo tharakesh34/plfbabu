@@ -118,7 +118,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 					rad.setPaidGST(rs.getBigDecimal("PaidGST"));
 					rad.setTotalDue(rs.getBigDecimal("TotalDue"));
 					rad.setWaivedGST(rs.getBigDecimal("WaivedGST"));
-					rad.setTaxHeaderId(rs.getLong("TaxHeaderId"));//TdsDue,TdsPaid,TdsWaived
+					rad.setTaxHeaderId(rs.getLong("TaxHeaderId"));
 					rad.setTdsDue(rs.getBigDecimal("TdsDue"));
 					rad.setTdsPaid(rs.getBigDecimal("TdsPaid"));
 					rad.setTdsWaived(rs.getBigDecimal("TdsWaived"));

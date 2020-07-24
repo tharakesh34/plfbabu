@@ -59,7 +59,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.webui.feetype.feetype.model.FeeTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
