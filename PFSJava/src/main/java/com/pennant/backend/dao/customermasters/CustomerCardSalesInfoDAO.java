@@ -2,8 +2,8 @@ package com.pennant.backend.dao.customermasters;
 
 import java.util.List;
 
-import com.pennant.backend.model.customermasters.CustCardSalesDetails;
 import com.pennant.backend.model.customermasters.CustCardSales;
+import com.pennant.backend.model.customermasters.CustCardSalesDetails;
 
 public interface CustomerCardSalesInfoDAO {
 
