@@ -49,7 +49,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
-import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennanttech.pff.core.TableType;
 
 /**

@@ -45,7 +45,6 @@ package com.pennant.backend.service.finance.financialsummary;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
-import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennanttech.pff.core.TableType;
 
 public interface SynopsisDetailsService {

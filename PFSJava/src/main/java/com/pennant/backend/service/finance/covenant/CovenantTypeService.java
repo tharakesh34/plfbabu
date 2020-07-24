@@ -42,8 +42,8 @@
 */
 package com.pennant.backend.service.finance.covenant;
 
-import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.covenant.CovenantType;
 
 public interface CovenantTypeService {
 
