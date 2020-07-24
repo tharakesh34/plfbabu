@@ -3,13 +3,13 @@ package com.pennant.backend.service.finance.globalvariable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
 import com.pennant.backend.service.GenericService;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.service.GlobalVariableService;
-
-import org.apache.log4j.Logger;
 
 /**
  * Service implementation for methods that depends on <b>PFSParameter</b>.<br>
