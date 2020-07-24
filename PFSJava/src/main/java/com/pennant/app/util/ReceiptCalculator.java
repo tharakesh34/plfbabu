@@ -2340,10 +2340,10 @@ public class ReceiptCalculator implements Serializable {
 
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
 			movement.setPaidAmount(allocate.getPaidNow().subtract(allocate.getPaidGST()));
-			movement.setWaivedAmount(allocate.getWaivedNow().subtract(allocate.getWaivedGST()));
+			movement.setWaivedAmount(allocate.getWaivedNow().subtract(allocate.getWaivedGST()).add(allocate.getTdsWaived()));
 		} else {
 			movement.setPaidAmount(allocate.getPaidNow());
-			movement.setWaivedAmount(allocate.getWaivedNow());
+			movement.setWaivedAmount(allocate.getWaivedNow().add(allocate.getTdsWaived()));
 		}
 
 		movement.setFeeTypeCode(allocate.getFeeTypeCode());
@@ -3307,7 +3307,6 @@ public class ReceiptCalculator implements Serializable {
 			rps.setDaysLate(fod.getFinCurODDays());
 			rps.setAllowWaiver(fod.isODAllowWaiver());
 			rps.setMaxWaiver(fod.getODMaxWaiverPerc());
-			rps.setWaivedAmt(fod.getTotWaived());
 			rps.setLatePftSchd(fod.getLPIAmt());
 			rps.setLatePftSchdPaid(fod.getLPIPaid());
 			rps.setLatePftSchdBal(fod.getLPIBal());
@@ -3328,7 +3327,6 @@ public class ReceiptCalculator implements Serializable {
 		rps.setDaysLate(fod.getFinCurODDays());
 		rps.setAllowWaiver(fod.isODAllowWaiver());
 		rps.setMaxWaiver(fod.getODMaxWaiverPerc());
-		rps.setWaivedAmt(fod.getTotWaived());
 		rps.setLatePftSchd(fod.getLPIAmt());
 		rps.setLatePftSchdPaid(fod.getLPIPaid());
 		rps.setLatePftSchdBal(fod.getLPIBal());
@@ -4367,10 +4365,16 @@ public class ReceiptCalculator implements Serializable {
 				calAllocationPaidGST(detail, paidAmount, allocate, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE);
 			}
 			if (waivedNow.compareTo(BigDecimal.ZERO) > 0) {
-				String taxType = allocate.getTaxType();
-				allocate.setTaxType(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
-				calAllocationWaiverGST(detail, waivedNow, allocate);
-				allocate.setTaxType(taxType);
+				BigDecimal waivedAmount = getPaidAmount(allocate, waivedNow);
+				//String taxType= allocate.getTaxType();
+				allocate.setTaxType(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE);
+				calAllocationWaiverGST(detail, waivedAmount, allocate);
+				//allocate.setTaxType(taxType);
+				if (allocate.isTdsReq() && tdsPaidNow.compareTo(BigDecimal.ZERO) == 0) {
+					BigDecimal tdsWaivedNow = getTDSAmount(detail.getFinScheduleData().getFinanceMain(), waivedAmount);
+					allocate.setTdsWaivedNow(tdsWaivedNow);
+					allocate.setTdsWaived(allocate.getTdsWaived().add(tdsWaivedNow));
+				}
 			}
 		}
 		if (allocate.isTdsReq() && tdsPaidNow.compareTo(BigDecimal.ZERO) == 0) {
