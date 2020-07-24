@@ -75,9 +75,6 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.model.finance.FinExcessAmount;
-
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
@@ -85,6 +82,7 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportCreationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -94,6 +92,7 @@ import com.pennant.backend.model.finance.DDAProcessData;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinMainReportData;
 import com.pennant.backend.model.finance.FinODDetails;
