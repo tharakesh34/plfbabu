@@ -1,7 +1,6 @@
 package com.pennant.backend.dao.pennydrop;
 
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
-import com.pennanttech.pff.external.BankAccountValidationService;
 
 public interface PennyDropDAO {
 	void savePennyDropSts(BankAccountValidation bankAccountValidations);
