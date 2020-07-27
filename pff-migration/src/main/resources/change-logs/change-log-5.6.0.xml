@@ -7916,27 +7916,27 @@
 			FM.FINAPPROVEDDATE,
 			PD.LATESTRPYDATE,
 			FM.REPAYFRQ,
-			UDF_CONVERTCURRENCY(FINASSETVALUE, FM.FINCCY, 'INR') FINASSETVALUE,
-			UDF_CONVERTCURRENCY(PD.TOTALPRIBAL, FM.FINCCY, 'INR') FUTURE_SCHEDULE_PRIN,
-			UDF_CONVERTCURRENCY((PD.ODPRINCIPAL + PD.ODPROFIT), FM.FINCCY, 'INR') INSTALMENT_DUE,
-			UDF_CONVERTCURRENCY((PD.TOTALPFTPAID + PD.TOTALPRIPAID), FM.FINCCY, 'INR') INSTALMENT_PAID,
-			UDF_CONVERTCURRENCY(BOUNCE_DUE, FM.FINCCY, 'INR') BOUNCE_DUE,
-			UDF_CONVERTCURRENCY(BOUNCE_PAID, FM.FINCCY, 'INR') BOUNCE_PAID,
-			UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_DUE, FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_DUE,
-			UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_PAID,FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_PAID,
-			UDF_CONVERTCURRENCY(TOTALPRISCHD, FM.FINCCY, 'INR') TOTAL_PRI_SCHD,
-			UDF_CONVERTCURRENCY(TOTALPRIPAID, FM.FINCCY, 'INR') TOTAL_PRI_PAID,
-			UDF_CONVERTCURRENCY(TOTALPFTSCHD, FM.FINCCY, 'INR') TOTAL_PFT_SCHD,
-			UDF_CONVERTCURRENCY(TOTALPFTPAID, FM.FINCCY, 'INR') TOTAL_PFT_PAID,
-			UDF_CONVERTCURRENCY(EXCESS_AMOUNT, FM.FINCCY, 'INR') EXCESS_AMOUNT,
-			UDF_CONVERTCURRENCY(EXCESS_AMT_PAID, FM.FINCCY, 'INR') EXCESS_AMT_PAID,
+			${add.schema}UDF_CONVERTCURRENCY(FINASSETVALUE, FM.FINCCY, 'INR') FINASSETVALUE,
+			${add.schema}UDF_CONVERTCURRENCY(PD.TOTALPRIBAL, FM.FINCCY, 'INR') FUTURE_SCHEDULE_PRIN,
+			${add.schema}UDF_CONVERTCURRENCY((PD.ODPRINCIPAL + PD.ODPROFIT), FM.FINCCY, 'INR') INSTALMENT_DUE,
+			${add.schema}UDF_CONVERTCURRENCY((PD.TOTALPFTPAID + PD.TOTALPRIPAID), FM.FINCCY, 'INR') INSTALMENT_PAID,
+			${add.schema}UDF_CONVERTCURRENCY(BOUNCE_DUE, FM.FINCCY, 'INR') BOUNCE_DUE,
+			${add.schema}UDF_CONVERTCURRENCY(BOUNCE_PAID, FM.FINCCY, 'INR') BOUNCE_PAID,
+			${add.schema}UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_DUE, FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_DUE,
+			${add.schema}UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_PAID,FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_PAID,
+			${add.schema}UDF_CONVERTCURRENCY(TOTALPRISCHD, FM.FINCCY, 'INR') TOTAL_PRI_SCHD,
+			${add.schema}UDF_CONVERTCURRENCY(TOTALPRIPAID, FM.FINCCY, 'INR') TOTAL_PRI_PAID,
+			${add.schema}UDF_CONVERTCURRENCY(TOTALPFTSCHD, FM.FINCCY, 'INR') TOTAL_PFT_SCHD,
+			${add.schema}UDF_CONVERTCURRENCY(TOTALPFTPAID, FM.FINCCY, 'INR') TOTAL_PFT_PAID,
+			${add.schema}UDF_CONVERTCURRENCY(EXCESS_AMOUNT, FM.FINCCY, 'INR') EXCESS_AMOUNT,
+			${add.schema}UDF_CONVERTCURRENCY(EXCESS_AMT_PAID, FM.FINCCY, 'INR') EXCESS_AMT_PAID,
 			PD.CURODDAYS,
 			PD.MATURITYDATE,
 			PD.CURREDUCINGRATE,
 			FM.CLOSINGSTATUS,
 			CU.OWNERSHIP,
 			FM.NUMBEROFTERMS,
-			UDF_CONVERTCURRENCY(CUSTINCOME, FM.FINCCY, 'INR') CUSTINCOME
+			${add.schema}UDF_CONVERTCURRENCY(CUSTINCOME, FM.FINCCY, 'INR') CUSTINCOME
 			FROM  FINANCEMAIN FM 
 			INNER JOIN CIBIL_CUSTOMER_EXTRACT CU ON  CU.FINREFERENCE = FM.FINREFERENCE 
 			INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE
@@ -7949,28 +7949,29 @@
 			]]>
 		</createView>
 	</changeSet>
+
 	<changeSet id="DE#85" author="thirupathi.m" dbms="postgresql">
 		<sql>
 			<![CDATA[
                 update DATA_ENGINE_COLUMN set ruleforvalue ='if((Pdd == '''')){Result = 0;  return;} else { Result=Pdd; return;}' where name='Pdd' and tableid in (select id from data_engine_table where configid in (select id from data_engine_config where name = 'NEWCOVENANTS_UPLOADBY_REFERENCE'));
 			]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
-<changeSet id="DE#86" author="thirupathi.m" dbms="postgresql">
+	<changeSet id="DE#86" author="thirupathi.m" dbms="postgresql">
 		<sql>
 			<![CDATA[
                update DATA_ENGINE_COLUMN set ruleforvalue ='if((DocumentReceived == '''')){Result = 0;  return;} else { Result=DocumentReceived; return;}' where name='DocumentReceived' and tableid in (select id from data_engine_table where configid in (select id from data_engine_config where name = 'NEWCOVENANTS_UPLOADBY_REFERENCE'));
 			]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
-<changeSet id="DE#87" author="thirupathi.m" dbms="postgresql">
+	<changeSet id="DE#87" author="thirupathi.m" dbms="postgresql">
 		<sql>
 			<![CDATA[
                update DATA_ENGINE_COLUMN set ruleforvalue ='if((AlertsRequired == '''')){Result = 0;  return;} else { Result=AlertsRequired; return;}' where name='AlertsRequired' and tableid in (select id from data_engine_table where configid in (select id from data_engine_config where name = 'NEWCOVENANTS_UPLOADBY_REFERENCE'));
 			]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
 </databaseChangeLog>

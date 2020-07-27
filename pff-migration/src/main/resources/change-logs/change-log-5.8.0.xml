@@ -2024,18 +2024,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="51.1" author="Varaprasad.K" dbms="mssql">
-		<sql>
-			<![CDATA[
-				MERGE INTO GST_INVOICE_SEQUENCES GSEQ
-				USING(SELECT EntityCode,MONTHYEAR,SEQNO,StateCode,TransactionType FROM GST_INVOICE_SEQUENCE_TEMP)GST
-				ON(GST.EntityCode = GSEQ.EntityCode AND GST.StateCode = GSEQ.StateCode and GST.TransactionType=GSEQ.TransactionType)
-				WHEN MATCHED THEN UPDATE SET MonthYear = GST.MonthYear, SeqNo = GST.SeqNo;
-				
-				]]>
-		</sql>
-	</changeSet>
-
 	<!-- Migration Scripts started -->
 	<changeSet id="100" author="murthy.y">
 		<createTable tableName="tax_details_stg1">
