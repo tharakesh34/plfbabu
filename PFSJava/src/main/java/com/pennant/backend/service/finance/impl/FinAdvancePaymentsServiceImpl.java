@@ -268,14 +268,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 				if (finPayment.isHoldDisbursement()) {
 					finPayment.setStatus(DisbursementConstants.STATUS_HOLD);
-				} else {
-					finPayment.setStatus(DisbursementConstants.STATUS_NEW);
-				}
-
-				if (finPayment.isHoldDisbursement()) {
-					finPayment.setStatus(DisbursementConstants.STATUS_HOLD);
-				} else {
-					finPayment.setStatus(DisbursementConstants.STATUS_NEW);
 				}
 
 				if (disbStp) {
