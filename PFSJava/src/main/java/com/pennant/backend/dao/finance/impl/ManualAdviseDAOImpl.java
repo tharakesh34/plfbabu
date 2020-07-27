@@ -941,9 +941,10 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AdviseID", adviseID);
 		source.addValue("PaidNow", amount);
+		source.addValue("HoldDue", false);
 
 		StringBuilder updateSql = new StringBuilder("Update ManualAdvise");
-		updateSql.append(" Set PaidAmount = PaidAmount - :PaidNow, BalanceAmt = BalanceAmt + :PaidNow ");
+		updateSql.append(" Set PaidAmount = PaidAmount - :PaidNow, BalanceAmt = BalanceAmt + :PaidNow, HoldDue = :HoldDue ");
 		updateSql.append(" Where AdviseID =:AdviseID");
 
 		logger.debug("updateSql: " + updateSql.toString());
