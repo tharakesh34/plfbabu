@@ -7949,5 +7949,28 @@
 			]]>
 		</createView>
 	</changeSet>
+	<changeSet id="DE#85" author="thirupathi.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+                update DATA_ENGINE_COLUMN set ruleforvalue ='if((Pdd == '''')){Result = 0;  return;} else { Result=Pdd; return;}' where name='Pdd' and tableid in (select id from data_engine_table where configid in (select id from data_engine_config where name = 'NEWCOVENANTS_UPLOADBY_REFERENCE'));
+			]]>
+		</sql>
+</changeSet>
+
+<changeSet id="DE#86" author="thirupathi.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+               update DATA_ENGINE_COLUMN set ruleforvalue ='if((DocumentReceived == '''')){Result = 0;  return;} else { Result=DocumentReceived; return;}' where name='DocumentReceived' and tableid in (select id from data_engine_table where configid in (select id from data_engine_config where name = 'NEWCOVENANTS_UPLOADBY_REFERENCE'));
+			]]>
+		</sql>
+</changeSet>
+
+<changeSet id="DE#87" author="thirupathi.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+               update DATA_ENGINE_COLUMN set ruleforvalue ='if((AlertsRequired == '''')){Result = 0;  return;} else { Result=AlertsRequired; return;}' where name='AlertsRequired' and tableid in (select id from data_engine_table where configid in (select id from data_engine_config where name = 'NEWCOVENANTS_UPLOADBY_REFERENCE'));
+			]]>
+		</sql>
+</changeSet>
 
 </databaseChangeLog>
