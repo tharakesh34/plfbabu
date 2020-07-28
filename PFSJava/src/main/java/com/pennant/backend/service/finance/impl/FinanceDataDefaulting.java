@@ -1014,6 +1014,7 @@ public class FinanceDataDefaulting {
 		}
 
 		finMain.setFixedRateTenor(financeType.getFixedRateTenor());
+		finMain.setEqualRepay(financeType.isEqualRepayment());
 
 	}
 
