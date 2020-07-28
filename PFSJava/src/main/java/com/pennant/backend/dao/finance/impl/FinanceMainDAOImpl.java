@@ -4025,6 +4025,27 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return closingStaus;
 	}
 
+	@Override
+	public Date getClosedDateByFinRef(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ClosedDate");
+		sql.append(" From FinanceMain");
+		sql.append(" Where FinReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, Date.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
 	/**
 	 * //### 18-07-2018 Ticket ID : 124998,receipt upload
 	 */

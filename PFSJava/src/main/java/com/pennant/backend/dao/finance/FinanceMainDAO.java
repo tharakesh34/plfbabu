@@ -429,4 +429,6 @@ public interface FinanceMainDAO {
 	void updateEHFinanceMain(FinanceMain financeMain);
 
 	String getFinBranch(String finReference);
+
+	Date getClosedDateByFinRef(String finReference);
 }

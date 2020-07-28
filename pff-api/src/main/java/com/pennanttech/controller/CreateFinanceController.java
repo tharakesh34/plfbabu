@@ -2295,7 +2295,15 @@ public class CreateFinanceController extends SummaryDetailService {
 		try {
 			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
 					FinanceConstants.FINSER_EVENT_ORG, "");
+
 			if (financeDetail != null) {
+				FinScheduleData scheduleData = financeDetail.getFinScheduleData();
+				FinanceMain financeMain = scheduleData.getFinanceMain();
+
+				if (!financeMain.isFinIsActive()) {
+					financeMain.setClosedDate(financeMainService.getClosedDateByFinRef(finReference));
+				}
+
 				Mandate mandate = financeDetail.getMandate();
 				if (mandate != null) {
 					long mandateId = mandate.getMandateID();

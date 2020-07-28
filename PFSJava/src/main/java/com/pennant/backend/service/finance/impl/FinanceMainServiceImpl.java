@@ -217,4 +217,9 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	public FinanceMain getFinanceMain(String finReference, String[] columns) {
 		return financeMainDAO.getFinanceMain(finReference, columns);
 	}
+
+	@Override
+	public Date getClosedDateByFinRef(String finReference) {
+		return financeMainDAO.getClosedDateByFinRef(finReference);
+	}
 }

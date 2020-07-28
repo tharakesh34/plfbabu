@@ -87,4 +87,6 @@ public interface FinanceMainService {
 
 	FinanceMain getFinanceMain(String finReference, String[] columns);
 
+	Date getClosedDateByFinRef(String finReference);
+
 }

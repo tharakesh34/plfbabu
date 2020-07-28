@@ -88,7 +88,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi",
 		"maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHAlwInGrace",
 		"planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate",
-		"lastDisbDate", "stage", "status", "product", "advTerms", "fixedRateTenor", "fixedTenorRate",
+		"lastDisbDate", "stage", "status", "product", "advTerms", "closedDate", "fixedRateTenor", "fixedTenorRate",
 		"eligibilityMethod", "connector", "legalRequired" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -747,6 +747,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String loanCategory;
 	private boolean allowSubvention;
 	private Map<String, Object> glSubHeadCodes = new HashMap<>();
+	@XmlElement
 	private Date closedDate;
 	private int recalIdx = -1;
 	private boolean alwStrtPrdHday;
