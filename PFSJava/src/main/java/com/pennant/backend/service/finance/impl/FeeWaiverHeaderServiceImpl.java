@@ -171,6 +171,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			FeeWaiverDetail feeWaiverDetail;
 			BigDecimal receivableAmt = BigDecimal.ZERO;
 			BigDecimal receivedAmt = BigDecimal.ZERO;
+			BigDecimal gstAmt = BigDecimal.ZERO;
 			BigDecimal waivedAmt = BigDecimal.ZERO;
 
 			BigDecimal paidCGST = BigDecimal.ZERO;
@@ -214,6 +215,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					if (manualAdvise.getBounceID() != 0) {
 						receivableAmt = receivableAmt.add(recAmount);
 						receivedAmt = receivedAmt.add(manualAdvise.getPaidAmount().add(paidTotGst));
+						gstAmt = manualAdvise.getPaidCGST().add(manualAdvise.getPaidIGST()
+								.add(manualAdvise.getPaidSGST().add(manualAdvise.getPaidUGST())));
 						waivedAmt = waivedAmt.add(manualAdvise.getWaivedAmount());
 					} else {
 						feeWaiverDetail = new FeeWaiverDetail();
@@ -228,7 +231,12 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						feeWaiverDetail.setTaxComponent(manualAdvise.getTaxComponent());
 
 						prepareGST(feeWaiverDetail, recAmount, gstPercentages);
-
+						if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE,
+								feeWaiverDetail.getTaxComponent())) {
+							feeWaiverDetail.setReceivedAmount(feeWaiverDetail.getReceivedAmount()
+									.add(manualAdvise.getPaidCGST().add(manualAdvise.getPaidIGST()
+											.add(manualAdvise.getPaidSGST().add(manualAdvise.getPaidUGST())))));
+						}
 						feeWaiverDetail.setBalanceAmount(
 								feeWaiverDetail.getReceivableAmount().subtract(feeWaiverDetail.getCurrWaiverAmount()));
 
@@ -250,9 +258,14 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					feeWaiverDetail.setFeeTypeDesc(Labels.getLabel("label_ReceiptDialog_BounceCharge.value"));
 				}
 
+				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(feeWaiverDetail.getTaxComponent())) {
+					receivedAmt = receivedAmt.add(gstAmt);
+					gstAmt = BigDecimal.ZERO;
+				}
+				feeWaiverDetail.setReceivedAmount(receivedAmt);
+
 				prepareGST(feeWaiverDetail, receivableAmt, gstPercentages);
 
-				feeWaiverDetail.setReceivedAmount(receivedAmt);
 				feeWaiverDetail.setWaivedAmount(waivedAmt);
 				feeWaiverDetail.setBalanceAmount(
 						feeWaiverDetail.getReceivableAmount().subtract(feeWaiverDetail.getCurrWaiverAmount()));
@@ -287,7 +300,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				feeWaiverDetail.setFeeTypeCode(RepayConstants.ALLOCATION_ODC);
 
 				FeeType lpp = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(RepayConstants.ALLOCATION_ODC);
-				if (lpp != null) {
+				if (lpp != null && StringUtils.isNotBlank(lpp.getTaxComponent())) {
 					feeWaiverDetail.setFeeTypeDesc(lpp.getFeeTypeDesc());
 					feeWaiverDetail.setTaxApplicable(lpp.isTaxApplicable());
 					feeWaiverDetail.setTaxComponent(lpp.getTaxComponent());
