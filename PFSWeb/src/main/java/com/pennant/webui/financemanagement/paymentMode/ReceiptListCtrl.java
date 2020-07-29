@@ -308,6 +308,14 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				searchObject.addFilterIn("NEXTROLECODE", filterList);
 				searchObject.addWhereClause(" PAYAGAINSTID = 0");
 
+				if (getUserWorkspace().getUserRoleSet().contains(FinanceConstants.REALIZATION_APPROVER)) {
+					filterList.add(FinanceConstants.REALIZATION_APPROVER);
+				}
+
+				if (getUserWorkspace().getUserRoleSet().contains(FinanceConstants.RECEIPT_APPROVER)) {
+					filterList.add(FinanceConstants.RECEIPT_APPROVER);
+				}
+
 			} else if (StringUtils.equals(module, FinanceConstants.REALIZATION_MAKER)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID = 0 AND ((RECEIPTMODESTATUS IN ('R', 'D')  AND RECEIPTPURPOSE = 'SchdlRepayment' and ((NEXTROLECODE is null Or NEXTROLECODE = '') or NEXTROLECODE='REALIZATION_MAKER')) OR NEXTROLECODE ='"
