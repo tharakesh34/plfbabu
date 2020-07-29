@@ -1917,7 +1917,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			invoiceDetail.setDbInvSetReq(false);
 			invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
 
-			long dueInvoiceID = this.gstInvoiceTxnService.feeTaxInvoicePreparation(invoiceDetail);
+			Long dueInvoiceID = this.gstInvoiceTxnService.feeTaxInvoicePreparation(invoiceDetail);
 
 			for (int i = 0; i < financeDetail.getFinScheduleData().getFinFeeDetailList().size(); i++) {
 				FinFeeDetail finFeeDetail = financeDetail.getFinScheduleData().getFinFeeDetailList().get(i);

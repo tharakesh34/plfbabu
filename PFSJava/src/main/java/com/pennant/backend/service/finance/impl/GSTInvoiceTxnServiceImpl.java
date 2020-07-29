@@ -202,7 +202,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 				invoiceAmout = invoiceAmout.add(gstAmount);
 			}
 
-			if (dbInvSetReq && taxHeader.getInvoiceID() > 0) {
+			if (dbInvSetReq && taxHeader.getInvoiceID() != null) {
 				dueInvoiceID = taxHeader.getInvoiceID();
 			}
 
