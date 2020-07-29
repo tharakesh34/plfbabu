@@ -2140,7 +2140,7 @@
 	</changeSet>
 
 	<changeSet id="100.4" author="murthy.y" dbms="mssql">
-		<sql>
+		 <sql splitStatements="false">
 				<![CDATA[
 					MERGE INTO tax_details_stg1 cd
 					USING (Select feeid,row_number() over( order by feeid) referenceid from (
@@ -2208,7 +2208,7 @@
 	</changeSet>
 
 	<changeSet id="100.6" author="murthy.y" dbms="mssql">
-		<sql>
+		 <sql splitStatements="false">
 				<![CDATA[
 					MERGE INTO tax_details_stg1 cd
 					USING (Select MOVEmentid,row_number() over( order by MOVEmentid) referenceid from (
@@ -2287,7 +2287,7 @@
 	</changeSet>
 
 	<changeSet id="100.9" author="murthy.y" dbms="mssql">
-		<sql>
+		 <sql splitStatements="false">
 				<![CDATA[
 						MERGE INTO tax_details_stg1 cd
 						USING (Select RPYSCHD_repayid,RPYSCHD_REPAYSCHID,row_number() over( order by RPYSCHD_repayid,RPYSCHD_REPAYSCHID) referenceid from (
@@ -2331,16 +2331,16 @@
 	</changeSet>
 
 	<changeSet id="100.10" author="murthy.y" dbms="mssql">
-		<sql>
+		 <sql splitStatements="false">
 				<![CDATA[
-					MERGE INTO tax_details_stg1 cd
-					USING (Select distinct referenceid +(select max(headerid) from (select headerid from tax_header 
-																	 union select headerid from tax_header_Temp)T) +1000 new_referenceid,   
-																	 referenceid old_referenceid
-					from tax_details_stg1 order by referenceid)T2 
-					ON (cd.referenceid = T2.old_referenceid)
-					WHEN MATCHED THEN
-					UPDATE SET tax_header_id = new_referenceid;
+                   MERGE INTO tax_details_stg1 cd
+                   USING (Select distinct top 100 percent  referenceid +(select max(headerid) from (select headerid from tax_header 
+																			union select headerid from tax_header_Temp)T) +1000 new_referenceid,   
+																			referenceid old_referenceid
+																			from tax_details_stg1 order by referenceid)T2 
+                   ON (cd.referenceid = T2.old_referenceid)
+                   WHEN MATCHED THEN
+                   UPDATE SET tax_header_id = new_referenceid;
 				]]>
 		</sql>
 	</changeSet>
@@ -2414,19 +2414,20 @@
 	</changeSet>
 
 	<changeSet id="100.12" author="murthy.y" dbms="mssql">
-		<sql>
+		 <sql splitStatements="false">
 				<![CDATA[
 					MERGE INTO tax_details_stg1 cd
-					using(  Select distinct id +(select max(id) from (select id from tax_details 
-																	 union select id from tax_details_Temp)T) +1000 new_tax_detailid,   
-																	 id old_tax_detailid
-					from tax_details_stg1 order by id)T2 
+					using(  Select distinct Top  100 percent id +(select max(id) from (select id from tax_details 
+																	union select id from tax_details_Temp)T) +1000 new_tax_detailid,   
+																	id old_tax_detailid
+																	from tax_details_stg1 order by id)T2 
 					ON (cd.id = T2.old_tax_detailid)
 					WHEN MATCHED THEN
 					UPDATE SET tax_detail_id = new_tax_detailid;
 				]]>
 		</sql>
 	</changeSet>
+	
 
 
 	<changeSet id="100.13" author="murthy.y" dbms="postgresql">

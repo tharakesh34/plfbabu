@@ -81,7 +81,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="DE#510" author="swamy.p">
+	<!-- <changeSet id="DE#510" author="swamy.p">
 		<sql>
 			<![CDATA[
 			    UPDATE CIBIL_STATES_MAPPING SET Code ='08' where Segment_Type='CORP' and CPProvince ='DN';
@@ -92,7 +92,7 @@
 				INSERT INTO CIBIL_STATES_MAPPING Values ('36', 'RETAIL', 'IN', 'TL',  'Telangana',	50, 56,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet author="keerthi.p" id="ST#482 .1">
 		<createTable tableName="PUSH_PULL_CONTROL">
