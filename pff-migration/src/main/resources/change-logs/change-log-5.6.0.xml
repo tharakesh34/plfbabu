@@ -7487,6 +7487,10 @@
 		</createIndex>
 	</changeSet>
 
+	<changeSet id="ST#350.76" author="Gopal.p">
+		<dropForeignKeyConstraint baseTableName="auto_knockoff_excess_details" constraintName="fk_auto_knfed_kid" />
+	</changeSet>
+
 	<!-- ST#350 Auto Knock-off Process change logs end -->
 
 	<changeSet id="ST#714.02" author="thirupathi.m">
