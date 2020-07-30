@@ -559,7 +559,7 @@ public class DeviationConfigCtrl {
 		case DeviationConstants.DT_INTEGER:
 
 			Intbox intbox = new Intbox();
-			intbox.setMaxlength(8);
+			intbox.setMaxlength(10);
 			try {
 				if (!StringUtils.isEmpty(value)) {
 					intbox.setValue(Integer.parseInt(value));
