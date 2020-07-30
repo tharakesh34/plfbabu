@@ -7676,7 +7676,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String alwrepayMethods = (String) SysParamUtil.getValue("COVENANT_REPAY_OTC_TYPE");
 		List<FinAdvancePayments> advancePaymentsList = financeDetail.getAdvancePaymentsList();
 
-		if (alwrepayMethods == null && CollectionUtils.isEmpty(advancePaymentsList)) {
+		if (alwrepayMethods == null || CollectionUtils.isEmpty(advancePaymentsList)) {
 			return;
 		}
 
@@ -7703,7 +7703,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		List<FinCovenantType> covenantTypeList = financeDetail.getCovenantTypeList();
-		if (!isOTCPayment && CollectionUtils.isEmpty(covenantTypeList)) {
+		if (!isOTCPayment || CollectionUtils.isEmpty(covenantTypeList)) {
 			return;
 		}
 
