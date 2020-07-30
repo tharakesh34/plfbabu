@@ -106,6 +106,9 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 	public void update(Taxes taxes, String type) {
 		logger.debug(Literal.ENTERING);
 		// Prepare the SQL, ensure primary key will not be updated.
+		if (taxes.getId() <= 0) {
+			return;
+		}
 		StringBuilder sql = new StringBuilder(" Update TAX_DETAILS");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set ReferenceId = :ReferenceId, TaxType = :TaxType, TaxPerc = :TaxPerc,");
