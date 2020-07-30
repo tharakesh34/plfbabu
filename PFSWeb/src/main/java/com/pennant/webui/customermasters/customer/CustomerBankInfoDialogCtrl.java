@@ -1483,7 +1483,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		settlementNo.setMaxlength(4);
 		listCell.setId("settlementNo".concat(String.valueOf(bankInfoDetail.getKeyValue())));
 		settlementNo.setReadonly(isReadOnly);
-		settlementNo.setValue(bankInfoDetail.getSettlementNo());
+		if (bankInfoDetail.getSettlementNo() == null) {
+			settlementNo.setValue(0);
+		} else {
+			settlementNo.setValue(bankInfoDetail.getSettlementNo());
+		}	
 		hbox.appendChild(space);
 		hbox.appendChild(settlementNo);
 		listCell.appendChild(hbox);
