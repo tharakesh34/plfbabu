@@ -10294,7 +10294,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if (PennantConstants.NEW_CREDITREVIEWTAB
 				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
 				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
-			appendCreditReviewDetailSummaryTab(true);
+			//appendCreditReviewDetailSummaryTab(true);
 		}
 		setEligibilityMethod(fieldCode);
 		logger.debug(Literal.LEAVING);
