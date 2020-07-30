@@ -193,7 +193,6 @@ public class ReceiptPaymentService extends ServiceHelper {
 			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_PRESENTMENT);
-			receiptDetail.setPayAgainstID(excessID);
 			receiptDetail.setAmount(presentmentAmt);
 			receiptDetail.setDueAmount(presentmentAmt);
 			receiptDetail.setValueDate(schDate);
