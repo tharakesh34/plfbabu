@@ -678,7 +678,10 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 			readOnlyComponentChecking();
 			readOnlyComponent(true, this.custRef);
-			this.addressDetail.setFilters(new Filter[] { new Filter("CustID", customer.getCustID(), Filter.OP_EQUAL) });
+			if (customer != null) {
+				this.addressDetail
+						.setFilters(new Filter[] { new Filter("CustID", customer.getCustID(), Filter.OP_EQUAL) });
+			}
 		} else if (PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(applicable)) {
 			if (flag) {
 				resetData();
