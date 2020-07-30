@@ -1,5 +1,6 @@
 package com.pennanttech.pff.external.disbursement.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.DisbursementDetails;
@@ -44,6 +45,6 @@ public interface DisbursementDAO {
 
 	String isDisbursementExist(DisbursementDetails detail);
 
-	List<FinAdvancePayments> getAutoDisbInstructions();
+	List<FinAdvancePayments> getAutoDisbInstructions(Date llDate);
 
 }

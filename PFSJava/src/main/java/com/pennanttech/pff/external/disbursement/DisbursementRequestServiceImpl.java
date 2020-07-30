@@ -2,6 +2,7 @@ package com.pennanttech.pff.external.disbursement;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,7 +36,9 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.ftp.SftpClient;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.disbursement.PaymentChannel;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 import com.pennanttech.pff.external.disbursement.dao.DisbursementDAO;
@@ -694,8 +697,12 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 	@Override
 	public void processInstructions() {
 		logger.info("Loading Disbursement/Payment/Insurance instructions..");
+		
+		Date appDate = SysParamUtil.getAppDate();
+		Integer futureDays = Integer.valueOf((SysParamUtil.getValue("NO_FUTURE_DAYS_DISB_DOWNLOAD").toString()));
+		Date llDate = DateUtil.addDays(appDate, futureDays - 1);
 
-		List<FinAdvancePayments> disbInstructios = disbursementRequestDAO.getAutoDisbInstructions();
+		List<FinAdvancePayments> disbInstructios = disbursementRequestDAO.getAutoDisbInstructions(JdbcUtil.getDate(llDate));
 
 		logger.info("{} instructions available.", disbInstructios.size());
 
