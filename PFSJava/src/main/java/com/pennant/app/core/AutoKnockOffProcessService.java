@@ -222,6 +222,7 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 		xcessPayable.setPayableType(knockOffData.getPayableType());
 		xcessPayable.setAmount(receiptAmount);
 		xcessPayable.setTotPaidNow(receiptAmount);
+		xcessPayable.setPayableID(knockOffData.getPayableId());
 
 		if (RepayConstants.PAYTYPE_PAYABLE.equals(receiptDetail.getPaymentType())) {
 			ManualAdvise advise = manualAdviseDAO.getManualAdviseById(receiptDetail.getPayAgainstID(), "_View");

@@ -1629,16 +1629,20 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 					//GST Calculations
 					TaxHeader taxHeader = paymentDetail.getTaxHeader();
-					List<Taxes> taxDetails = taxHeader.getTaxDetails();
-					if (taxHeader != null && CollectionUtils.isNotEmpty(taxDetails)) {
-						for (Taxes taxes : taxDetails) {
-							dueGST = dueGST.add(taxes.getActualTax());
-							if (StringUtils.equals(paymentDetail.getTaxComponent(),
-									FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-								dueGSTExclusive = dueGSTExclusive.add(taxes.getActualTax());
+
+					if (taxHeader != null) {
+						List<Taxes> taxDetails = taxHeader.getTaxDetails();
+						if (taxHeader != null && CollectionUtils.isNotEmpty(taxDetails)) {
+							for (Taxes taxes : taxDetails) {
+								dueGST = dueGST.add(taxes.getActualTax());
+								if (StringUtils.equals(paymentDetail.getTaxComponent(),
+										FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+									dueGSTExclusive = dueGSTExclusive.add(taxes.getActualTax());
+								}
 							}
 						}
 					}
+
 				}
 				if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(paymentDetail.getAmountType())
 						|| RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(paymentDetail.getAmountType())
