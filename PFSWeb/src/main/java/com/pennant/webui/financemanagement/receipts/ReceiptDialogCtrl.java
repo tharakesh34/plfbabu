@@ -2767,7 +2767,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				if (!StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
 						&& !StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
-						&& !StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+						&& !StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)
+						&& !StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_ADVINT)) {
 					this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(rcd.getAmount(), formatter));
 					this.favourNo.setValue(rcd.getFavourNumber());
 					this.valueDate.setValue(rcd.getValueDate());
