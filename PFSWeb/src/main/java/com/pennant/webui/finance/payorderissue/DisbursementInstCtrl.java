@@ -327,7 +327,7 @@ public class DisbursementInstCtrl {
 					listbox.appendChild(item);
 				}
 
-				if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB) && key==1) {
 					if (vasRecordingList != null && vasRecordingList.size() > 0) {
 						for (VASRecording vasDetail : vasRecordingList) {
 
