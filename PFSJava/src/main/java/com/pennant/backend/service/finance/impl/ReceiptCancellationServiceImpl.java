@@ -967,7 +967,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					// Payable Advise Amount make utilization
 					if (payAgainstID != 0) {
 						ManualAdviseMovements advMov = manualAdviseDAO.getAdvMovByReceiptSeq(
-								receiptDetail.getReceiptSeqID(), receiptDetail.getReceiptSeqID(), "");
+								receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), "");
 
 						if (advMov.getTaxHeaderId() != null && advMov.getTaxHeaderId() > 0) {
 							TaxHeader header = taxHeaderDetailsDAO.getTaxHeaderDetailsById(advMov.getTaxHeaderId(), "");
