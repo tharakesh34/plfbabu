@@ -1737,7 +1737,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					&& waiverdetail.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 
 				for (ManualAdvise advise : manualAdviseList) {
-					if (advise.getBounceID() != 0) {
+					if (advise.getBounceID() != 0 && waiverdetail.getAdviseId() == -3 ) {
 						ManualAdviseMovements movement = prepareAdviseWaiver(waiverdetail, advise);
 						if (movement != null) {
 							movements.add(movement);
