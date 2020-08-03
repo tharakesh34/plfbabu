@@ -3268,7 +3268,7 @@ public class ReceiptCalculator implements Serializable {
 			} else {
 				rps.setPenaltyPayNow(allocation.getPaidNow());
 			}
-			rps.setWaivedAmt(allocation.getWaivedNow());
+			rps.setWaivedAmt(allocation.getWaivedNow().add(allocation.getTdsWaivedNow()));
 
 			//GST Calculations
 			if (allocation.getTaxHeader() != null) {
@@ -4294,22 +4294,24 @@ public class ReceiptCalculator implements Serializable {
 		// GST calculation for Paid and waived amounts(always Paid Amount we are
 		// taking the inclusive type here because we are doing reverse
 		// calculation here)
+		
+		BigDecimal waivedAmount = getPaidAmount(allocate, waivedNow);
 		if (allocate.getDueGST().compareTo(BigDecimal.ZERO) > 0) {
 			if (paidNow.compareTo(BigDecimal.ZERO) > 0) {
 				calAllocationPaidGST(detail, paidAmount, allocate, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE);
 			}
 			if (waivedNow.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal waivedAmount = getPaidAmount(allocate, waivedNow);
 				//String taxType= allocate.getTaxType();
 				allocate.setTaxType(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE);
 				calAllocationWaiverGST(detail, waivedAmount, allocate);
 				//allocate.setTaxType(taxType);
-				if (allocate.isTdsReq() && tdsPaidNow.compareTo(BigDecimal.ZERO) == 0) {
-					BigDecimal tdsWaivedNow = getTDSAmount(detail.getFinScheduleData().getFinanceMain(), waivedAmount);
-					allocate.setTdsWaivedNow(tdsWaivedNow);
-					allocate.setTdsWaived(allocate.getTdsWaived().add(tdsWaivedNow));
-				}
 			}
+		}
+		
+		if (allocate.isTdsReq()) {
+			BigDecimal tdsWaivedNow = getTDSAmount(detail.getFinScheduleData().getFinanceMain(), waivedAmount);
+			allocate.setTdsWaivedNow(tdsWaivedNow);
+			allocate.setTdsWaived(allocate.getTdsWaived().add(tdsWaivedNow));
 		}
 
 		if (allocate.isTdsReq() && tdsPaidNow.compareTo(BigDecimal.ZERO) == 0) {
