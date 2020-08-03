@@ -2639,6 +2639,10 @@
 			baseColumnNames="TaxHeaderId" baseTableName="FinFeeDetail" referencedColumnNames="HeaderID" />
 	</changeSet>
 
+	<changeSet id="100.26.3" author="Manoj.P">
+		<dropForeignKeyConstraint baseTableName="FinFeeDetail" constraintName="FK_FFD_TH_THID" />
+	</changeSet>
+
 	<changeSet id="100.27" author="murthy.y">
 		<dropNotNullConstraint tableName="ManualadviseMovements" columnName="TaxHeaderId"
 			columnDataType="bigint" />
