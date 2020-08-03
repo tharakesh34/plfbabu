@@ -30,4 +30,9 @@
 			<column name="TaxHeaderId" type="bigint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
+
+	<changeSet id="4" author="murthy.y">
+		<dropNotNullConstraint tableName="AdtFinFeeDetail" columnName="TaxHeaderId" columnDataType="bigint" />
+	</changeSet>
+
 </databaseChangeLog>
