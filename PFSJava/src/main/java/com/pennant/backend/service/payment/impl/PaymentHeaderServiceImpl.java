@@ -941,7 +941,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				for (ManualAdviseMovements advMov : movements) {
 					waiverMovements.add(advMov);
 					invoiceDetail.setMovements(waiverMovements);
-					long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
+					Long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
 
 					if (advMov.getTaxHeader() != null) {
 						advMov.getTaxHeader().setInvoiceID(invoiceID);

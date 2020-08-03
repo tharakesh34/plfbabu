@@ -2033,9 +2033,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			advancePaymentService.setAdvancePaymentDetails(scheduleData.getFinanceMain(), scheduleData);
 		}
 
-		String s = null;
-		s.toCharArray();
-
 		logger.debug("Leaving");
 
 		return auditHeader;

@@ -1048,7 +1048,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 					invoiceDetail.setMovements(advMovements);
 
-					long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
+					Long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
 
 					if (taxMovement.getTaxHeader() != null) {
 						taxMovement.getTaxHeader().setInvoiceID(invoiceID);

@@ -539,7 +539,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 					invoiceDetail.setWaiver(true);
 					invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
 
-					long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
+					Long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
 
 					if (taxMovement.getTaxHeader() != null) {
 						taxMovement.getTaxHeader().setInvoiceID(invoiceID);

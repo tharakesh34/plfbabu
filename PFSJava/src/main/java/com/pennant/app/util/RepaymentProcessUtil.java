@@ -48,8 +48,8 @@ import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
@@ -761,7 +761,7 @@ public class RepaymentProcessUtil {
 							invoiceDetail.setWaiver(true);
 							invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
 
-							long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
+							Long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
 
 							if (taxHeader != null) {
 								taxHeader.setInvoiceID(invoiceID);
@@ -790,7 +790,7 @@ public class RepaymentProcessUtil {
 			invoiceDetail.setWaiver(false);
 			invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
 
-			long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
+			Long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
 
 			for (ManualAdviseMovements advMov : rcvPaidMovementList) {
 				if (advMov.getTaxHeader() != null) {
