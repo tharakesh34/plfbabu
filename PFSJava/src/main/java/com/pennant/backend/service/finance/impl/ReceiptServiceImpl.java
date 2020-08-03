@@ -442,8 +442,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (CollectionUtils.isNotEmpty(scheduleData.getFinFeeDetailList())) {
 			for (FinFeeDetail finFeeDetail : scheduleData.getFinFeeDetailList()) {
 				//Tax Details
-				long headerId = finFeeDetail.getTaxHeaderId();
-				if (headerId > 0) {
+				Long headerId = finFeeDetail.getTaxHeaderId();
+				if (headerId != null && headerId > 0) {
 					List<Taxes> taxDetails = getTaxHeaderDetailsDAO().getTaxDetailById(headerId, type);
 					TaxHeader taxheader = new TaxHeader();
 					taxheader.setTaxDetails(taxDetails);
@@ -1240,12 +1240,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 				finFeeDetailDAO.delete(finFeeDetail, false, "_Temp");
 				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-				if (finFeeDetail.getTaxHeaderId() > 0) {
+				Long taxHeaderId = finFeeDetail.getTaxHeaderId();
+				if (taxHeaderId != null && taxHeaderId > 0) {
 					if (taxHeader == null) {
 						taxHeader = new TaxHeader();
-						taxHeader.setHeaderId(finFeeDetail.getTaxHeaderId());
+						taxHeader.setHeaderId(taxHeaderId);
 					}
-					getTaxHeaderDetailsDAO().delete(finFeeDetail.getTaxHeaderId(), "_Temp");
+					getTaxHeaderDetailsDAO().delete(taxHeaderId, "_Temp");
 					getTaxHeaderDetailsDAO().delete(taxHeader, "_Temp");
 				}
 			}
@@ -2031,6 +2032,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (FinanceConstants.FINSER_EVENT_EARLYRPY.equals(rch.getReceiptPurpose())) {
 			advancePaymentService.setAdvancePaymentDetails(scheduleData.getFinanceMain(), scheduleData);
 		}
+
+		String s = null;
+		s.toCharArray();
 
 		logger.debug("Leaving");
 
@@ -5274,12 +5278,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				"_TView");
 		if (CollectionUtils.isNotEmpty(feesList)) {
 			for (FinFeeDetail finFeeDetail : feesList) {
-				if (finFeeDetail.getTaxHeaderId() > 0) {
-					List<Taxes> taxDetailById = getTaxHeaderDetailsDAO().getTaxDetailById(finFeeDetail.getTaxHeaderId(),
-							"_TView");
+				Long taxHeaderId = finFeeDetail.getTaxHeaderId();
+				if (taxHeaderId != null && taxHeaderId > 0) {
+					List<Taxes> taxDetailById = getTaxHeaderDetailsDAO().getTaxDetailById(taxHeaderId, "_TView");
 					TaxHeader taxheader = new TaxHeader();
 					taxheader.setTaxDetails(taxDetailById);
-					taxheader.setHeaderId(finFeeDetail.getTaxHeaderId());
+					taxheader.setHeaderId(taxHeaderId);
 					finFeeDetail.setTaxHeader(taxheader);
 				}
 			}

@@ -149,7 +149,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 
-				if (finFeeDetail.getTaxHeaderId() > 0) {
+				if (finFeeDetail.getTaxHeaderId() != null && finFeeDetail.getTaxHeaderId() > 0) {
 					finFeeDetail.setTaxHeader(
 							getTaxHeaderDetailsDAO().getTaxHeaderDetailsById(finFeeDetail.getTaxHeaderId(), "_TView"));
 					if (finFeeDetail.getTaxHeader() != null) {

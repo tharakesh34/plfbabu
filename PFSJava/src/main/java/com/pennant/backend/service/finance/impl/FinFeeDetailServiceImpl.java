@@ -195,9 +195,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 
 			//Fin Tax Header
-			if (finFeeDetail.isTaxApplicable() && finFeeDetail.getTaxHeaderId() > 0) {
-				finFeeDetail
-						.setTaxHeader(taxHeaderDetailsService.getTaxHeaderById(finFeeDetail.getTaxHeaderId(), type));
+			Long taxHeaderId = finFeeDetail.getTaxHeaderId();
+			if (finFeeDetail.isTaxApplicable() && (taxHeaderId != null && taxHeaderId > 0)) {
+				finFeeDetail.setTaxHeader(taxHeaderDetailsService.getTaxHeaderById(taxHeaderId, type));
 			}
 		}
 
@@ -218,8 +218,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 						getFinFeeScheduleDetailDAO().getFeeScheduleByFeeID(finFeeDetail.getFeeID(), isWIF, type));
 
 				//Fin Tax Header
-				long taxHeaderId = finFeeDetail.getTaxHeaderId();
-				if (taxHeaderId > 0) {
+				Long taxHeaderId = finFeeDetail.getTaxHeaderId();
+				if (taxHeaderId != null && taxHeaderId > 0) {
 					TaxHeader taxheader = getTaxHeaderDetailsService().getTaxHeaderById(taxHeaderId, type);
 					finFeeDetail.setTaxHeader(taxheader);
 				}
@@ -242,8 +242,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 						finFeeScheduleDetailDAO.getFeeScheduleByFeeID(finFeeDetail.getFeeID(), false, type));
 
 				//Fin Tax Header
-				long taxHeaderId = finFeeDetail.getTaxHeaderId();
-				if (taxHeaderId > 0) {
+				Long taxHeaderId = finFeeDetail.getTaxHeaderId();
+				if (taxHeaderId != null && taxHeaderId > 0) {
 					TaxHeader taxheader = getTaxHeaderDetailsService().getTaxHeaderById(taxHeaderId, type);
 					finFeeDetail.setTaxHeader(taxheader);
 				}
@@ -262,17 +262,16 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
 			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-			if (taxHeader != null && (finFeeDetail.isNewRecord()
-					|| (!finFeeDetail.isNewRecord() && finFeeDetail.getTaxHeaderId() > 0))) {
+			Long taxHeaderId = finFeeDetail.getTaxHeaderId();
+
+			if (taxHeader != null && (finFeeDetail.isNewRecord() || (!finFeeDetail.isNewRecord() && taxHeaderId > 0))) {
 				taxHeader.setRecordType(finFeeDetail.getRecordType());
 				taxHeader.setNewRecord(finFeeDetail.isNew());
 				taxHeader.setLastMntBy(finFeeDetail.getLastMntBy());
 				taxHeader.setLastMntOn(finFeeDetail.getLastMntOn());
 				taxHeader.setRecordStatus(finFeeDetail.getRecordStatus());
 
-				if (finFeeDetail.getTaxHeaderId() != null) {
-					taxHeader.setHeaderId(finFeeDetail.getTaxHeaderId());
-				}
+				taxHeader.setHeaderId(taxHeaderId);
 
 				TaxHeader txHeader = getTaxHeaderDetailsService().saveOrUpdate(taxHeader, tableType, auditTranType);
 				finFeeDetail.setTaxHeaderId(txHeader.getHeaderId());
@@ -536,8 +535,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
 			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-			if (taxHeader != null && (finFeeDetail.isNewRecord()
-					|| (!finFeeDetail.isNewRecord() && finFeeDetail.getTaxHeaderId() > 0))) {
+			if (taxHeader != null && (finFeeDetail.isNewRecord() || (!finFeeDetail.isNewRecord()
+					&& (finFeeDetail.getTaxHeaderId() != null && finFeeDetail.getTaxHeaderId() > 0)))) {
 				taxHeader.setRecordType(finFeeDetail.getRecordType());
 				taxHeader.setNewRecord(finFeeDetail.isNew());
 				taxHeader.setRecordStatus(finFeeDetail.getRecordStatus());
@@ -858,7 +857,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 				finFeeScheduleDetailDAO.deleteFeeScheduleBatch(finFeeDetail.getFeeID(), isWIF, tableType);
 				finFeeDetailDAO.delete(finFeeDetail, isWIF, tableType);
-				if (finFeeDetail.getTaxHeaderId() > 0) {
+				if (finFeeDetail.getTaxHeaderId() != null && finFeeDetail.getTaxHeaderId() > 0) {
 					getTaxHeaderDetailsService().delete(finFeeDetail.getTaxHeaderId(), tableType);
 				}
 				fields = PennantJavaUtil.getFieldDetails(finFeeDetail, finFeeDetail.getExcludeFields());
