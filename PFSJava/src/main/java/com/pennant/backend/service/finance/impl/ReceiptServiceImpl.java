@@ -992,7 +992,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						taxHeader.setNextTaskId(receiptHeader.getNextTaskId());
 						taxHeader.setRoleCode(receiptHeader.getRoleCode());
 						taxHeader.setNextRoleCode(receiptHeader.getNextRoleCode());
-						long headerId = getTaxHeaderDetailsDAO().save(allocation.getTaxHeader(), tableType.getSuffix());
+						Long headerId = getTaxHeaderDetailsDAO().save(allocation.getTaxHeader(), tableType.getSuffix());
 
 						List<Taxes> taxDetails = taxHeader.getTaxDetails();
 						for (Taxes taxes : taxDetails) {

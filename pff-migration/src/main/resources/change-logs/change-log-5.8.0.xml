@@ -2861,5 +2861,42 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="105" author="Gopal.p">
+		<dropNotNullConstraint tableName="ReceiptAllocationDetail" columnName="TaxHeaderID"
+			columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="106" author="Gopal.p">
+		<dropNotNullConstraint tableName="ReceiptAllocationDetail_Temp" columnName="TaxHeaderID"
+			columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="107" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				update ReceiptAllocationDetail set TaxHeaderId = null where TaxHeaderId <=0;
+				update ReceiptAllocationDetail_Temp set TaxHeaderId = null where TaxHeaderId <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="108" author="Gopal.p">
+		<dropNotNullConstraint tableName="FeeWaiverDetails" columnName="TaxHeaderID"
+			columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="109" author="Gopal.p">
+		<dropNotNullConstraint tableName="FeeWaiverDetails_Temp" columnName="TaxHeaderID"
+			columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="110" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				update FeeWaiverDetails set TaxHeaderId = null where TaxHeaderId <=0;
+				update FeeWaiverDetails_Temp set TaxHeaderId = null where TaxHeaderId <=0;
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

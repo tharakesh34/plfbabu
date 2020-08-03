@@ -69,7 +69,7 @@ public class ReceiptAllocationDetail implements Serializable {
 	private String taxType = "";
 	private String feeTypeCode = "";
 	private long feeId;
-	private long taxHeaderId = 0;
+	private Long taxHeaderId;
 	private TaxHeader taxHeader;
 
 	//Applicable only for allocation summary in receipt header
@@ -357,11 +357,11 @@ public class ReceiptAllocationDetail implements Serializable {
 		this.feeId = feeId;
 	}
 
-	public long getTaxHeaderId() {
+	public Long getTaxHeaderId() {
 		return taxHeaderId;
 	}
 
-	public void setTaxHeaderId(long taxHeaderId) {
+	public void setTaxHeaderId(Long taxHeaderId) {
 		this.taxHeaderId = taxHeaderId;
 	}
 

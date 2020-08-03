@@ -34,5 +34,18 @@
 	<changeSet id="4" author="murthy.y">
 		<dropNotNullConstraint tableName="AdtFinFeeDetail" columnName="TaxHeaderId" columnDataType="bigint" />
 	</changeSet>
+	
+	<changeSet id="5" author="Gopal.p">
+		<dropNotNullConstraint tableName="AdtFeeWaiverDetails" columnName="TaxHeaderID"
+			columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="6" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				update AdtFeeWaiverDetails set TaxHeaderId = null where TaxHeaderId <=0;
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

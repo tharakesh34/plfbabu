@@ -1527,7 +1527,7 @@ public class RepaymentProcessUtil {
 					if (StringUtils.isNotBlank(allocation.getTaxType()) && allocation.getTaxHeader() != null) {
 						List<Taxes> taxDetails = allocation.getTaxHeader().getTaxDetails();
 						if (CollectionUtils.isNotEmpty(taxDetails)) {
-							long headerId = getTaxHeaderDetailsDAO().save(allocation.getTaxHeader(),
+							Long headerId = getTaxHeaderDetailsDAO().save(allocation.getTaxHeader(),
 									TableType.MAIN_TAB.getSuffix());
 							for (Taxes taxes : taxDetails) {
 								taxes.setReferenceId(headerId);

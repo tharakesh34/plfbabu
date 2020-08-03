@@ -88,7 +88,7 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 	// GST fields
 	private boolean taxApplicable;
 	private String taxComponent;
-	private long taxHeaderId = 0;
+	private Long taxHeaderId;
 	private String finReference;// Display Field
 	private TaxHeader taxHeader = new TaxHeader();
 
@@ -112,11 +112,11 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 		this.taxComponent = taxComponent;
 	}
 
-	public long getTaxHeaderId() {
+	public Long getTaxHeaderId() {
 		return taxHeaderId;
 	}
 
-	public void setTaxHeaderId(long taxHeaderId) {
+	public void setTaxHeaderId(Long taxHeaderId) {
 		this.taxHeaderId = taxHeaderId;
 	}
 
