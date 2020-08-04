@@ -1164,6 +1164,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 						// Paid Details
 						advise.setPaidAmount(movement.getPaidAmount().negate());
+						advise.setTdsPaid(movement.getTdsPaid().negate());
 						advise.setPaidCGST(cgstTax.getPaidTax().negate());
 						advise.setPaidSGST(sgstTax.getPaidTax().negate());
 						advise.setPaidIGST(igstTax.getPaidTax().negate());

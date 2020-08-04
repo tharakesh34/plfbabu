@@ -1400,7 +1400,7 @@ public class RepaymentProcessUtil {
 									if (allocation.getAllocationTo() == movement.getAdviseID()) {
 										//Paid Details
 										advise.setPaidAmount(advise.getPaidAmount()
-												.add(movement.getPaidAmount().add(movement.getTdsPaid())));
+												.add(movement.getPaidAmount()));
 										advise.setTdsPaid(advise.getTdsPaid().add(movement.getTdsPaid()));
 
 										//Waiver Details
@@ -1472,7 +1472,7 @@ public class RepaymentProcessUtil {
 									if (allocation.getAllocationTo() == movement.getAdviseID()) {
 
 										advise.setPaidAmount(advise.getPaidAmount()
-												.add(movement.getPaidAmount().add(movement.getTdsPaid())));
+												.add(movement.getPaidAmount()));
 										advise.setTdsPaid(advise.getTdsPaid().add(movement.getTdsPaid()));
 
 										//Waiver Details

@@ -2384,7 +2384,7 @@ public class ReceiptCalculator implements Serializable {
 			movement.setPaidAmount(allocate.getPaidNow());
 			movement.setWaivedAmount(allocate.getWaivedNow().add(allocate.getTdsWaived()));
 		}
-
+		movement.setPaidAmount(movement.getPaidAmount().add(allocate.getTdsPaid()));
 		movement.setFeeTypeCode(allocate.getFeeTypeCode());
 		movement.setTdsPaid(allocate.getTdsPaid());
 
@@ -3266,7 +3266,7 @@ public class ReceiptCalculator implements Serializable {
 				rps.setPenaltyPayNow(
 						allocation.getPaidNow().add(allocation.getTdsPaidNow()).subtract(allocation.getPaidGST()));
 			} else {
-				rps.setPenaltyPayNow(allocation.getPaidNow());
+				rps.setPenaltyPayNow(allocation.getPaidNow().add(allocation.getTdsPaidNow()));
 			}
 			rps.setWaivedAmt(allocation.getWaivedNow().add(allocation.getTdsWaivedNow()));
 

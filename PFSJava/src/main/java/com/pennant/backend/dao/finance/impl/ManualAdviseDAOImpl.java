@@ -509,9 +509,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder(" insert into ManualAdviseMovements");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(
-				" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status, ReceiptID, ReceiptSeqID, WaiverID, TaxHeaderId)");
+				" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status, ReceiptID, ReceiptSeqID, WaiverID, TaxHeaderId,TdsPaid)");
 		sql.append(
-				" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status, :ReceiptID, :ReceiptSeqID, :WaiverID, :TaxHeaderId)");
+				" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status, :ReceiptID, :ReceiptSeqID, :WaiverID, :TaxHeaderId,:TdsPaid)");
 
 		// Get the identity sequence number.
 		if (movement.getMovementID() <= 0) {
@@ -1717,7 +1717,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
-		sql.append(", Status, ReceiptID, ReceiptSeqID, TaxHeaderId ");
+		sql.append(", Status, ReceiptID, ReceiptSeqID, TaxHeaderId,TdsPaid ");
 
 		if (StringUtils.contains(type, "View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent");
@@ -1752,6 +1752,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 					manualAdviseMovements.setReceiptID(rs.getLong("ReceiptID"));
 					manualAdviseMovements.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
 					manualAdviseMovements.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+					manualAdviseMovements.setTdsPaid(rs.getBigDecimal("TdsPaid"));
+					
 
 					if (StringUtils.contains(type, "View")) {
 						manualAdviseMovements.setFeeTypeCode(rs.getString("FeeTypeCode"));
