@@ -709,7 +709,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					this.listBoxCustomerEmails.setHeight(semiBorderlayoutHeights - 90 + "px");
 					this.listBoxCustomerGst.setHeight(semiBorderlayoutHeights - 90 + "px");
 				} else {
-					this.divKeyDetails.setHeight(borderLayoutHeight - 130 + "px");
+					this.divKeyDetails.setHeight(borderLayoutHeight - 240 + "px");
 					this.listBoxCustomerRating.setHeight(semiBorderlayoutHeights - 130 + "px");
 					this.grid_KYCDetails.setHeight(borderLayoutHeight - 220 + "px");
 					this.listBoxCustomerDocuments.setHeight(semiBorderlayoutHeights - 125 + "px");
