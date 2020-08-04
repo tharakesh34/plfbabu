@@ -355,4 +355,107 @@
 		</createView>
 	</changeSet>
 
+	<changeSet id="2_pre" author="bharat.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'manualadvisemovements_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="2" author="bharat.r">
+		<createView viewName="MANUALADVISEMOVEMENTS_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.MOVEMENTID,
+					   T1.ADVISEID,
+					   T1.MOVEMENTDATE,
+					   T1.MOVEMENTAMOUNT,
+					   T1.PAIDAMOUNT,
+					   T1.WAIVEDAMOUNT,
+					   T1.STATUS,
+					   T1.RECEIPTID,
+					   T1.RECEIPTSEQID,
+					   T1.PAIDCGST,
+					   T1.PAIDSGST,
+					   T1.PAIDIGST,
+					   T1.PAIDUGST,
+					   T2.ADVISETYPE,
+					   T3.FEETYPECODE,
+					   COALESCE(T3.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,
+					   T3.TAXCOMPONENT,
+					   T3.FEETYPEDESC,
+					   T1.WAIVEDCGST,
+					   T1.WAIVEDSGST,
+					   T1.WAIVEDUGST,
+					   T1.WAIVEDIGST,
+					   T1.TAXHEADERID,
+					   T2.HOLDDUE,
+					   T1.TDSPAID
+  				FROM MANUALADVISEMOVEMENTS_TEMP T1 
+  				JOIN MANUALADVISE T2 ON T1.ADVISEID = T2.ADVISEID 
+  				LEFT JOIN FEETYPES T3 ON T2.FEETYPEID = T3.FEETYPEID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="2_post" author="bharat.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'manualadvisemovements_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="3_pre" author="bharat.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'manualadvisemovements_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="3" author="bharat.r">
+		<createView viewName="MANUALADVISEMOVEMENTS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT 
+					T1.MOVEMENTID,
+					T1.ADVISEID,
+					T1.MOVEMENTDATE,
+					T1.MOVEMENTAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.WAIVEDAMOUNT,
+    				T1.STATUS, 
+    				T1.RECEIPTID, 
+    				T1.RECEIPTSEQID, 
+    				T1.PAIDCGST, 
+    				T1.PAIDSGST, 
+    				T1.PAIDIGST,
+    				T1.PAIDUGST,
+    				T2.ADVISETYPE, 
+    				T3.FEETYPECODE,
+    				COALESCE(T3.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,
+    				T3.TAXCOMPONENT,
+    				T3.FEETYPEDESC,
+    				T1.WAIVEDCGST,
+    				T1.WAIVEDSGST, 
+    				T1.WAIVEDUGST, 
+    				T1.WAIVEDIGST,
+    				T1.TAXHEADERID,
+    				T2.HOLDDUE,
+					t1.TDSPAID
+				FROM MANUALADVISEMOVEMENTS T1
+    			JOIN MANUALADVISE T2 ON T1.ADVISEID = T2.ADVISEID
+    			LEFT JOIN FEETYPES T3 ON T2.FEETYPEID = T3.FEETYPEID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="3_post" author="bharat.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'manualadvisemovements_aview');
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
