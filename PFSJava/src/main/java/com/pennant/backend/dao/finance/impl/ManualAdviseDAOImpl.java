@@ -1980,4 +1980,59 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public ManualAdviseMovements getAdvMovByReceiptSeq(long receiptID, long receiptSeqID, long adviseId, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
+		sql.append(", Status, ReceiptID, ReceiptSeqID, TaxHeaderId ");
+
+		if (StringUtils.contains(type, "View")) {
+			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent");
+		}
+
+		sql.append(" from ManualAdviseMovements");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("  Where ReceiptID = ? and ReceiptSeqID = ? and AdviseID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID, receiptSeqID,adviseId},
+					new RowMapper<ManualAdviseMovements>() {
+						@Override
+						public ManualAdviseMovements mapRow(ResultSet rs, int rowNum) throws SQLException {
+							ManualAdviseMovements movement = new ManualAdviseMovements();
+
+							movement.setMovementID(rs.getLong("MovementID"));
+							movement.setAdviseID(rs.getLong("AdviseID"));
+							movement.setMovementDate(rs.getTimestamp("MovementDate"));
+							movement.setMovementAmount(rs.getBigDecimal("MovementAmount"));
+							movement.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+							movement.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+							movement.setStatus(rs.getString("Status"));
+							movement.setReceiptID(rs.getLong("ReceiptID"));
+							movement.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+							movement.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+
+							if (StringUtils.contains(type, "View")) {
+								movement.setFeeTypeCode(rs.getString("FeeTypeCode"));
+								movement.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+								movement.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+								movement.setTaxComponent(rs.getString("TaxComponent"));
+							}
+
+							return movement;
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+
+	}
 }

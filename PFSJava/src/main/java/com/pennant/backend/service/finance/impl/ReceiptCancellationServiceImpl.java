@@ -967,7 +967,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					// Payable Advise Amount make utilization
 					if (payAgainstID != 0) {
 						ManualAdviseMovements advMov = manualAdviseDAO.getAdvMovByReceiptSeq(
-								receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), "");
+								receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(),receiptDetail.getPayAgainstID(), "");
 
 						if (advMov != null && advMov.getTaxHeaderId() != null) {
 							TaxHeader header = taxHeaderDetailsDAO.getTaxHeaderDetailsById(advMov.getTaxHeaderId(), "");
@@ -1145,8 +1145,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						Taxes igstTax = new Taxes();
 						Taxes ugstTax = new Taxes();
 						Taxes cessTax = new Taxes();
-						List<Taxes> taxDetails = taxHeader.getTaxDetails();
-						if (taxHeader != null && CollectionUtils.isNotEmpty(taxDetails)) {
+						if (taxHeader != null && CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
+							List<Taxes> taxDetails = taxHeader.getTaxDetails();
 							for (Taxes taxes : taxDetails) {
 								if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
 									cgstTax = taxes;

@@ -275,7 +275,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			for (FinReceiptDetail receiptDetail : receiptDetailList) {
 				if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
 					ManualAdviseMovements advMov = manualAdviseDAO.getAdvMovByReceiptSeq(receiptID,
-							receiptDetail.getReceiptSeqID(), StringUtils.equals(type, "_View") ? "_Temp" : "");
+							receiptDetail.getReceiptSeqID(),receiptDetail.getPayAgainstID(), StringUtils.equals(type, "_View") ? "_Temp" : "");
 					if (advMov != null) {
 						receiptDetail.setPayAdvMovement(advMov);
 					}
@@ -1017,6 +1017,19 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null
 				&& !rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList().isEmpty()) {
 			saveOrUpdateFees(rceiptData, tableType.getSuffix());
+		}
+		
+		for (int i = 0; i < receiptHeader.getAllocations().size(); i++) {
+			ReceiptAllocationDetail allocation = receiptHeader.getAllocations().get(i);
+			if (StringUtils.equals(RepayConstants.ALLOCATION_FEE, allocation.getAllocationType())) {
+				for (FinFeeDetail feeDtl : rceiptData.getFinanceDetail().getFinScheduleData()
+						.getFinFeeDetailList()) {
+					if (feeDtl.getFeeTypeID() == -(allocation.getAllocationTo())) {
+						allocation.setAllocationTo(feeDtl.getFeeID());
+						break;
+					}
+				}
+			}
 		}
 
 		FinReceiptHeader befRctHeader = new FinReceiptHeader();
@@ -1844,6 +1857,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			approveFees(receiptData, TableType.MAIN_TAB.getSuffix());
 		}
 
+		if (scheduleData.getFinFeeDetailList() != null) {
+			for (int i = 0; i < rch.getAllocations().size(); i++) {
+				ReceiptAllocationDetail allocation = rch.getAllocations().get(i);
+				if (StringUtils.equals(RepayConstants.ALLOCATION_FEE, allocation.getAllocationType())) {
+					for (FinFeeDetail feeDtl : receiptData.getFinanceDetail().getFinScheduleData()
+							.getFinFeeDetailList()) {
+						if (feeDtl.getFeeTypeID() == -(allocation.getAllocationTo())) {
+							allocation.setAllocationTo(feeDtl.getFeeID());
+							break;
+						}
+					}
+				}
+			}
+		}
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 		List<AuditDetail> tempAuditDetailList = new ArrayList<AuditDetail>();
 
@@ -5286,6 +5313,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 			scheduleData.setFinFeeDetailList(feesList);
 			receiptData.setFinFeeDetails(feesList);
+		}
+		
+		if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
+			for (int i = 0; i < receiptData.getReceiptHeader().getAllocations().size(); i++) {
+				ReceiptAllocationDetail allocation = receiptData.getReceiptHeader().getAllocations().get(i);
+				if (StringUtils.equals(RepayConstants.ALLOCATION_FEE, allocation.getAllocationType())) {
+					for (FinFeeDetail feeDtl : receiptData.getFinanceDetail().getFinScheduleData()
+							.getFinFeeDetailList()) {
+						if (feeDtl.getFeeID() == allocation.getAllocationTo()) {
+							allocation.setAllocationTo(-(feeDtl.getFeeTypeID()));
+							break;
+						}
+					}
+				}
+			}
 		}
 
 		//Setting fin tax details
