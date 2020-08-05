@@ -28,7 +28,7 @@ public class AutoKnockOffProcessItemWriter extends BasicDao<AutoKnockOffExcess>
 		String key = null;
 
 		for (AutoKnockOffExcess autoKnockOffExcess : autoKnockOffs) {
-			key = autoKnockOffExcess.getFinReference();
+			key = autoKnockOffExcess.getID() + "_" + autoKnockOffExcess.getFinReference();
 
 			if (knockOffExcess.contains(key)) {
 				continue;

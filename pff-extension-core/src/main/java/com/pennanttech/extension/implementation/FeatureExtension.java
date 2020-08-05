@@ -40,6 +40,8 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_SAMPLING", false);
 
+		customConstants.put("ALLOW_AUTO_KNOCK_OFF", true);
+
 	}
 
 	@Override

@@ -37,7 +37,7 @@ public class AutoKnockOffProcessor extends BasicDao<AutoKnockOffExcess>
 	public AutoKnockOffExcess process(AutoKnockOffExcess autoKnockoff) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		String key = autoKnockoff.getAmountType() + "_" + autoKnockoff.getFinReference();
+		String key = autoKnockoff.getID() + "_" + autoKnockoff.getFinReference();
 
 		long processedRecords = StepUtil.AUTO_KNOCKOFF_PROCESS.getProcessedRecords();
 		processedRecords = processedRecords + 1;
