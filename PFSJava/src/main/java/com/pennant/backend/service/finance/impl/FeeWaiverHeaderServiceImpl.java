@@ -479,7 +479,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			if (CollectionUtils.isNotEmpty(feeWaiverDetails)) {
 				for (FeeWaiverDetail feeWaiver : feeWaiverDetails) {
 					feeWaiver.setFinReference(finReference);
-					if (feeWaiver.getTaxHeaderId() > 0) {
+					if (feeWaiver.getTaxHeaderId() != null) {
 						// Fetch Tax Details
 						TaxHeader header = taxHeaderDetailsService.getTaxHeaderById(feeWaiver.getTaxHeaderId(),
 								"_Temp");
@@ -1737,7 +1737,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					&& waiverdetail.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 
 				for (ManualAdvise advise : manualAdviseList) {
-					if (advise.getBounceID() != 0 && waiverdetail.getAdviseId() == -3 ) {
+					if (advise.getBounceID() != 0 && waiverdetail.getAdviseId() == -3) {
 						ManualAdviseMovements movement = prepareAdviseWaiver(waiverdetail, advise);
 						if (movement != null) {
 							movements.add(movement);
