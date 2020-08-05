@@ -49,6 +49,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +63,7 @@ import org.zkoss.util.resource.Labels;
 import com.google.common.collect.ComparisonChain;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
@@ -221,6 +223,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 	private int getFinanceProfitDetailActiveCount(long finProfitDetailActiveCount, boolean active) {
 		return this.soaReportGenerationDAO.getFinanceProfitDetailActiveCount(finProfitDetailActiveCount, active);
+	}
+	
+	private Map<Long,List<ReceiptAllocationDetail>> getReceiptAllocationDetailMap(String finReference){
+		return this.soaReportGenerationDAO.getReceiptAllocationDetailsMap(finReference);
 	}
 
 	private StatementOfAccount getSOACustomerDetails(long custId) {
@@ -1156,6 +1162,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			//Fin Receipt Header
 			List<FinReceiptHeader> finReceiptHeadersList = getFinReceiptHeaders(finReference);
+			
+			Map<Long,List<ReceiptAllocationDetail>> radMap = getReceiptAllocationDetailMap(finReference);
 
 			//Fin Fee Details
 			List<FinFeeDetail> finFeedetailsList = getFinFeedetails(finReference);
@@ -1607,9 +1615,13 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									rHEventExcess = rHEventExcess.concat(finReceiptDetail.getPaymentRef() + finRef);
 								}
 							}
-
+							String allocMsg = "";
+                            if (radMap.containsKey(finReceiptHeader.getReceiptID())){
+								allocMsg = buildAllocationData(radMap.get(finReceiptHeader.getReceiptID()),
+										CurrencyUtil.getFormat(finMain.getFinCcy()));
+                            }
 							soaTranReport.setValueDate(receivedDate);
-							soaTranReport.setEvent(rHEventExcess + status);
+							soaTranReport.setEvent(rHEventExcess + status + allocMsg);
 							soaTranReport.setCreditAmount(finReceiptDetail.getAmount());
 
 							if (StringUtils.equals(rpaymentType, "EXCESS")) {
@@ -2182,6 +2194,47 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		logger.debug("Leaving");
 		return result;
+	}
+	
+	private String buildAllocationData (List<ReceiptAllocationDetail> radList,int formatter){
+		StringBuffer data = new StringBuffer();
+		Map<String,BigDecimal> allocMap = new LinkedHashMap<String, BigDecimal>();
+		if (CollectionUtils.isNotEmpty(radList)){
+			for (ReceiptAllocationDetail rad : radList){
+				String allocType = rad.getAllocationType();
+				String allocTypeMsg = "";
+				BigDecimal paidAmount = rad.getPaidAmount();
+				if (RepayConstants.ALLOCATION_EMI.equals(allocType)){
+					allocTypeMsg = "EMI Adjusted";
+				}else if (RepayConstants.ALLOCATION_MANADV.equals(allocType)){
+					allocTypeMsg = rad.getTypeDesc();
+				}else if (RepayConstants.ALLOCATION_BOUNCE.equals(allocType)){
+					allocTypeMsg = "Bounce Charges";
+				}else if (RepayConstants.ALLOCATION_FUT_PRI.equals(allocType)){
+					allocTypeMsg = "Principal";
+				}else if (RepayConstants.ALLOCATION_FUT_NPFT.equals(allocType)){
+					allocTypeMsg = "Interest";
+				}else if (RepayConstants.ALLOCATION_PP.equals(allocType)){
+					allocTypeMsg = "Principal";
+				}else if (RepayConstants.ALLOCATION_FEE.equals(allocType)){
+					allocTypeMsg = "Fees";
+				}
+				if (!allocTypeMsg.isEmpty()){
+					if (allocMap.containsKey(allocTypeMsg)){
+						paidAmount = paidAmount.add(allocMap.get(allocTypeMsg));
+					}
+					allocMap.put(allocTypeMsg, paidAmount);
+				}
+				
+			}
+			
+		}
+		data = data.append("\n");
+		for (Map.Entry<String, BigDecimal> entry: allocMap.entrySet()){
+			data = data.append(entry.getKey()).append(" : ").append(PennantApplicationUtil.formateAmount(entry.getValue(), formatter));
+			data = data.append("\n");
+		}
+		return data.toString();
 	}
 
 	private BigDecimal getGstAmount(String manualAdviseMovementEvent, ManualAdviseMovements manualAdviseMovements,

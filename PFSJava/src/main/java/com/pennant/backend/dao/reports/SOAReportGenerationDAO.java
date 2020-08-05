@@ -46,6 +46,7 @@ package com.pennant.backend.dao.reports;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
@@ -136,5 +137,7 @@ public interface SOAReportGenerationDAO {
 	List<String> getCustLoanDetails(long custID);
 
 	List<FinanceDisbursement> getFinanceDisbursementByFinRef(String finReference);
+	
+	Map<Long,List<ReceiptAllocationDetail>> getReceiptAllocationDetailsMap(String finReference);
 
 }
