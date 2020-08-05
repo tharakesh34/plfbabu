@@ -1680,8 +1680,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				BigDecimal totRemGST = BigDecimal.ZERO;
 
 				if (taxHeader != null && CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
-					for (int i = 0; i < taxHeader.getTaxDetails().size(); i++) {
-						Taxes tax = taxHeader.getTaxDetails().get(i);
+					for (Taxes tax : taxHeader.getTaxDetails()) {
 						totNetGST = totNetGST.add(tax.getNetTax());
 						totPaidGST = totPaidGST.add(tax.getPaidTax());
 						totRemGST = totRemGST.add(tax.getRemFeeTax());
