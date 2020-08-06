@@ -155,7 +155,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		if (!isPDetailsExits) {
 			header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
 		}
-		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 
 		/**
 		 * Added below line on 29-NOV-19 to update the realization date (On presentment realization date is not getting

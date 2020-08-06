@@ -292,12 +292,16 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						String status = rs.getString("STATUS");
 						String reasonCode = rs.getString("REASONCODE");
 						reasonCode = StringUtils.trimToEmpty(reasonCode);
-						processInactiveLoan(presentmentRef);
+						boolean processReceipt = processInactiveLoan(presentmentRef);
 						if (RepayConstants.PEXC_SUCCESS.equals(status)) {
 							successCount++;
 							updatePresentmentDetails(presentmentRef, status);
 							updatePresentmentHeader(presentmentRef, status, status);
 							presentmentDetailService.updateFinanceDetails(presentmentRef);
+							PresentmentDetail presentmentDetail=isPresentmentResponseIsExist(presentmentRef);
+							if (!processReceipt){
+								presentmentDetailService.processSuccessPresentments(presentmentDetail.getReceiptID());
+							}
 							updateChequeStatus(presentmentRef);
 							saveBatchLog(batchId, status, presentmentRef, null);
 						} else {
@@ -688,16 +692,19 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		return this.presentmentDetailService.presentmentCancellation(presentmentRef, reasonCode);
 	}
 
-	public void processInactiveLoan(String presentmentRef) throws Exception {
-
-		Boolean isLoanActive = isLoanActive(presentmentRef);
-		if (!isLoanActive) {
-			PresentmentDetail presentmentDetail = isPresentmentResponseIsExist(presentmentRef);
-			if (presentmentDetail != null && presentmentDetail.getReceiptID() == 0) {
-				presentmentDetailService.processReceipts(presentmentDetail);
+	public boolean processInactiveLoan(String presentmentRef) throws Exception {
+		boolean processReceipt = false;
+		boolean isLoanActive = isLoanActive(presentmentRef);
+		if (!isLoanActive){
+			PresentmentDetail presentmentDetail=isPresentmentResponseIsExist(presentmentRef);
+			if (presentmentDetail!=null && presentmentDetail.getReceiptID()==0){
+				presentmentDetailService.executeReceipts(presentmentDetail, false);
+				processReceipt = true;
 			}
 		}
-
+		
+		return processReceipt;
+		
 	}
 
 	// Truncating the data from staging tables
@@ -1139,6 +1146,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			createBounce(presement_Response, presement_Response.getReturnReason(), RepayConstants.PRES_SUCCESS);
 		} else {
 			updateSuccessResponse(presement_Response);
+			presentmentDetailService.processSuccessPresentments(presentmentDetail.getReceiptID());
 		}
 	}
 

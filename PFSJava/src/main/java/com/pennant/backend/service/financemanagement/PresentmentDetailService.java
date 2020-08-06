@@ -100,4 +100,8 @@ public interface PresentmentDetailService {
 	List<Long> getExcludeList(long id);
 
 	void updatePresentmentDetails(PresentmentHeader presentmentHeader);
+	
+	void processSuccessPresentments(long receiptId);
+	
+	void executeReceipts(PresentmentDetail presentmentDetail, boolean isFullEMIPresent) throws Exception;
 }

@@ -178,6 +178,11 @@ public class RepaymentProcessUtil {
 		finReceiptData.setValueDate(valuedate);
 		rch.setValueDate(null);
 		finReceiptData.setReceiptHeader(rch);
+		BigDecimal totDues = rch.getTotalPastDues().getBalance();
+		FinReceiptDetail recdtl = rch.getReceiptDetails().get(0);
+		if (recdtl.getDueAmount().compareTo(totDues)>0){
+			recdtl.setDueAmount(totDues);
+		}
 		finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, true);
 		finReceiptData = receiptCalculator.recalAutoAllocation(finReceiptData, valuedate, true);
 
@@ -2520,6 +2525,26 @@ public class RepaymentProcessUtil {
 
 		financeMainDAO.updatePaymentInEOD(fm);
 		limitManagement.processLoanRepay(fm, customerDetails.getCustomer(), priPaynow, profitDetail.getFinCategory());
+	}
+	
+	public void processSuccessPresentment(long receiptId) {
+		FinReceiptHeader rch = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptId, "");
+		if (rch == null){
+			return;
+		}
+		List<FinReceiptDetail> rcdDtls = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptId, "");
+		for (FinReceiptDetail recDtl : rcdDtls) {
+			FinRepayHeader rph = getFinanceRepaymentsDAO().getFinRepayHeadersByReceipt(recDtl.getReceiptSeqID(), "");
+			// updating fixexcess amount after realization
+			if (StringUtils.equals(rch.getReceiptPurpose(),FinanceConstants.FINSER_EVENT_SCHDRPY)){
+				if (rph!=null && rph.getExcessAmount().compareTo(BigDecimal.ZERO)>0){
+					finExcessAmountDAO.updExcessAfterRealize(rch.getReference(), rch.getExcessAdjustTo(), rph.getExcessAmount());
+				}
+			}
+		}
+		getFinReceiptHeaderDAO().updateReceiptStatusAndRealizationDate(receiptId, RepayConstants.PAYSTATUS_REALIZED,
+				DateUtility.getAppDate());
+		getFinReceiptDetailDAO().updateReceiptStatusByReceiptId(receiptId, RepayConstants.PAYSTATUS_REALIZED);
 	}
 
 	// ******************************************************//
