@@ -1015,9 +1015,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						FinExcessAmount excess = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
 								receiptHeader.getExcessAdjustTo());
 
-						if ((StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
-								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD))
-								&& StringUtils.equals(RepayConstants.PAYSTATUS_DEPOSITED, curStatus)) {
+						if (StringUtils.equals(RepayConstants.PAYSTATUS_DEPOSITED, curStatus)) {
 							if (excess == null || excess.getReservedAmt().compareTo(rpyHeader.getExcessAmount()) < 0) {
 								ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60205", "", null),
 										PennantConstants.default_Language);
@@ -1036,9 +1034,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						// Update Reserve Amount in FinExcessAmount
 
 						// Excess Amounts reversal Updations
-						if ((StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
-								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD))
-								&& StringUtils.equals(RepayConstants.PAYSTATUS_DEPOSITED, curStatus)) {
+						if ( StringUtils.equals(RepayConstants.PAYSTATUS_DEPOSITED, curStatus)) {
 							finExcessAmountDAO.deductExcessReserve(excess.getExcessID(), rpyHeader.getExcessAmount());
 						} else {
 
