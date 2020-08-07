@@ -178,12 +178,12 @@ public class RepaymentProcessUtil {
 		finReceiptData.setValueDate(valuedate);
 		rch.setValueDate(null);
 		finReceiptData.setReceiptHeader(rch);
-		BigDecimal totDues = rch.getTotalPastDues().getBalance();
+		finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, true);
+		BigDecimal totDues = finReceiptData.getReceiptHeader().getTotalPastDues().getTotalDue();
 		FinReceiptDetail recdtl = rch.getReceiptDetails().get(0);
 		if (recdtl.getDueAmount().compareTo(totDues)>0){
 			recdtl.setDueAmount(totDues);
 		}
-		finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, true);
 		finReceiptData = receiptCalculator.recalAutoAllocation(finReceiptData, valuedate, true);
 
 		finReceiptData.setBuildProcess("R");
