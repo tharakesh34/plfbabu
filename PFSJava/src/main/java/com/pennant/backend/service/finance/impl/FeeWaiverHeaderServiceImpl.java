@@ -225,10 +225,16 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						feeWaiverDetail.setAdviseId(manualAdvise.getAdviseID());
 						feeWaiverDetail.setFeeTypeCode(manualAdvise.getFeeTypeCode());
 						feeWaiverDetail.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
-						feeWaiverDetail.setReceivedAmount(manualAdvise.getPaidAmount().add(paidTotGst));
 						feeWaiverDetail.setWaivedAmount(manualAdvise.getWaivedAmount());
 						feeWaiverDetail.setTaxApplicable(manualAdvise.isTaxApplicable());
 						feeWaiverDetail.setTaxComponent(manualAdvise.getTaxComponent());
+
+						if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE,
+								feeWaiverDetail.getTaxComponent())) {
+							feeWaiverDetail.setReceivedAmount(manualAdvise.getPaidAmount());
+						} else {
+							feeWaiverDetail.setReceivedAmount(manualAdvise.getPaidAmount().add(paidTotGst));
+						}
 
 						prepareGST(feeWaiverDetail, recAmount, gstPercentages);
 						if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE,
