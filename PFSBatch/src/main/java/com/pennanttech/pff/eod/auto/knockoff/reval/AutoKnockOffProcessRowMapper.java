@@ -38,6 +38,8 @@ public class AutoKnockOffProcessRowMapper implements RowMapper<AutoKnockOffExces
 		excessDetails.setKnockOffOrder(rs.getString("KnockOffOrder"));
 		excessDetails.setFeeOrder(rs.getInt("FeeOrder"));
 		excessDetails.setFinCcy(rs.getString("FinCcy"));
+		excessDetails.setFrhCount(rs.getInt("FrhCount"));
+		excessDetails.setFmtCount(rs.getInt("FmtCount"));
 
 		List<AutoKnockOffExcessDetails> excessDts = new ArrayList<>();
 		excessDts.add(excessDetails);

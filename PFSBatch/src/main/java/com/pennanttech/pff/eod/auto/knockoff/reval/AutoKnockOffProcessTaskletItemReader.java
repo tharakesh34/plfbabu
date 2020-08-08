@@ -23,7 +23,7 @@ public class AutoKnockOffProcessTaskletItemReader extends JdbcCursorItemReader<A
 		sql.append(", ake.BalanceAmount, aked.KnockOffID, aked.Code, aked.Description, aked.ExecutionDays");
 		sql.append(", aked.FinType, aked.FeeTypeCode, aked.KnockOffOrder, aked.FeeOrder");
 		sql.append(", ake.ExecutionDay, ake.ThresholdValue, aked.FinCcy, ake.PayableId");
-		sql.append(", coalesce(frhCount, 0), coalesce(fmtCount, 0)");
+		sql.append(", coalesce(frhCount, 0) FrhCount, coalesce(fmtCount, 0) FmtCount");
 		sql.append(" From AUTO_KNOCKOFF_EXCESS ake");
 		sql.append(" Inner Join AUTO_KNOCKOFF_EXCESS_DETAILS aked on aked.ExcessId = ake.ID");
 		sql.append(" Left join (select count(*) frhcount, Reference from FinReceiptHeader_Temp rh");
