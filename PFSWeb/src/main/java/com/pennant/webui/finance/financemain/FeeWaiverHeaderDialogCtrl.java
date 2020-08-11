@@ -1112,8 +1112,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				lc.setParent(item);
 
 				// Received amount//6
-				lc = new Listcell(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, ccyFormatter));
-				totReceivedAmt = totReceivedAmt.add(BigDecimal.ZERO);
+				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getReceivedAmount(), ccyFormatter));
+				totReceivedAmt = totReceivedAmt.add(detail.getReceivedAmount());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -1123,7 +1123,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				// Receivable amount//8
+				// Balance amount//8
 				lc = new Listcell();
 				Label balance = new Label();
 				balance.setValue(PennantApplicationUtil.amountFormate(detail.getBalanceAmount(), ccyFormatter));
@@ -1161,8 +1161,9 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				// Net balance
 				lc = new Listcell();// 12
 				Label netBal = new Label();
-				netBal.setValue(PennantApplicationUtil.amountFormate(detail.getBalanceAmount(), ccyFormatter));
-				totNetBal = totNetBal.add(detail.getBalanceAmount());
+				netBal.setValue(PennantApplicationUtil
+						.amountFormate(detail.getBalanceAmount().subtract(detail.getReceivedAmount()), ccyFormatter));
+				totNetBal = totNetBal.add(detail.getBalanceAmount().subtract(detail.getReceivedAmount()));
 				lc.appendChild(netBal);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
