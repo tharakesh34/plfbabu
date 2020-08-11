@@ -3277,6 +3277,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		allocate.setTotalPaid(paidAmount);
+		allocate.setPaidAmount(paidAmount);
 
 		BigDecimal excGst = getReceiptCalculator().getExclusiveGSTAmount(allocate, paidAmount);
 		if (allocate.isTdsReq()) {
