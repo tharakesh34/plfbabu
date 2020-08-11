@@ -3554,7 +3554,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		}
 		// Funding account is mandatory for all modes
-		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH) && rcd.getFundingAc() <= 0) {
+		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE) && rcd.getFundingAc() <= 0) {
 			finScheduleData = setErrorToFSD(finScheduleData, "90502", "Funding Account");
 			return receiptData;
 		}
@@ -3663,7 +3664,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
 			receiptMode = fsi.getSubReceiptMode();
 		}
-		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)) {
+		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
 			int count = finTypePartnerBankDAO.getPartnerBankCount(financeMain.getFinType(), receiptMode,
 					AccountConstants.PARTNERSBANK_RECEIPTS, fundingAccount);
 			if (count <= 0 && !autoReceipt) {

@@ -1432,7 +1432,8 @@ public class FinServiceInstController extends SummaryDetailService {
 				if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
 					receiptMode = finServiceInst.getSubReceiptMode();
 				}
-				if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)) {
+				if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
+						&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
 					long fundingAccount = finServiceInst.getReceiptDetail().getFundingAc();
 					finServiceInst.setFundingAc(fundingAccount);
 					int count = finTypePartnerBankService.getPartnerBankCount(financeMain.getFinType(), receiptMode,
