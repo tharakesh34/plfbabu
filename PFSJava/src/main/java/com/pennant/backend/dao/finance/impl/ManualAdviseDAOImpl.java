@@ -944,7 +944,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		source.addValue("HoldDue", false);
 
 		StringBuilder updateSql = new StringBuilder("Update ManualAdvise");
-		updateSql.append(" Set PaidAmount = PaidAmount - :PaidNow, BalanceAmt = BalanceAmt + :PaidNow, HoldDue = :HoldDue ");
+		updateSql.append(
+				" Set PaidAmount = PaidAmount - :PaidNow, BalanceAmt = BalanceAmt + :PaidNow, HoldDue = :HoldDue ");
 		updateSql.append(" Where AdviseID =:AdviseID");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -1286,7 +1287,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				" Select MA.adviseID, MA.AdviseType, MA.FeeTypeID, MA.Sequence, MA.finReference, (MA.AdviseAmount - MA.PaidAmount - MA.WaivedAmount) balanceAmt,");
 		sql.append(
 				" MA.adviseAmount, MA.PaidAmount, MA.WaivedAmount, MA.ValueDate, MA.PostDate, MA.BounceID, MA.ReceiptID, MA.ReservedAmt,");
-		sql.append(" MA.paidsgst, MA.paidugst, MA.paidigst, MA.paidcgst,");
+		sql.append(" MA.paidsgst, MA.paidugst, MA.paidigst, MA.paidcgst, MA.paidcess,");
 		sql.append(
 				" MA.Version, MA.LastMntOn, MA.LastMntBy,MA.RecordStatus, MA.RoleCode, MA.NextRoleCode, MA.TaskId, MA.NextTaskId, MA.RecordType, MA.WorkflowId,");
 		sql.append(" FT.feetypecode, FT.FeeTypeDesc, coalesce(FT.TaxApplicable, 0) TaxApplicable, FT.TaxComponent,");
@@ -1753,7 +1754,6 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 					manualAdviseMovements.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
 					manualAdviseMovements.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
 					manualAdviseMovements.setTdsPaid(rs.getBigDecimal("TdsPaid"));
-					
 
 					if (StringUtils.contains(type, "View")) {
 						manualAdviseMovements.setFeeTypeCode(rs.getString("FeeTypeCode"));
@@ -2000,8 +2000,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID, receiptSeqID,adviseId},
-					new RowMapper<ManualAdviseMovements>() {
+			return this.jdbcOperations.queryForObject(sql.toString(),
+					new Object[] { receiptID, receiptSeqID, adviseId }, new RowMapper<ManualAdviseMovements>() {
 						@Override
 						public ManualAdviseMovements mapRow(ResultSet rs, int rowNum) throws SQLException {
 							ManualAdviseMovements movement = new ManualAdviseMovements();

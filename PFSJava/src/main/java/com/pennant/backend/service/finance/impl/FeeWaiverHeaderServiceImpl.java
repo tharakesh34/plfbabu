@@ -174,12 +174,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			BigDecimal gstAmt = BigDecimal.ZERO;
 			BigDecimal waivedAmt = BigDecimal.ZERO;
 
-			BigDecimal paidCGST = BigDecimal.ZERO;
-			BigDecimal paidSGST = BigDecimal.ZERO;
-			BigDecimal paidUGST = BigDecimal.ZERO;
-			BigDecimal paidIGST = BigDecimal.ZERO;
-			BigDecimal paidCESS = BigDecimal.ZERO;
-			BigDecimal paidTotGst = BigDecimal.ZERO;
 			List<FeeWaiverDetail> detailList = new ArrayList<FeeWaiverDetail>();
 
 			List<FinReceiptHeader> list = finReceiptHeaderDAO.getReceiptHeaderByRef(finReference,
@@ -204,17 +198,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				for (ManualAdvise manualAdvise : adviseList) {
 
 					BigDecimal recAmount = manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount());
-					paidCGST = paidCGST.add(manualAdvise.getPaidCGST());
-					paidSGST = paidSGST.add(manualAdvise.getPaidSGST());
-					paidUGST = paidUGST.add(manualAdvise.getPaidUGST());
-					paidIGST = paidIGST.add(manualAdvise.getPaidIGST());
-					paidCESS = paidCESS.add(manualAdvise.getPaidCESS());
-
-					paidTotGst = paidCGST.add(paidSGST).add(paidUGST).add(paidIGST).add(paidCESS);
 
 					if (manualAdvise.getBounceID() != 0) {
 						receivableAmt = receivableAmt.add(recAmount);
-						receivedAmt = receivedAmt.add(manualAdvise.getPaidAmount().add(paidTotGst));
+						receivedAmt = receivedAmt.add(manualAdvise.getPaidAmount());
 						gstAmt = manualAdvise.getPaidCGST().add(manualAdvise.getPaidIGST()
 								.add(manualAdvise.getPaidSGST().add(manualAdvise.getPaidUGST())));
 						waivedAmt = waivedAmt.add(manualAdvise.getWaivedAmount());
@@ -228,20 +215,17 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						feeWaiverDetail.setWaivedAmount(manualAdvise.getWaivedAmount());
 						feeWaiverDetail.setTaxApplicable(manualAdvise.isTaxApplicable());
 						feeWaiverDetail.setTaxComponent(manualAdvise.getTaxComponent());
-
-						if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE,
-								feeWaiverDetail.getTaxComponent())) {
-							feeWaiverDetail.setReceivedAmount(manualAdvise.getPaidAmount());
-						} else {
-							feeWaiverDetail.setReceivedAmount(manualAdvise.getPaidAmount().add(paidTotGst));
-						}
+						feeWaiverDetail.setReceivedAmount(manualAdvise.getPaidAmount());
 
 						prepareGST(feeWaiverDetail, recAmount, gstPercentages);
+
 						if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE,
 								feeWaiverDetail.getTaxComponent())) {
 							feeWaiverDetail.setReceivedAmount(feeWaiverDetail.getReceivedAmount()
-									.add(manualAdvise.getPaidCGST().add(manualAdvise.getPaidIGST()
-											.add(manualAdvise.getPaidSGST().add(manualAdvise.getPaidUGST())))));
+									.add(manualAdvise.getPaidCGST()
+											.add(manualAdvise.getPaidIGST()
+													.add(manualAdvise.getPaidSGST().add(manualAdvise.getPaidUGST())
+															.add(manualAdvise.getPaidCESS())))));
 						}
 						feeWaiverDetail.setBalanceAmount(
 								feeWaiverDetail.getReceivableAmount().subtract(feeWaiverDetail.getCurrWaiverAmount()));
