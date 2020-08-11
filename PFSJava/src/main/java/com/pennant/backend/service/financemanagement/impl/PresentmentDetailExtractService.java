@@ -118,7 +118,7 @@ public class PresentmentDetailExtractService {
 				pDetail.settDSAmount(rs.getBigDecimal("TDSAMOUNT"));
 				pDetail.setSchInsDue(BigDecimal.ZERO);
 				pDetail.setSchPenaltyDue(BigDecimal.ZERO);
-				pDetail.setAdvanceAmt(schAmtDue);
+				//pDetail.setAdvanceAmt(schAmtDue);
 				pDetail.setAdviseAmt(BigDecimal.ZERO);
 				pDetail.setExcessID(0);
 				pDetail.setReceiptID(0);
@@ -325,19 +325,21 @@ public class PresentmentDetailExtractService {
 		if (!PennantConstants.CHEQUESTATUS_NEW.equals(presentmentDetail.getMandateStatus())) {
 			if (PennantConstants.CHEQUESTATUS_PRESENT.equals(presentmentDetail.getMandateStatus())) {
 				presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_PRESENT);
+				return;
 			}
 			if (PennantConstants.CHEQUESTATUS_REALISE.equals(presentmentDetail.getMandateStatus())) {
 				presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_REALISE);
+				return;
 			}
 			if (PennantConstants.CHEQUESTATUS_REALISED.equals(presentmentDetail.getMandateStatus())) {
 				presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_REALISED);
+				return;
 			}
 			//COMMENTED THIS CODE FOR REPRESENTMENT PROCESS i.e, if Check got bounced also it shouldbe allowed for Representment
 			/*
 			 * if (PennantConstants.CHEQUESTATUS_BOUNCE.equals(presentmentDetail.getMandateStatus())) {
 			 * presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_BOUNCE); }
 			 */
-			return;
 		}
 
 		// EMI HOLD
@@ -509,7 +511,7 @@ public class PresentmentDetailExtractService {
 		AdvanceType advanceType = null;
 		String amountType = "";
 
-		if (prd.getSchDate().compareTo(prd.getGrcPeriodEndDate()) <= 0) {
+		if (prd.getGrcPeriodEndDate()!=null && prd.getSchDate().compareTo(prd.getGrcPeriodEndDate()) <= 0) {
 			advanceType = AdvanceType.getType(prd.getGrcAdvType());
 		} else {
 			advanceType = AdvanceType.getType(prd.getAdvType());

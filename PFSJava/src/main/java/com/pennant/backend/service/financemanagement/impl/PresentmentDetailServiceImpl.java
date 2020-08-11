@@ -598,7 +598,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 		header.setLogSchInPresentment(true);
 		header.setActFinReceipt(true);
-
+		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 
 		FinReceiptDetail receiptDetail = new FinReceiptDetail();
@@ -798,7 +798,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 		header.setRealizationDate(appDate);
 		header.setLogSchInPresentment(true);
-
+		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		
 		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 
 		FinReceiptDetail receiptDetail = new FinReceiptDetail();

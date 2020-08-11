@@ -302,7 +302,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							if (!processReceipt){
 								presentmentDetailService.processSuccessPresentments(presentmentDetail.getReceiptID());
 							}
-							updateChequeStatus(presentmentRef);
+							updateChequeStatus(presentmentRef,PennantConstants.CHEQUESTATUS_REALISED);
 							saveBatchLog(batchId, status, presentmentRef, null);
 						} else {
 							try {
@@ -316,6 +316,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 											detail.getStatus());
 									saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presentmentRef,
 											detail.getErrorDesc());
+									updateChequeStatus(presentmentRef,PennantConstants.CHEQUESTATUS_BOUNCE);
 								} else {
 									failedCount++;
 									updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0001",
@@ -608,7 +609,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							updatePresentmentDetails(presentmentRef, status);
 							updatePresentmentHeader(presentmentRef, status, status);
 							presentmentDetailService.updateFinanceDetails(presentmentRef);
-							updateChequeStatus(presentmentRef);
+							updateChequeStatus(presentmentRef,PennantConstants.CHEQUESTATUS_REALISED);
 							saveBatchLog(batchId, status, presentmentRef, null);
 							sendMailNotification(presentmentDetailService.getPresentmentDetail(presentmentRef), "");
 						} else {
@@ -623,7 +624,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 											detail.getStatus());
 									saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presentmentRef,
 											detail.getErrorDesc());
-
+									updateChequeStatus(presentmentRef,PennantConstants.CHEQUESTATUS_BOUNCE);
 									// Sending the Email Notification
 									sendMailNotification(detail, RepayConstants.MODULETYPE_BOUNCE);
 								} else {
@@ -635,6 +636,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 									saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef,
 											detail.getErrorDesc());
 									updateLog(dataEngineStatus.getId(), presentmentRef, "F", detail.getErrorDesc());
+									updateChequeStatus(presentmentRef,PennantConstants.CHEQUESTATUS_FAILED);
 									// Sending the Email Notification
 									sendMailNotification(detail, RepayConstants.MODULETYPE_BOUNCE);
 								}
@@ -1535,17 +1537,18 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	/*
 	 * Updating the cheque status if the mode is PDC
 	 */
-	private void updateChequeStatus(String presentmentRef) {
+	private void updateChequeStatus(String presentmentRef,String status) {
 
 		String paymentMode = presentmentDetailService.getPaymenyMode(presentmentRef);
 		PresentmentDetail detail = presentmentDetailService.getPresentmentDetailsByMode(presentmentRef, paymentMode);
 		// Updating the cheque status as releases if the payment mode is PDC
 		if (MandateConstants.TYPE_PDC.equals(paymentMode)) {
-			updateChequeStatus(detail.getMandateId(), PennantConstants.CHEQUESTATUS_REALISED);
+			updateChequeStatus(detail.getMandateId(),status);
 		}
 		logger.debug(Literal.LEAVING);
 
 	}
+	
 
 	private void updateChequeStatus(long chequeDetailsId, String chequestatus) {
 		logger.debug(Literal.ENTERING);
