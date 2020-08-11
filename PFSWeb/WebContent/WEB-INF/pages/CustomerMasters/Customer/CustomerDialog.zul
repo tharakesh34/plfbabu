@@ -144,7 +144,7 @@
 													</hbox>
 												</row>
 												<row>
-													<label id="label_ResidentialStatus" value="${c:l('label_CustomerDialog_ResidentialStatus.value')}" />
+													<label id="label_ResidentialStatus" value="${c:l('label_CustomerDialog_ResidentialStstus.value')}" />
 													<hbox>
 														<space id="space_ResidentialStatus" spacing="2px" />
 														<combobox id="residentialStatus"  width="155px" />
