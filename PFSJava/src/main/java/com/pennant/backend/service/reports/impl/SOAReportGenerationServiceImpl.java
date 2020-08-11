@@ -1578,7 +1578,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 										} else {
 											paymentType = mandateType;
 										}
-										paymentType = paymentType.concat(" EMI NO.: " + instlNo);
+										//paymentType = paymentType.concat(" EMI NO.: " + instlNo);
 									}
 
 								}
@@ -2201,6 +2201,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		Map<String,BigDecimal> allocMap = new LinkedHashMap<String, BigDecimal>();
 		if (CollectionUtils.isNotEmpty(radList)){
 			for (ReceiptAllocationDetail rad : radList){
+				if (rad.getPaidAmount().compareTo(BigDecimal.ZERO)<=0){
+					continue;
+				}
 				String allocType = rad.getAllocationType();
 				String allocTypeMsg = "";
 				BigDecimal paidAmount = rad.getPaidAmount();
@@ -2218,6 +2221,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					allocTypeMsg = "Principal";
 				}else if (RepayConstants.ALLOCATION_FEE.equals(allocType)){
 					allocTypeMsg = "Fees";
+				}else if (RepayConstants.ALLOCATION_ODC.equals(allocType)){
+					allocTypeMsg = "Late Pay Penalty";
+				}else if (RepayConstants.ALLOCATION_LPFT.equals(allocType)){
+					allocTypeMsg = "Late Pay Interest";
 				}
 				if (!allocTypeMsg.isEmpty()){
 					if (allocMap.containsKey(allocTypeMsg)){
