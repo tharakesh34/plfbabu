@@ -224,8 +224,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private int getFinanceProfitDetailActiveCount(long finProfitDetailActiveCount, boolean active) {
 		return this.soaReportGenerationDAO.getFinanceProfitDetailActiveCount(finProfitDetailActiveCount, active);
 	}
-	
-	private Map<Long,List<ReceiptAllocationDetail>> getReceiptAllocationDetailMap(String finReference){
+
+	private Map<Long, List<ReceiptAllocationDetail>> getReceiptAllocationDetailMap(String finReference) {
 		return this.soaReportGenerationDAO.getReceiptAllocationDetailsMap(finReference);
 	}
 
@@ -1162,8 +1162,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			//Fin Receipt Header
 			List<FinReceiptHeader> finReceiptHeadersList = getFinReceiptHeaders(finReference);
-			
-			Map<Long,List<ReceiptAllocationDetail>> radMap = getReceiptAllocationDetailMap(finReference);
+
+			Map<Long, List<ReceiptAllocationDetail>> radMap = getReceiptAllocationDetailMap(finReference);
 
 			//Fin Fee Details
 			List<FinFeeDetail> finFeedetailsList = getFinFeedetails(finReference);
@@ -1460,7 +1460,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						}
 
 						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-							gstAmount = GSTCalculator.getTotalGST(finReference, manualAdvise.getWaivedAmount(),
+							gstAmount = GSTCalculator.getTotalGST(finReference, manualAdvise.getAdviseAmount(),
 									taxComponent);
 						}
 
@@ -1468,7 +1468,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						soaTranReport.setTransactionDate(manualAdvise.getPostDate());
 						soaTranReport.setValueDate(manualAdvise.getValueDate());
 						soaTranReport.setCreditAmount(BigDecimal.ZERO);
-						soaTranReport.setDebitAmount(manualAdvise.getWaivedAmount().add(gstAmount));
+						soaTranReport.setDebitAmount(manualAdvise.getAdviseAmount().add(gstAmount));
 						soaTranReport.setPriority(12);
 
 						soaTransactionReports.add(soaTranReport);
@@ -1616,10 +1616,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								}
 							}
 							String allocMsg = "";
-                            if (radMap.containsKey(finReceiptHeader.getReceiptID())){
+							if (radMap.containsKey(finReceiptHeader.getReceiptID())) {
 								allocMsg = buildAllocationData(radMap.get(finReceiptHeader.getReceiptID()),
 										CurrencyUtil.getFormat(finMain.getFinCcy()));
-                            }
+							}
 							soaTranReport.setValueDate(receivedDate);
 							soaTranReport.setEvent(rHEventExcess + status + allocMsg);
 							soaTranReport.setCreditAmount(finReceiptDetail.getAmount());
@@ -2195,50 +2195,51 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		logger.debug("Leaving");
 		return result;
 	}
-	
-	private String buildAllocationData (List<ReceiptAllocationDetail> radList,int formatter){
+
+	private String buildAllocationData(List<ReceiptAllocationDetail> radList, int formatter) {
 		StringBuffer data = new StringBuffer();
-		Map<String,BigDecimal> allocMap = new LinkedHashMap<String, BigDecimal>();
-		if (CollectionUtils.isNotEmpty(radList)){
-			for (ReceiptAllocationDetail rad : radList){
-				if (rad.getPaidAmount().compareTo(BigDecimal.ZERO)<=0){
+		Map<String, BigDecimal> allocMap = new LinkedHashMap<String, BigDecimal>();
+		if (CollectionUtils.isNotEmpty(radList)) {
+			for (ReceiptAllocationDetail rad : radList) {
+				if (rad.getPaidAmount().compareTo(BigDecimal.ZERO) <= 0) {
 					continue;
 				}
 				String allocType = rad.getAllocationType();
 				String allocTypeMsg = "";
 				BigDecimal paidAmount = rad.getPaidAmount();
-				if (RepayConstants.ALLOCATION_EMI.equals(allocType)){
+				if (RepayConstants.ALLOCATION_EMI.equals(allocType)) {
 					allocTypeMsg = "EMI Adjusted";
-				}else if (RepayConstants.ALLOCATION_MANADV.equals(allocType)){
+				} else if (RepayConstants.ALLOCATION_MANADV.equals(allocType)) {
 					allocTypeMsg = rad.getTypeDesc();
-				}else if (RepayConstants.ALLOCATION_BOUNCE.equals(allocType)){
+				} else if (RepayConstants.ALLOCATION_BOUNCE.equals(allocType)) {
 					allocTypeMsg = "Bounce Charges";
-				}else if (RepayConstants.ALLOCATION_FUT_PRI.equals(allocType)){
+				} else if (RepayConstants.ALLOCATION_FUT_PRI.equals(allocType)) {
 					allocTypeMsg = "Principal";
-				}else if (RepayConstants.ALLOCATION_FUT_NPFT.equals(allocType)){
+				} else if (RepayConstants.ALLOCATION_FUT_NPFT.equals(allocType)) {
 					allocTypeMsg = "Interest";
-				}else if (RepayConstants.ALLOCATION_PP.equals(allocType)){
+				} else if (RepayConstants.ALLOCATION_PP.equals(allocType)) {
 					allocTypeMsg = "Principal";
-				}else if (RepayConstants.ALLOCATION_FEE.equals(allocType)){
+				} else if (RepayConstants.ALLOCATION_FEE.equals(allocType)) {
 					allocTypeMsg = "Fees";
-				}else if (RepayConstants.ALLOCATION_ODC.equals(allocType)){
+				} else if (RepayConstants.ALLOCATION_ODC.equals(allocType)) {
 					allocTypeMsg = "Late Pay Penalty";
-				}else if (RepayConstants.ALLOCATION_LPFT.equals(allocType)){
+				} else if (RepayConstants.ALLOCATION_LPFT.equals(allocType)) {
 					allocTypeMsg = "Late Pay Interest";
 				}
-				if (!allocTypeMsg.isEmpty()){
-					if (allocMap.containsKey(allocTypeMsg)){
+				if (!allocTypeMsg.isEmpty()) {
+					if (allocMap.containsKey(allocTypeMsg)) {
 						paidAmount = paidAmount.add(allocMap.get(allocTypeMsg));
 					}
 					allocMap.put(allocTypeMsg, paidAmount);
 				}
-				
+
 			}
-			
+
 		}
 		data = data.append("\n");
-		for (Map.Entry<String, BigDecimal> entry: allocMap.entrySet()){
-			data = data.append(entry.getKey()).append(" : ").append(PennantApplicationUtil.formateAmount(entry.getValue(), formatter));
+		for (Map.Entry<String, BigDecimal> entry : allocMap.entrySet()) {
+			data = data.append(entry.getKey()).append(" : ")
+					.append(PennantApplicationUtil.formateAmount(entry.getValue(), formatter));
 			data = data.append("\n");
 		}
 		return data.toString();
