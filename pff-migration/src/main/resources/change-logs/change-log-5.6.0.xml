@@ -7978,4 +7978,219 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="28_pre" author="Rahul.R" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financeenquiry_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="28" author="Rahul.R">
+		<createView viewName="FINANCEENQUIRY_TVIEW" replaceIfExists="true">
+		<![CDATA[
+			SELECT t1.finreference,
+			t1.finbranch,
+			t1.fintype,
+			t1.finccy,
+			t1.schedulemethod,
+			t1.profitdaysbasis,
+			t1.finstartdate,
+			t1.calterms AS numberofterms,
+			t1.custid,
+			t1.finamount,
+			t1.grcperiodenddate,
+			t1.maturitydate,
+			t1.finrepaymentamount,
+			t1.finisactive,
+			t1.allowgrcperiod,
+			t1.downpayment,
+			t1.migratedfinance,
+			t1.lastrepaydate,
+			t1.lastrepaypftdate,
+			t1.fincurrassetvalue,
+			t1.blacklisted,
+			t1.feechargeamt,
+			t1.closingstatus,
+			t1.graceterms,
+			t1.alwmultidisb,
+			t1.defferments,
+			t1.finstatus,
+			t1.mandateid,
+			t1.finrepaymethod,
+			t1.finassetvalue,
+			t1.fincurrassetvalue + t1.feechargeamt + t1.insuranceamt AS financingamount,
+			t1.fincurrassetvalue - t1.finrepaymentamount + t1.feechargeamt + t1.insuranceamt AS curfinamount,
+			t2.fintypedesc AS lovdescfintypename,
+			t2.finscheduleon AS lovdescfinscheduleon,
+			t2.findivision AS lovdescfindivision,
+			t2.fincategory AS lovdescproductcodename,
+			t2.finisalwdifferment AS lovdescfinalwdeferment,
+			t3.custcif AS lovdesccustcif,
+			t3.custshrtname AS lovdesccustshrtname,
+			t4.branchdesc AS lovdescfinbranchname,
+			t5.custtypectg,
+			COALESCE(t9.noinst, 0) AS noinst,
+			t1.totalcpz
+			FROM financemain_temp t1
+			JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			JOIN customers t3 ON t1.custid = t3.custid
+			JOIN rmtbranches t4 ON t1.finbranch = t4.branchcode
+			JOIN rmtcusttypes t5 ON t3.custtypecode = t5.custtypecode
+			LEFT JOIN finpftdetails t9 ON t1.finreference = t9.finreference
+		]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="28_post" author="Rahul.R" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financeenquiry_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="29_pre" author="Rahul.R" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financeenquiry_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="29" author="Rahul.R">
+		<createView viewName="FINANCEENQUIRY_VIEW" replaceIfExists="true">
+		<![CDATA[
+			SELECT t1.finreference,
+			t1.finbranch,
+			t1.fintype,
+			t1.finccy,
+			t1.schedulemethod,
+			t1.profitdaysbasis,
+			t1.finstartdate,
+			t1.calterms AS numberofterms,
+			t1.custid,
+			t1.finamount,
+			t1.grcperiodenddate,
+			t1.maturitydate,
+			t1.finrepaymentamount,
+			t1.finisactive,
+			t1.allowgrcperiod,
+			t1.downpayment,
+			t1.migratedfinance,
+			t1.lastrepaydate,
+			t1.lastrepaypftdate,
+			t1.fincurrassetvalue,
+			t1.blacklisted,
+			t1.feechargeamt,
+			t1.closingstatus,
+			t1.graceterms,
+			t1.alwmultidisb,
+			t1.defferments,
+			t1.finstatus,
+			t1.mandateid,
+			t1.finrepaymethod,
+			t1.finassetvalue,
+			t1.fincurrassetvalue + t1.feechargeamt + t1.insuranceamt AS financingamount,
+			t1.fincurrassetvalue - t1.finrepaymentamount + t1.feechargeamt + t1.insuranceamt AS curfinamount,
+			t2.fintypedesc AS lovdescfintypename,
+			t2.finscheduleon AS lovdescfinscheduleon,
+			t2.findivision AS lovdescfindivision,
+			t2.fincategory AS lovdescproductcodename,
+			t2.finisalwdifferment AS lovdescfinalwdeferment,
+			t3.custcif AS lovdesccustcif,
+			t3.custshrtname AS lovdesccustshrtname,
+			t4.branchdesc AS lovdescfinbranchname,
+			t5.custtypectg,
+			COALESCE(t9.noinst, 0) AS noinst,
+			t1.totalcpz
+			FROM financemain t1
+			JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			JOIN customers t3 ON t1.custid = t3.custid
+			JOIN rmtbranches t4 ON t1.finbranch = t4.branchcode
+			JOIN rmtcusttypes t5 ON t3.custtypecode = t5.custtypecode
+			LEFT JOIN finpftdetails t9 ON t1.finreference = t9.finreference
+		]]>
+			</createView>
+	</changeSet>
+
+	<changeSet id="29_post" author="Rahul.R" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financeenquiry_view');
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="30_pre" author="Naga.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finoverdueenquiry_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="30" author="Naga.G">
+		<createView viewName="FINOVERDUEENQUIRY_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.finreference,
+				t1.finbranch,
+				t1.fintype,
+				t1.finccy,
+				t1.schedulemethod,
+				t1.profitdaysbasis,
+				t1.finstartdate,
+				t1.numberofterms,
+				t1.custid,
+				t1.finamount,
+				t1.grcperiodenddate,
+				t1.maturitydate,
+				t1.finrepaymentamount,
+				t1.finisactive,
+				t1.allowgrcperiod,
+				t1.downpayment,
+				t1.migratedfinance,
+				t1.lastrepaydate,
+				t1.lastrepaypftdate,
+				t5.fintypedesc AS lovdescfintypename,
+				t6.custcif AS lovdesccustcif,
+				t6.custshrtname AS lovdesccustshrtname,
+				t7.branchdesc AS lovdescfinbranchname,
+				t1.blacklisted,
+				t5.finscheduleon AS lovdescfinscheduleon,
+				t1.feechargeamt,
+				t1.insuranceamt,
+				t1.closingstatus,
+				t8.custtypectg,
+				t1.graceterms,
+				t5.findivision AS lovdescfindivision,
+				t5.fincategory AS lovdescproductcodename,
+				t1.alwmultidisb,
+				t5.finisalwdifferment AS lovdescfinalwdeferment,
+				t1.defferments,
+				t1.fincurrassetvalue,
+				t1.finamount - t1.downpayment + t1.feechargeamt - t1.finrepaymentamount AS curfinamount,
+				t1.finamount - t1.downpayment + t1.feechargeamt AS financingamount,
+				t1.finstatus,
+				t1.totalcpz
+				FROM plf.financemain t1
+				JOIN plf.rmtfinancetypes t5 ON t1.fintype = t5.fintype
+				JOIN plf.customers t6 ON t1.custid = t6.custid
+				JOIN plf.rmtbranches t7 ON t1.finbranch = t7.branchcode
+				JOIN plf.rmtcusttypes t8 ON t6.custtypecode = t8.custtypecode
+				WHERE (t1.finreference IN ( SELECT finoddetails.finreference
+				FROM plf.finoddetails))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="30_post" author="Naga.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finoverdueenquiry_view');
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
