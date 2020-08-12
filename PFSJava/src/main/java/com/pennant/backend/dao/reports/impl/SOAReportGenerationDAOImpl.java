@@ -299,7 +299,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(
 				" Select T1.FinReference, T1.PostDate, T1.AdviseAmount, T1.AdviseType, T1.ReceiptId, T1.BounceId, T1.Adviseid, T1.FeeTypeId, T1.BalanceAmt,");
 		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T2.FeeTypeDesc, T1.ValueDate,T2.TaxComponent,");
-		selectSql.append(" T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST");
+		selectSql.append(" T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST, T1.PaidCESS");
 		selectSql.append(" FROM ManualAdvise T1");
 		selectSql.append(" Left Join FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId");
 		selectSql.append(" Where FinReference = :FinReference");
@@ -1157,7 +1157,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.debug("Leaving");
 		return financeDisbursements;
 	}
-	
+
 	@Override
 	public Map<Long, List<ReceiptAllocationDetail>> getReceiptAllocationDetailsMap(String finReference) {
 		logger.debug(Literal.ENTERING);
@@ -1168,38 +1168,40 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		Map<Long, List<ReceiptAllocationDetail>> finReceiptAllocationDetailsMap = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select  ReceiptID, AllocationType, PaidAmount, TypeDesc,AllocationTo  From ReceiptAllocationDetail_View");
+		sql.append(
+				" Select  ReceiptID, AllocationType, PaidAmount, TypeDesc,AllocationTo  From ReceiptAllocationDetail_View");
 		sql.append(" Where ReceiptId in (Select ReceiptId from FinReceiptHeader where Reference = :FinReference)");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			finReceiptAllocationDetailsMap = this.jdbcTemplate.query(sql.toString(),source, new ResultSetExtractor<Map<Long, List<ReceiptAllocationDetail>>>() {
+			finReceiptAllocationDetailsMap = this.jdbcTemplate.query(sql.toString(), source,
+					new ResultSetExtractor<Map<Long, List<ReceiptAllocationDetail>>>() {
 
-				@Override
-				public Map<Long, List<ReceiptAllocationDetail>> extractData(ResultSet rs)
-						throws SQLException, DataAccessException {
-					List<ReceiptAllocationDetail> radList = null;
-					Map<Long,List<ReceiptAllocationDetail>> radMap= new HashMap<>();
-					while (rs.next()){
-						ReceiptAllocationDetail rad = new ReceiptAllocationDetail();
-						rad.setReceiptID(rs.getLong("ReceiptID"));
-						rad.setAllocationType(rs.getString("AllocationType"));
-						rad.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-						rad.setTypeDesc(rs.getString("TypeDesc"));
-						rad.setAllocationTo(rs.getLong("AllocationTo"));
-						if (radMap.containsKey(rad.getReceiptID())){
-							radList = radMap.get(rad.getReceiptID());
-						}else{
-							radList = new ArrayList<>();
+						@Override
+						public Map<Long, List<ReceiptAllocationDetail>> extractData(ResultSet rs)
+								throws SQLException, DataAccessException {
+							List<ReceiptAllocationDetail> radList = null;
+							Map<Long, List<ReceiptAllocationDetail>> radMap = new HashMap<>();
+							while (rs.next()) {
+								ReceiptAllocationDetail rad = new ReceiptAllocationDetail();
+								rad.setReceiptID(rs.getLong("ReceiptID"));
+								rad.setAllocationType(rs.getString("AllocationType"));
+								rad.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+								rad.setTypeDesc(rs.getString("TypeDesc"));
+								rad.setAllocationTo(rs.getLong("AllocationTo"));
+								if (radMap.containsKey(rad.getReceiptID())) {
+									radList = radMap.get(rad.getReceiptID());
+								} else {
+									radList = new ArrayList<>();
+								}
+								radList.add(rad);
+								radMap.put(rad.getReceiptID(), radList);
+							}
+							// TODO Auto-generated method stub
+							return radMap;
 						}
-						radList.add(rad);
-						radMap.put(rad.getReceiptID(), radList);
-					}
-					// TODO Auto-generated method stub
-					return radMap;
-				}
-			});
+					});
 		} catch (EmptyResultDataAccessException e) {
 			finReceiptAllocationDetailsMap = new HashMap<>();
 		} finally {
