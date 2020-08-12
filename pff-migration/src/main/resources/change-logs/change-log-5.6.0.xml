@@ -8174,13 +8174,13 @@
 				t1.finamount - t1.downpayment + t1.feechargeamt AS financingamount,
 				t1.finstatus,
 				t1.totalcpz
-				FROM plf.financemain t1
-				JOIN plf.rmtfinancetypes t5 ON t1.fintype = t5.fintype
-				JOIN plf.customers t6 ON t1.custid = t6.custid
-				JOIN plf.rmtbranches t7 ON t1.finbranch = t7.branchcode
-				JOIN plf.rmtcusttypes t8 ON t6.custtypecode = t8.custtypecode
+				FROM financemain t1
+				JOIN rmtfinancetypes t5 ON t1.fintype = t5.fintype
+				JOIN customers t6 ON t1.custid = t6.custid
+				JOIN rmtbranches t7 ON t1.finbranch = t7.branchcode
+				JOIN rmtcusttypes t8 ON t6.custtypecode = t8.custtypecode
 				WHERE (t1.finreference IN ( SELECT finoddetails.finreference
-				FROM plf.finoddetails))
+				FROM finoddetails))
 			]]>
 		</createView>
 	</changeSet>
