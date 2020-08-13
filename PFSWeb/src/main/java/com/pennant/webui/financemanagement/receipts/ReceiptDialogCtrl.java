@@ -1616,6 +1616,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.cancelRemarks.setValue(rch.getCancelRemarks());
 		} else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
 			this.realizationDate.setValue(rch.getRealizationDate());
+			if (StringUtils.isEmpty(rch.getNextRoleCode())){
+				exclude = ",R,";
+			}
 		}
 
 		fillComboBox(this.receiptModeStatus, rch.getReceiptModeStatus(), PennantStaticListUtil.getReceiptModeStatus(),
