@@ -435,7 +435,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				statementOfAccount.setSvamount(
 						PennantApplicationUtil.formateAmount(statementOfAccount.getSvamount(), ccyEditField));
 				statementOfAccount.setAdvInstAmt(
-						PennantApplicationUtil.formateAmount(finMain.getDownPayment(), ccyEditField).toString());
+						String.valueOf(PennantApplicationUtil.amountFormate(finMain.getDownPayment(), ccyEditField)));
 				if (!finMain.getPromotionCode().isEmpty()) {
 					Promotion promotions = promotionDAO.getPromotionByReferenceId(finMain.getPromotionSeqId(),
 							"_AView");

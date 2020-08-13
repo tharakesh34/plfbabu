@@ -1093,6 +1093,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 			try {
 				BigDecimal precisionAmount = new BigDecimal(strValue);
+				precisionAmount = precisionAmount.multiply(BigDecimal.valueOf(100));
 				BigDecimal actualAmount = precisionAmount;
 
 				precisionAmount = precisionAmount.setScale(0, RoundingMode.HALF_DOWN);
