@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.service.amtmasters.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -359,5 +361,10 @@ public class ExpenseTypeServiceImpl extends GenericService<ExpenseType> implemen
 
 	public void setFinTypeExpenseDAO(FinTypeExpenseDAO finTypeExpenseDAO) {
 		this.finTypeExpenseDAO = finTypeExpenseDAO;
+	}
+
+	@Override
+	public List<ExpenseType> getExpenseTypes() {
+		return expenseTypeDAO.getExpenseTypes();
 	}
 }

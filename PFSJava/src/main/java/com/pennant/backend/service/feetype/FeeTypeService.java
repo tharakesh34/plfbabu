@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.feetype;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FeeType;
 
@@ -63,4 +65,6 @@ public interface FeeTypeService {
 	long getFinFeeTypeIdByFeeType(String feeTypeCode);
 
 	String getTaxCompByCode(String feeTypeCode);
+
+	List<FeeType> getAMZReqFeeTypes();
 }

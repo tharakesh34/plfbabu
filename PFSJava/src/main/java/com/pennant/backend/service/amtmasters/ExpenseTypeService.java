@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.amtmasters;
 
+import java.util.List;
+
 import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennant.backend.model.audit.AuditHeader;
 
@@ -60,4 +62,6 @@ public interface ExpenseTypeService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	long getFinExpenseIdByExpType(String expTypeCode, String type);
+
+	List<ExpenseType> getExpenseTypes();
 }

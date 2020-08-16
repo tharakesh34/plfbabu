@@ -4,26 +4,22 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.applicationmaster.BounceReason;
+import com.pennant.backend.model.amtmasters.ExpenseType;
 
 public class GenerateRowMapper {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new BounceReason();
-	private static String tableName = "BounceReasons";
+	private static Object object = new ExpenseType();
+	private static String tableName = "ExpenseTypes";
 	private static String whereClause = "Where ReturnCode = ?";
-	private static String varibaleName = "br";
-	private static boolean list = false;
+	private static String varibaleName = "expType";
+	private static boolean list = true;
 
 	private static String getSelectQuery() {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" bounceID, bounceCode, reasonType, category, reason, action, ");
-		sql.append(" ruleID, returnCode, active, ");
-	//	if (type.contains("View")) {
-			sql.append(" ruleCode, ruleCodeDesc,");
-		//}
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
-		sql.append(" NextTaskId, RecordType, WorkflowId ");
+		sql.append("ExpenseTypeId, ExpenseTypeCode, ExpenseTypeDesc, AmortReq, TaxApplicable, Active,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+		sql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		return sql.toString();
 	}
 

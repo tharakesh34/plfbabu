@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.core.FinEODEvent;
@@ -20,7 +20,6 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CalAvgPOSProcess extends Thread {
-
 	private static final Logger logger = Logger.getLogger(CalAvgPOSProcess.class);
 
 	private List<FinanceMain> financeList = null;
@@ -51,41 +50,29 @@ public class CalAvgPOSProcess extends Thread {
 		logger.debug(Literal.ENTERING);
 
 		Date startDate = getFormatDate(this.startDate);
-		Date monthEndDate = getFormatDate(this.projectedAmortization.getMonthEndDate());
+		Date monthEndDate = getFormatDate(projectedAmortization.getMonthEndDate());
 
-		List<FinEODEvent> finEODEventList = prepareFinDataForAMZandAccruals(startDate, monthEndDate, this.financeList);
+		List<FinEODEvent> finEODEventList = prepareFinDataForAMZandAccruals(startDate, monthEndDate, financeList);
 
+		long amzLogId = projectedAmortization.getAmzLogId();
 		try {
 
 			if (!finEODEventList.isEmpty()) {
-				this.incomeAmortizationService.calAndUpdateAvgPOS(finEODEventList);
+				incomeAmortizationService.calAndUpdateAvgPOS(finEODEventList);
 			}
 
-			// Increment and Update Log status
 			finCount.addAndGet(financeList.size());
 			if (finListSize == finCount.get()) {
-				this.incomeAmortizationService.updateCalAvgPOSStatus(EodConstants.PROGRESS_SUCCESS,
-						projectedAmortization.getAmzLogId()); // 2
+				incomeAmortizationService.updateCalAvgPOSStatus(EodConstants.PROGRESS_SUCCESS, amzLogId);
 			}
 		} catch (Exception e) {
-			this.incomeAmortizationService.updateCalAvgPOSStatus(EodConstants.PROGRESS_FAILED,
-					projectedAmortization.getAmzLogId()); // 3
+			this.incomeAmortizationService.updateCalAvgPOSStatus(EodConstants.PROGRESS_FAILED, amzLogId);
 			logger.error("Exception: ", e);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * 
-	 * Method for preparing finance data for amortization and Re Calculate Month End ACCRUALS
-	 * 
-	 * Schedules Details from LOG Table
-	 * 
-	 * @param startDate
-	 * @param monthEndDate
-	 * @return
-	 */
 	private List<FinEODEvent> prepareFinDataForAMZandAccruals(Date startDate, Date monthEndDate,
 			List<FinanceMain> financeList) {
 
@@ -93,41 +80,34 @@ public class CalAvgPOSProcess extends Thread {
 		List<FinanceScheduleDetail> finScheduleDetails = null;
 		List<FinEODEvent> finEODEventsList = new ArrayList<FinEODEvent>();
 
-		for (FinanceMain finMain : financeList) {
+		for (FinanceMain fm : financeList) {
+			Date finMaturityDate = fm.getMaturityDate();
+			finScheduleDetails = getFinScheduleDetails(fm.getFinReference(), monthEndDate);
 
-			// Finance Type from Cache and FinPftDetails
-			Date finMaturityDate = finMain.getMaturityDate();
-			finScheduleDetails = getFinScheduleDetails(finMain.getFinReference(), monthEndDate);
-
-			if (!finScheduleDetails.isEmpty()) {
-
-				Date schdMaturityDate = finScheduleDetails.get(finScheduleDetails.size() - 1).getSchDate();
-				finMain.setMaturityDate(schdMaturityDate);
-
-				if (StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
-					if (schdMaturityDate.compareTo(finMaturityDate) > 0) {
-						finMain.setClosingStatus(null);
-					}
-				}
-
-				finEODEvent = new FinEODEvent();
-				finEODEvent.setEventFromDate(monthEndDate);
-
-				finEODEvent.setFinanceMain(finMain);
-				finEODEvent.setFinanceScheduleDetails(finScheduleDetails);
-
-				finEODEventsList.add(finEODEvent);
+			if (CollectionUtils.isEmpty(finScheduleDetails)) {
+				continue;
 			}
+
+			Date schdMaturityDate = finScheduleDetails.get(finScheduleDetails.size() - 1).getSchDate();
+			fm.setMaturityDate(schdMaturityDate);
+
+			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
+				if (schdMaturityDate.compareTo(finMaturityDate) > 0) {
+					fm.setClosingStatus(null);
+				}
+			}
+
+			finEODEvent = new FinEODEvent();
+			finEODEvent.setEventFromDate(monthEndDate);
+
+			finEODEvent.setFinanceMain(fm);
+			finEODEvent.setFinanceScheduleDetails(finScheduleDetails);
+
+			finEODEventsList.add(finEODEvent);
 		}
 		return finEODEventsList;
 	}
 
-	/**
-	 * get Schedule Details at that point of time
-	 * 
-	 * @param finReference
-	 * @return
-	 */
 	private List<FinanceScheduleDetail> getFinScheduleDetails(String finReference, Date monthEndDate) {
 
 		List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<FinanceScheduleDetail>();
@@ -135,24 +115,17 @@ public class CalAvgPOSProcess extends Thread {
 		long logKey = this.incomeAmortizationService.getPrevSchedLogKey(finReference, monthEndDate);
 
 		if (logKey > 0) {
-			financeScheduleDetails = this.incomeAmortizationService.getFinScheduleDetails(finReference, "_Log", logKey);
+			financeScheduleDetails = incomeAmortizationService.getFinScheduleDetails(finReference, "_Log", logKey);
 		} else {
-			financeScheduleDetails = this.incomeAmortizationService.getFinScheduleDetails(finReference, "", 0);
+			financeScheduleDetails = incomeAmortizationService.getFinScheduleDetails(finReference, "", 0);
 		}
 
 		return financeScheduleDetails;
 	}
 
-	/**
-	 * 
-	 * @param date
-	 * @return
-	 */
 	private static Date getFormatDate(Date date) {
 		return DateUtility.getDBDate(DateUtility.format(date, PennantConstants.DBDateFormat));
 	}
-
-	// getters / setters
 
 	public void setIncomeAmortizationService(IncomeAmortizationService incomeAmortizationService) {
 		this.incomeAmortizationService = incomeAmortizationService;

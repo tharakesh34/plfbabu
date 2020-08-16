@@ -108,6 +108,8 @@
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="expenseTypeDAO" ref="expenseTypeDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 	</bean>
 
 	<!-- Beans -->
@@ -167,5 +169,7 @@
 	<bean id="stagePostingDAO" class="com.pennanttech.pff.core.account.dao.StagePostingDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-
+	
+	<bean id="expenseTypeDAO" class="com.pennant.backend.dao.amtmasters.impl.ExpenseTypeDAOImpl" parent="sequenceDao" />
+	<bean id="feeTypeDAO" class="com.pennant.backend.dao.feetype.impl.FeeTypeDAOImpl" parent="sequenceDao" />
 </beans>

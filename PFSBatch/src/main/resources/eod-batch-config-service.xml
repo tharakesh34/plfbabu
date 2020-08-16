@@ -511,6 +511,8 @@
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="expenseTypeDAO" ref="expenseTypeDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 	</bean>
 
 	<bean name="currencyService" class="com.pennant.backend.service.applicationmaster.impl.CurrencyServiceImpl">
@@ -543,4 +545,9 @@
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 	</bean>
+	
+		<!-- FeeType -->
+	<bean id="feeTypeDAO" class="com.pennant.backend.dao.feetype.impl.FeeTypeDAOImpl" parent="sequenceDao" />
+	
+	<bean id="expenseTypeDAO" class="com.pennant.backend.dao.amtmasters.impl.ExpenseTypeDAOImpl" parent="sequenceDao" />
 </beans>

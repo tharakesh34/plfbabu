@@ -85,4 +85,6 @@ public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
 	long getFeeTypeId(String feeTypeCode);
 
 	boolean isFeeTypeAmortzReq(String feeTypeCode);
+
+	List<FeeType> getAMZReqFeeTypes();
 }

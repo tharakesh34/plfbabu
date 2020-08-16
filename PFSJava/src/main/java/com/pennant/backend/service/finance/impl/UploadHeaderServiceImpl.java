@@ -43,10 +43,12 @@
 
 package com.pennant.backend.service.finance.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
@@ -67,6 +69,7 @@ import com.pennant.backend.dao.finance.UploadFinTypeExpenseDAO;
 import com.pennant.backend.dao.finance.UploadHeaderDAO;
 import com.pennant.backend.dao.finance.UploadTaxPercentDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennant.backend.model.assignmentupload.AssignmentUpload;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -205,9 +208,14 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 
 		amountCodes.setFinType(fm.getFinType());
 
-		aeEvent.getDataMap().putAll(amountCodes.getDeclaredFieldValues());
+		Map<String, Object> dataMap = aeEvent.getDataMap();
+		dataMap.putAll(amountCodes.getDeclaredFieldValues());
 
-		aeEvent.getDataMap().put(expense.getExpenseTypeCode() + "_AMZ_N", expense.getTransactionAmount());
+		for (ExpenseType feeType : expenseTypeService.getExpenseTypes()) {
+			dataMap.put(feeType.getExpenseTypeCode() + "_AMZ_N", BigDecimal.ZERO);
+		}
+
+		dataMap.put(expense.getExpenseTypeCode() + "_AMZ_N", expense.getTransactionAmount());
 
 		postingsPreparationUtil.postAccounting(aeEvent);
 

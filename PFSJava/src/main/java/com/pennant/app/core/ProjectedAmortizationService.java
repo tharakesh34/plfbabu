@@ -58,6 +58,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -66,9 +67,13 @@ import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
+import com.pennant.backend.dao.amtmasters.ExpenseTypeDAO;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.amortization.ProjectedAmortization;
+import com.pennant.backend.model.amtmasters.ExpenseType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -92,6 +97,11 @@ public class ProjectedAmortizationService {
 	private RuleExecutionUtil ruleExecutionUtil;
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
+	private ExpenseTypeDAO expenseTypeDAO;
+	private FeeTypeDAO feeTypeDAO;
+
+	public static List<FeeType> feeTypes = new ArrayList<>();
+	public static List<ExpenseType> expenseTypes = new ArrayList<>();
 
 	public CustEODEvent prepareMonthEndAccruals(CustEODEvent custEODEvent) throws Exception {
 		logger.info(Literal.ENTERING);
@@ -931,8 +941,25 @@ public class ProjectedAmortizationService {
 
 		amountCodes.setFinType(fm.getFinType());
 
+		if (CollectionUtils.isEmpty(expenseTypes)) {
+			expenseTypes.addAll(expenseTypeDAO.getExpenseTypes());
+		}
+
+		if (CollectionUtils.isEmpty(feeTypes)) {
+			feeTypes.addAll(feeTypeDAO.getAMZReqFeeTypes());
+		}
+
 		for (ProjectedAmortization amz : finEODEvent.getIncomeAMZList()) {
 			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+
+			for (ExpenseType expenseType : expenseTypes) {
+				dataMap.put(expenseType.getExpenseTypeCode() + "_AMZ", BigDecimal.ZERO);
+			}
+
+			for (FeeType expenseType : feeTypes) {
+				dataMap.put(expenseType.getFeeTypeCode() + "_AMZ", BigDecimal.ZERO);
+			}
+
 			aeEvent.setBranch(amz.getFinBranch());
 			aeEvent.setCcy(amz.getFinCcy());
 			aeEvent.setCustID(amz.getCustID());
@@ -941,7 +968,12 @@ public class ProjectedAmortizationService {
 			aeEvent.setFinType(amz.getFinType());
 			dataMap.put(amz.getFeeTypeCode() + "_AMZ", amz.getAmortizedAmount());
 			aeEvent.setDataMap(dataMap);
-			postingsPreparationUtil.postAccounting(aeEvent);
+
+			try {
+				postingsPreparationUtil.postAccounting(aeEvent);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 		}
 
 		// update fee / expense AMZ details
@@ -1479,6 +1511,14 @@ public class ProjectedAmortizationService {
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public void setExpenseTypeDAO(ExpenseTypeDAO expenseTypeDAO) {
+		this.expenseTypeDAO = expenseTypeDAO;
+	}
+
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
 	}
 
 }

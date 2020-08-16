@@ -42,10 +42,17 @@
  */
 package com.pennant.backend.dao.amtmasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -285,5 +292,58 @@ public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements Expe
 		logger.debug("Leaving");
 
 		return finExpenseId;
+	}
+
+	@Override
+	public List<ExpenseType> getExpenseTypes() {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ExpenseTypeId, ExpenseTypeCode, ExpenseTypeDesc, AmortReq, TaxApplicable, Active");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
+		sql.append(" from ExpenseTypes");
+		sql.append(" Where AmortReq = ? and Active = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					ps.setBoolean(1, true);
+					ps.setBoolean(2, true);
+				}
+			}, new RowMapper<ExpenseType>() {
+				@Override
+				public ExpenseType mapRow(ResultSet rs, int rowNum) throws SQLException {
+					ExpenseType expType = new ExpenseType();
+
+					expType.setExpenseTypeId(rs.getLong("ExpenseTypeId"));
+					expType.setExpenseTypeCode(rs.getString("ExpenseTypeCode"));
+					expType.setExpenseTypeDesc(rs.getString("ExpenseTypeDesc"));
+					expType.setAmortReq(rs.getBoolean("AmortReq"));
+					expType.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+					expType.setActive(rs.getBoolean("Active"));
+					expType.setVersion(rs.getInt("Version"));
+					expType.setLastMntBy(rs.getLong("LastMntBy"));
+					expType.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					expType.setRecordStatus(rs.getString("RecordStatus"));
+					expType.setRoleCode(rs.getString("RoleCode"));
+					expType.setNextRoleCode(rs.getString("NextRoleCode"));
+					expType.setTaskId(rs.getString("TaskId"));
+					expType.setNextTaskId(rs.getString("NextTaskId"));
+					expType.setRecordType(rs.getString("RecordType"));
+					expType.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return expType;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 }

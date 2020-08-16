@@ -47,12 +47,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ProjectedAmortizationService;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -66,13 +67,13 @@ import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.service.incomeamortization.IncomeAmortizationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * Service declaration for methods that depends on <b>IncomeAmortizationService</b>.<br>
  * 
  */
 public class IncomeAmortizationServiceImpl implements IncomeAmortizationService {
-
 	private static Logger logger = Logger.getLogger(IncomeAmortizationServiceImpl.class);
 
 	private FinLogEntryDetailDAO finLogEntryDetailDAO;
@@ -81,66 +82,46 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 	private FinanceMainDAO financeMainDAO;
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
 	private CustomerQueuingDAO customerQueuingDAO;
-
 	private ProjectedAmortizationService projectedAmortizationService;
 
-	/**
-	 * 
-	 * Amortization Process
-	 * 
-	 * Tables : IncomeAmortization, ProjectedIncomeAMZ
-	 * 
-	 * @param finEODEventList
-	 * @param monthEndDate
-	 * @param reCalAccruals
-	 * 
-	 * @return
-	 */
 	public void processAmortization(List<FinanceMain> financeList, Date monthEndDate) throws Exception {
-		logger.debug(" Entering ");
+		logger.info(Literal.ENTERING);
 
 		FinEODEvent finEODEvent = null;
-		List<ProjectedAccrual> finProjAccList = null;
+		List<ProjectedAccrual> accruals = null;
 		List<ProjectedAmortization> incomeAMZList = null;
 		Date curMonthStart = DateUtility.getMonthStart(monthEndDate);
 
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 
 		// Bulk inert new fees and expense details
 		this.projectedAmortizationService.prepareAMZDetails(monthEndDate, appDate);
 
 		for (FinanceMain finMain : financeList) {
+			String finReference = finMain.getFinReference();
+			incomeAMZList = this.projectedAmortizationDAO.getIncomeAMZDetailsByRef(finReference);
 
-			// get income/expense details
-			incomeAMZList = this.projectedAmortizationDAO.getIncomeAMZDetailsByRef(finMain.getFinReference());
-
-			if (!incomeAMZList.isEmpty()) {
-
-				finEODEvent = new FinEODEvent();
-
-				finEODEvent.setAppDate(appDate);
-				finEODEvent.setEventFromDate(monthEndDate);
-
-				finEODEvent.setFinanceMain(finMain);
-				finEODEvent.setIncomeAMZList(incomeAMZList);
-
-				if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
-
-					// get future ACCRUALS
-					finProjAccList = this.projectedAmortizationDAO
-							.getFutureProjectedAccrualsByFinRef(finMain.getFinReference(), curMonthStart);
-					finEODEvent.setProjectedAccrualList(finProjAccList);
-				}
-
-				// Amortization Calculation and Saving
-				this.projectedAmortizationService.processMonthEndIncomeAMZ(finEODEvent);
+			if (CollectionUtils.isEmpty(incomeAMZList)) {
+				continue;
 			}
 
-			incomeAMZList = null;
-			finProjAccList = null;
+			finEODEvent = new FinEODEvent();
+
+			finEODEvent.setAppDate(appDate);
+			finEODEvent.setEventFromDate(monthEndDate);
+
+			finEODEvent.setFinanceMain(finMain);
+			finEODEvent.setIncomeAMZList(incomeAMZList);
+
+			if (!FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())) {
+				accruals = projectedAmortizationDAO.getFutureProjectedAccrualsByFinRef(finReference, curMonthStart);
+				finEODEvent.setProjectedAccrualList(accruals);
+			}
+
+			projectedAmortizationService.processMonthEndIncomeAMZ(finEODEvent);
 		}
 
-		logger.debug(" Leaving ");
+		logger.info(Literal.LEAVING);
 	}
 
 	@Override
@@ -151,24 +132,6 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 	@Override
 	public List<FinanceScheduleDetail> getFinScheduleDetails(String finReference, String type, long logKey) {
 		return this.financeScheduleDetailDAO.getFinScheduleDetails(finReference, type, logKey);
-	}
-
-	/**
-	 * 
-	 * @param curMonthStart
-	 * @return
-	 */
-	public List<FinanceProfitDetail> getFinPftListForIncomeAMZ(Date curMonthStart) {
-		return profitDetailsDAO.getFinPftListForIncomeAMZ(curMonthStart);
-	}
-
-	/**
-	 * 
-	 * @param curMonthStart
-	 * @return
-	 */
-	public FinanceProfitDetail getFinProfitForAMZ(String finReference) {
-		return profitDetailsDAO.getFinProfitForAMZ(finReference);
 	}
 
 	@Override
@@ -196,29 +159,15 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 		return this.projectedAmortizationDAO.getAmortizationLog();
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public Date getPrvAMZMonthLog() {
 		return projectedAmortizationDAO.getPrvAMZMonthLog();
 	}
 
-	/**
-	 * 
-	 * @param monthEndDate
-	 * @return
-	 */
 	public void prepareAMZQueuing(Date monthEndDate) {
 		projectedAmortizationDAO.delete();
 		projectedAmortizationDAO.prepareAmortizationQueue(monthEndDate, false);
 	}
 
-	/**
-	 * 
-	 * @param monthEndDate
-	 * @return
-	 */
 	public List<FinanceMain> getFinListForAMZ(Date monthEndDate) {
 		return financeMainDAO.getFinListForAMZ(monthEndDate);
 	}
@@ -227,12 +176,7 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 	public void deleteAllProjIncomeAMZByMonth(Date curMonthEnd) {
 		projectedAmortizationDAO.truncateAndInsertProjAMZ(curMonthEnd);
 		projectedAmortizationDAO.copyPrvProjAMZ();
-
-		// projectedAmortizationDAO.deleteFutureProjAMZByMonthEnd(curMonthEnd);
-
 	}
-
-	// Calculate Average POS
 
 	@Override
 	public List<FinanceMain> getFinancesByFinApprovedDate(Date finApprovalStartDate, Date finApprovalEndDate) {
@@ -254,21 +198,11 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 		this.projectedAmortizationDAO.updateCalAvgPOSStatus(status, amzId);
 	}
 
-	/**
-	 * Update Average POS
-	 * 
-	 * @param finEODEventList
-	 * @param monthEndDate
-	 * @throws Exception
-	 */
 	public void calAndUpdateAvgPOS(List<FinEODEvent> finEODEventList) throws Exception {
-
 		ProjectedAccrual projAccrual = null;
 		List<ProjectedAccrual> projAccList = new ArrayList<ProjectedAccrual>(1);
 
 		for (FinEODEvent finEODEvent : finEODEventList) {
-
-			// calculate current month Average POS
 			BigDecimal avgPOS = this.projectedAmortizationService.calculateAveragePOS(finEODEvent);
 
 			if (avgPOS.compareTo(BigDecimal.ZERO) > 0) {
@@ -288,7 +222,13 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 		}
 	}
 
-	// getters / setters
+	public List<FinanceProfitDetail> getFinPftListForIncomeAMZ(Date curMonthStart) {
+		return profitDetailsDAO.getFinPftListForIncomeAMZ(curMonthStart);
+	}
+
+	public FinanceProfitDetail getFinProfitForAMZ(String finReference) {
+		return profitDetailsDAO.getFinProfitForAMZ(finReference);
+	}
 
 	public void setProjectedAmortizationService(ProjectedAmortizationService projectedAmortizationService) {
 		this.projectedAmortizationService = projectedAmortizationService;
@@ -308,10 +248,6 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 
 	public void setProjectedAmortizationDAO(ProjectedAmortizationDAO projectedAmortizationDAO) {
 		this.projectedAmortizationDAO = projectedAmortizationDAO;
-	}
-
-	public CustomerQueuingDAO getCustomerQueuingDAO() {
-		return customerQueuingDAO;
 	}
 
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {

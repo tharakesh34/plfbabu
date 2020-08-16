@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.amtmasters;
 
+import java.util.List;
+
 import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennanttech.pff.core.TableType;
 
@@ -58,4 +60,6 @@ public interface ExpenseTypeDAO {
 	boolean isDuplicateKey(long expenseTypeId, String expenseTypeCode, TableType tableType);
 
 	long getFinExpenseIdByExpType(String expTypeCode, String type);
+
+	List<ExpenseType> getExpenseTypes();
 }

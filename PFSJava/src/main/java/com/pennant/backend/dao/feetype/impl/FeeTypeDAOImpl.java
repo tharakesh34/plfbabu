@@ -43,8 +43,10 @@
 
 package com.pennant.backend.dao.feetype.impl;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -52,6 +54,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -481,6 +484,58 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		logger.debug(Literal.LEAVING);
 		return isAmortzReq;
+	}
+
+	@Override
+	public List<FeeType> getAMZReqFeeTypes() {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, AdviseType, AccountSetId");
+		sql.append(", HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent, Refundable, DueAccReq");
+		sql.append(", DueAccSet, TdsReq");
+		sql.append(" from FeeTypes");
+		sql.append(" Where AmortzReq = ? and Active = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					ps.setBoolean(1, true);
+					ps.setBoolean(2, true);
+				}
+			}, new RowMapper<FeeType>() {
+				@Override
+				public FeeType mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FeeType fee = new FeeType();
+
+					fee.setFeeTypeID(rs.getLong("FeeTypeID"));
+					fee.setFeeTypeCode(rs.getString("FeeTypeCode"));
+					fee.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+					fee.setActive(rs.getBoolean("Active"));
+					fee.setManualAdvice(rs.getBoolean("ManualAdvice"));
+					fee.setAdviseType(rs.getInt("AdviseType"));
+					fee.setAccountSetId(rs.getLong("AccountSetId"));
+					fee.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
+					fee.setAmortzReq(rs.getBoolean("AmortzReq"));
+					fee.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+					fee.setTaxComponent(rs.getString("TaxComponent"));
+					fee.setrefundable(rs.getBoolean("Refundable"));
+					fee.setDueAccReq(rs.getBoolean("DueAccReq"));
+					fee.setDueAccSet(rs.getLong("DueAccSet"));
+					fee.setTdsReq(rs.getBoolean("TdsReq"));
+
+					return fee;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 }

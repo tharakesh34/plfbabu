@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.feetype.impl;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -362,5 +364,10 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	@Override
 	public String getTaxCompByCode(String feeTypeCode) {
 		return getFeeTypeDAO().getTaxCompByCode(feeTypeCode);
+	}
+
+	@Override
+	public List<FeeType> getAMZReqFeeTypes() {
+		return feeTypeDAO.getAMZReqFeeTypes();
 	}
 }
