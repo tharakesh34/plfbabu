@@ -1016,6 +1016,18 @@ public class FinanceDataDefaulting {
 		finMain.setFixedRateTenor(financeType.getFixedRateTenor());
 		finMain.setEqualRepay(financeType.isEqualRepayment());
 
+		//UnPlanned EMI Holiday defaulting
+		if (financeType.isAlwUnPlanEmiHoliday()) {
+			if (finMain.getMaxUnplannedEmi() <= 0) {
+				finMain.setMaxUnplannedEmi(financeType.getMaxUnplannedEmi());
+			}
+			if (finMain.getUnPlanEMIHLockPeriod() <= 0) {
+				finMain.setUnPlanEMIHLockPeriod(financeType.getUnPlanEMIHLockPeriod());
+			}
+			if (!finMain.isUnPlanEMICpz()) {
+				finMain.setUnPlanEMICpz(financeType.isUnPlanEMICpz());
+			}
+		}
 	}
 
 	private void overdueDefaulting(String vldGroup, FinanceDetail finDetail) {
