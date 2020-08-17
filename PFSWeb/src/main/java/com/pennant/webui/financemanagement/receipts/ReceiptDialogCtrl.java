@@ -1616,7 +1616,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.cancelRemarks.setValue(rch.getCancelRemarks());
 		} else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
 			this.realizationDate.setValue(rch.getRealizationDate());
-			if (StringUtils.isEmpty(rch.getNextRoleCode())){
+			if (StringUtils.isEmpty(rch.getNextRoleCode())) {
 				exclude = ",R,";
 			}
 		}
@@ -3132,7 +3132,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)) {
 			allocationNetPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_PaidAmount"));
-			allocationPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_PaidAmount"));
+			//allocationPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_PaidAmount"));
 		}
 
 		// Balance Due AMount
