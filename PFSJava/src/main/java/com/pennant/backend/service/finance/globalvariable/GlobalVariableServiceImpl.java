@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
 import com.pennant.backend.service.GenericService;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
@@ -16,7 +15,7 @@ import com.pennanttech.pennapps.service.GlobalVariableService;
  * 
  */
 public class GlobalVariableServiceImpl extends GenericService<List<GlobalVariable>> implements GlobalVariableService {
-	private static final Logger logger = Logger.getLogger(SysParamUtil.class);
+	private static final Logger logger = Logger.getLogger(GlobalVariableServiceImpl.class);
 
 	private PFSParameterDAO pFSParameterDAO;
 	private static List<GlobalVariable> globalVariablesList = null;
@@ -46,14 +45,13 @@ public class GlobalVariableServiceImpl extends GenericService<List<GlobalVariabl
 
 	@Override
 	protected List<GlobalVariable> getEntity(String code) {
-		logger.debug("Entering");
-
-		globalVariablesList = getPFSParameterDAO().getGlobaVariables();
+		if (globalVariablesList == null) {
+			globalVariablesList = getPFSParameterDAO().getGlobaVariables();
+		}
 
 		if (globalVariablesList == null) {
 			globalVariablesList = new ArrayList<GlobalVariable>(1);
 		}
-		logger.debug("Leaving");
 		return globalVariablesList;
 	}
 

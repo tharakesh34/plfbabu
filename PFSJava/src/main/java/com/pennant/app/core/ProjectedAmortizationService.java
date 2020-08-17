@@ -885,12 +885,10 @@ public class ProjectedAmortizationService {
 		// insert new finance fees
 		count = this.projectedAmortizationDAO.prepareAMZFeeDetails(monthEndDate, appDate);
 
-		this.projectedAmortizationDAO.updateActualAmount(appDate, AmortizationConstants.AMZ_INCOMETYPE_FEE);
+		this.projectedAmortizationDAO.updateActualAmount(appDate);
 
 		// insert new finance expenses
 		count = count + this.projectedAmortizationDAO.prepareAMZExpenseDetails(monthEndDate, appDate);
-
-		this.projectedAmortizationDAO.updateActualAmount(appDate, AmortizationConstants.AMZ_INCOMETYPE_EXPENSE);
 
 		StepUtil.PREPARE_INCOME_AMZ_DETAILS.setTotalRecords(count);
 		StepUtil.PREPARE_INCOME_AMZ_DETAILS.setProcessedRecords(count);
@@ -932,6 +930,7 @@ public class ProjectedAmortizationService {
 
 		aeEvent.getAcSetIDList().add(accountingSetId);
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
+		aeEvent.setPostDate(amzMonth);
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
