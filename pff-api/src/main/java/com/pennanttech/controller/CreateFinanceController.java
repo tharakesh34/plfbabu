@@ -44,6 +44,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
@@ -82,6 +83,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.AgreementDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
@@ -221,6 +223,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private FinTypePartnerBankService finTypePartnerBankService;
 	private FinanceDeviationsService deviationDetailsService;
 	private ReceiptCalculator receiptCalculator;
+	private FeeTypeDAO feeTypeDAO;
 
 	/**
 	 * Method for process create finance request
@@ -2811,6 +2814,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finReference,
 				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_View");
 		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finReference);
+		FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode("BOUNCE");
 		TaxAmountSplit taxSplit;
 		TaxAmountSplit taxSplit2;
 		BigDecimal totalAmount = BigDecimal.ZERO;
@@ -2821,6 +2825,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				if (advisedFees.getBounceID() > 0) {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
 					feeDetail.setSchdDate(getBounceDueDate(advisedFees.getReceiptID()));
+					advisedFees.setTaxComponent(feeType.getTaxComponent());
 				} else {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_ADVISE);
 				}
@@ -2866,6 +2871,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		// Fetch summary details
 		FinanceSummary summary = getFinanceSummary(financeDetail);
 		summary.setOverDueAmount(totalDue.add(summary.getOverDueAmount()));
+		summary.setTotalOverDueIncCharges(summary.getOverDueAmount());
 		summary.setDueCharges(totalDue.add(summary.getDueCharges()));
 		summary.setAdvPaymentAmount(getTotalAdvAmount(finReference));
 		financeDetail.getFinScheduleData().setFinanceSummary(summary);
@@ -4256,8 +4262,11 @@ public class CreateFinanceController extends SummaryDetailService {
 		this.deviationDetailsService = deviationDetailsService;
 	}
 
-	@Autowired
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
+	}
+
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
 	}
 }
