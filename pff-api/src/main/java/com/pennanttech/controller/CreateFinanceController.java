@@ -31,7 +31,9 @@ import com.pennant.app.util.CDScheduleCalculator;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -98,6 +100,7 @@ import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.psl.PSLDetail;
@@ -217,6 +220,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private ReasonDetailDAO reasonDetailDAO;
 	private FinTypePartnerBankService finTypePartnerBankService;
 	private FinanceDeviationsService deviationDetailsService;
+	private ReceiptCalculator receiptCalculator;
 
 	/**
 	 * Method for process create finance request
@@ -2806,6 +2810,11 @@ public class CreateFinanceController extends SummaryDetailService {
 		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finReference,
 				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_View");
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finReference);
+		TaxAmountSplit taxSplit;
+		TaxAmountSplit taxSplit2;
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		BigDecimal totalDue = BigDecimal.ZERO;
 		if (manualAdviseFees != null && !manualAdviseFees.isEmpty()) {
 			for (ManualAdvise advisedFees : manualAdviseFees) {
 				FinFeeDetail feeDetail = new FinFeeDetail();
@@ -2820,12 +2829,44 @@ public class CreateFinanceController extends SummaryDetailService {
 				feeDetail.setPaidAmount(advisedFees.getPaidAmount());
 				feeDetail.setRemainingFee(advisedFees.getBalanceAmt());
 
+				if (advisedFees.getWorkflowId() == 0) {
+					totalAmount = feeDetail.getActualAmount().subtract(feeDetail.getPaidAmount())
+							.subtract(feeDetail.getWaivedAmount());
+
+					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(advisedFees.getTaxComponent())) {
+						taxSplit = GSTCalculator.getExclusiveGST(totalAmount, taxPercentages);
+						totalDue = totalDue.add(taxSplit.gettGST()).add(totalAmount);
+					} else {
+						totalDue = totalDue.add(totalAmount);
+					}
+					BigDecimal tdsAmount = BigDecimal.ZERO;
+
+					//if tds applicable
+					if (advisedFees.isTdsReq()
+							&& financeDetail.getFinScheduleData().getFinanceMain().isTDSApplicable()) {
+						BigDecimal taxableAmount = BigDecimal.ZERO;
+
+						if (StringUtils.isNotEmpty(advisedFees.getTaxComponent())
+								&& FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(advisedFees.getTaxComponent())) {
+							taxSplit2 = GSTCalculator.getInclusiveGST(totalAmount, taxPercentages);
+							taxableAmount = totalAmount.subtract(taxSplit2.gettGST());
+						} else {
+							taxableAmount = totalAmount;
+						}
+
+						tdsAmount = receiptCalculator.getTDSAmount(financeDetail.getFinScheduleData().getFinanceMain(),
+								taxableAmount);
+						totalDue = totalDue.subtract(tdsAmount);
+					}
+				}
 				financeDetail.getFinFeeDetails().add(feeDetail);
 			}
 		}
 
 		// Fetch summary details
 		FinanceSummary summary = getFinanceSummary(financeDetail);
+		summary.setOverDueAmount(totalDue.add(summary.getOverDueAmount()));
+		summary.setDueCharges(totalDue.add(summary.getDueCharges()));
 		summary.setAdvPaymentAmount(getTotalAdvAmount(finReference));
 		financeDetail.getFinScheduleData().setFinanceSummary(summary);
 
@@ -4215,4 +4256,8 @@ public class CreateFinanceController extends SummaryDetailService {
 		this.deviationDetailsService = deviationDetailsService;
 	}
 
+	@Autowired
+	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
+		this.receiptCalculator = receiptCalculator;
+	}
 }

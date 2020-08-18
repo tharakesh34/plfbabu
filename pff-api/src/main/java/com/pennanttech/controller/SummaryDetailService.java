@@ -150,13 +150,17 @@ public class SummaryDetailService {
 			BigDecimal overDuePrincipal = BigDecimal.ZERO;
 			BigDecimal overDueProfit = BigDecimal.ZERO;
 			BigDecimal overDueCharges = BigDecimal.ZERO;
-			int odInst = 0;
+			BigDecimal latePayPftBal = BigDecimal.ZERO;
+			BigDecimal totPenaltyBal = BigDecimal.ZERO;
+			int odInst = 0;	
 			List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 			if (finODDetailsList != null) {
 				for (FinODDetails odDetail : finODDetailsList) {
 					overDuePrincipal = overDuePrincipal.add(odDetail.getFinCurODPri());
 					overDueProfit = overDueProfit.add(odDetail.getFinCurODPft());
 					overDueCharges = overDueCharges.add(odDetail.getTotPenaltyAmt());
+					totPenaltyBal = totPenaltyBal.add(odDetail.getTotPenaltyBal());
+					latePayPftBal = latePayPftBal.add(odDetail.getLPIBal());
 					if (odDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
 						odInst++;
 					}
@@ -165,10 +169,11 @@ public class SummaryDetailService {
 				summary.setOverDueProfit(overDueProfit);
 				summary.setOverDueCharges(overDueCharges);
 				summary.setTotalOverDue(overDuePrincipal.add(overDueProfit));
-				summary.setTotalOverDueIncCharges(summary.getTotalOverDue().add(summary.getOverDueCharges()));
+				summary.setDueCharges(totPenaltyBal.add(latePayPftBal));
+				summary.setTotalOverDueIncCharges(summary.getTotalOverDue().add(summary.getDueCharges()));
 				summary.setFinODDetail(finODDetailsList);
 				summary.setOverDueInstlments(odInst);
-
+				summary.setOverDueAmount(summary.getTotalOverDueIncCharges());
 				financeDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
 			}
 		}
