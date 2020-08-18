@@ -212,6 +212,10 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal utilizedAmt = BigDecimal.ZERO;
 	@XmlElement(name = "unbilledAmount")
 	private BigDecimal availableAmt = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal dueCharges = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal overDueAmount = BigDecimal.ZERO;
 
 	public FinanceSummary() {
 
@@ -923,5 +927,21 @@ public class FinanceSummary implements Serializable {
 
 	public void setOverDueCharges(BigDecimal overDueCharges) {
 		this.overDueCharges = overDueCharges;
+	}
+
+	public BigDecimal getDueCharges() {
+		return dueCharges;
+	}
+
+	public void setDueCharges(BigDecimal dueCharges) {
+		this.dueCharges = dueCharges;
+	}
+
+	public BigDecimal getOverDueAmount() {
+		return overDueAmount;
+	}
+
+	public void setOverDueAmount(BigDecimal overDueAmount) {
+		this.overDueAmount = overDueAmount;
 	}
 }

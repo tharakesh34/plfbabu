@@ -404,6 +404,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc");
 			sql.append(", taxApplicable, taxComponent, dueCreation, linkedTranId, tdsReq ");
+			sql.append(", WorkflowId ");
 		}
 		sql.append(" from ManualAdvise");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -456,6 +457,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 						manualAdvise.setDueCreation(rs.getBoolean("dueCreation"));
 						manualAdvise.setLinkedTranId(rs.getLong("linkedTranId"));
 						manualAdvise.setTdsReq(rs.getBoolean("tdsReq"));
+						manualAdvise.setWorkflowId(rs.getInt("WorkflowId"));
 					}
 
 					return manualAdvise;
