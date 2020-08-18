@@ -3022,6 +3022,9 @@ public class ReceiptCalculator implements Serializable {
 			if (lppFeeType != null && lppFeeType.isTaxApplicable()) {
 				taxType = lppFeeType.getTaxComponent();
 			}
+			
+			BigDecimal taxableAmount = odBal;
+			BigDecimal tdsAmount = BigDecimal.ZERO;
 
 			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxType)) {
 				TaxAmountSplit taxSplit = new TaxAmountSplit();
@@ -3030,6 +3033,22 @@ public class ReceiptCalculator implements Serializable {
 				taxSplit = getGST(receiptData.getFinanceDetail(), taxSplit);
 				odBal = odBal.add(taxSplit.gettGST());
 			}
+			
+			if (allocate.isTdsReq()) {
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxType)) {
+					TaxAmountSplit taxSplit = new TaxAmountSplit();
+					taxSplit.setAmount(taxableAmount);
+					taxSplit.setTaxType(taxType);
+					taxSplit = getGST(receiptData.getFinanceDetail(), taxSplit);
+					taxableAmount = odBal.subtract(taxSplit.gettGST());
+				}
+
+				tdsAmount = getTDSAmount(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+						taxableAmount);
+				odBal = odBal.subtract(tdsAmount);
+
+			}
+
 
 			if (allocate.getWaivedAvailable().compareTo(BigDecimal.ZERO) > 0) {
 				if (allocate.getWaivedAvailable().compareTo(odBal) > 0) {
@@ -3055,8 +3074,12 @@ public class ReceiptCalculator implements Serializable {
 
 			balAmount = balAmount.subtract(odPayNow);
 			rch.setBalAmount(rch.getBalAmount().subtract(odPayNow));
-
-			updateAllocationWithTds(allocate, odPayNow, odWaiveNow, receiptData.getFinanceDetail(), BigDecimal.ZERO);
+			
+			if (isFullPaid) {
+				updateAllocationWithTds(allocate, odPayNow, odWaiveNow, receiptData.getFinanceDetail(), tdsAmount);
+			} else {
+				updateAllocationWithTds(allocate, odPayNow, odWaiveNow, receiptData.getFinanceDetail(), BigDecimal.ZERO);
+			}
 
 			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxType)) {
 				if (isFullPaid) {

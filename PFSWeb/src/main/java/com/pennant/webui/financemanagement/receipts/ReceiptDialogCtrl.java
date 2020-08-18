@@ -3454,9 +3454,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		BigDecimal tdsPaidNow = BigDecimal.ZERO;
 		if (allocate.isTdsReq()) {
-			tdsPaidNow = getReceiptCalculator().getTDSAmount(financeDetail.getFinScheduleData().getFinanceMain(),
-					totalPaid);
-			allocate.setTdsPaid(tdsPaidNow);
+			if (dueAmount.equals(paidAmount)){
+				tdsPaidNow = allocate.getTdsDue();
+			}else{
+				tdsPaidNow = getReceiptCalculator().getTDSAmount(financeDetail.getFinScheduleData().getFinanceMain(),
+						totalPaid);
+				allocate.setTdsPaid(tdsPaidNow);
+			}
 			allocate.setTotalPaid(totalPaid.add(tdsPaidNow));
 		}
 
