@@ -853,8 +853,6 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			}
 			if (finAdvpay.isHoldDisbursement()) {
 				finAdvpay.setStatus(DisbursementConstants.STATUS_HOLD);
-			} else {
-				finAdvpay.setStatus(DisbursementConstants.STATUS_NEW);
 			}
 			if (save) {
 				count = count + 1;
