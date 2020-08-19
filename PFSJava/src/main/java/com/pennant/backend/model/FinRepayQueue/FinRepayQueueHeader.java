@@ -366,7 +366,6 @@ public class FinRepayQueueHeader {
 		this.lppAmzReqonME = lppAmzReqonME;
 	}
 
-
 	public BigDecimal getAdviseAmount() {
 		return adviseAmount;
 	}

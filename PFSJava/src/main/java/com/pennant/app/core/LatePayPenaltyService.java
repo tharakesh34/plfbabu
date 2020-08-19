@@ -237,7 +237,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 				continue;
 			}
 
-
 			// MAx OD amounts is same as repayments balance amounts
 			if (rpd.getFinSchdDate().compareTo(rpd.getFinValueDate()) == 0
 					|| DateUtility.compare(grcDate, rpd.getFinValueDate()) >= 0) {

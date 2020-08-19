@@ -967,7 +967,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					// Payable Advise Amount make utilization
 					if (payAgainstID != 0) {
 						ManualAdviseMovements advMov = manualAdviseDAO.getAdvMovByReceiptSeq(
-								receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(),receiptDetail.getPayAgainstID(), "");
+								receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(),
+								receiptDetail.getPayAgainstID(), "");
 
 						if (advMov != null && advMov.getTaxHeaderId() != null) {
 							TaxHeader header = taxHeaderDetailsDAO.getTaxHeaderDetailsById(advMov.getTaxHeaderId(), "");
@@ -1034,7 +1035,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						// Update Reserve Amount in FinExcessAmount
 
 						// Excess Amounts reversal Updations
-						if ( StringUtils.equals(RepayConstants.PAYSTATUS_DEPOSITED, curStatus)) {
+						if (StringUtils.equals(RepayConstants.PAYSTATUS_DEPOSITED, curStatus)) {
 							finExcessAmountDAO.deductExcessReserve(excess.getExcessID(), rpyHeader.getExcessAmount());
 						} else {
 

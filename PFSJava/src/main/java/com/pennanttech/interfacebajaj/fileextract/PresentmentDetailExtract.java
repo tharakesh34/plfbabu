@@ -298,11 +298,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							updatePresentmentDetails(presentmentRef, status);
 							updatePresentmentHeader(presentmentRef, status, status);
 							presentmentDetailService.updateFinanceDetails(presentmentRef);
-							PresentmentDetail presentmentDetail=isPresentmentResponseIsExist(presentmentRef);
-							if (!processReceipt){
+							PresentmentDetail presentmentDetail = isPresentmentResponseIsExist(presentmentRef);
+							if (!processReceipt) {
 								presentmentDetailService.processSuccessPresentments(presentmentDetail.getReceiptID());
 							}
-							updateChequeStatus(presentmentRef,PennantConstants.CHEQUESTATUS_REALISED);
+							updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_REALISED);
 							saveBatchLog(batchId, status, presentmentRef, null);
 						} else {
 							try {
@@ -316,7 +316,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 											detail.getStatus());
 									saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presentmentRef,
 											detail.getErrorDesc());
-									updateChequeStatus(presentmentRef,PennantConstants.CHEQUESTATUS_BOUNCE);
+									updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_BOUNCE);
 								} else {
 									failedCount++;
 									updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0001",
@@ -609,7 +609,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							updatePresentmentDetails(presentmentRef, status);
 							updatePresentmentHeader(presentmentRef, status, status);
 							presentmentDetailService.updateFinanceDetails(presentmentRef);
-							updateChequeStatus(presentmentRef,PennantConstants.CHEQUESTATUS_REALISED);
+							updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_REALISED);
 							saveBatchLog(batchId, status, presentmentRef, null);
 							sendMailNotification(presentmentDetailService.getPresentmentDetail(presentmentRef), "");
 						} else {
@@ -624,7 +624,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 											detail.getStatus());
 									saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presentmentRef,
 											detail.getErrorDesc());
-									updateChequeStatus(presentmentRef,PennantConstants.CHEQUESTATUS_BOUNCE);
+									updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_BOUNCE);
 									// Sending the Email Notification
 									sendMailNotification(detail, RepayConstants.MODULETYPE_BOUNCE);
 								} else {
@@ -636,7 +636,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 									saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef,
 											detail.getErrorDesc());
 									updateLog(dataEngineStatus.getId(), presentmentRef, "F", detail.getErrorDesc());
-									updateChequeStatus(presentmentRef,PennantConstants.CHEQUESTATUS_FAILED);
+									updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_FAILED);
 									// Sending the Email Notification
 									sendMailNotification(detail, RepayConstants.MODULETYPE_BOUNCE);
 								}
@@ -697,16 +697,16 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	public boolean processInactiveLoan(String presentmentRef) throws Exception {
 		boolean processReceipt = false;
 		boolean isLoanActive = isLoanActive(presentmentRef);
-		if (!isLoanActive){
-			PresentmentDetail presentmentDetail=isPresentmentResponseIsExist(presentmentRef);
-			if (presentmentDetail!=null && presentmentDetail.getReceiptID()==0){
+		if (!isLoanActive) {
+			PresentmentDetail presentmentDetail = isPresentmentResponseIsExist(presentmentRef);
+			if (presentmentDetail != null && presentmentDetail.getReceiptID() == 0) {
 				presentmentDetailService.executeReceipts(presentmentDetail, false);
 				processReceipt = true;
 			}
 		}
-		
+
 		return processReceipt;
-		
+
 	}
 
 	// Truncating the data from staging tables
@@ -1537,18 +1537,17 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	/*
 	 * Updating the cheque status if the mode is PDC
 	 */
-	private void updateChequeStatus(String presentmentRef,String status) {
+	private void updateChequeStatus(String presentmentRef, String status) {
 
 		String paymentMode = presentmentDetailService.getPaymenyMode(presentmentRef);
 		PresentmentDetail detail = presentmentDetailService.getPresentmentDetailsByMode(presentmentRef, paymentMode);
 		// Updating the cheque status as releases if the payment mode is PDC
 		if (MandateConstants.TYPE_PDC.equals(paymentMode)) {
-			updateChequeStatus(detail.getMandateId(),status);
+			updateChequeStatus(detail.getMandateId(), status);
 		}
 		logger.debug(Literal.LEAVING);
 
 	}
-	
 
 	private void updateChequeStatus(long chequeDetailsId, String chequestatus) {
 		logger.debug(Literal.ENTERING);

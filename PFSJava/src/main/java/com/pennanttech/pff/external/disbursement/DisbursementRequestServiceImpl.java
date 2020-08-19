@@ -697,12 +697,13 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 	@Override
 	public void processInstructions() {
 		logger.info("Loading Disbursement/Payment/Insurance instructions..");
-		
+
 		Date appDate = SysParamUtil.getAppDate();
 		Integer futureDays = Integer.valueOf((SysParamUtil.getValue("NO_FUTURE_DAYS_DISB_DOWNLOAD").toString()));
 		Date llDate = DateUtil.addDays(appDate, futureDays - 1);
 
-		List<FinAdvancePayments> disbInstructios = disbursementRequestDAO.getAutoDisbInstructions(JdbcUtil.getDate(llDate));
+		List<FinAdvancePayments> disbInstructios = disbursementRequestDAO
+				.getAutoDisbInstructions(JdbcUtil.getDate(llDate));
 
 		logger.info("{} instructions available.", disbInstructios.size());
 

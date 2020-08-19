@@ -706,8 +706,9 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail, header,
 				repayHierarchy, schDate, appDate);
 	}
-	
-	private void processReceipts(PresentmentDetail presentmentDetail, boolean isExcessNoReserve,boolean updateReceiptId) throws Exception {
+
+	private void processReceipts(PresentmentDetail presentmentDetail, boolean isExcessNoReserve,
+			boolean updateReceiptId) throws Exception {
 
 		FinReceiptData finReceiptData = new FinReceiptData();
 		FinReceiptHeader header = new FinReceiptHeader();
@@ -734,7 +735,6 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 		FinReceiptDetail receiptDetail = new FinReceiptDetail();
 
-		
 		if (presentmentDetail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
 			receiptDetail = new FinReceiptDetail();
 			header.setReceiptAmount(presentmentDetail.getPresentmentAmt());
@@ -774,8 +774,9 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			presentmentDetailDAO.updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 		}
 	}
-	
-	private void processEmiInAdvance(PresentmentDetail presentmentDetail, boolean isExcessNoReserve,boolean updateReceiptId) throws Exception {
+
+	private void processEmiInAdvance(PresentmentDetail presentmentDetail, boolean isExcessNoReserve,
+			boolean updateReceiptId) throws Exception {
 
 		FinReceiptData finReceiptData = new FinReceiptData();
 		FinReceiptHeader header = new FinReceiptHeader();
@@ -799,7 +800,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		header.setRealizationDate(appDate);
 		header.setLogSchInPresentment(true);
 		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		
+
 		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 
 		FinReceiptDetail receiptDetail = new FinReceiptDetail();
@@ -851,7 +852,6 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			presentmentDetailDAO.updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 		}
 	}
-
 
 	@Override
 	public PresentmentDetail getPresentmentDetail(String presentmentRef) {
@@ -954,25 +954,22 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	public List<Long> getIncludeList(long id) {
 		return this.presentmentDetailDAO.getIncludeList(id);
 	}
-	
-	 @Override
+
+	@Override
 	public void processSuccessPresentments(long receiptId) {
 		repaymentProcessUtil.processSuccessPresentment(receiptId);
 	}
-	 
-	 @Override
+
+	@Override
 	public void executeReceipts(PresentmentDetail detail, boolean isExcessNoReserve) throws Exception {
-		if (detail.getAdvanceAmt().compareTo(BigDecimal.ZERO)>0){
+		if (detail.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0) {
 			processEmiInAdvance(detail, false, false);
 		}
-		if (detail.getPresentmentAmt().compareTo(BigDecimal.ZERO)>0){
-			processReceipts(detail, false,true);
+		if (detail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
+			processReceipts(detail, false, true);
 		}
 
-	
-		
 	}
-
 
 	@Override
 	public List<Long> getExcludeList(long id) {

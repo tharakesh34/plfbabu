@@ -124,9 +124,9 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		/*if (!enqiryModule) {
-			this.searchObject.addFilterNotEqual("recordType", PennantConstants.RECORD_TYPE_NEW);
-		}*/
+		/*
+		 * if (!enqiryModule) { this.searchObject.addFilterNotEqual("recordType", PennantConstants.RECORD_TYPE_NEW); }
+		 */
 	}
 
 	@Override

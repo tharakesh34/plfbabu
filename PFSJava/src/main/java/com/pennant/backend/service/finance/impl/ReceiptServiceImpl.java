@@ -275,7 +275,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			for (FinReceiptDetail receiptDetail : receiptDetailList) {
 				if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
 					ManualAdviseMovements advMov = manualAdviseDAO.getAdvMovByReceiptSeq(receiptID,
-							receiptDetail.getReceiptSeqID(),receiptDetail.getPayAgainstID(), StringUtils.equals(type, "_View") ? "_Temp" : "");
+							receiptDetail.getReceiptSeqID(), receiptDetail.getPayAgainstID(),
+							StringUtils.equals(type, "_View") ? "_Temp" : "");
 					if (advMov != null) {
 						receiptDetail.setPayAdvMovement(advMov);
 					}
@@ -1018,12 +1019,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				&& !rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList().isEmpty()) {
 			saveOrUpdateFees(rceiptData, tableType.getSuffix());
 		}
-		
+
 		for (int i = 0; i < receiptHeader.getAllocations().size(); i++) {
 			ReceiptAllocationDetail allocation = receiptHeader.getAllocations().get(i);
 			if (StringUtils.equals(RepayConstants.ALLOCATION_FEE, allocation.getAllocationType())) {
-				for (FinFeeDetail feeDtl : rceiptData.getFinanceDetail().getFinScheduleData()
-						.getFinFeeDetailList()) {
+				for (FinFeeDetail feeDtl : rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList()) {
 					if (feeDtl.getFeeTypeID() == -(allocation.getAllocationTo())) {
 						allocation.setAllocationTo(feeDtl.getFeeID());
 						break;
@@ -5316,7 +5316,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			scheduleData.setFinFeeDetailList(feesList);
 			receiptData.setFinFeeDetails(feesList);
 		}
-		
+
 		if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
 			for (int i = 0; i < receiptData.getReceiptHeader().getAllocations().size(); i++) {
 				ReceiptAllocationDetail allocation = receiptData.getReceiptHeader().getAllocations().get(i);

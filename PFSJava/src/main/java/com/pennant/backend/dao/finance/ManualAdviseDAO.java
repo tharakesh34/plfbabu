@@ -150,7 +150,7 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	long getDebitInvoiceID(long adviseID);
 
 	ManualAdviseMovements getAdvMovByReceiptSeq(long receiptID, long receiptSeqID, String type);
-	
-	ManualAdviseMovements getAdvMovByReceiptSeq(long receiptID, long receiptSeqID,long adviseId, String type);
+
+	ManualAdviseMovements getAdvMovByReceiptSeq(long receiptID, long receiptSeqID, long adviseId, String type);
 
 }

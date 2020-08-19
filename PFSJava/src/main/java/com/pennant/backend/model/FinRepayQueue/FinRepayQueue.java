@@ -86,7 +86,7 @@ public class FinRepayQueue {
 	//Advised profit Rates
 	private BigDecimal advProfit = BigDecimal.ZERO;
 	private BigDecimal rebate = BigDecimal.ZERO;
-	
+
 	private TaxHeader taxHeader;
 
 	public FinRepayQueue() {

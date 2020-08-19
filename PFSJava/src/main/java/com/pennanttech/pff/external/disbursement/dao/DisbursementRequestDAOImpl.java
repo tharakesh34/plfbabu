@@ -568,9 +568,10 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.query(sql.toString(), new Object[] {llDate}, new RowMapper<FinAdvancePayments>() {
+			return this.jdbcOperations.query(sql.toString(), new Object[] { llDate },
+					new RowMapper<FinAdvancePayments>() {
 
-				@Override
+						@Override
 						public FinAdvancePayments mapRow(ResultSet rs, int rowNum) throws SQLException {
 							FinAdvancePayments fap = new FinAdvancePayments();
 							fap.setPaymentId(rs.getLong("PaymentId"));
@@ -596,7 +597,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 							return fap;
 						}
-			});
+					});
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

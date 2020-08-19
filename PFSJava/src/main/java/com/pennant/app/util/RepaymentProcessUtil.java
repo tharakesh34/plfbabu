@@ -181,7 +181,7 @@ public class RepaymentProcessUtil {
 		finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, true);
 		BigDecimal totDues = finReceiptData.getReceiptHeader().getTotalPastDues().getTotalDue();
 		FinReceiptDetail recdtl = rch.getReceiptDetails().get(0);
-		if (recdtl.getDueAmount().compareTo(totDues)>0){
+		if (recdtl.getDueAmount().compareTo(totDues) > 0) {
 			recdtl.setDueAmount(totDues);
 		}
 		finReceiptData = receiptCalculator.recalAutoAllocation(finReceiptData, valuedate, true);
@@ -1404,8 +1404,7 @@ public class RepaymentProcessUtil {
 								for (ManualAdviseMovements movement : rcd.getAdvMovements()) {
 									if (allocation.getAllocationTo() == movement.getAdviseID()) {
 										//Paid Details
-										advise.setPaidAmount(advise.getPaidAmount()
-												.add(movement.getPaidAmount()));
+										advise.setPaidAmount(advise.getPaidAmount().add(movement.getPaidAmount()));
 										advise.setTdsPaid(advise.getTdsPaid().add(movement.getTdsPaid()));
 
 										//Waiver Details
@@ -1476,8 +1475,7 @@ public class RepaymentProcessUtil {
 								for (ManualAdviseMovements movement : rcd.getAdvMovements()) {
 									if (allocation.getAllocationTo() == movement.getAdviseID()) {
 
-										advise.setPaidAmount(advise.getPaidAmount()
-												.add(movement.getPaidAmount()));
+										advise.setPaidAmount(advise.getPaidAmount().add(movement.getPaidAmount()));
 										advise.setTdsPaid(advise.getTdsPaid().add(movement.getTdsPaid()));
 
 										//Waiver Details
@@ -2526,19 +2524,20 @@ public class RepaymentProcessUtil {
 		financeMainDAO.updatePaymentInEOD(fm);
 		limitManagement.processLoanRepay(fm, customerDetails.getCustomer(), priPaynow, profitDetail.getFinCategory());
 	}
-	
+
 	public void processSuccessPresentment(long receiptId) {
 		FinReceiptHeader rch = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptId, "");
-		if (rch == null){
+		if (rch == null) {
 			return;
 		}
 		List<FinReceiptDetail> rcdDtls = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptId, "");
 		for (FinReceiptDetail recDtl : rcdDtls) {
 			FinRepayHeader rph = getFinanceRepaymentsDAO().getFinRepayHeadersByReceipt(recDtl.getReceiptSeqID(), "");
 			// updating fixexcess amount after realization
-			if (StringUtils.equals(rch.getReceiptPurpose(),FinanceConstants.FINSER_EVENT_SCHDRPY)){
-				if (rph!=null && rph.getExcessAmount().compareTo(BigDecimal.ZERO)>0){
-					finExcessAmountDAO.updExcessAfterRealize(rch.getReference(), rch.getExcessAdjustTo(), rph.getExcessAmount());
+			if (StringUtils.equals(rch.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+				if (rph != null && rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
+					finExcessAmountDAO.updExcessAfterRealize(rch.getReference(), rch.getExcessAdjustTo(),
+							rph.getExcessAmount());
 				}
 			}
 		}

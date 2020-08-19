@@ -61,7 +61,7 @@ public class AEEvent implements Serializable {
 	private boolean uAmzExists = false;
 	private boolean cpzChgExists = false;
 	private boolean bpiIncomized = false;
-	
+
 	// Advise Movement
 	private ManualAdviseMovements movement;
 

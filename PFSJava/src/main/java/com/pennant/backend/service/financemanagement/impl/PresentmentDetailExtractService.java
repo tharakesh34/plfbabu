@@ -511,7 +511,7 @@ public class PresentmentDetailExtractService {
 		AdvanceType advanceType = null;
 		String amountType = "";
 
-		if (prd.getGrcPeriodEndDate()!=null && prd.getSchDate().compareTo(prd.getGrcPeriodEndDate()) <= 0) {
+		if (prd.getGrcPeriodEndDate() != null && prd.getSchDate().compareTo(prd.getGrcPeriodEndDate()) <= 0) {
 			advanceType = AdvanceType.getType(prd.getGrcAdvType());
 		} else {
 			advanceType = AdvanceType.getType(prd.getAdvType());

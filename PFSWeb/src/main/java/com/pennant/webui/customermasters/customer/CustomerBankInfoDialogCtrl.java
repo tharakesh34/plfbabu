@@ -1487,7 +1487,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			settlementNo.setValue(0);
 		} else {
 			settlementNo.setValue(bankInfoDetail.getSettlementNo());
-		}	
+		}
 		hbox.appendChild(space);
 		hbox.appendChild(settlementNo);
 		listCell.appendChild(hbox);

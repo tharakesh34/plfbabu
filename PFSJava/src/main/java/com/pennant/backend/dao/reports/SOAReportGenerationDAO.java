@@ -137,7 +137,7 @@ public interface SOAReportGenerationDAO {
 	List<String> getCustLoanDetails(long custID);
 
 	List<FinanceDisbursement> getFinanceDisbursementByFinRef(String finReference);
-	
-	Map<Long,List<ReceiptAllocationDetail>> getReceiptAllocationDetailsMap(String finReference);
+
+	Map<Long, List<ReceiptAllocationDetail>> getReceiptAllocationDetailsMap(String finReference);
 
 }

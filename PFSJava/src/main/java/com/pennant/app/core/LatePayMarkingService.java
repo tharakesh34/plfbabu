@@ -371,9 +371,8 @@ public class LatePayMarkingService extends ServiceHelper {
 		//fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), valueDate));
 		fod.setFinMaxODPri(curSchd.getPrincipalSchd());
 		fod.setFinMaxODPft(curSchd.getProfitSchd());
-		
-		Date grcDate = DateUtility.addDays(fod.getFinODSchdDate(), fod.getODGraceDays());
 
+		Date grcDate = DateUtility.addDays(fod.getFinODSchdDate(), fod.getODGraceDays());
 
 		//PENALTY Issue Ref : 134715
 		if (rpdList == null) {
@@ -391,8 +390,8 @@ public class LatePayMarkingService extends ServiceHelper {
 				}
 
 				//Max OD amounts is same as rpdList balance amounts
-				if (rpd.getFinSchdDate().compareTo(rpd.getFinValueDate()) == 0||
-						DateUtility.compare(grcDate, rpd.getFinValueDate()) >= 0) {
+				if (rpd.getFinSchdDate().compareTo(rpd.getFinValueDate()) == 0
+						|| DateUtility.compare(grcDate, rpd.getFinValueDate()) >= 0) {
 					fod.setFinMaxODPri(fod.getFinMaxODPri().subtract(rpd.getFinSchdPriPaid()));
 					fod.setFinMaxODPft(fod.getFinMaxODPft().subtract(rpd.getFinSchdPftPaid()));
 				}
