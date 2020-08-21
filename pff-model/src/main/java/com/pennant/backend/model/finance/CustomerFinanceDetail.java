@@ -70,6 +70,10 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	private String stage;
 	@XmlElement
 	private int curOddays = 0;
+	@XmlElement(name = "firstEmiAmount")
+	private BigDecimal firstRepay = BigDecimal.ZERO;
+	@XmlElement(name = "loanTenor")
+	private int numberOfTerms = 0;
 
 	public CustomerFinanceDetail() {
 		super();
@@ -415,6 +419,22 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 
 	public void setCurOddays(int curOddays) {
 		this.curOddays = curOddays;
+	}
+
+	public BigDecimal getFirstRepay() {
+		return firstRepay;
+	}
+
+	public void setFirstRepay(BigDecimal firstRepay) {
+		this.firstRepay = firstRepay;
+	}
+
+	public int getNumberOfTerms() {
+		return numberOfTerms;
+	}
+
+	public void setNumberOfTerms(int numberOfTerms) {
+		this.numberOfTerms = numberOfTerms;
 	}
 
 }
