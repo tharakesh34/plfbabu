@@ -108,17 +108,21 @@ public class JavaScriptBuilder extends Groupbox {
 	protected Tree tree;
 	protected Space space;
 	protected Codemirror codemirror;
+	protected Codemirror splCodemirror;
 	protected Tabbox tabbox;
 	protected Tabs tabs;
 	protected Tab treeTab;
 	protected Tab scriptTab;
+	protected Tab specialRulescriptTab;
 	protected Tabpanels tabPanels;
 	protected Tabpanel treeTabpanel;
 	protected Tabpanel scriptTabpanel;
+	protected Tabpanel specialRulescriptTabpanel;
 
 	private String actualBlock = "";
 	private String sqlQuery = "";
 	private String actualQuery = "";
+	private String splQuery = "";
 	private String fields = "";
 	private String query = "";
 	private String module = "";
@@ -158,7 +162,7 @@ public class JavaScriptBuilder extends Groupbox {
 	 * Enumerates the supported RuleTabs.
 	 */
 	public enum RuleTabs {
-		DESIGN, SCRIPT
+		DESIGN, SCRIPT, SPLSCRIPT
 	}
 
 	/**
@@ -194,6 +198,10 @@ public class JavaScriptBuilder extends Groupbox {
 
 		this.treeTab = new Tab("Rule Design");
 		this.treeTab.setParent(tabs);
+
+		this.specialRulescriptTab = new Tab("Special Rule");
+		this.specialRulescriptTab.setParent(tabs);
+
 		this.scriptTab = new Tab("Rule Result");
 		this.scriptTab.setParent(tabs);
 
@@ -229,8 +237,20 @@ public class JavaScriptBuilder extends Groupbox {
 		this.tree.setStyle("overflow:auto;");
 		this.tree.setParent(this.treeTabpanel);
 
+		this.specialRulescriptTabpanel = new Tabpanel();
+		this.specialRulescriptTabpanel.setParent(tabPanels);
+
 		this.scriptTabpanel = new Tabpanel();
 		this.scriptTabpanel.setParent(tabPanels);
+
+		this.splCodemirror = new Codemirror();
+		this.splCodemirror.setWidth("100%");
+		this.splCodemirror.setReadonly(false);
+		this.splCodemirror.setConfig("lineNumbers:true");
+		this.splCodemirror.setSyntax("js");
+		this.splCodemirror.setHeight(tabPanelboxHeight + "px");
+		this.splCodemirror.setStyle("overflow:auto;");
+		this.splCodemirror.setParent(this.specialRulescriptTabpanel);
 
 		this.codemirror = new Codemirror();
 		this.codemirror.setWidth("100%");
@@ -1153,11 +1173,11 @@ public class JavaScriptBuilder extends Groupbox {
 					Combobox operator = (Combobox) treeCell.getFellowIfAny(uUID + "_operator");
 
 					if (operator.getSelectedIndex() > 0) {
-						((Combobox) operator).setSelectedIndex(0);
+						operator.setSelectedIndex(0);
 					}
 
 					if (rightOperandType.getSelectedIndex() > 0) {
-						((Combobox) rightOperandType).setSelectedIndex(0);
+						rightOperandType.setSelectedIndex(0);
 					}
 				}
 
@@ -1269,7 +1289,7 @@ public class JavaScriptBuilder extends Groupbox {
 		logger.debug("Entering");
 
 		Combobox operandType = (Combobox) event.getOrigin().getData();
-		Component operand = (Component) event.getOrigin().getTarget();
+		Component operand = event.getOrigin().getTarget();
 		onChangingOperand(operand);
 
 		logger.debug("Leaving");
@@ -1291,14 +1311,14 @@ public class JavaScriptBuilder extends Groupbox {
 				Combobox operator = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_operator");
 
 				if (operator.getSelectedIndex() > 0) {
-					((Combobox) operator).setSelectedIndex(0);
+					operator.setSelectedIndex(0);
 				}
 
 				if (treeCell.getFellowIfAny(treeCell.getId() + "_rightOperandType") != null
 						&& treeCell.getFellowIfAny(treeCell.getId() + "_rightOperand") != null) {
 					Combobox rightOperandType = (Combobox) treeCell
 							.getFellowIfAny(treeCell.getId() + "_rightOperandType");
-					Component rightOperand = (Component) treeCell.getFellowIfAny(treeCell.getId() + "_rightOperand");
+					Component rightOperand = treeCell.getFellowIfAny(treeCell.getId() + "_rightOperand");
 					rightOperandType.setSelectedIndex(0);
 
 					if (rightOperand instanceof Combobox) {
@@ -1479,8 +1499,8 @@ public class JavaScriptBuilder extends Groupbox {
 		if (treeCell.getFellowIfAny(uUID + "_operator") != null) {
 			Combobox rightOperandType = (Combobox) treeCell.getFellowIfAny(uUID + "_rightOperandType");
 			Combobox leftOperandType = (Combobox) treeCell.getFellowIfAny(uUID + "_leftOperandType");
-			Component rightOperand = (Component) treeCell.getFellowIfAny(uUID + "_rightOperand");
-			Component leftOperand = (Component) treeCell.getFellowIfAny(uUID + "_leftOperand");
+			Component rightOperand = treeCell.getFellowIfAny(uUID + "_rightOperand");
+			Component leftOperand = treeCell.getFellowIfAny(uUID + "_leftOperand");
 
 			rightOperandType.setSelectedIndex(0);
 			String rightOperandTypeValue = rightOperandType.getSelectedItem().getValue();
@@ -1504,7 +1524,7 @@ public class JavaScriptBuilder extends Groupbox {
 				((Longbox) rightOperand).setValue((long) 0);
 			}
 
-			String excludeFields = getExcludeFieldsByOperator((Combobox) operator, leftOperand, leftOperandType);
+			String excludeFields = getExcludeFieldsByOperator(operator, leftOperand, leftOperandType);
 			fillComboBox(rightOperandType, rightOperandTypeValue, operandTypesList, excludeFields);
 		}
 
@@ -1694,7 +1714,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 			if (operand.getId().endsWith("_leftOperand")) {
 				for (int i = 0; i < globalVariableList.size(); i++) {
-					GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
+					GlobalVariable globalVariable = globalVariableList.get(i);
 					comboitem = new Comboitem();
 					comboitem.setLabel(globalVariable.getName());
 					comboitem.setValue(globalVariable.getName());
@@ -1712,7 +1732,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 				if (RuleConstants.GLOBALVAR.equals(leftOperandType.getSelectedItem().getValue())) {
 					for (int i = 0; i < globalVariableList.size(); i++) {
-						GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
+						GlobalVariable globalVariable = globalVariableList.get(i);
 						comboitem = new Comboitem();
 						comboitem.setLabel(globalVariable.getName());
 						comboitem.setValue(globalVariable.getName());
@@ -1730,7 +1750,7 @@ public class JavaScriptBuilder extends Groupbox {
 					Combobox leftOperand = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand");
 					if (globalVariableList != null && globalVariableList.size() > 0) {
 						for (int i = 0; i < globalVariableList.size(); i++) {
-							GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
+							GlobalVariable globalVariable = globalVariableList.get(i);
 							comboitem = new Comboitem();
 
 							if (leftOperand.getSelectedIndex() > 0) {
@@ -1756,7 +1776,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 					if (globalVariableList != null && globalVariableList.size() > 0) {
 						for (int i = 0; i < globalVariableList.size(); i++) {
-							GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
+							GlobalVariable globalVariable = globalVariableList.get(i);
 							comboitem = new Comboitem();
 
 							if (charDataTypes.contains(globalVariable.getType())) {
@@ -1803,7 +1823,7 @@ public class JavaScriptBuilder extends Groupbox {
 			if (operand.getId().endsWith("_leftOperand")) {
 				for (int i = 0; i < this.objectFieldList.size(); i++) {
 
-					RBFieldDetail fieldDetails = (RBFieldDetail) this.objectFieldList.get(i);
+					RBFieldDetail fieldDetails = this.objectFieldList.get(i);
 
 					comboitem = new Comboitem();
 					comboitem.setLabel(fieldDetails.getRbFldName() + "  -  " + fieldDetails.getRbFldDesc());
@@ -1829,7 +1849,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 				if (StringUtils.equals(leftOperandTypeValue, RuleConstants.GLOBALVAR)) {
 					for (int i = 0; i < this.objectFieldList.size(); i++) {
-						RBFieldDetail fieldDetails = (RBFieldDetail) this.objectFieldList.get(i);
+						RBFieldDetail fieldDetails = this.objectFieldList.get(i);
 
 						comboitem = new Comboitem();
 						comboitem.setLabel(fieldDetails.getRbFldName() + "  -  " + fieldDetails.getRbFldDesc());
@@ -1846,7 +1866,7 @@ public class JavaScriptBuilder extends Groupbox {
 				} else if (StringUtils.equals(leftOperandTypeValue, RuleConstants.CALCVALUE)) {
 					String numericDataTypes = "int,bigint,numeric,decimal";
 					for (int i = 0; i < this.objectFieldList.size(); i++) {
-						RBFieldDetail fieldDetails = (RBFieldDetail) this.objectFieldList.get(i);
+						RBFieldDetail fieldDetails = this.objectFieldList.get(i);
 
 						if (numericDataTypes.contains(fieldDetails.getRbFldType())) {
 							comboitem = new Comboitem();
@@ -1867,7 +1887,7 @@ public class JavaScriptBuilder extends Groupbox {
 				if (treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand") instanceof Combobox) {
 					Combobox leftOperand = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand");
 					for (int i = 0; i < this.objectFieldList.size(); i++) {
-						RBFieldDetail fieldDetails = (RBFieldDetail) this.objectFieldList.get(i);
+						RBFieldDetail fieldDetails = this.objectFieldList.get(i);
 
 						comboitem = new Comboitem();
 						if (leftOperand.getSelectedIndex() != 0) {
@@ -1888,7 +1908,7 @@ public class JavaScriptBuilder extends Groupbox {
 				} else {
 					String charDataTypes = "varchar,nvarchar,nchar,char";
 					for (int i = 0; i < this.objectFieldList.size(); i++) {
-						RBFieldDetail fieldDetails = (RBFieldDetail) this.objectFieldList.get(i);
+						RBFieldDetail fieldDetails = this.objectFieldList.get(i);
 
 						comboitem = new Comboitem();
 						if (charDataTypes.contains(fieldDetails.getRbFldType())) {
@@ -1990,13 +2010,12 @@ public class JavaScriptBuilder extends Groupbox {
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		logger.debug("Entering");
 
-		Component button = (Component) event.getOrigin().getTarget();
+		Component button = event.getOrigin().getTarget();
 		Textbox lovText = (Textbox) button.getAttribute("Operand");
 		Combobox operandType = (Combobox) button.getAttribute("OperandType");
 		Treecell treeCell = (Treecell) operandType.getParent();
 		Combobox leftOperand = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand");
-		RBFieldDetail fielddetails = (RBFieldDetail) ((Combobox) leftOperand).getSelectedItem()
-				.getAttribute("FieldDetails");
+		RBFieldDetail fielddetails = (RBFieldDetail) leftOperand.getSelectedItem().getAttribute("FieldDetails");
 
 		if (fielddetails == null) {
 			return;
@@ -2655,8 +2674,8 @@ public class JavaScriptBuilder extends Groupbox {
 			this.spaceCount = 0;
 			sqlQuery = getQuery(tree.getTreechildren());
 		}
-		this.codemirror.setValue(sqlQuery);
-
+		this.codemirror.setValue(this.splCodemirror.getValue() + sqlQuery);
+		this.splCodemirror.setValue(this.splCodemirror.getValue());
 		logger.debug("Leaving");
 	}
 
@@ -2691,6 +2710,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 			map.put("fieldObjectMap", fieldObjectMap);
 			map.put("javaScriptBuilder", this);
+			map.put("splCodemirror", splCodemirror.getValue());
 			map.put("varList", globalVariableList);
 
 			Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/RuleResultSimulation.zul", this, map);
@@ -2893,8 +2913,12 @@ public class JavaScriptBuilder extends Groupbox {
 		}
 
 		actualQuery = StringReplacement.getReplacedQuery(sqlQuery, globalVariableList, null);
-		this.codemirror.setValue(actualQuery);
+		this.codemirror.setValue(this.splCodemirror.getValue() + actualQuery);
+		this.splCodemirror.setValue(this.splCodemirror.getValue());
 
+		splQuery = this.splCodemirror.getValue();
+
+		actualQuery = this.splCodemirror.getValue() + actualQuery;
 		logger.debug("Leaving");
 
 		return this.sqlQuery;
@@ -3034,6 +3058,15 @@ public class JavaScriptBuilder extends Groupbox {
 
 	public void setJsRuleReturnTypeList(List<JSRuleReturnType> jsRuleReturnTypeList) {
 		this.jsRuleReturnTypeList = jsRuleReturnTypeList;
+	}
+
+	public String getSplQuery() {
+		return splQuery;
+	}
+
+	public void setSplQuery(String splQuery) {
+		this.splCodemirror.setValue(splQuery);
+		this.splQuery = splQuery;
 	}
 
 	// public void setEntityCode(String entityCode){

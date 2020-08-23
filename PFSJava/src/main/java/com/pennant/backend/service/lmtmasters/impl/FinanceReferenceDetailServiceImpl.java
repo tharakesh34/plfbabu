@@ -718,7 +718,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	}
 
 	@Override
-	public String getAllowedRolesByCode(String finType, int finRefType, String collValCode) {
-		return financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, collValCode);
+	public String getAllowedRolesByCode(String finType, int finRefType, String collValCode, String finEvent) {
+		return financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, collValCode, finEvent);
 	}
 }

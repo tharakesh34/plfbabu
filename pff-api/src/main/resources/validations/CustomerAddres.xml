@@ -61,7 +61,6 @@
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>Street is Mandatory</message>
 				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 			</constraint>
@@ -78,7 +77,7 @@
 
 		<field name="custAddrLine1">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>addrLine1  should have maximum 50 characters</message>
+				<message>addrLine1 should have maximum 50 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -90,7 +89,7 @@
 
 		<field name="custAddrLine2">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>addrLine2  should have maximum 50 characters</message>
+				<message>addrLine2 should have maximum 50 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -177,5 +176,15 @@
 			</constraint>
 		</field>
 
+		<field name="pinCodeId">
+			<constraint annotation="javax.validation.constraints.Max">
+				<message>PinCodeId allow 19 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">99999999999999999</element>
+			</constraint>
+		</field>
 	</bean>
 </constraint-mappings>

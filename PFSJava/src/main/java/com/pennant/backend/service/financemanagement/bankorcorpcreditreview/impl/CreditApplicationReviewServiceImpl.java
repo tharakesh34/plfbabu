@@ -22,6 +22,8 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.finance.ExtBreDetails;
+import com.pennant.backend.model.finance.ExtCreditReviewConfig;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
@@ -1653,4 +1655,13 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		this.creditReviewDetailDAO = creditReviewDetailDAO;
 	}
 
+	@Override
+	public ExtCreditReviewConfig getExtCreditReviewConfigDetails(ExtCreditReviewConfig extCreditReviewDetail) {
+		return getCreditReviewDetailDAO().getExtCreditReviewConfigDetails(extCreditReviewDetail);
+	}
+
+	@Override
+	public ExtBreDetails getExtBreDetailsByRef(String finReference) {
+		return getCreditReviewDetailDAO().getExtBreDetailsByRef(finReference);
+	}
 }

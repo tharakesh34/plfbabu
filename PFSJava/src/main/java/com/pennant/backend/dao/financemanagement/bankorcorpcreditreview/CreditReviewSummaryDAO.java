@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.financemanagement.bankorcorpcreditreview;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
@@ -37,4 +38,8 @@ public interface CreditReviewSummaryDAO {
 	BigDecimal getCcySpotRate(String ccyCode);
 
 	FinCreditReviewDetails getCreditReviewDetailsByYearAndCustId(long customerId, String year, String type);
+
+	List<String> getAuditYearsbyCustdId(long custId);
+
+	LinkedHashMap<String, Object> getFinCreditRevSummaryByCustIdAndAdtYr(long custId, long auditYear);
 }

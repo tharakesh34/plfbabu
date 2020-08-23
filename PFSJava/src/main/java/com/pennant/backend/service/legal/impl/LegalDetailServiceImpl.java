@@ -388,6 +388,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
+	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
@@ -620,6 +621,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 *            legalId of the LegalDetail. (String)
 	 * @return LegalDetails
 	 */
+	@Override
 	public LegalDetail getApprovedLegalDetail(long legalId) {
 		return getLegalDetailDAO().getLegalDetail(legalId, "_AView");
 	}

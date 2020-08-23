@@ -54,6 +54,7 @@ import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
+import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
@@ -64,6 +65,7 @@ import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pff.core.TableType;
 
 public interface FinanceMainDAO {
@@ -431,4 +433,27 @@ public interface FinanceMainDAO {
 	String getFinBranch(String finReference);
 
 	Date getClosedDateByFinRef(String finReference);
+
+	FinanceMain getFinBasicDetails(String finReference, String type);
+
+	void updateDeductFeeDisb(FinanceMain financeMain, TableType tableType);
+
+	FinanceMain getFinanceMain(String finReference, String[] columns, String type);
+
+	List<UserPendingCases> getUserPendingCasesDetails(String userLogin, String roleCode);
+
+	FinanceMain getFinDetailsForHunter(String leadId, String type);
+
+	DMSQueue getOfferIdByFin(DMSQueue dmsQueue);
+
+	void updatePmay(String finReference, boolean pmay, String type);
+
+	FinCustomerDetails getDetailsByOfferID(String offerID);
+
+	List<FinanceMain> getFinanceByInvReference(String finReference, String type);
+
+	List<String> getInvestmentFinRef(String finReference, String type);
+
+	List<String> getParentRefifAny(String finReference, String type, boolean isFromAgr);
+
 }

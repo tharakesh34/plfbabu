@@ -27,8 +27,8 @@
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-						<button id="btnTVInitiateClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnTVInitiateSave,btnTVInitiateClose" sclass="z-toolbarbutton" label="CLOSE"/>
+							<button id="btnTVInitiateClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnTVInitiateSave,btnTVInitiateClose" sclass="z-toolbarbutton" label="CLOSE" />
 						</toolbar>
 					</hbox>
 				</div>

@@ -89,6 +89,10 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private long documentRef;
 	@XmlElement(name = "docContent")
 	private byte[] docImage;
+	private String loanType;
+	private String lovDescLoanTypeName;
+	private String sourcingBranch;
+	private String lovDescSourcingBranch;
 
 	public TechnicalVerification() {
 		super();
@@ -125,6 +129,10 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		excludeFields.add("docImage");
 		excludeFields.add("productCategory");
 		excludeFields.add("verificationCategory");
+		excludeFields.add("loanType");
+		excludeFields.add("lovDescLoanTypeName");
+		excludeFields.add("sourcingBranch");
+		excludeFields.add("lovDescSourcingBranch");
 		return excludeFields;
 	}
 
@@ -479,4 +487,37 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public void setProductCategory(String productCategory) {
 		this.productCategory = productCategory;
 	}
+
+	public String getLoanType() {
+		return loanType;
+	}
+
+	public void setLoanType(String loanType) {
+		this.loanType = loanType;
+	}
+
+	public String getLovDescLoanTypeName() {
+		return lovDescLoanTypeName;
+	}
+
+	public void setLovDescLoanTypeName(String lovDescLoanTypeName) {
+		this.lovDescLoanTypeName = lovDescLoanTypeName;
+	}
+
+	public String getSourcingBranch() {
+		return sourcingBranch;
+	}
+
+	public void setSourcingBranch(String sourcingBranch) {
+		this.sourcingBranch = sourcingBranch;
+	}
+
+	public String getLovDescSourcingBranch() {
+		return lovDescSourcingBranch;
+	}
+
+	public void setLovDescSourcingBranch(String lovDescSourcingBranch) {
+		this.lovDescSourcingBranch = lovDescSourcingBranch;
+	}
+
 }

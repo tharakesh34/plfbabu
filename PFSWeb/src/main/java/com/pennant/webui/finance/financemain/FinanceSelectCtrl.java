@@ -106,6 +106,7 @@ import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
+import com.pennant.backend.service.finance.LoanDownSizingService;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.RepaymentCancellationService;
@@ -120,6 +121,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinanceMainSelectItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -129,6 +131,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -225,6 +228,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private List<String> usrfinRolesList = new ArrayList<String>();
 	private transient ChangeTDSService changeTDSService;//Clix Requirement added new change TDS Service
+	private transient LoanDownSizingService loanDownSizingService;
 
 	/**
 	 * Default constructor
@@ -1173,6 +1177,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			 */
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHANGETDS)) {
 			whereClause.append(" AND  MaturityDate > '" + appDate + "' AND  FinStartDate <= '" + appDate + "'");
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING)) {
+			whereClause.append(" AND FinAssetvalue > FinCurrAssetValue ");
 		}
 
 		//Written Off Finance Reference Details Condition
@@ -1287,7 +1293,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)
 				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)
 				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHANGETDS)) {
+				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHANGETDS)
+				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING)) {
 
 			openFinanceMainDialog(item);
 
@@ -1339,6 +1346,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			openFinChangeTDSMaintanceDialog(item);
 
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING)) {
+			openLoanDownsizingDialog(item);
 		} else {
 			if (this.getListBoxFinance().getSelectedItem() != null) {
 				final Listitem li = this.getListBoxFinance().getSelectedItem();
@@ -2340,6 +2349,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			StringBuilder fileLocaation = new StringBuilder("/WEB-INF/pages/Finance/FinanceMain/");
 			if (moduleDefiner.equalsIgnoreCase(FinanceConstants.FINSER_EVENT_ROLLOVER)) {
 				fileLocaation.append("RolloverFinanceMainDialog.zul");
+			} else if (moduleDefiner.equalsIgnoreCase(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING)) {
+				fileLocaation.append("LoanDownSizingDialog.zul");
 			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_IJARAH)) {
 				fileLocaation.append("IjarahFinanceMainDialog.zul");
 			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_FWIJARAH)) {
@@ -2363,7 +2374,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_MUSAWAMA)) {
 				fileLocaation.append("MusawamaFinanceMainDialog.zul");
 			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_CONVENTIONAL)) {
-				fileLocaation.append("ConvFinanceMainDialog.zul");
+				String pageName = PennantAppUtil.getFinancePageName(false);
+				fileLocaation.append(pageName);
 			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_QARDHASSAN)) {
 				fileLocaation.append("QardHassanFinanceMainDialog.zul");
 			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_STRUCTMUR)) {
@@ -3327,6 +3339,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					eventCodeRef = "";
 					moduleDefiner = FinanceConstants.FINSER_EVENT_CHANGETDS;
 					workflowCode = FinanceConstants.FINSER_EVENT_CHANGETDS;
+				} else if ("tab_LoanDownSizing".equals(tab.getId())) {
+					eventCodeRef = "";
+					moduleDefiner = FinanceConstants.FINSER_EVENT_LOANDOWNSIZING;
+					workflowCode = FinanceConstants.FINSER_EVENT_LOANDOWNSIZING;
 				}
 				return;
 			}
@@ -3633,6 +3649,113 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	}
 
+	/**
+	 * 
+	 * @param aFinanceDetail
+	 */
+	private void showLoanDownsizingView(FinanceDetail aFinanceDetail) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+		if (aFinanceMain.getWorkflowId() == 0 && isWorkFlowEnabled()) {
+			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+
+		map.put("financeSelectCtrl", this);
+		map.put("financeDetail", aFinanceDetail);
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("workflowCode", workflowCode);
+		map.put("eventCode", eventCodeRef);
+		map.put("menuItemRightName", menuItemRightName);
+
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/LoanDownSizingDialog.zul", null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * 
+	 * @param item
+	 * @throws Exception
+	 */
+	private void openLoanDownsizingDialog(Listitem item) throws Exception {
+		logger.debug("Entering ");
+
+		if (item != null) {
+			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+			// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
+			}
+
+			// Set WorkFlow Details
+			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
+			if (workFlowDetails == null) {
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				return;
+			}
+
+			// data retrieval
+			final FinanceDetail financeDetail = loanDownSizingService.getDownSizingFinance(aFinanceMain,
+					rcdMaintainSts);
+			financeDetail.setModuleDefiner(moduleDefiner);
+
+			// Role Code State Checking
+			String userRole = aFinanceMain.getNextRoleCode();
+			if (StringUtils.isEmpty(userRole)) {
+				userRole = workFlowDetails.getFirstTaskOwner();
+			}
+
+			String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
+			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
+
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+
+				valueParm[0] = aFinanceMain.getId();
+				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + " : " + valueParm[0];
+
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
+
+				MessageUtil.showError(errorDetails.getError());
+				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+
+				logger.debug("Leaving");
+				return;
+			}
+
+			if (isWorkFlowEnabled()) {
+				String whereCond = " AND FinReference = '" + aFinanceMain.getFinReference() + "' AND version = "
+						+ aFinanceMain.getVersion() + " ";
+
+				boolean userAcces = validateUserAccess(workFlowDetails.getId(),
+						getUserWorkspace().getLoggedInUser().getUserId(), workflowCode, whereCond,
+						aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
+
+				if (userAcces) {
+					showLoanDownsizingView(financeDetail);
+				} else {
+					MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
+				}
+			} else {
+				showLoanDownsizingView(financeDetail);
+			}
+		}
+
+		logger.debug("Leaving ");
+	}
+
 	public void setSearchObj(JdbcSearchObject<FinanceMain> searchObj) {
 		this.searchObject = searchObj;
 	}
@@ -3771,6 +3894,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	public void setChangeTDSService(ChangeTDSService changeTDSService) {
 		this.changeTDSService = changeTDSService;
+	}
+
+	public LoanDownSizingService getLoanDownSizingService() {
+		return loanDownSizingService;
+	}
+
+	public void setLoanDownSizingService(LoanDownSizingService loanDownSizingService) {
+		this.loanDownSizingService = loanDownSizingService;
 	}
 
 }

@@ -419,6 +419,30 @@
 														id="allowRevolving" checked="false" />
 												</hbox>
 											</row>
+											<row id="row_AllowLoanTypes" visible="false">
+												<label
+													id="label_FinanceTypeDialog_AllowLoanSplit"
+													value="${c:l('label_FinanceTypeDialog_AllowLoanSplit.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="alwLoanSplit" checked="false" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_SplitLoanType"
+													value="${c:l('label_FinanceTypeDialog_SplitLoanType.value')}" />
+												<hbox
+													id="hbox_splitLoanType">
+													<space
+														id="space_splitLoanType" spacing="2px" sclass="mandatory" />
+													<textbox
+														id="splitLoanType" width="175px" readonly="true" />
+													<button
+														id="btnSearchSplitLoanType"
+														image="/images/icons/LOVSearch.png"/>
+												</hbox>
+											</row>
 											<row>
 												<label
 													id="label_FinanceTypeDialog_FinCollateralOvrride"
@@ -693,6 +717,14 @@
 														id="taxNoMand" checked="false" />
 												</hbox>
 											</row>
+											<row id="row_InstBasedSchd">
+												<label id="label_FinanceTypeDialog_InstBasedSchd"
+													value="${c:l('label_FinanceTypeDialog_InstBasedSchd.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="instBasedSchd" checked="false" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 								</groupbox>
@@ -895,7 +927,73 @@
 													id="finIsRateRvwAtGrcEnd" checked="false" />
 											</hbox>
 										</row>
-
+										<row>
+											<label id="label_GrcAdjReq"
+												value="${c:l('label_FinanceTypeDialog_GrcAdjReq.value')}" />
+											<hbox id="hlayout_GrcAdjReq"
+												spacing="2px">
+												<space
+													id="space_GrcAdjReq" spacing="2px" />
+												<checkbox
+													id="grcAdjReq" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												id="label_GrcPeriodAftrFullDisb"
+												value="${c:l('label_FinanceTypeDialog_GrcPeriodAftrFullDisb.value')}" />
+											<hlayout
+												id="hlayout_GrcPeriodAftrFullDisb" spacing="2px">
+												<space
+													id="space_GrcPeriodAftrFullDisb" spacing="2px" />
+												<checkbox
+													id="grcPeriodAftrFullDisb" />
+											</hlayout>
+											<label
+												id="label_AutoIncrGrcEndDate"
+												value="${c:l('label_FinanceTypeDialog_AutoIncrGrcEndDate.value')}" />
+											<hlayout
+												id="hlayout_AutoIncrGrcEndDate" spacing="2px">
+												<space
+													id="space_AutoIncrGrcEndDate" spacing="2px" />
+												<checkbox
+													id="autoIncrGrcEndDate" />
+											</hlayout>
+										</row>
+										<row>
+											<label
+												id="label_GrcAutoIncrMonths"
+												value="${c:l('label_FinanceTypeDialog_GrcAutoIncrMonths.value')}" />
+											<hlayout
+												id="hlayout_GrcAutoIncrMonths" spacing="2px">
+												<space
+													id="space_GrcAutoIncrMonths" spacing="2px" />
+												<intbox
+													id="grcAutoIncrMonths" />
+											</hlayout>
+											<label
+												id="label_MaxAutoIncrAllowed"
+												value="${c:l('label_FinanceTypeDialog_MaxAutoIncrAllowed.value')}" />
+											<hlayout
+												id="hlayout_MaxAutoIncrAllowed" spacing="2px">
+												<space
+													id="space_MaxAutoIncrAllowed" spacing="2px" />
+												<intbox
+													id="maxAutoIncrAllowed" />
+											</hlayout>
+										</row>
+										<row>
+											<label
+												id="label_ThrldtoMaintainGrcPrd"
+												value="${c:l('label_FinanceTypeDialog_ThrldtoMaintainGrcPrd.value')}" />
+											<hlayout
+												id="hlayoutThrldtoMaintainGrcPrd" spacing="2px">
+												<space
+													id="spaceThrldtoMaintainGrcPrd" spacing="2px" />
+												<intbox
+													id="thrldtoMaintainGrcPrd" />
+											</hlayout>
+										</row>
 									</rows>
 								</grid>
 							</groupbox>
@@ -2399,6 +2497,102 @@
 														spacing="2px" />
 													<checkbox
 														id="allowDrawingPower" checked="false" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox id="gb_OCRCheck"
+									height="auto">
+									<caption
+										label="${c:l('label_FinanceTypeDialog_OCRCheck')}" />
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="260px" />
+											<column />
+											<column width="260px" />
+											<column />
+										</columns>
+										<rows>
+											<row visible="true">
+												<label
+													id="label_FinanceTypeDialog_OCRRequired"
+													value="${c:l('label_FinanceTypeDialog_OCRRequired.value')}" />
+												<hbox>
+													<space spacing="2px"
+														id="space_OCRRequired" />
+													<checkbox
+														id="ocrRequired" width="200px" />
+												</hbox>
+												<hbox visible="false"
+													id="labelAllowedOcr">
+													<label
+														id="label_FinanceTypeDialog_AllowedOCRs"
+														value="${c:l('label_FinanceTypeDialog_AllowedOCRs.value')}" />
+												</hbox>
+												<hbox visible="false"
+													id="hboxAllowedOCRS">
+													<space spacing="2px"
+														id="spaceAllowedOCRs" sclass="mandatory" />
+													<textbox
+														id="allowedOCRS" width="170px" readonly="true" />
+													<button
+														id="btnAlwOcr" image="/images/icons/LOVSearch.png" />
+												</hbox>
+											</row>
+											<row id="rowDefaultOCR"
+												visible="false">
+												<hbox>
+													<label
+														id="label_FinanceTypeDialog_DefaultOCR"
+														value="${c:l('label_FinanceTypeDialog_DefaultOCR.value')}" />
+												</hbox>
+												<hbox>
+													<extendedcombobox
+														id="defaultOCR" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox id="gbLoanPurpose"
+									height="auto">
+									<caption
+										label="${c:l('label_FinanceTypeDialog_LoanPurpose_Details.value')}" />
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="260px" />
+											<column />
+											<column width="260px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label
+													id="labelFinanceTypeDialogLoanPurpose"
+													value="${c:l('label_FinanceTypeDialog_LoanPurpose.value')}" />
+												<hbox>
+													<space spacing="2px"
+														id="spaceLoanPurpose" sclass="mandatory" />
+													<combobox
+														id="allowedLoanPurposes" width="200px" />
+												</hbox>
+												<hbox visible="false"
+													id="hboxSpecificLoanPurposes">
+													<label
+														value="${c:l('label_FinanceTypeDialog_SpecificLoanPurpose.value')}" />
+												</hbox>
+												<hbox visible="false"
+													id="hboxSpecificLoanPurposesTwo">
+													<space spacing="2px"
+														sclass="mandatory" />
+													<textbox
+														id="specificLoanPurposes" width="170px" readonly="true" />
+													<button
+														id="btnSpcLoanPurposes"
+														image="/images/icons/LOVSearch.png" />
 												</hbox>
 											</row>
 										</rows>

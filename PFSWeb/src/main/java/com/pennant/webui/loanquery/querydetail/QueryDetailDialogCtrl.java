@@ -45,6 +45,7 @@ package com.pennant.webui.loanquery.querydetail;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
@@ -961,6 +961,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			if (obj != null) {
 				aQueryDetail.setCategoryId(Long.valueOf(String.valueOf(obj)));
 				aQueryDetail.setCategoryCode(String.valueOf(this.qryCategory.getAttribute("Code")));
+				aQueryDetail.setCategoryDescription(qryCategory.getDescription());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1078,10 +1079,11 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		// Document Details
 		aQueryDetail.setDocumentDetailsList(getDocumentDetails());
 
+		aQueryDetail.setFinType(this.finReference.getDescription());
 		// raisedUsrrole
 		aQueryDetail.setRaisedUsrRole(this.roleCode);
 
-		// Finance Type Setting is required as it is used in Interface.
+		//Finance Type Setting is required as it is used in Interface.
 		if (this.financeMain != null) {
 			aQueryDetail.setFinType(this.financeMain.getFinType());
 		} else if (getFinanceMainService() != null && reference != null
@@ -1151,6 +1153,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 					|| (StringUtils.equals(String.valueOf(getUserWorkspace().getUserId()),
 							String.valueOf(queryDetail.getRaisedBy())))) {
 				List<String> list = new ArrayList<>();
+				Date appDate = SysParamUtil.getAppDate();
 				if ((queryDetail.getStatus().equals("Open")
 						&& !StringUtils.equals(String.valueOf(getUserWorkspace().getUserId()),
 								String.valueOf(queryDetail.getRaisedBy())))
@@ -1162,7 +1165,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 					this.row5.setVisible(true);
 					this.row6.setVisible(false);
 					this.responseBy.setValue(getUserWorkspace().getUserDetails().getUsername());
-					this.responseOn.setValue(DateUtility.getAppDate());
+					this.responseOn.setValue(appDate);
 					readOnlyComponent(false, this.docRemarks);
 					readOnlyComponent(false, this.btnUploadDoc);
 					readOnlyComponent(false, this.btnUploadDocs);
@@ -1191,7 +1194,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 					this.responseOn.setValue(queryDetail.getResponseOn());
 					this.closerNotes.setValue("");
 					this.closerBy.setValue(getUserWorkspace().getUserDetails().getUsername());
-					this.closerOn.setValue(DateUtility.getAppDate());
+					this.closerOn.setValue(appDate);
 					readOnlyComponent(false, this.status);
 
 					readOnlyComponent(false, this.docRemarks);

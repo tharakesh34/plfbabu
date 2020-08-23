@@ -688,4 +688,9 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	public void setCustomerIncomeList(List<CustomerIncome> customerIncomeList) {
 		this.customerIncomeList = customerIncomeList;
 	}
+
+	public boolean doSave(Radiogroup userAction, boolean b) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -56,7 +56,7 @@
 							</columns>
 							<rows>
 								<row id="row0">
-									<label id="label_EmpIndustry" value="${c:l('label_EmployerDetailDialog_EmpCategory.value')}" />
+									<label id="label_EmpIndustry" value="${c:l('label_EmployerDetailDialog_EmpIndustry.value')}" />
 									<hlayout id="hlayout_EmpIndustry">
 										<extendedcombobox id="empIndustry" />
 									</hlayout>
@@ -182,10 +182,17 @@
 								</row>
 								<row id="row10">
 									<label id="label_BankRefNo" value="${c:l('label_EmployerDetailDialog_BankRefNo.value')}" />
-									<hlayout id="hlayout_BankRefNo">
+									<hlayout id="hlayout_BankRefNo" spacing="2px">
 										<space spacing="2px" />
 										<textbox id="bankRefNo" width="180px" />
 									</hlayout>
+									<label id="label_EmpCategory" value="${c:l('label_EmployerDetailDialog_EmpCategory.value')}" />
+									<hlayout id="hlayout_empCategory" spacing="2px">
+										<space id="space_EmpCategory" spacing="2px" />
+										<combobox id="empCategory" width="180px" />
+									</hlayout>
+								</row>
+								<row id="row11">
 									<label id="label_EmployerDetailDialog_empIsActive" value="${c:l('label_EmployerDetailDialog_empIsActive.value')}" />
 									<hlayout id="hlayout_EmployerDetailDialog_empIsActive" spacing="2px">
 										<space id="space_EmployerDetailDialog_empIsActive" spacing="2px" />

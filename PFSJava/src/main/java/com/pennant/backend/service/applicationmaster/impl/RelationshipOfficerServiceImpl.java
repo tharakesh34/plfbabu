@@ -43,20 +43,27 @@
 
 package com.pennant.backend.service.applicationmaster.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.RelationshipOfficerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.systemmasters.DepartmentDAO;
+import com.pennant.backend.dao.systemmasters.DesignationDAO;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.systemmasters.Department;
+import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -69,6 +76,10 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private RelationshipOfficerDAO relationshipOfficerDAO;
+	@Autowired
+	private DepartmentDAO departmentDAO;
+	@Autowired
+	private DesignationDAO designationDAO;
 
 	public RelationshipOfficerServiceImpl() {
 		super();
@@ -219,9 +230,9 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 		RelationshipOfficer relationshipOfficer = new RelationshipOfficer();
 		BeanUtils.copyProperties((RelationshipOfficer) auditHeader.getAuditDetail().getModelData(),
 				relationshipOfficer);
-
-		getRelationshipOfficerDAO().delete(relationshipOfficer, TableType.TEMP_TAB);
-
+		if (!PennantConstants.FINSOURCE_ID_API.equals(relationshipOfficer.getSourceId())) {
+			getRelationshipOfficerDAO().delete(relationshipOfficer, TableType.TEMP_TAB);
+		}
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(relationshipOfficer.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(
 					relationshipOfficerDAO.getRelationshipOfficerById(relationshipOfficer.getROfficerCode(), ""));
@@ -343,4 +354,77 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 		logger.debug("Leaving");
 		return auditDetail;
 	}
+
+	@Override
+	public AuditDetail doValidations(RelationshipOfficer relationshipOfficer) {
+		logger.debug(Literal.ENTERING);
+
+		AuditDetail auditDetail = new AuditDetail();
+		//setting mandatory validation for rOfficerCode,rOfficerDeptCode,rOfficerDesc
+		if (StringUtils.isBlank(relationshipOfficer.getROfficerCode())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "rOfficerCode";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30561", "", valueParm)));
+		}
+		if (StringUtils.isBlank(relationshipOfficer.getROfficerDesc())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "rOfficerDesc";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30561", "", valueParm)));
+		}
+		if (StringUtils.isBlank(relationshipOfficer.getROfficerDeptCode())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "rOfficerDeptCode";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30561", "", valueParm)));
+		}
+		//Dept code master data validation
+		if (StringUtils.isNotBlank(relationshipOfficer.getROfficerDeptCode())) {
+			Department department = departmentDAO.getDepartmentById(relationshipOfficer.getROfficerDeptCode(), "");
+			if (department == null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "rOfficerDeptCode";
+				valueParm[1] = relationshipOfficer.getROfficerDeptCode();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+			}
+		}
+		//validate Phone number
+		String mobileNumber = relationshipOfficer.getMobileNO();
+		if (StringUtils.isNotBlank(mobileNumber)) {
+
+			if (!(mobileNumber.matches("[0-9]+"))) {
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90278", null)));
+			}
+		}
+
+		//Desg code master data validation
+		if (StringUtils.isNotBlank(relationshipOfficer.getGenDesignation())) {
+
+			Designation designation = designationDAO.getDesignationById(relationshipOfficer.getGenDesignation(), "");
+			if (designation == null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "genDesignation";
+				valueParm[1] = relationshipOfficer.getGenDesignation();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+			}
+		}
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), null));
+		logger.debug(Literal.LEAVING);
+		return auditDetail;
+	}
+
+	public DesignationDAO getDesignationDAO() {
+		return designationDAO;
+	}
+
+	public void setDesignationDAO(DesignationDAO designationDAO) {
+		this.designationDAO = designationDAO;
+	}
+
+	public DepartmentDAO getDepartmentDAO() {
+		return departmentDAO;
+	}
+
+	public void setDepartmentDAO(DepartmentDAO departmentDAO) {
+		this.departmentDAO = departmentDAO;
+	}
+
 }

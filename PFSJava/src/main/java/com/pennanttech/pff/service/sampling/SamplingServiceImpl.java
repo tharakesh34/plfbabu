@@ -281,8 +281,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			return auditHeader;
 		}
 		Sampling sampling = new Sampling();
-		BeanUtils.copyProperties((Sampling) auditHeader.getAuditDetail().getModelData(), sampling);
-
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), sampling);
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(sampling.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(samplingDAO.getSampling(sampling.getId(), ""));
 		}
@@ -1608,8 +1607,9 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				newOriginalTemp.remove("reference");
 				newOriginalTemp.put("lastmnton", new Timestamp(System.currentTimeMillis()));
 				newOriginalTemp.put("lastmntby", sampling.getLastMntBy());
-				extendedFieldRenderDAO.update(referece, (Integer) seqNo, newOriginalTemp, "", table);
-				extendedFieldRenderDAO.update(referece, (Integer) seqNo, newOriginalTemp, "_temp", table);
+				extendedFieldRenderDAO.update(referece, seqNo, newOriginalTemp, "", table);
+				extendedFieldRenderDAO.update(referece, seqNo, newOriginalTemp, "_temp", table);
+
 			} catch (Exception e) {
 				logger.warn(e);
 			} finally {

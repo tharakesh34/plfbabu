@@ -381,8 +381,9 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		if (bankBranch.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(bankBranch.getRecordType())
 				&& bankBranchDAO.isDuplicateKey(bankBranch.getBankCode(), bankBranch.getBranchCode(),
 						bankBranch.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-			String[] parameters = new String[1];
-			parameters[0] = PennantJavaUtil.getLabel("label_BranchCode") + ": " + bankBranch.getBranchCode();
+			String[] parameters = new String[2];
+			parameters[0] = PennantJavaUtil.getLabel("label_BranchCode") + ": " + bankBranch.getBranchCode() + " And ";
+			parameters[1] = PennantJavaUtil.getLabel("label_BankCode") + ": " + bankBranch.getBankCode();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -441,6 +442,11 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 
 	public void setBeneficiaryDAO(BeneficiaryDAO beneficiaryDAO) {
 		this.beneficiaryDAO = beneficiaryDAO;
+	}
+
+	@Override
+	public int getAccNoLengthByIFSC(String ifscCode) {
+		return getBankBranchDAO().getAccNoLengthByIFSC(ifscCode, "_View");
 	}
 
 }

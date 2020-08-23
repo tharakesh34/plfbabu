@@ -613,6 +613,7 @@ public class FinanceDataDefaulting {
 		}
 		// tasks # >>End Advance EMI and DSF
 
+		finMain.setInstBasedSchd(financeType.isInstBasedSchd());
 	}
 
 	/*
@@ -1130,6 +1131,7 @@ public class FinanceDataDefaulting {
 	public static boolean isValidateIDB(String IDB) {
 		if (!StringUtils.equals(IDB, CalculationConstants.IDB_30E360)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_30E360I)
+				&& !StringUtils.equals(IDB, CalculationConstants.IDB_30E360IH)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_30EP360)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_30U360)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_ACT_360)

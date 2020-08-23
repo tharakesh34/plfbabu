@@ -101,6 +101,7 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceMainExt;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -1976,6 +1977,11 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
+	}
+
+	public void doFillRemarks(FinanceMainExt financeMainExt) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

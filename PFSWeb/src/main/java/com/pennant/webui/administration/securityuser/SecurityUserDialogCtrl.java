@@ -335,6 +335,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		setListusrDftAppId();
 		fillComboBox(authType, "", authTypesList, "");
+		fillComboBox(ldapDomainName, "", ldapDomainList, "");
 
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
 			fillComboBox(ldapDomainName, "", ldapDomainList, "");
@@ -1344,6 +1345,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 
 		this.authType.setDisabled(isReadOnly("SecurityUserDialog_usrLogin"));
+		this.ldapDomainName.setDisabled(isReadOnly("SecurityUserDialog_usrLogin"));
 		this.txtbox_Password.setReadonly(isReadOnly("SecurityUserDialog_usrPwd"));
 		this.userStaffID.setReadonly(isReadOnly("SecurityUserDialog_userStaffID"));
 		this.usrFName.setReadonly(isReadOnly("SecurityUserDialog_usrFName"));

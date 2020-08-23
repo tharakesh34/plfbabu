@@ -25,6 +25,12 @@ public class CustEODEvent extends AbstractEntity {
 	private boolean checkPresentment = false;
 	private boolean eodSuccess = true;
 
+	/* NPA and Provision fields */
+	private boolean executeNPAAndProvision;
+	private boolean customerProvision;
+	private String provisionBooks;
+	private Date provisionEffectiveDate;
+
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -144,6 +150,42 @@ public class CustEODEvent extends AbstractEntity {
 
 	public void setAmzMethodRule(String amzMethodRule) {
 		this.amzMethodRule = amzMethodRule;
+	}
+
+	public boolean isExecuteNPAAndProvision() {
+		return executeNPAAndProvision;
+	}
+
+	public void setExecuteNPAaAndProvision(boolean executeNPAAndProvision) {
+		this.executeNPAAndProvision = executeNPAAndProvision;
+	}
+
+	public boolean isCustomerProvision() {
+		return customerProvision;
+	}
+
+	public void setCustomerProvision(boolean customerProvision) {
+		this.customerProvision = customerProvision;
+	}
+
+	public String getProvisionBooks() {
+		return provisionBooks;
+	}
+
+	public void setProvisionBooks(String provisionBooks) {
+		this.provisionBooks = provisionBooks;
+	}
+
+	public Date getProvisionEffectiveDate() {
+		return provisionEffectiveDate;
+	}
+
+	public void setProvisionEffectiveDate(Date provisionEffectiveDate) {
+		this.provisionEffectiveDate = provisionEffectiveDate;
+	}
+
+	public String getCustIdAsString() {
+		return customer != null ? String.valueOf(customer.getCustID()) : "";
 	}
 
 }

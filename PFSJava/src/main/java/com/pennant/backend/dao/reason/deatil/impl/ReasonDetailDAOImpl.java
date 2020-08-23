@@ -100,7 +100,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select RH.Module, RH.Reference, RH.Remarks, RH.Rolecode, SR.RoleDesc");
 		sql.append(", RH.Activity, RC.Code, RC.Description, RH.Touser, SU.UsrLogin, SU.Usrfname");
-		sql.append(", SU.Usrmname ,SU.Usrlname , RH.Logtime ");
+		sql.append(", SU.Usrmname ,SU.Usrlname , RH.Logtime, RS.Description as rejectReasonDesc");
 		sql.append(" from ReasonHeader RH");
 		sql.append(" inner join ReasonDetails RD ON RH.ID = RD.HeaderId");
 		sql.append(" inner join Reasons RS ON RS.ID = RD.ReasonID");

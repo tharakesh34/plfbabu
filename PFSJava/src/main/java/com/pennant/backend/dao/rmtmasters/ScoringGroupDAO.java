@@ -43,6 +43,9 @@
 
 package com.pennant.backend.dao.rmtmasters;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
 
 public interface ScoringGroupDAO {
@@ -54,4 +57,8 @@ public interface ScoringGroupDAO {
 	void delete(ScoringGroup scoringGroup, String type);
 
 	long save(ScoringGroup scoringGroup, String type);
+
+	ScoringGroup getScoringGroupByRiskScore(BigDecimal score, BigDecimal netSal, String string);
+
+	List<ScoringGroup> getScoringGroups(Object[] scoreGroupCodes, String type);
 }

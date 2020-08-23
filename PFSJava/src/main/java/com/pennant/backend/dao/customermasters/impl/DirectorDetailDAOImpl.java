@@ -216,7 +216,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 
 					cd.setDirectorId(rs.getLong("DirectorId"));
 					cd.setCustID(rs.getLong("CustID"));
-					cd.setShareHoldercustID(rs.getLong("ShareHolderCustID"));
+					cd.setShareHolderCustID(rs.getLong("ShareHolderCustID"));
 					cd.setFirstName(rs.getString("FirstName"));
 					cd.setMiddleName(rs.getString("MiddleName"));
 					cd.setLastName(rs.getString("LastName"));

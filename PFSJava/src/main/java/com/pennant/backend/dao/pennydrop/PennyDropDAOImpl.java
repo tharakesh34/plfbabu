@@ -90,8 +90,7 @@ public class PennyDropDAOImpl extends SequenceDao<BankAccountValidation> impleme
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Penny Drop details not avilable for the specified account number {} with specified IFSC {}",
-					"XXXX", ifsc);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);

@@ -20,6 +20,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.AccountingConfigCache;
@@ -30,8 +31,9 @@ public class DisbursementPostings {
 	private Logger logger = Logger.getLogger(DisbursementPostings.class);
 
 	private AccountEngineExecution engineExecution;
-	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
+	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private PostingsPreparationUtil postingsPreparationUtil;
+	protected AEAmountCodes amountCodes;
 
 	public DisbursementPostings() {
 		super();
@@ -56,7 +58,7 @@ public class DisbursementPostings {
 
 		Map<Long, List<ReturnDataSet>> disbMap = new HashMap<>();
 
-		List<FinAdvancePayments> approvedList = finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finRef, "");
+		List<FinAdvancePayments> approvedList = finAdvancePaymentsService.getFinAdvancePaymentsById(finRef, "");
 
 		if (CollectionUtils.isEmpty(approvedList)) {
 			return disbMap;
@@ -130,7 +132,7 @@ public class DisbursementPostings {
 
 		Map<Integer, Long> disbMap = new HashMap<>();
 
-		List<FinAdvancePayments> approvedList = finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finRef, "");
+		List<FinAdvancePayments> approvedList = finAdvancePaymentsService.getFinAdvancePaymentsById(finRef, "_AView");
 
 		if (advPaymentsList != null && !advPaymentsList.isEmpty()) {
 
@@ -141,6 +143,24 @@ public class DisbursementPostings {
 						&& StringUtils.equals(finApprovedPay.getStatus(), finAdvancePayments.getStatus())
 						&& !StringUtils.equals(PennantConstants.RCD_DEL, finAdvancePayments.getRecordType())) {
 					continue;
+				}
+
+				if (finApprovedPay != null) {
+					if (StringUtils.isBlank(finAdvancePayments.getPartnerBankAc())) {
+						finAdvancePayments.setPartnerBankAc(finApprovedPay.getPartnerBankAc());
+					}
+
+					if (StringUtils.isBlank(finAdvancePayments.getPartnerBankAcType())) {
+						finAdvancePayments.setPartnerBankAcType(finApprovedPay.getPartnerBankAcType());
+					}
+
+					if (StringUtils.isBlank(finAdvancePayments.getDisbCCy())) {
+						finAdvancePayments.setDisbCCy(finApprovedPay.getDisbCCy());
+					}
+
+					if (finAdvancePayments.getLlDate() == null) {
+						finAdvancePayments.setLLDate(finApprovedPay.getLlDate());
+					}
 				}
 
 				if (StringUtils.equals(PennantConstants.RCD_DEL, finAdvancePayments.getRecordType())) {
@@ -219,8 +239,8 @@ public class DisbursementPostings {
 		this.engineExecution = engineExecution;
 	}
 
-	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
-		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {

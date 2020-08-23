@@ -451,7 +451,6 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		logger.debug("selectSql: " + selectSql.toString());
 
 		List<String> custEmailsByIDs = this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
-		;
 		logger.debug("Leaving");
 
 		return custEmailsByIDs;

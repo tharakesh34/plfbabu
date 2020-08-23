@@ -84,8 +84,10 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -122,6 +124,11 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	protected Checkbox alwPreIncomization;
 	protected Label label_Window_Title;
 	protected Label label_FinTypeFeesDialog_AlwModifyFeeSchdMthd;
+
+	protected Row row_PercentageType;
+	protected Combobox percType;
+	protected ExtendedCombobox percRule;
+	protected Label label_FinTypeFeesDialog_PercRule;
 
 	// not auto wired vars
 	private FinTypeFees finTypeFees; // overhanded per param
@@ -270,6 +277,14 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.ruleCode.setValueColumn("RuleCode");
 		this.ruleCode.setDescColumn("RuleCodeDesc");
 		this.ruleCode.setValidateColumns(new String[] { "RuleCode" });
+
+		this.percRule.setMaxlength(8);
+		this.percRule.setMandatoryStyle(true);
+		this.percRule.setModuleName("Rule");
+		this.percRule.setValueColumn("RuleCode");
+		this.percRule.setDescColumn("RuleCodeDesc");
+		this.percRule.setValidateColumns(new String[] { "RuleCode" });
+		this.percRule.setMandatoryStyle(true);
 
 		this.amount.setMandatory(false);
 		this.amount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
@@ -467,17 +482,21 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			this.alwModifyFeeSchdMthd.setChecked(true);
 		}
 
+		this.percRule.setValue(aFinTypeFees.getPercRule());
+		fillComboBox(this.percType, aFinTypeFees.getPercType(), PennantStaticListUtil.getPercType(), "");
+
 		this.active.setChecked(aFinTypeFees.isActive());
 		this.alwPreIncomization.setChecked(aFinTypeFees.isAlwPreIncomization());
 		this.recordStatus.setValue(aFinTypeFees.getRecordStatus());
 
-		doSetRuleFilters();
+		doSetRuleFilters(this.ruleCode, "FEES");
+		doSetRuleFilters(this.percRule, "FEEPERC");
 		doSetConditionalProp();
 		doSetCalculationTypeProp();
 		doSetFeeSchdMethodProp();
 		//CR : Deduct fee at the time of additional disbursal
 		doSetFeeSchdMethod(aFinTypeFees.getFinEvent());
-
+		doSetPercTypeProp();
 		logger.debug("Leaving");
 	}
 
@@ -564,7 +583,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			wve.add(we);
 		}
 		try {
-			if (this.percentage.isVisible()) {
+			if (this.percentage.isVisible() && !this.percentage.isDisabled()) {
 				BigDecimal percentageValue = this.percentage.getValue();
 
 				if (percentageValue == null || percentageValue.compareTo(BigDecimal.ZERO) == 0) {
@@ -632,6 +651,17 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		}
 		try {
 			aFinTypeFees.setAlwPreIncomization(this.alwPreIncomization.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			this.percRule.getValidatedValue();
+			aFinTypeFees.setPercRule(this.percRule.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinTypeFees.setPercType(this.percType.getSelectedItem().getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -712,6 +742,20 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			this.amount
 					.setConstraint(new PTDecimalValidator(Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value"),
 							ccyFormat, this.amount.isVisible(), false));
+		}
+		if (this.row_PercentageType.isVisible()) {
+			if (!this.percType.isDisabled()) {
+				this.percType.setConstraint(new StaticListValidator(PennantStaticListUtil.getPercType(),
+						Labels.getLabel("label_FinTypeFeesDialog_PercentageTyp.value")));
+			}
+			if (!this.percRule.isReadonly()) {
+				if (PennantConstants.PERC_TYPE_VARIABLE.equals(percType.getSelectedItem().getValue())) {
+					this.percRule.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_FinTypeFeesDialog_PercRule.value"), null, true, true));
+				} else {
+					this.percRule.setConstraint("");
+				}
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -817,6 +861,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		readOnlyComponent(isReadOnly("FinTypeFeesDialog_alwModifyFee"), this.alwModifyFee);
 		readOnlyComponent(isReadOnly("FinTypeFeesDialog_alwModifyFeeSchdMthd"), this.alwModifyFeeSchdMthd);
 		readOnlyComponent(isReadOnly("FinTypeFeesDialog_active"), this.active);
+		readOnlyComponent(isReadOnly("FinTypeFeesDialog_percType"), this.percType);
+		readOnlyComponent(isReadOnly("FinTypeFeesDialog_percRule"), this.percRule);
 
 		if (enqiryModule) {
 			this.feeType.setReadonly(true);
@@ -835,6 +881,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			this.active.setDisabled(true);
 			this.btnSave.setDisabled(true);
 			this.btnDelete.setDisabled(true);
+			readOnlyComponent(isReadOnly("FinTypeFeesDialog_percType"), this.percType);
+			readOnlyComponent(isReadOnly("FinTypeFeesDialog_percRule"), this.percRule);
+
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -1100,6 +1149,38 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		logger.debug("Leaving");
 	}
 
+	public void onSelect$percType(Event event) {
+		logger.debug(Literal.ENTERING);
+		doSetPercTypeProp();
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private void doSetPercTypeProp() {
+		logger.debug(Literal.ENTERING);
+		if (!finTypeFees.isOriginationFee()) {
+			if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE,
+					this.calculationType.getSelectedItem().getValue().toString())
+					&& StringUtils.equals(PennantConstants.PERC_TYPE_VARIABLE,
+							this.percType.getSelectedItem().getValue().toString())) {
+				this.percRule.setVisible(true);
+				this.percRule.clearErrorMessage();
+				this.label_FinTypeFeesDialog_PercRule.setVisible(true);
+				this.percentage.setValue(BigDecimal.ZERO);
+				this.percentage.setDisabled(true);
+			} else {
+				this.percRule.setVisible(false);
+				this.label_FinTypeFeesDialog_PercRule.setVisible(false);
+				this.percRule.setValue("");
+				this.percRule.setConstraint("");
+				this.percRule.clearErrorMessage();
+				this.percentage.setValue(this.percentage.getValue());
+				this.percentage.setDisabled(false);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	public void onSelect$calculationType(Event event) {
 		logger.debug("Entering");
 		this.ruleCode.setValue("");
@@ -1130,7 +1211,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.ruleCode.setObject("");
 		this.ruleCode.setValue("", "");
 
-		doSetRuleFilters();
+		doSetRuleFilters(this.ruleCode, "FEES");
+		doSetRuleFilters(this.percRule, "FEEPERC");
 		String finEventValue = this.finEvent.getValue();
 		String calOnExcludeFields = "," + PennantConstants.FEE_CALCULATEDON_PAYAMOUNT + ",";
 
@@ -1168,20 +1250,21 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		logger.debug("Entering" + event.toString());
 		this.ruleCode.setObject("");
 		this.ruleCode.setValue("", "");
-		doSetRuleFilters();
+		doSetRuleFilters(this.ruleCode, "FEES");
+		doSetRuleFilters(this.percRule, "FEEPERC");
 
 		doSetFeeSchdMethod(this.finEvent.getValue());
 
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private void doSetRuleFilters() {
+	private void doSetRuleFilters(ExtendedCombobox rule, String type) {
 		Filter[] filters = new Filter[4];
-		filters[0] = new Filter("RuleModule", "FEES", Filter.OP_EQUAL);
+		filters[0] = new Filter("RuleModule", type, Filter.OP_EQUAL);
 		filters[1] = new Filter("RuleEvent", this.finEvent.getValue(), Filter.OP_EQUAL);
 		filters[2] = new Filter("FeeTypeID", readIDValueFromExtCombobox(this.feeType), Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
-		this.ruleCode.setFilters(filters);
+		rule.setFilters(filters);
 	}
 
 	private void doSetConditionalProp() {
@@ -1230,6 +1313,27 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			this.amount.setMandatory(false);
 			this.row_CalculationOn.setVisible(true);
 			this.space_percentage.setVisible(true);
+		}
+		if (SysParamUtil.isAllowed(SMTParameterConstants.FINTYPEFEE_PERCENTAGE_TYPE_REQUIRED)) {
+			if (!finTypeFees.isOriginationFee()) {
+				if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE,
+						this.calculationType.getSelectedItem().getValue().toString())) {
+					this.row_PercentageType.setVisible(true);
+				} else {
+					this.row_PercentageType.setVisible(false);
+					this.percType.setSelectedIndex(0);
+					this.percRule.setValue("");
+					this.percRule.setConstraint("");
+					this.percType.setConstraint("");
+					this.percType.clearErrorMessage();
+				}
+			} else {
+				this.row_PercentageType.setVisible(false);
+				this.percType.setSelectedIndex(0);
+				this.percRule.setValue("");
+				this.percRule.setConstraint("");
+				this.percType.setConstraint("");
+			}
 		}
 	}
 

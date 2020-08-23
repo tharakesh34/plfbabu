@@ -31,6 +31,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -45,6 +46,7 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.extendedfields.ExtendedFieldsGenerator;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -402,24 +404,25 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 		Map<String, Object> fielValueMap = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
 		aExetendedFieldRender.setMapValues(fielValueMap);
 
-		if (this.queryId > 0) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.COLLATERAL_DEDUP_WARNING) && this.queryId > 0) {
 			DedupParm dedupParm = this.dedupParmService.getApprovedDedupParmById(this.queryCode,
 					FinanceConstants.DEDUP_COLLATERAL, this.querySubCode);
 
-			String sqlQuery = "Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup_Temp T1"
+			String sqlQuery = "Select T1.CollateralRef, T2.CUSTSHRTNAME, T2.CUSTCIF DepositorCif From CollateralSetup_Temp T1"
 					+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_"
 					+ this.querySubCode + "_ED_Temp  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery()
-					+ " union all " + " Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup T1"
+					+ " union all "
+					+ " Select T1.CollateralRef, T2.CUSTSHRTNAME, T2.CUSTCIF DepositorCif From CollateralSetup T1"
 					+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_"
 					+ this.querySubCode + "_ED  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery()
 					+ " And NOT EXISTS (SELECT 1 FROM Collateral_" + this.querySubCode
 					+ "_ED_TEMP  WHERE REFERENCE = T1.CollateralRef)";
 
 			List<CollateralSetup> collateralSetupList = this.dedupParmService.queryExecution(sqlQuery, fielValueMap);
-
+			String customerCIF = "";
 			if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
 				boolean recordFound = true;
-
+				customerCIF = collateralSetupList.get(0).getDepositorCif();
 				if (collateralSetupList.size() == 1) {
 					if (StringUtils.isNotBlank(aExetendedFieldRender.getReference()) && StringUtils.equals(
 							collateralSetupList.get(0).getCollateralRef(), aExetendedFieldRender.getReference())) {
@@ -431,11 +434,12 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 						if (!(StringUtils.isNotBlank(aExetendedFieldRender.getReference()) && StringUtils
 								.equals(collateralSetup.getCollateralRef(), aExetendedFieldRender.getReference()))) {
 							recordFound = true;
+							customerCIF = collateralSetup.getDepositorCif();
 						}
 					}
 				}
 				if (recordFound) {
-					MessageUtil.showError("This collateral already used by some other customer.");
+					MessageUtil.showError(Labels.getLabel("Collateral_Dedup_Error_Message") + customerCIF);
 					return;
 				}
 			}

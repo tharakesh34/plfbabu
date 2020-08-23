@@ -11,19 +11,25 @@
 				.east-centered .z-east-collapsed .z-borderlayout-icon { display: none; color: #fff !important; font-size: 13px;
 				z-index: 25;}
 				.z-icon-angle-double-right:before{content: "\f00d"; color: #fff;}
-				.east-centered .z-east-collapsed .z-east-title { align-self: center;
+				.east-centered .z-east-collapsed
+				.z-east-title { align-self: center;
 				width: initial!important; transform-origin: center
-				center!important; padding: 0 10px; transform:
+				center!important; padding: 0
+				10px; transform:
 				rotate(90deg); color: #fff; background: #365b85; font-style: normal;
 				text-overflow:
-				ellipsis; overflow: hidden; height: 21px; font-family: "PT
-				Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 13px; white-space: nowrap;}
+				ellipsis;
+				overflow: hidden; height: 21px; font-family: "PT
+				Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 13px;
+				white-space: nowrap;}
 
 				.z-east-header { font-family:
-				"PT Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 13px;
+				"PT Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size:
+				13px;
 				font-weight: normal; font-style: normal;
 				height: 25px; border-bottom: 1px solid #e3e3e3; padding: 6px
-				6px 5px; line-height: 13px; overflow: hidden; cursor:
+				6px 5px;
+				line-height: 13px; overflow: hidden; cursor:
 				default; white-space: nowrap; background: #bc5c5c;
 				color: #fff; }
 
@@ -31,12 +37,14 @@
 				!important; height: 100% !important; border-collapse: separate;
 				border-spacing: 0; margin: 0; padding: 0;
 				list-style-image: none; list-style-position: outside;
-				list-style-type: none; }
+				list-style-type: none;
+				}
 
 				.z-borderlayout-icon:hover { color:
 				#fff; background:#bc5c5c;}
 
-				.z-groupbox-content { display: block; height: inherit; border: 1px solid #c5c5c5; border-top-width: 0;
+				.z-groupbox-content { display: block; height: inherit;
+				border: 1px solid #c5c5c5; border-top-width: 0;
 				padding: 4px 3px 3px; overflow:
 				auto; zoom: 1; }
 

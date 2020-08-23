@@ -86,7 +86,7 @@
 								</hbox>
 								<label id="label_VehicleDealerDialog_DealerFax" value="${c:l('label_VehicleDealerDialog_DealerFax.value')}" />
 								<hbox>
-									<space spacing="2px" id="dealerFax_dsa" />
+									<space spacing="2px" sclass="mandatory" id="dealerFax_dsa" />
 									<textbox id="dealerFax" width="100px" />
 									<!-- <textbox id="faxCountryCode" width="40px" /> <label value="-" style="display:inline-block;padding-top:4px;" 
 										/> <textbox id="faxAreaCode" width="40px" /> <label value="-" style="display:inline-block;padding-top:4px;" /> -->

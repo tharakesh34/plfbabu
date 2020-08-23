@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
@@ -75,6 +76,8 @@ import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.covenant.Covenant;
+import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.DocumentType;
@@ -93,6 +96,7 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -162,7 +166,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 */
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_documentDetailDialog(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_documentDetailDialog);
@@ -242,15 +246,43 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * @throws Exception
 	 */
 	public void doShowDialog() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
 			// New button visibility.
 			this.btnNew_DocumentDetails.setVisible(!enqiryModule);
 
-			// fill the components with the data
-			if (getDocumentDetailsList() != null && getDocumentDetailsList().size() > 0) {
-				doFillDocumentDetails(getDocumentDetailsList());
+			if (CollectionUtils.isNotEmpty(getDocumentDetailsList())) {
+				ArrayList<CovenantDocument> covenantDocList = new ArrayList<>();
+				ArrayList<DocumentDetails> newDocList = new ArrayList<>();
+				List<Covenant> covenants = new ArrayList<>();
+				if (financeDetail != null) {
+					covenants = financeDetail.getCovenants();
+					if (CollectionUtils.isNotEmpty(covenants)) {
+						for (Covenant covenant : covenants) {
+							covenantDocList.addAll(covenant.getCovenantDocuments());
+						}
+					}
+				}
+
+				if (CollectionUtils.isNotEmpty(covenantDocList)) {
+					for (DocumentDetails documentDetail : getDocumentDetailsList()) {
+						boolean recordFound = false;
+						for (CovenantDocument covenantDoc : covenantDocList) {
+							if (covenantDoc != null && covenantDoc.getDocumentId() != null
+									&& documentDetail.getDocId() == covenantDoc.getDocumentId()) {
+								recordFound = true;
+								break;
+							}
+						}
+						if (!recordFound) {
+							newDocList.add(documentDetail);
+						}
+					}
+					doFillDocumentDetails(newDocList);
+				} else {
+					doFillDocumentDetails(getDocumentDetailsList());
+				}
 			}
 
 			try {
@@ -272,8 +304,11 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					|| VerificationType.LV.getValue().equals(moduleName)
 					|| VerificationType.RCU.getValue().equals(moduleName)
 					|| CollateralConstants.SAMPLING_MODULE.equals(moduleName)
-					|| VerificationType.PD.getValue().equals(moduleName)
-					|| VASConsatnts.MODULE_NAME.equals(moduleName)) {
+					|| VerificationType.PD.getValue().equals(moduleName) || VASConsatnts.MODULE_NAME.equals(moduleName)
+					|| PennantConstants.PROJECT_DOC.equals(moduleName)
+					|| DocumentCategories.UPFNT_FEE_RECEIPTS.getKey().equals(moduleName)
+					|| DocumentCategories.MANUAL_ADVISE_PAYABLE.getKey().equals(moduleName)
+					|| DocumentCategories.VERIFICATION_VT.getKey().equals(moduleName)) {
 				this.btnNew_DocumentDetails.setVisible(isEditable);
 			}
 
@@ -283,7 +318,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// New Button & Double Click Events for Finance Contributor List
@@ -292,7 +327,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	@SuppressWarnings("unchecked")
 	public void onClick$btnNew_DocumentDetails(Event event) throws InterruptedException, SecurityException,
 			IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());
@@ -323,14 +358,14 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		map.put("module", module);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/DocumentTypeSelectDialog.zul",
 				window_documentDetailDialog, map);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	@SuppressWarnings("unchecked")
 	public void createNewDocument(CheckListDetail checkListDetail, boolean isCheckList)
 			throws InterruptedException, SecurityException, IllegalArgumentException, NoSuchMethodException,
 			IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("DocumentDetailDialogCtrl", this);
@@ -416,11 +451,26 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doFillDocumentDetails(List<DocumentDetails> documentDetails) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
+		if (CollectionUtils.isEmpty(documentDetails)) {
+			return;
+		}
+
+		//Covenant Documents
+		ArrayList<CovenantDocument> covenantDocList = new ArrayList<>();
+		if (financeDetail != null) {
+			if (CollectionUtils.isNotEmpty(financeDetail.getCovenants())) {
+				List<Covenant> covenants = financeDetail.getCovenants();
+				for (Covenant covenant : covenants) {
+					covenantDocList.addAll(covenant.getCovenantDocuments());
+				}
+			}
+		}
 
 		docDetailMap = new HashMap<>();
 		this.listBoxDocumentDetails.getItems().clear();
@@ -454,7 +504,26 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 			listitem.setAttribute("data", documentDetail);
 			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onFinDocumentItemDoubleClicked");
-			if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetail.getCategoryCode()))) {
+
+			//Finding the document is covenant document or not.
+			boolean isCovenantDoc = false;
+			if (CollectionUtils.isNotEmpty(covenantDocList)) {
+				for (CovenantDocument covenantDoc : covenantDocList) {
+					if (covenantDoc != null && covenantDoc.getDocumentId() != null
+							&& documentDetail.getDocId() == covenantDoc.getDocumentId()) {
+						isCovenantDoc = true;
+						break;
+					}
+				}
+				//Not rendering the Customer documents in Document Detail tab.
+				if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetail.getCategoryCode()))) {
+					this.listBoxDocumentDetails.appendChild(listitem);
+				}
+				docDetailMap.put(documentDetail.getDocCategory(), documentDetail);
+			}
+
+			//Not rendering the Customer and covenant documents in Document Detail tab.
+			if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetail.getCategoryCode())) && !isCovenantDoc) {
 				this.listBoxDocumentDetails.appendChild(listitem);
 			}
 			docDetailMap.put(documentDetail.getDocCategory(), documentDetail);
@@ -468,7 +537,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			lVerificationCtrl.addLoanDocuments(getLoanDocumentsFromScreen());
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private List<DocumentDetails> getLoanDocumentsFromScreen() {
@@ -491,7 +560,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	}
 
 	public void onFinDocumentItemDoubleClicked(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxDocumentDetails.getSelectedItem();
@@ -499,18 +568,21 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			DocumentDetails finDocumentDetail = (DocumentDetails) item.getAttribute("data");
-			if (StringUtils.trimToEmpty(finDocumentDetail.getRecordType())
+			if (PennantConstants.PROJECT_DOC.equals(moduleName) && isDeleteRecord(finDocumentDetail)) {
+				MessageUtil.showMessage(Labels.getLabel("common_NoMaintainance"));
+				return;
+			} else if (StringUtils.trimToEmpty(finDocumentDetail.getRecordType())
 					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				updateExistingDocument(finDocumentDetail, 0, false);
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public boolean isDocAllowedForInput(String docCategory, long checklistID) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<FinanceReferenceDetail> list = getFinanceDetail().getCheckList();
 		if (list != null && !list.isEmpty()) {
 			String roleCode = StringUtils
@@ -549,14 +621,14 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return false;
 	}
 
 	@SuppressWarnings("unchecked")
 	public void updateExistingDocument(DocumentDetails finDocumentDetail, long checklistID, boolean viewProcess)
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finDocumentDetail", finDocumentDetail);
@@ -656,7 +728,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public DocumentDetails getDocumentContent(DocumentDetails finDocumentDetail, List<Object> list,
@@ -669,7 +741,12 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			map.put("finDocumentDetail", finDocumentDetail);
 		}
 
-		finDocumentDetail.setDocImage(dMSService.getById(finDocumentDetail.getDocRefId()));
+		//If the document uploaded in DMS DocRefId is null
+		if (finDocumentDetail.getDocRefId() != null && finDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
+			finDocumentDetail.setDocImage(dMSService.getById(finDocumentDetail.getDocRefId()));
+		} else {
+			finDocumentDetail.setDocImage(dMSService.getImageByUri(finDocumentDetail.getDocUri()));
+		}
 
 		/*
 		 * if (finDocumentDetail.getDocImage() == null) { if (finDocumentDetail.getDocRefId() != null &&
@@ -727,13 +804,13 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	public CustomerDialogCtrl fetchCustomerDialogCtrl() throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		CustomerDialogCtrl customerDialogCtrl = null;
 		if (getFinanceMainDialogCtrl().getClass().getMethod("getCustomerDialogCtrl") != null) {
 			customerDialogCtrl = (CustomerDialogCtrl) getFinanceMainDialogCtrl().getClass()
 					.getMethod("getCustomerDialogCtrl").invoke(getFinanceMainDialogCtrl());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerDialogCtrl;
 	}
 
@@ -747,7 +824,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	// method for sorting document details
 	private List<DocumentDetails> sortDocumentDetails(List<DocumentDetails> documentDetails) {
-		if (documentDetails != null && documentDetails.size() > 0) {
+		if (CollectionUtils.isNotEmpty(documentDetails)) {
 			Collections.sort(documentDetails, new Comparator<DocumentDetails>() {
 
 				@Override
@@ -761,7 +838,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	}
 
 	private CustomerDocument doSetDocumentTypeMandProp(CustomerDocument customerDocument) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (customerDocument != null) {
 			JdbcSearchObject<DocumentType> jdbcSearchObject = new JdbcSearchObject<DocumentType>(DocumentType.class);
 			jdbcSearchObject.addField("DocExpDateIsMand");
@@ -783,10 +860,17 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				customerDocument.setDocIssuedAuthorityMand(documentType.isDocIssuedAuthorityMand());
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerDocument;
 	}
 
+	public static boolean isDeleteRecord(DocumentDetails finDocumentDetail) {
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, finDocumentDetail.getRecordType())
+				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, finDocumentDetail.getRecordType())) {
+			return true;
+		}
+		return false;
+	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

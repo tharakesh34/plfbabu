@@ -86,6 +86,8 @@ import com.pennant.backend.model.amtmasters.VehicleVersion;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
+import com.pennant.backend.model.applicationmaster.AssetClassificationDetail;
+import com.pennant.backend.model.applicationmaster.AssetClassificationHeader;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
@@ -125,6 +127,9 @@ import com.pennant.backend.model.applicationmaster.MandateSource;
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
 import com.pennant.backend.model.applicationmaster.NPABucket;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
+import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
+import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
+import com.pennant.backend.model.applicationmaster.NPATemplateType;
 import com.pennant.backend.model.applicationmaster.OtherBankFinanceType;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
@@ -144,6 +149,7 @@ import com.pennant.backend.model.applicationmaster.SysNotification;
 import com.pennant.backend.model.applicationmaster.TakafulProvider;
 import com.pennant.backend.model.applicationmaster.TargetDetail;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
+import com.pennant.backend.model.applicationmaster.TownCode;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.applicationmaster.VesselDetail;
 import com.pennant.backend.model.applicationmasters.Flag;
@@ -156,6 +162,7 @@ import com.pennant.backend.model.authorization.AuthorizationLimitDetail;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
+import com.pennant.backend.model.blacklist.NegativeReasoncodes;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.bmtmasters.CheckList;
@@ -221,6 +228,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
 import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.fees.FeePostings;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.AgreementFieldDetails;
 import com.pennant.backend.model.finance.AutoKnockOff;
 import com.pennant.backend.model.finance.AutoKnockOffFeeMapping;
@@ -240,7 +248,6 @@ import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.EtihadCreditBureauDetail;
 import com.pennant.backend.model.finance.FacilityType;
-import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -255,8 +262,13 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
+import com.pennant.backend.model.finance.FinFeeRefundDetails;
+import com.pennant.backend.model.finance.FinFeeRefundHeader;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
+import com.pennant.backend.model.finance.FinOCRCapture;
+import com.pennant.backend.model.finance.FinOCRDetail;
+import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinTypeKnockOff;
@@ -278,11 +290,14 @@ import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.PMAY;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.finance.TATNotificationCode;
 import com.pennant.backend.model.finance.UploadManualAdvise;
+import com.pennant.backend.model.finance.VasMovement;
+import com.pennant.backend.model.finance.VasMovementDetail;
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 import com.pennant.backend.model.finance.commodity.CommodityDetail;
@@ -350,6 +365,8 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.masters.Locality;
 import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
+import com.pennant.backend.model.ocrmaster.OCRDetail;
+import com.pennant.backend.model.ocrmaster.OCRHeader;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -409,6 +426,7 @@ import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.model.systemmasters.Caste;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
+import com.pennant.backend.model.systemmasters.CustTypePANMapping;
 import com.pennant.backend.model.systemmasters.DealerGroup;
 import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.model.systemmasters.Designation;
@@ -434,7 +452,9 @@ import com.pennant.backend.model.systemmasters.PRelationCode;
 import com.pennant.backend.model.systemmasters.PhoneType;
 import com.pennant.backend.model.systemmasters.ProductGroup;
 import com.pennant.backend.model.systemmasters.Profession;
+import com.pennant.backend.model.systemmasters.ProjectUnits;
 import com.pennant.backend.model.systemmasters.Province;
+import com.pennant.backend.model.systemmasters.Qualification;
 import com.pennant.backend.model.systemmasters.Religion;
 import com.pennant.backend.model.systemmasters.Salutation;
 import com.pennant.backend.model.systemmasters.Sector;
@@ -458,9 +478,11 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.document.DocumentCategory;
 import com.pennanttech.pennapps.pff.extension.feature.AbstractCustomModule;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
+import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
+import com.pennanttech.pennapps.pff.verification.model.LegalVetting;
 import com.pennanttech.pennapps.pff.verification.model.PersonalDiscussion;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
@@ -540,6 +562,9 @@ public class PennantJavaUtil {
 	private static String ReceiptProcessWF = "RECEIPT_PROCESS";
 	private final static String WF_VERIFICATION_PD = "VERIFICATION_PD";
 	private final static String WF_RECEIPTUPLOAD = "RECEIPTUPLOAD";
+	private static String FEEREFUND_WF = "FINFEEREFUND_PROCESS";
+	private static String WF_DEPOSITDETAILS = "DEPOSITDETAILS";
+	private static String WF_HOLDDISBURSEMENT = "HOLDDISBURSEMENT";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
@@ -609,7 +634,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("BuilderProjcet",
 				new ModuleMapping("BuilderProjcet", BuilderProjcet.class,
 						new String[] { "BuilderProjcet", "BuilderProjcet_AView" }, masterWF,
-						new String[] { "Id", "Name", "BuilderId", "ApfNo" }, null, 600));
+						new String[] { "Id", "Name", "BuilderIdName", "ApfNo" }, null, 600));
 
 		ModuleUtil.register("BlackListReasonCode",
 				new ModuleMapping("BlackListReasonCode", BlackListReasonCode.class,
@@ -620,6 +645,12 @@ public class PennantJavaUtil {
 		ModuleUtil.register("City",
 				new ModuleMapping("City", City.class, new String[] { "RMTProvinceVsCity", "RMTProvinceVsCity_AView" },
 						masterWF, new String[] { "PCCity", "PCCityName" },
+						new Object[][] { { "CityIsActive", "0", 1 } }, 350));
+
+		ModuleUtil.register("PCCityCLASSIFICATION",
+				new ModuleMapping("PCCityCLASSIFICATION", City.class,
+						new String[] { "RMTProvinceVsCity", "RMTProvinceVsCity_AView" }, masterWF,
+						new String[] { "PCCity", "PCCityName", "PCCityClassification" },
 						new Object[][] { { "CityIsActive", "0", 1 } }, 350));
 
 		ModuleUtil.register("Country",
@@ -802,10 +833,19 @@ public class PennantJavaUtil {
 				new ModuleMapping("Caste", Caste.class, new String[] { "Caste", "Caste_AView" }, masterWF,
 						new String[] { "CasteCode", "CasteDesc" }, new Object[][] { { "CasteIsActive", "0", 1 } },
 						400));
+		ModuleUtil.register("Qualification",
+				new ModuleMapping("Qualification", Qualification.class,
+						new String[] { "Qualification", "Qualification_AView" }, masterWF,
+						new String[] { "Code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 300));
 
 		ModuleUtil.register("Religion",
 				new ModuleMapping("Religion", Religion.class, new String[] { "Religion", "Religion_AView" }, masterWF,
 						new String[] { "ReligionCode", "ReligionDesc" }, new Object[][] { { "Active", "0", 1 } }, 400));
+
+		ModuleUtil.register("NegativeReasoncodes",
+				new ModuleMapping("NegativeReasoncodes", NegativeReasoncodes.class,
+						new String[] { "NegativeReasoncodes", "NegativeReasoncodes_View" }, masterWF,
+						new String[] { "Id", "BlackListCIF", "ReasonId" }, null, 600));
 
 		/************* Application Masters *************/
 		ModuleUtil.register("ReasonCode",
@@ -1138,6 +1178,11 @@ public class PennantJavaUtil {
 				masterWF, new String[] { "InstrumentMode", "PaymentMinAmtperTrans", "PaymentMaxAmtperTran",
 						"PaymentMaxAmtperDay", "ReceiptMinAmtperTran", "ReceiptMaxAmtperTran", "ReceiptMaxAmtperDay" },
 				null, 600));
+		ModuleUtil.register("CustTypePANMapping",
+				new ModuleMapping("CustTypePANMapping", CustTypePANMapping.class,
+						new String[] { "CustTypePANMapping", "CustTypePANMapping_AView" }, masterWF,
+						new String[] { "CustCategory", "CustType", "PANLetter" },
+						new String[][] { { "Active", "0", "1" } }, 600));
 
 		/************* Accounts *************/
 
@@ -1175,10 +1220,13 @@ public class PennantJavaUtil {
 				new ModuleMapping("Customer", Customer.class, new String[] { "Customers", "Customers_AView" }, masterWF,
 						new String[] { "CustID", "CustCIF", "CustShrtName" }, null, 300));
 
-		ModuleUtil.register("CustomerAddres",
-				new ModuleMapping("CustomerAddres", CustomerAddres.class,
-						new String[] { "CustomerAddresses", "CustomerAddresses_AView" }, null,
-						new String[] { "CustID", "CustAddrHNbr", "CustAddrType", "CustAddrPriority" }, null, 600));
+		ModuleUtil
+				.register("CustomerAddres",
+						new ModuleMapping("CustomerAddres", CustomerAddres.class,
+								new String[] { "CustomerAddresses", "CustomerAddresses_AView" }, null,
+								new String[] { "CustID", "CustAddrType", "CustAddrHNbr", "CustAddrStreet",
+										"CustAddrCity", "CustAddrProvince", "CustAddrCountry", "CustAddrZIP" },
+								null, 800));
 
 		ModuleUtil.register("CustomerAdditionalDetail",
 				new ModuleMapping("CustomerAdditionalDetail", CustomerAdditionalDetail.class,
@@ -1633,9 +1681,18 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("HoldDisbursement",
 				new ModuleMapping("HoldDisbursement", HoldDisbursement.class,
-						new String[] { "HoldDisbursement", "HoldDisbursement_AView" }, masterWF,
+						new String[] { "HoldDisbursement", "HoldDisbursement_AView" }, WF_HOLDDISBURSEMENT,
 						new String[] { "FinReference", "Hold", "TotalLoanAmt", "DisbursedAmount", "HoldLimitAmount" },
 						null, 600));
+
+		//PMAY
+		ModuleUtil.register("PMAY", new ModuleMapping("PMAY", PMAY.class, new String[] { "PMAY", "PMAY_AView" },
+				masterWF, new String[] { "FinReference", "Cif", "CustomerName", "ApplicationID" }, null, 600));
+
+		//PMAY Report
+		ModuleUtil.register("PMAYReport",
+				new ModuleMapping("FinanceMain", FinanceMain.class, new String[] { "FinanceMain", "FinanceMain_AView" },
+						null, new String[] { "FinReference", "FinType" }, new Object[][] { { "pMay", "0", 1 } }, 350));
 
 		/************* Credit Review Details *************/
 
@@ -2209,7 +2266,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("DSA",
 				new ModuleMapping("DSA", VehicleDealer.class,
 						new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF,
-						new String[] { "DealerName", "Code" },
+						new String[] { "DealerId", "Code", "DealerName" },
 						new Object[][] { { "DealerType", "0", "DSA" }, { "Active", "0", 1 } }, 350));
 
 		ModuleUtil.register("SourceOfficer", new ModuleMapping("SourceOfficer", VehicleDealer.class,
@@ -2357,6 +2414,11 @@ public class PennantJavaUtil {
 		ModuleUtil.register("RejectFinanceMain",
 				new ModuleMapping("FinanceMain", FinanceMain.class,
 						new String[] { "RejectFinanceMain", "RejectFinanceMain" }, masterWF,
+						new String[] { "FinReference", "FinType" }, null, 300));
+
+		ModuleUtil.register("FeeRefundFinanceMain",
+				new ModuleMapping("FeeRefundFinanceMain", FinanceMain.class,
+						new String[] { "FeeRefundFinanceMain_VIEW", "FeeRefundFinanceMain_VIEW" }, null,
 						new String[] { "FinReference", "FinType" }, null, 300));
 
 		ModuleUtil.register("ReinstateFinance",
@@ -2693,6 +2755,31 @@ public class PennantJavaUtil {
 		ModuleUtil.register("NPABucket",
 				new ModuleMapping("NPABucket", NPABucket.class, new String[] { "NPABUCKETS", "NPABUCKETS_AView" },
 						masterWF, new String[] { "BucketCode", "BucketDesc" }, null, 300));
+		//New Module NPA & Provision Header
+		ModuleUtil.register("NPAProvisionHeader",
+				new ModuleMapping("NPAProvisionHeader", NPAProvisionHeader.class,
+						new String[] { "NPA_PROVISION_HEADER", "NPA_PROVISION_HEADER_AView" }, masterWF,
+						new String[] { "Entity", "FinType" }, null, 600));
+
+		//New Module NPA & Provision Detail
+		ModuleUtil.register("NPAProvisionDetail", new ModuleMapping("NPAProvisionDetail", NPAProvisionDetail.class,
+				new String[] { "NPA_PROVISION_DETAILS", "NPA_PROVISION_DETAILS_AView" }, masterWF, new String[] {
+						"HeaderId", "AssetClassificationId", "nPAActive", "IntSecured", "IntUnSecured", "RBISecured" },
+				null, 600));
+		ModuleUtil.register("AssetClassificationHeader",
+				new ModuleMapping("AssetClassificationHeader", AssetClassificationHeader.class,
+						new String[] { "ASSET_CLSSFICATN_HEADER", "ASSET_CLSSFICATN_HEADER_AView" }, masterWF,
+						new String[] { "Code", "Description", "StageOrder", "Active" }, null, 600));
+		ModuleUtil.register("AssetClassificationDetail",
+				new ModuleMapping("AssetClassificationDetail", AssetClassificationDetail.class,
+						new String[] { "ASSET_CLSSFICATN_DETAILS", "ASSET_CLSSFICATN_DETAILS_AView" }, masterWF,
+						new String[] { "Id", "HeaderId", "FinType" }, null, 600));
+		ModuleUtil.register("NPATemplateType",
+				new ModuleMapping("NPATemplateType", NPATemplateType.class, new String[] { "NPA_TEMPLATE_TYPES" }, null,
+						new String[] { "Id", "Code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 350));
+		ModuleUtil.register("Provision",
+				new ModuleMapping("Provision", Provision.class, new String[] { "FinProvisions", "FinProvisions_AView" },
+						masterWF, new String[] { "FinReference", "FinBranch" }, null, 600));
 
 		ModuleUtil.register("ManualAdvise",
 				new ModuleMapping("ManualAdvise", ManualAdvise.class,
@@ -2756,6 +2843,21 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinFeeReceipt", new ModuleMapping("FinFeeReceipt", FinFeeReceipt.class,
 				new String[] { "FinFeeReceipts", "FinFeeReceipts" }, null, new String[] { "feeID", "id" }, null, 600));
 
+		ModuleUtil.register("FinFeeRefundHeader",
+				new ModuleMapping("FinFeeRefundHeader", FinFeeRefundHeader.class,
+						new String[] { "FinFeeRefundHeader", "FinFeeRefundHeader_Aview" }, FEEREFUND_WF,
+						new String[] { "headerId", "finReference" }, null, 600));
+
+		ModuleUtil.register("FinFeeRefundDetails",
+				new ModuleMapping("FinFeeRefundDetails", FinFeeRefundDetails.class,
+						new String[] { "FinFeeRefundDetails", "FinFeeRefundDetails_Aview" }, masterWF,
+						new String[] { "headerId", "Id" }, null, 600));
+
+		ModuleUtil.register("FinanceMainMaintenance",
+				new ModuleMapping("FinanceMainMaintenance", FinanceMain.class,
+						new String[] { "FinanceMainMaintenance_View" }, null,
+						new String[] { "FinReference", "FinType" }, null, 350));
+
 		/* Payment Instructions */
 		ModuleUtil.register("PaymentHeader",
 				new ModuleMapping("PaymentHeader", PaymentHeader.class,
@@ -2782,7 +2884,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FileBatchStatus",
 				new ModuleMapping("FileBatchStatus", FileBatchStatus.class,
 						new String[] { "FileBatchStatus", "FileBatchStatus_AView" }, null,
-						new String[] { "Id", "FileName" }, null, 600));
+						new String[] { "Id", "FileName" }, new Object[][] { { "FileName", "1", "" } }, 600));
 
 		/* DMS Document Details Module */
 		ModuleUtil.register("DmsDocumentDetails", new ModuleMapping("DmsDocumentDetails", DMSDocumentDetails.class,
@@ -2925,6 +3027,9 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("LegalVerification", new ModuleMapping("LegalVerification", LegalVerification.class,
 				new String[] { "verification_lv", "verification_lv_AView" }, WF_VERIFICATION_LV, null, null, 600));
+
+		ModuleUtil.register("LegalVetting", new ModuleMapping("LegalVetting", LegalVetting.class,
+				new String[] { "verification_vt", "verification_vt_view" }, WF_VERIFICATION_LV, null, null, 600));
 
 		ModuleUtil.register("LVDocument",
 				new ModuleMapping("LVDocument", LVDocument.class,
@@ -3077,7 +3182,7 @@ public class PennantJavaUtil {
 		// Deposit Details
 		ModuleUtil.register("DepositDetails",
 				new ModuleMapping("DepositDetails", DepositDetails.class,
-						new String[] { "DepositDetails", "DepositDetails_AView" }, masterWF,
+						new String[] { "DepositDetails", "DepositDetails_AView" }, WF_DEPOSITDETAILS,
 						new String[] { "BranchCode", "DepositType" }, null, 400));
 		// Deposit Movements
 		ModuleUtil.register("DepositMovements",
@@ -3514,6 +3619,9 @@ public class PennantJavaUtil {
 				new ModuleMapping("UploadHeader", UploadHeader.class,
 						new String[] { "uploadheader", "UPLOADHEADER_AVIEW" }, masterWF,
 						new String[] { "UploadId", "FileName" }, null, 600));
+		ModuleUtil.register("TownCode",
+				new ModuleMapping("TownCode", TownCode.class, new String[] { "TownCode", "TownCode" }, masterWF,
+						new String[] { "TownCode", "TownName" }, new Object[][] { { "Active", "0", 1 } }, 600));
 		// Manual Advise Upload
 		ModuleUtil.register("AdviseUpload",
 				new ModuleMapping("UploadHeader", UploadHeader.class,
@@ -3568,14 +3676,13 @@ public class PennantJavaUtil {
 		ModuleUtil.register("CustomerBankInfoAccntNumbers",
 				new ModuleMapping("CustomerBankInfo", CustomerBankInfo.class,
 						new String[] { "CustomerBankInfo", "CustomerBankInfo_AView" }, null,
-						new String[] { "accountNumber", "accountHolderName" }, null, 300));
+						new String[] { "accountNumber", "accountHolderName" }, null, 350));
 
 		ModuleUtil.register("SVDM",
 				new ModuleMapping("SVDM", VehicleDealer.class,
 						new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF,
 						new String[] { "DealerName", "Code" },
 						new Object[][] { { "DealerType", "0", "SVDM" }, { "Active", "0", 1 } }, 350));
-
 		ModuleUtil.register("Mandate_Sources",
 				new ModuleMapping("Mandate_Sources", MandateSource.class, new String[] { "MANDATE_SOURCES" }, null,
 						new String[] { "Code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 350));
@@ -3591,6 +3698,68 @@ public class PennantJavaUtil {
 						new String[] { "PresentMents_PartnerBank", "PartnerBanks_AView" }, masterWF, new String[] {
 								"PartnerBankCode", "PartnerBankName", "UtilityCode", "SponsorBankCode", "ClientCode" },
 						null, 700));
+
+		ModuleUtil.register("OCRHeader",
+				new ModuleMapping("OCRHeader", OCRHeader.class, new String[] { "OCRHEADER", "OCRHEADER_AView" },
+						masterWF, new String[] { "OcrID", "OcrDescription" }, null, 600));
+
+		ModuleUtil.register("OCRDetail",
+				new ModuleMapping("OCRDetail", OCRDetail.class, new String[] { "OCRDETAILS", "OCRDETAILS_AView" },
+						masterWF, new String[] { "StepSequence" }, null, 600));
+
+		ModuleUtil.register("ProjectUnits",
+				new ModuleMapping("ProjectUnits", ProjectUnits.class,
+						new String[] { "ProjectUnits", "ProjectUnits_AView" }, masterWF,
+						new String[] { "UnitId", "UnitType" }, null, 600));
+		ModuleUtil.register("ProjectTowers",
+				new ModuleMapping("ProjectTowers", ProjectUnits.class,
+						new String[] { "ProjectUnits", "ProjectUnits_AView" }, masterWF,
+						new String[] { "Tower", "UnitType" }, null, 600));
+		ModuleUtil.register("ProjectFloors",
+				new ModuleMapping("ProjectFloors", ProjectUnits.class,
+						new String[] { "ProjectUnits", "ProjectUnits_AView" }, masterWF,
+						new String[] { "FloorNumber", "UnitType" }, null, 600));
+		ModuleUtil.register("UnitNumber",
+				new ModuleMapping("UnitNumber", ProjectUnits.class,
+						new String[] { "ProjectUnits", "ProjectUnits_AView" }, masterWF,
+						new String[] { "UnitNumber", "UnitType" }, null, 600));
+		//Fin OCR Header Details
+		ModuleUtil.register("FinOCRHeader",
+				new ModuleMapping("FinOCRHeader", FinOCRHeader.class,
+						new String[] { "FinOCRHeader", "FinOCRHeader_AView" }, masterWF,
+						new String[] { "OcrID", "OcrDescription" }, null, 300));
+		//Fin OCR Details
+		ModuleUtil.register("FinOCRDetail",
+				new ModuleMapping("FinOCRDetail", FinOCRDetail.class,
+						new String[] { "FinOCRDetails", "FinOCRDetails_AView" }, masterWF,
+						new String[] { "DetailID", "CustomerContribution", "FinancerContribution" }, null, 300));
+		//Fin OCR Capture Details
+		ModuleUtil.register("FinOCRCapture",
+				new ModuleMapping("FinOCRCapture", FinOCRCapture.class,
+						new String[] { "FinOCRCapture", "FinOCRCapture" }, masterWF,
+						new String[] { "Id", "FinReference", "DemandAmount", "PaidAmount" }, null, 300));
+
+		ModuleUtil.register("TechnicalAgency", new ModuleMapping("TechnicalAgency", VehicleDealer.class,
+				new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF,
+				new String[] { "DealerName", "DealerCity" },
+				new Object[][] { { "DealerType", "0", Agencies.TVAGENCY.getKey() }, { "Active", "0", 1 } }, 300));
+		//new module for verification status report
+		ModuleUtil.register("VerificationsReport", new ModuleMapping("VerificationsReport", Verification.class,
+				new String[] { "verificationsreport_view" }, masterWF, new String[] { "KeyReference" }, null, 300));
+
+		ModuleUtil.register("ChildLoanFinanceTypes",
+				new ModuleMapping("RMTFinanceTypes", FinanceType.class,
+						new String[] { "RMTFinanceTypes", "RMTFinanceTypes" }, masterWF,
+						new String[] { "FinType", "FinTypeDesc" }, null, 450));
+
+		ModuleUtil.register("VasMovement",
+				new ModuleMapping("VasMovement", VasMovement.class, new String[] { "VasMovement", "VasMovement_AView" },
+						masterWF, new String[] { "vasMovementId", "finReference" }, null, 500));
+
+		ModuleUtil.register("VasMovementDetail",
+				new ModuleMapping("VasMovementDetail", VasMovementDetail.class,
+						new String[] { "VasMovementDetails", "VasMovementDetails_AView" }, masterWF,
+						new String[] { "vasMovementId", "vasMovementDetailId" }, null, 300));
 
 		registerCustomModules();
 	}

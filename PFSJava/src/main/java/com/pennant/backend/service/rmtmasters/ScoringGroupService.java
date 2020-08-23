@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.rmtmasters;
 
+import java.math.BigDecimal;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
 
@@ -59,4 +61,6 @@ public interface ScoringGroupService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	ScoringGroup getScoringGroupByRiskScore(BigDecimal score, BigDecimal netSal);
 }

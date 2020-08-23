@@ -52,6 +52,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -270,6 +271,8 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 			try {
 				doSave();
 			} catch (WrongValuesException e) {
+				throw e;
+			} catch (WrongValueException e) {
 				throw e;
 			} catch (Exception e) {
 				MessageUtil.showError(e);

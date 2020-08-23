@@ -134,9 +134,9 @@
 										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" vflex="1">
 											<columns>
 												<column width="220px" />
-												<column />
+												<column width="360px" />
 												<column width="220px" />
-												<column />
+												<column width="360px" />
 											</columns>
 											<rows>
 												<row>
@@ -421,6 +421,15 @@
 													<label id="label_FinanceMainDialog_SalesDepartment" value="${c:l('label_FinanceMainDialog_SalesDepartment.value')}" />
 													<extendedcombobox id="salesDepartment" />
 												</row>
+												<row>
+													<label id="label_FinanceMainDialog_ReqloanTenor" value="${c:l('label_FinanceMainDialog_ReqloanTenor.value')}" />
+													<hbox>
+														<space spacing="2px" id="space_ReqloanTenor" sclass="mandatory" />
+														<intbox id="reqLoanTenor" width="50px" maxlength="3" style="text-align:right" />
+													</hbox>
+													<label id="label_FinanceMainDialog_ReqLoanAmt" value="${c:l('label_FinanceMainDialog_RequestedLoanAmt.value')}" />
+													<currencyBox id="reqLoanAmt" />
+												</row>
 												<!-- Facility Details Start -->
 												<row id="row_commitment">
 													<label id="label_FinanceMainDialog_CommitRef" value="${c:l('label_FinanceMainDialog_CommitRef.value')}" />
@@ -541,6 +550,13 @@
 														<checkbox id="finIsRateRvwAtGrcEnd" checked="false" />
 													</hbox>
 												</row>
+												<row id="rowFinOCRrequired">
+													<label id="labelFinanceMainDialogFinOCRRequired" value="${c:l('label_FinanceMainDialog_FinOCRRequired.value')}" />
+													<hbox id="hboxFinOCRRequired">
+														<space spacing="2px" />
+														<checkbox id="finOCRRequired" checked="false" />
+													</hbox>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>
@@ -576,9 +592,9 @@
 										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 											<columns>
 												<column width="220px" />
-												<column />
+												<column width="360px" />
 												<column width="220px" />
-												<column />
+												<column width="360px" />
 											</columns>
 											<rows>
 												<row>
@@ -704,7 +720,25 @@
 														<intbox id="grcAdvTerms" />
 													</hbox>
 												</row>
-
+												<row id="row_underConstruction" visible="false">
+													<label id="label_UnderConstruction" value="${c:l('label_FinanceMainDialog_UnderConstruction.value')}" />
+													<hbox id="hbox_UnderConstruction">
+														<space id="space_UnderConstruction" spacing="2px" />
+														<checkbox id="underConstruction" />
+													</hbox>
+												</row>
+												<row id="row_autoIncrGrcEndDate">
+													<label id="label_AutoIncrGrcEndDate" value="${c:l('label_FinanceMainDialog_AutoIncrGrcEndDate.value')}" />
+													<hbox id="hbox_AutoIncrGrcEndDate">
+														<space id="space_AutoIncrGrcEndDate" spacing="2px" />
+														<checkbox id="autoIncrGrcEndDate" />
+													</hbox>
+													<label id="label_GrcPeriodAftrFullDisb" value="${c:l('label_FinanceMainDialog_GrcPeriodAftrFullDisb.value')}" />
+													<hbox id="hbox_GrcPeriodAftrFullDisb">
+														<space id="space_GrcPeriodAftrFullDisb" spacing="2px" />
+														<checkbox id="grcPeriodAftrFullDisb" />
+													</hbox>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>
@@ -713,9 +747,9 @@
 										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" vflex="1">
 											<columns>
 												<column width="220px" />
-												<column />
+												<column width="360px" />
 												<column width="220px" />
-												<column />
+												<column width="360px" />
 											</columns>
 											<rows>
 												<row id="noOfTermsRow">
@@ -1015,9 +1049,9 @@
 										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" vflex="1">
 											<columns>
 												<column width="220px" />
-												<column />
+												<column width="360px" />
 												<column width="220px" />
-												<column />
+												<column width="360px" />
 											</columns>
 											<rows>
 												<row>
@@ -1097,9 +1131,9 @@
 										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" vflex="1">
 											<columns>
 												<column width="220px" />
-												<column />
+												<column width="360px" />
 												<column width="220px" />
-												<column />
+												<column width="360px" />
 											</columns>
 											<rows>
 												<row>

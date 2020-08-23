@@ -45,7 +45,7 @@ public class InterestCertificate {
 	private String addressType3;
 	private String addressType4;
 	private String addressType5;
-	private String custFlatNbr;
+	private String custFlatNbr = "";
 	private String courseName;
 	private String collegeName;
 	private String universityName;
@@ -53,6 +53,23 @@ public class InterestCertificate {
 	private String totOustandingamt;
 	private String totalPftBal;
 	private String totalPriBal;
+	private String custAddress = "";
+
+	private BigDecimal emiAmount = BigDecimal.ZERO;
+	private String pftSchd = "0.00";
+	private String priSchd = "0.00";
+	private String emiAmt = "0.00";
+
+	private String pftSchdInWords = "";
+	private String priSchdInWords = "";
+	private String emiAmtInWords = "";
+
+	private String schdPftPaidInWords = "";
+	private String schdPriPaidInWords = "";
+	private String totalPaidInWords = "";
+
+	private String grcPft = "0.00";
+	private String grcPftPaid = "0.00";
 
 	// Getter and Setter
 	public String getCustName() {
@@ -437,6 +454,110 @@ public class InterestCertificate {
 
 	public void setTotalPriBal(String totalPriBal) {
 		this.totalPriBal = totalPriBal;
+	}
+
+	public BigDecimal getEmiAmount() {
+		return emiAmount;
+	}
+
+	public void setEmiAmount(BigDecimal emiAmount) {
+		this.emiAmount = emiAmount;
+	}
+
+	public String getPftSchd() {
+		return pftSchd;
+	}
+
+	public void setPftSchd(String pftSchd) {
+		this.pftSchd = pftSchd;
+	}
+
+	public String getPriSchd() {
+		return priSchd;
+	}
+
+	public void setPriSchd(String priSchd) {
+		this.priSchd = priSchd;
+	}
+
+	public String getEmiAmt() {
+		return emiAmt;
+	}
+
+	public void setEmiAmt(String emiAmt) {
+		this.emiAmt = emiAmt;
+	}
+
+	public String getPftSchdInWords() {
+		return pftSchdInWords;
+	}
+
+	public void setPftSchdInWords(String pftSchdInWords) {
+		this.pftSchdInWords = pftSchdInWords;
+	}
+
+	public String getPriSchdInWords() {
+		return priSchdInWords;
+	}
+
+	public void setPriSchdInWords(String priSchdInWords) {
+		this.priSchdInWords = priSchdInWords;
+	}
+
+	public String getEmiAmtInWords() {
+		return emiAmtInWords;
+	}
+
+	public void setEmiAmtInWords(String emiAmtInWords) {
+		this.emiAmtInWords = emiAmtInWords;
+	}
+
+	public String getSchdPftPaidInWords() {
+		return schdPftPaidInWords;
+	}
+
+	public void setSchdPftPaidInWords(String schdPftPaidInWords) {
+		this.schdPftPaidInWords = schdPftPaidInWords;
+	}
+
+	public String getSchdPriPaidInWords() {
+		return schdPriPaidInWords;
+	}
+
+	public void setSchdPriPaidInWords(String schdPriPaidInWords) {
+		this.schdPriPaidInWords = schdPriPaidInWords;
+	}
+
+	public String getTotalPaidInWords() {
+		return totalPaidInWords;
+	}
+
+	public void setTotalPaidInWords(String totalPaidInWords) {
+		this.totalPaidInWords = totalPaidInWords;
+	}
+
+	public String getCustAddress() {
+		return custAddress;
+	}
+
+	public void setCustAddress(String custAddress) {
+		this.custAddress = custAddress;
+	}
+
+	public String getGrcPft() {
+		return grcPft;
+	}
+
+	public void setGrcPft(String grcPft) {
+		this.grcPft = grcPft;
+	}
+
+	public String getGrcPftPaid() {
+		return grcPftPaid;
+	}
+
+	public void setGrcPftPaid(String grcPftPaid) {
+		this.grcPftPaid = grcPftPaid;
 	}
 
 }

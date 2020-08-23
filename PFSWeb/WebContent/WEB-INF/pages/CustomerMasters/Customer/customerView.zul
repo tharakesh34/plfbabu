@@ -24,42 +24,44 @@
 					<west style="overflow-y: auto;overflow-x: hidden;" border="none" margins="0,0,0,0">
 						<div style="border:none;background:white;width: 79px; height: 319px;">
 							<vbox style="border: 1px solid #d7d7d7;padding-top:10px;padding-left:20px;padding-bottom:10px;">
-								<image id="imgbasicDetails" src="/images/icons/BasicDetailss.svg" tooltiptext="Basic Details"
+								<image id="imgbasicDetails" src="/images/icons/BasicDetailss.svg" tooltiptext="${c:l('Basic_Details')}"
 									style="background:#d9d9d9;border-radius: 7px;
 								       box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12)!important;cursor:pointer"
 									width="60%" />
 								<separator />
-								<image id="imgkycDetails" src="/images/icons/KYCDetails.svg" tooltiptext="KYC Details" width="60%"
-									style="cursor:pointer;" />
-								<separator />
-								<image id="imgfinancialDetails" src="/images/icons/Financial.svg" tooltiptext="Financial Details" width="60%"
-									style="cursor:pointer;" />
-								<separator />
-								<image id="imgshareHolderDetails" src="/images/icons/Share_Holder.svg" tooltiptext="ShareHolder Details"
+								<image id="imgkycDetails" src="/images/icons/KYCDetails.svg" tooltiptext="${c:l('label_KYCDetails')}"
 									width="60%" style="cursor:pointer;" />
 								<separator />
-								<image id="imgbankingDetails" src="/images/icons/BankDetails.svg" tooltiptext="Banking Details" width="60%"
-									style="cursor:pointer;" />
+								<image id="imgfinancialDetails" src="/images/icons/Financial.svg" tooltiptext="${c:l('FinancialDetails')}"
+									width="60%" style="cursor:pointer;" />
 								<separator />
-								<image id="imghelp" src="/images/icons/Help.svg" tooltiptext="Help" width="60%" style="cursor:pointer;" />
+								<image id="imgshareHolderDetails" src="/images/icons/Share_Holder.svg" tooltiptext="${c:l('window_DirectorDetailDialog.title')}"
+									width="60%" style="cursor:pointer;" />
 								<separator />
-								<image id="imgadditionalDetails" src="/images/icons/Additional.svg" tooltiptext="Additional Details"
+								<image id="imgbankingDetails" src="/images/icons/BankDetails.svg" tooltiptext="${c:l('label_CustomerDialog_BankingDetails.value')}"
+									width="60%" style="cursor:pointer;" />
+								<separator />
+								<image id="imghelp" src="/images/icons/Help.svg" tooltiptext="${c:l('label_CustomerDialog_HelpTab.value')}"
+									width="60%" style="cursor:pointer;" />
+								<separator />
+								<image id="imgadditionalDetails" src="/images/icons/Additional.svg" tooltiptext="${c:l('AdditionalDetails')}"
 									width="60%" style="cursor:pointer;" />
 								<separator />
 								<image id="imgcustomerSummary" src="/images/icons/Customersummary.svg"
 									style="background:#d9d9d9;border-radius: 7px;
 								       box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12)!important;cursor:pointer;"
-									tooltiptext="Customer Summary" width="60%" />
+									tooltiptext="${c:l('menu_Item_CustomerSummary')}" width="60%" />
 								<separator />
-								<image id="imgloanDetails" src="/images/icons/LoanDetails.svg" tooltiptext="Loan Details" width="60%"
+								<image id="imgloanDetails" src="/images/icons/LoanDetails.svg" tooltiptext="${c:l('LoanDetails')}" width="60%"
 									style="cursor:pointer;" />
 								<separator />
-								<image id="imgcollateralDetails" src="/images/icons/collateral_details.svg" tooltiptext="Collateral Details"
+								<image id="imgcollateralDetails" src="/images/icons/collateral_details.svg" tooltiptext="${c:l('menu_Item_CollateralDetail')}"
 									width="60%" style="cursor:pointer;" />
 								<separator />
-								<image id="imgvasDetails" src="/images/icons/VAS.svg" tooltiptext="VAS Details" width="60%" style="cursor:pointer;" />
+								<image id="imgvasDetails" src="/images/icons/VAS.svg" tooltiptext="${c:l('VasDetails')}" width="60%"
+									style="cursor:pointer;" />
 								<separator />
-								<image id="imgpendingLoanDetails" src="/images/icons/Pending_loan.svg" tooltiptext="PendingLoan Details"
+								<image id="imgpendingLoanDetails" src="/images/icons/Pending_loan.svg" tooltiptext="${c:l('pendingLoanDetails')}"
 									width="60%" style="cursor:pointer;" />
 								<separator />
 							</vbox>
@@ -69,7 +71,8 @@
 						<box style="border:none;padding-left:30px;padding-right:30px;">
 							<hbox pack="stretch" width="100%" widths="35%,30%,35%" style="border:none;">
 								<toolbar style="padding-top:15px;background:white;border:none;" align="start" sclass="toolbar-start">
-									<label style="font-size:15px" id="customerTitle" value="Customer View"></label>
+									<label style="font-size:15px" id="customerTitle" value="${c:l('menu_Item_CustomersEnquiry')}">
+									</label>
 
 								</toolbar>
 							</hbox>
@@ -123,7 +126,8 @@
 												</vlayout>
 											</hbox>
 											<hbox id="statusBar" style="border-radius: 7px;padding-right:20px;cursor:pointer;" visible="false">
-												<vlayout style=" cursor:pointer;"></vlayout>
+												<vlayout style=" cursor:pointer;">
+												</vlayout>
 												<progressmeter id="basicProgress" sclass="progressmeter" width="1250px" style="cursor:pointer;" />
 											</hbox>
 										</vlayout>
@@ -615,7 +619,7 @@
 									<div id="gb_kycDetails" style="padding-left: 30px; padding-right: 30px;">
 										<hbox pack="stretch" id="hbox_kycDetails" style="border-style :none;" width="100%" widths="100%,0%,0%">
 											<toolbar height="100%" align="start" style="padding-top: 15px; background:white; border: none;">
-												<label value="KYC Details" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
+												<label value="${c:l('label_KYCDetails')}" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end" style="padding-right: 18px; padding-top: 15px;background:white;">
 											</toolbar>
@@ -762,7 +766,7 @@
 									<div id="gb_financialDetails" style="padding-left: 30px; padding-right: 30px;">
 										<hbox pack="stretch" id="hbox_financialDetails" style="border-style : none;" width="100%" widths="100%,0%,0%">
 											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
-												<label value="Financial Details" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
+												<label value="${c:l('FinancialDetails')}" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
 												style="padding-right: 18px; padding-top: 15px; background: white;">
@@ -845,7 +849,7 @@
 									<div id="gb_bankingDetails" style="padding-left: 30px; padding-right: 30px;">
 										<hbox pack="stretch" id="hbox_bankingDetails" style="border-style : none;" width="100%" widths="100%,0%,0%">
 											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
-												<label value="Banking Details" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
+												<label value="${c:l('label_CustomerDialog_BankingDetails.value')}" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
 												style="padding-right: 18px; padding-top: 15px; background: white;">
@@ -976,7 +980,7 @@
 										<hbox pack="stretch" id="hbox_helpDetails" style=" padding-right: 20px;border-style : none;" width="100%"
 											widths="100%,0%,0%">
 											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
-												<label value="Help" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
+												<label value="${c:l('label_Help')}" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
 												style="padding-right: 18px; padding-top: 15px; background: white;">
@@ -1088,7 +1092,8 @@
 									</div>
 									<div id="gb_additionalDetails" style="padding-left: 30px; padding-right: 30px;">
 										<tabbox tabscroll="false" width="100%" vflex="max" maximalHeight="true">
-											<tabs id="tabsIndexCenter" style="background:white;"></tabs>
+											<tabs id="tabsIndexCenter" style="background:white;">
+											</tabs>
 											<tabpanels id="tabpanels"
 												style="border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"

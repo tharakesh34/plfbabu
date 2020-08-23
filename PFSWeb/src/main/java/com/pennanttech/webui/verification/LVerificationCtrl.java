@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -20,6 +21,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
@@ -50,6 +52,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.CollateralHeaderDialogCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
@@ -130,6 +133,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 
 	private boolean fromVerification;
 	private LVInitiationListCtrl lvInitiationListCtrl;
+	private boolean verificationSync = SysParamUtil.isAllowed(SMTParameterConstants.ALW_VERIFICATION_SYNC);
 
 	/**
 	 * default constructor.<br>
@@ -867,10 +871,18 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			this.listBoxWaiver.appendChild(item);
 
 			if (enqiryModule) {
-				listheader_LegalVerification_IReInitRemarks.setVisible(false);
-				listheader_LegalVerification_Initiation_ReInitiate.setVisible(false);
-				listheader_LegalVerification_WReInitRemarks.setVisible(false);
-				listheader_LegalVerification_Initiation_WReInitiate.setVisible(false);
+				if (listheader_LegalVerification_IReInitRemarks != null) {
+					listheader_LegalVerification_IReInitRemarks.setVisible(false);
+				}
+				if (listheader_LegalVerification_Initiation_ReInitiate != null) {
+					listheader_LegalVerification_Initiation_ReInitiate.setVisible(false);
+				}
+				if (listheader_LegalVerification_WReInitRemarks != null) {
+					listheader_LegalVerification_WReInitRemarks.setVisible(false);
+				}
+				if (listheader_LegalVerification_Initiation_WReInitiate != null) {
+					listheader_LegalVerification_Initiation_WReInitiate.setVisible(false);
+				}
 				reason.setReadonly(true);
 				remarks.setReadonly(true);
 			}
@@ -1042,7 +1054,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				verification.setDecisionRemarks(textbox.getValue());
 				if (verification.getDecision() == Decision.OVERRIDE.getKey()
 						&& StringUtils.isEmpty(verification.getDecisionRemarks())) {
-					throw new WrongValueException(textbox, "Remarks are mandatory when Decision is Override");
+					throw new WrongValueException(textbox, Labels.getLabel("label_OVERRIDE_Validation"));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -1095,7 +1107,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				verification.setDecisionRemarks(textbox.getValue());
 				if (verification.getDecision() == Decision.OVERRIDE.getKey()
 						&& StringUtils.isEmpty(verification.getDecisionRemarks())) {
-					throw new WrongValueException(textbox, "Remarks are mandatory when Decision is Override");
+					throw new WrongValueException(textbox, Labels.getLabel("label_OVERRIDE_Validation"));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -1209,14 +1221,28 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		List<Verification> verificationsList = verificationService.getVerifications(this.verification.getKeyReference(),
 				VerificationType.LV.getKey());
 
-		for (Verification oldVrf : verificationsList) {
+		List<Verification> finalList = new ArrayList<>();
+
+		if (CollectionUtils.isNotEmpty(verificationsList)) {
+			for (Verification verification : verificationsList) {
+				if (CollectionUtils.isNotEmpty(financeDetail.getCollateralAssignmentList())) {
+					for (CollateralAssignment assign : financeDetail.getCollateralAssignmentList()) {
+						if (StringUtils.equals(verification.getReferenceFor(), assign.getCollateralRef())) {
+							finalList.add(verification);
+						}
+					}
+				}
+			}
+		}
+
+		for (Verification oldVrf : finalList) {
 			for (Verification newVrf : verification.getVerifications()) {
 				if (newVrf.getId() == oldVrf.getId() && newVrf.getRequestType() == RequestType.WAIVE.getKey()) {
 					BeanUtils.copyProperties(newVrf, oldVrf);
 				}
 			}
 		}
-		this.verification.setVerifications(verificationsList);
+		this.verification.setVerifications(finalList);
 		verificationService.setLVDetails(this.verification.getVerifications());
 	}
 
@@ -1260,7 +1286,9 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		for (long documentId : requiredCollateralDocs) {
 			if (!collateralDocuments.contains(documentId)) {
 				MessageUtil.showError("Required collateral documents should be initiate/Waive");
-				tab.setSelected(true);
+				if (tab != null) {
+					tab.setSelected(true);
+				}
 				return false;
 			}
 		}
@@ -1275,6 +1303,13 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				MessageUtil.showError("Legal Verification Re-Initiation is allowed only when user action is save");
 				return false;
 			}
+
+			if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave && verificationSync) {
+				LegalVerification legalVerification = new LegalVerification();
+				legalVerification.setVerificationId(verification.getId());
+				legalVerification = legalVerificationService.getLegalVerification(legalVerification, "_View");
+				verification.setLegalVerification(legalVerification);
+			}
 		}
 		return true;
 	}
@@ -1288,7 +1323,21 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				verificationService.setLastStatus(verification);
 			}
 		}
-		return list;
+
+		List<Verification> finalList = new ArrayList<>();
+
+		if (CollectionUtils.isNotEmpty(list)) {
+			for (Verification verification : list) {
+				if (CollectionUtils.isNotEmpty(financeDetail.getCollateralAssignmentList())) {
+					for (CollateralAssignment assign : financeDetail.getCollateralAssignmentList()) {
+						if (StringUtils.equals(verification.getReferenceFor(), assign.getCollateralRef())) {
+							finalList.add(verification);
+						}
+					}
+				}
+			}
+		}
+		return finalList;
 	}
 
 	private List<Verification> getInitVerifications() {
@@ -1345,6 +1394,9 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		try {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.LV, PennantConstants.TRAN_WF, initType);
 			refreshList();
+			String msg = Labels.getLabel("LV_INITIATION",
+					new String[] { financeDetail.getFinScheduleData().getFinReference() });
+			Clients.showNotification(msg, "info", null, null, -1);
 			closeDialog();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

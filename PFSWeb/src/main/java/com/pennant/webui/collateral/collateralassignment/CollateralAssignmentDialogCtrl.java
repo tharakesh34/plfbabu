@@ -286,7 +286,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			CollateralSetup collateralSetup = getCollateralSetup(this.collateralRef.getValue());
 			if (collateralSetup == null) {
 				collateralSetup = getCollateralSetupService().getCollateralSetupByRef(this.collateralRef.getValue(), "",
-						true);
+						false);
 			}
 			map.put("collateralSetup", collateralSetup);
 			map.put("fromLoan", true);
@@ -533,6 +533,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		int formatter = CurrencyUtil.getFormat(getCollateralAssignment().getCollateralCcy());
 		this.collateralRef.setProperties("CollateralSetup", "CollateralRef", "", true, 20);
 		this.collateralRef.setTextBoxWidth(143);
+		this.collateralRef.setWhereClause(getWhereClause().toString());
 
 		this.bankValuation.setProperties(false, formatter);
 
@@ -815,6 +816,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		}
 		getCollateralHeaderDialogCtrl().setCollateralSetups(collateralSetupList);
 		setCollateralTypeList(getFinanceDetail().getCollaterals());
+		getCollateralHeaderDialogCtrl().setCollateralSetups(collateralSetupList);
 		this.collateralRef.setValue(collateralSetup.getCollateralRef());
 		setAssignment(collateralSetup, false);
 	}
@@ -1192,6 +1194,28 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	//Getting the approved collateral setup values from search object and adding the newly created collateral setup list
 	private void setCollateralTypeList(List<CollateralSetup> collateralSetupList) {
 
+		StringBuilder whereClause = getWhereClause();
+
+		Search search = new Search(CollateralSetup.class);
+		search.addTabelName("CollateralSetup_AView");
+		search.addWhereClause(whereClause.toString());
+		List<CollateralSetup> collateralSetupSearchList = searchProcessor.getResults(search);
+
+		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
+			collateralSetupSearchList = new ArrayList<CollateralSetup>();
+		}
+
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+			collateralSetupSearchList.addAll(collateralSetupList);
+		}
+		//Setting null if collateralSetupSearchList is empty to throw the validation for collateralRef
+		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
+			collateralSetupSearchList = null;
+		}
+		this.collateralRef.setList(collateralSetupSearchList);
+	}
+
+	private StringBuilder getWhereClause() {
 		StringBuilder whereClause = new StringBuilder();
 		if (StringUtils.isNotEmpty(finType)) {
 			String collateralTypes = getFinanceTypeService().getAllowedCollateralTypes(finType);
@@ -1231,20 +1255,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 					.append(" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId =");
 			whereClause.append(customerId).append(")) )");
 		}
-
-		Search search = new Search(CollateralSetup.class);
-		search.addTabelName("CollateralSetup_AView");
-		search.addWhereClause(whereClause.toString());
-		List<CollateralSetup> collateralSetupSearchList = searchProcessor.getResults(search);
-
-		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
-			collateralSetupSearchList = new ArrayList<CollateralSetup>();
-		}
-
-		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
-			collateralSetupSearchList.addAll(collateralSetupList);
-		}
-		this.collateralRef.setList(collateralSetupSearchList);
+		return whereClause;
 	}
 
 	// WorkFlow Components

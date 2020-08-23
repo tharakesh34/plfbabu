@@ -694,6 +694,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @throws IllegalAccessException
 	 */
 
+	@Override
 	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException {
 		logger.debug("Entering");
 
@@ -828,6 +829,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @return auditHeader
 	 */
 
+	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
@@ -1817,7 +1819,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			postingsPreparationUtil.postAccounting(aeEvent);
 
 		} else if (StringUtils.equals(VASConsatnts.STATUS_CANCEL, vASRecording.getVasStatus())) {
-			postingsPreparationUtil.postReveralsByFinreference(vASRecording.getVasReference(), false);
+			postingsPreparationUtil.postReveralsByFinreference(vASRecording.getVasReference());
 		}
 
 		logger.debug("Leaving");

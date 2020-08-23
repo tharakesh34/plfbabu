@@ -50,7 +50,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -75,7 +76,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 
 public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
-	private static Logger logger = Logger.getLogger(FeeTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FeeTypeDAOImpl.class);
 
 	public FeeTypeDAOImpl() {
 		super();
@@ -319,28 +320,25 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	}
 
 	@Override
-	public long getFinFeeTypeIdByFeeType(String feeTypeCode, String type) {
-		logger.debug("Entering");
+	public Long getFinFeeTypeIdByFeeType(String feeTypeCode, String type) {
+		logger.debug(Literal.ENTERING);
 
-		long feeTypeId = Long.MIN_VALUE;
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT feeTypeID From FeeTypes");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" WHERE FeeTypeCode = :FeeTypeCode ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" feeTypeID from FeeTypes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FeeTypeCode = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FeeTypeCode", feeTypeCode);
+		logger.trace(Literal.SQL + sql.toString());
+
+		logger.debug(Literal.LEAVING);
 
 		try {
-			feeTypeId = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { feeTypeCode }, Long.class);
 		} catch (EmptyResultDataAccessException e) {
-			feeTypeId = Long.MIN_VALUE;
+			logger.warn("fee type is not available for the fee type code {}", feeTypeCode);
 		}
 
-		logger.debug("Leaving");
-
-		return feeTypeId;
+		return null;
 	}
 
 	/**

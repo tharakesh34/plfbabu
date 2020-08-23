@@ -115,6 +115,10 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	private transient List<SubventionScheduleDetail> subventionSchedules = null;
 	private BigDecimal subventionAmount = BigDecimal.ZERO;
 
+	// Inst Based Schd
+	private boolean instCalReq = true;
+	private long linkedDisbId;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -235,6 +239,14 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 
 	public void setAutoDisb(boolean autoDisb) {
 		this.autoDisb = autoDisb;
+	}
+
+	public boolean isInstCalReq() {
+		return instCalReq;
+	}
+
+	public void setInstCalReq(boolean instCalReq) {
+		this.instCalReq = instCalReq;
 	}
 
 	public int getDisbSeq() {
@@ -475,6 +487,14 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 
 	public void setDeductInsDisb(BigDecimal deductInsDisb) {
 		this.deductInsDisb = deductInsDisb;
+	}
+
+	public long getLinkedDisbId() {
+		return linkedDisbId;
+	}
+
+	public void setLinkedDisbId(long linkedDisbId) {
+		this.linkedDisbId = linkedDisbId;
 	}
 
 }

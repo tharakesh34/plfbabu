@@ -44,7 +44,6 @@ package com.pennant.backend.service.financemanagement.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,10 +53,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ProvisionCalculationUtil;
-import com.pennant.app.util.ReferenceGenerator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionMovementDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -69,14 +69,20 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.financemanagement.Provision;
+import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.financemanagement.ProvisionService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Provision</b>.<br>
@@ -158,15 +164,12 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
-			return auditHeader;
-		}
-		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -176,59 +179,15 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		if (provision.isWorkflow()) {
 			tableType = "_Temp";
 		}
-		FinanceDetail financeDetail = provision.getFinanceDetail();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
-		long serviceUID = Long.MIN_VALUE;
-		if (financeDetail.getFinScheduleData().getFinServiceInstructions().isEmpty()) {
-			FinServiceInstruction finServInst = new FinServiceInstruction();
-			finServInst.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
-			finServInst.setFinEvent(financeDetail.getModuleDefiner());
-			financeDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
-		}
-
-		for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
-			if (finSerList.getInstructionUID() == Long.MIN_VALUE) {
-				if (serviceUID == Long.MIN_VALUE) {
-					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
-				}
-				finSerList.setInstructionUID(serviceUID);
-			} else {
-				serviceUID = finSerList.getInstructionUID();
-			}
-		}
-
-		if (!provision.isWorkflow()) {
-
-			//Check Finance is RIA Finance Type or Not
-			Date dateValueDate = DateUtility.getAppValueDate();
-			getProvisionCalculationUtil().processProvCalculations(provision, dateValueDate, false, true, false);
+		if (provision.isNew()) {
+			getProvisionDAO().save(provision, tableType);
 		} else {
-
-			if (provision.isNew()) {
-				getProvisionDAO().save(provision, tableType);
-			} else {
-				getProvisionDAO().update(provision, tableType);
-			}
-
-		}
-
-		// Save Document Details
-		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
-			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType, financeMain,
-					FinanceConstants.FINSER_EVENT_PROVISION, serviceUID);
-			auditDetails.addAll(details);
-		}
-
-		// set Finance Check List audit details to auditDetails
-		//=======================================
-		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType, serviceUID));
+			getProvisionDAO().update(provision, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
@@ -245,10 +204,10 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -256,7 +215,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		getProvisionDAO().delete(provision, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -276,6 +235,11 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 			provision.setProvisionMovementList(getProvisionMovementDAO().getProvisionMovementListById(id, "_AView"));
 		}
 		return provision;
+	}
+
+	@Override
+	public Provision getProvisionById(String finReference, String tableType) {
+		return getProvisionDAO().getProvisionById(finReference, tableType);
 	}
 
 	/**
@@ -316,7 +280,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 	public AuditHeader doApprove(AuditHeader auditHeader)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
@@ -326,44 +290,36 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		Provision provision = new Provision();
 		BeanUtils.copyProperties((Provision) auditHeader.getAuditDetail().getModelData(), provision);
 
-		FinanceDetail financeDetail = provision.getFinanceDetail();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		long serviceUID = Long.MIN_VALUE;
-		for (FinServiceInstruction finServInst : provision.getFinanceDetail().getFinScheduleData()
-				.getFinServiceInstructions()) {
-			serviceUID = finServInst.getInstructionUID();
-		}
-		//Provision Postings Process
-		Date dateValueDate = DateUtility.getAppValueDate();
-		getProvisionCalculationUtil().processProvCalculations(provision, dateValueDate, false, true, false);
-
-		// set Check list details Audit
-		//=======================================
-		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-			auditHeader.getAuditDetails().addAll(getCheckListDetailService().doApprove(financeDetail, "", serviceUID));
-		}
-
-		// Save Document Details
-		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
-			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "", financeMain, FinanceConstants.FINSER_EVENT_PROVISION,
-					serviceUID);
-			auditHeader.setAuditDetails(details);
-		}
-
 		getProvisionDAO().delete(provision, "_Temp");
 
-		// Document Details delete
-		//=======================================
-		listDocDeletion(provision.getFinanceDetail(), "_Temp");
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(provision.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(getProvisionDAO().getProvisionById(provision.getId(), ""));
+		}
 
-		// Checklist Details delete
-		//=======================================
-		getCheckListDetailService().delete(provision.getFinanceDetail(), "_Temp", tranType);
+		if (provision.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+			tranType = PennantConstants.TRAN_DEL;
+			getProvisionDAO().delete(provision, TableType.MAIN_TAB.getSuffix());
+		} else {
+			provision.setRoleCode("");
+			provision.setNextRoleCode("");
+			provision.setTaskId("");
+			provision.setNextTaskId("");
+			provision.setWorkflowId(0);
 
-		// Fee charges deletion
-		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),
-				provision.getFinanceDetail().getModuleDefiner(), false, "_Temp");
+			long linkiedTranId = executeAccountingProcess(auditHeader);
+			provision.setProvLinkedTranId(linkiedTranId);
+			saveProvisionMovement(provision);
+
+			if (provision.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_ADD;
+				provision.setRecordType("");
+				getProvisionDAO().save(provision, TableType.MAIN_TAB.getSuffix());
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+				provision.setRecordType("");
+				getProvisionDAO().update(provision, TableType.MAIN_TAB.getSuffix());
+			}
+		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -373,7 +329,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		auditHeader.getAuditDetail().setModelData(provision);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
@@ -400,10 +356,10 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 	public AuditHeader doReject(AuditHeader auditHeader)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -445,7 +401,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		getCheckListDetailService().delete(provision.getFinanceDetail(), "_Temp", tranType);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
@@ -462,18 +418,18 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 	 */
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 		auditHeader = nextProcess(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		Provision provision = (Provision) auditDetail.getModelData();
 
@@ -608,6 +564,102 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		logger.debug("Leaving ");
 
 		return auditHeader;
+	}
+
+	/**
+	 * Method for Execute posting Details on Core Banking Side
+	 * 
+	 * @param auditHeader
+	 * @param curBDay
+	 * @return
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws AccountNotFoundException
+	 */
+
+	private long executeAccountingProcess(AuditHeader auditHeader) {
+		logger.debug("Entering");
+
+		Provision provision = new Provision();
+		BeanUtils.copyProperties((Provision) auditHeader.getAuditDetail().getModelData(), provision);
+		FinanceMain financeMain = provision.getFinanceDetail().getFinScheduleData().getFinanceMain();
+
+		AEEvent aeEvent = new AEEvent();
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PROVSN);
+		long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(),
+				AccountEventConstants.ACCEVENT_PROVSN, FinanceConstants.MODULEID_FINTYPE);
+
+		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
+		aeEvent.setFinReference(provision.getFinReference());
+		aeEvent.setValueDate(DateUtility.getAppDate());
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		if (amountCodes == null) {
+			amountCodes = new AEAmountCodes();
+		}
+
+		amountCodes.setFinType(financeMain.getFinType());
+		aeEvent.setBranch(financeMain.getFinBranch());
+		aeEvent.setCcy(financeMain.getFinCcy());
+		aeEvent.setCustID(financeMain.getCustID());
+		aeEvent.setCcy(SysParamUtil.getAppCurrency());
+
+		amountCodes.setProvDue(provision.getProfitDue());
+		amountCodes.setProvAmt(provision.getProvisionedAmt());
+
+		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+
+		aeEvent.getAcSetIDList().add(accountingID);
+		postingsPreparationUtil.postAccounting(aeEvent);
+		logger.debug("Leaving");
+
+		return aeEvent.getLinkedTranId();
+	}
+
+	/**
+	 * Saving the Provision Movement
+	 * 
+	 * @param provision
+	 */
+	private void saveProvisionMovement(Provision provision) {
+		ProvisionMovement movement = getProvisionMovement(provision);
+		getProvisionMovementDAO().save(movement, TableType.MAIN_TAB.getSuffix());
+	}
+
+	/**
+	 * Preparing Provision Movement
+	 * 
+	 * @param provision
+	 * @return
+	 */
+	private ProvisionMovement getProvisionMovement(Provision provision) {
+		ProvisionMovement movement = new ProvisionMovement();
+
+		movement.setProvCalDate(provision.getProvisionCalDate());
+		movement.setFinReference(provision.getFinReference());
+		movement.setProvMovementDate(provision.getProvisionCalDate());
+		movement.setProvMovementSeq(1);
+		movement.setProvisionedAmt(provision.getProvisionedAmt());
+		movement.setProvisionAmtCal(provision.getProvisionedAmt());
+		movement.setProvisionDue(provision.getProvisionDue());
+		movement.setProvisionPostSts("R");
+		movement.setNonFormulaProv(provision.getNonFormulaProv());
+		movement.setUseNFProv(provision.isUseNFProv());
+		movement.setAutoReleaseNFP(provision.isAutoReleaseNFP());
+		movement.setPrincipalDue(provision.getPrincipalDue());
+		movement.setProfitDue(provision.getProfitDue());
+		movement.setDueFromDate(provision.getDueFromDate());
+		movement.setLastFullyPaidDate(provision.getLastFullyPaidDate());
+		movement.setDueDays(provision.getDueDays());
+		movement.setPriBal(provision.getPriBal());
+
+		movement.setAssetCode(provision.getAssetCode());
+		movement.setAssetStageOrdr(provision.getAssetStageOrdr());
+		movement.setNpa(provision.isNpa());
+		movement.setPrvovisionRate(provision.getPrvovisionRate());
+		movement.setManualProvision(provision.isManualProvision());
+		movement.setLinkedTranId(provision.getProvLinkedTranId());
+
+		return movement;
 	}
 
 	@Override

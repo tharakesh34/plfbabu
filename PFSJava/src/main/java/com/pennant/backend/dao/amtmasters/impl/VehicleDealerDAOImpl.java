@@ -42,6 +42,10 @@
  */
 package com.pennant.backend.dao.amtmasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +55,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -102,48 +107,116 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	 * get the Collection Tables List
 	 */
 	public List<VehicleDealer> getVehicleDealerList(String dealerType, String type) {
-		logger.debug("Entering");
-		VehicleDealer vehicleDealer = new VehicleDealer();
-		vehicleDealer.setDealerType(dealerType);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				"SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
-		selectSql.append(
-				"DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,ShortCode,");
-		selectSql.append(
-				"CalculationRule,PaymentMode,AccountNumber,AccountingSetId,PANNumber,UIDNumber,TaxNumber,FromProvince,ToProvince,AccountNo,AccountType,BankBranchID,");
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, ");
-		selectSql.append(" NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId,SellerType, BranchCode ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DealerId, DealerType, DealerName, DealerTelephone, DealerFax, DealerAddress1");
+		sql.append(", DealerAddress2, DealerAddress3, DealerAddress4, DealerCountry, DealerCity, DealerProvince");
+		sql.append(", Email, POBox, ZipCode, Active, Emirates, CommisionPaidAt, Code, ShortCode, CalculationRule");
+		sql.append(", PaymentMode, AccountNumber, AccountingSetId, PanNumber, UidNumber, TaxNumber");
+		sql.append(", Fromprovince, Toprovince, AccountNo, AccountType, BankBranchID, Version");
+		sql.append(", LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId, SellerType, BranchCode, PinCodeId");
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",LovDescCountry,LovDescCity,LovDescProvince,");
-			selectSql.append("CalRuleDesc,AccountingSetCode,AccountingSetDesc,EmiratesDescription,");
-			selectSql.append(
-					"fromprovinceName,toprovinceName,bankBranchCode,bankBranchCodeName,bankName,branchIFSCCode,branchMICRCode,branchCity");
+			sql.append(", LovDescCountry, LovDescCity, LovDescProvince, CalRuleDesc");
+			sql.append(", AccountingSetCode, AccountingSetDesc, EmiratesDescription");
+			sql.append(", FromprovinceName, ToprovinceName, BankBranchCode, BankBranchCodeName, BankName");
+			sql.append(", BranchIFSCCode, BranchMICRCode, BranchCity, AreaName");
 		}
-		selectSql.append(" FROM  AMTVehicleDealer");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DealerType =:DealerType ");
-		logger.debug("selectSql: " + selectSql.toString());
 
-		// MapSqlParameterSource source = new MapSqlParameterSource();
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
+		sql.append(" from AMTVehicleDealer");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where DealerType = ?");
 
-		/*
-		 * StringBuilder selectSql = new
-		 * StringBuilder("select TABLE_NAME TableName, Status, ERROR_DESC ErrorMessage, EFFECTED_COUNT InsertCount" );
-		 * selectSql.append(" From COLLECTIONS_TABLES");
-		 */
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, dealerType);
+				}
+			}, new RowMapper<VehicleDealer>() {
+				@Override
+				public VehicleDealer mapRow(ResultSet rs, int rowNum) throws SQLException {
+					VehicleDealer vd = new VehicleDealer();
 
-		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VehicleDealer.class);
-		List<VehicleDealer> collectionsVehicleDealerList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+					vd.setDealerId(rs.getLong("DealerId"));
+					vd.setDealerType(rs.getString("DealerType"));
+					vd.setDealerName(rs.getString("DealerName"));
+					vd.setDealerTelephone(rs.getString("DealerTelephone"));
+					vd.setDealerFax(rs.getString("DealerFax"));
+					vd.setDealerAddress1(rs.getString("DealerAddress1"));
+					vd.setDealerAddress2(rs.getString("DealerAddress2"));
+					vd.setDealerAddress3(rs.getString("DealerAddress3"));
+					vd.setDealerAddress4(rs.getString("DealerAddress4"));
+					vd.setDealerCountry(rs.getString("DealerCountry"));
+					vd.setDealerCity(rs.getString("DealerCity"));
+					vd.setDealerProvince(rs.getString("DealerProvince"));
+					vd.setEmail(rs.getString("Email"));
+					vd.setPOBox(rs.getString("POBox"));
+					vd.setZipCode(rs.getString("ZipCode"));
+					vd.setActive(rs.getBoolean("Active"));
+					vd.setEmirates(rs.getString("Emirates"));
+					vd.setCommisionPaidAt(rs.getString("CommisionPaidAt"));
+					vd.setCode(rs.getString("Code"));
+					vd.setShortCode(rs.getString("ShortCode"));
+					vd.setCalculationRule(rs.getString("CalculationRule"));
+					vd.setPaymentMode(rs.getString("PaymentMode"));
+					vd.setAccountNumber(rs.getString("AccountNumber"));
+					vd.setAccountingSetId(rs.getLong("AccountingSetId"));
+					vd.setPanNumber(rs.getString("PanNumber"));
+					vd.setUidNumber(rs.getString("UidNumber"));
+					vd.setTaxNumber(rs.getString("TaxNumber"));
+					vd.setFromprovince(rs.getString("Fromprovince"));
+					vd.setToprovince(rs.getString("Toprovince"));
+					vd.setAccountNo(rs.getString("AccountNo"));
+					vd.setAccountType(rs.getString("AccountType"));
+					vd.setBankBranchID(rs.getLong("BankBranchID"));
+					vd.setVersion(rs.getInt("Version"));
+					vd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					vd.setLastMntBy(rs.getLong("LastMntBy"));
+					vd.setRecordStatus(rs.getString("RecordStatus"));
+					vd.setRoleCode(rs.getString("RoleCode"));
+					vd.setNextRoleCode(rs.getString("NextRoleCode"));
+					vd.setTaskId(rs.getString("TaskId"));
+					vd.setNextTaskId(rs.getString("NextTaskId"));
+					vd.setRecordType(rs.getString("RecordType"));
+					vd.setWorkflowId(rs.getLong("WorkflowId"));
+					vd.setSellerType(rs.getString("SellerType"));
+					vd.setBranchCode(rs.getString("BranchCode"));
+					vd.setPinCodeId(rs.getLong("PinCodeId"));
 
-		logger.debug("Leaving");
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						vd.setLovDescCountry(rs.getString("LovDescCountry"));
+						vd.setLovDescCity(rs.getString("LovDescCity"));
+						vd.setLovDescProvince(rs.getString("LovDescProvince"));
+						vd.setCalRuleDesc(rs.getString("CalRuleDesc"));
+						vd.setAccountingSetCode(rs.getString("AccountingSetCode"));
+						vd.setAccountingSetDesc(rs.getString("AccountingSetDesc"));
+						vd.setEmiratesDescription(rs.getString("EmiratesDescription"));
+						vd.setFromprovinceName(rs.getString("FromprovinceName"));
+						vd.setToprovinceName(rs.getString("ToprovinceName"));
+						vd.setBankBranchCode(rs.getString("BankBranchCode"));
+						vd.setBankBranchCodeName(rs.getString("BankBranchCodeName"));
+						vd.setBankName(rs.getString("BankName"));
+						vd.setBranchIFSCCode(rs.getString("BranchIFSCCode"));
+						vd.setBranchMICRCode(rs.getString("BranchMICRCode"));
+						vd.setBranchCity(rs.getString("BranchCity"));
+						vd.setAreaName(rs.getString("AreaName"));
+					}
 
-		return collectionsVehicleDealerList;
+					return vd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**
@@ -157,41 +230,113 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	 */
 	@Override
 	public VehicleDealer getVehicleDealerById(final long id, String type) {
-		logger.debug("Entering");
-		VehicleDealer vehicleDealer = new VehicleDealer();
-		vehicleDealer.setId(id);
-		StringBuilder selectSql = new StringBuilder();
+		logger.debug(Literal.ENTERING);
 
-		selectSql.append(
-				"SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
-		selectSql.append(
-				"DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,ProductCtg,ShortCode,");
-		selectSql.append(
-				"CalculationRule,PaymentMode,AccountNumber,AccountingSetId,PANNumber,UIDNumber,TaxNumber,FromProvince,ToProvince,AccountNo,AccountType,BankBranchID,");
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, ");
-		selectSql.append(" NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId,SellerType, BranchCode");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DealerId, DealerType, DealerName, DealerTelephone, DealerFax, DealerAddress1");
+		sql.append(", DealerAddress2, DealerAddress3, DealerAddress4, DealerCountry, DealerCity, DealerProvince");
+		sql.append(", Email, POBox, ZipCode, Active, Emirates, CommisionPaidAt, Code, ProductCtg, ShortCode");
+		sql.append(", CalculationRule, PaymentMode, AccountNumber, AccountingSetId, PanNumber, UidNumber");
+		sql.append(", TaxNumber, Fromprovince, Toprovince, AccountNo, AccountType, BankBranchID");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId, SellerType, BranchCode, PinCodeId");
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",LovDescCountry,LovDescCity,LovDescProvince,");
-			selectSql.append("CalRuleDesc,AccountingSetCode,AccountingSetDesc,EmiratesDescription,ProductCtgDesc,");
-			selectSql.append(
-					"fromprovinceName,toprovinceName,bankBranchCode,bankBranchCodeName,bankName,branchIFSCCode,branchMICRCode,branchCity");
+			sql.append(", LovDescCountry, LovDescCity");
+			sql.append(", LovDescProvince, CalRuleDesc, AccountingSetCode, AccountingSetDesc, EmiratesDescription");
+			sql.append(", ProductCtgDesc, FromprovinceName, ToprovinceName, BankBranchCode, BankBranchCodeName");
+			sql.append(", BankName, BranchIFSCCode, BranchMICRCode, BranchCity, AreaName");
 		}
-		selectSql.append(" FROM  AMTVehicleDealer");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DealerId =:DealerId ");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
-		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VehicleDealer.class);
+		sql.append(" from AMTVehicleDealer");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where DealerId = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
+					new RowMapper<VehicleDealer>() {
+						@Override
+						public VehicleDealer mapRow(ResultSet rs, int rowNum) throws SQLException {
+							VehicleDealer vd = new VehicleDealer();
+
+							vd.setDealerId(rs.getLong("DealerId"));
+							vd.setDealerType(rs.getString("DealerType"));
+							vd.setDealerName(rs.getString("DealerName"));
+							vd.setDealerTelephone(rs.getString("DealerTelephone"));
+							vd.setDealerFax(rs.getString("DealerFax"));
+							vd.setDealerAddress1(rs.getString("DealerAddress1"));
+							vd.setDealerAddress2(rs.getString("DealerAddress2"));
+							vd.setDealerAddress3(rs.getString("DealerAddress3"));
+							vd.setDealerAddress4(rs.getString("DealerAddress4"));
+							vd.setDealerCountry(rs.getString("DealerCountry"));
+							vd.setDealerCity(rs.getString("DealerCity"));
+							vd.setDealerProvince(rs.getString("DealerProvince"));
+							vd.setEmail(rs.getString("Email"));
+							vd.setPOBox(rs.getString("POBox"));
+							vd.setZipCode(rs.getString("ZipCode"));
+							vd.setActive(rs.getBoolean("Active"));
+							vd.setEmirates(rs.getString("Emirates"));
+							vd.setCommisionPaidAt(rs.getString("CommisionPaidAt"));
+							vd.setCode(rs.getString("Code"));
+							vd.setProductCtg(rs.getString("ProductCtg"));
+							vd.setShortCode(rs.getString("ShortCode"));
+							vd.setCalculationRule(rs.getString("CalculationRule"));
+							vd.setPaymentMode(rs.getString("PaymentMode"));
+							vd.setAccountNumber(rs.getString("AccountNumber"));
+							vd.setAccountingSetId(rs.getLong("AccountingSetId"));
+							vd.setPanNumber(rs.getString("PanNumber"));
+							vd.setUidNumber(rs.getString("UidNumber"));
+							vd.setTaxNumber(rs.getString("TaxNumber"));
+							vd.setFromprovince(rs.getString("Fromprovince"));
+							vd.setToprovince(rs.getString("Toprovince"));
+							vd.setAccountNo(rs.getString("AccountNo"));
+							vd.setAccountType(rs.getString("AccountType"));
+							vd.setBankBranchID(rs.getLong("BankBranchID"));
+							vd.setVersion(rs.getInt("Version"));
+							vd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							vd.setLastMntBy(rs.getLong("LastMntBy"));
+							vd.setRecordStatus(rs.getString("RecordStatus"));
+							vd.setRoleCode(rs.getString("RoleCode"));
+							vd.setNextRoleCode(rs.getString("NextRoleCode"));
+							vd.setTaskId(rs.getString("TaskId"));
+							vd.setNextTaskId(rs.getString("NextTaskId"));
+							vd.setRecordType(rs.getString("RecordType"));
+							vd.setWorkflowId(rs.getLong("WorkflowId"));
+							vd.setSellerType(rs.getString("SellerType"));
+							vd.setBranchCode(rs.getString("BranchCode"));
+							vd.setPinCodeId(rs.getLong("PinCodeId"));
+
+							if (StringUtils.trimToEmpty(type).contains("View")) {
+								vd.setLovDescCountry(rs.getString("LovDescCountry"));
+								vd.setLovDescCity(rs.getString("LovDescCity"));
+								vd.setLovDescProvince(rs.getString("LovDescProvince"));
+								vd.setCalRuleDesc(rs.getString("CalRuleDesc"));
+								vd.setAccountingSetCode(rs.getString("AccountingSetCode"));
+								vd.setAccountingSetDesc(rs.getString("AccountingSetDesc"));
+								vd.setEmiratesDescription(rs.getString("EmiratesDescription"));
+								vd.setProductCtgDesc(rs.getString("ProductCtgDesc"));
+								vd.setFromprovinceName(rs.getString("FromprovinceName"));
+								vd.setToprovinceName(rs.getString("ToprovinceName"));
+								vd.setBankBranchCode(rs.getString("BankBranchCode"));
+								vd.setBankBranchCodeName(rs.getString("BankBranchCodeName"));
+								vd.setBankName(rs.getString("BankName"));
+								vd.setBranchIFSCCode(rs.getString("BranchIFSCCode"));
+								vd.setBranchMICRCode(rs.getString("BranchMICRCode"));
+								vd.setBranchCity(rs.getString("BranchCity"));
+								vd.setAreaName(rs.getString("AreaName"));
+							}
+
+							return vd;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			vehicleDealer = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return vehicleDealer;
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	@Override
@@ -285,9 +430,11 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		insertSql.append("(DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
 		insertSql.append("DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,");
 		insertSql.append(
-				"Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,CalculationRule,PaymentMode,AccountNumber,AccountingSetId,Code,ProductCtg,ShortCode,PANNumber,UIDNumber,TaxNumber,fromprovince,toprovince,");
-		insertSql
-				.append("AccountNo,AccountType,BankBranchID ,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+				"Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,CalculationRule,PaymentMode,AccountNumber,");
+		insertSql.append(
+				"AccountingSetId,Code,ProductCtg,ShortCode,PANNumber,UIDNumber,TaxNumber,fromprovince,toprovince,");
+		insertSql.append(
+				"AccountNo,AccountType,BankBranchID, PinCodeId, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,SellerType, BranchCode)");
 
 		insertSql.append(" Values(:DealerId,:DealerType, :DealerName,:DealerTelephone,:DealerFax,:DealerAddress1,");
@@ -296,7 +443,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		insertSql.append(
 				" :Email,:POBox,:ZipCode,:Active,:Emirates,:CommisionPaidAt,:CalculationRule,:PaymentMode,:AccountNumber,:AccountingSetId,:Code ,:ProductCtg,:ShortCode, ");
 		insertSql.append(
-				" :panNumber,:uidNumber,:taxNumber,:fromprovince,:toprovince,:accountNo,:accountType,:bankBranchID,:Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,");
+				" :panNumber,:uidNumber,:taxNumber,:fromprovince,:toprovince,:accountNo,:accountType,:bankBranchID, :PinCodeId,:Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:SellerType, :BranchCode)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -339,7 +486,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		updateSql.append(
 				" PANNumber = :panNumber ,UIDNumber = :uidNumber ,TaxNumber =:taxNumber,fromprovince =:fromprovince,toprovince = :toprovince, AccountNo =:accountNo, ");
 		updateSql.append(
-				"AccountType = :accountType,BankBranchID = :bankBranchID,Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+				"AccountType = :accountType,BankBranchID = :bankBranchID, PinCodeId = :pinCodeId, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(
 				" RecordType = :RecordType, WorkflowId = :WorkflowId,SellerType = :SellerType, BranchCode=:BranchCode ");

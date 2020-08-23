@@ -130,6 +130,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
+	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
@@ -236,6 +237,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	 *            id of the QueryDetail. (String)
 	 * @return QUERYDETAIL
 	 */
+	@Override
 	public QueryDetail getApprovedQueryDetail(long id) {
 		return getQueryDetailDAO().getQueryDetail(id, "_AView");
 	}

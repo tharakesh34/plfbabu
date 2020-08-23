@@ -16,6 +16,7 @@ import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.legal.LegalDocument;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.model.dms.DMSModule;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.cache.Cache;
 import com.pennanttech.pennapps.core.cache.CacheManager;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -142,19 +143,19 @@ public abstract class GenericService<T> {
 	}
 
 	protected void saveDocument(DMSModule dm, DMSModule dsm, DocumentDetails dd) {
-		if (dd.getDocRefId() != null && dd.getDocRefId() > 0) {
-			return;
-		}
+		/*
+		 * if ((dd.getDocRefId() != null && dd.getDocRefId() > 0) || dd.getDocImage() == null) { return; }
+		 */
+		String finReference = dd.getFinReference();
+
 		if (dd.getCustId() == null || dd.getCustId() <= 0) {
 			if (dm == DMSModule.FINANCE && dsm == DMSModule.COLLATERAL) {
-				String finReferece = dd.getFinReference();
-				if ((finReferece != null)) {
-					dd.setCustId(dMSService.getCustomerIdByCollateral(finReferece));
+				if ((finReference != null)) {
+					dd.setCustId(dMSService.getCustomerIdByCollateral(finReference));
 				}
 			} else if (dm == DMSModule.FINANCE) {
-				String finReferece = dd.getFinReference();
-				if ((finReferece != null)) {
-					dd.setCustId(dMSService.getCustomerIdByFin(finReferece));
+				if ((finReference != null)) {
+					dd.setCustId(dMSService.getCustomerIdByFin(finReference));
 				}
 			}
 		}
@@ -173,6 +174,7 @@ public abstract class GenericService<T> {
 		dmsQueue.setDocExt(FilenameUtils.getExtension(dd.getDocName()));
 		dmsQueue.setDocImage(dd.getDocImage());
 		dmsQueue.setCreatedOn(SysParamUtil.getAppDate());
+		dmsQueue.setAuxiloryFields1(dd.getRemarks());
 
 		if (SessionUserDetails.getLogiedInUser() != null) {
 			dmsQueue.setCreatedBy(SessionUserDetails.getLogiedInUser().getUserId());
@@ -180,15 +182,24 @@ public abstract class GenericService<T> {
 			dmsQueue.setCreatedBy(1000);
 		}
 
-		if (validate(dmsQueue)) {
-			dd.setDocRefId(dMSService.save(dmsQueue));
+		dmsQueue = getLeadId(dmsQueue);
+
+		if (dmsQueue != null && validate(dmsQueue)) {
+			DMSQueue existDMSQueue = dMSService.isExistDocuri(dd.getDocUri(), dd.getFinReference());
+			if (existDMSQueue != null && existDMSQueue.getDocManagerID() != 0) {
+				existDMSQueue.setAuxiloryFields1(dd.getRemarks());
+				dMSService.updateDMSQueue(existDMSQueue);
+				dd.setDocRefId(existDMSQueue.getDocManagerID());
+			} else {
+				dd.setDocRefId(dMSService.save(dmsQueue));
+			}
 		}
 	}
 
 	protected void saveDocument(DMSModule dm, DMSModule dsm, CustomerDocument cd) {
-		if (cd.getDocRefId() != null && cd.getDocRefId() > 0) {
-			return;
-		}
+		/*
+		 * if ((cd.getDocRefId() != null && cd.getDocRefId() > 0) || cd.getCustDocImage() == null) { return; }
+		 */
 		if (cd.getCustID() == 0 || cd.getCustID() == Long.MIN_VALUE) {
 			if (dm == DMSModule.CUSTOMER) {
 				String custCIF = cd.getLovDescCustCIF();
@@ -200,7 +211,7 @@ public abstract class GenericService<T> {
 		DMSQueue dmsQueue = new DMSQueue();
 		dmsQueue.setModule(DMSModule.CUSTOMER);
 		dmsQueue.setSubModule(DMSModule.CUSTOMER);
-		dmsQueue.setFinReference("");
+		dmsQueue.setFinReference(cd.getFinReference());
 		dmsQueue.setCustId(cd.getCustID());
 		dmsQueue.setCustCif(cd.getLovDescCustCIF());
 		dmsQueue.setReference("");
@@ -211,6 +222,9 @@ public abstract class GenericService<T> {
 		dmsQueue.setDocExt(FilenameUtils.getExtension(cd.getCustDocName()));
 		dmsQueue.setDocImage(cd.getCustDocImage());
 		dmsQueue.setCreatedOn(SysParamUtil.getAppDate());
+		dmsQueue.setApplicationNo(cd.getApplicationNo());
+		dmsQueue.setOfferId(cd.getOfferId());
+		dmsQueue.setAuxiloryFields1(cd.getRemarks());
 
 		if (SessionUserDetails.getLogiedInUser() != null) {
 			dmsQueue.setCreatedBy(SessionUserDetails.getLogiedInUser().getUserId());
@@ -218,13 +232,36 @@ public abstract class GenericService<T> {
 			dmsQueue.setCreatedBy(1000);
 		}
 
-		if (validate(dmsQueue)) {
-			cd.setDocRefId(dMSService.save(dmsQueue));
+		dmsQueue = getLeadId(dmsQueue);
+
+		if (dmsQueue != null && validate(dmsQueue)) {
+			DMSQueue existDMSQueue = dMSService.isExistDocuri(cd.getDocUri(), cd.getFinReference());
+			if (existDMSQueue != null && existDMSQueue.getDocManagerID() != 0) {
+				existDMSQueue.setAuxiloryFields1(cd.getRemarks());
+				dMSService.updateDMSQueue(existDMSQueue);
+				cd.setDocRefId(existDMSQueue.getDocManagerID());
+			} else {
+				cd.setDocRefId(dMSService.save(dmsQueue));
+			}
 		}
 	}
 
+	private DMSQueue getLeadId(DMSQueue dmsQueue) {
+		if (SysParamUtil.isAllowed("LEAD_ID_IS_MANDATORY")) {
+
+			if (StringUtils.isEmpty(dmsQueue.getFinReference())) {
+				throw new AppException(
+						"To store documents in DMS system FinReference is mandatory, please contact system administrator");
+			}
+			if (StringUtils.isEmpty(dmsQueue.getOfferId()) && StringUtils.isEmpty(dmsQueue.getApplicationNo())) {
+				dmsQueue = dMSService.getOfferIdByFin(dmsQueue);
+			}
+		}
+		return dmsQueue;
+	}
+
 	protected void saveDocument(DMSModule dm, DMSModule dsm, LegalDocument ld) {
-		if (ld.getDocumentReference() != null && ld.getDocumentReference() > 0) {
+		if ((ld.getDocumentReference() != null && ld.getDocumentReference() > 0) || ld.getDocImage() == null) {
 			return;
 		}
 		String finReference = ld.getFinReference();
@@ -254,7 +291,9 @@ public abstract class GenericService<T> {
 			dmsQueue.setCreatedBy(1000);
 		}
 
-		if (validate(dmsQueue)) {
+		dmsQueue = getLeadId(dmsQueue);
+
+		if (dmsQueue != null && validate(dmsQueue)) {
 			ld.setDocumentReference(dMSService.save(dmsQueue));
 		}
 

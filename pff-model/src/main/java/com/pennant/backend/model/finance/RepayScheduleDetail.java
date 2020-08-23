@@ -86,7 +86,7 @@ public class RepayScheduleDetail implements Serializable {
 	private BigDecimal schdIncrCostBal = BigDecimal.ZERO;
 	private BigDecimal schdIncrCostPayNow = BigDecimal.ZERO;
 	private BigDecimal schdIncrCostWaivedNow = BigDecimal.ZERO;
-
+	
 	private Long lppTaxHeaderId;
 	private Long lpiTaxHeaderId;
 

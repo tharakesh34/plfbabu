@@ -3,15 +3,18 @@ package com.pennant.webui.dedup.dedupparm;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Center;
@@ -45,8 +48,10 @@ import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 @SuppressWarnings("rawtypes")
@@ -187,21 +192,21 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 		// Button for Clean
 		final Button btnProceed = new Button();
 		btnProceed.setSclass("z-toolbarbutton");
-		btnProceed.setLabel("Clean");
+		btnProceed.setLabel(Labels.getLabel("label_BlackListCheckDialog_Positive.value"));
 		btnProceed.addEventListener("onClick", new OnProceedListener());
 		btnProceed.setParent(startToolbar);
 
 		// Button for BlackListed
 		final Button btnCancel = new Button();
 		btnCancel.setSclass("z-toolbarbutton");
-		btnCancel.setLabel("BlackListed");
+		btnCancel.setLabel(Labels.getLabel("label_BlackListCheckDialog_Negative.value"));
 		btnCancel.addEventListener("onClick", new OnCancelListener());
 		btnCancel.setParent(startToolbar);
 
 		// Button for Help
 		final Button btnHelp = new Button();
 		btnHelp.setSclass("z-toolbarbutton");
-		btnHelp.setLabel("Help");
+		btnHelp.setLabel(Labels.getLabel("label_BlackListCheckDialog_Help.value"));
 		btnHelp.setParent(endToolbar);
 
 		//Label For Title
@@ -352,7 +357,8 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 			List<FinBlacklistCustomer> blackListData = new ArrayList<FinBlacklistCustomer>();
 			for (int i = 0; i < listbox.getItems().size(); i++) {
 				Listitem listitem = listbox.getItems().get(i);
-				List<Component> componentList = ((Listcell) listitem.getLastChild().getPreviousSibling()).getChildren();
+				List<Component> componentList = ((Listcell) listitem.getLastChild().getPreviousSibling()
+						.getPreviousSibling()).getChildren();
 				if (componentList != null && componentList.size() > 0) {
 					Component component = componentList.get(0);
 					if (component instanceof Checkbox) {
@@ -493,12 +499,18 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 					lc = new Listcell();
 					chk.setParent(lc);
 				} else {
-					fieldValue = data.getClass().getMethod(fieldMethod).invoke(data).toString();
+					Object value = data.getClass().getMethod(fieldMethod).invoke(data);
+					fieldValue = value == null ? "" : value.toString();
 					lc = new Listcell(fieldValue);
 				}
 				lc.setParent(item);
 			}
-
+			//adding a button to view the customer details
+			final Listcell lc = new Listcell();
+			Button button = new Button(Labels.getLabel("label_BlackListCustomer_View"));
+			button.addEventListener(Events.ON_CLICK, event -> onClickButtonView(data));
+			button.setParent(lc);
+			lc.setParent(item);
 			item.setAttribute("data", data);
 		}
 	}
@@ -519,6 +531,33 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 		}
 	}
 
+	/**
+	 * This method will redirect to BlacklistCustomerDialog page to view the customer details
+	 * 
+	 * @param data
+	 */
+	public void onClickButtonView(Object data) {
+		logger.debug(Literal.ENTERING);
+		if (data == null) {
+			return;
+		}
+		if (data instanceof BlackListCustomers) {
+			// Get the selected entity.
+			BlackListCustomers blackListCustomer = (BlackListCustomers) data;
+			HashMap<String, Object> arg = new HashMap<>();
+			arg.put("enqiryModule", true);
+			arg.put("blackListCustomer", blackListCustomer);
+			arg.put("moduleCode", PennantConstants.BLACKLISTCUSTOMER);
+
+			try {
+				Executions.createComponents("/WEB-INF/pages/ApplicationMaster/Blacklist/BlacklistCustomerDialog.zul",
+						null, arg);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
 	// Setter/Getter
 
 	public Object getObject() {

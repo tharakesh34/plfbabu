@@ -21,6 +21,7 @@ public class AEAmountCodes implements Serializable {
 
 	private BigDecimal amz = BigDecimal.ZERO;
 	private BigDecimal dAmz = BigDecimal.ZERO;
+	private BigDecimal dAmzPr = BigDecimal.ZERO;
 	private BigDecimal amzBal = BigDecimal.ZERO;
 	private BigDecimal uAmz = BigDecimal.ZERO;
 	private BigDecimal uLpi = BigDecimal.ZERO;
@@ -57,6 +58,7 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal priSB = BigDecimal.ZERO;
 	private BigDecimal priSP = BigDecimal.ZERO;
 	private BigDecimal rpPft = BigDecimal.ZERO;
+	private BigDecimal rpPftPr = BigDecimal.ZERO;
 	private BigDecimal rpTds = BigDecimal.ZERO;
 	private BigDecimal pftDuePaid = BigDecimal.ZERO;
 	private BigDecimal priDuePaid = BigDecimal.ZERO;
@@ -68,9 +70,12 @@ public class AEAmountCodes implements Serializable {
 
 	private BigDecimal rpPri = BigDecimal.ZERO;
 	private BigDecimal rpTot = BigDecimal.ZERO;
+	private BigDecimal rpTotPr = BigDecimal.ZERO;
 	private BigDecimal instpft = BigDecimal.ZERO;
+	private BigDecimal instpftPr = BigDecimal.ZERO;
 	private BigDecimal instTds = BigDecimal.ZERO;
 	private BigDecimal instpri = BigDecimal.ZERO;
+	private BigDecimal instpriPr = BigDecimal.ZERO;
 	private BigDecimal instcpz = BigDecimal.ZERO;
 	private BigDecimal insttot = BigDecimal.ZERO;
 	private BigDecimal refund = BigDecimal.ZERO;
@@ -92,6 +97,7 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal suspRls = BigDecimal.ZERO;
 	private BigDecimal penalty = BigDecimal.ZERO;
 	private BigDecimal waiver = BigDecimal.ZERO;
+	private BigDecimal provAsst = BigDecimal.ZERO;
 
 	private BigDecimal penaltyPaid = BigDecimal.ZERO;
 	private BigDecimal penaltyRcv = BigDecimal.ZERO;
@@ -171,6 +177,7 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal addVasToFinance = BigDecimal.ZERO;
 	private BigDecimal vasFeeWaived = BigDecimal.ZERO;
 	private BigDecimal paidVasFee = BigDecimal.ZERO;
+	private BigDecimal refundVasFee = BigDecimal.ZERO;
 
 	private BigDecimal imdAmount = BigDecimal.ZERO;
 
@@ -1642,4 +1649,59 @@ public class AEAmountCodes implements Serializable {
 		this.pastCpzChg = pastCpzChg;
 	}
 
+	public BigDecimal getRefundVasFee() {
+		return refundVasFee;
+	}
+
+	public void setRefundVasFee(BigDecimal refundVasFee) {
+		this.refundVasFee = refundVasFee;
+	}
+
+	public BigDecimal getProvAsst() {
+		return provAsst;
+	}
+
+	public void setProvAsst(BigDecimal provAsst) {
+		this.provAsst = provAsst;
+	}
+
+	public BigDecimal getRpPftPr() {
+		return rpPftPr;
+	}
+
+	public void setRpPftPr(BigDecimal rpPftPr) {
+		this.rpPftPr = rpPftPr;
+	}
+
+	public BigDecimal getRpTotPr() {
+		return rpTotPr;
+	}
+
+	public void setRpTotPr(BigDecimal rpTotPr) {
+		this.rpTotPr = rpTotPr;
+	}
+
+	public BigDecimal getdAmzPr() {
+		return dAmzPr;
+	}
+
+	public void setdAmzPr(BigDecimal dAmzPr) {
+		this.dAmzPr = dAmzPr;
+	}
+
+	public BigDecimal getInstpftPr() {
+		return instpftPr;
+	}
+
+	public void setInstpftPr(BigDecimal instpftPr) {
+		this.instpftPr = instpftPr;
+	}
+
+	public BigDecimal getInstpriPr() {
+		return instpriPr;
+	}
+
+	public void setInstpriPr(BigDecimal instpriPr) {
+		this.instpriPr = instpriPr;
+	}
 }

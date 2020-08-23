@@ -70,10 +70,14 @@ public interface PinCodeDAO extends BasicCrudDao<PinCode> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long pinCodeId, String pinCode, TableType tableType);
+	boolean isDuplicateKey(long pinCodeId, String city, String area, TableType tableType);
 
 	boolean isCityCodeExists(String pcCity);
 
 	PinCode getPinCode(String pinCode, String type);
+
+	int getPinCodeCount(String pinCode, String type);
+
+	PinCode getPinCodeById(long pinCodeId, String type);
 
 }

@@ -159,7 +159,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private String sourceId;
 	@XmlElement
 	private String documentName;
-	private long documentRef = Long.MIN_VALUE;
+	private Long documentRef = Long.MIN_VALUE;
 	@XmlElement(name = "docContent")
 	private byte[] docImage;
 	@XmlElement(name = "docRefId")

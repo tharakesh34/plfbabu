@@ -55,11 +55,13 @@ import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ReinstateFinanceDAO;
+import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReinstateFinance;
+import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.ReinstateFinanceService;
 import com.pennant.backend.util.PennantConstants;
@@ -79,6 +81,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 	private ReinstateFinanceDAO reinstateFinanceDAO;
 	private FinanceMainDAO financeMainDAO;
 	private TaskOwnersDAO taskOwnersDAO;
+	protected ReasonDetailDAO reasonDetailDAO;
 
 	public ReinstateFinanceServiceImpl() {
 		super();
@@ -126,6 +129,10 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 
 	public ReinstateFinance getNewReinstateFinance() {
 		return getReinstateFinanceDAO().getNewReinstateFinance();
+	}
+
+	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
+		this.reasonDetailDAO = reasonDetailDAO;
 	}
 
 	/**
@@ -437,6 +444,11 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 	 */
 	public List<String> getScheduleEffectModuleList(boolean schdChangeReq) {
 		return getFinanceMainDAO().getScheduleEffectModuleList(schdChangeReq);
+	}
+
+	@Override
+	public List<ReasonDetailsLog> getResonDetailsLog(String reference) {
+		return reasonDetailDAO.getReasonDetailsLog(reference);
 	}
 
 }

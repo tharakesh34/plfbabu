@@ -65,6 +65,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -798,7 +799,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	}
 
 	@Override
-	public String getAllowedRolesByCode(String finType, int finRefType, String limitCode) {
+	public String getAllowedRolesByCode(String finType, int finRefType, String limitCode, String finEvent) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
@@ -809,11 +810,20 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		sql.append(" Select LimitId from LimitCodeDetail");
 		sql.append(" Where LimitCode = ?)");
 
+		if (StringUtils.isNotBlank(finEvent)) {
+			sql.append(" and FinEvent = ?");
+		}
+
 		logger.trace(Literal.SQL + sql.toString());
 
+		logger.debug(Literal.LEAVING);
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { finType, finRefType, 1, limitCode }, String.class);
+			Object[] args = new Object[] { finType, finRefType, 1, limitCode };
+			if (StringUtils.isNotBlank(finEvent)) {
+				args = new Object[] { finType, finRefType, 1, limitCode, finEvent };
+			}
+
+			return this.jdbcOperations.queryForObject(sql.toString(), args, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("The mandatatory input statge not available for Fin Type {}, Fin Ref Type {}, Limit Code {}",
 					finType, finRefType, limitCode);
@@ -1030,6 +1040,27 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		logger.debug(Literal.LEAVING);
 
 		return null;
+	}
+
+	@Override
+	public List<SecurityUser> getUpLevelUsers(long usrId, String branch) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT UsrDesg,UsrLogin,UsrEmail,UsrFName, UsrMName, UsrLName, UsrMobile,UsrBranchCode,UsrDeptCode From SecUsers s");
+		selectSql.append(" join secUserHierarchy u on u.Reporting_To = s.UsrId ");
+		selectSql.append(" where u.usrid =:usrId and u.depth <> 0 and u.Branch =:branch");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("usrId", usrId);
+		source.addValue("branch", branch);
+
+		RowMapper<SecurityUser> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUser.class);
+
+		logger.debug("SelectSql: " + selectSql.toString());
+
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 }

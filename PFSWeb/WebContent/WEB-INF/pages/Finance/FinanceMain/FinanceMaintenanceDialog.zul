@@ -444,6 +444,13 @@
 														<combobox id="cbGrcSchdMthd" width="275px" readonly="true" />
 													</hbox>
 												</row>
+												<row id="row_underConstruction" visible="false">
+													<label id="label_UnderConstruction" value="${c:l('label_FinanceMainDialog_UnderConstruction.value')}" />
+													<hbox id="hbox_UnderConstruction">
+														<space id="space_UnderConstruction" spacing="2px" />
+														<checkbox id="underConstruction" />
+													</hbox>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>

@@ -117,6 +117,8 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	private String custAddrLine3;
 	private String custAddrLine4;
 	private String custDistrict;
+	@XmlElement
+	private Long pinCodeId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -435,5 +437,13 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustAddressId(long custAddressId) {
 		this.custAddressId = custAddressId;
+	}
+
+	public Long getPinCodeId() {
+		return pinCodeId;
+	}
+
+	public void setPinCodeId(Long pinCodeId) {
+		this.pinCodeId = pinCodeId;
 	}
 }

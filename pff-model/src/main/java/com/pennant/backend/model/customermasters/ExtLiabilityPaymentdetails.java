@@ -15,6 +15,7 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 	private long liabilityId;
 	@XmlElement
 	private String emiType;
+	private int emiClearedDay;
 	private ExtLiabilityPaymentdetails befImage;
 	private LoggedInUser userDetails;
 	private boolean newRecord = false;
@@ -105,6 +106,14 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 
 	public void setEmiClearance(String emiClearance) {
 		this.emiClearance = emiClearance;
+	}
+
+	public int getEmiClearedDay() {
+		return emiClearedDay;
+	}
+
+	public void setEmiClearedDay(int emiClearedDay) {
+		this.emiClearedDay = emiClearedDay;
 	}
 
 }

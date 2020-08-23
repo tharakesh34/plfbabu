@@ -185,15 +185,13 @@ public class SysParamUtil {
 	 */
 	public static Date getPostDate() {
 		String setPostingDateTo = getValueAsString(SMTParameterConstants.SET_POSTDATE_TO);
-		Date postingDate = getAppDate();
 
 		if (!StringUtils.equals(setPostingDateTo, Param.APP_DATE.getCode())) {
-			postingDate = getAppDate();
+			return getAppDate();
 		} else {
-			postingDate = getAppValueDate();
+			return getAppValueDate();
 		}
 
-		return postingDate;
 	}
 
 	public static boolean isAllowed(String code) {

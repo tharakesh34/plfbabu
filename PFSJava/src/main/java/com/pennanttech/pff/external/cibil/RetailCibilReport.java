@@ -484,7 +484,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			cell.setCellValue(DateUtil.format(finance.getLatestRpyDate(), DATE_FORMAT));
 
 			/* Date Closed */
-			cell = row.createCell(40);
+			row.createCell(40);
 			cell.setCellValue(DateUtil.format(finance.getMaturityDate(), DATE_FORMAT));
 
 			/* Date Reported */
@@ -542,6 +542,9 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 		/* Type of Collateral */
 		row.createCell(55);
+
+		/* Rate of Interest */
+		row.createCell(58);
 
 		/* Payment Frequency */
 		row.createCell(64);

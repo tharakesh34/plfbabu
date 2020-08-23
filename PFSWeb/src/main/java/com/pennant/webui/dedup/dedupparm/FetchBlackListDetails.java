@@ -2,17 +2,29 @@ package com.pennant.webui.dedup.dedupparm;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.MasterDefUtil.DocType;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.masters.MasterDefDAO;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FetchBlackListDetails {
 
@@ -22,6 +34,7 @@ public class FetchBlackListDetails {
 	private List<FinBlacklistCustomer> finBlacklistCustomer;
 	private FinanceDetail financeDetail;
 	private int userAction = -1;
+	private static MasterDefDAO masterDefDAO;
 
 	String BLACKLIST_FIELDS = "custCIF,custDOB,custFName,custLName,custCRCPR,"
 			+ "custPassportNo,mobileNumber,custNationality,employer,watchListRule,override,overridenby";
@@ -48,6 +61,8 @@ public class FetchBlackListDetails {
 
 		Customer customer = null;
 		String mobileNumber = "";
+		StringBuilder custAddress = new StringBuilder("");
+
 		if (aFinanceDetail.getCustomerDetails().getCustomer() != null) {
 			customer = aFinanceDetail.getCustomerDetails().getCustomer();
 			if (aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null) {
@@ -61,15 +76,53 @@ public class FetchBlackListDetails {
 			}
 		}
 
+		if (aFinanceDetail.getCustomerDetails().getCustomer() != null) {
+			customer = aFinanceDetail.getCustomerDetails().getCustomer();
+			if (aFinanceDetail.getCustomerDetails().getAddressList() != null) {
+				for (CustomerAddres address : aFinanceDetail.getCustomerDetails().getAddressList()) {
+					if (address.getCustAddrPriority() == Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						custAddress.append(address.getCustAddrHNbr()).append(", ");
+						custAddress.append(address.getCustAddrStreet()).append(", ");
+						if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOM_BLACKLIST_PARAMS)) {
+							custAddress.append(StringUtils.isNotEmpty(address.getCustAddrLine2())
+									? address.getCustAddrLine2().concat(", ") : "");
+							custAddress.append(StringUtils.isNotEmpty(address.getCustAddrLine1())
+									? address.getCustAddrLine1().concat(", ") : "");
+							custAddress.append(address.getLovDescCustAddrCityName()).append(", ");
+							custAddress.append(address.getLovDescCustAddrProvinceName()).append(", ");
+							custAddress.append(address.getLovDescCustAddrCountryName()).append(", ");
+							custAddress.append(address.getCustAddrZIP());
+						} else {
+							custAddress.append(address.getCustAddrCity()).append(", ");
+							custAddress.append(address.getCustAddrProvince()).append(", ");
+							custAddress.append(address.getCustAddrCountry());
+						}
+						break;
+					}
+				}
+			}
+		}
+
 		String finType = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType();
 		String finReference = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference();
 
 		BlackListCustomers blackListCustData = doSetCustDataToBlackList(customer, finReference, mobileNumber);
+		if (blackListCustData != null) {
+			blackListCustData.setAddress(custAddress.toString());
+		}
+		// setting the customer documents data
+		doSetCustomerDocumentsData(aFinanceDetail, blackListCustData);
+
 		setBlackListCustomers(
 				getDedupParmService().fetchBlackListCustomers(userRole, finType, blackListCustData, curLoginUser));
 
 		ShowBlackListDetailBox details = null;
 		if (getBlackListCustomers() != null && getBlackListCustomers().size() > 0) {
+
+			if (ImplementationConstants.ALLOW_SIMILARITY && App.DATABASE == Database.POSTGRES) {
+				BLACKLIST_FIELDS = "custCIF,custDOB,custFName,custCRCPR,"
+						+ "custPassportNo,mobileNumber,custNationality,employer,address,custAadhaar,watchListRule,override,overridenby";
+			}
 
 			Object dataObject = ShowBlackListDetailBox.show(parent, getBlackListCustomers(), BLACKLIST_FIELDS,
 					blackListCustData, curLoginUser);
@@ -124,6 +177,10 @@ public class FetchBlackListDetails {
 			blackListCustomer.setCustCIF(customer.getCustCIF());
 			blackListCustomer.setCustShrtName(customer.getCustShrtName());
 			blackListCustomer.setCustFName(customer.getCustFName());
+			if (ImplementationConstants.ALLOW_SIMILARITY && App.DATABASE == Database.POSTGRES) {
+				blackListCustomer.setCustFName(customer.getCustShrtName());
+				blackListCustomer.setCustCompName(customer.getCustShrtName());
+			}
 			blackListCustomer.setCustLName(customer.getCustLName());
 			blackListCustomer.setCustCRCPR(customer.getCustCRCPR());
 			blackListCustomer.setCustPassportNo(customer.getCustPassportNo());
@@ -137,13 +194,48 @@ public class FetchBlackListDetails {
 					blackListCustomer.getCustFName() != null ? "%" + blackListCustomer.getCustFName() + "%" : "");
 			blackListCustomer.setLikeCustLName(
 					blackListCustomer.getCustLName() != null ? "%" + blackListCustomer.getCustLName() + "%" : "");
-
+			// setting additional details data
+			blackListCustomer = FetchBlackListCustomerAdditionalDetails.doSetCustDataToBlackList(customer,
+					blackListCustomer);
 			logger.debug("Leaving");
 
 			return blackListCustomer;
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * 
+	 * @param aFinanceDetail
+	 * @param blackListCustData
+	 */
+	private void doSetCustomerDocumentsData(FinanceDetail aFinanceDetail, BlackListCustomers blackListCustData) {
+		logger.debug(Literal.ENTERING);
+		String aadharCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, DocType.AADHAAR.name());
+		String passPortCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, DocType.PASSPORT.name());
+		String voterIdCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, DocType.VOTER_ID.name());
+		String drivingLicenseCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE,
+				DocType.DRIVING_LICENCE.name());
+		String panCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, DocType.PAN.name());
+		CustomerDetails customerDetails = aFinanceDetail.getCustomerDetails();
+		if (customerDetails != null && customerDetails.getCustomerDocumentsList() != null) {
+			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
+				if (StringUtils.equals(aadharCode, document.getCustDocCategory())) { // Aadhar
+					blackListCustData.setCustAadhaar(document.getCustDocTitle());
+				} else if (StringUtils.equals(passPortCode, document.getCustDocCategory())) { // Passport
+					blackListCustData.setCustPassportNo(document.getCustDocTitle());
+				} else if (StringUtils.equals(drivingLicenseCode, document.getCustDocCategory())) {// Driving License
+					blackListCustData.setDl(document.getCustDocTitle());
+				} else if (StringUtils.equals(voterIdCode, document.getCustDocCategory())) {// VoterId
+					blackListCustData.setVid(document.getCustDocTitle());
+				} else if (StringUtils.equals(panCode, document.getCustDocCategory())) {// PAN
+					blackListCustData.setCustCRCPR(document.getCustDocTitle());
+				}
+
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public DedupParmService getDedupParmService() {
@@ -176,6 +268,14 @@ public class FetchBlackListDetails {
 
 	public void setFinBlacklistCustomer(List<FinBlacklistCustomer> finBlacklistCustomer) {
 		this.finBlacklistCustomer = finBlacklistCustomer;
+	}
+
+	public static MasterDefDAO getMasterDefDAO() {
+		return masterDefDAO;
+	}
+
+	public static void setMasterDefDAO(MasterDefDAO masterDefDAO) {
+		FetchBlackListDetails.masterDefDAO = masterDefDAO;
 	}
 
 }

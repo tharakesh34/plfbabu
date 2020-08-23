@@ -50,6 +50,7 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 	protected Listheader listheader_LoanReference;
 	protected Listheader listheader_Agency;
 	protected Listheader listheader_CreatedOn;
+	protected Listheader listheader_VerificationCategory;
 
 	// checkRights
 	protected Button button_LegalVerificationList_LegalVerificationSearch;
@@ -124,6 +125,7 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		registerField("createdOn", listheader_CreatedOn, SortOrder.NONE, createdOn, sortOperator_CreatedOn,
 				Operators.DATE);
 		registerField("agencyName", listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
+		registerField("verificationCategory");
 		// Render the page and display the data.
 		doRenderPage();
 		search();

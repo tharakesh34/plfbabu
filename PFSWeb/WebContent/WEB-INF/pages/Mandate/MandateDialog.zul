@@ -21,7 +21,8 @@
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 							<button id="btnCancel" visible="false" tooltiptext="${c:l('btnCancel.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnNotes" visible="false" tooltiptext="${c:l('btnNotes.tooltiptext')}" sclass="z-toolbarbutton" />
+							<button id="btnNotes" visible="false" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 							<button id="btnProcess" visible="false" label="${c:l('label_Process')}" tooltiptext="${c:l('btnProcess.tooltiptext')}"
 								sclass="z-toolbarbutton" />
 						</toolbar>

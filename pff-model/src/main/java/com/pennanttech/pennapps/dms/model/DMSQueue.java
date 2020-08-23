@@ -29,7 +29,16 @@ public class DMSQueue implements Serializable {
 	private long documentId;
 	byte[] docImage;
 	private int attemptNum;
-
+	private String offerId;
+	private String applicationNo;
+	private String auxiloryFields1;
+	private String auxiloryFields2;
+	private String auxiloryFields3;
+	private String auxiloryFields4;
+	private String auxiloryFields5;
+	/* -----Below Fields are Excluded----*/
+	private String folderIndex;
+	
 	public DMSQueue() {
 		super();
 	}
@@ -200,6 +209,70 @@ public class DMSQueue implements Serializable {
 
 	public void setAttemptNum(int attemptNum) {
 		this.attemptNum = attemptNum;
+	}
+
+	public String getOfferId() {
+		return offerId;
+	}
+
+	public void setOfferId(String offerId) {
+		this.offerId = offerId;
+	}
+
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
+
+	public String getAuxiloryFields1() {
+		return auxiloryFields1;
+	}
+
+	public void setAuxiloryFields1(String auxiloryFields1) {
+		this.auxiloryFields1 = auxiloryFields1;
+	}
+
+	public String getAuxiloryFields2() {
+		return auxiloryFields2;
+	}
+
+	public void setAuxiloryFields2(String auxiloryFields2) {
+		this.auxiloryFields2 = auxiloryFields2;
+	}
+
+	public String getAuxiloryFields3() {
+		return auxiloryFields3;
+	}
+
+	public void setAuxiloryFields3(String auxiloryFields3) {
+		this.auxiloryFields3 = auxiloryFields3;
+	}
+
+	public String getAuxiloryFields4() {
+		return auxiloryFields4;
+	}
+
+	public void setAuxiloryFields4(String auxiloryFields4) {
+		this.auxiloryFields4 = auxiloryFields4;
+	}
+
+	public String getAuxiloryFields5() {
+		return auxiloryFields5;
+	}
+
+	public void setAuxiloryFields5(String auxiloryFields5) {
+		this.auxiloryFields5 = auxiloryFields5;
+	}
+
+	public String getFolderIndex() {
+		return folderIndex;
+	}
+
+	public void setFolderIndex(String folderIndex) {
+		this.folderIndex = folderIndex;
 	}
 
 }

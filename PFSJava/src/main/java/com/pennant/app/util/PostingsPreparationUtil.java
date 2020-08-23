@@ -40,8 +40,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -722,10 +724,10 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> postReveralsByFinreference(String finReference, boolean imdFeeReversalReq) {
+	public List<ReturnDataSet> postReveralsByFinreference(String finReference) {
 		logger.debug("Entering");
 
-		List<ReturnDataSet> returnDataSets = getReveralsByFinreference(finReference, imdFeeReversalReq);
+		List<ReturnDataSet> returnDataSets = getReveralsByFinreference(finReference);
 
 		getPostingsDAO().updateStatusByFinRef(finReference, AccountConstants.POSTINGS_REVERSE);
 
@@ -845,12 +847,11 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> getReveralsByFinreference(String finReference, boolean imdFeeReversalReq) {
+	public List<ReturnDataSet> getReveralsByFinreference(String finReference) {
 		logger.debug("Entering");
 
 		long newLinkedTranID = getPostingsDAO().getLinkedTransId();
-		List<ReturnDataSet> returnDataSets = getPostingsDAO().getPostingsByFinRef(finReference, false,
-				imdFeeReversalReq);
+		List<ReturnDataSet> returnDataSets = getPostingsDAO().getPostingsByFinRef(finReference, false);
 
 		getEngineExecution().getReversePostings(returnDataSets, newLinkedTranID);
 
@@ -877,6 +878,41 @@ public class PostingsPreparationUtil implements Serializable {
 			throw new InterfaceException("9998",
 					"Total credits and Total debits are not matched.Please check accounting configuration.");
 		}
+	}
+
+	/**
+	 * Method for Reversal the Postings Except ACCEVENT_FEEPAY.
+	 * 
+	 * @param finReference
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws InterfaceException
+	 */
+	public List<ReturnDataSet> postReveralsExceptFeePay(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		List<ReturnDataSet> returnDataSets = new ArrayList<>();
+		Set<Long> linkedTranIds = new LinkedHashSet<>();
+		List<ReturnDataSet> dataSetList = getReveralsByFinreference(finReference);
+
+		for (ReturnDataSet returnDataSet : dataSetList) {
+			if (!AccountEventConstants.ACCEVENT_FEEPAY.equalsIgnoreCase(returnDataSet.getFinEvent())) {
+				returnDataSets.add(returnDataSet);
+				linkedTranIds.add(returnDataSet.getLinkedTranId());
+			}
+		}
+
+		for (Long linkedTranId : linkedTranIds) {
+			getPostingsDAO().updateStatusByLinkedTranId(linkedTranId, AccountConstants.POSTINGS_REVERSE);
+		}
+
+		getPostingsDAO().saveBatch(returnDataSets, true);
+
+		getAccountProcessUtil().procAccountUpdate(returnDataSets);
+
+		logger.debug(Literal.LEAVING);
+		return returnDataSets;
 	}
 
 	// ******************************************************//

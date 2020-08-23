@@ -214,8 +214,8 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	}
 
 	@Override
-	public FinanceMain getFinanceMain(String finReference, String[] columns) {
-		return financeMainDAO.getFinanceMain(finReference, columns);
+	public FinanceMain getFinanceMain(String finReference, String[] columns, String type) {
+		return financeMainDAO.getFinanceMain(finReference, columns, type);
 	}
 
 	@Override

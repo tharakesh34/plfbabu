@@ -49,4 +49,5 @@ public class NotificationConstants {
 	public static final String TLS = "TLS";
 	public static final String AUTO = "AUTO";
 
+	public static final String UTF_EIGHT_CHARSET = "UTF-8";
 }

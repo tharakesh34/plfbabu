@@ -659,7 +659,10 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		}
 
 		String[] lovFields = getModuleMapping().getLovFields();
-		if (lovFields != null && lovFields.length > 0) {
+		//if module filters are 1
+		if (lovFields != null && lovFields.length == 1) {
+			this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
+		} else if (lovFields != null && lovFields.length > 1) { //if module filters are > 1 
 			this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
 			this.jdbcSearchObject.addSort(lovFields[1].trim(), false);
 		}

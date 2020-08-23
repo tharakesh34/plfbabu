@@ -60,4 +60,6 @@ public interface EmployerDetailDAO extends BasicCrudDao<EmployerDetail> {
 	 * @return
 	 */
 	boolean isDuplicateKey(long employerId, TableType tableType);
+
+	boolean isNonTargetEmployee(String name, String category, String type);
 }

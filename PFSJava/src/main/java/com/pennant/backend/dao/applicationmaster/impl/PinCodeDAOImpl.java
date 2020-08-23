@@ -110,12 +110,12 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 	}
 
 	@Override
-	public boolean isDuplicateKey(long pinCodeId, String pinCode, TableType tableType) {
+	public boolean isDuplicateKey(long pinCodeId, String city, String areaName, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "pinCode = :pinCode AND pinCodeId != :pinCodeId";
+		String whereClause = "City = :City and AreaName = :AreaName AND pinCodeId != :pinCodeId";
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -133,7 +133,8 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("pinCodeId", pinCodeId);
-		paramSource.addValue("pinCode", pinCode);
+		paramSource.addValue("City", city);
+		paramSource.addValue("AreaName", areaName);
 
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
@@ -291,6 +292,62 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 
 		logger.debug(Literal.LEAVING);
 		return pinCode;
+	}
+
+	@Override
+	public int getPinCodeCount(String pinCode, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" count(pinCode)");
+		sql.append(" From PinCodes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where PinCode = :PinCode");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PinCode", pinCode);
+
+		logger.debug(Literal.LEAVING);
+
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+	}
+
+	@Override
+	public PinCode getPinCodeById(long pinCodeId, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PinCodeId, PinCode, City, AreaName");
+		sql.append(", Active, GroupId, Serviceable");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", PCCountry, PCProvince");
+		}
+
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From PinCodes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where PinCodeId = :PinCodeId");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		PinCode pinCode = new PinCode();
+		pinCode.setPinCodeId(pinCodeId);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pinCode);
+		RowMapper<PinCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PinCode.class);
+
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 }

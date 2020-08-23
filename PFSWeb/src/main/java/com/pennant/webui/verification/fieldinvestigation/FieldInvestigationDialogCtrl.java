@@ -44,6 +44,7 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.North;
 import org.zkoss.zul.South;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -66,6 +67,7 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -143,7 +145,8 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	protected Textbox summaryRemarks;
 	protected North north;
 	protected South south;
-
+	protected Space space_AgentCode;
+	protected Space space_AgentName;
 	private FieldInvestigation fieldInvestigation;
 	protected Map<String, DocumentDetails> docDetailMap = null;
 	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
@@ -157,6 +160,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	private transient CustomerDetailsService customerDetailsService;
 	private boolean fromLoanOrg;
 	protected Button btnSearchCustomerDetails;
+	private boolean isCodeNameMandatory;
 
 	/**
 	 * default constructor.<br>
@@ -248,7 +252,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		Filter[] reasonFilter = new Filter[1];
 		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.FISRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
-
+		PennantAppUtil.setReasonCodeFilters(reason, null);
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(50);
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -260,7 +264,11 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		} else {
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
-
+		isCodeNameMandatory = SysParamUtil.isAllowed(SMTParameterConstants.IS_AGENT_CODE_NAME_MANDATORY);
+		if (!isCodeNameMandatory) {
+			this.space_AgentCode.setVisible(false);
+			this.space_AgentName.setVisible(false);
+		}
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -633,7 +641,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 				calDate.set(Calendar.SECOND, calTimeNow.get(Calendar.SECOND));
 				fi.setVerifiedDate(new Timestamp(calDate.getTimeInMillis()));
 			} else {
-				fi.setVerifiedDate(new Timestamp(calDate.getTimeInMillis()));
+				fi.setVerifiedDate(SysParamUtil.getAppDate());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -693,10 +701,15 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	}
 
 	private void visibleComponent(Integer type) {
-		if (type == FIStatus.NEGATIVE.getKey() || type == FIStatus.REFERTOCREDIT.getKey()) {
+		if (type == FIStatus.NEGATIVE.getKey()) {
 			this.reason.setMandatoryStyle(true);
-		} else {
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.FINTVRTY.getKey());
+		} else if (type == FIStatus.REFERTOCREDIT.getKey()) {
+			this.reason.setMandatoryStyle(true);
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.FIRFRRTY.getKey());
+		} else if (type == FIStatus.POSITIVE.getKey()) {
 			this.reason.setMandatoryStyle(false);
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.FIPOSTVRTY.getKey());
 		}
 	}
 
@@ -815,12 +828,12 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_FieldInvestigationDialog_AgentCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, isCodeNameMandatory));
 		}
 		if (!this.agentName.isReadonly()) {
 			this.agentName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_FieldInvestigationDialog_AgentName.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME, true));
+							PennantRegularExpressions.REGEX_CUST_NAME, isCodeNameMandatory));
 		}
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(new PTListValidator(
@@ -852,6 +865,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.reason.setConstraint("");
 		this.summaryRemarks.setConstraint("");
 		this.summaryRemarks.setConstraint("");
+		this.verificationDate.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1043,6 +1057,9 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		try {
 			if (doProcess(fi, tranType)) {
 				refreshList();
+				String msg = PennantApplicationUtil.getSavingStatus(fi.getRoleCode(), fi.getNextRoleCode(),
+						fi.getKeyReference(), " Loan ", fi.getRecordStatus(), getNextTaskId());
+				Clients.showNotification(msg, "info", null, null, -1);
 				closeDialog();
 			}
 

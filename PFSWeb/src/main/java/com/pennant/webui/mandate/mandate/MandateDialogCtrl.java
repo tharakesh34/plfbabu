@@ -128,6 +128,8 @@ import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
+import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
+import com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
@@ -268,6 +270,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private transient PennyDropService pennyDropService;
 	private transient PennyDropDAO pennyDropDAO;
 	private transient BankAccountValidation bankAccountValidations;
+	private boolean coAppsAllowed = SysParamUtil.isAllowed(SMTParameterConstants.IS_COAPPLICANTS_ALLOWED_FOR_MANDATE);
 
 	protected Row row_MandateSource;
 	protected Textbox eMandateReferenceNo;
@@ -354,6 +357,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 						FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 						mandate.setEntityCode(financeType.getLovDescEntityCode());
 						mandate.setEntityDesc(financeType.getLovDescEntityDesc());
+						mandate.setOrgReference(financemain.getFinReference());
 					}
 					this.mandate.setWorkflowId(0);
 				}
@@ -485,7 +489,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		// Finance Main
 		this.finReference.setMaxlength(20);
-		this.finReference.setTextBoxWidth(120);
+		this.finReference.setTextBoxWidth(130);
 		this.finReference.setModuleName("FinanceManagement");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
@@ -817,8 +821,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		long custID = Long.parseLong(this.custID.getAttribute("custID").toString());
-		Filter filter[] = new Filter[1];
+		Filter filter[] = new Filter[2];
 		filter[0] = new Filter("CustID", custID, Filter.OP_EQUAL);
+		filter[1] = new Filter("RepaymentFrom", "Y", Filter.OP_EQUAL);
 		//this.custID.setValueType(DataType.LONG);
 
 		Object dataObject = ExtendedSearchListBox.show(this.window_MandateDialog, "CustomerBankInfoAccntNumbers",
@@ -846,6 +851,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				} else {
 					this.city.setValue("");
 				}
+				this.bankBranchID.setAttribute("bankBranchID", details.getBankBranchID());
+				this.bankBranchID.setValue(details.getBranchCode(), details.getBankBranch());
+				this.bank.setValue(details.getBankName());
+				this.micr.setValue(details.getMicr());
+				this.ifsc.setValue(details.getiFSC());
+				this.city.setValue(details.getCity());
 
 				if (accNoLength != 0) {
 					this.accNumber.setMaxlength(accNoLength);
@@ -925,6 +936,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.accNumber.setValue("");
 		this.accHolderName.setValue("");
 		this.city.setValue("");
+		this.cityName.setValue("");
 		this.bank.setValue("");
 		this.micr.setValue("");
 		this.ifsc.setValue("");
@@ -1181,7 +1193,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (fromLoan) {
 			this.north_mandate.setVisible(false);
-			readOnlyComponent(true, this.custID);
+			readOnlyComponent(!coAppsAllowed, this.custID);
 			readOnlyComponent(true, this.mandateType);
 
 			this.label_Status.setVisible(false);
@@ -1401,9 +1413,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.custID.setValue(aMandate.getCustCIF(), aMandate.getCustShrtName());
 			this.btnFetchAccountDetails.setDisabled(false);
 		}
-
-		fillComboBox(this.mandateType, aMandate.getMandateType(), mandateTypeList, "");
-
+		List<String> excludelist = new ArrayList<String>(1);
+		excludelist.add(MandateConstants.TYPE_PDC);
+		fillComboBox(this.mandateType, aMandate.getMandateType(), mandateTypeList, excludelist);
 		List<String> excludeList = new ArrayList<String>();
 		if (registration) {
 			excludeList.add(MandateConstants.STATUS_FIN);
@@ -1478,7 +1490,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (aMandate.getBankBranchID() != null && aMandate.getBankBranchID() != Long.MIN_VALUE
 				&& aMandate.getBankBranchID() != 0) {
 			this.bankBranchID.setAttribute("bankBranchID", aMandate.getBankBranchID());
-			this.bankBranchID.setValue(String.valueOf(aMandate.getBankBranchID()),
+			this.bankBranchID.setValue(String.valueOf(aMandate.getBranchCode()),
 					StringUtils.trimToEmpty(aMandate.getBranchDesc()));
 		}
 		this.city.setValue(StringUtils.trimToEmpty(aMandate.getCity()));
@@ -2163,8 +2175,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.btnFetchAccountDetails.setDisabled(true);
 			}
 		}
-
-		getFinReferences();
+		//making the loan reference as read only if it is from loan queue 
+		if (!fromLoan) {
+			getFinReferences();
+		}
 	}
 
 	public void onFulfill$mandateRef(Event event) throws WrongValueException, Exception {
@@ -2782,6 +2796,36 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 		}
 
+	}
+
+	/**
+	 * This method will set the customer filters
+	 */
+	public void doSetCustomerFilters() {
+		if (coAppsAllowed) {
+			ArrayList<String> custCIFs = new ArrayList<>(2);
+			if (getMandate() != null) {
+				custCIFs.add(getMandate().getCustCIF());
+			}
+			//Inside loan queue
+			if (getFinanceMainDialogCtrl() != null && getFinanceMainDialogCtrl() instanceof FinanceMainBaseCtrl) {
+				//Get coapplicant CIF's
+				JointAccountDetailDialogCtrl financeJointAccountDetailDialogCtrl = ((FinanceMainBaseCtrl) getFinanceMainDialogCtrl())
+						.getJointAccountDetailDialogCtrl();
+				if (financeJointAccountDetailDialogCtrl != null) {
+					List<Customer> jointAccountCustomers = financeJointAccountDetailDialogCtrl
+							.getJointAccountCustomers();
+					for (Customer customer : jointAccountCustomers) {
+						custCIFs.add(customer.getCustCIF());
+					}
+				}
+			}
+			//primary customer
+			custCIFs.add(getCIFForCustomer(financeDetail));
+			Filter[] filter = new Filter[1];
+			filter[0] = new Filter("CustCIF", custCIFs, Filter.OP_IN);
+			this.custID.setFilters(filter);
+		}
 	}
 
 	// ******************************************************//

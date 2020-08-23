@@ -407,9 +407,17 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		if (isFinanceProcess) {
 			// Calling Credit Review Details
 
+			if (detail == null) {
+				return;
+			}
+
 			FinScheduleData finScheduleData = detail.getFinScheduleData();
+			if (finScheduleData == null) {
+				return;
+			}
+
 			FinanceMain fm = finScheduleData.getFinanceMain();
-			if (detail == null || finScheduleData == null || fm == null) {
+			if (fm == null) {
 				return;
 			}
 

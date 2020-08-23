@@ -12,6 +12,8 @@ import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.perfios.PerfiosHeader;
+import com.pennant.backend.model.perfios.PerfiosTransaction;
 import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennanttech.pennapps.core.InterfaceException;
 
@@ -113,6 +115,15 @@ public interface CustomerDetailsService {
 
 	int getCrifScorevalue(String tablename, String reference);
 
+	void prepareDefaultIncomeExpenseList(CustomerDetails customerDetails);
+
+	String getExternalCibilResponse(String cif, String tableName);
+
 	boolean isCrifDeroge(String tablename, String reference);
 
+	String processPerfiosReport(PerfiosTransaction perfiosTransaction);
+
+	PerfiosHeader processPerfiosDocumentAndBankInfoDetails(String transationId);
+
+	CustomerDetails getCustomerDetails(long id, String type, boolean extDtsReq);
 }

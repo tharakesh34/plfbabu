@@ -58,6 +58,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -122,8 +123,12 @@ public class SelectFeeReceiptListCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (isWorkFlowEnabled() && !enqiryModule) {
 			getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 		}
-
-		fillComboBox(this.recAgainst, "", PennantStaticListUtil.getReceiptAgainstList(), "");
+		//AS PER IMD CHANGES COMMENTING CUSTOMER
+		String excludeFields = "";
+		if (arguments.containsKey("feeReceiptListCtrl")) {
+			excludeFields = "," + RepayConstants.RECEIPTTO_CUSTOMER + ",";
+		}
+		fillComboBox(this.recAgainst, "", PennantStaticListUtil.getReceiptAgainstList(), excludeFields);
 		doCheckRights();
 
 		doSetFieldProperties();

@@ -263,8 +263,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			if (arguments.containsKey("jountAccountDetail")) {
 				this.jountAccountDetail = (JointAccountDetail) arguments.get("jountAccountDetail");
 				JointAccountDetail befImage = new JointAccountDetail();
-				BeanUtils.copyProperties(this.jountAccountDetail, befImage);
-				this.jountAccountDetail.setBefImage(befImage);
+				if (this.jountAccountDetail.getBefImage() == null) {
+					BeanUtils.copyProperties(this.jountAccountDetail, befImage);
+					this.jountAccountDetail.setBefImage(befImage);
+				}
 				setNewContributor(true);
 				setJountAccountDetail(this.jountAccountDetail);
 			} else {
@@ -286,7 +288,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			if (arguments.containsKey("filter")) {
 				this.cif = (String[]) arguments.get("filter");
 			}
-
+			if (arguments.containsKey("coAppFilter")) {
+				this.cif = (String[]) arguments.get("coAppFilter");
+			}
 			if (arguments.containsKey("finJointAccountCtrl")) {
 				setFinanceMainDialogCtrl((com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl) arguments
 						.get("finJointAccountCtrl"));
@@ -676,6 +680,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Entering" + event.toString());
 		Map<String, Object> map = getDefaultArguments();
 		map.put("jointAccountDetailDialogCtrl", this);
+		map.put("fromLoan", true);
+		map.put("coAppFilter", cif);
 
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CoreCustomerSelect.zul", null, map);
 		logger.debug("Leaving" + event.toString());
@@ -734,7 +740,16 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		arg.put("isNewCustCret", true);
 		arg.put("jointAccountDetailDialogCtrl", this);
 		arg.put("newRecord", customerDetails.getCustomer().isNew());
-
+		arg.put("fromLoan", true);
+		arg.put("coAppFilter", cif);
+		if (financeMain != null && StringUtils.isNotEmpty(financeMain.getFinReference())) {
+			arg.put("finReference", financeMain.getFinReference());
+		} else if (jountAccountDetail != null && StringUtils.isNotEmpty(jountAccountDetail.getFinReference())) {
+			arg.put("finReference", jountAccountDetail.getFinReference());
+		} else {
+			arg.put("finReference", "");
+		}
+		arg.put("finMain", financeMain);
 		try {
 			Executions.createComponents(pageName, null, arg);
 		} catch (Exception e) {
@@ -922,6 +937,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.btnCancel.setVisible(true);
 		}
 		readOnlyComponent(isReadOnly("JountAccountDetailDialog_catOfCoApplicant"), this.catOfCoApplicant);
+		readOnlyComponent(isReadOnly("JountAccountDetailDialog_authoritySignatory"), this.authoritySignatory);
+		readOnlyComponent(isReadOnly("JountAccountDetailDialog_includeIncome"), this.includeIncome);
 		if (SysParamUtil.isAllowed(SMTParameterConstants.COAPP_CUST_CREATE)) {
 			readOnlyComponent(isReadOnly("button_JountAccountDetailDialog_btnCreateCustomer"), this.btn_NewCust);
 			readOnlyComponent(isReadOnly("button_JountAccountDetailDialog_btnEditCustomer"), this.btn_EditCust);
@@ -966,6 +983,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Leaving");
 	}
 
+	@Override
 	public boolean isReadOnly(String componentName) {
 		return getUserWorkspace().isReadOnly(componentName);
 	}
@@ -1469,10 +1487,12 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
+		//setting the customer details while save
+		aJountAccountDetail.setCustomerDetails(customerDetailsService.getCustById(aJountAccountDetail.getCustID()));
 		aJountAccountDetail.setRecordStatus(this.recordStatus.getValue());
 		setJountAccountDetail(aJountAccountDetail);
 

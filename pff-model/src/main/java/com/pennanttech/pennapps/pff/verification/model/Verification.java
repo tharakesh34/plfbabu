@@ -83,6 +83,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private TechnicalVerification technicalVerification;
 	private LegalVerification legalVerification;
 	private RiskContainmentUnit rcuVerification;
+	private LegalVetting legalVetting;
 
 	private int lastStatus;
 	private Date lastVerificationDate;
@@ -107,6 +108,8 @@ public class Verification extends AbstractWorkflowEntity {
 	//Value As Per Cost Of Property
 	private BigDecimal valueForCOP = BigDecimal.ZERO;
 	private String tvRecordStatus;
+	private List<LVDocument> vettingDocuments = new ArrayList<>();
+	private String city;
 
 	public Verification() {
 		super();
@@ -120,6 +123,7 @@ public class Verification extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("cif");
+		excludeFields.add("city");
 		excludeFields.add("customerName");
 		excludeFields.add("agencyName");
 		excludeFields.add("reasonName");
@@ -131,6 +135,7 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("technicalVerification");
 		excludeFields.add("lvDocuments");
 		excludeFields.add("legalVerification");
+		excludeFields.add("legalVetting");
 		excludeFields.add("agencyCity");
 		excludeFields.add("approveTab");
 		excludeFields.add("docType");
@@ -163,6 +168,7 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("accNumber");
 		excludeFields.add("bankName");
 		excludeFields.add("collateralType");
+		excludeFields.add("vettingDocuments");
 		return excludeFields;
 	}
 
@@ -725,4 +731,29 @@ public class Verification extends AbstractWorkflowEntity {
 	public void setCollateralType(String collateralType) {
 		this.collateralType = collateralType;
 	}
+
+	public LegalVetting getLegalVetting() {
+		return legalVetting;
+	}
+
+	public void setLegalVetting(LegalVetting legalVetting) {
+		this.legalVetting = legalVetting;
+	}
+
+	public List<LVDocument> getVettingDocuments() {
+		return vettingDocuments;
+	}
+
+	public void setVettingDocuments(List<LVDocument> vettingDocuments) {
+		this.vettingDocuments = vettingDocuments;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
 }

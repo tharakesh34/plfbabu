@@ -52,7 +52,8 @@
 								<hbox>
 									<longbox id="custID" width="180px" visible="false" />
 									<uppercasebox id="custCIF" width="180px" />
-									<button id="btnSearchCustCIF" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" image="/images/icons/more.png" />
+									<button id="btnSearchCustCIF" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" image="/images/icons/more.png"
+										autodisable="btnSearchCustCIF" />
 								</hbox>
 								<label id="label_FinanceMainSearch_FinReference" value="${c:l('label_FinanceMainSearch_FinReference.value')}" />
 								<listbox id="sortOperator_finReference" width="43px" mold="select" rows="1" />

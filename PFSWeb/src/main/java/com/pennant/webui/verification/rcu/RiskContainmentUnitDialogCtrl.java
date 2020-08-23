@@ -38,6 +38,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.North;
 import org.zkoss.zul.South;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -58,6 +59,7 @@ import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -119,6 +121,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 
 	protected North north;
 	protected South south;
+	protected Space space_AgentCode;
+	protected Space space_AgentName;
 
 	private RiskContainmentUnit riskContainmentUnit;
 	protected Map<String, DocumentDetails> docDetailMap = null;
@@ -136,6 +140,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	private boolean fromLoanOrg;
 
 	protected Button btnSearchCustomerDetails;
+	private boolean isCodeNameMandatory;
+	private boolean docFieldsDisabled;
 
 	/**
 	 * default constructor.<br>
@@ -227,7 +233,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		Filter[] reasonFilter = new Filter[1];
 		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.RCUSRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
-
+		PennantAppUtil.setReasonCodeFilters(reason, null);
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(20);
@@ -240,6 +246,12 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
 
+		isCodeNameMandatory = SysParamUtil.isAllowed(SMTParameterConstants.IS_AGENT_CODE_NAME_MANDATORY);
+		if (!isCodeNameMandatory) {
+			this.space_AgentCode.setVisible(false);
+			this.space_AgentName.setVisible(false);
+		}
+		docFieldsDisabled = SysParamUtil.isAllowed(SMTParameterConstants.IS_FCU_DOC_FIELDS_DISABLED_REQUIRED);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -447,6 +459,10 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 					label.setValue(" - " + document.getReferenceId());
 					lc.appendChild(label);
 					lc.setParent(item);
+				} else if (document.getDocumentType() == DocumentType.COAPPLICANT.getKey()) {
+					lc.setLabel(" CoApplicant-  " + document.getReferenceId());
+				} else if (document.getDocumentType() == DocumentType.CUSTOMER.getKey()) {
+					lc.setLabel(" Customer- " + document.getReferenceId());
 				}
 
 				lc = new Listcell();
@@ -507,8 +523,15 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				remarks.setWidth("350px");
 				lc.appendChild(remarks);
 				lc.setParent(item);
-
-				fillComboBox(verificationType, document.getVerificationType(), RCUDocVerificationType.getList());
+				int type = document.getVerificationType();
+				if (docFieldsDisabled) {
+					type = 1;//Defaulting to Sampled and disabling
+					verificationType.setDisabled(true);
+					rcuDocStatus.setDisabled(true);
+					pagesEyeBalled.setReadonly(true);
+					pagesSampled.setReadonly(true);
+				}
+				fillComboBox(verificationType, type, RCUDocVerificationType.getList());
 				fillComboBox(rcuDocStatus, document.getStatus(), RCUDocStatus.getList());
 				readOnlyComponents(verificationType, pagesEyeBalled, pagesSampled);
 
@@ -796,10 +819,15 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	}
 
 	private void visibleComponent(Integer type) {
-		if (type == RCUStatus.NEGATIVE.getKey() || type == RCUStatus.REFERTOCREDIT.getKey()) {
+		if (type == RCUStatus.NEGATIVE.getKey()) {
 			this.reason.setMandatoryStyle(true);
-		} else {
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.RCUNTVRTY.getKey());
+		} else if (type == RCUStatus.REFERTOCREDIT.getKey()) {
+			this.reason.setMandatoryStyle(true);
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.RCURFRRTY.getKey());
+		} else if (type == RCUStatus.POSITIVE.getKey()) {
 			this.reason.setMandatoryStyle(false);
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.RCUPOSTVRTY.getKey());
 		}
 	}
 
@@ -1053,12 +1081,12 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_RiskContainmentUnitDialog_AgentCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, isCodeNameMandatory));
 		}
 		if (!this.agentName.isReadonly()) {
 			this.agentName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_RiskContainmentUnitDialog_AgentName.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME, true));
+							PennantRegularExpressions.REGEX_CUST_NAME, isCodeNameMandatory));
 		}
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(
@@ -1090,7 +1118,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.recommendations.setConstraint("");
 		this.reason.setConstraint("");
 		this.remarks.setConstraint("");
-		this.remarks.setConstraint("");
+		this.verificationDate.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1207,6 +1235,9 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		try {
 			if (doProcess(rcu, tranType)) {
 				refreshList();
+				String msg = PennantApplicationUtil.getSavingStatus(rcu.getRoleCode(), rcu.getNextRoleCode(),
+						rcu.getKeyReference(), " Loan ", rcu.getRecordStatus(), getNextTaskId());
+				Clients.showNotification(msg, "info", null, null, -1);
 				closeDialog();
 			}
 

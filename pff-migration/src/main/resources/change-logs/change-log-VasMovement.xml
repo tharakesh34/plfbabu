@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="add.schema" value=" " dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="1" author="Somasekhar">
+		<createTable tableName="VasMovement">
+			<column name="VasMovementId" type="bigint">	
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="finReference" 	type="varchar(20)"/>		
+			<column name="version" 		type="int"><constraints nullable="false" />	</column>
+			<column name="lastmntby" 	type="bigint" />			
+			<column name="lastmnton" 	type="datetime" />			
+			<column name="recordstatus" 	type="varchar(50)" />		
+			<column name="rolecode" 		type="varchar(100)" />		
+			<column name="nextrolecode" 	type="varchar(200)" />		
+			<column name="taskid" 		type="varchar(50)" />		
+			<column name="nexttaskid" 	type="varchar(200)" />		
+			<column name="recordtype" 	type="varchar(50)" />		
+			<column name="workflowid" 	type="bigint" defaultValue="0"/>	
+	</createTable>
+	</changeSet>   
+	
+	<changeSet id="1.1" author="Somasekhar" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Version" tableName="VasMovement"
+			defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="1.2" author="Somasekhar" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table VasMovement add constraint DF_VasMovement_Version default ((0)) for Version;
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="2" author="Somasekhar">
+			<createTable tableName="VasMovement_temp">
+			<column name="VasMovementId" type="bigint">	
+			<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="finReference" 	type="varchar(20)"/>		
+			<column name="version" 		type="int"><constraints nullable="false" />	</column>
+			<column name="lastmntby" 	type="bigint" />			
+			<column name="lastmnton" 	type="datetime" />			
+			<column name="recordstatus" 	type="varchar(50)" />		
+			<column name="rolecode" 		type="varchar(100)" />		
+			<column name="nextrolecode" 	type="varchar(200)" />		
+			<column name="taskid" 		type="varchar(50)" />		
+			<column name="nexttaskid" 	type="varchar(200)" />		
+			<column name="recordtype" 	type="varchar(50)" />		
+			<column name="workflowid" 	type="bigint" defaultValue="0"/>
+		</createTable>
+	</changeSet>
+
+	
+	<changeSet id="2.1" author="Somasekhar" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Version" tableName="VasMovement_temp"
+			defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="2.2" author="Somasekhar" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table VasMovement_temp add constraint DF_VasMovement_Temp_Version default ((0)) for Version;
+		]]>
+		</sql>
+	</changeSet>
+	
+   <changeSet id="3" author="Somasekhar">
+		<createView viewName="vasMovement_aview"  replaceIfExists="true">
+		<![CDATA[
+			SELECT t1.vasMovementId,
+					t1.finReference,
+					t1.version,
+					t1.lastmntby,
+					t1.lastmnton,
+					t1.recordstatus,
+					t1.rolecode,
+					t1.nextrolecode,
+					t1.taskid,
+					t1.nexttaskid,
+					t1.recordtype,
+					t1.workflowid
+						FROM VasMovement t1	
+				]]>		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="4" author="Somasekhar">
+			<sql>
+			<![CDATA[
+					INSERT INTO SECGROUPS VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'VASMOVEMENT_MAKER', 'WF Maker Group for VASMOVEMENT',  1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+					INSERT INTO SECGROUPS VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'VASMOVEMENT_APPROVER', 'WF Approver Group for VASMOVEMENT',  1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	 <changeSet id="5" author="Somasekhar">
+				<sql>
+					<![CDATA[
+						INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2,'button_VasMovementDialog_btnDelete','VasMovementDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+						INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2,'button_VasMovementDialog_btnSave','VasMovementDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+						INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2,'button_VasMovementDialog_btnNew','VasMovementDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+						INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2,'button_VasMovementDialog_btnEdit','VasMovementDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+						INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2,'button_VasMovementDialog_btnNew_VasMovementDetail','VasMovementDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+						INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0,'menuItem_Finance_VasMovement','MENU',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+						
+						
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE	GRPCODE='VASMOVEMENT_MAKER') ,(SELECT RIGHTID FROM	SECRIGHTS WHERE	RIGHTNAME='button_VasMovementDialog_btnDelete'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO	SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE	GRPCODE='VASMOVEMENT_MAKER') ,(SELECT RIGHTID FROM	SECRIGHTS WHERE	RIGHTNAME='button_VasMovementDialog_btnSave'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='VASMOVEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VasMovementDialog_btnNew'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='VASMOVEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VasMovementDialog_btnEdit'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='VASMOVEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VasMovementDialog_btnNew_VasMovementDetail'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='VASMOVEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_Finance_VasMovement'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='VASMOVEMENT_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VasMovementDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='VASMOVEMENT_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_Finance_VasMovement'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						]]>
+				</sql>
+		</changeSet> 
+	
+	<changeSet id="6" author="Somasekhar">
+			<sql>
+			<![CDATA[
+						UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+						UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+						UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				]]>
+		</sql>
+	</changeSet> 
+					
+	<changeSet id="7" author="Somasekhar">
+			<sql>
+			<![CDATA[					
+						INSERT INTO SECGROUPS VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'VASMOVEMENTDETAIL_MAKER', 'WF Maker Group for VASMOVEMENTDETAIL',  1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+						INSERT INTO SECGROUPS VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'VASMOVEMENTDETAIL_APPROVER', 'WF Approver Group for VASMOVEMENTDETAIL',  1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+						]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="8" author="Somasekhar">
+			<sql>
+			<![CDATA[
+						INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2,'button_VasMovementDetailDialog_btnDelete','VasMovementDetailDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+						INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2,'button_VasMovementDetailDialog_btnSave','VasMovementDetailDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+						INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2,'button_VasMovementDetailDialog_btnNew','VasMovementDetailDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+						INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2,'button_VasMovementDetailDialog_btnEdit','VasMovementDetailDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+						INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'VasMovementDetailDialog_VasReference','VasMovementDetailDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+						INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'VasMovementDetailDialog_ModifyAmt','VasMovementDetailDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+						INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'VasMovementDetailDialog_ModifyDate','VasMovementDetailDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+					]]>
+		</sql>
+	</changeSet>
+	
+	 <changeSet id="9" author="Somasekhar">
+			<sql>
+					<![CDATA[
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE	GRPCODE='VASMOVEMENTDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VasMovementDetailDialog_btnDelete'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO	SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE	GRPCODE='VASMOVEMENTDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VasMovementDetailDialog_btnSave'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='VASMOVEMENTDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VasMovementDetailDialog_btnNew'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='VASMOVEMENTDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VasMovementDetailDialog_btnEdit'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='VASMOVEMENTDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VasMovementDetailDialog_VasReference'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='VASMOVEMENTDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VasMovementDetailDialog_ModifyAmt'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='VASMOVEMENTDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VasMovementDetailDialog_ModifyDate'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='VASMOVEMENTDETAIL_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VasMovementDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+						]]>
+		</sql>
+	</changeSet> 
+	
+ 	<changeSet id="10" author="Somasekhar">
+			<sql>
+					<![CDATA[
+	
+					UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+					UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+					UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+					]]>
+		</sql>
+	</changeSet> 
+	
+	
+	<changeSet id="11" author="Somasekhar">
+			<createTable tableName="VasMovementDetails">
+			<column name="VasMovementId" type="bigint"><constraints nullable="false"/></column>
+			<column name="vasMovementDetailId" type="bigint">	
+			<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="finReference" 	type="varchar(20)"/>		
+			<column name="vasReference" 	type="varchar(20)"/>
+			<column name="movementDate" type="datetime" ><constraints nullable="false"/></column>		
+			<column name="movementAmt"   type="decimal(18,0)" />
+			<column name="vasProvider" 	type="varchar(50)" />	
+			<column name="vasProduct" 	type="varchar(50)" />	
+			<column name="vasAmount"   type="decimal(18,0)" />
+			<column name="version" 		type="int"><constraints nullable="false" />	</column>
+			<column name="lastmntby" 	type="bigint" />			
+			<column name="lastmnton" 	type="datetime" />			
+			<column name="recordstatus" 	type="varchar(50)" />		
+			<column name="rolecode" 		type="varchar(100)" />		
+			<column name="nextrolecode" 	type="varchar(200)" />		
+			<column name="taskid" 		type="varchar(50)" />		
+			<column name="nexttaskid" 	type="varchar(200)" />		
+			<column name="recordtype" 	type="varchar(50)" />		
+			<column name="workflowid" 	type="bigint" />	
+		</createTable>
+	</changeSet>  
+	<changeSet id="11.1" author="Somasekhar" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Version" tableName="VasMovementDetails"
+			defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="11.2" author="Somasekhar" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table VasMovementDetails add constraint DF_VasMovementDetails_Version default ((0)) for Version;
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="11.3" author="Somasekhar" dbms="postgresql, oracle">
+		<addDefaultValue columnName="workflowid" tableName="VasMovementDetails"
+			defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="11.4" author="Somasekhar" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table VasMovementDetails add constraint DF_VasMovementDetai_workflowid default ((0)) for workflowid;
+		]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="12" author="Somasekhar">
+		<createTable tableName="VasMovementDetails_temp">
+			<column name="VasMovementId" type="bigint"><constraints nullable="false"/></column>
+			<column name="vasMovementDetailId" type="bigint">	
+			<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="finReference" 	type="varchar(20)"/>		
+			<column name="vasReference" 	type="varchar(20)"/>
+			<column name="movementDate" type="datetime" ><constraints nullable="false"/>	</column>	
+			<column name="movementAmt"   type="decimal(18,0)" />
+			<column name="vasProvider" 	type="varchar(50)" />	
+			<column name="vasProduct" 	type="varchar(50)" />	
+			<column name="vasAmount"   type="decimal(18,0)" />
+			<column name="version" 		type="int"><constraints nullable="false" />	</column>
+			<column name="lastmntby" 	type="bigint" />			
+			<column name="lastmnton" 	type="datetime" />			
+			<column name="recordstatus" 	type="varchar(50)" />		
+			<column name="rolecode" 		type="varchar(100)" />		
+			<column name="nextrolecode" 	type="varchar(200)" />		
+			<column name="taskid" 		type="varchar(50)" />		
+			<column name="nexttaskid" 	type="varchar(200)" />		
+			<column name="recordtype" 	type="varchar(50)" />		
+			<column name="workflowid" 	type="bigint" />	
+		</createTable>
+	</changeSet>  
+			
+			<changeSet id="12.1" author="Somasekhar" dbms="postgresql, oracle">
+		<addDefaultValue columnName="version" tableName="VasMovementDetails_temp"
+			defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="12.2" author="Somasekhar" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table VasMovementDetails_temp add constraint DF_VasMovementDetail_T_Version default ((0)) for Version;
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="12.3" author="Somasekhar" dbms="postgresql, oracle">
+		<addDefaultValue columnName="workflowid" tableName="VasMovementDetails_temp"
+			defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="12.4" author="Somasekhar" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table VasMovementDetails_temp add constraint DF_VasMovementDet_T_workflowid default ((0)) for workflowid;
+		]]>
+		</sql>
+	</changeSet>
+			
+	<changeSet id="13" author="Somasekhar">
+		<createView viewName="vasmovement_view"  replaceIfExists="true">
+		<![CDATA[
+			SELECT t1.vasmovementid,
+				t1.finreference,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid,
+				t2.finamount,
+				t2.finstartdate,
+				t2.maturitydate,
+				t2.custid,
+				t2.fintype
+			FROM vasmovement_temp t1
+			JOIN financemain t2 ON t2.finreference = t1.finreference
+		UNION ALL
+		SELECT t1.vasmovementid,
+				t1.finreference,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid,
+				t2.finamount,
+				t2.finstartdate,
+				t2.maturitydate,
+				t2.custid,
+				t2.fintype
+			FROM vasmovement t1
+			JOIN financemain t2 ON t2.finreference = t1.finreference
+			WHERE NOT (EXISTS ( SELECT 1
+           FROM vasmovement_temp
+			WHERE vasmovement_temp.vasmovementid = t1.vasmovementid))
+		UNION ALL
+			SELECT 0 AS vasmovementid,
+				t1.finreference,
+				0 AS version,
+				0 AS lastmntby,
+				NULL AS lastmnton,
+				NULL AS recordstatus,
+				NULL AS rolecode,
+				NULL AS nextrolecode,
+				NULL AS taskid,
+				NULL AS nexttaskid,
+				NULL AS recordtype,
+				0 AS workflowid,
+				t1.finamount,
+				t1.finstartdate,
+				t1.maturitydate,
+				t1.custid,
+				t1.fintype
+			FROM financemain t1
+			WHERE NOT (t1.finreference IN ( SELECT vasmovement_temp.finreference
+           FROM vasmovement_temp)) AND NOT (t1.finreference IN ( SELECT vasmovement.finreference
+           FROM vasmovement))
+			]]>		
+		</createView>
+	</changeSet>
+	
+	
+	<changeSet id="14" author="Somasekhar">
+		<createView viewName="vasmovementdetails_view"  replaceIfExists="true">
+		<![CDATA[
+				SELECT t1.vasmovementid,
+					t1.vasmovementdetailid,
+					t1.finreference,
+					t1.vasreference,
+					t1.movementdate,
+					t1.movementamt,
+					t1.vasprovider,
+					t1.vasproduct,
+					t1.vasamount,
+					t1.version,
+					t1.lastmntby,
+					t1.lastmnton,
+					t1.recordstatus,
+					t1.rolecode,
+					t1.nextrolecode,
+					t1.taskid,
+					t1.nexttaskid,
+					t1.recordtype,
+					t1.workflowid
+				FROM vasmovementdetails_temp t1
+				UNION ALL
+				SELECT t1.vasmovementid,
+					t1.vasmovementdetailid,
+					t1.finreference,
+					t1.vasreference,
+					t1.movementdate,
+					t1.movementamt,
+					t1.vasprovider,
+					t1.vasproduct,
+					t1.vasamount,
+					t1.version,
+					t1.lastmntby,
+					t1.lastmnton,
+					t1.recordstatus,
+					t1.rolecode,
+					t1.nextrolecode,
+					t1.taskid,
+					t1.nexttaskid,
+					t1.recordtype,
+					t1.workflowid
+				FROM vasmovementdetails t1
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM vasmovementdetails_temp
+				WHERE vasmovementdetails_temp.vasmovementid = t1.vasmovementid AND vasmovementdetails_temp.vasmovementdetailid = t1.vasmovementdetailid))
+			]]>		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="15" author="Somasekhar">
+		<createView viewName="vasmovement_view"  replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.vasmovementid,t1.finreference,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,
+				t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t2.finamount,
+				t2.finstartdate,t2.maturitydate,t3.custcif,t2.fintype,t2.finccy,t2.finBranch,t2.NumberOfTerms
+				
+				FROM vasmovement_temp t1
+				Inner JOIN financemain t2 ON t2.finreference = t1.finreference
+				inner join customers t3 on t3.custid = t2.custid
+				
+				UNION ALL
+				
+				SELECT t1.vasmovementid,t1.finreference,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,
+				t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t2.finamount,
+				t2.finstartdate,t2.maturitydate,t3.custcif,t2.fintype,t2.finccy,t2.finBranch,t2.NumberOfTerms
+				
+				FROM vasmovement t1
+				Inner JOIN financemain t2 ON t2.finreference = t1.finreference
+				Inner join customers t3 on t3.custid = t2.custid
+				
+				WHERE NOT (EXISTS ( SELECT 1  FROM vasmovement_temp  WHERE vasmovement_temp.vasmovementid = t1.vasmovementid))
+				
+				UNION ALL
+				
+				SELECT 0 AS vasmovementid,t1.finreference,0 AS version,
+				0 AS lastmntby,NULL AS lastmnton,NULL AS recordstatus,
+				NULL AS rolecode,NULL AS nextrolecode,
+				NULL AS taskid,NULL AS nexttaskid,
+				NULL AS recordtype,0 AS workflowid,
+				t1.finamount,t1.finstartdate,t1.maturitydate,t2.custcif,t1.fintype,t1.finccy,t1.finBranch,t1.NumberOfTerms
+				
+				FROM financemain t1
+				Inner join customers t2 on t2.custid = t1.custid
+				
+				WHERE NOT (t1.finreference IN ( SELECT vasmovement_temp.finreference FROM vasmovement_temp))
+				AND NOT (t1.finreference IN ( SELECT vasmovement.finreference FROM vasmovement))
+				]]>		
+		</createView>
+	</changeSet>
+
+	<changeSet id="16" author="Somasekhar">
+		<createView viewName="vasmovementdetails_view"  replaceIfExists="true">
+			<![CDATA[
+
+			SELECT t1.vasmovementid,t1.vasmovementdetailid,t1.finreference,t1.vasreference,t1.movementdate,t1.movementamt,
+					t1.vasprovider,t1.vasproduct,t1.vasamount,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+			t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid
+			FROM vasmovementdetails_temp t1
+			UNION ALL
+			SELECT t1.vasmovementid,t1.vasmovementdetailid,t1.finreference,t1.vasreference,t1.movementdate,t1.movementamt,
+					t1.vasprovider,t1.vasproduct,t1.vasamount,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+			t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid
+			FROM vasmovementdetails t1
+			WHERE NOT (EXISTS ( SELECT 1 FROM vasmovementdetails_temp WHERE vasmovementdetails_temp.vasmovementid = t1.vasmovementid AND vasmovementdetails_temp.vasmovementdetailid = t1.vasmovementdetailid
+			AND vasmovementdetails_temp.vasreference = t1.vasreference))
+			]]>		
+		</createView>
+	</changeSet>
+   
+   <changeSet id="17" author="somasekhar">
+		<addUniqueConstraint columnNames="vasmovementdetailid, vasreference"
+			constraintName="UK_vasmovementdetails" tableName="vasmovementdetails" />
+	</changeSet>
+	
+	<changeSet id="18" author="somasekhar">
+		<addUniqueConstraint columnNames="vasmovementdetailid, vasreference"
+			constraintName="UO_vasmovementdetails_temp" tableName="vasmovementdetails_temp" />
+	</changeSet>
+	
+	</databaseChangeLog>

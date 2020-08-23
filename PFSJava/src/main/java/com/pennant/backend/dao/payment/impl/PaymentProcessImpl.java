@@ -48,6 +48,13 @@ public class PaymentProcessImpl implements PaymentProcess {
 		try {
 			financeMain = financeMainDAO.getDisbursmentFinMainById(paymentInstruction.getFinReference(),
 					TableType.MAIN_TAB);
+
+			//In case of IMD or excess amount processing there is a chance of LAN in temp queue.
+			if (financeMain == null) {
+				financeMain = financeMainDAO.getDisbursmentFinMainById(paymentInstruction.getFinReference(),
+						TableType.TEMP_TAB);
+			}
+
 			String paymentType = paymentInstruction.getPaymentType();
 
 			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
@@ -55,8 +62,13 @@ public class PaymentProcessImpl implements PaymentProcess {
 
 			txStatus = this.transactionManager.getTransaction(txDef);
 
-			if (StringUtils.equals("E", paymentInstruction.getStatus())) {
+			//E -> PAID 
+			if (StringUtils.equals("E", paymentInstruction.getStatus())
+					|| DisbursementConstants.STATUS_PAID.equals(paymentInstruction.getStatus())) {
 				paymentInstruction.setStatus(DisbursementConstants.STATUS_PAID);
+			} else if (StringUtils.equals("P", paymentInstruction.getStatus())//P->REALIZED
+					|| DisbursementConstants.STATUS_REALIZED.equals(paymentInstruction.getStatus())) {
+				paymentInstruction.setStatus(DisbursementConstants.STATUS_REALIZED);
 			} else {
 				paymentDetailService.paymentReversal(paymentInstruction);
 				AEEvent aeEvent = new AEEvent();
@@ -159,10 +171,6 @@ public class PaymentProcessImpl implements PaymentProcess {
 		instruction.setPaymentInstructionId(paymentId);
 
 		instruction = this.paymentDetailService.getPaymentInstruction(paymentId, "");
-
-		if (instruction == null) {
-			instruction = this.paymentDetailService.getPaymentInstructionDetails(paymentId, "");
-		}
 
 		if (instruction == null) {
 			instruction = this.paymentDetailService.getPaymentInstructionDetails(paymentId, "");

@@ -68,6 +68,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods implementation for the <b>CollateralAssignment model</b> class.<br>
@@ -548,6 +549,38 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		return 0;
 	}
 
+	/**
+	 * Checking the If the loan have any assigned collaterals or not
+	 * 
+	 * @param finReference
+	 * @param tableType
+	 * @return
+	 */
+	@Override
+	public boolean isSecuredLoan(String finReference, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select count(*)  From CollateralAssignment");
+		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
+		sql.append(" Where Reference = :Reference");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", finReference);
+
+		int count = 0;
+		try {
+			logger.debug(Literal.LEAVING);
+			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			count = 0;
+		}
+
+		return count == 0 ? false : true;
+	}
+
 	private StringBuilder getSqlQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Module, Reference, CollateralRef, AssignPerc, Active, HostReference");
@@ -557,6 +590,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", CollateralCcy, CollateralValue, BankValuation, TotAssignPerc TotAssignedPerc");
 			sql.append(", UtilizedAmount, BankLTV, SpecialLTV");
+			sql.append(", DepositorCIF, CollateralType");
 		}
 
 		sql.append(" from CollateralAssignment");
@@ -605,5 +639,30 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			return ca;
 		}
 
+	}
+
+	@Override
+	public int getAssignedCollateralCountByRef(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select count(t2.CollateralRef) from CollateralAssignment_view t1 ");
+		sql.append(" join CollateralAssignment_view t2 ");
+		sql.append(" on t1.collateralref = t2.collateralref");
+		sql.append(" join financemain_view t3 on t2.reference = t3.finreference");
+		sql.append(" where t1.Reference = :Reference and t3.FINISACTIVE = 1");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", finReference);
+
+		try {
+			logger.debug(Literal.LEAVING);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return 0;
 	}
 }

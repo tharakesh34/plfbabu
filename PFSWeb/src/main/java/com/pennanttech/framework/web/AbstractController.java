@@ -36,6 +36,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.South;
@@ -745,6 +746,8 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 				((AccountSelectionBox) component).setReadonly(true);
 			} else if (component instanceof FrequencyBox) {
 				((FrequencyBox) component).setDisabled(true);
+			} else if (component instanceof Radio) {
+				((Radio) component).setDisabled(true);
 			}
 		} else {
 			if (component instanceof Combobox) {
@@ -793,6 +796,8 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 				((AccountSelectionBox) component).setReadonly(false);
 			} else if (component instanceof FrequencyBox) {
 				((FrequencyBox) component).setDisabled(false);
+			} else if (component instanceof Radio) {
+				((Radio) component).setDisabled(false);
 			}
 		}
 	}

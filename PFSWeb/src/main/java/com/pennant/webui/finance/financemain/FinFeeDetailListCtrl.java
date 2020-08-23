@@ -615,6 +615,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			this.btn_autoAllocate.setVisible(false);
 			this.gb_FinFeeReceipts.setVisible(false);
 		}
+		//IMD there is no auto allocate
+		this.btn_autoAllocate.setVisible(false);
+
 		this.div_AutoAllocate.setVisible(this.btn_autoAllocate.isVisible());
 
 		List<FinFeeReceipt> finFeeReceipts;
@@ -1149,6 +1152,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 				finFeeReceipts = this.finFeeReceiptMap.get(oldFinFeeReceipt.getReceiptID());
 				boolean receiptFound = false;
+				if (finFeeReceipts == null) {
+					continue;
+				}
 
 				for (FinFeeReceipt feeReceipt : finFeeReceipts) {
 
@@ -1667,6 +1673,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					continue;
 				}
 
+				if (!finFeeDetail.isNewRecord()) {
+					FinFeeDetail befImage = new FinFeeDetail();
+					BeanUtils.copyProperties(finFeeDetail, befImage);
+					finFeeDetail.setBefImage(befImage);
+				}
+
 				// setting paid amount and remaining amount
 				if (isDisbServ) {
 					finFeeDetail.setPaidAmount(BigDecimal.ZERO);
@@ -2043,6 +2055,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				lc.appendChild(gstDetails);
 				readOnlyComponent(!finFeeDetail.isTaxApplicable(), gstDetails);
 				lc.setParent(item);
+
+				//As per IMD requirement paid fields should be readOnly
+				curPaidFeeBox.setDisabled(true);
+				paidBox.setDisabled(true);
+				if (paidBox.getValue().compareTo(BigDecimal.ZERO) != 0) {
+					readOnlyComponent(true, feeSchdMethCombo);
+				}
 
 				List<Object> amountBoxlist = new ArrayList<Object>(11);
 				amountBoxlist.add(actualBox); //0

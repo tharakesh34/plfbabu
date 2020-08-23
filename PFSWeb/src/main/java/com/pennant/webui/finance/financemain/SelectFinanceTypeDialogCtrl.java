@@ -220,6 +220,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private String primaryIdLabel;
 	private String primaryIdRegex;
 	private boolean primaryIdMandatory;
+	private boolean primaryIdMOBMandatory;
 	boolean proceedFurther = false;
 	private PrimaryAccountService primaryAccountService;
 
@@ -1224,7 +1225,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				if (StringUtils.equals(productType, FinanceConstants.PRODUCT_CONVENTIONAL)) {
 					if (financeDetail.getCustomerDedupList() == null
 							|| financeDetail.getCustomerDedupList().isEmpty()) {
-						fileLocation.append("ConvFinanceMainDialog.zul");
+						String pageName = PennantAppUtil.getFinancePageName(false);
+						fileLocation.append(pageName);
 					}
 				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_ODFACILITY)) {
 					if (financeDetail.getCustomerDedupList() == null
@@ -1384,7 +1386,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 						new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
 
 				this.mobileNo.setConstraint(new PTMobileNumberValidator(
-						Labels.getLabel("label_SelectFinanceTypeDialog_MobileNo.value"), true));
+						Labels.getLabel("label_SelectFinanceTypeDialog_MobileNo.value"), primaryIdMOBMandatory));
 
 			}
 			try {
@@ -1632,14 +1634,17 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
 			// If customer exist is checked
 			if (this.existingCust.isChecked()) {
-				Customer customer = null;
 				// FIXME comment need to be removed when the version issue get
 				// resolved
 				// check Customer Data in LOCAL PFF system
 				// customer =
 				// this.customerDetailsService.checkCustomerByCIF(cif,
 				// TableType.TEMP_TAB.getSuffix());
-
+				Customer customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.TEMP_TAB.getSuffix());
+				if (customer != null) {
+					MessageUtil.showMessage("Customer is Maintainance");
+					return null;
+				}
 				if (customer == null) {
 					isCustFromTemp = false;
 					customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.MAIN_TAB.getSuffix());
@@ -1746,11 +1751,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 
 		String custCategoryType = this.custCtgType.getSelectedItem().getValue().toString();
+		String custCategoryTypeDesc = this.custCtgType.getSelectedItem().getLabel();
 		if (!StringUtils.equals(custCategoryType, PennantConstants.List_Select)
 				&& customerDetails.getCustomer().getCustCtgCode() == null
 				&& customerDetails.getCustomer().getLovDescCustCtgCodeName() == null) {
 			customer.setCustCtgCode(custCategoryType);
-			customer.setLovDescCustCtgCodeName(custCategoryType);
+			customer.setLovDescCustCtgCodeName(custCategoryTypeDesc);
 		}
 
 		customer.setLovDescCustCtgType(custCategoryType);
@@ -1837,6 +1843,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			Object saltuObj = PennantAppUtil.getSystemDefault("Salutation", "", saltufilters);
 
 			customer.setCustGenderCode(gender.getGenderCode());
+			customer.setLovDescCustGenderCodeName(gender.getGenderDesc());
 
 			if (saltuObj != null) {
 				Salutation salutation = (Salutation) saltuObj;
@@ -1858,6 +1865,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					? PennantApplicationUtil.unFormatEIDNumber(this.eidNumber.getValue()) : this.eidNumber.getValue());
 			processWIFCustomerData(wCustomer, customerDetails);
 		}
+		//preparing default income and expense list for new customer
+		customerDetailsService.prepareDefaultIncomeExpenseList(customerDetails);
 		return customerDetails;
 
 	}
@@ -1927,7 +1936,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		Map<String, String> attributes = PennantApplicationUtil.getPrimaryIdAttributes(getComboboxValue(custCtgType));
 
 		primaryIdLabel = attributes.get("LABEL");
+		//Using for PAN
 		primaryIdMandatory = Boolean.valueOf(attributes.get("MANDATORY"));
+		//Using for Mobile Number
+		primaryIdMOBMandatory = Boolean.valueOf(attributes.get("MOBILEMANDATORY"));
 		primaryIdRegex = attributes.get("REGEX");
 		int maxLength = Integer.valueOf(attributes.get("LENGTH"));
 
@@ -1937,7 +1949,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		eidNumber.setValue("");
 		eidNumber.setMaxlength(maxLength);
 
-		space_mobileNo.setSclass(primaryIdMandatory ? PennantConstants.mandateSclass : "");
+		space_mobileNo.setSclass(primaryIdMOBMandatory ? PennantConstants.mandateSclass : "");
 		mobileNo.setSclass(PennantConstants.mandateSclass);
 		mobileNo.setValue("");
 	}
@@ -2011,6 +2023,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.financeMainListCtrl = financeMainListCtrl;
 	}
 
+	@Override
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}

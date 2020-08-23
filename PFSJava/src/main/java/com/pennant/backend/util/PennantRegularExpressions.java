@@ -111,8 +111,9 @@ public class PennantRegularExpressions {
 	public static final String ID_CODES = "([A-Za-z\\/]*|[0-9\\/]*|[a-zA-Z0-9\\/]*)+\\s*";
 	//public static final String	ID_CODES							= "([A-Za-z\\s]*|[0-9\\s]*|[a-zA-Z0-9\\s]*)";
 
+	public static final String TELEPHONE_REGEX = "^\\+?[0-9\\s]{8,}$";
 	public static final String TELEPHONE_FAX_REGEX = "[0-9]{10}";
-	public static final String MOBILE_REGEX = "^(\\+\\d{1,3}[- ]?)?\\d{10}$";
+	public static final String MOBILE_REGEX = "[0-9]{10}";
 	public static final String EMAIL_REGEX = "^[a-zA-Z]+[0-9]*((\\.?[a-zA-Z0-9]+)*|(\\_?[a-zA-Z0-9]+)*)?\\@{1}[a-zA-z]+[0-9]*(\\.?[a-zA-Z]{2,4})?\\.{1}[a-zA-Z]{2,3}";
 	public static final String ADDRESS_REGEX = "[a-zA-Z0-9.\\>\\<\\!\\@\\#\\$\\%\\&\\(\\)\\[\\]\\{\\}\\s]+";
 	public static final String WEB_REGEX = "^[wW]{3}[\\.]{1}([a-zA-z]+[0-9]*)(\\.?[a-zA-Z]{2,4})?\\.{1}[a-zA-Z]{2,3}";
@@ -172,7 +173,7 @@ public class PennantRegularExpressions {
 	public static final String REGEX_AREA_MAXLENGTH = "REGEX_AREA_MAXLENGTH";
 	public static final String REGEX_PASSPORT = "REGEX_PASSPORT";
 	public static final String REGEX_CORP_CUST = "REGEX_CORP_CUST";
-	public static final String REGEX_AADHAR_NUMBER = "REGEX_AADHAAR_NUMBER";
+	public static final String REGEX_AADHAR_NUMBER = "REGEX_AADHAR_NUMBER";
 	public static final String REGEX_UPPBOX_ALPHA_FL3 = "REGEX_UPPBOX_ALPHA_FL3";
 	public static final String REGEX_UPPBOX_ALPHANUM_FL3 = "REGEX_UPPBOX_ALPHANUM_FL3";
 	public static final String REGEX_ACCOUNTNUMBER = "REGEX_ACCOUNTNUMBER";

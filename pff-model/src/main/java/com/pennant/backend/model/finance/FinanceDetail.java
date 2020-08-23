@@ -254,6 +254,8 @@ public class FinanceDetail implements java.io.Serializable {
 	private Verification rcuVerification;
 	private Verification pdVerification;
 	@XmlElement
+	private Verification legalVetting;
+	@XmlElement
 	private PSLDetail pslDetail;
 	private boolean fiApprovalTab = false;
 	private boolean fiInitTab = false;
@@ -306,10 +308,16 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<CollateralAssignment> tempCollateralAssignmentList = new ArrayList<>();
 	@XmlElement
 	private boolean disbStp;
+	private PricingDetail pricingDetail;
+	private List<FinFeeConfig> finFeeConfigList;
 
 	// used for Interfaces
 	private Long usrID;
 	private String usrLogin;
+	private FinOCRHeader finOCRHeader;
+	private boolean vettingApprovalTab = false;
+	private boolean vettingInitTab = false;
+	private PMAY pmay;
 
 	public FinanceDetail() {
 		super();
@@ -1586,6 +1594,62 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setDisbStp(boolean disbStp) {
 		this.disbStp = disbStp;
+	}
+
+	public FinOCRHeader getFinOCRHeader() {
+		return finOCRHeader;
+	}
+
+	public void setFinOCRHeader(FinOCRHeader finOCRHeader) {
+		this.finOCRHeader = finOCRHeader;
+	}
+
+	public Verification getLegalVetting() {
+		return legalVetting;
+	}
+
+	public void setLegalVetting(Verification legalVetting) {
+		this.legalVetting = legalVetting;
+	}
+
+	public boolean isVettingApprovalTab() {
+		return vettingApprovalTab;
+	}
+
+	public void setVettingApprovalTab(boolean vettingApprovalTab) {
+		this.vettingApprovalTab = vettingApprovalTab;
+	}
+
+	public boolean isVettingInitTab() {
+		return vettingInitTab;
+	}
+
+	public void setVettingInitTab(boolean vettingInitTab) {
+		this.vettingInitTab = vettingInitTab;
+	}
+
+	public PMAY getPmay() {
+		return pmay;
+	}
+
+	public void setPmay(PMAY pmay) {
+		this.pmay = pmay;
+	}
+
+	public PricingDetail getPricingDetail() {
+		return pricingDetail;
+	}
+
+	public void setPricingDetail(PricingDetail pricingDetail) {
+		this.pricingDetail = pricingDetail;
+	}
+
+	public List<FinFeeConfig> getFinFeeConfigList() {
+		return finFeeConfigList;
+	}
+
+	public void setFinFeeConfigList(List<FinFeeConfig> finFeeConfigList) {
+		this.finFeeConfigList = finFeeConfigList;
 	}
 
 }

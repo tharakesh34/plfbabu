@@ -42,7 +42,7 @@ public interface RiskContainmentUnitService {
 
 	void updateRCUDocuments(Verification item);
 
-	RCUDocument getRCUDocument(long verificationId, RCUDocument rcuDocument);
+	List<RCUDocument> getRCUDocument(long verificationId, RCUDocument rcuDocument);
 
 	void deleteRCUDocument(RCUDocument rcuDocument, String tableType);
 

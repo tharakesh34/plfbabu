@@ -629,6 +629,12 @@ public class CollateralController {
 			if (StringUtils.isBlank(collateralSetup.getReviewFrequency()) && collateralDetail != null) {
 				collateralSetup.setReviewFrequency(collateralDetail.getReviewFrequency());
 			}
+			if (collateralSetup.getSpecialLTV().compareTo(BigDecimal.ZERO) == 0 && collateralDetail != null) {
+				collateralSetup.setSpecialLTV(collateralDetail.getSpecialLTV());
+			}
+			if (StringUtils.isBlank(collateralSetup.getReviewFrequency()) && collateralDetail != null) {
+				collateralSetup.setReviewFrequency(collateralDetail.getReviewFrequency());
+			}
 			BigDecimal colValue = collateralSetup.getCollateralValue().multiply(ltvValue).divide(new BigDecimal(100), 0,
 					RoundingMode.HALF_DOWN);
 			if (collateralSetup.getMaxCollateralValue().compareTo(BigDecimal.ZERO) > 0

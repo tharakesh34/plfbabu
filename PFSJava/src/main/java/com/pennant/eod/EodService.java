@@ -9,6 +9,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualReversalService;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.AutoDisbursementService;
+import com.pennant.app.core.ChangeGraceEndService;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.DateRollOverService;
 import com.pennant.app.core.InstallmentDueService;
@@ -44,6 +45,7 @@ public class EodService {
 	private ProjectedAmortizationService projectedAmortizationService;
 	private LatePayDueCreationService latePayDueCreationService;
 	private AccrualReversalService accrualReversalService;
+	private ChangeGraceEndService changeGraceEndService;
 
 	public EodService() {
 		super();
@@ -123,8 +125,10 @@ public class EodService {
 			//customer status update
 			custEODEvent = latePayMarkingService.processCustomerStatus(custEODEvent);
 
-			//NPA Service
-			custEODEvent = npaService.processNPABuckets(custEODEvent);
+			if (custEODEvent.isExecuteNPAAndProvision()) {
+				custEODEvent = npaService.processProvisions(custEODEvent);
+			}
+
 		}
 
 		//LatePay Due creation Service
@@ -148,6 +152,11 @@ public class EodService {
 
 		//Accrual posted on EOD only
 		custEODEvent = accrualService.processAccrual(custEODEvent);
+
+		//NPA Accounting
+		if (custEODEvent.isExecuteNPAAndProvision()) {
+			custEODEvent = npaService.processAccounting(custEODEvent);
+		}
 
 		// Penalty Accrual posted on EOD only
 		custEODEvent = latePayDueCreationService.processLatePayAccrual(custEODEvent);
@@ -181,6 +190,8 @@ public class EodService {
 			installmentDueService.processDueDatePostings(custEODEvent);
 			advancePaymentService.processAdvansePayments(custEODEvent);
 		}
+		// Auto Increment Grace End
+		changeGraceEndService.processChangeGraceEnd(custEODEvent);
 
 	}
 
@@ -261,6 +272,11 @@ public class EodService {
 	@Autowired
 	public void setAccrualReversalService(AccrualReversalService accrualReversalService) {
 		this.accrualReversalService = accrualReversalService;
+	}
+
+	@Autowired
+	public void setChangeGraceEndService(ChangeGraceEndService changeGraceEndService) {
+		this.changeGraceEndService = changeGraceEndService;
 	}
 
 }

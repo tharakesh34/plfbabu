@@ -96,4 +96,12 @@ public interface FinFeeDetailDAO {
 	List<FinFeeDetail> getFeeDetails(String finReference, String feetypeCode, List<String> finEvents);
 
 	List<FinFeeDetail> getFinFeeDetailByReferenceId(long referenceId, String finEvent, String type);
+
+	/**
+	 * Method for update the paid and remaining fee details.
+	 * 
+	 * @param finFeeDetail
+	 * @param type
+	 */
+	void updateFeesFromUpfront(FinFeeDetail finFeeDetail, String type);
 }

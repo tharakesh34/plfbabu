@@ -45,7 +45,9 @@ package com.pennant.backend.dao.systemmasters.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -273,6 +275,63 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		}
 		logger.debug("Leaving");
 		return null;
+	}
+
+	public Map<String, Object> getSumOfPriPftEmiAmount(String finReference, String finStartDate, String finEndDate) {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, Object> amounts = new HashMap<>();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(
+				" select sum(profitschd) as profitschd, sum(principalschd) as principalschd , sum(repayamount) as repayamount");
+		sql.append(" from finscheduledetails ");
+		sql.append(" Where FinReference = :FinReference");
+		sql.append(" and schdate >=:FinstartDate and schdate <=:FinEndDate and repayonschdate=1");
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("FinstartDate", DateUtil.parse(finStartDate, "dd/MM/yyyy"));
+		source.addValue("FinEndDate", DateUtil.parse(finEndDate, "dd/MM/yyyy"));
+
+		try {
+			amounts = this.jdbcTemplate.queryForMap(sql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return amounts;
+	}
+
+	@Override
+	public Map<String, Object> getTotalGrcRepayProfit(String finReference, String finStartDate, String finEndDate) {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, Object> amounts = new HashMap<>();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select sum(profitschd) as grcPft, sum(schdpftpaid) as grcPftPaid ");
+		sql.append(" from finscheduledetails ");
+		sql.append(" Where FinReference = :FinReference and specifier in('G','E') and bpiOrHoliday=''");
+		sql.append(" and schdate >=:FinstartDate and schdate <=:FinEndDate ");
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("FinstartDate", DateUtil.parse(finStartDate, "dd/MM/yyyy"));
+		source.addValue("FinEndDate", DateUtil.parse(finEndDate, "dd/MM/yyyy"));
+
+		try {
+			amounts = this.jdbcTemplate.queryForMap(sql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return amounts;
 	}
 
 }

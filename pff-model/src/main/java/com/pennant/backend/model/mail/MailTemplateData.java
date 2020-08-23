@@ -23,6 +23,7 @@ public class MailTemplateData {
 	private String custAddrProvince = "";
 	private String custAddrDistrict = "";
 	private String custAddrPincode = "";
+	private String custSalutation = "";
 
 	// User Details
 	private String userName = "";
@@ -90,6 +91,8 @@ public class MailTemplateData {
 	private String totalProfitPaid = "";
 	private String totalProfitBalance = "";
 	private String nextRepayDate = "";
+	private String emiAmount = "";
+	private String repayAmount = "";
 
 	// User Branch Address Details
 	private String finBranchAddrLine1 = "";
@@ -112,6 +115,7 @@ public class MailTemplateData {
 	private String feeAmount = "";
 	private String insAmount = "";
 	private String finType = "";
+	private String finTypeDesc = "";
 
 	// Receipts
 	private String amount = "";
@@ -121,7 +125,6 @@ public class MailTemplateData {
 	private String bounceReason = "";
 	private String cancellationReason = "";
 	private String limitAmount = "";
-
 	// ---------------------------------
 
 	// facility
@@ -189,6 +192,8 @@ public class MailTemplateData {
 	private String receiptPurpose;
 	private String drawingPower;
 	private String currentDate;
+	//Including grace and installments
+	private String totalTenor;
 
 	public MailTemplateData() {
 
@@ -308,6 +313,14 @@ public class MailTemplateData {
 
 	public void setCustAddrPincode(String custAddrPincode) {
 		this.custAddrPincode = custAddrPincode;
+	}
+
+	public String getCustSalutation() {
+		return custSalutation;
+	}
+
+	public void setCustSalutation(String custSalutation) {
+		this.custSalutation = custSalutation;
 	}
 
 	public String getUserName() {
@@ -1425,6 +1438,38 @@ public class MailTemplateData {
 
 	public void setLimitAmount(String limitAmount) {
 		this.limitAmount = limitAmount;
+	}
+
+	public String getEmiAmount() {
+		return emiAmount;
+	}
+
+	public void setEmiAmount(String emiAmount) {
+		this.emiAmount = emiAmount;
+	}
+
+	public String getRepayAmount() {
+		return repayAmount;
+	}
+
+	public void setRepayAmount(String repayAmount) {
+		this.repayAmount = repayAmount;
+	}
+
+	public String getTotalTenor() {
+		return totalTenor;
+	}
+
+	public void setTotalTenor(String totalTenor) {
+		this.totalTenor = totalTenor;
+	}
+
+	public String getFinTypeDesc() {
+		return finTypeDesc;
+	}
+
+	public void setFinTypeDesc(String finTypeDesc) {
+		this.finTypeDesc = finTypeDesc;
 	}
 
 }

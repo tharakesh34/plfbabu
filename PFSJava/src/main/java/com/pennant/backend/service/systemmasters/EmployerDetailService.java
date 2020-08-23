@@ -59,4 +59,6 @@ public interface EmployerDetailService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	boolean isNonTargetEmployee(String name, String category, String type);
 }

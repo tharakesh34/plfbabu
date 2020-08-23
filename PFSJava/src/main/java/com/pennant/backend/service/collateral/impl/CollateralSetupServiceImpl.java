@@ -114,6 +114,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -330,6 +331,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
+	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
@@ -544,21 +546,21 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			}
 			collateralSetup.setExtendedFieldRenderList(renderList);
 
+			// Document Details
+			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef,
+					CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+			if (CollectionUtils.isNotEmpty(collateralSetup.getDocuments())) {
+				collateralSetup.getDocuments().addAll(documentList);
+			} else {
+				collateralSetup.setDocuments(documentList);
+			}
+
 			// Not Required Other Process details for the Enquiry
 			if (!isEnquiry) {
 
 				// Customer Details
 				collateralSetup.setCustomerDetails(getCustomerDetailsService()
 						.getCustomerDetailsById(collateralSetup.getDepositorId(), true, "_View"));
-
-				// Document Details
-				List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef,
-						CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
-				if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
-					collateralSetup.getDocuments().addAll(documentList);
-				} else {
-					collateralSetup.setDocuments(documentList);
-				}
 
 				// Agreement Details & Check List Details
 				if (StringUtils.isNotEmpty(collateralSetup.getRecordType())
@@ -681,6 +683,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	 *            (String)
 	 * @return CollateralDetail
 	 */
+	@Override
 	public CollateralSetup getApprovedCollateralSetupById(String collateralRef) {
 		logger.debug("Entering");
 		CollateralSetup collateralSetup = getCollateralSetupDAO().getCollateralSetupByRef(collateralRef, "_AView");
@@ -961,14 +964,26 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		}
 
 		// Extended field details Validation
-		if (collateralSetup.getExtendedFieldRenderList() != null
-				&& !collateralSetup.getExtendedFieldRenderList().isEmpty()) {
+		if (CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())) {
 			List<AuditDetail> details = collateralSetup.getAuditDetailMap().get("ExtendedFieldDetails");
 			ExtendedFieldHeader extendedFieldHeader = collateralSetup.getCollateralStructure().getExtendedFieldHeader();
-			if (details != null && details.size() > 0) {
+			if (CollectionUtils.isNotEmpty(details)) {
 				details = extendedFieldDetailsService.validateExtendedDdetails(extendedFieldHeader, details, method,
 						usrLanguage);
 				auditDetails.addAll(details);
+				//Collateral Dedup Validation
+				if (SysParamUtil.isAllowed(SMTParameterConstants.COLLATERAL_DEDUP_WARNING)) {
+					long queryId = collateralSetup.getCollateralStructure().getQueryId();
+					String querySubCode = collateralSetup.getCollateralStructure().getQuerySubCode();
+					String queryCode = collateralSetup.getCollateralStructure().getQueryCode();
+					List<ExtendedFieldRender> extFieldRenderList = collateralSetup.getExtendedFieldRenderList();
+					if (queryId > 0) {
+						for (ExtendedFieldRender extendedFieldRender : extFieldRenderList) {
+							auditDetails.addAll(extendedFieldDetailsService.validateCollateralDedup(extendedFieldRender,
+									queryCode, querySubCode, usrLanguage));
+						}
+					}
+				}
 			}
 		}
 		return auditDetails;

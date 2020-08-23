@@ -46,6 +46,7 @@ package com.pennant.backend.service.systemmasters;
 import java.text.ParseException;
 
 import com.pennant.backend.model.agreement.InterestCertificate;
+import com.pennant.backend.model.finance.FinanceMain;
 
 /**
  * Service declaration for methods that depends on <b>InterestCertificate</b>.<br>
@@ -55,5 +56,7 @@ public interface InterestCertificateService {
 
 	InterestCertificate getInterestCertificateDetails(String value, String startDate, String endDate,
 			boolean isProvCert) throws ParseException;
+
+	FinanceMain getFinanceMain(String finReference, String[] columns, String type);
 
 }

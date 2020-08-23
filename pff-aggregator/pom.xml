@@ -4,13 +4,13 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-aggregator</artifactId>
-	<version>5.8.0</version>
+	<version>5.10.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
 		<client.code>core</client.code>
-		<pff.version>5.8.0</pff.version>
+		<pff.version>5.10.0-SNAPSHOT</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.8</jdk.version>
 		<spring.version>4.0.5.RELEASE</spring.version>
@@ -99,7 +99,7 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-spreadsheets</artifactId>
-				<version>1.0.1</version>
+				<version>1.0.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.document</groupId>
@@ -269,6 +269,12 @@
 		<dependency>
 			<groupId>com.pennanttech.pennapps</groupId>
 			<artifactId>document-generator</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.pennanttech.framework.components</groupId>
@@ -281,6 +287,12 @@
 		<dependency>
 			<groupId>com.pennanttech.pennapps</groupId>
 			<artifactId>pennapps-spreadsheets</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.pennanttech.pennapps.pff</groupId>

@@ -348,4 +348,26 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 		return selectAllQuery;
 
 	}
+
+	public String getDocCategoryByDocType(String docTypeCode, String type) {
+
+		String categoryCode = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		StringBuilder sql = new StringBuilder("Select ");
+
+		if (type.contains("View")) {
+			sql.append(" CategoryCode ");
+		}
+		sql.append(" from BMTDocumentTypes");
+		sql.append(type);
+		sql.append(" where DocTypeCode = :DocTypeCode");
+		source.addValue("DocTypeCode", docTypeCode);
+		try {
+			categoryCode = jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		return categoryCode;
+	}
 }

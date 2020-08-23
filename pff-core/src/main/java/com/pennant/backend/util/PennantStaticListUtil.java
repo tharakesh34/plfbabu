@@ -3,6 +3,7 @@ package com.pennant.backend.util;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -344,6 +346,26 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> hourList;
 	private static List<ValueLabel> minList;
 
+	private static List<ValueLabel> npaPaymentTypesList;
+
+	private static List<ValueLabel> ocrApplicableList;
+	private static List<ValueLabel> ocrContributorList;
+	private static List<ValueLabel> empCateogoryList;
+	private static List<ValueLabel> projectType;
+	private static List<ValueLabel> unitTypes;
+	private static List<ValueLabel> apfTypes;
+	private static List<ValueLabel> technicalDone;
+	private static List<ValueLabel> legalDone;
+	private static List<ValueLabel> rcuDone;
+	private static List<ValueLabel> unitAreaConsidered;
+	private static List<ValueLabel> rateConsidered;
+	private static List<ValueLabel> loanPurposeTypes;
+	private static List<ValueLabel> verificationCategories;
+	private static List<ValueLabel> productTypeList;
+	private static List<ValueLabel> txFinTypeList;
+	private static List<ValueLabel> percType;
+	private static List<ValueLabel> betaConfiguration;
+
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -489,7 +511,7 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getRegexType() {
 
 		if (regexType == null) {
-			regexType = new ArrayList<ValueLabel>(15);
+			regexType = new ArrayList<ValueLabel>(16);
 			regexType.add(new ValueLabel("REGEX_ALPHA", Labels.getLabel("label_REGEX_ALPHA")));
 			regexType.add(new ValueLabel("REGEX_NUMERIC", Labels.getLabel("label_REGEX_NUMERIC")));
 			regexType.add(new ValueLabel("REGEX_ALPHANUM", Labels.getLabel("label_REGEX_ALPHANUM")));
@@ -504,6 +526,7 @@ public class PennantStaticListUtil {
 			regexType.add(new ValueLabel("REGEX_EMAIL", Labels.getLabel("label_REGEX_EMAIL")));
 			regexType.add(new ValueLabel("REGEX_WEB", Labels.getLabel("label_REGEX_WEB")));
 			regexType.add(new ValueLabel("REGEX_SPECIAL_REGX", Labels.getLabel("label_REGEX_SPECIAL_REGX")));
+			regexType.add(new ValueLabel("TELEPHONE_REGEX", Labels.getLabel("label_TELEPHONE_REGEX")));
 		}
 		return regexType;
 
@@ -1239,6 +1262,7 @@ public class PennantStaticListUtil {
 			enquiryTypes.add(new ValueLabel("VERENQ", Labels.getLabel("label_VerificationEnquiry")));
 			enquiryTypes.add(new ValueLabel("NTFLENQ", Labels.getLabel("label_NotificationEnquiry")));
 			enquiryTypes.add(new ValueLabel("DPDENQ", Labels.getLabel("label_DPDEnquiry")));
+			enquiryTypes.add(new ValueLabel("CREENQ", Labels.getLabel("label_CreditReviewDetailsEnquiry")));
 
 			if (ImplementationConstants.DDA_ALLOWED) {
 				enquiryTypes.add(new ValueLabel("DDAENQ", Labels.getLabel("label_DDAEnquiry")));
@@ -1253,6 +1277,7 @@ public class PennantStaticListUtil {
 			// Labels.getLabel("label_CustomerFinanceSummary")));
 			// enquiries.add(new ValueLabel("CASENQ",
 			// Labels.getLabel("label_CustomerAccountSummary")));
+			enquiryTypes.add(new ValueLabel("OCRENQ", Labels.getLabel("label_OCREnquiry")));
 			enquiryTypes.add(new ValueLabel("EXCESSENQ", Labels.getLabel("label_ExcessEnquiry")));
 
 		}
@@ -1961,7 +1986,7 @@ public class PennantStaticListUtil {
 
 	public static List<ValueLabel> getCustomerEmailPriority() {
 		if (customerEmailPriority == null) {
-			customerEmailPriority = new ArrayList<ValueLabel>(5);
+			customerEmailPriority = new CopyOnWriteArrayList<ValueLabel>();
 			customerEmailPriority.add(new ValueLabel(PennantConstants.KYC_PRIORITY_VERY_HIGH,
 					Labels.getLabel("label_EmailPriority_VeryHigh")));
 			customerEmailPriority.add(
@@ -1972,6 +1997,15 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_EmailPriority_Normal")));
 			customerEmailPriority
 					.add(new ValueLabel(PennantConstants.KYC_PRIORITY_LOW, Labels.getLabel("label_EmailPriority_Low")));
+		}
+		String string = SysParamUtil.getValueAsString(SMTParameterConstants.KYC_ADD_PRIORITY_REQ_ONLY);
+		if (string != null && CollectionUtils.isNotEmpty(customerEmailPriority)) {
+			List<String> priorityCodes = Arrays.asList(string.split(","));
+			for (ValueLabel valueLabel : customerEmailPriority) {
+				if (!priorityCodes.contains(valueLabel.getValue())) {
+					customerEmailPriority.remove(valueLabel);
+				}
+			}
 		}
 		return customerEmailPriority;
 	}
@@ -2406,6 +2440,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_ReceiptKnockOffCancel"), "RKNC"));
 			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_CHANGETDS,
 					Labels.getLabel("label_FinSerEvent_ChangeTDS"), "CTDS"));
+			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING,
+					Labels.getLabel("label_FinSerEvent_LoanDownSizing"), "LDS"));
 
 		}
 		return events;
@@ -2447,6 +2483,10 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PaymentDetail_Vendor")));
 			paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_THIRDPARTY,
 					Labels.getLabel("label_PaymentDetail_ThirdParty")));
+			if (SysParamUtil.isAllowed(SMTParameterConstants.SHOW_ADDITIONAL_DISB_PARTIES)) {
+				paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_BUILDER,
+						Labels.getLabel("label_PaymentDetail_Builder")));
+			}
 		}
 		return paymentDetails;
 	}
@@ -2883,6 +2923,10 @@ public class PennantStaticListUtil {
 					new ValueLabel(CalculationConstants.IDB_30E360, Labels.getLabel("label_ProfitDaysBasis_30E_360")));
 			PftDaysBasisList.add(new ValueLabel(CalculationConstants.IDB_30E360I,
 					Labels.getLabel("label_ProfitDaysBasis_30E_360I")));
+			PftDaysBasisList.add(new ValueLabel(CalculationConstants.IDB_30E360IH,
+					Labels.getLabel("label_ProfitDaysBasis_30E_360IH")));
+			PftDaysBasisList.add(new ValueLabel(CalculationConstants.IDB_30E360IA,
+					Labels.getLabel("label_ProfitDaysBasis_30E_360IA")));
 			PftDaysBasisList.add(new ValueLabel(CalculationConstants.IDB_30EP360,
 					Labels.getLabel("label_ProfitDaysBasis_30EPLUS_360")));
 			PftDaysBasisList.add(
@@ -4042,6 +4086,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ExtendedFieldModule_Verification_FI.value")));
 			verificatinTypes.add(new ValueLabel(ExtendedFieldConstants.VERIFICATION_PD,
 					Labels.getLabel("label_ExtendedFieldModule_Verification_PD.value")));
+			verificatinTypes.add(new ValueLabel(ExtendedFieldConstants.VERIFICATION_VETTING,
+					Labels.getLabel("label_ExtendedFieldModule_Verification_VETTING.value")));
 		}
 		return verificatinTypes;
 	}
@@ -4110,6 +4156,14 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_Subcategory_Domestic")));
 			subCategoriesList
 					.add(new ValueLabel(PennantConstants.SUBCATEGORY_NRI, Labels.getLabel("label_Subcategory_NRI")));
+			subCategoriesList
+					.add(new ValueLabel(PennantConstants.EMPLOYMENTTYPE_SEP, Labels.getLabel("label_Subcategory_SEP")));
+			subCategoriesList.add(
+					new ValueLabel(PennantConstants.EMPLOYMENTTYPE_SENP, Labels.getLabel("label_Subcategory_SENP")));
+			subCategoriesList.add(new ValueLabel(PennantConstants.EMPLOYMENTTYPE_SALARIED,
+					Labels.getLabel("label_Subcategory_SALARIED")));
+			subCategoriesList.add(new ValueLabel(PennantConstants.EMPLOYMENTTYPE_NONWORKING,
+					Labels.getLabel("label_Subcategory_NONWORKING")));
 		}
 		return subCategoriesList;
 	}
@@ -4121,6 +4175,8 @@ public class PennantStaticListUtil {
 			sourceInfoList.add(new ValueLabel("1", Labels.getLabel("label_SourceInfo_MCA")));
 			sourceInfoList.add(new ValueLabel("2", Labels.getLabel("label_SourceInfo_BSheet")));
 			sourceInfoList.add(new ValueLabel("3", Labels.getLabel("label_SourceInfo_Delphi")));
+			sourceInfoList.add(new ValueLabel("4", Labels.getLabel("label_SourceInfo_RepaymentSchedule")));
+			sourceInfoList.add(new ValueLabel("5", Labels.getLabel("label_SourceInfo_SOA")));
 		}
 		return sourceInfoList;
 	}
@@ -4132,6 +4188,9 @@ public class PennantStaticListUtil {
 			trackCheckList.add(new ValueLabel("1", Labels.getLabel("label_TrackCheck_Banking")));
 			trackCheckList.add(new ValueLabel("2", Labels.getLabel("label_TrackCheck_Cibil")));
 			trackCheckList.add(new ValueLabel("3", Labels.getLabel("label_TrackCheck_Delphi")));
+			trackCheckList.add(new ValueLabel("4", Labels.getLabel("label_TrackCheck_RTR")));
+			trackCheckList.add(new ValueLabel("5", Labels.getLabel("label_TrackCheck_RepaymentSchedule")));
+			trackCheckList.add(new ValueLabel("6", Labels.getLabel("label_TrackCheck_BSheet")));
 		}
 		return trackCheckList;
 	}
@@ -4147,6 +4206,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_Finance_Cheque_Status_Bounced")));
 			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_REALISED,
 					Labels.getLabel("label_Finance_Cheque_Status_Realised")));
+			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_CANCELLED,
+					Labels.getLabel("label_Finance_Cheque_Status_Cancelled")));
 		}
 		return chequeStatusList;
 	}
@@ -4754,6 +4815,8 @@ public class PennantStaticListUtil {
 			sourcingChannelCategory
 					.add(new ValueLabel(PennantConstants.PSF, Labels.getLabel("label_FinanceMainDialog_PSF.value")));
 			sourcingChannelCategory
+					.add(new ValueLabel(PennantConstants.DMA, Labels.getLabel("label_FinanceMainDialog_DMA.value")));
+			sourcingChannelCategory
 					.add(new ValueLabel(PennantConstants.ASM, Labels.getLabel("label_FinanceMainDialog_ASM.value")));
 			sourcingChannelCategory.add(
 					new ValueLabel(PennantConstants.ONLINE, Labels.getLabel("label_FinanceMainDialog_ONLINE.value")));
@@ -4761,6 +4824,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinanceMainDialog_REFERRAL.value")));
 			sourcingChannelCategory
 					.add(new ValueLabel(PennantConstants.NTB, Labels.getLabel("label_FinanceMainDialog_NTB.value")));
+			sourcingChannelCategory.add(new ValueLabel(PennantConstants.COONNECTOR,
+					Labels.getLabel("label_FinanceMainDialog_CONNECTOR.value")));
 
 		}
 		return sourcingChannelCategory;
@@ -4996,6 +5061,8 @@ public class PennantStaticListUtil {
 					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYABLE, Labels.getLabel("label_Payable_Advice")));
 			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASHCLT, Labels.getLabel("label_CASHCLT")));
 			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_DSF, Labels.getLabel("label_DSF")));
+			knockOffFrom
+					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PRESENTMENT, Labels.getLabel("label_PRESENTMENT")));
 
 		}
 		return knockOffFrom;
@@ -5361,6 +5428,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_custResidentialStstus_MERCHANT_NAVY.value")));
 			residentialStsList.add(
 					new ValueLabel(PennantConstants.PIO, Labels.getLabel("label_custResidentialStstus_PIO.value")));
+			residentialStsList.add(new ValueLabel(PennantConstants.FOREIGN_NATIONAL,
+					Labels.getLabel("label_custResidentialStstus_FOREIGN_NATIONAL.value")));
 		}
 		return residentialStsList;
 	}
@@ -5383,6 +5452,8 @@ public class PennantStaticListUtil {
 			entityTypeList.add(new ValueLabel(PennantConstants.MNC, Labels.getLabel("label_custEntityType_MNC.value")));
 			entityTypeList.add(new ValueLabel(PennantConstants.LOCAL_CIVIC,
 					Labels.getLabel("label_custEntityType_LOCAL_CIVIC.value")));
+			entityTypeList.add(new ValueLabel(PennantConstants.TRUST_SOCIETY,
+					Labels.getLabel("label_custEntityType_LOCAL_TRUST_SOCIETY.value")));
 		}
 		return entityTypeList;
 	}
@@ -5486,5 +5557,213 @@ public class PennantStaticListUtil {
 		}
 
 		return minList;
+	}
+
+	public static List<ValueLabel> getProjectType() {
+		if (projectType == null) {
+			projectType = new ArrayList<ValueLabel>(2);
+			projectType.add(new ValueLabel(PennantConstants.RESIDENTIAL, Labels.getLabel("label_Residential")));
+			projectType.add(new ValueLabel(PennantConstants.COMMERCIAL, Labels.getLabel("label_Commercial")));
+			projectType.add(new ValueLabel(PennantConstants.MIXED_USE, Labels.getLabel("label_MixedUse")));
+		}
+		return projectType;
+	}
+
+	public static List<ValueLabel> getUnitTypes() {
+		if (unitTypes == null) {
+			unitTypes = new ArrayList<ValueLabel>(2);
+			unitTypes.add(new ValueLabel(PennantConstants.FLAT, Labels.getLabel("label_Flat")));
+			unitTypes
+					.add(new ValueLabel(PennantConstants.INDEPENDENTHOUSE, Labels.getLabel("label_Independent_House")));
+		}
+		return unitTypes;
+	}
+
+	public static List<ValueLabel> getOCRApplicableList() {
+		if (ocrApplicableList == null) {
+			ocrApplicableList = new ArrayList<ValueLabel>(2);
+			ocrApplicableList.add(
+					new ValueLabel(PennantConstants.AGGREMENT_VALUE, Labels.getLabel("label_AgreementValue.value")));
+			ocrApplicableList
+					.add(new ValueLabel(PennantConstants.DOCUMENT_VALUE, Labels.getLabel("label_DocumentValue.value")));
+		}
+		return ocrApplicableList;
+	}
+
+	public static List<ValueLabel> getOCRContributorList() {
+		if (ocrContributorList == null) {
+			ocrContributorList = new ArrayList<ValueLabel>(2);
+			ocrContributorList.add(new ValueLabel(PennantConstants.CUSTOMER_CONTRIBUTION,
+					Labels.getLabel("label_Contributor_Customer.value")));
+			ocrContributorList.add(new ValueLabel(PennantConstants.FINANCER_CONTRIBUTION,
+					Labels.getLabel("label_Contributor_Financer.value")));
+		}
+		return ocrContributorList;
+	}
+
+	public static List<ValueLabel> getEmpCategoryList() {
+		if (empCateogoryList == null) {
+			empCateogoryList = new ArrayList<ValueLabel>(2);
+			empCateogoryList.add(new ValueLabel(PennantConstants.EMP_CATEGORY_NOTCAT,
+					Labels.getLabel("label_EmploymentCategory_NotCategorized.label")));
+			empCateogoryList.add(new ValueLabel(PennantConstants.EMP_CATEGORY_CATA,
+					Labels.getLabel("label_EmploymentCategory_CatA.label")));
+			empCateogoryList.add(new ValueLabel(PennantConstants.EMP_CATEGORY_CATB,
+					Labels.getLabel("label_EmploymentCategory_CatB.label")));
+			empCateogoryList.add(new ValueLabel(PennantConstants.EMP_CATEGORY_CATC,
+					Labels.getLabel("label_EmploymentCategory_CatC.label")));
+			empCateogoryList.add(new ValueLabel(PennantConstants.EMP_CATEGORY_CATD,
+					Labels.getLabel("label_EmploymentCategory_CatD.label")));
+		}
+		return empCateogoryList;
+	}
+
+	public static List<ValueLabel> getApfTypes() {
+		if (apfTypes == null) {
+			apfTypes = new ArrayList<ValueLabel>(5);
+			apfTypes.add(new ValueLabel(PennantConstants.AUTO, Labels.getLabel("label_Auto.value")));
+			apfTypes.add(new ValueLabel(PennantConstants.DEEMED, Labels.getLabel("label_Deemed.value")));
+			apfTypes.add(new ValueLabel(PennantConstants.GENERAL, Labels.getLabel("label_General.value")));
+		}
+		return apfTypes;
+	}
+
+	public static List<ValueLabel> getTechnicalDone() {
+		if (technicalDone == null) {
+			technicalDone = new ArrayList<ValueLabel>(3);
+			technicalDone.add(new ValueLabel(PennantConstants.YES, Labels.getLabel("label_BuilderCompany_Yes.value")));
+			technicalDone.add(new ValueLabel(PennantConstants.NO, Labels.getLabel("label_BuilderCompany_No.value")));
+			technicalDone.add(new ValueLabel(PennantConstants.AWAITED, Labels.getLabel("label_Awaited")));
+		}
+		return technicalDone;
+	}
+
+	public static List<ValueLabel> getLegalDone() {
+		if (legalDone == null) {
+			legalDone = new ArrayList<ValueLabel>(3);
+			legalDone.add(new ValueLabel(PennantConstants.YES, Labels.getLabel("label_BuilderCompany_Yes.value")));
+			legalDone.add(new ValueLabel(PennantConstants.NO, Labels.getLabel("label_BuilderCompany_No.value")));
+			legalDone.add(new ValueLabel(PennantConstants.AWAITED, Labels.getLabel("label_Awaited")));
+		}
+		return legalDone;
+	}
+
+	public static List<ValueLabel> getRCUDone() {
+		if (rcuDone == null) {
+			rcuDone = new ArrayList<ValueLabel>(3);
+			rcuDone.add(new ValueLabel(PennantConstants.YES, Labels.getLabel("label_BuilderCompany_Yes.value")));
+			rcuDone.add(new ValueLabel(PennantConstants.NO, Labels.getLabel("label_BuilderCompany_No.value")));
+			rcuDone.add(new ValueLabel(PennantConstants.AWAITED, Labels.getLabel("label_Awaited")));
+		}
+		return rcuDone;
+	}
+
+	public static List<ValueLabel> getUnitAreaConsidered() {
+		if (unitAreaConsidered == null) {
+			unitAreaConsidered = new ArrayList<ValueLabel>(3);
+			unitAreaConsidered.add(new ValueLabel(PennantConstants.CARPET_AREA, Labels.getLabel("label_CarpetArea")));
+			unitAreaConsidered.add(new ValueLabel(PennantConstants.BUILTUP_AREA, Labels.getLabel("label_BuiltupArea")));
+			unitAreaConsidered
+					.add(new ValueLabel(PennantConstants.SUPERBUILTUP_AREA, Labels.getLabel("label_SuperBuiltupArea")));
+		}
+		return unitAreaConsidered;
+	}
+
+	public static List<ValueLabel> geRateConsidered() {
+		if (rateConsidered == null) {
+			rateConsidered = new ArrayList<ValueLabel>(6);
+			rateConsidered.add(new ValueLabel(PennantConstants.CARPET_AREA_RATE,
+					Labels.getLabel("label_ProjectUnitsDialog_RateAsPerCarpetArea.value")));
+			rateConsidered.add(new ValueLabel(PennantConstants.BUILTUP_AREA_RATE,
+					Labels.getLabel("label_ProjectUnitsDialog_RateAsPerBuiltUpArea.value")));
+			rateConsidered.add(new ValueLabel(PennantConstants.SUPERBUILTUP_AREA_RATE,
+					Labels.getLabel("label_ProjectUnitsDialog_RateAsPerSuperBuiltUpArea.value")));
+			rateConsidered.add(new ValueLabel(PennantConstants.BRANCH_APF_RATE,
+					Labels.getLabel("label_ProjectUnitsDialog_RateAsPerBranchAPF.value")));
+			rateConsidered.add(new ValueLabel(PennantConstants.COST_SHEET_RATE,
+					Labels.getLabel("label_ProjectUnitsDialog_RateAsPerCostSheet.value")));
+			rateConsidered.add(new ValueLabel(PennantConstants.RATE_PER_SQUARE_FEET,
+					Labels.getLabel("label_ProjectUnitsDialog_UnitRpsf.value")));
+		}
+		return rateConsidered;
+	}
+
+	public static List<ValueLabel> getLoanPurposeTypes() {
+		if (loanPurposeTypes == null) {
+			loanPurposeTypes = new ArrayList<ValueLabel>(3);
+			loanPurposeTypes.add(new ValueLabel(PennantConstants.ALL, Labels.getLabel("label_LoanPurpose_All.value")));
+			loanPurposeTypes.add(
+					new ValueLabel(PennantConstants.SPECIFIC, Labels.getLabel("label_LoanPurpose_Specific.value")));
+			loanPurposeTypes.add(new ValueLabel(PennantConstants.NOTREQUIRED,
+					Labels.getLabel("label_LoanPurpose_NotRequired.value")));
+		}
+		return loanPurposeTypes;
+	}
+
+	public static List<ValueLabel> getLegalVerificationCategories() {
+		if (verificationCategories == null) {
+			verificationCategories = new ArrayList<ValueLabel>(2);
+			verificationCategories.add(new ValueLabel("1", Labels.getLabel("label_LegalVefication_LV")));
+			verificationCategories.add(new ValueLabel("2", Labels.getLabel("label_LegalVefication_TSR")));
+		}
+		return verificationCategories;
+	}
+
+	public static List<ValueLabel> getProductTypeList() {
+		productTypeList = new ArrayList<ValueLabel>(7);
+		productTypeList.add(new ValueLabel(FinanceConstants.HOMELOAN, Labels.getLabel("label_PRODUCT_HOMELOAN")));
+		productTypeList.add(new ValueLabel(FinanceConstants.HOMELOAN_BT, Labels.getLabel("label_PRODUCT_HOMELOAN_BT")));
+		productTypeList.add(new ValueLabel(FinanceConstants.LAP, Labels.getLabel("label_PRODUCT_LAP")));
+		productTypeList.add(new ValueLabel(FinanceConstants.LAP_TP, Labels.getLabel("label_PRODUCT_LAP_TP")));
+		productTypeList.add(new ValueLabel(FinanceConstants.HOMELOAN_TP, Labels.getLabel("label_PRODUCT_HOMELOAN_TP")));
+		productTypeList
+				.add(new ValueLabel(FinanceConstants.PERSONAL_LOAN, Labels.getLabel("label_PRODUCT_PERSONAL_LOAN")));
+
+		productTypeList.add(new ValueLabel(FinanceConstants.VRPL_VRBL, Labels.getLabel("label_PRODUCT_VRPL_VRBL")));
+		return productTypeList;
+	}
+
+	public static List<ValueLabel> getTxFinTypeList() {
+		txFinTypeList = new ArrayList<ValueLabel>(7);
+		txFinTypeList.add(new ValueLabel(FinanceConstants.HOME_PUCHASE, Labels.getLabel("label_HOME_PUCHASE")));
+		txFinTypeList
+				.add(new ValueLabel(FinanceConstants.UNDER_CONSTRUCTION, Labels.getLabel("label_UNDER_CONSTRUCTION")));
+		txFinTypeList
+				.add(new ValueLabel(FinanceConstants.SELF_CONSTRUCTION, Labels.getLabel("label_SELF_CONSTRUCTION")));
+		txFinTypeList.add(new ValueLabel(FinanceConstants.PLOTPUCHASE, Labels.getLabel("label_PLOTPUCHASE")));
+		txFinTypeList.add(new ValueLabel(FinanceConstants.RENOVATION_EXT, Labels.getLabel("label_RENOVATION_EXT")));
+		txFinTypeList.add(new ValueLabel(FinanceConstants.OTHERS, Labels.getLabel("label_OTHERS")));
+
+		return txFinTypeList;
+	}
+
+	public static List<ValueLabel> getPercType() {
+		if (percType == null) {
+			percType = new ArrayList<ValueLabel>(2);
+			percType.add(new ValueLabel(PennantConstants.PERC_TYPE_FIXED, "FIXED"));
+			percType.add(new ValueLabel(PennantConstants.PERC_TYPE_VARIABLE, "VARIABLE"));
+		}
+		return percType;
+	}
+
+	public static List<ValueLabel> getBetaConfiguration() {
+		if (betaConfiguration == null) {
+			betaConfiguration = new ArrayList<ValueLabel>(1);
+			betaConfiguration.add(new ValueLabel("Old", "Old"));
+		}
+
+		return betaConfiguration;
+	}
+
+	public static List<ValueLabel> getNPAPaymentTypes() {
+		if (npaPaymentTypesList == null) {
+			npaPaymentTypesList = new ArrayList<>(2);
+			npaPaymentTypesList.add(new ValueLabel(PennantConstants.NPA_PAYMENT_APPORTIONMENT_YES,
+					Labels.getLabel("label_NPA_Payment_Apportionment_Yes.value")));
+			npaPaymentTypesList.add(new ValueLabel(PennantConstants.NPA_PAYMENT_APPORTIONMENT_NO,
+					Labels.getLabel("label_NPA_Payment_Apportionment_No.value")));
+
+		}
+		return npaPaymentTypesList;
 	}
 }

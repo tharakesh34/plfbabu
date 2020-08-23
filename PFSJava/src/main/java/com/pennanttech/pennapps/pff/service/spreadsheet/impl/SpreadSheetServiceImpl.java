@@ -977,12 +977,10 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				} else {
 					dataMap.put("B" + i + ".TypeofAcc", "CC/OD Account");
 				}
-				if (StringUtils.isNotEmpty(bankingDetails.get(i).getCcLimit())) {
-					dataMap.put("B" + i + ".SanctionedLimit",
-							PennantApplicationUtil.formateAmount(
-									getAmountInLakhs(bankingDetails.get(i).getCcLimit().toString()),
-									PennantConstants.defaultCCYDecPos));
-				}
+				dataMap.put("B" + i + ".SanctionedLimit",
+						PennantApplicationUtil.formateAmount(
+								getAmountInLakhs(bankingDetails.get(i).getCcLimit().toString()),
+								PennantConstants.defaultCCYDecPos));
 				List<BankInfoDetail> bankInfoDetails = bankingDetails.get(i).getBankInfoDetails();
 				if (CollectionUtils.isNotEmpty(bankInfoDetails)) {
 					Map<String, BankInfoDetail> bankInfoDetailsMap = new HashMap<String, BankInfoDetail>();

@@ -76,7 +76,6 @@ public abstract class JsonService<T> {
 	protected JsonServiceDetail processMessage(JsonServiceDetail serviceDetail) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail logDetail = new InterfaceLogDetail();
-		;
 
 		if (serviceDetail.isXmlRequest()) {
 			serviceDetail.setRequestString(getObjectToXML(serviceDetail));
@@ -88,7 +87,7 @@ public abstract class JsonService<T> {
 
 		String url = App.getProperty(serviceDetail.getServiceUrl());
 		if (StringUtils.trimToNull(serviceDetail.getServiceEndPoint()) != null) {
-			url = url + serviceDetail.getServiceEndPoint();
+			url = StringUtils.trimToEmpty(url) + serviceDetail.getServiceEndPoint();
 		}
 		logDetail.setEndPoint(url);
 
@@ -198,6 +197,9 @@ public abstract class JsonService<T> {
 	public String getObjectToJson(JsonServiceDetail jsonServiceDetail) {
 		String resuestData = null;
 		try {
+			if (StringUtils.trimToNull(jsonServiceDetail.getRequestString()) != null) {
+				return jsonServiceDetail.getRequestString();
+			}
 			ObjectMapper mapper = getObjectMapper(jsonServiceDetail);
 			resuestData = mapper.writeValueAsString(jsonServiceDetail.getRequestData());
 		} catch (Exception e) {

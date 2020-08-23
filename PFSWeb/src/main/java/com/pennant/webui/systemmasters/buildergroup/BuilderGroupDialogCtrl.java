@@ -77,6 +77,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -203,17 +204,19 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		this.city.setDisplayStyle(2);
 		this.city.setValidateColumns(new String[] { "PCCity" });
 
-		this.province.setMandatoryStyle(false);
+		this.province.setMandatoryStyle(true);
 		this.province.setModuleName("Province");
 		this.province.setValueColumn("CPProvince");
 		this.province.setDescColumn("CPProvinceName");
 		this.province.setValidateColumns(new String[] { "CPProvince" });
 
-		this.pinCode.setMandatoryStyle(false);
+		this.pinCode.setMandatoryStyle(true);
 		this.pinCode.setModuleName("PinCode");
-		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setValueColumn("PinCodeId");
 		this.pinCode.setDescColumn("AreaName");
-		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		this.pinCode.setValueType(DataType.LONG);
+		this.pinCode.setValidateColumns(new String[] { "PinCodeId" });
+		this.pinCode.setInputAllowed(false);
 
 		this.expLimitOnAmt.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.expLimitOnAmt.setFormat(PennantConstants.rateFormate9);
@@ -379,49 +382,154 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onFulfill$city(Event event) {
-		logger.debug(Literal.ENTERING);
-
-		Object dataObject = city.getObject();
-		if (dataObject instanceof String || dataObject == null) {
-			this.city.setValue("");
-			this.city.setDescription("");
-			this.city.setAttribute("City", null);
-		} else {
-			City details = (City) dataObject;
-			this.city.setAttribute("City", details.getId());
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
 	public void onFulfill$province(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		Object dataObject = province.getObject();
-		if (dataObject instanceof String || dataObject == null) {
-			this.province.setValue("");
-			this.province.setDescription("");
-			this.province.setAttribute("Province", null);
+		String pcProvince = null;
+		if (dataObject instanceof String) {
+			fillPindetails(null, null);
 		} else {
-			Province details = (Province) dataObject;
-			this.province.setAttribute("Province", details.getId());
+			Province province = (Province) dataObject;
+			if (province == null) {
+				fillPindetails(null, null);
+			}
+			if (province != null) {
+				this.province.setErrorMessage("");
+				pcProvince = this.province.getValue();
+				fillPindetails(null, pcProvince);
+			}
 		}
+
+		this.city.setObject("");
+		this.pinCode.setObject("");
+		this.city.setValue("");
+		this.city.setDescription("");
+		this.pinCode.setValue("");
+		this.pinCode.setDescription("");
+		fillCitydetails(pcProvince);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onFulfill$pinCode(Event event) {
+	/**
+	 * based on state param ,city will be filtered
+	 * 
+	 * @param state
+	 */
+	private void fillCitydetails(String state) {
+		logger.debug(Literal.ENTERING);
+
+		this.city.setModuleName("City");
+		this.city.setValueColumn("PCCity");
+		this.city.setDescColumn("PCCityName");
+		this.city.setValidateColumns(new String[] { "PCCity" });
+		Filter[] filters = new Filter[1];
+		if (state != null && !state.isEmpty()) {
+			filters[0] = new Filter("PCProvince", state, Filter.OP_EQUAL);
+		} else {
+			filters[0] = new Filter("CITYISACTIVE", 1, Filter.OP_EQUAL);
+		}
+		this.city.setFilters(filters);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * onFulfill custAddrCity
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onFulfill$city(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		Object dataObject = city.getObject();
+
+		String cityValue = null;
+		if (dataObject instanceof String) {
+			this.city.setValue("");
+			this.city.setDescription("");
+			fillPindetails(null, null);
+		} else {
+			City city = (City) dataObject;
+			if (city != null) {
+				this.city.setErrorMessage("");
+				this.province.setErrorMessage("");
+
+				this.province.setValue(city.getPCProvince());
+				this.province.setDescription(city.getLovDescPCProvinceName());
+				cityValue = this.city.getValue();
+			} else {
+				fillCitydetails(province.getValue());
+			}
+		}
+
+		fillPindetails(cityValue, this.province.getValue());
+
+		this.pinCode.setObject("");
+		this.pinCode.setValue("");
+		this.pinCode.setDescription("");
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * based on param values,custaddrzip is filtered
+	 * 
+	 * @param cityValue
+	 * @param provice
+	 */
+
+	private void fillPindetails(String cityValue, String provice) {
+		logger.debug(Literal.ENTERING);
+
+		this.pinCode.setModuleName("PinCode");
+		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setDescColumn("AreaName");
+		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		Filter[] filters = new Filter[1];
+
+		if (cityValue != null && !cityValue.isEmpty()) {
+			filters[0] = new Filter("City", cityValue, Filter.OP_EQUAL);
+		} else if (provice != null && !provice.isEmpty()) {
+			filters[0] = new Filter("PCProvince", provice, Filter.OP_EQUAL);
+		} else {
+			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		}
+		this.pinCode.setFilters(filters);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * onFulfill custAddrZip.based on custAddrZip,custAddrCity and custAddrprovince will auto populate
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onFulfill$pinCode(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		Object dataObject = pinCode.getObject();
-		if (dataObject instanceof String || dataObject == null) {
+		if (dataObject instanceof String) {
 			this.pinCode.setValue("");
 			this.pinCode.setDescription("");
-			this.pinCode.setAttribute("PinCode", null);
 		} else {
-			PinCode details = (PinCode) dataObject;
-			this.pinCode.setAttribute("PinCode", details.getId());
+			PinCode pinCode = (PinCode) dataObject;
+			if (pinCode != null) {
+				this.city.setValue(pinCode.getCity());
+				this.city.setDescription(pinCode.getPCCityName());
+				this.province.setValue(pinCode.getPCProvince());
+				this.province.setDescription(pinCode.getLovDescPCProvinceName());
+				this.pinCode.setAttribute("PinCode", pinCode.getId());
+
+				this.city.setErrorMessage("");
+				this.province.setErrorMessage("");
+				this.pinCode.setErrorMessage("");
+			} else {
+				fillPindetails(city.getValue(), province.getValue());
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -523,10 +631,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		//City
 		try {
 			this.city.getValidatedValue();
-			Object obj = this.city.getAttribute("City");
-			if (obj != null) {
-				aBuilderGroup.setCity(obj.toString());
-			}
+			aBuilderGroup.setCity(this.city.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -534,10 +639,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		//Province
 		try {
 			this.province.getValidatedValue();
-			Object obj = this.province.getAttribute("Province");
-			if (obj != null) {
-				aBuilderGroup.setProvince(obj.toString());
-			}
+			aBuilderGroup.setProvince(this.province.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -584,7 +686,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -653,12 +755,12 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 					new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_City.value"), null, true, true));
 		}
 		if (!this.province.isReadonly()) {
-			this.province.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_State.value"), null, false, true));
+			this.province.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_BuilderGroupDialog_Province.value"), null, true, true));
 		}
 		if (!this.pinCode.isReadonly()) {
-			this.pinCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_Pincode.value"),
-					null, false, true));
+			this.pinCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_Pincode.value"), null, true, true));
 		}
 
 		if (!this.expLimitOnAmt.isReadonly()) {

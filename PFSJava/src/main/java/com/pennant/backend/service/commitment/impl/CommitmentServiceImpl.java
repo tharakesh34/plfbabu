@@ -236,10 +236,12 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * @return Commitment
 	 */
 
+	@Override
 	public Commitment getApprovedCommitmentById(String id) {
 		return getCommitmentDAO().getCommitmentById(id, "_AView");
 	}
 
+	@Override
 	public int getCmtAmountCount(long custID) {
 		return getCommitmentDAO().getCmtAmountCount(custID);
 	}
@@ -536,6 +538,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * @return auditHeader
 	 */
 
+	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
@@ -682,6 +685,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * @return auditHeader
 	 */
 
+	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 

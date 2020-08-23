@@ -288,7 +288,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
 			if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) >= diffentDays) {
 				throw new WrongValueException(this.toDate,
-						Labels.getLabel("label_Difference_between_days") + diffentDays);
+						Labels.getLabel("label_Difference_between_days") + " " + diffentDays);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -299,7 +299,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			if (alwdDaysFromAppDate > 0 && DateUtility.getDaysBetween(this.toDate.getValue(),
 					DateUtility.getAppDate()) >= alwdDaysFromAppDate) {
 				throw new WrongValueException(this.toDate,
-						Labels.getLabel("label_Diff_btwn_To_and_App_date") + alwdDaysFromAppDate);
+						Labels.getLabel("label_Diff_btwn_To_and_App_date") + " " + alwdDaysFromAppDate);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

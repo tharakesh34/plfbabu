@@ -36,7 +36,7 @@ public class PaymentsProcessService {
 		List<FinAdvancePayments> advancePayments = financeDetail.getAdvancePaymentsList();
 
 		if (CollectionUtils.isEmpty(advancePayments)) {
-			logger.debug("FinAdvancePayments list is emty for the reference :");
+			logger.debug("FinAdvancePayments list is emty");
 			return;
 		}
 

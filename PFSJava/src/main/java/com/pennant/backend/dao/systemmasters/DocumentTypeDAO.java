@@ -72,4 +72,6 @@ public interface DocumentTypeDAO extends BasicCrudDao<DocumentType> {
 
 	List<DocumentType> getDocumentTypes();
 
+	String getDocCategoryByDocType(String docTypeCode, String type);
+
 }

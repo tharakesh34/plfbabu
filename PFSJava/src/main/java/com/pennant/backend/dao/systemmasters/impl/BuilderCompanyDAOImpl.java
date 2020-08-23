@@ -42,11 +42,13 @@
 */
 package com.pennant.backend.dao.systemmasters.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -56,6 +58,7 @@ import com.pennant.backend.dao.systemmasters.BuilderCompanyDAO;
 import com.pennant.backend.model.systemmasters.BuilderCompany;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -75,50 +78,118 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 	public BuilderCompany getBuilderCompany(long id, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(
-				"id, name, segmentation, custId, groupId, apfType,peDevId,entityType,emailId,cityType,address1,address2,");
-		sql.append(
-				"address3,city,code,devavailablity,magnitude,absavailablity,totalProj,approved,remarks,panDetails,benfName,accountNo,bankBranchId,");
-		sql.append(
-				"limitOnAmt,limitOnUnits,currentExpUni,currentExpAmt,dateOfInCop,noOfProj,assHLPlayers,onGoingProj,expInBusiness,recommendation,");
-		sql.append("magintudeInLacs,noOfProjCons,");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, Name, Segmentation, CustId, GroupId, ApfType, PeDevId, EntityType, EmailId");
+		sql.append(", CityType, Address1, Address2, Address3, City, State, Code, Devavailablity, Magnitude");
+		sql.append(", Absavailablity, TotalProj, Approved, Remarks, PanDetails, BenfName, AccountNo");
+		sql.append(", BankBranchId, LimitOnAmt, LimitOnUnits, CurrentExpUni, CurrentExpAmt, DateOfInCop");
+		sql.append(", NoOfProj, AssHLPlayers, OnGoingProj, ExpInBusiness, Recommendation, MagintudeInLacs");
+		sql.append(", NoOfProjCons, PinCodeId");
 
 		if (type.contains("View")) {
-			sql.append(
-					"segmentationName, groupIdName, fieldCode, cityName,codeName,BranDesc, entyDesc, bankName, ifsc,areaName, LovDescCIFName, custCif, active,");
+			sql.append(", SegmentationName, GroupIdName, FieldCode, CityName");
+			sql.append(", CodeName, BranDesc, EntyDesc, BankName, Ifsc, AreaName, LovDescCIFName, CustCIF, Active");
 		}
 
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From BuilderCompany");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from BuilderCompany");
 		sql.append(type);
+		sql.append(" Where id = ?");
+
+		Object[] object = new Object[] { id };
+
 		if (type.contains("View")) {
-			sql.append(" Where id = :id AND FieldCode =:FieldCode");
-		} else {
-			sql.append(" Where id = :id");
+			sql.append(" and FieldCode = ?");
+
+			object = new Object[] { id, "SEGMENT" };
 		}
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		BuilderCompany builderCompany = new BuilderCompany();
-		builderCompany.setId(id);
-		builderCompany.setFieldCode("SEGMENT");
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(builderCompany);
-		RowMapper<BuilderCompany> rowMapper = BeanPropertyRowMapper.newInstance(BuilderCompany.class);
-
 		try {
-			builderCompany = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+
+			return this.jdbcOperations.queryForObject(sql.toString(), object, new RowMapper<BuilderCompany>() {
+				@Override
+				public BuilderCompany mapRow(ResultSet rs, int rowNum) throws SQLException {
+					BuilderCompany ca = new BuilderCompany();
+
+					ca.setId(rs.getLong("Id"));
+					ca.setName(rs.getString("Name"));
+					ca.setSegmentation(rs.getString("Segmentation"));
+					ca.setCustId(rs.getLong("CustId"));
+					ca.setGroupId(rs.getLong("GroupId"));
+					ca.setApfType(rs.getString("ApfType"));
+					ca.setPeDevId(rs.getString("PeDevId"));
+					ca.setEntityType(rs.getString("EntityType"));
+					ca.setEmailId(rs.getString("EmailId"));
+					ca.setCityType(rs.getString("CityType"));
+					ca.setAddress1(rs.getString("Address1"));
+					ca.setAddress2(rs.getString("Address2"));
+					ca.setAddress3(rs.getString("Address3"));
+					ca.setCity(rs.getString("City"));
+					ca.setState(rs.getString("State"));
+					ca.setCode(rs.getString("Code"));
+					ca.setDevavailablity(rs.getInt("Devavailablity"));
+					ca.setMagnitude(rs.getBigDecimal("Magnitude"));
+					ca.setAbsavailablity(rs.getBigDecimal("Absavailablity"));
+					ca.setTotalProj(rs.getInt("TotalProj"));
+					ca.setApproved(rs.getString("Approved"));
+					ca.setRemarks(rs.getString("Remarks"));
+					ca.setPanDetails(rs.getString("PanDetails"));
+					ca.setBenfName(rs.getString("BenfName"));
+					ca.setAccountNo(rs.getString("AccountNo"));
+					ca.setBankBranchId(rs.getLong("BankBranchId"));
+					ca.setLimitOnAmt(rs.getBigDecimal("LimitOnAmt"));
+					ca.setLimitOnUnits(rs.getBigDecimal("LimitOnUnits"));
+					ca.setCurrentExpUni(rs.getInt("CurrentExpUni"));
+					ca.setCurrentExpAmt(rs.getBigDecimal("CurrentExpAmt"));
+					ca.setDateOfInCop(rs.getTimestamp("DateOfInCop"));
+					ca.setNoOfProj(rs.getInt("NoOfProj"));
+					ca.setAssHLPlayers(rs.getInt("AssHLPlayers"));
+					ca.setOnGoingProj(rs.getInt("OnGoingProj"));
+					ca.setExpInBusiness(rs.getInt("ExpInBusiness"));
+					ca.setRecommendation(rs.getString("Recommendation"));
+					ca.setMagintudeInLacs(rs.getInt("MagintudeInLacs"));
+					ca.setNoOfProjCons(rs.getInt("NoOfProjCons"));
+					ca.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
+
+					if (type.contains("View")) {
+						ca.setSegmentationName(rs.getString("SegmentationName"));
+						ca.setGroupIdName(rs.getString("GroupIdName"));
+						ca.setFieldCode(rs.getString("FieldCode"));
+						ca.setCityName(rs.getString("CityName"));
+						ca.setCodeName(rs.getString("CodeName"));
+						ca.setBranDesc(rs.getString("BranDesc"));
+						ca.setEntyDesc(rs.getString("EntyDesc"));
+						ca.setBankName(rs.getString("BankName"));
+						ca.setIfsc(rs.getString("Ifsc"));
+						ca.setAreaName(rs.getString("AreaName"));
+						ca.setLovDescCIFName(rs.getString("LovDescCIFName"));
+						ca.setCustCIF(rs.getString("CustCIF"));
+						ca.setActive(rs.getBoolean("Active"));
+					}
+
+					ca.setVersion(rs.getInt("Version"));
+					ca.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					ca.setLastMntBy(rs.getLong("LastMntBy"));
+					ca.setRecordStatus(rs.getString("RecordStatus"));
+					ca.setRoleCode(rs.getString("RoleCode"));
+					ca.setNextRoleCode(rs.getString("NextRoleCode"));
+					ca.setTaskId(rs.getString("TaskId"));
+					ca.setNextTaskId(rs.getString("NextTaskId"));
+					ca.setRecordType(rs.getString("RecordType"));
+					ca.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return ca;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			builderCompany = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return builderCompany;
+		return null;
 	}
 
 	@Override
@@ -166,19 +237,23 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into BuilderCompany");
 		sql.append(tableType.getSuffix());
-		sql.append(
-				" (id, name, segmentation, CustId , groupId, apfType, peDevId, entityType, emailId, cityType, address1, address2,"
-						+ " address3, city, code, devavailablity, magnitude, absavailablity, totalProj, approved, remarks, panDetails, benfName, accountNo, bankBranchId,"
-						+ " limitOnAmt, limitOnUnits, currentExpUni, currentExpAmt, dateOfInCop, noOfProj, assHLPlayers, onGoingProj, expInBusiness, recommendation, magintudeInLacs, noOfProjCons, active, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(");
-		sql.append(
-				" :id, :name, :segmentation, :CustId ,:groupId, :apfType, :peDevId, :entityType, :emailId, :cityType, :address1, :address2,"
-						+ " :address3, :city, :code, :devavailablity, :magnitude, :absavailablity, :totalProj, :approved, :remarks, :panDetails, :benfName, :accountNo, :bankBranchId,"
-						+ " :limitOnAmt, :limitOnUnits, :currentExpUni, :currentExpAmt, :dateOfInCop, :noOfProj, :assHLPlayers, :onGoingProj, :expInBusiness, :recommendation, :magintudeInLacs, :noOfProjCons, :active,");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" (id, name, segmentation, CustId , groupId, apfType, peDevId, entityType");
+		sql.append(", emailId, cityType, address1, address2, address3, city, state, code, devavailablity");
+		sql.append(", magnitude, absavailablity, totalProj, approved, remarks, panDetails, benfName");
+		sql.append(", accountNo, bankBranchId, limitOnAmt, limitOnUnits, currentExpUni, currentExpAmt");
+		sql.append(", dateOfInCop, noOfProj, assHLPlayers, onGoingProj, expInBusiness, recommendation");
+		sql.append(", magintudeInLacs, noOfProjCons, active, pinCodeId");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId)");
+		sql.append("  values(");
+		sql.append(" :id, :name, :segmentation, :CustId ,:groupId, :apfType, :peDevId, :entityType");
+		sql.append(", :emailId, :cityType, :address1, :address2, :address3, :city, :state, :code, :devavailablity");
+		sql.append(", :magnitude, :absavailablity, :totalProj, :approved, :remarks, :panDetails");
+		sql.append(", :benfName, :accountNo, :bankBranchId, :limitOnAmt, :limitOnUnits, :currentExpUni");
+		sql.append(", :currentExpAmt, :dateOfInCop, :noOfProj, :assHLPlayers, :onGoingProj, :expInBusiness");
+		sql.append(", :recommendation, :magintudeInLacs, :noOfProjCons, :active, :pinCodeId");
+		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
+		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (builderCompany.getId() <= 0) {
@@ -206,15 +281,21 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update BuilderCompany");
 		sql.append(tableType.getSuffix());
-		sql.append(
-				"  set name = :name, segmentation = :segmentation,CustId = :CustId , groupId = :groupId, apfType= :apfType, peDevId= :peDevId, entityType= :entityType,"
-						+ " emailId= :emailId, cityType= :cityType, address1 = :address1, address2= :address2, address3= address3, city= :city, code= :code, devavailablity= :devavailablity,"
-						+ " magnitude= :magnitude, absavailablity= :absavailablity, totalProj= :totalProj, approved= :approved, remarks= :remarks, panDetails= :panDetails, benfName= :benfName,"
-						+ " accountNo= :accountNo, bankBranchId= :bankBranchId, limitOnAmt= :limitOnAmt, limitOnUnits= :limitOnUnits, currentExpUni= :currentExpUni,"
-						+ " currentExpAmt= :currentExpAmt, dateOfInCop= :dateOfInCop, noOfProj= :noOfProj, assHLPlayers= :assHLPlayers, onGoingProj= :onGoingProj, expInBusiness= :expInBusiness, recommendation= :recommendation, magintudeInLacs= :magintudeInLacs, noOfProjCons= :noOfProjCons,");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, active = :active,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append("  set name = :name, segmentation = :segmentation,CustId = :CustId , groupId = :groupId");
+		sql.append(", apfType= :apfType, peDevId= :peDevId, entityType= :entityType");
+		sql.append(", emailId= :emailId, cityType= :cityType, address1 = :address1, address2= :address2");
+		sql.append(", address3= address3, city= :city, state= :state, code= :code, devavailablity= :devavailablity");
+		sql.append(", magnitude= :magnitude, absavailablity= :absavailablity, totalProj= :totalProj");
+		sql.append(", approved= :approved, remarks= :remarks, panDetails= :panDetails, benfName= :benfName");
+		sql.append(", accountNo= :accountNo, bankBranchId= :bankBranchId, limitOnAmt= :limitOnAmt");
+		sql.append(", limitOnUnits= :limitOnUnits, currentExpUni= :currentExpUni");
+		sql.append(", currentExpAmt= :currentExpAmt, dateOfInCop= :dateOfInCop, noOfProj= :noOfProj");
+		sql.append(", assHLPlayers= :assHLPlayers, onGoingProj= :onGoingProj, expInBusiness= :expInBusiness");
+		sql.append(", recommendation= :recommendation, magintudeInLacs= :magintudeInLacs");
+		sql.append(", noOfProjCons= :noOfProjCons, pinCodeId = :pinCodeId");
+		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
+		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, active = :active");
+		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 

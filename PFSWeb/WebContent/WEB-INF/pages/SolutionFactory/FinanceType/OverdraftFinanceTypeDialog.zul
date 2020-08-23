@@ -696,8 +696,38 @@
 												<space spacing="2px" />
 												<checkbox id="finIsIntCpzAtGrcEnd" checked="false" />
 											</hbox>
+											<label id="label_UnderConstruction" value="${c:l('label_FinanceTypeDialog_UnderConstruction.value')}" />
+											<hbox id="hlayout_UnderConstruction" spacing="2px">
+												<space id="space_UnderConstruction" spacing="2px" />
+												<checkbox id="underConstruction" />
+											</hbox>
 										</row>
-
+										<row>
+											<label id="label_GrcPeriodAftrFullDisb" value="${c:l('label_FinanceTypeDialog_GrcPeriodAftrFullDisb.value')}" />
+											<hlayout id="hlayout_GrcPeriodAftrFullDisb" spacing="2px">
+												<space id="space_GrcPeriodAftrFullDisb" spacing="2px" />
+												<checkbox id="grcPeriodAftrFullDisb" />
+											</hlayout>
+										</row>
+										<row>
+											<label id="label_AutoIncrGrcEndDate" value="${c:l('label_FinanceTypeDialog_AutoIncrGrcEndDate.value')}" />
+											<hlayout id="hlayout_AutoIncrGrcEndDate" spacing="2px">
+												<space id="space_AutoIncrGrcEndDate" spacing="2px" />
+												<checkbox id="autoIncrGrcEndDate" />
+											</hlayout>
+										</row>
+										<row>
+											<label id="label_GrcAutoIncrMonths" value="${c:l('label_FinanceTypeDialog_GrcAutoIncrMonths.value')}" />
+											<hlayout id="hlayout_GrcAutoIncrMonths" spacing="2px">
+												<space id="space_GrcAutoIncrMonths" spacing="2px" />
+												<intbox id="grcAutoIncrMonths" />
+											</hlayout>
+											<label id="label_MaxAutoIncrAllowed" value="${c:l('label_FinanceTypeDialog_MaxAutoIncrAllowed.value')}" />
+											<hlayout id="hlayout_MaxAutoIncrAllowed" spacing="2px">
+												<space id="space_MaxAutoIncrAllowed" spacing="2px" />
+												<intbox id="maxAutoIncrAllowed" />
+											</hlayout>
+										</row>
 									</rows>
 								</grid>
 							</groupbox>
@@ -1175,8 +1205,7 @@
 								<div sclass="z-toolbar" style="padding:0">
 									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" height="100%" width="100%">
 										<toolbar align="start" style="border:none;">
-											<label value="${c:l('CustomerAccDetails')}" sclass="listboxHeading">
-											</label>
+											<label value="${c:l('CustomerAccDetails')}" sclass="listboxHeading"></label>
 										</toolbar>
 										<toolbar align="end" style="float:right; border-style: none; padding:0px;" height="100%">
 											<button id="btnNew_FinTypeAccount" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_FinTypeAccount.tooltiptext')}"

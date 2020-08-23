@@ -34,6 +34,7 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 	private boolean searchClick = true;
 	// For customer360 Report should displayed as  modal  
 	private boolean isCustomer360 = false;
+	private boolean fromFinance = false;
 
 	public ReportViewCtrl() {
 		super();
@@ -97,6 +98,10 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 			isCustomer360 = (boolean) arguments.containsKey("Customer360");
 		}
 
+		if (arguments.containsKey("fromFinance")) {
+			fromFinance = (boolean) arguments.containsKey("fromFinance");
+		}
+
 		AMedia amedia = null;
 		if (isAgreement) {
 
@@ -135,6 +140,11 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 				window_Report.setWidth("90%");
 				this.report.setHeight("739px");
 				setDialog(DialogType.MODAL);
+			} else if (fromFinance) {
+				window_Report.setHeight("80%");
+				window_Report.setWidth("80%");
+				this.report.setHeight("600px");
+				window_Report.doModal();
 			}
 		}
 

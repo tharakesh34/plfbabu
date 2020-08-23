@@ -63,12 +63,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinTypeFees extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
+	private long finTypeFeeId = Long.MIN_VALUE;
 	private String finType = null;
 	private boolean originationFee;
 	@XmlElement(name = "feeEvent")
 	private String finEvent;
 	private String finEventDesc;
-	private long feeTypeID = Long.MIN_VALUE;
+	private Long feeTypeID;
 	@XmlElement(name = "feeCode")
 	private String feeTypeCode;
 	@XmlElement(name = "feeDesc")
@@ -78,6 +79,8 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	private String calculationType;
 	private String ruleCode;
 	private String ruleDesc;
+	private String percType;
+	private String percRule;
 	private BigDecimal amount = BigDecimal.ZERO;
 	private BigDecimal percentage = BigDecimal.ZERO;
 	private String calculateOn;
@@ -136,6 +139,14 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 		return finType;
 	}
 
+	public long getFinTypeFeeId() {
+		return finTypeFeeId;
+	}
+
+	public void setFinTypeFeeId(long finTypeFeeId) {
+		this.finTypeFeeId = finTypeFeeId;
+	}
+
 	public void setId(String id) {
 		this.finType = id;
 	}
@@ -164,11 +175,11 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 		this.finEventDesc = finEventDesc;
 	}
 
-	public long getFeeTypeID() {
+	public Long getFeeTypeID() {
 		return feeTypeID;
 	}
 
-	public void setFeeTypeID(long feeTypeID) {
+	public void setFeeTypeID(Long feeTypeID) {
 		this.feeTypeID = feeTypeID;
 	}
 
@@ -379,4 +390,21 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	public void setTdsReq(boolean tdsReq) {
 		this.tdsReq = tdsReq;
 	}
+
+	public String getPercType() {
+		return percType;
+	}
+
+	public void setPercType(String percType) {
+		this.percType = percType;
+	}
+
+	public String getPercRule() {
+		return percRule;
+	}
+
+	public void setPercRule(String percRule) {
+		this.percRule = percRule;
+	}
+
 }

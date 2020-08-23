@@ -69,7 +69,7 @@
 								<listbox id="sortOperator_custDOB" width="43px" mold="select" rows="1" />
 								<datebox id="custDOB" width="170px" />
 							</row>
-							<row>
+							<row visible="false">
 								<label id="label_BlacklistCustomerSearch_CustFName" value="${c:l('label_BlacklistCustomerSearch_CustFName.value')}" />
 								<listbox id="sortOperator_custFName" width="43px" mold="select" rows="1" />
 								<textbox id="custFName" width="170px" />
@@ -112,11 +112,9 @@
 								hflex="min" />
 							<listheader id="listheader_CustDOB" label="${c:l('listheader_CustDOB.label')}" sort="auto" hflex="min" />
 
-							<!--<listheader id="listheader_CustLName" label="${c:l('listheader_CustLName.label')}" sort="auto" hflex="min" /> -->
-							<listheader id="listheader_CustLName" label="${c:l('listheader_CustName.label')}" sort="auto" hflex="min" />
+							<listheader id="listheader_CustLName" label="${c:l('listheader_CustName.label')}" hflex="min" />
 
-							<listheader id="listheader_CustCtgCode" label="${c:l('listheader_CustCtgCode.label')}" sort="auto"
-								hflex="min" />
+							<listheader id="listheader_CustCtgCode" label="${c:l('listheader_CustCtgCode.label')}" hflex="min" />
 							<listheader id="listheader_CustEID" label="${c:l('listheader_CustCRCPR.label')}" sort="auto" hflex="min" />
 							<listheader id="listheader_Passport" label="${c:l('listheader_CustAadhaarNo.label')}" sort="auto"
 								hflex="min" />

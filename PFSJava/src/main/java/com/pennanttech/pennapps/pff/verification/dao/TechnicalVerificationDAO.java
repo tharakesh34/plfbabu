@@ -32,7 +32,7 @@ public interface TechnicalVerificationDAO extends BasicCrudDao<TechnicalVerifica
 
 	List<TechnicalVerification> getTvListByCollRef(String collRef);
 
-	List<Verification> getTvValuation(List<Long> verificationIDs);
+	List<Verification> getTvValuation(List<Long> verificationIDs, String type);
 
 	void updateValuationAmount(Verification verification, TableType tableType);
 

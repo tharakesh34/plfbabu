@@ -13,6 +13,14 @@
 	<include file="change-logs/change-log-5.6.0.xml" />
 	<include file="change-logs/change-log-5.7.0.xml" />
 	<include file="change-logs/change-log-5.8.0.xml" />
+	<include file="change-logs/change-log-5.9.0.xml" />
+	<include file="change-logs/change-log-5.2.0_ddl.xml" />
+	<include file="change-logs/change-log-5.2.0_data.xml" />
+	<include file="change-logs/change-log-5.2.0_views.xml" />
+	<include file="change-logs/change-log-INST_BASED_SCHD.xml" />
+	<include file="change-logs/change-log-VasMovement.xml" />
+	<include file="change-logs/change-log-5.2.0.1_views.xml" />
+	<include file="change-logs/change-log-5.2.0_corrections.xml" />
 	<include file="change-logs/change-log-meta-data.xml" />
 
 </databaseChangeLog>

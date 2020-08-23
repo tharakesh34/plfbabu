@@ -152,6 +152,12 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 		lc = new Listcell(PennantJavaUtil.getLabel(financeMain.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("data", financeMain);
+
+		lc = new Listcell(financeMain.getApplicationNo());
+		lc.setParent(item);
+		lc = new Listcell(financeMain.getOfferId());
+		lc.setParent(item);
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onFinanceMainItemDoubleClicked");
 	}
 }

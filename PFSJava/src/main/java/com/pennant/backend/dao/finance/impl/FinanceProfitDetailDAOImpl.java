@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -106,7 +107,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", FinStartDate, MaturityDate, ProductCategory, ExcessAmt, EmiInAdvance, PrvMthAmz");
 		sql.append(", PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv, PenaltyPaid");
 		sql.append(", PenaltyDue, GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, PrvMthGapIntAmz, SvAmount");
-		sql.append(", CbAmount");
+		sql.append(", CbAmount, NOAutoIncGrcEnd");
 		sql.append(" from FinPftDetails");
 		sql.append(" Where FinReference = ?");
 
@@ -187,6 +188,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 							fpd.setPrvMthGapIntAmz(rs.getBigDecimal("PrvMthGapIntAmz"));
 							fpd.setSvAmount(rs.getBigDecimal("SvAmount"));
 							fpd.setCbAmount(rs.getBigDecimal("CbAmount"));
+							fpd.setNOAutoIncGrcEnd(rs.getInt("NOAutoIncGrcEnd"));
 
 							return fpd;
 						}
@@ -237,7 +239,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	}
 
 	private StringBuilder getProfitDetailQuery() {
-		StringBuilder sql = new StringBuilder("select");
+		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive, TotalPftSchd");
 		sql.append(", TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv, TotalPriPaid, TotalPriBal");
 		sql.append(", TdSchdPft, TdPftCpz, TdSchdPftPaid, TdSchdPftBal, PftAccrued, PftAccrueSusp");
@@ -247,7 +249,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", PrvRpySchPft, LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate");
 		sql.append(", PrvODDate, ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate, FullPaidDate");
 		sql.append(", ExcessAmt, EmiInAdvance, PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv");
-		sql.append(", AMZMethod, GapIntAmz, GapIntAmzLbd, SvAmount, CbAmount, NOPaidInst");
+		sql.append(", AMZMethod, GapIntAmz, GapIntAmzLbd, SvAmount, CbAmount, NOPaidInst, NOAutoIncGrcEnd");
 		sql.append(" from FinPftDetails");
 		return sql;
 	}
@@ -628,6 +630,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		insertSql.append(" ,ExcessAmt, EmiInAdvance, PayableAdvise, ");
 		insertSql.append(
 				" ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv, GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, SvAmount, CbAmount ");
+		insertSql.append(", NOAutoIncGrcEnd");
 		insertSql.append(" ) Values");
 		insertSql.append(" (:FinReference, :CustId, :FinBranch, :FinType, :LastMdfDate, :TotalPftSchd, ");
 		insertSql.append(" :TotalPftCpz, :TotalPftPaid, :TotalPftBal, :TotalPftPaidInAdv, :TotalPriPaid, ");
@@ -655,7 +658,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		insertSql.append(" , :ExcessAmt, :EmiInAdvance, :PayableAdvise, ");
 		insertSql.append(
 				" :ExcessAmtResv, :EmiInAdvanceResv, :PayableAdviseResv, :GapIntAmz, :GapIntAmzLbd, :PrvMthGapIntAmz, :SvAmount, :CbAmount ");
-		insertSql.append(" ) ");
+		insertSql.append(", :NOAutoIncGrcEnd) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -839,7 +842,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(" TotalRbtSchd = :TotalRbtSchd, TotalPriPaidInAdv = :TotalPriPaidInAdv,");
 		sql.append(" FinStatus = :FinStatus, FinStsReason = :FinStsReason, FinWorstStatus = :FinWorstStatus, ");
 		sql.append(" TotalPftPaidInAdv = :TotalPftPaidInAdv, LastMdfDate = :LastMdfDate, ");
-		sql.append(" AMZMethod = :AMZMethod, GapIntAmz = :GapIntAmz ");
+		sql.append(" AMZMethod = :AMZMethod, GapIntAmz = :GapIntAmz, NOAutoIncGrcEnd = :NOAutoIncGrcEnd");
 
 		if (posted) {
 			sql.append(
@@ -871,6 +874,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	/**
 	 * 
 	 */
+	@Override
 	public void updateODDetailsEOD(Date valueDate) {
 		logger.debug("Entering");
 
@@ -901,6 +905,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	/**
 	 * 
 	 */
+	@Override
 	public void updateTDDetailsEOD(Date valueDate) {
 		logger.debug("Entering");
 
@@ -937,6 +942,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	/**
 	 * 
 	 */
+	@Override
 	public void updateReceivableDetailsEOD(Date valueDate) {
 		logger.debug("Entering");
 
@@ -963,6 +969,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	/**
 	 * 
 	 */
+	@Override
 	public void updateBounceDetailsEOD(Date valueDate) {
 		logger.debug("Entering");
 
@@ -1185,12 +1192,14 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		int i = 0;
 
-		while (i < finRefList.size()) {
-			sql.append(" ?,");
-			i++;
+		if (CollectionUtils.isNotEmpty(finRefList)) {
+			while (i < finRefList.size()) {
+				sql.append(" ?,");
+				i++;
+			}
+			sql.deleteCharAt(sql.length() - 1);
 		}
 
-		sql.deleteCharAt(sql.length() - 1);
 		sql.append(")");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -1508,6 +1517,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			pftd.setSvAmount(rs.getBigDecimal("SvAmount"));
 			pftd.setCbAmount(rs.getBigDecimal("CbAmount"));
 			pftd.setNOPaidInst(rs.getInt("NOPaidInst"));
+			pftd.setNOAutoIncGrcEnd(rs.getInt("NOAutoIncGrcEnd"));
 
 			return pftd;
 		}

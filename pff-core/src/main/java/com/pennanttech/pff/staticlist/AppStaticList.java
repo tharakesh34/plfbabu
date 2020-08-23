@@ -109,6 +109,7 @@ public final class AppStaticList {
 		list.add(new Property("SC", App.getLabel("label_StandardCovenants")));
 		list.add(new Property("FC", App.getLabel("label_FinancialCovenants")));
 		list.add(new Property("NFC", App.getLabel("label_NonFinancialCovenants")));
+		list.add(new Property("SKR", App.getLabel("label_SafeKeepingRecord")));
 		return list;
 	}
 

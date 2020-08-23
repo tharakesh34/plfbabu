@@ -2,32 +2,25 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<script type="text/javascript" src="/deviceUtils/printerutil.js" />
 	<style>
 		div.z-column-cnt { padding: 3px; } div.z-column-cnt, div.z-row-cnt { color: #000000;
 		font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 11px; font-weight: bold; }
 	</style>
 
-	<window id="window_ReceiptEnquiryDialog" border="normal" width="100%" height="100%" sizable="false"
-		apply="${receiptEnquiryDialogCtrl}">
+	<window id="window_ReceiptEnquiryDialog" border="normal" width="100%" height="100%" sizable="false" apply="${receiptEnquiryDialogCtrl}">
 
 		<div sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start" sclass="toolbar-start">
-					<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-						sclass="z-toolbarbutton" />
-					<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-						sclass="z-toolbarbutton" />
-					<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-						sclass="z-toolbarbutton" />
-					<button id="btnSave" visible="false" tooltiptext="${c:l('btnSave.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-					<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-						sclass="z-toolbarbutton" />
+					<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnSave" visible="false" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 					<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 				</toolbar>
 
@@ -38,12 +31,9 @@
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
-					<button id="btnPrint" label="${c:l('label_Print')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint"
-						sclass="z-toolbarbutton" />
-					<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-					<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"
-						sclass="z-toolbarbutton" />
+					<button id="btnPrint" label="${c:l('label_Print')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" sclass="z-toolbarbutton" />
+					<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>
@@ -54,6 +44,7 @@
 					<tabs id="tabsIndexCenter">
 						<tab id="receiptDetailsTab" label="${c:l('label_ReceiptDialog_ReceiptDetails')}" />
 						<tab id="allocationDetailsTab" label="${c:l('label_ReceiptDialog_AllocationDetails')}" />
+						<tab id="postingDetailsTab" label="${c:l('label_ReceiptCancellationDialog_PostingDetails')}" visible="false" />
 					</tabs>
 					<tabpanels id="tabpanelsBoxIndexCenter">
 						<tabpanel style="overflow:auto">
@@ -153,6 +144,19 @@
 									</rows>
 								</grid>
 							</groupbox>
+
+							<groupbox id="gb_FeeDetail" style="border:0px;" visible="false">
+								<listbox id="listBoxFeeDetail" fixedLayout="false" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false" sizedByContent="true">
+									<listhead sizable="false">
+										<listheader id="listheader_FeeDetailList_FeeType" label="${c:l('listheader_FeeDetailList_FeeType.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_NetAmountOriginal" align="right" label="${c:l('listheader_FeeDetailList_NetAmountOriginal.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_NetAmountOriginalGST" align="right" label="${c:l('listheader_FeeDetailList_NetAmountOriginalGST.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_TotNetAmountOriginalGST" align="right" label="${c:l('listheader_FeeDetailList_TotNetAmountOriginalGST.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_AllocatedAmtTotal" align="right" label="${c:l('listheader_FeeDetailList_AllocatedAmtTotal.label')}" sort="false" />
+									</listhead>
+								</listbox>
+							</groupbox>
+
 							<groupbox>
 								<caption label="${c:l('label_ReceiptDialog_ReceiptDetail')}" />
 								<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
@@ -210,17 +214,33 @@
 												<textbox id="remarks" width="180px" />
 											</hbox>
 										</row>
+
+										<row id="row_BounceReason" visible="false">
+											<label id="label_ReceiptCancellationDialog_BounceReason" value="${c:l('label_ReceiptCancellationDialog_BounceReason.value')}" />
+											<extendedcombobox id="bounceCode" readonly="true" />
+											<label id="label_ReceiptCancellationDialog_BounceCharge" value="${c:l('label_ReceiptCancellationDialog_BounceCharge.value')}" />
+											<currencyBox id="bounceCharge" readonly="true" />
+										</row>
+										<row id="row_BounceRemarks" visible="false">
+											<label id="label_ReceiptCancellationDialog_BounceRemarks" value="${c:l('label_ReceiptCancellationDialog_BounceRemarks.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="bounceRemarks" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row id="row_CancelReason" visible="false">
+											<label id="label_ReceiptCancellationDialog_CancelReason" value="${c:l('label_ReceiptCancellationDialog_CancelReason.value')}" />
+											<extendedcombobox id="cancelReason" readonly="true" />
+										</row>
 									</rows>
 								</grid>
 							</groupbox>
 							<groupbox>
 								<caption label="${c:l('label_ReceiptDialog_Receipts')}" />
-								<listbox id="listBoxReceipts" fixedLayout="true" sizedByContent="true" span="true"
-									emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" height="100%" multiple="false">
+								<listbox id="listBoxReceipts" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" height="100%" multiple="false">
 									<listhead sizable="false" style="padding:0px;position:relative;">
 										<listheader label="${c:l('listheader_ReceiptDialog_AmountType.label')}" sort="false" width="40%" />
-										<listheader label="${c:l('listheader_ReceiptDialog_PaidAmount.label')}" align="right" sort="false"
-											width="20%" />
+										<listheader label="${c:l('listheader_ReceiptDialog_PaidAmount.label')}" align="right" sort="false" width="20%" />
 										<listheader label="${c:l('listheader_ReceiptDialog_Status.label')}" sort="false" width="20%" />
 									</listhead>
 								</listbox>
@@ -250,11 +270,8 @@
 										<row id="row_BankCode" visible="false">
 											<label id="label_ReceiptDialog_BankCode" value="${c:l('label_ReceiptDialog_BankCode.value')}" />
 											<extendedcombobox id="bankCode" />
-											<label id="label_ReceiptDialog_favourName" value="${c:l('label_ReceiptDialog_favourName.value')}" />
-											<hbox id="hbox_ReceiptDialog_favourName">
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="favourName" width="180px" />
-											</hbox>
+											<label id="label_FeeReceiptDialog_BankBranch" value="${c:l('label_ReceiptDialog_BankBranch.value')}" />
+											<extendedcombobox id="bankBranch" />
 										</row>
 										<row id="row_DepositDate" visible="false">
 											<label id="label_ReceiptDialog_DepositDate" value="${c:l('label_ReceiptDialog_DepositDate.value')}" />
@@ -278,6 +295,12 @@
 										<row id="row_ChequeAcNo" visible="false">
 											<label id="label_ReceiptDialog_ChequeAccountNo" value="${c:l('label_ReceiptDialog_ChequeAccountNo.value')}" />
 											<accountSelectionBox id="chequeAcNo" width="180px" />
+
+											<label id="label_ReceiptDialog_favourName" value="${c:l('label_ReceiptDialog_favourName.value')}" />
+											<hbox id="hbox_ReceiptDialog_favourName">
+												<space spacing="2px" sclass="mandatory" />
+												<textbox id="favourName" width="180px" />
+											</hbox>
 										</row>
 										<row id="row_fundingAcNo" visible="false">
 											<label id="label_ReceiptDialog_FundingAccount" value="${c:l('label_ReceiptDialog_FundingAccount.value')}" />
@@ -349,30 +372,82 @@
 								</grid>
 								<groupbox closable="false">
 									<caption label="${c:l('label_ReceiptDialog_PastduePayments')}" />
-									<listbox id="listBoxPastdues" fixedLayout="true" sizedByContent="true" span="true"
-										emptyMessage="${c:l('listbox.emptyMessage')}" width="99%" height="100%" multiple="false">
+									<listbox id="listBoxPastdues" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" width="99%" height="100%" multiple="false">
 										<listhead sizable="false" style="padding:0px;position:relative;">
 											<listheader label="${c:l('listheader_ReceiptDialog_AmountRelatedTo.label')}" sort="false" width="40%" />
-											<listheader label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}" align="right" sort="false"
-												width="20%" />
-											<listheader label="${c:l('listheader_ReceiptDialog_AmountWaivedNow.label')}" align="right" sort="false"
-												width="20%" />
+											<listheader label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}" align="right" sort="false" width="20%" />
+											<listheader label="${c:l('listheader_ReceiptDialog_AmountWaivedNow.label')}" align="right" sort="false" width="20%" />
 										</listhead>
 									</listbox>
 								</groupbox>
 								<groupbox closable="false">
 									<caption label="${c:l('label_ReceiptDialog_ManualAdvise')}" />
-									<listbox id="listBoxManualAdvises" fixedLayout="true" sizedByContent="true" span="true"
-										emptyMessage="${c:l('listbox.emptyMessage')}" width="99.8%" height="100%" multiple="false">
+									<listbox id="listBoxManualAdvises" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" width="99.8%" height="100%" multiple="false">
 										<listhead sizable="false" style="padding:0px;position:relative;">
 											<listheader label="${c:l('listheader_ReceiptDialog_AmountRelatedTo.label')}" sort="false" width="40%" />
-											<listheader label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}" align="right" sort="false"
-												width="20%" />
-											<listheader label="${c:l('listheader_ReceiptDialog_AmountWaivedNow.label')}" align="right" sort="false"
-												width="20%" />
+											<listheader label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}" align="right" sort="false" width="20%" />
+											<listheader label="${c:l('listheader_ReceiptDialog_AmountWaivedNow.label')}" align="right" sort="false" width="20%" />
 										</listhead>
 									</listbox>
 								</groupbox>
+							</groupbox>
+						</tabpanel>
+						<tabpanel style="overflow:auto">
+							<groupbox>
+								<grid id="grid_Postings" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" width="100%">
+									<columns>
+										<column width="220px" />
+										<column />
+										<column width="220px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label value="${c:l('label_ReceiptCancellationDialog_FinType.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="posting_finType" readonly="true" width="180px" />
+											</hbox>
+											<label value="${c:l('label_ReceiptCancellationDialog_FinReference.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="posting_finReference" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label value="${c:l('label_ReceiptCancellationDialog_FinCcy.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="posting_finCcy" readonly="true" width="180px" />
+											</hbox>
+											<label value="${c:l('label_ReceiptCancellationDialog_FinBranch.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="posting_finBranch" readonly="true" width="180px" />
+											</hbox>
+										</row>
+										<row>
+											<label value="${c:l('label_ReceiptCancellationDialog_CustID.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="posting_CustCIF" width="180px" readonly="true" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+								<listbox id="listBoxPosting" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" width="99%" height="100%" multiple="false">
+									<listhead sizable="false">
+										<listheader id="listheader_Acc_DebitOrCredit" label="${c:l('listheader_Acc_DebitOrCredit.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_EntryDesc" label="${c:l('listheader_Acc_EntryDesc.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_TranCode" label="${c:l('listheader_Acc_TranCode.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_RevTranCode" label="${c:l('listheader_Acc_RevTranCode.label')}" sort="false" hflex="min" visible="false" />
+										<listheader id="listheader_Acc_AccountType" label="${c:l('listheader_Acc_AccountType.label')}" sort="false" hflex="min" visible="false" />
+										<listheader id="listheader_Acc_AccountNo" label="${c:l('listheader_Acc_AccountNo.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_AcCcy" label="${c:l('listheader_Acc_AcCcy.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_Amount" label="${c:l('listheader_Acc_Amount.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_Error" label="${c:l('listheader_Acc_Error.label')}" sort="false" hflex="min" />
+									</listhead>
+								</listbox>
 							</groupbox>
 						</tabpanel>
 					</tabpanels>

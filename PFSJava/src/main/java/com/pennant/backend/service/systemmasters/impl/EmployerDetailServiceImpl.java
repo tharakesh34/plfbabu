@@ -218,6 +218,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 	 * @return EmployerDetail
 	 */
 
+	@Override
 	public EmployerDetail getApprovedEmployerDetailById(long id) {
 		return getEmployerDetailDAO().getEmployerDetailById(id, "_AView");
 	}
@@ -237,6 +238,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
+	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		String tranType = "";
@@ -246,7 +248,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 		}
 
 		EmployerDetail employerDetail = new EmployerDetail();
-		BeanUtils.copyProperties((EmployerDetail) auditHeader.getAuditDetail().getModelData(), employerDetail);
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), employerDetail);
 
 		if (employerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -296,6 +298,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 	 * @return auditHeader
 	 */
 
+	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		auditHeader = businessValidation(auditHeader, "doApprove", false);
@@ -451,6 +454,11 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 		}
 
 		return auditDetail;
+	}
+
+	@Override
+	public boolean isNonTargetEmployee(String name, String category, String type) {
+		return getEmployerDetailDAO().isNonTargetEmployee(name, category, type);
 	}
 
 }

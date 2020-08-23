@@ -55,6 +55,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -71,6 +72,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.PrimaryAccount;
@@ -89,6 +91,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.rmtmasters.CustomerTypeService;
+import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
@@ -154,6 +157,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	@Autowired(required = false)
 	private CustomerDedupCheckService customerDedupService;
 	private PrimaryAccountService primaryAccountService;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	/**
 	 * default constructor.<br>
@@ -222,7 +226,11 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		Map<String, String> attributes = PennantApplicationUtil.getPrimaryIdAttributes(getComboboxValue(custCtgType));
 
 		primaryIdLabel = attributes.get("LABEL");
-		primaryIdMandatory = Boolean.valueOf(attributes.get("MANDATORY"));
+		if (jointAccountDetailDialogCtrl != null && ImplementationConstants.COAPP_PANNUMBER_NON_MANDATORY) {
+			primaryIdMandatory = false;
+		} else {
+			primaryIdMandatory = Boolean.valueOf(attributes.get("MANDATORY"));
+		}
 		primaryIdRegex = attributes.get("REGEX");
 		int maxLength = Integer.valueOf(attributes.get("LENGTH"));
 
@@ -344,7 +352,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 
 					proceedAsNewCustomer(customerDetails, customerDetails.getCustomer().getCustCtgCode(),
-							customerDetails.getCustomer().getCustCRCPR(), null, true);
+							customerDetails.getCustomer().getCustCRCPR(), null, true,
+							customerDetails.getCustomer().getLovDescCustCtgCodeName());
 				}
 
 				if (customer == null) {
@@ -358,7 +367,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			} else if (prospect.isChecked()) {
 				newRecord = true;
 				String ctgType = custCtgType.getSelectedItem().getValue().toString();
-
+				String ctgTypeDesc = custCtgType.getSelectedItem().getLabel();
 				ArrayList<WrongValueException> wve = new ArrayList<>();
 
 				try {
@@ -483,7 +492,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				if (customer == null) {
 					customerDetails = proceedAsNewCustomer(customerDetails, ctgType, primaryIdNumber, primaryIdName,
-							true);
+							true, ctgTypeDesc);
 				}
 			}
 
@@ -568,7 +577,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public CustomerDetails proceedAsNewCustomer(CustomerDetails customerDetails, String ctgType, String primaryIdNumber,
-			String primaryIdName, boolean newRecord) {
+			String primaryIdName, boolean newRecord, String ctgTypeDesc) {
 		if (newRecord) {
 			customerDetails = getCustomerDetailsService().getNewCustomer(true, customerDetails);
 		}
@@ -577,7 +586,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 				&& customerDetails.getCustomer().getLovDescCustCtgCodeName() == null) {
 			customerDetails.getCustomer().setLovDescCustCtgType(ctgType);
 			customerDetails.getCustomer().setCustCtgCode(ctgType);
-			customerDetails.getCustomer().setLovDescCustCtgCodeName(ctgType);
+			customerDetails.getCustomer().setLovDescCustCtgCodeName(ctgTypeDesc);
 		}
 		customerDetails.getCustomer().setCustCIF(getCustomerDetailsService().getNewProspectCustomerCIF());
 		customerDetails.getCustomer().setCustCRCPR(primaryIdNumber);
@@ -692,6 +701,59 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		} catch (Exception e) {
 			logger.debug("Exception: ", e);
 		}
+	}
+
+	/**
+	 * When user clicks on button "customerId Search" button
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug(Literal.ENTERING + event.toString());
+		doSearchCustomerCIF();
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	/**
+	 * Method for Showing Customer Search Window
+	 */
+	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
+		logger.debug(Literal.ENTERING);
+		Map<String, Object> map = getDefaultArguments();
+		map.put("DialogCtrl", this);
+		map.put("filtertype", "Extended");
+		map.put("searchObject", this.custCIFSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for setting Customer Details on Search Filters
+	 * 
+	 * @param nCustomer
+	 * @param newSearchObject
+	 * @throws InterruptedException
+	 */
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		this.custCIF.clearErrorMessage();
+		this.custCIFSearchObject = newSearchObject;
+
+		Customer customer = (Customer) nCustomer;
+		if (customer != null) {
+			this.custCIF.setValue(customer.getCustCIF());
+		} else {
+			this.custCIF.setValue("");
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected Map<String, Object> getDefaultArguments() {
+		HashMap<String, Object> aruments = new HashMap<>();
+		aruments.put("moduleCode", moduleCode);
+		aruments.put("enqiryModule", enqiryModule);
+		return aruments;
 	}
 
 	public void setValidationOn(boolean validationOn) {

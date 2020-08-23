@@ -201,7 +201,9 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 				}
 
 				if (updateRecord) {
-					getTaxHeaderDetailsDAO().update(taxDetail, tableType);
+					if (taxDetail.getId() > 0) {
+						getTaxHeaderDetailsDAO().update(taxDetail, tableType);
+					}
 				}
 
 				if (deleteRecord) {

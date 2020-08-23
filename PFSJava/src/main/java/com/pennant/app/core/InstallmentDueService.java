@@ -123,6 +123,11 @@ public class InstallmentDueService extends ServiceHelper {
 			amountCodes.setPriSB(BigDecimal.ZERO);
 		}
 
+		//Provision and Fin Od days Greater than zero
+		if (profiDetails.isProvision() && profiDetails.getCurODDays() > 0) {
+			setProvisionData(amountCodes);
+		}
+
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		List<FinFeeScheduleDetail> feelist = finEODEvent.getFinFeeScheduleDetails();
@@ -237,6 +242,17 @@ public class InstallmentDueService extends ServiceHelper {
 		dueTaxDetail.setInvoiceID(invoiceID);
 
 		financeScheduleDetailDAO.saveSchDueTaxDetail(dueTaxDetail);
+	}
+
+	private void setProvisionData(AEAmountCodes amountCodes) {
+		amountCodes.setInstpftPr(amountCodes.getInstpft());
+		amountCodes.setInstpriPr(amountCodes.getInstpri());
+		amountCodes.setdAmzPr(amountCodes.getdAmz());
+
+		amountCodes.setInstpft(BigDecimal.ZERO);
+		amountCodes.setInstpri(BigDecimal.ZERO);
+		amountCodes.setdAmz(BigDecimal.ZERO);
+		amountCodes.setInsttot(BigDecimal.ZERO);
 	}
 
 	/**

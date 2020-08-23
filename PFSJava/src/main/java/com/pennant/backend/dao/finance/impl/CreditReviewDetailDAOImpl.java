@@ -14,6 +14,8 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.finance.CreditReviewDetailDAO;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
+import com.pennant.backend.model.finance.ExtBreDetails;
+import com.pennant.backend.model.finance.ExtCreditReviewConfig;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -175,7 +177,22 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 		logger.debug(Literal.ENTERING);
 		StringBuilder selectSql = new StringBuilder();
 		StringBuilder whereCondition = new StringBuilder();
-		whereCondition.append(" Product = :Product");
+
+		if (StringUtils.isNotEmpty(creditReviewDetail.getProduct())) {
+			whereCondition.append(" Product = :Product");
+		}
+
+		if (StringUtils.isNotEmpty(creditReviewDetail.getEmploymentType())
+				&& StringUtils.isNotEmpty(creditReviewDetail.getEligibilityMethod())) {
+			if (StringUtils.isNotEmpty(whereCondition.toString())) {
+				whereCondition.append(" and ");
+			}
+			whereCondition.append(" EmploymentType = :EmploymentType ");
+			if (StringUtils.isNotEmpty(whereCondition.toString())) {
+				whereCondition.append(" and ");
+			}
+			whereCondition.append(" EligibilityMethod = :EligibilityMethod ");
+		}
 
 		selectSql.append(
 				" Select ID,FINCATEGORY,EMPLOYMENTTYPE,ELIGIBILITYMETHOD,SECTION,TEMPLATENAME,TEMPLATEVERSION, FIELDS, PROTECTEDCELLS, FieldKeys");
@@ -194,11 +211,56 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 		try {
 			creditReviewDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
 			creditReviewDetail = null;
 		}
 
 		logger.debug(Literal.LEAVING);
 		return creditReviewDetail;
+	}
+
+	@Override
+	public ExtCreditReviewConfig getExtCreditReviewConfigDetails(ExtCreditReviewConfig extCreditReviewConfig) {
+
+		logger.debug(Literal.ENTERING);
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("select TemplateName, SalFields, SepFields, ConsolidatedBankingFields,");
+		selectSql.append(
+				" ConsolidatedObligationsFields, FinalEligIncomeDetailsFields, finalEligIncomeUserEntryFields,");
+		selectSql.append(" FinalEligLowLtvUserEntryFields, FinalEligLRDUSerEntryFields, FinalEligibilityFields,");
+		selectSql.append(" FinalEligUserEntryFields, FinalEligSuperLowerFields, FinalEligSuperLowerEntryFields,");
+		selectSql.append(" FinalEligSuperHigherFields, FinalEligSuperHigherEntryField, FinalEligAdvantageFields");
+		selectSql.append(" from BREExtCreditReviewConfig where CreditReviewType =:CreditReviewType");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extCreditReviewConfig);
+		RowMapper<ExtCreditReviewConfig> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ExtCreditReviewConfig.class);
+
+		try {
+			extCreditReviewConfig = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			extCreditReviewConfig = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return extCreditReviewConfig;
+	}
+
+	@Override
+	public ExtBreDetails getExtBreDetailsByRef(String finReference) {
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT * ");
+		selectSql.append(" FROM  EXTBreDetails");
+		selectSql.append(" Where finReference = :finReference");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("finReference", finReference);
+		RowMapper<ExtBreDetails> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtBreDetails.class);
+		try {
+			return jdbcTemplate.queryForObject(selectSql.toString(), source, rowMapper);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 }

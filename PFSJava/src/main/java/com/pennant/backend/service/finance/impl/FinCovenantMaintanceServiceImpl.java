@@ -169,8 +169,8 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 
 		List<Covenant> covenants = finMaintainInstruction.getCovenants();
 		if (CollectionUtils.isNotEmpty(covenants)) {
-			auditDetails.addAll(
-					covenantsService.doProcess(covenants, TableType.TEMP_TAB, auditHeader.getAuditTranType(), false));
+			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.TEMP_TAB,
+					auditHeader.getAuditTranType(), false, 0));
 		}
 
 		// Add Audit
@@ -302,7 +302,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 
 		List<Covenant> covenants = finMaintainInstruction.getCovenants();
 		if (CollectionUtils.isNotEmpty(covenants)) {
-			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.MAIN_TAB, "", true));
+			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.MAIN_TAB, "", true, 0));
 		}
 
 		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);

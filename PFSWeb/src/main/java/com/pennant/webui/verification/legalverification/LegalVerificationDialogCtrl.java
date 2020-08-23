@@ -41,6 +41,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.North;
 import org.zkoss.zul.South;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -66,6 +67,7 @@ import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -126,6 +128,8 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	protected Textbox remarks;
 	protected North north;
 	protected South south;
+	protected Space space_AgentCode;
+	protected Space space_AgentName;
 
 	private boolean fromLoanOrg;
 
@@ -147,6 +151,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	private transient CollateralSetupService collateralSetupService;
 
 	protected Button btnSearchCustomerDetails;
+	private boolean isCodeNameMandatory;
 
 	/**
 	 * default constructor.<br>
@@ -241,7 +246,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		Filter[] reasonFilter = new Filter[1];
 		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.LVSRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
-
+		PennantAppUtil.setReasonCodeFilters(this.reason, null);
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(20);
@@ -253,7 +258,11 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		} else {
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
-
+		isCodeNameMandatory = SysParamUtil.isAllowed(SMTParameterConstants.IS_AGENT_CODE_NAME_MANDATORY);
+		if (!isCodeNameMandatory) {
+			this.space_AgentCode.setVisible(false);
+			this.space_AgentName.setVisible(false);
+		}
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -819,8 +828,10 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	private void visibleComponent(Integer type) {
 		if (type == LVStatus.NEGATIVE.getKey()) {
 			this.reason.setMandatoryStyle(true);
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.LVNTVRTY.getKey());
 		} else {
 			this.reason.setMandatoryStyle(false);
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.LVPOSTVRTY.getKey());
 		}
 	}
 
@@ -998,12 +1009,12 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_AgentCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, isCodeNameMandatory));
 		}
 		if (!this.agentName.isReadonly()) {
 			this.agentName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_AgentName.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME, true));
+							PennantRegularExpressions.REGEX_CUST_NAME, isCodeNameMandatory));
 		}
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(new PTListValidator(
@@ -1183,6 +1194,9 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		try {
 			if (doProcess(lv, tranType)) {
 				refreshList();
+				String msg = PennantApplicationUtil.getSavingStatus(lv.getRoleCode(), lv.getNextRoleCode(),
+						lv.getKeyReference(), " Loan ", lv.getRecordStatus(), getNextTaskId());
+				Clients.showNotification(msg, "info", null, null, -1);
 				closeDialog();
 			}
 

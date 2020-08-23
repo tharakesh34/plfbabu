@@ -43,6 +43,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ProcessRecord;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -87,6 +88,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private DataSource dataSource;
 
 	private PresentmentImportProcess presentmentImportProcess;
+	private ValidateRecord presentmentRespValidation;
 
 	StringBuilder remarks = null;
 	PresentmentDetail detail = null;
@@ -495,6 +497,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			dataEngine = new DataEngineImport(dataSource, getUserDetails().getUserId(), App.DATABASE.name(), true,
 					SysParamUtil.getAppDate(), status);
 			dataEngine.setMedia(getMedia());
+			dataEngine.setValidateRecord(presentmentRespValidation);
 			try {
 				if (configName.equals("PRESENTMENT_RESPONSE_PDC")) {
 					dataEngine.setProcessRecord((ProcessRecord) SpringBeanUtil.getBean("customPresentmentExtact"));
@@ -592,6 +595,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 								skipUpdate = true;
 								errorMessage = "Presentment response already marked as bounce for the reference "
 										.concat(presentmentRef);
+							} else if (DateUtility.compare(DateUtility.getAppDate(),
+									presentmentDetail.getSchDate()) < 0) {
+								skipUpdate = true;
+								errorMessage = "Presentment schedule date is greater than application business date "
+										.concat(presentmentRef);
 							}
 						}
 
@@ -611,6 +619,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							presentmentDetailService.updateFinanceDetails(presentmentRef);
 							updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_REALISED);
 							saveBatchLog(batchId, status, presentmentRef, null);
+							//Send customer notification for successful presentment
 							sendMailNotification(presentmentDetailService.getPresentmentDetail(presentmentRef), "");
 						} else {
 							try {
@@ -683,6 +692,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				} else {
 					status.setRemarks(oldRemarks);
 				}
+				updateFileHeader(batchId, recordCount, successCount, failedCount, status.getRemarks());
 				return 0;
 			}
 		});
@@ -1699,4 +1709,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		this.presentmentImportProcess = presentmentImportProcess;
 	}
 
+	public void setPresentmentRespValidation(ValidateRecord presentmentRespValidation) {
+		this.presentmentRespValidation = presentmentRespValidation;
+	}
 }

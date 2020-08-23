@@ -105,6 +105,10 @@ public class CalculationUtil implements Serializable {
 			return getIDB_ACT_365LEAPStart(startCalendar, endCalendar);
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_BY_PERIOD)) {
 			return getIDB_BY_PERIOD(startCalendar, endCalendar);
+		} else if (strDaysBasis.equals(CalculationConstants.IDB_30E360IH)) {
+			return getIDB_30E360IH(startCalendar, endCalendar);
+		} else if (strDaysBasis.equals(CalculationConstants.IDB_30E360IA)) {
+			return getIDB_30E360IA(startCalendar, endCalendar);
 		}
 
 		return BigDecimal.ONE;
@@ -311,6 +315,42 @@ public class CalculationUtil implements Serializable {
 				CalculationConstants.IDB_BY_PERIOD);
 		double daysInYear = 360d;
 		BigDecimal dayFactor = BigDecimal.valueOf(numberOfDays / daysInYear);
+		return dayFactor;
+	}
+
+	private static BigDecimal getIDB_30E360IH(Calendar startCalendar, Calendar endCalendar) {
+		int numberOfDays = calNoOfDays(startCalendar.getTime(), endCalendar.getTime(),
+				CalculationConstants.IDB_30E360I);
+		double days30 = 30d;
+		double daysInYear = 360d;
+
+		double remainderDays = numberOfDays % days30;
+		BigDecimal dayFactor = BigDecimal.ZERO;
+
+		if (remainderDays == 0) {
+			dayFactor = BigDecimal.valueOf(numberOfDays / daysInYear);
+		} else {
+			dayFactor = getIDB_ACT_ISDA(startCalendar, endCalendar);
+		}
+
+		return dayFactor;
+	}
+
+	private static BigDecimal getIDB_30E360IA(Calendar startCalendar, Calendar endCalendar) {
+		int numberOfDays = calNoOfDays(startCalendar.getTime(), endCalendar.getTime(),
+				CalculationConstants.IDB_30E360I);
+		double days30 = 30d;
+		double daysInYear = 360d;
+
+		double remainderDays = numberOfDays % days30;
+		BigDecimal dayFactor = BigDecimal.ZERO;
+
+		if (remainderDays == 0) {
+			dayFactor = BigDecimal.valueOf(numberOfDays / daysInYear);
+		} else {
+			dayFactor = getIDB_ACT_365FIXED(startCalendar, endCalendar);
+		}
+
 		return dayFactor;
 	}
 

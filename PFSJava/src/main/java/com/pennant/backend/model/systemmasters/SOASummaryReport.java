@@ -56,12 +56,15 @@ public class SOASummaryReport {
 	private String finReference;
 	private String component;
 	private BigDecimal due;
+	private String dueInWords;
 	private BigDecimal receipt;
 	private BigDecimal overDue;
 	private int ccyEditField;
 
 	private BigDecimal ccyMinorCcyUnits;
 	private Date appDate;
+	private BigDecimal totalCharges;
+	private String totalChargesInWords;
 
 	public SOASummaryReport() {
 		super();
@@ -133,5 +136,29 @@ public class SOASummaryReport {
 
 	public Date getAppDate(Date appDate) {
 		return appDate;
+	}
+
+	public BigDecimal getTotalCharges() {
+		return totalCharges;
+	}
+
+	public void setTotalCharges(BigDecimal totalCharges) {
+		this.totalCharges = totalCharges;
+	}
+
+	public String getTotalChargesInWords() {
+		return totalChargesInWords;
+	}
+
+	public void setTotalChargesInWords(String totalChargesInWords) {
+		this.totalChargesInWords = totalChargesInWords;
+	}
+
+	public String getDueInWords() {
+		return dueInWords;
+	}
+
+	public void setDueInWords(String dueInWords) {
+		this.dueInWords = dueInWords;
 	}
 }

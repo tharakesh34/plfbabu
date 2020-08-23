@@ -45,6 +45,8 @@ package com.pennant.util;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,13 +57,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
@@ -103,6 +109,7 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.limit.LimitStructureDetail;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.BMTRBFldCriterias;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -126,6 +133,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
@@ -935,7 +944,7 @@ public class PennantAppUtil {
 		searchObject.addField("MaritalStsDesc");
 		searchObject.addFilter(new Filter("MaritalStsIsActive", 1, Filter.OP_EQUAL));
 
-		if (gender.equals("M")) {
+		if ("M".equals(gender)) {
 			searchObject.addFilter(new Filter("MARITALSTSCODE", "W", Filter.OP_NOT_EQUAL));
 		}
 
@@ -1275,6 +1284,27 @@ public class PennantAppUtil {
 			stepPolicyHeaderList.add(pftRateLabel);
 		}
 		return stepPolicyHeaderList;
+	}
+
+	public static List<ValueLabel> getFinTypeList() {
+		ArrayList<ValueLabel> finTypeList = new ArrayList<ValueLabel>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<FinanceType> searchObject = new JdbcSearchObject<FinanceType>(FinanceType.class);
+		searchObject.addTabelName("rmtfinancetypes");
+		searchObject.addField("FinType");
+		searchObject.addField("FinTypeDesc");
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+		searchObject.addFilters(filters);
+
+		List<FinanceType> appList = pagedListService.getBySearchObject(searchObject);
+		for (int i = 0; i < appList.size(); i++) {
+			ValueLabel finTypeLabel = new ValueLabel(String.valueOf(appList.get(i).getFinType()),
+					String.valueOf(appList.get(i).getFinType()) + "-" + appList.get(i).getFinTypeDesc());
+			finTypeList.add(finTypeLabel);
+		}
+		return finTypeList;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -2064,17 +2094,9 @@ public class PennantAppUtil {
 				AccountEngineEvent.class);
 
 		Filter[] filters = null;
-		List<String> accEngineEventsList = new ArrayList<String>();
-		;
-		if (!ImplementationConstants.ALLOW_ADDDBSF) {
-			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSF);
-		}
+		List<String> excludedAccEvents = getExcludedAccEvents();
 
-		if (!ImplementationConstants.ALLOW_DEPRECIATION) {
-			accEngineEventsList.add(AccountEventConstants.ACCEVENT_DPRCIATE);
-		}
-
-		if (accEngineEventsList.isEmpty()) {
+		if (excludedAccEvents.isEmpty()) {
 			filters = new Filter[2];
 		} else {
 			filters = new Filter[3];
@@ -2082,8 +2104,8 @@ public class PennantAppUtil {
 
 		filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 		filters[1] = new Filter("CategoryCode", categoryCode, Filter.OP_EQUAL);
-		if (!accEngineEventsList.isEmpty()) {
-			filters[2] = new Filter("AEEventCode", accEngineEventsList, Filter.OP_NOT_IN);
+		if (!excludedAccEvents.isEmpty()) {
+			filters[2] = new Filter("AEEventCode", excludedAccEvents, Filter.OP_NOT_IN);
 		}
 
 		searchObject.addFilters(filters);
@@ -2091,6 +2113,31 @@ public class PennantAppUtil {
 		searchObject.addSort("SeqOrder", false);
 		return pagedListService.getBySearchObject(searchObject);
 
+	}
+
+	public static List<String> getExcludedAccEvents() {
+		List<String> excludeEvents = new ArrayList<String>();
+
+		if (!ImplementationConstants.ALLOW_ADDDBSF) {
+			excludeEvents.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+		}
+
+		if (!ImplementationConstants.ALLOW_DEPRECIATION) {
+			excludeEvents.add(AccountEventConstants.ACCEVENT_DPRCIATE);
+		}
+
+		if (!ImplementationConstants.ALLOW_IND_AS) {
+			excludeEvents.add(AccountEventConstants.ACCEVENT_EXPENSE);
+			excludeEvents.add(AccountEventConstants.ACCEVENT_INDAS);
+		}
+
+		if (!ImplementationConstants.ALLOW_NPA_PROVISION) {
+			excludeEvents.add(AccountEventConstants.ACCEVENT_PROVSN);
+			excludeEvents.add(AccountEventConstants.ACCEVENT_PRVSN_MN);
+			excludeEvents.add(AccountEventConstants.ACCEVENT_PROVCHG);
+		}
+
+		return excludeEvents;
 	}
 
 	public static List<AccountEngineEvent> fetchAccountingEvents() {
@@ -2285,6 +2332,7 @@ public class PennantAppUtil {
 		search.addTabelName("DATA_ENGINE_CONFIG");
 		search.addField("Name");
 		search.addFilterLike("Name", "DISB_EXPORT_");
+		search.addFilterEqual("Active", true);
 
 		List<Configuration> list = SEARCH_PROCESSOR.getResults(search);
 
@@ -2370,6 +2418,100 @@ public class PennantAppUtil {
 		builder.append(".zul");
 		return builder.toString();
 
+	}
+
+	/**
+	 * This method will return customer Dialog page as per the client requirement by using system param value
+	 * 
+	 * @return String
+	 */
+	public static String getFinancePageName(boolean enquiry) {
+		String pageExt = SysParamUtil.getValueAsString("FINANCE_DIALOG_EXT");
+		StringBuilder builder = new StringBuilder();
+		if (enquiry) {
+			builder = builder.append("FinanceDetailEnquiryDialog");
+		} else {
+			builder = builder.append("ConvFinanceMainDialog");
+		}
+		builder.append(StringUtils.trimToEmpty(pageExt));
+		builder.append(".zul");
+		return builder.toString();
+
+	}
+
+	/**
+	 * This method will set the reason code filters for all verifications based on systemparam
+	 * 
+	 * @param ExtendedCombobox
+	 * @param filterCode
+	 * 
+	 */
+	public static void setReasonCodeFilters(ExtendedCombobox reason, String filterCode) {
+		Filter[] reasonFilter = new Filter[1];
+		if (SysParamUtil.isAllowed(SMTParameterConstants.VFN_REASONCODES_BASED_ON_REASONTYPE_REQ)) {
+			reasonFilter[0] = new Filter("ReasonTypecode", filterCode, Filter.OP_EQUAL);
+			reason.setFilters(reasonFilter);
+		}
+	}
+
+	/**
+	 * This method will set the address copy filters
+	 * 
+	 * @param window
+	 * @param filterCode
+	 * 
+	 */
+	public static Object getAddressCopyList(Window window, long custID) {
+		Filter filter[] = new Filter[1];
+		filter[0] = new Filter("CustId", custID, Filter.OP_EQUAL);
+		return ExtendedSearchListBox.show(window, "CustomerAddress", filter, "");
+	}
+
+	/**
+	 * This method will check the validity days for verifications based on system param
+	 * 
+	 * @param verificationDate
+	 * @param systemParam
+	 * @return
+	 */
+	public static boolean verificationValidityCheck(Timestamp verificationDate, String systemParam) {
+		try {
+			if (verificationDate != null && systemParam != null) {
+				String validityDays = SysParamUtil.getValueAsString(systemParam);
+				if (StringUtils.isNotBlank(validityDays) && Integer.parseInt(validityDays) != 0) {//if system param is not available in back end it will skip
+					Date appDate = SysParamUtil.getAppDate();
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+					Date verificationDt = format.parse(verificationDate.toString());
+					long diff = appDate.getTime() - verificationDt.getTime();
+					diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+					return diff > Integer.parseInt(validityDays);
+				}
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public static List<ValueLabel> getChildLoanFinType(String finType) {
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<FinanceType> searchObject = new JdbcSearchObject<FinanceType>(FinanceType.class);
+		searchObject.addFilterEqual("FinType", finType);
+		searchObject.addTabelName("RMTFinanceTypes");
+		searchObject.addField("splitLoanType");
+		List<FinanceType> financeType = pagedListService.getBySearchObject(searchObject);
+		List<String> result = new ArrayList<>();
+		List<ValueLabel> childFinanceTypes = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(financeType) && financeType.get(0).getSplitLoanType() != null) {
+			result = Arrays.asList(financeType.get(0).getSplitLoanType().split("\\s*,\\s*"));
+		}
+
+		for (int i = 0; i < result.size(); i++) {
+			ValueLabel product = new ValueLabel(String.valueOf(result.get(i)), result.get(i));
+			childFinanceTypes.add(product);
+		}
+
+		return childFinanceTypes;
 	}
 
 }

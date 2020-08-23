@@ -108,6 +108,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.PennantAppUtil;
@@ -1189,7 +1190,15 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				customerPic1.setSrc("images/icons/customerenquiry/female.png");
 			}
 		}
-
+		//Piramal change to hide the employment details section based on system param
+		String empSectionReq = SysParamUtil.getValueAsString(SMTParameterConstants.CUST_EMPLOYEEMENTDETAILS_REQUIRED);
+		if (PennantConstants.NO.equals(empSectionReq)) {
+			hbox_empDetails.setVisible(false);
+			listBoxCustomerEmploymentDetail.setVisible(false);
+		} else if (PennantConstants.YES.equals(empSectionReq)) {
+			hbox_empDetails.setVisible(true);
+			listBoxCustomerEmploymentDetail.setVisible(true);
+		}
 		doFillDownload(prepareList());
 		logger.debug("Leaving");
 	}

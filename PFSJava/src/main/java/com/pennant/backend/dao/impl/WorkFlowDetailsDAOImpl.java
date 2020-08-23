@@ -211,7 +211,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 	 */
 	public long save(WorkFlowDetails workFlowDetails) {
 		logger.debug("Entering + save()");
-		long workFlowId = getNextId("SeqWorkFlowDetails");
+		long workFlowId = getNextValue("SeqWorkFlowDetails");
 		workFlowDetails.setId(workFlowId);
 		String insertSql = "insert into WorkFlowDetails (WorkFlowId, WorkFlowType, "
 				+ " WorkFlowSubType, WorkFlowDesc, WorkFlowXml, WorkFlowRoles,"

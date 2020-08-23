@@ -267,4 +267,19 @@ public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTyp
 
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public List<IncomeType> getDefaultIncomeTypeList() {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT IncomeExpense, Category, IncomeTypeCode, IncomeTypeDesc, Margin, ");
+		selectSql.append(" LovDescCategoryName FROM  defaultincometypes_view");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<IncomeType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IncomeType.class);
+
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+	}
 }

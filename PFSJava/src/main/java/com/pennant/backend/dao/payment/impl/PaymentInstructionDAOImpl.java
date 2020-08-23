@@ -101,7 +101,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 		sql.append(" PaymentInstructionId, PaymentId, PaymentType, PaymentAmount, Remarks, PartnerBankId");
 		sql.append(", IssuingBank, FavourName, FavourNumber, PayableLoc, PrintingLoc, ValueDate, PostDate");
 		sql.append(", Status, TransactionRef, BankBranchId, AcctHolderName, AccountNo, PhoneCountryCode");
-		sql.append(", PhoneNumber, ClearingDate, Active, PaymentCCy");
+		sql.append(", PhoneNumber, ClearingDate, Active, PaymentCCy, RejectReason");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -365,6 +365,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 			fpd.setValueDate(rs.getTimestamp("ValueDate"));
 			fpd.setPostDate(rs.getTimestamp("PostDate"));
 			fpd.setStatus(rs.getString("Status"));
+			fpd.setRejectReason(rs.getString("RejectReason"));
 			fpd.setTransactionRef(rs.getString("TransactionRef"));
 			fpd.setBankBranchId(rs.getLong("BankBranchId"));
 			fpd.setAcctHolderName(rs.getString("AcctHolderName"));

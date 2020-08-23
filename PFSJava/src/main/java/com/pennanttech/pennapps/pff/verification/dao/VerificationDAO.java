@@ -93,4 +93,6 @@ public interface VerificationDAO extends BasicCrudDao<Verification> {
 
 	Verification getVerificationStatus(String reference, int verificationType, String addressType, String custCif);
 
+	List<String> getAprrovedLVVerifications(int decision, int verificationType);
+
 }

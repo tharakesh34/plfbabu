@@ -88,7 +88,7 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 	protected Listheader listheader_name;
 	protected Listheader listheader_segmentation;
 	protected Listheader listheader_groupId;
-	protected Listheader listheader_active;
+	//protected Listheader listheader_active;
 
 	// checkRights
 	protected Button button_BuilderCompanyList_NewBuilderCompany;
@@ -153,6 +153,7 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 		registerField("segmentation", listheader_segmentation, SortOrder.NONE, segmentation, sortOperator_segmentation,
 				Operators.STRING);
 		registerField("groupId", listheader_groupId, SortOrder.NONE, groupId, sortOperator_groupId, Operators.NUMERIC);
+		//registerField("active", listheader_active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 		registerField("groupIdName");
 		doSetFieldProperties();
 		// Render the page and display the data.

@@ -102,20 +102,24 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			List<SystemNotificationExecutionDetails> notifications = getSystemNotificationExecDetails();
 
 			for (SystemNotificationExecutionDetails detail : notifications) {
-				if (detail.getTemplateCode() != null) {
-					if ("EMAIL".equals(detail.getNotificationType())) {
-						prepareEmail(detail);
-					} else if ("SMS".equals(detail.getNotificationType())) {
-						prepareSMSMsg(detail);
+				try {
+					if (detail.getTemplateCode() != null) {
+						if ("EMAIL".equals(detail.getNotificationType())) {
+							prepareEmail(detail);
+						} else if ("SMS".equals(detail.getNotificationType())) {
+							prepareSMSMsg(detail);
+						}
+					} else {
+						if ("EMAIL".equals(detail.getNotificationType())) {
+							prepareEmailMessage(detail);
+						} else if ("SMS".equals(detail.getNotificationType())) {
+							prepareSMSMessage(detail);
+						}
 					}
-				} else {
-					if ("EMAIL".equals(detail.getNotificationType())) {
-						prepareEmailMessage(detail);
-					} else if ("SMS".equals(detail.getNotificationType())) {
-						prepareSMSMessage(detail);
-					}
+					updateProcessFlag(detail);
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
 				}
-				updateProcessFlag(detail);
 			}
 
 		} catch (Exception e) {
@@ -438,14 +442,17 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		Notification notification = new Notification();
 		notification.getMobileNumbers().add(detail.getMobileNumber());
 		notification.setNotificationId(detail.getNotificationId());
+		notification.setMobileNumber(detail.getMobileNumber());
 		try {
 			parseSMS(detail, notification);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
+		notification.setKeyReference(detail.getKeyReference());
 		notification.setModule(NotificationConstants.SYSTEM_NOTIFICATION);
 		notification.setSubModule(detail.getNotificationCode());
+		notification.setNotificationData(settingNotificationData(detail));
 
 		smsEngine.sendSms(notification);
 
@@ -460,7 +467,10 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		Template template = configuration.getTemplate("smsTemplate");
 
 		try {
-			result = FreeMarkerTemplateUtils.processTemplateIntoString(template, detail.getNotificationData());
+			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.parse(new InputSource(new StringReader(new String(detail.getNotificationData(), "UTF-8"))));
+
+			result = FreeMarkerTemplateUtils.processTemplateIntoString(template, document);
 			notification.setMessage(result);
 		} catch (IOException e) {
 			logger.error(Literal.EXCEPTION, e);

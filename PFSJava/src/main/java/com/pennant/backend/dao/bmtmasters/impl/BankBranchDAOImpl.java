@@ -58,6 +58,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -566,5 +567,29 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		}
 		logger.debug(Literal.LEAVING);
 		return exists;
+	}
+
+	@Override
+	public int getAccNoLengthByIFSC(String ifscCode, String type) {
+		logger.debug("Entering");
+
+		BankDetail bankDetail = new BankDetail();
+		bankDetail.setIfsc(String.valueOf(ifscCode));
+
+		StringBuilder selectSql = new StringBuilder("Select AccNoLength");
+
+		selectSql.append(" From BankBranches");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where Ifsc =:Ifsc");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
+
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug(dae);
+			return 0;
+		}
 	}
 }

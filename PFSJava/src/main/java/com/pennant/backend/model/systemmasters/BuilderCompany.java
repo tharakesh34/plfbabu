@@ -92,6 +92,7 @@ public class BuilderCompany extends AbstractWorkflowEntity implements Entity {
 	private String address3;
 	private String city;
 	private String cityName;
+	private String state;
 	private String code;
 	private String codeName;
 	private String areaName;
@@ -125,6 +126,7 @@ public class BuilderCompany extends AbstractWorkflowEntity implements Entity {
 	private String custCIF;
 	private boolean active;
 	private long custId;
+	private Long pinCodeId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -402,6 +404,14 @@ public class BuilderCompany extends AbstractWorkflowEntity implements Entity {
 		this.city = city;
 	}
 
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
 	public String getCode() {
 		return code;
 	}
@@ -592,6 +602,14 @@ public class BuilderCompany extends AbstractWorkflowEntity implements Entity {
 
 	public void setBranDesc(String branDesc) {
 		BranDesc = branDesc;
+	}
+
+	public Long getPinCodeId() {
+		return pinCodeId;
+	}
+
+	public void setPinCodeId(Long pinCodeId) {
+		this.pinCodeId = pinCodeId;
 	}
 
 }

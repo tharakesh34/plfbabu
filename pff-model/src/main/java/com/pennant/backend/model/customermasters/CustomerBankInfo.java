@@ -121,7 +121,7 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	private int noOfMonthsBanking;
 	private String lwowRatio;
 	@XmlElement
-	private String ccLimit;
+	private BigDecimal ccLimit = BigDecimal.ZERO;
 	private String typeOfBanks;
 	private Date accountOpeningDate;
 	@XmlElementWrapper(name = "bankInfoDetails")
@@ -140,6 +140,15 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	private String phoneNumber;
 	@XmlElement
 	private String city;
+	private String micr;
+	private String branchCode;
+	@XmlElement
+	private List<ExternalDocument> externalDocuments = new ArrayList<>();
+	//As per ExternalDocuments below fields are added
+	@XmlElement
+	private String transactionId;
+	@XmlElement
+	private String perfiosTransId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -164,6 +173,11 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("auditDetailMap");
 		excludeFields.add("iFSC");
 		excludeFields.add("city");
+		excludeFields.add("externalDocuments");
+		excludeFields.add("micr");
+		excludeFields.add("branchCode");
+		excludeFields.add("transactionId");
+		excludeFields.add("perfiosTransId");
 
 		return excludeFields;
 	}
@@ -537,11 +551,11 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 		this.lwowRatio = lwowRatio;
 	}
 
-	public String getCcLimit() {
+	public BigDecimal getCcLimit() {
 		return ccLimit;
 	}
 
-	public void setCcLimit(String ccLimit) {
+	public void setCcLimit(BigDecimal ccLimit) {
 		this.ccLimit = ccLimit;
 	}
 
@@ -608,4 +622,45 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	public void setCity(String city) {
 		this.city = city;
 	}
+
+	public List<ExternalDocument> getExternalDocuments() {
+		return externalDocuments;
+	}
+
+	public void setExternalDocuments(List<ExternalDocument> externalDocuments) {
+		this.externalDocuments = externalDocuments;
+	}
+
+	public String getMicr() {
+		return micr;
+	}
+
+	public void setMicr(String micr) {
+		this.micr = micr;
+	}
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
+	}
+
+	public String getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
+	}
+
+	public String getPerfiosTransId() {
+		return perfiosTransId;
+	}
+
+	public void setPerfiosTransId(String perfiosTransId) {
+		this.perfiosTransId = perfiosTransId;
+	}
+
 }

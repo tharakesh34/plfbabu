@@ -87,6 +87,8 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private String custDocIssuedCountry;
 	@XmlElement
 	private String docPurpose;
+	@XmlElement
+	private String remarks;
 	@XmlElement(name = "docRefId")
 	private String docUri;
 	private String lovDescCustDocIssuedCountry;
@@ -116,6 +118,9 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private String year;
 	private String sourceId;
 	private String docType;
+	private String offerId;
+	private String applicationNo;
+	private String finReference;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -153,6 +158,9 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 		excludeFields.add("custCtgCode");
 		excludeFields.add("year");
 		excludeFields.add("docType");
+		excludeFields.add("offerId");
+		excludeFields.add("applicationNo");
+		excludeFields.add("finReference");
 		return excludeFields;
 	}
 
@@ -477,4 +485,37 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	public void setYear(String year) {
 		this.year = year;
 	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public String getOfferId() {
+		return offerId;
+	}
+
+	public void setOfferId(String offerId) {
+		this.offerId = offerId;
+	}
+
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
 }

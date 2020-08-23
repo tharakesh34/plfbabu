@@ -1538,6 +1538,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		map.put("financeReferenceDetail", itemdata);
 		map.put("financeReferenceDetailDialogCtrl", this);
 		map.put("moduleName", moduleName);
+		map.put("eventAction", eventAction);
 		try {
 			Executions.createComponents(
 					"/WEB-INF/pages/SolutionFactory/FinanceReferenceDetail/FinanceReferenceDetailDialogLink.zul", null,

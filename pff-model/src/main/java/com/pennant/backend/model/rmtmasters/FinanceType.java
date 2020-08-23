@@ -253,7 +253,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String promotionDesc;
 
 	private long profitCenterID;
-	private String profitcenterCode;
+	private String profitCenterCode;
 	private String profitCenterDesc;
 
 	private String lovDescEntityCode;
@@ -277,6 +277,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean alwSanctionAmtOverride;
 	private boolean finIsRateRvwAtGrcEnd;
 	private boolean schdOnPMTCal;
+
+	//OCR Check
+	private boolean ocrRequired;
+	private String allowedOCRS;
+	private String defaultOCR;
+	//Loan Purpose
+	private String allowedLoanPurposes;
+	private String specificLoanPurposes;
 
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -355,6 +363,17 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean alwCloBefDUe;
 	private String finTypeClassification;
 	private boolean allowPftBal;
+	private boolean grcAdjReq;
+	private boolean grcPeriodAftrFullDisb;
+	private boolean autoIncrGrcEndDate;
+	private int grcAutoIncrMonths;
+	private int maxAutoIncrAllowed;
+	private int thrldtoMaintainGrcPrd;
+	private boolean alwLoanSplit;
+	private String splitLoanType;
+
+	//Inst based schd
+	private boolean instBasedSchd;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -391,7 +410,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("addrLine1");
 		excludeFields.add("promotionCode");
 		excludeFields.add("promotionDesc");
-		excludeFields.add("profitcenterCode");
+		excludeFields.add("profitCenterCode");
 		excludeFields.add("profitCenterDesc");
 		excludeFields.add("promotionType");
 		excludeFields.add("finCategoryDesc");
@@ -1798,6 +1817,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		finTypeAccountingMap.clear();
 		if (finTypeAccountingList != null) {
 			for (FinTypeAccounting finTypeAcc : finTypeAccountingList) {
+				System.out.println(finTypeAcc.getEvent());
 				finTypeAccountingMap.put(finTypeAcc.getEvent(), finTypeAcc.getAccountSetID());
 			}
 		}
@@ -2066,12 +2086,12 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.finTypePartnerBankList = finTypePartnerBankList;
 	}
 
-	public String getProfitcenterCode() {
-		return profitcenterCode;
+	public String getProfitCenterCode() {
+		return profitCenterCode;
 	}
 
-	public void setProfitcenterCode(String profitcenterCode) {
-		this.profitcenterCode = profitcenterCode;
+	public void setProfitCenterCode(String profitcenterCode) {
+		this.profitCenterCode = profitcenterCode;
 	}
 
 	public String getProfitCenterDesc() {
@@ -2538,12 +2558,124 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.schdOnPMTCal = schdOnPMTCal;
 	}
 
+	public boolean isOcrRequired() {
+		return ocrRequired;
+	}
+
+	public void setOcrRequired(boolean ocrRequired) {
+		this.ocrRequired = ocrRequired;
+	}
+
+	public String getAllowedOCRS() {
+		return allowedOCRS;
+	}
+
+	public void setAllowedOCRS(String allowedOCRS) {
+		this.allowedOCRS = allowedOCRS;
+	}
+
+	public String getDefaultOCR() {
+		return defaultOCR;
+	}
+
+	public void setDefaultOCR(String defaultOCR) {
+		this.defaultOCR = defaultOCR;
+	}
+
+	public String getAllowedLoanPurposes() {
+		return allowedLoanPurposes;
+	}
+
+	public void setAllowedLoanPurposes(String allowedLoanPurposes) {
+		this.allowedLoanPurposes = allowedLoanPurposes;
+	}
+
+	public String getSpecificLoanPurposes() {
+		return specificLoanPurposes;
+	}
+
+	public void setSpecificLoanPurposes(String specificLoanPurposes) {
+		this.specificLoanPurposes = specificLoanPurposes;
+	}
+
+	public boolean isGrcAdjReq() {
+		return grcAdjReq;
+	}
+
+	public void setGrcAdjReq(boolean grcAdjReq) {
+		this.grcAdjReq = grcAdjReq;
+	}
+
+	public boolean isGrcPeriodAftrFullDisb() {
+		return grcPeriodAftrFullDisb;
+	}
+
+	public void setGrcPeriodAftrFullDisb(boolean grcPeriodAftrFullDisb) {
+		this.grcPeriodAftrFullDisb = grcPeriodAftrFullDisb;
+	}
+
+	public boolean isAutoIncrGrcEndDate() {
+		return autoIncrGrcEndDate;
+	}
+
+	public void setAutoIncrGrcEndDate(boolean autoIncrGrcEndDate) {
+		this.autoIncrGrcEndDate = autoIncrGrcEndDate;
+	}
+
+	public int getGrcAutoIncrMonths() {
+		return grcAutoIncrMonths;
+	}
+
+	public void setGrcAutoIncrMonths(int grcAutoIncrMonths) {
+		this.grcAutoIncrMonths = grcAutoIncrMonths;
+	}
+
+	public int getMaxAutoIncrAllowed() {
+		return maxAutoIncrAllowed;
+	}
+
+	public void setMaxAutoIncrAllowed(int maxAutoIncrAllowed) {
+		this.maxAutoIncrAllowed = maxAutoIncrAllowed;
+	}
+
+	public int getThrldtoMaintainGrcPrd() {
+		return thrldtoMaintainGrcPrd;
+	}
+
+	public void setThrldtoMaintainGrcPrd(int thrldtoMaintainGrcPrd) {
+		this.thrldtoMaintainGrcPrd = thrldtoMaintainGrcPrd;
+	}
+
 	public boolean isalwPlannedEmiInGrc() {
 		return alwPlannedEmiInGrc;
 	}
 
 	public void setalwPlannedEmiInGrc(boolean alwPlannedEmiInGrc) {
 		this.alwPlannedEmiInGrc = alwPlannedEmiInGrc;
+	}
+
+	public boolean isAlwLoanSplit() {
+		return alwLoanSplit;
+	}
+
+	public void setAlwLoanSplit(boolean alwLoanSplit) {
+		this.alwLoanSplit = alwLoanSplit;
+	}
+
+	public String getSplitLoanType() {
+		return splitLoanType;
+	}
+
+	public void setSplitLoanType(String splitLoanType) {
+		this.splitLoanType = splitLoanType;
+	}
+
+	public boolean isInstBasedSchd() {
+		return instBasedSchd;
+	}
+
+	public void setInstBasedSchd(boolean instBasedSchd) {
+		this.instBasedSchd = instBasedSchd;
 	}
 
 }

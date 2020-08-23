@@ -165,7 +165,7 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Pay Order Details not available for specified FinReference Id {}", finReference);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);

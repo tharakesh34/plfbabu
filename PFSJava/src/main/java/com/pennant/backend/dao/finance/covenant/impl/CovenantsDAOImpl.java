@@ -612,7 +612,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 			c.setNextTaskId(rs.getString("NextTaskId"));
 			c.setRecordType(rs.getString("RecordType"));
 			c.setWorkflowId(rs.getLong("WorkflowId"));
-			c.setLastMntBy(rs.getInt("LastMntBy"));
+			c.setLastMntBy(rs.getLong("LastMntBy"));
 			c.setLastMntOn(rs.getTimestamp("LastMntOn"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {

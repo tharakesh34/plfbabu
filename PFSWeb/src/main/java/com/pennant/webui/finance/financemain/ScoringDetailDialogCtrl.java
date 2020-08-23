@@ -93,7 +93,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleReturnType;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -735,7 +734,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		if (StringUtils.equals("I", categoryValue)) {
 			metricExecScore = scoringMetric.getLovDescExecutedScore();
 			finExecScoreMap.put(key, metricExecScore);
-			lc = new Listcell(PennantAppUtil.amountFormate(metricExecScore, 0));
+			lc = new Listcell(PennantApplicationUtil.formatAmount(metricExecScore, 2, false));
 			lc.setStyle("text-align:right;font-weight:bold;color:#ff7300;");
 
 		} else if ("F".equals(categoryValue)) {
@@ -1023,7 +1022,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 			listgroupfoot.appendChild(cell);
 		}
 
-		cell = new Listcell(PennantAppUtil.amountFormate(totalMaxGrpScore, 0));
+		cell = new Listcell(PennantApplicationUtil.formatAmount(totalMaxGrpScore, 2, false));
 		cell.setStyle("font-weight:bold;text-align:right;");
 		listgroupfoot.appendChild(cell);
 
@@ -1031,7 +1030,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		 * if("N".equals(ctgType)){ cell = new Listcell(""); }else{
 		 */
 		cell = new Listcell();
-		Label label = new Label(PennantAppUtil.amountFormate(totalExecGrpScore, 0));
+		Label label = new Label(PennantApplicationUtil.formatAmount(totalExecGrpScore, 2, false));
 		label.setStyle("font-weight:bold;float:right;");
 		cell.appendChild(label);
 		if ("I".equals(ctgType)) {

@@ -45,6 +45,7 @@ package com.pennant.backend.dao.systemmasters;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.agreement.InterestCertificate;
 
@@ -71,5 +72,9 @@ public interface InterestCertificateDAO {
 
 	InterestCertificate getSumOfPrinicipalAndProfitAmountPaid(String finReference, String startDate, String endDate)
 			throws ParseException;
+
+	Map<String, Object> getSumOfPriPftEmiAmount(String finReference, String finStartDate, String finEndDate);
+
+	Map<String, Object> getTotalGrcRepayProfit(String finReference, String finStartDate, String finEndDate);
 
 }

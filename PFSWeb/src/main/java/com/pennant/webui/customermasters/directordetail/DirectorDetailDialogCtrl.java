@@ -192,6 +192,8 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	private BigDecimal totSharePerc;
 	private String userRole = "";
 	private boolean isEnquiry = false;
+	private boolean isFinanceProcess = false;
+	private boolean workflow = false;
 
 	/**
 	 * default constructor.<br>
@@ -267,6 +269,19 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			}
 			this.directorDetail.setWorkflowId(0);
 		}
+
+		if (arguments.containsKey("isFinanceProcess")) {
+			isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
+		}
+
+		if (arguments.containsKey("fromLoan")) {
+			isFinanceProcess = (Boolean) arguments.get("fromLoan");
+		}
+
+		if (getCustomerDialogCtrl() != null && !isFinanceProcess) {
+			workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+
 		doLoadWorkFlow(this.directorDetail.isWorkflow(), this.directorDetail.getWorkflowId(),
 				this.directorDetail.getNextTaskId());
 
@@ -1124,7 +1139,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			if (StringUtils.isBlank(aDirectorDetail.getRecordType())) {
 				aDirectorDetail.setVersion(aDirectorDetail.getVersion() + 1);
 				aDirectorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (getCustomerDialogCtrl() != null
+				if (!isFinanceProcess && getCustomerDialogCtrl() != null
 						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
 					aDirectorDetail.setNewRecord(true);
 				}
@@ -1388,6 +1403,9 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 					aDirectorDetail.setRecordType(PennantConstants.RCD_ADD);
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
+					if (workflow && !isFinanceProcess && StringUtils.isBlank(aDirectorDetail.getRecordType())) {
+						aDirectorDetail.setNewRecord(true);
+					}
 				}
 
 				if (StringUtils.isBlank(aDirectorDetail.getRecordType())) {
@@ -1843,9 +1861,10 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			throws InterruptedException {
 		logger.debug("Entering");
 		final Customer aCustomer = (Customer) nCustomer;
-		this.custID.setValue(aCustomer.getCustID());
-		this.custCIF.setValue(aCustomer.getCustCIF().trim());
-		this.custShrtName.setValue(aCustomer.getCustShrtName());
+		//PSD # 156134 commented the below code because main applicant details are overriding with share holder details.
+		//this.custID.setValue(aCustomer.getCustID());
+		//this.custCIF.setValue(aCustomer.getCustCIF().trim());
+		//this.custShrtName.setValue(aCustomer.getCustShrtName());
 		if (this.shareholderCustomer.isChecked()) {
 			this.shareHolderCustID.setValue(aCustomer.getCustID());
 			this.shareHolderCustCIF.setValue(aCustomer.getCustCIF().trim());

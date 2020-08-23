@@ -105,6 +105,18 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 	private BigDecimal settlementCredits = BigDecimal.ZERO;
 	@XmlElement
 	private Integer settlementNo;
+	@XmlElement
+	private BigDecimal interest = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal trf = BigDecimal.ZERO;
+
+	//Perfios
+	@XmlElement
+	private BigDecimal totalEmi = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal totalSalary = BigDecimal.ZERO;
+	@XmlElement
+	private int emiBounceNo;
 
 	public BankInfoDetail() {
 		super();
@@ -295,6 +307,46 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 
 	public void setSettlementNo(Integer settlementNo) {
 		this.settlementNo = settlementNo;
+	}
+
+	public BigDecimal getInterest() {
+		return interest;
+	}
+
+	public void setInterest(BigDecimal interest) {
+		this.interest = interest;
+	}
+
+	public BigDecimal getTrf() {
+		return trf;
+	}
+
+	public void setTrf(BigDecimal trf) {
+		this.trf = trf;
+	}
+
+	public BigDecimal getTotalEmi() {
+		return totalEmi;
+	}
+
+	public void setTotalEmi(BigDecimal totalEmi) {
+		this.totalEmi = totalEmi;
+	}
+
+	public BigDecimal getTotalSalary() {
+		return totalSalary;
+	}
+
+	public void setTotalSalary(BigDecimal totalSalary) {
+		this.totalSalary = totalSalary;
+	}
+
+	public int getEmiBounceNo() {
+		return emiBounceNo;
+	}
+
+	public void setEmiBounceNo(int emiBounceNo) {
+		this.emiBounceNo = emiBounceNo;
 	}
 
 }

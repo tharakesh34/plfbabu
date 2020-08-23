@@ -1,6 +1,7 @@
 package com.pennanttech.pennapps.pff.service.hook;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
@@ -18,5 +19,6 @@ public interface PostDeviationHook {
 	 * @param elgMethodVisible
 	 * @return The custom auto deviations.
 	 */
-	List<FinanceDeviations> raiseDeviations(FinanceDetail financeDetail, String deviationFilePath);
+	List<FinanceDeviations> raiseDeviations(FinanceDetail financeDetail, String deviationFilePath,
+			Map<String, Object> extendedDetails);
 }

@@ -147,6 +147,8 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	private String sourceId;
+	private Long pinCodeId;
+	private String areaName;
 
 	public VehicleDealer() {
 		super();
@@ -181,6 +183,7 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("branchCity");
 		excludeFields.add("returnStatus");
 		excludeFields.add("sourceId");
+		excludeFields.add("areaName");
 		return excludeFields;
 	}
 
@@ -703,5 +706,21 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
+	}
+
+	public Long getPinCodeId() {
+		return pinCodeId;
+	}
+
+	public void setPinCodeId(Long pinCodeId) {
+		this.pinCodeId = pinCodeId;
+	}
+
+	public String getAreaName() {
+		return areaName;
+	}
+
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
 	}
 }

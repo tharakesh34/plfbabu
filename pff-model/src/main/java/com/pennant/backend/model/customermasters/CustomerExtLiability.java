@@ -91,6 +91,19 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	@XmlElement
 	private BigDecimal currentOverDue = BigDecimal.ZERO;
 
+	@XmlElement
+	private String repayFromAccNo;
+	@XmlElement
+	private String remarks;
+	@XmlElement
+	private int noOfBouncesInSixMonths;
+	@XmlElement
+	private int noOfBouncesInTwelveMonths;
+	@XmlElement
+	private boolean consideredBasedOnRTR;
+	@XmlElement
+	private int mob;
+
 	@XmlElementWrapper(name = "extLiabilitiesPayments")
 	@XmlElement(name = "extLiabilitiesPayment")
 	private List<ExtLiabilityPaymentdetails> extLiabilitiesPayments = new ArrayList<>();
@@ -473,6 +486,54 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 
 	public void setLastThreeMonths(boolean lastThreeMonths) {
 		this.lastThreeMonths = lastThreeMonths;
+	}
+
+	public boolean isConsideredBasedOnRTR() {
+		return consideredBasedOnRTR;
+	}
+
+	public void setConsideredBasedOnRTR(boolean consideredBasedOnRTR) {
+		this.consideredBasedOnRTR = consideredBasedOnRTR;
+	}
+
+	public int getMob() {
+		return mob;
+	}
+
+	public void setMob(int mob) {
+		this.mob = mob;
+	}
+
+	public String getRepayFromAccNo() {
+		return repayFromAccNo;
+	}
+
+	public void setRepayFromAccNo(String repayFromAccNo) {
+		this.repayFromAccNo = repayFromAccNo;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public int getNoOfBouncesInSixMonths() {
+		return noOfBouncesInSixMonths;
+	}
+
+	public void setNoOfBouncesInSixMonths(int noOfBouncesInSixMonths) {
+		this.noOfBouncesInSixMonths = noOfBouncesInSixMonths;
+	}
+
+	public int getNoOfBouncesInTwelveMonths() {
+		return noOfBouncesInTwelveMonths;
+	}
+
+	public void setNoOfBouncesInTwelveMonths(int noOfBouncesInTwelveMonths) {
+		this.noOfBouncesInTwelveMonths = noOfBouncesInTwelveMonths;
 	}
 
 }

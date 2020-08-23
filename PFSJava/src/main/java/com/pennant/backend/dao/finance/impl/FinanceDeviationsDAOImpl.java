@@ -109,7 +109,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 				" DelegationRole = :DelegationRole, ApprovalStatus = :ApprovalStatus ,DeviationDate = :DeviationDate,");
 		sql.append(" DeviationCategory = :DeviationCategory, Remarks =:Remarks, ");
 		sql.append(" DeviationUserId=:DeviationUserId, DelegatedUserId = :DelegatedUserId, ");
-		sql.append(" MarkDeleted = :MarkDeleted, RaisedUser = :RaisedUser");
+		sql.append(" MarkDeleted = :MarkDeleted, RaisedUser = :RaisedUser, Mitigants = :Mitigants");
 		sql.append(" where DeviationId = :DeviationId");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -134,12 +134,12 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 		insertSql.append(" ( DeviationId, FinReference, Module, DeviationCode, DeviationType, ");
 		insertSql.append(" DeviationValue, UserRole, DelegationRole,ApprovalStatus,");
 		insertSql.append(
-				" DeviationDate, DeviationUserId,DelegatedUserId,DeviationCategory,Remarks,DeviProcessed, DeviationDesc, MarkDeleted, RaisedUser)");
+				" DeviationDate, DeviationUserId,DelegatedUserId,DeviationCategory,Remarks,DeviProcessed, DeviationDesc, MarkDeleted, RaisedUser, Mitigants)");
 
 		insertSql.append(" Values( :DeviationId, :FinReference, :Module, :DeviationCode, :DeviationType,");
 		insertSql.append(" :DeviationValue, :UserRole, :DelegationRole, :ApprovalStatus,");
 		insertSql.append(
-				" :DeviationDate, :DeviationUserId, :DelegatedUserId, :DeviationCategory, :Remarks, :DeviProcessed, :DeviationDesc, :MarkDeleted, :RaisedUser)");
+				" :DeviationDate, :DeviationUserId, :DelegatedUserId, :DeviationCategory, :Remarks, :DeviProcessed, :DeviationDesc, :MarkDeleted, :RaisedUser, :Mitigants)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
@@ -282,7 +282,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" DeviationId, FinReference, Module, Remarks, DeviationCode, DeviationType, DeviationValue");
 		sql.append(", UserRole, DeviationCategory, DelegationRole, ApprovalStatus, DeviationDate, DeviationUserId");
-		sql.append(", MarkDeleted, DelegatedUserId, DeviationDesc, RaisedUser");
+		sql.append(", MarkDeleted, DelegatedUserId, DeviationDesc, RaisedUser, Mitigants");
 
 		if (!StringUtils.containsIgnoreCase(type, "View")) {
 			sql.append(", DeviProcessed");
@@ -321,6 +321,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 			fd.setDelegatedUserId(rs.getString("DelegatedUserId"));
 			fd.setDeviationDesc(rs.getString("DeviationDesc"));
 			fd.setRaisedUser(rs.getString("RaisedUser"));
+			fd.setMitigants(rs.getString("Mitigants"));
 
 			if (!StringUtils.containsIgnoreCase(type, "View")) {
 				fd.setDeviProcessed(rs.getBoolean("DeviProcessed"));

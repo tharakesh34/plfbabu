@@ -173,6 +173,39 @@ public class DMSServiceImpl implements DMSService {
 	}
 
 	@Override
+	public byte[] getImageByUri(String docUri) {
+		logger.debug(Literal.ENTERING);
+		byte[] docImage = null;
+		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+			String docURI = StringUtils.trimToNull(docUri);
+			if (docURI != null) {
+				docImage = documentFileSystem.retrive(docURI);
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return docImage;
+	}
+	
+	@Override
+    public DMSQueue isExistDocuri(String docUri,String reference){
+    	logger.debug(Literal.ENTERING);
+    	if(StringUtils.isBlank(docUri) || StringUtils.isBlank(reference)){
+    		return null;
+    	}
+    	
+    	logger.debug(Literal.LEAVING);
+    	return dMSQueueDAO.isExistDocuri(docUri, reference);
+    }
+	
+	@Override
+	public void updateDMSQueue(DMSQueue dmsQueue){
+		logger.debug(Literal.ENTERING);
+		dMSQueueDAO.updateDMSQueue(dmsQueue);
+		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
 	public Long getCustomerIdByFin(String FinReference) {
 		return financeMainDAO.getCustomerIdByFin(FinReference);
 	}
@@ -185,6 +218,11 @@ public class DMSServiceImpl implements DMSService {
 	@Override
 	public Long getCustomerIdByCollateral(String collateralRef) {
 		return collateralSetupDAO.getCustomerIdByCollateral(collateralRef);
+	}
+
+	@Override
+	public DMSQueue getOfferIdByFin(DMSQueue dmsQueue) {
+		return financeMainDAO.getOfferIdByFin(dmsQueue);
 	}
 
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {

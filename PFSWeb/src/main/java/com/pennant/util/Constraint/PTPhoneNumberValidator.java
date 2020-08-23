@@ -9,10 +9,15 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zul.Constraint;
 
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
+
 public class PTPhoneNumberValidator implements Constraint {
 	private String fieldParm;
 	private boolean mandatory = false;
-	private final String PHONE_REGEX = "^[0-9]{11}";
+	private String PHONE_REGEX = "^[0-9]{11}";
 	private int maxLength = 11;
 	private final String PHONE_COUNTRY_REGEX = "^[1-9]{1}[0-9]{0,3}";
 	private final String PHONE_AREA_REGEX = "^[1-9]{1}[0-9]{0,3}";
@@ -23,6 +28,11 @@ public class PTPhoneNumberValidator implements Constraint {
 	public static final int VALIDATE_NUMBER = 3;
 
 	private int validateCode = 0;
+
+	private boolean isCustomPhoneRegexReq = StringUtils
+			.equals(SysParamUtil.getValueAsString(SMTParameterConstants.USE_CUSTOM_PHONE_REGEX), PennantConstants.YES)
+					? true : false;
+	private String NEW_PHONE_REGEX = PennantRegularExpressions.TELEPHONE_REGEX;
 
 	public PTPhoneNumberValidator(String fieldParm, boolean mandatory) {
 		setFieldParm(fieldParm);
@@ -84,16 +94,25 @@ public class PTPhoneNumberValidator implements Constraint {
 				}
 				break;
 			default:
+				if (isCustomPhoneRegexReq) {
+					PHONE_REGEX = NEW_PHONE_REGEX;
+				}
 				pattern = Pattern.compile(PHONE_REGEX);
 				matcher = pattern.matcher(compValue);
 
-				if (!matcher.matches()) {
-					return Labels.getLabel("FIELD_PHONE", new String[] { fieldParm });
+				if (!matcher.matches() && isCustomPhoneRegexReq) {
+					return Labels.getLabel("CUSTOM_PHONE_REGEX", new String[] { fieldParm });
 				}
 
-				if (compValue.length() != maxLength) {
-					return Labels.getLabel("FIELD_ALLOWED_MANFILL",
-							new String[] { fieldParm, String.valueOf(maxLength) });
+				if (!isCustomPhoneRegexReq) {
+					if (!matcher.matches()) {
+						return Labels.getLabel("FIELD_PHONE", new String[] { fieldParm });
+					}
+
+					if (compValue.length() != maxLength) {
+						return Labels.getLabel("FIELD_ALLOWED_MANFILL",
+								new String[] { fieldParm, String.valueOf(maxLength) });
+					}
 				}
 				break;
 			}

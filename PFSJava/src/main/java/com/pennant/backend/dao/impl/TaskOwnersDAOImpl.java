@@ -54,6 +54,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -300,6 +301,19 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 
 			try {
 				return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			} catch (EmptyResultDataAccessException e1) {
+				logger.warn(Literal.EXCEPTION, e1);
+				return null;
+			}
+		} catch (IncorrectResultSizeDataAccessException e) {
+			try {
+				List<String> list = this.jdbcOperations.queryForList(sql.toString(),
+						new Object[] { reference, userId, 0 }, String.class);
+				if (list != null && list.size() > 0) {
+					return list.get(0);
+				} else {
+					return null;
+				}
 			} catch (EmptyResultDataAccessException e1) {
 				logger.warn(Literal.EXCEPTION, e1);
 				return null;

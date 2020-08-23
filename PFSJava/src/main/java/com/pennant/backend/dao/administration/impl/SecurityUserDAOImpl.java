@@ -127,7 +127,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append("select UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile, UsrEmail");
 		sql.append(", UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, UsrAcExp, UsrAcExpDt");
 		sql.append(", UsrAcLocked, UsrLanguage, UsrDftAppId, UsrBranchCode, UsrDeptCode, UsrToken");
-		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType,UsrDftAppCode");
+		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType, UsrDftAppCode");
 		sql.append(", PwdExpDt, UserType,businessvertical, LDAPDomainName");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {

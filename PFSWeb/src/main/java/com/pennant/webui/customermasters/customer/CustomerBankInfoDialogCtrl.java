@@ -43,34 +43,44 @@
  */
 package com.pennant.webui.customermasters.customer;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Column;
 import org.zkoss.zul.Columns;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
@@ -94,6 +104,8 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.MasterDefUtil;
+import com.pennant.app.util.MasterDefUtil.AccountType;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -103,7 +115,11 @@ import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.BankInfoSubDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
+import com.pennant.backend.model.customermasters.ExternalDocument;
+import com.pennant.backend.model.perfios.PerfiosHeader;
+import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -115,14 +131,18 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
+import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.PerfiousService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerBankInfo/customerBankInfoDialog.zul file.
@@ -179,7 +199,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	protected Combobox repaymentFrom;
 	protected Intbox NoOfMonthsBanking;
 	protected Textbox lwowRatio;
-	protected Textbox ccLimit;
+	protected CurrencyBox ccLimit;
 	protected Combobox typeOfBanks;
 	protected Datebox accountOpeningDate;
 	protected Textbox phoneNumber; // autowired
@@ -218,6 +238,24 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	private String monthlyIncome = SysParamUtil.getValueAsString(SMTParameterConstants.MONTHLY_INCOME_REQ);
 	private String configDay = SysParamUtil.getValueAsString(SMTParameterConstants.BANKINFO_DAYS);
 	private boolean isCustomer360 = false;
+
+	private boolean fromLoan = false;
+	private String empType = null;
+	private BigDecimal finAmount = BigDecimal.ZERO;
+	private int tenor;
+	private String finReference = null;
+	private Groupbox gb_perfios;
+	private Button button_CustomerBankInfoDialog_btnInitiateperfios;
+	private Button button_CustomerBankInfoDialog_btnPerfiosDocUpload;
+	private List<ExternalDocument> externalDocumentsList = new ArrayList<>();
+	protected PerfiousService perfiosService;
+	protected CustomerDetailsService customerDetailsService;
+	private DMSService dmsService;
+
+	protected Listbox listBoxDocuments;
+	private boolean isCustomPhoneRegexReq = StringUtils
+			.equals(SysParamUtil.getValueAsString(SMTParameterConstants.USE_CUSTOM_PHONE_REGEX), PennantConstants.YES)
+					? true : false;
 
 	/**
 	 * default constructor.<br>
@@ -284,6 +322,25 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 					setNewRecord(false);
 				}
 				this.customerBankInfo.setWorkflowId(0);
+
+				if (arguments.containsKey("fromLoan")) {
+					fromLoan = (Boolean) arguments.get("fromLoan");
+				}
+
+				if (arguments.containsKey("empType")) {
+					empType = (String) arguments.get("empType");
+				}
+
+				if (arguments.containsKey("finAmount")) {
+					finAmount = (BigDecimal) arguments.get("finAmount");
+				}
+				if (arguments.containsKey("tenor")) {
+					tenor = (int) arguments.get("tenor");
+				}
+				if (arguments.containsKey("finReference")) {
+					finReference = (String) arguments.get("finReference");
+				}
+
 				if (arguments.containsKey("roleCode")) {
 					userRole = arguments.get("roleCode").toString();
 					getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerBankInfoDialog");
@@ -346,6 +403,10 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.bankBranchID.setButtonDisabled(false);
 		} else {
 			this.bankBranchID.setButtonDisabled(true);
+		}
+
+		if (fromLoan) {
+			this.gb_perfios.setVisible(true);
 		}
 
 		this.bankName.setMaxlength(8);
@@ -438,6 +499,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.groupboxWf.setVisible(false);
 			this.south.setHeight("0px");
 		}
+		this.ccLimit.setMandatory(false);
+		this.ccLimit.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.ccLimit.setScale(finFormatter);
+
+		if (isCustomPhoneRegexReq) {
+			this.phoneNumber.setMaxlength(18);
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -452,11 +521,24 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("CustomerBankInfoDialog", userRole);
 
+		/*
+		 * this.button_CustomerBankInfoDialog_btnPerfiosDocUpload
+		 * .setVisible(getUserWorkspace().isAllowed("button_CustomerBankInfoDialog_btnPerfiosDocUpload"));
+		 */
+		/*
+		 * this.button_CustomerBankInfoDialog_btnInitiateperfios
+		 * .setVisible(getUserWorkspace().isAllowed("button_CustomerBankInfoDialog_btnInitiateperfios"));
+		 */
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerBankInfoDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerBankInfoDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerBankInfoDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustomerBankInfoDialog_btnSave"));
 		this.btnCancel.setVisible(false);
+		if (perfiosService == null) {
+			this.button_CustomerBankInfoDialog_btnInitiateperfios.setVisible(false);
+		} else {
+			this.button_CustomerBankInfoDialog_btnInitiateperfios.setVisible(true);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -991,6 +1073,93 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 						.divide(odCCSumDivider, 0, RoundingMode.HALF_DOWN);
 			}
 
+			// Interest Sum and Summary
+			BigDecimal interestSum = BigDecimal.ZERO;
+			BigDecimal interestAvg = BigDecimal.ZERO;
+
+			// TRF Sum and Summary
+			BigDecimal trfSum = BigDecimal.ZERO;
+			BigDecimal trfAvg = BigDecimal.ZERO;
+			BigDecimal totalEmi = BigDecimal.ZERO;
+			BigDecimal totalEmiAvg = BigDecimal.ZERO;
+			BigDecimal totalSalary = BigDecimal.ZERO;
+			BigDecimal totalSalaryAvg = BigDecimal.ZERO;
+			int emiBounceNo = 0;
+			BigDecimal emiBounceAvg = BigDecimal.ZERO;
+
+			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
+				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+
+					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+
+					if (bankInfoDetail == null) {
+						continue;
+					}
+					//getting Interest
+					Hbox hbox = (Hbox) getComponent(listItem, "interest");
+					CurrencyBox interestValue = (CurrencyBox) hbox.getLastChild();
+					Clients.clearWrongValue(interestValue);
+					if (interestValue.getValidateValue() != null) {
+						interestSum = interestSum.add(interestValue.getValidateValue());
+					}
+					//getting TRF
+					Hbox trf = (Hbox) getComponent(listItem, "trf");
+					CurrencyBox trfValue = (CurrencyBox) trf.getLastChild();
+					Clients.clearWrongValue(trfValue);
+					if (trfValue.getValidateValue() != null) {
+						trfSum = trfSum.add(trfValue.getValidateValue());
+					}
+
+					//Total EMI
+					Hbox emi = (Hbox) getComponent(listItem, "totalEmi");
+					CurrencyBox emiComp = (CurrencyBox) emi.getLastChild();
+					Clients.clearWrongValue(emiComp);
+					if (emiComp.getValidateValue() != null) {
+						totalEmi = totalEmi.add(emiComp.getValidateValue());
+					}
+
+					//Total Salary
+					Hbox salary = (Hbox) getComponent(listItem, "totalSalary");
+					CurrencyBox salaryComp = (CurrencyBox) salary.getLastChild();
+					Clients.clearWrongValue(salaryComp);
+					if (salaryComp.getValidateValue() != null) {
+						totalSalary = totalSalary.add(salaryComp.getValidateValue());
+					}
+
+					//EMI Bounce No
+					Hbox emiBounce = (Hbox) getComponent(listItem, "emiBounce");
+					Intbox emiBounceComp = (Intbox) emiBounce.getLastChild();
+					Clients.clearWrongValue(emiBounceComp);
+					if (emiBounceComp != null) {
+						emiBounceNo = emiBounceNo + (emiBounceComp.intValue());
+					}
+
+				}
+			}
+
+			BigDecimal interestDivider = BigDecimal.valueOf(dataItems, 0);
+			if (interestSum.compareTo(BigDecimal.ZERO) > 0) {
+				interestAvg = PennantApplicationUtil.unFormateAmount(interestSum, PennantConstants.defaultCCYDecPos)
+						.divide(interestDivider, 0, RoundingMode.HALF_DOWN);
+			}
+
+			if (trfSum.compareTo(BigDecimal.ZERO) > 0) {
+				trfAvg = PennantApplicationUtil.unFormateAmount(trfSum, PennantConstants.defaultCCYDecPos)
+						.divide(interestDivider, 0, RoundingMode.HALF_DOWN);
+			}
+
+			if (totalEmi.compareTo(BigDecimal.ZERO) > 0) {
+				totalEmiAvg = PennantApplicationUtil.unFormateAmount(totalEmi, PennantConstants.defaultCCYDecPos)
+						.divide(interestDivider, 0, RoundingMode.HALF_DOWN);
+			}
+			if (totalSalary.compareTo(BigDecimal.ZERO) > 0) {
+				totalSalaryAvg = PennantApplicationUtil.unFormateAmount(totalSalary, PennantConstants.defaultCCYDecPos)
+						.divide(interestDivider, 0, RoundingMode.HALF_DOWN);
+			}
+			if (emiBounceNo > 0) {
+				emiBounceAvg = new BigDecimal(emiBounceNo).divide(interestDivider, 2, RoundingMode.HALF_DOWN);
+			}
+
 			if (this.listBoxAccBehaviour.getFellowIfAny("item_Sum") != null) {
 				Listitem item = (Listitem) this.listBoxAccBehaviour.getFellow("item_Sum");
 				listBoxAccBehaviour.removeItemAt(item.getIndex());
@@ -1063,6 +1232,29 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			listcell.setParent(item);
 
 			listcell = new Listcell(String.valueOf(odCCSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+			//Interest
+			listcell = new Listcell(String.valueOf(interestSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+			//TRF
+			listcell = new Listcell(String.valueOf(trfSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			//Total EMI
+			listcell = new Listcell(String.valueOf(totalEmi));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			//Total Salary
+			listcell = new Listcell(String.valueOf(totalSalary));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			//EMI Bounces
+			listcell = new Listcell(String.valueOf(emiBounceNo));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
@@ -1140,6 +1332,34 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			listcell.setParent(item);
 
 			listcell = new Listcell(PennantApplicationUtil.amountFormate(odCCAvg, PennantConstants.defaultCCYDecPos));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+			//Interest
+			listcell = new Listcell(String
+					.valueOf(PennantApplicationUtil.amountFormate(interestAvg, PennantConstants.defaultCCYDecPos)));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+			//TRF
+			listcell = new Listcell(
+					String.valueOf(PennantApplicationUtil.amountFormate(trfAvg, PennantConstants.defaultCCYDecPos)));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			//Total EMI
+			listcell = new Listcell(String
+					.valueOf(PennantApplicationUtil.amountFormate(totalEmiAvg, PennantConstants.defaultCCYDecPos)));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			//Total Salary
+			listcell = new Listcell(String
+					.valueOf(PennantApplicationUtil.amountFormate(totalSalaryAvg, PennantConstants.defaultCCYDecPos)));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			//EMI Bounces
+			listcell = new Listcell(String.valueOf(emiBounceAvg));
+
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
@@ -1246,8 +1466,9 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				box.setFormat(PennantApplicationUtil.getAmountFormate(2));
 				box.setScale(2);
 				if (bankInfoDetail.getBankInfoSubDetails().size() > 0) {
-					box.setValue(PennantApplicationUtil
-							.formateAmount(bankInfoDetail.getBankInfoSubDetails().get(count).getBalance(), 0));
+					box.setValue(PennantApplicationUtil.formateAmount(
+							bankInfoDetail.getBankInfoSubDetails().get(count).getBalance(),
+							PennantConstants.defaultCCYDecPos));
 					count++;
 				} else {
 					box.setValue(BigDecimal.ZERO);
@@ -1535,6 +1756,89 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		listCell.appendChild(hbox);
 		listCell.setParent(listItem);
 
+		// Interest
+		listCell = new Listcell();
+		hbox = new Hbox();
+		space = new Space();
+		space.setSpacing("2px");
+		CurrencyBox interest = new CurrencyBox();
+		interest.setBalUnvisible(true);
+		listCell.setId("interest".concat(String.valueOf(bankInfoDetail.getKeyValue())));
+		interest.setFormat(PennantApplicationUtil.getAmountFormate(2));
+		interest.setScale(2);
+		interest.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getInterest(), 2));
+		interest.setReadonly(isReadOnly);
+		hbox.appendChild(space);
+		hbox.appendChild(interest);
+		listCell.appendChild(hbox);
+		listCell.setParent(listItem);
+
+		// TRF
+		listCell = new Listcell();
+		hbox = new Hbox();
+		space = new Space();
+		space.setSpacing("2px");
+		CurrencyBox trf = new CurrencyBox();
+		trf.setBalUnvisible(true);
+		listCell.setId("trf".concat(String.valueOf(bankInfoDetail.getKeyValue())));
+		trf.setFormat(PennantApplicationUtil.getAmountFormate(2));
+		trf.setScale(2);
+		trf.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getTrf(), 2));
+		trf.setReadonly(isReadOnly);
+		hbox.appendChild(space);
+		hbox.appendChild(trf);
+		listCell.appendChild(hbox);
+		listCell.setParent(listItem);
+
+		//Total EMI or Loan
+		listCell = new Listcell();
+		hbox = new Hbox();
+		space = new Space();
+		space.setSpacing("2px");
+		CurrencyBox totalEmi = new CurrencyBox();
+		totalEmi.setBalUnvisible(true);
+		listCell.setId("totalEmi".concat(String.valueOf(bankInfoDetail.getKeyValue())));
+		totalEmi.setFormat(PennantApplicationUtil.getAmountFormate(2));
+		totalEmi.setScale(2);
+		totalEmi.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getTrf(), 2));
+		totalEmi.setReadonly(isReadOnly);
+		totalEmi.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getTotalEmi(), 2));
+		hbox.appendChild(space);
+		hbox.appendChild(totalEmi);
+		listCell.appendChild(hbox);
+		listCell.setParent(listItem);
+
+		//Total Salary
+		listCell = new Listcell();
+		hbox = new Hbox();
+		space = new Space();
+		space.setSpacing("2px");
+		CurrencyBox totalSalary = new CurrencyBox();
+		totalSalary.setBalUnvisible(true);
+		listCell.setId("totalSalary".concat(String.valueOf(bankInfoDetail.getKeyValue())));
+		totalSalary.setFormat(PennantApplicationUtil.getAmountFormate(2));
+		totalSalary.setScale(2);
+		totalSalary.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getTrf(), 2));
+		totalSalary.setReadonly(isReadOnly);
+		totalSalary.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getTotalSalary(), 2));
+		hbox.appendChild(space);
+		hbox.appendChild(totalSalary);
+		listCell.appendChild(hbox);
+		listCell.setParent(listItem);
+
+		//EMI Out Bounces
+		listCell = new Listcell();
+		hbox = new Hbox();
+		space = new Space();
+		space.setSpacing("2px");
+		listCell.setId("emiBounce".concat(String.valueOf(bankInfoDetail.getKeyValue())));
+		Intbox emiBounces = new Intbox();
+		emiBounces.setValue(bankInfoDetail.getEmiBounceNo());
+		hbox.appendChild(space);
+		hbox.appendChild(emiBounces);
+		listCell.appendChild(hbox);
+		listCell.setParent(listItem);
+
 		// Delete action
 		listCell = new Listcell();
 		hbox = new Hbox();
@@ -1778,10 +2082,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.fromDate.setValue(bankInfo.getFromDate());
 		this.accountOpeningDate.setValue(bankInfo.getAccountOpeningDate());
 		this.toDate.setValue(bankInfo.getToDate());
-		this.repaymentFrom.setValue(bankInfo.getRepaymentFrom());
+		fillComboBox(this.repaymentFrom, bankInfo.getRepaymentFrom(), PennantStaticListUtil.getYesNo(), "");
 		this.NoOfMonthsBanking.setValue(bankInfo.getNoOfMonthsBanking());
 		this.lwowRatio.setValue(bankInfo.getLwowRatio());
-		this.ccLimit.setValue(bankInfo.getCcLimit());
+		this.ccLimit.setValue(PennantApplicationUtil.formateAmount(bankInfo.getCcLimit(), finFormatter));
+		if (StringUtils.equals(MasterDefUtil.getAccountTypeCode(AccountType.OD), bankInfo.getAccountType())
+				|| StringUtils.equals(MasterDefUtil.getAccountTypeCode(AccountType.CC), bankInfo.getAccountType())) {
+			this.ccLimit.setMandatory(true);
+		}
 		this.typeOfBanks.setValue(bankInfo.getTypeOfBanks());
 
 		this.recordStatus.setValue(bankInfo.getRecordStatus());
@@ -1802,6 +2110,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			setBankInfoDetails(bankInfoDetails);
 			doFillBankInfoDetails();
 		}
+
+		if (CollectionUtils.isNotEmpty(bankInfo.getExternalDocuments())) {
+			doFillExternalDocuments(bankInfo.getExternalDocuments());
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1980,7 +2293,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			wve.add(we);
 		}
 		try {
-			aCustomerBankInfo.setRepaymentFrom((this.repaymentFrom.getValue()));
+			aCustomerBankInfo.setRepaymentFrom(getComboboxValue(this.repaymentFrom));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1995,7 +2308,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			wve.add(we);
 		}
 		try {
-			aCustomerBankInfo.setCcLimit((this.ccLimit.getValue()));
+			aCustomerBankInfo
+					.setCcLimit(PennantApplicationUtil.unFormateAmount(this.ccLimit.getActualValue(), finFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2021,6 +2335,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		aCustomerBankInfo.setExternalDocuments(getExternalDocumentsList());
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -2028,7 +2344,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 				Component component = wve.get(i).getComponent();
 				if (!focus) {
 					focus = setComponentFocus(component);
@@ -2150,6 +2466,39 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				}
 				try {
 					getCompValuetoBean(listitem, "odCCLimit");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+				//Interest
+				try {
+					getCompValuetoBean(listitem, "interest");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+				//TRF
+				try {
+					getCompValuetoBean(listitem, "trf");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				//totalEmi
+				try {
+					getCompValuetoBean(listitem, "totalEmi");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				//totalSalary
+				try {
+					getCompValuetoBean(listitem, "totalSalary");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				//emiBounce
+				try {
+					getCompValuetoBean(listitem, "emiBounce");
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
@@ -2373,11 +2722,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				if (!debitNo.isReadonly() && debitNo.getValue() == null) {
 					throw new WrongValueException(debitNo,
 							Labels.getLabel("FIELD_IS_MAND", new String[] { "Debit No" }));
-				} else if (!debitNo.isReadonly() && debitNo.getValue() < 0) {
+				} else if (!debitNo.isReadonly() && debitNo.intValue() < 0) {
 					throw new WrongValueException(debitNo,
 							Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO", new String[] { "Debit No" }));
 				}
-				bankInfoDetail.setDebitNo(debitNo.getValue());
+				bankInfoDetail.setDebitNo(debitNo.intValue());
 			}
 			break;
 
@@ -2406,11 +2755,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				if (!creditNo.isReadonly() && creditNo.getValue() == null) {
 					throw new WrongValueException(creditNo,
 							Labels.getLabel("FIELD_IS_MAND", new String[] { "Credit No" }));
-				} else if (!creditNo.isReadonly() && creditNo.getValue() < 0) {
+				} else if (!creditNo.isReadonly() && creditNo.intValue() < 0) {
 					throw new WrongValueException(creditNo,
 							Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO", new String[] { "Credit No" }));
 				}
-				bankInfoDetail.setCreditNo(creditNo.getValue());
+				bankInfoDetail.setCreditNo(creditNo.intValue());
 			}
 			break;
 
@@ -2559,6 +2908,62 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				bankInfoDetail.setoDCCLimit(PennantApplicationUtil.unFormateAmount(odCCLimit, 2));
 			}
 			break;
+		case "interest":
+			BigDecimal interest = BigDecimal.ZERO;
+			Hbox hbox16 = (Hbox) getComponent(listitem, "interest");
+			if (hbox16 != null) {
+				CurrencyBox interestValue = (CurrencyBox) hbox16.getLastChild();
+				Clients.clearWrongValue(interestValue);
+				if (interestValue.getValidateValue() != null) {
+					interest = interestValue.getValidateValue();
+				}
+				bankInfoDetail.setInterest(PennantApplicationUtil.unFormateAmount(interest, 2));
+			}
+			break;
+		case "trf":
+			BigDecimal trf = BigDecimal.ZERO;
+			Hbox hbox17 = (Hbox) getComponent(listitem, "trf");
+			if (hbox17 != null) {
+				CurrencyBox trfValue = (CurrencyBox) hbox17.getLastChild();
+				Clients.clearWrongValue(trfValue);
+				if (trfValue.getValidateValue() != null) {
+					trf = trfValue.getValidateValue();
+				}
+				bankInfoDetail.setTrf(PennantApplicationUtil.unFormateAmount(trf, 2));
+			}
+			break;
+		case "totalEmi":
+			BigDecimal totalEmi = BigDecimal.ZERO;
+			Hbox hbox18 = (Hbox) getComponent(listitem, "totalEmi");
+			if (hbox18 != null) {
+				CurrencyBox totalEmiValue = (CurrencyBox) hbox18.getLastChild();
+				Clients.clearWrongValue(totalEmiValue);
+				if (totalEmiValue.getValidateValue() != null) {
+					totalEmi = totalEmiValue.getValidateValue();
+				}
+				bankInfoDetail.setTotalEmi(PennantApplicationUtil.unFormateAmount(totalEmi, 2));
+			}
+			break;
+		case "totalSalary":
+			BigDecimal totalSalary = BigDecimal.ZERO;
+			Hbox hbox19 = (Hbox) getComponent(listitem, "totalSalary");
+			if (hbox19 != null) {
+				CurrencyBox totalSalaryValue = (CurrencyBox) hbox19.getLastChild();
+				Clients.clearWrongValue(totalSalaryValue);
+				if (totalSalaryValue.getValidateValue() != null) {
+					totalSalary = totalSalaryValue.getValidateValue();
+				}
+				bankInfoDetail.setTotalSalary(PennantApplicationUtil.unFormateAmount(totalSalary, 2));
+			}
+			break;
+		case "emiBounce":
+			Hbox hbox20 = (Hbox) getComponent(listitem, "emiBounce");
+			if (hbox20 != null) {
+				Intbox emiBounceValue = (Intbox) hbox20.getLastChild();
+				Clients.clearWrongValue(emiBounceValue);
+				bankInfoDetail.setEmiBounceNo(emiBounceValue.intValue());
+			}
+			break;
 
 		default:
 			break;
@@ -2602,15 +3007,12 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 						int i = 0;
 						for (String day : configDay.split(",")) {
-
-							try {
-								Integer.parseInt(StringUtils.trim(day));
-							} catch (NumberFormatException e) {
-								logger.error(Literal.EXCEPTION, e);
-								continue;
-							}
-							i++;
+							/*
+							 * try { Integer.parseInt(StringUtils.trim(day)); } catch (NumberFormatException e) {
+							 * logger.error(Literal.EXCEPTION, e); continue; }
+							 */
 							//Label day = (Label) listcell.getFellowIfAny("day"+i);
+							i++;
 							CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny("balance_currency"
 									.concat(String.valueOf(bankInfoDetail.getKeyValue())).concat(String.valueOf(i)));
 							if (this.accountType.getValue() != null
@@ -2634,9 +3036,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 							}
 
 							BankInfoSubDetail subDetail = null;
-							if (list != null && !list.isEmpty()) {
+							if (CollectionUtils.isNotEmpty(list)) {
 								for (BankInfoSubDetail subDtl : list) {
-									if (subDtl.getDay() == i) {
+									if (subDtl.getDay() == NumberUtils.toInt(day)) {
+										subDtl.setBalance(PennantApplicationUtil.unFormateAmount(balance,
+												PennantConstants.defaultCCYDecPos));
 										subDetail = subDtl;
 									}
 								}
@@ -2645,10 +3049,12 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 							if (subDetail == null) {
 								subDetail = new BankInfoSubDetail();
 								subDetail.setMonthYear(bankInfoDetail.getMonthYear());
-								subDetail.setDay(i);
+								subDetail.setDay(NumberUtils.toInt(day));
+								subDetail.setBalance(PennantApplicationUtil.unFormateAmount(balance,
+										PennantConstants.defaultCCYDecPos));
 								list.add(subDetail);
 							}
-							subDetail.setBalance(balance);
+
 						}
 					}
 				}
@@ -2672,8 +3078,12 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 								Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Balance" }));
 					}
 					BankInfoSubDetail subDetail = new BankInfoSubDetail();
+
+					subDetail.setBalance(
+							PennantApplicationUtil.unFormateAmount(balance, PennantConstants.defaultCCYDecPos));
 					subDetail.setMonthYear(bankInfoDetail.getMonthYear()); // PSD #153044
 					subDetail.setBalance(balance);
+
 					list.add(subDetail);
 
 				}
@@ -2696,15 +3106,22 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 		Object dataObject = this.bankName.getObject();
 
-		if (dataObject instanceof String) {
-			this.bankName.setValue(dataObject.toString(), "");
+		if (dataObject instanceof String || dataObject == null) {
+			this.bankName.setValue("", "");
+			this.bankBranch.setValue("");
+			this.bankBranchID.setValue("", "");
+			this.accountNumber.setValue("");
 		} else {
 			BankDetail details = (BankDetail) dataObject;
 			if (details != null) {
 				this.bankName.setValue(details.getBankCode(), details.getBankName());
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = details.getAccNoLength();
+				}
+				if (accNoLength != 0) {
 					this.accountNumber.setMaxlength(accNoLength);
+				} else {
+					this.accountNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 				}
 
 			} else {
@@ -2917,9 +3334,20 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 		}
 		if (!this.phoneNumber.isReadonly()) {
-			this.phoneNumber.setConstraint(
-					new PTMobileNumberValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),
-							false, PennantRegularExpressions.MOBILE_REGEX, this.phoneNumber.getMaxlength()));
+			if (isCustomPhoneRegexReq) {
+				this.phoneNumber.setConstraint(new PTPhoneNumberValidator(
+						Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), false));
+			} else {
+				this.phoneNumber.setConstraint(new PTMobileNumberValidator(
+						Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), false,
+						PennantRegularExpressions.MOBILE_REGEX, this.phoneNumber.getMaxlength()));
+			}
+
+		}
+
+		if (!this.ccLimit.isReadonly()) {
+			this.ccLimit.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerBankInfoDialog_CCLimit.value"), null, this.ccLimit.isMandatory()));
 		}
 
 		logger.debug("Leaving");
@@ -3128,18 +3556,16 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalMax.setReadonly(isReadOnly("CustomerBankInfoDialog_EodBalMax"));
 		this.eodBalAvg.setReadonly(isReadOnly("CustomerBankInfoDialog_EodBalAvg"));
 		readOnlyComponent(isReadOnly("CustomerBankInfoDialog_AccountOpeningDate"), this.accountOpeningDate);
-
-		/*
-		 * this.bankBranch.setReadonly(isReadOnly( "CustomerBankInfoDialog_BankBranch"));
-		 * this.fromDate.setReadonly(isReadOnly( "CustomerBankInfoDialog_FromDate"));
-		 * this.fromDate.setReadonly(isReadOnly("CustomerBankInfoDialog_ToDate") );
-		 * this.repaymentFrom.setReadonly(isReadOnly( "CustomerBankInfoDialog_RepaymentFrom"));
-		 * this.NoOfMonthsBanking.setReadonly(isReadOnly( "CustomerBankInfoDialog_NoOfMonthsBanking"));
-		 * this.lwowRatio.setReadonly(isReadOnly( "CustomerBankInfoDialog_lwowRatio"));
-		 * this.ccLimit.setReadonly(isReadOnly("CustomerBankInfoDialog_CCLimit") );
-		 * this.typeOfBanks.setReadonly(isReadOnly( "CustomerBankInfoDialog_TypeOfBanks"));
-		 */
-
+		readOnlyComponent(isReadOnly("CustomerBankInfoDialog_BankBranch"), this.bankBranch);
+		readOnlyComponent(isReadOnly("CustomerBankInfoDialog_FromDate"), this.fromDate);
+		readOnlyComponent(isReadOnly("CustomerBankInfoDialog_ToDate"), this.toDate);
+		readOnlyComponent(isReadOnly("CustomerBankInfoDialog_RepaymentFrom"), this.repaymentFrom);
+		readOnlyComponent(isReadOnly("CustomerBankInfoDialog_NoOfMonthsBanking"), this.NoOfMonthsBanking);
+		readOnlyComponent(isReadOnly("CustomerBankInfoDialog_lwowRatio"), this.lwowRatio);
+		readOnlyComponent(isReadOnly("CustomerBankInfoDialog_CCLimit"), this.ccLimit);
+		readOnlyComponent(isReadOnly("CustomerBankInfoDialog_TypeOfBanks"), this.typeOfBanks);
+		this.phoneNumber.setReadonly(isReadOnly("CustomerBankInfoDialog_PhoneNumber"));
+		this.accountHolderName.setReadonly(isReadOnly("CustomerBankInfoDialog_AccountHolderName"));
 		setMonthlyIncomeListBoxProperties();
 
 		if (isWorkFlowEnabled()) {
@@ -3173,6 +3599,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		logger.debug("Leaving");
 	}
 
+	@Override
 	public boolean isReadOnly(String componentName) {
 		boolean isCustomerWorkflow = false;
 		if (getCustomerDialogCtrl() != null) {
@@ -3611,6 +4038,319 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 	}
 
+	public void onClick$button_CustomerBankInfoDialog_btnPerfiosDocUpload(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		ExternalDocument externalDocument = new ExternalDocument();
+		externalDocument.setNewRecord(true);
+		map.put("customerBankInfoDialogCtrl", this);
+		map.put("newRecord", "true");
+		map.put("roleCode", getRole());
+		map.put("externalDocument", externalDocument);
+		map.put("finReference", finReference);
+		try {
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/ExternalDocumentDialog.zul",
+					window_CustomerBankInfoDialog, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onClick$button_CustomerBankInfoDialog_btnInitiateperfios(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+
+		if (perfiosService != null) {
+			HashMap<String, Object> employerMap = new HashMap<>();
+			String empType = "SelfEmployed";
+			String empName = "";
+			String bankCode = "";
+			if (customerBankInfo != null) {
+				bankCode = StringUtils.trimToEmpty(customerBankInfo.getBankName());
+			}
+
+			Map<String, Object> bankInfoMap = new HashMap<>();
+			List<CustomerBankInfo> customerBankInfoList = new ArrayList<CustomerBankInfo>();
+
+			List<ExternalDocument> externalDocuments = getExternalDocumentsList();
+			List<ExternalDocument> externalDocumentsList = new ArrayList<>();
+			List<ExternalDocument> notSavedDocList = new ArrayList<>();
+			List<ExternalDocument> processedDocList = new ArrayList<>();
+
+			if (CollectionUtils.isEmpty(externalDocuments)) {
+				MessageUtil.showMessage("Documents are not available to initiate Perfios,Please upload the documents");
+				return;
+			} else if (CollectionUtils.isNotEmpty(externalDocuments)) {
+
+				ArrayList<Date> fromAndToDates = new ArrayList<>();
+
+				for (ExternalDocument externalDocument : externalDocuments) {
+
+					if (!(externalDocument.getId() <= 0)
+							&& !(perfiosService.isDocumentExists(externalDocument.getDocRefId(), ""))) {
+
+						if (StringUtils.isEmpty(externalDocument.getFinReference())) {
+							externalDocument.setFinReference(this.finReference);
+						}
+
+						if (externalDocument.getDocImage() == null) {
+							externalDocument.setDocImage(dmsService.getById(externalDocument.getDocRefId()));
+						}
+
+						externalDocumentsList.add(externalDocument);
+
+						fromAndToDates.add(DateUtil.getDatePart(externalDocument.getFromDate()));
+						fromAndToDates.add(DateUtil.getDatePart(externalDocument.getToDate()));
+
+					} else if (externalDocument.getId() <= 0) {
+						notSavedDocList.add(externalDocument);
+					} else {
+						processedDocList.add(externalDocument);
+					}
+				}
+
+				if (CollectionUtils.isEmpty(notSavedDocList) && CollectionUtils.isNotEmpty(externalDocumentsList)) {
+
+					if (getCustomerDialogCtrl() != null) {
+						employerMap = getCustomerDialogCtrl().getExtendedFieldDetails();
+					}
+
+					if (employerMap.containsKey("empName")) {
+						empName = (String) employerMap.get("empName");
+					}
+
+					Map<String, Object> map = new HashMap<>();
+
+					if (StringUtils.equals(PennantConstants.EMPLOYMENTTYPE_SALARIED, this.empType)) {
+						empType = "Salaried";
+					} else if (StringUtils.equals(PennantConstants.EMPLOYMENTTYPE_SEP, this.empType)) {
+						empType = "SelfEmployed";
+					}
+
+					Date docFromDate = Collections.min(fromAndToDates);
+					Date docToDate = Collections.max(fromAndToDates);
+					map.put("empType", empType);
+					map.put("facility", "NONE");
+					map.put("sanLimitType", false);
+					map.put("sanLimitFixedAmt", BigDecimal.ZERO);
+					map.put("variableAmounts", BigDecimal.ZERO);
+					map.put("empName", empName);
+					map.put("financeAmount", finAmount);
+					map.put("bankName", bankName);
+					map.put("bankCode", bankCode);
+					if (tenor == 0) {
+						tenor = 1;
+					}
+					map.put("loanDuration", tenor);
+					map.put("custCIF", this.customerBankInfo.getLovDescCustCIF());
+					map.put("finReference", this.finReference);
+					map.put("yearMonthFrom", docFromDate);
+					map.put("yearMonthTo", docToDate);
+					bankInfoMap = perfiosService.statementUpaload(externalDocumentsList, map);
+					customerBankInfoList = (List<CustomerBankInfo>) bankInfoMap.get("custBankInfoList");
+				} else if (CollectionUtils.isNotEmpty(notSavedDocList)) {
+					MessageUtil.showMessage("Please Save all the documents and proceed with perfios initiation");
+					return;
+				} else if (CollectionUtils.isNotEmpty(processedDocList)) {
+					MessageUtil.showMessage("All Documents are initiated to perfios");
+					return;
+				}
+			}
+
+			if (!bankInfoMap.isEmpty() && bankInfoMap.get("error") != null
+					&& StringUtils.isNotEmpty(bankInfoMap.get("error").toString())) {
+				MessageUtil.showMessage(bankInfoMap.get("error").toString());
+				return;
+			}
+
+			if (CollectionUtils.isNotEmpty(customerBankInfoList)) {
+				List<BankInfoDetail> bankInfoDetails = new ArrayList<>();
+
+				for (CustomerBankInfo info : customerBankInfoList) {
+					bankInfoDetails = info.getBankInfoDetails();
+					for (int i = 0; i < bankInfoDetails.size(); i++) {
+						bankInfoDetails.get(i).setKeyValue(i + 1);
+					}
+				}
+
+				setBankInfoDetails(bankInfoDetails);
+				doFillBankInfoDetails();
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void doFillExternalDocuments(List<ExternalDocument> externalDocuments) {
+		logger.debug(Literal.ENTERING);
+
+		listBoxDocuments.getItems().clear();
+		if (CollectionUtils.isNotEmpty(externalDocuments)) {
+			int i = 0;
+			for (ExternalDocument externalDocument : externalDocuments) {
+				i++;
+				Listitem item = new Listitem();
+				Listcell lc;
+
+				lc = new Listcell();
+				lc.setId("DocName".concat(String.valueOf(i)));
+				A docLink = new A();
+				docLink.setLabel(externalDocument.getDocName());
+				docLink.addForward("onClick", self, "onClickDoDownload", externalDocument);
+				docLink.setStyle("text-decoration:underline;");
+				lc.appendChild(docLink);
+				lc.setParent(item);
+
+				lc = new Listcell();
+				lc.setIconSclass("FromDate".concat(String.valueOf(i)));
+				lc.setLabel(DateUtility.formatToLongDate(externalDocument.getFromDate()));
+				lc.setParent(item);
+
+				lc = new Listcell();
+				lc.setIconSclass("ToDate".concat(String.valueOf(i)));
+				lc.setLabel(DateUtility.formatToLongDate(externalDocument.getToDate()));
+				lc.setParent(item);
+
+				if (!externalDocument.isNew()) {
+					lc = new Listcell();
+					lc.setId("ResDoc".concat(String.valueOf(i)));
+					A responseDoc = new A();
+					responseDoc.setLabel("Perfios Report");
+					responseDoc.addForward("onClick", self, "onClickDownloadPerfiosReport", externalDocument);
+					responseDoc.setStyle("text-decoration:underline;");
+					responseDoc.setTooltiptext("Downlod the Perfios Report");
+					lc.appendChild(responseDoc);
+					lc.setParent(item);
+				} else {
+					lc = new Listcell();
+					lc.setParent(item);
+				}
+
+				item.setAttribute("data", externalDocument);
+				this.listBoxDocuments.appendChild(item);
+			}
+			setExternalDocumentsList(externalDocuments);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClickDoDownload(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		ExternalDocument externalDocumet = (ExternalDocument) event.getData();
+
+		if (externalDocumet != null && externalDocumet.getDocRefId() != 0
+				&& externalDocumet.getDocRefId() != Long.MIN_VALUE && externalDocumet.getDocImage() == null) {
+			externalDocumet.setDocImage(dmsService.getById(externalDocumet.getDocRefId()));
+		}
+		AMedia amedia = null;
+		if (externalDocumet != null && externalDocumet.getDocImage() != null) {
+			final InputStream data = new ByteArrayInputStream(externalDocumet.getDocImage());
+			String docName = externalDocumet.getDocName();
+			if (externalDocumet.getDocType().equals(PennantConstants.DOC_TYPE_PDF)) {
+				amedia = new AMedia(docName, "pdf", "application/pdf", data);
+			} else if (externalDocumet.getDocType().equals(PennantConstants.DOC_TYPE_IMAGE)) {
+				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
+			} else if (externalDocumet.getDocType().equals(PennantConstants.DOC_TYPE_WORD)
+					|| externalDocumet.getDocType().equals(PennantConstants.DOC_TYPE_MSG)) {
+				amedia = new AMedia(docName, "docx", "application/pdf", data);
+			} else if (externalDocumet.getDocType().equals(PennantConstants.DOC_TYPE_ZIP)) {
+				amedia = new AMedia(docName, "x-zip-compressed", "application/x-zip-compressed", data);
+			} else if (externalDocumet.getDocType().equals(PennantConstants.DOC_TYPE_7Z)) {
+				amedia = new AMedia(docName, "octet-stream", "application/octet-stream", data);
+			} else if (externalDocumet.getDocType().equals(PennantConstants.DOC_TYPE_RAR)) {
+				amedia = new AMedia(docName, "x-rar-compressed", "application/x-rar-compressed", data);
+			}
+			Filedownload.save(amedia);
+
+		} else {
+			MessageUtil.showMessage("Document details not available.");
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClickDownloadPerfiosReport(ForwardEvent event) {
+
+		logger.debug(Literal.ENTERING);
+
+		try {
+			if (perfiosService != null) {
+				ExternalDocument externalDocument = (ExternalDocument) event.getData();
+				PerfiosHeader perfiosHeader = perfiosService.getPerfiosReponseDocDetails(externalDocument.getDocRefId(),
+						"");
+
+				if (perfiosHeader != null) {
+					AMedia amedia = null;
+					final InputStream data;
+					if (perfiosHeader.getDocRefId() != null && perfiosHeader.getDocRefId() != 0
+							&& perfiosHeader.getDocRefId() != Long.MIN_VALUE) {
+						byte[] docImage = dmsService.getById(perfiosHeader.getDocRefId());
+						if (docImage != null) {
+							data = new ByteArrayInputStream(docImage);
+							amedia = new AMedia(perfiosHeader.getDocName(), "xlsx",
+									"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", data);
+							if (amedia != null) {
+								Filedownload.save(amedia);
+							}
+						}
+					} else if (StringUtils.equals(
+							SysParamUtil.getValueAsString(SMTParameterConstants.PERFIOS_REPORT_DOWNLOAD),
+							PennantConstants.YES) && StringUtils.equals(perfiosHeader.getStatusCode(), "S")
+							&& StringUtils.equals(perfiosHeader.getProcessStage(), "G")) { // Report generated but not downloaded.
+
+						perfiosHeader = customerDetailsService
+								.processPerfiosDocumentAndBankInfoDetails(perfiosHeader.getTransactionId());
+						if (perfiosHeader != null && perfiosHeader.getDocImage() != null) {
+							data = new ByteArrayInputStream(perfiosHeader.getDocImage());
+							amedia = new AMedia(perfiosHeader.getDocName(), "xlsx",
+									"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", data);
+							if (amedia != null) {
+								Filedownload.save(amedia);
+							}
+						} else {
+							MessageUtil.showMessage(perfiosHeader.getStatusDesc());
+						}
+					} else if (StringUtils.equals(perfiosHeader.getStatusCode(), "E")
+							&& StringUtils.isNotEmpty(perfiosHeader.getStatusDesc())) {
+						MessageUtil.showMessage("Perfios Report not yet generated.");
+					} else {
+						MessageUtil.showMessage("Perfios Report not yet generated.");
+					}
+				} else {
+					MessageUtil.showMessage("Perfios Report details does not exist.");
+				}
+			}
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * when clicks on extended combobox "accountType"
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 * @throws InterfaceException
+	 */
+	public void onFulfill$accountType(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING + event.toString());
+		Object dataObject = this.accountType.getObject();
+		if (dataObject instanceof String || dataObject == null) {
+			this.ccLimit.setMandatory(false);
+			this.ccLimit.setErrorMessage("");
+		} else {
+			LovFieldDetail details = (LovFieldDetail) dataObject;
+			if (details != null) {
+				if (StringUtils.equals(MasterDefUtil.getAccountTypeCode(AccountType.OD), details.getFieldCodeValue())
+						|| StringUtils.equals(MasterDefUtil.getAccountTypeCode(AccountType.CC),
+								details.getFieldCodeValue())) {
+					this.ccLimit.setMandatory(true);
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING + event.toString());
+	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -3690,4 +4430,28 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	public void setBankInfoSubDetails(List<BankInfoSubDetail> bankInfoSubDetails) {
 		this.bankInfoSubDetails = bankInfoSubDetails;
 	}
+
+	public List<ExternalDocument> getExternalDocumentsList() {
+		return externalDocumentsList;
+	}
+
+	public void setExternalDocumentsList(List<ExternalDocument> externalDocumentsList) {
+		this.externalDocumentsList = externalDocumentsList;
+	}
+
+	@Autowired(required = false)
+	public void setPerfiosService(PerfiousService perfiosService) {
+		this.perfiosService = perfiosService;
+	}
+
+	@Autowired
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	@Autowired
+	public void setDmsService(DMSService dmsService) {
+		this.dmsService = dmsService;
+	}
+
 }

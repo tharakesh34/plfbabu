@@ -188,11 +188,11 @@ public class City extends AbstractWorkflowEntity {
 		this.userDetails = userDetails;
 	}
 
-	public String getpCCityClassification() {
+	public String getPCCityClassification() {
 		return pCCityClassification;
 	}
 
-	public void setpCCityClassification(String pCCityClassification) {
+	public void setPCCityClassification(String pCCityClassification) {
 		this.pCCityClassification = pCCityClassification;
 	}
 

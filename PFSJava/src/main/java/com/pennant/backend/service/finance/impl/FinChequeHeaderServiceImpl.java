@@ -130,12 +130,14 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader, TableType tableType) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-
-		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return auditHeader;
-		}
+		auditHeader = businessValidation(auditHeader, PennantConstants.method_saveOrUpdate);
+		/**
+		 * Commented because the business validation not required it is calling from Finance detail service impl save or
+		 * update Need to change the code.
+		 */
+		/*
+		 * if (!auditHeader.isNextProcess()) { logger.info(Literal.LEAVING); return auditHeader; }
+		 */
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		ChequeHeader chequeHeader = (ChequeHeader) auditHeader.getAuditDetail().getModelData();
@@ -262,7 +264,9 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 		String auditTranType = "";
 
-		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
+		if (StringUtils.equals(PennantConstants.method_saveOrUpdate, method)
+				|| StringUtils.equals(PennantConstants.method_doApprove, method)
+				|| StringUtils.equals(PennantConstants.method_doReject, method)) {
 			if (chequeHeader.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
@@ -321,7 +325,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 				detail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
-			if ("saveOrUpdate".equals(method) && (isRcdType)) {
+			if (StringUtils.equals(PennantConstants.method_saveOrUpdate, method) && (isRcdType)) {
 				detail.setNewRecord(true);
 			}
 
@@ -448,11 +452,14 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		auditHeader = businessValidation(auditHeader, "doApprove");
-
-		if (!auditHeader.isNextProcess()) {
-			return auditHeader;
-		}
+		auditHeader = businessValidation(auditHeader, PennantConstants.method_doApprove);
+		/**
+		 * Commented because the business validation not required it is calling from Finance detail service impl save or
+		 * update Need to change the code.
+		 */
+		/*
+		 * if (!auditHeader.isNextProcess()) { return auditHeader; }
+		 */
 
 		ChequeHeader chequeHeader = new ChequeHeader();
 		BeanUtils.copyProperties((ChequeHeader) auditHeader.getAuditDetail().getModelData(), chequeHeader);
@@ -518,10 +525,12 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 		for (ChequeDetail detail : chequeDetails) {
 			if (!detail.isNewRecord()) {
-				if (detail.getDocImage() != null || detail.getDocumentRef() == Long.MIN_VALUE) {
+				if (detail.getDocImage() != null) {
 					dd.setUserDetails(detail.getUserDetails());
-
-					byte[] arr1 = getDocumentImage(detail.getDocumentRef());
+					byte[] arr1 = null;
+					if (detail.getDocumentRef() != null && detail.getDocumentRef() > 0) {
+						arr1 = getDocumentImage(detail.getDocumentRef());
+					}
 					byte[] arr2 = detail.getDocImage();
 
 					if (!Arrays.equals(arr1, arr2)) {
@@ -577,11 +586,14 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "doApprove");
-		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return auditHeader;
-		}
+		auditHeader = businessValidation(auditHeader, PennantConstants.method_doReject);
+		/**
+		 * Commented because the business validation not required it is calling from Finance detail service impl save or
+		 * update Need to change the code.
+		 */
+		/*
+		 * if (!auditHeader.isNextProcess()) { logger.info(Literal.LEAVING); return auditHeader; }
+		 */
 
 		ChequeHeader chequeHeader = (ChequeHeader) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);

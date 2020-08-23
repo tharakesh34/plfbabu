@@ -129,113 +129,108 @@
 								<row id="row6">
 									<label id="label_City" value="${c:l('label_BuilderCompanyDialog_City.value')}" />
 									<extendedcombobox id="city" />
-									<label id="label_Code" value="${c:l('label_BuilderCompanyDialog_Code.value')}" />
-									<extendedcombobox id="code" />
-
+									<label id="label_State" value="${c:l('label_BuilderCompanyDialog_State.value')}" />
+									<extendedcombobox id="state" />
 								</row>
 								<row id="row7">
+									<label id="label_Code" value="${c:l('label_BuilderCompanyDialog_Code.value')}" />
+									<extendedcombobox id="code" />
 									<label id="label_DevAvailablity" value="${c:l('label_BuilderCompanyDialog_DevAvailablity.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<intbox id="devavailablity" width="150px" style="text-align:right" />
 									</hbox>
+								</row>
+								<row id="row8">
 									<label id="label_Magnitude" value="${c:l('label_BuilderCompanyDialog_Magnitude.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<decimalbox id="magnitude" maxlength="19" width="150px" />
 									</hbox>
-
-								</row>
-								<row id="row8">
 									<label id="label_AbsAvailablity" value="${c:l('label_BuilderCompanyDialog_AbsAvailablity.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<decimalbox id="absavailablity" maxlength="19" width="150px" />
 									</hbox>
+								</row>
+								<row id="row9">
 									<label id="label_TotalProj" value="${c:l('label_BuilderCompanyDialog_TotalProj.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<intbox id="totalProj" maxlength="3" width="150px" style="text-align:right" />
 									</hbox>
-
-								</row>
-								<row id="row9">
 									<label id="label_Approved" value="${c:l('label_BuilderCompanyDialog_Approved.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<combobox id="approved" maxlength="30" width="150px" />
 									</hbox>
+								</row>
+								<row id="row10">
 									<label id="label_Remarks" value="${c:l('label_BuilderCompanyDialog_Remarks.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="remarks" maxlength="500" width="150px" />
 									</hbox>
-
-								</row>
-								<row id="row10">
 									<label id="label_PANDetails" value="${c:l('label_BuilderCompanyDialog_PANDetails.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="panDetails" maxlength="10" width="150px" />
 									</hbox>
+								</row>
+								<row id="row11">
 									<label id="label_BenfName" value="${c:l('label_BuilderCompanyDialog_BenfName.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="benfName" maxlength="150" width="150px" />
 									</hbox>
-
-								</row>
-								<row id="row11">
 									<label id="label_AccountNo" value="${c:l('label_BuilderCompanyDialog_AccountNo.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="accountNo" maxlength="20" width="150px" />
 									</hbox>
+								</row>
+								<row id="row12">
 									<label id="label_BankName" value="${c:l('label_BuilderCompanyDialog_BankName.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="bankName" width="150px" />
 										<label id="bankNameDesc" style="margin-left:10px;display:inline-block;padding-top:3px;" />
 									</hbox>
-
-
-								</row>
-								<row id="row12">
 									<label id="label_BankBranch" value="${c:l('label_BuilderCompanyDialog_BankBranch.value')}" />
 									<extendedcombobox id="bankBranch" />
+								</row>
+								<row id="row13">
 									<label id="label_IFSC" value="${c:l('label_BuilderCompanyDialog_IFSCCode.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="ifsc" maxlength="11" width="150px" />
 									</hbox>
-
-								</row>
-								<row id="row13">
 									<label id="label_LimitOnAmt" value="${c:l('label_BuilderCompanyDialog_LimitOnAmt.value')}" />
 									<currencyBox id="limitOnAmt" width="150px" />
+								</row>
+								<row id="row14">
 									<label id="label_LimitOnUnits" value="${c:l('label_BuilderCompanyDialog_LimitOnNoOfUnits.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<decimalbox id="limitOnUnits" maxlength="19" width="150px" />
 									</hbox>
-
-								</row>
-								<row id="row14">
 									<label id="label_CurrentExpUni" value="${c:l('label_BuilderCompanyDialog_CurrentExpUni.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<intbox id="currentExpUni" maxlength="18" width="150px" style="text-align:right" />
 									</hbox>
+								</row>
+								<row id="row15">
 									<label id="label_CurrentExpAmt" value="${c:l('label_BuilderCompanyDialog_CurrentExpAmt.value')}" />
 									<currencyBox id="currentExpAmt" width="150px" />
-								</row>
-
-								<row id="row15">
 									<label id="label_DateOfInCop" value="${c:l('label_BuilderCompanyDialog_DateOfInCop.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<datebox id="dateOfInCop" width="150px" />
 									</hbox>
+								</row>
+
+								<row id="row16">
 									<label id="label_Active" value="${c:l('label_BuilderCompanyDialog_Active.value')}" />
 									<hbox>
 										<space spacing="2px" />
@@ -257,7 +252,7 @@
 								<column width="35%" />
 							</columns>
 							<rows>
-								<row id="row16">
+								<row>
 
 									<label id="label_NoOfProj" value="${c:l('label_BuilderCompanyDialog_NoOfProj.value')}" />
 									<hbox>
@@ -325,3 +320,4 @@
 		</borderlayout>
 	</window>
 </zk>
+								

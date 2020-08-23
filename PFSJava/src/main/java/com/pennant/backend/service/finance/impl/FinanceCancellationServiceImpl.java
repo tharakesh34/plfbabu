@@ -291,7 +291,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		if (!financeMain.isWorkflow()) {
 			if (FinanceConstants.ACCOUNTING_TOTALREVERSAL) {
 				//Cancel All Transactions for Finance Disbursement including Commitment Postings, Stage Accounting on Reversal
-				getPostingsPreparationUtil().postReveralsByFinreference(finReference, true);
+				getPostingsPreparationUtil().postReveralsExceptFeePay(finReference);
 				logger.debug("Reverse Transaction Success for Reference : " + finReference);
 			} else {
 				//Event Based Accounting on Final Stage
@@ -505,8 +505,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		//Finance Cancellation Posting Process Execution
 		//=====================================
 		//Event Based Accounting on Final Stage
-		List<ReturnDataSet> returnDataSets = getPostingsPreparationUtil().postReveralsByFinreference(finReference,
-				true);
+		List<ReturnDataSet> returnDataSets = getPostingsPreparationUtil().postReveralsExceptFeePay(finReference);
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
@@ -712,8 +711,26 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		invoiceDetail.setWaiver(false);
 		invoiceDetail.setDbInvSetReq(true);
 
+		//Normal Fees invoice preparation
+		//In Case of Loan Cancel Approval GST Invoice is happen only for remaining fee after IMD.
+		if (CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinFeeDetailList())) {
+			for (FinFeeDetail fee : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+				fee.setPaidFromLoanApproval(true);
+			}
+		}
+
 		// Normal Fees invoice preparation
-		this.gstInvoiceTxnService.feeTaxInvoicePreparation(invoiceDetail);
+		Long dueInvoiceID = this.gstInvoiceTxnService.feeTaxInvoicePreparation(invoiceDetail);
+
+		for (int i = 0; i < financeDetail.getFinScheduleData().getFinFeeDetailList().size(); i++) {
+			FinFeeDetail finFeeDetail = financeDetail.getFinScheduleData().getFinFeeDetailList().get(i);
+			if (finFeeDetail.getTaxHeader() != null && finFeeDetail.getNetAmount().compareTo(BigDecimal.ZERO) > 0) {
+				if (dueInvoiceID == null) {
+					dueInvoiceID = finFeeDetail.getTaxHeader().getInvoiceID();
+				}
+				finFeeDetail.getTaxHeader().setInvoiceID(dueInvoiceID);
+			}
+		}
 
 		// Waiver Fees Invoice Preparation
 		if (ImplementationConstants.TAX_DFT_CR_INV_REQ) {

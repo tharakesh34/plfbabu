@@ -310,7 +310,7 @@ public class DisbursementInstCtrl {
 					lc.setParent(item);
 
 					if (detail.getStatus() != null && detail.getStatus().equals("REJECTED")) {
-						lc = new Listcell(detail.getStatus() + "-" + detail.getRejectReason());
+						lc = new Listcell(detail.getStatus() + "-" + StringUtils.trimToEmpty(detail.getRejectReason()));
 					} else {
 						lc = new Listcell(detail.getStatus());
 					}
@@ -530,7 +530,7 @@ public class DisbursementInstCtrl {
 	}
 
 	public void onClickNew(Object listCtrl, Object dialogCtrl, String module, List<FinAdvancePayments> list,
-			PayOrderIssueHeader payOrderIssueHeader) throws Exception {
+			PayOrderIssueHeader payOrderIssueHeader, String moduleDefiner) throws Exception {
 		logger.debug("Entering");
 
 		final FinAdvancePayments aFinAdvancePayments = new FinAdvancePayments();
@@ -543,6 +543,7 @@ public class DisbursementInstCtrl {
 		map.put("finAdvancePayments", aFinAdvancePayments);
 		map.put("newRecord", "true");
 		map.put("documentDetails", getDocumentDetails());
+		map.put("moduleDefiner", moduleDefiner);
 		doshowDialog(map, listCtrl, dialogCtrl, module, false, payOrderIssueHeader);
 
 		logger.debug("Leaving");

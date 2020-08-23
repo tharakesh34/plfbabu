@@ -81,6 +81,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
@@ -604,7 +605,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 				// NOC Issuance checking
 				int count = getLiabilityRequestDAO().getFinareferenceCount(liabilityRequest.getFinReference(), "_View");
 
-				if (count > 0) {
+				if (!SysParamUtil.isAllowed(SMTParameterConstants.NOC_GENERATION_MULTIPLE) && count > 0) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41041", errParm, valueParm), usrLanguage));
 				} else if (liabilityRequest.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new

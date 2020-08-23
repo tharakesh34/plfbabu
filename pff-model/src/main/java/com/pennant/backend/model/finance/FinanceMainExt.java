@@ -11,6 +11,8 @@ public class FinanceMainExt implements Serializable {
 	private String nstlAccNum;
 	private boolean processFlag;
 	private String ifscCode;
+	private byte[] remarks1;
+	private byte[] remarks2;
 
 	public FinanceMainExt() {
 		super();
@@ -60,4 +62,19 @@ public class FinanceMainExt implements Serializable {
 		this.ifscCode = ifscCode;
 	}
 
+	public byte[] getRemarks1() {
+		return remarks1;
+	}
+
+	public void setRemarks1(byte[] remarks1) {
+		this.remarks1 = remarks1;
+	}
+
+	public byte[] getRemarks2() {
+		return remarks2;
+	}
+
+	public void setRemarks2(byte[] remarks2) {
+		this.remarks2 = remarks2;
+	}
 }

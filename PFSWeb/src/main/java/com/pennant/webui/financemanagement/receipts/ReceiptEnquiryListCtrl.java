@@ -110,9 +110,9 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		this.module = getArgument("module");
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			super.moduleCode = "FeeReceipt";
-			super.tableName = "FINRECEIPTHEADER_FEDVIEW";
-			super.queueTableName = "FINRECEIPTHEADER_FEDVIEW";
-			super.enquiryTableName = "FINRECEIPTHEADER_FEDVIEW";
+			super.tableName = "FinReceiptHeader_FEDView";
+			super.queueTableName = "FinReceiptHeader_FEDView";
+			super.enquiryTableName = "FinReceiptHeader_FEDView";
 		} else {
 			super.moduleCode = "FinReceiptHeader";
 			super.tableName = "FinReceiptHeader_View";

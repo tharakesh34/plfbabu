@@ -43,6 +43,9 @@
 package com.pennant.backend.dao.rulefactory.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -54,6 +57,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -247,28 +251,29 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 	@Override
 	public void saveBatch(List<ReturnDataSet> dataSetList, boolean isNewTranID) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		setEntityCode(dataSetList);
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Insert Into Postings");
-		insertSql.append(" (LinkedTranId, Postref, PostingId, finReference, FinEvent,");
-		insertSql.append(" PostDate, ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account,ShadowPosting,");
-		insertSql.append(" PostAmountLcCcy, TransOrder, DerivedTranOrder,PostToSys,ExchangeRate, ");
-		insertSql.append(" PostAmount,AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId,");
-		insertSql.append(
-				" PostBranch, AppDate, AppValueDate, UserBranch, PostCategory , CustAppDate, AccountType, OldLinkedTranId, EntityCode )");
-		insertSql.append(" Values(:LinkedTranId, :Postref, :PostingId, :finReference, :FinEvent,");
-		insertSql.append(" :PostDate, :ValueDate, :TranCode, :TranDesc, :RevTranCode, :DrOrCr, :Account,");
-		insertSql.append(" :ShadowPosting,:PostAmountLcCcy, :TransOrder, :DerivedTranOrder,:PostToSys,");
-		insertSql.append(" :ExchangeRate,:PostAmount, :AmountType, :PostStatus, :ErrorId, :ErrorMsg, ");
-		insertSql.append(" :AcCcy,:TranOrderId,:PostBranch, :AppDate, :AppValueDate, :UserBranch, ");
-		insertSql.append(" :PostCategory , :CustAppDate, :AccountType, :OldLinkedTranId, :EntityCode)");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Insert Into Postings");
+		sql.append(" (LinkedTranId, Postref, PostingId, finReference, FinEvent");
+		sql.append(", PostDate, ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account");
+		sql.append(", ShadowPosting, PostAmountLcCcy, TransOrder, DerivedTranOrder, PostToSys");
+		sql.append(", ExchangeRate, PostAmount,AmountType, PostStatus, ErrorId, ErrorMsg");
+		sql.append(", AcCcy, TranOrderId, PostBranch, AppDate, AppValueDate, UserBranch");
+		sql.append(", PostCategory, CustAppDate, AccountType, OldLinkedTranId, EntityCode)");
+		sql.append(" Values(:LinkedTranId, :Postref, :PostingId, :finReference, :FinEvent,");
+		sql.append(" :PostDate, :ValueDate, :TranCode, :TranDesc, :RevTranCode, :DrOrCr, :Account,");
+		sql.append(" :ShadowPosting,:PostAmountLcCcy, :TransOrder, :DerivedTranOrder,:PostToSys,");
+		sql.append(" :ExchangeRate,:PostAmount, :AmountType, :PostStatus, :ErrorId, :ErrorMsg, ");
+		sql.append(" :AcCcy,:TranOrderId,:PostBranch, :AppDate, :AppValueDate, :UserBranch, ");
+		sql.append(" :PostCategory , :CustAppDate, :AccountType, :OldLinkedTranId, :EntityCode)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
+
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dataSetList.toArray());
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 
 		if (isNewTranID) {
 			Set<Long> linkedTransactions = new HashSet<>();
@@ -281,7 +286,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setEntityCode(List<ReturnDataSet> dataSetList) {
@@ -533,8 +538,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	 */
 
 	@Override
-	public List<ReturnDataSet> getPostingsByFinRef(String finReference, boolean reqReversals,
-			boolean imdFeeReversalReq) {
+	public List<ReturnDataSet> getPostingsByFinRef(String finReference, boolean reqReversals) {
 		logger.debug("Entering");
 
 		ReturnDataSet dataSet = new ReturnDataSet();
@@ -556,8 +560,11 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		if (!reqReversals) {
 			selectSql.append(" and OldLinkedTranID = 0 ");
 		}
-		if (imdFeeReversalReq && !SysParamUtil.isAllowed(SMTParameterConstants.UPFRONT_FEE_REVERSAL_REQ)) {
-			selectSql.append(" and T1.FinEvent != 'FEEPAY' ");
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL)) {
+			selectSql.append(
+					" and T1.LinkedTranId not in (Select LINKEDTRANID from FINADVANCEPAYMENTS Where STATUS in ('REJECTED','CANCELED') ");
+			selectSql.append(" and FINREFERENCE= :FinReference and  T1.FinEvent = 'DISBINS') ");
 		}
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL)) {
@@ -703,6 +710,88 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			logger.debug(Literal.EXCEPTION, e);
 		}
 		return null;
+	}
+
+	@Override
+	public List<ReturnDataSet> getPostingsByLinkedTranId(List<Long> linkedTranId, boolean reversal) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select * from (");
+		sql.append("Select LinkedTranId, Postref, PostingId, FinReference, FinEvent, PostDate, ValueDate");
+		sql.append(", TranCode, TranDesc, RevTranCode, DrOrCr, Account, ShadowPosting, PostAmount");
+		sql.append(", AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId, PostToSys, ExchangeRate");
+		sql.append(", PostBranch, AppDate, AppValueDate, UserBranch");
+		sql.append(" from Postings");
+		sql.append(" Where LinkedTranId in (?) ");
+		if (reversal) {
+			sql.append(" union all");
+			sql.append(" Select LinkedTranId, Postref, PostingId, FinReference, FinEvent, PostDate, ValueDate");
+			sql.append(", TranCode,  TranDesc, RevTranCode, DrOrCr, Account, ShadowPosting, PostAmount");
+			sql.append(", AmountType, PostStatus, ErrorId, ErrorMsg");
+			sql.append(", AcCcy, TranOrderId, PostToSys, ExchangeRate, PostBranch");
+			sql.append(", AppDate, AppValueDate, UserBranch");
+			sql.append(" FROM Postings");
+			sql.append(" Where OldLinkedTranId  in (?)");
+		}
+		sql.append(")Rev");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					for (Long o : linkedTranId) {
+						ps.setObject(index, o);
+						if (reversal) {
+							index++;
+							ps.setObject(index, o);
+						}
+					}
+
+				}
+			}, new RowMapper<ReturnDataSet>() {
+				@Override
+				public ReturnDataSet mapRow(ResultSet rs, int rowNum) throws SQLException {
+					ReturnDataSet pst = new ReturnDataSet();
+
+					pst.setLinkedTranId(rs.getLong("LinkedTranId"));
+					pst.setPostref(rs.getString("Postref"));
+					pst.setPostingId(rs.getString("PostingId"));
+					pst.setFinReference(rs.getString("FinReference"));
+					pst.setFinEvent(rs.getString("FinEvent"));
+					pst.setPostDate(rs.getTimestamp("PostDate"));
+					pst.setValueDate(rs.getTimestamp("ValueDate"));
+					pst.setTranCode(rs.getString("TranCode"));
+					pst.setTranDesc(rs.getString("TranDesc"));
+					pst.setRevTranCode(rs.getString("RevTranCode"));
+					pst.setDrOrCr(rs.getString("DrOrCr"));
+					pst.setAccount(rs.getString("Account"));
+					pst.setShadowPosting(rs.getBoolean("ShadowPosting"));
+					pst.setPostAmount(rs.getBigDecimal("PostAmount"));
+					pst.setAmountType(rs.getString("AmountType"));
+					pst.setPostStatus(rs.getString("PostStatus"));
+					pst.setErrorId(rs.getString("ErrorId"));
+					pst.setErrorMsg(rs.getString("ErrorMsg"));
+					pst.setAcCcy(rs.getString("AcCcy"));
+					pst.setTranOrderId(rs.getString("TranOrderId"));
+					pst.setPostToSys(rs.getString("PostToSys"));
+					pst.setExchangeRate(rs.getBigDecimal("ExchangeRate"));
+					pst.setPostBranch(rs.getString("PostBranch"));
+					pst.setAppDate(rs.getTimestamp("AppDate"));
+					pst.setAppValueDate(rs.getTimestamp("AppValueDate"));
+					pst.setUserBranch(rs.getString("UserBranch"));
+
+					return pst;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Autowired

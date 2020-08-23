@@ -47,6 +47,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jaxen.JaxenException;
@@ -63,6 +64,7 @@ import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorHeader;
+import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -73,6 +75,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.TATDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
@@ -333,4 +336,24 @@ public interface FinanceDetailService {
 
 	FinanceDetail getVerificationInitiationDetails(String finReference, VerificationType verificationType,
 			String tableType);
+
+	Map<String, Object> getUpLevelUsers(long usrId, String branch);
+
+	FinanceDetail getFinanceDetailsForPmay(String finReference);
+
+	List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings);
+
+	FinCustomerDetails getDetailsByOfferID(String offerID);
+
+	void saveDisbDetails(List<FinanceDisbursement> disbursementDetails, String finReference);
+
+	void saveFinSchdDetail(List<FinanceScheduleDetail> financeScheduleDetails, String finReference);
+
+	FinanceDetail getFinSchdDetailByRef(String finReference, String string, boolean b);
+
+	List<FinanceScheduleDetail> getFinScheduleDetails(String finReference, String string, boolean b);
+
+	List<FinanceStepPolicyDetail> getFinStepDetailListByFinRef(String finReference, String string, boolean b);
+
+	List<RepayInstruction> getRepayInstructions(String finReference, String string, boolean b);
 }

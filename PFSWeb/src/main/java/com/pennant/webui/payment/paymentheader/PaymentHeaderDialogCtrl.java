@@ -123,6 +123,7 @@ import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -938,6 +939,12 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			}
 		}
 
+		//#Bug Fix 153031
+		if (totAmount == null) {
+			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_NoPayInstruction.value"));
+			return;
+		}
+
 		doWriteComponentsToBean(aPaymentHeader);
 
 		isNew = aPaymentHeader.isNew();
@@ -966,6 +973,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		try {
 			if (doProcess(aPaymentHeader, tranType)) {
 				refreshList();
+				String msg = PennantApplicationUtil.getSavingStatus(aPaymentHeader.getRoleCode(),
+						aPaymentHeader.getNextRoleCode(), aPaymentHeader.getFinReference(), " Payment Instructions ",
+						aPaymentHeader.getRecordStatus(), aPaymentHeader.getNextRoleCode());
+				Clients.showNotification(msg, "info", null, null, -1);
+
 				closeDialog();
 				if (getDisbursementInstructionsDialogCtrl() != null) {
 					getDisbursementInstructionsDialogCtrl().closeDialog();
@@ -1203,6 +1215,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		List<FinExcessAmount> finExcessAmountList = this.paymentHeaderService
 				.getfinExcessAmount(this.financeMain.getFinReference());
 		if (finExcessAmountList != null && !finExcessAmountList.isEmpty()) {
+			finExcessAmountList = processFinExcessAmount(finExcessAmountList);
 			for (FinExcessAmount finExcessAmount : finExcessAmountList) {
 				paymentDetail = new PaymentDetail();
 				paymentDetail.setNewRecord(true);
@@ -1377,6 +1390,33 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		return taxes;
 	}
 
+	/**
+	 * Method for process the FinExcessAmount's
+	 * <li>In case of cancelled loan return a list that contain EXCESS FinExcessAmount.</li>
+	 * <li>In other cases return the complete FinExcessAmount's list.</li> <br>
+	 * In case of loan cancel before disbursement and excess amount are taken from deduct from disbursment in that case
+	 * system is displaying those advance's in payment instruction to avoid this we are validating excess amount's here
+	 * #PSD 153031 </br>
+	 * 
+	 * @param finExcessAmountList
+	 * @return
+	 */
+	private List<FinExcessAmount> processFinExcessAmount(List<FinExcessAmount> finExcessAmountList) {
+		logger.debug(Literal.LEAVING);
+		if (!FinanceConstants.CLOSE_STATUS_CANCELLED.equalsIgnoreCase(this.financeMain.getClosingStatus())) {
+			return finExcessAmountList;
+		}
+		List<FinExcessAmount> excessAmountList = new ArrayList<>(1);
+		for (FinExcessAmount finExcessAmount : finExcessAmountList) {
+			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equalsIgnoreCase(finExcessAmount.getAmountType())) {
+				excessAmountList.add(finExcessAmount);
+				break;
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return excessAmountList;
+	}
+
 	// Update the latest balance amount..
 	private void updatePaybleAmounts(List<PaymentDetail> newList, List<PaymentDetail> oldList) {
 		logger.debug(Literal.ENTERING);
@@ -1502,6 +1542,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		logger.debug("Entering");
 
 		List<PaymentDetail> list = new ArrayList<PaymentDetail>();
+		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();
+		long userId = loggedInUser.getUserId();
+
 		if (aPaymentHeader.isNewRecord()) {
 			for (PaymentDetail detail : getPaymentDetailList()) {
 				if (detail.getAmount() != null && (BigDecimal.ZERO.compareTo(detail.getAmount()) == 0)) {
@@ -1511,11 +1554,17 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				detail.setNewRecord(true);
 
+				detail.setLastMntBy(userId);
+				detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				detail.setUserDetails(loggedInUser);
 				detail = calTaxDetail(detail);
 				list.add(detail);
 			}
 		} else {
 			for (PaymentDetail detail : getPaymentDetailList()) {
+				detail.setLastMntBy(userId);
+				detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				detail.setUserDetails(loggedInUser);
 				if (detail.isNewRecord()) {
 					if (detail.getAmount() != null && (BigDecimal.ZERO.compareTo(detail.getAmount()) == 0)) {
 						continue;

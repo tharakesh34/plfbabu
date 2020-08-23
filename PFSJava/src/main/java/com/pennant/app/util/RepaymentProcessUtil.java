@@ -286,8 +286,9 @@ public class RepaymentProcessUtil {
 		// Find out Is there any schedule payment done or not, If exists Log
 		// will be captured
 		boolean isSchdLogReq = false;
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, rch.getReceiptPurpose())
-				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, rch.getReceiptPurpose())) {
+		String receiptPurpose = rch.getReceiptPurpose();
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, receiptPurpose)
+				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, receiptPurpose)) {
 			isSchdLogReq = true;
 		}
 		BigDecimal repledgeReceipt = BigDecimal.ZERO;
@@ -304,7 +305,7 @@ public class RepaymentProcessUtil {
 		if (isSchdLogReq) {
 			entryDetail = new FinLogEntryDetail();
 			entryDetail.setFinReference(finReference);
-			entryDetail.setEventAction(rch.getReceiptPurpose());
+			entryDetail.setEventAction(receiptPurpose);
 			entryDetail.setSchdlRecal(false);
 			entryDetail.setPostDate(postDate);
 			entryDetail.setReversalCompleted(false);
@@ -317,8 +318,8 @@ public class RepaymentProcessUtil {
 			listSave(oldFinSchdData, "_Log", logKey);
 		}
 
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, rch.getReceiptPurpose())
-				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, rch.getReceiptPurpose())) {
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, receiptPurpose)
+				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, receiptPurpose)) {
 			isSchdLogReq = true;
 		}
 
@@ -338,7 +339,7 @@ public class RepaymentProcessUtil {
 
 		boolean feesExecuted = false;
 
-		long postingId = getPostingsDAO().getPostingId();
+		long postingId = postingsDAO.getPostingId();
 		financeMain.setPostingId(postingId);
 
 		// Accounting Postings Process Execution
@@ -445,37 +446,41 @@ public class RepaymentProcessUtil {
 		 * branchCashDetailDAO.updateBranchCashDetail(rch.getUserDetails().getBranchCode(), receiptFromBank,
 		 * CashManagementConstants.Add_Receipt_Amount); }
 		 */
-
+		
+		String finType = financeMain.getFinType();
+		String cashierBranch = rch.getCashierBranch();
+		String entityCode = financeMain.getEntityCode();
+		
 		aeEvent.setCustID(financeMain.getCustID());
 		aeEvent.setFinReference(finReference);
-		aeEvent.setFinType(financeMain.getFinType());
+		aeEvent.setFinType(finType);
 		aeEvent.setPromotion(financeMain.getPromotionCode());
 		aeEvent.setBranch(financeMain.getFinBranch());
 		aeEvent.setCcy(financeMain.getFinCcy());
-		aeEvent.setPostingUserBranch(rch.getCashierBranch());
+		aeEvent.setPostingUserBranch(cashierBranch);
 		aeEvent.setLinkedTranId(0);
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setPostRefId(rch.getReceiptID());
 		aeEvent.setPostingId(financeMain.getPostingId());
-		aeEvent.setEntityCode(financeMain.getEntityCode());
+		aeEvent.setEntityCode(entityCode);
 
-		amountCodes.setUserBranch(rch.getCashierBranch());
-		amountCodes.setFinType(financeMain.getFinType());
+		amountCodes.setUserBranch(cashierBranch);
+		amountCodes.setFinType(finType);
 		amountCodes.setPartnerBankAc(rcd.getPartnerBankAc());
 		amountCodes.setPartnerBankAcType(rcd.getPartnerBankAcType());
 		amountCodes.setToExcessAmt(BigDecimal.ZERO);
 		amountCodes.setToEmiAdvance(BigDecimal.ZERO);
 		amountCodes.setPaymentType(rcd.getPaymentType());
 		amountCodes.setBusinessvertical(financeMain.getBusinessVerticalCode());
-		amountCodes.setEntitycode(financeMain.getEntityCode());
+		amountCodes.setEntitycode(entityCode);
 
 		if (StringUtils.isNotBlank(financeMain.getPromotionCode())
 				&& (financeMain.getPromotionSeqId() != null && financeMain.getPromotionSeqId() == 0)) {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(),
 					AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_PROMOTION));
 		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finType,
 					AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
 		}
 
@@ -522,7 +527,7 @@ public class RepaymentProcessUtil {
 		adjustedToReceipt = adjustedToReceipt.add(rch.getTotalFees().getTotalPaid());
 
 		BigDecimal toExcess = rch.getReceiptAmount().subtract(adjustedToReceipt);
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, rch.getReceiptPurpose())) {
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, receiptPurpose)) {
 			adjustedToReceipt = adjustedToReceipt.add(toExcess);
 			toExcess = BigDecimal.ZERO;
 		}
@@ -554,7 +559,7 @@ public class RepaymentProcessUtil {
 			dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
 		}
 
-		if (!feesExecuted && !StringUtils.equals(rch.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		if (!feesExecuted && !StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 			Map<String, BigDecimal> feeMap = new HashMap<>();
 
 			if (finFeeDetailList != null) {

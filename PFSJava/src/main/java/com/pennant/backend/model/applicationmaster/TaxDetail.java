@@ -93,6 +93,7 @@ public class TaxDetail extends AbstractWorkflowEntity implements Entity {
 	private LoggedInUser userDetails;
 
 	private boolean gstinAvailable;
+	private Long pinCodeId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -306,5 +307,13 @@ public class TaxDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setAreaName(String areaName) {
 		this.areaName = areaName;
+	}
+
+	public Long getPinCodeId() {
+		return pinCodeId;
+	}
+
+	public void setPinCodeId(Long pinCodeId) {
+		this.pinCodeId = pinCodeId;
 	}
 }

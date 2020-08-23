@@ -122,6 +122,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	private Textbox remarks;
 	private Combobox status;
 	private Row row_ApprovelStatus;
+	private Textbox mitigants;
 
 	private List<FinanceDeviations> financeDeviationsList;
 	private FinanceMain financeMain;
@@ -365,7 +366,8 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 			// ### 01-05-2018 - End
 		}
 		//### 09-06-2018 - set the maxLength of remarks Textbox.
-		this.remarks.setMaxlength(200);
+		this.remarks.setMaxlength(500);
+		this.mitigants.setMaxlength(1000);
 
 		// ### 01-05-2018 - Start - story #361(Tuleap server) Manual Deviations
 		// Set the components based on the record status.
@@ -375,11 +377,13 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 			readOnlyComponent(true, delegationRole);
 			readOnlyComponent(true, status);
 			remarks.setReadonly(true);
+			mitigants.setReadonly(true);
 		} else if (aFinanceDeviations.isApproved()) {
 			btnSave.setVisible(false);
 			readOnlyComponent(true, delegationRole);
 			readOnlyComponent(true, status);
 			remarks.setReadonly(true);
+			mitigants.setReadonly(true);
 		} else {
 			// Initiator.
 			if (aFinanceDeviations.isNewRecord()
@@ -564,6 +568,8 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 
 		this.remarks.setValue(aFinanceDeviations.getRemarks());
 
+		this.mitigants.setValue(aFinanceDeviations.getMitigants());
+
 		logger.debug(Literal.LEAVING);
 		// ### 06-05-2018 - End
 	}
@@ -637,6 +643,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		// ### 01-05-2018 - End
 		aFinanceDeviations.setDeviationDate(new Timestamp(System.currentTimeMillis()));
 		aFinanceDeviations.setRemarks(this.remarks.getValue());
+		aFinanceDeviations.setMitigants(this.mitigants.getValue());
 
 		doRemoveValidation();
 		doClearMessage();

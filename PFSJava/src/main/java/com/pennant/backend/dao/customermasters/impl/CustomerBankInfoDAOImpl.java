@@ -109,6 +109,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(" bankBranchID, AccountHolderName, phoneNumber,");
 		if (type.contains("View")) {
 			sql.append(" lovDescBankName,lovDescAccountType,Ifsc,");
+			sql.append(" City, Micr, BranchCode,"); // From HL
 		}
 		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -149,6 +150,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescBankName, LovDescAccountType, IFSC");
+			sql.append(", City, Micr, BranchCode"); //From HL
 		}
 		sql.append(" from CustomerBankInfo");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -198,7 +200,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 					cbi.setRepaymentFrom(rs.getString("RepaymentFrom"));
 					cbi.setNoOfMonthsBanking(rs.getInt("NoOfMonthsBanking"));
 					cbi.setLwowRatio(rs.getString("LwowRatio"));
-					cbi.setCcLimit(rs.getString("CcLimit"));
+					cbi.setCcLimit(rs.getBigDecimal("CcLimit"));
 					cbi.setTypeOfBanks(rs.getString("TypeOfBanks"));
 					cbi.setAccountOpeningDate(rs.getTimestamp("AccountOpeningDate"));
 					cbi.setAddToBenficiary(rs.getBoolean("AddToBenficiary"));
@@ -220,6 +222,9 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 						cbi.setLovDescBankName(rs.getString("LovDescBankName"));
 						cbi.setLovDescAccountType(rs.getString("LovDescAccountType"));
 						cbi.setiFSC(rs.getString("IFSC"));
+						cbi.setCity(rs.getString("City"));
+						cbi.setMicr(rs.getString("Micr"));
+						cbi.setBranchCode(rs.getString("BranchCode"));
 					}
 
 					return cbi;
@@ -543,6 +548,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(" bankBranchID, AccountHolderName, PhoneNumber,");
 		if (type.contains("View")) {
 			sql.append(" lovDescBankName,lovDescAccountType,lovDescCustCIF,lovDescCustShrtName,Ifsc,");
+			sql.append(" City, Micr, BranchCode,");
 		}
 		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -674,11 +680,13 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(" (BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
 		sql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization,");
 		sql.append("PeakUtilizationLevel, SettlementNo, SettlementCredits, ODCCLimit,");
+		sql.append("  Interest, Trf, TotalEmi, TotalSalary, EmiBounceNo, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(:BankId, :MonthYear, :Balance, :DebitNo, :DebitAmt, :CreditNo,");
 		sql.append(" :CreditAmt, :BounceIn, :BounceOut, :ClosingBal, :SanctionLimit, :AvgUtilization,");
 		sql.append(":PeakUtilizationLevel, :SettlementNo, :SettlementCredits, :ODCCLimit,");
+		sql.append(" :Interest, :Trf, :TotalEmi, :TotalSalary, :EmiBounceNo, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -706,8 +714,10 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(
 				" PeakUtilizationLevel = :PeakUtilizationLevel, SettlementNo = :SettlementNo, SettlementCredits = :SettlementCredits, ODCCLimit = :ODCCLimit,");
 		sql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		sql.append(" Interest =:Interest, Trf =:Trf,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
+		sql.append(", TotalEmi = :TotalEmi, TotalSalary = :TotalSalary, EmiBounceNo = :EmiBounceNo ");
 		sql.append(" Where BankId = :BankId And MonthYear = :MonthYear");
 
 		// TODO : TEMPERORY COMMENTED, NEED TO PROVIDE PERMINANT FIX
@@ -865,6 +875,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 				", BounceOut, ClosingBal, SanctionLimit, AvgUtilization, PeakUtilizationLevel, SettlementNo, SettlementCredits, ODCCLimit");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId");
 		sql.append(", NextTaskId, RecordType, WorkflowId");
+		sql.append(", Interest, Trf, TotalEmi, TotalSalary, EmiBounceNo");
 		sql.append(" from BankInfoDetail");
 		sql.append(StringUtils.trimToEmpty(type));
 		return sql;
@@ -911,6 +922,11 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 			bid.setNextTaskId(rs.getString("NextTaskId"));
 			bid.setRecordType(rs.getString("RecordType"));
 			bid.setWorkflowId(rs.getLong("WorkflowId"));
+			bid.setInterest(rs.getBigDecimal("Interest"));
+			bid.setTrf(rs.getBigDecimal("Trf"));
+			bid.setTotalEmi(rs.getBigDecimal("TotalEmi"));
+			bid.setTotalSalary(rs.getBigDecimal("TotalSalary"));
+			bid.setEmiBounceNo(rs.getInt("EmiBounceNo"));
 
 			return bid;
 		}

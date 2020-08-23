@@ -140,16 +140,19 @@ public class ImplementationConstants {
 		TAX_DFT_CR_INV_REQ = getValueAsBoolean(extensions, "TAX_DFT_CR_INV_REQ", false);
 		ALLOW_IND_AS = getValueAsBoolean(extensions, "ALLOW_IND_AS", false);
 		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
-		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", false);
+		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", true);
 		ALLOW_DSF_CASHCLT = getValueAsBoolean(extensions, "ALLOW_DSF_CASHCLT", false);
 		ALLOW_ADV_INT_EMI = getValueAsBoolean(extensions, "ALLOW_ADV_INT_EMI", false);
 		ALLOW_TDS_ON_FEE = getValueAsBoolean(extensions, "ALLOW_TDS_ON_FEE", false);
-		ALLOW_OD_LOANS = getValueAsBoolean(extensions, "ALLOW_OD_LOANS", false);
-		ALLOW_CD_LOANS = getValueAsBoolean(extensions, "ALLOW_CD_LOANS", false);
-		ALLOW_SCHOOL_ORG = getValueAsBoolean(extensions, "ALLOW_SCHOOL_ORG", false);
-		ALLOW_SAMPLING = getValueAsBoolean(extensions, "ALLOW_SAMPLING", false);
-		ALLOW_FDD_ON_RVW_DATE = getValueAsBoolean(extensions, "ALLOW_FDD_ON_RVW_DATE", false);
+		ALLOW_NPA_PROVISION = getValueAsBoolean(extensions, "ALLOW_NPA_PROVISION", false);
 
+		SHOW_CUSTOM_BLACKLIST_FIELDS = getValueAsBoolean(extensions, "SHOW_CUSTOM_BLACKLIST_FIELDS", false);
+		DSA_CODE_READONLY_FIELD = getValueAsBoolean(extensions, "DSA_CODE_READONLY_FIELD", false);
+		COAPP_PANNUMBER_NON_MANDATORY = getValueAsBoolean(extensions, "COAPP_PANNUMBER_NON_MANDATORY", false);
+		GENERATECIBIL_BTN_MANDATORY = getValueAsBoolean(extensions, "GENERATECIBIL_BTN_MANDATORY", false);
+		ALLOW_ALL_SERV_RCDS = getValueAsBoolean(extensions, "ALLOW_ALL_SERV_RCDS", false);
+		TV_FINALVAL_AMOUNT_VALD = getValueAsBoolean(extensions, "TV_FINALVAL_AMOUNT_VALD", false);
+		TV_FINALVAL_AMOUNT_VALD = getValueAsBoolean(extensions, "FEE_CAL_ON_RULE", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -170,6 +173,16 @@ public class ImplementationConstants {
 		LPP_GST_DUE_ON = getValueAsString(extensions, "LPP_GST_DUE_ON", "A");
 		GST_SCHD_CAL_ON = getValueAsString(extensions, "GST_SCHD_CAL_ON", "I");
 		ALLOW_AMOIUNT_INTEGRAL_PART = getValueAsString(extensions, "ALLOW_AMOIUNT_INTEGRAL_PART", "Y");
+
+		// FIXME HL >>
+		VER_TV_COLL_ED_ADDR_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_ADDR_COLUMN", "PROPERTYCITY"); // HL>>FIXME "CITY" for HL
+		VER_TV_COLL_ED_PROP_VAL_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_PROP_VAL_COLUMN",
+				"TOTALVALUATIONASPE"); // HL>>FIXME "DOCVALUE" for HL
+		VER_TV_COLL_ED_PROP_COST_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_PROP_COST_COLUMN",
+				"COSTOFPROPERTY"); // HL>>FIXME "DOCVALUE" for HL
+
+		//<<
+
 	}
 
 	public static boolean IMPLEMENTATION_CONVENTIONAL;
@@ -290,6 +303,17 @@ public class ImplementationConstants {
 	public static boolean ALLOW_SAMPLING;
 	public static boolean ALLOW_SCHOOL_ORG;
 	public static boolean ALLOW_FDD_ON_RVW_DATE;
+	public static boolean SHOW_CUSTOM_BLACKLIST_FIELDS;
+	public static boolean DSA_CODE_READONLY_FIELD;
+	public static boolean COAPP_PANNUMBER_NON_MANDATORY;
+	public static boolean GENERATECIBIL_BTN_MANDATORY;
+	public static boolean TV_FINALVAL_AMOUNT_VALD;
+
+	// FIXME>>HL >>
+	public static boolean FEE_CAL_ON_RULE;
+	//FIXME>>HL >>
+
+	public static boolean ALLOW_NPA_PROVISION;
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static
 	 * boolean ALLOW_LV_INITIATION_LOS; public static boolean ALLOW_RCU_INITIATION_LOS;
@@ -305,6 +329,23 @@ public class ImplementationConstants {
 	public static String BANK;
 	public static String CLIENTTYPE;
 	public static String COLLATERAL_ADJ;
+
+	// FIXME>>HL >>
+	/**
+	 * Technical verification collateral ED Address column Name
+	 */
+	public static String VER_TV_COLL_ED_ADDR_COLUMN;
+	/**
+	 * Technical verification collateral ED Property valuation column Name
+	 */
+	public static String VER_TV_COLL_ED_PROP_VAL_COLUMN;
+
+	/**
+	 * Technical verification collateral ED Property valuation column Name
+	 */
+	public static String VER_TV_COLL_ED_PROP_COST_COLUMN;
+
+	// FIXME>>HL >>
 
 	/**
 	 * GST Invoice Due basis/Receipt Basis
@@ -380,5 +421,19 @@ public class ImplementationConstants {
 			return defaultValue;
 		}
 	}
+
+	// FIXME MURTHT
+	public static final boolean OLD_FINANCIALS_REQUIRED = false;
+	//Old Phone numbers required listbox 
+	public static final boolean OLD_PHONENUMBERS_REQUIRED = false;
+	// Old Emails required listbox 
+	public static final boolean OLD_EMAILS_REQUIRED = false;
+	//Old GST Details AddressCopy required
+	public static final boolean OLD_ADDRESSCOPY_REQUIRED = false;
+
+	// Flag to allow similarity to check the % patch match of given string values
+	public static final boolean ALLOW_SIMILARITY = true;
+
+	public static final boolean LEAD_ID_IS_MANDATORY = true;
 
 }

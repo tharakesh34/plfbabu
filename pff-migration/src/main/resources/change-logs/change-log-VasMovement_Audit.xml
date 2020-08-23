@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="add.schema" value=" " dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+	<changeSet id="1" author="Somasekhar">
+		<createTable tableName="adtVasMovement">
+ 		
+		<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>		
+		 <column name="VasMovementId" type="bigint">	
+			<constraints  nullable="false" /> 
+			</column>	
+			<column name="finReference" 	type="varchar(20)"/>		
+			<column name="version" 		type="int"><constraints nullable="false" />	</column>
+			<column name="lastmntby" 	type="bigint" />			
+			<column name="lastmnton" 	type="datetime" />			
+			<column name="recordstatus" 	type="varchar(50)" />		
+			<column name="rolecode" 		type="varchar(100)" />		
+			<column name="nextrolecode" 	type="varchar(200)" />		
+			<column name="taskid" 		type="varchar(50)" />		
+			<column name="nexttaskid" 	type="varchar(200)" />		
+			<column name="recordtype" 	type="varchar(50)" />		
+			<column name="workflowid" 	type="bigint" />	
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="1.1" author="Somasekhar" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Version" tableName="adtVasMovement"
+			defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="1.2" author="Somasekhar" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table adtVasMovement add constraint DF_adtVasMovement_Version default ((0)) for Version;
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="2" author="Somasekhar">
+		<createTable tableName="adtVasMovementDetails">
+		<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="VasMovementId" type="bigint"><constraints nullable="false"/></column>
+			<column name="vasMovementDetailId" type="bigint">	
+			<constraints  nullable="false" />
+			</column>
+			<column name="finReference" 	type="varchar(20)"/>		
+			<column name="vasReference" 	type="varchar(20)"/>
+			<column name="movementDate" type="datetime" ><constraints nullable="false"/></column>		
+			<column name="movementAmt"   type="decimal(18,0)" />
+			<column name="vasProvider" 	type="varchar(50)" />	
+			<column name="vasProduct" 	type="varchar(50)" />	
+			<column name="vasAmount"   type="decimal(18,0)" />
+			<column name="version" 		type="int"><constraints nullable="false" />	</column>
+			<column name="lastmntby" 	type="bigint" />			
+			<column name="lastmnton" 	type="datetime" />			
+			<column name="recordstatus" 	type="varchar(50)" />		
+			<column name="rolecode" 		type="varchar(100)" />		
+			<column name="nextrolecode" 	type="varchar(200)" />		
+			<column name="taskid" 		type="varchar(50)" />		
+			<column name="nexttaskid" 	type="varchar(200)" />		
+			<column name="recordtype" 	type="varchar(50)" />		
+			<column name="workflowid" 	type="bigint" />	
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="2.1" author="Somasekhar" dbms="postgresql, oracle">
+		<addDefaultValue columnName="version" tableName="adtVasMovementDetails"
+			defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="2.2" author="Somasekhar" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table adtVasMovementDetails add constraint DF_adtVasMovementDetai_Version default ((0)) for Version;
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="2.3" author="Somasekhar" dbms="postgresql, oracle">
+		<addDefaultValue columnName="workflowid" tableName="adtVasMovementDetails"
+			defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="2.4" author="Somasekhar" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table adtVasMovementDetails add constraint DF_adtVasMovementDeta_workflid default ((0)) for workflowid;
+		]]>
+		</sql>
+	</changeSet>
+	
+	
+	</databaseChangeLog>

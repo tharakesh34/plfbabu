@@ -12,6 +12,7 @@ import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -78,6 +79,11 @@ public class FinEODEvent implements Serializable {
 	private List<ProjectedAccrual> projectedAccrualList = new ArrayList<>(1);
 	private List<ProjectedAmortization> incomeAMZList = new ArrayList<>(1);
 	private Date appDate;
+	// Auto Increment Grace End
+	private boolean updFinSchdForChangeGrcEnd = false;
+	private List<RepayInstruction> orgRepayInsts = new ArrayList<RepayInstruction>(1);
+	private List<FinanceScheduleDetail> orgFinSchdDetails = new ArrayList<FinanceScheduleDetail>(1);
+	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<FinServiceInstruction>();
 
 	public FinanceMain getFinanceMain() {
 		return financeMain;
@@ -468,5 +474,37 @@ public class FinEODEvent implements Serializable {
 
 	public void setAccruedAmount(BigDecimal accruedAmount) {
 		this.accruedAmount = accruedAmount;
+	}
+
+	public boolean isUpdFinSchdForChangeGrcEnd() {
+		return updFinSchdForChangeGrcEnd;
+	}
+
+	public void setUpdFinSchdForChangeGrcEnd(boolean updFinSchdForChangeGrcEnd) {
+		this.updFinSchdForChangeGrcEnd = updFinSchdForChangeGrcEnd;
+	}
+
+	public List<RepayInstruction> getOrgRepayInsts() {
+		return orgRepayInsts;
+	}
+
+	public void setOrgRepayInsts(List<RepayInstruction> orgRepayInsts) {
+		this.orgRepayInsts = orgRepayInsts;
+	}
+
+	public List<FinanceScheduleDetail> getOrgFinSchdDetails() {
+		return orgFinSchdDetails;
+	}
+
+	public void setOrgFinSchdDetails(List<FinanceScheduleDetail> orgFinSchdDetails) {
+		this.orgFinSchdDetails = orgFinSchdDetails;
+	}
+
+	public List<FinServiceInstruction> getFinServiceInstructions() {
+		return finServiceInstructions;
+	}
+
+	public void setFinServiceInstructions(List<FinServiceInstruction> finServiceInstructions) {
+		this.finServiceInstructions = finServiceInstructions;
 	}
 }

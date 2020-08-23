@@ -8,6 +8,7 @@ import javax.jws.WebService;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.others.JVPosting;
+import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.dashboard.DashBoardRequest;
 import com.pennanttech.ws.model.dashboard.DashBoardResponse;
@@ -41,5 +42,13 @@ public interface MiscellaneousSoapService {
 	@WebResult(name = "EligibilitySummaryResponse")
 	EligibilitySummaryResponse getEligibility(
 			@WebParam(name = "loanTypeMiscRequest") LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException;
+
+	@WebResult(name = "EligibilityDetailResponse")
+	EligibilityDetailResponse checkEligibility(
+			@WebParam(name = "eligibilityDetail") EligibilityDetail eligibilityDetail) throws ServiceException;
+
+	@WebResult(name = "EmployerDetail")
+	EmployerDetail getEmployerDetail(@WebParam(name = "eligibilityDetail") EmployerDetail employerDetail)
+			throws ServiceException;
 
 }

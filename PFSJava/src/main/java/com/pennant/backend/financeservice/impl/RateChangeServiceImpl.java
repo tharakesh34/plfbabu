@@ -86,6 +86,13 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 			isCalSchedule = false;
 		}
 
+		//if (StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_STEPINST)) {
+		if (StringUtils.isNotEmpty(moduleDefiner) && finScheduleData.getFinanceMain().isStepFinance()) {
+			finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO()
+					.getFinStepDetailListByFinRef(finScheduleData.getFinReference(), "", false));
+		}
+		//}
+
 		FinScheduleData finSchData = null;
 		finSchData = ScheduleCalculator.changeRate(finScheduleData, finServiceInst.getBaseRate(),
 				finServiceInst.getSplRate(),

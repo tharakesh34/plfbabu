@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>5.8.0</version>
+		<version>5.10.0-SNAPSHOT</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
@@ -135,15 +135,20 @@
 		</dependency>
 		<dependency>
 			<groupId>bouncycastle</groupId>
-			<artifactId>bcmail-jdk15</artifactId>
+			<artifactId>bcmail-jdk16</artifactId>
 			<version>140</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>bouncycastle</groupId>
-			<artifactId>bcprov-jdk15</artifactId>
+			<artifactId>bcprov-jdk16</artifactId>
 			<version>140</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>3.14.0</version>
 		</dependency>
 	</dependencies>
 </project>

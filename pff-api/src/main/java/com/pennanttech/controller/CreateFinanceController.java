@@ -242,6 +242,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			// financeMain details
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
+			String finEvent = FinanceConstants.FINSER_EVENT_ORG;
 			FinanceType financeType = finScheduleData.getFinanceType();
 			financeMain.setFinType(financeType.getFinType());
 
@@ -276,7 +277,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				String finType = financeMain.getFinType();
 				int finRefType = FinanceConstants.PROCEDT_LIMIT;
 				String quickDisbCode = FinanceConstants.QUICK_DISBURSEMENT;
-				String roles = financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, quickDisbCode);
+				String roles = financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, quickDisbCode,
+						finEvent);
 				if (StringUtils.isBlank(roles)) {
 					FinanceDetail response = new FinanceDetail();
 					doEmptyResponseObject(response);
@@ -289,7 +291,6 @@ public class CreateFinanceController extends SummaryDetailService {
 					roleCode = roleCod;
 					break;
 				}
-				String finEvent = FinanceConstants.FINSER_EVENT_ORG;
 
 				FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
 						financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
@@ -974,7 +975,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			String finType = financeMain.getFinType();
 			int finRefType = FinanceConstants.PROCEDT_LIMIT;
 			String quickDisbCode = FinanceConstants.PROCEDT_LEGAL_INIT;
-			String roles = financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, quickDisbCode);
+			String roles = financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, quickDisbCode,
+					finEvent);
 			boolean allowed = false;
 			if (StringUtils.isNotBlank(roles)) {
 				String[] roleCodes = roles.split(PennantConstants.DELIMITER_COMMA);

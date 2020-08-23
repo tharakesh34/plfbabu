@@ -104,4 +104,7 @@ public interface FinanceTypeService {
 	FinanceType getFinLtvCheckByFinType(String finType);
 
 	String getAllowedRepayMethods(String finType);
+
+	FinanceType getFinanceType(String finType);
+
 }

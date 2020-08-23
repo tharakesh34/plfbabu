@@ -589,6 +589,41 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		return null;
 	}
 
+	public String getStateCode(String custAddrProvince) {
+
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder(
+				"select taxstatecode from RMTCOUNTRYVSPROVINCE where CPPROVINCE =:CPPROVINCE");
+		MapSqlParameterSource mapParam = new MapSqlParameterSource();
+		mapParam.addValue("CPPROVINCE", custAddrProvince);
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), mapParam, String.class);
+		} catch (Exception e) {
+			logger.warn(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+
+	}
+
+	public String getEnquiryPurpose(String finType) {
+
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("select key_Code from master_def where key_Type =:key_Type");
+		MapSqlParameterSource mapParam = new MapSqlParameterSource();
+		mapParam.addValue("key_Type", finType);
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), mapParam, String.class);
+		} catch (Exception e) {
+			logger.warn(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+
+	}
+
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}

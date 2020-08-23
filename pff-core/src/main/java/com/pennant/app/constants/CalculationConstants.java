@@ -58,7 +58,11 @@ public class CalculationConstants {
 	public static final String IDB_ACT_365LEAP = "A/A_365L";
 	public static final String IDB_ACT_365LEAPS = "A/A365LS";
 	public static final String IDB_BY_PERIOD = "P/360";
+	//30E/360 ISDA OR Actual/365
 	public static final String IDB_30E360IH = "30E360IH";
+	//30E/360 ISDA OR Actual/365 Fixed
+	public static final String IDB_30E360IA = "30E360IA";
+
 	// Schedule Calculations constants
 	public static final String SCHMTHD_EQUAL = "EQUAL";
 	public static final String SCHMTHD_MAN_PRI = "MAN_PRI";
@@ -112,6 +116,7 @@ public class CalculationConstants {
 	public static final String RPYCHG_ADJTERMS = "ADJTERMS";
 	public static final String RPYCHG_ADDRECAL = "ADDRECAL";
 	public static final String RPYCHG_STEPPOS = "STEPPOS";
+	public static final String RPYCHG_STEPINST = "STEPINST";
 
 	// Schedule Date Event Flags
 	public static final int SCHDFLAG_PFT = 0;

@@ -60,4 +60,6 @@
 	<bean name="externalServiceStatus" class="com.pennanttech.external.services.ExternalServiceStatus">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	<bean id="abstractCersaiProcess" class="com.pennanttech.pff.external.cersai.AbstractCersaiProcess" abstract="true"
+		parent="abstractInterface" />
 </beans>

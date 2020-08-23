@@ -83,7 +83,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 		sql.append(" EntityCode, EntityDesc, PANNumber, Country, StateCode, CityCode, PinCode, EntityAddrLine1");
 		sql.append(", EntityAddrLine2, EntityAddrHNbr, EntityFlatNbr, EntityAddrStreet, EntityPOBox");
 		sql.append(", Active, GstinAvailable, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CINNumber");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CINNumber, PinCodeId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", CountryName, ProvinceName, CityName, PinCodeName");
@@ -128,6 +128,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 							e.setRecordType(rs.getString("RecordType"));
 							e.setWorkflowId(rs.getLong("WorkflowId"));
 							e.setcINNumber(rs.getString("CINNumber"));
+							e.setPinCodeId(rs.getLong("PinCodeId"));
 
 							if (StringUtils.trimToEmpty(type).contains("View")) {
 								e.setCountryName(rs.getString("CountryName"));
@@ -157,12 +158,14 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 		sql.append("(entityCode, entityDesc, pANNumber, country, stateCode, cityCode, ");
 		sql.append(
 				" pinCode,entityAddrLine1,entityAddrLine2,entityAddrHNbr,entityFlatNbr,entityAddrStreet,entityPOBox, active, gstinAvailable, ");
+		sql.append(" pinCodeId,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,cINNumber)");
 		sql.append(" values(");
 		sql.append(" :entityCode, :entityDesc, :pANNumber, :country, :stateCode, :cityCode, ");
 		sql.append(
 				" :pinCode,:entityAddrLine1,:entityAddrLine2,:entityAddrHNbr,:entityFlatNbr,:entityAddrStreet,:entityPOBox,:active, :gstinAvailable,");
+		sql.append(" :pinCodeId,");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:cINNumber)");
 
@@ -192,7 +195,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 				" stateCode = :stateCode, cityCode = :cityCode, pinCode = :pinCode,entityAddrLine1=:entityAddrLine1,entityAddrLine2=:entityAddrLine2,");
 		sql.append(
 				"entityAddrHNbr=:entityAddrHNbr,entityFlatNbr=:entityFlatNbr,entityAddrStreet=:entityAddrStreet,entityPOBox=:entityPOBox,");
-		sql.append(" active = :active, gstinAvailable = :gstinAvailable,");
+		sql.append(" active = :active, gstinAvailable = :gstinAvailable, PinCodeId = :PinCodeId,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId,cINNumber =:cINNumber");

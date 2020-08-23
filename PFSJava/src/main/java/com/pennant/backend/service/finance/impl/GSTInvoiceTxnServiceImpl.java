@@ -170,20 +170,39 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 
 				BigDecimal gstAmount = BigDecimal.ZERO;
 				if (origination || StringUtils.equals(RepayConstants.ALLOCATION_ODC, feeDetail.getFeeTypeCode())) {
+					if (feeDetail.isPaidFromLoanApproval()) {
+						BigDecimal netGstAmt = cgstTax.getNetTax().add(sgstTax.getNetTax()).add(igstTax.getNetTax())
+								.add(ugstTax.getNetTax()).add(cessTax.getNetTax());
+						BigDecimal paidGstAmt = cgstTax.getPaidTax().add(sgstTax.getPaidTax()).add(igstTax.getPaidTax())
+								.add(ugstTax.getPaidTax()).add(cessTax.getPaidTax());
+						gstAmount = netGstAmt.subtract(paidGstAmt);
 
-					gstAmount = cgstTax.getNetTax().add(sgstTax.getNetTax()).add(igstTax.getNetTax())
-							.add(ugstTax.getNetTax()).add(cessTax.getNetTax());
-					if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
-						continue;
+						if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
+							continue;
+						}
+
+						gstInvTxn.setFeeAmount(
+								feeDetail.getNetAmountOriginal().subtract(feeDetail.getPaidAmountOriginal())); //Fee Amount with out GST
+						gstInvTxn.setCGST_AMT(cgstTax.getNetTax().subtract(cgstTax.getPaidTax()));
+						gstInvTxn.setSGST_AMT(sgstTax.getNetTax().subtract(sgstTax.getPaidTax()));
+						gstInvTxn.setIGST_AMT(igstTax.getNetTax().subtract(igstTax.getPaidTax()));
+						gstInvTxn.setUGST_AMT(ugstTax.getNetTax().subtract(ugstTax.getPaidTax()));
+						gstInvTxn.setCESS_AMT(cessTax.getNetTax());
+
+					} else {
+						gstAmount = cgstTax.getNetTax().add(sgstTax.getNetTax()).add(igstTax.getNetTax())
+								.add(ugstTax.getNetTax()).add(cessTax.getNetTax());
+						if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
+							continue;
+						}
+
+						gstInvTxn.setFeeAmount(feeDetail.getNetAmountOriginal()); //Fee Amount with out GST
+						gstInvTxn.setCGST_AMT(cgstTax.getNetTax());
+						gstInvTxn.setSGST_AMT(sgstTax.getNetTax());
+						gstInvTxn.setIGST_AMT(igstTax.getNetTax());
+						gstInvTxn.setUGST_AMT(ugstTax.getNetTax());
+						gstInvTxn.setCESS_AMT(cessTax.getNetTax());
 					}
-
-					gstInvTxn.setFeeAmount(feeDetail.getNetAmountOriginal()); //Fee Amount with out GST
-					gstInvTxn.setCGST_AMT(cgstTax.getNetTax());
-					gstInvTxn.setSGST_AMT(sgstTax.getNetTax());
-					gstInvTxn.setIGST_AMT(igstTax.getNetTax());
-					gstInvTxn.setUGST_AMT(ugstTax.getNetTax());
-					gstInvTxn.setCESS_AMT(cessTax.getNetTax());
-
 				} else {
 
 					gstAmount = cgstTax.getPaidTax().add(sgstTax.getPaidTax()).add(igstTax.getPaidTax())
@@ -593,9 +612,8 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 
 		String branchCountry = fromBranch.getBranchCountry();
 		String branchProvince = fromBranch.getBranchProvince();
-		Province companyProvince = this.provinceService.getApprovedProvinceById(branchCountry, branchProvince);
 
-		companyProvince = this.provinceService.getApprovedProvinceByEntityCode(branchCountry, branchProvince,
+		Province companyProvince = this.provinceService.getApprovedProvinceByEntityCode(branchCountry, branchProvince,
 				entityCode);
 
 		if (companyProvince != null) {

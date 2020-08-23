@@ -92,6 +92,8 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	private String assignmentReference;
 	@XmlElement(name = "seq")
 	private long assignmentSeq;
+	private String depositorCIF;
+	private String collateralType;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -108,6 +110,8 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 		//### 16-05-2018 End Development Item 82
 		excludeFields.add("assignmentReference");
 		excludeFields.add("assignmentSeq");
+		excludeFields.add("depositorCIF");
+		excludeFields.add("collateralType");
 		return excludeFields;
 	}
 
@@ -290,5 +294,21 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 
 	public void setAssignmentSeq(long assignmentSeq) {
 		this.assignmentSeq = assignmentSeq;
+	}
+
+	public String getDepositorCIF() {
+		return depositorCIF;
+	}
+
+	public void setDepositorCIF(String depositorCIF) {
+		this.depositorCIF = depositorCIF;
+	}
+
+	public String getCollateralType() {
+		return collateralType;
+	}
+
+	public void setCollateralType(String collateralType) {
+		this.collateralType = collateralType;
 	}
 }

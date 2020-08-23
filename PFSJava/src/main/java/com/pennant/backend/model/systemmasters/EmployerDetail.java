@@ -47,7 +47,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -55,12 +62,16 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>EmployerDetail table</b>.<br>
  *
  */
+@XmlType(propOrder = { "empName", "empCategory", "empIndustry", "returnStatus" })
+@XmlRootElement(name = "employerDetail")
+@XmlAccessorType(XmlAccessType.NONE)
 public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private long employerId = Long.MIN_VALUE;
 	private String empIndustry;
 	private String lovDescIndustryDesc;
+	@XmlElement
 	private String empName;
 	private Date establishDate;
 	private String empAddrHNbr;
@@ -85,12 +96,23 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 	private String empAlocationType;
 	private String empAlocationTypeName;
 	private String bankRefNo;
+	@XmlElement
+	private String empCategory;
 	private boolean empIsActive;
 
 	private boolean newRecord;
 	private String lovValue;
 	private EmployerDetail befImage;
 	private LoggedInUser userDetails;
+	@XmlElement
+	private WSReturnStatus returnStatus;
+
+	@XmlElement
+	private String elgRuleCode;
+	@XmlElement
+	private String ruleResultType;
+	@XmlElement
+	private String ruleResult;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -112,6 +134,10 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("empProvinceName");
 		excludeFields.add("empCityName");
 		excludeFields.add("empAlocationTypeName");
+		excludeFields.add("returnStatus");
+		excludeFields.add("ruleResultType");
+		excludeFields.add("elgRuleCode");
+		excludeFields.add("ruleResult");
 		return excludeFields;
 	}
 
@@ -375,6 +401,14 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 		this.bankRefNo = bankRefNo;
 	}
 
+	public String getEmpCategory() {
+		return empCategory;
+	}
+
+	public void setEmpCategory(String empCategory) {
+		this.empCategory = empCategory;
+	}
+
 	public boolean isEmpIsActive() {
 		return empIsActive;
 	}
@@ -386,4 +420,37 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
+	public String getRuleResultType() {
+		return ruleResultType;
+	}
+
+	public void setRuleResultType(String ruleResultType) {
+		this.ruleResultType = ruleResultType;
+	}
+
+	public String getRuleResult() {
+		return ruleResult;
+	}
+
+	public void setRuleResult(String ruleResult) {
+		this.ruleResult = ruleResult;
+	}
+
+	public String getElgRuleCode() {
+		return elgRuleCode;
+	}
+
+	public void setElgRuleCode(String elgRuleCode) {
+		this.elgRuleCode = elgRuleCode;
+	}
+
 }

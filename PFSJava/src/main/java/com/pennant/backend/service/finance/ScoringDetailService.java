@@ -9,6 +9,7 @@ import com.pennant.backend.model.finance.FinanceScoreDetail;
 import com.pennant.backend.model.finance.FinanceScoreHeader;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
+import com.pennant.backend.model.rmtmasters.ScoringSlab;
 
 public interface ScoringDetailService {
 
@@ -39,4 +40,8 @@ public interface ScoringDetailService {
 	long saveHeader(FinanceScoreHeader header, String type);
 
 	void saveDetailList(List<FinanceScoreDetail> scoreDetailList, String type);
+
+	List<ScoringMetrics> getScoreMatricsListByCustType(String scoreRuleCode, String custType);
+
+	List<ScoringSlab> getScoringSlabsByScoreGrpId(long scoreGrpId, String type);
 }

@@ -53,7 +53,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public interface SalutationDAO extends BasicCrudDao<Salutation> {
 
-	Salutation getSalutationById(String id, String type);
+	Salutation getSalutationById(String id, String gender, String type);
 
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
@@ -64,7 +64,7 @@ public interface SalutationDAO extends BasicCrudDao<Salutation> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(String salutationCode, TableType tableType);
+	boolean isDuplicateKey(String salutationCode, String gender, TableType tableType);
 
 	String getSystemDefaultCount(String salutationCode);
 

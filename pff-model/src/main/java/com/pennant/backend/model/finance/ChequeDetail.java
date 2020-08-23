@@ -90,7 +90,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private String documentName;
-	private long documentRef = Long.MIN_VALUE;
+	private Long documentRef = Long.MIN_VALUE;
 	private byte[] docImage;
 	private boolean isUpload;
 
@@ -277,11 +277,11 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		this.eMIRefNo = eMIRefNo;
 	}
 
-	public long getDocumentRef() {
+	public Long getDocumentRef() {
 		return documentRef;
 	}
 
-	public void setDocumentRef(long documentRef) {
+	public void setDocumentRef(Long documentRef) {
 		this.documentRef = documentRef;
 	}
 

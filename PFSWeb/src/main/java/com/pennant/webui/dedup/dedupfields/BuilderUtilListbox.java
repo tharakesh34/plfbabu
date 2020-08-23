@@ -49,6 +49,10 @@ import java.util.List;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.ListModelList;
 
+import com.pennant.app.constants.ImplementationConstants;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
+
 public class BuilderUtilListbox {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -57,6 +61,14 @@ public class BuilderUtilListbox {
 		List data = new ArrayList();
 		data.add("EQUALS");
 		data.add("LIKE");
+		if (ImplementationConstants.ALLOW_SIMILARITY && App.DATABASE == Database.POSTGRES) {
+			data.add("SIMILARITY >= 50%");
+			data.add("SIMILARITY >= 60%");
+			data.add("SIMILARITY >= 70%");
+			data.add("SIMILARITY >= 80%");
+			data.add("SIMILARITY >= 90%");
+			data.add("SIMILARITY >= 100%");
+		}
 		return new ListModelList(data);
 	}
 
@@ -66,6 +78,14 @@ public class BuilderUtilListbox {
 		List data = new ArrayList();
 		data.add(" = ");
 		data.add(" LIKE ");
+		if (ImplementationConstants.ALLOW_SIMILARITY && App.DATABASE == Database.POSTGRES) {
+			data.add("SIMILARITY50");
+			data.add("SIMILARITY60");
+			data.add("SIMILARITY70");
+			data.add("SIMILARITY80");
+			data.add("SIMILARITY90");
+			data.add("SIMILARITY100");
+		}
 		return new ListModelList(data);
 	}
 

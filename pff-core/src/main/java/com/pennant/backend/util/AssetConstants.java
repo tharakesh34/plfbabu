@@ -99,10 +99,17 @@ public class AssetConstants {
 	public static final String UNIQUE_ID_PUTCALL = "PUT_CALL";
 	public static final String UNIQUE_ID_PDINITIATION = "PDINIT";
 	public static final String UNIQUE_ID_PDAPPROVAL = "PDAPPROVAL";
+	public static final String UNIQUE_ID_LEGAL_VETTING_INITIATION = "VINIT";
+	public static final String UNIQUE_ID_LEGAL_VETTING_APPROVAL = "VAPPR";
+	public static final String UNIQUE_ID_PRICING_DETAILS = "PRICINGDETAILS";
 
 	public static final int DEFAULT_ITEMNO = 1;
 
 	public static final String UNIQUE_ID_EXPENSES = "EXPENSES";
 	public static final String UNIQUE_ID_FINANCIALSUMMARY = "FINANCIALSUMMARY";
+	public static final String UNIQUE_ID_OCRDETAILS = "OCRDETAILS";
+	public static final String UNIQUE_ID_DMSINTERFACE = "DMSINTERFACE";
+
+	public static final String UNIQUE_ID_PMAY = "PMAY";
 
 }

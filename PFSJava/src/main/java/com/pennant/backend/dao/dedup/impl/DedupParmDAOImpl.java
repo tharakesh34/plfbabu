@@ -421,7 +421,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		// mapSqlParameterSource.addValues(fielValueMap);
 
 		for (String key : fielValueMap.keySet()) {
-			mapSqlParameterSource.addValue(key, fielValueMap.get(key));
+			mapSqlParameterSource.addValue(key.toUpperCase(), fielValueMap.get(key));
 		}
 
 		List<CollateralSetup> collateralSetups = null;

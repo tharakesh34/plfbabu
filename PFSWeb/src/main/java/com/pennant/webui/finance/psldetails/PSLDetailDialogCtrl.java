@@ -921,6 +921,13 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		}
 		// Land Area
 		try {
+
+			if (this.row_LandHolding.isVisible() && this.landArea.isVisible()
+					&& "Y".equals(landHolding.getSelectedItem().getValue())) {
+				this.landArea.setConstraint(
+						new StaticListValidator(landAreaList, Labels.getLabel("label_PSLDetailDialog_LandArea.value")));
+			}
+
 			String strLandArea = null;
 			if (this.landArea.getSelectedItem() != null) {
 				strLandArea = this.landArea.getSelectedItem().getValue().toString();
@@ -936,6 +943,13 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		}
 		// Sector
 		try {
+
+			if (this.row_Sector.isVisible() && ("SVS".equals(this.sector.getSelectedItem().getValue())
+					|| "MNF".equals(this.sector.getSelectedItem().getValue())) && this.amount.isVisible()) {
+				this.amount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_PSLDetailDialog_Amount.value"),
+						2, true, false, 0));
+			}
+
 			String strSector = null;
 			if (this.sector.getSelectedItem() != null) {
 				strSector = this.sector.getSelectedItem().getValue().toString();

@@ -94,6 +94,6 @@ public interface FinanceReferenceDetailService {
 
 	List<Long> getNotifications(String financeType, String finEvent, String roleCode, List<String> lovCodeList);
 
-	String getAllowedRolesByCode(String finType, int finRefType, String collValCode);
+	String getAllowedRolesByCode(String finType, int finRefType, String collValCode, String finEvent);
 
 }

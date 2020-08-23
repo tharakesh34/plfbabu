@@ -61,6 +61,7 @@ import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -73,6 +74,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -124,6 +126,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	private CustomerDetailsService customerDetailsService;
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private FinanceTypeDAO financeTypeDAO;
+	private FinODDetailsDAO finODDetailsDAO;
 	private CustomerDAO customerDAO;
 
 	@Override
@@ -182,6 +185,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	public void updateFinanceDetails(String presentmentRef) {
 		logger.debug(Literal.ENTERING);
 
+		Date appDate = SysParamUtil.getAppDate();
+
 		PresentmentDetail detail = this.presentmentDetailDAO.getPresentmentDetail(presentmentRef,
 				TableType.MAIN_TAB.getSuffix());
 		List<FinanceScheduleDetail> list = financeScheduleDetailDAO.getFinScheduleDetails(detail.getFinReference(),
@@ -192,6 +197,24 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			financeMainDAO.updateMaturity(detail.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED, false);
 			profitDetailsDAO.updateFinPftMaturity(detail.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED,
 					false);
+		}
+
+		List<FinODDetails> overDueList = finODDetailsDAO.getFinODBalByFinRef(detail.getFinReference());
+		if (CollectionUtils.isNotEmpty(overDueList)) {
+			FinScheduleData scheduleData = new FinScheduleData();
+			scheduleData.setFinanceMain(financeMainDAO.getFinanceDetailsByFinRefence(detail.getFinReference(), ""));
+			scheduleData.setFinanceScheduleDetails(
+					financeScheduleDetailDAO.getFinScheduleDetails(detail.getFinReference(), "", false));
+			overDueList = receiptCalculator.calPenalty(scheduleData, null, appDate, overDueList);
+			finODDetailsDAO.updateList(overDueList);
+			FinanceProfitDetail profitDetail = profitDetailsDAO.getFinProfitDetailsById(detail.getFinReference());
+			try {
+				repaymentProcessUtil.updateStatus(scheduleData.getFinanceMain(), appDate,
+						scheduleData.getFinanceScheduleDetails(), profitDetail, overDueList,
+						FinanceConstants.FINSER_EVENT_SCHDRPY, true);
+			} catch (Exception e) {
+				logger.error(e);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -511,6 +534,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
 	public void processReceipts(PresentmentDetail presentmentDetail) throws Exception {
 
 		FinReceiptData finReceiptData = new FinReceiptData();
@@ -665,7 +689,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		header.setLogSchInPresentment(true);
 		header.setActFinReceipt(true);
 
-		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
+		List<FinReceiptDetail> receiptDetails = new ArrayList<>();
 
 		if (advanceAmt.compareTo(BigDecimal.ZERO) > 0) {
 			FinReceiptDetail rd = new FinReceiptDetail();
@@ -943,6 +967,10 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
 	@Override

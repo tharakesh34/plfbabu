@@ -120,7 +120,14 @@ public final class ExtFieldStaticList {
 		list.add("ExtendedSecurityUser");
 		list.add("RestrictedProfile");
 		list.add("CautiousProfile");
-
+		list.add("VehicleDealer");
+		list.add("TechnicalAgency");
+		list.add("TechnicalAgency");
+		list.add("ProjectUnits");
+		list.add("ProjectTowers");
+		list.add("ProjectFloors");
+		list.add("UnitNumber");
+		list.add("DSA");
 		return list;
 	}
 

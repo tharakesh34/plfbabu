@@ -27,12 +27,14 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
@@ -76,6 +78,8 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private Media media = null;
 
 	PresentmentImportProcess presentmentImportProcess;
+	List<ValueLabel> defaultPaymentType;
+	private ValidateRecord presentmentRespValidation;
 
 	public ImportPresentmentDetailCtrl() {
 		super();
@@ -156,7 +160,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		instrumentTypeConfigName = instrumentTypeConfigName.concat(instType);
 
 		String configName = SysParamUtil.getValueAsString(instrumentTypeConfigName);
-		if (configName == null) {
+		if (StringUtils.isEmpty(configName)) {
 			configName = "PRESENTMENT_RESPONSE";
 		}
 
@@ -324,6 +328,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			detailExtract.setStatus(PRSENTMENT_FILE_IMPORT_STATUS);
 			detailExtract.setMediaOnly(getMedia());
 			detailExtract.setPresentmentImportProcess(presentmentImportProcess);
+			detailExtract.setPresentmentRespValidation(presentmentRespValidation);
 
 			Thread thread = new Thread(detailExtract);
 			thread.start();
@@ -433,4 +438,9 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		this.presentmentImportProcess = presentmentImportProcess;
 	}
 
+	@Autowired(required = false)
+	@Qualifier(value = "presentmentRespValidation")
+	public void setPresentmentRespValidation(ValidateRecord presentmentRespValidation) {
+		this.presentmentRespValidation = presentmentRespValidation;
+	}
 }

@@ -81,6 +81,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.jdbc.DataTypeUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
@@ -405,7 +406,13 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 			Filter[] filters = new Filter[fieldString.length];
 
 			for (int i = 0; i < fieldString.length; i++) {
-				filters[i] = new Filter(fieldString[i], "%" + searchText + "%", Filter.OP_LIKE);
+				Object object = DataTypeUtil.getValueAsObject(fieldString[i], searchText,
+						getModuleMapping().getModuleClass());
+				if (object instanceof String) {
+					filters[i] = new Filter(fieldString[i], "%" + object + "%", Filter.OP_LIKE);
+				} else {
+					filters[i] = new Filter(fieldString[i], object, Filter.OP_EQUAL);
+				}
 			}
 			this.jdbcSearchObject.addFilterOr(filters);
 		}

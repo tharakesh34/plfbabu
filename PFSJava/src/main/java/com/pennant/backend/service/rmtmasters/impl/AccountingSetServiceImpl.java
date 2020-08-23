@@ -679,7 +679,8 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			for (int k = 0; k < feeCodeList.length; k++) {
 				if ((StringUtils.isNotBlank(feeCodeList[k]) || "Result".equalsIgnoreCase(feeCodeList[k]))
 						&& (feeCodeList[k].trim().endsWith("_W") || feeCodeList[k].trim().endsWith("_C")
-								|| feeCodeList[k].trim().endsWith("_P") || feeCodeList[k].trim().endsWith("_AF"))) {
+								|| feeCodeList[k].trim().endsWith("_P") || feeCodeList[k].trim().endsWith("_AF")
+								|| feeCodeList[k].trim().endsWith("_R"))) {
 					if (!feeCode
 							.contains(feeCodeList[k].trim().substring(0, feeCodeList[k].trim().indexOf('_')) + ",")) {
 						feeCode = feeCode

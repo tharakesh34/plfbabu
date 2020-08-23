@@ -38,7 +38,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -900,7 +900,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setVerificationType(VerificationType.PD.getKey());
 		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 		item.setModule(Module.LOAN.getKey());
-		verification.setCreatedOn(DateUtility.getAppDate());
+		verification.setCreatedOn(SysParamUtil.getAppDate());
 
 		return item;
 	}
@@ -922,6 +922,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Combobox decision = (Combobox) getComponent(listitem, "Decision");
 			ExtendedCombobox reInitagencyComboBox = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 			Textbox reInitRemarks = (Textbox) getComponent(listitem, "ReInitRemarks");
+			Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
 
 			fivComboBox.clearErrorMessage();
 			agencyComboBox.clearErrorMessage();
@@ -935,6 +936,9 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 			if (reInitRemarks != null) {
 				reInitRemarks.clearErrorMessage();
+			}
+			if (remarks != null) {
+				remarks.clearErrorMessage();
 			}
 		}
 	}
@@ -1036,7 +1040,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			verification.setDecisionRemarks(textbox.getValue());
 			if (verification.getDecision() == Decision.OVERRIDE.getKey()
 					&& StringUtils.isEmpty(verification.getDecisionRemarks())) {
-				throw new WrongValueException(textbox, "Remarks are mandatory when Decision is Override");
+				throw new WrongValueException(textbox, Labels.getLabel("label_OVERRIDE_Validation"));
 			}
 			break;
 		default:

@@ -339,11 +339,14 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 		PinCode pinCode = (PinCode) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (pinCode.isNew() && pinCodeDAO.isDuplicateKey(pinCode.getPinCodeId(), pinCode.getPinCode(),
-				pinCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if ((StringUtils.equals(PennantConstants.RCD_STATUS_SAVED, pinCode.getRecordStatus())
+				|| StringUtils.equals(PennantConstants.RCD_STATUS_SUBMITTED, pinCode.getRecordStatus()))
+				&& pinCodeDAO.isDuplicateKey(pinCode.getPinCodeId(), pinCode.getCity(), pinCode.getAreaName(),
+						pinCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
-			parameters[0] = PennantJavaUtil.getLabel("label_PinCode") + ": " + pinCode.getPinCode();
+			parameters[0] = PennantJavaUtil.getLabel("label_City") + ": " + pinCode.getCity() + " + ";
+			parameters[1] = PennantJavaUtil.getLabel("label_AreaName") + ": " + pinCode.getAreaName();
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}

@@ -30,7 +30,7 @@ public interface FinReceiptDetailDAO {
 	//Cash Management
 	void updateFundingAcByReceiptID(long receiptID, long fundingAc, String type);
 
-	List<FinReceiptDetail> getFinReceiptDetailByExternalReference(String finReference);
+	List<FinReceiptDetail> getFinReceiptDetailByReference(String finReference);
 
 	boolean isDuplicateReceipt(String finReference, String txnReference, BigDecimal receiptAmount);
 

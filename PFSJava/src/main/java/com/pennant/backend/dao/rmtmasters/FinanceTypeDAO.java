@@ -96,6 +96,7 @@ public interface FinanceTypeDAO {
 
 	String getFinTypeByReference(String finref);
 
-	String getRepayHierarchy(String finType);
+	FinanceType getFinanceType(String finType);
 
+	String getRepayHierarchy(String finType);
 }

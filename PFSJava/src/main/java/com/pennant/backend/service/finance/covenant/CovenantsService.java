@@ -56,7 +56,7 @@ public interface CovenantsService {
 
 	List<AuditDetail> saveOrUpdate(List<Covenant> covenants, TableType tableType, String auditTranType);
 
-	List<AuditDetail> doApprove(List<Covenant> covenants, TableType tableType, String auditTranType);
+	List<AuditDetail> doApprove(List<Covenant> covenants, TableType tableType, String auditTranType, int docSize);
 
 	List<AuditDetail> delete(List<Covenant> covenants, TableType tableType, String auditTranType);
 
@@ -74,7 +74,9 @@ public interface CovenantsService {
 	List<AuditDetail> validateCovenant(List<AuditDetail> auditDetails, String usrLanguage, String method);
 
 	List<AuditDetail> doProcess(List<Covenant> covenants, TableType tableType, String auditTranType,
-			boolean isApproveRcd);
+			boolean isApproveRcd, int docSize);
 
 	List<ErrorDetail> validatePDDDocuments(String finReference, List<ErrorDetail> errorDetails);
+
+	void deleteDocumentByDocumentId(Long documentId, String tableType);
 }

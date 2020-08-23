@@ -18,14 +18,14 @@
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" sclass="z-toolbarbutton"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" sclass="z-toolbarbutton"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								sclass="z-toolbarbutton" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" sclass="z-toolbarbutton"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								sclass="z-toolbarbutton" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								sclass="z-toolbarbutton" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
@@ -35,8 +35,8 @@
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								sclass="z-toolbarbutton" />
+							<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
@@ -50,17 +50,21 @@
 						<tabs id="tabsIndexCenter">
 							<tab label="${c:l('label_CustomerDialog_BasicDetails.value')}" id="basicDetails" />
 							<tab label="${c:l('label_CustomerDialog_KYCDetails.value')}" id="tabkYCDetails" />
-							<tab label="${c:l('label_CustomerDialog_TabFinancial.value')}" id="tabfinancial" visible="false" />
-							<tab label="${c:l('label_CustomerDialog_ShareHolderDetails.value')}" id="directorDetails" visible="false" />
+							<tab label="${c:l('label_CustomerDialog_TabFinancial.value')}" id="tabfinancial"
+								visible="false" />
+							<tab label="${c:l('label_CustomerDialog_ShareHolderDetails.value')}" id="directorDetails"
+								visible="false" />
 							<tab label="${c:l('label_CustomerDialog_BankingDetails.value')}" id="tabbankDetails" />
 							<tab label="${c:l('label_CustomerDialog_CardSalesDetails.value')}" id="tabCardSaleDetails" />
-							<tab label="${c:l('label_CustomerDialog_GstDetails.value')}" id="tabGstDetails" visible="false" />
+							<tab label="${c:l('label_CustomerDialog_GstDetails.value')}" id="tabGstDetails"
+								visible="false" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_basicDetails">
 								<div id="divKeyDetails">
 									<groupbox id="gb_keyDetails">
-										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+											style="border:0px; padding:0px;">
 											<columns>
 												<column width="220px" />
 												<column width="360px" />
@@ -73,13 +77,14 @@
 													<hbox>
 														<space spacing="2px" />
 														<textbox id="custCIF" readonly="true" width="155px" />
-														<button id="btn_GenerateCibil" label="Generate Cibil" visible="false" sclass="z-toolbarbutton"
-															autodisable="btn_GenerateCibil" />
+														<button id="btn_GenerateCibil" label="Generate Cibil"
+															visible="false" sclass="z-toolbarbutton" autodisable="btn_GenerateCibil" />
 													</hbox>
 													<label value="${c:l('label_CustomerDialog_CustCoreBank.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<uppercasebox id="custCoreBank" maxlength="50" width="153px" style="overflow: hidden;" />
+														<uppercasebox id="custCoreBank" maxlength="50" width="153px"
+															style="overflow: hidden;" />
 													</hbox>
 												</row>
 												<row>
@@ -99,37 +104,46 @@
 													<label value="${c:l('label_CustomerDialog_CustFirstName.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
-														<textbox id="custFirstName" maxlength="50" width="250px" style="overflow: hidden;" />
+														<textbox id="custFirstName" maxlength="50" width="250px"
+															style="overflow: hidden;" />
 													</hbox>
 													<label value="${c:l('label_CustomerDialog_CustMiddleName.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<textbox id="custMiddleName" maxlength="50" width="250px" style="overflow: hidden;" />
+														<textbox id="custMiddleName" maxlength="50" width="250px"
+															style="overflow: hidden;" />
 													</hbox>
 												</row>
 												<row>
-													<label id="label_CustomerDialog_CustLastName" value="${c:l('label_CustomerDialog_CustLastName.value')}" />
+													<label id="label_CustomerDialog_CustLastName"
+														value="${c:l('label_CustomerDialog_CustLastName.value')}" />
 													<hbox id="hbox_CustLastName">
 														<space spacing="2px" id="space_cust_LName" />
-														<textbox id="custLastName" maxlength="50" width="250px" style="overflow: hidden;" />
+														<textbox id="custLastName" maxlength="50" width="250px"
+															style="overflow: hidden;" />
 													</hbox>
-													<label id="label_CustomerDialog_motherMaidenName" value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}" />
+													<label id="label_CustomerDialog_motherMaidenName"
+														value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}" />
 													<hbox id="hbox_motherMaidenName">
 														<space spacing="2px" sclass="mandatory" />
-														<textbox id="motherMaidenName" maxlength="50" width="250px" style="overflow: hidden;" />
+														<textbox id="motherMaidenName" maxlength="50" width="250px"
+															style="overflow: hidden;" />
 													</hbox>
 												</row>
 												<row>
-													<label id="label_CustomerDialog_CustShrtName" value="${c:l('label_CustomerDialog_CustShrtName.value')}" />
+													<label id="label_CustomerDialog_CustShrtName"
+														value="${c:l('label_CustomerDialog_CustShrtName.value')}" />
 													<hbox>
 														<space id="space_CustShrtName" spacing="2px" />
-														<textbox id="custShrtName" maxlength="100" width="250px" style="overflow: hidden;" />
+														<textbox id="custShrtName" maxlength="100" width="250px"
+															style="overflow: hidden;" />
 													</hbox>
 													<label value="${c:l('label_CustomerDialog_CustLng.value')}" />
 													<extendedcombobox id="custLng" />
 												</row>
 												<row>
-													<label id="label_CustomerDialog_CustDOB" value="${c:l('label_CustomerDialog_CustDOB.value')}" />
+													<label id="label_CustomerDialog_CustDOB"
+														value="${c:l('label_CustomerDialog_CustDOB.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
 														<datebox id="custDOB" width="155px" />
@@ -137,23 +151,27 @@
 															<label id="age" />
 														</cell>
 													</hbox>
-													<label id="label_ArabicName" value="${c:l('label_CustomerDialog_CustArabicName.value')}" />
+													<label id="label_ArabicName"
+														value="${c:l('label_CustomerDialog_CustArabicName.value')}" />
 													<hbox>
 														<space id="space_CustArabicName" spacing="2px" />
 														<textbox id="custArabicName" maxlength="50" width="250px" />
 													</hbox>
 												</row>
 												<row>
-													<label id="label_ResidentialStatus" value="${c:l('label_CustomerDialog_ResidentialStstus.value')}" />
+													<label id="label_ResidentialStatus"
+														value="${c:l('label_CustomerDialog_ResidentialStstus.value')}" />
 													<hbox>
 														<space id="space_ResidentialStatus" spacing="2px" />
-														<combobox id="residentialStatus"  width="155px" />
+														<combobox id="residentialStatus" width="155px" />
 													</hbox>
 												</row>
 												<row>
-													<label id="label_CustomerDialog_CustNationality" value="${c:l('label_CustomerDialog_CustNationality.value')}" />
+													<label id="label_CustomerDialog_CustNationality"
+														value="${c:l('label_CustomerDialog_CustNationality.value')}" />
 													<extendedcombobox id="custNationality" />
-													<label id="label_CustomerDialog_CustRO1" value="${c:l('label_CustomerDialog_CustRO1.value')}" />
+													<label id="label_CustomerDialog_CustRO1"
+														value="${c:l('label_CustomerDialog_CustRO1.value')}" />
 													<extendedcombobox id="custRO1" />
 												</row>
 												<row id="row_GenderSalutation">
@@ -162,7 +180,8 @@
 														<space id="space_Gender" spacing="2px" sclass="mandatory" />
 														<combobox id="custGenderCode" width="155px" />
 													</hbox>
-													<label value="${c:l('label_CustomerDialog_CustSalutationCode.value')}" />
+													<label
+														value="${c:l('label_CustomerDialog_CustSalutationCode.value')}" />
 													<hbox>
 														<space id="space_Salutation" spacing="2px" sclass="mandatory" />
 														<combobox id="custSalutationCode" width="155px" />
@@ -172,7 +191,8 @@
 													<label value="${c:l('label_CustomerDialog_noOfDependents.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<intbox id="noOfDependents" maxlength="3" width="45px" style="text-align:right;" />
+														<intbox id="noOfDependents" maxlength="3" width="45px"
+															style="text-align:right;" />
 													</hbox>
 													<label value="${c:l('label_CustomerDialog_CustMaritalSts.value')}" />
 													<hbox>
@@ -181,28 +201,47 @@
 													</hbox>
 												</row>
 												<row>
-													<label id="label_CustomerDialog_Target" value="${c:l('label_CustomerDialog_Target.value')}" />
+													<label id="label_CustomerDialog_Target"
+														value="${c:l('label_CustomerDialog_Target.value')}" />
 													<extendedcombobox id="target" />
-													<label id="label_CustomerDialog_SalaryTransfered" value="${c:l('label_CustomerDialog_SalaryTransfered.value')}" />
+													<label id="label_CustomerDialog_SalaryTransfered"
+														value="${c:l('label_CustomerDialog_SalaryTransfered.value')}" />
 													<hbox id="hbox_SalariedCustomer">
 														<space spacing="2px" />
 														<checkbox id="salariedCustomer" />
 													</hbox>
 												</row>
+												<row id="row_qualification">
+													<label id="label_CustomerDialog_CustQualification"
+														value="${c:l('label_CustomerDialog_CustQualification.value')}" />
+													<extendedcombobox id="custQualification" />
+												</row>
 												<row>
-													<label id="label_CustomerDialog_EIDNumber" value="${c:l('label_CustomerDialog_EIDNumber.value')}" />
+													<label id="label_CustomerDialog_EIDNumber"
+														value="${c:l('label_CustomerDialog_EIDNumber.value')}" />
 													<hbox>
 														<space id="space_EidNumber" spacing="2px" />
 														<uppercasebox id="eidNumber" width="156px" />
-														<label id="label_CustomerDialog_EIDName" style="margin-left:10px; display:inline-block; padding-top:5px; white-space:nowrap;" />
+														<label id="label_CustomerDialog_EIDName"
+															style="margin-left:10px; display:inline-block; padding-top:5px; white-space:nowrap;" />
 													</hbox>
-													<label id="label_CustomerDialog_CustCOB" value="${c:l('label_CustomerDialog_CustCOB.value')}" />
+													<label id="label_CustomerDialog_CustCOB"
+														value="${c:l('label_CustomerDialog_CustCOB.value')}" />
 													<extendedcombobox id="custCOB" />
+												</row>
+												<row id="row_residentialsts">
+													<!-- <row id="row_natueOfBusiness"> -->
+													<label
+														value="${c:l('label_CustomerDialog_NatureOfBusiness.value')}" />
+													<hbox>
+														<space spacing="2px" id="space_natureOfBusiness" />
+														<combobox id="natureOfBusiness" width="155px" />
+													</hbox>
 												</row>
 												<row>
 													<label value="${c:l('label_CustomerDialog_CustSector.value')}" />
 													<extendedcombobox id="custSector" />
-													<label value="${c:l('label_CustomerDialog_CustIndustry.value')}" />
+													<label id="label_CustomerDialog_CustIndustry" value="${c:l('label_CustomerDialog_CustIndustry.value')}" />
 													<extendedcombobox id="custIndustry" />
 												</row>
 												<row id="row_custStatus">
@@ -211,25 +250,42 @@
 														<space spacing="2px" />
 														<textbox id="custSts" width="150px" />
 													</hbox>
+													<label id="label_CustomerDialog_CKYCOrReferenceNo"
+														value="${c:l('label_CustomerDialog_CKYCOrReferenceNo.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="ckycOrRefNo" width="155px" />
+													</hbox>
 												</row>
 												<row>
-													<label id="label_CustRelatedParty" value="${c:l('label_CustomerDialog_RelatedParty.value')}" />
+													<label id="label_CustRelatedParty"
+														value="${c:l('label_CustomerDialog_RelatedParty.value')}" />
 													<hbox id="hbox_CustRelatedParty">
 														<space spacing="2px" />
 														<textbox id="custRelatedParty" width="250px" />
 													</hbox>
-													<label id='label_CustSegment' value="${c:l('label_CustomerDialog_CustSegment.value')}" />
+													<label id='label_CustSegment'
+														value="${c:l('label_CustomerDialog_CustSegment.value')}" />
 													<extendedcombobox id="custSegment" />
 												</row>
+												<row>
+													<label id="label_entityType" value="${c:l('label_CustomerDialog_EntityType.value')}" />
+													<hbox id="hbox_entityType">
+														<space spacing="2px" id="space_entitytype" sclass="mandatory" />
+														<combobox id="entityType" width="155px" />
+													</hbox>
+												</row>
 												<row id="row_custTradeLicenceNum" visible="false">
-													<label value="${c:l('label_CustomerDialog_CustTradeLicenceNum.value')}" />
+													<label
+														value="${c:l('label_CustomerDialog_CustTradeLicenceNum.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
 														<textbox id="custTradeLicenceNum" width="250px" />
 													</hbox>
 												</row>
 												<row>
-													<label id='label_CustGroupId' value="${c:l('label_CustomerDialog_CustGroupID.value')}" />
+													<label id='label_CustGroupId'
+														value="${c:l('label_CustomerDialog_CustGroupID.value')}" />
 													<extendedcombobox id="custGroupId" />
 												</row>
 												<row id="row_custStaff">
@@ -238,7 +294,8 @@
 														<space spacing="2px" />
 														<checkbox id="custIsStaff" />
 													</hbox>
-													<label id='label_CustStaffID' value="${c:l('label_CustomerDialog_CustSaffID.value')}" />
+													<label id='label_CustStaffID'
+														value="${c:l('label_CustomerDialog_CustSaffID.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<textbox id="custStaffID" width="100px" />
@@ -246,43 +303,58 @@
 
 												</row>
 												<row id="row_custDSA">
-													<label id='label_CustDSACode' value="${c:l('label_CustomerDialog_CustDSACode.value')}" />
+													<label id='label_CustDSACode'
+														value="${c:l('label_CustomerDialog_CustDSACode.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<textbox id="custDSACode" width="100px" />
 													</hbox>
-													<label id='label_CustDSADeptCode' value="${c:l('label_CustomerDialog_CustDSADeptCode.value')}" />
+													<label id='label_CustDSADeptCode'
+														value="${c:l('label_CustomerDialog_CustDSADeptCode.value')}" />
 													<extendedcombobox id="custDSADept" />
 												</row>
 												<row id="row_custCountry">
-													<label id='label_CustRiskCountryCode' value="${c:l('label_CustomerDialog_CustRiskCountry.value')}" />
+													<label id='label_CustRiskCountryCode'
+														value="${c:l('label_CustomerDialog_CustRiskCountry.value')}" />
 													<extendedcombobox id="custRiskCountry" />
-													<label id='label_CustParentCountry' value="${c:l('label_CustomerDialog_CustParentCountry.value')}" />
+													<label id='label_CustParentCountry'
+														value="${c:l('label_CustomerDialog_CustParentCountry.value')}" />
 													<extendedcombobox id="custParentCountry" />
 												</row>
 												<row id="row_custSub">
-													<label id='label_CustSubSector' value="${c:l('label_CustomerDialog_CustSubSector.value')}" />
+													<label id='label_CustSubSector'
+														value="${c:l('label_CustomerDialog_CustSubSector.value')}" />
 													<extendedcombobox id="custSubSector" />
-													<label id='label_CustSubSegment' value="${c:l('label_CustomerDialog_CustSubSegment.value')}" />
+													<label id='label_CustSubSegment'
+														value="${c:l('label_CustomerDialog_CustSubSegment.value')}" />
 													<extendedcombobox id="custSubSegment" />
 												</row>
 												<row>
-													<label id="label_CustomerDialog_ApplicationNo" value="${c:l('label_CustomerDialog_ApplicationNo.value')}" />
+													<label id="label_CustomerDialog_ApplicationNo"
+														value="${c:l('label_CustomerDialog_ApplicationNo.value')}" />
 													<hbox>
 														<space spacing="2px" id="space_applicationNo" />
 														<uppercasebox id="applicationNo" width="170px" visible="true" />
 													</hbox>
 												</row>
 												<row>
-													<label id="label_CustomerDialog_DND" value="${c:l('label_CustomerDialog_DND.value')}" />
+													<label id="label_CustomerDialog_DND"
+														value="${c:l('label_CustomerDialog_DND.value')}" />
 													<hbox id="hbox_DND">
 														<space spacing="2px" />
 														<checkbox id="dnd" />
 													</hbox>
+													<label id="label_CustomerDialog_VIP"
+														value="${c:l('label_CustomerDialog_VIP.value')}" />
+													<hbox id="hbox_VIP">
+														<space spacing="2px" />
+														<checkbox id="vip" />
+													</hbox>
 												</row>
 											</rows>
 										</grid>
-										<grid id="grid_ExtendedDetails" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
+										<grid id="grid_ExtendedDetails" sclass="GridLayoutNoBorder" fixedLayout="true"
+											style="border:0px; padding:0px;">
 											<columns>
 												<column width="220px" />
 												<column width="360px" />
@@ -291,20 +363,37 @@
 											</columns>
 											<rows>
 												<row>
-													<label id="label_CustomerDialog_subCategory" value="${c:l('label_CustomerDialog_SubCategory.value')}" />
-													<hbox>
-														<space spacing="2px" />
+													<label id="label_CustomerDialog_subCategory"
+														value="${c:l('label_CustomerDialog_SubCategory.value')}" />
+													<hbox id="hbox_SubCategory">
+														<space id="spaceSubCategory" spacing="2px" sclass="mandatory" />
 														<combobox id="subCategory" readonly="true" width="155px" />
 													</hbox>
-													<label id="label_CustomerDialog_CustReligion" value="${c:l('label_CustomerDialog_Religion.value')}" />
+													<label id="label_CustomerDialog_CustReligion"
+														value="${c:l('label_CustomerDialog_Religion.value')}" />
 													<hbox id="hbox_CustReligion">
 														<extendedcombobox id="religion" />
 													</hbox>
 												</row>
 												<row>
-													<label id="label_CustomerDialog_CustCaste" value="${c:l('label_CustomerDialog_Caste.value')}" />
+													<label id="label_OtherReligion"
+														value="${c:l('label_CustomerDialog_OtherReligion.value')}" />
+													<hbox id="hbox_CustOtherReligion">
+														<space spacing="2px" id="space_OtherReligion" />
+														<textbox id="otherReligion" width="200px" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_CustomerDialog_CustCaste"
+														value="${c:l('label_CustomerDialog_Caste.value')}" />
 													<hbox id="hbox_CustCaste">
 														<extendedcombobox id="caste" />
+													</hbox>
+													<label id="label_OtherCaste"
+														value="${c:l('label_CustomerDialog_OtherCaste.value')}" />
+													<hbox id="hbox_CustOtherCaste">
+														<space spacing="2px" id="space_OtherCaste" />
+														<textbox id="otherCaste" width="200px " />
 													</hbox>
 												</row>
 											</rows>
@@ -312,28 +401,32 @@
 									</groupbox>
 									<groupbox id="gb_rating">
 										<div sclass="z-toolbar" style="padding:0">
-											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:1px;">
+											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
+												style=" padding:1px;">
 												<toolbar align="start" style="border:none;">
 													<label value="${c:l('Rating')}" sclass="listboxHeading"></label>
 												</toolbar>
-												<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-													<button id="btnNew_CustomerRatings" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerRatings.tooltiptext')}" />
+												<toolbar align="end"
+													style="float:right; border-style: none; padding:0px;">
+													<button id="btnNew_CustomerRatings" label="${c:l('label_New')}"
+														tooltiptext="${c:l('btnNew_CustomerRatings.tooltiptext')}" />
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listBoxCustomerRating" emptyMessage="${c:l('listbox.emptyMessage')}" span="true"
-											sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false">
+										<listbox id="listBoxCustomerRating"
+											emptyMessage="${c:l('listbox.emptyMessage')}" span="true" sizedByContent="true"
+											tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false">
 											<listhead sizable="true">
-												<listheader id="listheader_CustRating_CustRatingType" label="${c:l('listheader_CustRatingType.label')}"
-													sort="false" hflex="min" />
-												<listheader id="listheader_CustRating_CustRatingCode" label="${c:l('listheader_CustRatingCode.label')}"
-													sort="false" hflex="min" />
-												<listheader id="listheader_CustRating_CustRating" label="${c:l('listheader_CustRating.label')}"
-													sort="false" hflex="min" />
-												<listheader id="listheader_CustRating_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
-													sort="false" hflex="min" />
-												<listheader id="listheader_CustRating_RecordType" label="${c:l('listheader_RecordType.label')}"
-													sort="false" hflex="min" />
+												<listheader id="listheader_CustRating_CustRatingType"
+													label="${c:l('listheader_CustRatingType.label')}" sort="false" hflex="min" />
+												<listheader id="listheader_CustRating_CustRatingCode"
+													label="${c:l('listheader_CustRatingCode.label')}" sort="false" hflex="min" />
+												<listheader id="listheader_CustRating_CustRating"
+													label="${c:l('listheader_CustRating.label')}" sort="false" hflex="min" />
+												<listheader id="listheader_CustRating_RecordStatus"
+													label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" />
+												<listheader id="listheader_CustRating_RecordType"
+													label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
 									</groupbox>
@@ -342,7 +435,8 @@
 							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_KYCDetails">
 								<groupbox id="gp_CustEmployeeDetails" closable="true">
 									<caption label="${c:l('gp_CustEmployeeDetails')}"></caption>
-									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+										style="border:0px; padding:0px;">
 										<columns>
 											<column width="220px" />
 											<column width="360px" />
@@ -354,8 +448,10 @@
 												<label value="${c:l('label_CustomerDialog_EmpStatus.value')}" />
 												<extendedcombobox id="empStatus" />
 												<hlayout spacing="0px">
-													<label id="label_CustomerDialog_EmpSector" value="${c:l('label_CustomerDialog_EmpSector.value')}" />
-													<label id="label_CustomerDialog_Profession" visible="false" value="${c:l('label_CustomerDialog_Profession.value')}" />
+													<label id="label_CustomerDialog_EmpSector"
+														value="${c:l('label_CustomerDialog_EmpSector.value')}" />
+													<label id="label_CustomerDialog_Profession" visible="false"
+														value="${c:l('label_CustomerDialog_Profession.value')}" />
 												</hlayout>
 												<hlayout spacing="0px">
 													<extendedcombobox id="empSector" />
@@ -365,7 +461,8 @@
 											<row id="row_EmpName">
 												<label value="${c:l('label_CustomerDialog_EmpName.value')}" />
 												<extendedcombobox id="empName" />
-												<label id="label_empNameOther" value="${c:l('label_CustomerDialog_EmpNameOther.value')}" />
+												<label id="label_empNameOther"
+													value="${c:l('label_CustomerDialog_EmpNameOther.value')}" />
 												<hbox id="hbox_empNameOther" visible="false">
 													<space spacing="2px" sclass="mandatory" />
 													<textbox id="empNameOther" width="154px" />
@@ -378,7 +475,8 @@
 												<extendedcombobox id="empDept" />
 											</row>
 											<row>
-												<label id="label_CustomerDialog_EmpFrom" value="${c:l('label_CustomerDialog_EmpFrom.value')}" />
+												<label id="label_CustomerDialog_EmpFrom"
+													value="${c:l('label_CustomerDialog_EmpFrom.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<datebox id="empFrom" width="155px" />
@@ -386,7 +484,8 @@
 														<label id="exp" />
 													</cell>
 												</hbox>
-												<label id="label_CustomerDialog_MonthlyIncome" value="${c:l('label_CustomerDialog_MonthlyIncome.value')}" />
+												<label id="label_CustomerDialog_MonthlyIncome"
+													value="${c:l('label_CustomerDialog_MonthlyIncome.value')}" />
 												<currencyBox id="monthlyIncome" />
 											</row>
 											<row>
@@ -398,7 +497,8 @@
 										</rows>
 									</grid>
 								</groupbox>
-								<grid id="grid_KYCDetails" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
+								<grid id="grid_KYCDetails" sclass="GridLayoutNoBorder" fixedLayout="true"
+									style="border:0px; padding:0px;">
 									<columns>
 										<column width="33%" />
 										<column width="33%" />
@@ -408,35 +508,39 @@
 										<row id="row_EmploymentDetails" spans="3">
 											<groupbox sclass="gb_dialog">
 												<div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
+													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+														style=" padding:0px;" width="100%">
 														<toolbar align="start" style="border:none;">
-															<label value="${c:l('EmploymentDetails')}" sclass="listboxHeading">
+															<label value="${c:l('EmploymentDetails')}"
+																sclass="listboxHeading">
 															</label>
 														</toolbar>
-														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-															<button id="btnNew_CustomerEmploymentDetail" label="${c:l('label_New')}"
-																tooltiptext="${c:l('btnNew_CustomerEmpDetail.tooltiptext')}"
+														<toolbar align="end"
+															style="float:right; border-style: none; padding:0px;">
+															<button id="btnNew_CustomerEmploymentDetail"
+																label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerEmpDetail.tooltiptext')}"
 																autodisable="btnNew_CustomerEmploymentDetail,btnNew_CustomerDocuments,btnNew_CustomerAddress,btnNew_CustomerPhoneNumber,btnNew_CustomerEmail" />
 														</toolbar>
 													</hbox>
 												</div>
-												<listbox id="listBoxCustomerEmploymentDetail" span="true" sizedByContent="true" fixedLayout="true"
-													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+												<listbox id="listBoxCustomerEmploymentDetail" span="true"
+													sizedByContent="true" fixedLayout="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+													multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
-														<listheader id="listheader_CustEmpCIF" label="${c:l('listheader_CustEmpCIF.label')}" sort="false"
-															hflex="min" />
-														<listheader id="listheader_CustEmpName" label="${c:l('listheader_CustEmpName.label')}" sort="false"
-															hflex="min" />
-														<listheader id="listheader_CustEmpDesg" label="${c:l('listheader_CustEmpDesg.label')}" sort="false"
-															hflex="min" />
-														<listheader id="listheader_CustEmpDept" label="${c:l('listheader_CustEmpDept.label')}" sort="false"
-															hflex="min" />
-														<listheader id="listheader_CustEmpType" label="${c:l('listheader_CustEmpType.label')}" sort="false"
-															hflex="min" />
-														<listheader id="listheader_CustEmp_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustEmp_RecordType" label="${c:l('listheader_RecordType.label')}"
-															sort="false" hflex="min" />
+														<listheader id="listheader_CustEmpCIF"
+															label="${c:l('listheader_CustEmpCIF.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustEmpName"
+															label="${c:l('listheader_CustEmpName.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustEmpDesg"
+															label="${c:l('listheader_CustEmpDesg.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustEmpDept"
+															label="${c:l('listheader_CustEmpDept.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustEmpType"
+															label="${c:l('listheader_CustEmpType.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustEmp_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustEmp_RecordType"
+															label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 													</listhead>
 												</listbox>
 											</groupbox>
@@ -444,37 +548,42 @@
 										<row spans="3">
 											<groupbox sclass="gb_dialog">
 												<div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
+													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+														style=" padding:0px;" width="100%">
 														<toolbar align="start" style="border:none;">
-															<label value="${c:l('DocumentDetails')}" sclass="listboxHeading">
+															<label value="${c:l('DocumentDetails')}"
+																sclass="listboxHeading">
 															</label>
 														</toolbar>
-														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-															<button id="btnNew_CustomerDocuments" label="${c:l('label_New')}"
+														<toolbar align="end"
+															style="float:right; border-style: none; padding:0px;">
+															<button id="btnNew_CustomerDocuments"
+																label="${c:l('label_New')}"
 																tooltiptext="${c:l('button_CustomerDocumentList_NewCustomerDocument.tooltiptext')}"
 																autodisable="btnNew_CustomerEmploymentDetail,btnNew_CustomerDocuments,btnNew_CustomerAddress,btnNew_CustomerPhoneNumber,btnNew_CustomerEmail" />
 														</toolbar>
 													</hbox>
 												</div>
-												<listbox id="listBoxCustomerDocuments" span="true" sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}"
-													width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+												<listbox id="listBoxCustomerDocuments" span="true" sizedByContent="true"
+													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
+													emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
-														<listheader id="listheader_CustDocType" label="${c:l('listheader_CustDocType.label')}" sort="false"
-															hflex="min" />
-														<listheader id="listheader_CustDocTitle" label="${c:l('listheader_CustDocTitle.label')}" sort="false"
-															hflex="min" />
-														<listheader id="listheader_CustDocIssuedCountry" label="${c:l('listheader_CustDocIssuedCountry.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustDocIssuedAuthority" label="${c:l('listheader_CustDocIssuedAuthority.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustDocIssuedOn" label="${c:l('listheader_CustDocIssuedOn.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustDocExpDate" label="${c:l('listheader_CustDocExpDate.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustDoc_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" visible="false" />
-														<listheader id="listheader_CustDoc_RecordType" label="${c:l('listheader_RecordType.label')}"
-															sort="false" hflex="min" />
+														<listheader id="listheader_CustDocType"
+															label="${c:l('listheader_CustDocType.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustDocTitle"
+															label="${c:l('listheader_CustDocTitle.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustDocIssuedCountry"
+															label="${c:l('listheader_CustDocIssuedCountry.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustDocIssuedAuthority"
+															label="${c:l('listheader_CustDocIssuedAuthority.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustDocIssuedOn"
+															label="${c:l('listheader_CustDocIssuedOn.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustDocExpDate"
+															label="${c:l('listheader_CustDocExpDate.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustDoc_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" visible="false" />
+														<listheader id="listheader_CustDoc_RecordType"
+															label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 													</listhead>
 												</listbox>
 											</groupbox>
@@ -482,86 +591,133 @@
 										<row style="vertical-align: top;">
 											<groupbox id="gb_customerAddressDetails" sclass="gb_dialog">
 												<div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:0px;">
+													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
+														style=" padding:0px;">
 														<toolbar align="start" style="border:none;">
-															<label value="${c:l('AddressDetails')}" sclass="listboxHeading">
+															<label value="${c:l('AddressDetails')}"
+																sclass="listboxHeading">
 															</label>
 														</toolbar>
-														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-															<button id="btnNew_CustomerAddress" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerAddress.tooltiptext')}"
+														<toolbar align="end"
+															style="float:right; border-style: none; padding:0px;">
+															<button id="btnNew_CustomerAddress"
+																label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerAddress.tooltiptext')}"
 																autodisable="btnNew_CustomerEmploymentDetail,btnNew_CustomerDocuments,btnNew_CustomerAddress,btnNew_CustomerPhoneNumber,btnNew_CustomerEmail" />
 														</toolbar>
 													</hbox>
 												</div>
-												<listbox id="listBoxCustomerAddress" span="true" sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}"
-													width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+												<listbox id="listBoxCustomerAddress" span="true" sizedByContent="true"
+													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
+													emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
-														<listheader id="listheader_CustAddr_CustAddrType" label="${c:l('listheader_CustAddrType.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustAddr_CustAddrCity" label="${c:l('listheader_CustAddrCity.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustAddr_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" visible="false" />
-														<listheader id="listheader_CustAddr_RecordType" label="${c:l('listheader_RecordType.label')}"
-															sort="false" hflex="min" />
+														<listheader id="listheader_CustAddr_CustAddrType"
+															label="${c:l('listheader_CustAddrType.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustAddr_CustAddrCity"
+															label="${c:l('listheader_CustAddrCity.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustAddr_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" visible="false" />
+														<listheader id="listheader_CustAddr_RecordType"
+															label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 													</listhead>
 												</listbox>
 											</groupbox>
 											<groupbox id="gb_customerPhoneDetails" sclass="gb_dialog">
 												<div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:0px;">
+													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
+														style=" padding:0px;">
 														<toolbar align="start" style="border:none;">
-															<label value="${c:l('PhoneDetails')}" sclass="listboxHeading">
+															<label value="${c:l('PhoneDetails')}"
+																sclass="listboxHeading">
 															</label>
 														</toolbar>
-														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-															<button id="btnNew_CustomerPhoneNumber" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerPhone.tooltiptext')}"
+														<toolbar align="end"
+															style="float:right; border-style: none; padding:0px;">
+															<button id="btnNew_CustomerPhoneNumber"
+																label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerPhone.tooltiptext')}"
 																autodisable="btnNew_CustomerEmploymentDetail,btnNew_CustomerDocuments,btnNew_CustomerAddress,btnNew_CustomerPhoneNumber,btnNew_CustomerEmail" />
 														</toolbar>
 													</hbox>
 												</div>
-												<listbox id="listBoxCustomerPhoneNumbers" span="true" sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}"
-													width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+												<listbox id="listBoxCustomerPhoneNumbers" span="true"
+													sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
+													emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
-														<listheader id="listheader_CustPhone_Type" label="${c:l('listheader_PhoneTypeCode.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustPhone_PhoneNumber" label="${c:l('listheader_PhoneNumber.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustPhone_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" visible="false" />
-														<listheader id="listheader_CustPhone_RecordType" label="${c:l('listheader_RecordType.label')}"
-															sort="false" hflex="min" />
+														<listheader id="listheader_CustPhone_Type"
+															label="${c:l('listheader_PhoneTypeCode.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustPhone_PhoneNumber"
+															label="${c:l('listheader_PhoneNumber.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustPhone_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" visible="false" />
+														<listheader id="listheader_CustPhone_RecordType"
+															label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
+													</listhead>
+												</listbox>
+												<listbox id="listBoxCustomerPhoneNumbersInlineEdit" span="true"
+													sizedByContent="true" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+													<listhead sizable="true">
+														<listheader label="${c:l('listheader_CustEmpCIF.label')}"
+															sort="false" width="150px" />
+														<listheader label="${c:l('listheader_PhoneTypeCode.label')}"
+															sort="false" width="250px" />
+														<listheader label="${c:l('listheader_PhoneNumber.label')}"
+															sort="false" width="300px" />
+														<listheader label="${c:l('listheader_CustEMailPriority.label')}"
+															sort="false" width="170px" />
+														<listheader label="${c:l('listheader_RecordType.label')}"
+															sort="false" width="100px" />
+														<listheader sort="false" width="100px" />
 													</listhead>
 												</listbox>
 											</groupbox>
 											<groupbox id="gb_customerEmailDetails" sclass="gb_dialog">
 												<div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:0px;">
+													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
+														style=" padding:0px;">
 														<toolbar align="start" style="border:none;">
-															<label value="${c:l('EmailDetails')}" sclass="listboxHeading">
+															<label value="${c:l('EmailDetails')}"
+																sclass="listboxHeading">
 															</label>
 														</toolbar>
-														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-															<button id="btnNew_CustomerEmail" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerEmail.tooltiptext')}"
+														<toolbar align="end"
+															style="float:right; border-style: none; padding:0px;">
+															<button id="btnNew_CustomerEmail"
+																label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerEmail.tooltiptext')}"
 																autodisable="btnNew_CustomerEmploymentDetail,btnNew_CustomerDocuments,btnNew_CustomerAddress,btnNew_CustomerPhoneNumber,btnNew_CustomerEmail" />
 														</toolbar>
 													</hbox>
 												</div>
-												<listbox id="listBoxCustomerEmails" span="true" sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}"
-													width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+												<listbox id="listBoxCustomerEmails" span="true" sizedByContent="true"
+													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
+													emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
-														<listheader id="listheader_CustCIF" label="${c:l('listheader_CustCIF.label')}" sort="auto"
-															hflex="min" visible="false" />
-														<listheader id="listheader_CustEmail_Type" label="${c:l('listheader_CustEMailTypeCode.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustEmail_Priority" label="${c:l('listheader_CustEMailPriority.label')}"
-															sort="false" hflex="min" visible="false" />
-														<listheader id="listheader_CustEmail_EmailID" label="${c:l('listheader_CustomerEmail.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustEmail_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" visible="false" />
-														<listheader id="listheader_CustEmail_RecordType" label="${c:l('listheader_RecordType.label')}"
-															sort="false" hflex="min" />
+														<listheader id="listheader_CustCIF"
+															label="${c:l('listheader_CustCIF.label')}" sort="auto" hflex="min" visible="false" />
+														<listheader id="listheader_CustEmail_Type"
+															label="${c:l('listheader_CustEMailTypeCode.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustEmail_Priority"
+															label="${c:l('listheader_CustEMailPriority.label')}" sort="false" hflex="min" visible="false" />
+														<listheader id="listheader_CustEmail_EmailID"
+															label="${c:l('listheader_CustomerEmail.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustEmail_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" visible="false" />
+														<listheader id="listheader_CustEmail_RecordType"
+															label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
+													</listhead>
+												</listbox>
+												<listbox id="listBoxCustomerEmailsInlineEdit" span="true"
+													sizedByContent="true" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+													<listhead sizable="true">
+														<listheader width="150px"
+															label="${c:l('listheader_CustEmpCIF.label')}" sort="auto" />
+														<listheader label="${c:l('listheader_CustEMailTypeCode.label')}"
+															sort="false" width="250px" />
+														<listheader label="${c:l('listheader_CustomerEmail.label')}"
+															sort="false" width="300px" />
+														<listheader label="${c:l('listheader_CustEMailPriority.label')}"
+															sort="false" width="170px" />
+														<listheader label="${c:l('listheader_RecordType.label')}"
+															sort="false" width="100px" />
+														<listheader sort="false" width="100px" />
 													</listhead>
 												</listbox>
 											</groupbox>
@@ -573,51 +729,75 @@
 							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_Financials">
 								<groupbox id="gb_incomeDetails">
 									<div sclass="z-toolbar" style="padding:0">
-										<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
+										<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+											width="100%">
 											<toolbar align="start" style="border:none;">
 												<label value="${c:l('IncomeDetails')}" sclass="listboxHeading"></label>
 											</toolbar>
-											<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-												<button id="btnNew_CustomerIncome" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerIncome.tooltiptext')}" />
+											<toolbar align="end"
+												style="float:right; border-style: none; padding:0px;">
+												<button id="btnNew_CustomerIncome" label="${c:l('label_New')}"
+													tooltiptext="${c:l('btnNew_CustomerIncome.tooltiptext')}" />
 											</toolbar>
 										</hbox>
 									</div>
-									<listbox id="listBoxCustomerIncome" emptyMessage="${c:l('listbox.emptyMessage')}" span="true"
-										sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" multiple="false">
+									<listbox id="listBoxCustomerIncome" emptyMessage="${c:l('listbox.emptyMessage')}"
+										span="true" sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" multiple="false">
 										<listhead sizable="true">
 											<listheader id="listheader_IncomeExpense"
 												label="${c:l('listheader_IncomeExpense.label')} ${c:l('listheader_IncomeTypeCategory.label')}" sort="auto"
 												hflex="min" />
-											<listheader id="listheader_CustInc_CustIncomeType" label="${c:l('listheader_CustIncomeType.label')}"
-												sort="false" hflex="min" />
-											<listheader id="listheader_CustInc_Margin" label="${c:l('listheader_Margin.label')}" sort="false"
-												hflex="min" style="text-align:right;" />
-											<listheader id="listheader_CustInc_CustIncome" label="${c:l('listheader_CustIncome.label')}" sort="false"
-												hflex="min" style="text-align:right;" />
-											<listheader id="listheader_CustInc_CalculatedAmount" label="${c:l('listheader_CalculatedAmount.label')}"
-												sort="false" hflex="min" style="text-align:right;" />
+											<listheader id="listheader_CustInc_CustIncomeType"
+												label="${c:l('listheader_CustIncomeType.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_CustInc_Margin"
+												label="${c:l('listheader_Margin.label')}" sort="false" hflex="min" style="text-align:right;" />
+											<listheader id="listheader_CustInc_CustIncome"
+												label="${c:l('listheader_CustIncome.label')}" sort="false" hflex="min" style="text-align:right;" />
+											<listheader id="listheader_CustInc_CalculatedAmount"
+												label="${c:l('listheader_CalculatedAmount.label')}" sort="false" hflex="min" style="text-align:right;" />
 											<!-- <listheader id="listheader_JointCust" label="${c:l('listheader_JointCust.label')}" sort="false" hflex="min" 
 												visible="false" /> -->
 											<!-- <listheader id="listheader_CustInc_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="false" 
 												hflex="min" visible="false" /> -->
-											<listheader id="listheader_CustInc_RecordType" label="${c:l('listheader_RecordType.label')}" sort="false"
-												hflex="min" />
+											<listheader id="listheader_CustInc_RecordType"
+												label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 										</listhead>
 									</listbox>
-									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" visible="false" height="0px">
+									<listbox id="listBoxCustomerIncomeInLineEdit"
+										emptyMessage="${c:l('listbox.emptyMessage')}" span="true" sizedByContent="true" multiple="false">
+										<listhead sizable="true">
+											<listheader
+												label="${c:l('listheader_IncomeExpense.label')} ${c:l('listheader_IncomeTypeCategory.label')}" sort="auto"
+												hflex="min" />
+											<listheader label="${c:l('listheader_CustIncomeType.label')}" sort="false"
+												hflex="min" />
+											<listheader label="${c:l('listheader_Margin.label')}" sort="false"
+												hflex="min" />
+											<listheader label="${c:l('listheader_CustIncome.label')}" sort="false"
+												hflex="min" />
+											<listheader label="${c:l('listheader_CalculatedAmount.label')}" sort="false"
+												hflex="min" style="text-align:right;" />
+											<listheader label="${c:l('listheader_RecordType.label')}" sort="false"
+												hflex="min" />
+											<listheader sort="false" hflex="min" />
+										</listhead>
+									</listbox>
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px"
+										visible="false" height="0px">
 										<columns>
 											<column width="500px" />
 											<column />
 										</columns>
 										<rows>
 											<row visible="true">
-												<label id="label_CustomerDialog_CustTotalIncome" value="${c:l('label_CustomerDialog_CustTotalIncome.value')}" />
+												<label id="label_CustomerDialog_CustTotalIncome"
+													value="${c:l('label_CustomerDialog_CustTotalIncome.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<decimalbox id="custTotalIncome" width="108px" style="text-align:right;" maxlength="25"
-														readonly="true" />
-													<decimalbox id="custTotalExpense" width="108px" style="text-align:right;" maxlength="25"
-														readonly="true" />
+													<decimalbox id="custTotalIncome" width="108px"
+														style="text-align:right;" maxlength="25" readonly="true" />
+													<decimalbox id="custTotalExpense" width="108px"
+														style="text-align:right;" maxlength="25" readonly="true" />
 												</hbox>
 											</row>
 										</rows>
@@ -627,43 +807,47 @@
 							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_directorDetails">
 								<groupbox id="gb_directorDetails" width="100%" height="100%">
 									<div sclass="z-toolbar" style="padding:0">
-										<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" height="100%" width="100%">
+										<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+											height="100%" width="100%">
 											<toolbar align="start" style="border:none;">
-												<label value="${c:l('DirectorDetails')}" sclass="listboxHeading">
-												</label>
+												<label value="${c:l('DirectorDetails')}" sclass="listboxHeading"></label>
 											</toolbar>
-											<toolbar align="end" style="float:right; border-style: none; padding:0px;" height="100%">
-												<button autodisable="btnNew_DirectorDetail" id="btnNew_DirectorDetail" label="${c:l('label_New')}"
-													tooltiptext="${c:l('btnNew_CustomerDirector.tooltiptext')}" />
+											<toolbar align="end" style="float:right; border-style: none; padding:0px;"
+												height="100%">
+												<button autodisable="btnNew_DirectorDetail" id="btnNew_DirectorDetail"
+													label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerDirector.tooltiptext')}" />
 											</toolbar>
 										</hbox>
 									</div>
-									<listbox id="listBoxCustomerDirectory" span="true" sizedByContent="true" fixedLayout="true"
-										tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false">
+									<listbox id="listBoxCustomerDirectory" span="true" sizedByContent="true"
+										fixedLayout="true" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}"
+										multiple="false">
 										<listhead sizable="true">
-											<listheader id="listheader_ShortName" label="${c:l('listheader_ShortName.label')}" sort="false"
-												hflex="min" />
-											<listheader id="listheader_CustCountry" label="${c:l('listheader_CustCountry.label')}" sort="false"
-												hflex="min" />
-											<listheader id="listheader_CustSharePerc" label="${c:l('listheader_CustSharePerc.label')}" sort="false"
-												hflex="min" />
-											<listheader id="listheader_IDType" label="${c:l('listheader_IDType.label')}" sort="false" hflex="min" />
-											<listheader id="listheader_IDReference" label="${c:l('listheader_IDReference.label')}" sort="false"
-												hflex="min" />
-											<listheader id="listheader_Nationality" label="${c:l('listheader_Nationality.label')}" sort="false"
-												hflex="min" />
-											<listheader id="listheader_Director" label="${c:l('listheader_Director.label')}" sort="auto"
-												hflex="min" />
-											<listheader id="listheader_CustDirector_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+											<listheader id="listheader_ShortName"
+												label="${c:l('listheader_ShortName.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_CustCountry"
+												label="${c:l('listheader_CustCountry.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_CustSharePerc"
+												label="${c:l('listheader_CustSharePerc.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_IDType" label="${c:l('listheader_IDType.label')}"
 												sort="false" hflex="min" />
-											<listheader id="listheader_CustDirector_RecordType" label="${c:l('listheader_RecordType.label')}"
-												sort="false" hflex="min" />
+											<listheader id="listheader_IDReference"
+												label="${c:l('listheader_IDReference.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_Nationality"
+												label="${c:l('listheader_Nationality.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_Director"
+												label="${c:l('listheader_Director.label')}" sort="auto" hflex="min" />
+											<listheader id="listheader_CustDirector_RecordStatus"
+												label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_CustDirector_RecordType"
+												label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 										</listhead>
 									</listbox>
 								</groupbox>
 							</tabpanel>
 							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_BankDetails">
-								<grid id="grid_BankDetails" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
+								<grid id="grid_BankDetails" sclass="GridLayoutNoBorder" fixedLayout="true"
+									style="border:0px; padding:0px;">
 									<columns>
 										<column width="45%" />
 										<column width="55%" />
@@ -674,56 +858,64 @@
 											<groupbox id="gp_BankInformationDetail" closable="true">
 												<caption label="${c:l('gp_BankInformationDetails')}"></caption>
 												<div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:1px;">
-														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-															<button id="btnNew_BankInformation" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_BankInformation.tooltiptext')}"
+													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
+														style=" padding:1px;">
+														<toolbar align="end"
+															style="float:right; border-style: none; padding:0px;">
+															<button id="btnNew_BankInformation"
+																label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_BankInformation.tooltiptext')}"
 																autodisable="btnNew_BankInformation" />
 														</toolbar>
 													</hbox>
 												</div>
-												<listbox id="listBoxCustomerBankInformation" span="true" sizedByContent="true"
-													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+												<listbox id="listBoxCustomerBankInformation" span="true"
+													sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
+													emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
-														<listheader id="listheader_CustomerBankInfo_BankName" label="${c:l('listheader_CustomerBankInfo_BankName.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustomerBankInfo_AccountNumber" label="${c:l('listheader_CustomerBankInfo_AccountNumber.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustomerBankInfo_AccountType" label="${c:l('listheader_CustomerBankInfo_AccountType.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_BankInfo_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" visible="false" />
-														<listheader id="listheader_BankInfo_RecordType" label="${c:l('listheader_RecordType.label')}"
-															sort="false" hflex="min" />
+														<listheader id="listheader_CustomerBankInfo_BankName"
+															label="${c:l('listheader_CustomerBankInfo_BankName.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustomerBankInfo_AccountNumber"
+															label="${c:l('listheader_CustomerBankInfo_AccountNumber.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustomerBankInfo_AccountType"
+															label="${c:l('listheader_CustomerBankInfo_AccountType.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_BankInfo_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" visible="false" />
+														<listheader id="listheader_BankInfo_RecordType"
+															label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 													</listhead>
 												</listbox>
 											</groupbox>
 											<groupbox id="gp_ChequeInformation" closable="true">
 												<caption label="${c:l('gp_CustomerChequeInfoDetails')}"></caption>
 												<div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:1px;">
-														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-															<button id="btnNew_ChequeInformation" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_ChequeInformation.tooltiptext')}"
+													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
+														style=" padding:1px;">
+														<toolbar align="end"
+															style="float:right; border-style: none; padding:0px;">
+															<button id="btnNew_ChequeInformation"
+																label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_ChequeInformation.tooltiptext')}"
 																autodisable="btnNew_ChequeInformation" />
 														</toolbar>
 													</hbox>
 												</div>
-												<listbox id="listBoxCustomerChequeInformation" span="true" sizedByContent="true"
-													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+												<listbox id="listBoxCustomerChequeInformation" span="true"
+													sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
+													emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
-														<listheader id="listheader_CustomerChequeInfo_MonthYear" label="${c:l('listheader_CustomerChequeInfo_MonthYear.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustomerChequeInfo_PaymentCheque" label="${c:l('listheader_CustomerChequeInfo_PaymentCheque.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustomerChequeInfo_Salary" label="${c:l('listheader_CustomerChequeInfo_Salary.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustomerChequeInfo_ReturnChequeAmt" label="${c:l('listheader_CustomerChequeInfo_ReturnChequeAmt.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustomerChequeInfo_Return" label="${c:l('listheader_CustomerChequeInfo_Return.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustomerChequeInfo_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" visible="false" />
-														<listheader id="listheader_CustomerChequeInfo_RecordType" label="${c:l('listheader_RecordType.label')}"
-															sort="false" hflex="min" />
+														<listheader id="listheader_CustomerChequeInfo_MonthYear"
+															label="${c:l('listheader_CustomerChequeInfo_MonthYear.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustomerChequeInfo_PaymentCheque"
+															label="${c:l('listheader_CustomerChequeInfo_PaymentCheque.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustomerChequeInfo_Salary"
+															label="${c:l('listheader_CustomerChequeInfo_Salary.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustomerChequeInfo_ReturnChequeAmt"
+															label="${c:l('listheader_CustomerChequeInfo_ReturnChequeAmt.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustomerChequeInfo_Return"
+															label="${c:l('listheader_CustomerChequeInfo_Return.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustomerChequeInfo_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" visible="false" />
+														<listheader id="listheader_CustomerChequeInfo_RecordType"
+															label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 													</listhead>
 												</listbox>
 											</groupbox>
@@ -731,61 +923,70 @@
 										<row spans="3">
 											<groupbox closable="true">
 												<caption label="${c:l('gp_CustFinExposureDetails')}"></caption>
-												<listbox id="listBoxCustomerFinExposure" span="true" sizedByContent="true" width="100%" height="100%"
-													multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+												<listbox id="listBoxCustomerFinExposure" span="true"
+													sizedByContent="true" width="100%" height="100%" multiple="false"
+													emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
-														<listheader id="listheader_CustFinExposure_FinDate" label="${c:l('listheader_CustFinExposure_FinDate.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustFinExposure_FinType" label="${c:l('listheader_CustFinExposure_FinType.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustFinExposure_FinReference" label="${c:l('listheader_CustFinExposure_FinReference.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustFinExposure_OriginalAmt" label="${c:l('listheader_CustFinExposure_OriginalAmt.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustFinExposure_Installment" label="${c:l('listheader_CustFinExposure_Installment.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustFinExposure_OutstandingBal" label="${c:l('listheader_CustFinExposure_OutstandingBal.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustFinExposure_FinStatus" label="${c:l('listheader_CustFinExposure_FinStatus.label')}"
-															sort="false" hflex="min" />
+														<listheader id="listheader_CustFinExposure_FinDate"
+															label="${c:l('listheader_CustFinExposure_FinDate.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustFinExposure_FinType"
+															label="${c:l('listheader_CustFinExposure_FinType.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustFinExposure_FinReference"
+															label="${c:l('listheader_CustFinExposure_FinReference.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustFinExposure_OriginalAmt"
+															label="${c:l('listheader_CustFinExposure_OriginalAmt.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustFinExposure_Installment"
+															label="${c:l('listheader_CustFinExposure_Installment.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustFinExposure_OutstandingBal"
+															label="${c:l('listheader_CustFinExposure_OutstandingBal.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustFinExposure_FinStatus"
+															label="${c:l('listheader_CustFinExposure_FinStatus.label')}" sort="false" hflex="min" />
 													</listhead>
 												</listbox>
 											</groupbox>
 										</row>
 										<row spans="3">
-											<groupbox id="gp_ExternalLiability" closable="true" width="100%" height="100%" style="overflow:auto"
-												ca:data-scrollable="true">
+											<groupbox id="gp_ExternalLiability" closable="true" width="100%"
+												height="100%" style="overflow:auto" ca:data-scrollable="true">
 												<caption label="${c:l('gp_ExternalLiabilityDetails')}"></caption>
 												<div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:1px;">
-														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-															<button id="btnNew_ExternalLiability" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_ExternalLiability.tooltiptext')}"
+													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
+														style=" padding:1px;">
+														<toolbar align="end"
+															style="float:right; border-style: none; padding:0px;">
+															<button id="btnDownloadExternalLiability"
+																label="${c:l('label_Download.value')}"
+																tooltiptext="${c:l('btnDownload_ExternalLiability.tooltiptext')}" />
+															<button id="btnUploadExternalLiability"
+																label="${c:l('label_Upload.value')}" tooltiptext="${c:l('btnUpload_ExternalLiability.tooltiptext')}" />
+															<button id="btnNew_ExternalLiability"
+																label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_ExternalLiability.tooltiptext')}"
 																autodisable="btnNew_ExternalLiability" />
 														</toolbar>
 													</hbox>
 												</div>
-												<listbox id="listBoxCustomerExternalLiability" span="true" sizedByContent="true"
-													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="500px" multiple="false"
-													emptyMessage="${c:l('listbox.emptyMessage')}">
+												<listbox id="listBoxCustomerExternalLiability" span="true"
+													sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="500px"
+													multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
-														<listheader id="listheader_ExternalLiability_FinDate" label="${c:l('listheader_ExternalLiability_FinDate.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_ExternalLiability_FinType" label="${c:l('listheader_ExternalLiability_FinType.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_ExternalLiability_BankName" label="${c:l('listheader_ExternalLiability_BankName.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_ExternalLiability_OriginalAmt" label="${c:l('listheader_ExternalLiability_OriginalAmt.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_ExternalLiability_Installment" label="${c:l('listheader_ExternalLiability_Installment.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_ExternalLiability_OutstandingBal" label="${c:l('listheader_ExternalLiability_OutstandingBal.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_ExternalLiability_FinStatus" label="${c:l('listheader_ExternalLiability_FinStatus.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_ExternalLiability_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" visible="false" />
-														<listheader id="listheader_ExternalLiability_RecordType" label="${c:l('listheader_RecordType.label')}"
-															sort="false" hflex="min" />
+														<listheader id="listheader_ExternalLiability_FinDate"
+															label="${c:l('listheader_ExternalLiability_FinDate.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_ExternalLiability_FinType"
+															label="${c:l('listheader_ExternalLiability_FinType.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_ExternalLiability_BankName"
+															label="${c:l('listheader_ExternalLiability_BankName.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_ExternalLiability_OriginalAmt"
+															label="${c:l('listheader_ExternalLiability_OriginalAmt.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_ExternalLiability_Installment"
+															label="${c:l('listheader_ExternalLiability_Installment.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_ExternalLiability_OutstandingBal"
+															label="${c:l('listheader_ExternalLiability_OutstandingBal.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_ExternalLiability_FinStatus"
+															label="${c:l('listheader_ExternalLiability_FinStatus.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_ExternalLiability_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" visible="false" />
+														<listheader id="listheader_ExternalLiability_RecordType"
+															label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 													</listhead>
 												</listbox>
 											</groupbox>
@@ -794,7 +995,8 @@
 								</grid>
 							</tabpanel>
 							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_CardSales">
-								<grid id="grid_CardSales" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
+								<grid id="grid_CardSales" sclass="GridLayoutNoBorder" fixedLayout="true"
+									style="border:0px; padding:0px;">
 									<columns>
 										<column width="100%" />
 										<column />
@@ -804,22 +1006,26 @@
 											<groupbox id="gp_CardSalesInformation" closable="true">
 												<caption label="${c:l('gp_CardSalesInformation')}"></caption>
 												<div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:1px;">
-														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-															<button id="btnNew_CardSalesInformation" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CardSalesInformation.tooltiptext')}"
+													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
+														style=" padding:1px;">
+														<toolbar align="end"
+															style="float:right; border-style: none; padding:0px;">
+															<button id="btnNew_CardSalesInformation"
+																label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CardSalesInformation.tooltiptext')}"
 																autodisable="btnNew_CardSalesInformation" />
 														</toolbar>
 													</hbox>
 												</div>
-												<listbox id="listBoxCustomerCardSalesInformation" span="true" sizedByContent="true"
-													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+												<listbox id="listBoxCustomerCardSalesInformation" span="true"
+													sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
+													emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
-														<listheader id="listheader_CustomerCardSalesInfo_MerchantId" label="${c:l('listheader_CustomerCardSalesInfo_MerchantId.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustomerCardSalesInfo_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" />
-														<listheader id="listheader_CustomerCardSalesInfo_RecordType" label="${c:l('listheader_RecordType.label')}"
-															sort="false" hflex="min" />
+														<listheader id="listheader_CustomerCardSalesInfo_MerchantId"
+															label="${c:l('listheader_CustomerCardSalesInfo_MerchantId.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustomerCardSalesInfo_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustomerCardSalesInfo_RecordType"
+															label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 													</listhead>
 												</listbox>
 											</groupbox>
@@ -832,26 +1038,30 @@
 
 									<groupbox id="gb_gstDetails">
 										<div sclass="z-toolbar" style="padding:0">
-											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
+											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+												width="100%">
 												<toolbar align="start" style="border:none;">
-													<label value="${c:l('customerGSTDetails')}" sclass="listboxHeading">
+													<label value="${c:l('customerGSTDetails')}"
+														sclass="listboxHeading">
 													</label>
 												</toolbar>
-												<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-													<button id="btnNew_CustomerGSTDetails" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerGSTDetails.tooltiptext')}" />
+												<toolbar align="end"
+													style="float:right; border-style: none; padding:0px;">
+													<button id="btnNew_CustomerGSTDetails" label="${c:l('label_New')}"
+														tooltiptext="${c:l('btnNew_CustomerGSTDetails.tooltiptext')}" />
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listBoxCustomerGst" emptyMessage="${c:l('listbox.emptyMessage')}" span="true"
-											sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" multiple="false">
+										<listbox id="listBoxCustomerGst" emptyMessage="${c:l('listbox.emptyMessage')}"
+											span="true" sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" multiple="false">
 											<listhead sizable="true">
 
-												<listheader id="listheader_GstNumber" label="${c:l('listheader_GstNumber.label')}" sort="false"
-													hflex="min" style="text-align:left;" />
-												<listheader id="listheader_frequencyType" label="${c:l('listheader_frequency.label')}" sort="false"
-													hflex="min" style="text-align:left;" />
-												<listheader id="listheader_GstOperation" label="${c:l('listheader_GstOperation.label')}" sort="false"
-													hflex="min" style="text-align:left;" />
+												<listheader id="listheader_GstNumber"
+													label="${c:l('listheader_GstNumber.label')}" sort="false" hflex="min" style="text-align:left;" />
+												<listheader id="listheader_frequencyType"
+													label="${c:l('listheader_frequency.label')}" sort="false" hflex="min" style="text-align:left;" />
+												<listheader id="listheader_GstOperation"
+													label="${c:l('listheader_GstOperation.label')}" sort="false" hflex="min" style="text-align:left;" />
 											</listhead>
 										</listbox>
 
@@ -867,7 +1077,8 @@
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
-						<label id="label_CustomerDialog_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+						<label id="label_CustomerDialog_RecordStatus" value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
 						<label id="recordStatus" style="font-weight:bold;" />
 					</hbox>
 				</groupbox>

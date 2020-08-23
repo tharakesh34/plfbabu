@@ -46,114 +46,322 @@
 				</div>
 			</north>
 
-			<center border="none" autoscroll="false">
-
-				<groupbox id="gb_basicDetails" sclass="gb-dialog">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-						<columns>
-							<column width="220px" />
-							<column />
-							<column width="220px" />
-							<column />
-						</columns>
-						<rows>
-							<row visible="true">
-								<label id="label_BlacklistCustomerDialog_CustCIF" value="${c:l('label_BlacklistCustomerDialog_CustCIF.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<textbox id="custCIF" width="180px" />
-								</hbox>
-								<label id="label_BlacklistCustomerDialog_CustCtgType" value="${c:l('label_BlacklistCustomerDialog_CustCtgType.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<combobox id="custCtgType" width="180px" />
-								</hbox>
-							</row>
-							<row visible="true">
-								<label id="label_BlacklistCustomerDialog_CustFName" value="${c:l('label_BlacklistCustomerDialog_CustFName.value')}" />
-								<hbox>
-									<space id="space_CustFName" spacing="2px" sclass="mandatory" />
-									<textbox id="custFName" width="180px" />
-								</hbox>
-								<label id="label_BlacklistCustomerDialog_CustLName" value="${c:l('label_BlacklistCustomerDialog_CustLName.value')}" />
-								<hbox>
-									<space id="space_CustLName" spacing="2px" sclass="mandatory" />
-									<textbox id="custLName" width="180px" />
-								</hbox>
-							</row>
-
-							<row visible="true">
-								<label id="label_BlacklistCustomerDialog_CustSName" value="${c:l('label_BlacklistCustomerDialog_CustSName.value')}" />
-								<hbox>
-									<space id="space_CustSName" spacing="2px" sclass="mandatory" />
-									<textbox id="custSName" width="180px" />
-								</hbox>
-								<label id="label_BlacklistCustomerDialog_CustDOB" value="${c:l('label_BlacklistCustomerDialog_CustDOB.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<datebox id="custDOB" width="180px" />
-								</hbox>
-							</row>
-
-							<row visible="true">
-								<label id="label_BlacklistCustomerDialog_CustEID" value="${c:l('label_BlacklistCustomerDialog_CustEID.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<uppercasebox id="custEID" width="180px" />
-								</hbox>
-								<label id="label_BlacklistCustomerDialog_CustAadhar" value="${c:l('label_BlacklistCustomerDialog_CustAadhar.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<textbox id="custAadhar" width="180px" />
-								</hbox>
-							</row>
-
-
-							<row visible="true">
-								<label id="label_BlacklistCustomerDialog_CustCin" value="${c:l('label_BlacklistCustomerDialog_CustCin.value')}" />
-								<hbox>
-									<space id="space_CustCin" spacing="2px" />
+			<center border="none" autoscroll="true">
+				<div>
+					<groupbox id="gb_basicDetails" sclass="gb-dialog">
+						<caption label="${c:l('gb_CustomerDetails')}" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+								<column />
+							</columns>
+							<rows>
+								<row visible="true">
+									<label id="label_BlacklistCustomerDialog_CustCIF" value="${c:l('label_BlacklistCustomerDialog_CustCIF.value')}" />
 									<hbox>
-										<textbox id="custCin" width="180px" />
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="custCIF" width="180px" />
 									</hbox>
-								</hbox>
-
-
-								<label id="label_BlacklistCustomerDialog_CustMobileNum" value="${c:l('label_BlacklistCustomerDialog_CustMobileNum.value')}" />
-								<hbox>
-									<space spacing="2px" />
+									<label id="label_BlacklistCustomerDialog_CustCtgType" value="${c:l('label_BlacklistCustomerDialog_CustCtgType.value')}" />
 									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="custCtgType" width="180px" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label id="label_BlacklistCustomerDialog_CustFName" value="${c:l('label_BlacklistCustomerDialog_CustFName.value')}" />
+									<hbox>
+										<space id="space_CustFName" spacing="2px" sclass="mandatory" />
+										<textbox id="custFName" width="180px" />
+									</hbox>
+									<label id="label_BlacklistCustomerDialog_CustLName" value="${c:l('label_BlacklistCustomerDialog_CustLName.value')}" />
+									<hbox>
+										<space id="space_CustLName" spacing="2px" sclass="mandatory" />
+										<textbox id="custLName" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_BlacklistCustomerDialog_CustMobileNum" value="${c:l('label_BlacklistCustomerDialog_CustMobileNum.value')}" />
+									<hbox>
+										<space spacing="2px" />
+
 										<textbox id="custMobileNum" width="180px" />
 									</hbox>
-								</hbox>
-							</row>
+									<label id="label_BlacklistCustomerDialog_CustDOB" value="${c:l('label_BlacklistCustomerDialog_CustDOB.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<datebox id="custDOB" width="180px" />
+									</hbox>
 
+								</row>
+								<row visible="true">
+									<label value="${c:l('label_CustomerBlackListDialog_CustGenderCode.value')}" />
+									<hbox>
+										<space id="space_Gender" spacing="2px" sclass="mandatory" />
+										<combobox id="custGenderCode" width="180px" />
+									</hbox>
+									<label id="label_BlacklistCustomerDialog_CustCin" value="${c:l('label_BlacklistCustomerDialog_CustCin.value')}" />
+									<hbox>
+										<space id="space_CustCin" spacing="2px" />
+										<hbox>
+											<textbox id="custCin" width="180px" />
+										</hbox>
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerAddressDialog_CustAddrType" value="${c:l('label_CustomerBlackListDialog_CustAddrType.value')}" />
+									<hbox>
+										<extendedcombobox id="custAddrType" width="150px" />
+									</hbox>
+									<label id="label_CustomerAddressDialog_CustAddrHNbr" value="${c:l('label_CustomerBlackListDialog_CustAddrHNbr.value')}"
+										visible="true" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custAddrHNbr" maxlength="50" visible="true" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerAddressDialog_CustAddrStreet" value="${c:l('label_CustomerBlackListDialog_CustAddrStreet.value')}"
+										visible="true" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custAddrStreet" maxlength="50" visible="true" width="180px" />
+									</hbox>
+									<label id="label_CustomerAddressDialog_CustAddrCity" value="${c:l('label_CustomerBlackListDialog_CustAddrCity.value')}"
+										visible="true" />
+									<hbox>
+										<extendedcombobox id="custAddrCity" width="150px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerAddressDialog_CustAddrProvince" value="${c:l('label_CustomerBlackListDialog_CustAddrProvince.value')}"
+										visible="true" />
+									<hbox>
+										<extendedcombobox id="custAddrProvince" width="150px" />
+									</hbox>
+									<label id="label_CustomerAddressDialog_CustAddrCountry" value="${c:l('label_CustomerBlackListDialog_CustAddrCountry.value')}"
+										visible="true" />
+									<hbox>
+										<extendedcombobox id="custAddrCountry" width="150px" />
+									</hbox>
 
-							<row visible="true">
+								</row>
 
-								<label id="label_BlacklistCustomerDialog_CustNationality" value="${c:l('label_BlacklistCustomerDialog_CustNationality.value')}" />
-								<hbox>
-									<extendedcombobox id="custNationality" />
-								</hbox>
+								<row visible="true">
+									<label id="label_CustomerAddressDialog_CustAddrZIP" value="${c:l('label_CustomerBlackListDialog_CustAddrZIP.value')}"
+										visible="true" />
+									<hbox>
+										<extendedcombobox id="custAddrZIP" width="150px" />
+									</hbox>
+									<label id="label_BlacklistCustomerDialog_CustEID" value="${c:l('label_BlacklistCustomerDialog_CustEID.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<uppercasebox id="custEID" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_BlacklistCustomerDialog_CustAadhar" value="${c:l('label_BlacklistCustomerDialog_CustAadhar.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custAadhar" width="180px" />
+									</hbox>
+									<label id="label_CustomerAddressDialog_CustPassport" value="${c:l('label_BlacklistCustomerDialog_CustPassport.value')}"
+										visible="true" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custPassport" maxlength="50" visible="true" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_BlacklistCustomerDialog_CustVid" value="${c:l('label_BlacklistCustomerDialog_CustVid.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custVid" width="180px" />
+									</hbox>
+									<label id="label_CustomerAddressDialog_CustDl" value="${c:l('label_BlacklistCustomerDialog_CustDl.value')}"
+										visible="true" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custDl" maxlength="50" visible="true" width="180px" />
+									</hbox>
+								</row>
 
+								<row visible="true">
 
-								<label id="label_BlacklistCustomerDialog_Employer" value="${c:l('label_BlacklistCustomerDialog_Employer.value')}" />
-								<hbox>
-									<extendedcombobox id="employer" />
-								</hbox>
+									<label id="label_BlacklistCustomerDialog_CustNationality" value="${c:l('label_BlacklistCustomerDialog_CustNationality.value')}" />
+									<hbox>
+										<extendedcombobox id="custNationality" maxlength="50" width="180px" />
+									</hbox>
+									<label id="label_CustomerAddressDialog_ProductAppliedInFi" value="${c:l('label_BlacklistCustomerDialog_ProductAppliedInFi.value')}"
+										visible="true" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="ProductAppliedInFi" maxlength="50" visible="true" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_BlacklistCustomerDialog_CustForgedDocumentType" value="${c:l('label_BlacklistCustomerDialog_CustForgedDocumentType.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="CustForgedDocumentType" width="180px" />
+									</hbox>
+									<label id="label_CustomerAddressDialog_CustCmd" value="${c:l('label_BlacklistCustomerDialog_CustCmd.value')}"
+										visible="true" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custCmd" maxlength="50" visible="true" width="180px" multiline="true" height="60px" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label id="label_BlacklistCustomerDialog_CustSName" value="${c:l('label_BlacklistCustomerDialog_CustSName.value')}" />
+									<hbox>
+										<space id="space_CustSName" spacing="2px" />
+										<textbox id="custSName" width="180px" />
+									</hbox>
+									<label id="label_BlacklistCustomerDialog_Employer" value="${c:l('label_BlacklistCustomerDialog_Employer.value')}" />
+									<hbox>
+										<extendedcombobox id="employer" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_BlacklistCustomerDialog_CustIsActive" value="${c:l('label_BlacklistCustomerDialog_CustIsActive.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="custIsActive" checked="false" />
+									</hbox>
+									<label id="label_ReasonCode" value="${c:l('label_BlacklistCustomerDialog_ReasonCode.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="reasonCode" maxlength="100" width="150px" />
+										<button id="btnReasonCode" image="/images/icons/LOVSearch.png" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_BlacklistCustomerDialog_Source" value="${c:l('label_BlacklistCustomerDialog_Source.value')}" />
+									<hbox>
+										<space id="space_Source" spacing="2px" />
+										<textbox id="source" width="180px" />
+									</hbox>
+									<label id="label_BlacklistCustomerDialog_Branch" value="${c:l('label_BlacklistCustomerDialog_Branch.value')}" />
+									<hbox>
+										<extendedcombobox id="branch" width="180px" />
+									</hbox>
+								</row>
 
+								<row>
+									<label id="label_BlacklistCustomerDialog_Address" value="${c:l('label_BlacklistCustomerDialog_Address.value')}" />
+									<cell colspan="4">
+										<hbox>
+											<space id="space_Address" spacing="2px" />
+											<textbox multiline="true" id="address" width="850px" height="80px" />
+										</hbox>
+									</cell>
+								</row>
 
-							</row>
-							<row>
-								<label id="label_BlacklistCustomerDialog_CustIsActive" value="${c:l('label_BlacklistCustomerDialog_CustIsActive.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<checkbox id="custIsActive" checked="false" />
-								</hbox>
-							</row>
-						</rows>
-					</grid>
-				</groupbox>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_AdditionalDetails" sclass="gb-dialog">
+						<caption label="${c:l('gb_AdditionalDetails')}" />
+						<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_BlacklistCustomerDialog_AdditionalField0" value="${c:l('label_BlacklistCustomerDialog_AdditionalField0.value')}" />
+									<hbox>
+										<space id="space_AdditionalField0" spacing="2px" />
+										<datebox id="additionalField0" width="180px" />
+									</hbox>
+									<label id="label_BlacklistCustomerDialog_AdditionalField1" value="${c:l('label_BlacklistCustomerDialog_AdditionalField1.value')}" />
+									<hbox>
+										<space id="space_AdditionalField1" spacing="2px" />
+										<textbox id="additionalField1" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_BlacklistCustomerDialog_AdditionalField2" value="${c:l('label_BlacklistCustomerDialog_AdditionalField2.value')}" />
+									<hbox>
+										<space id="space_AdditionalField2" spacing="2px" />
+										<textbox id="additionalField2" width="180px" />
+									</hbox>
+									<label id="label_BlacklistCustomerDialog_AdditionalField3" value="${c:l('label_BlacklistCustomerDialog_AdditionalField3.value')}" />
+									<hbox>
+										<space id="space_AdditionalField3" spacing="2px" />
+										<textbox id="additionalField3" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_BlacklistCustomerDialog_AdditionalField4" value="${c:l('label_BlacklistCustomerDialog_AdditionalField4.value')}" />
+									<hbox>
+										<space id="space_AdditionalField4" spacing="2px" />
+										<textbox id="additionalField4" width="180px" />
+									</hbox>
+									<label id="label_BlacklistCustomerDialog_AdditionalField5" value="${c:l('label_BlacklistCustomerDialog_AdditionalField5.value')}" />
+									<hbox>
+										<space id="space_AdditionalField5" spacing="2px" />
+										<textbox id="additionalField5" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_BlacklistCustomerDialog_AdditionalField6" value="${c:l('label_BlacklistCustomerDialog_AdditionalField6.value')}" />
+									<hbox>
+										<space id="space_AdditionalField6" spacing="2px" />
+										<textbox id="additionalField6" width="180px" />
+									</hbox>
+									<label id="label_BlacklistCustomerDialog_AdditionalField7" value="${c:l('label_BlacklistCustomerDialog_AdditionalField7.value')}" />
+									<hbox>
+										<space id="space_AdditionalField7" spacing="2px" />
+										<textbox id="additionalField7" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_BlacklistCustomerDialog_AdditionalField8" value="${c:l('label_BlacklistCustomerDialog_AdditionalField8.value')}" />
+									<hbox>
+										<space id="space_AdditionalField8" spacing="2px" />
+										<textbox id="additionalField8" width="180px" />
+									</hbox>
+									<label id="label_BlacklistCustomerDialog_AdditionalField9" value="${c:l('label_BlacklistCustomerDialog_AdditionalField9.value')}" />
+									<hbox>
+										<space id="space_AdditionalField9" spacing="2px" />
+										<textbox id="additionalField9" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_BlacklistCustomerDialog_AdditionalField10" value="${c:l('label_BlacklistCustomerDialog_AdditionalField10.value')}" />
+									<hbox>
+										<space id="space_AdditionalField10" spacing="2px" />
+										<textbox id="additionalField10" width="180px" />
+									</hbox>
+									<label id="label_BlacklistCustomerDialog_AdditionalField11" value="${c:l('label_BlacklistCustomerDialog_AdditionalField11.value')}" />
+									<hbox>
+										<space id="space_AdditionalField11" spacing="2px" />
+										<textbox id="additionalField11" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_BlacklistCustomerDialog_AdditionalField12" value="${c:l('label_BlacklistCustomerDialog_AdditionalField12.value')}" />
+									<hbox>
+										<space id="space_AdditionalField12" spacing="2px" />
+										<textbox id="additionalField12" width="180px" />
+									</hbox>
+									<label id="label_BlacklistCustomerDialog_AdditionalField13" value="${c:l('label_BlacklistCustomerDialog_AdditionalField13.value')}" />
+									<hbox>
+										<space id="space_AdditionalField13" spacing="2px" />
+										<textbox id="additionalField13" width="180px" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
 			</center>
 
 			<south sclass="south-dialog">

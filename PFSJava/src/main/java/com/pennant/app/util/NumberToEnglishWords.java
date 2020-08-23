@@ -64,17 +64,17 @@ public class NumberToEnglishWords {
 	private static Logger logger = Logger.getLogger(NumberToEnglishWords.class);
 	private static CurrencyDAO currencyDAO;
 
-	static String[] wrdOnes = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
-			"eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
+	static String[] wrdOnes = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+			"Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
 
-	static String[] wrdtens = { "", "ten", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy", "eighty",
-			"ninety" };
+	static String[] wrdtens = { "", "Ten", "Twenty", "Thirty", "Fourty", "Fifty", "Sixty", "Seventy", "Eighty",
+			"Ninety" };
 
-	static String[] wrdmillion = { "", "thousand", "million", "billion", "trillion", "quadrillion", "quintillion",
-			"sextillion", "septillion", "octillion", "nonillion", "decillion", "undecillion", "duodecillion",
-			"tredecillion", "quattuordecillion", "sexdecillion", "septendecillion", "octodecillion", "novemdecillion",
-			"vigintillion" };
-	static String[] wrdCrores = { "thousand", "lakhs" };
+	static String[] wrdmillion = { "", "Thousand", "Million", "Billion", "Trillion", "Quadrillion", "Quintillion",
+			"Sextillion", "Septillion", "Octillion", "Nonillion", "Decillion", "Undecillion", "Duodecillion",
+			"Tredecillion", "Quattuordecillion", "Sexdecillion", "Septendecillion", "Octodecillion", "Novemdecillion",
+			"Vigintillion" };
+	static String[] wrdCrores = { "Thousand", "Lakhs" };
 
 	/**
 	 * This method returns text value of given number in Billions or lakhs format
@@ -112,6 +112,9 @@ public class NumberToEnglishWords {
 		String strAmount = "";
 		String minorCcyDesc = "";
 		String currnecySymbol = "";
+		if (amount.compareTo(BigDecimal.ZERO) == 0) {
+			return strAmount;
+		}
 		if (amount.compareTo(BigDecimal.ZERO) < 0) {
 			minus = true;
 		}
@@ -150,6 +153,7 @@ public class NumberToEnglishWords {
 		if (minus) {
 			strAmount = "Dr " + strAmount;
 		}
+		strAmount = "(" + strAmount + " Only)";
 		logger.debug("Leaving ");
 		return strAmount;
 	}
@@ -215,9 +219,17 @@ public class NumberToEnglishWords {
 			df.applyPattern("0000000");
 
 			if (j == count - 1) {
-				result = formatInLakhs(df.format(Long.valueOf(numString[j])), result);
+				if (numString[j].startsWith("-")) {
+					result = formatInLakhs(df.format(Long.valueOf(numString[j].substring(1))), result);
+				} else {
+					result = formatInLakhs(df.format(Long.valueOf(numString[j])), result);
+				}
 			} else {
-				result = " crores " + formatInLakhs(df.format(Long.valueOf(numString[j])), result);
+				if (Integer.parseInt(df.format(Long.valueOf(numString[j])).substring(0, 2)) == 0) {
+					result = " crore " + formatInLakhs(df.format(Long.valueOf(numString[j])), result);
+				} else {
+					result = " crores " + formatInLakhs(df.format(Long.valueOf(numString[j])), result);
+				}
 			}
 		}
 		logger.debug("Leaving ");
@@ -247,10 +259,10 @@ public class NumberToEnglishWords {
 			tradLakhs = "";
 			break;
 		case 1:
-			tradLakhs = convertThousands(lakhs) + " lakh ";
+			tradLakhs = convertThousands(lakhs) + " Lakh ";
 			break;
 		default:
-			tradLakhs = convertThousands(lakhs) + " lakh ";
+			tradLakhs = convertThousands(lakhs) + " Lakh ";
 		}
 		result = result + tradLakhs;
 		String tradThousands;
@@ -298,7 +310,7 @@ public class NumberToEnglishWords {
 		long rem = number / 100;
 		long mod = number % 100;
 		if (rem > 0) {
-			word = wrdOnes[Long.valueOf(rem).intValue()] + " hundred";
+			word = wrdOnes[Long.valueOf(rem).intValue()] + " Hundred";
 			if (mod > 0) {
 				word = word + " ";
 			}
@@ -376,7 +388,7 @@ public class NumberToEnglishWords {
 				} else {
 					if (groupRecordsMap.containsKey(objectOne)) {
 						//If object is already in Map (in case last element is already in map)
-						List<T> tempList = (List<T>) groupRecordsMap.get(objectOne);
+						List<T> tempList = groupRecordsMap.get(objectOne);
 						tempList.add(childRecordsList.get(i));
 						groupRecordsMap.put(objectOne, tempList);
 					} else {

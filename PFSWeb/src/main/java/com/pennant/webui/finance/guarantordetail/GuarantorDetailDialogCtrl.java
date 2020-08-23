@@ -100,11 +100,13 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
+import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl;
@@ -252,6 +254,9 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private boolean isEnqProcess = false;
 	private boolean finsumryGurnatorEnq = false;
+	private boolean isCustomPhoneRegexReq = StringUtils
+			.equals(SysParamUtil.getValueAsString(SMTParameterConstants.USE_CUSTOM_PHONE_REGEX), PennantConstants.YES)
+					? true : false;
 
 	/**
 	 * default constructor.<br>
@@ -307,8 +312,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			if (arguments.containsKey("guarantorDetail")) {
 				this.guarantorDetail = (GuarantorDetail) arguments.get("guarantorDetail");
 				GuarantorDetail befImage = new GuarantorDetail();
-				BeanUtils.copyProperties(this.guarantorDetail, befImage);
-				this.guarantorDetail.setBefImage(befImage);
+				if (this.guarantorDetail.getBefImage() == null) {
+					BeanUtils.copyProperties(this.guarantorDetail, befImage);
+					this.guarantorDetail.setBefImage(befImage);
+				}
 				setGuarantorDetail(this.guarantorDetail);
 			} else {
 				setGuarantorDetail(null);
@@ -955,6 +962,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.addrCity.setValidateColumns(new String[] { "PCCity" });
 		this.cityName.setMaxlength(8);
 		this.addrZIP.setMaxlength(50);
+
+		if (isCustomPhoneRegexReq) {
+			this.mobileNo.setMaxlength(18);
+		}
 
 		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
 		logger.debug("Leaving");
@@ -1735,9 +1746,14 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			 * String[] { Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value") }))); }
 			 */
 			if (!this.mobileNo.isReadonly()) {
-				this.mobileNo.setConstraint(
-						new PTMobileNumberValidator(Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"), true,
-								PennantRegularExpressions.TELEPHONE_FAX_REGEX));
+				if (isCustomPhoneRegexReq) {
+					this.mobileNo.setConstraint(new PTPhoneNumberValidator(
+							Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"), true));
+				} else {
+					this.mobileNo.setConstraint(
+							new PTMobileNumberValidator(Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"),
+									true, PennantRegularExpressions.TELEPHONE_FAX_REGEX));
+				}
 			}
 			// Email Id
 			if (!this.emailId.isReadonly()) {

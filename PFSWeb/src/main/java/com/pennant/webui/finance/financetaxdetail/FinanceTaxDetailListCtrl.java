@@ -278,6 +278,11 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
+		if (enqiryModule) {
+			arg.put("enquirymode", true);
+		} else {
+			arg.put("enquirymode", false);
+		}
 		arg.put("financeTaxDetail", financetaxdetail);
 		arg.put("financeTaxDetailListCtrl", this);
 

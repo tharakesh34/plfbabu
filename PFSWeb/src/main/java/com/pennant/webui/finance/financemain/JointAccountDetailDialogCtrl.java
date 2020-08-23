@@ -330,15 +330,17 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * 
 	 * @param aFinanceDetail
 	 */
-	public void doSave_GuarantorDetail(FinanceDetail aFinanceDetail) {
+	public void doSave_GuarantorDetail(FinanceDetail aFinanceDetail, boolean isSaveRecord) {
 		logger.debug("Entering ");
 		if (guarantorDetailList != null && !this.guarantorDetailList.isEmpty()) {
 			for (GuarantorDetail details : guarantorDetailList) {
 				details.setFinReference(aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference());
 				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-				details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				details.setUserDetails(getUserWorkspace().getLoggedInUser());
 				details.setRecordStatus(aFinanceDetail.getUserAction());
+				if (isSaveRecord) {
+					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				}
 			}
 			Cloner cloner = new Cloner();
 			aFinanceDetail.setGurantorsDetailList(cloner.deepClone(guarantorDetailList));
@@ -351,15 +353,17 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * 
 	 * @param aFinanceDetail
 	 */
-	public void doSave_JointAccountDetail(FinanceDetail aFinanceDetail) {
+	public void doSave_JointAccountDetail(FinanceDetail aFinanceDetail, boolean isSaveRecord) {
 		logger.debug("Entering ");
 		if (jountAccountDetailList != null && !this.jountAccountDetailList.isEmpty()) {
 			for (JointAccountDetail details : jountAccountDetailList) {
 				details.setFinReference(aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference());
 				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-				details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				details.setUserDetails(getUserWorkspace().getLoggedInUser());
 				details.setRecordStatus(aFinanceDetail.getUserAction());
+				if (isSaveRecord) {
+					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				}
 			}
 			Cloner cloner = new Cloner();
 			aFinanceDetail.setJountAccountDetailList(cloner.deepClone(jountAccountDetailList));
@@ -393,6 +397,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		map.put("primaryCustID", custCIF);
 		map.put("ccy", ccy);
 		map.put("filter", setFilter(getjointAcFilter()));
+		map.put("coAppFilter", setFilter(getGurantorFilter())); // For getting coapplicant list from  getGurantorFilter()
 		try {
 			Executions.createComponents("/WEB-INF/pages/JointAccountDetail/JointAccountDetailDialog.zul",
 					window_JointAccountDetailDialog, map);
@@ -553,6 +558,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				map.put("ccDecimal", ccDecimal);
 				map.put("ccy", ccy);
 				map.put("filter", setFilter(getjointAcFilter()));
+				map.put("coAppFilter", setFilter(getGurantorFilter())); // For getting coapplicant list from  getGurantorFilter()
 				if (!enquiry) {
 					map.put("financeMain", getFinanceDetail().getFinScheduleData().getFinanceMain());
 					map.put("financeDetail", financeDetail);

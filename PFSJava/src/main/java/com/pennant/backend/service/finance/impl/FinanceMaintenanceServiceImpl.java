@@ -247,14 +247,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(finType,
 				StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
 				FinanceConstants.PROCEDT_STAGEACC, userRole, "_AEView", true));
-
+		
+		//Finance Joint Account Details
+				financeDetail
+						.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(finReference, "_View"));
+				
 		//Finance Guaranteer Details		
 		if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
 			financeDetail.setGurantorsDetailList(getGuarantorDetailService().getGuarantorDetail(finReference, "_View"));
-
-			//Finance Joint Account Details
-			financeDetail.setJountAccountDetailList(
-					getJointAccountDetailService().getJoinAccountDetail(finReference, "_View"));
 
 			// Collateral Details
 			if (ImplementationConstants.COLLATERAL_INTERNAL) {
@@ -417,6 +417,15 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 
 		}
+
+		// Save Fee Charges List
+		//=======================================
+		if (tableType == TableType.TEMP_TAB) {
+			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(),
+					false, tableType.getSuffix());
+		}
+		saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), false,
+				tableType.getSuffix());
 
 		// set Finance Check List audit details to auditDetails
 		//=======================================
@@ -958,6 +967,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			auditDetails.addAll(details);
 			listDocDeletion(financeDetail, "_Temp");
 		}
+
+		//Fee Charge Details
+		//=======================================
+		saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), false, "");
 
 		// set Check list details Audit
 		//=======================================

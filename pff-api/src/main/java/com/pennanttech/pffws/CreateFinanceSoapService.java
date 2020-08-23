@@ -7,6 +7,7 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.LoanStage;
 import com.pennant.backend.model.finance.UserActions;
@@ -81,5 +82,8 @@ public interface CreateFinanceSoapService {
 
 	@WebResult(name = "finReference")
 	DeviationList getDeviations(@WebParam(name = "finReference") String finReference) throws ServiceException;
+
+	@WebResult(name = "finance")
+	FinCustomerDetails getDetailsByOfferID(@WebParam(name = "offerID") String offerID) throws ServiceException;
 
 }

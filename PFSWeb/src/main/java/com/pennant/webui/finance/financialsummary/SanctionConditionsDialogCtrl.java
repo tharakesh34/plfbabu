@@ -204,6 +204,8 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
+		this.sanctionCondition.setMaxlength(150);
+		this.status.setMaxlength(40);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);

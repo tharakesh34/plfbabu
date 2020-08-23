@@ -130,7 +130,7 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 		if (facility) {
 			sql.append(" from CustomerFacilityDetails");
 		} else {
-			sql.append(", FeeChargeAmt, NumberOfTerms, FirstRepay");
+			sql.append(", FeeChargeAmt");
 			sql.append(" from CustomerFinanceDetails");
 		}
 
@@ -174,8 +174,6 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 
 					if (!facility) {
 						cfd.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-						cfd.setFirstRepay(rs.getBigDecimal("FirstRepay"));
-						cfd.setNumberOfTerms(rs.getInt("NumberOfTerms"));
 					}
 
 					return cfd;
@@ -187,6 +185,29 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
+	}
+
+	@Override
+	public List<AuditTransaction> getFinTransactions(String id) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select AuditReference, AuditDate, RoleCode, RoleDesc, LastMntBy, RecordStatus, ");
+		sql.append(" RecordType, UsrName from FinStsAprvlInquiry_View ");
+		sql.append(" Where AuditReference =:FinReference  ");
+		sql.append(" Order by AuditDate ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		CustomerFinanceDetail customerFinanceDetail = new CustomerFinanceDetail();
+		customerFinanceDetail.setFinReference(id);
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerFinanceDetail);
+		RowMapper<AuditTransaction> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(AuditTransaction.class);
+		logger.debug(Literal.LEAVING);
+
+		return this.auditJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	public void setAuditDataSource(DataSource auditDataSource) {

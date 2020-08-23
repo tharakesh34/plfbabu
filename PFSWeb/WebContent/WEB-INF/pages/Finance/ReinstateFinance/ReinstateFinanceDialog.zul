@@ -157,6 +157,13 @@
 													<textbox id="rejectRemarks" multiline="true" rows="4" style="overflow:auto;" width="260px" />
 												</hbox>
 											</row>
+											<row>
+												<label id="label_ReinstateFinanceDialog_RejectReason" value="${c:l('label_ReinstateFinanceDialog_RejectReason.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="rejectReason" multiline="true" rows="4" style="overflow:auto;" width="260px" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 								</groupbox>

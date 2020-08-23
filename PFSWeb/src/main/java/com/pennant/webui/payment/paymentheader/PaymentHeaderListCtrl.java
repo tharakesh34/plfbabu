@@ -175,7 +175,7 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		// finReference
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(120);
-		this.finReference.setModuleName("FinanceManagement");
+		this.finReference.setModuleName("FinanceMainMaintenance");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 

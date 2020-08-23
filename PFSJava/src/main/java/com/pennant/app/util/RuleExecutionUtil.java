@@ -47,6 +47,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -57,6 +58,8 @@ import java.util.regex.Pattern;
 import javax.script.Bindings;
 import javax.script.CompiledScript;
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -80,6 +83,7 @@ public class RuleExecutionUtil implements Serializable {
 
 	private transient ScriptEngine scriptEngine;
 	private transient GlobalVariableService globalVariableService;
+	private boolean splRule = false;
 
 	/**
 	 * default constructor.<br>
@@ -136,19 +140,13 @@ public class RuleExecutionUtil implements Serializable {
 		return result.getBuffer().toString();
 	}
 
-	/**
-	 * To Execute the Script Rule with object data
-	 * 
-	 * @param rule
-	 * @param fieldsandvalues
-	 * @param globalVariableList
-	 * @param finccy
-	 * @param ruleReturnDataType
-	 * @return
-	 * @throws Exception
-	 */
 	public Object executeRule(String rule, Map<String, Object> fieldsandvalues, String finccy,
 			RuleReturnType returnType) {
+		return executeRule(rule, fieldsandvalues, finccy, returnType, false);
+	}
+
+	public Object executeRule(String rule, Map<String, Object> fieldsandvalues, String finccy,
+			RuleReturnType returnType, boolean splRule) {
 
 		Bindings bindings = new SimpleBindings();
 
@@ -168,6 +166,12 @@ public class RuleExecutionUtil implements Serializable {
 		String scriptRule = getExecutableRule(rule);
 
 		try {
+
+			if (splRule) {
+				setFields(fieldsandvalues);
+				result = processSPLEngineRule(scriptRule.toString(), null, returnType);
+			}
+
 			result = processEngineRule(scriptRule.toString(), null, fieldsandvalues, returnType);
 		} catch (DatatypeConfigurationException e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -388,6 +392,19 @@ public class RuleExecutionUtil implements Serializable {
 		return null;
 	}
 
+	private void setFields(Map<String, Object> fieldsandvalues) {
+		List<String> keyset = new ArrayList<String>(fieldsandvalues.keySet());
+		for (int i = 0; i < keyset.size(); i++) {
+
+			Object var = fieldsandvalues.get(keyset.get(i));
+			if (var instanceof String) {
+				var = var.toString().trim();
+			}
+
+			scriptEngine.put(keyset.get(i), var);
+		}
+	}
+
 	/**
 	 * Method for Processing of SQL Rule and get Executed Result
 	 * 
@@ -412,6 +429,60 @@ public class RuleExecutionUtil implements Serializable {
 		return result;
 	}
 
+	private Object processSPLEngineRule(String rule, Bindings bindings, RuleReturnType returnType)
+			throws DatatypeConfigurationException {
+
+		List<GlobalVariable> globalVariables = SysParamUtil.getGlobaVariableList();
+		if (globalVariables != null && globalVariables.size() > 0) {
+			rule = getGlobalVariables(rule, globalVariables);
+		}
+
+		BigDecimal resultBigDecimal = BigDecimal.ZERO;
+		String result = null;
+		try {
+			String scriptRule = "function Pennant(){" + rule + "}Pennant();";
+
+			if (scriptEngine.eval(scriptRule) == null) {
+				scriptEngine.put("Result", null);
+			}
+			if (scriptEngine.eval(scriptRule) != null) {
+				resultBigDecimal = new BigDecimal(scriptEngine.eval(rule).toString());
+				resultBigDecimal = resultBigDecimal.setScale(0, RoundingMode.HALF_UP);
+				result = resultBigDecimal.toString();
+			} else {
+				if (scriptEngine.get("Result") != null) {
+					result = scriptEngine.get("Result").toString();
+					try {
+						if ("D".equals(returnType.value())) {
+							resultBigDecimal = new BigDecimal(result);
+							resultBigDecimal = resultBigDecimal.setScale(2, RoundingMode.UP);
+							result = resultBigDecimal.toString();
+						} else if ("S".equals(returnType.value())) {
+							result = result.trim().toString();
+						} else if ("C".equals(returnType.value())) {
+							result = result.trim().toString();
+						} else {
+							resultBigDecimal = new BigDecimal(result);
+							resultBigDecimal = resultBigDecimal.setScale(0, RoundingMode.FLOOR);
+							result = resultBigDecimal.toString();
+						}
+					} catch (Exception e) {
+						//do Nothing-- if return type is not a decimal
+						resultBigDecimal = new BigDecimal(scriptEngine.get("Result").toString());
+						resultBigDecimal = resultBigDecimal.setScale(0, RoundingMode.HALF_UP);
+						result = resultBigDecimal.toString();
+					}
+				}
+			}
+		} catch (ScriptException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		logger.debug("Leaving");
+		return result;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -426,6 +497,14 @@ public class RuleExecutionUtil implements Serializable {
 
 	public void setGlobalVariableService(GlobalVariableService globalVariableService) {
 		this.globalVariableService = globalVariableService;
+	}
+
+	public boolean isSplRule() {
+		return splRule;
+	}
+
+	public void setSplRule(boolean splRule) {
+		this.splRule = splRule;
 	}
 
 }

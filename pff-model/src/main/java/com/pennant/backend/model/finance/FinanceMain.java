@@ -89,7 +89,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHAlwInGrace",
 		"planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate",
 		"lastDisbDate", "stage", "status", "product", "advTerms", "closedDate", "fixedRateTenor", "fixedTenorRate",
-		"eligibilityMethod", "connector", "legalRequired" })
+		"eligibilityMethod", "connector", "legalRequired", "reqLoanAmt", "reqLoanTenor", "offerProduct", "offerAmount",
+		"custSegmentation", "baseProduct", "processType", "bureauTimeSeries", "campaignName", "existingLanRefNo",
+		"leadSource", "poSource", "rsa", "verification", "sourChannelCategory", "offerId" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -186,6 +188,47 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date firstDroplineDate;
 	private boolean pftServicingODLimit;
 
+	//Offer Details Start
+
+	@XmlElement
+	private String offerProduct;
+	@XmlElement
+	private BigDecimal offerAmount = BigDecimal.ZERO;
+	@XmlElement
+	private String custSegmentation;
+	@XmlElement
+	private String baseProduct;
+	@XmlElement
+	private String processType;
+	@XmlElement
+	private String bureauTimeSeries;
+	@XmlElement
+	private String campaignName;
+	@XmlElement
+	private String existingLanRefNo;
+	@XmlElement
+	private boolean rsa;
+	@XmlElement
+	private String verification;
+	@XmlElement
+	private String leadSource;
+	@XmlElement
+	private String poSource;
+	@XmlElement
+	private String offerId;
+
+	//Offer Details End
+
+	//Sourcing Details
+	@XmlElement
+	private String sourcingBranch;
+	private String lovDescSourcingBranch;
+	@XmlElement
+	private String sourChannelCategory;
+	private Long asmName;
+	@XmlElement(name = "asmName")
+	private String lovDescAsmName;
+
 	//Payment type check
 	private boolean chequeOrDDAvailable;
 	private boolean neftAvailable; //If NEFT/IMPS/RTGS Available
@@ -222,6 +265,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean resetOrgBal = true;
 	private String lovDescEntityCode;
 	//private String parentRef = "";
+	private String parentRef = "";
 
 	// Deviation Process
 	private boolean deviationApproval;
@@ -408,6 +452,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private int maxReAgeHolidays;
 	@XmlElement
 	private String product;
+	@XmlElement
+	private BigDecimal reqLoanAmt = BigDecimal.ZERO;
+	@XmlElement
+	private Integer reqLoanTenor = 0;
 
 	// ===========================================
 	// =========Schedule Build Usage ============
@@ -454,6 +502,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean rateChgAnyDay;
 	private BigDecimal pastduePftMargin = BigDecimal.ZERO;
 	private BigDecimal pftCpzFromReset = BigDecimal.ZERO;
+	private boolean recalSteps = false;
 
 	// Finance Maintenance Details
 	private int allowedDefRpyChange = 0;
@@ -784,6 +833,24 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean autoApprove = false;
 	private Date eodValueDate;
 
+	private boolean pmay = false;
+	//OCR changes
+	private boolean finOcrRequired = false;
+	//Check the Deviations are  Avilable or not in Workflow
+	private boolean deviationAvail;
+	//Split Loan or Pricing Detail
+	private boolean alwLoanSplit;
+	private boolean loanSplitted = false;
+	// Under Construction Details
+	@XmlElement
+	private boolean alwGrcAdj;
+	private boolean endGrcPeriodAftrFullDisb;
+	private boolean autoIncGrcEndDate;
+	private int pendingCovntCount = 0;
+	private String custEmpType = "";
+	//Disb based schedule
+	private boolean instBasedSchd;
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -996,6 +1063,17 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("rateChange");
 		excludeFields.add("appDate");
 		excludeFields.add("eodValueDate");
+		//Sourcing Details
+		excludeFields.add("lovDescSourcingBranch");
+		excludeFields.add("lovDescAsmName");
+		excludeFields.add("deviationAvail");
+		excludeFields.add("pendingCovntCount");
+		excludeFields.add("appDate");
+		excludeFields.add("parentRef");
+		excludeFields.add("recalSteps");
+
+		excludeFields.add("loanSplitted");
+		excludeFields.add("custEmpType");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -1004,6 +1082,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public FinanceMain() {
 		super();
+	}
+
+	public String getLovDescAsmName() {
+		return lovDescAsmName;
+	}
+
+	public void setLovDescAsmName(String lovDescAsmName) {
+		this.lovDescAsmName = lovDescAsmName;
 	}
 
 	public FinanceMain(String finReference) {
@@ -4685,4 +4771,271 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.eodValueDate = eodValueDate;
 	}
 
+	/*
+	 * public String getParentRef() { return parentRef; }
+	 * 
+	 * public void setParentRef(String parentRef) { this.parentRef = parentRef; }
+	 */
+
+	public BigDecimal getReqLoanAmt() {
+		return reqLoanAmt;
+	}
+
+	public void setReqLoanAmt(BigDecimal reqLoanAmt) {
+		this.reqLoanAmt = reqLoanAmt;
+	}
+
+	public Integer getReqLoanTenor() {
+		return reqLoanTenor;
+	}
+
+	public void setReqLoanTenor(Integer reqLoanTenor) {
+		this.reqLoanTenor = reqLoanTenor;
+	}
+
+	public boolean isFinOcrRequired() {
+		return finOcrRequired;
+	}
+
+	public void setFinOcrRequired(boolean finOcrRequired) {
+		this.finOcrRequired = finOcrRequired;
+	}
+
+	public String getOfferProduct() {
+		return offerProduct;
+	}
+
+	public void setOfferProduct(String offerProduct) {
+		this.offerProduct = offerProduct;
+	}
+
+	public BigDecimal getOfferAmount() {
+		return offerAmount;
+	}
+
+	public void setOfferAmount(BigDecimal offerAmount) {
+		this.offerAmount = offerAmount;
+	}
+
+	public String getCustSegmentation() {
+		return custSegmentation;
+	}
+
+	public void setCustSegmentation(String custSegmentation) {
+		this.custSegmentation = custSegmentation;
+	}
+
+	public String getBaseProduct() {
+		return baseProduct;
+	}
+
+	public void setBaseProduct(String baseProduct) {
+		this.baseProduct = baseProduct;
+	}
+
+	public String getProcessType() {
+		return processType;
+	}
+
+	public void setProcessType(String processType) {
+		this.processType = processType;
+	}
+
+	public String getBureauTimeSeries() {
+		return bureauTimeSeries;
+	}
+
+	public void setBureauTimeSeries(String bureauTimeSeries) {
+		this.bureauTimeSeries = bureauTimeSeries;
+	}
+
+	public String getCampaignName() {
+		return campaignName;
+	}
+
+	public void setCampaignName(String campaignName) {
+		this.campaignName = campaignName;
+	}
+
+	public String getExistingLanRefNo() {
+		return existingLanRefNo;
+	}
+
+	public void setExistingLanRefNo(String existingLanRefNo) {
+		this.existingLanRefNo = existingLanRefNo;
+	}
+
+	public boolean isRsa() {
+		return rsa;
+	}
+
+	public void setRsa(boolean rsa) {
+		this.rsa = rsa;
+	}
+
+	public String getVerification() {
+		return verification;
+	}
+
+	public void setVerification(String verification) {
+		this.verification = verification;
+	}
+
+	public String getLeadSource() {
+		return leadSource;
+	}
+
+	public void setLeadSource(String leadSource) {
+		this.leadSource = leadSource;
+	}
+
+	public String getPoSource() {
+		return poSource;
+	}
+
+	public void setPoSource(String poSource) {
+		this.poSource = poSource;
+	}
+
+	public String getSourcingBranch() {
+		return sourcingBranch;
+	}
+
+	public void setSourcingBranch(String sourcingBranch) {
+		this.sourcingBranch = sourcingBranch;
+	}
+
+	public String getLovDescSourcingBranch() {
+		return lovDescSourcingBranch;
+	}
+
+	public void setLovDescSourcingBranch(String lovDescSourcingBranch) {
+		this.lovDescSourcingBranch = lovDescSourcingBranch;
+	}
+
+	public String getSourChannelCategory() {
+		return sourChannelCategory;
+	}
+
+	public void setSourChannelCategory(String sourChannelCategory) {
+		this.sourChannelCategory = sourChannelCategory;
+	}
+
+	public Long getAsmName() {
+		return asmName;
+	}
+
+	public void setAsmName(Long asmName) {
+		this.asmName = asmName;
+	}
+
+	public String getOfferId() {
+		return offerId;
+	}
+
+	public void setOfferId(String offerId) {
+		this.offerId = offerId;
+	}
+
+	public boolean isDeviationAvail() {
+		return deviationAvail;
+	}
+
+	public void setDeviationAvail(boolean deviationAvail) {
+		this.deviationAvail = deviationAvail;
+	}
+
+	public boolean isPmay() {
+		return pmay;
+	}
+
+	public void setPmay(boolean pmay) {
+		this.pmay = pmay;
+	}
+
+	/*
+	 * public String getParentRef() { return parentRef; }
+	 * 
+	 * public void setParentRef(String parentRef) { this.parentRef = parentRef; }
+	 */
+
+	public boolean isAlwGrcAdj() {
+		return alwGrcAdj;
+	}
+
+	public void setAlwGrcAdj(boolean alwGrcAdj) {
+		this.alwGrcAdj = alwGrcAdj;
+	}
+
+	public boolean isEndGrcPeriodAftrFullDisb() {
+		return endGrcPeriodAftrFullDisb;
+	}
+
+	public void setEndGrcPeriodAftrFullDisb(boolean endGrcPeriodAftrFullDisb) {
+		this.endGrcPeriodAftrFullDisb = endGrcPeriodAftrFullDisb;
+	}
+
+	public boolean isAutoIncGrcEndDate() {
+		return autoIncGrcEndDate;
+	}
+
+	public void setAutoIncGrcEndDate(boolean autoIncGrcEndDate) {
+		this.autoIncGrcEndDate = autoIncGrcEndDate;
+	}
+
+	public int getPendingCovntCount() {
+		return pendingCovntCount;
+	}
+
+	public boolean isRecalSteps() {
+		return recalSteps;
+	}
+
+	public void setRecalSteps(boolean recalSteps) {
+		this.recalSteps = recalSteps;
+	}
+
+	public void setPendingCovntCount(int pendingCovntCount) {
+		this.pendingCovntCount = pendingCovntCount;
+	}
+
+	public String getParentRef() {
+		return parentRef;
+	}
+
+	public void setParentRef(String parentRef) {
+		this.parentRef = parentRef;
+	}
+
+	public boolean isAlwLoanSplit() {
+		return alwLoanSplit;
+	}
+
+	public void setAlwLoanSplit(boolean alwLoanSplit) {
+		this.alwLoanSplit = alwLoanSplit;
+	}
+
+	public boolean isInstBasedSchd() {
+		return instBasedSchd;
+	}
+
+	public void setInstBasedSchd(boolean instBasedSchd) {
+		this.instBasedSchd = instBasedSchd;
+	}
+
+	public boolean isLoanSplitted() {
+		return loanSplitted;
+	}
+
+	public void setLoanSplitted(boolean loanSplitted) {
+		this.loanSplitted = loanSplitted;
+	}
+
+	public String getCustEmpType() {
+		return custEmpType;
+	}
+
+	public void setCustEmpType(String custEmpType) {
+		this.custEmpType = custEmpType;
+	}
 }

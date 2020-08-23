@@ -279,26 +279,83 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	public List<FinFeeDetail> getPaidFinFeeDetails(final String reference, String type) {
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
 		finFeeDetail.setFinReference(reference);
+		finFeeDetail.setOriginationFee(true);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select FeeID, FeeOrder, CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, RemainingFee");
-		sql.append(", VasReference, Status, Refundable");
-		sql.append(", ActualAmountOriginal, PaidAmountOriginal, NetAmount");
-		sql.append(", ActPercentage, WaivedGST, ReferenceId, TaxHeaderId ");
-		sql.append(", PaidTDS, RemTDS, NetTDS");
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, FeeID, FeeOrder, FinEvent, CalculatedAmount, ActualAmountOriginal");
+		sql.append(", ActualAmount, WaivedAmount, WaivedGST, NetAmountOriginal, NetAmountGST, NetAmount");
+		sql.append(", PaidAmount, PaidAmountGST, PaidAmountOriginal, RemainingFee, RemainingFeeGST");
+		sql.append(", RemainingFeeOriginal, VasReference, Status, ReferenceId");
+		sql.append(", FeeScheduleMethod, ActPercentage, PaidTDS, RemTDS, NetTDS");
+		sql.append(", TaxHeaderId, TaxApplicable, ActualAmount");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent");
 		}
-		sql.append(" From FinFeeDetail");
+		sql.append(", WaivedGST, ReferenceId");
+		sql.append(" from FinFeeDetail");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = :FinReference ");
+		sql.append(" Where FinReference = ? And ActualAmount > 0 ");
+		sql.append(" AND FeeScheduleMethod ='DISB' AND OriginationFee = ? ");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
-		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finFeeDetail.getFinReference());
+					ps.setBoolean(index, finFeeDetail.isOriginationFee());
+				}
+			}, new RowMapper<FinFeeDetail>() {
+				@Override
+				public FinFeeDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinFeeDetail ffd = new FinFeeDetail();
 
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+					ffd.setFinReference(rs.getString("FinReference"));
+					ffd.setFeeID(rs.getLong("FeeID"));
+					ffd.setFeeOrder(rs.getInt("FeeOrder"));
+					ffd.setFinEvent(rs.getString("FinEvent"));
+					ffd.setCalculatedAmount(rs.getBigDecimal("CalculatedAmount"));
+					ffd.setActualAmountOriginal(rs.getBigDecimal("ActualAmountOriginal"));
+					ffd.setActualAmount(rs.getBigDecimal("ActualAmount"));
+					ffd.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+					ffd.setWaivedGST(rs.getBigDecimal("WaivedGST"));
+					ffd.setNetAmountOriginal(rs.getBigDecimal("NetAmountOriginal"));
+					ffd.setNetAmountGST(rs.getBigDecimal("NetAmountGST"));
+					ffd.setNetAmount(rs.getBigDecimal("NetAmount"));
+					ffd.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+					ffd.setPaidAmountGST(rs.getBigDecimal("PaidAmountGST"));
+					ffd.setPaidAmountOriginal(rs.getBigDecimal("PaidAmountOriginal"));
+					ffd.setRemainingFee(rs.getBigDecimal("RemainingFee"));
+					ffd.setRemainingFeeGST(rs.getBigDecimal("RemainingFeeGST"));
+					ffd.setRemainingFeeOriginal(rs.getBigDecimal("RemainingFeeOriginal"));
+					ffd.setVasReference(rs.getString("VasReference"));
+					ffd.setStatus(rs.getString("Status"));
+					ffd.setReferenceId(rs.getLong("ReferenceId"));
+					ffd.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
+					ffd.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+					ffd.setFeeScheduleMethod(rs.getString("FeeScheduleMethod"));
+					ffd.setActPercentage(rs.getBigDecimal("ActPercentage"));
+					ffd.setPaidTDS(rs.getBigDecimal("PaidTDS"));
+					ffd.setRemTDS(rs.getBigDecimal("RemTDS"));
+					ffd.setNetTDS(rs.getBigDecimal("NetTDS"));
+					ffd.setFeeTypeCode(rs.getString("FeeTypeCode"));
+					ffd.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+					ffd.setTaxComponent(rs.getString("TaxComponent"));
+
+					return ffd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+
 	}
 
 	/**
@@ -991,5 +1048,31 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			return fd;
 		}
 
+	}
+
+	@Override
+	public void updateFeesFromUpfront(FinFeeDetail finFeeDetail, String type) {
+		logger.debug(Literal.ENTERING);
+		int recordCount = 0;
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update FinFeeDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		sql.append(" Set PaidAmount = :PaidAmount, ");
+		sql.append(" PaidAmountOriginal = :PaidAmountOriginal, ");
+		sql.append(" PaidAmountGST = :PaidAmountGST,");
+		sql.append(" RemainingFee = :RemainingFee,");
+		sql.append(" RemainingFeeOriginal = :RemainingFeeOriginal, ");
+		sql.append(" RemainingFeeGST = :RemainingFeeGST ");
+		sql.append(" Where FeeID = :FeeID ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
 	}
 }

@@ -47,6 +47,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -56,10 +57,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
@@ -70,6 +73,7 @@ import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
@@ -81,14 +85,18 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.configuration.VASConfigurationDAO;
+import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.gstn.validation.impl.TestCustomerPaymentService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
@@ -123,6 +131,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	protected Textbox finReference;
 	protected Grid grid_Basicdetails;
 	protected Button btnCMSTest;
+	protected Listbox listboxVasRecording;
 
 	// not auto wired variables
 	public PayOrderIssueHeader payOrderIssueHeader;
@@ -169,6 +178,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	//Test
 	@Autowired(required = false)
 	private TestCustomerPaymentService testCustomerPaymentService;
+	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
+	private VASConfigurationDAO vASConfigurationDAO;
 
 	/**
 	 * default constructor.<br>
@@ -423,7 +434,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 		this.payOrderIssue_FinAssetValue.setValue(formateAmount(financeMain.getFinAssetValue()));
 		this.payOrderIssue_FinCurrAssetValue.setValue(formateAmount(financeMain.getFinCurrAssetValue()));
-		doFillFinAdvancePaymentsDetails(payIHeader.getFinAdvancePaymentsList(), payIHeader.getvASRecordings());
+		doFillFinAdvancePaymentsDetails(payIHeader.getFinAdvancePaymentsList(), null);
+		doFillVASRecordingDetails(payIHeader.getvASRecordings());
 		this.recordStatus.setValue(payIHeader.getRecordStatus());
 
 		if (!enqiryModule) {
@@ -918,6 +930,127 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		logger.debug("Leaving");
 	}
 
+	private void doFillVASRecordingDetails(List<VASRecording> vasRecordingList) {
+		logger.debug(" Entering ");
+
+		if (vasRecordingList != null && vasRecordingList.size() > 0) {
+
+			BigDecimal grandTotal = BigDecimal.ZERO;
+			for (VASRecording vasDetail : vasRecordingList) {
+
+				VASConfiguration configuration = vasDetail.getVasConfiguration();
+
+				if (configuration == null) {
+					configuration = this.vASConfigurationDAO.getVASConfigurationByCode(vasDetail.getProductCode(), "");
+				}
+
+				VASProviderAccDetail vasProviderAccDetail = vASProviderAccDetailDAO
+						.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(), "_view");
+				BigDecimal subTotal = BigDecimal.ZERO;
+				if (vasProviderAccDetail != null) {
+					Listcell lc;
+					Listitem item = new Listitem();
+					lc = new Listcell("");
+					lc.setParent(item);
+					lc = new Listcell(vasProviderAccDetail.getProviderDesc());
+					lc.setParent(item);
+					lc = new Listcell(vasProviderAccDetail.getPaymentMode());
+					lc.setParent(item);
+
+					lc = new Listcell(vasProviderAccDetail.getBankName());
+					lc.setParent(item);
+					lc = new Listcell(vasProviderAccDetail.getProviderDesc());
+					lc.setParent(item);
+
+					lc = new Listcell(vasProviderAccDetail.getAccountNumber());
+					lc.setParent(item);
+					grandTotal = grandTotal.add(vasDetail.getFee());
+					subTotal = subTotal.add(vasDetail.getFee());
+					lc = new Listcell(PennantApplicationUtil.amountFormate(vasDetail.getFee(), ccyformat));
+					lc.setParent(item);
+
+					if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
+						lc = new Listcell(vasDetail.getInsStatus());
+					} else {
+						lc = new Listcell(PennantConstants.RECORD_TYPE_NEW);
+
+					}
+					lc.setParent(item);
+
+					if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
+						lc = new Listcell(PennantConstants.RCD_STATUS_APPROVED);
+
+					} else {
+						lc = new Listcell("");
+					}
+					lc.setParent(item);
+
+					if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
+						lc = new Listcell("");
+
+					} else {
+						lc = new Listcell(PennantConstants.RCD_ADD);
+					}
+
+					lc.setParent(item);
+
+					item.setAttribute("data", vasProviderAccDetail);
+					ComponentsCtrl.applyForward(item, "onDoubleClick=onVASRecordingItemDoubleClicked");
+					listboxVasRecording.appendChild(item);
+				}
+
+			}
+
+			//group total
+			if (listboxVasRecording != null && listboxVasRecording.getItems().size() > 0) {
+				// Display Totals On Footer
+				addListItem(listboxVasRecording, Labels.getLabel("listheader_AdvancePayments_GrandTotal.label"),
+						grandTotal, false);
+			}
+
+		}
+		logger.debug(" Leaving ");
+	}
+
+	private void addListItem(Listbox listbox, String lable, BigDecimal total, boolean footer) {
+		//sub total Display Totals On Footer
+		Listgroupfoot item = new Listgroupfoot();
+		Listitem listitem = new Listitem();
+
+		Listcell listcell;
+
+		listcell = new Listcell();
+		listcell.setSpan(5);
+		setParent(footer, listcell, item, listitem);
+
+		listcell = new Listcell(lable);
+		listcell.setStyle("font-weight:bold");
+		setParent(footer, listcell, item, listitem);
+
+		listcell = new Listcell(PennantApplicationUtil.amountFormate(total, ccyformat));
+		listcell.setStyle("text-align:right;font-weight:bold");
+		setParent(footer, listcell, item, listitem);
+
+		listcell = new Listcell();
+		listcell.setSpan(3);
+		setParent(footer, listcell, item, listitem);
+
+		if (footer) {
+			listbox.appendChild(item);
+		} else {
+			listbox.appendChild(listitem);
+		}
+
+	}
+
+	private void setParent(boolean footer, Listcell listcell, Listgroupfoot item, Listitem listitem) {
+		if (footer) {
+			listcell.setParent(item);
+		} else {
+			listcell.setParent(listitem);
+		}
+	}
+
 	/**
 	 * Method to fill the combobox with given list of values
 	 * 
@@ -952,7 +1085,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	public void onClick$button_PayOrderIssueDialog_NewDisbursement(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		disbursementInstCtrl.onClickNew(this.payOrderIssueListCtrl, this, ModuleType_POISSUE,
-				getFinAdvancePaymentsList(), payOrderIssueHeader);
+				getFinAdvancePaymentsList(), payOrderIssueHeader, null);
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -961,6 +1094,27 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		logger.debug("Entering" + event.toString());
 		disbursementInstCtrl.onDoubleClick(this.payOrderIssueListCtrl, this, ModuleType_POISSUE, enqiryModule,
 				payOrderIssueHeader);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onVASRecordingItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		Listitem selectedItem = this.listboxVasRecording.getSelectedItem();
+		final VASProviderAccDetail aVasProviderAccDetail = (VASProviderAccDetail) selectedItem.getAttribute("data");
+
+		Map<String, Object> arg = new HashMap<String, Object>();
+		arg.put("enqiryModule", true);
+		arg.put("vASProviderAccDetail", aVasProviderAccDetail);
+		arg.put("isDisbInst", true);
+
+		try {
+			Executions.createComponents(
+					"/WEB-INF/pages/SystemMaster/VASProviderAccDetail/VASProviderAccDetailDialog.zul", null, arg);
+		} catch (Exception e) {
+			logger.error("Exception:", e);
+			MessageUtil.showError(e);
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -1241,6 +1395,22 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void setDisbursementInstCtrl(DisbursementInstCtrl disbursementInstCtrl) {
 		this.disbursementInstCtrl = disbursementInstCtrl;
+	}
+
+	public VASProviderAccDetailDAO getvASProviderAccDetailDAO() {
+		return vASProviderAccDetailDAO;
+	}
+
+	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
+		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
+	}
+
+	public VASConfigurationDAO getvASConfigurationDAO() {
+		return vASConfigurationDAO;
+	}
+
+	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
+		this.vASConfigurationDAO = vASConfigurationDAO;
 	}
 
 }

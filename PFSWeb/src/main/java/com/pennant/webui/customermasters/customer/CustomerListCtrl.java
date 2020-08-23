@@ -60,10 +60,12 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.model.CustomerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -107,10 +109,17 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 	protected Listbox sortOperator_custCtgCode;
 	protected Listbox sortOperator_custTypeCode;
 	protected Listbox sortOperator_custShrtName;
+	protected Listbox sortOperator_custEID;
+	protected Listbox sortOperator_custMobile;
+	protected Textbox custEid;
+	protected Textbox custMobile;
 
 	private transient CustomerDetailsService customerDetailsService;
 	private final List<ValueLabel> custCtgCodeList = PennantAppUtil.getcustCtgCodeList();
 	private String module = null;
+	private Combobox betaReq;
+	private List<ValueLabel> betaConfig = PennantStaticListUtil.getBetaConfiguration();
+	private String betaDialog = "_Beta";
 
 	/**
 	 * default constructor.<br>
@@ -161,6 +170,10 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		registerField("custDftBranch", listheader_CustDftBranch, SortOrder.NONE, custDftBranch,
 				sortOperator_custDftBranch, Operators.STRING);
 
+		registerField("custCRCPR", custEid, SortOrder.NONE, sortOperator_custEID, Operators.STRING);
+		this.custMobile.setMaxlength(LengthConstants.LEN_MOBILE);
+		registerField("phoneNumber", custMobile, SortOrder.NONE, sortOperator_custMobile, Operators.STRING);
+
 		fillComboBox(this.custCtgCode, "", custCtgCodeList, "");
 		registerField("custCtgCode", listheader_CustCtgCode, SortOrder.NONE, custCtgCode, sortOperator_custCtgCode,
 				Operators.STRING);
@@ -170,6 +183,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 				sortOperator_custTypeCode, Operators.STRING);
 		registerField("LovDescRequestStage", listheader_RequestStage);
 
+		fillComboBox(this.betaReq, "Beta", betaConfig, "");
 		// Render the page and display no data when the page loaded for the first time.
 		doRenderPage();
 	}
@@ -266,15 +280,19 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		arg.put("newRecord", customerDetails.getCustomer().isNew());
 		arg.put("module", module);
 		arg.put("isFromCustomer", true);
+		arg.put("BetaData", betaDialog);
 
 		try {
-			String pageName = PennantAppUtil.getCustomerPageName();
+			StringBuilder pageName = new StringBuilder("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog");
+			pageName.append(StringUtils.trimToEmpty(betaDialog));
+			pageName.append(".zul");
+
 			if (enqiryModule) {
-				Executions.createComponents(pageName, null, arg);
+				Executions.createComponents(pageName.toString(), null, arg);
 			} else if (StringUtils.equals("360", module)) {
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null, arg);
 			} else {
-				Executions.createComponents(pageName, null, arg);
+				Executions.createComponents(pageName.toString(), null, arg);
 
 			}
 		} catch (Exception e) {
@@ -351,5 +369,14 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
+	}
+
+	public void onSelect$betaReq(Event event) {
+		String betaReq = getComboboxValue(this.betaReq);
+		if (betaReq.equals("Old")) {
+			betaDialog = "";
+		} else {
+			betaDialog = "_Beta";
+		}
 	}
 }

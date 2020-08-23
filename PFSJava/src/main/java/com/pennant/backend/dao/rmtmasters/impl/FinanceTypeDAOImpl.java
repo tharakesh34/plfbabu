@@ -53,6 +53,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -129,19 +130,22 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", AdvStage, DsfReq, CashCollateralReq, TdsAllowToModify, TdsApplicableTo, AlwVan");
 		sql.append(", VanAllocationMethod, AllowDrawingPower, AllowRevolving, AlwSanctionAmt");
 		sql.append(", AlwSanctionAmtOverride, SanBsdSchdle");
-
+		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes");
+		sql.append(" , GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths");
+		sql.append(", MaxAutoIncrAllowed, AlwLoanSplit, SplitLoanType");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinCategoryDesc, DownPayRuleCode, DownPayRuleDesc, LovDescFinContingentAcTypeName");
 			sql.append(", LovDescFinBankContAcTypeName, LovDescFinProvisionAcTypeName, LovDescFinAcTypeName");
 			sql.append(", LovDescPftPayAcTypeName, LovDescFinSuspAcTypeName, LovDescFinDivisionName");
-			sql.append(", LovDescPromoFinTypeDesc, ProfitcenterCode, ProfitCenterDesc, LovDescEntityCode");
+			sql.append(", LovDescPromoFinTypeDesc, ProfitCenterCode, ProfitCenterDesc, LovDescEntityCode");
 		}
 
-		sql.append(", Version, LastMntBy, LastMntOn");
-		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" , Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(" , RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" , ThrldtoMaintainGrcPrd, InstBasedSchd ");
 		sql.append(" From RMTFinanceTypes");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("  Where FinType = ?");
+		sql.append(" Where FinType = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -348,6 +352,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setAlwSanctionAmt(rs.getBoolean("AlwSanctionAmt"));
 							ft.setAlwSanctionAmtOverride(rs.getBoolean("AlwSanctionAmtOverride"));
 							ft.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
+							ft.setAllowedLoanPurposes(rs.getString("AllowedLoanPurposes"));
 
 							if (StringUtils.trimToEmpty(type).contains("View")) {
 								ft.setFinCategoryDesc(rs.getString("FinCategoryDesc"));
@@ -361,7 +366,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 								ft.setLovDescFinSuspAcTypeName(rs.getString("LovDescFinSuspAcTypeName"));
 								ft.setLovDescFinDivisionName(rs.getString("LovDescFinDivisionName"));
 								ft.setLovDescPromoFinTypeDesc(rs.getString("LovDescPromoFinTypeDesc"));
-								ft.setProfitcenterCode(rs.getString("ProfitcenterCode"));
+								ft.setProfitCenterCode(rs.getString("ProfitCenterCode"));
 								ft.setProfitCenterDesc(rs.getString("ProfitCenterDesc"));
 								ft.setLovDescEntityCode(rs.getString("LovDescEntityCode"));
 							}
@@ -424,7 +429,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", RollOverFrq, DownPayRule, AlwMultiPartyDisb, CollateralType, TdsApplicable, ApplyGrcPricing");
 		sql.append(", ApplyRpyPricing, DroplineOD, DroppingMethod, RateChgAnyDay, ManualSchedule, AlwBPI");
 		sql.append(
-				", BpiTreatment, PftDueSchOn, PlanEMIHAlw , AlwPlannedEmiInGrc , PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax");
+				", BpiTreatment, PftDueSchOn, PlanEMIHAlw, AlwPlannedEmiInGrc, PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax");
 		sql.append(", PlanEMIHLockPeriod, PlanEMICpz, UnPlanEMIHLockPeriod, UnPlanEMICpz, ReAgeCpz");
 		sql.append(", FddLockPeriod, AlwdRpyMethods, MaxUnplannedEmi, MaxReAgeHolidays, RoundingMode");
 		sql.append(", RoundingTarget, FrequencyDays, AlwReage, AlwUnPlanEmiHoliday, AlwMaxDisbCheckReq");
@@ -436,7 +441,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", AdvStage, DsfReq, CashCollateralReq, TdsAllowToModify, TdsApplicableTo, AlwVan");
 		sql.append(", VanAllocationMethod, AllowDrawingPower, AllowRevolving, AlwSanctionAmt");
 		sql.append(", AlwSanctionAmtOverride, SanBsdSchdle");
-
+		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes"); //HL- merging
+		sql.append(", GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths");
+		sql.append(", MaxAutoIncrAllowed, AlwLoanSplit, SplitLoanType,InstBasedSchd");
 		if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 			sql.append(", DownPayRuleCode, DownPayRuleDesc, LovDescFinDivisionName, LovDescPromoFinTypeDesc");
 			sql.append(", LovDescDftStepPolicyName, GrcPricingMethodDesc, RpyPricingMethodDesc, DftStepPolicyType");
@@ -633,6 +640,11 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setAlwSanctionAmt(rs.getBoolean("AlwSanctionAmt"));
 							ft.setAlwSanctionAmtOverride(rs.getBoolean("AlwSanctionAmtOverride"));
 							ft.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
+							ft.setDefaultOCR(rs.getString("DefaultOCR"));
+							ft.setOcrRequired(rs.getBoolean("OcrRequired"));
+							ft.setAllowedLoanPurposes(rs.getString("AllowedLoanPurposes"));
+							ft.setAllowedOCRS(rs.getString("AllowedOCRS"));
+							ft.setSpecificLoanPurposes(rs.getString("SpecificLoanPurposes"));
 
 							if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 								ft.setDownPayRuleCode(rs.getString("DownPayRuleCode"));
@@ -671,7 +683,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 */
 	@Override
 	public FinanceType getFinanceTypeByFinType(final String finType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceType financeType = new FinanceType();
 		financeType.setFinType(finType);
 
@@ -680,6 +692,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		selectSql.append(" AllowRIAInvestment, FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  ");
 		selectSql.append(
 				" PastduePftCalMthd, PastduePftMargin,alwMultiPartyDisb, alwMaxDisbCheckReq, CostOfFunds, FinLTVCheck, PartiallySecured , AlwVan, vanAllocationMethod, AlwSanctionAmt, AlwSanctionAmtOverride, AutoApprove  ");
+		selectSql.append(
+				" GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths, MaxAutoIncrAllowed ");
+		selectSql.append(" , ThrldtoMaintainGrcPrd ");
 		selectSql.append(" FROM RMTFinanceTypes");
 		selectSql.append(" Where FinType = :FinType");
 
@@ -693,7 +708,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			logger.warn("Exception: ", e);
 			financeType = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeType;
 	}
 
@@ -704,7 +719,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 */
 	@Override
 	public List<FinanceType> getFinTypeDetailForBatch() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinAcType, FinCategory, FinDivision, ");
 		selectSql.append(" FinIsOpenNewFinAc, PftPayAcType,  FinSuspAcType, FinProvisionAcType , ");
@@ -717,7 +732,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
 
 		List<FinanceType> finTypes = this.jdbcTemplate.query(selectSql.toString(), typeRowMapper);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return finTypes;
 	}
 
@@ -735,7 +750,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 */
 	@Override
 	public void delete(FinanceType financeType, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 		String deleteSql = "Delete From RMTFinanceTypes" + StringUtils.trimToEmpty(type) + " Where FinType =:FinType";
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
@@ -756,7 +771,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			logger.debug("Error delete Method");
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -775,7 +790,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 	@Override
 	public String save(FinanceType financeType, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder("Insert Into RMTFinanceTypes");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(
@@ -816,7 +831,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" ApplyGrcPricing, GrcPricingMethod, ApplyRpyPricing, RpyPricingMethod, RpyHierarchy, DroplineOD, DroppingMethod,RateChgAnyDay, ");
 		sql.append(
-				" AlwBPI , BpiTreatment , PftDueSchOn , PlanEMIHAlw , AlwPlannedEmiInGrc , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax ,AlwReage,AlwUnPlanEmiHoliday,QuickDisb, AutoApprove, chequeCaptureReq, ");
+				" AlwBPI , BpiTreatment , PftDueSchOn , PlanEMIHAlw, AlwPlannedEmiInGrc, PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax ,AlwReage,AlwUnPlanEmiHoliday,QuickDisb, AutoApprove, chequeCaptureReq, ");
 		sql.append(
 				" PlanEMIHLockPeriod , PlanEMICpz , UnPlanEMIHLockPeriod , UnPlanEMICpz , ReAgeCpz, FddLockPeriod, AlwdRpyMethods,MaxUnplannedEmi, MaxReAgeHolidays, ");
 		sql.append(
@@ -826,8 +841,10 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", AdvIntersetReq, AdvType, AdvMinTerms, AdvMaxTerms, AdvDefaultTerms");
 		sql.append(", GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms, GrcAdvDefaultTerms, AdvStage");
 		sql.append(", DsfReq, CashCollateralReq , TdsAllowToModify, TdsApplicableTo, alwVan, vanAllocationMethod ");
-		sql.append(", AllowDrawingPower, AllowRevolving, AlwSanctionAmt, AlwSanctionAmtOverride, SanBsdSchdle ) ");
-
+		sql.append(", AllowDrawingPower, AllowRevolving, AlwSanctionAmt, AlwSanctionAmtOverride, SanBsdSchdle");
+		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes");
+		sql.append(", GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths ");
+		sql.append(", MaxAutoIncrAllowed, ThrldtoMaintainGrcPrd, AlwLoanSplit, SplitLoanType,InstBasedSchd ) ");
 		sql.append(
 				" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, :FinAcType, :FinContingentAcType,");
 		sql.append(" :FinBankContingentAcType, :FinProvisionAcType,:FinSuspAcType, :FinIsGenRef,");
@@ -879,13 +896,16 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				", :GrcAdvIntersetReq, :GrcAdvType, :GrcAdvMinTerms, :GrcAdvMaxTerms, :GrcAdvDefaultTerms, :AdvStage");
 		sql.append(
-				", :DsfReq, :CashCollateralReq , :TdsAllowToModify , :TdsApplicableTo, :AlwVan, :VanAllocationMethod , :AllowDrawingPower, :AllowRevolving, :AlwSanctionAmt, :AlwSanctionAmtOverride, :SanBsdSchdle ) ");
+				", :DsfReq, :CashCollateralReq , :TdsAllowToModify , :TdsApplicableTo, :AlwVan, :VanAllocationMethod , :AllowDrawingPower, :AllowRevolving, :AlwSanctionAmt, :AlwSanctionAmtOverride, :SanBsdSchdle ");
+		sql.append(", :OcrRequired, :AllowedOCRS, :DefaultOCR, :AllowedLoanPurposes, :SpecificLoanPurposes ");
+		sql.append(", :GrcAdjReq, :GrcPeriodAftrFullDisb, :AutoIncrGrcEndDate, :GrcAutoIncrMonths ");
+		sql.append(", :MaxAutoIncrAllowed, :ThrldtoMaintainGrcPrd, :AlwLoanSplit, :SplitLoanType,:InstBasedSchd ) ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeType.getId();
 	}
 
@@ -905,7 +925,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	@Override
 	public void update(FinanceType financeType, String type) {
 		int recordCount = 0;
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder("Update RMTFinanceTypes");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(
@@ -980,7 +1000,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" ApplyGrcPricing = :ApplyGrcPricing, GrcPricingMethod = :GrcPricingMethod, ApplyRpyPricing = :ApplyRpyPricing, RpyPricingMethod = :RpyPricingMethod, RpyHierarchy = :RpyHierarchy, ");
 		sql.append(" DroplineOD = :DroplineOD, DroppingMethod = :DroppingMethod, RateChgAnyDay=:RateChgAnyDay,");
 		sql.append(
-				" AlwBPI=:AlwBPI , BpiTreatment=:BpiTreatment , PftDueSchOn=:PftDueSchOn , PlanEMIHAlw =:PlanEMIHAlw , AlwPlannedEmiInGrc =:AlwPlannedEmiInGrc , PlanEMIHMethod =:PlanEMIHMethod , PlanEMIHMaxPerYear =:PlanEMIHMaxPerYear , PlanEMIHMax=:PlanEMIHMax , ");
+				" AlwBPI=:AlwBPI , BpiTreatment=:BpiTreatment , PftDueSchOn=:PftDueSchOn , PlanEMIHAlw =:PlanEMIHAlw , AlwPlannedEmiInGrc = :AlwPlannedEmiInGrc, PlanEMIHMethod =:PlanEMIHMethod , PlanEMIHMaxPerYear =:PlanEMIHMaxPerYear , PlanEMIHMax=:PlanEMIHMax , ");
 		sql.append(
 				" PlanEMIHLockPeriod=:PlanEMIHLockPeriod , PlanEMICpz=:PlanEMICpz , UnPlanEMIHLockPeriod=:UnPlanEMIHLockPeriod , UnPlanEMICpz=:UnPlanEMICpz ,AlwReage=:AlwReage,AlwUnPlanEmiHoliday=:AlwUnPlanEmiHoliday, ");
 		sql.append(
@@ -1002,6 +1022,13 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				", AdvStage= :AdvStage, DsfReq= :DsfReq, CashCollateralReq= :CashCollateralReq  , TdsAllowToModify =:TdsAllowToModify, TdsApplicableTo =:TdsApplicableTo");
 		sql.append(
 				", AlwVan =:AlwVan, VanAllocationMethod =:VanAllocationMethod , AllowDrawingPower =:AllowDrawingPower, AllowRevolving =:AllowRevolving, AlwSanctionAmt =:AlwSanctionAmt, AlwSanctionAmtOverride =:AlwSanctionAmtOverride, SanBsdSchdle =:SanBsdSchdle");
+		sql.append(", OcrRequired =:OcrRequired, AllowedOCRS =:AllowedOCRS, DefaultOCR =:DefaultOCR ");
+		sql.append(", AllowedLoanPurposes =:AllowedLoanPurposes, SpecificLoanPurposes =:SpecificLoanPurposes");
+		sql.append(
+				", GrcAdjReq = :GrcAdjReq, GrcPeriodAftrFullDisb = :GrcPeriodAftrFullDisb, AutoIncrGrcEndDate = :AutoIncrGrcEndDate");
+		sql.append(", GrcAutoIncrMonths = :GrcAutoIncrMonths, MaxAutoIncrAllowed = :MaxAutoIncrAllowed");
+		sql.append(
+				", ThrldtoMaintainGrcPrd = :ThrldtoMaintainGrcPrd, AlwLoanSplit = :AlwLoanSplit, SplitLoanType = :SplitLoanType,InstBasedSchd=:InstBasedSchd ");
 		sql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_Temp")) {
@@ -1014,7 +1041,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1024,7 +1051,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 */
 	@Override
 	public int getFinanceTypeCountById(String finType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		int productCount = 0;
 		FinanceType financeType = new FinanceType();
 		financeType.setFinType(finType);
@@ -1042,7 +1069,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			logger.debug(dae);
 			productCount = 0;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return productCount;
 	}
 
@@ -1053,7 +1080,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 */
 	@Override
 	public int getPromotionTypeCountById(String finType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		int promotionCount = 0;
 		FinanceType financeType = new FinanceType();
 		financeType.setFinType(finType);
@@ -1072,7 +1099,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			promotionCount = 0;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return promotionCount;
 	}
 
@@ -1084,7 +1111,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 */
 	@Override
 	public int getProductCountById(String productCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		int productCount = 0;
 		FinanceType financeType = new FinanceType();
@@ -1102,7 +1129,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			logger.debug(dae);
 			productCount = 0;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return productCount;
 	}
 
@@ -1111,7 +1138,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 */
 	@Override
 	public String getAllowedCollateralTypes(String finType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String collateralTypes = "";
 		FinanceType financeType = new FinanceType();
@@ -1130,7 +1157,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			logger.debug(dae);
 			collateralTypes = "";
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return collateralTypes;
 	}
 
@@ -1141,7 +1168,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 */
 	@Override
 	public List<FinanceType> getFinanceTypeByProduct(String productCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceType financeType = new FinanceType();
 		financeType.setFinCategory(productCode);
@@ -1161,7 +1188,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			return Collections.emptyList();
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return finacetypeList;
 	}
 
@@ -1173,7 +1200,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 */
 	@Override
 	public String getFinanceTypeDesc(String productCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String finTypeDesc = "";
 		FinanceType financeType = new FinanceType();
@@ -1192,13 +1219,13 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			logger.debug(dae);
 			finTypeDesc = "";
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return finTypeDesc;
 	}
 
 	@Override
 	public int getFinTypeCount(String finType, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = null;
 		int count = 0;
@@ -1217,14 +1244,14 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			logger.error(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return count;
 	}
 
 	@Override
 	public int getFinanceTypeByRuleCode(long ruleId, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceType financeType = new FinanceType();
 		financeType.setDownPayRule(ruleId);
 
@@ -1236,7 +1263,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
@@ -1245,7 +1272,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 */
 	@Override
 	public boolean isStepPolicyExists(String policyCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(FinType)");
 		selectSql.append(" From RMTFinanceTypes_View ");
@@ -1260,7 +1287,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new FinanceType());
 		int rcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return rcdCount > 0 ? true : false;
 	}
 
@@ -1273,7 +1300,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 */
 	@Override
 	public boolean isDivisionCodeExistsInFinanceTypes(String divisionCode, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FINDIVISION", divisionCode);
@@ -1291,7 +1318,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			logger.debug("Exception: ", dae);
 			recordCount = 0;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return recordCount > 0 ? true : false;
 	}
@@ -1321,7 +1348,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 	@Override
 	public FinanceType getFinLtvCheckByFinType(String finType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceType financeType = new FinanceType();
 		financeType.setFinType(finType);
 
@@ -1340,14 +1367,14 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			logger.warn("Exception: ", e);
 			financeType = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeType;
 	}
 
 	@Override
 	public String getAllowedRepayMethods(String finType, String type) {
 
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String finTypeDesc = "";
 		FinanceType financeType = new FinanceType();
@@ -1366,7 +1393,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			logger.debug(dae);
 			finTypeDesc = "";
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return finTypeDesc;
 
 	}
@@ -1416,6 +1443,31 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	}
 
 	@Override
+	public FinanceType getFinanceType(final String finType) {
+		logger.debug("Entering");
+		FinanceType financeType = new FinanceType();
+		financeType.setFinType(finType);
+
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append(" Select * FROM RMTFinanceTypes_View");
+		selectSql.append(" Where FinType = :FinType");
+
+		logger.debug("selectListSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
+		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
+
+		try {
+			financeType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			financeType = null;
+		}
+		logger.debug("Leaving");
+		return financeType;
+	}
+
+	@Override
 	public String getRepayHierarchy(String finType) {
 		logger.debug(Literal.ENTERING);
 
@@ -1434,5 +1486,4 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-
 }

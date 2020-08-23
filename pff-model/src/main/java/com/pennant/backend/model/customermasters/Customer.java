@@ -72,7 +72,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"noOfDependents", "custTypeCode", "custSector", "custSubSector", "custSegment", "custSubSegment",
 		"custIndustry", "custGroupID", "custParentCountry", "custRiskCountry", "custIsStaff", "custStaffID",
 		"custEmpSts", "custDSA", "custDSADept", "custAddlDec1", "subCategory", "casteId", "religionId",
-		"custShrtNameLclLng", "returnStatus" })
+		"custShrtNameLclLng", "returnStatus", "custCRCPR" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class Customer extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 2198471029043076055L;
@@ -188,6 +188,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	@XmlElement(name = "subSector")
 	private String custSubSector;
 	private String lovDescCustSubSectorName;
+	@XmlElement
 	private String custProfession;
 	private String lovDescCustProfessionName;
 	private BigDecimal custTotalIncome = BigDecimal.ZERO;
@@ -297,7 +298,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private boolean proceedToDedup = false;
 	private boolean dedupFound = false;
 	private boolean skipDedup = false;
-	@XmlElement(name = "panNumber")
+	@XmlElement(name = "custCRCPR")
 	private String custCRCPR;
 	private boolean jointCust;
 	private String jointCustName;
@@ -342,6 +343,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String applicationNo;
 	private String branchProvince;
 	private boolean dnd;
+	private boolean vip;
 
 	private String legalconstitution;
 	private String businesscategory;
@@ -2210,6 +2212,14 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setResidentialStatus(String residentialStatus) {
 		this.residentialStatus = residentialStatus;
+	}
+
+	public boolean isVip() {
+		return vip;
+	}
+
+	public void setVip(boolean vip) {
+		this.vip = vip;
 	}
 
 }

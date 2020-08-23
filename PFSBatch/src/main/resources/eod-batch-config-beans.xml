@@ -740,6 +740,7 @@
 		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
 		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
 		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 
 	<bean id="externalLiabilityDAO" class="com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl"
@@ -801,6 +802,8 @@
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 	<bean name="receiptCalculator" class="com.pennant.app.util.ReceiptCalculator" scope="prototype">
@@ -899,4 +902,9 @@
 	</bean>
 
 	<bean id="bpsDAO" class="com.pennanttech.pff.batch.backend.dao.impl.BatchProcessStatusDAOImpl" parent="basicDao" />
+
+	<bean id="extractDataDAO" class="com.pennant.backend.dao.ext.impl.ExtractDataDAOImpl">
+		<property name="mainDataSource" ref="dataSource" />
+		<property name="extDataSource" ref="extDataSource" />
+	</bean>
 </beans>

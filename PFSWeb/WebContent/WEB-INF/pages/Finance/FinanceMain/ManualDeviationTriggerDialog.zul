@@ -77,7 +77,14 @@
 										<label value="${c:l('label_ManualDeviationTriggerDialog_remarks.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="remarks" width="175px" multiline="true" rows="4" />
+											<textbox id="remarks" width="500px" multiline="true" rows="4" />
+										</hbox>
+									</row>
+									<row>
+										<label value="${c:l('label_ManualDeviationTriggerDialog_Mitigants.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="mitigants" width="500px" multiline="true" rows="4" />
 										</hbox>
 									</row>
 								</rows>

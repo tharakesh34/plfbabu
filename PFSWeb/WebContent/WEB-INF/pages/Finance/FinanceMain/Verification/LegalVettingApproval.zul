@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<style>.z-groupbox-collapsed{ height: auto !important; }</style>
+
+	<window id="window_LegalVettingInitiation" border="none" apply="${legalVettingInitiationCtrl}" width="100%"
+		height="100%" sizable="false" contentStyle="padding:0px;border:none;">
+		<radiogroup id="vetting" visible="false" />
+
+		<groupbox height="100%" contentStyle="overflow:auto;">
+			<groupbox id="finBasicdetails">
+				<caption label="${c:l('label_CustomerDialog_BasicDetails.value') }" />
+			</groupbox>
+
+			<groupbox style="border:none;" contentStyle="border-top-width: 0px;" height="25%">
+				<caption label="${c:l('gb_Initiation')}" />
+				<toolbar id="toolbar_Initiation" align="end">
+					<button id="btnNew_Initiation" label="${c:l('label_New')}" tooltiptext="${c:l('button_LegalVettingApproval_InitDoc.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+				</toolbar>
+				<listbox id="listBoxInitiation" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}"
+					xmlns:w="client" w:onBind="zWatch.listen({onShow: [this, this.syncSize]});" w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});"
+					vflex="true">
+					<listhead sizable="true">
+						<listheader id="listheader_LegalVettingApproval_Select" label="${c:l('listheader_LegalVettingApproval_Select.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_Collateral" label="${c:l('listheader_LegalVettingApproval_Collateral.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_Agency" label="${c:l('listheader_LegalVettingApproval_Agency.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_Initiation_Remarks" label="${c:l('listheader_LegalVettingApproval_Remarks.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_Initiation_Status" label="${c:l('listheader_LegalVettingApproval_Status.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_Initiation_VrfDate" label="${c:l('listheader_LegalVettingApproval_VrfDate.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_Decision" label="${c:l('listheader_LegalVettingApproval_Decision.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_IReInitRemarks" label="${c:l('listheader_LegalVettingApproval_Remarks.label')}"
+							sort="false" hflex="min" />
+						<listheader visible="true" id="listheader_LegalVettingApproval_Initiation_ReInitiate" sort="false"
+							hflex="min" />
+					</listhead>
+				</listbox>
+			</groupbox>
+			<groupbox style="border:none;" contentStyle="border-top-width: 0px;" height="25%">
+				<caption label="${c:l('gb_Waiver')}" />
+				<toolbar id="toolbar_Waiver" align="end">
+					<button id="btnNew_ReinitWaiver" label="${c:l('label_New')}" tooltiptext="${c:l('button_LegalVettingApproval_WaiveDoc.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+				</toolbar>
+				<listbox id="listBoxWaiver" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}"
+					xmlns:w="client" w:onBind="zWatch.listen({onShow: [this, this.syncSize]});" w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});"
+					vflex="true">
+					<listhead sizable="true">
+						<listheader id="listheader_LegalVettingApproval_Waiver_WCollateral" label="${c:l('listheader_LegalVettingApproval_Waiver_Collateral.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_Waiver_DocumentType" label="${c:l('listheader_LegalVettingApproval_Waiver_DocumentType.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_Waiver_Reason" label="${c:l('listheader_LegalVettingApproval_Waiver_Reason.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_Waiver_Remarks" label="${c:l('listheader_LegalVettingApproval_Waiver_Remarks.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_Waiver_Status" label="${c:l('listheader_LegalVettingApproval_Waiver_Status.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_Waiver_VrfDate" label="${c:l('listheader_LegalVettingApproval_Waiver_VrfDate.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_Waiver_WDecision" label="${c:l('listheader_LegalVettingApproval_Waiver_Decision.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_LegalVettingApproval_Waiver_WReInitRemarks" label="${c:l('listheader_LegalVettingApproval_Waiver_Remarks.label')}"
+							sort="false" hflex="min" />
+						<listheader visible="true" id="listheader_LegalVettingApproval_Initiation_WReInitiate" sort="false"
+							hflex="min" />
+					</listhead>
+				</listbox>
+			</groupbox>
+			<groupbox id="vettingRecodringDetails" style="border:none;" contentStyle="border-top-width: 0px;" vflex="true">
+				<caption label="${c:l('label_LegalVettingApproval_recording') }" />
+			</groupbox>
+		</groupbox>
+	</window>
+</zk>

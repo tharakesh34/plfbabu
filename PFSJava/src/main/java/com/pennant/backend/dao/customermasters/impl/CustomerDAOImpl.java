@@ -214,6 +214,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(", CustSuspTrigger, ApplicationNo, Dnd, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CasteId");
 		sql.append(", ReligionId, SubCategory, MarginDeviation, ResidentialStatus");
+		sql.append(", OtherCaste, OtherReligion, NatureOfBusiness, EntityType, CustResidentialSts, Qualification, Vip"); //From HL
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescCustTypeCodeName, LovDescCustMaritalStsName, LovDescCustEmpStsName");
@@ -384,6 +385,13 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 					c.setSubCategory(rs.getString("SubCategory"));
 					c.setMarginDeviation(rs.getBoolean("MarginDeviation"));
 					c.setResidentialStatus(rs.getString("ResidentialStatus"));
+					c.setNatureOfBusiness(rs.getString("NatureOfBusiness"));
+					c.setQualification(rs.getString("Qualification"));
+					c.setOtherReligion(rs.getString("OtherReligion"));
+					c.setVip(rs.getBoolean("Vip"));
+					c.setCustResidentialSts(rs.getString("CustResidentialSts"));
+					c.setOtherCaste(rs.getString("OtherCaste"));
+					c.setEntityType(rs.getString("EntityType"));
 
 					if (StringUtils.trimToEmpty(type).contains("View")) {
 						c.setLovDescCustTypeCodeName(rs.getString("LovDescCustTypeCodeName"));
@@ -566,9 +574,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				" DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR,CustSourceID,");
 		insertSql.append(
 				" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer,ApplicationNo, Dnd,");
-
 		insertSql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				" OtherCaste, OtherReligion, NatureOfBusiness, EntityType, CustResidentialSts, Qualification, Vip");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		insertSql.append(" ,CasteId, ReligionId, SubCategory,MarginDeviation, ResidentialStatus  )");
 		insertSql.append(
 				" Values(:CustID, :CustCIF, :CustCoreBank, :CustCtgCode, :CustTypeCode, :CustSalutationCode, :CustFName, :CustMName,");
@@ -604,7 +613,9 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		insertSql.append(
 				" :JointCust, :JointCustName, :JointCustDob, :custRelation, :ContactPersonName, :EmailID, :PhoneNumber, :SalariedCustomer, :ApplicationNo, :Dnd,");
 		insertSql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
+				" :OtherCaste, :OtherReligion, :NatureOfBusiness, :EntityType, :CustResidentialSts, :Qualification, :Vip");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
 		insertSql.append(" ,:CasteId, :ReligionId, :SubCategory, :MarginDeviation, :ResidentialStatus)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -706,6 +717,9 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(
 				" ,CasteId = :CasteId, ReligionId = :ReligionId, SubCategory = :SubCategory, ApplicationNo = :ApplicationNo, Dnd = :Dnd, ResidentialStatus = :ResidentialStatus");
+		updateSql.append(
+				", OtherCaste= :OtherCaste, OtherReligion= :OtherReligion, NatureOfBusiness= :NatureOfBusiness, EntityType= :EntityType,");
+		updateSql.append(" CustResidentialSts= :CustResidentialSts, Qualification= :Qualification, Vip = :Vip");
 		updateSql.append(" Where CustID =:CustID");
 
 		if (!type.endsWith("_Temp")) {
@@ -2261,7 +2275,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(
 				" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber,");
 		selectSql.append(" SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger ");
-		selectSql.append(" , CasteId, ReligionId, SubCategory, ApplicationNo, Dnd ");
+		selectSql.append(" , CasteId, ReligionId, SubCategory, ApplicationNo, Dnd, Vip ");
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustGroupID =:CustGroupID");
 
@@ -2933,6 +2947,73 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug(Literal.LEAVING);
 		return null;
+	}
+
+	@Override
+	public boolean isCustTypeExists(String custType, String type) {
+		logger.debug(Literal.ENTERING);
+
+		int count = 0;
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("CustTypeCode", custType);
+
+		StringBuilder sql = new StringBuilder("SELECT  COUNT(CustTypeCode)  FROM  Customers");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustTypeCode = :CustTypeCode");
+
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			count = this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return count > 0 ? true : false;
+	}
+
+	@Override
+	public String getExternalCibilResponse(String cif, String tableName) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select JsonResponse from ");
+		sql.append(tableName);
+		sql.append(" where  Reference = :Reference ");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", cif);
+		logger.trace("selectSql: " + sql.toString());
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exceprtion ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public List<String> isDuplicateCRCPR(long custId, String custCRCPR, String custCtgCode) {
+		logger.debug(Literal.ENTERING);
+
+		List<String> cifs = null;
+
+		StringBuilder sql = new StringBuilder("select custCIF");
+		sql.append(" FROM  Customers");
+		sql.append("_View");
+		sql.append(" Where CustCRCPR =:CustCRCPR and CustCtgCode=:CustCtgCode");
+		logger.trace("Sql: " + sql.toString());
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("CustCRCPR", custCRCPR);
+		parameterSource.addValue("CustCtgCode", custCtgCode);
+
+		try {
+			cifs = this.jdbcTemplate.queryForList(sql.toString(), parameterSource, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return cifs;
 	}
 
 }

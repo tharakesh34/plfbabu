@@ -87,8 +87,8 @@ import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
-import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -285,10 +285,9 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		//this.custEmpName.setDisplayStyle(3);
 		this.custEmpName.setMandatoryStyle(true);
 		this.custEmpName.setModuleName("EmployerDetail");
-		this.custEmpName.setValueColumn("EmployerId");
-		this.custEmpName.setValueType(DataType.LONG);
-		this.custEmpName.setDescColumn("EmpName");
-		this.custEmpName.setValidateColumns(new String[] { "EmployerId" });
+		this.custEmpName.setValueColumn("EmpName");
+		this.custEmpName.setDescColumn("EmpIndustry");
+		this.custEmpName.setValidateColumns(new String[] { "EmpName" });
 
 		this.custEmpFrom.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.custEmpTo.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -439,9 +438,12 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			this.custID.setValue(aCustomerEmploymentDetail.getCustID());
 		}
 
-		if (null != aCustomerEmploymentDetail.getCustEmpName()) {
-			this.custEmpName.setValue(String.valueOf(aCustomerEmploymentDetail.getCustEmpName()));
+		if (aCustomerEmploymentDetail.getCustEmpName() != null) {
+			this.custEmpName.setValue(StringUtils.trimToEmpty(aCustomerEmploymentDetail.getLovDesccustEmpName()),
+					StringUtils.trimToEmpty(aCustomerEmploymentDetail.getLovDescEmpIndustry()));
+			this.custEmpName.setAttribute("EmpId", aCustomerEmploymentDetail.getCustEmpName());
 		}
+
 		this.custEmpFrom.setValue(aCustomerEmploymentDetail.getCustEmpFrom());
 		this.custEmpTo.setValue(aCustomerEmploymentDetail.getCustEmpTo());
 		this.custEmpDesg.setValue(aCustomerEmploymentDetail.getCustEmpDesg());
@@ -463,7 +465,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			this.custEmpDesg.setDescription(aCustomerEmploymentDetail.getLovDescCustEmpDesgName());
 			this.custEmpDept.setDescription(aCustomerEmploymentDetail.getLovDescCustEmpDeptName());
 			this.custEmpType.setDescription(aCustomerEmploymentDetail.getLovDescCustEmpTypeName());
-			this.custEmpName.setDescription(aCustomerEmploymentDetail.getLovDesccustEmpName());
+			//this.custEmpName.setDescription(aCustomerEmploymentDetail.getLovDesccustEmpName());
 		}
 		this.recordStatus.setValue(aCustomerEmploymentDetail.getRecordStatus());
 
@@ -500,6 +502,11 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		if (dataObject instanceof EmployerDetail) {
 			EmployerDetail details = (EmployerDetail) dataObject;
 			employerId = details.getEmployerId();
+			this.custEmpName.setAttribute("EmpId", details.getId());
+		} else if (dataObject instanceof String || dataObject == null) {
+			this.custEmpName.setValue("");
+			this.custEmpName.setDescription("");
+			this.custEmpName.setAttribute("EmpId", null);
 		}
 
 		if (otherEmployerId != 0 && !enqiryModule && otherEmployerId == employerId) {
@@ -531,9 +538,14 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			wve.add(we);
 		}
 		try {
-			aCustomerEmploymentDetail.setLovDesccustEmpName(this.custEmpName.getDescription());
-			if (StringUtils.isNotEmpty(this.custEmpName.getValue())) {
-				aCustomerEmploymentDetail.setCustEmpName(Long.parseLong(this.custEmpName.getValue()));
+			aCustomerEmploymentDetail.setLovDesccustEmpName(this.custEmpName.getValue());
+			aCustomerEmploymentDetail.setLovDescEmpIndustry(this.custEmpName.getDescription());
+			this.custEmpName.getValidatedValue();
+			Object object = this.custEmpName.getAttribute("EmpId");
+			if (object != null) {
+				aCustomerEmploymentDetail.setCustEmpName((Long.parseLong(object.toString())));
+			} else {
+				aCustomerEmploymentDetail.setCustEmpName(null);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -801,6 +813,11 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 							PennantRegularExpressions.REGEX_COMPANY_NAME, false, false));
 		}
 
+		if (!this.custEmpType.getButton().isDisabled()) {
+			this.custEmpType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpType.value"), null, true, true));
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -824,18 +841,25 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		this.custEmpDesg.setConstraint(new PTStringValidator(
-				Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpDesg.value"), null, true, true));
+		if (!custEmpDesg.isReadonly()) {
+			this.custEmpDesg.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpDesg.value"), null, true, true));
+		}
 
-		this.custEmpDept.setConstraint(new PTStringValidator(
-				Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpDept.value"), null, true, true));
+		if (!custEmpDept.isReadonly()) {
+			this.custEmpDept.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpDept.value"), null, true, true));
+		}
 
-		this.custEmpType.setConstraint(new PTStringValidator(
-				Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpType.value"), null, true, true));
+		if (!custEmpType.isReadonly()) {
+			this.custEmpType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpType.value"), null, true, true));
 
-		logger.debug("Leaving");
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1168,7 +1192,8 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			for (int i = 0; i < getCustomerDialogCtrl().getCustomerEmploymentDetailList().size(); i++) {
 				CustomerEmploymentDetail customerRating = getCustomerDialogCtrl().getCustomerEmploymentDetailList()
 						.get(i);
-				if (customerRating.getCustEmpName() == aCustomerRating.getCustEmpName()) { // Both Current and Existing list rating same
+				if (customerRating.getCustEmpName() != null && aCustomerRating.getCustEmpName() != null
+						&& customerRating.getCustEmpName().equals(aCustomerRating.getCustEmpName())) { // Both Current and Existing list rating same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(

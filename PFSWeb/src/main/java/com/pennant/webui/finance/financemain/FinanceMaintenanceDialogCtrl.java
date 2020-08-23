@@ -93,6 +93,7 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -107,6 +108,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExt;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.mandate.Mandate;
@@ -126,6 +128,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
@@ -209,6 +212,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected CurrencyBox finAssetValue;
 	protected Label netFinAmount;
 	protected Checkbox manualSchedule;
+	protected Checkbox underConstruction;
 	protected Row row_ManualSchedule;
 	protected Textbox finDivisionName;
 	protected Hbox hbox_PromotionProduct;
@@ -735,7 +739,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		} else {
 			this.row_ManualSchedule.setVisible(false);
 		}
-
+		this.underConstruction.setChecked(aFinanceMain.isAlwGrcAdj());
 		this.finAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), format));
 		this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(), format));
 		setNetFinanceAmount(true);
@@ -1988,6 +1992,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_finStartDate"), this.odStartDate);
+		readOnlyComponent(true, this.underConstruction);
 		this.odFinAssetValue.setDisabled(isReadOnly("FinanceMainDialog_finAmount"));
 
 		this.finWriteoffPayAmount.setReadonly(isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
@@ -2037,6 +2042,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finWriteoffPayAccount.setReadonly(true);
 		this.finWriteoffPayAmount.setReadonly(true);
 		this.manualSchedule.setDisabled(true);
+		readOnlyComponent(true, this.underConstruction);
 		logger.debug("Leaving");
 	}
 
@@ -2184,11 +2190,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (getJointAccountDetailDialogCtrl() != null) {
 			if (getJointAccountDetailDialogCtrl().getGuarantorDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getGuarantorDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail, true);
 			}
 			if (getJointAccountDetailDialogCtrl().getJountAccountDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getJountAccountDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail, true);
 			}
 		} else {
 			aFinanceDetail.setJountAccountDetailList(null);
@@ -2216,6 +2222,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
 							continue;
 						}
+
+						if (curDisb.getLinkedDisbId() != 0) {
+							continue;
+						}
+
 						utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount())
 								.add(aFinanceMain.getFeeChargeAmt().add(aFinanceMain.getInsuranceAmt()));
 					}
@@ -3296,13 +3307,14 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		FinanceMain financeMain = super.getFinanceMain();
 		int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		financeMain.setDownPayment(
-				PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue() == null ? BigDecimal.ZERO
+				PennantApplicationUtil.unFormateAmount(this.downPayBank.getActualValue() == null ? BigDecimal.ZERO
 						: this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue() == null
 								? BigDecimal.ZERO : this.downPaySupl.getActualValue()),
 						format));
-		financeMain.setFinAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), format));
+		financeMain
+				.setFinAssetValue(PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(), format));
 		financeMain.setFinCurrAssetValue(
-				PennantAppUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), format));
+				PennantApplicationUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), format));
 		return financeMain;
 	}
 
@@ -3397,11 +3409,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (getJointAccountDetailDialogCtrl() != null) {
 			if (getJointAccountDetailDialogCtrl().getGuarantorDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getGuarantorDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail, false);
 			}
 			if (getJointAccountDetailDialogCtrl().getJountAccountDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getJountAccountDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail, false);
 			}
 		} else {
 			aFinanceDetail.setJountAccountDetailList(null);
@@ -3612,8 +3624,18 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// 5.For ECS registration not required
 
 		repaymethod = StringUtils.trimToEmpty(repaymethod);
+		//this change is to display co-applicant mandates along with primary customer 
+		List<Long> custIds = new ArrayList<Long>(1);
+		custIds.add(custid);
+		if (SysParamUtil.isAllowed(SMTParameterConstants.IS_COAPPLICANTS_ALLOWED_FOR_MANDATE)
+				&& getFinanceDetail() != null) {
+			for (JointAccountDetail accountDetail : getFinanceDetail().getJountAccountDetailList()) {
+				custIds.add(accountDetail.getCustID());
+			}
+		}
+
 		Filter[] filters = new Filter[3];
-		filters[0] = new Filter("CustID", custid, Filter.OP_EQUAL);
+		filters[0] = new Filter("CustID", custIds, Filter.OP_IN);
 		filters[1] = new Filter("MandateType", repaymethod, Filter.OP_EQUAL);
 		filters[2] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.mandateRef.setFilters(filters);

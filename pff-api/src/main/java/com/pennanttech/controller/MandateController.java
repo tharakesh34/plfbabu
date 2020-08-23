@@ -85,11 +85,11 @@ public class MandateController {
 			mandate.setVersion(1);
 			mandate.setMandateCcy(SysParamUtil.getAppCurrency());
 			mandate.setStatus(MandateConstants.STATUS_NEW);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			auditHeader = mandateService.doApprove(auditHeader);
@@ -160,7 +160,7 @@ public class MandateController {
 
 		WSReturnStatus response = new WSReturnStatus();
 		try {
-			//set the default values for mandate 
+			// set the default values for mandate
 			prepareRequiredData(mandate);
 
 			Mandate prvMandate = mandateService.getApprovedMandateById(mandate.getMandateID());
@@ -174,11 +174,11 @@ public class MandateController {
 			// copy properties
 			BeanUtils.copyProperties(mandate, prvMandate);
 
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(prvMandate, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			// call update service method
@@ -214,7 +214,7 @@ public class MandateController {
 		logger.debug(Literal.ENTERING);
 		WSReturnStatus response = new WSReturnStatus();
 		try {
-			//get the mandate by the mandateId
+			// get the mandate by the mandateId
 			Mandate mandate = mandateService.getApprovedMandateById(mandateID);
 
 			prepareRequiredData(mandate);
@@ -222,11 +222,11 @@ public class MandateController {
 			mandate.setNewRecord(false);
 			mandate.setVersion(mandate.getVersion() + 1);
 
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			auditHeader = mandateService.doApprove(auditHeader);
@@ -263,7 +263,7 @@ public class MandateController {
 		try {
 			List<Mandate> mandatesList = mandateService.getApprovedMandatesByCustomerId(customer.getCustID());
 			if (!mandatesList.isEmpty()) {
-				//set the amount in words for response
+				// set the amount in words for response
 				for (Mandate mandate : mandatesList) {
 					BigDecimal maxlimt = PennantApplicationUtil.formateAmount(mandate.getMaxLimit(),
 							CurrencyUtil.getFormat(mandate.getMandateCcy()));
@@ -326,11 +326,11 @@ public class MandateController {
 		logger.debug(Literal.ENTERING);
 		Mandate response = null;
 		AuditHeader auditHeader = null;
-		//set status
+		// set status
 		mandate.setApproveMandate(true);
 		mandate.setStatus(MandateConstants.STATUS_APPROVED);
 
-		//set mandate detail and get audit header detail
+		// set mandate detail and get audit header detail
 		auditHeader = doSetMandateDefault(mandate);
 
 		try {
@@ -398,12 +398,12 @@ public class MandateController {
 		mandate.setVersion(1);
 		mandate.setMandateCcy(SysParamUtil.getAppCurrency());
 
-		//get the header details from the request
+		// get the header details from the request
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_HEADER_KEY);
 		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_WF);
 
-		//set the headerDetails to AuditHeader
+		// set the headerDetails to AuditHeader
 		auditHeader.setApiHeader(reqHeaderDetails);
 
 		logger.debug(Literal.LEAVING);

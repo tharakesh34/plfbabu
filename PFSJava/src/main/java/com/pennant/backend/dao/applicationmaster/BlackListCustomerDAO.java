@@ -47,6 +47,7 @@ import java.util.List;
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
+import com.pennant.backend.model.blacklist.NegativeReasoncodes;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -85,4 +86,13 @@ public interface BlackListCustomerDAO extends BasicCrudDao<BlackListCustomers> {
 	 * @return
 	 */
 	boolean isDuplicateKey(String custCIF, TableType tableType);
+
+	void deleteNegativeReasonList(String blacklisCIF, TableType tableType);
+
+	void deleteNegativeReason(long reasonId, TableType tableType);
+
+	void saveNegativeReason(NegativeReasoncodes negativeReasoncodes, TableType tableType);
+
+	List<NegativeReasoncodes> getNegativeReasonList(String blacklisCIF, String type);
+
 }

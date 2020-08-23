@@ -286,6 +286,25 @@ public class FinanceDataValidation {
 		} else {
 			stp = finDetail.isStp();
 		}
+
+		//As per IMD Changes paid can be done through IMD only
+		List<FinFeeDetail> feeList = finScheduleData.getFinFeeDetailList();
+		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup) && !CollectionUtils.isEmpty(feeList)) {
+			for (FinFeeDetail feeDetail : feeList) {
+				//As per IMD Changes PAID can be happen through IMD only
+				if (feeDetail.getPaidAmount() != null && BigDecimal.ZERO.compareTo(feeDetail.getPaidAmount()) != 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = feeDetail.getFeeTypeCode();
+					valueParm[1] = "0";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("IMD006", valueParm)));
+				}
+			}
+		}
+		if (!errorDetails.isEmpty()) {
+			finScheduleData.setErrorDetails(errorDetails);
+			return finScheduleData;
+		} //IMD
+
 		errorDetails = doValidateFees(finScheduleData, stp);
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
@@ -1957,6 +1976,23 @@ public class FinanceDataValidation {
 							detail.setGuarantorProofName(detail.getGuarantorProofName().toLowerCase());
 						}
 					}
+
+					if (StringUtils.isNotBlank(detail.getName())) {
+						detail.setGuarantorCIFName(detail.getName());
+					}
+					if (StringUtils.isBlank(detail.getGuarantorGenderCode())) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "gender";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+						return errorDetails;
+					} else {
+						if (!genderDAO.isValidGenderCode(detail.getGuarantorGenderCode())) {
+							String[] valueParm = new String[1];
+							valueParm[0] = detail.getGuarantorGenderCode();
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+							return errorDetails;
+						}
+					}
 				}
 			}
 		}
@@ -3355,6 +3391,16 @@ public class FinanceDataValidation {
 				;
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
 				return errorDetails;
+			}
+
+			// validate isAlwUnderConstruction
+			if (!financeType.isGrcAdjReq()) {
+				if (finMain.isAlwGrcAdj()) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Alw Under Construction";
+					valueParm[1] = finMain.getFinType();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+				}
 			}
 
 			if (finMain.getFixedRateTenor() > 0 && finMain.getFixedTenorRate().compareTo(BigDecimal.ZERO) <= 0) {
@@ -5906,7 +5952,7 @@ public class FinanceDataValidation {
 
 		for (LegalApplicantDetail applicantDetail : applicantDetails) {
 			if (StringUtils.isNotBlank(applicantDetail.getTitle())) {
-				Salutation salutation = salutationDAO.getSalutationById(applicantDetail.getTitle(), "_AView");
+				Salutation salutation = salutationDAO.getSalutationById(applicantDetail.getTitle(), "", "_AView");
 				if (salutation == null) {
 					String[] param = new String[2];
 					param[0] = "Title";
@@ -6621,5 +6667,4 @@ public class FinanceDataValidation {
 	public void setCustomerEMailService(CustomerEMailService customerEMailService) {
 		this.customerEMailService = customerEMailService;
 	}
-
 }

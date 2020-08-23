@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinCovenantMaintanceServiceImpl.java                                 * 	  
+ * FileName    		:  FeeWaiverHeaderServiceImpl.java                                 		* 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -442,6 +442,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			taxHeader.setVersion(1);
 			taxHeader.setTaxDetails(taxes);
 			feeWaiverDetail.setTaxHeader(taxHeader);
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(feeWaiverDetail.getTaxComponent())) {
+				taxSplit = GSTCalculator.getExclusiveGST(feeWaiverDetail.getReceivedAmount(), gstPercentages);
+				feeWaiverDetail.setReceivedAmount(feeWaiverDetail.getReceivedAmount().add(taxSplit.gettGST()));
+			}
 		} else {
 			feeWaiverDetail.setActualReceivable(receivableAmt);
 			feeWaiverDetail.setReceivableAmount(receivableAmt);

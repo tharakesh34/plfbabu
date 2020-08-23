@@ -95,4 +95,12 @@ public interface VerificationService {
 
 	Verification getVerificationStatus(String reference, int verificationType, String addressType, String custCif);
 
+	List<String> getApprovedLVVerifications(int decision, int verificationType);
+
+	void saveLegalVetting(Verification verification);
+
+	void savereInitLegalVetting(FinanceDetail financeDetail, Verification verification);
+
+	void setVettingDetails(List<Verification> verifications);
+
 }

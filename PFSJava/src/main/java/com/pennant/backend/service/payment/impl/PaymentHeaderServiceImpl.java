@@ -868,7 +868,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			default:
 				break;
 			}
-
+			eventMapping.put("pi_excessAmount", excessAmount);
 			eventMapping.put("pi_emiInAdvance", emiInAdavance);
 			eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
 			eventMapping.put("CASHCLT_P", cashCtrl);

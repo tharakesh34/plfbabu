@@ -50,6 +50,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -62,9 +63,9 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods implementation for the <b>Provision model</b> class.<br>
@@ -85,13 +86,13 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 
 	@Override
 	public Provision getProvision() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("Provision");
 		Provision provision = new Provision();
 		if (workFlowDetails != null) {
 			provision.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return provision;
 	}
 
@@ -103,10 +104,10 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 
 	@Override
 	public Provision getNewProvision() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Provision provision = getProvision();
 		provision.setNewRecord(true);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return provision;
 	}
 
@@ -121,35 +122,35 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 	 */
 	@Override
 	public Provision getProvisionById(final String id, String type) {
-		logger.debug("Entering");
-		Provision provision = new Provision();
+		logger.debug(Literal.ENTERING);
 
+		Provision provision = new Provision();
 		provision.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference, FinBranch, FinType, ");
-		selectSql.append(" CustID, ProvisionCalDate, ProvisionedAmt, ProvisionAmtCal, ProvisionDue, ");
-		selectSql.append(" NonFormulaProv, UseNFProv, AutoReleaseNFP, PrincipalDue, ProfitDue, ");
-		selectSql.append(" DueFromDate, LastFullyPaidDate , ");
+		StringBuilder sql = new StringBuilder("Select FinReference, FinBranch, FinType, ");
+		sql.append(" CustID, ProvisionCalDate, ProvisionedAmt, ProvisionAmtCal, ProvisionDue, ");
+		sql.append(" NonFormulaProv, UseNFProv, AutoReleaseNFP, PrincipalDue, ProfitDue, ");
+		sql.append(" DueFromDate, LastFullyPaidDate, DueDays, priBal, AssetCode,");
+		sql.append(" AssetStageOrdr, NPA, ManualProvision,PrvovisionRate,");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" FinCcy, lovDescCustCIF, lovDescCustShrtName , ");
+			sql.append(" FinCcy, lovDescCustCIF, lovDescCustShrtName , ");
 		}
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From FinProvisions");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, ");
+		sql.append(" NextTaskId, RecordType, WorkflowId");
+		sql.append(" From FinProvisions");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference =:FinReference");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
 		RowMapper<Provision> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Provision.class);
 
 		try {
-			provision = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			provision = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
 			provision = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return provision;
 	}
 
@@ -167,24 +168,16 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 	 */
 	@Override
 	public void delete(Provision provision, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FinProvisions");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		StringBuilder sql = new StringBuilder("Delete From FinProvisions");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				throw new ConcurrencyException();
-			}
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -210,15 +203,15 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 		sql.append(" PrincipalDue, ProfitDue, DueFromDate, LastFullyPaidDate, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId,");
-		sql.append(" Duedays,DpdBucketID,NpaBucketID,PftBal,PriBal,PrvovisionRate)");
+		sql.append(" DueDays,DpdBucketID,NpaBucketID,PftBal,PriBal,PrvovisionRate,");
+		sql.append(" AssetCode, assetStageOrdr, NPA, ProvLinkedTranId, ProvChgLinkedTranId, ManualProvision) ");
 		sql.append(" Values(:FinReference, :FinBranch, :FinType, :CustID, :ProvisionCalDate,");
 		sql.append(" :ProvisionedAmt, :ProvisionAmtCal, :ProvisionDue, :NonFormulaProv,");
 		sql.append(" :UseNFProv, :AutoReleaseNFP, :PrincipalDue, :ProfitDue, :DueFromDate, :LastFullyPaidDate, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
-		sql.append(" :RecordType, :WorkflowId,");
-		sql.append(" :Duedays,:DpdBucketID,:NpaBucketID,:PftBal,:PriBal,:PrvovisionRate)");
-
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,  ");
+		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId,");
+		sql.append(" :DueDays,:DpdBucketID,:NpaBucketID,:PftBal,:PriBal,:PrvovisionRate,");
+		sql.append(" :AssetCode, :AssetStageOrdr, :Npa, :ProvLinkedTranId, :ProvChgLinkedTranId, :ManualProvision) ");
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
@@ -242,31 +235,32 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 	@Override
 	public void update(Provision provision, String type) {
 		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinProvisions");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinBranch = :FinBranch,");
-		updateSql.append(" FinType = :FinType, CustID = :CustID, ProvisionCalDate = :ProvisionCalDate,");
-		updateSql.append(" ProvisionedAmt = :ProvisionedAmt, ProvisionAmtCal = :ProvisionAmtCal,");
-		updateSql.append(" ProvisionDue = :ProvisionDue, NonFormulaProv = :NonFormulaProv,");
-		updateSql.append(" UseNFProv = :UseNFProv, AutoReleaseNFP = :AutoReleaseNFP,");
-		updateSql.append(" PrincipalDue = :PrincipalDue, ProfitDue = :ProfitDue, ");
-		updateSql.append(" DueFromDate = :DueFromDate, LastFullyPaidDate = :LastFullyPaidDate, ");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		updateSql.append(
-				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Update FinProvisions");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set FinBranch = :FinBranch,");
+		sql.append(" FinType = :FinType, CustID = :CustID, ProvisionCalDate = :ProvisionCalDate,");
+		sql.append(" ProvisionedAmt = :ProvisionedAmt, ProvisionAmtCal = :ProvisionAmtCal,");
+		sql.append(" ProvisionDue = :ProvisionDue, NonFormulaProv = :NonFormulaProv,");
+		sql.append(" UseNFProv = :UseNFProv, AutoReleaseNFP = :AutoReleaseNFP,");
+		sql.append(" PrincipalDue = :PrincipalDue, ProfitDue = :ProfitDue, ");
+		sql.append(" DueFromDate = :DueFromDate, LastFullyPaidDate = :LastFullyPaidDate, ");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,");
+		sql.append(" AssetCode = :AssetCode, assetStageOrdr = :assetStageOrdr, NPA = :Npa, ");
+		sql.append(" PrvovisionRate = :PrvovisionRate, provLinkedTranId = :provLinkedTranId,");
+		sql.append(" provChgLinkedTranId = :provChgLinkedTranId, manualProvision = :manualProvision ");
+		sql.append(" Where FinReference =:FinReference");
 
-		logger.debug("updateSql: " + updateSql.toString());
-
+		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -278,62 +272,55 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 	@Override
 	public void updateProvAmt(ProvisionMovement provisionMovement, String type) {
 		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinProvisions");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set ProvisionedAmt = :ProvisionedAmt, ProvisionDue = :ProvisionDue ");
-		updateSql.append(" Where FinReference =:FinReference ");
-
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Update FinProvisions");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set ProvisionedAmt = :ProvisionedAmt, ProvisionDue = :ProvisionDue ");
+		sql.append(" Where FinReference =:FinReference ");
+		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public List<Provision> getProcessedProvisions() {
-		logger.debug("Entering");
-		StringBuilder selectSql = new StringBuilder(
-				"Select  FinReference, provisionCalDate,provisionAmt as provisionedAmt, provisionAmtCal, nonFormulaProv, useNFProv, prevProvisionCalDate, prevProvisionedAmt, transRef");
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select  FinReference, provisionCalDate,provisionAmt as provisionedAmt, provisionAmtCal,");
+		sql.append(" nonFormulaProv, useNFProv, prevProvisionCalDate, prevProvisionedAmt, transRef");
+		sql.append(" From FinProcessedprovisions");
 
-		selectSql.append(" From FinProcessedprovisions");
-
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new Provision());
 		RowMapper<Provision> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Provision.class);
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
 	public String saveProcessedProvisions(Provision provision) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinProcessedprovisions");
-
-		insertSql.append(" (FinReference, provisionCalDate, provisionAmt, provisionAmtCal, nonFormulaProv,");
-		insertSql.append(" useNFProv, prevProvisionCalDate, prevProvisionedAmt, transRef)");
-
-		insertSql.append(
-				" Values(:FinReference, :ProvisionCalDate, :ProvisionedAmt, :ProvisionAmtCal, :NonFormulaProv,");
-		insertSql.append(" :UseNFProv, :PrevProvisionCalDate, :PrevProvisionedAmt, :TransRef)");
-
-		logger.debug("insertSql: " + insertSql.toString());
+		StringBuilder sql = new StringBuilder("Insert Into FinProcessedprovisions");
+		sql.append(" (FinReference, provisionCalDate, provisionAmt, provisionAmtCal, nonFormulaProv,");
+		sql.append(" useNFProv, prevProvisionCalDate, prevProvisionedAmt, transRef)");
+		sql.append(" Values(:FinReference, :ProvisionCalDate, :ProvisionedAmt, :ProvisionAmtCal, ");
+		sql.append(" :NonFormulaProv, :UseNFProv, :PrevProvisionCalDate, :PrevProvisionedAmt, :TransRef)");
+		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
 		try {
-			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(sql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			logger.debug(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return provision.getId();
 	}
 
@@ -364,19 +351,19 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 
 	@Override
 	public void updateProvisonAmounts(Provision provision) {
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinProvisions");
-		updateSql.append(" Set ProvisionCalDate = :ProvisionCalDate,ProvisionAmtCal=:ProvisionAmtCal,");
-		updateSql.append(" ProvisionedAmt = :ProvisionedAmt, Duedays = :Duedays, DpdBucketID = :DpdBucketID,");
-		updateSql.append(
-				" NpaBucketID = :NpaBucketID, PftBal = :PftBal, PriBal = :PriBal, PrvovisionRate = :PrvovisionRate, DueFromDate =:DueFromDate ");
-		updateSql.append(" Where FinReference =:FinReference ");
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Update FinProvisions");
+		sql.append(" Set ProvisionCalDate = :ProvisionCalDate,ProvisionAmtCal=:ProvisionAmtCal,");
+		sql.append(" ProvisionedAmt = :ProvisionedAmt, DueDays = :DueDays, DpdBucketID = :DpdBucketID,");
+		sql.append(" NpaBucketID = :NpaBucketID, PftBal = :PftBal, PriBal = :PriBal,");
+		sql.append(" PrvovisionRate = :PrvovisionRate, DueFromDate =:DueFromDate ");
+		sql.append(" Where FinReference =:FinReference ");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -385,23 +372,43 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 
 		provision.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference, FinBranch, FinType, ");
-		selectSql.append(" CustID, ProvisionCalDate, ProvisionedAmt, ProvisionAmtCal, ProvisionDue, ");
-		selectSql.append(" NonFormulaProv, UseNFProv, AutoReleaseNFP, PrincipalDue, ProfitDue, ");
-		selectSql.append(" DueFromDate, LastFullyPaidDate ");
-		selectSql.append(" From FinProvisions");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+		StringBuilder sql = new StringBuilder("Select FinReference, FinBranch, FinType, ");
+		sql.append(" CustID, ProvisionCalDate, ProvisionedAmt, ProvisionAmtCal, ProvisionDue, ");
+		sql.append(" NonFormulaProv, UseNFProv, AutoReleaseNFP, PrincipalDue, ProfitDue, ");
+		sql.append(" DueFromDate, LastFullyPaidDate ");
+		sql.append(" From FinProvisions");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference =:FinReference");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
 		RowMapper<Provision> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Provision.class);
 
 		try {
-			provision = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			provision = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			provision = null;
 		}
 		return provision;
+	}
+
+	@Override
+	public boolean isProvisionExists(String finReference, TableType type) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = new StringBuilder("Select Count(*) From FinProvisions");
+		sql.append(StringUtils.trimToEmpty(type.getSuffix()));
+		sql.append(" Where FinReference =:FinReference");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		if (jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
+			return true;
+		}
+		logger.debug(Literal.LEAVING);
+		return false;
 	}
 
 }

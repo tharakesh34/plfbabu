@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.script.Bindings;
 import javax.script.ScriptEngine;
@@ -30,6 +32,7 @@ import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.delegationdeviation.DeviationUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
@@ -50,6 +53,7 @@ import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
+import com.pennant.backend.service.solutionfactory.ExtendedFieldDetailService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -88,6 +92,9 @@ public class DeviationExecutionCtrl {
 	private PostDeviationHook postDeviationHook;
 	@Autowired
 	private DeviationHelper deviationHelper;
+	@Autowired
+	private ExtendedFieldDetailService extendedFieldDetailService;
+
 	/* This list which hold the all deviation across the tab's */
 	private List<FinanceDeviations> financeDeviations = new ArrayList<>();
 	List<ValueLabel> delegators = new ArrayList<>();
@@ -174,22 +181,25 @@ public class DeviationExecutionCtrl {
 		FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
 
 		// Prepare additional data like co-applicants, collateral details.
-		// *** Co-applicant's details. ***
-		CustomerDetails customer;
+				// *** Co-applicant's details. ***
+				CustomerDetails customerDetails;
+				Map<String, Object> extendedDetails = new HashMap();
 
-		if (CollectionUtils.isNotEmpty(aFinanceDetail.getJountAccountDetailList())) {
-			for (JointAccountDetail coApplicant : aFinanceDetail.getJountAccountDetailList()) {
-				CustomerDetails custDeatils = coApplicant.getCustomerDetails();
-				if (custDeatils != null) {
-					CustomerDetails custdet = setCoappExtendedfields(custDeatils);
-					coApplicant.setCustomerDetails(custdet);
-				} else {
-					customer = customerDetailsService.getCustomerDetailsById(coApplicant.getCustID(), true, "_AView");
-					CustomerDetails custdet = setCoappExtendedfields(customer);
-					coApplicant.setCustomerDetails(custdet);
+				if (CollectionUtils.isNotEmpty(aFinanceDetail.getJountAccountDetailList())) {
+					String fieldName = SysParamUtil.getValueAsString(SMTParameterConstants.CUST_EXT_DEVIATIONS);
+					for (JointAccountDetail coApplicant : aFinanceDetail.getJountAccountDetailList()) {
+						customerDetails = customerDetailsService.getCustomerDetailsById(coApplicant.getCustID(), true,
+								"_AView");
+						Customer coAppCustomer = customerDetails.getCustomer();
+						if (StringUtils.equals(coAppCustomer.getCustCtgCode(), (PennantConstants.PFF_CUSTCTG_INDIV))) {
+							Map<String, Object> extValues = extendedFieldDetailService.getValueByFieldName(
+									coAppCustomer.getCustCIF(), ExtendedFieldConstants.MODULE_CUSTOMER,
+									coAppCustomer.getCustCtgCode(), null, fieldName, "");
+							coApplicant.setCustomerDetails(customerDetails);
+							extendedDetails.put(coApplicant.getCustCIF(), extValues);
+						}
+					}
 				}
-			}
-		}
 
 		if (CollectionUtils.isNotEmpty(aFinanceDetail.getGurantorsDetailList())) {
 			for (GuarantorDetail guarantorDetail : aFinanceDetail.getGurantorsDetailList()) {
@@ -198,9 +208,9 @@ public class DeviationExecutionCtrl {
 					continue;
 				}
 				if (guarantorDetail.isBankCustomer()) {
-					customer = customerDetailsService.getCustomerDetailsById(guarantorDetail.getCustID(), true,
+					customerDetails = customerDetailsService.getCustomerDetailsById(guarantorDetail.getCustID(), true,
 							"_AView");
-					guarantorDetail.setCustomerDetails(customer);
+					guarantorDetail.setCustomerDetails(customerDetails);
 				}
 			}
 		}
@@ -210,7 +220,7 @@ public class DeviationExecutionCtrl {
 
 		// Call the customization hook.
 		String deviationFilePath = SysParamUtil.getValueAsString(SMTParameterConstants.CUSTOM_DEVIATION_FILE_PATH);
-		List<FinanceDeviations> deviations = postDeviationHook.raiseDeviations(aFinanceDetail, deviationFilePath);
+		List<FinanceDeviations> deviations = postDeviationHook.raiseDeviations(aFinanceDetail, deviationFilePath, extendedDetails);
 
 		// Remove the deviations that are invalid like duplicate code, invalid delegator etc.
 		deviations = deviationHelper.getValidCustomDeviations(deviations, delegators);

@@ -36,7 +36,7 @@
 							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btnPrint"
 							sclass="z-toolbarbutton" />
 						<button id="btnPrint" label="${c:l('label_Print')}"
-							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btnPrint"
+							autodisable="btnPrint,btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
 							tooltiptext="${c:l('btnPrint.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 					</toolbar>
 

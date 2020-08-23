@@ -10,10 +10,10 @@ import com.pennant.backend.model.ValueLabel;
 public enum RCUDocStatus {
 
 	SELECT(0, Labels.getLabel("Combo.Select")),
-	INITIATED(1, "Initiated"),
-	REFERRED(2, "Referred"),
-	HOLD(3, "Hold"),
-	COMPLETED(4, "Completed");
+	INITIATED(1, Labels.getLabel("label_RCUDocStatus_Initiated")),
+	REFERRED(2, Labels.getLabel("label_RCUDocStatus_Referred")),
+	HOLD(3, Labels.getLabel("label_RCUDocStatus_Hold")),
+	COMPLETED(4, Labels.getLabel("label_RCUDocStatus_Completed"));
 
 	private final Integer key;
 	private final String value;

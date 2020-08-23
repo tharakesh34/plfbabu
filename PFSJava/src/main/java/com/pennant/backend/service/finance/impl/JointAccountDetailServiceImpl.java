@@ -635,6 +635,11 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 
 		boolean isSaveRecord = false;
 		ExtendedFieldHeader extendedFieldHeader = jointAccountDetail.getCustomerDetails().getExtendedFieldHeader();
+
+		if (extendedFieldHeader == null) {
+			return;
+		}
+
 		StringBuilder tableName = new StringBuilder();
 		tableName.append(extendedFieldHeader.getModuleName());
 		tableName.append("_");

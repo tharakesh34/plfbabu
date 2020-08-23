@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_FinOCRDialog" border="normal" width="100%" height="100%" apply="${finOCRDialogCtrl}" sizable="false">
+
+		<borderlayout id="borderlayoutFinOCRDetails">
+			<center border="none" autoscroll="false">
+				<div width="100%" height="100%">
+					<groupbox style="border:none;" id="finBasicdetails" zclass="null" />
+					<tabbox width="100%">
+						<tabs id="tabsIndexCenter">
+							<tab label="${c:l('label_FinOCRDialog_OCRDefinition.value')}" id="tabOCRDefinition" />
+							<tab label="${c:l('label_FinOCRDialog_OCRCapture.value')}" id="tabOCRCapture" />
+						</tabs>
+						<tabpanels id="tabpanelsBoxIndexCenter">
+							<tabpanel style="overflow:auto" id="tp_OCRDefinition">
+								<groupbox id="finOCRDetails" sclass="gb-dialog">
+									<caption label="${c:l('gp_OCRDetails')}"></caption>
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:none">
+										<columns>
+											<column width="15%" />
+											<column width="35%" />
+											<column width="15%" />
+											<column width="35%" />
+										</columns>
+										<rows>
+											<row>
+												<label id="label_OCRID" value="${c:l('label_FinOCRDialog_OCRID.value')}" />
+												<extendedcombobox id="ocrID" />
+												<label id="label_OCRDescription" value="${c:l('label_FinOCRDialog_OCRDescription.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<textbox id="ocrDescription" width="250px" />
+												</hbox>
+
+											</row>
+											<row>
+												<label id="label_CustomerPortion" value="${c:l('label_FinOCRDialog_CustomerPortion.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<intbox id="customerPortion" width="150px" />
+												</hbox>
+												<label id="label_OCRApplicableOn" value="${c:l('label_FinOCRDialog_OCRApplicableOn.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<combobox id="ocrApplicableOn" width="150px" />
+												</hbox>
+											</row>
+											<row>
+												<label id="label_SplitApplicable" value="${c:l('label_FinOCRDialog_SplitApplicable.value')}" />
+												<checkbox id="splitApplicable" checked="false" />
+											</row>
+										</rows>
+									</grid>
+									<div sclass="z-toolbar" height="28px" id="ocrStepsDiv">
+										<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
+
+											<!-- COMMON BUTTONS -->
+											<toolbar align="start" sclass="toolbar-start" width="300px">
+												<hbox align="center" style="padding: 0px">
+													<label id="window_FinOCRDialog_title" value="${c:l('window_FinOCRDialog_title')}" style="font-weight:bold; font-size: 11px;" />
+												</hbox>
+											</toolbar>
+											<!-- SEARCH AREA -->
+											<toolbar align="center" sclass="toolbar-center" />
+
+											<!-- CRUD BUTTONS -->
+											<toolbar align="end" sclass="toolbar-end">
+												<button id="btnNew_FinOCRStep" label="${c:l('label_New')}" tooltiptext="${c:l('button_FinOCRDialog_NewStep.tooltiptext')}"
+													sclass="z-toolbarbutton" />
+											</toolbar>
+										</hbox>
+									</div>
+									<listbox id="listBoxFinOCRSteps" fixedLayout="true" sizedByContent="true" span="true"
+										emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" multiple="false">
+										<listhead sizable="false">
+											<listheader id="listheader_FinOCRDialog_StepSequence" label="${c:l('listheader_FinOCRDialog_StepSequence.label')}"
+												sort="false" hflex="min" />
+											<listheader id="listheader_FinOCRDialog_PayableByCustomer" label="${c:l('listheader_FinOCRDialog_PayableByCustomer.label')}"
+												sort="false" hflex="min" />
+											<listheader id="listheader_FinOCRDialog_PayableByFinancer" label="${c:l('listheader_FinOCRDialog_PayableByFinancer.label')}"
+												sort="false" hflex="min" />
+											<listheader id="listheader_FinOCRDialog_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+												sort="false" hflex="min" />
+											<listheader id="listheader_FinOCRDialog_RecordType" label="${c:l('label.RecordType')}" sort="false"
+												hflex="min" />
+										</listhead>
+									</listbox>
+								</groupbox>
+							</tabpanel>
+
+							<tabpanel style="overflow:auto" id="tp_OCRCapture">
+								<div sclass="z-toolbar" height="28px" id="ocrCaptureDiv">
+									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
+										<!-- CRUD BUTTONS -->
+										<toolbar align="end" sclass="toolbar-end">
+											<button id="btnNew_FinOCRCapture" label="${c:l('label_New')}" tooltiptext="${c:l('button_FinOCRDialog_NewStep.tooltiptext')}"
+												sclass="z-toolbarbutton" />
+										</toolbar>
+									</hbox>
+								</div>
+								<listbox id="listBoxOCRCapture" fixedLayout="true" sizedByContent="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" multiple="false">
+									<listhead sizable="false">
+										<listheader id="listheader_FinOCRDialog_TrancheNo" label="${c:l('listheader_FinOCRDialog_TrancheNumber.label')}"
+											sort="false" hflex="min" />
+										<listheader id="listheader_FinOCRDialog_BuilderDemand" label="${c:l('listheader_FinOCRDialog_BuilderDemand.label')}"
+											sort="false" hflex="min" />
+										<listheader id="listheader_FinOCRDialog_FinancerContribution" label="${c:l('listheader_FinOCRDialog_FinancerContribution.label')}"
+											sort="false" hflex="min" />
+										<listheader id="listheader_FinOCRDialog_OCRPaidWithTranche" label="${c:l('listheader_FinOCRDialog_OCRPaidWithTranche.label')}"
+											sort="false" hflex="min" />
+										<listheader id="listheader_FinOCRDialogCapture_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+											sort="false" hflex="min" />
+										<listheader id="listheader_FinOCRDialogCapture_RecordType" label="${c:l('label.RecordType')}" sort="false"
+											hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

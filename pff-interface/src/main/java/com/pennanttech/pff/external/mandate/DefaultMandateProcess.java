@@ -58,6 +58,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -80,6 +81,7 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DataEngineImport;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineLog;
@@ -111,6 +113,10 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	Channel channel = null;
 	ChannelSftp channelSftp = null;
 	Session session = null;
+
+	@Autowired(required = false)
+	@Qualifier("mandateUploadValidationImpl")
+	private ValidateRecord mandateUploadValidationImpl;
 
 	public DefaultMandateProcess() {
 		super();
@@ -308,6 +314,13 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
 			return;
 		}
+
+		// Validate the file prefix.
+		if (prefix != null && !(StringUtils.startsWith(fileName, prefix))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
+
+			return;
+		}
 	}
 
 	public List<String> getEntityCodes() {
@@ -415,6 +428,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
+		dataEngine.setValidateRecord(mandateUploadValidationImpl);
 		dataEngine.importData(configName);
 
 		do {

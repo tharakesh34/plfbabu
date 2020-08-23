@@ -789,6 +789,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		sql.append("select HeaderId");
 		sql.append(" From LimitHeader");
 		sql.append(" Where CustomerId = :CustomerId");
+
 		logger.debug("selectSql: " + sql.toString());
 		int recordCount = 0;
 		try {

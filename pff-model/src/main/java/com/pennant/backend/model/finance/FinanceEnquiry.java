@@ -136,7 +136,8 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private boolean sanBsdSchdle;
 	private long promotionSeqId;
 	private BigDecimal cbAmount;
-	private BigDecimal totalCpz;
+	private BigDecimal totalCpz = BigDecimal.ZERO;
+	private boolean finOcrRequired;
 
 	public FinanceEnquiry() {
 
@@ -806,6 +807,14 @@ public class FinanceEnquiry implements java.io.Serializable {
 
 	public void setTotalCpz(BigDecimal totalCpz) {
 		this.totalCpz = totalCpz;
+	}
+
+	public boolean isFinOcrRequired() {
+		return finOcrRequired;
+	}
+
+	public void setFinOcrRequired(boolean finOcrRequired) {
+		this.finOcrRequired = finOcrRequired;
 	}
 
 }

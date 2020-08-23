@@ -58,6 +58,7 @@ import java.util.Map;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 import org.apache.commons.beanutils.converters.DateConverter;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -150,6 +151,7 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -474,6 +476,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox sanctionAmountOverride;
 	protected Row row_sanction;
 
+	//OCR Check
+	protected Checkbox ocrRequired;
+	protected Textbox allowedOCRS;
+	protected ExtendedCombobox defaultOCR;
+	protected Row rowDefaultOCR;
+	protected Hbox hboxAllowedOCRS;
+	protected Hbox labelAllowedOcr;
+	protected Button btnDefaultOcr;
+	protected Button btnAlwOcr;
+
 	// Features Tab
 	protected PTCKeditor remarks; // autowired
 
@@ -506,6 +518,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox finSuspTrigger; // autoWired
 	protected Label label_FinanceTypeDialog_FinTypeSuspRemarks;
 	protected Textbox finSuspRemarks; // autoWired
+	//loan purpose
+	protected Combobox allowedLoanPurposes;
+	protected Hbox hboxSpecificLoanPurposes;
+	protected Hbox hboxSpecificLoanPurposesTwo;
+	protected Textbox specificLoanPurposes;
+	protected Button btnSpcLoanPurposes;
 
 	// ==============
 	// not auto wired Var's
@@ -617,10 +635,32 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Groupbox grcAdvIntAndEMIReq;
 	protected Groupbox advIntAndEMIReq;
 	//tasks # >>End Advance EMI and DSF
+	// Under Construction
+	protected Checkbox grcAdjReq;
+	protected Checkbox grcPeriodAftrFullDisb;
+	protected Checkbox autoIncrGrcEndDate;
+	protected Intbox grcAutoIncrMonths;
+	protected Intbox maxAutoIncrAllowed;
+	protected Intbox thrldtoMaintainGrcPrd;
+	protected Space space_GrcAutoIncrMonths;
+	protected Space space_MaxAutoIncrAllowed;
+
+	protected Row row_AllowLoanTypes;
+	protected Label label_FinanceTypeDialog_splitLoanType;
+	protected Hbox hbox_splitLoanType;
+	protected Textbox splitLoanType;
+	protected Space space_splitLoanType;
+	protected Button btnSearchSplitLoanType;
+	protected Checkbox alwLoanSplit;
 
 	private List<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
 	private List<ValueLabel> vanAllocationMethodsList = PennantStaticListUtil.getVanAllocationMethods();
 	FinanceType fintypeLTVCheck = null;
+	private List<ValueLabel> loanPurposeList = PennantStaticListUtil.getLoanPurposeTypes();
+
+	//Disb based schedule
+	protected Checkbox instBasedSchd;
+	protected Row row_InstBasedSchd;
 
 	/**
 	 * default constructor.<br>
@@ -644,7 +684,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws Exception
 	 */
 	public void onCreate$window_FinanceTypeDialog(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_FinanceTypeDialog);
@@ -711,7 +751,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			MessageUtil.showError(e);
 			this.window_FinanceTypeDialog.onClose();
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -719,7 +759,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 */
 	@SuppressWarnings("unused")
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		int format = CurrencyUtil.getFormat(getFinanceType().getFinCcy());
 
@@ -1070,7 +1110,20 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		// Allow Minimum Cap Amount
 		this.row_ODMinCapAmount.setVisible(ImplementationConstants.ALW_LPP_MIN_CAP_AMT);
-		logger.debug("Leaving");
+		this.allowedOCRS.setReadonly(true);
+
+		this.defaultOCR.setModuleName("OCRHeader");
+		this.defaultOCR.setValueColumn("OcrID");
+		this.defaultOCR.setDescColumn("OcrDescription");
+		this.defaultOCR.setValidateColumns(new String[] { "OcrID" });
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_SPLIT)) {
+			this.row_AllowLoanTypes.setVisible(true);
+		}
+
+		// Inst Based Schd
+		this.row_InstBasedSchd.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.IS_INST_BASED_SCHD_REQ));
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -1081,7 +1134,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinanceTypeDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinanceTypeDialog_btnSave"));
@@ -1102,9 +1155,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		doSave();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -1114,9 +1167,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		MessageUtil.showHelpWindow(event, window_FinanceTypeDialog);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -1126,9 +1179,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		doDelete();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -1150,7 +1203,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 */
 
 	public void doWriteBeanToComponents(FinanceType aFinanceType) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		int format = CurrencyUtil.getFormat(aFinanceType.getFinCcy());
 		// ================= Tab 1
@@ -1273,6 +1326,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		//Added Auto approve flag
 		this.autoApprove.setChecked(aFinanceType.isAutoApprove());
 		this.taxNoMand.setChecked(aFinanceType.isTaxNoMand());
+		this.instBasedSchd.setChecked(aFinanceType.isInstBasedSchd());
 
 		this.developerFinance.setChecked(aFinanceType.isDeveloperFinance());
 		setDeveloperFinanceFlagDetail();
@@ -1344,6 +1398,27 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		doCheckGrcPftCpzFrq();
 		doDisableGrcSchdMtd();
 		doCheckRateType(cbfinGrcRateType, true, false);
+		// newly added fields in grace
+		this.grcPeriodAftrFullDisb.setChecked(aFinanceType.isGrcPeriodAftrFullDisb());
+		this.autoIncrGrcEndDate.setChecked(aFinanceType.isAutoIncrGrcEndDate());
+		this.grcAutoIncrMonths.setValue(aFinanceType.getGrcAutoIncrMonths());
+		this.maxAutoIncrAllowed.setValue(aFinanceType.getMaxAutoIncrAllowed());
+		this.thrldtoMaintainGrcPrd.setValue(aFinanceType.getThrldtoMaintainGrcPrd());
+		// Added As part of Under Construction changes
+		if (aFinanceType.isAutoIncrGrcEndDate()) {
+			onCheckAutoIncrGrcEndDate();
+		}
+
+		// field Properties
+		dodisableGracePeriod();
+
+		// Under Construction Details
+		this.grcAdjReq.setChecked(aFinanceType.isGrcAdjReq());
+
+		// Field Properties
+		if (aFinanceType.isGrcAdjReq()) {
+			doSetGrcAdjReqFieldProp(true);
+		}
 
 		// ================= Tab 3
 		this.frequencyDays.setValue(aFinanceType.getFrequencyDays());
@@ -1651,6 +1726,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finIsAlwEarlySettle.setChecked(aFinanceType.isFinIsAlwEarlySettle());
 		this.finDepreciationFrq.setValue(aFinanceType.getFinDepreciationFrq());
 		this.finHistRetension.setValue(aFinanceType.getFinHistRetension());
+
+		this.alwLoanSplit.setChecked(aFinanceType.isAlwLoanSplit());
+		this.splitLoanType.setValue(StringUtils.trimToEmpty(aFinanceType.getSplitLoanType()));
+
 		// doCheckMandFinAEAddDisbFDA();
 		if (aFinanceType.isNewRecord()) {
 			this.finIsActive.setChecked(true);
@@ -1690,10 +1769,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.fintypeLTVCheck = getFinanceTypeService().getFinLtvCheckByFinType(aFinanceType.getFinType());
 		}
 		doSetCollateralProp(fintypeLTVCheck);
+		doSetSplitLoanType();
 
 		this.recordStatus.setValue(aFinanceType.getRecordStatus());
 
-		this.profitCenter.setValue(aFinanceType.getProfitcenterCode());
+		this.profitCenter.setValue(aFinanceType.getProfitCenterCode());
 		this.profitCenter.setDescription(aFinanceType.getProfitCenterDesc());
 		this.profitCenter.setObject(new ProfitCenter(aFinanceType.getProfitCenterID()));
 		if (!isOverdraft && !consumerDurable) {
@@ -1750,9 +1830,23 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (!isOverdraft && !consumerDurable) {
 			fillComboBox(this.vaAllocationMethod, aFinanceType.getVanAllocationMethod(), vanAllocationMethodsList, "");
 		}
+
+		this.ocrRequired.setChecked(aFinanceType.isOcrRequired());
+		this.allowedOCRS.setValue(aFinanceType.getAllowedOCRS());
+		this.defaultOCR.setValue(aFinanceType.getDefaultOCR());
+		checkOCRRequiredChecked(this.ocrRequired.isChecked());
+
 		// tasks # >>End Advance EMI and DSF
 
 		fillQDPValDays();
+
+		if (aFinanceType.isNewRecord() && !isCopyProcess) {
+			fillComboBox(this.allowedLoanPurposes, PennantConstants.ALL, loanPurposeList, "");
+		} else {
+			fillComboBox(this.allowedLoanPurposes, aFinanceType.getAllowedLoanPurposes(), loanPurposeList, "");
+		}
+		this.specificLoanPurposes.setValue(aFinanceType.getSpecificLoanPurposes());
+		doCheckLoanPurposeproperties();
 
 		logger.debug("Leaving doWriteBeanToComponents()");
 	}
@@ -1785,7 +1879,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param targetList
 	 */
 	private void fillRoundingTarget(Combobox combobox, int roundTarget, List<RoundingTarget> targetList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		combobox.getChildren().clear();
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue(PennantConstants.List_Select);
@@ -1802,7 +1896,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				combobox.setSelectedItem(comboitem);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setRateLabels(FinanceType aFinanceType) {
@@ -1816,7 +1910,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * 
 	 */
 	protected void appendInsuranceDetailsTab() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
 			createTab(AssetConstants.UNIQUE_ID_INSURANCES, true);
@@ -1839,7 +1933,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1847,7 +1941,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * 
 	 */
 	protected void appendAccountingDetailsTab() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
 			createTab(AssetConstants.UNIQUE_ID_ACCOUNTING, true);
@@ -1871,7 +1965,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1879,7 +1973,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * 
 	 */
 	protected void appendFeeDetailTab() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
 			createTab(AssetConstants.UNIQUE_ID_FEES, true);
@@ -1903,7 +1997,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1911,7 +2005,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * 
 	 */
 	protected void appendPartnerBankTab() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
 			createTab(AssetConstants.UNIQUE_ID_PARTNERBANK, true);
@@ -1936,7 +2030,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1947,7 +2041,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param tabVisible
 	 */
 	public void createTab(String moduleID, boolean tabVisible) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String tabName = Labels.getLabel("tab_label_" + moduleID);
 
@@ -1962,7 +2056,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		tabpanel.setHeight("100%");
 		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private String getTabID(String id) {
@@ -1988,7 +2082,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 */
 
 	public void doWriteComponentsToBean(FinanceType aFinanceType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		int format = CurrencyUtil.getFormat(null);
 
@@ -2118,6 +2212,21 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		if (this.row_AllowLoanTypes.isVisible()) {
+			try {
+				aFinanceType.setSplitLoanType(this.splitLoanType.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aFinanceType.setAlwLoanSplit(this.alwLoanSplit.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		} else {
+			aFinanceType.setSplitLoanType("");
+			aFinanceType.setAlwLoanSplit(false);
+		}
 		try {
 			aFinanceType.setEligibilityMethods(this.eligibilityMethod.getValue());
 		} catch (WrongValueException we) {
@@ -2220,6 +2329,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		aFinanceType.setDroplineOD(this.droplineOD.isChecked());
 		aFinanceType.setFrequencyDays(this.frequencyDays.getValue());
 		aFinanceType.setTaxNoMand(this.taxNoMand.isChecked());
+		aFinanceType.setInstBasedSchd(this.instBasedSchd.isChecked());
 		try {
 			// to Check frequency code and frequency month
 			if (!"#".equals(this.rollOverFrq.getFrqCodeValue()) && "#".equals(this.rollOverFrq.getFrqMonthValue())) {
@@ -2296,7 +2406,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			profitCenter.getValidatedValue();
 			ProfitCenter profitCenter = (ProfitCenter) this.profitCenter.getObject();
 			aFinanceType.setProfitCenterID(profitCenter.getId());
-			aFinanceType.setProfitcenterCode(profitCenter.getProfitCenterCode());
+			aFinanceType.setProfitCenterCode(profitCenter.getProfitCenterCode());
 			aFinanceType.setProfitCenterDesc(profitCenter.getProfitCenterDesc());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -2683,8 +2793,28 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				aFinanceType.setGrcAdvMaxTerms(0);
 				aFinanceType.setGrcAdvDefaultTerms(0);
 			}
-
+			// Under Construction Details
+			aFinanceType.setGrcAdjReq(this.grcAdjReq.isChecked());
+			aFinanceType.setAutoIncrGrcEndDate(this.autoIncrGrcEndDate.isChecked());
+			aFinanceType.setGrcPeriodAftrFullDisb(this.grcPeriodAftrFullDisb.isChecked());
+			aFinanceType.setThrldtoMaintainGrcPrd(this.thrldtoMaintainGrcPrd.intValue());
+			try {
+				aFinanceType.setGrcAutoIncrMonths(this.grcAutoIncrMonths.intValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aFinanceType.setMaxAutoIncrAllowed(this.maxAutoIncrAllowed.intValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 			// tasks # >>End Advance EMI and DSF
+		} else {
+			aFinanceType.setGrcAdjReq(false);
+			aFinanceType.setGrcPeriodAftrFullDisb(false);
+			aFinanceType.setAutoIncrGrcEndDate(false);
+			aFinanceType.setMaxAutoIncrAllowed(0);
+			aFinanceType.setGrcAutoIncrMonths(0);
 		}
 
 		try {
@@ -2700,6 +2830,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 
 		}
+		aFinanceType.setAutoIncrGrcEndDate(this.autoIncrGrcEndDate.isChecked());
+		aFinanceType.setGrcPeriodAftrFullDisb(this.grcPeriodAftrFullDisb.isChecked());
+		try {
+			aFinanceType.setGrcAutoIncrMonths(this.grcAutoIncrMonths.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setMaxAutoIncrAllowed(this.maxAutoIncrAllowed.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		if (!isOverdraft && !consumerDurable) {
 			showErrorDetails(wve, gracePeriod);
 		}
@@ -3876,13 +4019,39 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		// ****************End of Tab 6********************//
 
 		aFinanceType.setRecordStatus(this.recordStatus.getValue());
-
-		logger.debug("Leaving");
+		aFinanceType.setOcrRequired(this.ocrRequired.isChecked());
+		if (aFinanceType.isOcrRequired()) {
+			try {
+				aFinanceType.setAllowedOCRS(this.allowedOCRS.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aFinanceType.setDefaultOCR(this.defaultOCR.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		} else {
+			aFinanceType.setAllowedOCRS(null);
+			aFinanceType.setDefaultOCR(null);
+		}
+		try {
+			aFinanceType.setAllowedLoanPurposes(getComboboxValue(this.allowedLoanPurposes));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setSpecificLoanPurposes(this.specificLoanPurposes.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		showErrorDetails(wve, extendedDetails);
+		logger.debug(Literal.LEAVING);
 	}
 
 	// For Tab Wise validations
 	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (wve.size() > 0) {
 			doRemoveValidation();
 			doRemoveLOVValidation();
@@ -3893,7 +4062,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -3904,7 +4073,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws Exception
 	 */
 	public void doShowDialog(FinanceType aFinanceType) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aFinanceType.isNew()) {
@@ -3960,14 +4129,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setValidationOn(true);
 		int format = CurrencyUtil.getFormat(this.finCcy.getValue());
 
@@ -4027,6 +4196,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.collateralType.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_CollateralType.value"), null, true));
 		}
+		if (this.hbox_splitLoanType.isVisible() && this.alwLoanSplit.isChecked()
+				&& !this.btnSearchSplitLoanType.isDisabled()) {
+			this.splitLoanType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_SplitLoanType.value"), null, true));
+		}
+
 		if (validate && !this.btnSearchAlwEarlyMethod.isDisabled()) {
 			if (!isOverdraft && !consumerDurable) {
 				this.alwEarlyPayMethods.setConstraint(new PTStringValidator(
@@ -4087,6 +4262,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (!this.financeGrcBaseRate.getMarginComp().isDisabled()) {
 				this.financeGrcBaseRate.getMarginComp().setConstraint(new PTDecimalValidator(
 						Labels.getLabel("label_FinanceTypeDialog_FinGrcBaseRate.value"), 9, false, true, -9999, 9999));
+			}
+			if (!this.grcAutoIncrMonths.isReadonly()) {
+				this.grcAutoIncrMonths.setConstraint(
+						new PTNumberValidator(Labels.getLabel("label_FinanceTypeDialog_GrcAutoIncrMonths.value"),
+								this.autoIncrGrcEndDate.isChecked(), false, 0, 99));
+			}
+
+			if (!this.maxAutoIncrAllowed.isReadonly()) {
+				this.maxAutoIncrAllowed.setConstraint(
+						new PTNumberValidator(Labels.getLabel("label_FinanceTypeDialog_MaxAutoIncrAllowed.value"),
+								this.autoIncrGrcEndDate.isChecked(), false, 0, 99));
 			}
 
 		}
@@ -4249,13 +4435,29 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				}
 			}
 		}
+		if (this.ocrRequired.isChecked() && !this.allowedOCRS.isReadonly()) {
+			this.allowedOCRS.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinanceTypeDialog_AllowedOCRs.value"), null, true, false));
+		}
 
-		logger.debug("Leaving");
+		String loanPurpose = getComboboxValue(this.allowedLoanPurposes);
+		if (!this.allowedLoanPurposes.isDisabled()) {
+			this.allowedLoanPurposes.setConstraint(new PTListValidator<ValueLabel>(
+					Labels.getLabel("label_FinanceTypeDialog_LoanPurpose.value"), loanPurposeList, true));
+		}
+
+		if (!this.specificLoanPurposes.isDisabled()) {
+			this.specificLoanPurposes.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_SpecificLoanPurpose.value"), null,
+							StringUtils.equals(loanPurpose, PennantConstants.SPECIFIC)));
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/** Disables the Validation by setting empty constraints. */
 	private void doRemoveValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setValidationOn(false);
 		if (isPromotion) {
 			this.startDate.setConstraint("");
@@ -4267,6 +4469,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finMinAmount.setConstraint("");
 		this.finAssetType.setConstraint("");
 		this.collateralType.setConstraint("");
+		this.splitLoanType.setConstraint("");
 		this.alwEarlyPayMethods.setConstraint("");
 		this.finHistRetension.setConstraint("");
 		this.finIntRate.setConstraint("");
@@ -4306,13 +4509,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.advMinTerms.setConstraint("");
 		this.advMaxTerms.setConstraint("");
 		this.advDefaultTerms.setConstraint("");
+		this.allowedOCRS.setConstraint("");
+		this.defaultOCR.setConstraint("");
+		this.allowedLoanPurposes.setConstraint("");
+		this.specificLoanPurposes.setConstraint("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/** Set Validations for LOV Fields */
 	private void doSetLOVValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// ******* Basic Details Tab *************//
 		if (isPromotion) {
 			this.product.setConstraint(
@@ -4358,12 +4565,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		this.finDivision.setConstraint(
 				new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinDivision.value"), null, true, true));
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/** Remove validations for LOV Fields */
 	private void doRemoveLOVValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (isPromotion) {
 			this.product.setConstraint("");
 		}
@@ -4393,7 +4600,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.oDMinCapAmount.setConstraint("");
 		// gracemethod
 		this.grcPricingMethod.setConstraint("");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// CRUD operations
@@ -4404,7 +4611,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final FinanceType aFinanceType = new FinanceType();
 		BeanUtils.copyProperties(getFinanceType(), aFinanceType);
 		String tranType = PennantConstants.TRAN_WF;
@@ -4434,7 +4641,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				MessageUtil.showError(e);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -4442,7 +4649,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * MSTGRP1_MAKER
 	 */
 	private void doEdit() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (isCompReadonly) {
 			doSetReadOnly(true);
@@ -4497,6 +4704,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		readOnlyComponent(isCompReadonly, this.profitCenter);
 		readOnlyComponent(isCompReadonly, this.autoApprove);
+		readOnlyComponent(isCompReadonly, this.grcAdjReq);
+		readOnlyComponent(isCompReadonly, this.grcPeriodAftrFullDisb);
+		readOnlyComponent(isCompReadonly, this.autoIncrGrcEndDate);
+		readOnlyComponent(isCompReadonly, this.grcAutoIncrMonths);
+		readOnlyComponent(isCompReadonly, this.maxAutoIncrAllowed);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -4504,7 +4716,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -4518,7 +4730,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doSetReadOnly(boolean isTrue) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.product.setReadonly(isTrue);
 		this.startDate.setDisabled(isTrue);
 		this.endDate.setDisabled(isTrue);
@@ -4593,6 +4805,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finIsOpenPftPayAcc.setDisabled(isTrue);
 		this.finDepreciationReq.setDisabled(isTrue);
 		this.finCollateralReq.setDisabled(isTrue);
+		this.alwLoanSplit.setDisabled(isTrue);
 		this.finIsAlwMD.setDisabled(isTrue);
 		this.fInIsAlwGrace.setDisabled(isTrue);
 		this.finHistRetension.setReadonly(isTrue);
@@ -4647,6 +4860,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.quickDisb.setDisabled(isTrue);
 		this.developerFinance.setDisabled(isTrue);
 		this.taxNoMand.setDisabled(isTrue);
+		this.instBasedSchd.setDisabled(isTrue);
 		this.autoApprove.setDisabled(isTrue);
 
 		readOnlyComponent(isTrue, this.autoApprove);
@@ -4780,6 +4994,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.sanctionAmountOverride.setDisabled(isTrue);
 			this.schdOnPMTCal.setDisabled(isTrue);
 		}
+		readOnlyComponent(isTrue, this.grcAdjReq);
+		readOnlyComponent(isTrue, this.grcPeriodAftrFullDisb);
+		readOnlyComponent(isTrue, this.autoIncrGrcEndDate);
+		readOnlyComponent(isTrue, this.grcAutoIncrMonths);
+		readOnlyComponent(isTrue, this.maxAutoIncrAllowed);
 		// tasks # >>End Advance EMI and DSF
 
 		if (isTrue) {
@@ -4867,14 +5086,20 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.userAction.setSelectedIndex(0);
 		}
 
-		logger.debug("Leaving");
+		this.ocrRequired.setDisabled(isTrue);
+		this.btnAlwOcr.setDisabled(isTrue);
+		this.defaultOCR.setButtonDisabled(isTrue);
+		this.allowedLoanPurposes.setDisabled(isTrue);
+		this.btnSpcLoanPurposes.setDisabled(isTrue);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// remove validation, if there are a save before
 		if (ImplementationConstants.ALLOW_FINACTYPES) {
@@ -4978,6 +5203,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.allowDrawingPower.setChecked(false);
 		this.sanBsdSchdle.setChecked(false);
 		this.taxNoMand.setChecked(false);
+		this.splitLoanType.setConstraint("");
+		this.instBasedSchd.setChecked(false);
 		if (isOverdraft) {
 			this.lPPRule.setValue("");
 			this.lPPRule.setDescription("");
@@ -5030,8 +5257,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (ImplementationConstants.ALLOW_IRRCODES) {
 			this.alwdIRRDetails.setValue("");
 		}
+		this.grcAdjReq.setChecked(false);
+		this.grcPeriodAftrFullDisb.setChecked(false);
+		this.autoIncrGrcEndDate.setChecked(false);
+		this.grcAutoIncrMonths.setValue(0);
+		this.maxAutoIncrAllowed.setValue(0);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$quickDisb(Event event) {
@@ -5060,7 +5292,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws InterruptedException
 	 */
 	public void doSave() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final FinanceType aFinanceType = new FinanceType();
 		BeanUtils.copyProperties(getFinanceType(), aFinanceType);
@@ -5141,7 +5373,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -5154,7 +5386,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @return boolean
 	 */
 	private boolean doProcess(FinanceType aFinanceType, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -5297,7 +5529,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return processCompleted;
 	}
@@ -5312,7 +5544,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @return boolean
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		FinanceType afinanceType = (FinanceType) auditHeader.getAuditDetail().getModelData();
@@ -5366,7 +5598,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -5376,7 +5608,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws InterruptedException
 	 */
 	public void onFulfill$product(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		Object dataObject = product.getObject();
 		FinanceType sourceFin = null;
 		doRemoveValidation();
@@ -5427,14 +5659,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				doDisableDepreciationDFrq(getFinanceType().isFinDepreciationReq(), isCompReadonly);
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
 	 * To get the Rule LOV List From Rule Table
 	 */
 	public void onFulfill$downPayRule(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		Object dataObject = downPayRule.getObject();
 		if (dataObject instanceof String) {
 			this.downPayRule.setValue(dataObject.toString());
@@ -5452,14 +5684,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.downPayRule.setDescription("");
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
 	 * To get the currency LOV List From RMTCurrencies Table And Amount is formatted based on the currency
 	 */
 	public void onFulfill$finCcy(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		Object dataObject = finCcy.getObject();
 		if (dataObject instanceof String) {
 			this.finCcy.setValue(dataObject.toString());
@@ -5479,11 +5711,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onFulfill$finDivision(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		Object dataObject = finDivision.getObject();
 		if (dataObject instanceof String) {
 			this.finDivision.setValue(dataObject.toString());
@@ -5495,7 +5727,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.finDivision.setDescription(details.getDivisionCodeDesc());
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -5504,7 +5736,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 */
 
 	public void onFulfill$finAcType(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		Object dataObject = finAcType.getObject();
 		if (dataObject instanceof String) {
 			this.finAcType.setValue(dataObject.toString());
@@ -5516,7 +5748,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.finAcType.setDescription(details.getAcTypeDesc());
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -5525,7 +5757,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 */
 
 	public void onFulfill$pftPayAcType(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		Object dataObject = pftPayAcType.getObject();
 		if (dataObject instanceof String) {
 			this.pftPayAcType.setValue(dataObject.toString());
@@ -5537,7 +5769,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.pftPayAcType.setDescription(details.getAcTypeDesc());
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -5545,7 +5777,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * it's purpose is movement and it is a Suspense account
 	 */
 	public void onFulfill$finSuspAcType(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		Object dataObject = finSuspAcType.getObject();
 		if (dataObject instanceof String) {
 			this.finSuspAcType.setValue(dataObject.toString());
@@ -5557,7 +5789,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.finSuspAcType.setDescription(details.getAcTypeDesc());
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -5565,7 +5797,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * it's purpose is movement and it is a Provision account
 	 */
 	public void onFulfill$finProvisionAcType(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		Object dataObject = finProvisionAcType.getObject();
 		if (dataObject instanceof String) {
 			this.finProvisionAcType.setValue(dataObject.toString());
@@ -5577,7 +5809,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.finProvisionAcType.setDescription(details.getAcTypeDesc());
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onFulfill$financeBaserate(Event event) throws InterruptedException {
@@ -5814,6 +6046,53 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onCheck$ocrRequired(Event event) {
+		checkOCRRequiredChecked(this.ocrRequired.isChecked());
+	}
+
+	private void checkOCRRequiredChecked(boolean checked) {
+		logger.debug(Literal.ENTERING);
+
+		if (checked) {
+			this.rowDefaultOCR.setVisible(true);
+			this.hboxAllowedOCRS.setVisible(true);
+			this.labelAllowedOcr.setVisible(true);
+		} else {
+			this.rowDefaultOCR.setVisible(false);
+			this.hboxAllowedOCRS.setVisible(false);
+			this.labelAllowedOcr.setVisible(false);
+			this.defaultOCR.setValue("");
+			this.allowedOCRS.setValue("");
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Allowed OCR's assignment
+	 * 
+	 * @throws Exceptionon
+	 */
+	public void onClick$btnAlwOcr(Event event) throws Exception {
+		logger.debug(Literal.ENTERING + event.toString());
+		List<String> detailsList = null;
+		this.allowedOCRS.setErrorMessage("");
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog, "OCRHeader",
+				String.valueOf(this.allowedOCRS.getValue()), new Filter[] { new Filter("Active", 1, Filter.OP_EQUAL) });
+		if (dataObject != null) {
+			String details = (String) dataObject;
+			detailsList = Arrays.asList(details.split(","));
+			this.allowedOCRS.setValue(details);
+			this.defaultOCR.setFilters(new Filter[] { new Filter("OcrID", detailsList, Filter.OP_IN) });
+		}
+		if (!CollectionUtils.isEmpty(detailsList)) {
+			if (!detailsList.contains(defaultOCR.getValue())) {
+				defaultOCR.setValue("", "");
+			}
+		}
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
 	public void onCheck$tDSApplicable(Event event) {
 		if (!isOverdraft && !consumerDurable) {
 			checkTDSApplicableChecked();
@@ -5844,7 +6123,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onCheck$allowRIAInvestment(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		boolean allowRIAInvestmentFlag = this.allowRIAInvestment.isChecked();
 
@@ -5927,7 +6206,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					allowRIAInvestmentFlag);
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	// ******************************
@@ -5935,26 +6214,26 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	// ******************************
 
 	public void onCheck$fInIsAlwGrace(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		dodisableGracePeriod();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onCheck$rolloverFinance(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		this.rollOverFrq.setValue("");
 		doCheckRollOverFrq();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onCheck$developerFinance(Event event) {// FIXME
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		setDeveloperFinanceFlagDetail();
 		if (!this.developerFinance.isChecked()) {
 			this.alwEarlyPayMethods.setValue("");
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -5996,7 +6275,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onChange$cbfinProductType(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		if (this.cbfinProductType.getSelectedItem() != null
 				&& !StringUtils.equals(getComboboxValue(this.cbfinProductType), PennantConstants.List_Select)) {
@@ -6028,7 +6307,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		doCheckAdvisedRates();
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void doCheckAdvisedRates() {
@@ -6062,7 +6341,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onCheck$finIsDwPayRequired(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		if (this.finIsDwPayRequired.isChecked()) {
 			this.downPayRule.setReadonly(isCompReadonly);
 			this.downPayRule.setMandatoryStyle(true);
@@ -6074,11 +6353,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.downPayRule.setReadonly(true);
 			this.downPayRule.setMandatoryStyle(false);
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onCheck$applyGrcPricing(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		this.grcPricingMethod.setErrorMessage("");
 		this.grcPricingMethod.setConstraint("");
 		this.grcPricingMethod.setValue("0");
@@ -6092,13 +6371,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.grcPricingMethod.setButtonDisabled(true);
 			this.grcPricingMethod.setMandatoryStyle(false);
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onCheck$droplineOD(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		doSetDropline();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void doSetDropline() {
@@ -6112,7 +6391,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onCheck$applyRpyPricing(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		this.rpyPricingMethod.setErrorMessage("");
 		this.rpyPricingMethod.setConstraint("");
 		this.rpyPricingMethod.setValue("0");
@@ -6126,11 +6405,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.rpyPricingMethod.setButtonDisabled(true);
 			this.rpyPricingMethod.setMandatoryStyle(false);
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onCheck$finCommitmentReq(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (this.finCommitmentReq.isChecked()) {
 			this.alwMaxDisbCheckReq.setChecked(false);
 			this.alwMaxDisbCheckReq.setDisabled(true);
@@ -6138,29 +6417,29 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.alwMaxDisbCheckReq.setDisabled(false);
 		}
 		doCheckBoxChecked(this.finCommitmentReq.isChecked(), this.finCommitmentOvrride);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$limitRequired(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		doLimitChecked(this.limitRequired.isChecked(), this.overrideLimit);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$finIsAlwMD(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setMultiDisbCheckReqFlag(true);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$alwZeroIntAcc(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setZeroIntAccount();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setZeroIntAccount() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (this.alwZeroIntAcc.isChecked()) {
 			this.row_FinBaseRates.setVisible(false);
 			this.row_FinRepRates.setVisible(false);
@@ -6186,7 +6465,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finMaxRate.setReadonly(false);
 			this.finIsRvwAlw.setDisabled(false);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setMultiDisbCheckReqFlag(boolean isAction) {
@@ -6196,7 +6475,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (isAction) {
 				this.alwMaxDisbCheckReq.setChecked(false);
 			}
-			this.alwMaxDisbCheckReq.setDisabled(true);
+			this.alwMaxDisbCheckReq.setDisabled(isCompReadonly);
 		}
 	}
 
@@ -6230,10 +6509,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			// this.finIsAlwGrcRepay.setChecked(finTypeBef.isFinIsAlwGrcRepay());
 			// this.applyGrcPricing.setChecked(true);
 			this.grcPricingMethod.setValue(Long.toString(finTypeBef.getGrcPricingMethod()));
+			this.grcAutoIncrMonths.setValue(finTypeBef.getGrcAutoIncrMonths());
+			this.maxAutoIncrAllowed.setValue(finTypeBef.getMaxAutoIncrAllowed());
 			doDisableGrcSchdMtd();
 			// this.finIsAlwGrcRepay.setChecked(this.oldVar_finIsAlwGrcRepay);
 			// this.gracePeriod.setVisible(true);
 
+			this.grcAdjReq.setValue(finTypeBef.isGrcAdjReq());
 			this.alwPlannedEmiInGrc.setDisabled(isCompReadonly);
 		} else {
 			this.cbfinGrcRateType.setSelectedIndex(0);
@@ -6255,7 +6537,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.gracePeriod.setDisabled(true);
 			this.gracePeriod.setSclass(PennantConstants.mandateSclass);
 			// this.gracePeriod.setVisible(false);
-
+			this.grcAutoIncrMonths.setValue(0);
+			this.maxAutoIncrAllowed.setValue(0);
+			this.grcPeriodAftrFullDisb.setChecked(false);
+			this.autoIncrGrcEndDate.setChecked(false);
+			this.grcAdjReq.setChecked(false);
 			this.alwPlannedEmiInGrc.setChecked(false);
 			this.alwPlannedEmiInGrc.setDisabled(true);
 
@@ -6265,7 +6551,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public int getComboitemIndex(Combobox combobox, String value) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (combobox.getItems() != null && !combobox.getItems().isEmpty()) {
 			for (Comboitem comboitem : combobox.getItems()) {
 				if (StringUtils.equals(comboitem.getValue().toString(), value)) {
@@ -6303,7 +6589,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	private void doSetDownpayProperties(String productCtg, boolean isUserAction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (isUserAction) {
 			this.allowDownpayPgm.setChecked(false);
 			this.finIsDwPayRequired.setDisabled(false);
@@ -6352,11 +6638,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.allowDownpayPgm.setDisabled(false);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$finGrcIsIntCpz(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		doCheckGrcPftCpzFrq();
 
@@ -6373,7 +6659,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onChange$cbfinGrcRateType(Event event) {
@@ -6406,7 +6692,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void changeFinRateType() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if ("F".equals(getComboboxValue(this.cbfinRateType)) || "R".equals(getComboboxValue(this.cbfinRateType))) {
 			if (this.row_allowDownpayPgm.isVisible()) {
 				this.allowDownpayPgm.setChecked(false);
@@ -6423,11 +6709,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.allowDownpayPgm.setDisabled(false);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$finIsIntCpz(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		doCheckPftCpzFrq();
 		if (this.finIsIntCpz.isChecked() || finGrcIsIntCpz.isChecked()) {
@@ -6443,17 +6729,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onCheck$finIsRvwAlw(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		doCheckRpeayReview(true);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onChange$cbfinSchdMthd(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		if (!"M".equals(getComboboxValue(cbfinRateType))) {
 			if (this.finIsRvwAlw.isChecked()) {
@@ -6482,7 +6768,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/** To Enable or Disable GracePeriod Tab Profit Capitalize Frequency. */
@@ -6500,12 +6786,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finGrcCpzFrq.setDisabled(true);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/** To Enable or Disable Schedule Tab Review Frequency. */
 	private void doCheckRpeayReview(boolean checkAction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (this.finIsRvwAlw.isChecked()) {
 			if (!isCompReadonly) {
@@ -6565,12 +6851,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/** To Enable or Disable Schedule Tab Profit Capitalize Frequency. */
 	private void doCheckPftCpzFrq() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (this.finIsIntCpz.isChecked()) {
 			if (!isCompReadonly) {
@@ -6583,11 +6869,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finCpzFrq.setDisabled(true);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doCheckRateType(Combobox combobox, boolean isGrc, boolean checkAction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String value = getComboboxValue(combobox);
 		// grace
@@ -6673,7 +6959,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// ******************************
@@ -6681,10 +6967,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	// ******************************
 
 	public void onCheck$applyODPenalty(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		onCheckODPenalty(true);
 		doClearMessages();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void onCheckODPenalty(boolean checkAction) {
@@ -6757,9 +7043,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onChange$oDChargeType(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		onChangeODChargeType(true);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onchangeODCharges(String val) {
@@ -6838,9 +7124,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onCheck$oDAllowWaiver(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		onCheckODWaiver(true);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void onCheckODWaiver(boolean checkAction) {
@@ -6857,9 +7143,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onCheck$alwBpiTreatment(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		oncheckalwBpiTreatment(null, null);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -6869,7 +7155,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param bpiRateBasis
 	 */
 	private void setMandatoryForAlwBpiTreat(String bpiRateBasis) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (this.alwBpiTreatment.isChecked()
 				&& !StringUtils.equals(PennantConstants.List_Select, getComboboxValue(this.dftBpiTreatment))
 				&& !StringUtils.equals(FinanceConstants.BPI_NO, getComboboxValue(this.dftBpiTreatment))) {
@@ -6888,7 +7174,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			setComboboxSelectedItem(this.cbBpiPftDaysBasis, PennantConstants.List_Select);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -6897,13 +7183,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param event
 	 */
 	public void onChange$dftBpiTreatment(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setMandatoryForAlwBpiTreat("");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void oncheckalwBpiTreatment(String bpiType, String bpiRateBasis) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (this.alwBpiTreatment.isChecked()) {
 			this.space_DftBpiTreatment.setSclass(PennantConstants.mandateSclass);
 			this.dftBpiTreatment.setDisabled(isCompReadonly);
@@ -6920,7 +7206,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			setComboboxSelectedItem(this.dftBpiTreatment, FinanceConstants.BPI_NO);
 		}
 		setMandatoryForAlwBpiTreat(bpiRateBasis);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -6928,19 +7214,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * Method for Setting Default Values of visibility on Check Planned Emi Holidays
 	 */
 	public void onCheck$alwPlannedEmiHoliday(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		onCheckPlannedEmiholiday(getComboboxValue(this.planEmiMethod));
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$alwPlannedEmiInGrc(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		onCheckPlannedEmiholiday(getComboboxValue(this.planEmiMethod));
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void onCheckPlannedEmiholiday(String planEmiHMType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (this.alwPlannedEmiHoliday.isChecked() || this.alwPlannedEmiInGrc.isChecked()) {
 			this.row_planEmiMthd.setVisible(true);
 			this.row_MaxPlanEmi.setVisible(true);
@@ -6971,12 +7257,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} else {
 			this.alwPlannedEmiInGrc.setDisabled(isCompReadonly);
 		}
-		logger.debug("Leaving");
-
+		logger.debug(Literal.ENTERING);
 	}
 
 	public void onCheck$alwReage(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (this.alwReage.isChecked()) {
 			this.row_ReAgeDetails.setVisible(true);
 		} else {
@@ -6985,11 +7270,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.cpzAtReAge.setChecked(false);
 
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$alwUnPlannedEmiHoliday(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (this.alwUnPlannedEmiHoliday.isChecked()) {
 			this.row_LockPeriod.setVisible(true);
@@ -7002,7 +7287,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.cpzAtUnPlannedEmi.setChecked(false);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// ******************************************************//
@@ -7051,9 +7336,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(FinanceType aFinanceType, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceType.getBefImage(), aFinanceType);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return new AuditHeader(String.valueOf(aFinanceType.getId()), null, null, null, auditDetail,
 				aFinanceType.getUserDetails(), getOverideMap());
 	}
@@ -7061,7 +7346,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	// To Show Error messages
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AuditHeader auditHeader = new AuditHeader();
 		try {
@@ -7071,7 +7356,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			logger.error("Exception: ", exp);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/** To get Note Dialog on clicking the button note */
@@ -7093,9 +7378,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onCheck$finGrcIsRvwAlw(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		doCheckGraceReview();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/** To Disable Grace Period Tab Profit Review Frequency Used Twice */
@@ -7121,11 +7406,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onCheck$finIsAlwGrcRepay(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		this.finGrcSchdMthd.setSelectedIndex(0);
 		this.finGrcSchdMthd.setErrorMessage("");
 		doDisableGrcSchdMtd();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void doDisableGrcSchdMtd() {
@@ -7156,7 +7441,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param alwHybridRate
 	 */
 	private void setFixedRateTenor(boolean alwHybridRate, boolean isCompReadonly) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.space_fixedRateTenor.setSclass("");
 		this.alwHybridRate.setDisabled(isCompReadonly);
 		if (alwHybridRate && !isCompReadonly) {
@@ -7166,7 +7451,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.fixedRateTenor.setValue(0);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/** method to check rate type in grace tab */
@@ -7189,7 +7474,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onCheck$alwPlanDeferment(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean alwPlanDefermentFlag = this.alwPlanDeferment.isChecked();
 
@@ -7204,7 +7489,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	private void doDisableOrEnableDifferments(boolean isAllow, Intbox intbox, boolean isReadOnly, Space space) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		intbox.setReadonly(isReadOnly);
 		if (!isReadOnly && isAllow) {
 			space.setSclass(PennantConstants.mandateSclass);
@@ -7214,23 +7499,23 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			intbox.setReadonly(true);
 			space.setSclass("");
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * To Check the user action based on the result removes the error messages;
 	 */
 	public void onCheck$userAction(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 			doClearMessages();
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/** TO clear all error messages */
 	private void doClearMessages() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Basic Tab
 		if (isPromotion) {
 			this.product.setErrorMessage("");
@@ -7258,6 +7543,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finDftStmtFrq.setErrorMessage("");
 		this.finHistRetension.setErrorMessage("");
 		this.cbfinSchdMthd.setErrorMessage("");
+		this.splitLoanType.setErrorMessage("");
 
 		// Scheduling Tab
 		this.cbfinRateType.setErrorMessage("");
@@ -7345,17 +7631,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.alwdIRRDetails.setErrorMessage("");
 		}
 		this.finLTVCheck.setErrorMessage("");
+		this.grcAutoIncrMonths.setErrorMessage("");
+		this.maxAutoIncrAllowed.setErrorMessage("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (doClose(this.btnSave.isVisible())) {
 			Events.postEvent("onClick$button_FinanceTypeList_NewFinanceType",
 					financeTypeListCtrl.window_FinanceTypeList, getFinanceType());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// tasks # >>Start Advance EMI and DSF
@@ -7456,7 +7744,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws WrongValueException
 	 */
 	private void mustBeHigher(Decimalbox maxvalue, Decimalbox minvalue, String maxlabel, String minlabel) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if ((maxvalue.getValue() != null) && (minvalue.getValue() != null)
 				&& ((maxvalue.getValue().compareTo(BigDecimal.ZERO) != 0)
 						|| (minvalue.getValue().compareTo(BigDecimal.ZERO) != 0))) {
@@ -7465,18 +7753,18 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 						new String[] { Labels.getLabel(maxlabel), Labels.getLabel(minlabel) }));
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void mustBeHigher(CurrencyBox maxvalue, CurrencyBox minvalue, String maxlabel, String minlabel) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (maxvalue.getActualValue().compareTo(BigDecimal.ZERO) != 0) {
 			if (maxvalue.getActualValue().compareTo(minvalue.getActualValue()) != 1) {
 				throw new WrongValueException(maxvalue, Labels.getLabel("FIELD_IS_GREATER",
 						new String[] { Labels.getLabel(maxlabel), Labels.getLabel(minlabel) }));
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doCheckBoxChecked(boolean checked, Checkbox checkbox) {
@@ -7531,7 +7819,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * IN FinanceTypeDialogCtrl.java
 	 */
 	private void setDefaultValues() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceType finType = getFinanceType();
 		if (ImplementationConstants.ALLOW_FINACTYPES) {
 			// this.pftPayAcType.setValue("");
@@ -7551,6 +7839,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finHistRetension.setValue(12);
 		finType.setFinHistRetension(12);
 		this.finCollateralReq.setValue(false);
+		this.alwLoanSplit.setValue(false);
 		this.finCollateralOvrride.setValue(false);
 		this.finDepreciationFrq.setValue("M0031");
 		finType.setFinDepreciationFrq("M0031");
@@ -7634,6 +7923,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	}
 
+	public void onClick$btnSearchSplitLoanType(Event event) throws Exception {
+		logger.debug("Entering  " + event.toString());
+		this.splitLoanType.setErrorMessage("");
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog, "FinanceType",
+				String.valueOf(this.splitLoanType.getValue()), null);
+		if (dataObject != null) {
+			String details = (String) dataObject;
+			this.splitLoanType.setValue(details);
+		}
+		logger.debug("Leaving  " + event.toString());
+
+	}
+
 	public void onClick$btnAlwElgMthdDetails(Event event) throws Exception {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog, "EligibilityMethods",
@@ -7651,11 +7953,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param event
 	 */
 	public void onCheck$finCollateralReq(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		doCheckBoxChecked(this.finCollateralReq.isChecked(), this.finCollateralOvrride);
 		doSetCollateralProp(this.fintypeLTVCheck);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onCheck$alwLoanSplit(Event event) {
+		logger.debug(Literal.ENTERING);
+		doSetSplitLoanType();
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -7664,7 +7972,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param finType
 	 */
 	private void doSetCollateralProp(FinanceType finType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (this.finCollateralReq.isChecked()) {
 			this.btnSearchCollateralType.setDisabled(isCompReadonly);
 			this.row_LTVCheck.setVisible(true);
@@ -7685,13 +7993,24 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 			this.finCollateralCheck.setChecked(false);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void doSetSplitLoanType() {
+		logger.debug(Literal.ENTERING);
+		if (this.alwLoanSplit.isChecked()) {
+			this.btnSearchSplitLoanType.setDisabled(isCompReadonly);
+		} else {
+			this.btnSearchSplitLoanType.setDisabled(true);
+			this.splitLoanType.setValue("");
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChange$finSuspTrigger(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		doChangeSuspTrigger();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void doChangeSuspTrigger() {
@@ -7706,7 +8025,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onClick$btnNew_FinTypeAccount(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		Clients.clearWrongValue(this.listBoxFinTypeAccounts);
 		// create a new IncomeExpenseDetail object, We GET it from the backEnd.
 		final FinTypeAccount aFinTypeAccount = getFinanceTypeService().getNewFinTypeAccount();
@@ -7722,11 +8041,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onFinTypeAccountItemDoubleClicked(ForwardEvent event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget();
 		FinTypeAccount itemdata = (FinTypeAccount) item.getAttribute("data");
 		if (!StringUtils.trimToEmpty(itemdata.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -7743,11 +8062,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				MessageUtil.showError(e);
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void doFillCustAccountTypes(List<FinTypeAccount> finTypeAccount) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			if (finTypeAccount != null) {
 				setFinTypeAccountList(finTypeAccount);
@@ -7756,7 +8075,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void fillCustAccountTypes(List<FinTypeAccount> finTypeAccounts) {
@@ -7924,7 +8243,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void setSteppingFieldsVisibility(boolean isVisible) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.gb_SteppingDetails.setVisible(true);
 		this.label_FinanceTypeDialog_AllowedStepPolicies.setVisible(isVisible);
 		this.hbox_alwdStepPolicies.setVisible(isVisible);
@@ -7936,7 +8255,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		this.sp_alwdStepPolices.setSclass(sClass);
 		this.sp_dftStepPolicy.setSclass(sClass);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnSearchStepPolicy(Event event) {
@@ -8098,7 +8417,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws Exception
 	 */
 	public void onClick$btnAlwVasProducts(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		setVasProductDetails(true);
 
@@ -8111,7 +8430,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finTypeAccountingListCtrl.setAccountingMandStyle(AccountEventConstants.ACCEVENT_VAS_FEE, vasFlag);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -8120,7 +8439,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param isVasAlwd
 	 */
 	private void setVasProductDetails(boolean isVasAlwd) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.alwdVasProduct.setConstraint("");
 		this.mandVasProduct.setConstraint("");
@@ -8209,7 +8528,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -8218,7 +8537,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param FinTypeVASProducts
 	 */
 	private void doFillAlwVasProductDetails(List<FinTypeVASProducts> finTypeVASProducts) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		setFinTypeVASProductsList(finTypeVASProducts);
 		if (finTypeVASProducts == null || finTypeVASProducts.isEmpty()) {
@@ -8246,7 +8565,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.alwdVasProduct.setValue(tempvasProduct);
 		this.mandVasProduct.setValue(tempmandatory);
 
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 	}
 
 	private void setComboboxSelectedItem(Combobox combobox, String selectedValue) {
@@ -8265,7 +8584,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param cmtFlagDetailList
 	 */
 	private void fetchVasProductDetals() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Map<String, FinTypeVASProducts> vasProductMap = new HashMap<>();
 
@@ -8357,7 +8676,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -8367,11 +8686,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws Exception
 	 */
 	public void onClick$btnAlwReceiptModes(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		setReceiptModes();
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -8380,7 +8699,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param isAlwReceipts
 	 */
 	private void setReceiptModes() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.alwdReceiptModes.setConstraint("");
 		this.alwdReceiptModes.setErrorMessage("");
@@ -8391,7 +8710,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (selectedValues != null) {
 			this.alwdReceiptModes.setValue(selectedValues);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -8400,7 +8719,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param FinTypeVASProducts
 	 */
 	private void doFillAlwReceiptModess(List<FinTypeReceiptModes> finTypeReceiptModes) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		setFinTypeReceiptModesList(finTypeReceiptModes);
 		if (finTypeReceiptModes == null || finTypeReceiptModes.isEmpty()) {
@@ -8419,7 +8738,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		this.alwdReceiptModes.setValue(tempReceiptMode);
 
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 	}
 
 	/**
@@ -8428,7 +8747,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param cmtFlagDetailList
 	 */
 	private void fetchReceiptModes() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Map<String, FinTypeReceiptModes> receiptModesMap = new HashMap<>();
 
@@ -8506,7 +8825,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doStoreEventDetails() {
@@ -8532,7 +8851,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * Cost Of Funds
 	 */
 	private void setCofRate() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (StringUtils.isBlank(this.costOfFunds.getValue())) {
 			this.costOfFunds.setDescription(PennantApplicationUtil.formatRate(BigDecimal.ZERO.doubleValue(), 2));
@@ -8550,7 +8869,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.costOfFunds.setDescription("");
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -8559,7 +8878,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws InterruptedException
 	 */
 	public void onFulfill$costOfFunds(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		Object dataObject = costOfFunds.getObject();
 
@@ -8570,7 +8889,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			setCofRate();
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -8593,7 +8912,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param isVasAlwd
 	 */
 	private void setIRRCodesDetails(boolean isVasAlwd) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.alwdIRRDetails.setConstraint("");
 		this.alwdIRRDetails.setErrorMessage("");
@@ -8637,7 +8956,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -8646,7 +8965,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param IRRCodes
 	 */
 	private void doFillAlwIRRCodesDetails(List<IRRFinanceType> irrFinanceTypeList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (!isCopyProcess) {
 			setIrrFinanceTypeList(irrFinanceTypeList);
@@ -8667,7 +8986,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		this.alwdIRRDetails.setValue(tempvasProduct);
 
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 	}
 
 	/**
@@ -8676,7 +8995,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param fetchIRRCodeDetals
 	 */
 	private void fetchIRRCodeDetals() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Map<Long, IRRFinanceType> irrCodeMap = new HashMap<>();
 
@@ -8754,7 +9073,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public List<FinTypeAccount> getFinTypeAccountList() {
@@ -8766,10 +9085,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * 
 	 */
 	protected void appendExpenseDetailTab() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (consumerDurable) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return;
 		}
 
@@ -8791,6 +9110,117 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Specific loan purposes assignment
+	 * 
+	 * @param event
+	 */
+	public void onChange$allowedLoanPurposes(Event event) {
+		logger.debug(Literal.ENTERING + event.toString());
+		doCheckLoanPurposeproperties();
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	private void doCheckLoanPurposeproperties() {
+		String loanPurpose = getComboboxValue(this.allowedLoanPurposes);
+		if (StringUtils.equals(PennantConstants.SPECIFIC, loanPurpose)) {
+			this.hboxSpecificLoanPurposes.setVisible(true);
+			this.hboxSpecificLoanPurposesTwo.setVisible(true);
+		} else {
+			this.specificLoanPurposes.setValue("");
+			this.hboxSpecificLoanPurposes.setVisible(false);
+			this.hboxSpecificLoanPurposesTwo.setVisible(false);
+		}
+	}
+
+	/**
+	 * Specific loan purposes assignment
+	 * 
+	 * @throws Exceptionon
+	 */
+	public void onClick$btnSpcLoanPurposes(Event event) throws Exception {
+		logger.debug(Literal.ENTERING + event.toString());
+		this.specificLoanPurposes.setErrorMessage("");
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog, "LoanPurpose",
+				this.specificLoanPurposes.getValue(), null);
+		if (dataObject != null) {
+			String details = (String) dataObject;
+			this.specificLoanPurposes.setValue(details);
+		}
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	public void onCheck$grcAdjReq(Event event) {
+		logger.debug("Entering");
+
+		FinanceType finTypeBef = getFinanceType().getBefImage();
+
+		this.grcAutoIncrMonths.setConstraint("");
+		this.maxAutoIncrAllowed.setConstraint("");
+
+		this.grcAutoIncrMonths.setErrorMessage("");
+		this.maxAutoIncrAllowed.setErrorMessage("");
+
+		if (this.grcAdjReq.isChecked()) {
+
+			this.grcPeriodAftrFullDisb.setChecked(true);
+			this.autoIncrGrcEndDate.setChecked(true);
+			this.grcAutoIncrMonths.setValue(finTypeBef.getGrcAutoIncrMonths());
+			this.maxAutoIncrAllowed.setValue(finTypeBef.getMaxAutoIncrAllowed());
+			doSetGrcAdjReqFieldProp(true);
+
+		} else {
+
+			this.grcPeriodAftrFullDisb.setChecked(false);
+			this.autoIncrGrcEndDate.setChecked(false);
+			this.grcAutoIncrMonths.setValue(0);
+			this.maxAutoIncrAllowed.setValue(0);
+			doSetGrcAdjReqFieldProp(isCompReadonly);
+		}
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Under Construction dependent Component Properties
+	 */
+	private void doSetGrcAdjReqFieldProp(boolean isReadonly) {
+
+		readOnlyComponent(isReadonly, this.grcPeriodAftrFullDisb);
+		readOnlyComponent(isReadonly, this.autoIncrGrcEndDate);
+
+		// dependent mandatory fields
+		onCheckAutoIncrGrcEndDate();
+	}
+
+	private void onCheckAutoIncrGrcEndDate() {
+		logger.debug("Entering");
+
+		this.grcAutoIncrMonths.setConstraint("");
+		this.maxAutoIncrAllowed.setConstraint("");
+
+		this.grcAutoIncrMonths.setErrorMessage("");
+		this.maxAutoIncrAllowed.setErrorMessage("");
+
+		if (this.autoIncrGrcEndDate.isChecked()) {
+			this.space_GrcAutoIncrMonths.setSclass(PennantConstants.mandateSclass);
+			this.space_MaxAutoIncrAllowed.setSclass(PennantConstants.mandateSclass);
+		} else {
+			this.space_GrcAutoIncrMonths.setSclass("");
+			this.space_MaxAutoIncrAllowed.setSclass("");
+		}
+
+		logger.debug("Leaving");
+	}
+
+	public void onCheck$autoIncrGrcEndDate(Event event) {
+		logger.debug("Entering");
+
+		onCheckAutoIncrGrcEndDate();
 
 		logger.debug("Leaving");
 	}

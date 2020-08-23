@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
@@ -26,6 +27,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.service.hook.PostExteranalServiceHook;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.RiskContainmentUnitDAO;
@@ -49,6 +51,9 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentDetailValidation documentValidation;
+	@Autowired(required = false)
+	@Qualifier("verificationPostExteranalServiceHook")
+	private PostExteranalServiceHook postExteranalServiceHook;
 
 	public RiskContainmentUnitServiceImpl() {
 		super();
@@ -97,6 +102,10 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
+		//calling post hoot
+		if (postExteranalServiceHook != null) {
+			postExteranalServiceHook.doProcess(auditHeader, "saveOrUpdate");
+		}
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -377,7 +386,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		}
 
 		RiskContainmentUnit rcu = new RiskContainmentUnit();
-		BeanUtils.copyProperties((RiskContainmentUnit) auditHeader.getAuditDetail().getModelData(), rcu);
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), rcu);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(rcu.getRecordType())) {
 			auditHeader.getAuditDetail()
@@ -446,7 +455,10 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		auditHeader.getAuditDetail().setModelData(rcu);
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
-
+		//calling post hoot
+		if (postExteranalServiceHook != null) {
+			postExteranalServiceHook.doProcess(auditHeader, "doApprove");
+		}
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -823,7 +835,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	}
 
 	@Override
-	public RCUDocument getRCUDocument(long verificationId, RCUDocument rcuDocument) {
+	public List<RCUDocument> getRCUDocument(long verificationId, RCUDocument rcuDocument) {
 		return riskContainmentUnitDAO.getRCUDocument(verificationId, rcuDocument);
 	}
 

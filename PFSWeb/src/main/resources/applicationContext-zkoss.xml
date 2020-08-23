@@ -23,7 +23,6 @@
 	<!-- ====================================================== -->
 
 	<bean id="indexCtrl" class="com.pennant.webui.index.IndexCtrl" parent="basisCtrl" scope="prototype">
-		<property name="userService" ref="userService" />
 	</bean>
 
 	<bean id="welcomeCtrl" class="com.pennant.webui.index.WelcomeCtrl" scope="prototype">
@@ -1055,6 +1054,25 @@
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="primaryAccountService" ref="primaryAccountService" />
 		<property name="dMSService" ref="dMSService" />
+		<property name="incomeAndExpenseCtrl" ref="incomeAndExpenseCtrl" />
+		<property name="customerPhoneNumberInLineEditCtrl" ref="customerPhoneNumberInLineEditCtrl" />
+		<property name="customerEmailInlineEditCtrl" ref="customerEmailInlineEditCtrl" />
+		<property name="custTypePANMappingService" ref="custTypePANMappingService" />
+		<property name="masterDefDAO" ref="masterDefDAO" />
+		<property name="customerExtLiabilityUploadDialogCtrl" ref="customerExtLiabilityUploadDialogCtrl" />
+
+	</bean>
+	<bean id="incomeAndExpenseCtrl" class="com.pennant.webui.customermasters.customer.IncomeAndExpenseCtrl" parent="basisCtrl"
+		scope="prototype">
+	</bean>
+
+	<bean id="customerPhoneNumberInLineEditCtrl" class="com.pennant.webui.customermasters.customerphonenumber.CustomerPhoneNumberInLineEditCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="phoneTypeService" ref="phoneTypeService" />
+	</bean>
+
+	<bean id="customerEmailInlineEditCtrl" class="com.pennant.webui.customermasters.customeremail.CustomerEmailInlineEditCtrl"
+		parent="basisCtrl" scope="prototype">
 	</bean>
 
 	<bean id="prospectCustomerDialogCtrl" class="com.pennant.webui.customermasters.customer.ProspectCustomerDialogCtrl"
@@ -1204,6 +1222,7 @@
 
 	<bean id="customerExtLiabilityDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerExtLiabilityDialogCtrl"
 		parent="basisCtrl" scope="prototype">
+		<property name="bankDetailService" ref="bankDetailService" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -1643,6 +1662,8 @@
 		<property name="spreadSheetService" ref="spreadSheetService"></property>
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="dMSService" ref="dMSService" />
+		<property name="pricingDetailService" ref="pricingDetailService" />
+		<property name="financeTypeService" ref="financeTypeService" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl" class="com.pennant.webui.finance.financemain.MurabahaFinanceMainDialogCtrl"
@@ -1853,6 +1874,7 @@
 		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
 		<property name="finOptionMaintanceService" ref="finOptionMaintanceService" />
 		<property name="changeTDSService" ref="changeTDSService" />
+		<property name="loanDownSizingService" ref="loanDownSizingService" />
 	</bean>
 
 	<!--============ Finance Contributor Detail ============== -->
@@ -2394,6 +2416,8 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="disbursementInstCtrl" ref="disbursementInstCtrl" />
+		<property name="vASProviderAccDetailDAO" ref="vASProviderAccDetailDAO" />
+		<property name="vASConfigurationDAO" ref="vASConfigurationDAO" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -2574,6 +2598,7 @@
 	<bean id="receiptEnquiryDialogCtrl" class="com.pennant.webui.financemanagement.receipts.ReceiptEnquiryDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="branchService" ref="branchService" />
+		<property name="postingsDAO" ref="postingsDAO" />
 	</bean>
 
 
@@ -3124,6 +3149,7 @@
 		<property name="reportConfigurationService" ref="reportConfigurationService" />
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="unitName" value="PFF" />
+		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
 	</bean>
 
 	<!-- Reports Search Template -->
@@ -3394,6 +3420,7 @@
 	<!-- Internal BlackLits Checking -->
 	<bean name="fetchBlackListDetails" class="com.pennant.webui.dedup.dedupparm.FetchBlackListDetails">
 		<property name="dedupParmService" ref="dedupParmService" />
+		<property name="masterDefDAO" ref="masterDefDAO" />
 	</bean>
 
 	<!-- Police & Court Case Checking -->
@@ -4127,6 +4154,24 @@
 		scope="prototype">
 		<property name="nPABucketService" ref="nPABucketService" />
 	</bean>
+
+	<!-- NPAProvisionHeader -->
+	<bean id="nPAProvisionHeaderListCtrl" class="com.pennant.webui.applicationmaster.npaprovisionheader.NPAProvisionHeaderListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="nPAProvisionHeaderService" ref="nPAProvisionHeaderService" />
+	</bean>
+
+	<bean id="nPAProvisionHeaderDialogCtrl" class="com.pennant.webui.applicationmaster.npaprovisionheader.NPAProvisionHeaderDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="nPAProvisionHeaderService" ref="nPAProvisionHeaderService" />
+	</bean>
+
+	<!--Select NPA HEader Provision -->
+	<bean id="selectNPAProvisionHeaderDialogCtrl" class="com.pennant.webui.applicationmaster.npaprovisionheader.SelectNPAProvisionHeaderDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="nPAProvisionHeaderService" ref="nPAProvisionHeaderService" />
+	</bean>
+
 	<!-- NPABucketConfiguration -->
 	<bean id="nPABucketConfigurationListCtrl" class="com.pennant.webui.applicationmaster.npabucketconfiguration.NPABucketConfigurationListCtrl"
 		parent="basisListCtrl" scope="prototype">
@@ -4295,6 +4340,8 @@
 	<bean id="builderProjcetDialogCtrl" class="com.pennant.webui.systemmasters.builderprojcet.BuilderProjcetDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="builderProjcetService" ref="builderProjcetService" />
+		<property name="bankDetailService" ref="bankDetailService" />
+		<property name="bankBranchService" ref="bankBranchService" />
 	</bean>
 
 	<bean id="errorCtrl" class="com.pennanttech.framework.web.ErrorCtrl" scope="prototype" />
@@ -4390,7 +4437,7 @@
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 		<property name="gstnValidationService" ref="gstnValidationService" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
-		
+
 	</bean>
 	<!-- Entity -->
 	<bean id="entityListCtrl" class="com.pennant.webui.applicationmaster.entity.EntityListCtrl" parent="basisListCtrl"
@@ -4765,6 +4812,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="technicalVerificationService" ref="technicalVerificationService" />
+		<property name="scriptValidationService" ref="scriptValidationService" />
 	</bean>
 
 	<bean id="technicalValuationDialogCtrl" class="com.pennant.webui.solutionfactory.extendedfielddetail.TechnicalValuationDialogCtrl"
@@ -4775,6 +4823,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
+		<property name="verificationService" ref="verificationService" />
 	</bean>
 
 	<bean id="tvInitiationListCtrl" class="com.pennant.webui.verification.tv.TVInitiationListCtrl" parent="basisListCtrl"
@@ -4796,6 +4845,16 @@
 
 	<bean id="lvInitiationListCtrl" class="com.pennant.webui.verification.legalverification.LVInitiationListCtrl"
 		parent="basisListCtrl" scope="prototype" />
+
+	<!--============ Legal Vetting Module ============== -->
+	<bean id="legalVettingInitiationListCtrl" class="com.pennant.webui.verification.legalvetting.LegalVettingInitiationListCtrl"
+		parent="basisListCtrl" scope="prototype" />
+
+	<bean id="legalVettingVerificationListCtrl" class="com.pennant.webui.verification.legalvettingverification.LegalVettingVerificationListCtrl"
+		parent="basisListCtrl" scope="prototype" />
+
+	<bean id="legalVettingVerificationDialogCtrl" class="com.pennant.webui.verification.legalvettingverification.LegalVettingVerificationDialogCtrl"
+		parent="basisCtrl" scope="prototype" />
 
 
 	<!--============ RiskContainmentUnit Module ============== -->
@@ -5232,6 +5291,7 @@
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="financeMainService" ref="financeMainService" />
+		<property name="collateralSetupService" ref="collateralSetupService" />
 	</bean>
 
 	<bean id="linkedLoansDialogCtrl" class="com.pennant.webui.financemanagement.receipts.LinkedLoansDialogCtrl"
@@ -5619,6 +5679,7 @@
 		<property name="notesDAO" ref="notesDAO" />
 		<property name="queryDetailDAO" ref="queryDetailDAO" />
 		<property name="recommendationNotesDetailsDAO" ref="recommendationNotesDetailsDAO" />
+		<property name="financeMainExtService" ref="financeMainExtService" />
 	</bean>
 	<bean id="risksAndMitigantsDialogCtrl" class="com.pennant.webui.finance.financialsummary.RisksAndMitigantsDialogCtrl"
 		parent="basisCtrl" scope="prototype">
@@ -5695,5 +5756,173 @@
 		<property name="loanTypeKnockOffService" ref="loanTypeKnockOffService" />
 	</bean>
 
+	<!--============ FinFeeRefund Details ============== -->
+
+	<bean id="finFeeRefundListCtrl" class="com.pennant.webui.financemanagement.receipts.FinFeeRefundListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="finFeeRefundService" ref="finFeeRefundService" />
+	</bean>
+	<bean id="finFeeRefundDialogCtrl" class="com.pennant.webui.financemanagement.receipts.FinFeeRefundDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="finFeeRefundService" ref="finFeeRefundService" />
+		<property name="eventManager" ref="eventManager" />
+		<property name="accountingSetService" ref="accountingSetService" />
+		<property name="engineExecution" ref="engineExecution" />
+	</bean>
+
+	<!--============ OCR Details ============== -->
+	<bean id="ocrListCtrl" class="com.pennant.webui.ocrmaster.ocrheader.OCRHeaderListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="ocrHeaderService" ref="ocrHeaderService" />
+	</bean>
+
+	<bean id="ocrDialogCtrl" class="com.pennant.webui.ocrmaster.ocrheader.OCRHeaderDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="ocrHeaderService" ref="ocrHeaderService" />
+	</bean>
+
+	<bean id="ocrDetailDialogCtrl" class="com.pennant.webui.ocrmaster.ocrheader.OCRDetailDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="ocrHeaderService" ref="ocrHeaderService" />
+	</bean>
+
+	<!-- Fin OCR Header -->
+	<bean id="finOCRDialogCtrl" class="com.pennant.webui.finance.financemain.FinOCRDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="ocrHeaderService" ref="ocrHeaderService" />
+	</bean>
+
+	<bean id="finOCRStepDialogCtrl" class="com.pennant.webui.finance.financemain.FinOCRStepDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+	</bean>
+
+	<bean id="finOCRCaptureDialogCtrl" class="com.pennant.webui.finance.financemain.FinOCRCaptureDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+	</bean>
+
+	<bean id="projectUnitsDialogCtrl" class="com.pennant.webui.systemmasters.builderprojcet.ProjectUnitsDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+
+	<!--============ Qualification Details ============== -->
+
+	<bean id="qualificationListCtrl" class="com.pennant.webui.systemmasters.qualification.QualificationListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="qualificationService" ref="qualificationService" />
+	</bean>
+
+	<bean id="qualificationDialogCtrl" class="com.pennant.webui.systemmasters.qualification.QualificationDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="qualificationService" ref="qualificationService" />
+	</bean>
+
+	<bean id="dmsDialogCtrl" class="com.pennant.webui.finance.dms.DMSDialogCtrl" parent="basisCtrl" scope="prototype" />
+
+	<bean id="extDocumentDetailDialogCtrl" class="com.pennant.webui.customermasters.customer.ExternalDocumentDialogCtrl"
+		parent="basisCtrl" scope="prototype" />
+
+	<!-- PAN Letter Mapping -->
+	<bean id="custTypePANMappingListCtrl" class="com.pennant.webui.systemmasters.panmapping.CustTypePANMappingListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="custTypePANMappingService" ref="custTypePANMappingService" />
+	</bean>
+
+	<bean id="custTypePANMappingDialogCtrl" class="com.pennant.webui.systemmasters.panmapping.CustTypePANMappingDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="custTypePANMappingService" ref="custTypePANMappingService" />
+	</bean>
+
+	<!-- Loan DownSizing -->
+	<bean id="loanDownSizingDialogCtrl" class="com.pennant.webui.finance.additional.LoanDownSizingDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="loanDownSizingService" ref="loanDownSizingService" />
+	</bean>
+
+	<!-- Loan DownSizing Movements -->
+	<bean id="loanDownSizingMovementCtrl" class="com.pennant.webui.finance.additional.LoanDownSizingMovementCtrl"
+		parent="basisCtrl" scope="prototype" />
+	<!-- CERSAI DATA IMPORT -->
+	<bean id="cersaiDataFileImportCtrl" class="com.pennanttech.interfacebajaj.CersaiDataFileImportCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+	</bean>
+	<!-- Customer Ext Liability upload -->
+	<bean id="customerExtLiabilityUploadDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerExtLiabilityUploadDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+	</bean>
+
+	<!-- PMAY -->
+	<bean id="pmayListCtrl" class="com.pennant.webui.systemmasters.pmay.PMAYListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="pmayService" ref="pmayService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+	</bean>
+
+	<bean id="pmayDialogCtrl" class="com.pennant.webui.systemmasters.pmay.PMAYDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="pmayService" ref="pmayService" />
+		<property name="ruleService" ref="ruleService" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+	</bean>
+
+	<bean id="hunterUploadDialogCtrl" class="com.pennant.webui.finance.upload.HunterUploadDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+	</bean>
+
+	<bean id="beneficiarySelectCtrl" class="com.pennant.webui.beneficiary.beneficiary.BeneficiarySelectCtrl" parent="basisListCtrl"
+		scope="prototype">
+	</bean>
+
+	<bean id="pricingDetailListCtrl" class="com.pennant.webui.finance.financemain.PricingDetailListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="pricingDetailService" ref="pricingDetailService" />
+	</bean>
+
+	<bean id="selectChildLoanFinTypeDialogCtrl" class="com.pennant.webui.finance.financemain.SelectChildLoanFinTypeDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="pricingDetailService" ref="pricingDetailService" />
+	</bean>
+
+	<bean id="financeExtCreditReviewSpreadSheetCtrl" class="com.pennant.webui.external.creditreview.FinanceExtCreditReviewSpreadSheetCtrl"
+		parent="basisCtrl" scope="prototype" />
+
+	<!--============ Vas Movement ============== -->
+
+	<bean id="vasMovementListCtrl" class="com.pennant.webui.finance.vasMovement.VasMovementListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="vasMovementService" ref="vasMovementService" />
+	</bean>
+
+	<bean id="vasMovementDialogCtrl" class="com.pennant.webui.finance.vasMovement.VasMovementDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="vasMovementService" ref="vasMovementService" />
+	</bean>
+
+	<!-- Check List Details -->
+
+	<bean id="vasMovementDetailDialogCtrl" class="com.pennant.webui.finance.vasMovement.VasMovementDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="vASRecordingService" ref="vASRecordingService" />
+	</bean>
+
+	<!-- AssetClassificationHeader -->
+	<bean id="assetClassificationHeaderListCtrl" class="com.pennant.webui.applicationmaster.assetclassificationheader.AssetClassificationHeaderListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="assetClassificationHeaderService" ref="assetClassificationHeaderService" />
+	</bean>
+	<bean id="assetClassificationHeaderDialogCtrl" class="com.pennant.webui.applicationmaster.assetclassificationheader.AssetClassificationHeaderDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="assetClassificationHeaderService" ref="assetClassificationHeaderService" />
+	</bean>
+	<!-- Manual Provisioning -->
+	<bean id="manualProvisioningListCtrl" class="com.pennant.webui.applicationmaster.manualprovisioning.ManualProvisioningListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="provisionService" ref="provisionService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="nPAProvisionHeaderService" ref="nPAProvisionHeaderService" />
+	</bean>
+	<bean id="manualProvisioningDialogCtrl" class="com.pennant.webui.applicationmaster.manualprovisioning.ManualProvisioningDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="provisionService" ref="provisionService" />
+	</bean>
 
 </beans>

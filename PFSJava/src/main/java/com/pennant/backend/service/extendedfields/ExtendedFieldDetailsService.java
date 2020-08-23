@@ -3,6 +3,7 @@ package com.pennant.backend.service.extendedfields;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,8 @@ import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -39,6 +42,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
+import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -64,6 +68,8 @@ public class ExtendedFieldDetailsService {
 	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
 	private ExtendedFieldDetailsValidation extendedFieldDetailsValidation;
 	private AuditHeaderDAO auditHeaderDAO;
+	@Autowired(required = false)
+	private DedupParmService dedupParmService;
 
 	@Autowired
 	protected SamplingDAO samplingDAO;
@@ -495,6 +501,10 @@ public class ExtendedFieldDetailsService {
 
 			// Setting Extended field is to identify record related to Extended
 			// fields
+			if (deatils.get(i).getBefImage() != null) {
+				ExtendedFieldRender befImage = (ExtendedFieldRender) deatils.get(i).getBefImage();
+				befImage.setTableName(tableName);
+			}
 			extendedFieldRender.setBefImage(extendedFieldRender);
 			deatils.get(i).setExtended(true);
 			deatils.get(i).setModelData(extendedFieldRender);
@@ -1067,6 +1077,60 @@ public class ExtendedFieldDetailsService {
 		return new ArrayList<AuditDetail>();
 	}
 
+	public List<AuditDetail> validateCollateralDedup(ExtendedFieldRender aExetendedFieldRender, String queryCode,
+			String querySubCode, String usrLanguage) {
+		logger.debug(Literal.ENTERING);
+
+		DedupParm dedupParm = this.dedupParmService.getApprovedDedupParmById(queryCode,
+				FinanceConstants.DEDUP_COLLATERAL, querySubCode);
+
+		String sqlQuery = "Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup_Temp T1"
+				+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_" + "PROPERTY"
+				+ "_ED_Temp  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery() + " union all "
+				+ " Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup T1"
+				+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_" + "PROPERTY"
+				+ "_ED  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery()
+				+ " And NOT EXISTS (SELECT 1 FROM Collateral_" + "PROPERTY"
+				+ "_ED_TEMP  WHERE REFERENCE = T1.CollateralRef)";
+
+		List<CollateralSetup> collateralSetupList = this.dedupParmService.queryExecution(sqlQuery,
+				aExetendedFieldRender.getMapValues());
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		AuditDetail auditDetail = new AuditDetail();
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = aExetendedFieldRender.getReference();
+		errParm[0] = PennantJavaUtil.getLabel("label_Collateral") + ":" + valueParm[0];
+
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+			boolean recordFound = true;
+			if (collateralSetupList.size() == 1) {
+				if (StringUtils.isNotBlank(aExetendedFieldRender.getReference()) && StringUtils
+						.equals(collateralSetupList.get(0).getCollateralRef(), aExetendedFieldRender.getReference())) {
+					recordFound = false;
+				}
+			} else {
+				recordFound = false;
+				for (CollateralSetup collateralSetup : collateralSetupList) {
+					if (!(StringUtils.isNotBlank(aExetendedFieldRender.getReference()) && StringUtils
+							.equals(collateralSetup.getCollateralRef(), aExetendedFieldRender.getReference()))) {
+						recordFound = true;
+					}
+				}
+			}
+			if (recordFound) {
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "WCOLL01", errParm, null));
+				auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+				auditDetails.add(auditDetail);
+				return auditDetails;
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return Collections.emptyList();
+	}
+
 	public List<AuditDetail> validateSamplingDetails(List<AuditDetail> deatils, Sampling sampling, String method,
 			String usrLanguage, String moduleCode) {
 		logger.debug(Literal.ENTERING);
@@ -1115,6 +1179,34 @@ public class ExtendedFieldDetailsService {
 
 		ExtendedFieldRender befExtRender = extendedFieldRenderDAO.getExtendedFieldDetails(reference, render.getSeqNo(),
 				tableName, "");
+
+		if (befExtRender != null) {
+			Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(reference, tableName.toString(),
+					"");
+			if (extFieldMap != null) {
+				Map<String, Object> modifiedExtMap = new HashMap<>();
+				for (Entry<String, Object> entrySet : extFieldMap.entrySet()) {
+					modifiedExtMap.put(entrySet.getKey().toUpperCase(), entrySet.getValue());
+				}
+
+				// Audit Details Preparation For Before Image
+				modifiedExtMap.put("Reference", extFieldMap.get("Reference"));
+				modifiedExtMap.put("SeqNo", extFieldMap.get("SeqNo"));
+				modifiedExtMap.put("Version", extFieldMap.get("Version"));
+				modifiedExtMap.put("LastMntOn", extFieldMap.get("LastMntOn"));
+				modifiedExtMap.put("LastMntBy", extFieldMap.get("LastMntBy"));
+				modifiedExtMap.put("RecordStatus", extFieldMap.get("RecordStatus"));
+				modifiedExtMap.put("RoleCode", extFieldMap.get("RoleCode"));
+				modifiedExtMap.put("NextRoleCode", extFieldMap.get("NextRoleCode"));
+				modifiedExtMap.put("TaskId", extFieldMap.get("TaskId"));
+				modifiedExtMap.put("NextTaskId", extFieldMap.get("NextTaskId"));
+				modifiedExtMap.put("RecordType", extFieldMap.get("RecordType"));
+				modifiedExtMap.put("WorkflowId", extFieldMap.get("WorkflowId"));
+
+				befExtRender.setMapValues(modifiedExtMap);
+				befExtRender.setAuditMapValues(modifiedExtMap);
+			}
+		}
 		ExtendedFieldRender oldExRender = render.getBefImage();
 
 		if (tempRender == null && befExtRender == null) {
@@ -1168,7 +1260,7 @@ public class ExtendedFieldDetailsService {
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befExtRender == null || tempRender != null) {
+					if (befExtRender == null && tempRender == null) {
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}

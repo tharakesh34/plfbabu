@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -106,8 +107,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		 */
 
 		// Step POS Case , setting Step Details to Object
-		if (StringUtils.isNotEmpty(moduleDefiner)
-				&& StringUtils.equals(financeMain.getRecalType(), CalculationConstants.RPYCHG_STEPPOS)) {
+		if (StringUtils.isNotEmpty(moduleDefiner) && finScheduleData.getFinanceMain().isStepFinance()) {
 			finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO()
 					.getFinStepDetailListByFinRef(finScheduleData.getFinReference(), "", false));
 		}
@@ -466,6 +466,16 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				valueParm[0] = "Disbursement amount:" + actualDisbAmount;
 				valueParm[1] = "Remaining finAssetValue:" + finAssetValue.subtract(finCurAssetValue);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
+			}
+		}
+
+		//validate and allow only single instruction where instruction based schedule
+		if (financeMain.isInstBasedSchd() && finServiceInstruction.isQuickDisb()) {
+			if (CollectionUtils.isNotEmpty(financeDetail.getAdvancePaymentsList())
+					&& financeDetail.getAdvancePaymentsList().size() > 1) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Only one Instruction allowed";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
 			}
 		}
 

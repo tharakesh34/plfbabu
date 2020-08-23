@@ -103,6 +103,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceGraphReportData;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceScheduleReportData;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
@@ -342,25 +343,30 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 		}
 
-		if (!(this.financeMainDialogCtrl instanceof ReceiptDialogCtrl)
-				&& !(this.financeMainDialogCtrl instanceof LoanClosureEnquiryDialogCtrl)) {
-			this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass()
-					.getMethod("getFinFeeDetailListCtrl").invoke(financeMainDialogCtrl));
-		}
+		try {
 
-		if (financeMainDialogCtrl instanceof ConvFinanceMainDialogCtrl) {
-			setFinFeeDetailListCtrl(((ConvFinanceMainDialogCtrl) financeMainDialogCtrl).getFinFeeDetailListCtrl());
-		}
+			if (!(this.financeMainDialogCtrl instanceof ReceiptDialogCtrl)
+					&& !(this.financeMainDialogCtrl instanceof LoanClosureEnquiryDialogCtrl)) {
+				this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass()
+						.getMethod("getFinFeeDetailListCtrl").invoke(financeMainDialogCtrl));
+			}
 
-		if (financeMainDialogCtrl instanceof ReceiptDialogCtrl
-				|| financeMainDialogCtrl instanceof LoanClosureEnquiryDialogCtrl) {
-			//
-		} else {
-			logger.warn("Replace the below buy using instanceof " + financeMainDialogCtrl.getClass());
-			// FIXME MUR>> Replace me as above otherwise you don't know where i
-			// came.
-			this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass()
-					.getMethod("getFinFeeDetailListCtrl").invoke(financeMainDialogCtrl));
+			if (financeMainDialogCtrl instanceof ConvFinanceMainDialogCtrl) {
+				setFinFeeDetailListCtrl(((ConvFinanceMainDialogCtrl) financeMainDialogCtrl).getFinFeeDetailListCtrl());
+			}
+
+			if (financeMainDialogCtrl instanceof ReceiptDialogCtrl
+					|| financeMainDialogCtrl instanceof LoanClosureEnquiryDialogCtrl) {
+				//
+			} else {
+				logger.warn("Replace the below buy using instanceof " + financeMainDialogCtrl.getClass());
+				// FIXME MUR>> Replace me as above otherwise you don't know where i
+				// came.
+				this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass()
+						.getMethod("getFinFeeDetailListCtrl").invoke(financeMainDialogCtrl));
+			}
+		} catch (Exception e) {
+			this.setFinFeeDetailListCtrl(null);
 		}
 
 		boolean isEnquiry = false;
@@ -699,7 +705,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 			// Schedule Maintenance Buttons hiding for Other Event Operations
 			if (StringUtils.isNotBlank(moduleDefiner)) {
-				doOpenChildWindow();
+				if (this.finScheduleData.getFinanceMain().isAlwGrcAdj()
+						&& !this.finScheduleData.getFinServiceInstructions().isEmpty()) {
+					this.btnAddDisbursement.setVisible(false);
+				} else {
+					doOpenChildWindow();
+				}
 			}
 
 			if (getFinanceMainDialogCtrl() != null && !(this.financeMainDialogCtrl instanceof ReceiptDialogCtrl)
@@ -973,6 +984,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				boolean showAdvRate = false;
 				FinanceScheduleDetail curSchd = aFinSchData.getFinanceScheduleDetails().get(i);
 
+				FinanceScheduleDetail nxtSchdate = null;
+				if (i < sdSize - 1) {
+					nxtSchdate = aFinSchData.getFinanceScheduleDetails().get(i + 1);
+				}
+
 				if (i != 0 && !termsCountCompleted) {
 					if (curSchd.getSchDate().compareTo(grcEndDate) <= 0) {
 						if (curSchd.isPftOnSchDate()) {
@@ -1086,7 +1102,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				// Resetting Maturity Terms & Summary details rendering incase
 				// of Reduce maturity cases
 				if (!isOverdraft && curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
-						&& !financeMain.isSanBsdSchdle()) {
+						&& !financeMain.isSanBsdSchdle() && !(financeMain.isInstBasedSchd() && nxtSchdate != null
+								&& nxtSchdate.getClosingBalance().compareTo(BigDecimal.ZERO) != 0)) {
 					lastRecord = true;
 				}
 
@@ -1750,6 +1767,19 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			// this.btnAddTerms.setDisabled(!getUserWorkspace().isAllowed("button_"
 			// + dialogName + "_btnAddTerms"));
 			this.btnReCalcualte.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
+			// PSD Ticket 130142 (LMS: Add term history is not correctly
+			// reflected on approval screen)
+			FinanceProfitDetail financeProfitDetail = financeDetailService
+					.getFinProfitDetailsById(finScheduleData.getFinanceMain().getFinReference());
+
+			if (financeProfitDetail != null) {
+				if (finScheduleData.getFinanceMain().isAlwGrcAdj()) {
+					finScheduleData.getFinanceMain().setNOInst(
+							financeProfitDetail.getNOInst() - finScheduleData.getFinanceMain().getGraceTerms());
+				} else {
+					finScheduleData.getFinanceMain().setNOInst(financeProfitDetail.getNOInst());
+				}
+			}
 
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RMVTERM)) {
 			this.btnRmvTerms.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRmvTerms"));

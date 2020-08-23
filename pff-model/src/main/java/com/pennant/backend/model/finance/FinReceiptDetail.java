@@ -32,6 +32,12 @@ public class FinReceiptDetail implements Serializable {
 	@XmlElement
 	private String bankCode;
 	private String bankCodeDesc;
+	//Bankbranch ID for IMD
+	private long bankBranchID;
+	//IFSC for IMD API
+	@XmlElement(name = "ifsc")
+	private String iFSC;
+	private String branchDesc;
 	@XmlElement
 	private String favourName;
 	@XmlElement
@@ -113,6 +119,8 @@ public class FinReceiptDetail implements Serializable {
 		excludeFields.add("dueAmount");
 		excludeFields.add("payOrder");
 		excludeFields.add("payAdvMovement");
+		excludeFields.add("iFSC");
+		excludeFields.add("branchDesc");
 		return excludeFields;
 	}
 
@@ -442,5 +450,29 @@ public class FinReceiptDetail implements Serializable {
 
 	public void setPayAdvMovement(ManualAdviseMovements payAdvMovement) {
 		this.payAdvMovement = payAdvMovement;
+	}
+
+	public long getBankBranchID() {
+		return bankBranchID;
+	}
+
+	public void setBankBranchID(long bankBranchID) {
+		this.bankBranchID = bankBranchID;
+	}
+
+	public String getiFSC() {
+		return iFSC;
+	}
+
+	public void setiFSC(String iFSC) {
+		this.iFSC = iFSC;
+	}
+
+	public String getBranchDesc() {
+		return branchDesc;
+	}
+
+	public void setBranchDesc(String branchDesc) {
+		this.branchDesc = branchDesc;
 	}
 }

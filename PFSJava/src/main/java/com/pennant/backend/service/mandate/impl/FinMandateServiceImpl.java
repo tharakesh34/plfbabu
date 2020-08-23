@@ -117,7 +117,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	@Override
 	public Mandate getMnadateByID(long mandateID) {
 		Mandate mandate = mandateDAO.getMandateById(mandateID, "_View");
-		if (mandate != null) {
+		if (mandate != null && mandate.getDocumentRef() != null && mandate.getDocumentRef() > 0) {
 			byte[] data = getDocumentImage(mandate.getDocumentRef());
 			if (data != null) {
 				mandate.setDocImage(data);
@@ -141,7 +141,11 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 		boolean isMandateReq = checkRepayMethod(finmain);
 		if (isMandateReq) {
 			if (mandate != null) {
-				mandate.setCustID(finmain.getCustID());
+				//FIXME Setting the customer ID to mandate when custId is null or zero
+				//adding this condition to stop overring the co-applicant customer Id from loan queue 
+				if (mandate.getCustID() == 0 || mandate.getCustID() == Long.MIN_VALUE) {
+					mandate.setCustID(finmain.getCustID());
+				}
 				Mandate useExisting = checkExistingMandate(mandate.getMandateID());
 
 				if (useExisting != null) {
@@ -193,7 +197,11 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 		boolean isMandateReq = checkRepayMethod(finmain);
 		if (isMandateReq) {
 			if (mandate != null) {
-				mandate.setCustID(finmain.getCustID());
+				//FIXME Setting the customer ID to mandate when custId is null or zero
+				//adding this condition to stop overring the co-applicant customer Id from loan queue 
+				if (mandate.getCustID() == 0 || mandate.getCustID() == Long.MIN_VALUE) {
+					mandate.setCustID(finmain.getCustID());
+				}
 				Mandate useExisting = checkExistingMandate(mandate.getMandateID());
 				if (useExisting != null) {
 					// set mandate id to finance
@@ -612,11 +620,11 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 
 	private void getDocument(Mandate mandate) {
 		DocumentDetails dd = new DocumentDetails();
-		dd.setFinReference(mandate.getFinReference());
+		dd.setFinReference(mandate.getOrgReference());
 		dd.setDocName(mandate.getDocumentName());
 		dd.setCustId(mandate.getCustID());
 
-		if (mandate.getDocumentRef() != 0 && !mandate.isNewRecord()) {
+		if (mandate.getDocumentRef() != null && mandate.getDocumentRef() > 0 && !mandate.isNewRecord()) {
 			byte[] olddocumentManager = getDocumentImage(mandate.getDocumentRef());
 			if (olddocumentManager != null) {
 				byte[] arr1 = olddocumentManager;

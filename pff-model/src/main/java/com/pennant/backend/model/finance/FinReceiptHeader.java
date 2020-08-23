@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,8 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -131,7 +134,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private List<ReceiptAllocationDetail> allocations = new ArrayList<>(1);
 	private List<ReceiptAllocationDetail> allocationsSummary = new ArrayList<>(1);
 	private ManualAdvise manualAdvise; // Bounce Reason
-	private List<FinFeeDetail> paidFeeList; // Paid Fee Detail List for Fee Receipt
+	private List<FinFeeDetail> paidFeeList = new ArrayList<FinFeeDetail>(1); // Paid Fee Detail List for Fee Receipt
 	private List<FinODDetails> finODDetails = new ArrayList<>(1);
 	private List<ManualAdviseMovements> payablesMovements = new ArrayList<>(1);
 	private List<FinExcessMovement> finExcessMovements = new ArrayList<>(1);
@@ -169,9 +172,11 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String custBaseCcy;
 	private String favourNumber;
 	private Long reasonCode;
-
+	private List<DocumentDetails> documentDetails = new ArrayList<>(1);;
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private String prvReceiptPurpose;
 	private Long partnerBankId;
+	private String receiptSource;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -279,9 +284,11 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("bounceId");
 		excludeFields.add("custBaseCcy");
 		excludeFields.add("favourNumber");
-
+		excludeFields.add("documentDetails");
+		excludeFields.add("auditDetailMap");
 		excludeFields.add("prvReceiptPurpose");
 		excludeFields.add("partnerBankId");
+		excludeFields.add("receiptSource");
 
 		return excludeFields;
 	}
@@ -1425,6 +1432,22 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		this.reasonCode = reasonCode;
 	}
 
+	public List<DocumentDetails> getDocumentDetails() {
+		return documentDetails;
+	}
+
+	public void setDocumentDetails(List<DocumentDetails> documentDetails) {
+		this.documentDetails = documentDetails;
+	}
+
+	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
+
+	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
+	}
+
 	public String getPrvReceiptPurpose() {
 		return prvReceiptPurpose;
 	}
@@ -1455,6 +1478,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setKnockOffType(String knockOffType) {
 		this.knockOffType = knockOffType;
+	}
+
+	public String getReceiptSource() {
+		return receiptSource;
+	}
+
+	public void setReceiptSource(String receiptSource) {
+		this.receiptSource = receiptSource;
 	}
 
 }

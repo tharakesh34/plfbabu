@@ -90,8 +90,10 @@ public interface RuleService {
 	List<String> getAEAmountCodesList(String event);
 
 	Rule getRuleById(long ruleID, String type);
+	
+	Rule getApprovedRule(String ruleCode, String ruleModule, String ruleEvent);	
 
-	Rule getApprovedRule(String ruleCode, String ruleModule, String ruleEvent);
+	public Rule getActiveRuleByID(final String id, final String module, final String event,boolean active) ;
 
 	List<Rule> getGSTRuleDetails(String ruleModule, String type);
 

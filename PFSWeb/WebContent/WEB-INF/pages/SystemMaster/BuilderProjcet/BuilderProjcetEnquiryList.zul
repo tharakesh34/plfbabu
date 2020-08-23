@@ -5,7 +5,7 @@
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
-		<window id="window_BuilderProjcetList" apply="${builderProjcetListCtrl}" border="none" width="100%">
+		<window id="window_BuilderProjectList" apply="${BuilderProjectListCtrl}" border="none" width="100%">
 			<div sclass="z-toolbar" style="padding:0px">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 
@@ -13,29 +13,29 @@
 					<label value="" />
 					<!-- SEARCH AREA -->
 					<toolbar align="center" style="toolbar-center">
-						<button id="button_BuilderProjcetList_BuilderProjcetSearch" label="${c:l('label_Filter')}"
-							autodisable="button_BuilderProjcetList_BuilderProjcetSearch,print,button_BuilderProjcetList_NewBuilderProjcet,btnRefresh,help"
-							tooltiptext="${c:l('button_BuilderProjcetList_BuilderProjcetSearch.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="button_BuilderProjectList_BuilderProjectSearch" label="${c:l('label_Filter')}"
+							autodisable="button_BuilderProjectList_BuilderProjectSearch,print,button_BuilderProjectList_NewBuilderProject,btnRefresh,help"
+							tooltiptext="${c:l('button_BuilderProjectList_BuilderProjectSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="print" label="${c:l('label_Print')}"
-							autodisable="button_BuilderProjcetList_BuilderProjcetSearch,print,button_BuilderProjcetList_NewBuilderProjcet,btnRefresh,help"
-							tooltiptext="${c:l('button_BuilderProjcetList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
+							autodisable="button_BuilderProjectList_BuilderProjectSearch,print,button_BuilderProjectList_NewBuilderProject,btnRefresh,help"
+							tooltiptext="${c:l('button_BuilderProjectList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<button id="button_BuilderProjcetList_NewBuilderProjcet" label="${c:l('label_New')}"
-						autodisable="button_BuilderProjcetList_BuilderProjcetSearch,print,button_BuilderProjcetList_NewBuilderProjcet,btnRefresh,help"
-						tooltiptext="${c:l('button_BuilderProjcetList_NewBuilderProjcet.tooltiptext')}" sclass="z-toolbarbutton" />
+					<button id="button_BuilderProjectList_NewBuilderProject" label="${c:l('label_New')}"
+						autodisable="button_BuilderProjectList_BuilderProjectSearch,print,button_BuilderProjectList_NewBuilderProject,btnRefresh,help"
+						tooltiptext="${c:l('button_BuilderProjectList_NewBuilderProject.tooltiptext')}" sclass="z-toolbarbutton" />
 					<toolbar align="end" style="border-style: none;">
 						<button id="btnRefresh" label="${c:l('label_Refresh')}"
-							autodisable="button_BuilderProjcetList_BuilderProjcetSearch,print,button_BuilderProjcetList_NewBuilderProjcet,btnRefresh,help"
+							autodisable="button_BuilderProjectList_BuilderProjectSearch,print,button_BuilderProjectList_NewBuilderProject,btnRefresh,help"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="help" label="${c:l('label_Help')}"
-							autodisable="button_BuilderProjcetList_BuilderProjcetSearch,print,button_BuilderProjcetList_NewBuilderProjcet,btnRefresh,help"
+							autodisable="button_BuilderProjectList_BuilderProjectSearch,print,button_BuilderProjectList_NewBuilderProject,btnRefresh,help"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>
-			<borderlayout id="borderLayout_BuilderProjcetList">
+			<borderlayout id="borderLayout_BuilderProjectList">
 				<north border="none">
 					<textbox id="moduleType" value="ENQ" visible="false" />
 				</north>
@@ -52,34 +52,34 @@
 							</columns>
 							<rows>
 								<row>
-									<label id="label_BuilderProjcetList_id" value="${c:l('label_BuilderProjcetList_id.value')}" />
+									<label id="label_BuilderProjectList_id" value="${c:l('label_BuilderProjectList_id.value')}" />
 									<listbox id="sortOperator_id" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<longbox id="id" width="171px" maxlength="26" />
-									<label id="label_BuilderProjcetList_name" value="${c:l('label_BuilderProjcetList_name.value')}" />
+									<label id="label_BuilderProjectList_name" value="${c:l('label_BuilderProjectList_name.value')}" />
 									<listbox id="sortOperator_name" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="name" width="200px" maxlength="50" />
 								</row>
 								<row>
-									<label id="label_BuilderProjcetList_builderId" value="${c:l('label_BuilderProjcetList_builderId.value')}" />
+									<label id="label_BuilderProjectList_builderId" value="${c:l('label_BuilderProjectList_builderId.value')}" />
 									<listbox id="sortOperator_builderId" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="builderId" width="171px" maxlength="19" />
-									<label id="label_BuilderProjcetList_apfNo" value="${c:l('label_BuilderProjcetList_apfNo.value')}" />
+									<label id="label_BuilderProjectList_apfNo" value="${c:l('label_BuilderProjectList_apfNo.value')}" />
 									<listbox id="sortOperator_apfNo" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="apfNo" width="180px" maxlength="20" />
 								</row>
 
 								<row>
-									<label id="label_BuilderProjcetList_RecordStatus" value="${c:l('label_BuilderProjcetList_RecordStatus.value')}" />
+									<label id="label_BuilderProjectList_RecordStatus" value="${c:l('label_BuilderProjectList_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
-									<label id="label_BuilderProjcetList_RecordType" value="${c:l('label_BuilderProjcetList_RecordType.value')}" />
+									<label id="label_BuilderProjectList_RecordType" value="${c:l('label_BuilderProjectList_RecordType.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
 								</row>
 							</rows>
 						</grid>
 
-						<listbox id="listBoxBuilderProjcet" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
+						<listbox id="listBoxBuilderProject" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
 							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
 							<listhead sizable="true">
 								<listheader id="listheader_name" label="${c:l('listheader_name.label')}" sort="auto" hflex="min" />
@@ -93,7 +93,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingBuilderProjcetList" />
+					<paging id="pagingBuilderProjectList" />
 				</south>
 
 			</borderlayout>

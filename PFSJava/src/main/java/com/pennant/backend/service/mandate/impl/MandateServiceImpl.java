@@ -745,7 +745,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		dd.setFinReference(mandate.getFinReference());
 		dd.setDocName(mandate.getDocumentName());
 		dd.setCustId(mandate.getCustID());
-		if (mandate.getDocumentRef() != 0 && !mandate.isNewRecord()) {
+		if (mandate.getDocumentRef() != null && mandate.getDocumentRef() > 0 && !mandate.isNewRecord()) {
 			byte[] olddocumentManager = getDocumentImage(mandate.getDocumentRef());
 			if (olddocumentManager != null) {
 				byte[] arr1 = olddocumentManager;
@@ -904,7 +904,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	@Override
 	public void getDocumentImage(Mandate mandate) {
-		mandate.setDocImage(getDocumentImage(mandate.getDocumentRef()));
+		if (mandate.getDocumentRef() != null) {
+			mandate.setDocImage(getDocumentImage(mandate.getDocumentRef()));
+		}
 	}
 
 	@Override

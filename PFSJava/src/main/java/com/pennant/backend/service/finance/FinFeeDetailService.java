@@ -44,18 +44,22 @@
 package com.pennant.backend.service.finance;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
+import com.pennant.backend.model.finance.FinFeeConfig;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 
 public interface FinFeeDetailService {
@@ -122,6 +126,13 @@ public interface FinFeeDetailService {
 
 	List<FinFeeDetail> getFinFeeDetailsByReferenceId(long referenceId, String eventCodeRef, String type); //TO get the Servicing Fees
 
+	void updateFeesFromUpfront(FinFeeDetail finFeeDetail, String type);
+
 	Map<Long, List<FinFeeReceipt>> getUpfromtReceiptMap(List<FinFeeReceipt> finFeeReceipt);
+
+	BigDecimal calDropLineLPOS(FinScheduleData finScheduleData, Date appDate);
+
+	void convertGSTFinFeeConfig(FinFeeDetail finFeeDetail, FinFeeConfig finFeeConfig, FinanceDetail financeDetail,
+			Map<String, BigDecimal> taxPercentages);
 
 }

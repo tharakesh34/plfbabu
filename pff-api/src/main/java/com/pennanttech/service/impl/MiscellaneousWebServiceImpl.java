@@ -1,6 +1,8 @@
 package com.pennanttech.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -15,11 +17,19 @@ import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
+import com.pennant.backend.model.bre.BREResponse;
+import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.others.JVPosting;
+import com.pennant.backend.model.rmtmasters.ScoringGroup;
+import com.pennant.backend.model.rmtmasters.ScoringMetrics;
+import com.pennant.backend.model.rmtmasters.ScoringSlab;
+import com.pennant.backend.model.systemmasters.BRERequestDetail;
+import com.pennant.backend.model.systemmasters.EmployerDetail;
+import com.pennant.backend.service.finance.ScoringDetailService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -51,6 +61,7 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	private CovenantsService covenantsService;
 	private FinanceMainDAO financeMainDAO;
 	private CovenantTypeDAO covenantTypeDAO;
+	private ScoringDetailService scoringDetailService;
 
 	public MiscellaneousWebServiceImpl() {
 		super();
@@ -274,6 +285,16 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	}
 
 	@Override
+	public EligibilityDetailResponse checkEligibility(EligibilityDetail eligibilityDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		EligibilityDetailResponse eligibilityResponse = miscellaneousController.checkEligibility(eligibilityDetail);
+
+		logger.debug(Literal.LEAVING);
+		return eligibilityResponse;
+	}
+
+	@Override
 	public EligibilitySummaryResponse getCheckListRule(LoanTypeMiscRequest loanTypeMiscRequest)
 			throws ServiceException {
 		logger.debug(Literal.ENTERING);
@@ -318,6 +339,177 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 			}
 		}
 
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	@Override
+	public EmployerDetail getEmployerDetail(EmployerDetail employerDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		EmployerDetail response = new EmployerDetail();
+		WSReturnStatus returnStatus = new WSReturnStatus();
+
+		//validation
+		if (StringUtils.isBlank(employerDetail.getEmpName())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "empName";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			response.setReturnStatus(returnStatus);
+		}
+		if (StringUtils.isBlank(employerDetail.getEmpCategory())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "empCategory";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			response.setReturnStatus(returnStatus);
+		}
+		boolean exist = miscellaneousController.isNonTargetEmployee(employerDetail.getEmpName(),
+				employerDetail.getEmpCategory());
+
+		if (!exist) {
+			response = new EmployerDetail();
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		} else {
+			String[] valueParm = new String[2];
+			valueParm[0] = response.getEmpName();
+			valueParm[1] = response.getEmpCategory();
+			returnStatus.setReturnText("Failed.");
+			response.setElgRuleCode(response.getEmpCategory());
+			response.setReturnStatus(returnStatus);
+		}
+		logger.debug(Literal.LEAVING);
+
+		return response;
+	}
+
+	@Override
+	public BREResponse getScore(BRERequestDetail bRERequestDetail) throws ServiceException {
+		BigDecimal totalGrpMaxScore = BigDecimal.ZERO;
+		BigDecimal totalGrpExecScore = BigDecimal.ZERO;
+
+		BREResponse breResponse = getDatamap(bRERequestDetail);
+
+		String custType = (String) breResponse.getDataMap().get("custType");
+
+		if (StringUtils.isEmpty(custType)) {
+			custType = "R";
+		}
+
+		//Get the Scoring Matrics based on Rules and Retail Customer
+		List<ScoringMetrics> scoringMetricsList = scoringDetailService
+				.getScoreMatricsListByCustType(bRERequestDetail.getScoreRuleCode(), custType);
+
+		//Get the slab based on the scoreGroupId
+		List<ScoringSlab> scoringSlabList = scoringDetailService
+				.getScoringSlabsByScoreGrpId(scoringMetricsList.get(0).getScoreGroupId(), "_AView");
+
+		CustomerEligibilityCheck customerEligibilityCheck = new CustomerEligibilityCheck();
+
+		customerEligibilityCheck.setDataMap(breResponse.getDataMap());
+
+		//Execute the Matrics
+		scoringDetailService.executeScoringMetrics(scoringMetricsList, customerEligibilityCheck);
+
+		for (ScoringMetrics scoringMetric : scoringMetricsList) {
+
+			if (scoringMetric.getLovDescMetricMaxPoints() != null) {
+				totalGrpMaxScore = totalGrpMaxScore.add(scoringMetric.getLovDescMetricMaxPoints());
+			}
+			if (scoringMetric.getLovDescExecutedScore() != null) {
+				totalGrpExecScore = totalGrpExecScore.add(scoringMetric.getLovDescExecutedScore());
+			}
+
+		}
+		breResponse.setRiskScore(totalGrpExecScore);
+
+		try {
+			//Get the Scoring Group
+			String ruleVal = getScrSlab(scoringMetricsList.get(0).getScoreGroupId(), totalGrpExecScore, "", true,
+					scoringSlabList);
+			breResponse.setScoringGroup(ruleVal);
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return breResponse;
+	}
+
+	private String getScrSlab(long refId, BigDecimal grpTotalScore, String execCreditWorth, boolean isRetail,
+			List<ScoringSlab> scoringMetricsList) throws InterruptedException {
+		logger.debug("Entering");
+		List<ScoringSlab> slabList = scoringMetricsList;
+		String creditWorth = "None";
+		BigDecimal minScore = new BigDecimal(35);
+		List<Long> scoringValues = new ArrayList<>();
+
+		for (ScoringSlab scoringSlab : slabList) {
+			scoringValues.add(scoringSlab.getScoringSlab());
+		}
+
+		Collections.sort(scoringValues);
+
+		if (slabList != null && !slabList.isEmpty()) {
+
+			for (Long slab : scoringValues) {
+				if (isRetail) {
+					if (grpTotalScore.compareTo(minScore) >= 0 && grpTotalScore.compareTo(new BigDecimal(slab)) <= 0) {
+
+						for (ScoringSlab scoringSlab : slabList) {
+							if (slab.compareTo(scoringSlab.getScoringSlab()) == 0) {
+								creditWorth = scoringSlab.getCreditWorthness();
+							}
+						}
+						break;
+					}
+				}
+			}
+
+		} else if (StringUtils.isNotBlank(execCreditWorth)) {
+			creditWorth = execCreditWorth;
+		}
+
+		logger.debug("Leaving");
+		return creditWorth;
+	}
+
+	private BREResponse getDatamap(BRERequestDetail bRERequestDetail) {
+		logger.debug(Literal.ENTERING);
+		BREResponse response = null;
+		try {
+			response = miscellaneousController.getDatamap(bRERequestDetail);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			response = new BREResponse();
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	@Override
+	public BREResponse getProductOffers(BRERequestDetail bRERequestDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		ScoringGroup group = new ScoringGroup();
+		group.setScoreGroupCode(bRERequestDetail.getSegmentRule());
+
+		BREResponse breResponse = miscellaneousController.getProductOffer(bRERequestDetail);
+
+		logger.debug(Literal.LEAVING);
+
+		return breResponse;
+	}
+
+	@Override
+	public BREResponse calculateEligibility(BRERequestDetail checkEligibilty) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		BREResponse response = null;
+		try {
+			response = miscellaneousController.calculateEligibility(checkEligibilty);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			response = new BREResponse();
+		}
 		logger.debug(Literal.LEAVING);
 		return response;
 	}

@@ -152,7 +152,7 @@ public class SummaryDetailService {
 			BigDecimal overDueCharges = BigDecimal.ZERO;
 			BigDecimal latePayPftBal = BigDecimal.ZERO;
 			BigDecimal totPenaltyBal = BigDecimal.ZERO;
-			int odInst = 0;	
+			int odInst = 0;
 			List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 			if (finODDetailsList != null) {
 				for (FinODDetails odDetail : finODDetailsList) {

@@ -99,6 +99,7 @@ public class Branch extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private String pinCode;
 	private String pinAreaDesc;
+	private Long pinCodeId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -474,5 +475,13 @@ public class Branch extends AbstractWorkflowEntity {
 
 	public void setClusterName(String clusterName) {
 		this.clusterName = clusterName;
+	}
+
+	public Long getPinCodeId() {
+		return pinCodeId;
+	}
+
+	public void setPinCodeId(Long pinCodeId) {
+		this.pinCodeId = pinCodeId;
 	}
 }

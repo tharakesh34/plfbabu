@@ -101,6 +101,22 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		sql.append(" Where FinReference = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			if (!isWIF) {
+				sql.append(" , lovDescDisbExpType ");
+			}
+		}
+		if (isWIF) {
+			sql.append(" From WIFFinDisbursementDetails");
+		} else {
+			sql.append(" ,DisbStatus, DisbType, DisbClaim, DisbExpType, ContractorId, DisbRetPerc, DisbRetAmount, ");
+			sql.append(" AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate, ");
+			sql.append(
+					" ConsultFeeFrq, ConsultFeeStartDate, ConsultFeeEndDate,  instructionUID , QuickDisb,InstCalReq,LinkedDisbId");
+			sql.append(" From FinDisbursementDetails");
+		}
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference =:FinReference");
 
 		FinanceDisbursementRowMapper rowMapper = new FinanceDisbursementRowMapper(type, isWIF);
 
@@ -223,7 +239,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			insertSql.append(
 					" DisbStatus, DisbType, DisbClaim, DisbExpType, ContractorId, DisbRetPerc, DisbRetAmount, ");
 			insertSql.append(" AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate, ");
-			insertSql.append(" ConsultFeeFrq, ConsultFeeStartDate, ConsultFeeEndDate, instructionUID,");
+			insertSql.append(
+					" ConsultFeeFrq, ConsultFeeStartDate, ConsultFeeEndDate, instructionUID,InstCalReq,LinkedDisbId,");
 		}
 		insertSql.append(" DisbDisbursed, DisbIsActive, DisbRemarks, Version , LastMntBy, LastMntOn, RecordStatus,");
 		insertSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
@@ -233,7 +250,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			insertSql.append(
 					" :DisbStatus, :DisbType, :DisbClaim, :DisbExpType, :ContractorId, :DisbRetPerc, :DisbRetAmount, ");
 			insertSql.append(" :AutoDisb, :NetAdvDue, :NetRetDue, :DisbRetPaid, :RetPaidDate, ");
-			insertSql.append(" :ConsultFeeFrq, :ConsultFeeStartDate, :ConsultFeeEndDate, :instructionUID,");
+			insertSql.append(
+					" :ConsultFeeFrq, :ConsultFeeStartDate, :ConsultFeeEndDate, :instructionUID,:InstCalReq,:LinkedDisbId,");
 		}
 		insertSql.append(" :DisbDisbursed, :DisbIsActive, :DisbRemarks, :Version , :LastMntBy, ");
 		insertSql.append(" :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType,");
@@ -278,7 +296,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			insertSql.append(
 					" DisbStatus, QuickDisb, DisbType, DisbClaim, DisbExpType, ContractorId, DisbRetPerc, DisbRetAmount, ");
 			insertSql.append(" AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate, ");
-			insertSql.append(" ConsultFeeFrq, ConsultFeeStartDate, ConsultFeeEndDate,LinkedTranId, instructionUID, ");
+			insertSql.append(
+					" ConsultFeeFrq, ConsultFeeStartDate, ConsultFeeEndDate,LinkedTranId, instructionUID,InstCalReq,LinkedDisbId, ");
 			if (type.contains("Log")) {
 				insertSql.append(" LogKey , ");
 			}
@@ -292,7 +311,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 					" :DisbStatus, :QuickDisb ,:DisbType, :DisbClaim, :DisbExpType, :ContractorId, :DisbRetPerc, :DisbRetAmount, ");
 			insertSql.append(" :AutoDisb, :NetAdvDue, :NetRetDue, :DisbRetPaid, :RetPaidDate, ");
 			insertSql.append(
-					" :ConsultFeeFrq, :ConsultFeeStartDate, :ConsultFeeEndDate,:LinkedTranId, :instructionUID, ");
+					" :ConsultFeeFrq, :ConsultFeeStartDate, :ConsultFeeEndDate,:LinkedTranId, :instructionUID,:InstCalReq,:LinkedDisbId, ");
 			if (type.contains("Log")) {
 				insertSql.append(" :LogKey , ");
 			}
@@ -341,7 +360,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			updateSql.append(
 					" AutoDisb=:AutoDisb, NetAdvDue=:NetAdvDue, NetRetDue=:NetRetDue, DisbRetPaid=:DisbRetPaid, RetPaidDate=:RetPaidDate, ");
 			updateSql.append(
-					" ConsultFeeFrq=:ConsultFeeFrq, ConsultFeeStartDate=:ConsultFeeStartDate, ConsultFeeEndDate=:ConsultFeeEndDate,  instructionUID=:instructionUID, ");
+					" ConsultFeeFrq=:ConsultFeeFrq, ConsultFeeStartDate=:ConsultFeeStartDate, ConsultFeeEndDate=:ConsultFeeEndDate,  instructionUID=:instructionUID,InstCalReq=:InstCalReq,LinkedDisbId=:LinkedDisbId, ");
 		}
 		updateSql.append(" DisbReqDate = :DisbReqDate, DisbDisbursed = :DisbDisbursed, DisbIsActive = :DisbIsActive,");
 		updateSql.append(
@@ -455,7 +474,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		if (!isWIF) {
 			sql.append(", DisbStatus, DisbType, DisbClaim, DisbExpType, ContractorId, DisbRetPerc, DisbRetAmount");
 			sql.append(", AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate, ConsultFeeFrq");
-			sql.append(", ConsultFeeStartDate, ConsultFeeEndDate, instructionUID, QuickDisb");
+			sql.append(", ConsultFeeStartDate, ConsultFeeEndDate, instructionUID, QuickDisb,InstCalReq,LinkedDisbId ");
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				sql.append(", lovDescDisbExpType");
@@ -713,6 +732,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 				finDisb.setConsultFeeEndDate(rs.getTimestamp("ConsultFeeEndDate"));
 				finDisb.setInstructionUID(rs.getLong("instructionUID"));
 				finDisb.setQuickDisb(rs.getBoolean("QuickDisb"));
+				finDisb.setInstCalReq(rs.getBoolean("InstCalReq"));
+				finDisb.setLinkedDisbId(rs.getLong("LinkedDisbId"));
 
 				if (StringUtils.trimToEmpty(type).contains("View")) {
 					finDisb.setLovDescDisbExpType(rs.getString("lovDescDisbExpType"));

@@ -1477,11 +1477,11 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (getJointAccountDetailDialogCtrl() != null) {
 			if (getJointAccountDetailDialogCtrl().getGuarantorDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getGuarantorDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail, true);
 			}
 			if (getJointAccountDetailDialogCtrl().getJountAccountDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getJountAccountDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail, true);
 			}
 		} else {
 			aFinanceDetail.setJountAccountDetailList(null);
@@ -2771,11 +2771,11 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (getJointAccountDetailDialogCtrl() != null) {
 			if (getJointAccountDetailDialogCtrl().getGuarantorDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getGuarantorDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail, false);
 			}
 			if (getJointAccountDetailDialogCtrl().getJountAccountDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getJountAccountDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail, false);
 			}
 		} else {
 			aFinanceDetail.setJountAccountDetailList(null);

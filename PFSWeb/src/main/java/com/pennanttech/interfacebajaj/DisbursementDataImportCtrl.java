@@ -23,6 +23,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.FinAutoApprovalProcess;
+import com.pennant.app.core.InstBasedSchdProcess;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
@@ -71,6 +72,9 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	@Autowired(required = false)
 	private FinAutoApprovalProcess finAutoApprovalService;
+
+	@Autowired(required = false)
+	private InstBasedSchdProcess instBasedSchdProcess;
 
 	/**
 	 * default constructor.<br>
@@ -156,6 +160,8 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			}
 			if (allowPaymentType) {
 				DISBURSEMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution(fileConfig);
+				//FIXME overriding the DISB_IMPORT_STATUS by selected file configuration
+				DISB_IMPORT_STATUS = DISBURSEMENT_FILE_IMPORT_STATUS;
 				doFillPanel(config, DISBURSEMENT_FILE_IMPORT_STATUS);
 			}
 		} catch (Exception e) {
@@ -225,6 +231,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 			ProcessData t1 = null;
 			FinAutoApprove t2 = null;
+			FinInstBasedSchd t3 = null;
 
 			t1 = new ProcessData(userId, DISB_IMPORT_STATUS);
 
@@ -233,6 +240,10 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 			t2 = new FinAutoApprove(userId, DISB_IMPORT_STATUS.getId());
 			t2.start();
+			t2.join();
+
+			t3 = new FinInstBasedSchd(DISB_IMPORT_STATUS.getId());
+			t3.start();
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -370,6 +381,23 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			try {
 				finAutoApprovalService.checkForAutoApproval(getUserWorkspace().getLoggedInUser(), batchId);
 
+			} catch (Exception e) {
+				logger.error("Exception:", e);
+			}
+		}
+	}
+
+	public class FinInstBasedSchd extends Thread {
+		private long batchId;
+
+		public FinInstBasedSchd(long batchId) {
+			this.batchId = batchId;
+		}
+
+		@Override
+		public void run() {
+			try {
+				instBasedSchdProcess.rebuildSchdBasedOnInst(getUserWorkspace().getLoggedInUser(), batchId);
 			} catch (Exception e) {
 				logger.error("Exception:", e);
 			}

@@ -337,7 +337,7 @@ public class AccrualService extends ServiceHelper {
 			//-------------------------------------------------------------------------------------
 			//Cumulative Totals
 			//-------------------------------------------------------------------------------------
-			calCumulativeTotals(pftDetail, curSchd);
+			calCumulativeTotals(pftDetail, curSchd, finMain);
 
 			//-------------------------------------------------------------------------------------
 			//Till Date and Future Date Totals
@@ -347,7 +347,7 @@ public class AccrualService extends ServiceHelper {
 			if (DateUtil.compare(curSchdDate, valueDate) <= 0) {
 				calTillDateTotals(pftDetail, curSchd);
 			} else {
-				calNextDateTotals(pftDetail, curSchd);
+				calNextDateTotals(pftDetail, curSchd, finMain);
 
 				if (TDS_SCHD_INDEX < -1) {
 					if (curSchd.isTDSApplicable()) {
@@ -450,7 +450,8 @@ public class AccrualService extends ServiceHelper {
 
 	}
 
-	private static void calCumulativeTotals(FinanceProfitDetail pftDetail, FinanceScheduleDetail curSchd) {
+	private static void calCumulativeTotals(FinanceProfitDetail pftDetail, FinanceScheduleDetail curSchd,
+			FinanceMain financeMain) {
 		// profit
 		pftDetail.setTotalPftSchd(pftDetail.getTotalPftSchd().add(curSchd.getProfitSchd()));
 		pftDetail.setTotalPftCpz(pftDetail.getTotalPftCpz().add(curSchd.getCpzAmount()));
@@ -469,8 +470,9 @@ public class AccrualService extends ServiceHelper {
 			if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))
 					|| DateUtil.compare(curSchd.getSchDate(), pftDetail.getMaturityDate()) == 0) {
 				if (!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
-					//Installments, Paid and OD
-					pftDetail.setNOInst(pftDetail.getNOInst() + 1);
+					/*
+					 * //Installments, Paid and OD pftDetail.setNOInst(pftDetail.getNOInst() + 1);
+					 */
 
 					if (curSchd.isSchPftPaid() && curSchd.isSchPriPaid()) {
 						pftDetail.setNOPaidInst(pftDetail.getNOPaidInst() + 1);
@@ -571,8 +573,8 @@ public class AccrualService extends ServiceHelper {
 
 	}
 
-	private static void calNextDateTotals(FinanceProfitDetail pftDetail, FinanceScheduleDetail curSchd) {
-
+	private static void calNextDateTotals(FinanceProfitDetail pftDetail, FinanceScheduleDetail curSchd,
+			FinanceMain financeMain) {
 		// advance Profit and Principal
 		pftDetail.setTotalPftPaidInAdv(pftDetail.getTotalPftPaidInAdv().add(curSchd.getSchdPftPaid()));
 		pftDetail.setTotalPriPaidInAdv(pftDetail.getTotalPriPaidInAdv().add(curSchd.getSchdPriPaid()));
@@ -588,6 +590,12 @@ public class AccrualService extends ServiceHelper {
 					pftDetail.setNSchdPriDue(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 					pftDetail.setNSchdPftDue(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 				}
+
+				if (!(financeMain.isAlwGrcAdj()
+						&& DateUtil.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) <= 0)) {
+					pftDetail.setFutureInst(pftDetail.getFutureInst() + 1);
+				}
+
 				if (!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 					pftDetail.setFutureInst(pftDetail.getFutureInst() + 1);
 				}
@@ -637,6 +645,11 @@ public class AccrualService extends ServiceHelper {
 		//Calculated at individual level
 		//pftDetail.setPftAccrued(pftDetail.getPftAmz().subtract(pftDetail.getTotalPftPaid()));
 
+		//Provision Amortization
+		if (pftDetail.isProvision()) {
+			setProvisionData(pftDetail);
+		}
+
 		// Suspense Amortization
 		if (DateUtil.compare(dateSusp, pftDetail.getMaturityDate()) <= 0) {
 			pftDetail.setPftAmzSusp(
@@ -663,6 +676,28 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setTdsAccrued(pftDetail.getTdTdsBal().add(accrueTDS));
 		}
 
+	}
+
+	private void setProvisionData(FinanceProfitDetail pftDetail) {
+		if (pftDetail.getCurODDays() >= 0) {
+			BigDecimal pftAmz = pftDetail.getPftAmz();
+			BigDecimal pftAmzNormal = pftDetail.getPftAmzNormal();
+			BigDecimal pftAmzPD = pftDetail.getPftAmzPD();
+
+			/*
+			 * pftDetail.setPftAmzSusp(pftAmz.subtract(pftAmzNormal).subtract(pftAmzPD));
+			 * pftDetail.setPftAccrueSusp(pftDetail.getPftAccrued().subtract(pftDetail.getPftAccrueSusp()));
+			 */
+			pftDetail.setPftAmzSusp(pftAmz);
+			pftDetail.setPftAccrueSusp(pftDetail.getPftAccrued());
+
+			pftDetail.setPftAmz(BigDecimal.ZERO);
+			pftDetail.setPftAccrued(BigDecimal.ZERO);
+		} else {
+			pftDetail.setPftAmzSusp(BigDecimal.ZERO);
+			pftDetail.setPftAccrueSusp(BigDecimal.ZERO);
+		}
+		pftDetail.setPftInSusp(false);
 	}
 
 	/**

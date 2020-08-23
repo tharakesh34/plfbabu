@@ -91,6 +91,9 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		} else if (verificationType == VerificationType.PD.getKey()) {
 			parameterSource.addValue("dealerType", Agencies.PDAGENCY.getKey());
 			parameterSource.addValue("reasontypecode", WaiverReasons.PDWRES.getKey());
+		} else if (verificationType == VerificationType.VETTING.getKey()) {
+			parameterSource.addValue("dealerType", Agencies.LVAGENCY.getKey());
+			parameterSource.addValue("reasontypecode", WaiverReasons.LVWRES.getKey());
 		}
 
 		parameterSource.addValue("keyReference", keyReference);
@@ -285,7 +288,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		StringBuilder sql = new StringBuilder("select");
 		sql.append(" v.id, verificationType, module, keyReference, referenceType, reference, ");
-		sql.append(" referenceFor,");
+		sql.append(" referenceFor, v.verificationCategory,");
 		sql.append(
 				" requesttype, reinitid, agency, a.dealerName agencyName,a.dealerCity agencyCity, reason, remarks, ");
 		sql.append(" createdBy, createdOn, status, agencyRemarks, agencyReason, decision, ");
@@ -584,7 +587,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			int verificationType, Integer tvStatus) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("select Verificationcategory,Agency,ReferenceFor from verifications");
+		StringBuilder sql = new StringBuilder(
+				"select Verificationcategory,Agency,ReferenceFor, Id, Reinitid from verifications");
 		sql.append(
 				" where verificationType = :verificationType and keyReference = :keyReference and referencefor = :collateralReference and verificationdate is not null");
 		sql.append(" and status = :status");
@@ -620,6 +624,24 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public List<String> getAprrovedLVVerifications(int decision, int verificationType) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("select keyReference from verifications");
+		sql.append(" where decision = :decision and verificationType = :verificationType");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("decision", decision);
+		paramMap.addValue("verificationType", verificationType);
+		try {
+			return jdbcTemplate.queryForList(sql.toString(), paramMap, String.class);
 		} catch (Exception e) {
 			logger.error(e);
 		}

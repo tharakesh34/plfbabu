@@ -44,10 +44,12 @@ package com.pennant.webui.finance.financemain;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
@@ -165,6 +167,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Listbox sortOperator_InitiateDate; // autoWired
 	protected Textbox branchCode; // autoWired
 	protected Listbox sortOperator_Branch; // autowired
+	protected Listbox sortOperator_applicationNo; // autowired
+	protected Textbox applicationNo; // autowired
+	protected Listbox sortOperator_offerId; // autowired
+	protected Textbox offerId; // autowired
 	protected Listbox sortOperator_passPort;
 
 	// List headers
@@ -182,6 +188,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Listheader listheader_Priority;
 	protected Listheader listheader_RecordStatus; // autoWired
 	protected Listheader listheader_RecordType; // autoWired
+	protected Listheader listheader_ApplicationNo; // autoWired
+	protected Listheader listheader_OfferId; // autoWired
 
 	// checkRights
 	protected Button btnHelp; // autoWired
@@ -257,7 +265,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.sortOperator_finType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_custID
-				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleAlphaNumOperators()));
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_custName
@@ -271,6 +279,20 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.sortOperator_eidNumber
 				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleStringOperators()));
 		this.sortOperator_eidNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_applicationNo
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleAlphaNumOperators()));
+		this.sortOperator_applicationNo.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_offerId
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleAlphaNumOperators()));
+		this.sortOperator_offerId.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		/*
+		 * this.sortOperator_passPort.setModel(new ListModelList<SearchOperators>(new SearchOperators()
+		 * .getStringOperators())); this.sortOperator_passPort.setItemRenderer(new
+		 * SearchOperatorListModelItemRenderer());
+		 */
 
 		if (this.sortOperator_passPort != null) {
 			this.sortOperator_passPort
@@ -369,6 +391,12 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.listheader_InitiateDate.setSortAscending(new FieldComparator("InitiateDate", true));
 		this.listheader_InitiateDate.setSortDescending(new FieldComparator("InitiateDate", false));
 
+		this.listheader_ApplicationNo.setSortAscending(new FieldComparator("ApplicationNo", true));
+		this.listheader_ApplicationNo.setSortDescending(new FieldComparator("ApplicationNo", false));
+
+		this.listheader_OfferId.setSortAscending(new FieldComparator("OfferId", true));
+		this.listheader_OfferId.setSortDescending(new FieldComparator("OfferId", false));
+
 		this.listheader_RequestStage.setSortAscending(new FieldComparator("LovDescRequestStage", true));
 		this.listheader_RequestStage.setSortDescending(new FieldComparator("LovDescRequestStage", false));
 
@@ -385,6 +413,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// ++ create the searchObject and initial sorting ++//
 		this.searchObj = new JdbcSearchObject<FinanceMain>(FinanceMain.class, getListRows());
 		this.searchObj.addSort("FinReference", false);
+		this.searchObj.addSort("PrevMntOn", true);
 
 		// Field Declarations for Fetching List Data
 		this.searchObj.addField("FinReference");
@@ -415,6 +444,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addField("FinCurrAssetValue");
 		this.searchObj.addField("AdvEMITerms");
 		this.searchObj.addField("Version");
+		this.searchObj.addField("OfferId");
+		this.searchObj.addField("ApplicationNo");
 
 		// FIXME: DELETE BELOW CODE AFTER TESTING
 		/*
@@ -495,6 +526,12 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			screenEvent = FinanceConstants.FINSER_EVENT_ORG;
 		}
 
+		boolean custInMaintain = checkCustomerStatus(aFinanceMain.getCustCIF());
+		if (custInMaintain) {
+			MessageUtil.showMessage("Customer is Maintainance");
+			return;
+		}
+
 		doLoadWorkFlow(aFinanceMain.isWorkflow(), aFinanceMain.getWorkflowId(), aFinanceMain.getNextTaskId());
 		final FinanceDetail financeDetail = getFinanceDetailService().getOriginationFinance(aFinanceMain.getId(),
 				aFinanceMain.getNextRoleCode(), screenEvent, getRole());
@@ -514,20 +551,25 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		// Check whether the record was locked by any other user.
 		String userId = financeDetail.getFinScheduleData().getFinanceMain().getNextUserId();
+		if (StringUtils.isNotBlank(userId)) {
+			//Due to parallel workflow getting multiple userId's
+			String[] userIds = StringUtils.split(userId, PennantConstants.DELIMITER_COMMA);
+			List<String> list = (userIds != null) ? Arrays.asList(userIds) : null;
+			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK"))
+					&& CollectionUtils.isNotEmpty(list)
+					&& !(list.contains(Long.toString(getUserWorkspace().getUserId())))) {
+				SecurityUser user = PennantAppUtil.getUser(Long.valueOf(list.get(0)));
+				String userName = "";
 
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK"))
-				&& StringUtils.isNotEmpty(userId)
-				&& !StringUtils.equals(userId, Long.toString(getUserWorkspace().getUserId()))) {
-			SecurityUser user = PennantAppUtil.getUser(Long.valueOf(userId));
-			String userName = "";
+				if (user != null) {
+					userName = user.getUsrLogin();
+				}
 
-			if (user != null) {
-				userName = user.getUsrLogin();
+				MessageUtil.showMessage(Labels.getLabel("label_Finance_Record_Locked", new String[] { userName }));
+				return;
 			}
-
-			MessageUtil.showMessage(Labels.getLabel("label_Finance_Record_Locked", new String[] { userName }));
-			return;
 		}
+
 		// Check swap customer or not
 		boolean finReferenceProcess = getFinChangeCustomerService()
 				.isFinReferenceProcess(aFinanceMain.getFinReference());
@@ -591,6 +633,28 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		logger.debug("Leaving " + event.toString());
+	}
+
+	/**
+	 * Method for checking if customer is in maintainance
+	 * 
+	 * @param financeDetail
+	 * @return
+	 */
+	private boolean checkCustomerStatus(String custCif) {
+
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<Customer> searchObject = new JdbcSearchObject<Customer>(Customer.class);
+		searchObject.addTabelName("customers_temp");
+		searchObject.addFilterEqual("custCif", custCif);
+
+		List<Customer> rightList = pagedListService.getBySearchObject(searchObject);
+		if (rightList != null && !rightList.isEmpty()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -869,7 +933,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				zulPath.append("MusawamaFinanceMainDialog.zul");
 				break;
 			case FinanceConstants.PRODUCT_CONVENTIONAL:
-				zulPath.append("ConvFinanceMainDialog.zul");
+				String pageName = PennantAppUtil.getFinancePageName(false);
+				zulPath.append(pageName);
 				break;
 			case FinanceConstants.PRODUCT_CD:
 				zulPath.append("CDFinanceMainDialog.zul");
@@ -929,6 +994,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.finReference.setValue("");
 		this.sortOperator_finType.setSelectedIndex(0);
 		this.finType.setValue("");
+		this.sortOperator_applicationNo.setSelectedIndex(0);
+		this.applicationNo.setValue("");
+		this.sortOperator_offerId.setSelectedIndex(0);
+		this.offerId.setValue("");
 		this.branchCode.setValue("");
 		this.sortOperator_custName.setSelectedIndex(0);
 		this.fincustName.setValue("");
@@ -999,11 +1068,12 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		// FIXME: Below fields are not part of ZUL or visible FALSE
+
+		this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL));
 		/*
-		 * this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL)); this.searchObj.addFilter(new
-		 * Filter("DeviationApproval", 0, Filter.OP_EQUAL)); this.searchObj.addFilter(new Filter("RecordType",
-		 * PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL)); this.searchObj.addFilter(new Filter("RcdMaintainSts",
-		 * "", Filter.OP_EQUAL));
+		 * this.searchObj.addFilter(new Filter("DeviationApproval", 0, Filter.OP_EQUAL)); this.searchObj.addFilter(new
+		 * Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL)); this.searchObj.addFilter(new
+		 * Filter("RcdMaintainSts", "", Filter.OP_EQUAL));
 		 */
 
 		this.searchObj.addFilter(new Filter("DeviationApproval", 0, Filter.OP_EQUAL));
@@ -1059,6 +1129,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		this.searchObj.addSortDesc("Priority");
+		this.searchObj.addSortDesc("LastMntOn");
 
 		// CustId
 		if (StringUtils.isNotBlank(this.custCIF.getValue())) {
@@ -1165,6 +1236,16 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (StringUtils.isNotBlank(this.finMobileNumber.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_mobileNumber.getSelectedItem(),
 					this.finMobileNumber.getValue().trim(), "PhoneNumber");
+		}
+		// APPlicationNumber
+		if (StringUtils.isNotBlank(this.applicationNo.getValue())) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_applicationNo.getSelectedItem(),
+					this.applicationNo.getValue().trim(), "ApplicationNo");
+		}
+		// OfferId
+		if (StringUtils.isNotBlank(this.offerId.getValue())) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_offerId.getSelectedItem(),
+					this.offerId.getValue().trim(), "offerId");
 		}
 
 		// InitiateDate
@@ -1369,6 +1450,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * Method for Fetching Current Selected Tab in Screen
 	 */
+	@Override
 	public String getCurrentTab() {
 		final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
 		final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")

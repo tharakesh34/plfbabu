@@ -192,14 +192,14 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		// Button for Not Duplicate
 		final Button btnProceed = new Button();
 		btnProceed.setSclass("z-toolbarbutton");
-		btnProceed.setLabel("Not Duplicate");
+		btnProceed.setLabel(Labels.getLabel("button_NotDuplicate_label"));
 		btnProceed.addEventListener("onClick", new OnProceedListener());
 		btnProceed.setParent(startToolbar);
 
 		// Button for Duplicate Found
 		final Button btnCancel = new Button();
 		btnCancel.setSclass("z-toolbarbutton");
-		btnCancel.setLabel("Duplicate Record");
+		btnCancel.setLabel(Labels.getLabel("button_DuplicateRecord_label"));
 		btnCancel.addEventListener("onClick", new OnCancelListener());
 		btnCancel.setParent(startToolbar);
 
@@ -248,7 +248,8 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 				DateUtility.formatToLongDate(custDedup.getCustDOB())));
 		if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 			rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_CustomerDedupDialog_CustShrtName.value"),
-					custDedup.getCustShrtName() == "" ? custDedup.getCustFName() : custDedup.getCustShrtName(),
+					StringUtils.isNotEmpty(custDedup.getCustShrtName()) ? custDedup.getCustFName()
+							: custDedup.getCustShrtName(),
 					Labels.getLabel("label_CustomerDedupDialog_EID.value"), custDedup.getCustCRCPR()));
 			rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_CustomerDedupDialog_MobileNum.value"),
 					custDedup.getMobileNumber(), Labels.getLabel("label_CustomerDedupDialog_appScore.value"),

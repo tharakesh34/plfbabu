@@ -44,9 +44,13 @@ package com.pennant.webui.finance.financemain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -55,6 +59,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -89,10 +94,15 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.bmtmasters.BankBranch;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.PagedListService;
@@ -114,6 +124,7 @@ import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsDialogCtrl;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
+import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.finance.payorderissue.PayOrderIssueDialogCtrl;
 import com.pennant.webui.finance.payorderissue.PayOrderIssueListCtrl;
@@ -226,6 +237,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private boolean newCustomer = false;
 	private int ccyFormatter = 0;
 	private long custID;
+	private String custCIF = "";
 	private String finCcy;
 
 	private String moduleType = "";
@@ -254,6 +266,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private transient PennyDropService pennyDropService;
 	private PennyDropDAO pennyDropDAO;
 	private BankAccountValidation bankAccountValidations;
+	private String moduleDefiner = null;
 
 	/**
 	 * default constructor.<br>
@@ -323,6 +336,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 			if (arguments.containsKey("moduleType")) {
 				this.moduleType = (String) arguments.get("moduleType");
+			}
+
+			//moduleDefiner
+			if (arguments.containsKey("moduleDefiner")) {
+				this.moduleDefiner = (String) arguments.get("moduleDefiner");
 			}
 
 			if (arguments.containsKey("approvedDisbursments")) {
@@ -1284,6 +1302,16 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 										new String[] {
 												Labels.getLabel("label_FinAdvancePaymentsDialog_AmtToBeReleased.value"),
 												Labels.getLabel("label_FinAdvancePaymentsDialog_DisbAmount.value") }));
+					} else {
+
+						if (financeMain.isInstBasedSchd()
+								&& StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)
+								&& insAmt.compareTo(disAmt) != 0) {
+							throw new WrongValueException(this.amtToBeReleased,
+									Labels.getLabel("NUMBER_EQ", new String[] {
+											Labels.getLabel("label_FinAdvancePaymentsDialog_AmtToBeReleased.value"),
+											Labels.getLabel("label_FinAdvancePaymentsDialog_DisbAmount.value") }));
+						}
 					}
 
 				}
@@ -1667,9 +1695,14 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 								getPayOrderIssueDialogCtrl()
 										.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails, null);
 							} else {
-								getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(
-										this.finAdvancePaymentsDetails,
-										getPayOrderIssueDialogCtrl().payOrderIssueHeader.getvASRecordings());
+								if (this.moduleType.equals("POISSUE")) {
+									getPayOrderIssueDialogCtrl()
+											.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails, null);
+								} else {
+									getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(
+											this.finAdvancePaymentsDetails,
+											getPayOrderIssueDialogCtrl().payOrderIssueHeader.getvASRecordings());
+								}
 							}
 
 						}
@@ -1804,8 +1837,14 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
 									null);
 						} else {
-							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
-									getPayOrderIssueDialogCtrl().payOrderIssueHeader.getvASRecordings());
+							if (this.moduleType.equals("POISSUE")) {
+								getPayOrderIssueDialogCtrl()
+										.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails, null);
+							} else {
+								getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(
+										this.finAdvancePaymentsDetails,
+										getPayOrderIssueDialogCtrl().payOrderIssueHeader.getvASRecordings());
+							}
 						}
 					}
 					closeDialog();
@@ -2123,10 +2162,36 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	public void onClick$btnGetCustBeneficiary(Event event) {
 		logger.debug("Entering");
-		Filter filter[] = new Filter[1];
-		filter[0] = new Filter("CustId", custID, Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinAdvancePaymentsDialog, "BeneficiaryEnquiry",
-				filter, "");
+		Filter filter[] = new Filter[2];
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.IS_COAPPLICANTS_ALLOWED_FOR_DISBURSEMENT)) {
+			filter[0] = new Filter("CustId", custID, Filter.OP_EQUAL);
+			Object dataObject = ExtendedSearchListBox.show(this.window_FinAdvancePaymentsDialog, "BeneficiaryEnquiry",
+					filter, "");
+			doFillBeneficiaryDetails(dataObject);
+		} else {
+			Map<String, Object> aruments = new HashMap<>();
+
+			//getting the customer cif's of applicant and coapp's for Customer CIF filter in Beneficiary Select
+			aruments.put("custCIFs", getCustomerCIFs());
+
+			//passing primary cif to display in search window
+			aruments.put("custCIF", custCIF);
+
+			//preparing filters to render only primary beneficiary while loading 
+			filter[0] = new Filter("CustCIF", custCIF, Filter.OP_EQUAL);
+			aruments.put("filtersList", Arrays.asList(filter));
+
+			aruments.put("DialogCtrl", this);
+			Executions.createComponents("/WEB-INF/pages/Beneficiary/BeneficiarySelect.zul", null, aruments);
+		}
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * This method will fill the beneficiary details
+	 */
+	public void doFillBeneficiaryDetails(Object dataObject) {
 		if (dataObject instanceof Beneficiary) {
 			Beneficiary details = (Beneficiary) dataObject;
 			if (details != null) {
@@ -2285,7 +2350,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			return;
 		} else {
 			try {
-				boolean status = bankAccountValidationService.validateBankAccount(bankAccountValidations);
+				boolean status = false;
+				if (bankAccountValidationService != null) {
+					status = bankAccountValidationService.validateBankAccount(bankAccountValidations);
+				}
 				if (status) {
 					this.pennyDropResult.setValue("Sucess");
 				} else {
@@ -2431,4 +2499,73 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.bankAccountValidationService = bankAccountValidationService;
 	}
 
+	/**
+	 * This method will return the list of customer cif's
+	 * 
+	 * @return List<String>
+	 */
+	private List<String> getCustomerCIFs() {
+		ArrayList<String> custCIFs = new ArrayList<>(2);
+		CustomerDetails customerDetails = null;
+
+		//Inside loan queue
+		if (getFinanceMainDialogCtrl() != null) {
+			//Get Primary Customer CIF
+			FinanceMainBaseCtrl financeMainDialogCtrl = (FinanceMainBaseCtrl) getFinanceMainDialogCtrl();
+			CustomerDialogCtrl customerDialogCtrl = financeMainDialogCtrl.getCustomerDialogCtrl();
+
+			if (customerDialogCtrl != null) {
+				customerDetails = customerDialogCtrl.getCustomerDetails();
+			}
+
+			//From Add Disbursement menu
+			FinanceDetail financeDetail = financeMainDialogCtrl.getFinanceDetail();
+			//From Add Disbursement menu
+			if (financeDetail != null) {
+				customerDetails = financeDetail.getCustomerDetails();
+			}
+
+			//Setting the Primary Customer CIF
+			if (customerDetails != null) {
+				custCIF = customerDetails.getCustomer().getCustCIF();
+			}
+
+			//Co-applicant details from Add disbursement menu where co Applicants tab not available
+			List<JointAccountDetail> jountAccountDetailList = financeDetail.getJountAccountDetailList();
+			getCoAppList(custCIFs, jountAccountDetailList);
+
+			//Get Co-applicant CIF's in side the loan queue from Co Applicants tab
+			JointAccountDetailDialogCtrl financeJointAccountDetailDialogCtrl = financeMainDialogCtrl
+					.getJointAccountDetailDialogCtrl();
+			if (financeJointAccountDetailDialogCtrl != null) {
+				List<Customer> jointAccountCustomers = financeJointAccountDetailDialogCtrl.getJointAccountCustomers();
+				for (Customer customer : jointAccountCustomers) {
+					custCIFs.add(customer.getCustCIF());
+				}
+			}
+		} else if (payOrderIssueDialogCtrl != null) {//From Disbursement Instructions menu in loan management
+			PayOrderIssueHeader payOrderIssueHeader = payOrderIssueDialogCtrl.getPayOrderIssueHeader();
+			if (payOrderIssueHeader != null) {
+				//Primary CIF
+				custCIF = payOrderIssueHeader.getCustCIF();
+				getCoAppList(custCIFs, payOrderIssueHeader.getJointAccountDetails());
+			}
+		}
+		//Primary CIF
+		custCIFs.add(custCIF);
+		return custCIFs;
+	}
+
+	/**
+	 * 
+	 * @param custCIFs
+	 * @param jountAccountDetailList
+	 */
+	private void getCoAppList(ArrayList<String> custCIFs, List<JointAccountDetail> jountAccountDetailList) {
+		if (!CollectionUtils.isEmpty(jountAccountDetailList)) {
+			for (JointAccountDetail accountDetail : jountAccountDetailList) {
+				custCIFs.add(accountDetail.getCustCIF());
+			}
+		}
+	}
 }

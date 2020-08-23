@@ -28,13 +28,359 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#291" author="shahbaj.b">
+	<changeSet id="DE#419" author="vijaya.a">
+		<modifyDataType tableName="Collection_CustomerDetails" columnName="CustShrtName" newDataType="varchar(200)" />
+	</changeSet>
+
+	<!-- <changeSet id="DE#429" author="Gopal.p" dbms="postgresql,mssql">
+		<createSequence sequenceName="SeqFinExpenseMovements" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+
+	<changeSet author="murthy.y" id="DE#485.1">
+		<createTable tableName="App_SessionValidation">
+			<column name="EntityCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AgentID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="UserToken" type="varchar(10)" />
+			<column name="UserTokenExpiry" type="datetime" />
+			<column name="RegistrationId" type="varchar(300)" />
+			<column name="Flag" type="char(1)" defaultValue="0" />
+		</createTable>
+	</changeSet>
+
+	<changeSet author="murthy.y" id="DE#485.2">
+		<addPrimaryKey columnNames="EntityCode, AgentID" tableName="App_SessionValidation" />
+	</changeSet> -->
+
+	<changeSet id="DE#414" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
-				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='MANDATE_REGISTRATION_STATUS';
-				INSERT INTO SMTPARAMETERS VALUES('MANDATE_REGISTRATION_STATUS','Mandate Rgistration Status required or not','String',1,'N',30,0,null,null,'Mandate Rgistration Status required or no',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+				UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
+				UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_Temp)t);
+				
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='FIN_FEEWAIVER_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeWaiverHeaderDialog_valueDate');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='FIN_FEEWAIVER_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeWaiverHeaderDialog_remarks');
+								
+				DELETE FROM SecRights where RightName='FeeWaiverHeaderDialog_valueDate';
+				DELETE FROM SecRights where RightName='FeeWaiverHeaderDialog_remarks';
+								
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'FeeWaiverHeaderDialog_valueDate','FeeWaiverHeaderDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'FeeWaiverHeaderDialog_remarks','FeeWaiverHeaderDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_FEEWAIVER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeWaiverHeaderDialog_valueDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_FEEWAIVER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeWaiverHeaderDialog_remarks'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+								
+				UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
+				UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_Temp)t);
 			]]>
 		</sql>
 	</changeSet>
 
+	<!-- <changeSet id="DE#510" author="swamy.p">
+		<sql>
+			<![CDATA[
+			    UPDATE CIBIL_STATES_MAPPING SET Code ='08' where Segment_Type='CORP' and CPProvince ='DN';
+				UPDATE CIBIL_STATES_MAPPING SET Code ='28' where Segment_Type='RETAIL' and CPProvince ='AP';		
+				UPDATE CIBIL_STATES_MAPPING SET Code ='35' where Segment_Type='RETAIL' and CPProvince ='AN';
+				
+				DELETE FROM CIBIL_STATES_MAPPING where Segment_Type='RETAIL' and CPProvince ='TL';
+				INSERT INTO CIBIL_STATES_MAPPING Values ('36', 'RETAIL', 'IN', 'TL',  'Telangana',	50, 56,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+			]]>
+		</sql>
+	</changeSet> -->
+
+	<!-- <changeSet author="keerthi.p" id="ST#482 .1">
+		<createTable tableName="PUSH_PULL_CONTROL">
+			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="Name" type="varchar(100)" />
+			<column name="Type" type="char(4)" />
+			<column name="Status" type="char(1)" />
+			<column name="LastRunDate" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet author="keerthi.p" id="ST#482 .2">
+		<addUniqueConstraint columnNames="Name,Type" constraintName="UK_PUSH_PULL_CONTROL_NT" tableName="PUSH_PULL_CONTROL" />
+	</changeSet> -->
+	<changeSet id="DE#594" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				Delete from ErrorDetails WHERE code='FC0001';
+				INSERT INTO ErrorDetails VALUES('FC0001','EN','W','Insufficient funds to process Early Settlement. Please click Override to park amount into Excess.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#616_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'int_mandate_request_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#616" author="vijaya.a">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT M.MANDATEID,
+						M.DOCUMENTNAME,
+						BD.BANKSHORTCODE
+						BANKCODE,
+						BD.BANKNAME,
+						case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+						case when
+						LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
+						CUST.CUSTCIF,
+						CUST.CUSTSHRTNAME,
+						CUST.CustCoreBank,
+						FT.FINTYPEDESC FINTYPE ,
+						FIN.FINREFERENCE ,
+						COALESCE((SELECT SUM(TotalAmount) from (Select
+						MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount
+						FROM FINSCHEDULEDETAILS FSD
+						INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE
+						=FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID
+						GROUP BY FM.FINREFERENCE)T)/CCYMINORCCYUNITS, 0) CUST_EMI,
+						COALESCE((SELECT
+						SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount FROM FINSCHEDULEDETAILS FSD WHERE
+						(REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID =
+						M.MANDATEID) GROUP BY FINREFERENCE)T)/CCYMINORCCYUNITS, 0) EMI,
+						CASE M.OPENMANDATE WHEN 1 THEN 'New Open ECS' ELSE 'No
+						Open ECS' END OPENMANDATE,
+						M.ACCNUMBER,
+						CASE WHEN M.ACCTYPE = '10' then 'Savings Account' WHEN M.ACCTYPE = '11' then
+						'Current Account' WHEN M.ACCTYPE = '11' then
+						'Cash Credit Account' ELSE M.ACCTYPE END ACCTYPE,
+						M.ACCHOLDERNAME,
+						BB.MICR,
+						BB.IFSC,
+						BB.ADDOFBRANCH,
+						(select MIN(FIRSTREPAYDATE) from FINPFTDETAILS where FINREFERENCE IN (SELECT
+						FINREFERENCE FROM FINANCEMAIN WHERE
+						MANDATEID=M.MANDATEID)) FIRSTDUEDATE,
+						(select MAX(SCHDATE) from FINSCHEDULEDETAILS
+						where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT
+						FINREFERENCE FROM FINANCEMAIN WHERE
+						MANDATEID=M.MANDATEID)) EMIENDDATE,
+						M.MAXLIMIT MAXLIMIT,
+						COALESCE((SELECT SUM(MANDATEDEBITAMOUNT) from (Select MAX(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE
+						(REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE
+						MANDATEID=M.MANDATEID) GROUP BY FINREFERENCE)T), 0)/CCYMINORCCYUNITS DEBITAMOUNT,
+						FIN.NumberOfTerms,
+						M.periodicity,
+						M.STARTDATE,
+						M.EXPIRYDATE,
+						FIN.APPLICATIONNO,
+						M.MANDATETYPE,
+						M.STATUS,
+						M.INPUTDATE,
+						M.RECORDSTATUS,
+						M.RECORDTYPE,
+						M.MANDATECCY,
+						COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS,
+						M.EntityCode,
+						CP.PHONENUMBER,
+						CE.CUSTEMAIL,
+						PB.PARTNERBANKNAME,
+						M.LASTMNTON,
+						BB.BranchDesc BANK_BRANCH_NAME
+						FROM MANDATES M
+					INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+					INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE
+					INNER JOIN CUSTOMERS CUST ON CUST.CUSTID = M.CUSTID
+					INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH
+					LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
+					LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CUST.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+					LEFT JOIN CUSTOMERPHONENUMBERS CP ON CP.PHONECUSTID = CUST.CUSTID AND CP.PHONETYPEPRIORITY = 5
+					LEFT OUTER JOIN	RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+					LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE = FIN.FINREFERENCE
+					LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH
+					LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE = FT.FINTYPE
+					WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="DE#616_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'int_mandate_request_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#50" author="aditya.a" dbms="postgresql">
+		<dropNotNullConstraint tableName="FINANCEMAIN" columnName="REFERRALID" columnDataType="VARCHAR(10)" />
+		<dropNotNullConstraint tableName="FINANCEMAIN_TEMP" columnName="REFERRALID" columnDataType="VARCHAR(10)" />
+	</changeSet>
+
+	<changeSet id="DE#50" author="aditya.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINANCEMAIN ALTER COLUMN REFERRALID VARCHAR(10) NULL;
+				ALTER TABLE FINANCEMAIN_TEMP ALTER COLUMN REFERRALID VARCHAR(10) NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- <changeSet id="DE#699" author="vijaya.a">
+		<dropForeignKeyConstraint baseTableName="COVENANT_DOCUMENTS" constraintName="FK_COVENANT_DOCUMENTS_DID" />
+	</changeSet> -->
+
+	<changeSet id="DE#710" author="Manoj.P">
+		<createView viewName="Int_Mandate_Request_view" replaceIfExists="true">
+		<![CDATA[
+			SELECT m.mandateid,
+		    m.documentname,
+		    bd.bankshortcode AS bankcode,
+		    bd.bankname,
+		        CASE
+		            WHEN (lb.branchcode IS NULL) THEN cb.branchcode
+		            ELSE lb.branchcode
+		        END AS branchcode,
+		        CASE
+		            WHEN (lb.branchdesc IS NULL) THEN cb.branchdesc
+		            ELSE lb.branchdesc
+		        END AS branchdesc,
+		    cust.custcif,
+		    cust.custshrtname,
+		    cust.custcorebank,
+		    ft.fintypedesc AS fintype,
+		    fin.finreference,
+		    COALESCE((( SELECT sum(t.totalamount) AS sum
+		           FROM ( SELECT max((fsd.repayamount + fsd.feeschd)) AS totalamount
+		                   FROM (finscheduledetails fsd
+		                     JOIN financemain fm ON ((((fm.finreference) = (fsd.finreference)) AND (fm.custid = m.custid))))
+		                  GROUP BY fm.finreference) t) / ccy.ccyminorccyunits), (0)) AS cust_emi,
+		    COALESCE((( SELECT sum(t.totalamount) AS sum
+		           FROM ( SELECT max((fsd.repayamount + fsd.feeschd)) AS totalamount
+		                   FROM finscheduledetails fsd
+		                  WHERE (((fsd.repayonschdate = 1) OR (fsd.pftonschdate = 1)) AND ((fsd.finreference) = ANY ( SELECT financemain.finreference
+		                           FROM financemain
+		                          WHERE (financemain.mandateid = m.mandateid))))
+		                  GROUP BY fsd.finreference) t) / ccy.ccyminorccyunits), (0)) AS emi,
+		        CASE m.openmandate
+		            WHEN 1 THEN 'New Open ECS'
+		            ELSE 'No
+								Open ECS'
+		        END AS openmandate,
+		    m.accnumber,
+		        CASE
+		            WHEN ((m.acctype) = '10') THEN 'Savings Account'
+		            WHEN ((m.acctype) = '11') THEN 'Current Account'
+		            WHEN ((m.acctype) = '11') THEN 'Cash Credit Account'
+		            ELSE m.acctype
+		        END AS acctype,
+		    m.accholdername,
+		    bb.micr,
+		    bb.ifsc,
+		    bb.addofbranch,
+		    ( SELECT min(finpftdetails.firstrepaydate) AS min
+		           FROM finpftdetails
+		          WHERE ((finpftdetails.finreference) = ANY ( SELECT financemain.finreference
+		                   FROM financemain
+		                  WHERE (financemain.mandateid = m.mandateid)))) AS firstduedate,
+		    ( SELECT max(finscheduledetails.schdate) AS max
+		           FROM finscheduledetails
+		          WHERE (((finscheduledetails.repayonschdate = 1) OR (finscheduledetails.pftonschdate = 1)) AND ((finscheduledetails.finreference) = ANY ( SELECT financemain.finreference
+		                   FROM financemain
+		                  WHERE (financemain.mandateid = m.mandateid))))) AS emienddate,
+		     COALESCE(m.maxlimit, 0) AS maxlimit,
+		    (COALESCE(( SELECT sum(t.mandatedebitamount) AS sum
+		           FROM ( SELECT max((finscheduledetails.repayamount + finscheduledetails.feeschd)) AS mandatedebitamount
+		                   FROM finscheduledetails
+		                  WHERE (((finscheduledetails.repayonschdate = 1) OR (finscheduledetails.pftonschdate = 1)) AND ((finscheduledetails.finreference) = ANY ( SELECT financemain.finreference
+		                           FROM financemain
+		                          WHERE (financemain.mandateid = m.mandateid))))
+		                  GROUP BY finscheduledetails.finreference) t), (0)) / ccy.ccyminorccyunits) AS debitamount,
+		    fin.numberofterms,
+		    m.periodicity,
+		    m.startdate,
+		    m.expirydate,
+		    fin.applicationno,
+		    m.mandatetype,
+		    m.status,
+		    m.inputdate,
+		    m.recordstatus,
+		    m.recordtype,
+		    m.mandateccy,
+		    COALESCE(ccy.ccyminorccyunits, (100)) AS ccyminorccyunits,
+		    m.entitycode,
+		    cp.phonenumber,
+		    ce.custemail,
+		    pb.partnerbankname,
+		    m.lastmnton,
+		    bb.branchdesc AS bank_branch_name
+		   FROM (((((((((((mandates m
+		     JOIN bankbranches bb ON ((bb.bankbranchid = m.bankbranchid)))
+		     JOIN bmtbankdetail bd ON (((bd.bankcode) = (bb.bankcode))))
+		     JOIN customers cust ON ((cust.custid = m.custid)))
+		     JOIN rmtbranches cb ON (((cb.branchcode) = (cust.custdftbranch))))
+		     LEFT JOIN partnerbanks pb ON ((pb.partnerbankid = m.partnerbankid)))
+		     LEFT JOIN customeremails ce ON (((ce.custid = cust.custid) AND (ce.custemailpriority = 5))))
+		     LEFT JOIN customerphonenumbers cp ON (((cp.phonecustid = cust.custid) AND (cp.phonetypepriority = 5))))
+		     LEFT JOIN rmtcurrencies ccy ON ((ccy.ccycode = m.mandateccy)))
+		     LEFT JOIN financemain fin ON (((m.orgreference) = (fin.finreference))))
+		     LEFT JOIN rmtbranches lb ON (((lb.branchcode) = (fin.finbranch))))
+		     LEFT JOIN rmtfinancetypes ft ON (((fin.fintype) = (ft.fintype))))
+		     WHERE (((m.status) = 'NEW') AND (NOT (m.mandateid IN ( SELECT mandate_requests.mandateid
+		           FROM mandate_requests
+		          WHERE (((mandate_requests.status) = 'AC') OR ((mandate_requests.status) = 'NEW'))))))
+		        ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="DE#24_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'manualadvise_lovview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#24" author="vijaya.a">
+		<createView viewName="MANUALADVISE_LOVVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT ADVISEID,
+				  	FEETYPEID,
+				  	ADVISETYPE,
+				  	FINREFERENCE,
+				  	cast(round(ADVISEAMOUNT / 100, 2) as numeric(36,2)) ADVISEAMOUNT,
+				  	VALUEDATE,
+				  	POSTDATE,
+				  	cast(round(RESERVEDAMT / 100, 2) as numeric(36,2)) RESERVEDAMT,
+				  	cast(round(BALANCEAMT / 100, 2) as numeric(36,2)) BALANCEAMT
+					FROM MANUALADVISE_AVIEW where holdDue=0
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="DE#24_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'MANUALADVISE_LOVVIEW');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#1009" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update Dedupfields set FieldName = 'CustCompName' where FieldDesc = 'Company Name' and QueryModule = 'CORPBlackList';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#1028" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update Dedupfields set FieldName = 'CustCompName' where FieldDesc = 'Company Name' and QueryModule = 'SMEBlacklist';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

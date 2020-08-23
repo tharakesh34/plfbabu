@@ -537,4 +537,9 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	public void setCustomerIncomeList(List<CustomerIncome> customerIncomeList) {
 		this.customerIncomeList = customerIncomeList;
 	}
+
+	public void doSave_ScoreDetail(FinanceDetail aFinanceDetail) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -164,6 +164,8 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.FeeReceiptService;
+import com.pennant.backend.service.finance.FinFeeConfigService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
@@ -236,6 +238,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private ReasonCodeDAO reasonCodeDAO;
 	private AdvancePaymentService advancePaymentService;
 	private FeeTypeDAO feeTypeDAO;
+	private FeeReceiptService feeReceiptService;
+	private FinFeeConfigService finFeeConfigService;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -293,7 +297,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (CollectionUtils.isNotEmpty(allocations)) {
 				for (ReceiptAllocationDetail allocation : allocations) {
 					allocation.setTotalPaid(allocation.getPaidAmount().add(allocation.getTdsPaid()));
-					long headerId = allocation.getTaxHeaderId();
+					Long headerId = allocation.getTaxHeaderId();
 					if (headerId > 0) {
 						List<Taxes> taxDetails = getTaxHeaderDetailsDAO().getTaxDetailById(headerId, type);
 						TaxHeader taxHeader = new TaxHeader(headerId);
@@ -304,6 +308,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			receiptHeader.setAllocations(allocations);
+		} else {
+			// Fetch Repay Headers List
+			for (FinReceiptDetail rcd : receiptDetailList) {
+				rcd.setRepayHeader(financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), ""));
+			}
+			// Bounce reason Code
+			if (RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(receiptHeader.getReceiptMode())) {
+				receiptHeader.setManualAdvise(manualAdviseDAO.getManualAdviseByReceiptId(receiptID, "_View"));
+			}
+			receiptHeader.setPaidFeeList(
+					feeReceiptService.getPaidFinFeeDetails(receiptHeader.getReference(), receiptID, "_View"));
 		}
 
 		logger.debug("Leaving");
@@ -369,6 +384,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), eventCode, false,
 				FinanceConstants.MODULEID_FINTYPE));
+
+		financeDetail.setFinFeeConfigList(
+				finFeeConfigService.getFinFeeConfigList(financeMain.getFinReference(), eventCode, false, "_View"));
 
 		scheduleData.setFeeEvent(eventCode);
 
@@ -445,7 +463,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				//Tax Details
 				Long headerId = finFeeDetail.getTaxHeaderId();
 				if (headerId != null && headerId > 0) {
-					List<Taxes> taxDetails = getTaxHeaderDetailsDAO().getTaxDetailById(headerId, type);
+					List<Taxes> taxDetails = taxHeaderDetailsDAO.getTaxDetailById(headerId, type);
 					TaxHeader taxheader = new TaxHeader();
 					taxheader.setTaxDetails(taxDetails);
 					taxheader.setHeaderId(headerId);
@@ -470,6 +488,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		} else {
 			financeDetail.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finReference, "_View"));
 		}
+
+		financeDetail.setJountAccountDetailList(jointAccountDetailService.getJoinAccountDetail(finReference, "_AView"));
+
+		financeDetail.setGurantorsDetailList(guarantorDetailService.getGuarantorDetail(finReference, "_AView"));
 
 		// Multi Receipts: Get In Process Receipts
 		receiptData = getInProcessReceiptData(receiptData);
@@ -1588,8 +1610,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return aAuditHeader;
 		}
 		if (StringUtils.equals(FinanceConstants.REALIZATION_APPROVER, roleCode)) {
-			if ((StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
-					FinanceConstants.FINSER_EVENT_SCHDRPY))
+			if (((StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
+					FinanceConstants.FINSER_EVENT_SCHDRPY)
+					&& StringUtils.isEmpty(receiptData.getReceiptHeader().getPrvReceiptPurpose())))
 					&& (StringUtils.equals(receiptData.getReceiptHeader().getReceiptMode(),
 							RepayConstants.RECEIPTMODE_CHEQUE)
 							|| StringUtils.equals(receiptData.getReceiptHeader().getReceiptMode(),
@@ -1809,6 +1832,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// save Receipt Details
 		repayProcessUtil.doSaveReceipts(rch, scheduleData.getFinFeeDetailList(), true);
 		long receiptID = rch.getReceiptID();
+		//assigning user details to fix the 900 blocker while approve in deposit approver screen
+		if (rch.getUserDetails() == null) {
+			if (SessionUserDetails.getLogiedInUser() != null) {
+				rch.setUserDetails(SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser()));
+			}
+		}
 
 		// Save Deposit Details
 		saveDepositDetails(rch, PennantConstants.method_doApprove);
@@ -2769,6 +2798,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
 					.setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(), auditTranType, method, null));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
+		}
+
+		//Check List Details
+		if (!CollectionUtils.isEmpty(financeDetail.getFinanceCheckList())) {
+			auditDetails.addAll(
+					checkListDetailService.getAuditDetail(auditDetailMap, financeDetail, auditTranType, method));
 		}
 
 		financeDetail.setAuditDetailMap(auditDetailMap);
@@ -3801,6 +3836,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return receiptData;
 		}
 
+		// Sub Receipt Mode Mode
+		boolean isDeveloperFinance = financeMainDAO.isDeveloperFinance(finReference, "", false);
+		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
+			if (!isDeveloperFinance && StringUtils.equals(subReceiptMode, RepayConstants.RECEIPTMODE_ESCROW)) {
+				parm0 = "Sub Receipt Mode";
+				parm1 = RepayConstants.RECEIPTMODE_ESCROW + " Allowed only for developer finance";
+				finScheduleData = setErrorToFSD(finScheduleData, "90281", parm0, parm1);
+				return receiptData;
+			}
+		}
+
 		// DE#555: In receipt upload, If the sub receipt mode is ESCROW and receipt mode is ONLINE , 
 		//system not allowing to upload. It is allowing only, if loan is related developer finance.
 		//Same functionality is working fine in front end screen’s(Receipt maker screen). Now we are removing the validation.
@@ -4391,6 +4437,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		rch.setValueDate(rcd.getValueDate());
 		rch.setPartnerBankId(rcd.getFundingAc());
+
+		if (rch.getReceiptMode() != null && rch.getSubReceiptMode() == null) {
+			rch.setSubReceiptMode(rch.getSubReceiptMode());
+		}
 
 		if (StringUtils.equals(fsi.getReqType(), RepayConstants.REQTYPE_INQUIRY)) {
 			receiptData.setValueDate(SysParamUtil.getAppDate());
@@ -5252,6 +5302,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), eventCode, false,
 				FinanceConstants.MODULEID_FINTYPE));
 
+		financeDetail.setFinFeeConfigList(
+				finFeeConfigService.getFinFeeConfigList(financeMain.getFinReference(), eventCode, false, "_View"));
+
 		scheduleData.setFeeEvent(eventCode);
 
 		// Finance Schedule Details from Main table
@@ -5377,6 +5430,35 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		} else if (receiptPurposeCtg == 2) {
 			method = CalculationConstants.EARLYPAY_ADJMUR;
 			repayMain.setEarlyPayAmount(repayMain.getCurFinAmount());
+		}
+
+		boolean isStepLoan = false;
+		String valueAsString = SysParamUtil.getValueAsString("STEP_LOAN_SERVICING_REQ");
+		if (StringUtils.equalsIgnoreCase(valueAsString, PennantConstants.YES)) {
+			if (aFinanceMain.isStepFinance()) {
+				if (StringUtils.isNotBlank(aFinanceMain.getStepPolicy())
+						|| (aFinanceMain.isAlwManualSteps() && aFinanceMain.getNoOfSteps() > 0)) {
+					isStepLoan = true;
+					finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO()
+							.getFinStepDetailListByFinRef(finScheduleData.getFinReference(), "", false));
+				}
+			}
+		}
+
+		if (isStepLoan) {
+
+			List<RepayInstruction> rpst = finScheduleData.getRepayInstructions();
+			if (repayMain.getEarlyPayOnSchDate().compareTo(aFinanceMain.getGrcPeriodEndDate()) < 0) {
+
+				finScheduleData.getFinanceMain().setRecalSteps(true);
+				finScheduleData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_STEPINST);
+				for (RepayInstruction repayInstruction : rpst) {
+					if (repayInstruction.getRepayDate().compareTo(aFinanceMain.getGrcPeriodEndDate()) > 0) {
+						finScheduleData.getFinanceMain().setRecalFromDate(repayInstruction.getRepayDate());
+						break;
+					}
+				}
+			}
 		}
 
 		// Step POS Case , setting Step Details to Object
@@ -6983,4 +7065,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		this.feeTypeDAO = feeTypeDAO;
 	}
 
+	public void setFinFeeConfigService(FinFeeConfigService finFeeConfigService) {
+		this.finFeeConfigService = finFeeConfigService;
+	}
+
+	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
+		this.feeReceiptService = feeReceiptService;
+	}
 }

@@ -440,13 +440,12 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	public void doWriteBeanToComponents(CovenantDocument aCovenantDocument) {
 		logger.debug(Literal.ENTERING);
 
-		this.convDocType.setValue(aCovenantDocument.getCovenantType());
-
 		this.docReceivedDate.setValue(aCovenantDocument.getDocumentReceivedDate());
 		this.documentName.setAttribute("data", aCovenantDocument.getDocumentDetail());
 
 		if (aCovenantDocument.getDocumentDetail() != null
 				&& aCovenantDocument.getDocumentDetail().getDocName() != null) {
+			this.convDocType.setValue(aCovenantDocument.getDocumentDetail().getDoctype());
 			this.documentName.setValue(aCovenantDocument.getDocumentDetail().getDocName());
 		} else {
 			this.documentName.setValue(aCovenantDocument.getDocName());
@@ -507,7 +506,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 
 		try {
 			this.convDocType.getValidatedValue();
-			aCovenantDocument.setCovenantType("PDD");
+			// aCovenantDocument.setCovenantType("PDD");
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -527,6 +526,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 				DocumentDetails details = (DocumentDetails) this.documentName.getAttribute("data");
 				details.setDocRefId(Long.MIN_VALUE);
 				details.setDocReceivedDate(this.docReceivedDate.getValue());
+				details.setDocName(this.documentName.getValue());
 				aCovenantDocument.setDocumentDetail(details);
 			} else {
 				aCovenantDocument.setDocumentDetail(null);
@@ -919,7 +919,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		covenantDocuments = new ArrayList<CovenantDocument>();
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
-		valueParm[0] = aCovenantDocument.getCovenantType();
+		valueParm[0] = aCovenantDocument.getDocCategory();
 		errParm[0] = PennantJavaUtil.getLabel("label_CovenantDocumentDialog_ConvDocType.value") + ":" + valueParm[0];
 		List<CovenantDocument> existingcovenantDocs = null;
 

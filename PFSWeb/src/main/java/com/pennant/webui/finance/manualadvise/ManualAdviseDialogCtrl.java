@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -87,6 +88,7 @@ import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -113,11 +115,14 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
+import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
+import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -184,13 +189,14 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected Decimalbox totalGST;
 	protected Decimalbox cess;
 	protected Decimalbox total;
-
+	protected Tab manualAdviseDetailsTab;
 	// TDS details
 	protected Groupbox gb_TDSDetails;
 	protected Decimalbox tds;
 
 	private FinanceMain financeMain;
-
+	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
+	private transient FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl;
 	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl;
 	private long accountsetId;
 	private String selectMethodName = "onSelectTab";
@@ -752,6 +758,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			}
 		}
 
+		if (FinanceConstants.MANUAL_ADVISE_PAYABLE == aManualAdvise.getAdviseType()) {
+			appendDocumentDetailTab();
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -902,7 +912,12 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		//Document Details Saving
+		if (documentDetailDialogCtrl != null) {
+			aManualAdvise.setDocumentDetails(documentDetailDialogCtrl.getDocumentDetailsList());
+		} else {
+			aManualAdvise.setDocumentDetails(aManualAdvise.getDocumentDetails());
+		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -1349,7 +1364,27 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			aManualAdvise.setNextTaskId(nextTaskId);
 			aManualAdvise.setRoleCode(getRole());
 			aManualAdvise.setNextRoleCode(nextRoleCode);
-
+			//Document Details
+			if (CollectionUtils.isNotEmpty(aManualAdvise.getDocumentDetails())) {
+				for (DocumentDetails details : aManualAdvise.getDocumentDetails()) {
+					details.setReferenceId(String.valueOf(aManualAdvise.getId()));
+					details.setDocModule(PennantConstants.PAYABLE_ADVISE_DOC_MODULE_NAME);
+					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					details.setRecordStatus(aManualAdvise.getRecordStatus());
+					details.setWorkflowId(aManualAdvise.getWorkflowId());
+					details.setTaskId(taskId);
+					details.setNextTaskId(nextTaskId);
+					details.setRoleCode(getRole());
+					details.setNextRoleCode(nextRoleCode);
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aManualAdvise.getRecordType())) {
+						if (StringUtils.trimToNull(details.getRecordType()) == null) {
+							details.setRecordType(aManualAdvise.getRecordType());
+							details.setNewRecord(true);
+						}
+					}
+				}
+			}
 			auditHeader = getAuditHeader(aManualAdvise, tranType);
 			String operationRefs = getServiceOperations(taskId, aManualAdvise);
 
@@ -1512,6 +1547,20 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	/**
+	 * Method for Rendering Document Details Data
+	 */
+	private void appendDocumentDetailTab() {
+		logger.debug(Literal.ENTERING);
+		createTab(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL, true);
+		final HashMap<String, Object> map = getDefaultArguments();
+		map.put("documentDetails", this.manualAdvise.getDocumentDetails());
+		map.put("module", DocumentCategories.MANUAL_ADVISE_PAYABLE.getKey());
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
+				getTabpanel(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL), map);
+		logger.debug(Literal.LEAVING);
+	}
+
 	private boolean validateAccounting(boolean validate) {
 		if (this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Cancel")
 				|| this.userAction.getSelectedItem().getLabel().contains("Reject")
@@ -1558,7 +1607,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		tabpanel.setStyle("overflow:auto;");
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight("100%");
-		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+		ComponentsCtrl.applyForward(tab, "onSelect=" + selectMethodName);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1596,6 +1645,34 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aManualAdvise.getBefImage(), aManualAdvise);
 		return new AuditHeader(getReference(), null, null, null, auditDetail, aManualAdvise.getUserDetails(),
 				getOverideMap());
+	}
+
+	public HashMap<String, Object> getDefaultArguments() {
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("roleCode", getRole());
+		map.put("financeMainDialogCtrl", this);
+		map.put("isNotFinanceProcess", true);
+		map.put("moduleName", DocumentCategories.MANUAL_ADVISE_PAYABLE.getKey());
+		map.put("enqiryModule", enqiryModule);
+		map.put("finHeaderList", getHeaderBasicDetails());
+		map.put("isEditable", !isReadOnly("button_" + this.pageRightName + "_btnNewDocuments"));
+		return map;
+	}
+
+	/**
+	 * fill finance basic details to List
+	 * 
+	 * @return
+	 */
+	private ArrayList<Object> getHeaderBasicDetails() {
+		ArrayList<Object> arrayList = new ArrayList<Object>();
+		arrayList.add(0, this.lbl_LoanReference.getValue());
+		arrayList.add(1, this.lbl_LoanType.getValue());
+		arrayList.add(2, this.lbl_CustCIF.getValue());
+		arrayList.add(3, this.lbl_FinAmount.getValue());
+		arrayList.add(4, this.lbl_startDate.getValue());
+		arrayList.add(5, this.lbl_MaturityDate.getValue());
+		return arrayList;
 	}
 
 	public void setManualAdviseService(ManualAdviseService manualAdviseService) {

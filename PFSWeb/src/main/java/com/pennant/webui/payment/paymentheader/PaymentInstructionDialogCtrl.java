@@ -370,7 +370,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		}
 
 		fillComboBox(this.paymentType, paymentInstruction.getPaymentType(),
-				PennantStaticListUtil.getPaymentTypesWithIST(), "");
+				PennantStaticListUtil.getPaymentTypes(), "");
 		if (paymentInstruction.getPartnerBankId() != Long.MIN_VALUE && paymentInstruction.getPartnerBankId() != 0) {
 			this.partnerBankID.getButton().setDisabled(isReadOnly("PaymentInstructionDialog_partnerBankID"));
 			this.partnerBankID.setAttribute("partnerBankId", paymentInstruction.getPartnerBankId());

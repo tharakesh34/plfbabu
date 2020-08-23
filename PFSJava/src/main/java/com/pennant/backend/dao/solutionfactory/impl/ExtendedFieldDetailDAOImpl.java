@@ -154,6 +154,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		sql.append(", Filters, FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, Editable");
 		sql.append(", Visible, AllowInRule, ValFromScript, Scriptlet, Version, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", DefValue, AgrField"); //HL
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescModuleName, LovDescSubModuleName");
@@ -201,6 +202,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	/**
 	 * Method for Deletion of Extended Detail List of ExtendedDetail
 	 */
+	@Override
 	public void deleteByExtendedFields(final long id, String type) {
 		logger.debug(Literal.ENTERING);
 		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
@@ -357,7 +359,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, Filters,");
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, visible,");
 		selectSql.append(
-				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,AllowInRule, ValFromScript, Scriptlet, ");
+				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,AllowInRule, ValFromScript, Scriptlet, DefValue, ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescModuleName,lovDescSubModuleName , ");
 		}
@@ -386,7 +388,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, Filters,");
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, ");
 		selectSql.append(
-				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, AllowInRule, Visible, ValFromScript, Scriptlet, ");
+				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, AllowInRule, Visible, ValFromScript, Scriptlet, DefValue, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From ExtendedFieldDetail");
@@ -941,6 +943,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	 * @throws DataAccessException
 	 * 
 	 */
+	@Override
 	public void deleteAdditional(final String id, String tableName, String type) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder deleteSql = new StringBuilder("Delete From " + tableName);
@@ -952,6 +955,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
 	public void deleteAdditional(String primaryKeyColumn, final Serializable id, String type, String tableName) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder deleteSql = new StringBuilder("Delete From " + tableName);
@@ -1179,6 +1183,8 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			efd.setNextTaskId(rs.getString("NextTaskId"));
 			efd.setRecordType(rs.getString("RecordType"));
 			efd.setWorkflowId(rs.getLong("WorkflowId"));
+			efd.setDefValue(rs.getString("DefValue"));
+			efd.setAgrField(rs.getString("AgrField"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				efd.setLovDescModuleName(rs.getString("LovDescModuleName"));
@@ -1187,5 +1193,34 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 			return efd;
 		}
+	}
+
+	@Override
+	public Map<String, Object> getValueByFieldName(String reference, String moduleName, String subModuleName,
+			String event, String field, String type) {
+
+		StringBuilder sql = null;
+
+		Map<String, Object> values = null;
+		MapSqlParameterSource source = null;
+		sql = new StringBuilder();
+		sql.append(" select ".concat(field));
+		sql.append(" from ");
+		sql.append(moduleName);
+		sql.append("_");
+		sql.append(subModuleName);
+		sql.append("_ed");
+		sql.append(type);
+		sql.append(" where reference = :reference");
+
+		source = new MapSqlParameterSource();
+		source.addValue("reference", reference);
+		try {
+			values = jdbcTemplate.queryForMap(sql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return values;
 	}
 }

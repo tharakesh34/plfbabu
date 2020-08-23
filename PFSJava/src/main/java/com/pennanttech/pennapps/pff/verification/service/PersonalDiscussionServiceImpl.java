@@ -97,6 +97,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
+	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
@@ -330,6 +331,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 	 *            id of the PersonalDiscussion. (String)
 	 * @return verification_pd
 	 */
+	@Override
 	public PersonalDiscussion getApprovedPersonalDiscussion(long id) {
 		return personalDiscussionDAO.getPersonalDiscussion(id, "");
 	}
@@ -364,7 +366,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 		}
 
 		PersonalDiscussion pd = new PersonalDiscussion();
-		BeanUtils.copyProperties((PersonalDiscussion) auditHeader.getAuditDetail().getModelData(), pd);
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), pd);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(pd.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(personalDiscussionDAO.getPersonalDiscussion(pd.getId(), ""));
@@ -822,6 +824,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 		}
 	}
 
+	@Override
 	public boolean isAddressChange(CustomerAddres oldAddress, CustomerAddres newAddress) {
 
 		if (oldAddress == null || newAddress == null) {

@@ -67,6 +67,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSuspHead;
+import com.pennant.backend.model.finance.PMAY;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.model.financemanagement.FinanceFlag;
@@ -81,6 +82,7 @@ import com.pennant.webui.financemanagement.financeFlags.FinanceFlagsListCtrl;
 import com.pennant.webui.financemanagement.liability.LiabilityRequestListCtrl;
 import com.pennant.webui.financemanagement.provision.ProvisionListCtrl;
 import com.pennant.webui.financemanagement.suspense.SuspenseListCtrl;
+import com.pennant.webui.systemmasters.pmay.PMAYListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -124,6 +126,8 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private FinanceSuspHead suspHead;
 	private FinanceMain financeMain = new FinanceMain();
 	private CustomerDetails custDetail;
+	private transient PMAYListCtrl pmayListCtrl;
+	private PMAY pmay = null;
 
 	/**
 	 * default constructor.<br>
@@ -230,6 +234,18 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			setSuspenseListCtrl(null);
 		}
 
+		//pmay
+
+		if (arguments.containsKey("pmayListCtrl")) {
+			setPmayListCtrl((PMAYListCtrl) arguments.get("pmayListCtrl"));
+		} else {
+			setPmayListCtrl(null);
+		}
+
+		if (arguments.containsKey("pmay")) {
+			pmay = (PMAY) arguments.get("pmay");
+		}
+
 		doSetFieldProperties();
 
 		showSelectFinanceTypeDialog();
@@ -294,6 +310,13 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_NOCISSUANCE)) {
 			this.finReference.setFilters(new Filter[] { new Filter("FinIsActive", 0, Filter.OP_EQUAL) });
+		}
+
+		if (StringUtils.equals(eventCode, FinanceConstants.PMAY)) {
+			Filter[] filter = new Filter[1];
+			filter[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+			this.finReference.setWhereClause(null);
+			this.finReference.setFilters(filter);
 		}
 
 	}
@@ -445,6 +468,28 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 		}
 
+		if (StringUtils.equals(eventCode, FinanceConstants.PMAY)) {
+			FinanceDetail financeDetails = getFinanceDetailService().getFinanceDetailsForPmay(finReference.getValue());
+			if (financeDetails.getPmay() != null) {
+				pmay = financeDetails.getPmay();
+			}
+			if (pmay == null) {
+				pmay = new PMAY();
+				pmay.setNewRecord(true);
+				pmay.setFinReference(financeDetails.getFinReference());
+			} else {
+				pmay.setFinReference(financeDetails.getFinReference());
+			}
+			map.put("pmay", pmay);
+			map.put("pmayListCtrl", getPmayListCtrl());
+			map.put("financeDetail", financeDetails);
+			// call the ZUL-file with the parameters packed in a map
+			try {
+				Executions.createComponents("/WEB-INF/pages/SystemMaster/PMAY/PMAYDialog.zul", null, map);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}
+		}
 		logger.debug("Leaving");
 		this.window_SelectFinReferenceDialog.onClose();
 	}
@@ -554,6 +599,14 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	public void setSuspenseListCtrl(SuspenseListCtrl suspenseListCtrl) {
 		this.suspenseListCtrl = suspenseListCtrl;
+	}
+
+	public PMAYListCtrl getPmayListCtrl() {
+		return pmayListCtrl;
+	}
+
+	public void setPmayListCtrl(PMAYListCtrl pmayListCtrl) {
+		this.pmayListCtrl = pmayListCtrl;
 	}
 
 }

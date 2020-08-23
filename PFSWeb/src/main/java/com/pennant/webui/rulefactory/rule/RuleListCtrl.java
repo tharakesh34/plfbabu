@@ -130,6 +130,9 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			super.searchObject.addFilterEqual("ruleEvent", this.limitLine.getValue());
 
 		}
+		if (RuleConstants.MODULE_FEEPERC.equals(this.ruleModule.getValue())) {
+			super.searchObject.addFilterEqual("Active", 1);
+		}
 	}
 
 	@Override
@@ -192,6 +195,8 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			this.ruleModuleName = "StageAccountingRule";
 		} else if (RuleConstants.MODULE_VERRULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "VerificationRule";
+		} else if (RuleConstants.MODULE_FEEPERC.equals(ruleModule.getValue())) {
+			this.ruleModuleName = "FeePerc";
 		}
 
 		// Set the page level components.
@@ -215,6 +220,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 				Operators.STRING);
 		registerField("ruleCodeDesc", listheader_RuleCodeDesc, SortOrder.NONE, ruleCodeDesc, sortOperator_ruleCodeDesc,
 				Operators.STRING);
+		registerField("Active");
 
 		if (this.ruleEvent != null) {
 			registerField("ruleEvent", listheader_RuleEvent, SortOrder.NONE, ruleEvent, sortOperator_ruleEvent,
@@ -273,6 +279,8 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			aRule.setRuleEvent(this.limitLine.getValue());
 		} else if (StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_SCORES)) {
 			aRule.setRuleEvent("RSCORE");
+		} else if (StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_FEEPERC)) {
+			aRule.setRuleEvent("");
 		} else if (!StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_FEES)) {
 			aRule.setRuleEvent(ruleModuleValue);
 		} else if (StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_GSTRULE)) { //GST Rules
@@ -305,9 +313,14 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		String ruleCode = (String) selectedItem.getAttribute("ruleCode");
 		String ruleModule = this.ruleModule.getValue();
 		String ruleEvent = (String) selectedItem.getAttribute("ruleEvent");
+		boolean active = (boolean) selectedItem.getAttribute("active");
+		Rule rule = null;
 
-		Rule rule = ruleService.getRuleById(ruleCode, ruleModule, ruleEvent);
-
+		if (RuleConstants.MODULE_FEEPERC.equals(this.ruleModule.getValue())) {
+			rule = ruleService.getActiveRuleByID(ruleCode, ruleModule, ruleEvent, active);
+		} else {
+			rule = ruleService.getRuleById(ruleCode, ruleModule, ruleEvent);
+		}
 		if (rule == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;

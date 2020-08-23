@@ -293,7 +293,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			doFillCollateralDetails(getCollateralAssignments(), false);
 			setCollateralSetups(getFinanceDetail().getCollaterals());
 			doFillAssetDetails(getExtendedFieldRenderList());
-
+			setCollateralSetups(getFinanceDetail().getCollaterals());
 			// Setting Controller to the Parent Controller
 			try {
 				if (getFinanceMainDialogCtrl() != null) {

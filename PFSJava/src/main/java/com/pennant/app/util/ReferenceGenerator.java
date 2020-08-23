@@ -210,6 +210,15 @@ public class ReferenceGenerator implements Serializable {
 		return servUIDNo;
 	}
 
+	public static String generateAPFSequence() {
+		logger.debug("Entering");
+		// Get the sequence number.
+		long referenceSeqNumber = sequenceGenetor.getNextValue("SeqApfNumber");
+		String sequence = StringUtils.leftPad(String.valueOf(referenceSeqNumber), 5, '0');
+		logger.debug("Leaving");
+		return sequence;
+	}
+
 	public static void setSequenceGenetor(SequenceDao<?> sequenceGenetor) {
 		ReferenceGenerator.sequenceGenetor = sequenceGenetor;
 	}

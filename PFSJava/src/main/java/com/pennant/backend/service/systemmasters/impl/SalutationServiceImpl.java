@@ -170,8 +170,8 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	 * @return Salutation
 	 */
 	@Override
-	public Salutation getSalutationById(String id) {
-		return getSalutationDAO().getSalutationById(id, "_View");
+	public Salutation getSalutationById(String id, String gender) {
+		return getSalutationDAO().getSalutationById(id, gender, "_View");
 	}
 
 	/**
@@ -182,8 +182,8 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	 *            (String)
 	 * @return Salutation
 	 */
-	public Salutation getApprovedSalutationById(String id) {
-		return getSalutationDAO().getSalutationById(id, "_AView");
+	public Salutation getApprovedSalutationById(String id, String gender) {
+		return getSalutationDAO().getSalutationById(id, gender, "_AView");
 	}
 
 	/**
@@ -215,8 +215,8 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 		getSalutationDAO().delete(salutation, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(salutation.getRecordType())) {
-			auditHeader.getAuditDetail()
-					.setBefImage(salutationDAO.getSalutationById(salutation.getSalutationCode(), ""));
+			auditHeader.getAuditDetail().setBefImage(salutationDAO.getSalutationById(salutation.getSalutationCode(),
+					salutation.getSalutationGenderCode(), ""));
 		}
 
 		if (salutation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -310,10 +310,11 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 		// Get the model object.
 		Salutation salutation = (Salutation) auditDetail.getModelData();
 		String code = salutation.getSalutationCode();
+		String gender = salutation.getSalutationGenderCode();
 
 		// Check the unique keys.
 		if (salutation.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(salutation.getRecordType()) && salutationDAO
-				.isDuplicateKey(code, salutation.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+				.isDuplicateKey(code, gender, salutation.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_SalutationCode") + ": " + code;
 

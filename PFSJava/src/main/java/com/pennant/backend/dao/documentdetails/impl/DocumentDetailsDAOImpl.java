@@ -189,19 +189,19 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	public long save(DocumentDetails documentDetails, String type) {
 		logger.debug("Entering");
 
-		if (documentDetails.getDocId() == Long.MIN_VALUE || documentDetails.getDocId() == 0) {
+		if (documentDetails.getDocId() == Long.MIN_VALUE || documentDetails.getDocId() <= 0) {
 			documentDetails.setDocId(getNextValue("SeqDocumentDetails"));
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into DocumentDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" ( DocId, DocModule, DocCategory, Doctype,DocName,ReferenceId, FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal, DocBarcode");
+				" ( DocId, DocModule, DocCategory, Doctype,DocName,ReferenceId, FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal, DocBarcode, Remarks");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID)");
 		insertSql.append(" Values(:DocId,:DocModule, :DocCategory, :Doctype, :DocName,:ReferenceId, :FinEvent,");
 		insertSql.append(
-				" :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived , :docOriginal,:DocBarcode ,:Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+				" :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived , :docOriginal,:DocBarcode , :Remarks, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :docRefId, :instructionUID)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -232,12 +232,12 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		StringBuilder insertSql = new StringBuilder("Insert Into DocumentDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" ( DocId, DocModule, DocCategory, Doctype,DocName,ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode");
+				" ( DocId, DocModule, DocCategory, Doctype,DocName,ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode, Remarks");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, DocRefId, instructionUID)");
 		insertSql.append(" Values(:DocId,:DocModule, :DocCategory, :Doctype, :DocName,:ReferenceId,:FinEvent");
 		insertSql.append(
-				", :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived,  :docOriginal , :DocBarcode, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+				", :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived,  :docOriginal , :DocBarcode, :Remarks, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :docRefId, :instructionUID)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -270,7 +270,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		updateSql.append(
 				" ReferenceId=:ReferenceId, FinEvent=:FinEvent, DocPurpose = :DocPurpose, DocUri = :DocUri, DocReceivedDate = :DocReceivedDate");
 		updateSql.append(
-				", DocReceived = :DocReceived, DocOriginal  =:docOriginal , DocBarcode = :DocBarcode, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+				", DocReceived = :DocReceived, DocOriginal  =:docOriginal , DocBarcode = :DocBarcode, Remarks = :Remarks, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, ");
 		updateSql.append(
 				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, docRefId = :docRefId,instructionUID = :instructionUID ");
@@ -293,7 +293,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 
 		StringBuilder sql = new StringBuilder("select DocId, DocModule, DocCategory,");
 		sql.append(
-				" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode,");
+				" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode, Remarks,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID ");
 		sql.append(" from DocumentDetails");
@@ -326,7 +326,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 
 		StringBuilder sql = new StringBuilder("select DocId, DocModule, DocCategory,");
 		sql.append(
-				" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode,");
+				" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode, Remarks,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID ");
 		sql.append(" from DocumentDetails");
@@ -357,7 +357,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		documentDetails.setId(id);
 
 		StringBuilder selectSql = new StringBuilder(
-				"Select DocId, DocModule, DocCategory, DocReceivedDate, DocReceived, DocOriginal,DocBarcode,");
+				"Select DocId, DocModule, DocCategory, DocReceivedDate, DocReceived, DocOriginal,DocBarcode, Remarks,");
 		selectSql.append(" Doctype, DocName, DocRefId, ReferenceId ,FinEvent, DocUri,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, instructionUID ");
@@ -384,26 +384,28 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 
 	@Override
 	public DocumentDetails getDocumentDetailsById(long id, String type, boolean readAttachment) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		DocumentDetails documentDetails = new DocumentDetails();
 
 		documentDetails.setId(id);
 
 		StringBuilder selectSql = new StringBuilder(
-				"Select DocId, DocModule, DocCategory, T2.DocImage,DocReceivedDate,DocReceived, DocOriginal,DocBarcode,");
+				"Select DocId, DocModule, DocCategory,DocReceivedDate,DocReceived, DocOriginal,DocBarcode, Remarks,");
 
 		if (readAttachment) {
-			selectSql.append(" Doctype, DocName, DocRefId, ReferenceId ,FinEvent, T1.DocUri,");
+			selectSql.append(" Doctype, DocName, DocRefId, ReferenceId ,FinEvent, T1.DocUri,  T2.DocImage,");
 		} else {
-			selectSql.append(" Doctype, DocName, ReferenceId, FinEvent, DocPurpose,");
+			selectSql.append(" Doctype, DocName, ReferenceId, FinEvent, DocPurpose, DocUri,");
 		}
 
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, instructionUID ");
 		selectSql.append(" From DocumentDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" T1 Inner Join ");
-		selectSql.append(" DocumentManager T2 ON T1.DocRefId = T2.Id");
+		if (readAttachment) {
+			selectSql.append(" T1 Inner Join ");
+			selectSql.append(" DocumentManager T2 ON T1.DocRefId = T2.Id");
+		}
 		selectSql.append(" Where DocId =:DocId");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -414,11 +416,11 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		try {
 			documentDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Literal.EXCEPTION, e);
 			documentDetails = null;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.ENTERING);
 
 		return documentDetails;
 	}
@@ -443,7 +445,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 
 		StringBuilder selectSql = new StringBuilder("Select DocId, DocModule, DocCategory, ");
 		selectSql.append(
-				" Doctype, DocName, ReferenceId ,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode,");
+				" Doctype, DocName, ReferenceId ,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode, Remarks,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, instructionUID, DocRefId ");
 		selectSql.append(" From DocumentDetails");

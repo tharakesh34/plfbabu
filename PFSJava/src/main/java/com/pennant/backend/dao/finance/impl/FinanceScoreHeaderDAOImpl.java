@@ -37,7 +37,8 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" HeaderId, FinReference, GroupId, MinScore, Override, OverrideScore, CreditWorth");
+		sql.append(" HeaderId, FinReference, GroupId, MinScore, Override");
+		sql.append(", OverrideScore, CreditWorth, CustId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", GroupCode, GroupCodeDesc");
@@ -68,6 +69,7 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 					fsh.setOverride(rs.getBoolean("Override"));
 					fsh.setOverrideScore(rs.getInt("OverrideScore"));
 					fsh.setCreditWorth(rs.getString("CreditWorth"));
+					fsh.setCustId(rs.getLong("CustId"));
 
 					if (StringUtils.trimToEmpty(type).contains("View")) {
 						fsh.setGroupCode(rs.getString("GroupCode"));
@@ -97,9 +99,9 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 		StringBuilder insertSql = new StringBuilder("INSERT INTO FinanceScoreHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (HeaderId , FinReference , GroupId , MinScore , ");
-		insertSql.append(" Override , OverrideScore , CreditWorth) ");
+		insertSql.append(" Override , OverrideScore , CreditWorth, CustId) ");
 		insertSql.append(" VALUES (:HeaderId , :FinReference , :GroupId , :MinScore , ");
-		insertSql.append(" :Override , :OverrideScore , :CreditWorth) ");
+		insertSql.append(" :Override , :OverrideScore , :CreditWorth, :CustId) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
 

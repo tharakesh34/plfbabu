@@ -67,4 +67,9 @@ public interface FinFeeReceiptDAO {
 	BigDecimal getUpfrontFee(long feeId, String tableType);
 
 	List<Map<String, Object>> getFeeDetails(String finReference);
+
+	List<FinFeeReceipt> getFinFeeReceiptByReceiptId(long receiptID, String type);
+
+	void deleteFinFeeReceiptByReceiptId(long receiptID, String suffix);
+
 }

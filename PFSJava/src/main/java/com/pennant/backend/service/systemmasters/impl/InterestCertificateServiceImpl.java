@@ -46,13 +46,19 @@ package com.pennant.backend.service.systemmasters.impl;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.NumberToEnglishWords;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.systemmasters.InterestCertificateDAO;
 import com.pennant.backend.model.agreement.InterestCertificate;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.InterestCertificateService;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -69,6 +75,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 
 	private ExtendedFieldService extendedFieldService;
 	private InterestCertificateDAO interestCertificateDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	public InterestCertificateServiceImpl() {
 		super();
@@ -97,8 +104,14 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 		List<String> coApplicantList = interestCertificateDAO.getCoApplicantNames(finReference);
 		StringBuilder coapplicant = new StringBuilder();
 		for (String object : coApplicantList) {
-			coapplicant.append(object).append(" , ");
+			coapplicant.append(",").append(object);
 		}
+
+		if (StringUtils.contains(coapplicant, ",")) {
+			String coAppNames = coapplicant.toString();
+			coapplicant.replace(coAppNames.lastIndexOf(","), coAppNames.lastIndexOf(",") + 1, " and ");
+		}
+
 		intCert.setCoApplicant(coapplicant.toString());
 		// set Loan ExtendedFields
 		if (extendedFieldService != null) {
@@ -108,6 +121,8 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 		int format = CurrencyUtil.getFormat(intCert.getFinCcy());
 		InterestCertificate summary = interestCertificateDAO.getSumOfPrinicipalAndProfitAmount(finReference, startDate,
 				endDate);
+		Map<String, Object> amounts = interestCertificateDAO.getSumOfPriPftEmiAmount(finReference, startDate, endDate);
+
 		if (summary != null && summary.getFinSchdPftPaid() != null && summary.getFinSchdPriPaid() != null) {
 			String finSchdPftPaid = PennantApplicationUtil.amountFormate(summary.getFinSchdPftPaid(), format);
 			finSchdPftPaid = finSchdPftPaid.replace(",", "");
@@ -119,6 +134,27 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 			intCert.setSchdPriPaid(PennantApplicationUtil.amountFormate(summary.getFinSchdPriPaid(), format));
 			intCert.setTotalPaid(PennantApplicationUtil
 					.amountFormate(summary.getFinSchdPriPaid().add(summary.getFinSchdPftPaid()), format));
+			try {
+				intCert.setSchdPftPaidInWords(
+						summary.getFinSchdPftPaid() == BigDecimal.ZERO ? ""
+								: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
+										PennantApplicationUtil.formateAmount(summary.getFinSchdPftPaid(), format),
+										"")));
+				intCert.setSchdPriPaidInWords(
+						summary.getFinSchdPriPaid() == BigDecimal.ZERO ? ""
+								: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
+										PennantApplicationUtil.formateAmount(summary.getFinSchdPriPaid(), format),
+										"")));
+				intCert.setTotalPaidInWords(
+						summary.getFinSchdPftPaid().add(summary.getFinSchdPriPaid()) == BigDecimal.ZERO ? ""
+								: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
+										PennantApplicationUtil.formateAmount(
+												summary.getFinSchdPriPaid().add(summary.getFinSchdPftPaid()), format),
+										"")));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 		} else {
 			intCert.setFinSchdPftPaid(new BigDecimal(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format)));
 			intCert.setFinSchdPriPaid(new BigDecimal(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format)));
@@ -128,6 +164,43 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 		}
 
 		intCert.setFinAmount(PennantApplicationUtil.amountFormate(new BigDecimal(intCert.getFinAmount()), format));
+
+		if (amounts != null && !amounts.isEmpty()) {
+
+			BigDecimal pftSchd = (BigDecimal) amounts.get("profitschd");
+			BigDecimal priSchd = (BigDecimal) amounts.get("principalschd");
+			BigDecimal emiAmount = (BigDecimal) amounts.get("repayamount");
+			intCert.setPftSchd(PennantApplicationUtil.amountFormate(pftSchd, format));
+			intCert.setPriSchd(PennantApplicationUtil.amountFormate(priSchd, format));
+			intCert.setEmiAmt(PennantApplicationUtil.amountFormate(emiAmount, format));
+
+			try {
+				intCert.setPftSchdInWords(pftSchd == BigDecimal.ZERO ? ""
+						: WordUtils.capitalize(NumberToEnglishWords
+								.getAmountInText(PennantApplicationUtil.formateAmount(pftSchd, format), "")));
+				intCert.setPriSchdInWords(priSchd == BigDecimal.ZERO ? ""
+						: WordUtils.capitalize(NumberToEnglishWords
+								.getAmountInText(PennantApplicationUtil.formateAmount(priSchd, format), "")));
+				intCert.setEmiAmtInWords(emiAmount == BigDecimal.ZERO ? ""
+						: WordUtils.capitalize(NumberToEnglishWords
+								.getAmountInText(PennantApplicationUtil.formateAmount(emiAmount, format), "")));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
+		//Grace repay Details
+		Map<String, Object> graceRepayMap = interestCertificateDAO.getTotalGrcRepayProfit(finReference, startDate,
+				endDate);
+
+		if (graceRepayMap != null && !graceRepayMap.isEmpty()) {
+			BigDecimal grcPft = (BigDecimal) graceRepayMap.get("grcpft");
+			BigDecimal grcPftPaid = (BigDecimal) graceRepayMap.get("grcpftpaid");
+			intCert.setGrcPft(PennantApplicationUtil.amountFormate(grcPft, format));
+			intCert.setGrcPftPaid(PennantApplicationUtil.amountFormate(grcPftPaid, format));
+		}
 
 		// collateral address setup
 		String collateralRef = interestCertificateDAO.getCollateralRef(intCert.getFinReference());
@@ -157,8 +230,17 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 
 	}
 
+	@Override
+	public FinanceMain getFinanceMain(String finReference, String[] columns, String type) {
+		return financeMainDAO.getFinanceMain(finReference, columns, type);
+	}
+
 	public void setInterestCertificateDAO(InterestCertificateDAO interestCertificateDAO) {
 		this.interestCertificateDAO = interestCertificateDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 	@Autowired(required = false)

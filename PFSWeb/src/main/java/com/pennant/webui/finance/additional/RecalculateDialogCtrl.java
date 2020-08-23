@@ -74,6 +74,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -110,6 +111,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	private transient RecalculateService recalService;
 	private boolean appDateValidationReq = false;
+	private boolean excludeReq = SysParamUtil.isAllowed(SMTParameterConstants.EXCLUDE_RECALTYPE_VAL_IN_RECAL);
 
 	/**
 	 * default constructor.<br>
@@ -266,7 +268,11 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 							PennantStaticListUtil.getSchCalCodes(), excldValues);
 				}
 			}
-
+			if (excludeReq) {
+				excldValues = ",CURPRD,TILLDATE,ADJMDT,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,STEPPOS,";
+				fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
+						PennantStaticListUtil.getSchCalCodes(), excldValues);
+			}
 			if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
 				fillSchFromDates(this.cbEventFromDate, aFinSchData.getFinanceScheduleDetails(), true);
 				this.cbEventFromDate.setDisabled(true);

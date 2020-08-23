@@ -8,4 +8,5 @@ public interface MandateProcessDAO {
 	public List<Long> getMandateList(String entityCode);
 
 	public List<String> getEntityCodes();
+
 }

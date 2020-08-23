@@ -28,9 +28,9 @@ public class FinanceMainExtDAOImpl extends BasicDao<FinanceMainExt> implements F
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into FinanceMainExt");
-		insertSql.append(" (FinReference, RepayIBAN, ProcessFlag, NstlAccNum, IfscCode )");
-		insertSql.append(" VALUES(:FinReference, :RepayIBAN, :ProcessFlag, :NstlAccNum, :IfscCode )");
-
+		insertSql.append(" (FinReference, RepayIBAN, ProcessFlag, NstlAccNum, IfscCode, Remarks1, Remarks2 )");
+		insertSql.append(" VALUES(:FinReference, :RepayIBAN, :ProcessFlag, :NstlAccNum, :IfscCode, ");
+		insertSql.append(":Remarks1, :Remarks2 )");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMainExt);
@@ -53,7 +53,8 @@ public class FinanceMainExtDAOImpl extends BasicDao<FinanceMainExt> implements F
 		financeMainExt.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder(
-				"SELECT FinReference, RepayIBAN, ProcessFlag, NstlAccNum, IfscCode ");
+				"SELECT FinReference, RepayIBAN, ProcessFlag, NstlAccNum, IfscCode, ");
+		selectSql.append("  Remarks1, Remarks2 ");
 		selectSql.append(" From FinanceMainExt");
 		selectSql.append(" Where FinReference =:FinReference");
 
@@ -85,7 +86,8 @@ public class FinanceMainExtDAOImpl extends BasicDao<FinanceMainExt> implements F
 
 		updateSql.append(" FinanceMainExt");
 		updateSql.append(" Set RepayIBAN = :RepayIBAN,");
-		updateSql.append(" ProcessFlag =:ProcessFlag, NstlAccNum =:NstlAccNum , IfscCode=:IfscCode ");
+		updateSql.append(" ProcessFlag =:ProcessFlag, NstlAccNum =:NstlAccNum , IfscCode=:IfscCode, ");
+		updateSql.append("Remarks1 = :Remarks1, Remarks2 = :Remarks2 ");
 		updateSql.append(" WHERE FinReference =:FinReference ");
 
 		logger.debug("updateSql: " + updateSql.toString());

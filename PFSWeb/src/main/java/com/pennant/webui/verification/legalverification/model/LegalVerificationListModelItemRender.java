@@ -11,6 +11,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 
 public class LegalVerificationListModelItemRender implements ListitemRenderer<LegalVerification>, Serializable {
@@ -35,6 +36,13 @@ public class LegalVerificationListModelItemRender implements ListitemRenderer<Le
 		lc = new Listcell(lv.getKeyReference());
 		lc.setParent(item);
 		lc = new Listcell(lv.getAgencyName());
+		lc.setParent(item);
+		String value = "0";
+		if (String.valueOf(lv.getVerificationCategory()) != null) {
+			value = String.valueOf(lv.getVerificationCategory());
+		}
+		lc = new Listcell(
+				PennantStaticListUtil.getlabelDesc(value, PennantStaticListUtil.getLegalVerificationCategories()));
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(lv.getCreatedOn()));
 		lc.setParent(item);

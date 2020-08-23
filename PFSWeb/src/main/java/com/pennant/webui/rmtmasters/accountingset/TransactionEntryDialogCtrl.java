@@ -1696,6 +1696,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		feeMap.put("_P", Labels.getLabel("label_TransactionEntryDialog_FeePaid"));
 		feeMap.put("_AF", Labels.getLabel("label_TransactionEntryDialog_FeeAF"));
 		feeMap.put("_SCH", Labels.getLabel("label_TransactionEntryDialog_FeeSF"));
+		feeMap.put("_R", Labels.getLabel("label_TransactionEntryDialog_FeeReFunded"));
 
 		// GST Fields
 		feeMap.put("_CGST_C", Labels.getLabel("label_TransactionEntryDialog_CGST"));
@@ -1703,30 +1704,35 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		feeMap.put("_CGST_P", Labels.getLabel("label_TransactionEntryDialog_CGST"));
 		feeMap.put("_CGST_SCH", Labels.getLabel("label_TransactionEntryDialog_CGST"));
 		feeMap.put("_CGST_AF", Labels.getLabel("label_TransactionEntryDialog_CGST"));
+		feeMap.put("_CGST_R", Labels.getLabel("label_TransactionEntryDialog_R_CGST"));
 
 		feeMap.put("_SGST_C", Labels.getLabel("label_TransactionEntryDialog_SGST"));
 		feeMap.put("_SGST_N", Labels.getLabel("label_TransactionEntryDialog_SGST"));
 		feeMap.put("_SGST_P", Labels.getLabel("label_TransactionEntryDialog_SGST"));
 		feeMap.put("_SGST_SCH", Labels.getLabel("label_TransactionEntryDialog_SGST"));
 		feeMap.put("_SGST_AF", Labels.getLabel("label_TransactionEntryDialog_SGST"));
+		feeMap.put("_SGST_R", Labels.getLabel("label_TransactionEntryDialog_R_SGST"));
 
 		feeMap.put("_UGST_C", Labels.getLabel("label_TransactionEntryDialog_UGST"));
 		feeMap.put("_UGST_N", Labels.getLabel("label_TransactionEntryDialog_UGST"));
 		feeMap.put("_UGST_P", Labels.getLabel("label_TransactionEntryDialog_UGST"));
 		feeMap.put("_UGST_SCH", Labels.getLabel("label_TransactionEntryDialog_UGST"));
 		feeMap.put("_UGST_AF", Labels.getLabel("label_TransactionEntryDialog_UGST"));
+		feeMap.put("_UGST_R", Labels.getLabel("label_TransactionEntryDialog_R_UGST"));
 
 		feeMap.put("_IGST_C", Labels.getLabel("label_TransactionEntryDialog_IGST"));
 		feeMap.put("_IGST_N", Labels.getLabel("label_TransactionEntryDialog_IGST"));
 		feeMap.put("_IGST_P", Labels.getLabel("label_TransactionEntryDialog_IGST"));
 		feeMap.put("_IGST_SCH", Labels.getLabel("label_TransactionEntryDialog_IGST"));
 		feeMap.put("_IGST_AF", Labels.getLabel("label_TransactionEntryDialog_IGST"));
+		feeMap.put("_IGST_R", Labels.getLabel("label_TransactionEntryDialog_R_IGST"));
 
 		feeMap.put("_CESS_C", Labels.getLabel("label_TransactionEntryDialog_CESS"));
 		feeMap.put("_CESS_N", Labels.getLabel("label_TransactionEntryDialog_CESS"));
 		feeMap.put("_CESS_P", Labels.getLabel("label_TransactionEntryDialog_CESS"));
 		feeMap.put("_CESS_SCH", Labels.getLabel("label_TransactionEntryDialog_CESS"));
 		feeMap.put("_CESS_AF", Labels.getLabel("label_TransactionEntryDialog_CESS"));
+		feeMap.put("_CESS_R", Labels.getLabel("label_TransactionEntryDialog_R_CESS"));
 
 		//Waivers
 		feeMap.put("_CGST_W", Labels.getLabel("label_TransactionEntryDialog_W_CGST"));

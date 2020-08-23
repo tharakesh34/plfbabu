@@ -95,8 +95,6 @@ public class ExternalDocumentManager {
 		if (!documentDetailList.isEmpty()) {
 			DocumentDetails documentDet = documentDetailList.get(0);
 			if (documentDetailList.size() == 1) {
-				documentDet.setDocName(fileName);
-				documentDet.setDocImage(documentDet.getDocImage());
 				returndetails = documentDet;
 			} else {
 				try {

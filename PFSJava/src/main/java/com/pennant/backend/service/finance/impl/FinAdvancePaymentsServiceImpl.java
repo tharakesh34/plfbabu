@@ -724,6 +724,9 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		FinScheduleData schd = financeDetail.getFinScheduleData();
 		if (schd != null && schd.getDisbursementDetails() != null) {
 			for (FinanceDisbursement disbursement : schd.getDisbursementDetails()) {
+				if (disbursement.getLinkedDisbId() != 0) {
+					continue;
+				}
 				totPOAmount = totPOAmount.add(disbursement.getDisbAmount());
 			}
 		}
@@ -769,7 +772,9 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				|| StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
 			processDisbursments(financeDetail);
 			// Postings preparation
-			generateAccounting(financeDetail);
+			if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+				generateAccounting(financeDetail);
+			}
 			auditDetails.addAll(doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD, financeDetail.isDisbStp()));
 			delete(financeDetail.getAdvancePaymentsList(), "_Temp", "");
 			return auditDetails;
@@ -1000,6 +1005,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		if (list != null && !list.isEmpty()) {
 			for (FinanceDisbursement financeDisbursement : list) {
 				if (group && seq != financeDisbursement.getDisbSeq()) {
+					continue;
+				}
+
+				// exclude inst based schedules
+				if (financeDisbursement.getLinkedDisbId() != 0) {
 					continue;
 				}
 

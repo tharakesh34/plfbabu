@@ -537,7 +537,11 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 							Checkbox checkbox = new Checkbox();
 							checkbox.setDisabled(true);
 							if (fieldValue != null) {
-								checkbox.setChecked(Integer.parseInt(fieldValue.toString()) == 1 ? true : false);
+								if (fieldValue instanceof Boolean) {
+									checkbox.setChecked((boolean) fieldValue);
+								} else {
+									checkbox.setChecked(Integer.parseInt(fieldValue.toString()) == 1 ? true : false);
+								}
 							}
 							lc.appendChild(checkbox);
 						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_FRQ)) {

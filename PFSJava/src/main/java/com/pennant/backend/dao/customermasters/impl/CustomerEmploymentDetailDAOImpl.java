@@ -75,27 +75,26 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 		CustomerEmploymentDetail customerEmploymentDetail = new CustomerEmploymentDetail();
 		customerEmploymentDetail.setCustEmpId(custEmpId);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT CustEmpId,CustID, CustEmpName, CustEmpDept, CustEmpDesg,");
-		selectSql.append(" CustEmpType, CustEmpFrom, CustEmpTo,CurrentEmployer,CompanyName,");
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT CustEmpId,CustID, CustEmpName, CustEmpDept, CustEmpDesg");
+		sql.append(", CustEmpType, CustEmpFrom, CustEmpTo,CurrentEmployer,CompanyName");
 		if (type.contains("View")) {
-			selectSql.append(" lovDescCustEmpDesgName, lovDescCustEmpDeptName,");
-			selectSql.append(" lovDescCustEmpTypeName,lovDesccustEmpName,");
+			sql.append(", LovDescEmpCategory, lovDescCustEmpDesgName, LovDescCustEmpDeptName");
+			sql.append(", LovDescCustEmpTypeName, LovDesccustEmpName, LovDescEmpIndustry");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM  CustomerEmpDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustEmpId = :CustEmpId");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" FROM  CustomerEmpDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustEmpId = :CustEmpId");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
 		RowMapper<CustomerEmploymentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(CustomerEmploymentDetail.class);
 
 		try {
-			customerEmploymentDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			customerEmploymentDetail = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			customerEmploymentDetail = null;
@@ -291,7 +290,8 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", LovDescCustEmpDesgName, LovDescCustEmpDeptName, LovDescCustEmpTypeName, LovDesccustEmpName");
+			sql.append(", LovDescCustEmpDesgName, LovDescCustEmpDeptName, LovDescCustEmpTypeName");
+			sql.append(", LovDesccustEmpName, LovDescEmpCategory, LovDescEmpIndustry");
 		}
 
 		sql.append(" from CustomerEmpDetails");
@@ -338,6 +338,8 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 						emp.setLovDescCustEmpDeptName(rs.getString("LovDescCustEmpDeptName"));
 						emp.setLovDescCustEmpTypeName(rs.getString("LovDescCustEmpTypeName"));
 						emp.setLovDesccustEmpName(rs.getString("LovDesccustEmpName"));
+						emp.setLovDescEmpCategory(rs.getString("LovDescEmpCategory"));
+						emp.setLovDescEmpIndustry(rs.getString("LovDescEmpIndustry"));
 					}
 
 					return emp;
@@ -382,20 +384,18 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 		source.addValue("CustId", custID);
 		source.addValue("CustEmpId", custEmpId);
 
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("SELECT Version FROM CustomerEmpDetails");
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT Version FROM CustomerEmpDetails");
+		sql.append(" WHERE CustId = :CustId AND CustEmpId = :CustEmpId");
 
-		selectSql.append(" WHERE CustId = :CustId AND CustEmpId = :CustEmpId");
-
-		logger.debug("insertSql: " + selectSql.toString());
-		int returnRcds = 0;
+		logger.trace(Literal.SQL + sql.toString());
 		try {
-			returnRcds = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (Exception e) {
 
 		}
 		logger.debug("Leaving");
-		return returnRcds;
+		return 0;
 	}
 
 }

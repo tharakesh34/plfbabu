@@ -137,7 +137,7 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> {
 				sortOperator_saluationDesc, Operators.STRING);
 		registerField("salutationIsActive", listheader_SalutationIsActive, SortOrder.NONE, salutationIsActive,
 				sortOperator_salutationIsActive, Operators.BOOLEAN);
-
+		registerField("salutationGenderCode");
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -201,8 +201,13 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> {
 		}
 
 		// Get the selected entity.
-		String id = ((String) selectedItem.getAttribute("id"));
-		Salutation salutation = salutationService.getSalutationById(id);
+		Salutation salutation = ((Salutation) selectedItem.getAttribute("id"));
+		if (salutation == null) {
+			return;
+		}
+
+		salutation = salutationService.getSalutationById(salutation.getSalutationCode(),
+				salutation.getSalutationGenderCode());
 
 		if (salutation == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

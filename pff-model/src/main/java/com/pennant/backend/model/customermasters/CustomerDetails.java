@@ -204,6 +204,9 @@ public class CustomerDetails implements java.io.Serializable {
 	@XmlElement
 	private List<CustomerFinanceDetail> customerFinanceDetailList;
 
+	private boolean reInitiateCibil = true;
+	private String actualError;
+
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
 	}
@@ -678,6 +681,22 @@ public class CustomerDetails implements java.io.Serializable {
 
 	public void setCustomerFinanceDetailList(List<CustomerFinanceDetail> customerFinanceDetailList) {
 		this.customerFinanceDetailList = customerFinanceDetailList;
+	}
+
+	public boolean isReInitiateCibil() {
+		return reInitiateCibil;
+	}
+
+	public void setReInitiateCibil(boolean reInitiateCibil) {
+		this.reInitiateCibil = reInitiateCibil;
+	}
+
+	public String getActualError() {
+		return actualError;
+	}
+
+	public void setActualError(String actualError) {
+		this.actualError = actualError;
 	}
 
 }

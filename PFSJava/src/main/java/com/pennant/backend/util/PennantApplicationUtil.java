@@ -819,6 +819,8 @@ public class PennantApplicationUtil {
 			// "label_CoreCustomerDialog_PrimaryID_Retl.value");
 			result.put("MANDATORY",
 					"Y".equals(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_REQ")) ? "true" : "false");
+			result.put("MOBILEMANDATORY",
+					SysParamUtil.isAllowed(SMTParameterConstants.CUST_PRIMARY_ID_MOB_REQ) ? "true" : "false");
 			result.put("REGEX", "REGEX_" + SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL") + "_NUMBER");
 			break;
 		case "CORP":
@@ -827,12 +829,15 @@ public class PennantApplicationUtil {
 			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID_Corp.value");
 			result.put("MANDATORY",
 					"Y".equals(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_REQ")) ? "true" : "false");
+			result.put("MOBILEMANDATORY",
+					SysParamUtil.isAllowed(SMTParameterConstants.CUST_PRIMARY_ID_MOB_REQ) ? "true" : "false");
 			result.put("REGEX", "REGEX_" + SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP") + "_NUMBER");
 			break;
 		default:
 			result.put("TYPE", "");
 			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID.value");
 			result.put("MANDATORY", "false");
+			result.put("MOBILEMANDATORY", "false");
 			result.put("REGEX", "");
 		}
 

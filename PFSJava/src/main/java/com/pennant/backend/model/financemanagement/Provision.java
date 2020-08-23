@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -87,14 +88,26 @@ public class Provision extends AbstractWorkflowEntity {
 	private String lovDescCustCIF;
 	private String lovDescCustShrtName;
 	private String lovDescFinDivision;
-	private int duedays;
+	private int dueDays;
 	private long dpdBucketID;
 	private long npaBucketID;
 	private BigDecimal pftBal;
 	private BigDecimal priBal;
 	private BigDecimal prvovisionRate;
 
+	private String assetCode;
+	private int assetStageOrdr;
+	private boolean npa;
+	private long provLinkedTranId;
+	private long provChgLinkedTranId;
+	private boolean manualProvision;
+	private boolean assetFwdMov;
+	private boolean assetBkwMov;
+
+	private Provision oldProvision;
+	private ProvisionMovement provisionMovement;
 	private FinanceDetail financeDetail;
+	private NPAProvisionHeader npaHeader;
 
 	private List<ProvisionMovement> provisionMovementList = new ArrayList<ProvisionMovement>();
 	private String rcdAction = "";
@@ -120,6 +133,14 @@ public class Provision extends AbstractWorkflowEntity {
 		excludeFields.add("transRef");
 		excludeFields.add("financeDetail");
 		excludeFields.add("rcdAction");
+		excludeFields.add("npaHeader");
+		excludeFields.add("finCcy");
+		excludeFields.add("oldProvision");
+		excludeFields.add("assetFwdMov");
+		excludeFields.add("assetBkwMov");
+		excludeFields.add("provisionMovement");
+		excludeFields.add("financeDetail");
+		excludeFields.add("npaHeader");
 		return excludeFields;
 	}
 
@@ -359,12 +380,12 @@ public class Provision extends AbstractWorkflowEntity {
 		this.finCcy = finCcy;
 	}
 
-	public int getDuedays() {
-		return duedays;
+	public int getDueDays() {
+		return dueDays;
 	}
 
-	public void setDuedays(int duedays) {
-		this.duedays = duedays;
+	public void setDueDays(int dueDays) {
+		this.dueDays = dueDays;
 	}
 
 	public long getDpdBucketID() {
@@ -413,6 +434,94 @@ public class Provision extends AbstractWorkflowEntity {
 
 	public void setRcdAction(String rcdAction) {
 		this.rcdAction = rcdAction;
+	}
+
+	public String getAssetCode() {
+		return assetCode;
+	}
+
+	public void setAssetCode(String assetCode) {
+		this.assetCode = assetCode;
+	}
+
+	public int getAssetStageOrdr() {
+		return assetStageOrdr;
+	}
+
+	public void setAssetStageOrdr(int assetStageOrdr) {
+		this.assetStageOrdr = assetStageOrdr;
+	}
+
+	public long getProvLinkedTranId() {
+		return provLinkedTranId;
+	}
+
+	public void setProvLinkedTranId(long provLinkedTranId) {
+		this.provLinkedTranId = provLinkedTranId;
+	}
+
+	public long getProvChgLinkedTranId() {
+		return provChgLinkedTranId;
+	}
+
+	public void setProvChgLinkedTranId(long provChgLinkedTranId) {
+		this.provChgLinkedTranId = provChgLinkedTranId;
+	}
+
+	public NPAProvisionHeader getNpaHeader() {
+		return npaHeader;
+	}
+
+	public void setNpaHeader(NPAProvisionHeader npaHeader) {
+		this.npaHeader = npaHeader;
+	}
+
+	public boolean isNpa() {
+		return npa;
+	}
+
+	public void setNpa(boolean npa) {
+		this.npa = npa;
+	}
+
+	public boolean isManualProvision() {
+		return manualProvision;
+	}
+
+	public void setManualProvision(boolean manualProvision) {
+		this.manualProvision = manualProvision;
+	}
+
+	public boolean isAssetFwdMov() {
+		return assetFwdMov;
+	}
+
+	public void setAssetFwdMov(boolean assetFwdMov) {
+		this.assetFwdMov = assetFwdMov;
+	}
+
+	public boolean isAssetBkwMov() {
+		return assetBkwMov;
+	}
+
+	public void setAssetBkwMov(boolean assetBkwMov) {
+		this.assetBkwMov = assetBkwMov;
+	}
+
+	public ProvisionMovement getProvisionMovement() {
+		return provisionMovement;
+	}
+
+	public void setProvisionMovement(ProvisionMovement provisionMovement) {
+		this.provisionMovement = provisionMovement;
+	}
+
+	public Provision getOldProvision() {
+		return oldProvision;
+	}
+
+	public void setOldProvision(Provision oldProvision) {
+		this.oldProvision = oldProvision;
 	}
 
 }

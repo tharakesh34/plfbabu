@@ -2067,7 +2067,10 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 				finRefList.add(finMain.getFinReference());
 			}
-			finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
+
+			if (CollectionUtils.isNotEmpty(finRefList)) {
+				finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
+			}
 		}
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
@@ -2134,8 +2137,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			strXML = StringEscapeUtils.escapeJavaScript(strXML);
 			chartDetail.setStrXML(strXML);
 
-			Executions.createComponents("/Charts/Chart.zul",
-					(Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny("graphTabPanel"),
+			Executions.createComponents("/Charts/Chart.zul", tabpanelsBoxIndexCenter.getFellowIfAny("graphTabPanel"),
 					Collections.singletonMap("chartDetail", chartDetail));
 		}
 		chartDetailList = new ArrayList<ChartDetail>(); // Resetting
@@ -2698,6 +2700,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		return eventManager;
 	}
 
+	@Override
 	public void setEventManager(EventManager eventManager) {
 		this.eventManager = eventManager;
 	}

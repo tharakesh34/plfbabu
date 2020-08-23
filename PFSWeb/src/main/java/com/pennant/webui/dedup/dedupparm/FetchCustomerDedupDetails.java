@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.masters.MasterDefDAO;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -26,7 +29,7 @@ public class FetchCustomerDedupDetails {
 
 	private static final Logger logger = Logger.getLogger(FetchCustomerDedupDetails.class);
 
-	private static final String CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custFName,custLName,custCRCPR,custEMail,mobileNumber,aadharNumber,"
+	private static String CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custFName,custLName,custCRCPR,custEMail,mobileNumber,aadharNumber,"
 			+ "custNationality,dedupRule,override";
 
 	private static DedupParmService dedupParmService;
@@ -52,6 +55,10 @@ public class FetchCustomerDedupDetails {
 
 			if (custDedupData != null && !custDedupData.isEmpty()) {
 				customer.setDedupFound(true);
+				if (ImplementationConstants.SHOW_CUSTOM_BLACKLIST_FIELDS) {
+					CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custShrtName,custCRCPR,custEMail,mobileNumber,aadharNumber,"
+							+ "custNationality,dedupRule,override";
+				}
 				Object dataObject = ShowCustomerDedupListBox.show(parentWindow, custDedupData, CUSTOMERDEDUP_LABELS,
 						customerDedup, curLoginUser);
 
@@ -219,8 +226,15 @@ public class FetchCustomerDedupDetails {
 		String mobileNumber = "";
 		String emailid = "";
 		String aadharId = "";
+		String voterId = "";
+		String drivingLicenseNo = "";
 		String aadhar = masterDefDAO.getMasterCode("DOC_TYPE", "AADHAAR");
 		String passPort = masterDefDAO.getMasterCode("DOC_TYPE", "PASSPORT");
+		String voterIdCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, PennantConstants.VOTER_ID);
+		String drivingLicenseCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE,
+				PennantConstants.DRIVING_LICENCE);
+		StringBuilder custAddress = new StringBuilder("");
+
 		Customer customer = customerDetails.getCustomer();
 		if (customerDetails.getCustomerPhoneNumList() != null) {
 			for (CustomerPhoneNumber custPhone : customerDetails.getCustomerPhoneNumList()) {
@@ -258,6 +272,40 @@ public class FetchCustomerDedupDetails {
 			}
 		}
 
+		//Driving License 
+		if (customerDetails.getCustomerDocumentsList() != null && StringUtils.isNotEmpty(drivingLicenseCode)) {
+			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
+				if (StringUtils.equals(drivingLicenseCode, document.getCustDocCategory())) {
+					drivingLicenseNo = document.getCustDocTitle();
+					break;
+				}
+			}
+		}
+		//VoterId 
+		if (customerDetails.getCustomerDocumentsList() != null && StringUtils.isNotEmpty(voterIdCode)) {
+			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
+				if (StringUtils.equals(voterIdCode, document.getCustDocCategory())) {
+					voterId = document.getCustDocTitle();
+					break;
+				}
+			}
+		}
+
+		//Address
+		if (customerDetails.getAddressList() != null) {
+			for (CustomerAddres address : customerDetails.getAddressList()) {
+				if (String.valueOf(address.getCustAddrPriority()).equals(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+					custAddress.append(address.getCustAddrHNbr()).append(", ");
+					custAddress.append(address.getCustAddrStreet()).append(", ");
+					custAddress.append(address.getCustAddrCity()).append(", ");
+					custAddress.append(address.getCustAddrProvince()).append(", ");
+					custAddress.append(address.getCustAddrZIP()).append(", ");
+					custAddress.append(address.getCustAddrCountry());
+					break;
+				}
+			}
+		}
+
 		CustomerDedup customerDedup = new CustomerDedup();
 		customerDedup.setFinReference(customer.getCustCIF());
 		customerDedup.setCustId(customer.getCustID());
@@ -280,6 +328,9 @@ public class FetchCustomerDedupDetails {
 		customerDedup.setCustPOB(customer.getCustPOB());
 		customerDedup.setCustResdCountry(customer.getCustResdCountry());
 		customerDedup.setCustEMail(emailid);
+		customerDedup.setVoterID(voterId);
+		customerDedup.setDrivingLicenceNo(drivingLicenseNo);
+		customerDedup.setAddress(custAddress.toString());
 
 		logger.debug("Leaving");
 		return customerDedup;

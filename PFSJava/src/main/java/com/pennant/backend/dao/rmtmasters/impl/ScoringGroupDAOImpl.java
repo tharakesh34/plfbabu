@@ -43,12 +43,18 @@
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -225,6 +231,57 @@ public class ScoringGroupDAOImpl extends SequenceDao<ScoringGroup> implements Sc
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
+	}
+
+	@Override
+	public ScoringGroup getScoringGroupByRiskScore(BigDecimal score, BigDecimal netSal, String type) {
+		logger.debug("Entering");
+		ScoringGroup scoringGroup = new ScoringGroup();
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select ScoreGroupId, ScoreGroupCode, ScoreGroupName, CategoryType, MinScore, IsOverride, OverrideScore");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append("");
+		}
+		selectSql.append(" From RMTScoringGroup");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ScoreGroupId =:ScoreGroupId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringGroup);
+		RowMapper<ScoringGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringGroup.class);
+
+		try {
+			scoringGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			scoringGroup = null;
+		}
+		logger.debug("Leaving");
+		return scoringGroup;
+	}
+
+	public List<ScoringGroup> getScoringGroups(Object[] scoreGroupCodes, String type) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder("SELECT ScoreGroupId , ScoreGroupCode , ");
+		selectSql.append(" ScoreGroupName , CategoryType, MinScore , IsOverride , OverrideScore  ");
+
+		selectSql.append(" From RmtScoringGroup");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ScoreGroupCode in(:scoreGroupCode)");
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("scoreGroupCode", Arrays.asList(scoreGroupCodes));
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ScoringGroup> rowMapper = BeanPropertyRowMapper.newInstance(ScoringGroup.class);
+
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), paramSource, rowMapper);
 	}
 
 }

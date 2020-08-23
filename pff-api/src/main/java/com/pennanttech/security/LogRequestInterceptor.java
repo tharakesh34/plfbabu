@@ -36,7 +36,7 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 	static final Logger log = Logger.getLogger(LogRequestInterceptor.class);
 
 	private APILogDetailDAO apiLogDetailDAO;
-	SimpleDateFormat dateFormat = new SimpleDateFormat(PennantConstants.APIDateFormatter);
+	private SimpleDateFormat dateFormat = new SimpleDateFormat(PennantConstants.APIDateFormatter);
 
 	public LogRequestInterceptor() {
 		super(Phase.RECEIVE);

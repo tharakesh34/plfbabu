@@ -40,6 +40,7 @@ import com.pennant.UserWorkspace;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -149,10 +150,25 @@ public class ExtendedFieldCtrl {
 				List<ScriptError> defaultList = defaults.getAll();
 				for (int i = 0; i < defaultList.size(); i++) {
 					ScriptError dftKeyValue = defaultList.get(i);
-					if (fieldValuesMap.containsKey(dftKeyValue.getProperty())) {
-						fieldValuesMap.remove(dftKeyValue.getProperty());
+					try {
+						//setting the default values to the extended field for pre-scripting
+						ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(),
+								extendedFieldHeader.getExtendedFieldDetails());
+						if (detail != null && detail.isValFromScript()) {
+							detail.setFieldList(dftKeyValue.getValue());
+							if (fieldValuesMap.containsKey(detail.getFieldName())) {
+								//defaults should be populated when a new record is open other wise DB value need to be displayed
+								String value = fieldValuesMap.get(detail.getFieldName()).toString();
+								if ("#".equals(value) || "0".equals(value) || StringUtils.isBlank(value)) {//combobox,numeric,text
+									fieldValuesMap.put(detail.getFieldName(), dftKeyValue.getValue());
+								}
+							}
+						} else if (fieldValuesMap.containsKey(dftKeyValue.getProperty())) {
+							fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
+						}
+					} catch (Exception e) {
+						logger.debug(Literal.EXCEPTION + "Error while setting default values");
 					}
-					fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
 				}
 			}
 		}
@@ -166,12 +182,16 @@ public class ExtendedFieldCtrl {
 		}
 	}
 
+	public ExtendedFieldRender save(boolean validationReq) throws ParseException {
+		return save(validationReq, null);
+	}
+
 	/**
 	 * Method for saving the Extended field details
 	 * 
 	 * @return ExtendedFieldRender extendedFieldRender
 	 */
-	public ExtendedFieldRender save(boolean validationReq) throws ParseException {
+	public ExtendedFieldRender save(boolean validationReq, CustomerDetails customerDetails) throws ParseException {
 
 		if (this.extendedFieldHeader == null) {
 			return null;
@@ -191,6 +211,7 @@ public class ExtendedFieldCtrl {
 		map = generator.doSave(this.extendedFieldHeader.getExtendedFieldDetails(), makeReadOnly);
 		this.extendedFieldRender.setMapValues(map);
 		this.extendedFieldRender.setTypeCode(this.extendedFieldHeader.getSubModuleName());
+		map.put("cd", customerDetails);
 
 		// Post Validations for the Extended fields
 		if (!makeReadOnly) {
@@ -200,6 +221,7 @@ public class ExtendedFieldCtrl {
 				showErrorDetails(postValidationErrors);
 			}
 		}
+		map.remove("cd");
 
 		if (isNewRecord) {
 			this.extendedFieldRender.setSeqNo(1);
@@ -821,6 +843,21 @@ public class ExtendedFieldCtrl {
 	}
 
 	/**
+	 * Getting the Extendedfield details
+	 * 
+	 * @param fileldName
+	 * @return
+	 */
+	private ExtendedFieldDetail getFieldDetail(String fileldName, List<ExtendedFieldDetail> extendedFieldDetails) {
+		for (ExtendedFieldDetail detail : extendedFieldDetails) {
+			if (detail.getFieldName().equals(fileldName)) {
+				return detail;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Method for deAllocating the ExtendedFields Authorities.
 	 * 
 	 */
@@ -990,7 +1027,13 @@ public class ExtendedFieldCtrl {
 	}
 
 	public void setValues(Map<String, Object> fieldValueMap) {
-		this.generator.setValues(extendedFieldHeader.getExtendedFieldDetails(), fieldValueMap);
+		if (extendedFieldHeader != null) {
+			this.generator.setValues(extendedFieldHeader.getExtendedFieldDetails(), fieldValueMap);
+		}
+	}
+
+	public ExtendedFieldsGenerator getGenerator() {
+		return generator;
 	}
 
 	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {

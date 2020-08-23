@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -30,6 +31,7 @@ import com.jcraft.jsch.Session;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAutoApprovalDetails;
+import com.pennant.backend.model.finance.InstBasedSchdDetails;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -54,6 +56,7 @@ import com.pennanttech.pff.core.process.PaymentProcess;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.DisbursementResponse;
 import com.pennanttech.pff.logging.dao.FinAutoApprovalDetailDAO;
+import com.pennanttech.pff.logging.dao.InstBasedSchdDetailDAO;
 
 public class DefaultDisbursementResponse extends AbstractInterface implements DisbursementResponse {
 	protected final Logger logger = LogManager.getLogger(getClass());
@@ -62,6 +65,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 	private PaymentProcess paymentProcess;
 	private LoggedInUser loggedInUser;
 	@Autowired(required = false)
+	@Qualifier("disbStatusUploadValidationImpl")
 	private ValidateRecord disbursementRespDataValidation;
 
 	@Autowired(required = false)
@@ -76,6 +80,9 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 	Channel channel = null;
 	ChannelSftp channelSftp = null;
 	Session session = null;
+
+	@Autowired(required = false)
+	private InstBasedSchdDetailDAO instBasedSchdDetailDAO;
 
 	public DefaultDisbursementResponse() {
 		super();
@@ -346,7 +353,12 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
+
+		// FIXME
+		//DisbStatusUploadValidationImpl disbStatusUploadValidationImpl=new DisbStatusUploadValidationImpl();
+		//disbStatusUploadValidationImpl.setFinAutoApprovalDetailDAO(finAutoApprovalDetailDAO);
 		dataEngine.setValidateRecord(disbursementRespDataValidation);
+
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put(DisbursementConstants.STATUS_AWAITCON, DisbursementConstants.STATUS_AWAITCON);
 		dataEngine.setFilterMap(filterMap);
@@ -516,33 +528,39 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			finAdvPayments = namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 
 			List<FinAutoApprovalDetails> autoAppList = new ArrayList<FinAutoApprovalDetails>();
+			List<InstBasedSchdDetails> instBasedSchdList = new ArrayList<InstBasedSchdDetails>();
 
 			for (FinAdvancePayments finAdvPayment : finAdvPayments) {
 				try {
 					disbursementProcess.process(finAdvPayment);
+
 					boolean autoApprove = false;
+					boolean instBasedSchd = false;
 
 					// get the QDP flag from Loan level.
 					FinanceType financeType = finAutoApprovalDetailDAO
 							.getQDPflagByFinref(finAdvPayment.getFinReference());
 
-					if (financeType != null) {
+					if (financeType.isQuickDisb()) {
 						// Check for the AutoApprove flag from LoanType.
-						if (financeType.isQuickDisb() && financeType.isAutoApprove()) {
+						if (financeType.isAutoApprove()) {
 							autoApprove = true;
+						} else if (financeType.isInstBasedSchd() && (StringUtils.equals(finAdvPayment.getStatus(),
+								DisbursementConstants.STATUS_REALIZED)
+								|| StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_PAID))) {
+							// Check Rebuild Schd is true
+							// should check in finance main if the inst based
+							// schedule yes or no
+
+							//check if record already available in table
+							boolean isRecordExists = instBasedSchdDetailDAO
+									.isDisbRecordProceed(finAdvPayment.getPaymentId());
+
+							if (!isRecordExists) {
+								instBasedSchd = true;
+							}
 						}
 					}
-					/*
-					 * //FIXME: Need to check Payment Mode based AutoApprove Required or not. if
-					 * ((StringUtils.equals(finAdvPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_NEFT) ||
-					 * StringUtils.equals(finAdvPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_RTGS)) &&
-					 * StringUtils.equals(DisbursementConstants.STATUS_PAID, finAdvPayment.getStatus())) { autoApprove =
-					 * true; } else if ((StringUtils.equals(finAdvPayment.getPaymentType(),
-					 * DisbursementConstants.PAYMENT_TYPE_CHEQUE) || StringUtils.equals(finAdvPayment.getPaymentType(),
-					 * DisbursementConstants.PAYMENT_TYPE_DD)) &&
-					 * StringUtils.equals(DisbursementConstants.STATUS_REALIZED, finAdvPayment.getStatus())) {
-					 * autoApprove = true; }
-					 */
 
 					if (autoApprove) {
 
@@ -560,11 +578,32 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 						autoAppList.add(detail);
 					}
 
+					if (instBasedSchd) {
+						InstBasedSchdDetails instBasedSchdDetails = new InstBasedSchdDetails();
+						instBasedSchdDetails.setFinReference(finAdvPayment.getFinReference());
+						instBasedSchdDetails.setBatchId(Long.valueOf(params[0].toString()));
+						instBasedSchdDetails.setDisbId(finAdvPayment.getPaymentId());
+						instBasedSchdDetails.setRealizedDate(finAdvPayment.getRealizationDate());
+						instBasedSchdDetails.setDisbAmount(finAdvPayment.getAmtToBeReleased());
+						if (instBasedSchdDetails.getRealizedDate() == null) {
+							instBasedSchdDetails.setRealizedDate(finAdvPayment.getClearingDate());
+						}
+						instBasedSchdDetails.setStatus(DisbursementConstants.AUTODISB_STATUS_PENDING);
+						instBasedSchdDetails.setUserId(Long.valueOf(params[2].toString()));
+						instBasedSchdDetails.setDownloadedon(finAdvPayment.getDownloadedon());
+						instBasedSchdDetails.setLinkedTranId(finAdvPayment.getLinkedTranId());
+						instBasedSchdList.add(instBasedSchdDetails);
+					}
+
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 				}
 			}
 			finAutoApprovalDetailDAO.logFinAutoApprovalDetails(autoAppList);
+
+			if (CollectionUtils.isNotEmpty(instBasedSchdList)) {
+				instBasedSchdDetailDAO.saveInstBasedSchdDetails(instBasedSchdList);
+			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -611,7 +650,8 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			sql.append(" AVD.DEALERNAME, AVD.DEALERTELEPHONE, PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, DR.STATUS,");
 			sql.append(" DR.REJECT_REASON REJECTREASON,DR.REALIZATION_DATE REALIZATIONDATE,");
 			sql.append(" DR.PAYMENT_DATE RESPDATE, DR.TRANSACTIONREF,");
-			sql.append(" PI.PROVIDERID, DR.FINREFERENCE FROM DISBURSEMENT_REQUESTS DR ");
+			sql.append(" PI.PROVIDERID, DR.FINREFERENCE");
+			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
 			sql.append(" INNER JOIN INSURANCEPAYMENTINSTRUCTIONS PI ON PI.ID = DR.DISBURSEMENT_ID");
 			sql.append(" INNER JOIN VASPROVIDERACCDETAIL VPA ON VPA.PROVIDERID = PI.PROVIDERID");
 			sql.append(" INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = VPA.BANKBRANCHID");

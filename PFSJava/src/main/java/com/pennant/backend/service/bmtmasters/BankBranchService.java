@@ -69,4 +69,6 @@ public interface BankBranchService {
 	BankBranch getBankBrachByCode(String bankCode, String branchCode);
 
 	BankBranch getBankBrachByMicr(String micr);
+
+	int getAccNoLengthByIFSC(String ifscCode);
 }

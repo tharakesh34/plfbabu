@@ -104,7 +104,6 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 	protected Listbox sortOperator_profitDaysBasis;
 
 	protected Listheader listheader_FinType;
-	protected Listheader listheader_FinProduct;
 	protected Listheader listheader_CustCIF;
 	protected Listheader listheader_FinRef;
 	protected Listheader listheader_FinBranch;

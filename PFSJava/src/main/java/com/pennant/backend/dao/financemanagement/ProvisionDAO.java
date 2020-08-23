@@ -47,6 +47,7 @@ import java.util.List;
 
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
+import com.pennanttech.pff.core.TableType;
 
 public interface ProvisionDAO {
 
@@ -73,4 +74,6 @@ public interface ProvisionDAO {
 	void updateProvisonAmounts(Provision provision);
 
 	Provision getDMProvisionById(String id, String type);
+
+	boolean isProvisionExists(String finReference, TableType type);
 }

@@ -176,6 +176,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 		sql.deleteCharAt(sql.length() - 1);
 		sql.append(")");
+		sql.append(" and PaidAmount > ?");
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
@@ -186,6 +187,8 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 					for (Long feeId : feeIds) {
 						ps.setLong(index++, feeId);
 					}
+
+					ps.setInt(index++, 0);
 				}
 			}, new RowMapper<FinFeeReceipt>() {
 				@Override
@@ -421,4 +424,47 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		}
 
 	}
+
+	@Override
+	public List<FinFeeReceipt> getFinFeeReceiptByReceiptId(long receiptID, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT ID, FeeID, ReceiptID, PaidAmount,  Version, LastMntBy, LastMntOn, RecordStatus,");
+		sql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		sql.append(" From FinFeeReceipts");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" WHERE  ReceiptID = :ReceiptID");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+
+		RowMapper<FinFeeReceipt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeReceipt.class);
+
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+	}
+
+	@Override
+	public void deleteFinFeeReceiptByReceiptId(long receiptID, String type) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder deleteSql = new StringBuilder();
+		deleteSql.append("Delete From FinFeeReceipts");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where ReceiptID = :ReceiptID ");
+		logger.debug(Literal.SQL + deleteSql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+
+		try {
+			this.jdbcTemplate.update(deleteSql.toString(), source);
+		} catch (DataAccessException e) {
+			//throw new DependencyFoundException(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 }

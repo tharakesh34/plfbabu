@@ -403,7 +403,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					",TILLMDT,TILLDATE,ADDRECAL,ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");
 		} else {
 			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
-					PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");
+					PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,STEPPOS,");//,ADDTERM
 		}
 
 		logger.debug("Leaving");
@@ -987,11 +987,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			} else if (repayToDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0
 					|| this.cbRepayToDate.getSelectedIndex() != (totalCount - 1)) {
 				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
-						PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");
+						PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,CURPRD,ADDTERM,STEPPOS,");
 			} else {
 				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
 						PennantStaticListUtil.getSchCalCodes(),
-						",ADDLAST,ADJTERMS,CURPRD,ADDTERM,TILLDATE,TILLMDT,ADDRECAL,STEPPOS,");
+						",ADDLAST,CURPRD,ADDTERM,TILLDATE,TILLMDT,ADDRECAL,STEPPOS,");
 			}
 
 			fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),

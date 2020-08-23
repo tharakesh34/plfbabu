@@ -445,7 +445,7 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 	public void onClick$button_PayOrderIssueDialog_NewDisbursement(Event event) throws Exception {
 		logger.debug(Literal.ENTERING + event.toString());
 		disbursementInstCtrl.onClickNew(this.customerPaymentTxnsListCtrl, this, ModuleType_CUSTPMTTXN,
-				getFinAdvancePaymentsList(), null);
+				getFinAdvancePaymentsList(), null, null);
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 

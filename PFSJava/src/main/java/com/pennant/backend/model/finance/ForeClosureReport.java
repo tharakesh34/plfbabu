@@ -20,17 +20,25 @@ public class ForeClosureReport implements Serializable {
 
 	private String finReference;
 	private BigDecimal finAmount = BigDecimal.ZERO;
+	private String finAmountInWords = "Zero Only";
 	private BigDecimal finAssetValue = BigDecimal.ZERO;
+	private String finAssetValueInWords = "";
 	private String disbursalDate;
 	private String chrgTillDate;
 	private BigDecimal outstandingPri = BigDecimal.ZERO;
+	private String outstandingPriInWords = "Zero Only";
 	private BigDecimal latePayCharges = BigDecimal.ZERO;
+	private String latePayChargesInWords = "Zero Only";
 	private BigDecimal cheqBncCharges = BigDecimal.ZERO;
+	private String cheqBncChargesInWords = "Zero Only";
 	private BigDecimal instForTheMonth = BigDecimal.ZERO;
+	private String instForTheMonthInWords = "Zero Only";
 	private BigDecimal foreClosFees = BigDecimal.ZERO;
+	private String foreClosFeesInWords = "Zero Only";
 	private BigDecimal principalAmt = BigDecimal.ZERO;
 	private BigDecimal interestAmt = BigDecimal.ZERO;
 	private BigDecimal pendingInsts = BigDecimal.ZERO;
+	private String pendingInstsInWords = "Zero Only";
 	private BigDecimal tds = BigDecimal.ZERO;
 	private BigDecimal refund = BigDecimal.ZERO;
 	private BigDecimal intOnTerm = BigDecimal.ZERO;
@@ -38,8 +46,14 @@ public class ForeClosureReport implements Serializable {
 	private BigDecimal totalDues = BigDecimal.ZERO;
 	private BigDecimal advInsts = BigDecimal.ZERO;
 	private BigDecimal otherRefunds = BigDecimal.ZERO;
+	private String otherRefundsInWords = "Zero Only";
 	private BigDecimal totalRefunds = BigDecimal.ZERO;
 	private BigDecimal netReceivable = BigDecimal.ZERO;
+	private String netReceivableInWords = "Zero Only";
+
+	private BigDecimal netReceivableNoRefund = BigDecimal.ZERO;
+	private String netReceivableNoRefundInWords = "Zero Only";
+
 	private BigDecimal manualAdviceAmt = BigDecimal.ZERO;
 	private BigDecimal latePayInterestAmt = BigDecimal.ZERO;
 	private String total;
@@ -62,9 +76,27 @@ public class ForeClosureReport implements Serializable {
 	private BigDecimal amount7 = BigDecimal.ZERO;
 	private BigDecimal intPerday = BigDecimal.ZERO;
 	private int noOfIntDays;
-
+	private String nameOftheBorrowers;
+	private String custSalutation;
+	private String collateralAddress;
 	private String linkedFinRef;
 	private BigDecimal actPercentage = BigDecimal.ZERO;
+
+	//Variable to set 18% GST on foreclosure charges
+	private BigDecimal gstOnForeClosFees = BigDecimal.ZERO;
+	//Variable to set excluding 18% GST on foreclosure charges GHF
+	private BigDecimal foreClosFeesExGST = BigDecimal.ZERO;
+
+	private BigDecimal chargesIncGST = BigDecimal.ZERO;
+	private String chargesIncGSTInWords = "Zero Only";
+	//Customer Address
+	private String custAddrHNbr;
+	private String custFlatNo;
+	private String custAddrStreet;
+	private String custAddrCityName;
+	private String custAddrProvinceName;
+	private String custAddrZIP;
+	private String custAddrCountryName;
 
 	public ForeClosureReport() {
 		super();
@@ -468,6 +500,214 @@ public class ForeClosureReport implements Serializable {
 
 	public void setLatePayInterestAmt(BigDecimal latePayInterestAmt) {
 		this.latePayInterestAmt = latePayInterestAmt;
+	}
+
+	public String getCustSalutation() {
+		return custSalutation;
+	}
+
+	public void setCustSalutation(String custSalutation) {
+		this.custSalutation = custSalutation;
+	}
+
+	public String getNameOftheBorrowers() {
+		return nameOftheBorrowers;
+	}
+
+	public void setNameOftheBorrowers(String nameOftheBorrowers) {
+		this.nameOftheBorrowers = nameOftheBorrowers;
+	}
+
+	public String getCollateralAddress() {
+		return collateralAddress;
+	}
+
+	public void setCollateralAddress(String collateralAddress) {
+		this.collateralAddress = collateralAddress;
+	}
+
+	public BigDecimal getGstOnForeClosFees() {
+		return gstOnForeClosFees;
+	}
+
+	public void setGstOnForeClosFees(BigDecimal gstOnForeClosFees) {
+		this.gstOnForeClosFees = gstOnForeClosFees;
+	}
+
+	public BigDecimal getChargesIncGST() {
+		return chargesIncGST;
+	}
+
+	public void setChargesIncGST(BigDecimal chargesIncGST) {
+		this.chargesIncGST = chargesIncGST;
+	}
+
+	public String getFinAmountInWords() {
+		return finAmountInWords;
+	}
+
+	public void setFinAmountInWords(String finAmountInWords) {
+		this.finAmountInWords = finAmountInWords;
+	}
+
+	public String getOutstandingPriInWords() {
+		return outstandingPriInWords;
+	}
+
+	public void setOutstandingPriInWords(String outstandingPriInWords) {
+		this.outstandingPriInWords = outstandingPriInWords;
+	}
+
+	public String getLatePayChargesInWords() {
+		return latePayChargesInWords;
+	}
+
+	public void setLatePayChargesInWords(String latePayChargesInWords) {
+		this.latePayChargesInWords = latePayChargesInWords;
+	}
+
+	public String getCheqBncChargesInWords() {
+		return cheqBncChargesInWords;
+	}
+
+	public void setCheqBncChargesInWords(String cheqBncChargesInWords) {
+		this.cheqBncChargesInWords = cheqBncChargesInWords;
+	}
+
+	public String getInstForTheMonthInWords() {
+		return instForTheMonthInWords;
+	}
+
+	public void setInstForTheMonthInWords(String instForTheMonthInWords) {
+		this.instForTheMonthInWords = instForTheMonthInWords;
+	}
+
+	public String getForeClosFeesInWords() {
+		return foreClosFeesInWords;
+	}
+
+	public void setForeClosFeesInWords(String foreClosFeesInWords) {
+		this.foreClosFeesInWords = foreClosFeesInWords;
+	}
+
+	public String getPendingInstsInWords() {
+		return pendingInstsInWords;
+	}
+
+	public void setPendingInstsInWords(String pendingInstsInWords) {
+		this.pendingInstsInWords = pendingInstsInWords;
+	}
+
+	public String getChargesIncGSTInWords() {
+		return chargesIncGSTInWords;
+	}
+
+	public void setChargesIncGSTInWords(String chargesIncGSTInWords) {
+		this.chargesIncGSTInWords = chargesIncGSTInWords;
+	}
+
+	public BigDecimal getForeClosFeesExGST() {
+		return foreClosFeesExGST;
+	}
+
+	public void setForeClosFeesExGST(BigDecimal foreClosFeesExGST) {
+		this.foreClosFeesExGST = foreClosFeesExGST;
+	}
+
+	public String getNetReceivableInWords() {
+		return netReceivableInWords;
+	}
+
+	public void setNetReceivableInWords(String netReceivableInWords) {
+		this.netReceivableInWords = netReceivableInWords;
+	}
+
+	public String getOtherRefundsInWords() {
+		return otherRefundsInWords;
+	}
+
+	public void setOtherRefundsInWords(String otherRefundsInWords) {
+		this.otherRefundsInWords = otherRefundsInWords;
+	}
+
+	public String getFinAssetValueInWords() {
+		return finAssetValueInWords;
+	}
+
+	public void setFinAssetValueInWords(String finAssetValueInWords) {
+		this.finAssetValueInWords = finAssetValueInWords;
+	}
+
+	public String getCustAddrHNbr() {
+		return custAddrHNbr;
+	}
+
+	public void setCustAddrHNbr(String custAddrHNbr) {
+		this.custAddrHNbr = custAddrHNbr;
+	}
+
+	public String getCustFlatNo() {
+		return custFlatNo;
+	}
+
+	public void setCustFlatNo(String custFlatNo) {
+		this.custFlatNo = custFlatNo;
+	}
+
+	public String getCustAddrStreet() {
+		return custAddrStreet;
+	}
+
+	public void setCustAddrStreet(String custAddrStreet) {
+		this.custAddrStreet = custAddrStreet;
+	}
+
+	public String getCustAddrCityName() {
+		return custAddrCityName;
+	}
+
+	public void setCustAddrCityName(String custAddrCityName) {
+		this.custAddrCityName = custAddrCityName;
+	}
+
+	public String getCustAddrProvinceName() {
+		return custAddrProvinceName;
+	}
+
+	public void setCustAddrProvinceName(String custAddrProvinceName) {
+		this.custAddrProvinceName = custAddrProvinceName;
+	}
+
+	public String getCustAddrZIP() {
+		return custAddrZIP;
+	}
+
+	public void setCustAddrZIP(String custAddrZIP) {
+		this.custAddrZIP = custAddrZIP;
+	}
+
+	public String getCustAddrCountryName() {
+		return custAddrCountryName;
+	}
+
+	public void setCustAddrCountryName(String custAddrCountryName) {
+		this.custAddrCountryName = custAddrCountryName;
+	}
+
+	public BigDecimal getNetReceivableNoRefund() {
+		return netReceivableNoRefund;
+	}
+
+	public void setNetReceivableNoRefund(BigDecimal netReceivableNoRefund) {
+		this.netReceivableNoRefund = netReceivableNoRefund;
+	}
+
+	public String getNetReceivableNoRefundInWords() {
+		return netReceivableNoRefundInWords;
+	}
+
+	public void setNetReceivableNoRefundInWords(String netReceivableNoRefundInWords) {
+		this.netReceivableNoRefundInWords = netReceivableNoRefundInWords;
 	}
 
 }

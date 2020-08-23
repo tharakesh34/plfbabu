@@ -150,8 +150,9 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 		registerField("Id");
 		registerField("Category", listheader_Category, SortOrder.NONE, category, sortOperator_Category,
 				Operators.STRING);
-		registerField("Code");
-		registerField("Description");
+		registerField("Code", listheader_Code, SortOrder.ASC, code, sortOperator_Code, Operators.STRING);
+		registerField("Description", listheader_Description, SortOrder.NONE, description, sortOperator_Description,
+				Operators.STRING);
 		registerField("DocType", listheader_DocType, SortOrder.ASC, docType, sortOperator_DocType, Operators.DEFAULT);
 		registerField("DocTypeName");
 		//registerField("Los");		

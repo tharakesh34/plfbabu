@@ -8,6 +8,7 @@ public class RuleConstants {
 
 	// Rule Module Codes
 	public static final String MODULE_FEES = "FEES";
+	public static final String MODULE_FEEPERC = "FEEPERC";
 	public static final String MODULE_AGRRULE = "AGRRULE";
 	public static final String MODULE_VERRULE = "VERRULE";
 	public static final String MODULE_CLRULE = "CLRULE";
@@ -124,6 +125,7 @@ public class RuleConstants {
 
 	public static final String TAB_DESIGN = "DESIGN";
 	public static final String TAB_SCRIPT = "SCRIPT";
+	public static final String TAB_SPLSCRIPT = "SPLSCRIPT";
 
 	public static final String fm = "FinanceMain";
 	public static final String ft = "FinanceType";

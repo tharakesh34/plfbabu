@@ -491,7 +491,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		case RuleConstants.MODULE_SCORES:
 			this.label_seqOrder.setValue(Labels.getLabel("label_RuleDialog_metricSeqOrder.value"));
 			//this.row_SeqOrder.setVisible(true);
-			this.rule.setReturnType(RuleConstants.RETURNTYPE_INTEGER);
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
 			break;
 
 		case RuleConstants.MODULE_SUBHEAD:
@@ -528,6 +528,10 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 		case RuleConstants.MODULE_STGACRULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_INTEGER);
+			break;
+		case RuleConstants.MODULE_FEEPERC:
+			this.row_FeeType.setVisible(true);
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
 			break;
 		}
 
@@ -683,6 +687,14 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			if (aRule.getFeeTypeID() != null) {
 				this.feeType.setObject(new FeeType(aRule.getFeeTypeID()));
 			}
+		}else if (StringUtils.equalsIgnoreCase(module, RuleConstants.MODULE_FEEPERC)){
+			this.ruleEvent.setValue(event);
+			this.feeType.setValue(aRule.getFeeTypeCode());
+			this.feeType.setDescription(aRule.getFeeTypeDesc());
+
+			if (aRule.getFeeTypeID() != null) {
+				this.feeType.setObject(new FeeType(aRule.getFeeTypeID()));
+			}
 		}
 
 		this.seqOrder.setValue(aRule.getSeqOrder());
@@ -829,6 +841,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 					aRule.setSQLRule(this.javaScriptSqlRule.getActualQuery());
 					aRule.setActualBlock(this.javaScriptSqlRule.getActualBlock());
 					aRule.setFields(this.javaScriptSqlRule.getFields());
+					aRule.setSPLRule(this.javaScriptSqlRule.getSplQuery());
 				}
 			}
 		} catch (WrongValueException we) {
@@ -840,7 +853,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -1013,7 +1026,9 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 				if (StringUtils.equalsIgnoreCase(this.rule.getRuleModule(), RuleConstants.MODULE_FEES)) {
 					this.javaScriptSqlRule.setEvent(this.ruleEvent.getValue());
-				} else {
+				} else if (StringUtils.equalsIgnoreCase(this.rule.getRuleModule(), RuleConstants.MODULE_FEEPERC)) {
+					this.javaScriptSqlRule.setEvent(this.ruleEvent.getValue());
+				}else {
 					this.javaScriptSqlRule.setEvent(this.rule.getRuleEvent());
 				}
 
@@ -1027,6 +1042,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.javaScriptSqlRule.setEvent(this.rule.getRuleEvent());
 			this.javaScriptSqlRule.setFields(this.rule.getFields());
 			this.javaScriptSqlRule.setSqlQuery(this.rule.getSQLRule());
+			this.javaScriptSqlRule.setSplQuery(this.rule.getSPLRule());
 			this.javaScriptSqlRule.setActualBlock(this.rule.getActualBlock());
 			this.javaScriptSqlRule.buildQuery(this.rule.getActualBlock());
 

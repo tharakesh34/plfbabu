@@ -356,8 +356,7 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	}
 
 	@Override
-	public long getFinFeeTypeIdByFeeType(String feeTypeCode) {
-
+	public Long getFinFeeTypeIdByFeeType(String feeTypeCode) {
 		return feeTypeDAO.getFinFeeTypeIdByFeeType(feeTypeCode, "_View");
 	}
 

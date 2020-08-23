@@ -97,6 +97,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		sql.append(" PERIODICITY FREQUENCY,");
 		sql.append(" STATUS,");
 		sql.append(" PARTNERBANKNAME PARTNER_BANK,");
+		sql.append(" BRANCHIFSCCODE PARTNER_BANK_IFSC,");
 		sql.append(" LASTMNTON REGISTERED_DATE,");
 		sql.append(" BANK_BRANCH_NAME,");
 		sql.append(" UTILITYCODE UTILITY_CODE,");

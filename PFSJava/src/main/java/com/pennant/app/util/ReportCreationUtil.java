@@ -56,6 +56,7 @@ public class ReportCreationUtil {
 		parameters.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
 		parameters.put("client", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT_DIGITAL));
 		parameters.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
+		parameters.put("SOAOrgLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SOA));
 
 		if ("FINENQ_BulkDifferemmentDetails".equals(reportName)) {
 			String recalType = ((BulkProcessHeader) object).getReCalType();

@@ -271,6 +271,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		parameterMap.put("USER_DEPT_CODE", userDetails.getDepartmentCode());
 		parameterMap.put("USER_BRANCH_CODE", userDetails.getBranchCode());
 		parameterMap.put("USER_BRANCH_NAME", userDetails.getBranchName());
+		parameterMap.put("ddMMYY", DateUtil.getSysDate("ddMMyy"));
 
 		try {
 			if ("DISB_EXPORT_DEFAULT".equals(configName) || "DISB_EXPORT_HDFC".equals(configName)) {
@@ -326,6 +327,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		sql.append(" LLDATE DISBURSEMENT_DATE,");
 		sql.append(" PAYABLELOC DRAWEE_LOCATION,");
 		sql.append(" PRINTINGLOC PRINT_LOCATION,");
+		sql.append(" CHEQUE_NUMBER,");
 		sql.append(" CUSTSHRTNAME CUSTOMER_NAME,");
 		sql.append(" CUSTOMER_MOBILE,");
 		sql.append(" CUSTOMER_EMAIL,");
@@ -384,7 +386,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					//rowMap.put("PAYMENT_DETAIL1", DISB_FI_EMAIL);
 					rowMap.put("RESP_BATCH_ID", 0);
 					rowMap.put("TRANSACTIONREF", null);
-					rowMap.put("CHEQUE_NUMBER", null);
+					//rowMap.put("CHEQUE_NUMBER", null);
 					rowMap.put("DD_CHEQUE_CHARGE", null);
 					rowMap.put("PAYMENT_DATE", null);
 					rowMap.put("REJECT_REASON", null);

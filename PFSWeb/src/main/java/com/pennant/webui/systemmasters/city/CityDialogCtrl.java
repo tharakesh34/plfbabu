@@ -347,7 +347,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.pCCity.setValue(aCity.getPCCity());
 		this.pCCityName.setValue(aCity.getPCCityName());
 		this.bankRefNo.setValue(aCity.getBankRefNo());
-		fillComboBox(this.pCCityClass, aCity.getpCCityClassification(), cityClassList, "");
+		fillComboBox(this.pCCityClass, aCity.getPCCityClassification(), cityClassList, "");
 		this.recordStatus.setValue(aCity.getRecordStatus());
 		this.cityIsActive.setChecked(aCity.isCityIsActive());
 
@@ -403,7 +403,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 			wve.add(we);
 		}
 		try {
-			aCity.setpCCityClassification(this.pCCityClass.getSelectedItem().getValue().toString());
+			aCity.setPCCityClassification(this.pCCityClass.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

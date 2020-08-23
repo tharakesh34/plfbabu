@@ -51,10 +51,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -91,6 +93,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	private FinanceMainDAO financeMainDAO;
 	private FinanceTypeDAO financeTypeDAO;
 	private CustomerDetailsService customerDetailsService;
+	private JountAccountDetailDAO jointAccountDetailDAO;
 
 	/**
 	 * @return the auditHeaderDAO
@@ -206,9 +209,11 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		for (ChequeDetail detail : cdList) {
 			DMSQueue dmsQueue = new DMSQueue();
 			if (!detail.isNewRecord()) {
-				if (detail.getDocImage() != null || detail.getDocumentRef() == Long.MIN_VALUE) {
+				if (detail.getDocImage() != null) {
 					byte[] arr1 = null;
-					arr1 = getDocumentImage(detail.getDocumentRef());
+					if (detail.getDocumentRef() != null && detail.getDocumentRef() > 0) {
+						arr1 = getDocumentImage(detail.getDocumentRef());
+					}
 					byte[] arr2 = detail.getDocImage();
 					if (!Arrays.equals(arr1, arr2)) {
 						dmsQueue.setDocImage(arr2);
@@ -782,7 +787,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		scheduleData.setFinanceType(financeType);
 		financeDetail.setCustomerDetails(
 				customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_View"));
-
+		financeDetail.setJountAccountDetailList(jointAccountDetailDAO.getJountAccountDetailByFinnRef(finReference));
 		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}

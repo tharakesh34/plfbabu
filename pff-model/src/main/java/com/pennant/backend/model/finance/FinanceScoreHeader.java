@@ -22,6 +22,7 @@ public class FinanceScoreHeader implements Serializable, Entity {
 	private long lastMntBy;
 	private String roleCode;
 	private String recordStatus;
+	private long custId;
 
 	public FinanceScoreHeader() {
 
@@ -147,6 +148,14 @@ public class FinanceScoreHeader implements Serializable, Entity {
 
 	public void setRoleCode(String roleCode) {
 		this.roleCode = roleCode;
+	}
+
+	public long getCustId() {
+		return custId;
+	}
+
+	public void setCustId(long custId) {
+		this.custId = custId;
 	}
 
 }

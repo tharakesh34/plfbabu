@@ -95,6 +95,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -323,9 +324,11 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.pinCode.setMaxlength(10);
 		this.pinCode.setMandatoryStyle(true);
 		this.pinCode.setModuleName("PinCode");
-		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setValueColumn("PinCodeId");
 		this.pinCode.setDescColumn("AreaName");
-		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		this.pinCode.setValueType(DataType.LONG);
+		this.pinCode.setValidateColumns(new String[] { "PinCodeId" });
+		this.pinCode.setInputAllowed(false);
 
 		this.entity.setMaxlength(10);
 		this.entity.setMandatoryStyle(true);
@@ -484,7 +487,12 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.miniBranch.setChecked(aBranch.isMiniBranch());
 		fillComboBox(this.branchType, aBranch.getBranchType(), branchTypeList, "");
 		fillComboBox(this.region, aBranch.getRegion(), regionList, "");
-		this.pinCode.setValue(aBranch.getPinCode());
+
+		if (aBranch.getPinCodeId() != null) {
+			this.pinCode.setAttribute("pinCodeId", aBranch.getPinCodeId());
+		}
+
+		this.pinCode.setValue(aBranch.getPinCode(), aBranch.getPinAreaDesc());
 		if (this.miniBranch.isChecked()) {
 			this.parentBranch.setAttribute("branchCode", aBranch.getBranchCode());
 			this.parentBranch.setValue(aBranch.getBranchCode(), aBranch.getBranchDesc());
@@ -718,7 +726,13 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			wve.add(we);
 		}
 		try {
-			aBranch.setPinCode(this.pinCode.getValidatedValue());
+			Object obj = this.pinCode.getAttribute("pinCodeId");
+			if (obj != null) {
+				if (!StringUtils.isEmpty(obj.toString())) {
+					aBranch.setPinCodeId(Long.valueOf((obj.toString())));
+				}
+			}
+			aBranch.setPinCode(this.pinCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -960,7 +974,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchAddrStreet.value"),
 							PennantRegularExpressions.REGEX_ADDRESS, true));
 		}
-		if (!this.pinCode.isReadonly()) {
+		if (this.pinCode.isButtonVisible()) {
 			this.pinCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_PinCode.value"),
 					PennantRegularExpressions.REGEX_ADDRESS, true));
 		}
@@ -1670,9 +1684,9 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 
 	private void fillPindetails(String id, String province) {
 		this.pinCode.setModuleName("PinCode");
-		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setValueColumn("PinCodeId");
 		this.pinCode.setDescColumn("AreaName");
-		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		this.pinCode.setValidateColumns(new String[] { "PinCodeId" });
 		Filter[] filters1 = new Filter[1];
 
 		if (id != null) {
@@ -1696,7 +1710,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			PinCode details = (PinCode) dataObject;
 
 			if (details != null) {
-
 				this.branchCountry.setValue(details.getpCCountry());
 				this.branchCountry.setDescription(details.getLovDescPCCountryName());
 				this.branchCity.setValue(details.getCity());
@@ -1706,7 +1719,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				this.branchCity.setErrorMessage("");
 				this.branchProvince.setErrorMessage("");
 				this.branchCountry.setErrorMessage("");
-				;
+				this.pinCode.setAttribute("pinCodeId", details.getPinCodeId());
+				this.pinCode.setValue(details.getPinCode());
 			}
 
 		}

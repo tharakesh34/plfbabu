@@ -51,7 +51,7 @@ public interface TechnicalVerificationService {
 
 	TechnicalVerification getVerificationFromRecording(long verificationId);
 
-	List<Verification> getTvValuation(List<Long> verificationIDs);
+	List<Verification> getTvValuation(List<Long> verificationIDs, String type);
 
 	Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName);
 

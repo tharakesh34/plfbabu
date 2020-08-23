@@ -51,6 +51,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -280,6 +281,33 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+
+	@Override
+	public List<ScoringMetrics> getScoreMatricsListByCustType(String scoreRleCode, String custType) {
+		logger.debug("Entering");
+
+		ScoringMetrics scoringMetrics = new ScoringMetrics();
+		scoringMetrics.setCategoryType(custType);
+
+		StringBuilder selectSql = new StringBuilder("Select m.ScoreGroupId, m.ScoringId, m.CategoryType, ");
+		selectSql.append(" t2.rulecode lovdescscoringcode ,t2.rulecodedesc lovdescscoringcodedesc ,");
+		selectSql.append(" t2.sqlrule lovdescsqlrule, t2.seqorder lovdescscoremetricseq ");
+		selectSql.append(" from plf.rmtscoringmetrics m ");
+		selectSql.append(" inner join plf.rmtscoringgroup g on m.scoregroupid = g.scoregroupid ");
+		selectSql.append(" and m.categorytype='R' ");
+		selectSql.append(" inner JOIN rules t2 ON t2.ruleid = M.scoringid ");
+		selectSql.append(" and g.scoregroupcode= :scoreGrooupCode");
+		selectSql.append(" AND t2.rulemodule= 'SCORES' ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
+		beanParameters.addValue("scoreGrooupCode", scoreRleCode);
+
+		RowMapper<ScoringMetrics> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringMetrics.class);
+
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 }

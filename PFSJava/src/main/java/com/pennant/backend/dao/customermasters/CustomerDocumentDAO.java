@@ -45,6 +45,7 @@ package com.pennant.backend.dao.customermasters;
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.ExternalDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pff.core.TableType;
 
@@ -84,4 +85,8 @@ public interface CustomerDocumentDAO {
 	List<String> getDuplicateDocByTitle(long custId, String docCategory, String docNumber);
 
 	int updateDocURI(String docURI, long id, TableType tableType);
+
+	long save(ExternalDocument externalDocument, String type);
+
+	List<ExternalDocument> getExternalDocuments(long bankId, String type);
 }

@@ -116,6 +116,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	private String sezCertificateNo;
 	private Date sezValueDate;
 	private String addressDetail;
+	private Long pinCodeId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -377,6 +378,14 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 
 	public void setAddressDetail(String addressDetail) {
 		this.addressDetail = addressDetail;
+	}
+
+	public Long getPinCodeId() {
+		return pinCodeId;
+	}
+
+	public void setPinCodeId(Long pinCodeId) {
+		this.pinCodeId = pinCodeId;
 	}
 
 }

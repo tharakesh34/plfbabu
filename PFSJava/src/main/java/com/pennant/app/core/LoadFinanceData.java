@@ -3,17 +3,20 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.amortization.ProjectedAmortization;
+import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -31,6 +34,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.rits.cloning.Cloner;
 
 public class LoadFinanceData extends ServiceHelper {
 	private static Logger logger = Logger.getLogger(LoadFinanceData.class);
@@ -44,6 +48,7 @@ public class LoadFinanceData extends ServiceHelper {
 		// List<FinanceScheduleDetail> custSchdDetails =
 		// getFinanceScheduleDetailDAO().getFinScheduleDetails(custID, true);
 		List<FinanceProfitDetail> custpftDet = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID, true);
+		Cloner cloner = null;
 
 		for (FinanceMain main : custFinMains) {
 			FinEODEvent finEODEvent = new FinEODEvent();
@@ -64,6 +69,10 @@ public class LoadFinanceData extends ServiceHelper {
 			List<FinanceScheduleDetail> finSchdDetails = financeScheduleDetailDAO.getFinScheduleDetails(finReference,
 					TableType.MAIN_TAB.getSuffix(), false);
 			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
+
+			// Original Schedules
+			cloner = new Cloner();
+			finEODEvent.setOrgFinSchdDetails(cloner.deepClone(finSchdDetails));
 
 			// Fin Excess Amounts
 			finEODEvent.setFinExcessAmounts(
@@ -175,6 +184,12 @@ public class LoadFinanceData extends ServiceHelper {
 					finEODEvent.setIdxPresentment(i);
 					custEODEvent.setCheckPresentment(true);
 				}
+			}
+
+			// Is Provision exists
+			if (custEODEvent.isDueExist() && ImplementationConstants.ALLOW_NPA_PROVISION && provisionDAO
+					.isProvisionExists(finEODEvent.getFinanceMain().getFinReference(), TableType.MAIN_TAB)) {
+				finEODEvent.getFinProfitDetail().setProvision(true);
 			}
 
 			// Date Rollover Setting
@@ -325,9 +340,10 @@ public class LoadFinanceData extends ServiceHelper {
 			boolean rateReview = finEODEvent.isupdFinSchdForRateRvw();
 			boolean monthEnd = finEODEvent.isUpdMonthEndPostings();
 			boolean lbdPosted = finEODEvent.isUpdLBDPostings();
+			boolean changeGraceEnd = finEODEvent.isUpdFinSchdForChangeGrcEnd();
 
 			// update finance main
-			if (finEODEvent.isUpdFinMain()) {
+			if (finEODEvent.isUpdFinMain() && !changeGraceEnd) {
 				// finEODEvent.getFinanceMain().setVersion(finEODEvent.getFinanceMain().getVersion()
 				// + 1);
 				getFinanceMainDAO().updateFinanceInEOD(finMain, finEODEvent.getFinMainUpdateFields(), rateReview);
@@ -361,6 +377,22 @@ public class LoadFinanceData extends ServiceHelper {
 			//					listSave = null;
 			//				}
 			//			}
+
+			// Save Schedule, Repay Instruction Details when Change Grace End
+			if (changeGraceEnd) {
+
+				// TODO : List the Actual update columns list instead of all
+				finMain.setVersion(finMain.getVersion() + 1);
+				getFinanceMainDAO().update(finMain, TableType.MAIN_TAB, false);
+
+				// Existing Schedule back up
+				long logKey = saveFinLogEntryDetail(finMain);
+				listSave(finEODEvent, "_Log", logKey);
+
+				// Save Latest Schedule Details
+				listDeletion(finEODEvent, FinanceConstants.FINSER_EVENT_CHGGRCEND, "");
+				listSave(finEODEvent, "", 0);
+			}
 
 			//insert or Update
 			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
@@ -418,15 +450,9 @@ public class LoadFinanceData extends ServiceHelper {
 
 			// provisions
 			if (!finEODEvent.getProvisions().isEmpty()) {
-				for (Provision provision : finEODEvent.getProvisions()) {
-					if (StringUtils.equals(provision.getRcdAction(), EodConstants.RECORD_UPDATE)) {
-						getProvisionDAO().updateProvisonAmounts(provision);
-					} else if (StringUtils.equals(provision.getRcdAction(), EodConstants.RECORD_INSERT)) {
-						getProvisionDAO().save(provision, "");
-					}
-
-				}
+				saveProvisions(finEODEvent);
 			}
+
 			// disbursement postings
 			for (FinanceDisbursement disbursement : finEODEvent.getFinanceDisbursements()) {
 				if (disbursement.isPosted()) {
@@ -465,6 +491,23 @@ public class LoadFinanceData extends ServiceHelper {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Save Provisions and Provision Movements
+	 * 
+	 * @param finEODEvent
+	 */
+	private void saveProvisions(FinEODEvent finEODEvent) {
+		for (Provision provision : finEODEvent.getProvisions()) {
+
+			provisionDAO.delete(provision, TableType.MAIN_TAB.getSuffix());
+			provisionDAO.save(provision, TableType.MAIN_TAB.getSuffix());
+
+			if (provision.getProvisionMovement() != null) {
+				provisionMovementDAO.save(provision.getProvisionMovement(), TableType.MAIN_TAB.getSuffix());
+			}
+		}
 	}
 
 	/**
@@ -526,6 +569,23 @@ public class LoadFinanceData extends ServiceHelper {
 		getCustomerDAO().updateCustAppDate(custId, nextDate, newCustStatus);
 		logger.debug(" Leaving ");
 	}
+
+	/**
+	 * Log the Entry Detail
+	 */
+	public long saveFinLogEntryDetail(FinanceMain financeMain) {
+
+		FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+
+		entryDetail.setReversalCompleted(false);
+		entryDetail.setPostDate(DateUtility.getAppDate());
+		entryDetail.setFinReference(financeMain.getFinReference());
+		entryDetail.setSchdlRecal(financeMain.isScheduleChange());
+		entryDetail.setEventAction(AccountEventConstants.ACCEVENT_GRACEEND);
+
+		return getFinLogEntryDetailDAO().save(entryDetail);
+	}
+
 	//
 	// public void updateCustQueueStatus(int threadId, long custId, int
 	// progress, boolean start) {
@@ -600,6 +660,94 @@ public class LoadFinanceData extends ServiceHelper {
 			logger.debug(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method to save Schedule dependent tables
+	 * 
+	 * @param finEODEvent
+	 * @param tableType
+	 * @param logKey
+	 */
+	public void listSave(FinEODEvent finEODEvent, String tableType, long logKey) {
+
+		FinanceMain financeMain = finEODEvent.getFinanceMain();
+		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+
+		// Finance Schedule Details
+		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+		if (!finEODEvent.getFinanceScheduleDetails().isEmpty()) {
+
+			if (logKey != 0) {
+				finSchdDetails = finEODEvent.getOrgFinSchdDetails();
+			}
+			for (int i = 0; i < finSchdDetails.size(); i++) {
+
+				finSchdDetails.get(i).setLastMntBy(financeMain.getLastMntBy());
+				finSchdDetails.get(i).setFinReference(financeMain.getFinReference());
+				int seqNo = 0;
+
+				if (mapDateSeq.containsKey(finSchdDetails.get(i).getSchDate())) {
+					seqNo = mapDateSeq.get(finSchdDetails.get(i).getSchDate());
+					mapDateSeq.remove(finSchdDetails.get(i).getSchDate());
+				}
+
+				seqNo = seqNo + 1;
+				mapDateSeq.put(finSchdDetails.get(i).getSchDate(), seqNo);
+				finSchdDetails.get(i).setSchSeq(seqNo);
+				finSchdDetails.get(i).setLogKey(logKey);
+			}
+
+			getFinanceScheduleDetailDAO().saveList(finSchdDetails, tableType, false);
+		}
+
+		// Finance Repay Instruction Details
+		List<RepayInstruction> repayInstructions = finEODEvent.getRepayInstructions();
+		if (!finEODEvent.getRepayInstructions().isEmpty() && finEODEvent.isUpdRepayInstruct()) {
+
+			if (logKey != 0) {
+				repayInstructions = finEODEvent.getOrgRepayInsts();
+			}
+			for (int i = 0; i < repayInstructions.size(); i++) {
+
+				repayInstructions.get(i).setFinReference(financeMain.getFinReference());
+				repayInstructions.get(i).setLogKey(logKey);
+			}
+
+			getRepayInstructionDAO().saveList(repayInstructions, tableType, false);
+		}
+
+		// Finance Service Instructions
+		if (!finEODEvent.getFinServiceInstructions().isEmpty() && logKey == 0) {
+			getFinServiceInstructionDAO().saveList(finEODEvent.getFinServiceInstructions(), tableType);
+		}
+
+		// TODO : Finance Disbursement AND SubVention Details
+	}
+
+	/**
+	 * Method to delete Schedule Dependent tables
+	 * 
+	 * @param scheduleData
+	 * @param finEvent
+	 * @param tableType
+	 */
+	public void listDeletion(FinEODEvent finEODEvent, String finEvent, String tableType) {
+
+		FinanceMain financeMain = finEODEvent.getFinanceMain();
+		String finReference = financeMain.getFinReference();
+
+		// Finance Schedule Details
+		if (!finEODEvent.getFinanceScheduleDetails().isEmpty()) {
+			getFinanceScheduleDetailDAO().deleteByFinReference(finReference, tableType, false, 0);
+		}
+
+		// Finance Repay Instruction Details
+		if (!finEODEvent.getRepayInstructions().isEmpty() && finEODEvent.isUpdRepayInstruct()) {
+			getRepayInstructionDAO().deleteByFinReference(finReference, tableType, false, 0);
+		}
+
+		// TODO : Finance Disbursement AND SubVention Details
 	}
 
 }

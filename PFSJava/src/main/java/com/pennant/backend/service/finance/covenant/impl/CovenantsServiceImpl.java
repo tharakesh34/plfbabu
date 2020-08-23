@@ -17,7 +17,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinancePurposeDetailServiceImpl.java                                                   * 	  
+ * FileName    		:  CovenantsServiceImpl.java                                            * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -128,21 +128,35 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 
 	@Override
 	public List<AuditDetail> doProcess(List<Covenant> covenants, TableType tableType, String tranType,
-			boolean isApproveRcd) {
+			boolean isApproveRcd, int docSize) {
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		auditDetails.addAll(processCovenants(covenants, tableType, tranType, isApproveRcd));
 
 		List<DocumentDetails> documents = new ArrayList<>();
 
-		for (Covenant covenant : covenants) {
-			for (DocumentDetails document : covenant.getDocumentDetails()) {
-				document.setLastMntBy(covenant.getLastMntBy());
-				documents.add(document);
+		for (Covenant covenant : covenants) {//if covenants tab is not available in loan queue below list is getting empty
+			if (CollectionUtils.isNotEmpty(covenant.getDocumentDetails())) {
+				for (DocumentDetails document : covenant.getDocumentDetails()) {
+					document.setLastMntBy(covenant.getLastMntBy());
+					document.setLastMntOn(covenant.getLastMntOn());
+					document.setReferenceId(covenant.getKeyReference());
+					documents.add(document);
+				}
+			} else if (CollectionUtils.isNotEmpty(covenant.getCovenantDocuments())) {//we are preparing document list by using covenants doc
+				for (CovenantDocument covenantDocument : covenant.getCovenantDocuments()) {
+					if (covenantDocument.getDocumentDetail() != null) {
+						covenantDocument.getDocumentDetail().setLastMntBy(covenant.getLastMntBy());
+						covenantDocument.getDocumentDetail().setLastMntOn(covenant.getLastMntOn());
+						covenantDocument.getDocumentDetail().setDocName(covenantDocument.getDocName());
+						covenantDocument.getDocumentDetail().setReferenceId(covenant.getKeyReference());
+						documents.add(covenantDocument.getDocumentDetail());
+					}
+				}
 			}
 		}
 
-		auditDetails.addAll(processDocumentDetails(documents, tableType, tranType, isApproveRcd));
+		auditDetails.addAll(processDocumentDetails(documents, tableType, tranType, isApproveRcd, docSize));
 
 		Date nextFrequencyDate = null;
 		Date frequencyDate = null;
@@ -192,7 +206,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 
 	@Override
 	public List<AuditDetail> saveOrUpdate(List<Covenant> covenants, TableType tableType, String auditTranType) {
-		return doProcess(covenants, tableType, auditTranType, false);
+		return doProcess(covenants, tableType, auditTranType, false, 0);
 	}
 
 	@Override
@@ -298,7 +312,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 	}
 
 	private List<AuditDetail> processDocumentDetails(List<DocumentDetails> documents, TableType tableType,
-			String tranType, boolean isApproveRcd) {
+			String tranType, boolean isApproveRcd, int docSize) {
 		logger.debug(Literal.ENTERING);
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
@@ -311,7 +325,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 		boolean deleteRecord = false;
 		boolean approveRec = isApproveRcd;
 
-		int i = 0;
+		int i = docSize;
 		DocumentDetails object = new DocumentDetails();
 		String[] fields = PennantJavaUtil.getFieldDetails(object, object.getExcludeFields());
 
@@ -335,7 +349,8 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			String rcdType = "";
 			String recordStatus = "";
 			boolean isTempRecord = false;
-			if (StringUtils.isEmpty(tranType) || tranType.equals(PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
+			if (StringUtils.isEmpty(tranType) || tranType.equals(PennantConstants.PREAPPROVAL_TABLE_TYPE)
+					|| "A".equals(tranType)) {
 				approveRec = true;
 				document.setRoleCode("");
 				document.setNextRoleCode("");
@@ -519,8 +534,9 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 	}
 
 	@Override
-	public List<AuditDetail> doApprove(List<Covenant> covenants, TableType tableType, String auditTranType) {
-		return doProcess(covenants, tableType, auditTranType, true);
+	public List<AuditDetail> doApprove(List<Covenant> covenants, TableType tableType, String auditTranType,
+			int docSize) {
+		return doProcess(covenants, tableType, auditTranType, true, docSize);
 	}
 
 	@Override
@@ -539,15 +555,20 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 		int j = 0;
 		for (Covenant covenant : covenants) {
 			List<CovenantDocument> documents = new ArrayList<>();
+			List<DocumentDetails> documentDetails = new ArrayList<>();
 			if (CollectionUtils.isNotEmpty(covenant.getCovenantDocuments())) {
 				for (CovenantDocument covenantDocument : covenant.getCovenantDocuments()) {
 					documents.add(covenantDocument);
+					if (covenantDocument.getDocumentDetail() != null) {
+						documentDetails.add(covenantDocument.getDocumentDetail());
+					}
 					auditDetails.add(new AuditDetail(tranType, ++j, fields[0], fields[1],
 							covenantDocument.getBefImage(), covenantDocument));
 				}
+				covenantsDAO.deleteDocuments(documents, tableType);
+				documentDetailsDAO.deleteList(documentDetails, tableType.getSuffix());
 			}
 
-			covenantsDAO.deleteDocuments(documents, tableType);
 		}
 
 		Covenant parentObject = new Covenant();
@@ -823,6 +844,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 					if (!isDocumentReceived) {
 						String[] valueParm = new String[2];
 						AuditDetail detail = new AuditDetail();
+						valueParm[0] = finAdvancePayment.getPaymentType();
 						valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
 						detail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
 						auditDetails.add(detail);
@@ -852,6 +874,11 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			}
 		}
 		return errorDetails;
+	}
+
+	@Override
+	public void deleteDocumentByDocumentId(Long documentId, String tableType) {
+		covenantsDAO.deleteDocumentByDocumentId(documentId, tableType);
 	}
 
 	public void setCovenantsDAO(CovenantsDAO covenantsDAO) {

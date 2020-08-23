@@ -140,12 +140,23 @@
 										<space spacing="2px" />
 										<intbox id="noOfBounces" style="text-align:right" />
 									</hbox>
+									<label id="label_CustomerExtLiabilityDialog_NoOfBouncesInSixMonths" value="${c:l('label_CustomerExtLiabilityDialog_NoOfBouncesInSixMonths.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="noOfBouncesInSixMonths" style="text-align:right" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerExtLiabilityDialog_NoOfBouncesInTwelveMonths" value="${c:l('label_CustomerExtLiabilityDialog_NoOfBouncesInTwelveMonths.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="noOfBouncesInTwelveMonths" style="text-align:right" />
+									</hbox>
 									<label id="label_CustomerExtLiabilityDialog_POS" value="${c:l('label_CustomerExtLiabilityDialog_POS.value')}" />
 									<hbox>
 										<currencyBox id="pos" />
 									</hbox>
 								</row>
-
 								<row>
 									<label id="label_CustomerExtLiabilityDialog_Overdue" value="${c:l('label_CustomerExtLiabilityDialog_Overdue.value')}" />
 									<hbox>
@@ -187,7 +198,18 @@
 								<row>
 									<label id="label_CustomerExtLiabilityDialog_RepayFrom" value="${c:l('label_CustomerExtLiabilityDialog_RepayFrom.value')}" />
 									<extendedcombobox id="repayFrom" />
-
+									<label id="label_CustomerExtLiabilityDialog__RepayFromAccNo" value="${c:l('label_CustomerExtLiabilityDialog_RepayFromAccNo.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="repayFromAccNo" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerExtLiabilityDialog_consideredBasedOnRTR" value="${c:l('label_CustomerExtLiabilityDialog_consideredBasedOnRTR.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="consideredBasedOnRTR" />
+									</hbox>
 									<label id="label_CustomerExtLiabilityDialog_NoOfInstallmentMonths" value="${c:l('label_CustomerExtLiabilityDialog_NoOfInstallmentMonths.value')}" />
 									<hbox>
 										<space spacing="2px" />
@@ -204,6 +226,7 @@
 										<space spacing="2px" />
 										<textbox id="ownerShip" />
 									</hbox>
+
 								</row>
 								<row>
 									<label id="label_CustomerExtLiabilityDialog_LasttwentyFourMonths" value="${c:l('label_CustomerExtLiabilityDialog_LastTwentyFourMonths.value')}" />
@@ -228,6 +251,18 @@
 										<currencyBox id="currentOverDue" />
 									</hbox>
 								</row>
+								<row>
+									<label id="label_CustomerExtLiabilityDialog_MOB" value="${c:l('label_CustomerExtLiabilityDialog_MOB.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="mob" style="text-align:right" />
+									</hbox>
+									<label id="label_Remarks" value="${c:l('label_CustomerExtLiabilityDialog_Remarks.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="remarks" width="250px" multiline="true" height="60px" style="resize: none;" />
+									</hbox>
+								</row>
 							</rows>
 						</grid>
 					</groupbox>
@@ -240,6 +275,8 @@
 								<listheader id="listheader_Externel_Liabilities_MonthYear" label="${c:l('listheader_Externel_Liabilities_MonthYear.label')}"
 									align="left" hflex="min" />
 								<listheader id="listheader_Externel_Liabilities_EmiClearance" label="${c:l('listheader_Externel_Liabilities_EmiClearance.label')}"
+									align="left" hflex="min" />
+								<listheader id="listheader_Externel_Liabilities_ClearedDate" label="${c:l('listheader_Externel_Liabilities_ClearedDate.label')}"
 									align="left" hflex="min" />
 							</listhead>
 						</listbox>

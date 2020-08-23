@@ -317,6 +317,10 @@ public class FeeDetailService {
 
 			// Excluding GST & TDS -- SO COMMENTED
 			//fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
+			//BUG FIX RELATED TO FEE IN CASE OF WAIVE REMAINING AMT RELATED
+			//TODO:GANESH Need to move to core.
+			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount())
+					.subtract(fee.getWaivedAmount().add(fee.getWaivedGST())));
 		}
 
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, moduleDefiner)) {

@@ -463,8 +463,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 			sql.append(tableType.getSuffix());
 		}
 
-		sql.append(
-				" Where verificationId in (select verificationId from verifications where keyReference =:keyReference)");
+		sql.append(" Where verificationId in (select Id from verifications where keyReference =:keyReference)");
 
 		sql.append(" and documentType = :documentType");
 
@@ -551,7 +550,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 	}
 
 	@Override
-	public RCUDocument getRCUDocument(long verificationId, RCUDocument rcuDocument) {
+	public List<RCUDocument> getRCUDocument(long verificationId, RCUDocument rcuDocument) {
 
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
@@ -575,7 +574,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 
 		RowMapper<RCUDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RCUDocument.class);
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			// logger.error("Exception: ", e);
 		} finally {
@@ -583,7 +582,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 			sql = null;
 		}
 		logger.debug(Literal.LEAVING);
-		return null;
+		return new ArrayList<>();
 	}
 
 	@Override

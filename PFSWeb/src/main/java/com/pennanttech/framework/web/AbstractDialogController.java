@@ -25,10 +25,12 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennanttech.pennapps.core.DocType;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -471,6 +473,16 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 
 	public void setEventManager(EventManager eventManager) {
 		this.eventManager = eventManager;
+	}
+
+	protected boolean isBackwardCase(AbstractWorkflowEntity entity) {
+		if (entity.getWorkflowId() == 0) {
+			return false;
+		}
+
+		WorkflowEngine engine = new WorkflowEngine(WorkFlowUtil.getWorkflow(entity.getWorkflowId()).getWorkFlowXml());
+
+		return engine.isBackwardCase(entity.getTaskId(), entity.getNextTaskId().replace(";", ""));
 	}
 
 }

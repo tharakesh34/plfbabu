@@ -42,14 +42,14 @@ import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.model.cibil.CibilFileInfo;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 import com.pennanttech.service.AmazonS3Bucket;
 
 public class CorporateCibilReport extends BasicDao<Object> {
 	protected static final Logger logger = LoggerFactory.getLogger(CorporateCibilReport.class);
-	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CIBIL_CORPORATE_EXTRACT_STATUS");
-
+	public static DataEngineStatus EXTRACT_STATUS = StepUtil.CIBIL_EXTRACT_CORPORATE;
 	private static final String DATE_FORMAT = "ddMMyyyy";
 	private CibilFileInfo fileInfo;
 	private CibilMemberDetail memberDetails;
@@ -1445,7 +1445,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		successCount = 0;
 		failedCount = 0;
 
-		EXTRACT_STATUS.reset();
+		//EXTRACT_STATUS.reset();
 	}
 
 	private String updateRemarks() {

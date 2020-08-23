@@ -1,7 +1,11 @@
 package com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.impl;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +15,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -23,6 +28,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSummary> implements CreditReviewSummaryDAO {
 	private static Logger logger = Logger.getLogger(CreditReviewSummaryDAOImpl.class);
@@ -509,6 +515,58 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 		}
 		logger.debug("Leaving");
 		return currency.getCcySpotRate();
+	}
+
+	@Override
+	public List<String> getAuditYearsbyCustdId(long custId) {
+		List<String> auditYrList = new ArrayList<>();
+		MapSqlParameterSource parmSrc = new MapSqlParameterSource();
+		parmSrc.addValue("custId", custId);
+		StringBuffer selectSql = new StringBuffer(
+				"Select audityear from FinCreditReviewDetails_View where customerId =:custId");
+		try {
+			auditYrList = this.jdbcTemplate.query(selectSql.toString(), parmSrc, new RowMapper<String>() {
+				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+					return rs.getString(1);
+				}
+			});
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		return auditYrList;
+
+	}
+
+	@Override
+	public LinkedHashMap<String, Object> getFinCreditRevSummaryByCustIdAndAdtYr(long customerId, long auditYear) {
+		logger.debug(Literal.ENTERING);
+		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select SubcategoryCode, ItemValue from FinCreditReviewSummary_view where detailId =");
+		sql.append(
+				" (Select detailId FROM FinCreditReviewDetails_view Where customerId =:customerId and auditYear =:auditYear)  order by summaryId asc");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("customerId", customerId);
+		source.addValue("auditYear", auditYear);
+
+		try {
+			this.jdbcTemplate.query(sql.toString(), source, new RowMapper<Map<String, Object>>() {
+
+				@Override
+				public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+					map.put(rs.getString("SubcategoryCode"), rs.getBigDecimal("ItemValue"));
+					return map;
+				}
+			});
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return map;
 	}
 
 }

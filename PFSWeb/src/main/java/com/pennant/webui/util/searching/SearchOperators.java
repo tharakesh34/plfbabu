@@ -263,6 +263,8 @@ public class SearchOperators implements Serializable {
 		// list position 0
 		result.add(new SearchOperators(Filter.OP_EQUAL, "=", "equals"));
 		// list position 1
+		result.add(new SearchOperators(Filter.OP_NOT_EQUAL, "<>", "not equal"));
+		// list position 2
 		result.add(new SearchOperators(Filter.OP_LIKE, "%", "like"));
 
 		return result;
@@ -430,6 +432,8 @@ public class SearchOperators implements Serializable {
 			listbox.setSelectedIndex(1);
 		} else if (filter.getOperator() == Filter.OP_LIKE) {
 			// Delete used '%' signs if the operator is like or iLike
+			final String str = StringUtils.replaceChars(filter.getValue().toString(), "%", "");
+			filter.setValue(str);
 			listbox.setSelectedIndex(2);
 		}
 	}

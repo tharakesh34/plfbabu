@@ -28,6 +28,7 @@
 					<value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value>
 					<value>com.pennant.validation.UpdateLoanPenaltyDetailGroup</value>
 					<value>com.pennant.validation.ScheduleMethodGroup</value>
+					<value>com.pennant.validation.UpfrontFeesGroup</value>
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -49,6 +50,7 @@
 					<value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value>
 					<value>com.pennant.validation.UpdateLoanPenaltyDetailGroup</value>
 					<value>com.pennant.validation.ScheduleMethodGroup</value>
+					<value>com.pennant.validation.UpfrontFeesGroup</value>
 				</groups>
 				<element name="max">20</element>
 			</constraint>
@@ -151,6 +153,7 @@
 					<value>com.pennant.validation.ChangeInterestGroup</value>
 					<value>com.pennant.validation.AddDisbursementGroup</value>
 					<value>com.pennant.validation.PartialSettlementGroup</value>
+					<value>com.pennant.validation.UpfrontFeesGroup</value>
 				</groups>
 				<element name="value">1</element>
 			</constraint>
@@ -161,6 +164,7 @@
 					<value>com.pennant.validation.ChangeInterestGroup</value>
 					<value>com.pennant.validation.AddDisbursementGroup</value>
 					<value>com.pennant.validation.PartialSettlementGroup</value>
+					<value>com.pennant.validation.UpfrontFeesGroup</value>
 				</groups>
 				<element name="value">999999999999999999</element>
 			</constraint>
@@ -334,7 +338,8 @@
 				<element name="lang">javascript</element>
 				<element name="script">
 					if ((_this.splrate != null) &amp;&amp; (_this.splrate !="")) {
-					if ((_this.baseRate != null) &amp;&amp; (_this.baseRate
+					if ((_this.baseRate != null)
+					&amp;&amp; (_this.baseRate
 					!= "")) {
 					true;
 					} else {
@@ -371,6 +376,9 @@
 		</field>
 		<field name="disbursementDetails">
 			<valid></valid>
+		</field>
+		<field name="receiptDetail">
+			<valid />
 		</field>
 	</bean>
 </constraint-mappings>

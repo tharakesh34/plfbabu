@@ -50,8 +50,7 @@
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto" ca:data-scrollable="true">
 								<groupbox id="gb_basicDetails" sclass="gb-dialog">
-									<caption label="${c:l('gb_CustomerDetails')}">
-									</caption>
+									<caption label="${c:l('gb_CustomerDetails')}"></caption>
 									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 										<columns>
 											<column width="15%" />

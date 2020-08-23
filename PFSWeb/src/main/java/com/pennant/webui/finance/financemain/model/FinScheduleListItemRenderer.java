@@ -629,6 +629,11 @@ public class FinScheduleListItemRenderer implements Serializable {
 				BigDecimal curTotDisbAmt = BigDecimal.ZERO;
 				for (int i = 0; i < disbList.size(); i++) {
 					FinanceDisbursement curDisb = disbList.get(i);
+
+					if (aFinanceMain.isInstBasedSchd() && curDisb.getLinkedDisbId() == 0 && !curDisb.isInstCalReq()) {
+						continue;
+					}
+
 					if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
 						continue;
 					}
@@ -781,6 +786,12 @@ public class FinScheduleListItemRenderer implements Serializable {
 				if (getFinScheduleData().getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_ISTISNA)) {
 					if (getFinScheduleData().getDisbursementDetails() != null) {
 						for (FinanceDisbursement disbursement : getFinScheduleData().getDisbursementDetails()) {
+
+							if (aFinanceMain.isInstBasedSchd() && disbursement.getLinkedDisbId() == 0
+									&& !disbursement.isInstCalReq()) {
+								continue;
+							}
+
 							if (getFinanceScheduleDetail().getSchDate().compareTo(disbursement.getDisbDate()) == 0) {
 								String remarks = "";
 								if ("B".equals(StringUtils.trimToEmpty(disbursement.getDisbType()))) {
@@ -2366,6 +2377,11 @@ public class FinScheduleListItemRenderer implements Serializable {
 				BigDecimal curTotDisbAmt = BigDecimal.ZERO;
 				for (int d = 0; d < getFinScheduleData().getDisbursementDetails().size(); d++) {
 					FinanceDisbursement curDisb = getFinScheduleData().getDisbursementDetails().get(d);
+
+					if (aFinanceMain.isInstBasedSchd() && curDisb.getLinkedDisbId() == 0 && !curDisb.isInstCalReq()) {
+						continue;
+					}
+
 					if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
 						continue;
 					}

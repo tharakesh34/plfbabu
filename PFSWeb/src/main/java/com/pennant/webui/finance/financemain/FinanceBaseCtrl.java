@@ -7550,11 +7550,11 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		if (getJointAccountDetailDialogCtrl() != null) {
 			if (getJointAccountDetailDialogCtrl().getGuarantorDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getGuarantorDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail, false);
 			}
 			if (getJointAccountDetailDialogCtrl().getJountAccountDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getJountAccountDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail, false);
 			}
 		} else {
 			aFinanceDetail.setJountAccountDetailList(null);

@@ -64,10 +64,11 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.ExternalDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -76,7 +77,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>CustomerDocument model</b> class.<br>
  * 
  */
-public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implements CustomerDocumentDAO {
+public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> implements CustomerDocumentDAO {
 	private static Logger logger = Logger.getLogger(CustomerDocumentDAOImpl.class);
 
 	public CustomerDocumentDAOImpl() {
@@ -103,7 +104,7 @@ public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implemen
 		selectSql.append(" SELECT CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn,");
 		selectSql.append(" CustDocCategory, CustDocName, DocRefId,");
 		selectSql.append(" CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry, CustDocIsVerified,");
-		selectSql.append(" CustDocVerifiedBy, CustDocIsAcrive, DocPurpose, DocUri,");
+		selectSql.append(" CustDocVerifiedBy, CustDocIsAcrive, DocPurpose, DocUri, Remarks, ");
 		if (type.contains("View")) {
 			selectSql.append(" lovDescCustDocCategory, lovDescCustDocIssuedCountry, ");
 			selectSql.append(" DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,");
@@ -149,7 +150,7 @@ public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implemen
 		sql.append(", CustDocIssuedOn, CustDocIssuedCountry, CustDocIsVerified, CustDocCategory, CustDocName");
 		sql.append(", DocRefId, CustDocVerifiedBy, CustDocIsAcrive, DocPurpose, DocUri, Version, LastMntOn");
 		sql.append(", LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-
+		sql.append(", Remarks"); //HL-Merging
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescCustDocCategory, LovDescCustDocIssuedCountry, DocExpDateIsMand");
 			sql.append(", DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired");
@@ -200,6 +201,7 @@ public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implemen
 					cd.setNextTaskId(rs.getString("NextTaskId"));
 					cd.setRecordType(rs.getString("RecordType"));
 					cd.setWorkflowId(rs.getLong("WorkflowId"));
+					cd.setRemarks(rs.getString("Remarks"));
 
 					if (StringUtils.trimToEmpty(type).contains("View")) {
 						cd.setLovDescCustDocCategory(rs.getString("LovDescCustDocCategory"));
@@ -233,7 +235,7 @@ public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implemen
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn,");
 		selectSql.append(" CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry, CustDocIsVerified,");
-		selectSql.append(" CustDocCategory, CustDocName, DocRefId, CustDocVerifiedBy, CustDocIsAcrive,");
+		selectSql.append(" CustDocCategory, CustDocName, DocRefId, CustDocVerifiedBy, CustDocIsAcrive, Remarks,");
 		selectSql.append(" lovDescCustDocCategory, lovDescCustDocIssuedCountry, ");
 		selectSql.append(" DocExpDateIsMand,DocIssueDateMand,DocIdNumMand, DocPurpose, DocUri,");
 		selectSql.append(" DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord,");
@@ -342,14 +344,15 @@ public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implemen
 		insertSql.append(" (CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn,");
 		insertSql.append(
 				" CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry, CustDocIsVerified, CustDocVerifiedBy,");
-		insertSql.append(" CustDocIsAcrive,CustDocCategory, CustDocName, DocRefId, DocPurpose, DocUri, PdfPassWord,");
+		insertSql.append(
+				" CustDocIsAcrive,CustDocCategory, CustDocName, DocRefId, DocPurpose, DocUri, PdfPassWord,Remarks,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:CustID, :CustDocType, :CustDocTitle, :CustDocSysName, :CustDocRcvdOn,");
 		insertSql.append(
 				" :CustDocExpDate, :CustDocIssuedOn, :CustDocIssuedCountry, :CustDocIsVerified, :CustDocVerifiedBy,");
 		insertSql.append(
-				" :CustDocIsAcrive,:CustDocCategory, :CustDocName, :DocRefId, :DocPurpose, :DocUri, :PdfPassWord,");
+				" :CustDocIsAcrive,:CustDocCategory, :CustDocName, :DocRefId, :DocPurpose, :DocUri, :PdfPassWord, :Remarks,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -359,6 +362,31 @@ public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implemen
 
 		logger.debug("Leaving");
 		return customerDocument.getId();
+	}
+
+	@Override
+	public long save(ExternalDocument externalDocument, String type) {
+		logger.debug("Entering");
+
+		if (externalDocument.getId() == Long.MIN_VALUE || externalDocument.getId() == 0) {
+			externalDocument.setId(getNextValue("SeqDocumentDetails"));
+		}
+
+		StringBuilder insertSql = new StringBuilder("Insert Into ExternalDocuments");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(
+				" ( Id, CustId, FinReference, BankId,DocName,DocType, FromDate, ToDate, Passwordprotected,Password,DocRefId, Docuri)");
+
+		insertSql.append(" Values(:Id,:CustId, :FinReference, :BankId, :DocName,:DocType, :FromDate,");
+		insertSql.append(" :ToDate, :PasswordProtected, :Password, :DocRefId , :DocUri)");
+
+		logger.debug("insertSql: " + insertSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(externalDocument);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+
+		logger.debug("Leaving");
+		return externalDocument.getId();
 	}
 
 	/**
@@ -384,7 +412,7 @@ public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implemen
 		updateSql.append(" Set CustDocType = :CustDocType, CustDocTitle = :CustDocTitle,");
 		updateSql.append(" CustDocSysName = :CustDocSysName, CustDocRcvdOn = :CustDocRcvdOn,");
 		updateSql.append(" CustDocExpDate = :CustDocExpDate, CustDocIssuedOn = :CustDocIssuedOn,");
-		updateSql.append(" CustDocName=:CustDocName,");
+		updateSql.append(" CustDocName=:CustDocName, Remarks= :Remarks, ");
 		updateSql.append(" CustDocIssuedCountry = :CustDocIssuedCountry, CustDocIsVerified = :CustDocIsVerified,");
 		updateSql.append(
 				" CustDocVerifiedBy = :CustDocVerifiedBy, CustDocIsAcrive = :CustDocIsAcrive, DocRefId = :DocRefId,");
@@ -427,11 +455,11 @@ public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implemen
 			selectSql.append(" custDocRcvdOn, custDocExpDate, custDocIssuedOn, ");
 			selectSql.append(
 					" custDocIssuedCountry, lovDescCustDocIssuedCountry, custDocIsVerified, custDocVerifiedBy, custDocIsAcrive, ");
-			selectSql.append(" DocExpDateIsMand,DocIssueDateMand,DocIdNumMand, ");
+			selectSql.append(" DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, ");
 			selectSql.append(" DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, Remarks  ");
 		selectSql.append(" From CustomerDocuments");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID = :CustID AND CustDocCategory =:CustDocCategory ");
@@ -466,7 +494,7 @@ public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implemen
 		StringBuilder selectSql = new StringBuilder(
 				"Select CustID, CustDocCategory docCategory, 'CUSTOMER' categoryCode, ");
 		selectSql.append(" CustDocType DocType, DocPurpose, DocUri, CustDocName DocName, RecordStatus,");
-		selectSql.append(" RecordType, WorkflowId");
+		selectSql.append(" RecordType, WorkflowId, Remarks");
 		selectSql.append(" From CustomerDocuments");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID =:CustID AND CustDocCategory IN(:DocTypeList) ");
@@ -706,6 +734,37 @@ public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implemen
 		}
 		logger.debug(Literal.LEAVING);
 		return 0;
+	}
+
+	@Override
+	public List<ExternalDocument> getExternalDocuments(long bankId, String type) {
+		logger.debug(Literal.ENTERING);
+		ExternalDocument externalDocument = new ExternalDocument();
+		externalDocument.setBankId(bankId);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT Id, CustId, FinReference, BankId, DocName");
+		selectSql.append(", DocType, FromDate, ToDate, PasswordProtected");
+		selectSql.append(", Password, DocRefId, DocUri ");
+
+		selectSql.append(" FROM ExternalDocuments");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" where BankId = :BankId ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(externalDocument);
+		RowMapper<ExternalDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ExternalDocument.class);
+
+		List<ExternalDocument> externalDocuments = null;
+		try {
+			externalDocuments = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION);
+		}
+		logger.debug(Literal.LEAVING);
+		return externalDocuments == null ? Collections.emptyList() : externalDocuments;
 	}
 
 }

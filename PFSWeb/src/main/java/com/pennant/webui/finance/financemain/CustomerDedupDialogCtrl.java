@@ -329,7 +329,8 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				custCtgCode = customerDetails.getCustomer().getCustCtgCode();
 			}
 			customerDetails = coreCustomerSelectCtrl.proceedAsNewCustomer(customerDetails, custCtgCode,
-					customerDetails.getCustomer().getCustCRCPR(), null, true);
+					customerDetails.getCustomer().getCustCRCPR(), null, true,
+					customerDetails.getCustomer().getLovDescCustCtgCodeName());
 			customerListCtrl.buildDialogWindow(customerDetails, true);
 
 		}
@@ -395,7 +396,8 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				customerDetails.setCustomer(customer);
 
 				customerDetails = coreCustomerSelectCtrl.proceedAsNewCustomer(customerDetails, custCtgCode,
-						customerDetails.getCustomer().getCustCRCPR(), null, true);
+						customerDetails.getCustomer().getCustCRCPR(), null, true,
+						customerDetails.getCustomer().getLovDescCustCtgCodeName());
 				customerListCtrl.buildDialogWindow(customerDetails, true);
 				closeDialog();
 			}

@@ -942,7 +942,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 					Labels.getLabel("label_PartnerBankDialog_FavourLength.value"), false, false, 99));
 		}
 
-		if (!this.btnSearchBranchCode.isDisabled() && this.alwBankBranchCode.isVisible()) {
+		if (!this.btnSearchBranchCode.isDisabled() && this.alwBankBranchCode.isVisible() && AlwBranchCode.isVisible()) {
 			this.alwBankBranchCode.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_PartnerBankDialog_AlwBankBranchCode.value"), null, true));
 		}
@@ -963,6 +963,10 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		if (!this.downloadType.isDisabled() && this.alwDisburment.isChecked()) {
 			this.downloadType.setConstraint(new StaticListValidator(downloadTypesList,
 					Labels.getLabel("label_PartnerBankDialog_DownloadType.value")));
+		}
+		if (!this.dataEngineConfigName.isDisabled() && this.alwDisburment.isChecked()) {
+			this.dataEngineConfigName.setConstraint(new StaticListValidator(dataEngineConfigNameList,
+					Labels.getLabel("label_PartnerBankDialog_DataEngineConfigName.value")));
 		}
 		logger.debug("Leaving");
 	}
@@ -1850,7 +1854,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.reqFileDownload.setChecked(false);
 			this.dataEngineConfigName.setSelectedIndex(0);
 		} else {
-			this.dataEngineConfigName.setDisabled(false);
+			this.dataEngineConfigName.setDisabled(isReadOnly("PartnerBankDialog_DataEngineConfigName"));
 			this.dataEngineConfigName.setConstraint("");
 			this.dataEngineConfigName.setErrorMessage("");
 			this.reqFileDownload.setChecked(true);

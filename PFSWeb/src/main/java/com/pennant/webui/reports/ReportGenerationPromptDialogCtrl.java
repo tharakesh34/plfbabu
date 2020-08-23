@@ -104,6 +104,7 @@ import org.zkoss.zul.impl.NumberInputElement;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -117,6 +118,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -226,6 +228,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 	private boolean isEntity = false;
 	private String entityValue = "";
+	private CollateralAssignmentDAO collateralAssignmentDAO;
 
 	public ReportGenerationPromptDialogCtrl() {
 		super();
@@ -775,8 +778,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					comboitem.setValue(object.toString());
 					valueLabel.setValue(object.toString());
 
-					object = (String) dynamicListResult.get(i).getClass()
-							.getMethod(aReportFieldsDetails.getLovTextFieldMethod()).invoke(dynamicListResult.get(i));
+					object = dynamicListResult.get(i).getClass().getMethod(aReportFieldsDetails.getLovTextFieldMethod())
+							.invoke(dynamicListResult.get(i));
 
 					comboitem.setLabel(object.toString());
 					valueLabel.setLabel(object.toString());
@@ -965,7 +968,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 						// If LovSearch show error message on text box
 						if (aReportFieldsDetails.getFieldType().trim().equals(FIELDTYPE.LOVSEARCH.toString())) {
 							WrongValueException wee = new WrongValueException(
-									(Textbox) we.getComponent().getParent().getChildren().get(2), we.getMessage());
+									we.getComponent().getParent().getChildren().get(2), we.getMessage());
 							wve.add(wee);
 						} else {
 							wve.add(we);
@@ -1251,10 +1254,10 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 								throw new WrongValueException(fromDateBox,
 										Labels.getLabel("label_Error_FromTimeMustBfrTo.vlaue"));
 							} else if (fromDateBox instanceof Decimalbox) {
-								Number fromValue = (Number) (fromDateBox instanceof Intbox
-										? ((Intbox) fromDateBox).getValue() : ((Decimalbox) fromDateBox).getValue());
-								Number toValue = (Number) (toDateBox instanceof Intbox ? ((Intbox) toDateBox).getValue()
-										: ((Decimalbox) toDateBox).getValue());
+								Number fromValue = fromDateBox instanceof Intbox ? ((Intbox) fromDateBox).getValue()
+										: ((Decimalbox) fromDateBox).getValue();
+								Number toValue = toDateBox instanceof Intbox ? ((Intbox) toDateBox).getValue()
+										: ((Decimalbox) toDateBox).getValue();
 								if (fromValue.doubleValue() > toValue.doubleValue()) {
 									throw new WrongValueException(fromDateBox,
 											Labels.getLabel("label_Error_FromValueMustGretaerTo.vlaue"));
@@ -1600,8 +1603,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			boolean isRangeField = false;
 			ReportFilterFields aReportFilterFields = reportConfiguration.getListReportFieldsDetails().get(i);
-			Object tempComponent = (Object) dymanicFieldsRows
-					.getFellowIfAny(Long.toString(aReportFilterFields.getFieldID()));
+			Object tempComponent = dymanicFieldsRows.getFellowIfAny(Long.toString(aReportFilterFields.getFieldID()));
 			aReportFilterFields.getFilterFileds();
 
 			// If not CheckBox type
@@ -1665,8 +1667,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		for (int i = 0; i < reportConfiguration.getListReportFieldsDetails().size(); i++) {
 			ReportFilterFields aReportFilterFields = reportConfiguration.getListReportFieldsDetails().get(i);
 
-			Object tempComponent = (Object) dymanicFieldsRows
-					.getFellowIfAny(Long.toString(aReportFilterFields.getFieldID()));
+			Object tempComponent = dymanicFieldsRows.getFellowIfAny(Long.toString(aReportFilterFields.getFieldID()));
 			if (!(tempComponent instanceof LabelImageElement)) {
 				InputElement component = (InputElement) dymanicFieldsRows
 						.getFellowIfAny(Long.toString(aReportFilterFields.getFieldID()));
@@ -1743,7 +1744,16 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					+ PathUtil.REPORTS_IMAGE_PNG_FORMAT;
 			argsMap.put("organizationLogo", PathUtil.getPath(path));
 		} else {
-			argsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+			if (StringUtils.equals(reportConfiguration.getMenuItemCode(), "menu_Item_PaymentSchedule")) {
+				File file = new File(PathUtil.getPath(PathUtil.PAYMENT_SCHEDULE_IMAGE_CLIENT));
+				if (file.exists()) {
+					argsMap.put("organizationLogo", PathUtil.getPath(PathUtil.PAYMENT_SCHEDULE_IMAGE_CLIENT));
+				} else {
+					argsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+				}
+			} else {
+				argsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+			}
 		}
 
 		argsMap.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
@@ -2012,7 +2022,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			ReportFilterFields aReportFieldsDetails = reportConfiguration.getListReportFieldsDetails().get(i);
 
 			if (reportSearchTemplateMap.containsKey(aReportFieldsDetails.getFieldID())) {
-				ReportSearchTemplate reportSearchTemplate = (ReportSearchTemplate) reportSearchTemplateMap
+				ReportSearchTemplate reportSearchTemplate = reportSearchTemplateMap
 						.get(aReportFieldsDetails.getFieldID());
 				// Here We will check if Field type changed after template saved for avoiding problems in values
 				// displaying
@@ -2330,7 +2340,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
 					false);
 			if (filters != null && filters.size() >= 2) {
-				String[] fromDateArray = ((ReportSearchTemplate) filters.get(1)).getFieldValue().split("&");
+				String[] fromDateArray = filters.get(1).getFieldValue().split("&");
 				fromDate = DateUtility.format(DateUtility.getDate(fromDateArray[0]), PennantConstants.DBDateFormat);
 				toDate = DateUtility.format(DateUtility.getDate(fromDateArray[1]), PennantConstants.DBDateFormat);
 			}
@@ -2351,8 +2361,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
 					false);
 			if (filters != null && filters.size() >= 2) {
-				fromDate = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
-				toDate = ((ReportSearchTemplate) filters.get(1)).getFieldValue();
+				fromDate = filters.get(0).getFieldValue();
+				toDate = filters.get(1).getFieldValue();
 			}
 
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
@@ -2366,7 +2376,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
 					false);
 			if (filters != null && filters.size() > 0) {
-				limitType = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
+				limitType = filters.get(0).getFieldValue();
 				if ("Expired Limits".equals(limitType)) {
 					whereCondition.append(" Where T2.ExpiryDate < GetDate()  ");
 				} else if ("Excess Limits".equals(limitType)) {
@@ -2403,8 +2413,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
 					false);
 			if (filters != null && filters.size() >= 2) {
-				finReference = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
-				appPercentage = ((ReportSearchTemplate) filters.get(1)).getFieldValue();
+				finReference = filters.get(0).getFieldValue();
+				appPercentage = filters.get(1).getFieldValue();
 			}
 
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
@@ -2507,14 +2517,30 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			if (!StringUtils.equals(reportMenuCode, "menu_Item_CashflowReport")
 					&& !StringUtils.equals(reportMenuCode, "menu_Item_AdvanceReport") && filters != null
 					&& filters.size() == 2) {
-				userDate = ((ReportSearchTemplate) filters.get(1)).getFieldValue();
+				userDate = filters.get(1).getFieldValue();
 			} else if (filters != null && filters.size() == 1) {
-				userDate = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
+				userDate = filters.get(0).getFieldValue();
 			}
 
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
 					userDate, null, null);
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_NoObjectionCertificate")) {
+			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
+			if (SysParamUtil.isAllowed(SMTParameterConstants.NOC_LINKED_LOANS_CHECK_REQ)) {
+				if (whereCondition != null) {
+					String finReference = whereCondition.substring(24, whereCondition.length() - 1);
+					//checking weather the selected reference assigned collateral has been linked with other active loans or not 
+					if (collateralAssignmentDAO.getAssignedCollateralCountByRef(finReference) > 0) {
+						String msg = Labels.getLabel("label_collateralAssignment_Error");
+						if (MessageUtil.confirm(msg) == MessageUtil.NO) {
+							return;
+						}
+					}
+				}
+			}
+			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
+					null, null);
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_WriteoffReport")) {
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 			if ("where".equals(whereCondition.toString().trim())) {
@@ -2597,6 +2623,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 		}
 
+		@Override
 		public void onEvent(Event event) throws Exception {
 			Checkbox checkbox = (Checkbox) event.getTarget();
 			Listitem listItem = (Listitem) checkbox.getParent().getParent();
@@ -2652,7 +2679,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		CustomArgument customArgument = (CustomArgument) event.getData();
 		ReportFilterFields aReportFieldsDetails = customArgument.getaReportFieldsDetails();
 
-		Hbox hbox = (Hbox) customArgument.hbox;
+		Hbox hbox = customArgument.hbox;
 		Textbox valuestextBox = (Textbox) hbox.getChildren().get(1);
 		Textbox labelstextBox = (Textbox) hbox.getChildren().get(2);
 		Button button = (Button) hbox.getChildren().get(3);
@@ -2729,7 +2756,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					labelstextBox.setValue("");
 					doClearFields(aReportFieldsDetails);
 				} else {
-					Object details = (Object) dataObject;
+					Object details = dataObject;
 
 					if (details != null) {
 						String tempValuestextBox = valuestextBox.getValue();
@@ -2826,7 +2853,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		Listitem li = new Listitem(); // To read List Item
 		StringBuilder tempWhereCondition = new StringBuilder();
 		for (int i = 0; i < multiSelectionListBox.getItems().size(); i++) {
-			li = (Listitem) multiSelectionListBox.getItems().get(i);
+			li = multiSelectionListBox.getItems().get(i);
 			Listcell lc = (Listcell) li.getFirstChild();
 			Checkbox checkBox = (Checkbox) lc.getFirstChild();
 			if (checkBox.isChecked()) {
@@ -3065,4 +3092,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		this.financeDetailService = financeDetailService;
 	}
 
+	public CollateralAssignmentDAO getCollateralAssignmentDAO() {
+		return collateralAssignmentDAO;
+	}
+
+	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
+		this.collateralAssignmentDAO = collateralAssignmentDAO;
+	}
 }

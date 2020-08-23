@@ -55,8 +55,8 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 		StringBuilder sql = new StringBuilder();
 		if (type.contains("view")) {
-			sql.append(" select id, linkId, seqno, custid, custcif, custshrtname,");
-			sql.append(" fintype, fintypedesc, findate, loanbank, loanbankname,");
+			sql.append(" select id, linkId, seqno, custid, cu.custcif, cu.custshrtname,");
+			sql.append(" fintype, el.fintypedesc, findate, loanbank, loanbankname,");
 			sql.append(" rateofinterest, tenure, originalamount, instalmentamount,");
 			sql.append(" outstandingbalance, balancetenure, bounceinstalments, principaloutstanding,");
 			sql.append(" overdueamount, finstatus, custstsdescription,");
@@ -197,9 +197,9 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select cel.version from customer_ext_liabilities_view cel");
+		sql.append(" select version from customer_ext_liabilities cel");
 		sql.append(" inner join external_liabilities el on el.linkid = cel.linkid");
-		sql.append(" where cel.custid = :custid and cel.seqno = :seqno");
+		sql.append(" where custid = :custid and seqno = :seqno");
 		logger.trace(Literal.SQL + sql.toString());
 
 		int recordCount = 0;
@@ -378,10 +378,10 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		sql.append(" Insert Into EXTERNAL_LIABILITIES_PD");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (LiabilityId, EmiType, EmiClearance, Version, LastMntBy, LastMntOn, RecordStatus");
-		sql.append(" , RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" , RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, EmiClearedDay)");
 		sql.append(" Values(:LiabilityId, :EmiType, :EmiClearance, :Version, :LastMntBy");
 		sql.append(" , :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType");
-		sql.append(" , :WorkflowId)");
+		sql.append(" , :WorkflowId, :EmiClearedDay)");
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(installmentDetails.toArray());
@@ -405,7 +405,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, LiabilityId, EmiType, EmiClearance, Version, LastMntOn, LastMntBy");
-		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, EmiClearedDay");
 		sql.append(" from EXTERNAL_LIABILITIES_PD_VIEW");
 		sql.append(" Where LiabilityId = ?");
 
@@ -437,7 +437,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 					epd.setNextTaskId(rs.getString("NextTaskId"));
 					epd.setRecordType(rs.getString("RecordType"));
 					epd.setWorkflowId(rs.getLong("WorkflowId"));
-
+					epd.setEmiClearedDay(rs.getInt("EmiClearedDay"));
 					return epd;
 				}
 			});
@@ -457,10 +457,11 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		StringBuilder sql = new StringBuilder();
 		sql.append(" update EXTERNAL_LIABILITIES_PD");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" set EmiType=:EmiType, emiClearance=:emiClearance,");
-		sql.append(" version=:version, lastmntby=:lastMntBy,lastmnton=:lastMntOn, recordstatus=:recordStatus,");
-		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode,");
-		sql.append(" taskid=:taskId, nexttaskid=:nextTaskId, recordtype=:recordType, workflowid=:workflowId");
+		sql.append(" set EmiType = :EmiType, EmiClearance = :EmiClearance, EmiClearedDay = :EmiClearedDay");
+		sql.append(
+				", Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus");
+		sql.append(", Rolecode = :RoleCode, NextRoleCode = :NextRoleCode");
+		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, Workflowid = :WorkflowId");
 		sql.append(" where liabilityId = :liabilityId ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(installmentDetails);
@@ -556,4 +557,13 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		return sumCreditAmt;
 	}
 
+	@Override
+	public void delete(long linkId, String type) {
+		StringBuilder sql = new StringBuilder(" Delete From EXTERNAL_LIABILITIES_PD");
+		sql.append(" Where LiabilityId IN (select ID from EXTERNAL_LIABILITIES Where linkId =:linkId)");
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("linkId", linkId);
+		this.jdbcTemplate.update(sql.toString(), source);
+	}
 }

@@ -341,9 +341,9 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 						uploadDetail.setFeeTypeCode(feeTypeCode.substring(0, 8));
 					} else {
 
-						long feeTypeId = this.uploadHeaderService.getFinFeeTypeIdByFeeType(feeTypeCode);
+						Long feeTypeId = this.uploadHeaderService.getFinFeeTypeIdByFeeType(feeTypeCode);
 
-						if (feeTypeId == 0 || feeTypeId == Long.MIN_VALUE) {
+						if (feeTypeId != null) {
 
 							if (valid) {
 								valid = false;

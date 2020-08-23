@@ -215,6 +215,7 @@ public class PennantConstants {
 	public static final String METHOD_INTIATEHUNTERSERVICE = "doInitiateHunterService";
 	public static final String METHOD_DOMAINCHECKSERVICE = "doDomainCheckService";
 	public static final String METHOD_DOCUMENTVERIFICATION = "doDocumentVerification";
+	public static final String METHOD_LOAN_DATA_SYNC = "executeLoanDataSync";
 
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";
@@ -241,6 +242,7 @@ public class PennantConstants {
 	public static final String PROC_STATUS_RETRY = "R";
 	public static final String PROC_STATUS_COMPLETE = "C";
 	public static final String DEFAULT_COUNTRY = "APP_DFT_COUNTRY";
+	public static final String SET_POSTDATE_TO = "SET_POSTDATE_TO";
 
 	// Application Level label Definitions, can be moved to labels TODO
 	public static final String YES = "Y";
@@ -781,7 +783,8 @@ public class PennantConstants {
 	public static final String SUBCATEGORY_NRI = "NRI"; // NRI
 	public static final String EMPLOYMENTTYPE_SEP = "SEP"; // Domestic
 	public static final String EMPLOYMENTTYPE_SENP = "SENP";
-	public static final String EMPLOYMENTTYPE_SALARIED = "SALARIED"; // Domestic
+	public static final String EMPLOYMENTTYPE_SALARIED = "SALARIED"; //Domestic
+	public static final String EMPLOYMENTTYPE_NONWORKING = "NON-WORKING";
 
 	// WorkFlow Fields
 	public static final String WORKFLOW_VERSION = "VERSION";
@@ -802,6 +805,7 @@ public class PennantConstants {
 	public static final String CHEQUESTATUS_REALISE = "REALISE";
 	public static final String CHEQUESTATUS_REALISED = "REALISED";
 	public static final String CHEQUESTATUS_FAILED = "FAILED";
+	public static final String CHEQUESTATUS_CANCELLED = "CANCELLED";
 	public static final String CHEQUE_AC_TYPE_CA = "11";
 	public static final String CHEQUE_AC_TYPE_SA = "10";
 	public static final String CHEQUE_AC_TYPE_CC = "12";
@@ -852,6 +856,7 @@ public class PennantConstants {
 
 	public static final String DSA = "DSA";
 	public static final String PSF = "PSF";
+	public static final String DMA = "DMA";
 	public static final String ONLINE = "ONL";
 	public static final String OFFLINE = "OFFL";
 	public static final String REFERRAL = "REF";
@@ -859,6 +864,7 @@ public class PennantConstants {
 	public static final String ASM = "ASM";
 	public static final String KVI = "KVI";
 	public static final String DEFAULT = "DEFAULT";
+	public static final String COONNECTOR = "CONNECTOR";
 
 	public static final String REC_ON_APPR = "REC_ON_APPROVAL";
 
@@ -942,16 +948,20 @@ public class PennantConstants {
 	public static final String MNC = "MNC";
 	public static final String LOCAL_CIVIC = "Local Civic";
 	public static final String SEP = "9";
+	public static final String FOREIGN_NATIONAL = "FORNAT";
+	public static final String TRUST_SOCIETY = "TRUSTSOC";
 
 	// Final Valuation Amount Decisions
 	public static final String OK = "OK";
 	public static final String NOTOK = "NOTOK";
+	public static final String OTHER = "OTH";
 
 	public static final String REASON_CODE_EARLYSETTLEMENT = "FC";
 	// Temporary Purpose
 	public static final String OLD_CREDITREVIEWTAB = "OLDCREDITREVIEWTAB";
 	public static final String NEW_CREDITREVIEWTAB = "NEWCREDITREVIEWTAB";
-	// Credit Review Inside Tab Names
+	public static final String EXT_CREDITREVIEWTAB = "EXTCREDITREVIEWTAB";
+	//Credit Review Inside Tab Names
 	public static final String BALANCE_SHEET = "Balance Sheet";
 	public static final String PROFIT_AND_LOSS = "Profit and Loss";
 	public static final String SUMMARY_AND_RATIOS = "Summary and Ratios";
@@ -964,7 +974,9 @@ public class PennantConstants {
 	public static final String DBD_AND_MBD_SEPARATELY = "SEPRT";
 	public static final String DBD_AND_MBD_TOGETHER = "TOGTHR";
 	public static final String DBD_PERCENTAGE_CALCULATED_ON = "INVAMT";
-
+	public static final String NPA_PAYMENT_APPORTIONMENT_YES = "Y";
+	public static final String NPA_PAYMENT_APPORTIONMENT_NO = "N";
+	public static final String SELECT_LABEL = "---Select---";
 	//Emi Clearance
 	public static final String WAITING_CLEARANCE = "WTCLR";
 	public static final String CLEARED = "CLRD";
@@ -973,5 +985,78 @@ public class PennantConstants {
 	public static final String NEWCOVENANTS_UPLOADBY_REFERENCE = "NEWCOVENANTS_UPLOADBY_REFERENCE";
 
 	public static boolean EOD_DELAY_REQ = false;
+
+	// OCR Static List Constants
+	public static final String AGGREMENT_VALUE = "AGG";
+	public static final String DOCUMENT_VALUE = "DOC";
+	public static final String CUSTOMER_CONTRIBUTION = "Customer";
+	public static final String FINANCER_CONTRIBUTION = "Financer";
+
+	public static final String MODULE_NAME = "Project";
+	public static final String PROJECT_DOC = "PROJECTDOC";
+	//Project Types
+	public static final String RESIDENTIAL = "Residential";
+	public static final String COMMERCIAL = "Commercial";
+	public static final String MIXED_USE = "Mixed Use";
+	public static final String AWAITED = "A";
+
+	public static final String PERC_TYPE_FIXED = "F";
+	public static final String PERC_TYPE_VARIABLE = "V";
+
+	//Unit Types
+	public static final String FLAT = "Flat";
+	public static final String INDEPENDENTHOUSE = "Independent House";
+	public static final String CARPET_AREA = "Carpet Area";
+	public static final String BUILTUP_AREA = "Built-up Area";
+	public static final String SUPERBUILTUP_AREA = "Super Built-up Area";
+	public static final String CARPET_AREA_RATE = "Rate as per Carpet Area";
+	public static final String BUILTUP_AREA_RATE = "Rate as per Built up area";
+	public static final String SUPERBUILTUP_AREA_RATE = "Rate as per Super Built up area";
+	public static final String BRANCH_APF_RATE = "Rate as per Branch APF";
+	public static final String COST_SHEET_RATE = "Rate as per Cost Sheet";
+	public static final String RATE_PER_SQUARE_FEET = "Recommended base rate per sq ft";
+
+	//Employer Category
+	public static final String EMP_CATEGORY_NOTCAT = "NOTCAT";
+	public static final String EMP_CATEGORY_CATA = "CATA";
+	public static final String EMP_CATEGORY_CATB = "CATB";
+	public static final String EMP_CATEGORY_CATC = "CATC";
+	public static final String EMP_CATEGORY_CATD = "CATD";
+	//Type of APF
+	public static final String AUTO = "Auto";
+	public static final String DEEMED = "Deemed";
+	public static final String GENERAL = "General";
+
+	//Piramal Page Ext
+	public static final String PIRAMAL = "_Piramal";
+
+	//Income Categories
+	public static final String INC_CATEGORY_SALARY = "SALARY";
+	public static final String INC_CATEGORY_OTHER = "OTHERS";
+	//De-dupe doc type codes 
+	public static final String VOTER_ID = "VOTER_ID";
+	public static final String DRIVING_LICENCE = "DRIVING_LICENCE";
+	public static final String DOC_TYPE = "DOC_TYPE";
+	//Loan purpose type codes 
+	public static final String ALL = "ALL";
+	public static final String SPECIFIC = "SPECIFIC";
+	public static final String NOTREQUIRED = "NOTREQUIRED";
+	//Up front fee receipt cancel Doc module
+	public static final String FEE_DOC_MODULE_NAME = "Fee Cancellation";
+	public static final String PAYABLE_ADVISE_DOC_MODULE_NAME = "Payable Advise";
+	public static final String BLACKLISTCUSTOMER = "BLACKLISTCUSTOMER";
+	public static final String REQ_TV_STATUS_CODES = "REQ_TV_STATUS_CODES";
+	public static final String ACC_TYPE = "ACC_TYPE";
+	public static final String CERSAI_IMPORT = "CERSAI_IMPORT";
+	public static final String PHONE_TYPE = "PHONE_TYPE";
+	// Covenant Details on Loan queue
+	public static final String COVENANT_PDD = "PDD";
+	public static final String COVENANT_OTC = "OTC";
+	public static final String COVENANT_LOS = "LOS";
+
+	// Step Types
+	public static final String SUPER_LOAN_LOWER_EMI = "SUPER LOAN-LOWER EMI";
+	public static final String SUPER_LOAN_HIGHER_LOAN = "SUPER LOAN-HIGHER LOAN";
+	public static final String ADVANTAGE = "ADVANTAGE";
 
 }

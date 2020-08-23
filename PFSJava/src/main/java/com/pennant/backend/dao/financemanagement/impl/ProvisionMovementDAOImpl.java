@@ -60,6 +60,7 @@ import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>ProvisionMovement model</b> class.<br>
@@ -84,37 +85,37 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 	 */
 	@Override
 	public ProvisionMovement getProvisionMovementById(final String id, final Date movementDate, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		ProvisionMovement provisionMovement = new ProvisionMovement();
 
 		provisionMovement.setId(id);
 		provisionMovement.setProvMovementDate(movementDate);
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference, ProvMovementDate,");
-		selectSql.append(" ProvMovementSeq, ProvCalDate, ProvisionedAmt, ProvisionAmtCal, ProvisionDue,");
-		selectSql.append(" ProvisionPostSts, NonFormulaProv, UseNFProv, AutoReleaseNFP, PrincipalDue,");
-		selectSql.append(" ProfitDue, DueFromDate, LastFullyPaidDate, LinkedTranId ");
+		StringBuilder sql = new StringBuilder("Select FinReference, ProvMovementDate,");
+		sql.append(" ProvMovementSeq, ProvCalDate, ProvisionedAmt, ProvisionAmtCal, ProvisionDue,");
+		sql.append(" ProvisionPostSts, NonFormulaProv, UseNFProv, AutoReleaseNFP, PrincipalDue,");
+		sql.append(" ProfitDue, DueFromDate, LastFullyPaidDate, LinkedTranId, ");
+		sql.append(
+				" AssetCode, AssetStageOrdr, NPA, ManualProvision, ProvChgLinkedTranId, PrvovisionRate, DueDays, PriBal");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append("");
+			sql.append("");
 		}
-		selectSql.append(" From FinProvMovements");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference AND ProvMovementDate =:ProvMovementDate ");
-		selectSql.append(" and ProvMovementSeq =(SELECT MAX(ProvMovementSeq) FROM FinProvMovements ");
-		selectSql.append(" Where FinReference =:FinReference AND ProvMovementDate =:ProvMovementDate ) ");
+		sql.append(" From FinProvMovements");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference =:FinReference AND ProvMovementDate =:ProvMovementDate ");
+		sql.append(" and ProvMovementSeq =(SELECT MAX(ProvMovementSeq) FROM FinProvMovements ");
+		sql.append(" Where FinReference =:FinReference AND ProvMovementDate =:ProvMovementDate ) ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
 		RowMapper<ProvisionMovement> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ProvisionMovement.class);
-
 		try {
-			provisionMovement = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			provisionMovement = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
 			provisionMovement = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return provisionMovement;
 	}
 
@@ -129,7 +130,7 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 	 */
 	@Override
 	public List<ProvisionMovement> getProvisionMovementListById(final String id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		ProvisionMovement provisionMovement = new ProvisionMovement();
 
 		provisionMovement.setId(id);
@@ -137,7 +138,9 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 		StringBuilder selectSql = new StringBuilder("Select FinReference, ProvMovementDate,");
 		selectSql.append(" ProvMovementSeq, ProvCalDate, ProvisionedAmt, ProvisionAmtCal, ProvisionDue,");
 		selectSql.append(" ProvisionPostSts, NonFormulaProv, UseNFProv, AutoReleaseNFP, PrincipalDue,");
-		selectSql.append(" ProfitDue, DueFromDate, LastFullyPaidDate, LinkedTranId ");
+		selectSql.append(" ProfitDue, DueFromDate, LastFullyPaidDate, LinkedTranId, ");
+		selectSql.append(
+				" AssetCode, AssetStageOrdr, NPA, ManualProvision, ProvChgLinkedTranId, PrvovisionRate, DueDays, PriBal");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
@@ -145,12 +148,12 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
 		RowMapper<ProvisionMovement> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ProvisionMovement.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
@@ -168,24 +171,24 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 	 */
 	@Override
 	public void delete(ProvisionMovement provisionMovement, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FinProvMovements");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		StringBuilder sql = new StringBuilder("Delete From FinProvMovements");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -203,23 +206,27 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 	 */
 	@Override
 	public String save(ProvisionMovement provisionMovement, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinProvMovements");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, ProvMovementDate, ProvMovementSeq, ProvCalDate, ProvisionedAmt,");
-		insertSql.append(" ProvisionAmtCal, ProvisionDue, ProvisionPostSts, NonFormulaProv, UseNFProv,");
-		insertSql.append(" AutoReleaseNFP, PrincipalDue, ProfitDue, DueFromDate, LastFullyPaidDate, LinkedTranId) ");
-		insertSql.append(" Values(:FinReference, :ProvMovementDate, :ProvMovementSeq, :ProvCalDate,");
-		insertSql.append(" :ProvisionedAmt, :ProvisionAmtCal, :ProvisionDue, :ProvisionPostSts, :NonFormulaProv,");
-		insertSql.append(
-				" :UseNFProv, :AutoReleaseNFP, :PrincipalDue, :ProfitDue, :DueFromDate, :LastFullyPaidDate, :LinkedTranId)");
+		StringBuilder sql = new StringBuilder("Insert Into FinProvMovements");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinReference, ProvMovementDate, ProvMovementSeq, ProvCalDate, ProvisionedAmt,");
+		sql.append(" ProvisionAmtCal, ProvisionDue, ProvisionPostSts, NonFormulaProv, UseNFProv,");
+		sql.append(" AutoReleaseNFP, PrincipalDue, ProfitDue, DueFromDate, LastFullyPaidDate, LinkedTranId, ");
+		sql.append(
+				" AssetCode, AssetStageOrdr, NPA, ManualProvision, ProvChgLinkedTranId, PrvovisionRate, DueDays, PriBal)");
+		sql.append(" Values(:FinReference, :ProvMovementDate, :ProvMovementSeq, :ProvCalDate,");
+		sql.append(" :ProvisionedAmt, :ProvisionAmtCal, :ProvisionDue, :ProvisionPostSts, :NonFormulaProv,");
+		sql.append(
+				" :UseNFProv, :AutoReleaseNFP, :PrincipalDue, :ProfitDue, :DueFromDate, :LastFullyPaidDate, :LinkedTranId,");
+		sql.append(
+				" :AssetCode, :AssetStageOrdr, :Npa, :ManualProvision, :ProvChgLinkedTranId, :PrvovisionRate, :DueDays, :PriBal)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		logger.debug(Literal.LEAVING);
 		return provisionMovement.getId();
 	}
 
@@ -238,22 +245,26 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 	@Override
 	public void update(ProvisionMovement provisionMovement, String type) {
 		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinProvMovements");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set ProvisionedAmt = :ProvisionedAmt, ProvisionDue = :ProvisionDue, ");
-		updateSql.append(" ProvisionPostSts = :ProvisionPostSts, LinkedTranId = :LinkedTranId ");
-		updateSql.append(" Where FinReference =:FinReference AND ProvMovementDate = :ProvMovementDate");
-		updateSql.append(" AND ProvMovementSeq = :ProvMovementSeq");
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Update FinProvMovements");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set ProvisionedAmt = :ProvisionedAmt, ProvisionDue = :ProvisionDue, ");
+		sql.append(" ProvisionPostSts = :ProvisionPostSts, LinkedTranId = :LinkedTranId, ");
+		sql.append(
+				" AssetCode = :AssetCode, AssetStageOrdr = :AssetStageOrdr, NPA = :NPA, ManualProvision = :ManualProvision, ");
+		sql.append(
+				" ProvChgLinkedTranId = :ProvChgLinkedTranId, PrvovisionRate = :PrvovisionRate, DueDays = :DueDays, PriBal = :PriBal");
+		sql.append(" Where FinReference =:FinReference AND ProvMovementDate = :ProvMovementDate");
+		sql.append(" AND ProvMovementSeq = :ProvMovementSeq");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 }

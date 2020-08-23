@@ -66,6 +66,11 @@
 									<label id="label_Amount" value="${c:l('label_ChequeDetailDialog_Amount.value')}" />
 									<currencyBox id="totAmount" width="200px" />
 								</row>
+								<row>
+									<label id="label_ChequeDetailDialog_Customer"
+										value="${c:l('label_ChequeDetailDialog_Customer.value')}" />
+									<extendedcombobox id="customer" />
+								</row>
 							</rows>
 						</grid>
 					</groupbox>
@@ -130,6 +135,8 @@
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="accNumber" width="200px" />
+										<button id="btnFetchAccountDetails" tooltiptext="${c:l('label_FetchAccountDetails.tooltiptext')}"
+											image="/images/icons/more.png" />
 									</hbox>
 								</row>
 

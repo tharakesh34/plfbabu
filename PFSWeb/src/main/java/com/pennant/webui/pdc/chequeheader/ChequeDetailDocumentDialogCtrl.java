@@ -217,7 +217,8 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 			this.btnDelete.setVisible(true);
 		}
 
-		if (chequeDetail.getDocImage() == null && chequeDetail.getDocumentRef() != Long.MIN_VALUE) {
+		if (chequeDetail.getDocImage() == null && chequeDetail.getDocumentRef() != null
+				&& chequeDetail.getDocumentRef() > 0) {
 			chequeDetail.setDocImage(dMSService.getById(chequeDetail.getDocumentRef()));
 		}
 		AMedia amedia = null;

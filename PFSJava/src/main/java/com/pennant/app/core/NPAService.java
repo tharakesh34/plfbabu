@@ -36,30 +36,42 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.rulefactory.RuleDAO;
-import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
+import com.pennant.backend.dao.applicationmaster.NPAProvisionDetailDAO;
+import com.pennant.backend.dao.applicationmaster.NPAProvisionHeaderDAO;
+import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
+import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
+import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.financemanagement.Provision;
-import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.backend.util.RuleConstants;
-import com.pennant.backend.util.RuleReturnType;
-import com.pennant.eod.constants.EodConstants;
+import com.pennant.backend.model.financemanagement.ProvisionMovement;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.ProvisionConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.TableType;
 
 public class NPAService extends ServiceHelper {
-
 	private static final long serialVersionUID = 6161809223570900644L;
-	private static Logger logger = Logger.getLogger(NPAService.class);
-	private RuleExecutionUtil ruleExecutionUtil;
-	private RuleDAO ruleDAO;
+	private static Logger logger = LogManager.getLogger(NPAService.class);
+
+	private NPAProvisionHeaderDAO nPAProvisionHeaderDAO;
+	private NPAProvisionDetailDAO nPAProvisionDetailDAO;
+	private CollateralAssignmentDAO collateralAssignmentDAO;
 
 	/**
 	 * Default constructor
@@ -68,87 +80,71 @@ public class NPAService extends ServiceHelper {
 		super();
 	}
 
-	public CustEODEvent processNPABuckets(CustEODEvent custEODEvent) throws Exception {
-		logger.debug(" Entering ");
-		String prvRule = "";
-		Object object = SysParamUtil.getValue("PROVISION_RULE");
-		if (object == null) {
-			return custEODEvent;
-		}
+	/**
+	 * Processing NPA provision.
+	 * 
+	 * @param custEODEvent
+	 * @return
+	 * @throws Exception
+	 */
+	public CustEODEvent processProvisions(CustEODEvent custEODEvent) throws Exception {
+		String strCustId = custEODEvent.getCustIdAsString();
+		logger.info("Provision Calculation started fro the Customer ID {}", strCustId);
 
-		prvRule = (String) object;
-
-		Rule rule = ruleDAO.getRuleByID(prvRule, RuleConstants.MODULE_PROVSN, RuleConstants.EVENT_PROVSN, "");
-		if (rule == null) {
+		if (!(DateUtil.compare(custEODEvent.getEodDate(), DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0)) {
 			return custEODEvent;
 		}
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
 
-		for (FinEODEvent finEODEvent : finEODEvents) {
-			finEODEvent = findProvision(finEODEvent, valueDate, rule);
+		String provisionBooks = custEODEvent.getProvisionBooks();
 
+		boolean customerProvision = custEODEvent.isCustomerProvision();
+		if (customerProvision) {
+			Provision provision = getMaxProvisionAsset(finEODEvents, provisionBooks);
+
+			if (provision == null) {
+				return custEODEvent;
+			}
+
+			for (FinEODEvent finEODEvent : finEODEvents) {
+				findProvision(finEODEvent, valueDate, provisionBooks, provision);
+			}
+		} else {
+			for (FinEODEvent finEODEvent : finEODEvents) {
+				findProvision(finEODEvent, valueDate, provisionBooks, null);
+			}
 		}
-		logger.debug(" Leaving ");
+
+		logger.info("Provision Calculation completd fro the Customer ID {}", strCustId);
 		return custEODEvent;
 
 	}
 
-	private FinEODEvent findProvision(FinEODEvent finEODEvent, Date valueDate, Rule rule) throws SQLException {
+	private FinEODEvent findProvision(FinEODEvent finEODEvent, Date valueDate, String provisionBooks,
+			Provision provision) throws SQLException {
+		String finReference = finEODEvent.getFinProfitDetail().getFinReference();
+
+		logger.info("Provision Calculation started fro the FinReference  {}", finReference);
 
 		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
-		String finReference = pftDetail.getFinReference();
-		String productCode = pftDetail.getFinCategory();
-		String finStatus = pftDetail.getFinStatus();
-		int dueBucket = pftDetail.getDueBucket();
-
-		Provision provision = new Provision();
-
-		List<NPABucketConfiguration> list = getNPABucketConfigurations(productCode);
-
-		//No configuration for NPA found then do nothing
-		if (list == null || list.isEmpty()) {
+		Provision oldProvision = provisionDAO.getProvisionById(finReference, TableType.MAIN_TAB.getSuffix());
+		if (oldProvision != null && oldProvision.isManualProvision()) {
 			return finEODEvent;
 		}
 
-		long npaBucket = 0;
-
-		/*
-		 * if current bucket status is empty no need to calculate the provision buckets, but if he is already in
-		 * provision then provision should be update.
-		 */
-
-		if (StringUtils.isNotBlank(finStatus)) {
-			//sortNPABucketConfig(list); FIXME MUR commented as per Veritas Need to check with PV
-			for (NPABucketConfiguration configuration : list) {
-				if (configuration.getDueDays() >= dueBucket) {
-					npaBucket = configuration.getBucketID();
-					break;
-				}
-			}
+		if (provision == null) {
+			provision = getProvision(finEODEvent, provisionBooks);
 		}
 
-		if (npaBucket == 0) {
-			int size = list.size();
-			NPABucketConfiguration conigMin = null;
-			NPABucketConfiguration conigMax = null;
+		if (provision == null) {
+			logger.info("Provision Calculation completed fro the FinReference  {}", finReference);
 
-			if (size == 1) {
-				conigMin = list.get(0);
-				conigMax = list.get(0);
-			} else {
-				conigMin = list.get(0);
-				conigMax = list.get(size - 1);
-			}
-
-			if (dueBucket > conigMin.getDueDays() && dueBucket > conigMax.getDueDays()) {
-				npaBucket = conigMax.getBucketID();
-			}
-
+			return finEODEvent;
 		}
 
-		provision.setFinReference(finReference);
+		provision.setFinReference(pftDetail.getFinReference());
 		provision.setFinBranch(pftDetail.getFinBranch());
 		provision.setFinType(pftDetail.getFinType());
 		provision.setCustID(pftDetail.getCustId());
@@ -158,99 +154,420 @@ public class NPAService extends ServiceHelper {
 		provision.setPrincipalDue(pftDetail.getODPrincipal());
 		provision.setProfitDue(pftDetail.getODProfit());
 		Date lastFullypaid = pftDetail.getFullPaidDate();
+
 		if (lastFullypaid == null) {
 			lastFullypaid = pftDetail.getFinStartDate();
 		}
+
 		provision.setLastFullyPaidDate(lastFullypaid);
 		provision.setDueFromDate(pftDetail.getPrvODDate());
-		provision.setDuedays(pftDetail.getCurODDays());
+		provision.setDueDays(pftDetail.getCurODDays());
 
-		BigDecimal provisionRate = getDuePercentage(finEODEvent, rule.getSQLRule());
-		BigDecimal provisonAmt = getProvisionAmt(provisionRate, provision);
-		provision.setPrvovisionRate(provisionRate);
+		//Calculating Provision Amount
+		BigDecimal provisonAmt = (provision.getPriBal().multiply(provision.getPrvovisionRate()))
+				.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+
 		provision.setProvisionAmtCal(provisonAmt);
-		//Should be set after the postings
-		provision.setProvisionedAmt(BigDecimal.ZERO);
+		provision.setProvisionedAmt(provisonAmt);
 
-		if (StringUtils.isNotBlank(finStatus)) {
-			provision.setDpdBucketID(getBucketID(finStatus));
-		} else {
-			provision.setDpdBucketID(0);
+		//Executing accounting process
+		setAssetMovement(finEODEvent, provision, oldProvision, valueDate);
+
+		provision.setDpdBucketID(0);
+		provision.setLastMntBy(1000);
+		provision.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+
+		provision.setProvisionMovement(getProvisionMovement(provision));
+		finEODEvent.getFinProfitDetail().setProvision(true);
+		finEODEvent.getProvisions().add(provision);
+
+		logger.info("Provision Calculation completed fro the FinReference  {}", finReference);
+
+		return finEODEvent;
+	}
+
+	private Provision getProvision(FinEODEvent finEODEvent, String provisionBooks) throws SQLException {
+		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
+		FinanceMain financeMain = finEODEvent.getFinanceMain();
+		String finType = financeMain.getFinType();
+		int dpdDays = pftDetail.getCurODDays();
+		NPAProvisionDetail provisionDetail = null;
+		Provision provision = null;
+
+		NPAProvisionHeader provisionHeader = nPAProvisionHeaderDAO.getNPAProvisionByFintype(finType,
+				TableType.MAIN_TAB);
+
+		//If Provision details are not available against the loan type.
+		if (provisionHeader == null) {
+			return provision;
 		}
-		provision.setNpaBucketID(npaBucket);
 
-		Provision prvProvison = getProvisionDAO().getCurNPABucket(finReference);
-		if (prvProvison != null) {
-			provision.setRcdAction(EodConstants.RECORD_UPDATE);
-		} else {
-			if (provision.getNpaBucketID() != 0 && provision.getProvisionAmtCal().compareTo(BigDecimal.ZERO) != 0) {
-				provision.setRcdAction(EodConstants.RECORD_INSERT);
+		List<NPAProvisionDetail> provisionDetails = this.nPAProvisionDetailDAO
+				.getNPAProvisionDetailList(provisionHeader.getId(), TableType.AVIEW);
+
+		//If Provision Percentages are not available against the loan type.
+		if (CollectionUtils.isEmpty(provisionDetails)) {
+			return provision;
+		}
+
+		for (int i = 0; i < provisionDetails.size() - 1; i++) {
+
+			if (dpdDays == provisionDetails.get(i + 1).getDPDdays()) {
+				provisionDetail = provisionDetails.get(i + 1);
+				break;
+
+			}
+
+			if (dpdDays == provisionDetails.get(i).getDPDdays()) {
+				provisionDetail = provisionDetails.get(i);
+				break;
+
+			}
+
+			if (i == 0 && dpdDays < provisionDetails.get(i).getDPDdays()) {
+				provisionDetail = provisionDetails.get(i);
+				break;
+
+			}
+
+			if (dpdDays > provisionDetails.get(i).getDPDdays() && dpdDays < provisionDetails.get(i + 1).getDPDdays()) {
+				provisionDetail = provisionDetails.get(i + 1);
+				break;
 			}
 		}
-		finEODEvent.getProvisions().add(provision);
+
+		if (provisionDetail == null) {
+			return provision;
+		}
+
+		provision = new Provision();
+
+		//Getting Provision Rate
+		BigDecimal provisionRate = getProvisionRate(finEODEvent, provisionDetail, provisionBooks);
+		provision.setPrvovisionRate(provisionRate);
+		provision.setAssetCode(provisionDetail.getAssetCode());
+		provision.setAssetStageOrdr(provisionDetail.getAssetStageOrder());
+		provision.setNpa(provisionDetail.isnPAActive());
+		provision.setManualProvision(false);
+
+		return provision;
+	}
+
+	private BigDecimal getProvisionRate(FinEODEvent finEODEvent, NPAProvisionDetail provisionDetail,
+			String provisionBooks) {
+
+		String finReference = finEODEvent.getFinanceMain().getFinReference();
+		boolean isSecured = this.collateralAssignmentDAO.isSecuredLoan(finReference, TableType.MAIN_TAB);
+
+		BigDecimal provisionRate = BigDecimal.ZERO;
+		if (ProvisionConstants.PROVISION_BOOKS_REG.equals(ProvisionConstants.PROVISION_BOOKS_REG)) {
+			if (isSecured) {
+				provisionRate = provisionDetail.getRegSecPerc();
+			} else {
+				provisionRate = provisionDetail.getRegUnSecPerc();
+			}
+		} else if (ProvisionConstants.PROVISION_BOOKS_INT.equals(provisionBooks)) {
+			if (isSecured) {
+				provisionRate = provisionDetail.getIntSecPerc();
+			} else {
+				provisionRate = provisionDetail.getIntUnSecPerc();
+			}
+		}
+
+		return provisionRate;
+	}
+
+	private void setAssetMovement(FinEODEvent finEODEvent, Provision provision, Provision oldProvision,
+			Date eodValueDate) {
+		//Getting Old Provision details 
+		if (oldProvision == null) {
+			provision.setAssetFwdMov(provision.isNpa());
+		} else {
+			if (!oldProvision.isNpa() && provision.isNpa()) {
+				provision.setAssetFwdMov(true);
+			} else if (oldProvision.isNpa() && !provision.isNpa()) {
+				provision.setAssetBkwMov(true);
+			}
+		}
+	}
+
+	/**
+	 * Checking the If NPA repay Heirarchy Required or not against the loan type
+	 * 
+	 * @param finReference
+	 * @return
+	 */
+	public boolean isNAPRepayHierarchyReq(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		Provision provision = provisionDAO.getProvisionById(finReference, TableType.MAIN_TAB.getSuffix());
+		if (provision == null) {
+			return false;
+		}
+
+		NPAProvisionHeader provisionHeader = nPAProvisionHeaderDAO.getNPAProvisionByFintype(provision.getFinType(),
+				TableType.MAIN_TAB);
+
+		//If Provision details are not available against the loan type.
+		if (provisionHeader == null) {
+			return false;
+		}
+
+		List<NPAProvisionDetail> provisionDetails = this.nPAProvisionDetailDAO
+				.getNPAProvisionDetailList(provisionHeader.getId(), TableType.AVIEW);
+
+		//If Provision Percentages are not available against the loan type.
+		if (CollectionUtils.isEmpty(provisionDetails)) {
+			return false;
+		}
+
+		NPAProvisionDetail npaProvisionDetail = null;
+		for (NPAProvisionDetail detail : provisionDetails) {
+			if (StringUtils.equals(detail.getAssetCode(), provision.getAssetCode())) {
+				npaProvisionDetail = detail;
+				break;
+			}
+		}
+
+		if (npaProvisionDetail == null) {
+			return false;
+		}
+
+		if (StringUtils.equals(PennantConstants.YES, npaProvisionDetail.getNPARepayApprtnmnt())) {
+			return true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return false;
+	}
+
+	/**
+	 * Getting Max Provision Assets list
+	 * 
+	 * @param finEODEvents
+	 * @param provisionBooks
+	 * @return
+	 * @throws SQLException
+	 */
+	private Provision getMaxProvisionAsset(List<FinEODEvent> finEODEvents, String provisionBooks) throws SQLException {
+		Provision maxProvision = new Provision();
+
+		for (FinEODEvent finEODEvent : finEODEvents) {
+			Provision provision = getProvision(finEODEvent, provisionBooks);
+
+			if (provision == null) {
+				continue;
+			}
+
+			if (provision.getAssetStageOrdr() > maxProvision.getAssetStageOrdr()) {
+				maxProvision.setAssetCode(provision.getAssetCode());
+				maxProvision.setAssetStageOrdr(provision.getAssetStageOrdr());
+				maxProvision.setPrvovisionRate(provision.getPrvovisionRate());
+				maxProvision.setNpa(provision.isNpa());
+			}
+
+		}
+
+		if (StringUtils.trimToNull(maxProvision.getAssetCode()) == null) {
+			return null;
+		}
+		return maxProvision;
+	}
+
+	private ProvisionMovement getProvisionMovement(Provision provision) {
+		ProvisionMovement movement = new ProvisionMovement();
+
+		movement.setProvCalDate(provision.getProvisionCalDate());
+		movement.setFinReference(provision.getFinReference());
+		movement.setProvMovementDate(provision.getProvisionCalDate());
+		movement.setProvMovementSeq(1);
+		movement.setProvisionedAmt(provision.getProvisionedAmt());
+		movement.setProvisionAmtCal(provision.getProvisionedAmt());
+		movement.setProvisionDue(provision.getProvisionDue());
+		movement.setProvisionPostSts("R");
+		movement.setNonFormulaProv(provision.getNonFormulaProv());
+		movement.setUseNFProv(provision.isUseNFProv());
+		movement.setAutoReleaseNFP(provision.isAutoReleaseNFP());
+		movement.setPrincipalDue(provision.getPrincipalDue());
+		movement.setProfitDue(provision.getProfitDue());
+		movement.setDueFromDate(provision.getDueFromDate());
+		movement.setLastFullyPaidDate(provision.getLastFullyPaidDate());
+		movement.setDueDays(provision.getDueDays());
+		movement.setPriBal(provision.getPriBal());
+
+		movement.setAssetCode(provision.getAssetCode());
+		movement.setAssetStageOrdr(provision.getAssetStageOrdr());
+		movement.setNpa(provision.isNpa());
+		movement.setPrvovisionRate(provision.getPrvovisionRate());
+		movement.setManualProvision(provision.isManualProvision());
+
+		return movement;
+	}
+
+	public CustEODEvent processAccounting(CustEODEvent custEODEvent) throws Exception {
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+
+		for (FinEODEvent finEODEvent : finEODEvents) {
+			List<Provision> provisions = finEODEvent.getProvisions();
+
+			if (CollectionUtils.isEmpty(provisions)) {
+				continue;
+			}
+
+			for (Provision provision : provisions) {
+				Date eodDate = custEODEvent.getEodDate();
+				Date monthEnd = DateUtil.getMonthEnd(eodDate);
+				if ((DateUtil.compare(eodDate, monthEnd) != 0)) {
+					continue;
+				}
+
+				//Process Provision Accounting.
+				finEODEvent = processProvAccounting(finEODEvent, custEODEvent, provision);
+
+				//Process Provision Accounting Reversal.
+				finEODEvent = processProvAccountingReversal(finEODEvent, custEODEvent, provision);
+
+				//Process NPAChange Accounting.
+				finEODEvent = processNPAChgAccounting(finEODEvent, custEODEvent, provision);
+			}
+		}
+		return custEODEvent;
+	}
+
+	private FinEODEvent processProvAccounting(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Provision provision)
+			throws Exception {
+
+		String eventCode = AccountEventConstants.ACCEVENT_PROVSN;
+		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
+		FinanceMain main = finEODEvent.getFinanceMain();
+
+		long accountingID = getAccountingID(main, eventCode);
+		if (accountingID == Long.MIN_VALUE) {
+			logger.debug(" Leaving. Accounting Not Found");
+			return finEODEvent;
+		}
+
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(main, finPftDetail, finEODEvent.getFinanceScheduleDetails(),
+				eventCode, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
+
+		aeEvent.setValueDate(SysParamUtil.getPostDate());
+		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
+		aeAmountCodes.setProvDue(provision.getProvisionDue());
+		aeAmountCodes.setProvAmt(provision.getProvisionedAmt());
+
+		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
+		aeEvent.getAcSetIDList().add(accountingID);
+		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
+		aeEvent = postAccountingEOD(aeEvent);
+
+		provision.setProvLinkedTranId(aeEvent.getLinkedTranId());
+		provision.getProvisionMovement().setLinkedTranId(aeEvent.getLinkedTranId());
+		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+
 		return finEODEvent;
-
 	}
 
-	private BigDecimal getDuePercentage(FinEODEvent finEODEvent, String rule) throws SQLException {
+	private FinEODEvent processProvAccountingReversal(FinEODEvent finEODEvent, CustEODEvent custEODEvent,
+			Provision provision) throws Exception {
 
-		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
+		String eventCode = AccountEventConstants.ACCEVENT_PRVSN_MN;
+		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
+		FinanceMain main = finEODEvent.getFinanceMain();
 
-		String finCcy = pftDetail.getFinCcy();
-		HashMap<String, Object> dataMap = new HashMap<String, Object>();
-		dataMap.put("RestructureLoan", finEODEvent.getFinanceMain().isScheduleRegenerated());
-		dataMap.put("DueBucket", pftDetail.getDueBucket());
-		dataMap.put("ODDays", pftDetail.getCurODDays());
-		dataMap.put("Product", pftDetail.getFinCategory());
-		dataMap.put("NonStarter", 1);
-		dataMap.put("Starter", 0);
-
-		if (pftDetail.getNOPaidInst() > 0) {
-			dataMap.put("Starter", 1);
-			dataMap.put("NonStarter", 0);
-
+		long accountingID = getAccountingID(main, eventCode);
+		if (accountingID == Long.MIN_VALUE) {
+			logger.debug(" Leaving. Accounting Not Found");
+			return finEODEvent;
 		}
 
-		BigDecimal pecentage = (BigDecimal) ruleExecutionUtil.executeRule(rule, dataMap, finCcy,
-				RuleReturnType.DECIMAL);
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(main, finPftDetail, finEODEvent.getFinanceScheduleDetails(),
+				eventCode, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
 
-		//since rule is considered as percentage we need have eight decimals 
-		pecentage = pecentage.divide(new BigDecimal(100), 8, RoundingMode.HALF_DOWN);
-		return pecentage;
+		aeEvent.setValueDate(custEODEvent.getProvisionEffectiveDate());
+
+		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
+		aeAmountCodes.setProvDue(provision.getProvisionDue());
+		aeAmountCodes.setProvAmt(provision.getProvisionedAmt());
+
+		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
+		aeEvent.getAcSetIDList().add(accountingID);
+		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
+		aeEvent = postAccountingEOD(aeEvent);
+
+		provision.setProvLinkedTranId(aeEvent.getLinkedTranId());
+		provision.getProvisionMovement().setLinkedTranId(aeEvent.getLinkedTranId());
+		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+
+		return finEODEvent;
 	}
 
-	private BigDecimal getProvisionAmt(BigDecimal percentage, Provision provision) throws SQLException {
+	private FinEODEvent processNPAChgAccounting(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Provision provision)
+			throws Exception {
 
-		int total = 0;
-		Object object = SysParamUtil.getValue("PROVISION_ON_TOTAL");
-		if (object != null) {
-			total = Integer.parseInt(object.toString());
+		if (!provision.isAssetFwdMov()) {
+			return finEODEvent;
 		}
-		BigDecimal dueAmount = provision.getPftBal().add(provision.getPriBal());
 
-		//0 - Principal+profit
-		//1 - Principal
-		//2 - profit
-		if (total == 1) {
-			dueAmount = provision.getPriBal();
-		} else if (total == 2) {
-			dueAmount = provision.getPftBal();
+		AEEvent aeEvent = executeNPAAccounting(finEODEvent, custEODEvent, provision);
+
+		if (aeEvent == null) {
+			return finEODEvent;
 		}
-		BigDecimal provisonAmt = BigDecimal.ZERO;
-		if (percentage.compareTo(BigDecimal.ZERO) != 0) {
-			provisonAmt = dueAmount.multiply(percentage);
-			provisonAmt = provisonAmt.setScale(0, RoundingMode.HALF_DOWN);
 
+		provision.setProvChgLinkedTranId(aeEvent.getLinkedTranId());
+		provision.getProvisionMovement().setProvChgLinkedTranId(aeEvent.getLinkedTranId());
+		aeEvent = postAccountingEOD(aeEvent);
+		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+
+		return finEODEvent;
+	}
+
+	private AEEvent executeNPAAccounting(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Provision provision)
+			throws Exception {
+
+		String eventCode = AccountEventConstants.ACCEVENT_PROVCHG;
+		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
+		FinanceMain main = finEODEvent.getFinanceMain();
+
+		long accountingID = getAccountingID(main, eventCode);
+		if (accountingID == Long.MIN_VALUE) {
+			logger.debug(" Leaving. Accounting Not Found");
+			return null;
 		}
-		return provisonAmt;
+
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(main, finPftDetail, finEODEvent.getFinanceScheduleDetails(),
+				eventCode, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
+		//Old
+		//-- PFTAMZ(amz) - TDSCHDPFT(pftS)
+		//--TDSCHDPFTBAL(PftSB)
+		//--TDSCHDPFTBAL(pftSB)+TOTALPRIBAL(priAB)
+		//--TOTALPRIBAL(priAB)-TDSCHDPRI(priS)
+
+		//New 
+		//TDSCHDPFTBAL(pftSB)+TDSCHDPRIBAL(PriSB)	//1 Leg
+		//TDSCHDPFTBAL(PftSB)	//2 Leg
+		//TOTALPRISCHD(pri) - TDSCHDPRI(priS)//3 Leg  
+
+		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
+		aeAmountCodes.setProvDue(provision.getProvisionDue());
+		aeAmountCodes.setProvAmt(provision.getProvisionedAmt());
+
+		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
+		aeEvent.getAcSetIDList().add(accountingID);
+		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
+		return aeEvent;
 	}
 
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
+	//Getters and setters
+	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
+		this.collateralAssignmentDAO = collateralAssignmentDAO;
 	}
 
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
+	public void setnPAProvisionHeaderDAO(NPAProvisionHeaderDAO nPAProvisionHeaderDAO) {
+		this.nPAProvisionHeaderDAO = nPAProvisionHeaderDAO;
 	}
 
+	public void setnPAProvisionDetailDAO(NPAProvisionDetailDAO nPAProvisionDetailDAO) {
+		this.nPAProvisionDetailDAO = nPAProvisionDetailDAO;
+	}
 }

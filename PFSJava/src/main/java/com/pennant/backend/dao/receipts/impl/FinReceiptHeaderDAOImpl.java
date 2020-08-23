@@ -218,7 +218,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records not available for the Receipt ID {}", receiptID);
+			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 		return null;
@@ -1205,4 +1205,29 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		}
 
 	}
+
+	@Override
+	public boolean isReceiptsInProcess(String reference, String receiptPurpose, long receiptId, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM FINRECEIPTHEADER" + type);
+		sql.append(" WHERE REFERENCE = :REFERENCE AND RECEIPTPURPOSE = :RECEIPTPURPOSE ");
+		sql.append(" AND ReceiptID <> :ReceiptID  ");
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("REFERENCE", reference);
+		source.addValue("RECEIPTPURPOSE", receiptPurpose);
+		source.addValue("ReceiptID", receiptId);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0 ? true : false;
+		} catch (DataAccessException e) {
+			//
+		}
+
+		logger.debug(Literal.LEAVING);
+		return false;
+	}
+
 }

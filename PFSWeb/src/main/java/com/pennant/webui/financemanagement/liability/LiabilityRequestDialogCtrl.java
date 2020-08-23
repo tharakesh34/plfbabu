@@ -63,6 +63,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
@@ -85,6 +86,8 @@ import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
+import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -111,12 +114,13 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.rits.cloning.Cloner;
 
 /**
@@ -148,6 +152,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 	private LiabilityRequestService liabilityRequestService;
 	private FinanceWorkFlowService financeWorkFlowService;
+	protected CollateralAssignmentDAO collateralAssignmentDAO;
+	private JountAccountDetailDAO jountAccountDetailDAO;
 	private Map<String, List<DocumentDetails>> autoDownloadMap = null;
 
 	/**
@@ -947,49 +953,35 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		logger.debug("Entering");
 
 		// Set the next task id
-		String action = userAction.getSelectedItem().getLabel();
-		String nextTaskId = StringUtils.trimToEmpty(liabilityRequest.getNextTaskId());
+		String nextTaskId = "";
 
-		if ("".equals(nextTaskId)) {
-			if ("Save".equals(action)) {
-				nextTaskId = taskId + ";";
-			}
+		if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+			nextTaskId = taskId + ";";
 		} else {
-			if ("Resubmit".equals(action)) {
-				nextTaskId = "";
-			} else if (!"Save".equals(action)) {
-				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-			}
-		}
+			nextTaskId = StringUtils.trimToEmpty(liabilityRequest.getNextTaskId());
 
-		if ("".equals(nextTaskId)) {
-			nextTaskId = getNextTaskIds(taskId, liabilityRequest);
+			nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+			if ("".equals(nextTaskId)) {
+				nextTaskId = getNextTaskIds(taskId, liabilityRequest);
+			}
 		}
 
 		// Set the role codes for the next tasks
 		String nextRoleCode = "";
-		String nextRole = "";
-		Map<String, String> baseRoleMap = null;
 
-		if ("".equals(nextTaskId)) {
-			nextRoleCode = getFirstTaskOwner();
-		} else {
+		if (StringUtils.isNotBlank(nextTaskId)) {
 			String[] nextTasks = nextTaskId.split(";");
 
-			if (nextTasks.length > 0) {
-				baseRoleMap = new HashMap<String, String>(nextTasks.length);
+			if (nextTasks != null && nextTasks.length > 0) {
 				for (int i = 0; i < nextTasks.length; i++) {
+
 					if (nextRoleCode.length() > 1) {
 						nextRoleCode = nextRoleCode.concat(",");
 					}
-					nextRole = getTaskOwner(nextTasks[i]);
-					nextRoleCode += nextRole;
-					String baseRole = "";
-					if (!"Resubmit".equals(action)) {
-						baseRole = StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i]));
-					}
-					baseRoleMap.put(nextRole, baseRole);
+					nextRoleCode = getTaskOwner(nextTasks[i]);
 				}
+			} else {
+				nextRoleCode = getTaskOwner(nextTaskId);
 			}
 		}
 
@@ -997,6 +989,11 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		liabilityRequest.setNextTaskId(nextTaskId);
 		liabilityRequest.setRoleCode(getRole());
 		liabilityRequest.setNextRoleCode(nextRoleCode);
+
+		getLiabilityRequest().setTaskId(taskId);
+		getLiabilityRequest().setNextTaskId(nextTaskId);
+		getLiabilityRequest().setRoleCode(getRole());
+		getLiabilityRequest().setNextRoleCode(nextRoleCode);
 
 		logger.debug("Leaving");
 	}
@@ -1116,8 +1113,18 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		int format = CurrencyUtil.getFormat(aFinanceMain.getFinCcy());
 		FinanceType financeType = aFinanceDetail.getFinScheduleData().getFinanceType();
 
+		this.reqLoanAmt.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getReqLoanAmt(), format));
+		this.appliedLoanAmt.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getAppliedLoanAmt(), format));
+		this.reqLoanTenor.setValue(aFinanceMain.getReqLoanTenor());
+		fillList(this.advType, AdvanceType.getRepayList(), aFinanceMain.getAdvType());
+		this.advTerms.setValue(aFinanceMain.getAdvTerms());
+		this.finOCRRequired.setChecked(aFinanceMain.isFinOcrRequired());
 		this.liabilityRef.setValue(aFinanceMain.getFinReference());
 		this.liabilityRef.setObject(aFinanceMain);
+		this.tDSStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.tDSEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.tDSPercentage.setFormat(PennantApplicationUtil.getAmountFormate(2));
+		this.tDSLimitAmt.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getTdsLimitAmt(), format));
 		if (!getLiabilityRequest().isNewRecord()) {
 			this.liabilityRef.setReadonly(true);
 		}
@@ -1154,13 +1161,18 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		}
 
 		// Finance MainDetails Tab ---> 1. Basic Details
-
+		this.vanCode.setValue(aFinanceMain.getVanCode());
 		this.finType.setValue(aFinanceMain.getFinType());
 		this.finCcy.setValue(aFinanceMain.getFinCcy());
 		fillComboBox(this.cbProfitDaysBasis, aFinanceMain.getProfitDaysBasis(),
 				PennantStaticListUtil.getProfitDaysBasis(), "");
 		fillComboBox(this.finRepayMethod, aFinanceMain.getFinRepayMethod(), PennantStaticListUtil.getRepayMethods(),
 				"");
+		fillComboBox(this.advStage, aFinanceMain.getAdvStage(), PennantStaticListUtil.getRepayMethods(), "");
+		this.offerId.setValue(aFinanceMain.getOfferId());
+		this.finIsRateRvwAtGrcEnd.setChecked(aFinanceMain.isFinIsRateRvwAtGrcEnd());
+		this.allowDrawingPower.setChecked(aFinanceMain.isAllowDrawingPower());
+		this.allowRevolving.setChecked(aFinanceMain.isAllowRevolving());
 		this.finBranch.setValue(aFinanceMain.getFinBranch());
 		this.custCIF.setValue(aFinanceMain.getLovDescCustCIF());
 		this.custShrtName.setValue(aFinanceMain.getLovDescCustShrtName());
@@ -1171,6 +1183,60 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		this.finPurpose.setValue(aFinanceMain.getFinPurpose());
 		this.disbAcctId.setValue(aFinanceMain.getDisbAccountId());
 		this.repayAcctId.setValue(aFinanceMain.getRepayAccountId());
+		this.accountsOfficer.setValue(String.valueOf(aFinanceMain.getAccountsOfficer()));
+		this.accountsOfficer.setDescription(aFinanceMain.getLovDescAccountsOfficer());
+
+		this.dsaCode.setValue(aFinanceMain.getDsaName());
+		this.dsaCode.setDescription(aFinanceMain.getDsaCodeDesc());
+
+		if (aFinanceMain.getOfferId() != null) {
+			this.offerId.setValue(aFinanceMain.getOfferId());
+		}
+		fillComboBox(this.sourChannelCategory, aFinanceMain.getSourChannelCategory(),
+				PennantStaticListUtil.getSourcingChannelCategory(), "");
+
+		this.sourcingBranch.setValue(aFinanceMain.getSourcingBranch());
+		this.sourcingBranch.setDescription(aFinanceMain.getLovDescSourcingBranch());
+		if (aFinanceMain.getAsmName() != null) {
+			this.asmName.setValue(String.valueOf(aFinanceMain.getAsmName()));
+		}
+		this.connector.setValue(String.valueOf(aFinanceMain.getConnector()));
+
+		if (aFinanceMain.getReferralId() != null) {
+			this.referralId.setValue(aFinanceMain.getReferralId());
+			this.referralId.setDescription(aFinanceMain.getReferralIdDesc());
+		}
+		if (aFinanceMain.getDmaCode() != null) {
+			this.dmaCode.setValue(aFinanceMain.getDmaCode());
+			this.dmaCode.setDescription(aFinanceMain.getDmaName());
+		}
+
+		if (aFinanceMain.getSalesDepartment() != null) {
+			this.salesDepartment.setValue(aFinanceMain.getSalesDepartment());
+			this.salesDepartment.setDescription(aFinanceMain.getSalesDepartmentDesc());
+		}
+
+		// Start : Offer Details
+		if (StringUtils.isNotBlank(aFinanceMain.getOfferProduct())) {
+			this.gb_offerDetails.setVisible(true);
+			this.offerProduct.setValue(aFinanceMain.getOfferProduct());
+			this.offerAmount.setValue((BigDecimal) aFinanceMain.getOfferAmount());
+			this.custSegmentation.setValue(StringUtils.trimToEmpty(aFinanceMain.getCustSegmentation()));
+			this.baseProduct.setValue(aFinanceMain.getBaseProduct());
+			this.processType.setValue(aFinanceMain.getProcessType());
+			this.bureauTimeSeries.setValue(aFinanceMain.getBureauTimeSeries());
+			this.campaignName.setValue(aFinanceMain.getCampaignName());
+			this.existingLanRefNo.setValue(aFinanceMain.getExistingLanRefNo());
+			this.verification.setValue(aFinanceMain.getVerification());
+			this.leadSource.setValue(aFinanceMain.getLeadSource());
+			this.poSource.setValue(aFinanceMain.getPoSource());
+		} else {
+			this.gb_offerDetails.setVisible(false);
+		}
+		// End : Offer Details
+
+		fillList(this.grcAdvType, AdvanceType.getGrcList(), aFinanceMain.getGrcAdvType());
+		this.grcAdvTerms.setValue(aFinanceMain.getGrcAdvTerms());
 
 		String repayMethod = aFinanceMain.getFinRepayMethod();
 		if (StringUtils.isEmpty(repayMethod)) {
@@ -1209,7 +1275,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			fillComboBox(this.insPaidStatus, getLiabilityRequest().getInsPaidStatus(),
 					PennantStaticListUtil.getInsPaidStatusList(), "");
 			this.insClaimAmount
-					.setValue(PennantAppUtil.formateAmount(getLiabilityRequest().getInsClaimAmount(), format));
+					.setValue(PennantApplicationUtil.formateAmount(getLiabilityRequest().getInsClaimAmount(), format));
 			doEdit();
 		}
 
@@ -1254,8 +1320,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				this.row_downPayPercentage.setVisible(true);
 			}
 			this.downPayAccount.setValue(aFinanceMain.getDownPayAccount());
-			this.downPayBank.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPayBank(), format));
-			this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(), format));
+			this.downPayBank.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getDownPayBank(), format));
+			this.downPaySupl.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getDownPaySupl(), format));
 			if (aFinanceMain.isNewRecord()) {
 				this.downPayAccount.setValue("");
 			} else {
@@ -1312,9 +1378,10 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 		this.finPurpose.setValue(aFinanceMain.getFinPurpose());
 		if (StringUtils.isNotBlank(aFinanceMain.getFinPurpose())) {
-			this.finPurpose.setDescription(aFinanceMain.getLovDescFinPurposeName());
+			this.finPurpose.setValue(StringUtils.trimToEmpty(aFinanceMain.getFinPurpose()),
+					StringUtils.trimToEmpty(aFinanceMain.getLovDescFinPurposeName()));
 		}
-		this.securityDeposit.setValue(PennantAppUtil.formateAmount(aFinanceMain.getSecurityDeposit(), format));
+		this.securityDeposit.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getSecurityDeposit(), format));
 
 		// Step Finance
 		if ((aFinanceMain.isNewRecord() || !aFinanceMain.isStepFinance()) && !financeType.isStepFinance()) {
@@ -1497,8 +1564,9 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 		fillComboBox(this.repayRateBasis, aFinanceMain.getRepayRateBasis(),
 				PennantStaticListUtil.getInterestRateType(!aFinanceMain.isMigratedFinance()), "");
-		this.finRepaymentAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getReqRepayAmount(), format));
-		this.finAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), format));
+		this.finRepaymentAmount
+				.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getReqRepayAmount(), format));
+		this.finAmount.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinAmount(), format));
 
 		if ("PFT".equals(aFinanceMain.getScheduleMethod())) {
 			this.finRepaymentAmount.setReadonly(true);
@@ -1581,8 +1649,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				BigDecimal.ZERO, BigDecimal.ZERO, this.rpyAdvRate.getEffRateComp());
 
 		// External Charges For Ijarah
-		this.supplementRent.setValue(PennantAppUtil.formateAmount(aFinanceMain.getSupplementRent(), format));
-		this.increasedCost.setValue(PennantAppUtil.formateAmount(aFinanceMain.getIncreasedCost(), format));
+		this.supplementRent.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getSupplementRent(), format));
+		this.increasedCost.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getIncreasedCost(), format));
 
 		this.repayFrq.setDisabled(isReadOnly("FinanceMainDialog_repayFrq"));
 		if (StringUtils.isNotEmpty(aFinanceMain.getRepayFrq())
@@ -1689,12 +1757,12 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					this.oDChargeAmtOrPerc
-							.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), format));
+							.setValue(PennantApplicationUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), format));
 				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					this.oDChargeAmtOrPerc
-							.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), 2));
+							.setValue(PennantApplicationUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), 2));
 				}
 				this.oDAllowWaiver.setChecked(penaltyRate.isODAllowWaiver());
 				this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
@@ -1793,6 +1861,11 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		} else {
 			aFinanceDetail.setFinanceCheckList(null);
 		}
+		aFinanceDetail.setCollateralAssignmentList(collateralAssignmentDAO
+				.getCollateralAssignmentByFinRef(finReference.getValue(), FinanceConstants.MODULE_NAME, "_View"));
+
+		aFinanceDetail.setJountAccountDetailList(
+				jountAccountDetailDAO.getJountAccountDetailByFinRef(finReference.getValue(), "_AView"));
 
 		aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		aFinanceDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
@@ -1929,6 +2002,16 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 	public void setLiabilityRequestListCtrl(LiabilityRequestListCtrl liabilityRequestListCtrl) {
 		this.liabilityRequestListCtrl = liabilityRequestListCtrl;
+	}
+
+	@Autowired
+	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
+		this.collateralAssignmentDAO = collateralAssignmentDAO;
+	}
+
+	@Autowired
+	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
+		this.jountAccountDetailDAO = jountAccountDetailDAO;
 	}
 
 }

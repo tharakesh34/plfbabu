@@ -70,6 +70,7 @@ import org.zkoss.zul.Window;
 import com.pennant.AccountSelectionBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
@@ -96,6 +97,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -261,7 +263,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(), "VehicleDealerDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), super.pageRightName);
 			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
@@ -343,9 +345,11 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.zipCode.setTextBoxWidth(121);
 		this.zipCode.setMandatoryStyle(true);
 		this.zipCode.setModuleName("PinCode");
-		this.zipCode.setValueColumn("PinCode");
+		this.zipCode.setValueColumn("PinCodeId");
 		this.zipCode.setDescColumn("AreaName");
-		this.zipCode.setValidateColumns(new String[] { "PinCode" });
+		this.zipCode.setValueType(DataType.LONG);
+		this.zipCode.setValidateColumns(new String[] { "PinCodeId" });
+		this.zipCode.setInputAllowed(false);
 
 		if ("DSA".equals(module)) {
 			this.row_8.setVisible(true);
@@ -742,8 +746,16 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.dealerAddress3.setValue(aVehicleDealer.getDealerAddress3());
 		this.dealerAddress4.setValue(aVehicleDealer.getDealerAddress4());
 		this.dealerCountry.setValue(aVehicleDealer.getDealerCountry());
-		this.code.setValue(vehicleDealer.getCode());
-		this.shortCode.setValue(vehicleDealer.getShortCode());
+		this.code.setValue(aVehicleDealer.getCode());
+		if (ImplementationConstants.DSA_CODE_READONLY_FIELD) {
+			if (StringUtils.equals(module, Agencies.DSA.getKey())) {
+				if (StringUtils.equals(aVehicleDealer.getRecordType(), "EDIT")
+						|| StringUtils.equals(aVehicleDealer.getRecordType(), "")) {
+					code.setReadonly(true);
+				}
+			}
+		}
+		this.shortCode.setValue(aVehicleDealer.getShortCode());
 
 		this.dealerProvince.setValue(aVehicleDealer.getDealerProvince());
 		this.cityName.setValue(aVehicleDealer.getDealerCity());
@@ -775,7 +787,12 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.email.setValue(aVehicleDealer.getEmail());
 		this.emirates.setValue(aVehicleDealer.getEmirates());
 		this.dealerPoBox.setValue(aVehicleDealer.getPOBox());
-		this.zipCode.setValue(aVehicleDealer.getZipCode());
+
+		if (aVehicleDealer.getPinCodeId() != null) {
+			this.zipCode.setAttribute("pinCodeId", aVehicleDealer.getPinCodeId());
+		}
+
+		this.zipCode.setValue(aVehicleDealer.getZipCode(), aVehicleDealer.getAreaName());
 		this.active.setChecked(aVehicleDealer.isActive());
 		this.accountingSetId.setValue(aVehicleDealer.getAccountingSetCode());
 		this.commisionCalRule.setValue(aVehicleDealer.getCalculationRule());
@@ -933,6 +950,12 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			wve.add(we);
 		}
 		try {
+			Object obj = this.zipCode.getAttribute("pinCodeId");
+			if (obj != null) {
+				if (!StringUtils.isEmpty(obj.toString())) {
+					aVehicleDealer.setPinCodeId(Long.valueOf((obj.toString())));
+				}
+			}
 			aVehicleDealer.setZipCode(this.zipCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1083,9 +1106,11 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			wve.add(we);
 		}
 		try {
-			// writing multiple selected values into branch field.
-			this.branch.getValue();
-			Map<String, Object> branchValues = getSelectedValues(this.branch);
+			if (this.branch.isVisible() && this.branch.isButtonDisabled()) {
+				// writing multiple selected values into branch field.
+				this.branch.getValue();
+			}
+			Map<String, Object> branchValues = getSelectedValues(branch);
 			if (branchValues != null) {
 				StringBuffer data = new StringBuffer();
 				for (String branches : branchValues.keySet()) {
@@ -1131,8 +1156,12 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> getSelectedValues(ExtendedCombobox extendedCombobox) {
+		Map<String, Object> values = new HashMap<>();
 		Object object = extendedCombobox.getAttribute("data");
-		return (Map<String, Object>) object;
+		if (object != null && StringUtils.isNotEmpty(object.toString())) {
+			values = (Map<String, Object>) object;
+		}
+		return values;
 	}
 
 	/**
@@ -1230,7 +1259,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 					Labels.getLabel("label_VehicleDealerDialog_DealerProvince.value"), null, true, true));
 		}
 
-		if (!this.dealerFax.isReadonly() && !this.dealerFax.getText().equals("")) {
+		if (!this.dealerFax.isReadonly() && this.dealerFax.getText().equals("")) {
 			this.dealerFax.setConstraint(
 					new PTMobileNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerFax.value"), false,
 							PennantRegularExpressions.TELEPHONE_FAX_REGEX));
@@ -1270,7 +1299,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 								PennantRegularExpressions.REGEX_NUMERIC, true));
 			}
 		}
-		if (!this.zipCode.isReadonly()) {
+		if (this.zipCode.isButtonVisible()) {
 			this.zipCode.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_ZipCode.value"),
 					PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
@@ -1341,7 +1370,17 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 								PennantRegularExpressions.REGEX_AADHAR_NUMBER, true));
 			}
 		}
-		logger.debug(Literal.LEAVING);
+
+		if (!this.branch.isButtonDisabled()) {
+
+			if (!this.branch.isButtonDisabled() && this.branch.isVisible()) {
+
+				this.branch.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_VehicleDealerDialog_Branch.value"), null, true, true));
+			}
+
+			logger.debug(Literal.LEAVING);
+		}
 	}
 
 	/**
@@ -1475,7 +1514,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.productCtg.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_TaxNumber"));
 		this.shortCode.setReadonly(isReadOnly("VehicleDealerDialog_VASM_Code"));
 		this.active.setDisabled(isReadOnly("VehicleDealerDialog_" + module + "_Active"));
-		this.code.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_code"));
+		this.code.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_Code"));
 		this.panNumber.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_PanNumber"));
 		this.uidNumber.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_UidNumber"));
 		this.taxNumber.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_TaxNumber"));
@@ -2014,6 +2053,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 				this.dealerCity.setErrorMessage("");
 				this.dealerProvince.setErrorMessage("");
 				this.zipCode.setErrorMessage("");
+				this.zipCode.setAttribute("pinCodeId", pinCode.getPinCodeId());
+				this.zipCode.setValue(pinCode.getPinCode());
 			}
 		}
 
@@ -2024,9 +2065,9 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		logger.debug("Entering");
 
 		this.zipCode.setModuleName("PinCode");
-		this.zipCode.setValueColumn("PinCode");
+		this.zipCode.setValueColumn("PinCodeId");
 		this.zipCode.setDescColumn("AreaName");
-		this.zipCode.setValidateColumns(new String[] { "PinCode" });
+		this.zipCode.setValidateColumns(new String[] { "PinCodeId" });
 		Filter[] filters = new Filter[2];
 
 		if (cityValue != null) {

@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.service.rmtmasters.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1001,6 +1002,11 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 		}
 		logger.debug("Leaving");
 		return auditDetailsList;
+	}
+
+	@Override
+	public ScoringGroup getScoringGroupByRiskScore(BigDecimal score, BigDecimal netSal) {
+		return getScoringGroupDAO().getScoringGroupByRiskScore(score, netSal, "_AView");
 	}
 
 	public void setScoringSlabDAO(ScoringSlabDAO scoringSlabDAO) {

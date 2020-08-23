@@ -335,8 +335,18 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 			getFinanceMainDialogCtrl().getClass().getMethod("setReasonDetails", ReasonHeader.class)
 					.invoke(financeMainDialogCtrl, reasonHeader);
 			getFinanceMainDialogCtrl().getClass().getMethod("doSave").invoke(getFinanceMainDialogCtrl());
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
+		} catch (Exception exp) {
+			try {
+				Throwable e1 = exp.getCause();
+				if (e1 instanceof WrongValuesException) {
+					this.window_ReasonDetailsDialog.onClose();
+					throw new WrongValuesException(((WrongValuesException) e1).getWrongValueExceptions());
+				}
+			} catch (Exception e) {
+				this.window_ReasonDetailsDialog.onClose();
+				logger.error(Literal.EXCEPTION, e);
+				throw e;
+			}
 		}
 		this.window_ReasonDetailsDialog.onClose();
 

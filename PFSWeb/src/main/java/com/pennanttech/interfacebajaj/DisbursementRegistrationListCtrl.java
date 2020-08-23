@@ -779,6 +779,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			request.setAutoDownload(false);
 			request.setChannel(getComboboxValue(this.channelTypes));
 			request.setLoggedInUser(getUserWorkspace().getLoggedInUser());
+			request.setAppValueDate(SysParamUtil.getAppValueDate());
 
 			disbursementRequestService.prepareRequest(request);
 

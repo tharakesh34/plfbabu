@@ -637,8 +637,10 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 					for (FinanceCheckListReference fincListRefTemp : tempFinCheckListRefList) {
 						if (finCheckListRef.getQuestionId() == fincListRefTemp.getQuestionId()
 								&& finCheckListRef.getAnswer() == fincListRefTemp.getAnswer()) {
-							tempFinCheckListRef = fincListRefTemp;
-							break;
+							if (finCheckListRef.getInstructionUID() == fincListRefTemp.getInstructionUID()) {
+								tempFinCheckListRef = fincListRefTemp;
+								break;
+							}
 						}
 					}
 				}
@@ -646,8 +648,10 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 					for (FinanceCheckListReference fincListRefBef : befFinCheckListRefList) {
 						if (finCheckListRef.getQuestionId() == fincListRefBef.getQuestionId()
 								&& finCheckListRef.getAnswer() == fincListRefBef.getAnswer()) {
-							befFinCheckListRef = fincListRefBef;
-							break;
+							if (finCheckListRef.getInstructionUID() == fincListRefBef.getInstructionUID()) {
+								befFinCheckListRef = fincListRefBef;
+								break;
+							}
 						}
 					}
 				}

@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.BeanUtils;
@@ -22,9 +23,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.dao.WorkFlowDetailsDAO;
@@ -37,6 +41,7 @@ import com.pennant.backend.dao.applicationmaster.ReportingManagerDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.mail.MailTemplateDAO;
 import com.pennant.backend.dao.notifications.NotificationsDAO;
+import com.pennant.backend.dao.systemmasters.DocumentTypeDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
@@ -52,6 +57,7 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.facility.Facility;
+import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -74,6 +80,7 @@ import com.pennant.backend.model.mail.MailTemplateData;
 import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.drawingpower.DrawingPowerService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
@@ -93,6 +100,7 @@ import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.notification.sms.SmsEngine;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.util.DataMapUtil;
 import com.pennanttech.pff.core.util.DataMapUtil.FieldPrefix;
 import com.pennanttech.pff.sms.PresentmentBounceService;
@@ -121,6 +129,7 @@ public class NotificationService extends GenericService<Notification> {
 	private EmailEngine emailEngine;
 	private SmsEngine smsEngine;
 	private DrawingPowerService drawingPowerService;
+	private DocumentTypeDAO documentTypeDAO;
 
 	private PresentmentBounceService presentmentBounceService;
 
@@ -352,13 +361,20 @@ public class NotificationService extends GenericService<Notification> {
 				emailAndMobiles = getEmailsAndMobile(customerDetails, mailNotification, data, financeMain);
 
 				if (CollectionUtils.isNotEmpty(emailAndMobiles.get("EMAILS"))) {
+					if (CollectionUtils.isNotEmpty(mailKeyData.getEmails())) {
+						mailKeyData.getEmails().clear();
+					}
 					mailKeyData.getEmails().addAll(emailAndMobiles.get("EMAILS"));
 				}
 
 				if (CollectionUtils.isNotEmpty(emailAndMobiles.get("MOBILES"))) {
+					if (CollectionUtils.isNotEmpty(mailKeyData.getMobileNumbers())) {
+						mailKeyData.getMobileNumbers().clear();
+					}
 					mailKeyData.getMobileNumbers().addAll(emailAndMobiles.get("MOBILES"));
 				}
 
+				prepareAdditionalData(documents, data);
 				template = getMailTemplate(mailNotification.getRuleTemplate(), data);
 				if (template != null && template.isActive()) {
 					try {
@@ -374,6 +390,10 @@ public class NotificationService extends GenericService<Notification> {
 					continue;
 				}
 
+				if (CollectionUtils.isNotEmpty(mailKeyData.getAttachmentList())) {
+					mailKeyData.getAttachmentList().clear();
+				}
+
 				if (template != null && template.isEmailTemplate() && CollectionUtils.isNotEmpty(documents)) {
 					setAttachements(template, mailNotification.getRuleAttachment(), data, documents);
 				}
@@ -387,6 +407,28 @@ public class NotificationService extends GenericService<Notification> {
 					sendSmsNotification(emailMessage);
 				}
 			}
+		}
+	}
+
+	//Prepare additional data required for rule .
+	private void prepareAdditionalData(List<DocumentDetails> documents, Map<String, Object> data) {
+		boolean isCovDocFound = false;
+		if (CollectionUtils.isNotEmpty(documents)) {
+			for (DocumentDetails documentDetail : documents) {
+				if (documentDetail != null && documentDetail.getDocCategory() != null) {
+					String docCategoryCode = documentTypeDAO.getDocCategoryByDocType(documentDetail.getDocCategory(),
+							"_AView");
+					if (StringUtils.equals(docCategoryCode, DocumentCategories.COVENANT.getKey())) {
+						isCovDocFound = true;
+						break;
+					}
+				}
+			}
+		}
+		if (isCovDocFound) {
+			data.put("CovenantDoc", PennantConstants.YES);
+		} else {
+			data.put("CovenantDoc", PennantConstants.NO);
 		}
 	}
 
@@ -662,6 +704,8 @@ public class NotificationService extends GenericService<Notification> {
 		int format = CurrencyUtil.getFormat(main.getFinCcy());
 
 		data.setCustShrtName(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
+		data.setCustSalutation(StringUtils
+				.trimToEmpty(financeDetail.getCustomerDetails().getCustomer().getLovDescCustSalutationCodeName()));
 		data.setFinReference(main.getFinReference());
 		data.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), format));
 		if (presentmentBounceService != null) {
@@ -692,6 +736,7 @@ public class NotificationService extends GenericService<Notification> {
 		data.setCustId(main.getCustID());
 		data.setCustCIF(main.getLovDescCustCIF());
 		data.setFinType(main.getFinType());
+		data.setFinTypeDesc(main.getLovDescFinTypeName());
 		data.setNextRepayDate(DateUtil.format(main.getNextRepayDate(), DateFormat.LONG_DATE));
 		data.setPriority(main.getPriority());
 
@@ -754,6 +799,7 @@ public class NotificationService extends GenericService<Notification> {
 		data.setMaturityDate(DateUtility.formatToLongDate(main.getMaturityDate()));
 		data.setNumberOfTerms(String.valueOf(main.getNumberOfTerms()));
 		data.setGraceTerms(String.valueOf(main.getGraceTerms()));
+		data.setTotalTenor(String.valueOf(main.getNumberOfTerms() + main.getGraceTerms()));
 		data.setFinCurrAssetValue(PennantApplicationUtil.amountFormate(main.getFinCurrAssetValue(), format));
 		data.setRepaymentFrequency(main.getRepayFrq());
 		data.setGraceBaseRate(main.getGraceBaseRate());
@@ -850,9 +896,29 @@ public class NotificationService extends GenericService<Notification> {
 		} else {
 			data.setEffectiveRate("");
 		}
+		try {
+			RateDetail details = RateUtil.rates(main.getRepayBaseRate(), main.getFinCcy(), main.getRepaySpecialRate(),
+					main.getRepayMargin(), main.getRpyMinRate(), main.getRpyMaxRate());
+			data.setRepayRate(PennantApplicationUtil.formatRate(details.getNetRefRateLoan().doubleValue(), 2));
+		} catch (Exception e) {
+			e.printStackTrace();
+			data.setRepayRate("");
+		}
+		if (main.getRepayProfitRate() != null) {
+			data.setRepayRate(PennantApplicationUtil.formatRate(main.getRepayProfitRate().doubleValue(), 2));
+		} else {
+			data.setRepayRate("");
+		}
 		data.setCustId(main.getCustID());
 		data.setCustCIF(main.getLovDescCustCIF());
 		data.setFinType(main.getFinType());
+		if (StringUtils.isNotEmpty(main.getLovDescFinTypeName())
+				&& StringUtils.contains(main.getLovDescFinTypeName(), "-")) {
+			String splitLoanType = StringUtils.substring(main.getLovDescFinTypeName(), 3);
+			data.setFinTypeDesc(splitLoanType);
+		} else {
+			data.setFinTypeDesc(main.getLovDescFinTypeName());
+		}
 		data.setNextRepayDate(DateUtil.format(main.getNextRepayDate(), DateFormat.LONG_DATE));
 		data.setPriority(main.getPriority());
 
@@ -1213,7 +1279,23 @@ public class NotificationService extends GenericService<Notification> {
 		declaredFieldValues.put("drawingPower",
 				drawingPowerVal == null ? BigDecimal.ZERO : PennantApplicationUtil.amountFormate(drawingPowerVal, 2));
 		declaredFieldValues.put("currentDate", DateUtility.formatToLongDate(SysParamUtil.getAppDate()));
-
+		declaredFieldValues.put("emiOnTotalLoanAmt",
+				PennantApplicationUtil.amountFormate(ScheduleCalculator.getEMIOnFinAssetValue(aFinanceDetail), 2));
+		declaredFieldValues.put("ct_custSalutationCode",
+				StringUtils.trimToEmpty(customer.getLovDescCustSalutationCodeName()));
+		//setting the disbursement type to notification rule fields
+		if (CollectionUtils.isNotEmpty(aFinanceDetail.getAdvancePaymentsList())) {
+			for (FinAdvancePayments advancePayments : aFinanceDetail.getAdvancePaymentsList()) {
+				String paymentType = StringUtils.trimToEmpty(advancePayments.getPaymentType());
+				declaredFieldValues.put("di_paymentType", paymentType);
+				//if multiple instructions are available considering only CHEQUE
+				if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)) {
+					break;
+				}
+			}
+		} else {
+			declaredFieldValues.put("di_paymentType", "");
+		}
 		return declaredFieldValues;
 	}
 
@@ -1284,16 +1366,23 @@ public class NotificationService extends GenericService<Notification> {
 		if (NotificationConstants.TEMPLATE_FOR_CN.equals(templateType)) {
 			if (CollectionUtils.isNotEmpty(custEmails)) {
 				for (CustomerEMail customerEMail : custEmails) {
-					emails.add(customerEMail.getCustEMail());
-					templateData.setCustEmailId(customerEMail.getCustEMail());
-
+					if (customerEMail.getCustEMailPriority() == NumberUtils
+							.toInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						emails.add(customerEMail.getCustEMail());
+						templateData.setCustEmailId(customerEMail.getCustEMail());
+						break;
+					}
 				}
 			}
 
 			if (CollectionUtils.isNotEmpty(custMobiles)) {
 				for (CustomerPhoneNumber customerPhoneNumber : custMobiles) {
-					mobileNumbers.add(customerPhoneNumber.getPhoneNumber());
-					templateData.setCustMobileNumber(customerPhoneNumber.getPhoneNumber());
+					if (customerPhoneNumber.getPhoneTypePriority() == NumberUtils
+							.toInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						mobileNumbers.add(customerPhoneNumber.getPhoneNumber());
+						templateData.setCustMobileNumber(customerPhoneNumber.getPhoneNumber());
+						break;
+					}
 				}
 			}
 		} else if (NotificationConstants.TEMPLATE_FOR_SP.equals(templateType)) {
@@ -1474,6 +1563,10 @@ public class NotificationService extends GenericService<Notification> {
 	@Qualifier("presentmentBounceService")
 	public void setPresentmentBounceService(PresentmentBounceService presentmentBounceService) {
 		this.presentmentBounceService = presentmentBounceService;
+	}
+
+	public void setDocumentTypeDAO(DocumentTypeDAO documentTypeDAO) {
+		this.documentTypeDAO = documentTypeDAO;
 	}
 
 }

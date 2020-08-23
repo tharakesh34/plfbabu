@@ -349,7 +349,9 @@ public class PresentmentDetailExtractService {
 		}
 
 		//at first advance interest and EMI then EMI advance 
-		processAdvAmounts(detailHeader, presentmentDetail);
+		if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_PRESENTMENT, detailHeader.getPresentmentType())) {
+			processAdvAmounts(detailHeader, presentmentDetail);
+		}
 
 		// EMI IN ADVANCE
 		//if there is no due no need to proceed further.

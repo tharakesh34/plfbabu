@@ -54,9 +54,9 @@ public interface SalutationService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	Salutation getSalutationById(String id);
+	Salutation getSalutationById(String id, String gender);
 
-	Salutation getApprovedSalutationById(String id);
+	Salutation getApprovedSalutationById(String id, String gender);
 
 	AuditHeader delete(AuditHeader auditHeader);
 

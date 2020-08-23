@@ -44,8 +44,11 @@ package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -55,6 +58,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -138,6 +143,8 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private boolean holdDue;
 
 	private FeeType feeType;
+	private List<DocumentDetails> documentDetails = new ArrayList<>(1);;
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public String getFinSource() {
 		return finSource;
@@ -174,6 +181,8 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("taxComponent");
 		excludeFields.add("stp");
 		excludeFields.add("finSourceId");
+		excludeFields.add("documentDetails");
+		excludeFields.add("auditDetailMap");
 		excludeFields.add("feeType");
 		excludeFields.add("tdsPaid");
 		excludeFields.add("tdsReq");
@@ -550,6 +559,22 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 
 	public void setHoldDue(boolean holdDue) {
 		this.holdDue = holdDue;
+	}
+
+	public List<DocumentDetails> getDocumentDetails() {
+		return documentDetails;
+	}
+
+	public void setDocumentDetails(List<DocumentDetails> documentDetails) {
+		this.documentDetails = documentDetails;
+	}
+
+	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
+
+	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
 	}
 
 }

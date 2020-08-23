@@ -430,6 +430,8 @@ public class FinanceConstants {
 	public static final String PROCEDT_VERIFICATION_RCU_APPR = "RCUAPPR";
 	public static final String PROCEDT_VERIFICATION_PD_INIT = "PDINIT";
 	public static final String PROCEDT_VERIFICATION_PD_APPR = "PDAPPR";
+	public static final String PROCEDT_VERIFICATION_LVETTING_INIT = "LVETTINIT";
+	public static final String PROCEDT_VERIFICATION_LVETTING_APPR = "LVETTAPPR";
 
 	/**
 	 * Sampling constants
@@ -503,4 +505,24 @@ public class FinanceConstants {
 	public static final String GST_SCHD_CAL_ON_PRI = "P";
 	public static final String GST_SCHD_CAL_ON_EMI = "E";
 
+	//PMAY Validation
+	public static final String PMAY_VALIDATION = "PMAYVALD";
+
+	public static final String PAYABLE_ADVISE = "PayableAdvises";
+
+	public static final String PMAY = "PMAY";
+
+	public static final String HOME_PUCHASE = "HP";
+	public static final String UNDER_CONSTRUCTION = "UC";
+	public static final String SELF_CONSTRUCTION = "SC";
+	public static final String PLOTPUCHASE = "PP+SC";
+	public static final String RENOVATION_EXT = "R/E";
+
+	public static final String HOMELOAN = "HL";
+	public static final String HOMELOAN_BT = "HLBT";
+	public static final String LAP = "LAP";
+	public static final String LAP_TP = "LAPTP";
+	public static final String HOMELOAN_TP = "HLTP";
+	public static final String PERSONAL_LOAN = "PL";
+	public static final String VRPL_VRBL = "PLBL";
 }

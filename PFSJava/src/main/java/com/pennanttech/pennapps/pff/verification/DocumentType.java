@@ -17,7 +17,7 @@ import java.util.List;
 import com.pennant.backend.model.ValueLabel;
 
 public enum DocumentType {
-	COLLATRL(1, "Collateral"), LOAN(2, "Loan"), CUSTOMER(3, "Customer");
+	COLLATRL(1, "Collateral"), LOAN(2, "Loan"), CUSTOMER(3, "Customer"), COAPPLICANT(4, "Co-Applicant");
 
 	private final Integer key;
 	private final String value;

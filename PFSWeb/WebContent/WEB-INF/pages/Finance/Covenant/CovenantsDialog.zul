@@ -141,7 +141,7 @@
 											<datebox id="extendedDate" width="120px" />
 										</hbox>
 									</row>
-									<row id="row_documentRecieved">
+									<row id="row_documentRecieved" visible="false">
 										<label value="${c:l('label_CovenantsDialog_DocumentRecieved.value')}" />
 										<hbox>
 											<space spacing="2px" />

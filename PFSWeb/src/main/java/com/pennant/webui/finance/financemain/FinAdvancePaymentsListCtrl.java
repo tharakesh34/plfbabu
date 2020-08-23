@@ -482,7 +482,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		disbursementInstCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
 		//disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
 		disbursementInstCtrl.onClickNew(this, this.financeMainDialogCtrl, ModuleType_Loan, getFinAdvancePaymentsList(),
-				null);
+				null, moduleDefiner);
 
 		logger.debug("Leaving" + event.toString());
 	}

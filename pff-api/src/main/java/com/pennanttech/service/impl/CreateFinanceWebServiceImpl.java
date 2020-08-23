@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.impl.FinanceDeviationsDAOImpl;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.perfios.PerfiosTransactionDAO;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
@@ -28,6 +30,7 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
@@ -38,6 +41,7 @@ import com.pennant.backend.model.finance.UserActions;
 import com.pennant.backend.model.finance.UserPendingCases;
 import com.pennant.backend.model.finance.UserPendingCasesResponse;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.perfios.PerfiosTransaction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -90,6 +94,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	private FinanceDeviationsDAO financeDeviationsDAO;
 	private DeviationHelper deviationHelper;
 	private SecurityUserDAO securityUserDAO;
+	private PerfiosTransactionDAO perfiosTransactionDAO;
 
 	/**
 	 * validate and create finance by receiving request object from interface
@@ -1560,6 +1565,53 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		return response;
 	}
 
+	@Override
+	public WSReturnStatus updatePerfiosStatus(PerfiosTransaction perfiosTransaction) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		String response = customerDetailsService.processPerfiosReport(perfiosTransaction);
+		returnStatus.setReturnText(response);
+
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
+	@Override
+	public FinCustomerDetails getDetailsByOfferID(String offerID) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		String offerId = null;
+		try {
+			JSONObject jsonObject = new JSONObject(offerID);
+			offerId = jsonObject.getString("offerID");
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + "OfferID is not passed in the request");
+		}
+		FinCustomerDetails response = new FinCustomerDetails();
+		if (StringUtils.isBlank(offerId)) {
+			response.setCif(null);
+			String[] valueParm = new String[1];
+			valueParm[0] = "offerID";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		}
+		response = financeDetailService.getDetailsByOfferID(offerId);
+		if (response != null && response.getFinReference() == null) {
+			//if no data found for offerID
+			response.setCif(null);
+			String[] valueParm = new String[2];
+			valueParm[0] = "data is";
+			valueParm[1] = offerId;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90295", valueParm));
+			return response;
+		} else {
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
 	@Autowired
 	public void setCreateFinanceController(CreateFinanceController createFinanceController) {
 		this.createFinanceController = createFinanceController;
@@ -1628,6 +1680,11 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	@Autowired
 	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
 		this.securityUserDAO = securityUserDAO;
+	}
+
+	@Autowired
+	public void setPerfiosTransactionDAO(PerfiosTransactionDAO perfiosTransactionDAO) {
+		this.perfiosTransactionDAO = perfiosTransactionDAO;
 	}
 
 }

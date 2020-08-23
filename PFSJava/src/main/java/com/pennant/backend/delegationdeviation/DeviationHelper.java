@@ -349,7 +349,8 @@ public class DeviationHelper {
 		boolean allowed = false;
 		int finRefType = FinanceConstants.PROCEDT_LIMIT;
 		String quickDisbCode = FinanceConstants.MANUAL_DEVIATION;
-		String roles = financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, quickDisbCode);
+		String finEvent = FinanceConstants.FINSER_EVENT_ORG;
+		String roles = financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, quickDisbCode, finEvent);
 
 		if (StringUtils.isNotBlank(roles)) {
 			String[] roleCodes = roles.split(PennantConstants.DELIMITER_COMMA);

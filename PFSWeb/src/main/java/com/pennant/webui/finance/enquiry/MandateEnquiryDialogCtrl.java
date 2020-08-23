@@ -583,7 +583,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 			String externalRef = getMandate().getExternalRef();
 			String documentName = getMandate().getDocumentName();
 
-			if (docImage == null && documentRef > 0) {
+			if (docImage == null && documentRef != null && documentRef > 0) {
 				mandate.setDocImage(mandateService.getDocumentManImage(documentRef));
 			} /*
 				 * else { if (docImage == null && StringUtils.isNotBlank(externalRef)) { DocumentDetails document =

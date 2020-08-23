@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_LoanDownSizingMovement" border="normal" apply="${loanDownSizingMovementCtrl}" width="80%"
+		sizable="false">
+		<borderlayout id="borderlayoutLimitHeader">
+
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+						<toolbar align="start" sclass="toolbar-start"></toolbar>
+						<toolbar align="center" sclass="toolbar-center">
+							<label id="dialogTitle" value="${c:l('window_FinAssetAmtMovement.title')}" sclass="label-heading" />
+						</toolbar>
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnClose" label="Close" autodisable="btnDelete,btnSave,btnNotes,btnHelp,btnClose,btnCopyTo"
+								tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+
+			<center border="none" autoscroll="true">
+				<groupbox id="gb_movementdetails" mold="3d" style="overflow-x:hidden;">
+
+					<listbox id="listBoxMovementDetails" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true" span="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false">
+
+						<listhead sizable="false">
+							<listheader id="listheader_MovementDate" label="${c:l('listheader_MovementDate')}" hflex="min" />
+							<listheader id="listheader_MovementAmount" label="${c:l('listheader_MovementAmount')}" align="right"
+								hflex="min" />
+							<listheader id="listheader_SanctionedAmount" label="${c:l('listheader_SanctionedAmount')}" align="right"
+								hflex="min" />
+							<listheader id="listheader_RevisedSanctionedAmt" label="${c:l('listheader_RevisedSanctionedAmt')}"
+								align="right" hflex="min" />
+							<listheader id="listheader_DisbursedAmt" label="${c:l('listheader_DisbursedAmt')}" align="right"
+								hflex="min" />
+							<listheader id="listheader_AvailableAmt" label="${c:l('listheader_AvailableAmt')}" align="right"
+								hflex="min" />
+						</listhead>
+					</listbox>
+				</groupbox>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

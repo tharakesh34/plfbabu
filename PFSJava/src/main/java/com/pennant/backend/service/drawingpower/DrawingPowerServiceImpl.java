@@ -99,7 +99,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		return auditDetail;
 	}
 
-	private ErrorDetail doRevolvingValidations(FinanceDetail financeDetail) {
+	public ErrorDetail doRevolvingValidations(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -147,7 +147,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		return null;
 	}
 
-	private ErrorDetail doDrawingPowerCheck(FinanceDetail financeDetail, String moduleDefiner) {
+	public ErrorDetail doDrawingPowerCheck(FinanceDetail financeDetail, String moduleDefiner) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();

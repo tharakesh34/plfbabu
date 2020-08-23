@@ -69,7 +69,7 @@ public interface CustomerAddresDAO {
 
 	int getcustAddressCount(String addrType);
 
-	boolean isServiceable(String pinCode);
+	boolean isServiceable(long pinCodeId);
 
 	CustomerAddres getHighPriorityCustAddr(long id, String type);
 }

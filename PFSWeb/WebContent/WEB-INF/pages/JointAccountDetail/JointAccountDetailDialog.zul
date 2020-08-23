@@ -60,10 +60,10 @@
 											<button id="viewCustInfo" image="/images/icons/more.png" tooltiptext="${c:l('tooltip_Custinfo')}" />
 											<space spacing="2px" />
 											<button id="btn_NewCust" label="${c:l('label_JountAccountDetailDialog_BtnNewCust.value')}"
-												tooltiptext="${c:l('tooltip_NewCust')}" />
+												tooltiptext="${c:l('tooltip_NewCust')}" autodisable="btn_NewCust,btn_EditCust" />
 											<space spacing="2px" />
 											<button id="btn_EditCust" label="${c:l('label_JountAccountDetailDialog_BtnEditCust.value')}"
-												tooltiptext="${c:l('tooltip_EditCust')}" />
+												tooltiptext="${c:l('tooltip_EditCust')}" autodisable="btn_EditCust,btn_NewCust" />
 										</hbox>
 									</cell>
 								</row>

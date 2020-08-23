@@ -761,6 +761,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		String recPurpose = getComboboxValue(this.receiptPurpose);
 		if (isForeClosure) {
 			recPurpose = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+			method = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
 		}
 
 		switch (recPurpose) {

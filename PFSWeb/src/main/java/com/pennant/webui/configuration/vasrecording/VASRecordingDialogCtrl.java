@@ -152,6 +152,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.component.extendedfields.ExtendedFieldsGenerator;
+import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -274,6 +275,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private FinanceReferenceDetailService financeReferenceDetailService;
 	private CustomerEMailDAO customerEMailDAO;
 	private NotificationService notificationService;
+	private EventManager eventManager;
 
 	private boolean financeVas = false;
 	private boolean feeEditable = false;
@@ -293,6 +295,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private FinanceDetail clonedFinanceDetail = null;
 	private boolean vaildatePremium;
 	protected Button btnInsurance_VasRecording;
+	protected boolean vasMovement;
 
 	@Autowired(required = false)
 	private InsuranceCalculatorService insuranceCalculatorService;
@@ -398,6 +401,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				setVASRecordingListCtrl((VASRecordingListCtrl) arguments.get("vASRecordingListCtrl"));
 			} else {
 				setVASRecordingListCtrl(null);
+			}
+
+			if (arguments.containsKey("vasMovement")) {
+				vasMovement = (boolean) arguments.get("vasMovement");
 			}
 
 			// set Field Properties
@@ -567,6 +574,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						this.btnDelete.setVisible(true);
 					} else {
 						this.btnDelete.setVisible(false);
+						//Added provision to enable delete button based on right.
 						this.btnDelete.setVisible(!isReadOnly("button_VASRecordingDialog_btnDelete"));
 					}
 				}
@@ -641,6 +649,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Remove Error Messages for Fields
 	 */
 
+	@Override
 	public void doClearMessage() {
 		logger.debug(Literal.ENTERING);
 		this.productCode.setErrorMessage("");
@@ -867,7 +876,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 							finFeeDetail.setRemainingFee(BigDecimal.ZERO);
 						} else if (StringUtils.equals(VASConsatnts.VAS_PAYMENT_DEDUCTION,
 								aVASRecording.getVasConfiguration().getModeOfPayment())) {
-							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
+							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
 						}
 
 						finFeeDetail.setNetAmountOriginal(aVASRecording.getFee());
@@ -1344,6 +1353,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				setDialog(DialogType.EMBEDDED);
 			}
 
+			if (vasMovement) {
+				this.btnInsurance_VasRecording.setDisabled(true);
+				setDialog(DialogType.MODAL);
+			}
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -1682,26 +1696,21 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				List<ScriptError> defaultList = defaults.getAll();
 				for (int i = 0; i < defaultList.size(); i++) {
 					ScriptError dftKeyValue = defaultList.get(i);
-					if (StringUtils.trimToNull(this.vASRecording.getVasReference()) == null || !isNewrecord()) {
+					//if VAS is a new record we have to set the default values
+					if (StringUtils.trimToNull(this.vASRecording.getVasReference()) == null
+							&& aVASRecording.isNewRecord()) {
 						ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
 						if (!detail.isVisible() || detail.isValFromScript()) {
-							if (fieldValuesMap.containsKey(dftKeyValue.getProperty())) {
-								fieldValuesMap.remove(dftKeyValue.getProperty());
-							}
 							if (detail.isValFromScript()) {
 								detail.setFieldList(dftKeyValue.getValue());
 							}
 							fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
 						}
-					} else {
-						if (fieldValuesMap.containsKey(dftKeyValue.getProperty())) {
-							fieldValuesMap.remove(dftKeyValue.getProperty());
-						}
+					} else { //Is VAS record is saved in DB or memory? then we have to set the saved data to extended fields
 						ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
 						if (detail.isValFromScript()) {
 							detail.setFieldList(dftKeyValue.getValue());
 						}
-						fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
 					}
 				}
 			}
@@ -2931,6 +2940,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		return 0;
 	}
 
+	@Override
 	public boolean isReadOnly(String componentName) {
 		if (isWorkFlowEnabled() || isFinanceVas()) {
 			return getUserWorkspace().isReadOnly(componentName);
@@ -3256,6 +3266,22 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	public void onClickExtbtnINS_PRE_API() {
 		logger.debug(Literal.ENTERING);
+
+		VASRecording vasRecording = new VASRecording();
+		vasRecording.setFinReference(this.vasReference.getValue());
+
+		List<VASRecording> vasRecordingList = null;
+		if (this.financeDetail != null) {
+			vasRecordingList = this.financeDetail.getFinScheduleData().getVasRecordingList();
+
+			if (vasRecordingList != null) {
+				if (vasRecordingList.isEmpty()) {
+					vasRecordingList.add(vasRecording);
+				} else {
+					vasRecordingList.get(0).setVasReference(this.vasReference.getValue());
+				}
+			}
+		}
 		try {
 			String prospectDetails = insuranceProspectService.getInsurancePremimumAPIResult(this.financeDetail);
 			if (prospectDetails != null) {
@@ -3679,6 +3705,14 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
+	}
+
+	public EventManager getEventManager() {
+		return eventManager;
+	}
+
+	public void setEventManager(EventManager eventManager) {
+		this.eventManager = eventManager;
 	}
 
 	public FinVasRecordingDialogCtrl getFinVasRecordingDialogCtrl() {

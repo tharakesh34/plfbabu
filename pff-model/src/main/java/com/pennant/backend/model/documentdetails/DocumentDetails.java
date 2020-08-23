@@ -72,6 +72,8 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private Long pdfMappingRef;
 	private String pdfPassWord;
 	private boolean docIsPdfExtRequired = false;
+	private String remarks;
+
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	// New proeprty added for holding the DocumentManager table's ID
@@ -552,6 +554,14 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustId(Long custId) {
 		this.custId = custId;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
 }

@@ -78,6 +78,8 @@ public class AccountEventConstants {
 	public static final String ACCEVENT_NEWCMT = "NEWCMT";
 	public static final String ACCEVENT_PRGCLAIM = "PRGCLAIM";
 	public static final String ACCEVENT_PROVSN = "PROVSN";
+	public static final String ACCEVENT_PRVSN_MN = "PRVSN_MN";
+	public static final String ACCEVENT_PROVCHG = "PROVCHG";
 	public static final String ACCEVENT_RATCHG = "RATCHG";
 	public static final String ACCEVENT_REPAY = "REPAY";
 	public static final String ACCEVENT_SCDCHG = "SCDCHG";
@@ -108,6 +110,7 @@ public class AccountEventConstants {
 	public static final String ACCEVENT_DISBINS = "DISBINS";
 	public static final String ACCEVENT_HOLDEMI = "HLDEMI";
 	public static final String ACCEVENT_FEEPAY = "FEEPAY";
+	public static final String ACCEVENT_FEEREFUND = "FEREFUND";
 	public static final String ACCEVENT_MANFEE = "MANFEE";
 	public static final String ACCEVENT_PAYMTINS = "PAYMTINS";
 	public static final String ACCEVENT_CASHTOPENNANT = "C2P";

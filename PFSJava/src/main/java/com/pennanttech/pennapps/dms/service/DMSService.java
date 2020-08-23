@@ -20,4 +20,12 @@ public interface DMSService {
 	void processDocuments();
 
 	public void storeDocInFileSystem(DMSQueue dmsQueue);
+
+	DMSQueue getOfferIdByFin(DMSQueue dmsQueue);
+
+	public byte[] getImageByUri(String docUri);
+	
+	public DMSQueue isExistDocuri(String docUri,String reference);
+	
+	public void updateDMSQueue(DMSQueue dmsQueue);
 }

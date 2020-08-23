@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class CustomerEligibilityCheck implements Serializable {
 
@@ -110,6 +112,12 @@ public class CustomerEligibilityCheck implements Serializable {
 	private boolean chequeOrDDAvailable;
 	private boolean neftAvailable; //If NEFT/IMPS/RTGS Available
 
+	private BigDecimal cibilScore;
+	private String custCity;
+	private String bureauDelinquency;
+	private BigDecimal calculatedAnnualNetSalary = BigDecimal.ZERO;
+	private Map<String, Object> dataMap;
+
 	/*
 	 * private String custCIF; private String custSubSector = ""; private String custCOB = ""; private String
 	 * custDftBranch; private long custGroupID = 0; private String custGroupSts; private boolean custIsBlocked = false;
@@ -136,6 +144,15 @@ public class CustomerEligibilityCheck implements Serializable {
 	 */
 	private BigDecimal netLoanAmount;
 	Map<String, Object> extendedFields = new HashMap<>();
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("cibilScore");
+		excludeFields.add("bureaDelinquency");
+		excludeFields.add("calculatedAnnualNetSalary");
+		excludeFields.add("custCity");
+		return excludeFields;
+	}
 
 	public CustomerEligibilityCheck() {
 
@@ -893,6 +910,46 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public void setNetLoanAmount(BigDecimal netLoanAmount) {
 		this.netLoanAmount = netLoanAmount;
+	}
+
+	public BigDecimal getCibilScore() {
+		return cibilScore;
+	}
+
+	public void setCibilScore(BigDecimal cibilScore) {
+		this.cibilScore = cibilScore;
+	}
+
+	public String getBureauDelinquency() {
+		return bureauDelinquency;
+	}
+
+	public void setBureauDelinquency(String bureauDelinquency) {
+		this.bureauDelinquency = bureauDelinquency;
+	}
+
+	public BigDecimal getCalculatedAnnualNetSalary() {
+		return calculatedAnnualNetSalary;
+	}
+
+	public void setCalculatedAnnualNetSalary(BigDecimal calculatedAnnualNetSalary) {
+		this.calculatedAnnualNetSalary = calculatedAnnualNetSalary;
+	}
+
+	public String getCustCity() {
+		return custCity;
+	}
+
+	public void setCustCity(String custCity) {
+		this.custCity = custCity;
+	}
+
+	public Map<String, Object> getDataMap() {
+		return dataMap;
+	}
+
+	public void setDataMap(Map<String, Object> dataMap) {
+		this.dataMap = dataMap;
 	}
 
 }

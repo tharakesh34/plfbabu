@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.rulefactory.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -122,7 +124,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT RuleId, RuleCode, RuleModule, RuleEvent, RuleCodeDesc, AllowDeviation");
-		sql.append(", CalFeeModify, FeeToFinance, WaiverDecider, Waiver, WaiverPerc, SQLRule, ActualBlock, SeqOrder");
+		sql.append(
+				", CalFeeModify, FeeToFinance, WaiverDecider, Waiver, WaiverPerc, SQLRule, SPLRule, ActualBlock, SeqOrder");
 		sql.append(", ReturnType, DeviationType, GroupId, Revolving, FixedOrVariableLimit, Active, Fields, FeeTypeID");
 		if (type.contains("View")) {
 			sql.append(", LovDescGroupName, FeeTypeCode, FeeTypeDesc");
@@ -134,6 +137,91 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 		logger.debug(Literal.LEAVING);
 		return sql;
+	}
+
+	@Override
+	public Rule getActiveRuleByID(final String id, final String module, final String event, String type,
+			boolean active) {
+		logger.debug("Entering");
+
+		Rule rule = new Rule();
+		rule.setRuleCode(id);
+		rule.setRuleModule(module);
+		rule.setRuleEvent(event);
+		rule.setActive(active);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(
+				" SELECT RuleId, RuleCode, RuleModule,RuleEvent, RuleCodeDesc,AllowDeviation,CalFeeModify, FeeToFinance, ");
+		sql.append(
+				" WaiverDecider , Waiver, WaiverPerc, SQLRule, ActualBlock,SeqOrder, ReturnType, DeviationType, GroupId,  Revolving,FixedOrVariableLimit,Active,");
+		sql.append(" Fields, FeeTypeID,");
+		if (type.contains("View")) {
+			sql.append(" lovDescGroupName , FeeTypeCode, FeeTypeDesc, ");
+		}
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From Rules");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(
+				" Where RuleCode =:RuleCode AND RuleModule =:RuleModule AND RuleEvent =:RuleEvent AND Active = :Active");
+		sql.append(" Order BY SeqOrder ");
+
+		logger.debug("selectSql: " + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
+
+		try {
+			rule = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, new RowMapper<Rule>() {
+				@Override
+				public Rule mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Rule rule = new Rule();
+					rule.setTaskId(rs.getString("TaskId"));
+					rule.setRuleId(rs.getLong("RuleId"));
+					rule.setDeviationType(rs.getString("DeviationType"));
+					rule.setFixedOrVariableLimit(rs.getString("FixedOrVariableLimit"));
+					rule.setFeeTypeID(rs.getLong("FeeTypeID"));
+					rule.setWorkflowId(rs.getLong("WorkflowId"));
+					rule.setRuleEvent(rs.getString("RuleEvent"));
+					rule.setRoleCode(rs.getString("RoleCode"));
+					rule.setWaiverDecider(rs.getString("WaiverDecider"));
+					rule.setNextRoleCode(rs.getString("NextRoleCode"));
+					rule.setRecordType(rs.getString("RecordType"));
+					rule.setVersion(rs.getInt("Version"));
+					rule.setNextTaskId(rs.getString("NextTaskId"));
+					rule.setRecordStatus(rs.getString("RecordStatus"));
+					rule.setFeeToFinance(rs.getString("FeeToFinance"));
+					rule.setRuleCodeDesc(rs.getString("RuleCodeDesc"));
+					rule.setCalFeeModify(rs.getBoolean("CalFeeModify"));
+					rule.setLastMntBy(rs.getLong("LastMntBy"));
+					rule.setAllowDeviation(rs.getBoolean("AllowDeviation"));
+					rule.setReturnType(rs.getString("ReturnType"));
+					rule.setWaiverPerc(rs.getBigDecimal("WaiverPerc"));
+					rule.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					rule.setGroupId(rs.getLong("GroupId"));
+					rule.setActive(rs.getBoolean("Active"));
+					rule.setFields(rs.getString("Fields"));
+					rule.setSeqOrder(rs.getInt("SeqOrder"));
+					rule.setRevolving(rs.getBoolean("Revolving"));
+					rule.setRuleModule(rs.getString("RuleModule"));
+					rule.setSQLRule(rs.getString("SQLRule"));
+					rule.setWaiver(rs.getBoolean("Waiver"));
+					rule.setRuleCode(rs.getString("RuleCode"));
+					rule.setActualBlock(rs.getString("ActualBlock"));
+
+					if (type.contains("View")) {
+						rule.setFeeTypeCode(rs.getString("FeeTypeCode"));
+						rule.setLovDescGroupName(rs.getString("lovDescGroupName"));
+						rule.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+					}
+					return rule;
+				}
+			});
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return rule;
 	}
 
 	@Override
@@ -329,12 +417,12 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		sql.append("Insert Into Rules");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (RuleId,RuleCode, RuleModule, RuleEvent, RuleCodeDesc, WaiverDecider, Waiver");
-		sql.append(", WaiverPerc, SQLRule, ActualBlock, SeqOrder, ReturnType, DeviationType, GroupId");
+		sql.append(", WaiverPerc, SQLRule,SPLRule, ActualBlock, SeqOrder, ReturnType, DeviationType, GroupId");
 		sql.append(", AllowDeviation, CalFeeModify, FeeToFinance, Revolving, FixedOrVariableLimit, Active");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, Fields, feeTypeID)");
 		sql.append(" Values(:RuleId,:RuleCode, :RuleModule, :RuleEvent, :RuleCodeDesc, :WaiverDecider, :Waiver");
-		sql.append(", :WaiverPerc, :SQLRule, :ActualBlock,:SeqOrder, :ReturnType, :DeviationType, :GroupId");
+		sql.append(", :WaiverPerc, :SQLRule, :SPLRule, :ActualBlock,:SeqOrder, :ReturnType, :DeviationType, :GroupId");
 		sql.append(", :AllowDeviation, :CalFeeModify, :FeeToFinance, :Revolving, :FixedOrVariableLimit, :Active");
 		sql.append(", :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
 		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId, :Fields, :feeTypeID)");
@@ -374,7 +462,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		sql.append("Update Rules");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set RuleCodeDesc = :RuleCodeDesc,");
-		sql.append(" WaiverDecider = :WaiverDecider, Waiver = :Waiver, WaiverPerc = :WaiverPerc, SQLRule = :SQLRule");
+		sql.append(
+				" WaiverDecider = :WaiverDecider, Waiver = :Waiver, WaiverPerc = :WaiverPerc, SQLRule = :SQLRule, sPLRule = :sPLRule");
 		sql.append(", AllowDeviation =:AllowDeviation, CalFeeModify = :CalFeeModify, ActualBlock = :ActualBlock");
 		sql.append(", SeqOrder = :SeqOrder, ReturnType = :ReturnType, DeviationType = :DeviationType");
 		sql.append(", GroupId = :GroupId, FeeToFinance = :FeeToFinance,  Revolving = :Revolving");
@@ -398,6 +487,24 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public void updateRuleByID(Rule rule, String type) {
+		logger.debug("Entering");
+		int recordCount = 0;
+
+		String updateSql = "update Rules set Active= :Active  , RecordType = :RecordType, "
+				+ "  lastMntBy= :lastMntBy ,lastMntOn= :lastMntOn  " + "where RuleId= :RuleId";
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	/**
 	 * This method return the columns list of the tables sent as parameters
 	 * 
@@ -412,6 +519,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 * @throws EmptyResultDataAccessException
 	 * 
 	 */
+	@Override
 	public List<BMTRBFldDetails> getFieldList(String module, String event) {
 		logger.debug(Literal.ENTERING);
 
@@ -450,6 +558,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 * 
 	 * @return List
 	 */
+	@Override
 	public List<BMTRBFldCriterias> getOperatorsList() {
 		logger.debug(Literal.ENTERING);
 
@@ -705,7 +814,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		rule.setRuleModule(module);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT RuleModule, RuleCode, RuleCodeDesc ");
+		sql.append(" SELECT * ");
 		sql.append(" From Rules");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" WHERE RuleModule =:RuleModule AND  RuleCode =:RuleCode");
@@ -922,4 +1031,28 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		parameterSource.addValue(parameterName, fieldValue);
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public int getRuleCodeCount(String ruleCode, String ruleEvent, String ruleModule) {
+		logger.debug("Entering");
+
+		Rule rule = new Rule();
+		rule.setRuleCode(ruleCode);
+		rule.setRuleEvent(ruleEvent);
+		rule.setRuleModule(ruleModule);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From Rules");
+		selectSql.append(" Where RuleCode =:RuleCode ANd RuleEvent =:RuleEvent And RuleModule = :RuleModule");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
+
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+		}
+	}
+
 }

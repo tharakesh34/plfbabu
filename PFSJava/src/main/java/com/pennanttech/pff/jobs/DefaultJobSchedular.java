@@ -53,6 +53,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private static final String REG_CASH_BACK_DBD_JOB_TRIGGER = "REG_CASH_BACK_DBD_JOB_TRIGGER";
 
 	private DMSService dMSService;
+	DMSStorage dmsStorageType = DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE));
 
 	private DisbursementRequestService disbursementRequestService;
 	private DisbursementResponse defaultDisbursementResponse;
@@ -78,7 +79,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		registerDmsServiceInvokeJob();
 		registerCashBackDbdInvokeJob();
 
-		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+		if ((DMSStorage.FS == dmsStorageType) || (DMSStorage.EXTERNAL == dmsStorageType)) {
 			registerDMSJob();
 		}
 

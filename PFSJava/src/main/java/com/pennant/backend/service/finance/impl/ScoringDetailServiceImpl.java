@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -283,10 +284,14 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 			fieldsandvalues = customerEligibilityCheck.getDeclaredFieldValues();
 		}
 
+		if (customerEligibilityCheck != null && customerEligibilityCheck.getDataMap() != null) {
+			fieldsandvalues.putAll(customerEligibilityCheck.getDataMap());
+		}
+
 		for (ScoringMetrics scoringMetrics : scoringMetricsList) {
-			Integer lovDescExecutedScore = (Integer) this.ruleExecutionUtil
-					.executeRule(scoringMetrics.getLovDescSQLRule(), fieldsandvalues, null, RuleReturnType.INTEGER);
-			scoringMetrics.setLovDescExecutedScore(new BigDecimal(lovDescExecutedScore));
+			BigDecimal lovDescExecutedScore = (BigDecimal) this.ruleExecutionUtil.executeRule(
+					scoringMetrics.getLovDescSQLRule(), fieldsandvalues, null, RuleReturnType.DECIMAL, false);
+			scoringMetrics.setLovDescExecutedScore(lovDescExecutedScore);
 		}
 		logger.debug("Leaving");
 		return scoringMetricsList;
@@ -302,8 +307,9 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
+		int k = 1;
 		List<FinanceScoreHeader> finScoreHeaderList = financeDetail.getFinScoreHeaderList();
-		if (finScoreHeaderList != null && !finScoreHeaderList.isEmpty()) {
+		if (CollectionUtils.isNotEmpty(finScoreHeaderList)) {
 
 			FinanceScoreHeader tempHeader = new FinanceScoreHeader();
 			String[] headerFields = PennantJavaUtil.getFieldDetails(tempHeader, tempHeader.getExcludeFields());
@@ -322,10 +328,9 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 				FinanceScoreHeader header = finScoreHeaderList.get(i);
 				List<FinanceScoreDetail> scoreDetailList = null;
 
-				if (financeDetail.getScoreDetailListMap().containsKey(header.getHeaderId())) {
-					scoreDetailList = financeDetail.getScoreDetailListMap().get(header.getHeaderId());
+				if (financeDetail.getScoreDetailListMap().containsKey(header.getCustId())) {
+					scoreDetailList = financeDetail.getScoreDetailListMap().get(header.getCustId());
 				}
-
 				long headerId = header.getHeaderId();
 				header.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 				getFinanceScoreHeaderDAO().deleteHeader(header, "");
@@ -337,21 +342,21 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 				auditDetailList.add(new AuditDetail(PennantConstants.TRAN_WF, i + 1, headerFields[0], headerFields[1],
 						null, header));
 
-				if (scoreDetailList != null) {
-					for (int j = 0; j < scoreDetailList.size(); j++) {
-
-						FinanceScoreDetail detail = scoreDetailList.get(j);
+				if (CollectionUtils.isNotEmpty(scoreDetailList)) {
+					for (FinanceScoreDetail financeScoreDetail : scoreDetailList) {
+						FinanceScoreDetail detail = financeScoreDetail;
 						detail.setHeaderId(headerId);
 						detail.setLastMntBy(lastmntBy);
 						detail.setRecordStatus(recordStatus);
 						detail.setRoleCode(rolecode);
-						auditDetailList.add(new AuditDetail(PennantConstants.TRAN_WF, j + 1, detailFields[0],
+						auditDetailList.add(new AuditDetail(PennantConstants.TRAN_WF, k++, detailFields[0],
 								detailFields[1], null, detail));
 					}
 					getFinanceScoreHeaderDAO().deleteDetailList(headerId, "");
 					getFinanceScoreHeaderDAO().saveDetailList(scoreDetailList, "");
 				}
 			}
+
 		}
 		logger.debug("Leaving");
 		return auditDetailList;
@@ -593,6 +598,16 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 		getFinanceScoreHeaderDAO().deleteDetailList(headerList, type);
 	}
 
+	@Override
+	public List<ScoringMetrics> getScoreMatricsListByCustType(String scoreRuleCode, String custType) {
+		return getScoringMetricsDAO().getScoreMatricsListByCustType(scoreRuleCode, custType);
+	}
+
+	@Override
+	public List<ScoringSlab> getScoringSlabsByScoreGrpId(long scoreGrpId, String type) {
+		return getScoringSlabDAO().getScoringSlabsByScoreGrpId(scoreGrpId, type);
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -640,4 +655,5 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
+
 }

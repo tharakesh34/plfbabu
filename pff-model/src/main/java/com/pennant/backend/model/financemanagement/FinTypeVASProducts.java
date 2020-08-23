@@ -37,6 +37,8 @@ public class FinTypeVASProducts extends AbstractWorkflowEntity {
 	private String productCtgDesc;
 	private String manufacturerDesc;
 	private BigDecimal vasFee;
+	private String feePaymentMode;
+	private String vasReference;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public Set<String> getExcludeFields() {
@@ -49,6 +51,8 @@ public class FinTypeVASProducts extends AbstractWorkflowEntity {
 		excludeFields.add("manufacturerDesc");
 		excludeFields.add("recAgainst");
 		excludeFields.add("vasFee");
+		excludeFields.add("feePaymentMode");
+		excludeFields.add("vasReference");
 		return excludeFields;
 	}
 
@@ -174,6 +178,22 @@ public class FinTypeVASProducts extends AbstractWorkflowEntity {
 
 	public void setVasFee(BigDecimal vasFee) {
 		this.vasFee = vasFee;
+	}
+
+	public String getFeePaymentMode() {
+		return feePaymentMode;
+	}
+
+	public void setFeePaymentMode(String feePaymentMode) {
+		this.feePaymentMode = feePaymentMode;
+	}
+
+	public String getVasReference() {
+		return vasReference;
+	}
+
+	public void setVasReference(String vasReference) {
+		this.vasReference = vasReference;
 	}
 
 }

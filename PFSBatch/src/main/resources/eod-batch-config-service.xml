@@ -40,6 +40,7 @@
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
 	</bean>
 	<bean id="paymentRecoveryService" class="com.pennant.eod.PaymentRecoveryService">
 		<property name="paymentRecoveryHeaderDAO" ref="paymentRecoveryHeaderDAO" />
@@ -165,9 +166,25 @@
 	</bean>
 
 	<!-- No end of day Service -->
-	<bean id="eodService" class="com.pennant.eod.EodService" />
+	<bean id="eodService" class="com.pennant.eod.EodService">
+		<property name="accrualService" ref="accrualService" />
+		<property name="rateReviewService" ref="rateReviewService" />
+		<property name="dateRollOverService" ref="dateRollOverService" />
+		<property name="installmentDueService" ref="installmentDueService" />
+		<property name="latePayMarkingService" ref="latePayMarkingService" />
+		<property name="npaService" ref="npaService" />
+		<property name="autoDisbursementService" ref="autoDisbursementService" />
+		<property name="receiptPaymentService" ref="receiptPaymentService" />
+		<property name="loadFinanceData" ref="loadFinanceData" />
+		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
+		<property name="changeGraceEndService" ref="changeGraceEndService" />
+	</bean>
 
 	<bean id="archivalService" class="com.pennant.eod.ArchivalService" parent="serviceHelper" />
+
+	<bean id="changeGraceEndService" class="com.pennant.app.core.ChangeGraceEndService" parent="serviceHelper">
+		<property name="accrualService" ref="accrualService" />
+	</bean>
 
 	<bean id="auditHeaderDAO" class="com.pennant.backend.dao.audit.impl.AuditHeaderDAOImpl" parent="auditSequenceDao" />
 
@@ -545,9 +562,15 @@
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 	</bean>
-	
-		<!-- FeeType -->
+
+	<!-- FeeType -->
 	<bean id="feeTypeDAO" class="com.pennant.backend.dao.feetype.impl.FeeTypeDAOImpl" parent="sequenceDao" />
-	
+
 	<bean id="expenseTypeDAO" class="com.pennant.backend.dao.amtmasters.impl.ExpenseTypeDAOImpl" parent="sequenceDao" />
+
+
+	<bean id="extractData" class="com.pennant.eod.ExtractDataExecution">
+		<property name="extractDataDAO" ref="extractDataDAO" />
+	</bean>
+
 </beans>

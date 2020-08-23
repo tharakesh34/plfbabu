@@ -765,4 +765,31 @@
 	</jaxrs:server>
 
 	<jaxws:endpoint id="dealerSoapService" implementor="#wsDealerService" address="/dealerSoap" publish="false" />
+
+	<!-- RelationshipOfficer API gateway -->
+	<bean id="wsRelationshipOfficersService" class="com.pennanttech.service.impl.RelationshipOfficersWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="relationshipOfficersRestService" address="/relationshipOfficersRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsRelationshipOfficersService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="relationshipOfficersSoapService" implementor="#wsRelationshipOfficersService"
+		address="/relationshipOfficersSoap" publish="false" />
+
 </beans>

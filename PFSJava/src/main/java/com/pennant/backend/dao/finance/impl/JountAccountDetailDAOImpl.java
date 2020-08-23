@@ -47,13 +47,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -740,6 +743,40 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 			logger.error("Exception: ", e);
 		}
 		return null;
+	}
+
+	@Override
+	public Map<String, Integer> getCustCtgCount(String finRef) {
+		logger.trace(Literal.ENTERING);
+
+		MapSqlParameterSource sqlScource = new MapSqlParameterSource();
+		sqlScource.addValue("FinReference", finRef);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select custctgcode ,count(*) count ");
+		selectSql.append(" from FinJointAccountDetails_View F ");
+		selectSql.append(
+				" Inner Join Customers C on C.CustCIF =  F.CustCIF where finreference=:FinReference group by custctgcode  ");
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		try {
+			map = this.jdbcTemplate.query(selectSql.toString(), sqlScource,
+					new ResultSetExtractor<Map<String, Integer>>() {
+						Map<String, Integer> map = new HashMap<String, Integer>();
+
+						@Override
+						public Map<String, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
+							while (rs.next()) {
+								map.put(rs.getString(1), rs.getInt(2));
+							}
+							return map;
+						}
+
+					});
+		} catch (Exception e) {
+			logger.warn("Exception: ", e);
+		}
+		logger.debug(Literal.LEAVING);
+		return map;
 	}
 
 }

@@ -13,6 +13,8 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.pennant.backend.model.cersai.Cersai;
+
 public class AbstractInterface {
 	private static final Logger logger = Logger.getLogger(AbstractInterface.class);
 
@@ -54,5 +56,10 @@ public class AbstractInterface {
 		this.transDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		this.transDef.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
 		this.transDef.setTimeout(120);
+	}
+
+	public void updateCollateralAssignment(Cersai cersai, String cersaiReferenceNumber) {
+		// TODO Auto-generated method stub
+
 	}
 }

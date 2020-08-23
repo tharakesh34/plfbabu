@@ -66,6 +66,7 @@ import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.pennydrop.PennyDropDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
@@ -129,6 +130,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private PennyDropDAO pennyDropDAO;
 	@Autowired(required = false)
 	private transient BankAccountValidationService bankAccountValidationService;
+	private JountAccountDetailDAO jountAccountDetailDAO;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -323,7 +325,11 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			issueHeader
 					.setvASRecordings(vasRecordingDAO.getVASRecordingsStatusByReference(finMian.getFinReference(), ""));
 		}
-
+		//Getting the JoinAccount Details
+		if (getJountAccountDetailDAO() != null) {
+			issueHeader.setJointAccountDetails(
+					getJountAccountDetailDAO().getJountAccountDetailByFinRef(id, TableType.MAIN_TAB.getSuffix()));
+		}
 		logger.debug("Leaving");
 		return issueHeader;
 	}
@@ -1008,6 +1014,14 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {
 		this.paymentsProcessService = paymentsProcessService;
+	}
+
+	public JountAccountDetailDAO getJountAccountDetailDAO() {
+		return jountAccountDetailDAO;
+	}
+
+	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
+		this.jountAccountDetailDAO = jountAccountDetailDAO;
 	}
 
 }

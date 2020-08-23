@@ -467,7 +467,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		}
 		// Acc Number
 		try {
-			this.accNumber.setErrorMessage("");
 			aBeneficiary.setAccNumber(this.accNumber.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
