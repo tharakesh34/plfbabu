@@ -172,6 +172,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Listbox sortOperator_offerId; // autowired
 	protected Textbox offerId; // autowired
 	protected Listbox sortOperator_passPort;
+	protected Combobox betaReq;
 
 	// List headers
 	protected Listheader listheader_CustomerCIF; // autoWired
@@ -220,6 +221,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private String CREATE_CIF = "CREATECIF";
 	private String CREATE_ACCOUNT = "CREATACCOUNT";
 	private List<String> usrfinRolesList = new ArrayList<String>();
+	private String betaDialog = "_Beta";
+	private List<ValueLabel> betaConfig = PennantStaticListUtil.getBetaConfiguration();
 
 	/**
 	 * default constructor.<br>
@@ -481,6 +484,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			finEligibility = null;
 		}
 
+		if (requestSource.equals("Origination")) {
+			betaReq.setVisible(true);
+			fillComboBox(this.betaReq, "Beta", betaConfig, "");
+		}
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -933,7 +940,12 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				zulPath.append("MusawamaFinanceMainDialog.zul");
 				break;
 			case FinanceConstants.PRODUCT_CONVENTIONAL:
-				String pageName = PennantAppUtil.getFinancePageName(false);
+				String pageName = "ConvFinanceMainDialog";
+				if (StringUtils.isEmpty(betaDialog)) {
+					pageName = pageName + ".zul";
+				} else {
+					pageName = pageName + betaDialog + ".zul";
+				}
 				zulPath.append(pageName);
 				break;
 			case FinanceConstants.PRODUCT_CD:
@@ -1611,4 +1623,12 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.finChangeCustomerService = finChangeCustomerService;
 	}
 
+	public void onSelect$betaReq(Event event) {
+		String betaReq = getComboboxValue(this.betaReq);
+		if (betaReq.equals("Old")) {
+			betaDialog = "";
+		} else {
+			betaDialog = "_Beta";
+		}
+	}
 }

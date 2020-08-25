@@ -394,7 +394,6 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
-import com.pennanttech.pff.document.external.ExternalDocumentManager;
 import com.pennanttech.pff.external.HunterService;
 import com.pennanttech.pff.external.pan.service.EligibilityService;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -11902,36 +11901,36 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Groupbox expCacsGrpBox = null;
 
 			try {
-				if (window.getFellow("WORKINGCAPITAL") instanceof Groupbox) {
-					workingcapGrpBox = (Groupbox) window.getFellow("WORKINGCAPITAL");
+				if (window.getFellowIfAny("WORKINGCAPITAL") instanceof Groupbox) {
+					workingcapGrpBox = (Groupbox) window.getFellowIfAny("WORKINGCAPITAL");
 				}
 
-				if (window.getFellow("BALANCETRANSFER") instanceof Groupbox) {
-					baltransferGrpBox = (Groupbox) window.getFellow("BALANCETRANSFER");
+				if (window.getFellowIfAny("BALANCETRANSFER") instanceof Groupbox) {
+					baltransferGrpBox = (Groupbox) window.getFellowIfAny("BALANCETRANSFER");
 				}
 
-				if (window.getFellow("EXPRESS_TOPUP") instanceof Groupbox) {
-					expTopupGrpBox = (Groupbox) window.getFellow("EXPRESS_TOPUP");
+				if (window.getFellowIfAny("EXPRESS_TOPUP") instanceof Groupbox) {
+					expTopupGrpBox = (Groupbox) window.getFellowIfAny("EXPRESS_TOPUP");
 				}
 
-				if (window.getFellow("SEPSENP") instanceof Groupbox) {
-					expSepBox = (Groupbox) window.getFellow("SEPSENP");
+				if (window.getFellowIfAny("SEPSENP") instanceof Groupbox) {
+					expSepBox = (Groupbox) window.getFellowIfAny("SEPSENP");
 				}
 
-				if (window.getFellow("CIBIL") instanceof Groupbox) {
-					expCibilGrpBox = (Groupbox) window.getFellow("CIBIL");
+				if (window.getFellowIfAny("CIBIL") instanceof Groupbox) {
+					expCibilGrpBox = (Groupbox) window.getFellowIfAny("CIBIL");
 				}
 
-				if (window.getFellow("TURNOVER") instanceof Groupbox) {
-					expTurnoverGrpBox = (Groupbox) window.getFellow("TURNOVER");
+				if (window.getFellowIfAny("TURNOVER") instanceof Groupbox) {
+					expTurnoverGrpBox = (Groupbox) window.getFellowIfAny("TURNOVER");
 				}
 
-				if (window.getFellow("CACS") instanceof Groupbox) {
-					expCacsGrpBox = (Groupbox) window.getFellow("CACS");
+				if (window.getFellowIfAny("CACS") instanceof Groupbox) {
+					expCacsGrpBox = (Groupbox) window.getFellowIfAny("CACS");
 				}
 
-				if (window.getFellow("ad_ELGMETHOD") instanceof Textbox) {
-					elgMethodBox = (Textbox) window.getFellow("ad_ELGMETHOD");
+				if (window.getFellowIfAny("ad_ELGMETHOD") instanceof Textbox) {
+					elgMethodBox = (Textbox) window.getFellowIfAny("ad_ELGMETHOD");
 				}
 
 				if (workingcapGrpBox != null) {
@@ -24098,24 +24097,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Window window = extendedFieldCtrl.getWindow();
 			String elgMethodValue = "";
 			try {
-				if (window.getFellow("ad_ELGMETHOD") instanceof Textbox) {
-					elgMethodValue = ((Textbox) window.getFellow("ad_ELGMETHOD")).getValue();
+				if (window.getFellowIfAny("ad_ELGMETHOD") instanceof Textbox) {
+					elgMethodValue = ((Textbox) window.getFellowIfAny("ad_ELGMETHOD")).getValue();
 				}
 
 				// If Eligibility Method is ET(Express Top-Up)
 				if ("ET".equals(elgMethodValue)) {
 
 					BigDecimal sanctionedAmt = BigDecimal.ZERO;
-					if (window.getFellow("ad_ET_LN_SNCAMT") instanceof CurrencyBox) {
-						sanctionedAmt = ((CurrencyBox) window.getFellow("ad_ET_LN_SNCAMT")).getActualValue();
+					if (window.getFellowIfAny("ad_ET_LN_SNCAMT") instanceof CurrencyBox) {
+						sanctionedAmt = ((CurrencyBox) window.getFellowIfAny("ad_ET_LN_SNCAMT")).getActualValue();
 						if (sanctionedAmt == null) {
 							sanctionedAmt = BigDecimal.ZERO;
 						}
 					}
 
 					BigDecimal outSatandingAmt = BigDecimal.ZERO;
-					if (window.getFellow("ad_ET_OT_LNAMNT") instanceof CurrencyBox) {
-						outSatandingAmt = ((CurrencyBox) window.getFellow("ad_ET_OT_LNAMNT")).getActualValue();
+					if (window.getFellowIfAny("ad_ET_OT_LNAMNT") instanceof CurrencyBox) {
+						outSatandingAmt = ((CurrencyBox) window.getFellowIfAny("ad_ET_OT_LNAMNT")).getActualValue();
 						if (outSatandingAmt == null) {
 							outSatandingAmt = BigDecimal.ZERO;
 						}
@@ -24142,8 +24141,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 															// capital)
 					BigDecimal accountLimit = BigDecimal.ZERO;
 
-					if (window.getFellow("ad_WC_CC_ACNT_LIMIT") instanceof CurrencyBox) {
-						accountLimit = ((CurrencyBox) window.getFellow("ad_WC_CC_ACNT_LIMIT")).getActualValue();
+					if (window.getFellowIfAny("ad_WC_CC_ACNT_LIMIT") instanceof CurrencyBox) {
+						accountLimit = ((CurrencyBox) window.getFellowIfAny("ad_WC_CC_ACNT_LIMIT")).getActualValue();
 						if (accountLimit == null) {
 							accountLimit = BigDecimal.ZERO;
 						}
@@ -24161,8 +24160,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 															// Transfer)
 					BigDecimal btLoanAmtTrack = BigDecimal.ZERO;
 
-					if (window.getFellow("ad_BT_LN_AMT_BT") instanceof CurrencyBox) {
-						btLoanAmtTrack = ((CurrencyBox) window.getFellow("ad_BT_LN_AMT_BT")).getActualValue();
+					if (window.getFellowIfAny("ad_BT_LN_AMT_BT") instanceof CurrencyBox) {
+						btLoanAmtTrack = ((CurrencyBox) window.getFellowIfAny("ad_BT_LN_AMT_BT")).getActualValue();
 						if (btLoanAmtTrack == null) {
 							btLoanAmtTrack = BigDecimal.ZERO;
 						}
@@ -24178,8 +24177,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				} else if ("CACS".contentEquals(elgMethodValue)) {
 					BigDecimal grossReceiptAmt = BigDecimal.ZERO;
 
-					if (window.getFellow("ad_CAS_GROSSRECEIPT") instanceof CurrencyBox) {
-						grossReceiptAmt = ((CurrencyBox) window.getFellow("ad_CAS_GROSSRECEIPT")).getActualValue();
+					if (window.getFellowIfAny("ad_CAS_GROSSRECEIPT") instanceof CurrencyBox) {
+						grossReceiptAmt = ((CurrencyBox) window.getFellowIfAny("ad_CAS_GROSSRECEIPT")).getActualValue();
 						if (grossReceiptAmt == null) {
 							grossReceiptAmt = BigDecimal.ZERO;
 						}
@@ -24244,11 +24243,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				Textbox hunterResult = null;
 				Groupbox hunterGrpBox = null;
 				try {
-					if (window.getFellow("HUNTER") instanceof Groupbox) {
-						hunterGrpBox = (Groupbox) window.getFellow("HUNTER");
+					if (window.getFellowIfAny("HUNTER") instanceof Groupbox) {
+						hunterGrpBox = (Groupbox) window.getFellowIfAny("HUNTER");
 					}
-					if (window.getFellow("ad_Text") instanceof Textbox) {
-						hunterResult = (Textbox) window.getFellow("ad_Text");
+					if (window.getFellowIfAny("ad_Text") instanceof Textbox) {
+						hunterResult = (Textbox) window.getFellowIfAny("ad_Text");
 					}
 					if (hunterResult != null && hunterGrpBox != null) {
 						hunterResult.setDisabled(true);

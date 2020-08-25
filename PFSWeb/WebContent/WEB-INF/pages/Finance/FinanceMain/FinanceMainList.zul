@@ -21,6 +21,7 @@
 						<button id="button_FinanceMainList_PrintList" label="${c:l('label_Print')}"
 							autodisable="button_FinanceMainList_FinanceMainSearchDialog,button_FinanceMainList_PrintList,button_FinanceMainList_NewFinanceMain,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_FinanceMainList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
+						<combobox id="betaReq" visible="false"/>
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
