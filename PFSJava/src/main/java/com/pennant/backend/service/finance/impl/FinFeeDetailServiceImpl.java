@@ -388,7 +388,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 						fee.setFeeSeq(finFeeDtl.getFeeSeq());
 						getFinFeeDetailDAO().update(fee, false, "");
 					}
-				} else if (fee.getActualAmount().compareTo(BigDecimal.ZERO) > 0) {
+				} else  {
 					fee.setFeeID(getFinFeeDetailDAO().save(fee, isWIF, tableType));
 				}
 
