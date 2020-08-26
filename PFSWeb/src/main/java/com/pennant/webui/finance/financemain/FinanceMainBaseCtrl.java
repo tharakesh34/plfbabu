@@ -19564,17 +19564,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							|| StringUtils.isNotEmpty(moduleDefiner))) {
 
 				// Overdraft Schedule Maintenance
+				FinScheduleData scheduleData = null;
 				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)) {
-					rebuildODSchd(finScheduleData);
+					scheduleData = rebuildODSchd(finScheduleData);
 				} else {
-					if (finScheduleData.getOverdraftScheduleDetails() != null) {
-						finScheduleData.getOverdraftScheduleDetails().clear();
+					if (getFinanceDetail().getFinScheduleData().getOverdraftScheduleDetails() != null) {
+						getFinanceDetail().getFinScheduleData().getOverdraftScheduleDetails().clear();
 					}
 
 					// To Rebuild the overdraft if any fields are changed
-					finScheduleData.getFinanceMain().setEventFromDate(financeMain.getFinStartDate());
+					getFinanceDetail().getFinScheduleData().getFinanceMain().setEventFromDate(
+							getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate());
 
-					ScheduleCalculator.buildODSchedule(finScheduleData);
+					scheduleData = ScheduleCalculator.buildODSchedule(getFinanceDetail().getFinScheduleData());
 				}
 
 				// Show Error Details in Schedule Calculation
@@ -19583,9 +19585,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					return;
 				}
 
-				financeMain.setLovDescIsSchdGenerated(true);
-				if (overdraftScheduleDetailDialogCtrl != null) {
-					overdraftScheduleDetailDialogCtrl.doFillScheduleList(finScheduleData);
+				getFinanceDetail().setFinScheduleData(scheduleData);
+				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
+				if (getOverdraftScheduleDetailDialogCtrl() != null) {
+					getOverdraftScheduleDetailDialogCtrl().doFillScheduleList(getFinanceDetail().getFinScheduleData());
 				} else {
 					appendScheduleDetailTab(false, false);
 				}
@@ -19738,12 +19741,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @throws InterruptedException
 	 */
-	private void rebuildODSchd(FinScheduleData finScheduleData) throws InterruptedException {
+	private FinScheduleData rebuildODSchd(FinScheduleData finScheduleData) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		// Validate Limit Increases after New Maturity Date
 		List<OverdraftScheduleDetail> odSchdList = finScheduleData.getOverdraftScheduleDetails();
-		for (OverdraftScheduleDetail curODSchd : odSchdList) {
+		for (int i = 0; i < odSchdList.size(); i++) {
+			OverdraftScheduleDetail curODSchd = odSchdList.get(i);
 			if (DateUtility.compare(curODSchd.getDroplineDate(),
 					finScheduleData.getFinanceMain().getMaturityDate()) >= 0) {
 				if (curODSchd.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO) > 0) {
@@ -19756,21 +19760,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// If any errors , on Limit Increase validation
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
 			logger.debug(Literal.LEAVING);
+			return finScheduleData;
 		}
 
 		// Overdraft Schedule Recalculation
 		finScheduleData.getFinanceMain().setEventFromDate(appDate);
-		ScheduleCalculator.buildODSchedule(finScheduleData);
+		finScheduleData = ScheduleCalculator.buildODSchedule(finScheduleData);
 
 		// If any Errors on Overdraft Schedule build
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
 			logger.debug(Literal.LEAVING);
+			return finScheduleData;
 		}
 
 		// To Recalculate the Schedule based on new Parameters
 		finScheduleData = getReScheduleService().doResetOverdraftSchd(finScheduleData);
 
 		logger.debug(Literal.LEAVING);
+		return finScheduleData;
 	}
 
 	/**
