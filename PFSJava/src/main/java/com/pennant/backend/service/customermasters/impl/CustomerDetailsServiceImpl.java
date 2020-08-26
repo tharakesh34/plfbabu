@@ -98,6 +98,7 @@ import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
 import com.pennant.backend.dao.customermasters.CustomerRatingDAO;
 import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.rmtmasters.CustomerTypeDAO;
 import com.pennant.backend.dao.smtmasters.CountryDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
@@ -155,6 +156,7 @@ import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennant.backend.model.rmtmasters.CustomerType;
 import com.pennant.backend.model.systemmasters.City;
@@ -306,6 +308,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private PostValidationHook postValidationHook;
 	private PrimaryAccountDAO primaryAccountDAO;
 	private BeneficiaryDAO beneficiaryDAO;
+	private JountAccountDetailDAO jountAccountDetailDAO;
 
 	public CustomerDetailsServiceImpl() {
 		super();
@@ -765,6 +768,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		List<CustomerFinanceDetail> customerFinanceDetail = approvalStatusEnquiryService
 				.getListOfCustomerFinanceById(id, null);
+		
+		customerFinanceDetail.forEach(customerFinDetail -> {
+			List<JointAccountDetail> jointAccountDetailList = jountAccountDetailDAO
+					.getJountAccountDetailByFinRef(customerFinDetail.getFinReference(),"_View");
+			customerFinDetail.setJointAccountDetails(jointAccountDetailList);
+		});
+
 		customerDetails.setCustomerFinanceDetailList(customerFinanceDetail);
 
 		logger.debug(Literal.LEAVING);
@@ -7896,6 +7906,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	@Override
 	public boolean isCrifDeroge(String tablename, String reference) {
 		return customerDAO.isCrifDeroge(tablename, reference);
+	}
+
+	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
+		this.jountAccountDetailDAO = jountAccountDetailDAO;
 	}
 
 }

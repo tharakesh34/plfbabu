@@ -78,12 +78,15 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	public CustomerFinanceDetail() {
 		super();
 	}
+	@XmlElement(name = "coApplicants")
+	private List<JointAccountDetail> jointAccountDetails;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("usrFName");
 		excludeFields.add("stage");
 		excludeFields.add("curOddays");
+		excludeFields.add("jointAccountDetails");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -437,4 +440,11 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 		this.numberOfTerms = numberOfTerms;
 	}
 
+	public List<JointAccountDetail> getJointAccountDetails() {
+		return jointAccountDetails;
+	}
+	
+	public void setJointAccountDetails(List<JointAccountDetail> jointAccountDetails) {
+		this.jointAccountDetails = jointAccountDetails;
+	}
 }
