@@ -783,11 +783,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		this.bounceCode.setModuleName("BounceReason");
 		this.bounceCode.setMandatoryStyle(true);
-		this.bounceCode.setValueColumn("BounceID");
-		this.bounceCode.setValueType(DataType.LONG);
+		this.bounceCode.setValueColumn("BounceCode");
+		//this.bounceCode.setValueType(DataType.LONG);
 		this.bounceCode.setDescColumn("Reason");
 		this.bounceCode.setDisplayStyle(2);
-		this.bounceCode.setValidateColumns(new String[] { "BounceID", "BounceCode", "Lovdesccategory", "Reason" });
+		this.bounceCode.setValidateColumns(new String[] { "BounceCode", "Lovdesccategory", "Reason" });
 
 		this.bounceCharge.setProperties(false, formatter);
 		this.bounceRemarks.setMaxlength(100);
