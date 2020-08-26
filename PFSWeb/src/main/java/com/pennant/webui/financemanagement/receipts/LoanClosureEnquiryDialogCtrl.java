@@ -1275,7 +1275,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		lc.setParent(item);
 
 		// Balance Due AMount
-		addAmountCell(item, allocate.getTotRecv().add(allocate.getDueGST()), ("AllocateBalDue_" + idx), true);
+		addAmountCell(item, allocate.getTotRecv(), ("AllocateBalDue_" + idx), true);
 
 		// if (allocate.isEditable()){
 		this.listBoxPastdues.appendChild(item);
@@ -3544,7 +3544,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		if (financeMain != null) {
 			Date applDate = SysParamUtil.getAppDate();
 			String appDate = DateFormatUtils.format(applDate, "MMM  dd,yyyy");
-			String disDate = DateFormatUtils.format(financeMain.getFinStartDate(), "dd'th' MMMM yyyy");
+			String disDate = DateUtility.formatToLongDate(financeMain.getFinStartDate());
+
 			Date chrgTillDate;
 
 			Date prvEmiDate = receiptData.getOrgFinPftDtls().getPrvRpySchDate();
@@ -3563,7 +3564,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			closureReport
 					.setFinAssetValue(PennantApplicationUtil.formateAmount(financeMain.getFinAssetValue(), formatter));
 			closureReport.setDisbursalDate(disDate);
-			closureReport.setChrgTillDate(DateFormatUtils.format(chrgTillDate, "MMM  dd,yyyy"));
+			closureReport.setChrgTillDate(DateUtility.formatToLongDate(chrgTillDate));
 
 			if (getFinanceDetail().getCustomerDetails() != null
 					&& getFinanceDetail().getCustomerDetails().getCustomer() != null) {
