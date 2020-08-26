@@ -942,11 +942,12 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			}
 
 			if ((StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, mandate.getStatus())
-					|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus()))
+					|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus())
+					|| StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, mandate.getStatus()))
 					&& StringUtils.isNotBlank(mandate.getMandateRef()) && !StringUtils
 							.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE, aMandate.getStatus())) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "Mandate will get Approve only when it is ACK stage";
+				valueParm[0] = "Mandate will Approve/Reject only when it is Acknowledged.";
 				returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
 				return returnStatus;
 			}
@@ -957,9 +958,8 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 				return returnStatus;
 			}
-
-			if (StringUtils.isNotBlank((mandateRegStatus))
-					&& StringUtils.equalsIgnoreCase(mandate.getStatus(), mandateRegStatus)) {
+			
+			if (StringUtils.isNotBlank((mandateRegStatus)) && StringUtils.equalsIgnoreCase(mandate.getStatus(), mandateRegStatus)) {
 				mandate.setStatus("APPROVED");
 			} else {
 				mandate.setStatus(mandate.getStatus().toUpperCase());
@@ -980,6 +980,39 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		} else {
 			mandate.setOrgReference(aMandate.getOrgReference());
 		}
+		
+		if ((StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, mandate.getStatus())
+				|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus()))
+				&& aMandate.isSwapIsActive()) {
+			mandate.setSwapIsActive(aMandate.isSwapIsActive());
+			mandate.setMandateType(aMandate.getMandateType());
+			// FinanceMain finMain =
+			// financeMainService.getFinanceMainByFinRef(mandate.getOrgReference());
+			String tableType = "";
+			if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
+				tableType = "_View";
+			}
+
+			String finType = financeMainService.getFinanceTypeFinReference(mandate.getOrgReference(), tableType);
+			String allowedRepayModes = financeTypeService.getAllowedRepayMethods(finType);
+			if (StringUtils.isNotBlank(allowedRepayModes)) {
+				boolean isTypeFound = false;
+				String[] types = allowedRepayModes.split(PennantConstants.DELIMITER_COMMA);
+				for (String type : types) {
+					if (StringUtils.equals(type, aMandate.getMandateType())) {
+						isTypeFound = true;
+						break;
+					}
+				}
+				if (!isTypeFound) {
+					String[] valueParm = new String[2];
+					valueParm[0] = mandate.getMandateType();
+					returnStatus = APIErrorHandlerService.getFailedStatus("90307", valueParm);
+					return returnStatus;
+				}
+			}
+		}
+		
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}

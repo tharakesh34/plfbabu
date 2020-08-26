@@ -20,12 +20,14 @@ import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -52,6 +54,7 @@ public class MandateController {
 	private FinanceMainService financeMainService;
 	private FinanceMainDAO financeMainDAO;
 	private PennyDropService pennyDropService;
+	private MandateStatusDAO mandateStatusDAO;
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -488,6 +491,30 @@ public class MandateController {
 		try {
 			count = mandateService.updateMandateStatus(mandate);
 			if (count > 0) {
+				MandateStatus mandateStatus = new MandateStatus();
+				mandateStatus.setMandateID(mandate.getMandateID());
+				mandateStatus.setStatus(mandate.getStatus());
+				mandateStatus.setReason(mandate.getReason());
+				mandateStatus.setChangeDate(SysParamUtil.getAppDate());
+				mandateStatusDAO.save(mandateStatus, "");
+				if ((StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus())
+						|| StringUtils.equals("Accepted", mandate.getStatus())) && mandate.isSwapIsActive()) {
+					String type = "";
+					int tempCount = 0;
+
+					tempCount = financeMainDAO.getFinanceCountById(mandate.getOrgReference(), "", false);
+					if (tempCount > 0) {
+						type = "";
+					} else if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
+						tempCount = financeMainDAO.getFinanceCountById(mandate.getOrgReference(), "_Temp", false);
+						if (tempCount > 0) {
+							type = "_Temp";
+						}
+					}
+
+					financeMainService.loanMandateSwapping(mandate.getOrgReference(), mandate.getMandateID(),
+							mandate.getMandateType(), type);
+				}
 				response = APIErrorHandlerService.getSuccessStatus();
 			} else {
 				response = APIErrorHandlerService.getFailedStatus();
@@ -545,6 +572,11 @@ public class MandateController {
 	@Autowired
 	public void setPennyDropService(PennyDropService pennyDropService) {
 		this.pennyDropService = pennyDropService;
+	}
+	
+	@Autowired
+	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
+		this.mandateStatusDAO = mandateStatusDAO;
 	}
 
 }
