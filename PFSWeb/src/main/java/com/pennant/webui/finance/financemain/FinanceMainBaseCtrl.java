@@ -9178,7 +9178,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (DateUtility.compare(emiDate, finSchdDetail.getSchDate()) == 0) {
 						if (getFinanceDetail().getFinScheduleData().getFinanceMain().isAlwBPI()) {
 							BigDecimal repayAmount = schdList.get(2).getRepayAmount();
-							chequeDetail.setAmount(repayAmount);
+							if (finSchdDetail.isTDSApplicable()) {
+								chequeDetail.setAmount(repayAmount.subtract(finSchdDetail.getTDSAmount()));
+							} else {
+								chequeDetail.setAmount(repayAmount);
+							}
 							break;
 						} else {
 							BigDecimal repayAmount = schdList.get(1).getRepayAmount();
