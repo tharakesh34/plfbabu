@@ -202,8 +202,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					if (manualAdvise.getBounceID() != 0) {
 						receivableAmt = receivableAmt.add(recAmount);
 						receivedAmt = receivedAmt.add(manualAdvise.getPaidAmount());
-						gstAmt = manualAdvise.getPaidCGST().add(manualAdvise.getPaidIGST()
-								.add(manualAdvise.getPaidSGST().add(manualAdvise.getPaidUGST())));
+						gstAmt = manualAdvise.getPaidCGST().add(manualAdvise.getPaidIGST().add(manualAdvise
+								.getPaidSGST().add(manualAdvise.getPaidUGST()).add(manualAdvise.getPaidCESS())));
 						waivedAmt = waivedAmt.add(manualAdvise.getWaivedAmount());
 					} else {
 						feeWaiverDetail = new FeeWaiverDetail();
