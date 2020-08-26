@@ -2114,6 +2114,7 @@
 		<property name="approvalStatusEnquiryService" ref="approvalStatusEnquiryService" />
 		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
 		<property name="beneficiaryDAO" ref="beneficiaryDAO" />
+		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
