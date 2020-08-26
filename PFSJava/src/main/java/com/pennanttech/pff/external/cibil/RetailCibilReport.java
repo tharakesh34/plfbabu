@@ -41,8 +41,10 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.service.cibil.CIBILService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.dataengine.Event;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.dataengine.util.DataEngineUtil;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -116,7 +118,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 				return;
 			}
 
-			updateCiblilData();
+			updateCiblilData(cibilFile);
 
 		} catch (Exception e) {
 			EXTRACT_STATUS.setStatus("F");
@@ -125,17 +127,16 @@ public class RetailCibilReport extends BasicDao<Object> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void updateCiblilData() {
+	private void updateCiblilData(File cibilFile) {
 		// Move the File into S3 bucket
 		try {
-			EventProperties properties = cibilService.getEventProperties("CIBIL_REPORT", "S3");
-			AmazonS3Bucket bucket = null;
-			if (properties != null && properties.getStorageType().equals("S3")) {
-				String accessKey = EncryptionUtil.decrypt(properties.getAccessKey());
-				String secretKey = EncryptionUtil.decrypt(properties.getSecretKey());
-				String bucketName = properties.getBucketName();
-				bucket = new AmazonS3Bucket(properties.getRegionName(), bucketName, accessKey, secretKey);
-				bucket.setSseAlgorithm(properties.getSseAlgorithm());
+			EventProperties properties = cibilService.getEventProperties("CIBIL_REPORT");
+			if (properties.getStorageType().equalsIgnoreCase("MOVE_TO_S3_BUCKET")) {
+				DataEngineUtil.postEvents(Event.MOVE_TO_S3_BUCKET.name(), properties, cibilFile);
+			} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_SFTP")) {
+				DataEngineUtil.postEvents(Event.COPY_TO_SFTP.name(), properties, cibilFile);
+			} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_FTP")) {
+				DataEngineUtil.postEvents(Event.COPY_TO_FTP.name(), properties, cibilFile);
 			}
 			EXTRACT_STATUS.setStatus("S");
 		} catch (Exception e) {

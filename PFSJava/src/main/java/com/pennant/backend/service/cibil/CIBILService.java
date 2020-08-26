@@ -26,5 +26,8 @@ public interface CIBILService {
 	public CibilMemberDetail getMemberDetails(String bureauType);
 
 	long getotalRecords(String pffCustctgCorp);
+	
+	EventProperties getEventProperties(String configName);
+
 
 }
