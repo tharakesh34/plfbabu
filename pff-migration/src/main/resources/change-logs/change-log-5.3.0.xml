@@ -383,4 +383,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="DE#1201" author="saiteja.r">
+		<addUniqueConstraint columnNames="custcrcpr, custctgcode" constraintName="uk_cust_ctgcode_crcpr"
+			tableName="CUSTOMERS" />
+	</changeSet>
+
+	<changeSet id="DE#1201.1" author="saiteja.r">
+		<addUniqueConstraint columnNames="custcrcpr, custctgcode" constraintName="uk_cust_ctgcode_crcpr_temp"
+			tableName="CUSTOMERS_TEMP" />
+	</changeSet>
 </databaseChangeLog>
