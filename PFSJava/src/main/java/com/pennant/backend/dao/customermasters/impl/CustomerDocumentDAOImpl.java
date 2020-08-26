@@ -498,11 +498,11 @@ public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implemen
 		StringBuilder selectSql = new StringBuilder(
 				"Select CustID, CustDocCategory docCategory, 'CUSTOMER' categoryCode, ");
 		selectSql.append(" CustDocType DocType, CustDocName DocName, DocRefId, DocPurpose, DocUri,");
+		selectSql.append(" CustDocTitle, CustDocSysName, custDocIssuedCountry,");
 		if (type.contains("View")) {
-			selectSql.append(" lovDescCustDocCategory lovDescDocCategoryName, CustDocTitle, CustDocSysName,");
+			selectSql.append(" lovDescCustDocCategory lovDescDocCategoryName, ");
 			selectSql.append(" custDocRcvdOn, custDocExpDate, custDocIssuedOn, lovDescCustCIF, lovDescCustShrtName,");
-			selectSql.append(
-					" custDocIssuedCountry, lovDescCustDocIssuedCountry, custDocIsVerified, custDocVerifiedBy, custDocIsAcrive,");
+			selectSql.append(" lovDescCustDocIssuedCountry, custDocIsVerified, custDocVerifiedBy, custDocIsAcrive,");
 			selectSql.append(" DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
