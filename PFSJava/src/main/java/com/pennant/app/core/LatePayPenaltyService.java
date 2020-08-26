@@ -202,6 +202,9 @@ public class LatePayPenaltyService extends ServiceHelper {
 		fod.setTotPenaltyPaid(BigDecimal.ZERO);
 		fod.setTotPenaltyBal(BigDecimal.ZERO);
 		fod.setTotWaived(BigDecimal.ZERO);
+		
+		BigDecimal totPenaltyPaid = BigDecimal.ZERO;
+		BigDecimal totWaived = BigDecimal.ZERO;
 
 		List<OverdueChargeRecovery> odcrList = new ArrayList<OverdueChargeRecovery>();
 		OverdueChargeRecovery odcr = new OverdueChargeRecovery();
@@ -256,11 +259,18 @@ public class LatePayPenaltyService extends ServiceHelper {
 			odcr.setFinCurODAmt(odPri.add(odPft));
 			odcr.setPenaltyPaid(rpd.getPenaltyPaid());
 			odcr.setWaivedAmt(rpd.getPenaltyWaived());
-			odcrList.add(odcr);
+			
+			BigDecimal schdpaid = rpd.getFinSchdPriPaid().add(rpd.getFinSchdPftPaid());
+			if (schdpaid.compareTo(BigDecimal.ZERO) > 0) {
+				odcrList.add(odcr);
+			}
 
 			if (odcr.getMovementDate().compareTo(valueDate) == 0) {
 				isAddTodayRcd = false;
 			}
+			
+			totPenaltyPaid = totPenaltyPaid.add(rpd.getPenaltyPaid());
+			totWaived = totWaived.add(rpd.getPenaltyWaived());
 
 		}
 
@@ -387,8 +397,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 		}
 
 		// Add Today Paid and Waived
-		fod.setTotPenaltyPaid(fod.getTotPenaltyPaid().add(odcrNext.getPenaltyPaid()));
-		fod.setTotWaived(fod.getTotWaived().add(odcrNext.getWaivedAmt()));
+		fod.setTotPenaltyPaid(totPenaltyPaid);
+		fod.setTotWaived(totWaived);
 		fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 	}
 
