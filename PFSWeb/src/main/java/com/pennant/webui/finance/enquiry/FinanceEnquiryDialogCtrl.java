@@ -1532,8 +1532,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.accountsOfficer.setValue(String.valueOf(aFinanceMain.getAccountsOfficer()));
 		this.accountsOfficer.setDescription(aFinanceMain.getLovDescAccountsOfficer());
 
-		this.dsaCode.setValue(aFinanceMain.getDsaName());
-		this.dsaCode.setDescription(aFinanceMain.getDsaCodeDesc());
+		this.dsaCode.setValue(aFinanceMain.getDsaCode());
+		this.dsaCode.setDescription(aFinanceMain.getDsaName());
 
 		this.eligibilityMethod.setValue(aFinanceMain.getLovEligibilityMethod());
 		this.eligibilityMethod.setDescription(aFinanceMain.getLovDescEligibilityMethod());
