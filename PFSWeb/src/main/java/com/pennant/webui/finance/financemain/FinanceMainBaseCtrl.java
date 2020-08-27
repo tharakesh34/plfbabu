@@ -1140,7 +1140,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired
 	private BaseRateCodeService baseRateCodeService;
 	private transient SpreadsheetCtrl spreadSheetCtrl;
-	private FinanceSpreadSheetCtrl financeSpreadSheetCtrl;
 
 	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
 	private List<String> assignCollateralRef = new ArrayList<>();
@@ -1183,6 +1182,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	Map<String, Object> dataMap = new HashMap<>();
 
 	private transient DMSDialogCtrl dmsDialogCtrl;
+	private transient FinanceSpreadSheetCtrl financeSpreadSheetCtrl;
 	private transient FinanceExtCreditReviewSpreadSheetCtrl financeExtCreditReviewSpreadSheetCtrl;
 
 	// Under Construction

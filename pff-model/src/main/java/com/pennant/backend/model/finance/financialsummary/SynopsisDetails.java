@@ -42,17 +42,12 @@
  */
 package com.pennant.backend.model.finance.financialsummary;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -68,12 +63,14 @@ public class SynopsisDetails extends AbstractWorkflowEntity {
 	private long id = Long.MIN_VALUE;
 	private long ParticularId;
 
-	private String customerBackGround;
-	private String detailedBusinessProfile;
-	private String detailsofGroupCompaniesIfAny;
-	private String pdDetails;
-	private String majorProduct;
-	private String otherRemarks;
+	private byte[] customerBackGround;
+	private byte[] detailedBusinessProfile;
+	private byte[] detailsofGroupCompaniesIfAny;
+	private byte[] pdDetails;
+	private byte[] majorProduct;
+	private byte[] otherRemarks;
+	private byte[] cmtOnCollateralDtls;
+	private byte[] endUse;
 
 	private boolean newRecord = false;
 	private SynopsisDetails befImage;
@@ -156,52 +153,68 @@ public class SynopsisDetails extends AbstractWorkflowEntity {
 		this.particulars = particulars;
 	}
 
-	public String getCustomerBackGround() {
+	public byte[] getCustomerBackGround() {
 		return customerBackGround;
 	}
 
-	public void setCustomerBackGround(String customerBackGround) {
+	public void setCustomerBackGround(byte[] customerBackGround) {
 		this.customerBackGround = customerBackGround;
 	}
 
-	public String getDetailedBusinessProfile() {
+	public byte[] getDetailedBusinessProfile() {
 		return detailedBusinessProfile;
 	}
 
-	public void setDetailedBusinessProfile(String detailedBusinessProfile) {
+	public void setDetailedBusinessProfile(byte[] detailedBusinessProfile) {
 		this.detailedBusinessProfile = detailedBusinessProfile;
 	}
 
-	public String getDetailsofGroupCompaniesIfAny() {
+	public byte[] getDetailsofGroupCompaniesIfAny() {
 		return detailsofGroupCompaniesIfAny;
 	}
 
-	public void setDetailsofGroupCompaniesIfAny(String detailsofGroupCompaniesIfAny) {
+	public void setDetailsofGroupCompaniesIfAny(byte[] detailsofGroupCompaniesIfAny) {
 		this.detailsofGroupCompaniesIfAny = detailsofGroupCompaniesIfAny;
 	}
 
-	public String getPdDetails() {
+	public byte[] getPdDetails() {
 		return pdDetails;
 	}
 
-	public void setPdDetails(String pdDetails) {
+	public void setPdDetails(byte[] pdDetails) {
 		this.pdDetails = pdDetails;
 	}
 
-	public String getMajorProduct() {
+	public byte[] getMajorProduct() {
 		return majorProduct;
 	}
 
-	public void setMajorProduct(String majorProduct) {
+	public void setMajorProduct(byte[] majorProduct) {
 		this.majorProduct = majorProduct;
 	}
 
-	public String getOtherRemarks() {
+	public byte[] getOtherRemarks() {
 		return otherRemarks;
 	}
 
-	public void setOtherRemarks(String otherRemarks) {
+	public void setOtherRemarks(byte[] otherRemarks) {
 		this.otherRemarks = otherRemarks;
+	}
+
+	public byte[] getCmtOnCollateralDtls() {
+		return cmtOnCollateralDtls;
+	}
+
+	public void setCmtOnCollateralDtls(byte[] cmtOnCollateralDtls) {
+		this.cmtOnCollateralDtls = cmtOnCollateralDtls;
+	}
+
+	public byte[] getEndUse() {
+		return endUse;
+	}
+
+	public void setEndUse(byte[] endUse) {
+		this.endUse = endUse;
 	}
 
 }

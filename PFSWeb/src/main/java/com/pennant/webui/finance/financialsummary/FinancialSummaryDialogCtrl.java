@@ -42,6 +42,7 @@ O * Copyright 2011 - Pennant Technologies
  */
 package com.pennant.webui.finance.financialsummary;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -118,12 +119,15 @@ import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.finance.FinanceMainExtService;
 import com.pennant.backend.service.finance.GuarantorDetailService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.component.PTCKeditor;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
@@ -168,14 +172,16 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Textbox endUseOfFunds;
 	private Textbox btTenure;
 	private Textbox btdetailsEmi;
-	private Textbox customerBackground;
-	private Textbox detailedBusinessProfile;
-	private Textbox detailsofGroupCompaniesIfAny;
-	private Textbox pdDetails;
-	private Textbox majorProduct;
-	private Textbox otherRemarks;
+	protected PTCKeditor customerBackground;
+	protected PTCKeditor detailedBusinessProfile;
+	protected PTCKeditor detailsofGroupCompaniesIfAny;
+	protected PTCKeditor pdDetails;
+	protected PTCKeditor majorProduct;
+	protected PTCKeditor otherRemarks;
 	private Textbox purposeOfLoan;
 	private Textbox employeerName;
+	protected PTCKeditor cmtOnCollateralDtls;
+	protected PTCKeditor endUse;
 
 	protected Listbox listBoxCustomerDetails;
 	protected Listbox listBoxReferencesDetails;
@@ -270,6 +276,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private CustomerDetailsService customerDetailsService;
 	private GuarantorDetailService guarantorDetailService;
+	private FinanceMainExtService financeMainExtService;
 
 	List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
 	protected Tabpanel otherDetailsFieldTabPanel;
@@ -551,13 +558,49 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.loanReference.setValue(financeMain.getFinReference());
 		this.source.setValue(financeMain.getLovDescSourceCity());
 		if (financeDetail.getSynopsisDetails() != null) {
-			this.customerBackground.setValue(financeDetail.getSynopsisDetails().getCustomerBackGround());
-			this.detailedBusinessProfile.setValue(financeDetail.getSynopsisDetails().getDetailedBusinessProfile());
-			this.detailsofGroupCompaniesIfAny
-					.setValue(financeDetail.getSynopsisDetails().getDetailsofGroupCompaniesIfAny());
-			this.pdDetails.setValue(financeDetail.getSynopsisDetails().getPdDetails());
-			this.majorProduct.setValue(financeDetail.getSynopsisDetails().getMajorProduct());
-			this.otherRemarks.setValue(financeDetail.getSynopsisDetails().getOtherRemarks());
+			try {
+				if (financeDetail.getSynopsisDetails().getCustomerBackGround() != null) {
+					//We are using UTF-8 character set to provide the compatibility of the existing data
+					this.customerBackground
+							.setValue(new String(financeDetail.getSynopsisDetails().getCustomerBackGround(),
+									NotificationConstants.UTF_EIGHT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getDetailedBusinessProfile() != null) {
+					this.detailedBusinessProfile
+							.setValue(new String(financeDetail.getSynopsisDetails().getDetailedBusinessProfile(),
+									NotificationConstants.UTF_EIGHT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getDetailsofGroupCompaniesIfAny() != null) {
+					this.detailsofGroupCompaniesIfAny
+							.setValue(new String(financeDetail.getSynopsisDetails().getDetailsofGroupCompaniesIfAny(),
+									NotificationConstants.UTF_EIGHT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getPdDetails() != null) {
+					this.pdDetails.setValue(new String(financeDetail.getSynopsisDetails().getPdDetails(),
+							NotificationConstants.UTF_EIGHT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getMajorProduct() != null) {
+					this.majorProduct.setValue(new String(financeDetail.getSynopsisDetails().getMajorProduct(),
+							NotificationConstants.UTF_EIGHT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getOtherRemarks() != null) {
+					this.otherRemarks.setValue(new String(financeDetail.getSynopsisDetails().getOtherRemarks(),
+							NotificationConstants.UTF_EIGHT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getCmtOnCollateralDtls() != null) {
+					//new requirement
+					this.cmtOnCollateralDtls
+							.setValue(new String(financeDetail.getSynopsisDetails().getCmtOnCollateralDtls(),
+									NotificationConstants.DEFAULT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getEndUse() != null) {
+					this.endUse.setValue(new String(financeDetail.getSynopsisDetails().getEndUse(),
+							NotificationConstants.DEFAULT_CHARSET));
+				}
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		if (isbasicDetailsVisible) {
 			doFillBasicDetails(financeMain, fsdList);
@@ -820,12 +863,24 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			synopsisDetails.setRecordStatus(PennantConstants.RECORD_TYPE_NEW);
 			synopsisDetails.setNewRecord(true);
 		}
-		synopsisDetails.setCustomerBackGround(this.customerBackground.getValue());
-		synopsisDetails.setDetailedBusinessProfile(this.detailedBusinessProfile.getValue());
-		synopsisDetails.setDetailsofGroupCompaniesIfAny(this.detailsofGroupCompaniesIfAny.getValue());
-		synopsisDetails.setPdDetails(this.pdDetails.getValue());
-		synopsisDetails.setMajorProduct(this.majorProduct.getValue());
-		synopsisDetails.setOtherRemarks(this.otherRemarks.getValue());
+		try {
+			synopsisDetails.setCustomerBackGround(
+					this.customerBackground.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+			synopsisDetails.setDetailedBusinessProfile(
+					this.detailedBusinessProfile.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+			synopsisDetails.setDetailsofGroupCompaniesIfAny(
+					this.detailsofGroupCompaniesIfAny.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+			synopsisDetails.setPdDetails(this.pdDetails.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+			synopsisDetails
+					.setMajorProduct(this.majorProduct.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+			synopsisDetails
+					.setOtherRemarks(this.otherRemarks.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+			synopsisDetails.setCmtOnCollateralDtls(
+					this.cmtOnCollateralDtls.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
+			synopsisDetails.setEndUse(this.endUse.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		synopsisDetails.setFinReference(finReference);
 
 		setSynopsisDetails(synopsisDetails);
@@ -1982,6 +2037,14 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void doFillRemarks(FinanceMainExt financeMainExt) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public FinanceMainExtService getFinanceMainExtService() {
+		return financeMainExtService;
+	}
+
+	public void setFinanceMainExtService(FinanceMainExtService financeMainExtService) {
+		this.financeMainExtService = financeMainExtService;
 	}
 
 }

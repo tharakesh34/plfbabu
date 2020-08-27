@@ -61,7 +61,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	protected DMSService dmsService;
-	protected DocumentManagementService dmsManagementService;
+	protected DocumentManagementService documentManagementService;
 
 	private List<DocumentDetails> finDocumentDetailList = new ArrayList<DocumentDetails>();
 	private Object financeMainDialogCtrl;
@@ -172,7 +172,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				}
 			}
 
-			List<ExternalDocument> listOfExternalDocs = dmsManagementService.getExternalDocument(extDocument);
+			List<ExternalDocument> listOfExternalDocs = documentManagementService.getExternalDocument(extDocument);
 
 			doFillExtDocuments(listOfExternalDocs);
 		} catch (Exception e) {
@@ -341,11 +341,11 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 							}
 
 							if (CollectionUtils.isNotEmpty(updatedDocumentsList)) {
-								dmsManagementService.updateExternalDocuments(updatedDocumentsList);
+								documentManagementService.updateExternalDocuments(updatedDocumentsList);
 							}
 
 							if (CollectionUtils.isNotEmpty(addFinDocuments)) {
-								dmsManagementService.addExternalDocument(addFinDocuments);
+								documentManagementService.addExternalDocument(addFinDocuments);
 							}
 						}
 					}
@@ -359,11 +359,11 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 								applicantCIF, applicationNo, financeDetail);
 
 						if (CollectionUtils.isNotEmpty(map.get("update"))) {
-							dmsManagementService.updateExternalDocuments(map.get("update"));
+							documentManagementService.updateExternalDocuments(map.get("update"));
 						}
 
 						if (CollectionUtils.isNotEmpty(map.get("add"))) {
-							dmsManagementService.addExternalDocument(map.get("add"));
+							documentManagementService.addExternalDocument(map.get("add"));
 						}
 					}
 
@@ -377,10 +377,10 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 								Map<String, List<ExternalDocument>> coAppMap = prepareUpdateDocumentsList(
 										coApplicantDocs, coApplicant.getCustCIF(), applicationNo, financeDetail);
 								if (CollectionUtils.isNotEmpty(coAppMap.get("update"))) {
-									dmsManagementService.updateExternalDocuments(coAppMap.get("update"));
+									documentManagementService.updateExternalDocuments(coAppMap.get("update"));
 								}
 								if (CollectionUtils.isNotEmpty(coAppMap.get("add"))) {
-									dmsManagementService.addExternalDocument(coAppMap.get("add"));
+									documentManagementService.addExternalDocument(coAppMap.get("add"));
 								}
 							}
 						}
@@ -509,7 +509,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					}
 					//Calling metaData update API to update that doc is received  - Piramal implementation 
 					if (StringUtils.isNotEmpty(App.getProperty("exteranal.interface.dms.leadId.based"))) {
-						dmsManagementService.updateExternalDocuments(extDoc,
+						documentManagementService.updateExternalDocuments(extDoc,
 								financeDetail.getFinScheduleData().getFinanceMain().getCustID());
 
 					}
@@ -608,7 +608,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 						//Calling metaData update API to update CIFs tagged while saving  - Piramal implementation 
 						if (StringUtils.isNotEmpty(App.getProperty("exteranal.interface.dms.leadId.based"))) {
-							dmsManagementService.updateExternalDocuments(extDoc, custId);
+							documentManagementService.updateExternalDocuments(extDoc, custId);
 
 						}
 					}
@@ -657,8 +657,8 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	}
 
 	@Autowired(required = false)
-	public void setDmsManagementService(DocumentManagementService dmsManagementService) {
-		this.dmsManagementService = dmsManagementService;
+	public void setDocumentManagementService(DocumentManagementService documentManagementService) {
+		this.documentManagementService = documentManagementService;
 	}
 
 	public List<DocumentDetails> getDocumentDetailList() {
