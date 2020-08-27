@@ -8193,4 +8193,36 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="382" author="kranthi.k">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTAMOUNTCODES WHERE AllowedEvent ='REPAY' and amountCode = 'CACLT_ReceiptAmount';
+				DELETE FROM BMTAMOUNTCODES WHERE AllowedEvent ='REPAY' and amountCode = 'DSF_ReceiptAmount';
+				INSERT INTO BMTAMOUNTCODES VALUES('REPAY',  0, 'CACLT_ReceiptAmount',  'Cash Collateral', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO BMTAMOUNTCODES VALUES('REPAY', 0, 'DSF_ReceiptAmount', 'Debt Service Fund', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="383" author="kranthi.k">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTAMOUNTCODES WHERE AllowedEvent ='EARLYSTL' and amountCode = 'CACLT_ReceiptAmount';
+				DELETE FROM BMTAMOUNTCODES WHERE AllowedEvent ='EARLYSTL' and amountCode = 'DSF_ReceiptAmount';
+				INSERT INTO BMTAMOUNTCODES VALUES('EARLYSTL',  0, 'CACLT_ReceiptAmount',  'Cash Collateral', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO BMTAMOUNTCODES VALUES('EARLYSTL', 0, 'DSF_ReceiptAmount', 'Debt Service Fund', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);			
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="384" author="kranthi.k">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTAMOUNTCODES WHERE AllowedEvent ='EARLYPAY' and amountCode = 'CACLT_ReceiptAmount';
+				DELETE FROM BMTAMOUNTCODES WHERE AllowedEvent ='EARLYPAY' and amountCode = 'DSF_ReceiptAmount';
+				INSERT INTO BMTAMOUNTCODES VALUES('EARLYPAY',  0, 'CACLT_ReceiptAmount',  'Cash Collateral', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO BMTAMOUNTCODES VALUES('EARLYPAY', 0, 'DSF_ReceiptAmount', 'Debt Service Fund', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
