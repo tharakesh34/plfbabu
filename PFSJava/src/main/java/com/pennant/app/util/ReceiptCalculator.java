@@ -2352,8 +2352,7 @@ public class ReceiptCalculator implements Serializable {
 				if (allocate.getAllocationTo() == -(feeDtl.getFeeTypeID())) {
 
 					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
-						feeDtl.setPaidAmountOriginal(feeDtl.getPaidAmountOriginal()
-								.add(allocate.getPaidAmount().subtract(allocate.getPaidGST())));
+						feeDtl.setPaidAmountOriginal(allocate.getPaidAmount().subtract(allocate.getPaidGST()));
 						feeDtl.setRemainingFeeOriginal(feeDtl.getActualAmountOriginal()
 								.subtract(allocate.getWaivedNow()).subtract(feeDtl.getPaidAmountOriginal()));
 					} else {
@@ -3952,12 +3951,12 @@ public class ReceiptCalculator implements Serializable {
 			taxSplit = getGST(financeDetail, taxSplit);
 
 			// Set the GST to allocations
-			allocation.setPaidCGST(taxSplit.getcGST());
-			allocation.setPaidSGST(taxSplit.getsGST());
-			allocation.setPaidUGST(taxSplit.getuGST());
-			allocation.setPaidIGST(taxSplit.getiGST());
-			allocation.setPaidCESS(taxSplit.getCess());
-			allocation.setPaidGST(taxSplit.gettGST());
+			allocation.setPaidCGST(allocation.getPaidCGST().add(taxSplit.getcGST()));
+			allocation.setPaidSGST(allocation.getPaidSGST().add(taxSplit.getsGST()));
+			allocation.setPaidUGST(allocation.getPaidUGST().add(taxSplit.getuGST()));
+			allocation.setPaidIGST(allocation.getPaidIGST().add(taxSplit.getiGST()));
+			allocation.setPaidCESS(allocation.getPaidCESS().add(taxSplit.getCess()));
+			allocation.setPaidGST(allocation.getPaidGST().add(taxSplit.gettGST()));
 
 			if (allocation.getTaxHeader() != null
 					&& CollectionUtils.isNotEmpty(allocation.getTaxHeader().getTaxDetails())) {
