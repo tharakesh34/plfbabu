@@ -518,7 +518,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 					}
 					taxHeaderDetailsDAO.saveTaxes(taxList, tableType.getSuffix());
 				}
-				if (paymentDetail.getPaymentDetailId() <= 0) {
+				if (paymentDetail.getPaymentDetailId() <= 0 || tableType.equals(TableType.MAIN_TAB)) {
 					String detailId = getPaymentDetailDAO().save(paymentDetail, tableType);
 					paymentDetail.setPaymentDetailId(Long.valueOf(detailId));
 				}
