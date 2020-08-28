@@ -3003,5 +3003,16 @@
 			select deps_restore_dependencies('plf','customerfinancedetails_aview');
 		</sql>
 	</changeSet>
+	
+	<changeSet id="DE#1242" author="pavankalyan.s">
+		<sql>
+			<![CDATA[
+				delete from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYSTL' and RBFLDNAME = 'completedInstallments';
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES', 'EARLYSTL', 'completedInstallments', 'Completed Installments Till Date', 'int', 9, '1', '1', '', 'static', '');
+				delete from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYPAY' and RBFLDNAME = 'completedInstallments';
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES', 'EARLYPAY', 'completedInstallments', 'Completed Installments Till Date', 'int', 9, '1', '1', '', 'static', '');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
