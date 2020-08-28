@@ -1475,7 +1475,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.productCtg.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_TaxNumber"));
 		this.shortCode.setReadonly(isReadOnly("VehicleDealerDialog_VASM_Code"));
 		this.active.setDisabled(isReadOnly("VehicleDealerDialog_" + module + "_Active"));
-		this.code.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_code"));
+		this.code.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_Code"));
 		this.panNumber.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_PanNumber"));
 		this.uidNumber.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_UidNumber"));
 		this.taxNumber.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_TaxNumber"));
