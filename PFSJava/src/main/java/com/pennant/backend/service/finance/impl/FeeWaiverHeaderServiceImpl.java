@@ -173,6 +173,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			BigDecimal receivedAmt = BigDecimal.ZERO;
 			BigDecimal gstAmt = BigDecimal.ZERO;
 			BigDecimal waivedAmt = BigDecimal.ZERO;
+			BigDecimal adviseAmt = BigDecimal.ZERO;
+			BigDecimal waivedGstAmt = BigDecimal.ZERO;
+			BigDecimal waivedGstBounceAmt = BigDecimal.ZERO;
 
 			List<FeeWaiverDetail> detailList = new ArrayList<FeeWaiverDetail>();
 
@@ -200,11 +203,24 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					BigDecimal recAmount = manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount());
 
 					if (manualAdvise.getBounceID() != 0) {
+						manualAdvise.setAdviseID(-3);
+					}
+					BigDecimal currWaiverGst = feeWaiverDetailDAO.getFeeWaiverDetailList(finReference,
+							manualAdvise.getAdviseID());
+
+					if (manualAdvise.getBounceID() != 0) {
 						receivableAmt = receivableAmt.add(recAmount);
 						receivedAmt = receivedAmt.add(manualAdvise.getPaidAmount());
+						adviseAmt = manualAdvise.getAdviseAmount();
 						gstAmt = manualAdvise.getPaidCGST().add(manualAdvise.getPaidIGST().add(manualAdvise
-								.getPaidSGST().add(manualAdvise.getPaidUGST()).add(manualAdvise.getPaidCESS())));
+								.getPaidSGST().add(manualAdvise.getPaidUGST().add(manualAdvise.getPaidCESS()))));
+
 						waivedAmt = waivedAmt.add(manualAdvise.getWaivedAmount());
+
+						if (currWaiverGst != null && currWaiverGst.compareTo(BigDecimal.ZERO) > 0) {
+							waivedGstBounceAmt = currWaiverGst;
+						}
+
 					} else {
 						feeWaiverDetail = new FeeWaiverDetail();
 						feeWaiverDetail.setFinReference(finReference);
@@ -216,7 +232,20 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						feeWaiverDetail.setTaxApplicable(manualAdvise.isTaxApplicable());
 						feeWaiverDetail.setTaxComponent(manualAdvise.getTaxComponent());
 						feeWaiverDetail.setReceivedAmount(manualAdvise.getPaidAmount());
+						feeWaiverDetail.setWaivedAmount(manualAdvise.getWaivedAmount());
 
+						if (currWaiverGst != null && currWaiverGst.compareTo(BigDecimal.ZERO) > 0) {
+							waivedGstAmt = currWaiverGst;
+						}
+						feeWaiverDetail.setWaiverGST(waivedGstAmt);
+
+						if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE,
+								feeWaiverDetail.getTaxComponent())) {
+							TaxAmountSplit taxSplit = GSTCalculator.getExclusiveGST(manualAdvise.getAdviseAmount(),
+									gstPercentages);
+							feeWaiverDetail.setAdviseAmount(manualAdvise.getAdviseAmount());
+							feeWaiverDetail.setAdviseGST(taxSplit.gettGST());
+						}
 						prepareGST(feeWaiverDetail, recAmount, gstPercentages);
 
 						if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE,
@@ -254,6 +283,14 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				}
 				feeWaiverDetail.setReceivedAmount(receivedAmt);
 
+				if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE,
+						feeWaiverDetail.getTaxComponent())) {
+					TaxAmountSplit taxSplit = GSTCalculator.getExclusiveGST(adviseAmt, gstPercentages);
+					feeWaiverDetail.setAdviseAmount(adviseAmt);
+					feeWaiverDetail.setWaivedAmount(waivedAmt);
+					feeWaiverDetail.setWaiverGST(waivedGstBounceAmt);
+					feeWaiverDetail.setAdviseGST(taxSplit.gettGST());
+				}
 				prepareGST(feeWaiverDetail, receivableAmt, gstPercentages);
 
 				feeWaiverDetail.setWaivedAmount(waivedAmt);
@@ -393,18 +430,27 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private void prepareGST(FeeWaiverDetail feeWaiverDetail, BigDecimal receivableAmt,
 			Map<String, BigDecimal> gstPercentages) {
 		logger.debug(Literal.ENTERING);
+		BigDecimal actualRevAmount = BigDecimal.ZERO;
 
 		if (feeWaiverDetail.isTaxApplicable()) {
 			TaxAmountSplit taxSplit = null;
 			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(feeWaiverDetail.getTaxComponent())) {
+
 				taxSplit = GSTCalculator.getExclusiveGST(receivableAmt, gstPercentages);
-				feeWaiverDetail.setActualReceivable(receivableAmt);
+
+				if (feeWaiverDetail.getAdviseAmount() != null) {
+					actualRevAmount = feeWaiverDetail.getAdviseAmount().subtract(feeWaiverDetail.getWaivedAmount());
+				}
+				feeWaiverDetail.setActualReceivable(actualRevAmount);
+				feeWaiverDetail
+						.setReceivableGST(feeWaiverDetail.getAdviseGST().subtract(feeWaiverDetail.getWaiverGST()));
+				feeWaiverDetail.setReceivableAmount(actualRevAmount.add(feeWaiverDetail.getReceivableGST()));
 			} else {
 				taxSplit = GSTCalculator.getInclusiveGST(receivableAmt, gstPercentages);
 				feeWaiverDetail.setActualReceivable(receivableAmt.subtract(taxSplit.gettGST()));
+				feeWaiverDetail.setReceivableGST(taxSplit.gettGST());
+				feeWaiverDetail.setReceivableAmount(taxSplit.getNetAmount());
 			}
-			feeWaiverDetail.setReceivableGST(taxSplit.gettGST());
-			feeWaiverDetail.setReceivableAmount(taxSplit.getNetAmount());
 
 			List<Taxes> taxes = new ArrayList<>();
 

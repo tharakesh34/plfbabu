@@ -1386,7 +1386,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					soaTranReport.setValueDate(ma.getValueDate());
 					soaTranReport.setCreditAmount(ma.getWaivedAmount());
 					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(ma.getTaxComponent())) {
-						soaTranReport.setCreditAmount(ma.getWaivedAmount().add(getWaivedGST(ma.getTaxHeader())));
+						soaTranReport.setCreditAmount(ma.getWaivedAmount().add(ma.getCurrWaiverGst()));
 					}
 					soaTranReport.setDebitAmount(BigDecimal.ZERO);
 					soaTranReport.setPriority(15);
