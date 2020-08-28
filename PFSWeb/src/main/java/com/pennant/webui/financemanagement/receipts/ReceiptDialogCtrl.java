@@ -74,6 +74,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
@@ -1350,6 +1351,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			BounceReason bounceReason = (BounceReason) dataObject;
 			if (bounceReason != null) {
 				Map<String, Object> executeMap = bounceReason.getDeclaredFieldValues();
+				this.bounceCode.setAttribute("BounceId", bounceReason.getId());
 
 				if (receiptHeader != null) {
 					if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
@@ -1606,10 +1608,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			ManualAdvise bounceReason = rch.getManualAdvise();
 			if (bounceReason != null) {
-				this.bounceCode.setValue(String.valueOf(bounceReason.getBounceID()), bounceReason.getBounceCode());
+				this.bounceCode.setValue(String.valueOf(bounceReason.getBounceCode()),
+						bounceReason.getBounceCodeDesc());
 				this.bounceCharge
 						.setValue(PennantApplicationUtil.formateAmount(bounceReason.getAdviseAmount(), formatter));
 				this.bounceRemarks.setValue(bounceReason.getRemarks());
+				this.bounceCode.setAttribute("BounceId", bounceReason.getBounceID());
 			}
 		} else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
 			this.cancelReason.setValue(rch.getCancelReason(), rch.getCancelReasonDesc());
@@ -4121,7 +4125,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 			bounce.setReceiptID(header.getReceiptID());
 			try {
-				bounce.setBounceID(Long.valueOf(this.bounceCode.getValue()));
+				this.bounceCode.getValidatedValue();
+				Object object = this.bounceCode.getAttribute("BounceId");
+				if (object != null) {
+					bounce.setBounceID(NumberUtils.toLong(object.toString()));
+				} else {
+					bounce.setBounceID(0);
+				}
 			} catch (WrongValueException e) {
 				wve.add(e);
 			}
