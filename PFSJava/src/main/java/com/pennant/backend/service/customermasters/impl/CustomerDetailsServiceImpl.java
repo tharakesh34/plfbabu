@@ -976,7 +976,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * @return Customer
 	 */
 	public CustomerDetails getApprovedCustomerById(long id) {
-		return getCustomerById(id, "");
+		return getCustomerById(id, "_AView");
 	}
 
 	/**
