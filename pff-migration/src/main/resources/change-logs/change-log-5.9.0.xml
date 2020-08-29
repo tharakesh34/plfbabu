@@ -1798,7 +1798,7 @@
 				  LEFT JOIN ENTITY T10 ON T10.ENTITYCODE = T1.ENTITY
 				 WHERE NOT (EXISTS ( SELECT 1 FROM RMTBRANCHES_TEMP WHERE RMTBRANCHES_TEMP.BRANCHCODE = T1.BRANCHCODE))
           ]]>
-		</createView>
+	</createView>
 	</changeSet>
 
 	<changeSet id="ST#931.9_post" author="Gopalaswamy.M" dbms="postgresql">
@@ -2125,7 +2125,7 @@
 					 JOIN PINCODES T5 ON T1.PINCODEID = T5.PINCODEID 
 					 JOIN RMTPROVINCEVSCITY T6 ON T1.CITYCODE = T6.PCCITY 
 			]]>
-		</createView>
+	</createView>
 	</changeSet>
 
 	<changeSet id="ST#931.26_post" author="Gopalaswamy.M" dbms="postgresql">
@@ -2222,7 +2222,7 @@
 					 JOIN RMTPROVINCEVSCITY T6 ON T1.CITYCODE = T6.PCCITY 
 				  WHERE NOT (EXISTS ( SELECT 1 FROM TAXDETAIL_TEMP WHERE TAXDETAIL_TEMP.ID = T1.ID))
 			]]>
-		</createView>
+	</createView>
 	</changeSet>
 
 	<changeSet id="ST#931.27_post" author="Gopalaswamy.M" dbms="postgresql">
@@ -2345,7 +2345,7 @@
 					LEFT JOIN BMTCOUNTRIES T5 ON T1.CUSTADDRCOUNTRY = T5.COUNTRYCODE
 					LEFT JOIN PINCODES T6 ON T1.PINCODEID = T6.PINCODEID
 			]]>
-		</createView>
+	</createView>
 	</changeSet>
 
 	<changeSet id="ST#931.35_post" author="Gopalaswamy.M" dbms="postgresql">
@@ -2607,7 +2607,7 @@
 				     LEFT JOIN RMTCUSTTYPES T8 ON T1.ENTITYTYPE = T8.CUSTTYPECODE
 				     LEFT JOIN BMTBANKDETAIL T9 ON T9.BANKCODE = T7.BANKCODE
 			]]>
-		</createView>
+	   </createView>
 	</changeSet>
 	<changeSet id="ST#931.44_post" author="Gopalaswamy.M" dbms="postgresql">
 		<sql>
@@ -3020,7 +3020,7 @@
 				   LEFT JOIN VASPRODUCTCATEGORY T14 ON T1.PRODUCTCTG = T14.PRODUCTCTG
 				   LEFT JOIN PINCODES T15 ON T1.PINCODEID = T15.PINCODEID
 			]]>
-		</createView>
+	</createView>
 	</changeSet>
 
 	<changeSet id="ST#931.54_post" author="Gopalaswamy.M" dbms="postgresql">
@@ -3199,7 +3199,7 @@
 				   FROM AMTVEHICLEDEALER_TEMP
 				   WHERE AMTVEHICLEDEALER_TEMP.DEALERID = T1.DEALERID))
 			]]>
-		</createView>
+	    </createView>
 	</changeSet>
 
 	<changeSet id="ST#931.55_post" author="Gopalaswamy.M" dbms="postgresql">
@@ -3483,7 +3483,7 @@
 				    JOIN CUSTOMERS T6 ON T1.TAXCUSTID = T6.CUSTID
 				    WHERE NOT (EXISTS ( SELECT 1 FROM FINTAXDETAIL_TEMP WHERE FINTAXDETAIL_TEMP.FINREFERENCE = T1.FINREFERENCE))
 			]]>
-		</createView>
+	    </createView>
 	</changeSet>
 
 	<changeSet id="ST#931.65_post" author="Gopalaswamy.M" dbms="postgresql">
@@ -3948,7 +3948,7 @@
 		<sql>
 			<![CDATA[
 				delete from SMTParameters where	sysparmcode='PROVISION_BOOKS';
-				Insert into SMTParameters values ('PROVISION_BOOKS', 'Provision Books of Accounting.(Regulatory(REG),Internal(INT))','String','1','REG',1,0,null,null,'Provision Books of Accounting.(Regulatory(REG),Internal(INT)).',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				Insert into SMTParameters values ('PROVISION_BOOKS', 'Provision Books of Accounting.(Regulatory(REG),Internal(INT))','String','1','REG',3,0,null,null,'Provision Books of Accounting.(Regulatory(REG),Internal(INT)).',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
 	</changeSet>
@@ -4019,11 +4019,11 @@
 			<column name="Description" type="varchar(100)">
 				<constraints nullable="false" />
 			</column>
-			<column name="StageOrder" type="int" defaultValue="0">
+			<column name="StageOrder" type="int" >
 				<constraints unique="true" nullable="false" uniqueConstraintName="UK_AST_CLSFN_HEADER_STGORDR" />
 			</column>
-			<column name="Active" type="boolean" defaultValue="false" />
-			<column name="Version" type="int" defaultValue="0" />
+			<column name="Active" type="boolean" />
+			<column name="Version" type="int"  />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
@@ -4035,7 +4035,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
+	
 	<changeSet id="ST#540.10" author="Tejaswi.b">
 		<createTable tableName="ASSET_CLSSFICATN_HEADER_TEMP">
 			<column name="Id" type="bigint">
@@ -4047,11 +4047,11 @@
 			<column name="Description" type="varchar(100)">
 				<constraints nullable="false" />
 			</column>
-			<column name="StageOrder" type="int" defaultValue="0">
+			<column name="StageOrder" type="int" >
 				<constraints unique="true" nullable="false" uniqueConstraintName="UK_AST_CLSFN_HEADER_STGORDR_T" />
 			</column>
-			<column name="Active" type="boolean" defaultValue="false" />
-			<column name="Version" type="int" defaultValue="0" />
+			<column name="Active" type="boolean"  />
+			<column name="Version" type="int"  />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
@@ -4062,6 +4062,29 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	
+	
+	<changeSet id="ST#540.10.1" author="Tejaswi.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="StageOrder" tableName="ASSET_CLSSFICATN_HEADER" defaultValue="0" />
+		<addDefaultValue columnName="Active" tableName="ASSET_CLSSFICATN_HEADER" defaultValue="0" />
+		<addDefaultValue columnName="Version" tableName="ASSET_CLSSFICATN_HEADER" defaultValue="0" />
+		<addDefaultValue columnName="StageOrder" tableName="ASSET_CLSSFICATN_HEADER_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="Active" tableName="ASSET_CLSSFICATN_HEADER_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="Version" tableName="ASSET_CLSSFICATN_HEADER_TEMP" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#540.10.1" author="Tejaswi.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ASSET_CLSSFICATN_HEADER ADD CONSTRAINT DF_ASSET_CLSSFICATN_HDR_SO DEFAULT 0 FOR StageOrder;
+				ALTER TABLE ASSET_CLSSFICATN_HEADER ADD CONSTRAINT DF_ASSET_CLSSFICATN_HDR_ACT DEFAULT 0 FOR Active;
+				ALTER TABLE ASSET_CLSSFICATN_HEADER ADD CONSTRAINT DF_ASSET_CLSSFICATN_HDR_VRS DEFAULT 0 FOR Version;
+				ALTER TABLE ASSET_CLSSFICATN_HEADER_TEMP ADD CONSTRAINT DF_ASSET_CLSSFICATN_HDR_T_SO DEFAULT 0 FOR StageOrder;
+				ALTER TABLE ASSET_CLSSFICATN_HEADER_TEMP ADD CONSTRAINT DF_ASSET_CLSSFICATN_HDR_T_ACT DEFAULT 0 FOR Active;
+				ALTER TABLE ASSET_CLSSFICATN_HEADER_TEMP ADD CONSTRAINT DF_ASSET_CLSSFICATN_HDR_T_VRS DEFAULT 0 FOR Version;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#540.11" author="Tejaswi.b">
@@ -4075,7 +4098,7 @@
 			<column name="FinType" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="Version" type="int" defaultValue="0" />
+			<column name="Version" type="int" />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
@@ -4099,7 +4122,7 @@
 			<column name="FinType" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
-			<column name="Version" type="int" defaultValue="0" />
+			<column name="Version" type="int"  />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
@@ -4110,6 +4133,21 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#540.12.1" author="Tejaswi.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Version" tableName="ASSET_CLSSFICATN_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="Version" tableName="ASSET_CLSSFICATN_DETAILS_TEMP" defaultValue="0" />
+		
+	</changeSet>
+	
+	<changeSet id="ST#540.12.1" author="Tejaswi.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ASSET_CLSSFICATN_DETAILS ADD CONSTRAINT DF_ASSET_CLSSFICATN_DTLS_VRS DEFAULT 0 FOR Version;
+				ALTER TABLE ASSET_CLSSFICATN_DETAILS_TEMP ADD CONSTRAINT DF_ASSET_CLSSFICATN_DTLS_T_VRS DEFAULT 0 FOR Version;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#540.13" author="Tejaswi.b">
@@ -4187,7 +4225,7 @@
         	 WHERE     NOT EXISTS
           	 (SELECT 1 FROM ASSET_CLSSFICATN_HEADER_TEMP WHERE   ASSET_CLSSFICATN_HEADER_TEMP.Code = T1.Code)
           ]]>
-		</createView>
+       </createView>
 	</changeSet>
 
 	<changeSet id="ST#540.18" author="Tejaswi.b">
@@ -4251,7 +4289,7 @@
           	ASSET_CLSSFICATN_DETAILS_TEMP.HeaderId = T1.HeaderId AND
           	ASSET_CLSSFICATN_DETAILS_TEMP.Id = T1.Id)
           ]]>
-		</createView>
+       </createView>
 	</changeSet>
 
 	<changeSet id="ST#540.20" author="Tejaswi.b">
@@ -4361,8 +4399,8 @@
 			<column name="FinType" type="varchar(8)">
 				<constraints unique="true" nullable="false" uniqueConstraintName="UK_NPA_PRVSN_HEADER_FINTYPE" />
 			</column>
-			<column name="Active" type="boolean" defaultValue="true" />
-			<column name="Version" type="int" defaultValue="0" />
+			<column name="Active" type="boolean"  />
+			<column name="Version" type="int"  />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
@@ -4388,8 +4426,8 @@
 			<column name="FinType" type="varchar(8)">
 				<constraints unique="true" nullable="false" uniqueConstraintName="UK_NPA_PRVSN_HEADER_FINTYPE_T" />
 			</column>
-			<column name="Active" type="boolean" defaultValue="true" />
-			<column name="Version" type="int" defaultValue="0" />
+			<column name="Active" type="boolean"  />
+			<column name="Version" type="int"  />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
@@ -4400,6 +4438,24 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#540.22.1" author="Tejaswi.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Active" tableName="NPA_PROVISION_HEADER" defaultValue="1" />
+		<addDefaultValue columnName="Version" tableName="NPA_PROVISION_HEADER" defaultValue="0" />
+		<addDefaultValue columnName="Active" tableName="NPA_PROVISION_HEADER_TEMP" defaultValue="1" />	
+		<addDefaultValue columnName="Version" tableName="NPA_PROVISION_HEADER_TEMP" defaultValue="0" />	
+	</changeSet>
+	
+	<changeSet id="ST#540.22.1" author="Tejaswi.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE NPA_PROVISION_HEADER ADD CONSTRAINT DF_NPA_PROVISION_HEADER_ACT DEFAULT 1 FOR Active;
+				ALTER TABLE NPA_PROVISION_HEADER ADD CONSTRAINT DF_NPA_PROVISION_HEADER_VRS DEFAULT 0 FOR Version;
+				ALTER TABLE NPA_PROVISION_HEADER_TEMP ADD CONSTRAINT DF_NPA_PROVISION_HEADER_T_ACT DEFAULT 1 FOR Active;
+				ALTER TABLE NPA_PROVISION_HEADER_TEMP ADD CONSTRAINT DF_NPA_PROVISION_HEADER_T_VRS DEFAULT 0 FOR Version;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#540.23" author="Vijayakumar.k">
@@ -4490,11 +4546,11 @@
 				<constraints nullable="false" />
 			</column>
 
-			<column name="NpaActive" type="boolean" defaultValue="false">
+			<column name="NpaActive" type="boolean" >
 				<constraints nullable="false" />
 			</column>
 
-			<column name="DPDdays" type="int" defaultValue="0">
+			<column name="DPDdays" type="int" >
 				<constraints nullable="false" />
 			</column>
 
@@ -4502,23 +4558,23 @@
 				<constraints nullable="false" />
 			</column>
 
-			<column name="IntSecPerc" type="decimal(5,2)" defaultValue="0">
+			<column name="IntSecPerc" type="decimal(5,2)" >
 				<constraints nullable="false" />
 			</column>
 
-			<column name="IntUnSecPerc" type="decimal(5,2)" defaultValue="0">
+			<column name="IntUnSecPerc" type="decimal(5,2)" >
 				<constraints nullable="false" />
 			</column>
 
-			<column name="RegSecPerc" type="decimal(5,2)" defaultValue="0">
+			<column name="RegSecPerc" type="decimal(5,2)" >
 				<constraints nullable="false" />
 			</column>
 
-			<column name="RegUnSecPerc" type="decimal(5,2)" defaultValue="0">
+			<column name="RegUnSecPerc" type="decimal(5,2)" >
 				<constraints nullable="false" />
 			</column>
 
-			<column name="Version" type="int" defaultValue="0" />
+			<column name="Version" type="int"  />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
@@ -4530,7 +4586,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
+	
 	<changeSet id="ST#540.26" author="Vijayakumar.k">
 		<createTable tableName="NPA_PROVISION_DETAILS_Temp">
 			<column name="Id" type="bigint">
@@ -4545,11 +4601,11 @@
 				<constraints nullable="false" />
 			</column>
 
-			<column name="NpaActive" type="boolean" defaultValue="false">
+			<column name="NpaActive" type="boolean" >
 				<constraints nullable="false" />
 			</column>
 
-			<column name="DPDdays" type="int" defaultValue="0">
+			<column name="DPDdays" type="int" >
 				<constraints nullable="false" />
 			</column>
 
@@ -4557,23 +4613,23 @@
 				<constraints nullable="false" />
 			</column>
 
-			<column name="IntSecPerc" type="decimal(5,2)" defaultValue="0">
+			<column name="IntSecPerc" type="decimal(5,2)" >
 				<constraints nullable="false" />
 			</column>
 
-			<column name="IntUnSecPerc" type="decimal(5,2)" defaultValue="0">
+			<column name="IntUnSecPerc" type="decimal(5,2)" >
 				<constraints nullable="false" />
 			</column>
 
-			<column name="RegSecPerc" type="decimal(5,2)" defaultValue="0">
+			<column name="RegSecPerc" type="decimal(5,2)" >
 				<constraints nullable="false" />
 			</column>
 
-			<column name="RegUnSecPerc" type="decimal(5,2)" defaultValue="0">
+			<column name="RegUnSecPerc" type="decimal(5,2)" >
 				<constraints nullable="false" />
 			</column>
 
-			<column name="Version" type="int" defaultValue="0" />
+			<column name="Version" type="int"  />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
@@ -4584,6 +4640,47 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#540.26.1" author="Tejaswi.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="NpaActive" tableName="NPA_PROVISION_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="DPDdays" tableName="NPA_PROVISION_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="IntSecPerc" tableName="NPA_PROVISION_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="IntUnSecPerc" tableName="NPA_PROVISION_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="RegSecPerc" tableName="NPA_PROVISION_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="RegUnSecPerc" tableName="NPA_PROVISION_DETAILS" defaultValue="0" />	
+		<addDefaultValue columnName="Version" tableName="NPA_PROVISION_DETAILS" defaultValue="0" />
+
+		<addDefaultValue columnName="NpaActive" tableName="NPA_PROVISION_DETAILS_Temp" defaultValue="0" />
+		<addDefaultValue columnName="DPDdays" tableName="NPA_PROVISION_DETAILS_Temp" defaultValue="0" />
+		<addDefaultValue columnName="IntSecPerc" tableName="NPA_PROVISION_DETAILS_Temp" defaultValue="0" />
+		<addDefaultValue columnName="IntUnSecPerc" tableName="NPA_PROVISION_DETAILS_Temp" defaultValue="0" />
+		<addDefaultValue columnName="RegSecPerc" tableName="NPA_PROVISION_DETAILS_Temp" defaultValue="0" />
+		<addDefaultValue columnName="RegUnSecPerc" tableName="NPA_PROVISION_DETAILS_Temp" defaultValue="0" />	
+		<addDefaultValue columnName="Version" tableName="NPA_PROVISION_DETAILS_Temp" defaultValue="0" />			
+	</changeSet>
+	
+	<changeSet id="ST#540.26.1" author="Tejaswi.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE NPA_PROVISION_DETAILS ADD CONSTRAINT DF_NPA_PROVISION_DTL_NACT DEFAULT 0 FOR NpaActive;
+				ALTER TABLE NPA_PROVISION_DETAILS ADD CONSTRAINT DF_NPA_PROVISION_DTL_DPDAYS DEFAULT 0 FOR DPDdays;
+				ALTER TABLE NPA_PROVISION_DETAILS ADD CONSTRAINT DF_NPA_PROVISION_DTL_ISP DEFAULT 0 FOR IntSecPerc;
+				ALTER TABLE NPA_PROVISION_DETAILS ADD CONSTRAINT DF_NPA_PROVISION_DTL_IUSP DEFAULT 0 FOR IntUnSecPerc;
+				ALTER TABLE NPA_PROVISION_DETAILS ADD CONSTRAINT DF_NPA_PROVISION_DTL_RSP DEFAULT 0 FOR RegSecPerc;
+				ALTER TABLE NPA_PROVISION_DETAILS ADD CONSTRAINT DF_NPA_PROVISION_DTL_RSUP DEFAULT 0 FOR RegUnSecPerc;
+				ALTER TABLE NPA_PROVISION_DETAILS ADD CONSTRAINT DF_NPA_PROVISION_DTL_VRS DEFAULT 0 FOR Version;
+				
+				ALTER TABLE NPA_PROVISION_DETAILS_Temp ADD CONSTRAINT DF_NPA_PROVISION_DTL_T_NACT DEFAULT 0 FOR NpaActive;
+				ALTER TABLE NPA_PROVISION_DETAILS_Temp ADD CONSTRAINT DF_NPA_PROVISION_DTL_T_DPDAYS DEFAULT 0 FOR DPDdays;
+				ALTER TABLE NPA_PROVISION_DETAILS_Temp ADD CONSTRAINT DF_NPA_PROVISION_DTL_T_ISP DEFAULT 0 FOR IntSecPerc;
+				ALTER TABLE NPA_PROVISION_DETAILS_Temp ADD CONSTRAINT DF_NPA_PROVISION_DTL_T_IUSP DEFAULT 0 FOR IntUnSecPerc;
+				ALTER TABLE NPA_PROVISION_DETAILS_Temp ADD CONSTRAINT DF_NPA_PROVISION_DTL_T_RSP DEFAULT 0 FOR RegSecPerc;
+				ALTER TABLE NPA_PROVISION_DETAILS_Temp ADD CONSTRAINT DF_NPA_PROVISION_DTL_T_RSUP DEFAULT 0 FOR RegUnSecPerc;
+				ALTER TABLE NPA_PROVISION_DETAILS_Temp ADD CONSTRAINT DF_NPA_PROVISION_DTL_T_VRS DEFAULT 0 FOR Version;
+				
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#540.27" author="Vijayakumar.k">
@@ -4614,7 +4711,7 @@
                         T3.StageOrder as AssetStageOrder
 					FROM NPA_PROVISION_DETAILS T1 
 					JOIN NPA_PROVISION_HEADER t2 ON T2.id = t1.HeaderId
-					JOIN ASSET_CLSSFICATN_HEADER t3 ON T3.Id = t1.AssetClassificationId;
+					JOIN ASSET_CLSSFICATN_HEADER t3 ON T3.Id = t1.AssetClassificationId
 				]]>
 		</createView>
 	</changeSet>
@@ -4861,24 +4958,74 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#540.36" author="Tejaswi.b">
+	<changeSet id="ST#540.36.1" author="Tejaswi.b">
 		<addColumn tableName="FinProvisions">
 			<column name="AssetCode" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.36.2" author="Tejaswi.b">
+		<addColumn tableName="FinProvisions">
 			<column name="AssetStageOrdr" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.36.3" author="Tejaswi.b">
+		<addColumn tableName="FinProvisions">
 			<column name="NPA" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.36.4" author="Tejaswi.b">
+		<addColumn tableName="FinProvisions">
 			<column name="ManualProvision" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.36.5" author="Tejaswi.b">
+		<addColumn tableName="FinProvisions">
 			<column name="ProvLinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.36.6" author="Tejaswi.b">
+		<addColumn tableName="FinProvisions">
 			<column name="ProvChgLinkedTranId" type="bigint" />
 		</addColumn>
 	</changeSet>
-
-	<changeSet id="ST#540.37" author="Tejaswi.b">
+	
+	<changeSet id="ST#540.37.1" author="Tejaswi.b">
 		<addColumn tableName="FinProvisions_Temp">
 			<column name="AssetCode" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.37.2" author="Tejaswi.b">
+		<addColumn tableName="FinProvisions_Temp">
 			<column name="AssetStageOrdr" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.37.3" author="Tejaswi.b">
+		<addColumn tableName="FinProvisions_Temp">
 			<column name="NPA" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.37.4" author="Tejaswi.b">
+		<addColumn tableName="FinProvisions_Temp">
 			<column name="ManualProvision" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.37.5" author="Tejaswi.b">
+		<addColumn tableName="FinProvisions_Temp">
 			<column name="ProvLinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.37.6" author="Tejaswi.b">
+		<addColumn tableName="FinProvisions_Temp">
 			<column name="ProvChgLinkedTranId" type="bigint" />
 		</addColumn>
 	</changeSet>
@@ -4895,16 +5042,33 @@
 		<addDefaultValue columnName="provChgLinkedTranId" tableName="FinProvisions_Temp" defaultValue="0" />
 		<addDefaultValue columnName="provChgLinkedTranId" tableName="finprovisions" defaultValue="0" />
 	</changeSet>
+	
+	<changeSet id="ST#540.38" author="Tejaswi.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE finprovisions ADD CONSTRAINT DF_FinProvisions_ASO DEFAULT 0 FOR assetStageOrdr;
+				ALTER TABLE finprovisions ADD CONSTRAINT DF_FinProvisions_NPA DEFAULT 0 FOR NPA;
+				ALTER TABLE finprovisions ADD CONSTRAINT DF_FinProvisions_MNP DEFAULT 0 FOR manualProvision;
+				ALTER TABLE finprovisions ADD CONSTRAINT DF_FinProvisions_PLT DEFAULT 0 FOR provLinkedTranId;
+				ALTER TABLE finprovisions ADD CONSTRAINT DF_FinProvisions_PCLT DEFAULT 0 FOR provChgLinkedTranId;
+				ALTER TABLE FinProvisions_Temp ADD CONSTRAINT DF_FinProvisions_T_ASO  DEFAULT 0 FOR assetStageOrdr;
+				ALTER TABLE FinProvisions_Temp ADD CONSTRAINT DF_FinProvisions_T_NPA  DEFAULT 0 FOR NPA;
+				ALTER TABLE FinProvisions_Temp ADD CONSTRAINT DF_FinProvisions_T_MNP  DEFAULT 0 FOR manualProvision;
+				ALTER TABLE FinProvisions_Temp ADD CONSTRAINT DF_FinProvisions_T_PLT  DEFAULT 0 FOR provLinkedTranId;
+				ALTER TABLE FinProvisions_Temp ADD CONSTRAINT DF_FinProvisions_T_PCLT DEFAULT 0 FOR provChgLinkedTranId;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#540.39" author="Tejaswi.b">
 		<sql>
 			<![CDATA[
 				Update finprovisions set assetStageOrdr = 0;
 				Update FinProvisions_Temp set assetStageOrdr = 0;
-				Update finprovisions set NPA = false;
-				Update FinProvisions_Temp set NPA = false;
-				Update finprovisions set manualProvision = false;
-				Update FinProvisions_Temp set manualProvision = false;
+				Update finprovisions set NPA = 0;
+				Update FinProvisions_Temp set NPA = 0;
+				Update finprovisions set manualProvision = 0;
+				Update FinProvisions_Temp set manualProvision = 0;
 				Update finprovisions set provLinkedTranId = 0;
 				Update FinProvisions_Temp set provLinkedTranId = 0;
 				Update finprovisions set provChgLinkedTranId = 0;
@@ -4916,7 +5080,7 @@
 	<changeSet id="ST#540.40_pre" author="Tejaswi.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'FinProvisions_AView');
+				select deps_save_and_drop_dependencies ('plf', 'finprovisions_aview');
 		 	]]>
 		</sql>
 	</changeSet>
@@ -4971,7 +5135,7 @@
 	<changeSet id="ST#540.40_post" author="Tejaswi.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'FinProvisions_AView');
+				select deps_restore_dependencies ('plf', 'finprovisions_aview');
 			]]>
 		</sql>
 	</changeSet>
@@ -4979,7 +5143,7 @@
 	<changeSet id="ST#540.41_pre" author="Tejaswi.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'FinProvisions_View');
+				select deps_save_and_drop_dependencies ('plf', 'finprovisions_view');
 		 	]]>
 		</sql>
 	</changeSet>
@@ -5082,24 +5246,59 @@
 	<changeSet id="ST#540.41_post" author="Tejaswi.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'FinProvisions_View');
+				select deps_restore_dependencies ('plf', 'finprovisions_view');
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#540.42" author="Tejaswi.b">
+		<changeSet id="ST#540.42.1" author="Tejaswi.b">
 		<addColumn tableName="FinProvmovements">
 			<column name="AssetCode" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.42.2" author="Tejaswi.b">
+		<addColumn tableName="FinProvmovements">
 			<column name="AssetStageOrdr" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.42.3" author="Tejaswi.b">
+		<addColumn tableName="FinProvmovements">
 			<column name="NPA" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.42.4" author="Tejaswi.b">
+		<addColumn tableName="FinProvmovements">
 			<column name="ManualProvision" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.42.5" author="Tejaswi.b">
+		<addColumn tableName="FinProvmovements">
 			<column name="ProvChgLinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.42.6" author="Tejaswi.b">
+		<addColumn tableName="FinProvmovements">
 			<column name="PrvovisionRate" type="decimal(13,9)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.42.7" author="Tejaswi.b">
+		<addColumn tableName="FinProvmovements">
 			<column name="DueDays" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#540.42.8" author="Tejaswi.b">
+		<addColumn tableName="FinProvmovements">
 			<column name="PriBal" type="decimal(18)" />
 		</addColumn>
 	</changeSet>
-
+	
 	<changeSet id="ST#540.43" author="Tejaswi.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="assetStageOrdr" tableName="FinProvmovements" defaultValue="0" />
 		<addDefaultValue columnName="NPA" tableName="FinProvmovements" defaultValue="0" />
@@ -5109,13 +5308,28 @@
 		<addDefaultValue columnName="DueDays" tableName="FinProvmovements" defaultValue="0" />
 		<addDefaultValue columnName="PriBal" tableName="FinProvmovements" defaultValue="0" />
 	</changeSet>
+	
+	
+	<changeSet id="ST#540.43" author="Tejaswi.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_ASO DEFAULT 0 FOR assetStageOrdr;
+				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_NPA DEFAULT 0 FOR NPA;
+				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_MNP DEFAULT 0 FOR manualProvision;
+				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_PCLT DEFAULT 0 FOR provChgLinkedTranId;
+				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_PSR DEFAULT 0 FOR PrvovisionRate;
+				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_DD DEFAULT 0 FOR DueDays;
+				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_PB DEFAULT 0 FOR PriBal;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#540.44" author="Tejaswi.b">
 		<sql>
 			<![CDATA[
 				Update FinProvmovements set assetStageOrdr = 0;
-				Update FinProvmovements set NPA = false;
-				Update FinProvmovements set manualProvision = false;
+				Update FinProvmovements set NPA = 0;
+				Update FinProvmovements set manualProvision = 0;
 				Update FinProvmovements set provChgLinkedTranId = 0;
 				Update FinProvmovements set PrvovisionRate = 0.00;
 				Update FinProvmovements set DueDays = 0;
@@ -5127,7 +5341,7 @@
 	<changeSet id="ST#540.45_pre" author="Tejaswi.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'FinProvmovements_AView');
+				select deps_save_and_drop_dependencies ('plf', 'finprovmovements_aview');
 		 	]]>
 		</sql>
 	</changeSet>
@@ -5159,7 +5373,7 @@
 	    			prvovisionRate,
 	    			duedays,
 	    			PriBal
-   				FROM FinProvmovements;
+   				FROM FinProvmovements
      	  ]]>
 		</createView>
 	</changeSet>
@@ -5167,7 +5381,7 @@
 	<changeSet id="ST#540.45_post" author="Tejaswi.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'FinProvmovements_AView');
+				select deps_restore_dependencies ('plf', 'finprovmovements_aview');
 			]]>
 		</sql>
 	</changeSet>
@@ -5210,15 +5424,15 @@
 			values
 			('NPAProvisionHeader','NPAProvisionHeader','listheader_NPAProvisionHeaderList_Entity.label,listheader_NPAProvisionHeaderList_FinType.label,label.RecordStatus,label.RecordType',
 			'entity,finType,RECORDSTATUS,RECORDTYPE','String,String,String,String',null,'ReportList04',
-			'NPAProvision Details','Enquiry',0,1000,to_date('23-06-20','DD-MM-RR'),'Approved',null,null,null,null,null,0,0);
+			'NPAProvision Details','Enquiry',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0);
 	
 			Insert into REPORTLIST
 			(CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ)
 			values
-			('Provision','Provision','listheader_CIFNo.label,listheader_CustName.label,listheader_FinReference.label,listheader_FinType.label,listheader_ManualProvisioning.label,listheader_AssetStage.label,label.RecordStatus,label.RecordType,
+			('Provision','Provision','listheader_CIFNo.label,listheader_CustName.label,listheader_FinReference.label,listheader_FinType.label,listheader_ManualProvisioning.label,listheader_AssetStage.label,label.RecordStatus,label.RecordType',
 			'lovDescCustCIF,lovDescCustShrtName,finReference,finType,manualProvision,assetCode,RECORDSTATUS,RECORDTYPE',
 			'long,String,String,String,boolean,String,String,String',null,'ReportList08',
-			'Manual Provision Details','Enquiry',0,1000,to_date('23-06-20','DD-MM-RR'),'Approved',null,null,null,null,null,0,0);
+			'Manual Provision Details','Enquiry',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0);
 	
 			Insert into REPORTLIST
 			(CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ)
@@ -5226,7 +5440,7 @@
 			('AssetClassificationHeader','AssetClassificationHeader','listheader_Code.label,listheader_Description.label,listheader_StageOrder.label,listheader_Active.label,label.RecordStatus,label.RecordType',
 			'code,description,stageOrder,active,RECORDSTATUS,RECORDTYPE',
 			'String,String,long,boolean,String,String',null,'ReportList06',
-			'Asset Classification Details','Enquiry',0,1000,to_date('23-06-20','DD-MM-RR'),'Approved',null,null,null,null,null,0,0);
+			'Asset Classification Details','Enquiry',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0);
 			]]>
 		</sql>
 	</changeSet>
