@@ -434,6 +434,18 @@ public class FeeCalculator implements Serializable {
 					executionMap.put("finAgetilldate", finAge);
 					executionMap.put("completedTenure", finAge);
 				}
+
+				int instNO = 0;
+				for (FinanceScheduleDetail detail : finScheduleData.getFinanceScheduleDetails()) {
+					if (detail.getSchDate().compareTo(DateUtility.getAppDate()) <= 0) {
+						instNO = detail.getInstNumber();
+					} else {
+						break;
+					}
+				}
+
+				executionMap.put("completedInstallments", instNO);
+
 				if (financeMain != null && StringUtils.isNotBlank(financeMain.getFinReference())
 						&& StringUtils.isNotBlank(financeDetail.getModuleDefiner())) {
 					FinanceProfitDetail finProfitDetail = profitDetailsDAO

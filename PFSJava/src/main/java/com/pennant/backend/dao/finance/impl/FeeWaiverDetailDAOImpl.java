@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.dao.finance.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -234,5 +235,33 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		}
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
+	}
+
+	@Override
+	public BigDecimal getFeeWaiverDetailList(String finReference, long adviseId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select sum(currwaivergst)");
+		sql.append(" from plf.feewaiverheader fh");
+		sql.append(" LEFT JOIN feewaiverdetails fwd on fwd.waiverid = fh.waiverid");
+		sql.append(" where adviseId = :adviseId and FinReference = :FinReference and currwaiveramount > 0 ");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("FinReference", finReference);
+		parameterSource.addValue("adviseId", adviseId);
+
+		BigDecimal currwaivergst = BigDecimal.ZERO;
+
+		try {
+			currwaivergst = this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			currwaivergst = BigDecimal.ZERO;
+		}
+		logger.debug(Literal.LEAVING);
+		return currwaivergst;
 	}
 }

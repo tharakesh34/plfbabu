@@ -64,6 +64,7 @@ public class Provision extends AbstractWorkflowEntity {
 	private String finReference = null;
 	private String finBranch;
 	private String finType;
+	private boolean finIsActive;
 	private long custID;
 	private Date provisionCalDate;
 	private BigDecimal provisionedAmt = BigDecimal.ZERO;
@@ -140,7 +141,7 @@ public class Provision extends AbstractWorkflowEntity {
 		excludeFields.add("assetBkwMov");
 		excludeFields.add("provisionMovement");
 		excludeFields.add("financeDetail");
-		excludeFields.add("npaHeader");
+		excludeFields.add("finIsActive");
 		return excludeFields;
 	}
 
@@ -524,4 +525,11 @@ public class Provision extends AbstractWorkflowEntity {
 		this.oldProvision = oldProvision;
 	}
 
+	public boolean isFinIsActive() {
+		return finIsActive;
+	}
+
+	public void setFinIsActive(boolean finIsActive) {
+		this.finIsActive = finIsActive;
+	}
 }

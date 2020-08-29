@@ -63,6 +63,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.google.common.collect.ComparisonChain;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -1662,7 +1663,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					soaTranReport.setValueDate(ma.getValueDate());
 					soaTranReport.setCreditAmount(ma.getWaivedAmount());
 					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(ma.getTaxComponent())) {
-						soaTranReport.setCreditAmount(ma.getWaivedAmount().add(getWaivedGST(ma.getTaxHeader())));
+						soaTranReport.setCreditAmount(ma.getWaivedAmount().add(ma.getCurrWaiverGst()));
 					}
 					soaTranReport.setDebitAmount(BigDecimal.ZERO);
 					soaTranReport.setPriority(15);
@@ -2345,17 +2346,21 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			}
 
 			//LPP Penalty UnAccrued Paid on Receipts
-			List<FinTaxIncomeDetail> incomeList = getFinODAmzTaxDetailDAO().getFinTaxIncomeList(finReference, "LPP");
-			if (incomeList != null && !incomeList.isEmpty()) {
-				for (FinTaxIncomeDetail detail : incomeList) {
-					soaTranReport = new SOATransactionReport();
-					soaTranReport.setEvent(penaltyUnAccrued + DateUtility.format(detail.getValueDate(), "dd/MM/yyyy"));
-					soaTranReport.setTransactionDate(detail.getPostDate());
-					soaTranReport.setValueDate(detail.getValueDate());
-					soaTranReport.setDebitAmount(detail.getReceivedAmount());
-					soaTranReport.setCreditAmount(BigDecimal.ZERO);
-					soaTranReport.setPriority(27);
-					soaTransactionReports.add(soaTranReport);
+			if (ImplementationConstants.ALLOW_UNACCURED_PENALITY_SOA) {
+				List<FinTaxIncomeDetail> incomeList = getFinODAmzTaxDetailDAO().getFinTaxIncomeList(finReference,
+						"LPP");
+				if (incomeList != null && !incomeList.isEmpty()) {
+					for (FinTaxIncomeDetail detail : incomeList) {
+						soaTranReport = new SOATransactionReport();
+						soaTranReport
+								.setEvent(penaltyUnAccrued + DateUtility.format(detail.getValueDate(), "dd/MM/yyyy"));
+						soaTranReport.setTransactionDate(detail.getPostDate());
+						soaTranReport.setValueDate(detail.getValueDate());
+						soaTranReport.setDebitAmount(detail.getReceivedAmount());
+						soaTranReport.setCreditAmount(BigDecimal.ZERO);
+						soaTranReport.setPriority(27);
+						soaTransactionReports.add(soaTranReport);
+					}
 				}
 			}
 

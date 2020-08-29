@@ -956,4 +956,43 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public EventProperties getEventProperties(String configName) {
+		logger.trace(Literal.ENTERING);
+		EventProperties evntProrts = new EventProperties();
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		StringBuilder sql = null;
+		sql = new StringBuilder("SELECT DEP.* FROM DATA_ENGINE_EVENT_PROPERTIES DEP");
+		sql.append(" INNER JOIN DATA_ENGINE_CONFIG DC ON DC.ID = DEP.CONFIG_ID");
+		sql.append(" Where DC.NAME = :NAME");
+		parameterSource.addValue("NAME", configName);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, new RowMapper<EventProperties>() {
+				@Override
+				public EventProperties mapRow(ResultSet rs, int rowNum) throws SQLException {
+					evntProrts.setStorageType(rs.getString("STORAGE_TYPE"));
+					evntProrts.setRegionName(rs.getString("REGION_NAME"));
+					evntProrts.setBucketName(rs.getString("BUCKET_NAME"));
+					evntProrts.setAccessKey(rs.getString("ACCESS_KEY"));
+					evntProrts.setSecretKey(rs.getString("SECRET_KEY"));
+					evntProrts.setPrefix(rs.getString("PREFIX"));
+					evntProrts.setSseAlgorithm(rs.getString("SSE_ALGORITHM"));
+					evntProrts.setHostName(rs.getString("HOST_NAME"));
+					evntProrts.setPort(rs.getString("PORT"));
+					evntProrts.setPrivateKey(rs.getString("PRIVATE_KEY"));
+
+					return evntProrts;
+
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("Configuration details not available for " + configName);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.trace(Literal.LEAVING);
+		return null;
+	}
 }

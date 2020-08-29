@@ -177,6 +177,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String prvReceiptPurpose;
 	private Long partnerBankId;
 	private String receiptSource;
+	private Long linkedTranId;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -289,6 +290,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("prvReceiptPurpose");
 		excludeFields.add("partnerBankId");
 		excludeFields.add("receiptSource");
+		excludeFields.add("linkedTranId");
 
 		return excludeFields;
 	}
@@ -1486,6 +1488,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setReceiptSource(String receiptSource) {
 		this.receiptSource = receiptSource;
+	}
+
+	public Long getLinkedTranId() {
+		return linkedTranId;
+	}
+
+	public void setLinkedTranId(Long linkedTranId) {
+		this.linkedTranId = linkedTranId;
 	}
 
 }

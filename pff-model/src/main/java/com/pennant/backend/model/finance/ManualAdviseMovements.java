@@ -33,6 +33,7 @@ public class ManualAdviseMovements implements Serializable {
 	private TaxHeader taxHeader;
 	private Date schDate;
 	private boolean lppAmzReqonME;
+	private BigDecimal currWaiverGst = BigDecimal.ZERO;
 
 	public long getMovementID() {
 		return movementID;
@@ -216,6 +217,14 @@ public class ManualAdviseMovements implements Serializable {
 
 	public void setLppAmzReqonME(boolean lppAmzReqonME) {
 		this.lppAmzReqonME = lppAmzReqonME;
+	}
+
+	public BigDecimal getCurrWaiverGst() {
+		return currWaiverGst;
+	}
+
+	public void setCurrWaiverGst(BigDecimal currWaiverGst) {
+		this.currWaiverGst = currWaiverGst;
 	}
 
 }

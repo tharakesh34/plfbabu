@@ -86,12 +86,15 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	private String custPOBox;
 	@XmlElement(name = "country")
 	private String custAddrCountry;
+	@XmlElement(name = "countryName")
 	private String lovDescCustAddrCountryName;
 	@XmlElement(name = "state")
 	private String custAddrProvince;
+	@XmlElement(name = "stateName")
 	private String lovDescCustAddrProvinceName;
 	@XmlElement(name = "city")
 	private String custAddrCity;
+	@XmlElement(name = "cityName")
 	private String lovDescCustAddrCityName;
 	@XmlElement(name = "pinCode")
 	private String custAddrZIP;

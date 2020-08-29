@@ -56,6 +56,33 @@
 						</hbox>
 					</div>
 				</north>
+				<!-- Split Screen Start -->
+				<east id="btnSplitDoc" title="Documents" size="40%" flex="true" open="false" collapsible="true"
+					visible="false" slidable="false">
+					<borderlayout>
+						<north>
+							<div sclass="z-toolbar" style="padding:0">
+								<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+									<toolbar align="end" sclass="toolbar-end">
+										<button id="btnSplitDocClose" label="Back" sclass="z-toolbarbutton"
+											visible="false" />
+									</toolbar>
+								</hbox>
+							</div>
+						</north>
+						<center>
+							<div id="div_DocPdf" height="100%">
+								<groupbox id="gb_split_Document" visible="false" height="100%" width="100%">
+									<groupbox id="gb_splitScreen_Documents" visible="false" />
+									<groupbox id="gb_splitScreen_Iframe" visible="false" height="100%" width="100%">
+										<iframe id="splitScreen_Iframe" visible="false" height="100%" width="100%" />
+									</groupbox>
+								</groupbox>
+							</div>
+						</center>
+					</borderlayout>
+				</east>
+				<!-- Split Screen End -->
 				<center border="none" id="divCenter">
 					<tabbox id="tabBoxIndexCenter" width="99%" height="100%">
 						<tabs id="tabsIndexCenter">
@@ -142,6 +169,18 @@
 														<space spacing="2px" />
 														<checkbox id="tDSApplicable" checked="false" visible="false" />
 													</hbox>
+												</row>
+												<row id="row_tDSEndDate" visible="false">
+													<label id="label_FinanceMainDialog_tDSStartDate" value="${c:l('label_FinanceMainDialog_tDSStartDate.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<datebox id="tDSStartDate" width="120px" />
+													</hbox>
+													<label id="label_FinanceMainDialog_tDSEndDate" value="${c:l('label_FinanceMainDialog_tDSEndDate.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<datebox id="tDSEndDate" width="120px" />
+													</hbox>
 
 												</row>
 												<row id="row_RolloverPayment" visible="false">
@@ -214,6 +253,29 @@
 														<button id="btnAddSecondaryAccounts" label="${c:l('label_Add')}" sclass="z-toolbarbutton" visible="false" />
 													</hbox>
 
+												</row>
+												<row id="row_Revolving_DP" visible="false">
+													<label id="label_FinanceTypeDialog_AllowRevolving" value="${c:l('label_FinanceTypeDialog_AllowRevolving.value')}"
+														visible="false" />
+													<hbox id="hbox_AlwRevolving" visible="false">
+														<space spacing="2px" />
+														<checkbox id="allowRevolving" checked="false" />
+													</hbox>
+													<label id="label_FinanceTypeDialog_AlwDP" value="${c:l('label_FinanceTypeDialog_allowDrawingPower.value')}"
+														visible="false" />
+													<hbox id="hbox_AlwDP" visible="false">
+														<space spacing="2px" />
+														<checkbox id="allowDrawingPower" checked="false" />
+													</hbox>
+												</row>
+												<row id="row_tDSPercentage" visible="false">
+													<label id="label_tDSPercentage" value="${c:l('label_FinanceMainDialog_tDSPercentage.value')}" />
+													<hbox id="hbox_tDSPercentage">
+														<space spacing="2px" />
+														<decimalbox id="tDSPercentage" width="72px" />
+													</hbox>
+													<label id="label_FinanceMainDialog_TDSLimitAmt" value="${c:l('label_FinanceMainDialog_TDSLimitAmt.value')}" />
+													<currencyBox id="tDSLimitAmt" />
 												</row>
 												<row id="row_downPayPercentage" visible="false">
 													<label id="label_FinanceMainDialog_Percentage" value="${c:l('label_FinanceMainDialog_Percentage.value')}" />
@@ -418,6 +480,25 @@
 													<label id="label_FinanceMainDialog_Connector" value="${c:l('label_FinanceMainDialog_Connector.value')}" />
 													<extendedcombobox id="connector" width="200px" />
 												</row>
+												<row id="row_Van" visible="false">
+													<label id="label_FinanceMainDialog_VanReq" value="${c:l('label_FinanceMainDialog_VanReq.value')}" />
+													<hbox>
+														<checkbox id="vanReq" disabled="true" />
+													</hbox>
+													<label id="label_FinanceMainDialog_VanCode" value="${c:l('label_FinanceMainDialog_VanCode.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<uppercasebox id="vanCode" width="180px" />
+													</hbox>
+												</row>
+												<row id="row_FinRateRvw" visible="false">
+													<label id="label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd" value="${c:l('label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd.value')}"
+														visible="false" />
+													<hbox id="hbox_finIsRateRvwAtGrcEnd" visible="false">
+														<space spacing="2px" />
+														<checkbox id="finIsRateRvwAtGrcEnd" checked="false" />
+													</hbox>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>
@@ -565,6 +646,18 @@
 														<combobox id="cbGrcSchdMthd" width="275px" readonly="true" />
 													</hbox>
 												</row>
+												<row id="row_grcAdvTypes" visible="false">
+													<label value="${c:l('label_financemainDialog_GraceAdvanceType.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="grcAdvType" />
+													</hbox>
+													<label value="${c:l('label_financemainDialog_GraceAdvanceTerms.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<intbox id="grcAdvTerms" />
+													</hbox>
+												</row>
 												<row id="row_GrcMaxAmount">
 													<label id="label_FinanceMainDialog_GrcMaxReqAmount" value="${c:l('label_FinanceMainDialog_GrcMaxReqAmount.value')}" />
 													<currencyBox id="grcMaxAmount" />
@@ -624,6 +717,25 @@
 														<datebox id="odMaturityDate" width="120px" visible="true" readonly="true" disabled="true" />
 													</hbox>
 												</row>
+												<row id="row_advTypes" visible="false">
+													<label value="${c:l('label_financemainDialog_AdvanceType.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="advType" />
+													</hbox>
+													<label value="${c:l('label_financemainDialog_AdvanceTerms.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<intbox id="advTerms" />
+													</hbox>
+												</row>
+												<row id="row_advStages" visible="false">
+													<label value="${c:l('label_FinanceTypeDialog_AdvanceStage.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="advStage" />
+													</hbox>
+												</row>
 												<row visible="false">
 													<label id="label_FinanceMainDialog_FinRepaymentAmount" value="${c:l('label_FinanceMainDialog_FinRepaymentAmount.value')}"
 														visible="false" />
@@ -653,15 +765,22 @@
 														<combobox id="dftBpiTreatment" width="250px" readonly="true" />
 													</hbox>
 												</row>
-												<row id="row_PlannedEMIH" visible="false">
+													<row id="row_PlannedEMIH" visible="false">
 													<label id="label_FinanceMainDialog_AlwPlannedEmiHoliday" value="${c:l('label_FinanceMainDialog_AlwPlannedEmiHoliday.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<checkbox id="alwPlannedEmiHoliday" checked="false" />
 													</hbox>
-													<label id="label_FinanceMainDialog_PlanEmiHolidayMethod" visible="false"
+													<label id="label_FinanceMainDialog_AlwPlannedGraceEmiHoliday" value="${c:l('label_FinanceMainDialog_AlwPlannedGraceEmiHoliday.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<checkbox id="alwPlannedEmiHolidayInGrace" checked="false" />
+													</hbox>
+												</row>
+												<row id="row_PlanEMIMthd" visible="false">
+													<label id="label_FinanceMainDialog_PlanEmiHolidayMethod" 
 														value="${c:l('label_FinanceMainDialog_PlanEmiHolidayMethod.value')}" />
-													<hbox id="hbox_planEmiMethod" visible="false">
+													<hbox id="hbox_planEmiMethod" >
 														<space sclass="mandatory" spacing="2px" />
 														<combobox id="planEmiMethod" width="250px" readonly="true" />
 													</hbox>
@@ -941,6 +1060,14 @@
 													<hbox>
 														<space id="space_oDMaxWaiverPerc" spacing="2px" sclass="mandatory" />
 														<decimalbox id="oDMaxWaiverPerc" width="120px" maxlength="6" />
+													</hbox>
+												</row>
+												<row id="row_odAllowTDS" visible="true">
+													<label
+														value="${c:l('label_FinanceMainDialog_ODTDSApplicable.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<checkbox id="odTDSApplicable" checked="false" />
 													</hbox>
 												</row>
 												<row id="row_ODMinCapAmount" visible="false">

@@ -70,16 +70,24 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	private String stage;
 	@XmlElement
 	private int curOddays = 0;
+	@XmlElement(name = "firstEmiAmount")
+	private BigDecimal firstRepay = BigDecimal.ZERO;
+	@XmlElement(name = "loanTenor")
+	private int numberOfTerms = 0;
 
 	public CustomerFinanceDetail() {
 		super();
 	}
+
+	@XmlElement(name = "coApplicants")
+	private List<JointAccountDetail> jointAccountDetails;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("usrFName");
 		excludeFields.add("stage");
 		excludeFields.add("curOddays");
+		excludeFields.add("jointAccountDetails");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -417,4 +425,27 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 		this.curOddays = curOddays;
 	}
 
+	public BigDecimal getFirstRepay() {
+		return firstRepay;
+	}
+
+	public void setFirstRepay(BigDecimal firstRepay) {
+		this.firstRepay = firstRepay;
+	}
+
+	public int getNumberOfTerms() {
+		return numberOfTerms;
+	}
+
+	public void setNumberOfTerms(int numberOfTerms) {
+		this.numberOfTerms = numberOfTerms;
+	}
+
+	public List<JointAccountDetail> getJointAccountDetails() {
+		return jointAccountDetails;
+	}
+
+	public void setJointAccountDetails(List<JointAccountDetail> jointAccountDetails) {
+		this.jointAccountDetails = jointAccountDetails;
+	}
 }

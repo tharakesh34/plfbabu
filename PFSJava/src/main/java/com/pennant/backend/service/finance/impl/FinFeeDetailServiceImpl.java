@@ -282,8 +282,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					taxHeader.setHeaderId(taxHeaderId);
 				}
 
-				TaxHeader txHeader = getTaxHeaderDetailsService().saveOrUpdate(taxHeader, tableType, auditTranType);
-				finFeeDetail.setTaxHeaderId(txHeader.getHeaderId());
+				if (finFeeDetail.isTaxApplicable()) {
+					TaxHeader txHeader = getTaxHeaderDetailsService().saveOrUpdate(taxHeader, tableType, auditTranType);
+					finFeeDetail.setTaxHeaderId(txHeader.getHeaderId());
+				}
 			}
 		}
 		List<AuditDetail> auditDetails = new ArrayList<>();
@@ -397,7 +399,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 						fee.setFeeSeq(finFeeDtl.getFeeSeq());
 						getFinFeeDetailDAO().update(fee, false, "");
 					}
-				} else if (fee.getActualAmount().compareTo(BigDecimal.ZERO) > 0) {
+				} else {
 					fee.setFeeID(getFinFeeDetailDAO().save(fee, isWIF, tableType));
 				}
 
@@ -1401,19 +1403,16 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 		}
 	}
-	
+
 	@Override
 	public void convertGSTFinFeeConfig(FinFeeDetail finFeeDetail, FinFeeConfig finFeeConfig,
 			FinanceDetail financeDetail, Map<String, BigDecimal> taxPercentages) {
 		logger.debug(Literal.ENTERING);
-		
-		
+
 		String taxComponent = finFeeConfig.getTaxComponent();
 		BigDecimal taxableAmount = finFeeConfig.getAmount();
 		BigDecimal waivedAmount = finFeeDetail.getWaivedAmount();
-		
-		
-		
+
 		BigDecimal totalGST;
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
 			totalGST = GSTCalculator.getExclusiveGST(taxableAmount, taxPercentages).gettGST();
@@ -1443,7 +1442,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finFeeDetail.setPaidAmount(finFeeConfig.getAmount());
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1754,17 +1753,18 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				// Remaining Fee
 				BigDecimal remainingAmountOriginal = finFeeDetail.getActualAmountOriginal()
 						.subtract(finFeeDetail.getPaidAmountOriginal()).subtract(waivedAmount);
-				taxSplit = GSTCalculator.getExclusiveGST(remainingAmountOriginal, taxPercentages);
-				cgstTax.setRemFeeTax(taxSplit.getcGST());
-				sgstTax.setRemFeeTax(taxSplit.getsGST());
-				igstTax.setRemFeeTax(taxSplit.getiGST());
-				ugstTax.setRemFeeTax(taxSplit.getuGST());
-				cessTax.setRemFeeTax(taxSplit.getCess());
+				//taxSplit = GSTCalculator.getExclusiveGST(remainingAmountOriginal, taxPercentages);
+				cgstTax.setRemFeeTax(cgstTax.getNetTax().subtract(cgstTax.getPaidTax()));
+				sgstTax.setRemFeeTax(sgstTax.getNetTax().subtract(sgstTax.getPaidTax()));
+				igstTax.setRemFeeTax(igstTax.getNetTax().subtract(igstTax.getPaidTax()));
+				ugstTax.setRemFeeTax(ugstTax.getNetTax().subtract(ugstTax.getPaidTax()));
+				cessTax.setRemFeeTax(cessTax.getNetTax().subtract(cessTax.getPaidTax()));
 
-				finFeeDetail.setRemainingFeeGST(taxSplit.gettGST());
+				BigDecimal totRemGST = cgstTax.getRemFeeTax().add(sgstTax.getRemFeeTax()).add(igstTax.getRemFeeTax())
+						.add(ugstTax.getRemFeeTax()).add(cessTax.getRemFeeTax());
+				finFeeDetail.setRemainingFeeGST(totRemGST);
 				finFeeDetail.setRemainingFeeOriginal(remainingAmountOriginal);
-				finFeeDetail.setRemainingFee(
-						remainingAmountOriginal.add(taxSplit.gettGST()).subtract(finFeeDetail.getRemTDS()));
+				finFeeDetail.setRemainingFee(remainingAmountOriginal.add(totRemGST).subtract(finFeeDetail.getRemTDS()));
 
 				// Waived Amounts
 				taxSplit = GSTCalculator.getExclusiveGST(waivedAmount, taxPercentages);
@@ -1837,18 +1837,21 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					finFeeDetail.setPaidAmountGST(taxSplit.gettGST());
 				}
 
-				// Remaining Amount
-				BigDecimal totalRemainingFee = totalNetFee.subtract(totalPaidFee);
-				taxSplit = GSTCalculator.getInclusiveGST(totalRemainingFee, taxPercentages);
-				cgstTax.setRemFeeTax(taxSplit.getcGST());
-				sgstTax.setRemFeeTax(taxSplit.getsGST());
-				igstTax.setRemFeeTax(taxSplit.getiGST());
-				ugstTax.setRemFeeTax(taxSplit.getuGST());
-				cessTax.setRemFeeTax(taxSplit.getCess());
+				// Remaining Fee
+				BigDecimal remainingAmountOriginal = finFeeDetail.getActualAmountOriginal()
+						.subtract(finFeeDetail.getPaidAmountOriginal()).subtract(waivedAmount);
+				//taxSplit = GSTCalculator.getInclusiveGST(remainingAmountOriginal, taxPercentages);
+				cgstTax.setRemFeeTax(cgstTax.getNetTax().subtract(cgstTax.getPaidTax()));
+				sgstTax.setRemFeeTax(sgstTax.getNetTax().subtract(sgstTax.getPaidTax()));
+				igstTax.setRemFeeTax(igstTax.getNetTax().subtract(igstTax.getPaidTax()));
+				ugstTax.setRemFeeTax(ugstTax.getNetTax().subtract(ugstTax.getPaidTax()));
+				cessTax.setRemFeeTax(cessTax.getNetTax().subtract(cessTax.getPaidTax()));
 
-				finFeeDetail.setRemainingFeeOriginal(taxSplit.getNetAmount().subtract(taxSplit.gettGST()));
-				finFeeDetail.setRemainingFee(totalRemainingFee.subtract(finFeeDetail.getRemTDS()));
-				finFeeDetail.setRemainingFeeGST(taxSplit.gettGST());
+				BigDecimal totRemGST = cgstTax.getRemFeeTax().add(sgstTax.getRemFeeTax()).add(igstTax.getRemFeeTax())
+						.add(ugstTax.getRemFeeTax()).add(cessTax.getRemFeeTax());
+				finFeeDetail.setRemainingFeeGST(totRemGST);
+				finFeeDetail.setRemainingFeeOriginal(remainingAmountOriginal);
+				finFeeDetail.setRemainingFee(remainingAmountOriginal.add(totRemGST).subtract(finFeeDetail.getRemTDS()));
 
 				// Waived Amounts
 				taxSplit = GSTCalculator.getInclusiveGST(waivedAmount, taxPercentages);
@@ -1981,7 +1984,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		}
 		return limitAmt;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -2061,7 +2064,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public void setTaxHeaderDetailsService(TaxHeaderDetailsService taxHeaderDetailsService) {
 		this.taxHeaderDetailsService = taxHeaderDetailsService;
 	}
-	
+
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}

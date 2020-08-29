@@ -119,8 +119,9 @@
 				<element name="max">100</element>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Pattern">
-				<message>favourName  invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
-			</message>
+				<message>favourName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and
+					must starts with [a-z A-Z].
+				</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
@@ -229,15 +230,16 @@
 				<element name="max">50</element>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Pattern">
-				<message>accHolderName  invalid. Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
-			</message>
+				<message>accHolderName invalid. Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .]
+					and must starts with [a-z A-Z 0-9].
+				</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.AddDisbursementGroup</value>
 					<value>com.pennant.validation.CancelDisbursementGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
+				<element name="regexp">^$|^[A-Za-z0-9]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint>
 		</field>
 		<!-- <field name="phoneCountryCode"> <constraint annotation="org.hibernate.validator.constraints.Length"> <message>phoneCountryCode 

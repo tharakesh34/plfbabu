@@ -2899,4 +2899,120 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="ST#1210.1_pre" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+		<![CDATA[
+			select deps_save_and_drop_dependencies('plf','customerfinancedetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1210.1" author="GopalaSwamy.M">
+		<createView viewName="CUSTOMERFINANCEDETAILS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				 SELECT T1.FINREFERENCE,
+				    T1.FINBRANCH,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.FINTYPE,
+				    T1.FINAMOUNT,
+				    T1.DOWNPAYMENT,
+				    T1.FEECHARGEAMT,
+				    T1.FINSTARTDATE,
+				    T1.LASTMNTBY,
+				    T1.FINCCY,
+				    T1.RECORDTYPE,
+				    T1.FINASSETVALUE,
+				    T2.CUSTID,
+				    T2.CUSTCIF,
+				    T2.CUSTSHRTNAME,
+				    T3.ROLEDESC PRVROLEDESC,
+				    COALESCE(T4.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T1.NEXTROLECODE)) NEXTROLEDESC,
+				    T6.DEPTDESC,
+				    T7.USRFNAME,
+				    T7.USRLNAME LASTMNTBYUSER,
+				    T9.FINTYPEDESC,
+				    T9.FINDIVISION LOVDESCFINDIVISION,
+				    T1.FIRSTREPAY,
+				    T1.NUMBEROFTERMS
+			  	 FROM FINANCEMAIN_TEMP T1
+			     JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+			     LEFT JOIN SECROLES T3 ON T3.ROLECD = T1.ROLECODE
+			     LEFT JOIN SECROLES T4 ON T4.ROLECD = T1.NEXTROLECODE
+			     LEFT JOIN SECUSERS T5 ON T5.USRID = T1.LASTMNTBY
+			     LEFT JOIN BMTDEPARTMENTS T6 ON T6.DEPTCODE = T5.USRDEPTCODE
+			     LEFT JOIN SECUSERS T7 ON T1.LASTMNTBY = T7.USRID
+			     LEFT JOIN RMTFINANCETYPES T9 ON T1.FINTYPE = T9.FINTYPE
+				  ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1210.1_post" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plf','customerfinancedetails_view');
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1210.2_pre" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+		<![CDATA[
+			select deps_save_and_drop_dependencies('plf','customerfinancedetails_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1210.2" author="GopalaSwamy.M">
+		<createView viewName="CUSTOMERFINANCEDETAILS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				 SELECT FM.FINREFERENCE,
+				    FM.FINBRANCH,
+				    FM.ROLECODE,
+				    FM.NEXTROLECODE,
+				    FM.RECORDTYPE,
+				    FM.FINCCY,
+				    FM.FINTYPE,
+				    FM.FINAMOUNT,
+				    FM.DOWNPAYMENT,
+				    FM.FEECHARGEAMT,
+				    FM.FINSTARTDATE,
+				    FM.LASTMNTBY,
+				    FM.FINASSETVALUE,
+				    C.CUSTCIF,
+				    C.CUSTSHRTNAME,
+				    '' PRVROLEDESC,
+				    '' NEXTROLEDESC,
+				    C.CUSTID,
+				    D.DEPTDESC,
+				    U.USRFNAME,
+				    U.USRLNAME LASTMNTBYUSER,
+				    FT.FINTYPEDESC,
+				    FT.FINDIVISION LOVDESCFINDIVISION,
+					FM.FIRSTREPAY,
+					FM.NUMBEROFTERMS
+				   	FROM FINANCEMAIN FM
+				     JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE
+				     JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
+				     JOIN SECUSERS U ON U.USRID = FM.LASTMNTBY
+				     JOIN BMTDEPARTMENTS D ON D.DEPTCODE = U.USRDEPTCODE
+				  ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1210.2_post" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plf','customerfinancedetails_aview');
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#1242" author="pavankalyan.s">
+		<sql>
+			<![CDATA[
+				delete from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYSTL' and RBFLDNAME = 'completedInstallments';
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES', 'EARLYSTL', 'completedInstallments', 'Completed Installments Till Date', 'int', 9, '1', '1', '', 'static', '');
+				delete from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYPAY' and RBFLDNAME = 'completedInstallments';
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES', 'EARLYPAY', 'completedInstallments', 'Completed Installments Till Date', 'int', 9, '1', '1', '', 'static', '');
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

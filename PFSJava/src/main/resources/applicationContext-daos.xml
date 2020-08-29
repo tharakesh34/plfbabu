@@ -2120,6 +2120,7 @@
 		<property name="perfiosTransactionDAO" ref="perfiosTransactionDAO" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="dMSQueueDAO" ref="dMSQueueDAO" />
+		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
@@ -3491,6 +3492,7 @@
 		<property name="feeCalculator" ref="feeCalculator" />
 		<property name="finFeeConfigService" ref="finFeeConfigService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="provisionDAO" ref="provisionDAO" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -4860,6 +4862,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="feeReceiptService" ref="feeReceiptService" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->

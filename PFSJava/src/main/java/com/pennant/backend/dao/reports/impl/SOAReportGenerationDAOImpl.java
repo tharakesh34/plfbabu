@@ -336,14 +336,33 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		List<ManualAdviseMovements> manualAdviseMovementsList;
 
 		StringBuilder sql = new StringBuilder();
-
-		sql.append("Select T1.Movementdate, T1.movementamount, F.TaxComponent");
-		sql.append(", T1.WaivedAmount, T1.TaxHeaderId");
-		sql.append(", F.FEETYPEDESC, T2.ValueDate");
-		sql.append(" FROM ManualAdviseMovements T1");
-		sql.append(" INNER JOIN ManualAdvise T2 on T1.Adviseid = T2.Adviseid");
-		sql.append(" LEFT JOIN FEETYPES F ON F.FEETYPEID = T2.FEETYPEID");
-		sql.append(" WHERE T2.WaivedAmount > 0 And T2.FinReference = :FinReference");
+		sql.append(" select * from (");
+		sql.append("Select MA.FinReference,MA.Adviseid,MAM.MovementId, Movementdate, movementamount, F.TaxComponent");
+		sql.append(
+				", MAM.WaivedAmount, MAM.TaxHeaderId, F.FEETYPEDESC, MA.ValueDate, FW.currwaivergst, FW.curractualwaiver, F.FeeTypeCode");
+		sql.append(" from ManualAdvise MA ");
+		sql.append(" INNER JOIN ManualAdviseMovements MAM on MAM.Adviseid = MA.Adviseid ");
+		sql.append(" LEFT JOIN FEETYPES F ON F.FEETYPEID = MA.FEETYPEID");
+		sql.append(" INNER JOIN (select FW.FinReference, FWD.FeeTypeCode, FW.WaiverID, FWD.Adviseid");
+		sql.append(", FWD.currwaivergst,FWD.curractualwaiver from  feewaiverheader FW ");
+		sql.append(" INNER JOIN feewaiverdetails FWD on FWD.waiverid = FW.waiverid) FW ON");
+		sql.append(" FW.FinReference = MA.FinReference and FW.Adviseid = MA.Adviseid and FW.WaiverID = MAM.WaiverID");
+		sql.append(" where FW.Adviseid  not in  (-1, -2, -3) and F.FeeTypeCode is not null ");
+		sql.append(" union all ");
+		sql.append(" Select MA.FinReference,MA.Adviseid,MAM.MovementId, Movementdate, movementamount, F.TaxComponent");
+		sql.append(
+				", MAM.WaivedAmount, MAM.TaxHeaderId, F.FEETYPEDESC, MA.ValueDate, FW.currwaivergst, FW.curractualwaiver, F.FeeTypeCode");
+		sql.append(" from ManualAdvise MA ");
+		sql.append(" INNER JOIN ManualAdviseMovements MAM on MAM.Adviseid = MA.Adviseid ");
+		sql.append(" LEFT JOIN FEETYPES F ON F.FEETYPEID = MA.FEETYPEID");
+		sql.append(" LEFT JOIN (select FW.FinReference, FWD.FeeTypeCode, FW.WaiverID, FWD.Adviseid");
+		sql.append(", FWD.currwaivergst,FWD.curractualwaiver from feewaiverheader FW");
+		sql.append(" INNER JOIN feewaiverdetails FWD on FWD.waiverid = FW.waiverid) FW");
+		sql.append(" on FW.FinReference = MA.FinReference and FW.WaiverID = MAM.WaiverID");
+		sql.append(" where FW.Adviseid  in  (-1, -2, -3) and F.FeeTypeCode is null ");
+		sql.append(
+				" ) ma where ma.FinReference = :FinReference and ma.WaivedAmount >0 and (ma.currwaivergst > 0 or ma.curractualwaiver <=600)");
+		sql.append(" order by ma.MovementId, ma.Adviseid");
 
 		logger.trace(Literal.SQL + sql.toString());
 

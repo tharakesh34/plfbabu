@@ -383,4 +383,31 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="DE#1201" author="saiteja.r">
+		<addUniqueConstraint columnNames="custcrcpr, custctgcode" constraintName="uk_cust_ctgcode_crcpr"
+			tableName="CUSTOMERS" />
+	</changeSet>
+
+	<changeSet id="DE#1201.1" author="saiteja.r">
+		<addUniqueConstraint columnNames="custcrcpr, custctgcode" constraintName="uk_cust_ctgcode_crcpr_temp"
+			tableName="CUSTOMERS_TEMP" />
+	</changeSet>
+	
+	<changeSet id="105" author="keerthi.P">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMLENGTH = 10 WHERE SYSPARMCODE ='TAX_ROUNDINGMODE';
+			]]>
+		</sql>
+	</changeSet>
+
+    <changeSet id="105.1" author="keerthi.P">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMLENGTH = 10 WHERE SYSPARMCODE ='TDS_ROUNDINGMODE';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

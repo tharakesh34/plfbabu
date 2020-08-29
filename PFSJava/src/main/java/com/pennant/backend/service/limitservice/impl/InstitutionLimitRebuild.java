@@ -83,6 +83,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.LimitFilterQuery;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.LimitConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -146,12 +147,18 @@ public class InstitutionLimitRebuild {
 			StepUtil.INSTITUTION_LIMITS_UPDATE.setTotalRecords(financeMains.size());
 
 			for (FinanceMain financeMain : financeMains) {
-				List<FinanceMain> list = custmains.get(financeMain.getCustID());
-				if (list == null) {
-					list = new ArrayList<FinanceMain>();
-					custmains.put(financeMain.getCustID(), list);
+
+				if (!(FinanceConstants.CLOSE_STATUS_CANCELLED.equals(financeMain.getClosingStatus())
+						|| PennantConstants.RCD_STATUS_CANCELLED.equals(financeMain.getRecordStatus()))) {
+
+					List<FinanceMain> list = custmains.get(financeMain.getCustID());
+					if (list == null) {
+						list = new ArrayList<FinanceMain>();
+						custmains.put(financeMain.getCustID(), list);
+					}
+					list.add(financeMain);
 				}
-				list.add(financeMain);
+
 			}
 
 			for (Entry<Long, List<FinanceMain>> entry : custmains.entrySet()) {
@@ -526,6 +533,8 @@ public class InstitutionLimitRebuild {
 		}
 
 		fm.add("finReference");
+		fm.add("closingStatus");
+		fm.add("recordStatus");
 
 		limitFieldMap.put("fm_", fm);
 		limitFieldMap.put("ct_", ct);

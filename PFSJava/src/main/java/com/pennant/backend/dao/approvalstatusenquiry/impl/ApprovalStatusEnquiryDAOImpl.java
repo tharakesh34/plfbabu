@@ -130,7 +130,7 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 		if (facility) {
 			sql.append(" from CustomerFacilityDetails");
 		} else {
-			sql.append(", FeeChargeAmt");
+			sql.append(", FeeChargeAmt, NumberOfTerms, FirstRepay");
 			sql.append(" from CustomerFinanceDetails");
 		}
 
@@ -174,6 +174,8 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 
 					if (!facility) {
 						cfd.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+						cfd.setFirstRepay(rs.getBigDecimal("FirstRepay"));
+						cfd.setNumberOfTerms(rs.getInt("NumberOfTerms"));
 					}
 
 					return cfd;

@@ -81,6 +81,7 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal totalCpz = BigDecimal.ZERO;
 
 	private int finCurODDays = 0;
+	private String assetCode;
 	private BigDecimal finODTotPenaltyAmt = BigDecimal.ZERO;
 	private BigDecimal finODTotWaived = BigDecimal.ZERO;
 	private BigDecimal finODTotPenaltyPaid = BigDecimal.ZERO;
@@ -944,4 +945,13 @@ public class FinanceSummary implements Serializable {
 	public void setOverDueAmount(BigDecimal overDueAmount) {
 		this.overDueAmount = overDueAmount;
 	}
+
+	public String getAssetCode() {
+		return assetCode;
+	}
+
+	public void setAssetCode(String assetCode) {
+		this.assetCode = assetCode;
+	}
+
 }

@@ -109,6 +109,14 @@ public class NPAService extends ServiceHelper {
 			}
 
 			for (FinEODEvent finEODEvent : finEODEvents) {
+				Provision provisionDet = new Provision();
+
+				provisionDet.setPrvovisionRate(provision.getPrvovisionRate());
+				provisionDet.setAssetCode(provision.getAssetCode());
+				provisionDet.setAssetStageOrdr(provision.getAssetStageOrdr());
+				provisionDet.setNpa(provision.isNpa());
+				provisionDet.setManualProvision(false);
+
 				findProvision(finEODEvent, valueDate, provisionBooks, provision);
 			}
 		} else {
@@ -364,8 +372,14 @@ public class NPAService extends ServiceHelper {
 				maxProvision.setAssetStageOrdr(provision.getAssetStageOrdr());
 				maxProvision.setPrvovisionRate(provision.getPrvovisionRate());
 				maxProvision.setNpa(provision.isNpa());
+			} else if (provision.getAssetStageOrdr() == maxProvision.getAssetStageOrdr()) {
+				if (provision.isNpa() && !maxProvision.isNpa()) {
+					maxProvision.setAssetCode(provision.getAssetCode());
+					maxProvision.setAssetStageOrdr(provision.getAssetStageOrdr());
+					maxProvision.setPrvovisionRate(provision.getPrvovisionRate());
+					maxProvision.setNpa(provision.isNpa());
+				}
 			}
-
 		}
 
 		if (StringUtils.trimToNull(maxProvision.getAssetCode()) == null) {

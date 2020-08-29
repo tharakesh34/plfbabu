@@ -117,6 +117,7 @@ import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RecommendationNotesDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RisksAndMitigantsDAO;
 import com.pennant.backend.dao.finance.financialSummary.SanctionConditionsDAO;
+import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
@@ -228,6 +229,7 @@ import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
+import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -418,6 +420,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private CollateralSetupService collateralSetupService;
 	private HoldDisbursementDAO holdDisbursementDAO;
 	private PaymentsProcessService paymentsProcessService;
+	private ProvisionDAO provisionDAO;
 
 	@Autowired(required = false)
 	private Crm crm;
@@ -9073,6 +9076,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				summary.setFinODTotPenaltyPaid(finODDetails.getTotPenaltyPaid());
 				summary.setFinODTotPenaltyBal(finODDetails.getTotPenaltyBal());
 			}
+
+			if (ImplementationConstants.ALLOW_NPA_PROVISION) {
+				Provision provision = provisionDAO.getProvisionById(finReference, "_View");
+				if (provision != null) {
+					summary.setAssetCode(provision.getAssetCode());
+				}
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -12843,6 +12853,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setPostExteranalServiceHook(PostExteranalServiceHook postExteranalServiceHook) {
 		this.postExteranalServiceHook = postExteranalServiceHook;
+	}
+
+	public void setProvisionDAO(ProvisionDAO provisionDAO) {
+		this.provisionDAO = provisionDAO;
 	}
 
 }

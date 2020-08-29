@@ -69,4 +69,6 @@ public interface CIBILDAO {
 
 	List<CustomerDocument> getExternalCustomerDocuments(Long custId);
 
+	EventProperties getEventProperties(String configName);
+
 }

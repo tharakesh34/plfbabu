@@ -903,12 +903,13 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 
 		for (FinFeeRefundDetails finFeeRefundDetails : refundList) {
 			FinFeeDetail feeDetail = getFeeDetailByFeeID(finFeeDetails, finFeeRefundDetails.getFeeId());
-			BigDecimal waivedAmt = finFeeRefundDetails.getRefundAmtOriginal();
-			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equalsIgnoreCase(feeDetail.getTaxComponent())) {
-				waivedAmt = finFeeRefundDetails.getRefundAmount();
-			}
+			BigDecimal waivedAmt = finFeeRefundDetails.getRefundAmount();
+
 			feeDetail.setWaivedAmount(waivedAmt);
 			feeDetail.setWaivedGST(finFeeRefundDetails.getRefundAmtGST());
+
+			String taxComponent = feeDetail.getTaxComponent();
+			feeDetail.setTaxComponent(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
 
 			Long taxHeaderId = feeDetail.getTaxHeaderId();
 			if (taxHeaderId == null) {
@@ -924,7 +925,15 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			if (feeDetail.getTaxHeader() != null) {
 				feeDetail.getTaxHeader().setTaxDetails(taxHeaderDetailsDAO.getTaxDetailById(taxHeaderId, type));
 			}
+
 			finFeeDetailService.calculateFees(feeDetail, financeMain, taxPercentages);
+
+			feeDetail.setTaxComponent(taxComponent);
+
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equalsIgnoreCase(taxComponent)) {
+				feeDetail.setWaivedAmount(feeDetail.getWaivedAmount().subtract(feeDetail.getWaivedGST()));
+			}
+
 			finFeeDetailsList.add(feeDetail);
 		}
 		return finFeeDetailsList;

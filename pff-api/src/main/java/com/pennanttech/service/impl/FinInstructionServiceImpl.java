@@ -1224,8 +1224,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
 		if (fsi.getValueDate() == null) {
-			fsi.setValueDate(fsi.getReceivedDate());
-			fsi.getReceiptDetail().setValueDate(fsi.getReceivedDate());
+			fsi.setValueDate(fsi.getReceiptDetail().getReceivedDate());
+			fsi.getReceiptDetail().setValueDate(fsi.getReceiptDetail().getReceivedDate());
 		}
 
 		fsi.setReceivedDate(fsi.getReceiptDetail().getReceivedDate());

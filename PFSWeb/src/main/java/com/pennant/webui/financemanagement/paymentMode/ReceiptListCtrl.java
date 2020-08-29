@@ -303,8 +303,15 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			if (StringUtils.equals(module, FinanceConstants.REALIZATION_APPROVER)
 					|| StringUtils.equals(module, FinanceConstants.RECEIPT_APPROVER)) {
 				List<String> filterList = new ArrayList<>();
-				filterList.add(FinanceConstants.REALIZATION_APPROVER);
-				filterList.add(FinanceConstants.RECEIPT_APPROVER);
+
+				if (getUserWorkspace().getUserRoleSet().contains(FinanceConstants.REALIZATION_APPROVER)) {
+					filterList.add(FinanceConstants.REALIZATION_APPROVER);
+				}
+
+				if (getUserWorkspace().getUserRoleSet().contains(FinanceConstants.RECEIPT_APPROVER)) {
+					filterList.add(FinanceConstants.RECEIPT_APPROVER);
+				}
+
 				searchObject.addFilterIn("NEXTROLECODE", filterList);
 				searchObject.addWhereClause(" PAYAGAINSTID = 0");
 

@@ -20,11 +20,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.northconcepts.datapipeline.core.Record;
 import com.northconcepts.datapipeline.csv.CSVWriter;
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -36,16 +34,16 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.service.cibil.CIBILService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.dataengine.Event;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
-import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.dataengine.util.DataEngineUtil;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.model.cibil.CibilFileInfo;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
-import com.pennanttech.service.AmazonS3Bucket;
 
 public class CorporateCibilReport extends BasicDao<Object> {
 	protected static final Logger logger = LoggerFactory.getLogger(CorporateCibilReport.class);
@@ -159,17 +157,13 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 		// Move the File into S3 bucket
 		try {
-			EventProperties properties = cibilService.getEventProperties("CIBIL_REPORT", "S3");
-			AmazonS3Bucket bucket = null;
-			if (properties != null && properties.getStorageType().equals("S3")) {
-				String accessKey = EncryptionUtil.decrypt(properties.getAccessKey());
-				String secretKey = EncryptionUtil.decrypt(properties.getSecretKey());
-				String bucketName = properties.getBucketName();
-
-				bucket = new AmazonS3Bucket(properties.getRegionName(), bucketName, accessKey, secretKey);
-				bucket.setSseAlgorithm(properties.getSseAlgorithm());
-
-				bucket.putObject(cibilFile, properties.getPrefix());
+			EventProperties properties = cibilService.getEventProperties("CIBIL_REPORT");
+			if (properties.getStorageType().equalsIgnoreCase("MOVE_TO_S3_BUCKET")) {
+				DataEngineUtil.postEvents(Event.MOVE_TO_S3_BUCKET.name(), properties, cibilFile);
+			} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_SFTP")) {
+				DataEngineUtil.postEvents(Event.COPY_TO_SFTP.name(), properties, cibilFile);
+			} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_FTP")) {
+				DataEngineUtil.postEvents(Event.COPY_TO_FTP.name(), properties, cibilFile);
 			}
 
 			EXTRACT_STATUS.setStatus("S");

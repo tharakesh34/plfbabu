@@ -129,6 +129,11 @@ public class CIBILServiceImpl implements CIBILService {
 		return cibildao.getotalRecords(segmentType);
 	}
 
+	@Override
+	public EventProperties getEventProperties(String configName) {
+		return cibildao.getEventProperties(configName);
+	}
+
 	public void setCibildao(CIBILDAO cibildao) {
 		this.cibildao = cibildao;
 	}

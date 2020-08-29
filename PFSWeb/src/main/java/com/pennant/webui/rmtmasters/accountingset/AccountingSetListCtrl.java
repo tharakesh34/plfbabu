@@ -113,7 +113,7 @@ public class AccountingSetListCtrl extends GFCBaseListCtrl<AccountingSet> {
 	protected void doAddFilters() {
 		super.doAddFilters();
 
-		this.searchObject.addFilterNotIn("AEEventCode", PennantAppUtil.getExcludedAccEvents());
+		this.searchObject.addFilterNotIn("EventCode", PennantAppUtil.getExcludedAccEvents());
 	}
 
 	@Override

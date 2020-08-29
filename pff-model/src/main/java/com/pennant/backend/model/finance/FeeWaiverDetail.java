@@ -83,6 +83,9 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal receivableGST = BigDecimal.ZERO;
 	private BigDecimal currActualWaiver = BigDecimal.ZERO;
 	private BigDecimal currWaiverGST = BigDecimal.ZERO;
+	private BigDecimal WaiverGST = BigDecimal.ZERO;
+	private BigDecimal adviseGST = BigDecimal.ZERO;
+
 	private String waiverType;
 
 	// GST fields
@@ -90,6 +93,7 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 	private String taxComponent;
 	private Long taxHeaderId;
 	private String finReference;// Display Field
+	private BigDecimal adviseAmount;
 	private TaxHeader taxHeader = new TaxHeader();
 
 	public FeeWaiverDetail() {
@@ -140,6 +144,9 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("gstWaiver");
 		excludeFields.add("taxHeader");
 		excludeFields.add("finReference");
+		excludeFields.add("adviseAmount");
+		excludeFields.add("WaiverGST");
+		excludeFields.add("adviseGST");
 
 		return excludeFields;
 	}
@@ -345,6 +352,30 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setTaxHeader(TaxHeader taxHeader) {
 		this.taxHeader = taxHeader;
+	}
+
+	public BigDecimal getAdviseAmount() {
+		return adviseAmount;
+	}
+
+	public void setAdviseAmount(BigDecimal adviseAmount) {
+		this.adviseAmount = adviseAmount;
+	}
+
+	public BigDecimal getWaiverGST() {
+		return WaiverGST;
+	}
+
+	public void setWaiverGST(BigDecimal waiverGST) {
+		WaiverGST = waiverGST;
+	}
+
+	public BigDecimal getAdviseGST() {
+		return adviseGST;
+	}
+
+	public void setAdviseGST(BigDecimal adviseGST) {
+		this.adviseGST = adviseGST;
 	}
 
 }

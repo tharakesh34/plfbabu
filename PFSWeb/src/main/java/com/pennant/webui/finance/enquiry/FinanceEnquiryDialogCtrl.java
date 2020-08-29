@@ -233,6 +233,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox finSuspDate;
 	protected Textbox finOverDueStatus;
 	protected Intbox finOverDueDays;
+	protected Label provision_AssetStage;
 
 	// Step Finance Fields
 	protected Checkbox stepFinance;
@@ -722,8 +723,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 
 			if (this.row_employeeName != null && this.row_employeeName.isVisible()) {
-				this.employeeName.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
-						LengthConstants.LEN_MASTER_CODE);
+				this.employeeName.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 10);
 			}
 			if (StringUtils.equals(FinanceConstants.FIN_DIVISION_CORPORATE, this.finDivision)) {
 				if (this.row_employeeName != null) {
@@ -798,8 +798,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.unPlannedEmiHLockPeriod.setMaxlength(3);
 			this.maxReAgeHolidays.setMaxlength(3);
 			this.maxUnplannedEmi.setMaxlength(3);
-			this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
-					LengthConstants.LEN_MASTER_CODE);
+			this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 10);
 			this.dmaCode.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
 					LengthConstants.LEN_MASTER_CODE);
 			this.salesDepartment.setProperties("GeneralDepartment", "GenDepartment", "GenDeptDesc", false,
@@ -837,6 +836,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.availableAmt.setMaxlength(18);
 		this.availableAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.sourcingBranch.setMandatoryStyle(true);
+		this.provision_AssetStage.setVisible(ImplementationConstants.ALLOW_NPA_PROVISION);
 		// Field visibility & Naming for FinAsset value and finCurrent asset
 		// value by OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
@@ -1314,6 +1314,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (financeSummary != null) {
 
 			this.finOverDueDays.setValue(financeSummary.getFinCurODDays());
+			this.provision_AssetStage.setValue(financeSummary.getAssetCode());
 
 			if (PennantConstants.WORFLOW_MODULE_CD.equals(aFinanceMain.getLovDescProductCodeName())) {
 				this.totalDisb.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), formatter));
