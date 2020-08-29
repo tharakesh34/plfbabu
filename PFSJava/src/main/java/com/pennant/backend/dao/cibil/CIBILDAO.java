@@ -68,8 +68,7 @@ public interface CIBILDAO {
 	List<CustomerPhoneNumber> getExternalCustomerPhoneNumbers(Long custId);
 
 	List<CustomerDocument> getExternalCustomerDocuments(Long custId);
-	
-	EventProperties getEventProperties(String configName);
 
+	EventProperties getEventProperties(String configName);
 
 }

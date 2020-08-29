@@ -573,7 +573,7 @@ public class MandateController {
 	public void setPennyDropService(PennyDropService pennyDropService) {
 		this.pennyDropService = pennyDropService;
 	}
-	
+
 	@Autowired
 	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
 		this.mandateStatusDAO = mandateStatusDAO;

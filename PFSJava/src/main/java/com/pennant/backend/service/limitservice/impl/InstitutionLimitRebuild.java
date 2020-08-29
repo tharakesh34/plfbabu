@@ -158,7 +158,7 @@ public class InstitutionLimitRebuild {
 					}
 					list.add(financeMain);
 				}
-				
+
 			}
 
 			for (Entry<Long, List<FinanceMain>> entry : custmains.entrySet()) {

@@ -674,8 +674,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 
 			if (this.row_employeeName != null && this.row_employeeName.isVisible()) {
-				this.employeeName.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
-						10);
+				this.employeeName.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 10);
 			}
 			if (StringUtils.equals(FinanceConstants.FIN_DIVISION_CORPORATE, this.finDivision)) {
 				if (this.row_employeeName != null) {
@@ -749,8 +748,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.unPlannedEmiHLockPeriod.setMaxlength(3);
 			this.maxReAgeHolidays.setMaxlength(3);
 			this.maxUnplannedEmi.setMaxlength(3);
-			this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
-					10);
+			this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 10);
 			this.dmaCode.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
 					LengthConstants.LEN_MASTER_CODE);
 			this.salesDepartment.setProperties("GeneralDepartment", "GenDepartment", "GenDeptDesc", false,

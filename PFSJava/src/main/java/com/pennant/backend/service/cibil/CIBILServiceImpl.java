@@ -133,7 +133,7 @@ public class CIBILServiceImpl implements CIBILService {
 	public EventProperties getEventProperties(String configName) {
 		return cibildao.getEventProperties(configName);
 	}
-	
+
 	public void setCibildao(CIBILDAO cibildao) {
 		this.cibildao = cibildao;
 	}

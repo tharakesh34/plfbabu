@@ -202,7 +202,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		fod.setTotPenaltyPaid(BigDecimal.ZERO);
 		fod.setTotPenaltyBal(BigDecimal.ZERO);
 		fod.setTotWaived(BigDecimal.ZERO);
-		
+
 		BigDecimal totPenaltyPaid = BigDecimal.ZERO;
 		BigDecimal totWaived = BigDecimal.ZERO;
 
@@ -259,7 +259,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			odcr.setFinCurODAmt(odPri.add(odPft));
 			odcr.setPenaltyPaid(rpd.getPenaltyPaid());
 			odcr.setWaivedAmt(rpd.getPenaltyWaived());
-			
+
 			BigDecimal schdpaid = rpd.getFinSchdPriPaid().add(rpd.getFinSchdPftPaid());
 			if (schdpaid.compareTo(BigDecimal.ZERO) > 0) {
 				odcrList.add(odcr);
@@ -268,7 +268,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (odcr.getMovementDate().compareTo(valueDate) == 0) {
 				isAddTodayRcd = false;
 			}
-			
+
 			totPenaltyPaid = totPenaltyPaid.add(rpd.getPenaltyPaid());
 			totWaived = totWaived.add(rpd.getPenaltyWaived());
 

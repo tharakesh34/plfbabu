@@ -838,7 +838,6 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			finAdvpay.setLastMntOn(payOrderIssueHeader.getLastMntOn());
 			finAdvpay.setLastMntBy(payOrderIssueHeader.getLastMntBy());
 
-
 			if (StringUtils.isEmpty(type)) {
 				finAdvpay.setRoleCode("");
 				finAdvpay.setNextRoleCode("");

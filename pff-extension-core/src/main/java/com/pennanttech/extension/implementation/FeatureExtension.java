@@ -23,7 +23,7 @@ public class FeatureExtension implements IFeatureExtension {
 
 		/* Override the implementation constants here as specified in example. */
 
-		customConstants.put("AUTO_EOD_REQUIRED", false);
+		customConstants.put("AUTO_EOD_REQUIRED", true);
 
 		customConstants.put("ALLOW_IND_AS", true);
 		customConstants.put("ALLOW_ADV_INT_EMI", true);
@@ -36,11 +36,13 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_CD_LOANS", true);
 
-		customConstants.put("ALLOW_SCHOOL_ORG", false);
+		customConstants.put("ALLOW_SCHOOL_ORG", true);
 
-		customConstants.put("ALLOW_SAMPLING", false);
+		customConstants.put("ALLOW_SAMPLING", true);
 
 		customConstants.put("ALLOW_AUTO_KNOCK_OFF", true);
+
+		customConstants.put("ALLOW_OLDEST_DUE", true);
 
 	}
 

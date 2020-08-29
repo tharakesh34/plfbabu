@@ -78,6 +78,7 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	public CustomerFinanceDetail() {
 		super();
 	}
+
 	@XmlElement(name = "coApplicants")
 	private List<JointAccountDetail> jointAccountDetails;
 
@@ -443,7 +444,7 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	public List<JointAccountDetail> getJointAccountDetails() {
 		return jointAccountDetails;
 	}
-	
+
 	public void setJointAccountDetails(List<JointAccountDetail> jointAccountDetails) {
 		this.jointAccountDetails = jointAccountDetails;
 	}

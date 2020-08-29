@@ -768,10 +768,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		List<CustomerFinanceDetail> customerFinanceDetail = approvalStatusEnquiryService
 				.getListOfCustomerFinanceById(id, null);
-		
+
 		customerFinanceDetail.forEach(customerFinDetail -> {
 			List<JointAccountDetail> jointAccountDetailList = jountAccountDetailDAO
-					.getJountAccountDetailByFinRef(customerFinDetail.getFinReference(),"_View");
+					.getJountAccountDetailByFinRef(customerFinDetail.getFinReference(), "_View");
 			customerFinDetail.setJointAccountDetails(jointAccountDetailList);
 		});
 

@@ -45,14 +45,12 @@ import com.pennanttech.dataengine.Event;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.DataEngineUtil;
-import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.model.cibil.CibilFileInfo;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
-import com.pennanttech.service.AmazonS3Bucket;
 
 public class RetailCibilReport extends BasicDao<Object> {
 	private static final Logger logger = LoggerFactory.getLogger(RetailCibilReport.class);

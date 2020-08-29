@@ -956,7 +956,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public EventProperties getEventProperties(String configName) {
 		logger.trace(Literal.ENTERING);

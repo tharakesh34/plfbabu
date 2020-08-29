@@ -335,7 +335,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select * from (");
 		sql.append("Select MA.FinReference,MA.Adviseid,MAM.MovementId, Movementdate, movementamount, F.TaxComponent");
-		sql.append(", MAM.WaivedAmount, MAM.TaxHeaderId, F.FEETYPEDESC, MA.ValueDate, FW.currwaivergst, FW.curractualwaiver, F.FeeTypeCode");
+		sql.append(
+				", MAM.WaivedAmount, MAM.TaxHeaderId, F.FEETYPEDESC, MA.ValueDate, FW.currwaivergst, FW.curractualwaiver, F.FeeTypeCode");
 		sql.append(" from ManualAdvise MA ");
 		sql.append(" INNER JOIN ManualAdviseMovements MAM on MAM.Adviseid = MA.Adviseid ");
 		sql.append(" LEFT JOIN FEETYPES F ON F.FEETYPEID = MA.FEETYPEID");
@@ -346,7 +347,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(" where FW.Adviseid  not in  (-1, -2, -3) and F.FeeTypeCode is not null ");
 		sql.append(" union all ");
 		sql.append(" Select MA.FinReference,MA.Adviseid,MAM.MovementId, Movementdate, movementamount, F.TaxComponent");
-		sql.append(", MAM.WaivedAmount, MAM.TaxHeaderId, F.FEETYPEDESC, MA.ValueDate, FW.currwaivergst, FW.curractualwaiver, F.FeeTypeCode");
+		sql.append(
+				", MAM.WaivedAmount, MAM.TaxHeaderId, F.FEETYPEDESC, MA.ValueDate, FW.currwaivergst, FW.curractualwaiver, F.FeeTypeCode");
 		sql.append(" from ManualAdvise MA ");
 		sql.append(" INNER JOIN ManualAdviseMovements MAM on MAM.Adviseid = MA.Adviseid ");
 		sql.append(" LEFT JOIN FEETYPES F ON F.FEETYPEID = MA.FEETYPEID");
@@ -355,7 +357,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(" INNER JOIN feewaiverdetails FWD on FWD.waiverid = FW.waiverid) FW");
 		sql.append(" on FW.FinReference = MA.FinReference and FW.WaiverID = MAM.WaiverID");
 		sql.append(" where FW.Adviseid  in  (-1, -2, -3) and F.FeeTypeCode is null ");
-		sql.append(" ) ma where ma.FinReference = :FinReference and ma.WaivedAmount >0 and (ma.currwaivergst > 0 or ma.curractualwaiver <=600)");
+		sql.append(
+				" ) ma where ma.FinReference = :FinReference and ma.WaivedAmount >0 and (ma.currwaivergst > 0 or ma.curractualwaiver <=600)");
 		sql.append(" order by ma.MovementId, ma.Adviseid");
 
 		logger.trace(Literal.SQL + sql.toString());

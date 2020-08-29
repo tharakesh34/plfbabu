@@ -958,8 +958,9 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 				return returnStatus;
 			}
-			
-			if (StringUtils.isNotBlank((mandateRegStatus)) && StringUtils.equalsIgnoreCase(mandate.getStatus(), mandateRegStatus)) {
+
+			if (StringUtils.isNotBlank((mandateRegStatus))
+					&& StringUtils.equalsIgnoreCase(mandate.getStatus(), mandateRegStatus)) {
 				mandate.setStatus("APPROVED");
 			} else {
 				mandate.setStatus(mandate.getStatus().toUpperCase());
@@ -980,10 +981,9 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		} else {
 			mandate.setOrgReference(aMandate.getOrgReference());
 		}
-		
+
 		if ((StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, mandate.getStatus())
-				|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus()))
-				&& aMandate.isSwapIsActive()) {
+				|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus())) && aMandate.isSwapIsActive()) {
 			mandate.setSwapIsActive(aMandate.isSwapIsActive());
 			mandate.setMandateType(aMandate.getMandateType());
 			// FinanceMain finMain =
@@ -1012,7 +1012,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				}
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
