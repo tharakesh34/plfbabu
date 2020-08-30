@@ -302,7 +302,9 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(
 				" Select T1.FinReference, T1.PostDate, T1.AdviseAmount, T1.AdviseType, T1.ReceiptId, T1.BounceId, T1.Adviseid, T1.FeeTypeId, T1.BalanceAmt,");
 		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T2.FeeTypeDesc, T1.ValueDate,T2.TaxComponent,");
-		selectSql.append(" T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST, T1.PaidCESS");
+		selectSql.append(
+				" T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST, T1.PaidCESS, T1.WaivedCGST, T1.WaivedSGST,");
+		selectSql.append(" T1.WaivedIGST, T1.WaivedUGST, T1.WaivedCESS");
 		selectSql.append(" FROM ManualAdvise T1");
 		selectSql.append(" Left Join FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId");
 		selectSql.append(" Where FinReference = :FinReference");

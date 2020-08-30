@@ -8901,6 +8901,7 @@
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 		<property name="promotionDAO" ref="promotionDAO" />
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
+		<property name="feeWaiverDetailDAO" ref="feeWaiverDetailDAO" />
 	</bean>
 
 	<!-- Finance Covenant Details -->
