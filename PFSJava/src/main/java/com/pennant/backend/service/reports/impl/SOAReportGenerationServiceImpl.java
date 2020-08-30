@@ -72,6 +72,7 @@ import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.dao.finance.FeeWaiverDetailDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
@@ -149,6 +150,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	@Autowired(required = false)
 	private SOAReportService soaReportService;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
+	private FeeWaiverDetailDAO feeWaiverDetailDAO;
 
 	private Date fixedEndDate = null;
 
@@ -922,17 +924,25 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					}
 					adviseBalanceAmt = adviseBalanceAmt.add(manualAdvise.getBalanceAmt().add(gstAmount));
 				}
+				if (manualAdvise.getBounceID() != 0) {
+					manualAdvise.setAdviseID(-3);
+				}
 
 				if (manualAdvise.getAdviseType() == 1 && manualAdvise.getBounceID() == 0) {
 
 					if (manualAdvise.getAdviseAmount() != null) {
+						BigDecimal currWaiverGst = feeWaiverDetailDAO.getFeeWaiverDetailList(finReference,
+								manualAdvise.getAdviseID());
+						if (currWaiverGst == null) {
+							currWaiverGst = BigDecimal.ZERO;
+						}
 						bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(manualAdvise.getAdviseAmount())
 								.subtract(manualAdvise.getWaivedAmount());
 
 						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())) { //GST Calculation only for Exclusive case
 							BigDecimal gstAmount = GSTCalculator.getTotalGST(finReference,
-									manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()),
-									manualAdvise.getTaxComponent());
+									manualAdvise.getAdviseAmount(), manualAdvise.getTaxComponent());
+							gstAmount = gstAmount.subtract(currWaiverGst);
 							bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(gstAmount);
 						}
 					}
@@ -954,15 +964,20 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					}
 
 					if (manualAdvise.getAdviseAmount() != null) {
+						manualAdvise.setAdviseID(-3);
+						BigDecimal currWaiverGst = feeWaiverDetailDAO.getFeeWaiverDetailList(finReference,
+								manualAdvise.getAdviseID());
+						if (currWaiverGst == null) {
+							currWaiverGst = BigDecimal.ZERO;
+						}
 						bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount
 								.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
 
 						if (bounceFeeType != null && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE
 								.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
 							BigDecimal gstAmount = GSTCalculator.getTotalGST(finReference,
-									manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()),
-									bounceFeeType.getTaxComponent());
-
+									manualAdvise.getAdviseAmount(), bounceFeeType.getTaxComponent());
+							gstAmount = gstAmount.subtract(currWaiverGst);
 							bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(gstAmount);
 						}
 					}
@@ -2345,6 +2360,14 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
 		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
+	}
+
+	public FeeWaiverDetailDAO getFeeWaiverDetailDAO() {
+		return feeWaiverDetailDAO;
+	}
+
+	public void setFeeWaiverDetailDAO(FeeWaiverDetailDAO feeWaiverDetailDAO) {
+		this.feeWaiverDetailDAO = feeWaiverDetailDAO;
 	}
 
 }

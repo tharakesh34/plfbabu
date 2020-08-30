@@ -219,6 +219,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 						if (currWaiverGst != null && currWaiverGst.compareTo(BigDecimal.ZERO) > 0) {
 							waivedGstBounceAmt = currWaiverGst;
+						} else {
+							waivedGstAmt = BigDecimal.ZERO;
+							waivedGstBounceAmt = currWaiverGst;
 						}
 
 					} else {
@@ -236,8 +239,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 						if (currWaiverGst != null && currWaiverGst.compareTo(BigDecimal.ZERO) > 0) {
 							waivedGstAmt = currWaiverGst;
+							feeWaiverDetail.setWaiverGST(waivedGstAmt);
 						}
-						feeWaiverDetail.setWaiverGST(waivedGstAmt);
 
 						if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE,
 								feeWaiverDetail.getTaxComponent())) {
