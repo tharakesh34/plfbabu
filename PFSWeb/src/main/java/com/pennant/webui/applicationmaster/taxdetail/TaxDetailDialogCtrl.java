@@ -81,6 +81,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -238,9 +239,11 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 
 		this.pinCode.setMandatoryStyle(true);
 		this.pinCode.setModuleName("PinCode");
-		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setValueColumn("PinCodeId");
 		this.pinCode.setDescColumn("AreaName");
-		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		this.pinCode.setValueType(DataType.LONG);
+		this.pinCode.setInputAllowed(false);
+		this.pinCode.setValidateColumns(new String[] { "PinCodeId" });
 
 		this.cityCode.setMandatoryStyle(true);
 		this.cityCode.setModuleName("City");
@@ -456,6 +459,8 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		} else {
 			PinCode pinCode = (PinCode) dataObject;
 			if (pinCode != null) {
+				this.pinCode.setAttribute("pinCodeId", pinCode.getPinCodeId());
+				this.pinCode.setValue(pinCode.getPinCode());
 				if (StringUtils.isBlank(this.country.getValue())) {
 					this.country.setValue(pinCode.getpCCountry(), pinCode.getLovDescPCCountryName());
 					this.old_country = pinCode.getpCCountry();
@@ -684,6 +689,11 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		this.country.setValue(aTaxDetail.getCountry(), aTaxDetail.getCountryName());
 		this.stateCode.setValue(aTaxDetail.getStateCode(), aTaxDetail.getProvinceName());
 		this.cityCode.setValue(aTaxDetail.getCityCode(), aTaxDetail.getCityName());
+
+		if (aTaxDetail.getPinCodeId() != null) {
+			this.pinCode.setAttribute("pinCodeId", aTaxDetail.getPinCodeId());
+		}
+
 		this.pinCode.setValue(aTaxDetail.getPinCode(), aTaxDetail.getAreaName());
 		this.entityCode.setValue(aTaxDetail.getEntityCode(), aTaxDetail.getEntityDesc());
 
@@ -807,7 +817,13 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		}
 		// Pin Code
 		try {
-			aTaxDetail.setPinCode(this.pinCode.getValidatedValue());
+			Object obj = this.pinCode.getAttribute("pinCodeId");
+			if (obj != null) {
+				if (!StringUtils.isEmpty(obj.toString())) {
+					aTaxDetail.setPinCodeId(Long.valueOf((obj.toString())));
+				}
+			}
+			aTaxDetail.setPinCode(this.pinCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -941,7 +957,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_AddressLine4.value"),
 							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		if (!this.pinCode.isReadonly()) {
+		if (this.pinCode.isButtonVisible()) {
 			this.pinCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_PinCode.value"), null, true, true));
 		}

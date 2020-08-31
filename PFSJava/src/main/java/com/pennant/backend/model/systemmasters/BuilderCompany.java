@@ -125,6 +125,7 @@ public class BuilderCompany extends AbstractWorkflowEntity implements Entity {
 	private String custCIF;
 	private boolean active;
 	private long custId;
+	private Long pinCodeId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -592,6 +593,14 @@ public class BuilderCompany extends AbstractWorkflowEntity implements Entity {
 
 	public void setBranDesc(String branDesc) {
 		BranDesc = branDesc;
+	}
+
+	public Long getPinCodeId() {
+		return pinCodeId;
+	}
+
+	public void setPinCodeId(Long pinCodeId) {
+		this.pinCodeId = pinCodeId;
 	}
 
 }

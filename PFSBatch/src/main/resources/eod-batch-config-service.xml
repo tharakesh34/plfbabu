@@ -545,9 +545,9 @@
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 	</bean>
-	
-		<!-- FeeType -->
+
+	<!-- FeeType -->
 	<bean id="feeTypeDAO" class="com.pennant.backend.dao.feetype.impl.FeeTypeDAOImpl" parent="sequenceDao" />
-	
+
 	<bean id="expenseTypeDAO" class="com.pennant.backend.dao.amtmasters.impl.ExpenseTypeDAOImpl" parent="sequenceDao" />
 </beans>

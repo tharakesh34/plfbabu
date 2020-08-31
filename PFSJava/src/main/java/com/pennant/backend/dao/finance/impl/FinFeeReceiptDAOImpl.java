@@ -176,6 +176,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 		sql.deleteCharAt(sql.length() - 1);
 		sql.append(")");
+		sql.append("  AND PaidAmount > 0");
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
@@ -421,4 +422,42 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		}
 
 	}
+
+	@Override
+	public List<FinFeeReceipt> getFinFeeReceiptByReceiptId(long receiptID, String type) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT ID, FeeID, ReceiptID, PaidAmount,  Version, LastMntBy, LastMntOn, RecordStatus,");
+		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" From FinFeeReceipts");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" WHERE  ReceiptID = :ReceiptID");
+		logger.debug(Literal.SQL + selectSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+		RowMapper<FinFeeReceipt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeReceipt.class);
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+	}
+
+	@Override
+	public void deleteFinFeeReceiptByReceiptId(long receiptID, String type) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder deleteSql = new StringBuilder();
+		deleteSql.append("Delete From FinFeeReceipts");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where ReceiptID = :ReceiptID ");
+		logger.debug(Literal.SQL + deleteSql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+
+		try {
+			this.jdbcTemplate.update(deleteSql.toString(), source);
+		} catch (DataAccessException e) {
+			//throw new DependencyFoundException(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 }

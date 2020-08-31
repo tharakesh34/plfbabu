@@ -164,6 +164,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
@@ -237,6 +238,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private AdvancePaymentService advancePaymentService;
 	private FeeTypeDAO feeTypeDAO;
 
+	private FeeReceiptService feeReceiptService;
+
 	public ReceiptServiceImpl() {
 		super();
 	}
@@ -293,7 +296,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (CollectionUtils.isNotEmpty(allocations)) {
 				for (ReceiptAllocationDetail allocation : allocations) {
 					allocation.setTotalPaid(allocation.getPaidAmount().add(allocation.getTdsPaid()));
-					long headerId = allocation.getTaxHeaderId();
+					Long headerId = allocation.getTaxHeaderId();
 					if (headerId > 0) {
 						List<Taxes> taxDetails = getTaxHeaderDetailsDAO().getTaxDetailById(headerId, type);
 						TaxHeader taxHeader = new TaxHeader(headerId);
@@ -304,6 +307,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			receiptHeader.setAllocations(allocations);
+		} else {
+			// Fetch Repay Headers List
+			for (FinReceiptDetail rcd : receiptDetailList) {
+				rcd.setRepayHeader(financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), ""));
+			}
+			// Bounce reason Code
+			if (RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(receiptHeader.getReceiptMode())) {
+				receiptHeader.setManualAdvise(manualAdviseDAO.getManualAdviseByReceiptId(receiptID, "_View"));
+			}
+			receiptHeader.setPaidFeeList(
+					feeReceiptService.getPaidFinFeeDetails(receiptHeader.getReference(), receiptID, "_View"));
 		}
 
 		logger.debug("Leaving");
@@ -445,7 +459,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				//Tax Details
 				Long headerId = finFeeDetail.getTaxHeaderId();
 				if (headerId != null && headerId > 0) {
-					List<Taxes> taxDetails = getTaxHeaderDetailsDAO().getTaxDetailById(headerId, type);
+					List<Taxes> taxDetails = taxHeaderDetailsDAO.getTaxDetailById(headerId, type);
 					TaxHeader taxheader = new TaxHeader();
 					taxheader.setTaxDetails(taxDetails);
 					taxheader.setHeaderId(headerId);
@@ -6981,6 +6995,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
+	}
+
+	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
+		this.feeReceiptService = feeReceiptService;
 	}
 
 }

@@ -114,6 +114,7 @@ import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RecommendationNotesDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RisksAndMitigantsDAO;
 import com.pennant.backend.dao.finance.financialSummary.SanctionConditionsDAO;
+import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
@@ -219,6 +220,7 @@ import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
+import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -401,6 +403,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private CollateralSetupService collateralSetupService;
 	private HoldDisbursementDAO holdDisbursementDAO;
 	private PaymentsProcessService paymentsProcessService;
+	private ProvisionDAO provisionDAO;
 
 	@Autowired(required = false)
 	private Crm crm;
@@ -598,7 +601,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		if (!feeIds.isEmpty()) {
-			scheduleData.setFinFeeReceipts(getFinFeeDetailService().getFinFeeReceiptsById(feeIds, "_TView"));
+			scheduleData.setFinFeeReceipts(getFinFeeDetailService().getFinFeeReceiptsById(feeIds, "_View"));
 		}
 
 		// insurance Details
@@ -2910,28 +2913,25 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Finance Fee Receipts
 		// =======================================
-		if (scheduleData.getFinFeeReceipts() != null && !scheduleData.getFinFeeReceipts().isEmpty()) {
-			for (FinFeeReceipt finFeeReceipt : scheduleData.getFinFeeReceipts()) {
-				for (FinFeeDetail finFeeDetail : finFeeDetails) {
-
-					if (finFeeReceipt.getFeeTypeId() != 0) {
-						if (finFeeReceipt.getFeeTypeId() == finFeeDetail.getFeeTypeID()) {
-							finFeeReceipt.setFeeID(finFeeDetail.getFeeID());
-							break;
-						}
-
-					} else {
-						if (StringUtils.equals(finFeeReceipt.getFeeTypeCode(), finFeeDetail.getFeeTypeCode())) {
-							finFeeReceipt.setFeeID(finFeeDetail.getFeeID());
-							break;
-						}
-					}
-				}
-			}
-
-			auditDetails.addAll(getFinFeeDetailService().saveOrUpdateFinFeeReceipts(scheduleData.getFinFeeReceipts(),
-					tableType.getSuffix(), auditTranType));
-		}
+		/*
+		 * //TODO:GANESH NEED TO REMOVE if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null &&
+		 * !financeDetail.getFinScheduleData().getFinFeeReceipts().isEmpty()) { for (FinFeeReceipt finFeeReceipt :
+		 * financeDetail.getFinScheduleData().getFinFeeReceipts()) { for (FinFeeDetail finFeeDetail :
+		 * financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
+		 * 
+		 * if (finFeeReceipt.getFeeTypeId() != 0) { if (finFeeReceipt.getFeeTypeId() == finFeeDetail.getFeeTypeID()) {
+		 * finFeeReceipt.setFeeID(finFeeDetail.getFeeID()); break; }
+		 * 
+		 * } else { if (StringUtils.equals(finFeeReceipt.getFeeTypeCode(), finFeeDetail.getFeeTypeCode())) {
+		 * finFeeReceipt.setFeeID(finFeeDetail.getFeeID()); break; } } } }
+		 * 
+		 * 
+		 * auditDetails.addAll(getFinFeeDetailService().saveOrUpdateFinFeeReceipts(
+		 * financeDetail.getFinScheduleData().getFinFeeReceipts(), tableType.getSuffix(),
+		 * auditHeader.getAuditTranType()));
+		 * 
+		 * }
+		 */
 
 		// set Finance Insurance Details Audit
 		// =======================================
@@ -4907,15 +4907,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Finance Fee Receipt Details
-			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)) {
-				if (finScheduleData.getFinFeeReceipts() == null || finScheduleData.getFinFeeReceipts().isEmpty()) {
-					getFinFeeDetailService().createExcessAmount(financeMain.getFinReference(), null,
-							financeMain.getCustID());
-				} else {
-					getFinFeeDetailService().doApproveFinFeeReceipts(finScheduleData.getFinFeeReceipts(), "", tranType,
-							financeMain.getFinReference(), financeMain.getCustID());
-				}
-			}
+			/*
+			 * //TODO:GANESH NEED TO REMOVE if (StringUtils.equals(financeDetail.getModuleDefiner(),
+			 * FinanceConstants.FINSER_EVENT_ORG) ||
+			 * FinanceConstants.FINSER_EVENT_ADDDISB.equalsIgnoreCase(financeDetail.getModuleDefiner())) { if
+			 * (financeDetail.getFinScheduleData().getFinFeeReceipts() == null ||
+			 * financeDetail.getFinScheduleData().getFinFeeReceipts().isEmpty()) {
+			 * getFinFeeDetailService().createExcessAmount(financeMain.getFinReference(), null,
+			 * financeMain.getCustID()); } else {
+			 * getFinFeeDetailService().doApproveFinFeeReceipts(financeDetail.getFinScheduleData().getFinFeeReceipts(),
+			 * "", tranType,financeMain.getFinReference(), financeMain.getCustID(), financeDetail.getModuleDefiner()); }
+			 * }
+			 */
 
 			// Plan EMI Holiday Details Deletion, if exists on Old image
 			// =======================================
@@ -5196,10 +5199,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				// Fin Fee Receipt Details Deletion
-				if (finScheduleData.getFinFeeReceipts() != null) {
-					auditDetailList.addAll(getFinFeeDetailService()
-							.deleteFinFeeReceipts(finScheduleData.getFinFeeReceipts(), "_Temp", auditTranType));
-				}
+				/*
+				 * //TODO:GANESH NEED TO REMOVE if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null) {
+				 * auditDetailList.addAll(getFinFeeDetailService().deleteFinFeeReceipts(
+				 * financeDetail.getFinScheduleData().getFinFeeReceipts(), "_Temp", auditHeader.getAuditTranType())); }
+				 */
 
 				// Step Details Deletion
 				// =======================================
@@ -6601,7 +6605,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		cancelStageAccounting(financeMain.getFinReference(), financeDetail.getModuleDefiner());
 
 		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
-			getPostingsPreparationUtil().postReveralsByFinreference(financeMain.getFinReference(), true);
+			getPostingsPreparationUtil().postReveralsExceptFeePay(financeMain.getFinReference());
 
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			String[] fieldsArray = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
@@ -6631,8 +6635,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			if ((StringUtils.containsIgnoreCase(financeMain.getRecordStatus(), "Reject")
-					|| StringUtils.containsIgnoreCase(financeMain.getRecordStatus(), "Cancel"))
-					&& StringUtils.isEmpty(financeMain.getNextTaskId())) {
+					|| StringUtils.containsIgnoreCase(financeMain.getRecordStatus(), "Cancel")
+					|| StringUtils.containsIgnoreCase(financeMain.getRecordStatus(), "Rejected"))) {
 				TaskOwners taskOwner = new TaskOwners();
 				taskOwner.setReference(financeMain.getFinReference());
 				taskOwner.setProcessed(true);
@@ -7006,10 +7010,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditDetails.addAll(getFinFeeDetailService().delete(fees, "_Temp", auditHeader.getAuditTranType(), isWIF));
 		}
 
-		if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null) {
-			auditDetails.addAll(getFinFeeDetailService().deleteFinFeeReceipts(
-					financeDetail.getFinScheduleData().getFinFeeReceipts(), "_Temp", auditHeader.getAuditTranType()));
-		}
+		/*
+		 * //TODO:GANESH NEED TO REMOVE if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null) {
+		 * auditDetails.addAll(getFinFeeDetailService().deleteFinFeeReceipts(
+		 * financeDetail.getFinScheduleData().getFinFeeReceipts(), "_Temp", auditHeader.getAuditTranType())); }
+		 */
 
 		auditHeader.setAuditDetails(auditDetails);
 
@@ -8846,6 +8851,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				summary.setFinODTotWaived(finODDetails.getTotWaived());
 				summary.setFinODTotPenaltyPaid(finODDetails.getTotPenaltyPaid());
 				summary.setFinODTotPenaltyBal(finODDetails.getTotPenaltyBal());
+			}
+
+			if (ImplementationConstants.ALLOW_NPA_PROVISION) {
+				Provision provision = provisionDAO.getProvisionById(finReference, "_View");
+				if (provision != null) {
+					summary.setAssetCode(provision.getAssetCode());
+				}
 			}
 		}
 
@@ -12115,6 +12127,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setCashBackProcessService(CashBackProcessService cashBackProcessService) {
 		this.cashBackProcessService = cashBackProcessService;
+	}
+
+	public void setProvisionDAO(ProvisionDAO provisionDAO) {
+		this.provisionDAO = provisionDAO;
 	}
 
 }

@@ -765,6 +765,7 @@ public class AccountEngineExecution implements Serializable {
 			addZeroifNotContains(dataMap, feeCode + "_SCH");
 			addZeroifNotContains(dataMap, feeCode + "_AF");
 			addZeroifNotContains(dataMap, feeCode + "_N");
+			addZeroifNotContains(dataMap, feeCode + "_R");
 
 			// GST
 			addZeroifNotContains(dataMap, feeCode + "_UGST_N");
@@ -790,6 +791,11 @@ public class AccountEngineExecution implements Serializable {
 			addZeroifNotContains(dataMap, feeCode + "_IGST_W");
 			addZeroifNotContains(dataMap, feeCode + "_CGST_W");
 			addZeroifNotContains(dataMap, feeCode + "_CESS_W");
+
+			addZeroifNotContains(dataMap, feeCode + "_UGST_R");
+			addZeroifNotContains(dataMap, feeCode + "_SGST_R");
+			addZeroifNotContains(dataMap, feeCode + "_IGST_R");
+			addZeroifNotContains(dataMap, feeCode + "_CGST_R");
 
 			addZeroifNotContains(dataMap, feeCode + "_UGST_SCH");
 			addZeroifNotContains(dataMap, feeCode + "_SGST_SCH");

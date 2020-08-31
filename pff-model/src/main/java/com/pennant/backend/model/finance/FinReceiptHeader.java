@@ -131,7 +131,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private List<ReceiptAllocationDetail> allocations = new ArrayList<>(1);
 	private List<ReceiptAllocationDetail> allocationsSummary = new ArrayList<>(1);
 	private ManualAdvise manualAdvise; // Bounce Reason
-	private List<FinFeeDetail> paidFeeList; // Paid Fee Detail List for Fee Receipt
+	private List<FinFeeDetail> paidFeeList = new ArrayList<FinFeeDetail>(1); // Paid Fee Detail List for Fee Receipt
 	private List<FinODDetails> finODDetails = new ArrayList<>(1);
 	private List<ManualAdviseMovements> payablesMovements = new ArrayList<>(1);
 	private List<FinExcessMovement> finExcessMovements = new ArrayList<>(1);
@@ -172,6 +172,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	private String prvReceiptPurpose;
 	private Long partnerBankId;
+	private String receiptSource;
+	private Long linkedTranId;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -282,6 +284,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 		excludeFields.add("prvReceiptPurpose");
 		excludeFields.add("partnerBankId");
+		excludeFields.add("receiptSource");
+		excludeFields.add("linkedTranId");
 
 		return excludeFields;
 	}
@@ -1455,6 +1459,22 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setKnockOffType(String knockOffType) {
 		this.knockOffType = knockOffType;
+	}
+
+	public String getReceiptSource() {
+		return receiptSource;
+	}
+
+	public void setReceiptSource(String receiptSource) {
+		this.receiptSource = receiptSource;
+	}
+
+	public Long getLinkedTranId() {
+		return linkedTranId;
+	}
+
+	public void setLinkedTranId(Long linkedTranId) {
+		this.linkedTranId = linkedTranId;
 	}
 
 }

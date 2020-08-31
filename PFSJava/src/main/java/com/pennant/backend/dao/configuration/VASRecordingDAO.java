@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.dao.configuration;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.backend.model.configuration.VASRecording;
@@ -80,4 +81,5 @@ public interface VASRecordingDAO {
 
 	Long getCustomerId(String finReference);
 
+	void updatePaidAmt(String vasReference, String primaryLinkRef, BigDecimal paidAmt, String type);
 }

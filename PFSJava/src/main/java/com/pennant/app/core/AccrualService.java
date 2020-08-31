@@ -637,6 +637,11 @@ public class AccrualService extends ServiceHelper {
 		//Calculated at individual level
 		//pftDetail.setPftAccrued(pftDetail.getPftAmz().subtract(pftDetail.getTotalPftPaid()));
 
+		//Provision Amortization
+		if (pftDetail.isProvision()) {
+			setProvisionData(pftDetail);
+		}
+
 		// Suspense Amortization
 		if (DateUtil.compare(dateSusp, pftDetail.getMaturityDate()) <= 0) {
 			pftDetail.setPftAmzSusp(
@@ -663,6 +668,28 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setTdsAccrued(pftDetail.getTdTdsBal().add(accrueTDS));
 		}
 
+	}
+
+	private void setProvisionData(FinanceProfitDetail pftDetail) {
+		if (pftDetail.getCurODDays() >= 0) {
+			BigDecimal pftAmz = pftDetail.getPftAmz();
+			BigDecimal pftAmzNormal = pftDetail.getPftAmzNormal();
+			BigDecimal pftAmzPD = pftDetail.getPftAmzPD();
+
+			/*
+			 * pftDetail.setPftAmzSusp(pftAmz.subtract(pftAmzNormal).subtract(pftAmzPD));
+			 * pftDetail.setPftAccrueSusp(pftDetail.getPftAccrued().subtract(pftDetail.getPftAccrueSusp()));
+			 */
+			pftDetail.setPftAmzSusp(pftAmz);
+			pftDetail.setPftAccrueSusp(pftDetail.getPftAccrued());
+
+			pftDetail.setPftAmz(BigDecimal.ZERO);
+			pftDetail.setPftAccrued(BigDecimal.ZERO);
+		} else {
+			pftDetail.setPftAmzSusp(BigDecimal.ZERO);
+			pftDetail.setPftAccrueSusp(BigDecimal.ZERO);
+		}
+		pftDetail.setPftInSusp(false);
 	}
 
 	/**

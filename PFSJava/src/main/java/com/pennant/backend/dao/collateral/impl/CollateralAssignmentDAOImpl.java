@@ -68,6 +68,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods implementation for the <b>CollateralAssignment model</b> class.<br>
@@ -546,6 +547,38 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Checking the If the loan have any assigned collaterals or not
+	 * 
+	 * @param finReference
+	 * @param tableType
+	 * @return
+	 */
+	@Override
+	public boolean isSecuredLoan(String finReference, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select count(*)  From CollateralAssignment");
+		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
+		sql.append(" Where Reference = :Reference");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", finReference);
+
+		int count = 0;
+		try {
+			logger.debug(Literal.LEAVING);
+			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			count = 0;
+		}
+
+		return count == 0 ? false : true;
 	}
 
 	private StringBuilder getSqlQuery(String type) {

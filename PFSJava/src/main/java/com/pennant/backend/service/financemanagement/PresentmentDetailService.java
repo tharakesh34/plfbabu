@@ -48,6 +48,7 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public interface PresentmentDetailService {
 

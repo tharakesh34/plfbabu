@@ -4,22 +4,33 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.amtmasters.ExpenseType;
+import com.pennant.backend.model.systemmasters.BuilderCompany;
 
 public class GenerateRowMapper {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new ExpenseType();
-	private static String tableName = "ExpenseTypes";
-	private static String whereClause = "Where ReturnCode = ?";
-	private static String varibaleName = "expType";
-	private static boolean list = true;
+	private static Object object = new BuilderCompany();
+	private static String tableName = "BuilderCompany";
+	private static String whereClause = "Where id = ? and FieldCode = ?";
+	private static String varibaleName = "ca";
+	private static boolean list = false;
 
 	private static String getSelectQuery() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("ExpenseTypeId, ExpenseTypeCode, ExpenseTypeDesc, AmortReq, TaxApplicable, Active,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
-		sql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append("id, name, segmentation, custId, groupId, apfType,peDevId,entityType");
+		sql.append(", emailId, cityType, address1, address2");
+		sql.append(", address3, city, code, devavailablity, magnitude, absavailablity, totalProj");
+		sql.append(", approved, remarks, panDetails, benfName, accountNo, bankBranchId");
+		sql.append(", limitOnAmt, limitOnUnits, currentExpUni, currentExpAmt, dateOfInCop");
+		sql.append(", noOfProj, assHLPlayers, onGoingProj, expInBusiness, recommendation");
+		sql.append(", magintudeInLacs, noOfProjCons, pinCodeId");
+
+		sql.append(", segmentationName, groupIdName, fieldCode, cityName,codeName");
+		sql.append(", BranDesc, entyDesc, bankName, ifsc,areaName, LovDescCIFName, custCIF, active");
+
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
+
 		return sql.toString();
 	}
 

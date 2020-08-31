@@ -103,6 +103,7 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.limit.LimitStructureDetail;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.BMTRBFldCriterias;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -1277,6 +1278,27 @@ public class PennantAppUtil {
 		return stepPolicyHeaderList;
 	}
 
+	public static List<ValueLabel> getFinTypeList() {
+		ArrayList<ValueLabel> finTypeList = new ArrayList<ValueLabel>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<FinanceType> searchObject = new JdbcSearchObject<FinanceType>(FinanceType.class);
+		searchObject.addTabelName("rmtfinancetypes");
+		searchObject.addField("FinType");
+		searchObject.addField("FinTypeDesc");
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+		searchObject.addFilters(filters);
+
+		List<FinanceType> appList = pagedListService.getBySearchObject(searchObject);
+		for (int i = 0; i < appList.size(); i++) {
+			ValueLabel finTypeLabel = new ValueLabel(String.valueOf(appList.get(i).getFinType()),
+					String.valueOf(appList.get(i).getFinType()) + "-" + appList.get(i).getFinTypeDesc());
+			finTypeList.add(finTypeLabel);
+		}
+		return finTypeList;
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Object getSystemDefault(String moduleName, String tableName, Filter[] filters) {
 
@@ -2064,17 +2086,9 @@ public class PennantAppUtil {
 				AccountEngineEvent.class);
 
 		Filter[] filters = null;
-		List<String> accEngineEventsList = new ArrayList<String>();
-		;
-		if (!ImplementationConstants.ALLOW_ADDDBSF) {
-			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSF);
-		}
+		List<String> excludedAccEvents = getExcludedAccEvents();
 
-		if (!ImplementationConstants.ALLOW_DEPRECIATION) {
-			accEngineEventsList.add(AccountEventConstants.ACCEVENT_DPRCIATE);
-		}
-
-		if (accEngineEventsList.isEmpty()) {
+		if (excludedAccEvents.isEmpty()) {
 			filters = new Filter[2];
 		} else {
 			filters = new Filter[3];
@@ -2082,8 +2096,8 @@ public class PennantAppUtil {
 
 		filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 		filters[1] = new Filter("CategoryCode", categoryCode, Filter.OP_EQUAL);
-		if (!accEngineEventsList.isEmpty()) {
-			filters[2] = new Filter("AEEventCode", accEngineEventsList, Filter.OP_NOT_IN);
+		if (!excludedAccEvents.isEmpty()) {
+			filters[2] = new Filter("AEEventCode", excludedAccEvents, Filter.OP_NOT_IN);
 		}
 
 		searchObject.addFilters(filters);
@@ -2091,6 +2105,31 @@ public class PennantAppUtil {
 		searchObject.addSort("SeqOrder", false);
 		return pagedListService.getBySearchObject(searchObject);
 
+	}
+
+	public static List<String> getExcludedAccEvents() {
+		List<String> excludeEvents = new ArrayList<String>();
+
+		if (!ImplementationConstants.ALLOW_ADDDBSF) {
+			excludeEvents.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+		}
+
+		if (!ImplementationConstants.ALLOW_DEPRECIATION) {
+			excludeEvents.add(AccountEventConstants.ACCEVENT_DPRCIATE);
+		}
+
+		if (!ImplementationConstants.ALLOW_IND_AS) {
+			excludeEvents.add(AccountEventConstants.ACCEVENT_EXPENSE);
+			excludeEvents.add(AccountEventConstants.ACCEVENT_INDAS);
+		}
+
+		if (!ImplementationConstants.ALLOW_NPA_PROVISION) {
+			excludeEvents.add(AccountEventConstants.ACCEVENT_PROVSN);
+			excludeEvents.add(AccountEventConstants.ACCEVENT_PRVSN_MN);
+			excludeEvents.add(AccountEventConstants.ACCEVENT_PROVCHG);
+		}
+
+		return excludeEvents;
 	}
 
 	public static List<AccountEngineEvent> fetchAccountingEvents() {

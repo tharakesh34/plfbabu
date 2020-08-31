@@ -82,6 +82,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.LatePayMarkingService;
+import com.pennant.app.core.NPAService;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -137,6 +138,7 @@ public class ReceiptCalculator implements Serializable {
 	private LatePayMarkingService latePayMarkingService;
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private NPAService npaService;
 	private BigDecimal actualOdPaid = BigDecimal.ZERO;
 	private List<FinanceScheduleDetail> finSchdDtls = new ArrayList<>();
 	private List<Long> inProcessReceipts = new ArrayList<>();
@@ -2362,6 +2364,7 @@ public class ReceiptCalculator implements Serializable {
 					feeDtl.setRemainingFee(
 							feeDtl.getActualAmount().subtract(feeDtl.getPaidAmount().add(feeDtl.getWaivedAmount())));
 					feeDtl.setPaidTDS(allocate.getTdsPaid());
+					feeDtl.setPaidCalcReq(true);
 					break;
 				}
 			}
@@ -2490,17 +2493,8 @@ public class ReceiptCalculator implements Serializable {
 		// Penal after schedule collection OR along
 		String repayHierarchy = scheduleData.getFinanceType().getRpyHierarchy();
 
-		// #PSD:138273
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_DIFF_RPYHCY_NPA)) {
-			// FIXME:Currently NPA is updating on EOD, so for temporary purpose
-			// we are changing repay hierarchy on basis of DPD.
-
-			int dueBucket = financeScheduleDetailDAO.getDueBucket(scheduleData.getFinanceMain().getFinReference());
-			if (dueBucket >= SysParamUtil.getValueAsInt(SMTParameterConstants.RPYHCY_ON_DPD_BUCKET)) {
-				repayHierarchy = SysParamUtil.getValueAsString(SMTParameterConstants.RPYHCY_ON_NPA);
-			}
-		}
-
+		String finReference = scheduleData.getFinanceMain().getFinReference();
+		repayHierarchy = getRepayHierarchyOnNPA(finReference);
 		if (repayHierarchy.contains("CS")) {
 			rch.setPenalSeparate(true);
 		} else {
@@ -2541,6 +2535,31 @@ public class ReceiptCalculator implements Serializable {
 		}
 
 		return receiptData;
+	}
+
+	private String getRepayHierarchyOnNPA(String finReference) {
+		String repayHierarchy = "";
+		if (ImplementationConstants.ALLOW_NPA_PROVISION) {
+			String npaRepayHierarchy = SysParamUtil.getValueAsString(SMTParameterConstants.RPYHCY_ON_NPA);
+			if (StringUtils.trimToNull(npaRepayHierarchy) != null) {
+				boolean isNPARepayHierarchyReq = npaService.isNAPRepayHierarchyReq(finReference);
+
+				if (isNPARepayHierarchyReq) {
+					repayHierarchy = npaRepayHierarchy;
+				}
+			}
+		} else {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_DIFF_RPYHCY_NPA)) {
+				// FIXME:Currently NPA is updating on EOD, so for temporary purpose
+				// we are changing repay hierarchy on basis of DPD.
+				int dueBucket = financeScheduleDetailDAO.getDueBucket(finReference);
+				if (dueBucket >= SysParamUtil.getValueAsInt(SMTParameterConstants.RPYHCY_ON_DPD_BUCKET)) {
+					repayHierarchy = SysParamUtil.getValueAsString(SMTParameterConstants.RPYHCY_ON_NPA);
+				}
+			}
+		}
+
+		return repayHierarchy == null ? "" : repayHierarchy;
 	}
 
 	public FinReceiptData calApportion(char[] rpyOrder, FinReceiptData receiptData) {
@@ -4761,4 +4780,13 @@ public class ReceiptCalculator implements Serializable {
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
+
+	public NPAService getNpaService() {
+		return npaService;
+	}
+
+	public void setNpaService(NPAService npaService) {
+		this.npaService = npaService;
+	}
+
 }

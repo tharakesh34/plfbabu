@@ -91,6 +91,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 
 		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId");
+		sql.append(", pinCodeId");
 		sql.append(" From FinTaxDetail");
 		sql.append(type);
 		sql.append(" Where finReference = :finReference");
@@ -121,13 +122,15 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		sql.append(
 				"addrLine3, addrLine4, country, province, city, pinCode, sezCertificateNo , sezValueDate , AddressDetail, ");
 		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		sql.append(" pinCodeId)");
 		sql.append(" values(");
 		sql.append(" :finReference, :applicableFor,:TaxCustId, :taxExempted, :taxNumber, :addrLine1, :addrLine2, ");
 		sql.append(
 				" :addrLine3, :addrLine4, :country, :province, :city, :pinCode,  :sezCertificateNo , :sezValueDate , :AddressDetail, ");
 		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, ");
+		sql.append(":pinCodeId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -158,7 +161,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 				" city = :city, pinCode = :pinCode, sezCertificateNo = :sezCertificateNo , sezValueDate = :sezValueDate, AddressDetail = :AddressDetail, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, pinCodeId = :pinCodeId");
 		sql.append(" where finReference = :finReference ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 

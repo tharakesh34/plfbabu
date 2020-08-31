@@ -277,9 +277,11 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		this.city.setValidateColumns(new String[] { "PCCity" });
 
 		this.code.setModuleName("PinCode");
-		this.code.setValueColumn("PinCode");
+		this.code.setValueColumn("PinCodeId");
 		this.code.setDescColumn("AreaName");
-		this.code.setValidateColumns(new String[] { "PinCode" });
+		this.code.setValueType(DataType.LONG);
+		this.code.setValidateColumns(new String[] { "PinCodeId" });
+		this.code.setInputAllowed(false);
 		this.bankBranch.setModuleName("BankBranch");
 		this.bankBranch.setValueColumn("BranchCode");
 		this.bankBranch.setDescColumn("BranchDesc");
@@ -452,10 +454,11 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		if (dataObject instanceof String || dataObject == null) {
 			this.code.setValue("");
 			this.code.setDescription("");
-			this.code.setAttribute("PinCode", null);
+			this.code.setAttribute("pinCodeId", null);
 		} else {
 			PinCode details = (PinCode) dataObject;
-			this.code.setAttribute("PinCode", details.getId());
+			this.code.setAttribute("pinCodeId", details.getPinCodeId());
+			this.code.setValue(details.getPinCode());
 		}
 		logger.debug("Leaving" + event.toString());
 
@@ -566,6 +569,11 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		this.address2.setValue(aBuilderCompany.getAddress2());
 		this.address3.setValue(aBuilderCompany.getAddress3());
 		this.city.setValue(aBuilderCompany.getCity());
+
+		if (aBuilderCompany.getPinCodeId() != null) {
+			this.code.setAttribute("pinCodeId", aBuilderCompany.getPinCodeId());
+		}
+
 		this.code.setValue(StringUtils.trimToEmpty(aBuilderCompany.getCode()),
 				StringUtils.trimToEmpty(aBuilderCompany.getAreaName()));
 		this.devavailablity.setValue(aBuilderCompany.getDevavailablity());
@@ -677,6 +685,12 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 			wve.add(we);
 		}
 		try {
+			Object obj = this.code.getAttribute("pinCodeId");
+			if (obj != null) {
+				if (!StringUtils.isEmpty(obj.toString())) {
+					aBuilderCompany.setPinCodeId(Long.valueOf((obj.toString())));
+				}
+			}
 			aBuilderCompany.setCode(this.code.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);

@@ -2574,6 +2574,7 @@
 	<bean id="receiptEnquiryDialogCtrl" class="com.pennant.webui.financemanagement.receipts.ReceiptEnquiryDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="branchService" ref="branchService" />
+		<property name="postingsDAO" ref="postingsDAO" />
 	</bean>
 
 
@@ -4127,6 +4128,24 @@
 		scope="prototype">
 		<property name="nPABucketService" ref="nPABucketService" />
 	</bean>
+
+	<!-- NPAProvisionHeader -->
+	<bean id="nPAProvisionHeaderListCtrl" class="com.pennant.webui.applicationmaster.npaprovisionheader.NPAProvisionHeaderListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="nPAProvisionHeaderService" ref="nPAProvisionHeaderService" />
+	</bean>
+
+	<bean id="nPAProvisionHeaderDialogCtrl" class="com.pennant.webui.applicationmaster.npaprovisionheader.NPAProvisionHeaderDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="nPAProvisionHeaderService" ref="nPAProvisionHeaderService" />
+	</bean>
+
+	<!--Select NPA HEader Provision -->
+	<bean id="selectNPAProvisionHeaderDialogCtrl" class="com.pennant.webui.applicationmaster.npaprovisionheader.SelectNPAProvisionHeaderDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="nPAProvisionHeaderService" ref="nPAProvisionHeaderService" />
+	</bean>
+
 	<!-- NPABucketConfiguration -->
 	<bean id="nPABucketConfigurationListCtrl" class="com.pennant.webui.applicationmaster.npabucketconfiguration.NPABucketConfigurationListCtrl"
 		parent="basisListCtrl" scope="prototype">
@@ -4390,7 +4409,7 @@
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 		<property name="gstnValidationService" ref="gstnValidationService" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
-		
+
 	</bean>
 	<!-- Entity -->
 	<bean id="entityListCtrl" class="com.pennant.webui.applicationmaster.entity.EntityListCtrl" parent="basisListCtrl"
@@ -5695,5 +5714,39 @@
 		<property name="loanTypeKnockOffService" ref="loanTypeKnockOffService" />
 	</bean>
 
+	<!--============ FinFeeRefund Details ============== -->
+
+	<bean id="finFeeRefundListCtrl" class="com.pennant.webui.financemanagement.receipts.FinFeeRefundListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="finFeeRefundService" ref="finFeeRefundService" />
+	</bean>
+	<bean id="finFeeRefundDialogCtrl" class="com.pennant.webui.financemanagement.receipts.FinFeeRefundDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="finFeeRefundService" ref="finFeeRefundService" />
+		<property name="eventManager" ref="eventManager" />
+		<property name="accountingSetService" ref="accountingSetService" />
+		<property name="engineExecution" ref="engineExecution" />
+	</bean>
+
+	<!-- AssetClassificationHeader -->
+	<bean id="assetClassificationHeaderListCtrl" class="com.pennant.webui.applicationmaster.assetclassificationheader.AssetClassificationHeaderListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="assetClassificationHeaderService" ref="assetClassificationHeaderService" />
+	</bean>
+	<bean id="assetClassificationHeaderDialogCtrl" class="com.pennant.webui.applicationmaster.assetclassificationheader.AssetClassificationHeaderDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="assetClassificationHeaderService" ref="assetClassificationHeaderService" />
+	</bean>
+	<!-- Manual Provisioning -->
+	<bean id="manualProvisioningListCtrl" class="com.pennant.webui.applicationmaster.manualprovisioning.ManualProvisioningListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="provisionService" ref="provisionService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="nPAProvisionHeaderService" ref="nPAProvisionHeaderService" />
+	</bean>
+	<bean id="manualProvisioningDialogCtrl" class="com.pennant.webui.applicationmaster.manualprovisioning.ManualProvisioningDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="provisionService" ref="provisionService" />
+	</bean>
 
 </beans>

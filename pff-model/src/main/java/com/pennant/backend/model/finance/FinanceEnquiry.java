@@ -136,7 +136,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private boolean sanBsdSchdle;
 	private long promotionSeqId;
 	private BigDecimal cbAmount;
-	private BigDecimal totalCpz;
+	private BigDecimal totalCpz = BigDecimal.ZERO;
 
 	public FinanceEnquiry() {
 

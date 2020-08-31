@@ -48,6 +48,7 @@ import java.util.List;
 import com.pennant.backend.model.collateral.AssignmentDetails;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
+import com.pennanttech.pff.core.TableType;
 
 public interface CollateralAssignmentDAO {
 
@@ -80,5 +81,7 @@ public interface CollateralAssignmentDAO {
 	void deLinkCollateral(String finReference, String TableType);
 
 	int getAssignedCollateralCountByRef(String collateralRef, String reference, String type);
+
+	boolean isSecuredLoan(String finReference, TableType tableType);
 
 }

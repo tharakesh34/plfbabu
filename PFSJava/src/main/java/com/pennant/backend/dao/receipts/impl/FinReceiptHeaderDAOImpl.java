@@ -1205,4 +1205,30 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		}
 
 	}
+
+	@Override
+	public boolean isReceiptsInProcess(String reference, String receiptPurpose, long receiptId, String type) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) FROM FINRECEIPTHEADER" + type);
+		selectSql.append(" WHERE REFERENCE = :REFERENCE AND RECEIPTPURPOSE = :RECEIPTPURPOSE ");
+		selectSql.append(" AND ReceiptID <> :ReceiptID  ");
+		logger.debug(Literal.SQL + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("REFERENCE", reference);
+		source.addValue("RECEIPTPURPOSE", receiptPurpose);
+		source.addValue("ReceiptID", receiptId);
+
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			count = 0;
+		}
+		logger.debug(Literal.LEAVING);
+		return count > 0 ? true : false;
+	}
+
 }

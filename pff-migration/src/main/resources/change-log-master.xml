@@ -9,10 +9,11 @@
 	<include file="change-logs/change-log-dms.xml" />
 	<include file="change-logs/change-log-5.3.0.xml" />
 	<include file="change-logs/change-log-5.4.0.xml" />
-	<include file="change-logs/change-log-5.5.0.xml" />
+	<include file="change-logs/change-log-5.5.0.xml" /> 
 	<include file="change-logs/change-log-5.6.0.xml" />
 	<include file="change-logs/change-log-5.7.0.xml" />
 	<include file="change-logs/change-log-5.8.0.xml" />
+	<include file="change-logs/change-log-5.9.0.xml" />
 	<include file="change-logs/change-log-meta-data.xml" />
 
 </databaseChangeLog>

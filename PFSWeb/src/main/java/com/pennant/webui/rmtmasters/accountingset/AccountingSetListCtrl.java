@@ -63,6 +63,7 @@ import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.service.rmtmasters.AccountingSetService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.rmtmasters.accountingset.model.AccountingSetListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -106,6 +107,13 @@ public class AccountingSetListCtrl extends GFCBaseListCtrl<AccountingSet> {
 	 */
 	public AccountingSetListCtrl() {
 		super();
+	}
+
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+
+		this.searchObject.addFilterNotIn("eventcode", PennantAppUtil.getExcludedAccEvents());
 	}
 
 	@Override

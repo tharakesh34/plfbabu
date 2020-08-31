@@ -135,7 +135,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(120);
 		this.finReference.setMandatoryStyle(true);
-		this.finReference.setModuleName("FinanceManagement");
+		this.finReference.setModuleName("FinanceMainMaintenance");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 		this.finReference.setWhereClause(sql.toString());

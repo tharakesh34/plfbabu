@@ -1841,6 +1841,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			wve.add(we);
 		}
 
+		try {
+			aCustomer.setResidentialStatus(getComboboxValue(this.residentialStatus));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		this.basicDetails.setSelected(true);
 		showErrorDetails(wve, custTab, basicDetails);
 

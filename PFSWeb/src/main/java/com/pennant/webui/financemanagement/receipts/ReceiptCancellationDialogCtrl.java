@@ -66,6 +66,7 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
@@ -89,6 +90,8 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -109,11 +112,13 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -218,6 +223,10 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	protected Textbox posting_finCcy;
 	protected Textbox posting_CustCIF;
 	protected Textbox posting_finBranch;
+
+	protected Groupbox gb_FeeDetail;
+	//TODO: labels are same
+	protected Listbox listBoxFeeDetail;
 
 	private FinReceiptHeader receiptHeader = null;
 	private ReceiptCancellationListCtrl receiptCancellationListCtrl;
@@ -643,9 +652,13 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			doSetValidation();
 		}
 
-		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)
+				|| (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)
+						&& RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(this.receiptHeader.getReceiptMode()))) {
 			aReceiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
-
+			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
+				aReceiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_CANCEL);
+			}
 			try {
 				aReceiptHeader.setBounceDate(this.bounceDate.getValue());
 			} catch (WrongValueException e) {
@@ -656,6 +669,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			ManualAdvise bounce = aReceiptHeader.getManualAdvise();
 			if (bounce == null) {
 				bounce = new ManualAdvise();
+				bounce.setNewRecord(true);
 			}
 
 			bounce.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
@@ -774,6 +788,12 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 	public void onFulfill$bounceCode(Event event) {
 		logger.debug("Entering" + event.toString());
+
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)
+				|| RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(this.receiptHeader.getReceiptMode())) {
+			this.bounceCharge.setValue(BigDecimal.ZERO);
+			return;
+		}
 
 		Object dataObject = bounceCode.getObject();
 
@@ -925,7 +945,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		this.payment_finReference.setValue(header.getReference());
 		this.payment_finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
 		this.payment_finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
-		;
 		this.payment_CustCIF.setValue(header.getCustCIF() + "-" + header.getCustShrtName());
 
 		boolean isBounceProcess = false;
@@ -945,6 +964,21 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			this.bounceRemarks.setReadonly(true);
 			this.label_ReceiptCancellationDialog_BounceDate.setVisible(false);
 			this.hbox_ReceiptCancellationDialog_BounceDate.setVisible(false);
+		}
+
+		//in case of Fee Bounce
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)
+				&& RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(this.receiptHeader.getReceiptMode())) {
+			this.row_CancelReason.setVisible(false);
+			this.cancelReason.setMandatoryStyle(false);
+			this.cancelReason.setReadonly(true);
+			this.label_ReceiptCancellationDialog_BounceDate.setVisible(false);
+			this.hbox_ReceiptCancellationDialog_BounceDate.setVisible(false);
+			this.row_BounceReason.setVisible(true);
+			this.row_BounceRemarks.setVisible(true);
+			this.bounceCode.setMandatoryStyle(true);
+			this.bounceCode.setReadonly(false);
+			this.bounceRemarks.setReadonly(false);
 		}
 
 		// Separating Receipt Amounts based on user entry, if exists
@@ -1038,6 +1072,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 				doFillRepaySchedules(sortRpySchdDetails(new ArrayList<>(rpySchdMap.values())));
 			}
+			doFillFeeDetails(receiptHeader.getPaidFeeList(), finFormatter);
 
 			// Posting Details
 			this.postingDetailsTab.addForward(Events.ON_SELECT, this.window_ReceiptCancellationDialog,
@@ -1166,6 +1201,11 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 					for (int j = 0; j < repayHeaderList.size(); j++) {
 						tranIdList.add(repayHeaderList.get(j).getLinkedTranId());
 					}
+
+					if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
+						tranIdList.add(receiptDetail.getRepayHeader().getLinkedTranId());
+					}
+
 				}
 			}
 		}
@@ -1702,6 +1742,108 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, receiptHeader);
 		return new AuditHeader(String.valueOf(receiptHeader.getReceiptID()), null, null, null, auditDetail,
 				receiptHeader.getUserDetails(), getOverideMap());
+	}
+
+	/**
+	 * Method for Filling Fee details which are going to be paid on Origination Process
+	 */
+	private void doFillFeeDetails(List<FinFeeDetail> feeDetails, int finFormatter) {
+		logger.debug(Literal.ENTERING);
+		Listcell lc;
+		Listitem item;
+
+		this.listBoxFeeDetail.getItems().clear();
+		if (feeDetails != null) {
+			BigDecimal totalPaid = BigDecimal.ZERO;
+			this.gb_FeeDetail.setVisible(true);
+
+			//IMD Total Allocated Amount with GST
+			Decimalbox totalPaidBox = getDecimalbox(finFormatter, true);
+			for (int i = 0; i < feeDetails.size(); i++) {
+				FinFeeDetail fee = feeDetails.get(i);
+				item = new Listitem();
+
+				FinFeeReceipt feeReceipt = fee.getFinFeeReceipts().get(0);
+
+				//FeeType Desc
+				lc = new Listcell(
+						StringUtils.isNotEmpty(fee.getVasReference()) ? fee.getVasReference() : fee.getFeeTypeDesc());
+				lc.setStyle("font-weight:bold;color: #FF6600;");
+				lc.setParent(item);
+
+				//Net Amount Orginal
+				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getNetAmountOriginal(), finFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				//Net Amount GST
+				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getNetAmountGST(), finFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				//Total Net Amount
+				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getNetAmount(), finFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				//Allocated Amount total
+				Decimalbox allocAmtTotBox = getDecimalbox(finFormatter, true);
+				allocAmtTotBox.setValue(PennantAppUtil.formateAmount(feeReceipt.getPaidAmount(), finFormatter));
+				lc = new Listcell();
+				lc.appendChild(allocAmtTotBox);
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				this.listBoxFeeDetail.appendChild(item);
+				totalPaid = totalPaid.add(feeReceipt.getPaidAmount());
+			}
+
+			if (totalPaid.compareTo(BigDecimal.ZERO) >= 0) {
+				totalPaidBox.setValue(PennantAppUtil.formateAmount(totalPaid, finFormatter));
+				doFillSummaryDetails(totalPaidBox);
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for Filling Summary Details for Repay Schedule Terms
+	 * 
+	 * @param totalrefund
+	 * @param totalWaiver
+	 * @param totalPft
+	 * @param totalPri
+	 */
+	private void doFillSummaryDetails(Decimalbox totalPaidBox) {
+
+		Listcell lc;
+		Listitem item;
+
+		//Summary Details
+		item = new Listitem();
+		item.setId("LISTITEM_SUMMARY");
+		lc = new Listcell(Labels.getLabel("listcell_Total.label"));
+		item.setStyle("font-weight:bold;background-color: #C0EBDF;");
+		lc.setSpan(4);
+		lc.setParent(item);
+
+		lc = new Listcell();
+		lc.appendChild(totalPaidBox);
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+
+		lc = new Listcell("");
+		lc.setParent(item);
+		this.listBoxFeeDetail.appendChild(item);
+	}
+
+	private Decimalbox getDecimalbox(int finFormatter, boolean readOnly) {
+		Decimalbox decimalbox = new Decimalbox();
+		decimalbox.setWidth("75px");
+		decimalbox.setMaxlength(18);
+		decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		decimalbox.setDisabled(readOnly);
+		return decimalbox;
 	}
 
 	/**

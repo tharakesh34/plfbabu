@@ -89,6 +89,7 @@ import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -331,9 +332,11 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrZIP.setTextBoxWidth(121);
 		this.custAddrZIP.setMandatoryStyle(true);
 		this.custAddrZIP.setModuleName("PinCode");
-		this.custAddrZIP.setValueColumn("PinCode");
+		this.custAddrZIP.setValueColumn("PinCodeId");
 		this.custAddrZIP.setDescColumn("AreaName");
-		this.custAddrZIP.setValidateColumns(new String[] { "PinCode" });
+		this.custAddrZIP.setValueType(DataType.LONG);
+		this.custAddrZIP.setValidateColumns(new String[] { "PinCodeId" });
+		this.custAddrZIP.setInputAllowed(false);
 
 		this.custAddrPhone.setMaxlength(50);
 		this.cityName.setMaxlength(50);
@@ -471,7 +474,12 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrCountry.setValue(aCustomerAddres.getCustAddrCountry());
 		this.custAddrProvince.setValue(aCustomerAddres.getCustAddrProvince());
 		this.custAddrCity.setValue(aCustomerAddres.getCustAddrCity());
-		this.custAddrZIP.setValue(aCustomerAddres.getCustAddrZIP());
+
+		if (aCustomerAddres.getPinCodeId() != null) {
+			this.custAddrZIP.setAttribute("pinCodeId", aCustomerAddres.getPinCodeId());
+		}
+
+		this.custAddrZIP.setValue(aCustomerAddres.getCustAddrZIP(), aCustomerAddres.getLovDescCustAddrZip());
 		this.custAddrPhone.setValue(aCustomerAddres.getCustAddrPhone());
 		this.cityName.setValue(aCustomerAddres.getCustAddrCity());
 		this.custCIF.setValue(
@@ -579,7 +587,14 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			wve.add(we);
 		}
 		try {
+			Object obj = this.custAddrZIP.getAttribute("pinCodeId");
+			if (obj != null) {
+				if (!StringUtils.isEmpty(obj.toString())) {
+					aCustomerAddres.setPinCodeId(Long.valueOf((obj.toString())));
+				}
+			}
 			aCustomerAddres.setCustAddrZIP(this.custAddrZIP.getValue());
+			aCustomerAddres.setLovDescCustAddrZip(this.custAddrZIP.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -777,7 +792,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 							PennantRegularExpressions.REGEX_NUMERIC, false));
 		}
 
-		if (!this.custAddrZIP.isReadonly()) {
+		if (this.custAddrZIP.isButtonVisible()) {
 			this.custAddrZIP.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_CustomerAddresDialog_CustAddrZIP.value"), null, true, true));
 		}
@@ -1600,9 +1615,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		logger.debug("Entering");
 
 		this.custAddrZIP.setModuleName("PinCode");
-		this.custAddrZIP.setValueColumn("PinCode");
+		this.custAddrZIP.setValueColumn("PinCodeId");
 		this.custAddrZIP.setDescColumn("AreaName");
-		this.custAddrZIP.setValidateColumns(new String[] { "PinCode" });
+		this.custAddrZIP.setValidateColumns(new String[] { "PinCodeId" });
 		Filter[] filters = new Filter[2];
 
 		if (cityValue != null) {
@@ -1645,6 +1660,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				this.custAddrCity.setErrorMessage("");
 				this.custAddrProvince.setErrorMessage("");
 				this.custAddrZIP.setErrorMessage("");
+				this.custAddrZIP.setAttribute("pinCodeId", pinCode.getPinCodeId());
+				this.custAddrZIP.setValue(pinCode.getPinCode());
 			}
 		}
 

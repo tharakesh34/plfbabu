@@ -431,4 +431,9 @@ public interface FinanceMainDAO {
 	String getFinBranch(String finReference);
 
 	Date getClosedDateByFinRef(String finReference);
+
+	FinanceMain getFinBasicDetails(String finReference, String type);
+
+	void updateDeductFeeDisb(FinanceMain financeMain, TableType tableType);
+
 }

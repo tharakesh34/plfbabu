@@ -601,6 +601,14 @@ public class AgreementDetail {
 		this.custAddrPhone = custAddrPhone;
 	}
 
+	public String getLovDescCustAddrZIP() {
+		return lovDescCustAddrZIP;
+	}
+
+	public void setLovDescCustAddrZIP(String lovDescCustAddrZIP) {
+		this.lovDescCustAddrZIP = lovDescCustAddrZIP;
+	}
+
 	/**
 	 * Provides current customers District Name.
 	 */
@@ -696,6 +704,11 @@ public class AgreementDetail {
 	 * Provides current customers Phone Number.
 	 */
 	private String custAddrPhone = "";
+
+	/**
+	 * Provides current customers AreaNmae.
+	 */
+	private String lovDescCustAddrZIP = "";
 
 	public String getCustRegAddrHNbr() {
 		return custRegAddrHNbr;
@@ -824,6 +837,7 @@ public class AgreementDetail {
 	private String lovDescCustRegAddrCityName = "";
 	private String custRegAddrZIP = "";
 	private String custRegAddrPhone = "";
+	private String lovDescCustRegAddrZIP = "";
 
 	private String custPerAddrHNbr = "";
 	private String custPerFlatNbr = "";
@@ -839,6 +853,7 @@ public class AgreementDetail {
 	private String lovDescCustPerAddrCityName = "";
 	private String custPerAddrZIP = "";
 	private String custPerAddrPhone = "";
+	private String lovDescCustPerAddrZIP = "";
 
 	// OFFICE ADDRESS Details Setting Added for the Requirement of PL_CAM
 	private String custOfcAddrHNbr = "";
@@ -855,6 +870,7 @@ public class AgreementDetail {
 	private String lovDescCustOfcAddrCityName = "";
 	private String custOfcAddrZIP = "";
 	private String custOfcAddrPhone = "";
+	private String lovDescCustOfcAddrZIP = "";
 
 	// ========== Arabic Fields Details ==========//
 
@@ -1080,6 +1096,30 @@ public class AgreementDetail {
 
 	public void setCustPerAddrPhone(String custPerAddrPhone) {
 		this.custPerAddrPhone = custPerAddrPhone;
+	}
+
+	public String getLovDescCustRegAddrZIP() {
+		return lovDescCustRegAddrZIP;
+	}
+
+	public void setLovDescCustRegAddrZIP(String lovDescCustRegAddrZIP) {
+		this.lovDescCustRegAddrZIP = lovDescCustRegAddrZIP;
+	}
+
+	public String getLovDescCustPerAddrZIP() {
+		return lovDescCustPerAddrZIP;
+	}
+
+	public void setLovDescCustPerAddrZIP(String lovDescCustPerAddrZIP) {
+		this.lovDescCustPerAddrZIP = lovDescCustPerAddrZIP;
+	}
+
+	public String getLovDescCustOfcAddrZIP() {
+		return lovDescCustOfcAddrZIP;
+	}
+
+	public void setLovDescCustOfcAddrZIP(String lovDescCustOfcAddrZIP) {
+		this.lovDescCustOfcAddrZIP = lovDescCustOfcAddrZIP;
 	}
 
 	private String finReferenceArabic;
@@ -5568,6 +5608,7 @@ public class AgreementDetail {
 		private String custAge = "";
 		private String custFatherName = "";
 		private String custSalutation = "";
+		private String lovDescCustAddrZIP = "";
 
 		public CoApplicant() {
 
@@ -5772,6 +5813,15 @@ public class AgreementDetail {
 		public void setCustSalutation(String custSalutation) {
 			this.custSalutation = custSalutation;
 		}
+
+		public String getLovDescCustAddrZIP() {
+			return lovDescCustAddrZIP;
+		}
+
+		public void setLovDescCustAddrZIP(String lovDescCustAddrZIP) {
+			this.lovDescCustAddrZIP = lovDescCustAddrZIP;
+		}
+
 	}
 
 	private List<CustomerBankInfo> customerBankInfos;

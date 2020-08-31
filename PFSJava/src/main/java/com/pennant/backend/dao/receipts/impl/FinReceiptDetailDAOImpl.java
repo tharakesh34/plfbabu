@@ -387,7 +387,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 	}
 
 	@Override
-	public List<FinReceiptDetail> getFinReceiptDetailByExternalReference(String extReference) {
+	public List<FinReceiptDetail> getFinReceiptDetailByReference(String reference) {
 		logger.debug("Entering");
 
 		StringBuilder selectSql = new StringBuilder();
@@ -395,7 +395,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 				" Select T1.Reference,T2.PaymentType,T1.ReceiptPurpose, T2.TRANSACTIONREF, T2.AMOUNT, T2.ReceivedDate");
 		selectSql.append(" From FINRECEIPTHEADER T1");
 		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
-		selectSql.append(" where extReference = '" + extReference + "'");
+		selectSql.append(" where Reference = '" + reference + "'");
 
 		BeanPropertySqlParameterSource beanParamSource = new BeanPropertySqlParameterSource(new FinReceiptDetail());
 

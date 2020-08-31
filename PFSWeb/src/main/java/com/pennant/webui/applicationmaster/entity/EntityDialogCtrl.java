@@ -74,6 +74,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -210,9 +211,11 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 		this.pinCode.setMandatoryStyle(true);
 		this.pinCode.setModuleName("PinCode");
-		this.pinCode.setValueColumn("PinCode");
-		this.pinCode.setDescColumn("City");
-		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		this.pinCode.setValueColumn("PinCodeId");
+		this.pinCode.setDescColumn("AreaName");
+		this.pinCode.setValueType(DataType.LONG);
+		this.pinCode.setInputAllowed(false);
+		this.pinCode.setValidateColumns(new String[] { "PinCodeId" });
 		this.pinCode.setTextBoxWidth(180);
 
 		this.entityCode.setMaxlength(8);
@@ -407,9 +410,9 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 	private void fillPindetails(String id, String province) {
 		this.pinCode.setModuleName("PinCode");
-		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setValueColumn("PinCodeId");
 		this.pinCode.setDescColumn("AreaName");
-		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		this.pinCode.setValidateColumns(new String[] { "PinCodeId" });
 		Filter[] filters1 = new Filter[1];
 
 		if (id != null) {
@@ -439,7 +442,6 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 			PinCode details = (PinCode) dataObject;
 
 			if (details != null) {
-
 				this.country.setValue(details.getpCCountry());
 				this.country.setDescription(details.getLovDescPCCountryName());
 				this.cityCode.setValue(details.getCity());
@@ -449,7 +451,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 				this.cityCode.setErrorMessage("");
 				this.stateCode.setErrorMessage("");
 				this.country.setErrorMessage("");
-				;
+				this.pinCode.setAttribute("pinCodeId", details.getPinCodeId());
+				this.pinCode.setValue(details.getPinCode());
 			}
 
 		}
@@ -588,7 +591,12 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		this.country.setValue(aEntity.getCountry());
 		this.stateCode.setValue(aEntity.getStateCode());
 		this.cityCode.setValue(aEntity.getCityCode());
-		this.pinCode.setValue(aEntity.getPinCode());
+
+		if (aEntity.getPinCodeId() != null) {
+			this.pinCode.setAttribute("pinCodeId", aEntity.getPinCodeId());
+		}
+
+		this.pinCode.setValue(aEntity.getPinCode(), aEntity.getPinCodeName());
 		this.active.setChecked(aEntity.isActive());
 		this.gstinAvailable.setChecked(aEntity.isGstinAvailable());
 		this.entityAddrLine1.setValue(aEntity.getEntityAddrLine1());
@@ -682,7 +690,13 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		}
 		// Pin Code
 		try {
-			aEntity.setPinCode(this.pinCode.getValidatedValue());
+			Object obj = this.pinCode.getAttribute("pinCodeId");
+			if (obj != null) {
+				if (!StringUtils.isEmpty(obj.toString())) {
+					aEntity.setPinCodeId(Long.valueOf((obj.toString())));
+				}
+			}
+			aEntity.setPinCode(this.pinCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -825,7 +839,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 			this.cityCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_EntityDialog_CityCode.value"), null, true, true));
 		}
-		if (!this.pinCode.isReadonly()) {
+		if (this.pinCode.isButtonVisible()) {
 			this.pinCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_EntityDialog_PinCode.value"), null, true, true));
 		}

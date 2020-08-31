@@ -94,4 +94,6 @@ public interface FinReceiptHeaderDAO {
 	boolean isOnlineExists(String reference, String subReceiptMode, String tranRef, String type);
 
 	String getLoanReferenc(String finReference, String receiptFileName);
+
+	boolean isReceiptsInProcess(String reference, String receiptPurpose, long receiptId, String type);
 }

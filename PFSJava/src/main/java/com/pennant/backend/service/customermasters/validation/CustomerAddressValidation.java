@@ -118,11 +118,14 @@ public class CustomerAddressValidation {
 
 		auditDetail.setErrorDetail(screenValidations(customerAddres));
 
-		boolean isServiceable = getCustomerAddresDAO().isServiceable(customerAddres.getCustAddrZIP());
+		boolean isServiceable = getCustomerAddresDAO().isServiceable(customerAddres.getPinCodeId());
+
 		if (!isServiceable) {
 			valueParm[0] = StringUtils.trimToEmpty(customerAddres.getCustAddrZIP());
+			valueParm[1] = StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrZip());
 
-			errParm[0] = PennantJavaUtil.getLabel("label_PinCode") + "-" + valueParm[0];
+			errParm[0] = PennantJavaUtil.getLabel("label_PinCode") + "-" + valueParm[0] + " For "
+					+ PennantJavaUtil.getLabel("label_AreaName") + "-" + valueParm[1];
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "81005", errParm, null));
 		}
 

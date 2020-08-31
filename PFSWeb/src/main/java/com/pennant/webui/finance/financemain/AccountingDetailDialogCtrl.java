@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.finance.financemain;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -895,7 +896,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 		if (getDialogCtrl() != null) {
 			try {
-				getDialogCtrl().getClass().getMethod("executeAccounting").invoke(getDialogCtrl());
+				Method method = getDialogCtrl().getClass().getMethod("executeAccounting");
+				method.invoke(getDialogCtrl());
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 				if (e.getCause().getClass().equals(WrongValuesException.class)) {

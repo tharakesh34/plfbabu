@@ -76,6 +76,7 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal NSchdPftDue = BigDecimal.ZERO;
 
 	private boolean PftInSusp;
+	private boolean provision;
 
 	private String FinStatus;
 	private String FinStsReason;
@@ -1659,6 +1660,14 @@ public class FinanceProfitDetail implements Serializable {
 
 	public void setCbAmount(BigDecimal cbAmount) {
 		this.cbAmount = cbAmount;
+	}
+
+	public boolean isProvision() {
+		return provision;
+	}
+
+	public void setProvision(boolean provision) {
+		this.provision = provision;
 	}
 
 }

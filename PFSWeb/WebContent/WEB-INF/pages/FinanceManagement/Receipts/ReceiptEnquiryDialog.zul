@@ -54,6 +54,7 @@
 					<tabs id="tabsIndexCenter">
 						<tab id="receiptDetailsTab" label="${c:l('label_ReceiptDialog_ReceiptDetails')}" />
 						<tab id="allocationDetailsTab" label="${c:l('label_ReceiptDialog_AllocationDetails')}" />
+						<tab id="postingDetailsTab" label="${c:l('label_ReceiptCancellationDialog_PostingDetails')}" visible="false" />
 					</tabs>
 					<tabpanels id="tabpanelsBoxIndexCenter">
 						<tabpanel style="overflow:auto">
@@ -153,6 +154,40 @@
 									</rows>
 								</grid>
 							</groupbox>
+							
+							<groupbox id="gb_FeeDetail"
+								style="border:0px;" visible="false">
+								<listbox id="listBoxFeeDetail"
+									fixedLayout="false" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false"
+									sizedByContent="true">
+									<listhead sizable="false">
+										<listheader
+											id="listheader_FeeDetailList_FeeType"
+											label="${c:l('listheader_FeeDetailList_FeeType.label')}"
+											sort="false" />
+										<listheader
+											id="listheader_FeeDetailList_NetAmountOriginal" align="right"
+											label="${c:l('listheader_FeeDetailList_NetAmountOriginal.label')}"
+											sort="false" />
+										<listheader
+											id="listheader_FeeDetailList_NetAmountOriginalGST"
+											align="right"
+											label="${c:l('listheader_FeeDetailList_NetAmountOriginalGST.label')}"
+											sort="false" />
+										<listheader
+											id="listheader_FeeDetailList_TotNetAmountOriginalGST"
+											align="right"
+											label="${c:l('listheader_FeeDetailList_TotNetAmountOriginalGST.label')}"
+											sort="false" />
+										<listheader
+											id="listheader_FeeDetailList_AllocatedAmtTotal" align="right"
+											label="${c:l('listheader_FeeDetailList_AllocatedAmtTotal.label')}"
+											sort="false" />
+									</listhead>
+								</listbox>
+							</groupbox>
+							
 							<groupbox>
 								<caption label="${c:l('label_ReceiptDialog_ReceiptDetail')}" />
 								<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
@@ -209,6 +244,36 @@
 												<space spacing="2px" />
 												<textbox id="remarks" width="180px" />
 											</hbox>
+										</row>
+										
+										<row id="row_BounceReason" visible="false">
+											<label
+												id="label_ReceiptCancellationDialog_BounceReason"
+												value="${c:l('label_ReceiptCancellationDialog_BounceReason.value')}" />
+											<extendedcombobox
+												id="bounceCode" readonly="true"/>
+											<label
+												id="label_ReceiptCancellationDialog_BounceCharge"
+												value="${c:l('label_ReceiptCancellationDialog_BounceCharge.value')}" />
+											<currencyBox
+												id="bounceCharge" readonly="true"/>
+										</row>
+										<row id="row_BounceRemarks" visible="false">
+											<label
+												id="label_ReceiptCancellationDialog_BounceRemarks"
+												value="${c:l('label_ReceiptCancellationDialog_BounceRemarks.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="bounceRemarks" width="180px"  readonly="true"/>
+											</hbox>
+										</row>
+										<row id="row_CancelReason" visible="false">
+											<label
+												id="label_ReceiptCancellationDialog_CancelReason"
+												value="${c:l('label_ReceiptCancellationDialog_CancelReason.value')}" />
+											<extendedcombobox
+												id="cancelReason"  readonly="true"/>
 										</row>
 									</rows>
 								</grid>
@@ -373,6 +438,106 @@
 										</listhead>
 									</listbox>
 								</groupbox>
+							</groupbox>
+						</tabpanel>
+						<tabpanel style="overflow:auto">
+							<groupbox>
+								<grid id="grid_Postings"
+									sclass="GridLayoutNoBorder" fixedLayout="true"
+									style="border:0px" width="100%">
+									<columns>
+										<column width="220px" />
+										<column />
+										<column width="220px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label
+												value="${c:l('label_ReceiptCancellationDialog_FinType.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="posting_finType" readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_ReceiptCancellationDialog_FinReference.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="posting_finReference" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_ReceiptCancellationDialog_FinCcy.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="posting_finCcy" readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_ReceiptCancellationDialog_FinBranch.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="posting_finBranch" readonly="true" width="180px" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_ReceiptCancellationDialog_CustID.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="posting_CustCIF" width="180px" readonly="true" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+								<listbox id="listBoxPosting"
+									fixedLayout="true" sizedByContent="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" width="99%"
+									height="100%" multiple="false">
+									<listhead sizable="false">
+										<listheader
+											id="listheader_Acc_DebitOrCredit"
+											label="${c:l('listheader_Acc_DebitOrCredit.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_Acc_EntryDesc"
+											label="${c:l('listheader_Acc_EntryDesc.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_TranCode"
+											label="${c:l('listheader_Acc_TranCode.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_RevTranCode"
+											label="${c:l('listheader_Acc_RevTranCode.label')}"
+											sort="false" hflex="min" visible="false" />
+										<listheader
+											id="listheader_Acc_AccountType"
+											label="${c:l('listheader_Acc_AccountType.label')}"
+											sort="false" hflex="min" visible="false" />
+										<listheader
+											id="listheader_Acc_AccountNo"
+											label="${c:l('listheader_Acc_AccountNo.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_AcCcy"
+											label="${c:l('listheader_Acc_AcCcy.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_Amount"
+											label="${c:l('listheader_Acc_Amount.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_Error"
+											label="${c:l('listheader_Acc_Error.label')}" sort="false"
+											hflex="min" />
+									</listhead>
+								</listbox>
 							</groupbox>
 						</tabpanel>
 					</tabpanels>

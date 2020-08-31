@@ -75,6 +75,7 @@ import com.pennant.validation.RemoveTermsGroup;
 import com.pennant.validation.ScheduleMethodGroup;
 import com.pennant.validation.UpdateLoanBasicDetailsGroup;
 import com.pennant.validation.UpdateLoanPenaltyDetailGroup;
+import com.pennant.validation.UpfrontFeesGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.CreateFinanceController;
@@ -537,11 +538,20 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	public FinanceDetail feePayment(FinServiceInstruction finServiceInstruction) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
+		// for logging purpose
+		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+		if (finServiceInstruction.getAmount() == null) {
+			finServiceInstruction.setAmount(BigDecimal.ZERO);
+		}
+		// bean validations
+		validationUtility.validate(finServiceInstruction, UpfrontFeesGroup.class);
+
 		String moduleDefiner = FinanceConstants.FINSER_EVENT_FEEPAYMENT;
 		//String eventCode = AccountEventConstants.ACCEVENT_REPAY;
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
+
 		FinanceDetail financeDetail = null;
 
 		//vlidate duplicate record
@@ -568,11 +578,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 	private boolean checkUpFrontDuplicateRequest(FinServiceInstruction finServiceInstruction, String moduleDefiner) {
 		List<FinReceiptDetail> receiptDetails = finReceiptDetailDAO
-				.getFinReceiptDetailByExternalReference(finServiceInstruction.getExternalReference());
+				.getFinReceiptDetailByReference(finServiceInstruction.getFinReference());
 		if (finServiceInstruction.getReceiptDetail() != null) {
-			if (finServiceInstruction.getReceiptDetail().getReceivedDate() == null) {
-				finServiceInstruction.getReceiptDetail().setReceivedDate(DateUtility.getAppDate());
-			}
 			if (receiptDetails != null && !receiptDetails.isEmpty()) {
 				for (FinReceiptDetail finReceiptDetail : receiptDetails) {
 					if (finReceiptDetail.getAmount().compareTo(finServiceInstruction.getAmount()) == 0

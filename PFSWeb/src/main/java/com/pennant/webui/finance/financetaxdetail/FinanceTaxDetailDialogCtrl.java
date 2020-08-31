@@ -103,6 +103,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -373,9 +374,11 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		this.city.setTextBoxWidth(143);
 
 		this.pinCode.setModuleName("PinCode");
-		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setValueColumn("PinCodeId");
 		this.pinCode.setDescColumn("AreaName");
-		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		this.pinCode.setValueType(DataType.LONG);
+		this.pinCode.setValidateColumns(new String[] { "PinCodeId" });
+		this.pinCode.setInputAllowed(false);
 		this.pinCode.setMandatoryStyle(true);
 		this.pinCode.setTextBoxWidth(143);
 
@@ -1055,7 +1058,6 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			PinCode details = (PinCode) dataObject;
 
 			if (details != null) {
-
 				this.country.setValue(details.getpCCountry());
 				this.country.setDescription(details.getLovDescPCCountryName());
 				this.city.setValue(details.getCity());
@@ -1065,7 +1067,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 				this.city.setErrorMessage("");
 				this.province.setErrorMessage("");
 				this.country.setErrorMessage("");
-				;
+				this.pinCode.setAttribute("pinCodeId", details.getPinCodeId());
+				this.pinCode.setValue(details.getPinCode());
 			}
 
 		}
@@ -1119,9 +1122,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 	private void fillPindetails(String id, String province) {
 		this.pinCode.setModuleName("PinCode");
-		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setValueColumn("PinCodeId");
 		this.pinCode.setDescColumn("AreaName");
-		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		this.pinCode.setValidateColumns(new String[] { "PinCodeId" });
 		Filter[] filters1 = new Filter[1];
 
 		if (id != null) {
@@ -1165,6 +1168,11 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		this.country.setValue(aFinanceTaxDetail.getCountry(), aFinanceTaxDetail.getCountryName());
 		this.province.setValue(aFinanceTaxDetail.getProvince(), aFinanceTaxDetail.getProvinceName());
 		this.city.setValue(aFinanceTaxDetail.getCity(), aFinanceTaxDetail.getCityName());
+
+		if (aFinanceTaxDetail.getPinCodeId() != null) {
+			this.pinCode.setAttribute("pinCodeId", aFinanceTaxDetail.getPinCodeId());
+		}
+
 		this.pinCode.setValue(aFinanceTaxDetail.getPinCode(), aFinanceTaxDetail.getPinCodeName());
 		this.taxCustId = aFinanceTaxDetail.getTaxCustId();
 
@@ -1314,7 +1322,13 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		}
 		// Pin Code
 		try {
-			aFinanceTaxDetail.setPinCode(this.pinCode.getValidatedValue());
+			Object obj = this.pinCode.getAttribute("pinCodeId");
+			if (obj != null) {
+				if (!StringUtils.isEmpty(obj.toString())) {
+					aFinanceTaxDetail.setPinCodeId(Long.valueOf((obj.toString())));
+				}
+			}
+			aFinanceTaxDetail.setPinCode(this.pinCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1479,7 +1493,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 					null, true, true));
 		}
 
-		if (!this.pinCode.isReadonly()) {
+		if (this.pinCode.isButtonVisible()) {
 			this.pinCode.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_FinanceTaxDetailDialog_PinCode.value"), null, true, true));
 		}

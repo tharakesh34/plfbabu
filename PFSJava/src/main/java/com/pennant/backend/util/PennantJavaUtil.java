@@ -86,6 +86,8 @@ import com.pennant.backend.model.amtmasters.VehicleVersion;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
+import com.pennant.backend.model.applicationmaster.AssetClassificationDetail;
+import com.pennant.backend.model.applicationmaster.AssetClassificationHeader;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
@@ -125,6 +127,9 @@ import com.pennant.backend.model.applicationmaster.MandateSource;
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
 import com.pennant.backend.model.applicationmaster.NPABucket;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
+import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
+import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
+import com.pennant.backend.model.applicationmaster.NPATemplateType;
 import com.pennant.backend.model.applicationmaster.OtherBankFinanceType;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
@@ -255,6 +260,8 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
+import com.pennant.backend.model.finance.FinFeeRefundDetails;
+import com.pennant.backend.model.finance.FinFeeRefundHeader;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -540,6 +547,7 @@ public class PennantJavaUtil {
 	private static String ReceiptProcessWF = "RECEIPT_PROCESS";
 	private final static String WF_VERIFICATION_PD = "VERIFICATION_PD";
 	private final static String WF_RECEIPTUPLOAD = "RECEIPTUPLOAD";
+	private static String FEEREFUND_WF = "FINFEEREFUND_PROCESS";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
@@ -2359,6 +2367,11 @@ public class PennantJavaUtil {
 						new String[] { "RejectFinanceMain", "RejectFinanceMain" }, masterWF,
 						new String[] { "FinReference", "FinType" }, null, 300));
 
+		ModuleUtil.register("FeeRefundFinanceMain",
+				new ModuleMapping("FeeRefundFinanceMain", FinanceMain.class,
+						new String[] { "FeeRefundFinanceMain_VIEW", "FeeRefundFinanceMain_VIEW" }, null,
+						new String[] { "FinReference", "FinType" }, null, 300));
+
 		ModuleUtil.register("ReinstateFinance",
 				new ModuleMapping("ReinstateFinance", ReinstateFinance.class,
 						new String[] { "ReinstateFinance", "ReinstateFinance_View" }, "REINSTATELOAN",
@@ -2693,6 +2706,17 @@ public class PennantJavaUtil {
 		ModuleUtil.register("NPABucket",
 				new ModuleMapping("NPABucket", NPABucket.class, new String[] { "NPABUCKETS", "NPABUCKETS_AView" },
 						masterWF, new String[] { "BucketCode", "BucketDesc" }, null, 300));
+		//New Module NPA & Provision Header
+		ModuleUtil.register("NPAProvisionHeader",
+				new ModuleMapping("NPAProvisionHeader", NPAProvisionHeader.class,
+						new String[] { "NPA_PROVISION_HEADER", "NPA_PROVISION_HEADER_AView" }, masterWF,
+						new String[] { "Entity", "FinType" }, null, 600));
+
+		//New Module NPA & Provision Detail
+		ModuleUtil.register("NPAProvisionDetail", new ModuleMapping("NPAProvisionDetail", NPAProvisionDetail.class,
+				new String[] { "NPA_PROVISION_DETAILS", "NPA_PROVISION_DETAILS_AView" }, masterWF, new String[] {
+						"HeaderId", "AssetClassificationId", "nPAActive", "IntSecured", "IntUnSecured", "RBISecured" },
+				null, 600));
 
 		ModuleUtil.register("ManualAdvise",
 				new ModuleMapping("ManualAdvise", ManualAdvise.class,
@@ -2755,6 +2779,21 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("FinFeeReceipt", new ModuleMapping("FinFeeReceipt", FinFeeReceipt.class,
 				new String[] { "FinFeeReceipts", "FinFeeReceipts" }, null, new String[] { "feeID", "id" }, null, 600));
+
+		ModuleUtil.register("FinFeeRefundHeader",
+				new ModuleMapping("FinFeeRefundHeader", FinFeeRefundHeader.class,
+						new String[] { "FinFeeRefundHeader", "FinFeeRefundHeader_Aview" }, masterWF,
+						new String[] { "headerId", "finReference" }, null, 600));
+
+		ModuleUtil.register("FinFeeRefundDetails",
+				new ModuleMapping("FinFeeRefundDetails", FinFeeRefundDetails.class,
+						new String[] { "FinFeeRefundDetails", "FinFeeRefundDetails_Aview" }, masterWF,
+						new String[] { "headerId", "Id" }, null, 600));
+
+		ModuleUtil.register("FinanceMainMaintenance",
+				new ModuleMapping("FinanceMainMaintenance", FinanceMain.class,
+						new String[] { "FinanceMainMaintenance_View" }, null,
+						new String[] { "FinReference", "FinType" }, null, 350));
 
 		/* Payment Instructions */
 		ModuleUtil.register("PaymentHeader",
@@ -3579,6 +3618,10 @@ public class PennantJavaUtil {
 		ModuleUtil.register("Mandate_Sources",
 				new ModuleMapping("Mandate_Sources", MandateSource.class, new String[] { "MANDATE_SOURCES" }, null,
 						new String[] { "Code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 350));
+		ModuleUtil.register("AssetClassificationHeader",
+				new ModuleMapping("AssetClassificationHeader", AssetClassificationHeader.class,
+						new String[] { "ASSET_CLSSFICATN_HEADER", "ASSET_CLSSFICATN_HEADER_AView" }, masterWF,
+						new String[] { "Code", "Description", "StageOrder", "Active" }, null, 600));
 
 		ModuleUtil.register("FinTypePartnerBank_Mandates", new ModuleMapping("FinTypePartnerBank_Mandates",
 				FinTypePartnerBank.class,
@@ -3591,6 +3634,17 @@ public class PennantJavaUtil {
 						new String[] { "PresentMents_PartnerBank", "PartnerBanks_AView" }, masterWF, new String[] {
 								"PartnerBankCode", "PartnerBankName", "UtilityCode", "SponsorBankCode", "ClientCode" },
 						null, 700));
+
+		ModuleUtil.register("AssetClassificationDetail",
+				new ModuleMapping("AssetClassificationDetail", AssetClassificationDetail.class,
+						new String[] { "ASSET_CLSSFICATN_DETAILS", "ASSET_CLSSFICATN_DETAILS_AView" }, masterWF,
+						new String[] { "Id", "HeaderId", "FinType" }, null, 600));
+		ModuleUtil.register("NPATemplateType",
+				new ModuleMapping("NPATemplateType", NPATemplateType.class, new String[] { "NPA_TEMPLATE_TYPES" }, null,
+						new String[] { "Id", "Code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 350));
+		ModuleUtil.register("Provision",
+				new ModuleMapping("Provision", Provision.class, new String[] { "FinProvisions", "FinProvisions_AView" },
+						masterWF, new String[] { "FinReference", "FinBranch" }, null, 600));
 
 		registerCustomModules();
 	}

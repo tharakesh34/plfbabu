@@ -55,7 +55,9 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.FinEODEvent;
@@ -69,9 +71,11 @@ import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
+import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
@@ -90,7 +94,9 @@ import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
@@ -107,6 +113,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.GSTInvoiceTxnDetails;
 import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
@@ -119,9 +126,11 @@ import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
+import com.pennant.backend.service.finance.TaxHeaderDetailsService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -157,6 +166,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
+	private FeeReceiptService feeReceiptService;
+	private TaxHeaderDetailsService taxHeaderDetailsService;
+	private AuditHeaderDAO auditHeaderDAO;
+	private GSTInvoiceTxnDAO gstInvoiceTxnDAO;
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -216,9 +229,17 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			receiptHeader.setReceiptDetails(receiptDetailList);
 
 			// Bounce reason Code
-			if (StringUtils.isNotEmpty(receiptHeader.getRecordType())
-					&& StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.MODULETYPE_BOUNCE)) {
+			if ((StringUtils.isNotEmpty(receiptHeader.getRecordType())
+					&& StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.MODULETYPE_BOUNCE))
+					|| (isFeePayment
+							&& RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(receiptHeader.getReceiptMode()))) {
 				receiptHeader.setManualAdvise(manualAdviseDAO.getManualAdviseByReceiptId(receiptID, "_TView"));
+			}
+
+			if (isFeePayment) {
+				receiptHeader.setPaidFeeList(
+						feeReceiptService.getPaidFinFeeDetails(receiptHeader.getReference(), receiptID, "_View"));
+
 			}
 		}
 
@@ -339,7 +360,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				receiptHeader.getBefImage(), receiptHeader));
-		auditHeaderDAO.addAudit(auditHeader);
+		this.auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -380,6 +401,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		String errorCode = "";
 		boolean isGoldLoanProcess = false;
 		if (FinanceConstants.FINSER_EVENT_FEEPAYMENT.equals(receiptHeader.getReceiptPurpose())) {
+			List<FinReceiptDetail> receiptdetails = receiptHeader.getReceiptDetails();
+			FinReceiptDetail receiptdetail = receiptdetails.get(0);
+			FinRepayHeader repayHeader = receiptdetail.getRepayHeader();
+			receiptHeader.setLinkedTranId(repayHeader.getLinkedTranId());
 			errorCode = procFeeReceiptCancellation(receiptHeader);
 			if (StringUtils.isBlank(errorCode)) {
 				tranType = PennantConstants.TRAN_UPD;
@@ -391,6 +416,19 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				receiptHeader.setNextTaskId("");
 				receiptHeader.setWorkflowId(0);
 				receiptHeader.setRcdMaintainSts(null);
+				ManualAdvise advice = receiptHeader.getManualAdvise();
+				if (advice != null) {
+					advice.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					advice.setRecordType("");
+					advice.setRoleCode("");
+					advice.setNextRoleCode("");
+					advice.setTaskId("");
+					advice.setNextTaskId("");
+					advice.setWorkflowId(0);
+					String adviseId = manualAdviseDAO.save(advice, TableType.MAIN_TAB);
+					advice.setAdviseID(Long.parseLong(adviseId));
+				}
+
 				finReceiptHeaderDAO.update(receiptHeader, TableType.MAIN_TAB);
 			}
 		} else {
@@ -453,6 +491,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					}
 				}
 			}
+		} else {
+			//process FinFeeDetails
+			processFinFeeDetails(receiptHeader);
 		}
 
 		// Bounce Reason Code
@@ -647,45 +688,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60209", null), usrLanguage));
 				}
 			}
-			boolean rcdAssigned = finFeeReceiptDAO.isFinFeeReceiptAllocated(receiptHeader.getReceiptID(), "_View");
-			if (rcdAssigned) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60210", null), usrLanguage));
-			}
 		}
 
-		/*
-		 * =====================================================================
-		 * ======================================== ================ // For Gold Loans, Not allowed to cancel when
-		 * finance is in Other Maintenance if(StringUtils.equals(receiptHeader.getProductCategory(),
-		 * FinanceConstants.PRODUCT_GOLD)){ String finReference = receiptHeader.getReference(); boolean rcdAvailable =
-		 * financeMainDAO.isFinReferenceExists(finReference, "_Temp", false); if (rcdAvailable) {
-		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60213", null),usrLanguage)); }else{
-		 * 
-		 * // If any receipt after cancellation receipt and including that having Waiver amount // then should not allow
-		 * for cancellation Date cancelReqDate = receiptHeader.getReceiptDetails().get(0).getReceivedDate();
-		 * 
-		 * FinanceMain financeMain = financeMainDAO.getFinanceMainById(receiptHeader.getReference(), "", false); int
-		 * minPftPeriod = getPromotionDAO().getPromtionMinPftPeriod(financeMain. getPromotionSeqId(), ""); Date
-		 * maxAlwCancelRcptDate = DateUtility.addDays(financeMain.getFinStartDate(), minPftPeriod);
-		 * 
-		 * if(DateUtility.compare(cancelReqDate, maxAlwCancelRcptDate) <= 0){
-		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60215", null),usrLanguage)); }else{
-		 * List<ReceiptCancelDetail> cancelReceipts = finReceiptHeaderDAO.getReceiptCancelDetailList(cancelReqDate,
-		 * finReference);
-		 * 
-		 * boolean waiverExists = false; sortReceipts(cancelReceipts); for (int i = cancelReceipts.size() - 1; i >= 0;
-		 * i--) {
-		 * 
-		 * ReceiptCancelDetail receipt = cancelReceipts.get(i); if(receipt.getReceiptId() <=
-		 * receiptHeader.getReceiptID()){ continue; } if(receipt.getWaviedAmt() != null &&
-		 * receipt.getWaviedAmt().compareTo(BigDecimal.ZERO) > 0){ waiverExists = true; } }
-		 * 
-		 * // If waiver exists not allowed to do cancellation if(waiverExists){
-		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60214", null),usrLanguage)); } } }
-		 * 
-		 * } =====================================================================
-		 * ======================================== ================
-		 */
 		if (ImplementationConstants.DEPOSIT_PROC_REQ) {
 			if (!PennantConstants.method_doReject.equals(method)
 					&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus())
@@ -1931,7 +1935,15 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// Posting Reversal Case Program Calling in Equation
 		// ============================================
 		long postingId = postingsDAO.getPostingId();
-		postingsPreparationUtil.postReversalsByPostRef(receiptHeader.getReceiptID(), postingId);
+		List<ReturnDataSet> returnDataSetList = postingsPreparationUtil
+				.postReversalsByPostRef(receiptHeader.getReceiptID(), postingId);
+
+		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+			for (ReturnDataSet returnDataSet : returnDataSetList) {
+				FinRepayHeader rpyHeader = receiptDetail.getRepayHeader();
+				rpyHeader.setLinkedTranId(returnDataSet.getLinkedTranId());
+			}
+		}
 
 		// Update Receipt Detail Status
 		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
@@ -2450,6 +2462,210 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void processFinFeeDetails(FinReceiptHeader finReceiptHeader) {
+		List<FinFeeDetail> paidFeeList = finReceiptHeader.getPaidFeeList();
+
+		if (CollectionUtils.isEmpty(paidFeeList)) {
+			return;
+		}
+
+		String userBranch = finReceiptHeader.getUserDetails().getBranchCode();
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finReceiptHeader.getCustID(),
+				finReceiptHeader.getFinCcy(), userBranch, finReceiptHeader.getFinBranch());
+
+		BigDecimal excessAmt = BigDecimal.ZERO;
+		for (FinFeeDetail finFeeDetail : paidFeeList) {
+			FinFeeDetail tempfinFee = new FinFeeDetail();
+			BeanUtils.copyProperties(finFeeDetail, tempfinFee);
+			excessAmt = excessAmt.add(finFeeDetail.getFinFeeReceipts().get(0).getPaidAmount());
+			calculateGST(tempfinFee, taxPercentages);
+			finFeeDetailService.updateFeesFromUpfront(tempfinFee, "_Temp");
+		}
+
+		for (FinFeeDetail finFeeDetail : finReceiptHeader.getPaidFeeList()) {
+			if (finFeeDetail.isTaxApplicable()) {
+				List<Taxes> taxDetails = finFeeDetail.getTaxHeader().getTaxDetails();
+				for (Taxes taxes : taxDetails) {
+					taxHeaderDetailsDAO.update(taxes, "_Temp");
+				}
+			}
+		}
+
+		List<FinReceiptDetail> receiptdetails = finReceiptHeader.getReceiptDetails();
+		FinReceiptDetail receiptdetail = receiptdetails.get(0);
+		FinRepayHeader repayHeader = receiptdetail.getRepayHeader();
+
+		processGSTInvoicePreparation(finReceiptHeader, repayHeader.getLinkedTranId(), taxPercentages);
+
+		excessAmt = finReceiptHeader.getReceiptAmount().subtract(excessAmt);
+		processExcessAmount(excessAmt, finReceiptHeader.getReference(), finReceiptHeader.getReceiptID());
+
+	}
+
+	/**
+	 * Method for calculate GST for Details for the given allocated amount.
+	 * 
+	 * @param receiptHeader
+	 */
+	public void calculateGST(FinFeeDetail finFeeDetail, Map<String, BigDecimal> taxPercentages) {
+		FinFeeReceipt finFeeReceipt = finFeeDetail.getFinFeeReceipts().get(0);
+		BigDecimal canlFeeAmt = finFeeReceipt.getPaidAmount();
+		BigDecimal remPaid = BigDecimal.ZERO;
+		remPaid = finFeeDetail.getPaidAmount().subtract(canlFeeAmt);
+
+		finFeeDetail.setPaidAmount(remPaid);
+		finFeeDetail.setPaidAmountOriginal(remPaid);
+		FinanceMain financeMain = null;
+		finFeeDetail.setPaidCalcReq(true);
+		finFeeDetail.setTaxComponent(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+		feeReceiptService.calculateFees(finFeeDetail, financeMain, taxPercentages);
+	}
+
+	private void processGSTInvoicePreparation(FinReceiptHeader finReceiptHeader, long linkedTranId,
+			Map<String, BigDecimal> taxPercentages) {
+		logger.debug(Literal.ENTERING);
+
+		String finReference = finReceiptHeader.getReference();
+		List<FinFeeDetail> finFeeDetailsList = finReceiptHeader.getPaidFeeList();
+		Long oldLinkTranId = finReceiptHeader.getLinkedTranId();
+
+		calculateGSTForCredit(finFeeDetailsList, taxPercentages, oldLinkTranId);
+		FinanceDetail financeDetail = new FinanceDetail();
+		FinanceMain financeMain = this.financeMainDAO.getFinanceMainById(finReference, "_Temp", false);
+		financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+		financeDetail.getFinScheduleData()
+				.setFinanceType(financeTypeDAO.getFinanceTypeByFinType(financeMain.getFinType()));
+
+		InvoiceDetail invoiceDetail = new InvoiceDetail();
+		invoiceDetail.setLinkedTranId(linkedTranId);
+		invoiceDetail.setFinanceDetail(financeDetail);
+		invoiceDetail.setFinFeeDetailsList(finFeeDetailsList);
+		invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
+		invoiceDetail.setOrigination(false);
+		invoiceDetail.setWaiver(true);
+		invoiceDetail.setDbInvSetReq(true);
+
+		Long dueInvoiceID = gstInvoiceTxnService.feeTaxInvoicePreparation(invoiceDetail);
+
+		for (FinFeeDetail finFeeDetail : finFeeDetailsList) {
+			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+			if (taxHeader != null && finFeeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
+				if (dueInvoiceID == null) {
+					dueInvoiceID = finFeeDetail.getTaxHeader().getInvoiceID();
+				}
+				taxHeader.setInvoiceID(dueInvoiceID);
+				this.taxHeaderDetailsDAO.update(taxHeader, "_Temp");
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void processExcessAmount(BigDecimal excessAmt, String finReference, long receiptId) {
+		logger.debug(Literal.ENTERING);
+		if (BigDecimal.ZERO.compareTo(excessAmt) < 0) {
+			FinExcessAmount excess = null;
+			excess = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
+					RepayConstants.EXCESSADJUSTTO_EXCESS);
+			//Creating Excess
+			if (excess == null) {
+				//TODO:
+				//Throw Exception
+			} else {
+				excess.setBalanceAmt(excess.getBalanceAmt().subtract(excessAmt));
+				excess.setAmount(excess.getAmount().subtract(excessAmt));
+				finExcessAmountDAO.updateExcess(excess);
+			}
+			//Creating ExcessMoment
+			FinExcessMovement excessMovement = new FinExcessMovement();
+			excessMovement.setExcessID(excess.getExcessID());
+			excessMovement.setAmount(excessAmt);
+			excessMovement.setReceiptID(receiptId);
+			excessMovement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+			excessMovement.setTranType(AccountConstants.TRANTYPE_DEBIT);
+			excessMovement.setMovementFrom("UPFRONT");
+			finExcessAmountDAO.saveExcessMovement(excessMovement);
+			logger.debug(Literal.LEAVING);
+		}
+	}
+
+	/**
+	 * Method for calculate GST for Details for the given allocated amount.
+	 * 
+	 * @param receiptHeader
+	 */
+	public void calculateGSTForCredit(List<FinFeeDetail> finFeeDetailsList, Map<String, BigDecimal> taxPercentages,
+			Long oldLinkTranId) {
+		Long invoiceId = gstInvoiceTxnDAO.getInvoiceIdByTranId(oldLinkTranId);
+
+		List<GSTInvoiceTxnDetails> txnDetailsList = gstInvoiceTxnDAO.getTxnListByInvoiceId(invoiceId);
+		for (GSTInvoiceTxnDetails txnDetails : txnDetailsList) {
+			for (FinFeeDetail finFeeDetail : finFeeDetailsList) {
+
+				if (!StringUtils.equals(finFeeDetail.getFeeTypeCode(), txnDetails.getFeeCode())) {
+					continue;
+				}
+
+				finFeeDetail.setWaivedAmount(txnDetails.getFeeAmount());
+				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+				Taxes cgstTax = null;
+				Taxes sgstTax = null;
+				Taxes igstTax = null;
+				Taxes ugstTax = null;
+				Taxes cessTax = null;
+
+				if (taxHeader == null) {
+					taxHeader = new TaxHeader();
+					taxHeader.setNewRecord(true);
+					taxHeader.setRecordType(PennantConstants.RCD_ADD);
+					taxHeader.setVersion(taxHeader.getVersion() + 1);
+					finFeeDetail.setTaxHeader(taxHeader);
+				}
+
+				List<Taxes> taxDetails = taxHeader.getTaxDetails();
+
+				if (CollectionUtils.isNotEmpty(taxDetails)) {
+					for (Taxes taxes : taxDetails) {
+						String taxType = taxes.getTaxType();
+						switch (taxType) {
+						case RuleConstants.CODE_CGST:
+							cgstTax = taxes;
+							cgstTax.setWaivedTax(txnDetails.getCGST_AMT());
+							break;
+						case RuleConstants.CODE_SGST:
+							sgstTax = taxes;
+							sgstTax.setWaivedTax(txnDetails.getSGST_AMT());
+							break;
+						case RuleConstants.CODE_IGST:
+							igstTax = taxes;
+							igstTax.setWaivedTax(txnDetails.getIGST_AMT());
+							break;
+						case RuleConstants.CODE_UGST:
+							ugstTax = taxes;
+							ugstTax.setWaivedTax(txnDetails.getUGST_AMT());
+							break;
+						case RuleConstants.CODE_CESS:
+							cessTax = taxes;
+							cessTax.setWaivedTax(txnDetails.getCESS_AMT());
+							break;
+						default:
+							break;
+						}
+
+					}
+				}
+
+				BigDecimal gstAmount = cgstTax.getWaivedTax().add(sgstTax.getWaivedTax()).add(igstTax.getWaivedTax())
+						.add(ugstTax.getWaivedTax()).add(cessTax.getWaivedTax());
+				finFeeDetail.setWaivedGST(gstAmount);
+
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equalsIgnoreCase(finFeeDetail.getTaxComponent())) {
+					finFeeDetail.setWaivedAmount(txnDetails.getFeeAmount().add(finFeeDetail.getWaivedGST()));
+				}
+			}
+		}
+	}
+
 	@Override
 	public Map<String, Object> getGLSubHeadCodes(String reference) {
 		return this.financeMainDAO.getGLSubHeadCodes(reference);
@@ -2522,4 +2738,21 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
 		this.presentmentDetailDAO = presentmentDetailDAO;
 	}
+
+	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
+		this.feeReceiptService = feeReceiptService;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setTaxHeaderDetailsService(TaxHeaderDetailsService taxHeaderDetailsService) {
+		this.taxHeaderDetailsService = taxHeaderDetailsService;
+	}
+
+	public void setGstInvoiceTxnDAO(GSTInvoiceTxnDAO gstInvoiceTxnDAO) {
+		this.gstInvoiceTxnDAO = gstInvoiceTxnDAO;
+	}
+
 }

@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.GSTInvoiceTxn;
+import com.pennant.backend.model.finance.GSTInvoiceTxnDetails;
 import com.pennant.backend.model.finance.SeqGSTInvoice;
 
 public interface GSTInvoiceTxnDAO {
@@ -69,4 +70,8 @@ public interface GSTInvoiceTxnDAO {
 	void deleteSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice);
 
 	void updateSeqNo();
+
+	Long getInvoiceIdByTranId(Long tranId);
+
+	List<GSTInvoiceTxnDetails> getTxnListByInvoiceId(Long invoiceId);
 }

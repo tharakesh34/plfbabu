@@ -150,6 +150,13 @@ public class GSTCalculator {
 		return taxSplit;
 	}
 
+	//TODO:GANESH need to check FinanceTaxDetail
+	public static Map<String, BigDecimal> getTaxPercentages(long custId, String finCCY, String userBranch,
+			String finBranch) {
+		return getTaxPercentages(custId, finCCY, userBranch, finBranch, null);
+
+	}
+
 	/**
 	 * This method will return the GST percentages by executing the GST rules configured.
 	 * 

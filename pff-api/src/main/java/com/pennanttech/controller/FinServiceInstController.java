@@ -12,10 +12,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.security.auth.login.AccountNotFoundException;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
@@ -111,6 +113,7 @@ import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FeeReceiptService;
@@ -128,6 +131,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -137,6 +141,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.finance.DisbRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -186,6 +191,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private ManualAdviseDAO manualAdviseDAO;
 	private BankDetailDAO bankDetailDAO;
 	private DisbursementPostings disbursementPostings;
+	private BankDetailService bankDetailService;
 
 	/**
 	 * Method for process AddRateChange request and re-calculate schedule details
@@ -2659,31 +2665,37 @@ public class FinServiceInstController extends SummaryDetailService {
 	}
 
 	public FinanceDetail doFeePayment(FinServiceInstruction finServiceInst) {
-		logger.debug("Enteing");
+		logger.debug(Literal.ENTERING);
 
 		FinanceDetail response = null;
+
+		//Validate given Request Receipt Data is valid or not.
+		WSReturnStatus returnStatus = validateReceiptData(finServiceInst);
+		if (returnStatus != null) {
+			response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(returnStatus);
+			return response;
+		}
+
 		try {
-			List<ErrorDetail> errorDetails = upfrontFeeValidations(PennantConstants.VLD_CRT_LOAN, finServiceInst, true,
-					AccountEventConstants.ACCEVENT_ADDDBSP);
-			if (errorDetails.size() == 0) {
-				errorDetails = feeReceiptService.processFeePayment(finServiceInst);
-			}
-			if (errorDetails != null) {
-				for (ErrorDetail errorDetail : errorDetails) {
-					response = new FinanceDetail();
-					doEmptyResponseObject(response);
-					response.setReturnStatus(
-							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-					return response;
-				}
+			ErrorDetail errorDetail = feeReceiptService.processFeePayment(finServiceInst);
+			if (errorDetail != null) {
+				response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				response.setReturnStatus(
+						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				return response;
 			}
 			response = new FinanceDetail();
 			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			response.setReceiptId(finServiceInst.getReceiptId());
 		} catch (InterfaceException ex) {
 			logger.error("InterfaceException", ex);
 			response = new FinanceDetail();
 			doEmptyResponseObject(response);
+			APIErrorHandlerService.logUnhandledException(ex);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9998", ex.getMessage()));
 			return response;
 		} catch (AppException appEx) {
@@ -2691,6 +2703,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", appEx.getMessage()));
+			APIErrorHandlerService.logUnhandledException(appEx);
 			return response;
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -2701,7 +2714,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			return response;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -2955,7 +2968,217 @@ public class FinServiceInstController extends SummaryDetailService {
 	}
 
 	/**
-	 * Method for fetch Customer Loan Details of corresponding userID
+	 * Method for validate the Receipt related data.
+	 * 
+	 * 
+	 * @param fsi
+	 * @return
+	 */
+	private WSReturnStatus validateReceiptData(FinServiceInstruction fsi) {
+		logger.debug(Literal.ENTERING);
+		String finReference = fsi.getFinReference();
+		String[] valueParm = null;
+
+		//validate FinReference
+		boolean isValidRef = financeMainDAO.isFinReferenceExists(finReference, TableType.TEMP_TAB.getSuffix(), false);
+		if (!isValidRef) {
+			valueParm = new String[1];
+			valueParm[0] = fsi.getFinReference();
+			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		}
+
+		//better to check any unpaid fess us there or not
+
+		// Valid Receipt Mode
+		String receiptMode = fsi.getPaymentMode();
+		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_NEFT)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_RTGS)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_IMPS)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ESCROW)) {
+
+			valueParm = new String[2];
+			valueParm[0] = "Receipt mode";
+			valueParm[1] = RepayConstants.RECEIPTMODE_CASH + "," + RepayConstants.RECEIPTMODE_CHEQUE + ","
+					+ RepayConstants.RECEIPTMODE_DD + "," + RepayConstants.RECEIPTMODE_NEFT + ","
+					+ RepayConstants.RECEIPTMODE_RTGS + "," + RepayConstants.RECEIPTMODE_IMPS + ","
+					+ RepayConstants.RECEIPTMODE_ESCROW;
+			return APIErrorHandlerService.getFailedStatus("90281", valueParm);
+		}
+		FinReceiptDetail finReceiptDetail = fsi.getReceiptDetail();
+
+		if (finReceiptDetail.getFundingAc() <= 0) {
+			valueParm = new String[1];
+			valueParm[0] = "fundingAccount";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		} else {
+			PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(finReceiptDetail.getFundingAc(), "");
+			if (partnerBank != null) {
+				fsi.getReceiptDetail().setPartnerBankAc(partnerBank.getAccountNo());
+				fsi.getReceiptDetail().setPartnerBankAcType(partnerBank.getAcType());
+			} else {
+				valueParm = new String[2];
+				valueParm[0] = "fundingAccount";
+				valueParm[1] = String.valueOf(finReceiptDetail.getFundingAc());
+				return APIErrorHandlerService.getFailedStatus("90224", valueParm);
+			}
+		}
+
+		if (finReceiptDetail.getReceivedDate() == null) {
+			valueParm = new String[1];
+			valueParm[0] = "receivedDate";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		} else {
+			Date appDate = DateUtility.getAppDate();
+			if (DateUtility.compare(fsi.getReceiptDetail().getReceivedDate(), appDate) > 0) {
+				valueParm = new String[1];
+				valueParm[0] = DateUtility.formatToLongDate(appDate);
+				return APIErrorHandlerService.getFailedStatus("RU0006", valueParm);
+			}
+		}
+
+		if (StringUtils.isNotBlank(finReceiptDetail.getPaymentRef())) {
+			Pattern pattern = Pattern.compile(
+					PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM));
+			Matcher matcher = pattern.matcher(finReceiptDetail.getPaymentRef());
+			if (matcher.matches() == false) {
+				valueParm = new String[1];
+				valueParm[0] = "paymentRef";
+				return APIErrorHandlerService.getFailedStatus("90347", valueParm);
+			}
+		}
+
+		if (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode)
+				|| RepayConstants.RECEIPTMODE_DD.equals(receiptMode)) {
+
+			if (StringUtils.isBlank(finReceiptDetail.getFavourName())) {
+				valueParm = new String[1];
+				valueParm[0] = "favourName";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
+			//CHEQUE / DD number
+			if (StringUtils.isBlank(finReceiptDetail.getFavourNumber())) {
+				valueParm = new String[1];
+				valueParm[0] = "favourNumber";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+			if (!StringUtils.isNumeric(finReceiptDetail.getFavourNumber())) {
+				valueParm = new String[1];
+				valueParm[0] = "favourNumber";
+				return APIErrorHandlerService.getFailedStatus("90242", valueParm);
+			}
+			if (finReceiptDetail.getFavourNumber().length() != 6) {
+				valueParm = new String[2];
+				valueParm[0] = "favourNumber size";
+				valueParm[1] = "six";
+				return APIErrorHandlerService.getFailedStatus("90277", valueParm);
+			}
+			//Cheque Acc No {0} is lessthan or equals to {1} .
+			if (StringUtils.length(finReceiptDetail.getChequeAcNo()) > 50) {
+				valueParm = new String[2];
+				valueParm[0] = "chequeAcNo";
+				valueParm[1] = "50";
+				return APIErrorHandlerService.getFailedStatus("90220", valueParm);
+			}
+			//value Date
+			Date appDate = DateUtility.getAppDate();
+			if (finReceiptDetail.getValueDate() == null) {
+				valueParm = new String[1];
+				valueParm[0] = "valueDate";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			} else {
+				if (DateUtility.compare(finReceiptDetail.getValueDate(), appDate) > 0) {
+					valueParm = new String[1];
+					valueParm[0] = DateUtility.formatToLongDate(appDate);
+					return APIErrorHandlerService.getFailedStatus("RU0007", valueParm);
+				}
+			}
+			if (fsi.isNonStp()) {
+				if (fsi.getRealizationDate() == null) {
+					valueParm = new String[1];
+					valueParm[0] = "realizationDate";
+					return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				} else {
+					if (DateUtility.compare(fsi.getRealizationDate(), finReceiptDetail.getValueDate()) < 0) {
+						valueParm = new String[1];
+						valueParm[0] = DateUtility.formatToLongDate(finReceiptDetail.getValueDate());
+						return APIErrorHandlerService.getFailedStatus("RU0019", valueParm);
+					}
+					if (DateUtility.compare(fsi.getRealizationDate(), appDate) > 0) {
+						valueParm = new String[2];
+						valueParm[0] = "realizationDate";
+						valueParm[1] = DateUtility.formatToLongDate(appDate);
+						return APIErrorHandlerService.getFailedStatus("30568", valueParm);
+					}
+				}
+			}
+
+			if (StringUtils.isBlank(finReceiptDetail.getBankCode())) {
+				valueParm = new String[1];
+				valueParm[0] = "bankCode";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			} else {
+				// Bank Details should be configured
+				BankDetail bankDetail = bankDetailService.getBankDetailById(finReceiptDetail.getBankCode());
+				if (bankDetail == null) {
+					valueParm = new String[2];
+					valueParm[0] = "bankCode";
+					valueParm[1] = finReceiptDetail.getBankCode();
+					return APIErrorHandlerService.getFailedStatus("90224", valueParm);
+				}
+			}
+		} else {
+			//need to empty the data wich is not req
+			fsi.setRealizationDate(null);
+			finReceiptDetail.setFavourName("");
+			finReceiptDetail.setFavourNumber("");
+			finReceiptDetail.setChequeAcNo("");
+		}
+		//In Case of online mode transactionRef is mandatory
+		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_NEFT)
+				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_RTGS)
+				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_IMPS)
+				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ESCROW)) {
+			if (StringUtils.isBlank(finReceiptDetail.getTransactionRef())) {
+				valueParm = new String[1];
+				valueParm[0] = "transactionRef";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+			Pattern pattern = Pattern.compile(
+					PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM));
+			Matcher matcher = pattern.matcher(finReceiptDetail.getTransactionRef());
+			if (matcher.matches() == false) {
+				valueParm = new String[1];
+				valueParm[0] = "transactionRef";
+				return APIErrorHandlerService.getFailedStatus("90347", valueParm);
+			}
+		}
+
+		if (CollectionUtils.isEmpty(fsi.getFinFeeDetails())) {
+			valueParm = new String[1];
+			valueParm[0] = "fees";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		//check any UpFront is in process
+		boolean isInProgRec = finReceiptHeaderDAO.isReceiptsInProcess(fsi.getFinReference(),
+				FinanceConstants.FINSER_EVENT_FEEPAYMENT, Long.MIN_VALUE, "_Temp");
+		if (isInProgRec) {
+			valueParm = new String[1];
+			valueParm[0] = FinanceConstants.FINSER_EVENT_FEEPAYMENT;
+			return APIErrorHandlerService.getFailedStatus("IMD002", valueParm);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	/**
+	 * Method for enabling the DepositProcess<br>
+	 * Based on the workflow and roleCode checks weather deposit process required or not.
 	 * 
 	 * @param userID
 	 * @return CustomerODLoanDetails
@@ -3350,4 +3573,9 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
 		this.disbursementPostings = disbursementPostings;
 	}
+
+	public void setBankDetailService(BankDetailService bankDetailService) {
+		this.bankDetailService = bankDetailService;
+	}
+
 }

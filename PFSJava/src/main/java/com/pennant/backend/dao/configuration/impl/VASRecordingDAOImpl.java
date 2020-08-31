@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.dao.configuration.impl;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -674,4 +675,28 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		}
 		return null;
 	}
+
+	@Override
+	public void updatePaidAmt(String vasReference, String primaryLinkRef, BigDecimal paidAmt, String type) {
+		int recordCount = 0;
+		logger.debug(Literal.ENTERING);
+		StringBuilder updateSql = new StringBuilder("Update VASRecording");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set PaidAmt =:PaidAmt ");
+		updateSql.append(" Where VasReference = :VasReference AND PrimaryLinkRef =:PrimaryLinkRef");
+
+		logger.debug(Literal.SQL + updateSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PaidAmt", paidAmt);
+		source.addValue("VasReference", vasReference);
+		source.addValue("PrimaryLinkRef", primaryLinkRef);
+
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 }

@@ -225,6 +225,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox finSuspDate;
 	protected Textbox finOverDueStatus;
 	protected Intbox finOverDueDays;
+	protected Label provision_AssetStage;
 
 	// Step Finance Fields
 	protected Checkbox stepFinance;
@@ -785,6 +786,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.utilizedAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.availableAmt.setMaxlength(18);
 		this.availableAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+		this.provision_AssetStage.setVisible(ImplementationConstants.ALLOW_NPA_PROVISION);
 		// Field visibility & Naming for FinAsset value and finCurrent asset
 		// value by OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
@@ -1239,6 +1241,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (financeSummary != null) {
 
 			this.finOverDueDays.setValue(financeSummary.getFinCurODDays());
+			this.provision_AssetStage.setValue(financeSummary.getAssetCode());
 
 			if (PennantConstants.WORFLOW_MODULE_CD.equals(aFinanceMain.getLovDescProductCodeName())) {
 				this.totalDisb.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), formatter));

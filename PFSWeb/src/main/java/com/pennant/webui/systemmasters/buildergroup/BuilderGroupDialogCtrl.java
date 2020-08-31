@@ -77,6 +77,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -211,9 +212,11 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 
 		this.pinCode.setMandatoryStyle(false);
 		this.pinCode.setModuleName("PinCode");
-		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setValueColumn("PinCodeId");
 		this.pinCode.setDescColumn("AreaName");
-		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		this.pinCode.setValueType(DataType.LONG);
+		this.pinCode.setValidateColumns(new String[] { "PinCodeId" });
+		this.pinCode.setInputAllowed(false);
 
 		this.expLimitOnAmt.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.expLimitOnAmt.setFormat(PennantConstants.rateFormate9);
@@ -422,6 +425,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		} else {
 			PinCode details = (PinCode) dataObject;
 			this.pinCode.setAttribute("PinCode", details.getId());
+			this.pinCode.setValue(details.getPinCode());
 		}
 
 		logger.debug(Literal.LEAVING);

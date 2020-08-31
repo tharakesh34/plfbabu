@@ -86,6 +86,7 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
+import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
@@ -117,6 +118,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pff.core.TableType;
 
 public class RepaymentPostingsUtil implements Serializable {
 	private static final long serialVersionUID = 4165353615228874397L;
@@ -140,6 +142,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	private LatePayBucketService latePayBucketService;
 	private AccrualService accrualService;
 	private ManualAdviseDAO manualAdviseDAO;
+	private ProvisionDAO provisionDAO;
 
 	// Assignments
 	private AssignmentDAO assignmentDAO;
@@ -1269,6 +1272,18 @@ public class RepaymentPostingsUtil implements Serializable {
 					.compareTo(financeProfitDetail.getTotalPftSchd()) >= 0) {
 				amountCodes.setUnAccruedPaid(
 						financeProfitDetail.getTotalPftSchd().subtract(financeProfitDetail.getPrvMthAmz()));
+
+				if (ImplementationConstants.ALLOW_NPA_PROVISION) {
+					boolean isExists = provisionDAO.isProvisionExists(financeMain.getFinReference(),
+							TableType.MAIN_TAB);
+					//NPA Provision related 
+					if (isExists && financeProfitDetail.getCurODDays() > 0) {
+						amountCodes.setRpPftPr(amountCodes.getRpPft());
+						amountCodes.setRpTotPr(amountCodes.getRpTot());
+						amountCodes.setRpPft(BigDecimal.ZERO);
+						amountCodes.setRpTot(BigDecimal.ZERO);
+					}
+				}
 			}
 		}
 
@@ -2253,5 +2268,13 @@ public class RepaymentPostingsUtil implements Serializable {
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public ProvisionDAO getProvisionDAO() {
+		return provisionDAO;
+	}
+
+	public void setProvisionDAO(ProvisionDAO provisionDAO) {
+		this.provisionDAO = provisionDAO;
 	}
 }

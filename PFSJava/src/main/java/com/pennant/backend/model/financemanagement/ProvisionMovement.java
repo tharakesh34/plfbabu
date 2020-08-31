@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+* Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -78,6 +78,15 @@ public class ProvisionMovement extends AbstractWorkflowEntity {
 	private String lovValue;
 	private ProvisionMovement befImage;
 	private LoggedInUser userDetails;
+
+	private String assetCode;
+	private int assetStageOrdr;
+	private boolean npa;
+	private long provChgLinkedTranId;
+	private boolean manualProvision;
+	private BigDecimal prvovisionRate;
+	private int dueDays;
+	private BigDecimal priBal;
 
 	private List<ReturnDataSet> postingsList = new ArrayList<ReturnDataSet>();
 
@@ -270,6 +279,70 @@ public class ProvisionMovement extends AbstractWorkflowEntity {
 
 	public List<ReturnDataSet> getPostingsList() {
 		return postingsList;
+	}
+
+	public int getDueDays() {
+		return dueDays;
+	}
+
+	public void setDueDays(int dueDays) {
+		this.dueDays = dueDays;
+	}
+
+	public BigDecimal getPriBal() {
+		return priBal;
+	}
+
+	public void setPriBal(BigDecimal priBal) {
+		this.priBal = priBal;
+	}
+
+	public String getAssetCode() {
+		return assetCode;
+	}
+
+	public void setAssetCode(String assetCode) {
+		this.assetCode = assetCode;
+	}
+
+	public int getAssetStageOrdr() {
+		return assetStageOrdr;
+	}
+
+	public void setAssetStageOrdr(int assetStageOrdr) {
+		this.assetStageOrdr = assetStageOrdr;
+	}
+
+	public boolean isNpa() {
+		return npa;
+	}
+
+	public void setNpa(boolean npa) {
+		this.npa = npa;
+	}
+
+	public long getProvChgLinkedTranId() {
+		return provChgLinkedTranId;
+	}
+
+	public void setProvChgLinkedTranId(long provChgLinkedTranId) {
+		this.provChgLinkedTranId = provChgLinkedTranId;
+	}
+
+	public boolean isManualProvision() {
+		return manualProvision;
+	}
+
+	public void setManualProvision(boolean manualProvision) {
+		this.manualProvision = manualProvision;
+	}
+
+	public BigDecimal getPrvovisionRate() {
+		return prvovisionRate;
+	}
+
+	public void setPrvovisionRate(BigDecimal prvovisionRate) {
+		this.prvovisionRate = prvovisionRate;
 	}
 
 }

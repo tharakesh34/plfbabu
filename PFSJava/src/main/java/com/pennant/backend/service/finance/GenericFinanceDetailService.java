@@ -1917,11 +1917,22 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			invoiceDetail.setDbInvSetReq(false);
 			invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
 
+			//Normal Fees invoice preparation
+			//In Case of Loan Approval GST Invoice is happen only for remaining fee after IMD.
+			if (CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinFeeDetailList())) {
+				for (FinFeeDetail fee : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+					fee.setPaidFromLoanApproval(true);
+				}
+			}
+
 			Long dueInvoiceID = this.gstInvoiceTxnService.feeTaxInvoicePreparation(invoiceDetail);
 
 			for (int i = 0; i < financeDetail.getFinScheduleData().getFinFeeDetailList().size(); i++) {
 				FinFeeDetail finFeeDetail = financeDetail.getFinScheduleData().getFinFeeDetailList().get(i);
 				if (finFeeDetail.getTaxHeader() != null && finFeeDetail.getNetAmount().compareTo(BigDecimal.ZERO) > 0) {
+					if (dueInvoiceID == null) {
+						dueInvoiceID = finFeeDetail.getTaxHeader().getInvoiceID();
+					}
 					finFeeDetail.getTaxHeader().setInvoiceID(dueInvoiceID);
 				}
 			}

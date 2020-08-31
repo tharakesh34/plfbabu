@@ -91,6 +91,7 @@ public class Entity extends AbstractWorkflowEntity {
 	private String lovValue;
 
 	private String cINNumber;
+	private Long pinCodeId;
 
 	public String getEntityAddrLine1() {
 		return entityAddrLine1;
@@ -340,5 +341,13 @@ public class Entity extends AbstractWorkflowEntity {
 
 	public void setGstinAvailable(boolean gstinAvailable) {
 		this.gstinAvailable = gstinAvailable;
+	}
+
+	public Long getPinCodeId() {
+		return pinCodeId;
+	}
+
+	public void setPinCodeId(Long pinCodeId) {
+		this.pinCodeId = pinCodeId;
 	}
 }

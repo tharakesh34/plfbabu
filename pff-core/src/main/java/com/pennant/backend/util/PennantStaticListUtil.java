@@ -344,6 +344,8 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> hourList;
 	private static List<ValueLabel> minList;
 
+	private static List<ValueLabel> npaPaymentTypesList;
+
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -5486,5 +5488,17 @@ public class PennantStaticListUtil {
 		}
 
 		return minList;
+	}
+
+	public static List<ValueLabel> getNPAPaymentTypes() {
+		if (npaPaymentTypesList == null) {
+			npaPaymentTypesList = new ArrayList<>(2);
+			npaPaymentTypesList.add(new ValueLabel(PennantConstants.NPA_PAYMENT_APPORTIONMENT_YES,
+					Labels.getLabel("label_NPA_Payment_Apportionment_Yes.value")));
+			npaPaymentTypesList.add(new ValueLabel(PennantConstants.NPA_PAYMENT_APPORTIONMENT_NO,
+					Labels.getLabel("label_NPA_Payment_Apportionment_No.value")));
+
+		}
+		return npaPaymentTypesList;
 	}
 }

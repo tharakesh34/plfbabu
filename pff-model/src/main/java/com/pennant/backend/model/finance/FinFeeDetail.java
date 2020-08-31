@@ -156,6 +156,9 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private Long taxHeaderId;
 	private TaxHeader taxHeader;
 
+	private boolean isPaidFromLoanApproval = false;
+	private boolean paidCalcReq = false;
+
 	public FinFeeDetail() {
 		super();
 	}
@@ -190,6 +193,10 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("moduleDefiner");
 		excludeFields.add("actualOldAmount");
 		excludeFields.add("tdsReq");
+		excludeFields.add("isPaidFromUpfront");
+		excludeFields.add("paidCalcReq");
+		excludeFields.add("isPaidFromLoanApproval");
+		excludeFields.add("paidCalcReq");
 
 		return excludeFields;
 	}
@@ -766,4 +773,19 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		this.tdsReq = tdsReq;
 	}
 
+	public boolean isPaidFromLoanApproval() {
+		return isPaidFromLoanApproval;
+	}
+
+	public void setPaidFromLoanApproval(boolean isPaidFromLoanApproval) {
+		this.isPaidFromLoanApproval = isPaidFromLoanApproval;
+	}
+
+	public boolean isPaidCalcReq() {
+		return paidCalcReq;
+	}
+
+	public void setPaidCalcReq(boolean paidCalcReq) {
+		this.paidCalcReq = paidCalcReq;
+	}
 }

@@ -90,38 +90,84 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	 */
 	@Override
 	public CustomerAddres getCustomerAddresById(final long id, String addType, String type) {
-		logger.debug("Entering");
-		CustomerAddres customerAddres = new CustomerAddres();
-		customerAddres.setId(id);
-		customerAddres.setCustAddrType(addType);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustAddressId, CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
-		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince,CustAddrPriority,");
-		selectSql.append(
-				" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict,");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustAddressId, CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet");
+		sql.append(", CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince, CustAddrPriority");
+		sql.append(", CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom, TypeOfResidence, CustAddrLine3");
+		sql.append(", CustAddrLine4, CustDistrict, PinCodeId");
+
 		if (type.contains("View")) {
-			selectSql.append(" lovDescCustAddrTypeName, lovDescCustAddrCityName,");
-			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName,");
+			sql.append(", LovDescCustAddrTypeName, LovDescCustAddrCityName");
+			sql.append(", LovDescCustAddrProvinceName, LovDescCustAddrCountryName, LovDescCustAddrZip");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" FROM CustomerAddresses");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID AND CustAddrType = :custAddrType");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
+		sql.append(" from CustomerAddresses");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustID = ? and CustAddrType = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			customerAddres = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, addType },
+					new RowMapper<CustomerAddres>() {
+						@Override
+						public CustomerAddres mapRow(ResultSet rs, int rowNum) throws SQLException {
+							CustomerAddres ca = new CustomerAddres();
+
+							ca.setCustAddressId(rs.getLong("CustAddressId"));
+							ca.setCustID(rs.getLong("CustID"));
+							ca.setCustAddrType(rs.getString("CustAddrType"));
+							ca.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
+							ca.setCustFlatNbr(rs.getString("CustFlatNbr"));
+							ca.setCustAddrStreet(rs.getString("CustAddrStreet"));
+							ca.setCustAddrLine1(rs.getString("CustAddrLine1"));
+							ca.setCustAddrLine2(rs.getString("CustAddrLine2"));
+							ca.setCustPOBox(rs.getString("CustPOBox"));
+							ca.setCustAddrCity(rs.getString("CustAddrCity"));
+							ca.setCustAddrProvince(rs.getString("CustAddrProvince"));
+							ca.setCustAddrPriority(rs.getInt("CustAddrPriority"));
+							ca.setCustAddrCountry(rs.getString("CustAddrCountry"));
+							ca.setCustAddrZIP(rs.getString("CustAddrZIP"));
+							ca.setCustAddrPhone(rs.getString("CustAddrPhone"));
+							ca.setCustAddrFrom(rs.getTimestamp("CustAddrFrom"));
+							ca.setTypeOfResidence(rs.getString("TypeOfResidence"));
+							ca.setCustAddrLine3(rs.getString("CustAddrLine3"));
+							ca.setCustAddrLine4(rs.getString("CustAddrLine4"));
+							ca.setCustDistrict(rs.getString("CustDistrict"));
+							ca.setPinCodeId(rs.getLong("PinCodeId"));
+
+							if (type.contains("View")) {
+								ca.setLovDescCustAddrTypeName(rs.getString("LovDescCustAddrTypeName"));
+								ca.setLovDescCustAddrCityName(rs.getString("LovDescCustAddrCityName"));
+								ca.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
+								ca.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
+								ca.setLovDescCustAddrZip(rs.getString("LovDescCustAddrZip"));
+							}
+
+							ca.setVersion(rs.getInt("Version"));
+							ca.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							ca.setLastMntBy(rs.getLong("LastMntBy"));
+							ca.setRecordStatus(rs.getString("RecordStatus"));
+							ca.setRoleCode(rs.getString("RoleCode"));
+							ca.setNextRoleCode(rs.getString("NextRoleCode"));
+							ca.setTaskId(rs.getString("TaskId"));
+							ca.setNextTaskId(rs.getString("NextTaskId"));
+							ca.setRecordType(rs.getString("RecordType"));
+							ca.setWorkflowId(rs.getLong("WorkflowId"));
+
+							return ca;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerAddres = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return customerAddres;
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**
@@ -135,7 +181,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		sql.append(", CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince, CustAddrPriority, CustAddrCountry");
 		sql.append(", CustAddrZIP, CustAddrPhone, CustAddrFrom, TypeOfResidence, CustAddrLine3, CustAddrLine4");
 		sql.append(", CustDistrict, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, PinCodeId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescCustAddrTypeName, LovDescCustAddrCityName, LovDescCustAddrProvinceName");
@@ -189,6 +235,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 					ca.setNextTaskId(rs.getString("NextTaskId"));
 					ca.setRecordType(rs.getString("RecordType"));
 					ca.setWorkflowId(rs.getLong("WorkflowId"));
+					ca.setPinCodeId(rs.getLong("PinCodeId"));
 
 					if (StringUtils.trimToEmpty(type).contains("View")) {
 						ca.setLovDescCustAddrTypeName(rs.getString("LovDescCustAddrTypeName"));
@@ -292,16 +339,17 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		insertSql.append(" (CustAddressId,CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
 		insertSql.append(
 				" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCountry, CustAddrProvince, CustAddrPriority,");
-		insertSql.append(
-				" CustAddrCity, CustAddrZIP, CustAddrPhone,CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict,");
+		insertSql.append(" CustAddrCity, CustAddrZIP, CustAddrPhone,CustAddrFrom,TypeOfResidence,CustAddrLine3,");
+		insertSql.append(" CustAddrLine4, CustDistrict, PinCodeId,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
 		insertSql
 				.append(" Values(:CustAddressId,:CustID, :CustAddrType, :CustAddrHNbr, :CustFlatNbr, :CustAddrStreet,");
 		insertSql.append(
 				" :CustAddrLine1, :CustAddrLine2, :CustPOBox, :CustAddrCountry, :CustAddrProvince, :CustAddrPriority,");
-		insertSql.append(
-				" :CustAddrCity, :CustAddrZIP, :CustAddrPhone, :CustAddrFrom,:TypeOfResidence,:CustAddrLine3,:CustAddrLine4,:CustDistrict,");
+		insertSql
+				.append(" :CustAddrCity, :CustAddrZIP, :CustAddrPhone, :CustAddrFrom,:TypeOfResidence,:CustAddrLine3,");
+		insertSql.append(" :CustAddrLine4,:CustDistrict, :PinCodeId,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -340,7 +388,8 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 				" CustAddrCountry = :CustAddrCountry, CustAddrProvince = :CustAddrProvince, CustAddrPriority = :CustAddrPriority, ");
 		updateSql.append(" CustAddrCity = :CustAddrCity, CustAddrZIP = :CustAddrZIP,");
 		updateSql.append(
-				" CustAddrPhone = :CustAddrPhone,TypeOfResidence = :TypeOfResidence,CustAddrLine3=:CustAddrLine3,CustAddrLine4=:CustAddrLine4,CustDistrict=:CustDistrict,");
+				" CustAddrPhone = :CustAddrPhone,TypeOfResidence = :TypeOfResidence,CustAddrLine3=:CustAddrLine3,CustAddrLine4=:CustAddrLine4,");
+		updateSql.append(" CustDistrict = :CustDistrict, PinCodeId = :PinCodeId,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
@@ -453,14 +502,14 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	}
 
 	@Override
-	public boolean isServiceable(String pinCode) {
+	public boolean isServiceable(long pinCodeId) {
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("pinCode", pinCode);
+		source.addValue("pinCodeId", pinCodeId);
 
 		StringBuilder selectSql = new StringBuilder("SELECT serviceable");
 		selectSql.append(" From PinCodes");
-		selectSql.append(" Where pinCode=:pinCode");
+		selectSql.append(" Where pinCodeId = :pinCodeId");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		int rcdCount = 0;
@@ -494,9 +543,9 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT  CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
-		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince,CustAddrPriority,");
-		selectSql.append(
-				" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict");
+		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince, CustAddrPriority,");
+		selectSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom, TypeOfResidence, CustAddrLine3,");
+		selectSql.append(" CustAddrLine4, CustDistrict, PinCodeId");
 		if (type.contains("View")) {
 			selectSql.append(", lovDescCustAddrTypeName, lovDescCustAddrCityName,");
 			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName, lovDescCustAddrZip");

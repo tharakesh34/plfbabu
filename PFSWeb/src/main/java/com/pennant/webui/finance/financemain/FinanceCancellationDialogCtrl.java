@@ -37,6 +37,7 @@ import org.zkoss.zul.Window;
 import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
@@ -1552,15 +1553,19 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			if (onLoadProcess) {
 				doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
 			}
-
+			List<ReturnDataSet> returnDataSets = new ArrayList<>();
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
 			List<ReturnDataSet> accountingSetEntries = postingsPreparationUtil
-					.getReveralsByFinreference(finMain.getFinReference(), true);
-
-			getFinanceDetail().setReturnDataSetList(accountingSetEntries);
+					.getReveralsByFinreference(finMain.getFinReference());
+			for (ReturnDataSet returnDataSet : accountingSetEntries) {
+				if (!AccountEventConstants.ACCEVENT_FEEPAY.equalsIgnoreCase(returnDataSet.getFinEvent())) {
+					returnDataSets.add(returnDataSet);
+				}
+			}
+			getFinanceDetail().setReturnDataSetList(returnDataSets);
 			if (getAccountingDetailDialogCtrl() != null) {
-				getAccountingDetailDialogCtrl().doFillAccounting(accountingSetEntries);
+				getAccountingDetailDialogCtrl().doFillAccounting(returnDataSets);
 			}
 		}
 

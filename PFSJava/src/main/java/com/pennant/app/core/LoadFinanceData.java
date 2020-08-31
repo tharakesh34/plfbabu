@@ -28,7 +28,6 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -175,6 +174,12 @@ public class LoadFinanceData extends ServiceHelper {
 					finEODEvent.setIdxPresentment(i);
 					custEODEvent.setCheckPresentment(true);
 				}
+			}
+
+			// Is Provision exists
+			if (custEODEvent.isDueExist() && ImplementationConstants.ALLOW_NPA_PROVISION && provisionDAO
+					.isProvisionExists(finEODEvent.getFinanceMain().getFinReference(), TableType.MAIN_TAB)) {
+				finEODEvent.getFinProfitDetail().setProvision(true);
 			}
 
 			// Date Rollover Setting
@@ -418,15 +423,9 @@ public class LoadFinanceData extends ServiceHelper {
 
 			// provisions
 			if (!finEODEvent.getProvisions().isEmpty()) {
-				for (Provision provision : finEODEvent.getProvisions()) {
-					if (StringUtils.equals(provision.getRcdAction(), EodConstants.RECORD_UPDATE)) {
-						getProvisionDAO().updateProvisonAmounts(provision);
-					} else if (StringUtils.equals(provision.getRcdAction(), EodConstants.RECORD_INSERT)) {
-						getProvisionDAO().save(provision, "");
-					}
-
-				}
+				saveProvisions(finEODEvent);
 			}
+
 			// disbursement postings
 			for (FinanceDisbursement disbursement : finEODEvent.getFinanceDisbursements()) {
 				if (disbursement.isPosted()) {
@@ -465,6 +464,23 @@ public class LoadFinanceData extends ServiceHelper {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Save Provisions and Provision Movements
+	 * 
+	 * @param finEODEvent
+	 */
+	private void saveProvisions(FinEODEvent finEODEvent) {
+		for (Provision provision : finEODEvent.getProvisions()) {
+
+			provisionDAO.delete(provision, TableType.MAIN_TAB.getSuffix());
+			provisionDAO.save(provision, TableType.MAIN_TAB.getSuffix());
+
+			if (provision.getProvisionMovement() != null) {
+				provisionMovementDAO.save(provision.getProvisionMovement(), TableType.MAIN_TAB.getSuffix());
+			}
+		}
 	}
 
 	/**

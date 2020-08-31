@@ -83,40 +83,73 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 	public TaxDetail getTaxDetail(long id, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, country, stateCode, entityCode, taxCode, addressLine1, ");
-		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode, hsnNumber, natureService, ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, Country, StateCode, EntityCode, TaxCode, AddressLine1, AddressLine2, AddressLine3");
+		sql.append(", AddressLine4, PinCode, CityCode, HsnNumber, NatureService, PinCodeId");
 
 		if (type.contains("View")) {
-			sql.append(
-					"addressLine2, addressLine3, addressLine4, pinCode, cityName, countryName,provinceName,entityDesc, GstInAvailable,");
+			sql.append(", CityName, CountryName, ProvinceName, EntityDesc");
+			sql.append(", GstinAvailable, AreaName");
 		}
 
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From TAXDETAIL");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from TAXDETAIL");
 		sql.append(type);
-		sql.append(" Where id = :Id");
+		sql.append(" Where id = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		TaxDetail taxDetail = new TaxDetail();
-		taxDetail.setId(id);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(taxDetail);
-		RowMapper<TaxDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDetail.class);
-
 		try {
-			taxDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<TaxDetail>() {
+				@Override
+				public TaxDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					TaxDetail td = new TaxDetail();
+
+					td.setId(rs.getLong("Id"));
+					td.setCountry(rs.getString("Country"));
+					td.setStateCode(rs.getString("StateCode"));
+					td.setEntityCode(rs.getString("EntityCode"));
+					td.setTaxCode(rs.getString("TaxCode"));
+					td.setAddressLine1(rs.getString("AddressLine1"));
+					td.setAddressLine2(rs.getString("AddressLine2"));
+					td.setAddressLine3(rs.getString("AddressLine3"));
+					td.setAddressLine4(rs.getString("AddressLine4"));
+					td.setPinCode(rs.getString("PinCode"));
+					td.setCityCode(rs.getString("CityCode"));
+					td.setHsnNumber(rs.getString("HsnNumber"));
+					td.setNatureService(rs.getString("NatureService"));
+					td.setPinCodeId(rs.getLong("PinCodeId"));
+
+					if (type.contains("View")) {
+						td.setCityName(rs.getString("CityName"));
+						td.setCountryName(rs.getString("CountryName"));
+						td.setProvinceName(rs.getString("ProvinceName"));
+						td.setEntityDesc(rs.getString("EntityDesc"));
+						td.setGstinAvailable(rs.getBoolean("GstinAvailable"));
+						td.setAreaName(rs.getString("AreaName"));
+					}
+
+					td.setVersion(rs.getInt("Version"));
+					td.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					td.setLastMntBy(rs.getLong("LastMntBy"));
+					td.setRecordStatus(rs.getString("RecordStatus"));
+					td.setRoleCode(rs.getString("RoleCode"));
+					td.setNextRoleCode(rs.getString("NextRoleCode"));
+					td.setTaskId(rs.getString("TaskId"));
+					td.setNextTaskId(rs.getString("NextTaskId"));
+					td.setRecordType(rs.getString("RecordType"));
+					td.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return td;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			taxDetail = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return taxDetail;
+		return null;
 	}
 
 	@Override
@@ -165,13 +198,14 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 		sql.append(tableType.getSuffix());
 		sql.append("(id, country, stateCode, entityCode, taxCode, addressLine1, ");
 		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode, hsnNumber, natureService, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" pinCodeId, ");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(" RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :Id, :Country, :StateCode, :EntityCode, :TaxCode, :AddressLine1, ");
-		sql.append(" :AddressLine2, :AddressLine3, :AddressLine4, :PinCode, :CityCode, :HsnNumber, :NatureService, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :Id, :Country, :StateCode, :EntityCode, :TaxCode, :AddressLine1, :AddressLine2,");
+		sql.append(" :AddressLine3, :AddressLine4, :PinCode, :CityCode, :HsnNumber, :NatureService, :pinCodeId,");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId,");
+		sql.append(" :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (taxDetail.getId() <= 0) {
@@ -203,6 +237,7 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 		sql.append(" taxCode = :TaxCode, addressLine1 = :AddressLine1, addressLine2 = :AddressLine2, ");
 		sql.append(" addressLine3 = :AddressLine3, addressLine4 = :AddressLine4, pinCode = :PinCode, ");
 		sql.append(" cityCode = :CityCode, hsnNumber = :hsnNumber, natureService = :natureService,");
+		sql.append(" pinCodeId = :PinCodeId, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -252,7 +287,7 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, Country, StateCode, EntityCode, TaxCode, AddressLine1, AddressLine2, AddressLine3");
-		sql.append(", AddressLine4, PinCode, CityCode, HsnNumber, NatureService, Version, LastMntOn");
+		sql.append(", AddressLine4, PinCode, CityCode, HsnNumber, NatureService, PinCodeId, Version, LastMntOn");
 		sql.append(", LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
 		sql.append(", WorkflowId");
 
@@ -291,6 +326,7 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 					td.setCityCode(rs.getString("CityCode"));
 					td.setHsnNumber(rs.getString("HsnNumber"));
 					td.setNatureService(rs.getString("NatureService"));
+					td.setPinCodeId(rs.getLong("PinCodeId"));
 					td.setVersion(rs.getInt("Version"));
 					td.setLastMntOn(rs.getTimestamp("LastMntOn"));
 					td.setLastMntBy(rs.getLong("LastMntBy"));

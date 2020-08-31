@@ -2159,7 +2159,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					if (!(DisbursementConstants.STATUS_REVERSED.equals(payments.getStatus())
 							|| DisbursementConstants.STATUS_REJECTED.equals(payments.getStatus())
 							|| DisbursementConstants.STATUS_APPROVED.equals(payments.getStatus())
-							|| DisbursementConstants.STATUS_CANCEL.equals(payments.getStatus()))) {
+							|| DisbursementConstants.STATUS_CANCEL.equals(payments.getStatus())
+							|| DisbursementConstants.STATUS_NEW.equals(payments.getStatus()))) {
 						MessageUtil.showError(Labels.getLabel("label_Finance_Cancel_Disbursement_Status_Reversed"));
 						return;
 					}

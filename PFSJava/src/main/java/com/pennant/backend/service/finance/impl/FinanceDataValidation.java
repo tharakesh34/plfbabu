@@ -286,6 +286,25 @@ public class FinanceDataValidation {
 		} else {
 			stp = finDetail.isStp();
 		}
+
+		//As per IMD Changes paid can be done through IMD only
+		List<FinFeeDetail> feeList = finScheduleData.getFinFeeDetailList();
+		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup) && !CollectionUtils.isEmpty(feeList)) {
+			for (FinFeeDetail feeDetail : feeList) {
+				//As per IMD Changes PAID can be happen through IMD only
+				if (feeDetail.getPaidAmount() != null && BigDecimal.ZERO.compareTo(feeDetail.getPaidAmount()) != 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = feeDetail.getFeeTypeCode();
+					valueParm[1] = "0";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("IMD006", valueParm)));
+				}
+			}
+		}
+		if (!errorDetails.isEmpty()) {
+			finScheduleData.setErrorDetails(errorDetails);
+			return finScheduleData;
+		} //IMD
+
 		errorDetails = doValidateFees(finScheduleData, stp);
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);

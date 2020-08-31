@@ -6449,4 +6449,57 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public FinanceMain getFinBasicDetails(String finReference, String type) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("");
+		sql.append("SELECT T1.FinReference, T1.CustID, T1.FinCcy, T1.FinBranch, T1.FinType, T1.ScheduleMethod, ");
+		sql.append(" T1.ProfitDaysBasis, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.ProductCategory, T1.FinCategory, ");
+		sql.append(" T3.CustCIF as lovDescCustCIF, T3.CustShrtName  as lovDescCustShrtName, ClosingStatus ");
+		sql.append(" From FinanceMain");
+		sql.append(type);
+		sql.append(" T1 INNER JOIN RMTFinanceTypes T2 ON T1.FinType=T2.FinType ");
+		sql.append(" INNER JOIN Customers T3 ON T1.CustID = T3.CustID ");
+		sql.append(" Where T1.FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public void updateDeductFeeDisb(FinanceMain financeMain, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("update FinanceMain");
+		sql.append(tableType.getSuffix());
+		sql.append(" set DeductFeeDisb=:DeductFeeDisb, LastMntOn = :LastMntOn ");
+		sql.append(" where FinReference = :FinReference ");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("DeductFeeDisb", financeMain.getDeductFeeDisb());
+		source.addValue("LastMntOn", financeMain.getLastMntOn());
+		source.addValue("FinReference", financeMain.getFinReference());
+		source.addValue("PrevMntOn", financeMain.getPrevMntOn());
+		source.addValue("Version", financeMain.getVersion());
+
+		int recordCount = jdbcTemplate.update(sql.toString(), source);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 }

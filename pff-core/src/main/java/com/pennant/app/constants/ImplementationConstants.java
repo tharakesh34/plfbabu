@@ -149,6 +149,7 @@ public class ImplementationConstants {
 		ALLOW_SCHOOL_ORG = getValueAsBoolean(extensions, "ALLOW_SCHOOL_ORG", false);
 		ALLOW_SAMPLING = getValueAsBoolean(extensions, "ALLOW_SAMPLING", false);
 		ALLOW_FDD_ON_RVW_DATE = getValueAsBoolean(extensions, "ALLOW_FDD_ON_RVW_DATE", false);
+		ALLOW_NPA_PROVISION = getValueAsBoolean(extensions, "ALLOW_NPA_PROVISION", false);
 		ALLOW_UNACCURED_PENALITY_SOA = getValueAsBoolean(extensions, "ALLOW_UNACCURED_PENALITY_SOA", true);
 
 		/*
@@ -280,6 +281,7 @@ public class ImplementationConstants {
 	public static boolean AUTO_EOD_REQUIRED;
 	public static boolean ALW_ADV_INTEMI_ADVICE_CREATION;
 	public static boolean TAX_DFT_CR_INV_REQ = false;
+
 	public static boolean ALLOW_IND_AS;
 	public static boolean ALLOW_AUTO_KNOCK_OFF;
 	public static boolean ALLOW_OLDEST_DUE;
@@ -291,6 +293,7 @@ public class ImplementationConstants {
 	public static boolean ALLOW_SAMPLING;
 	public static boolean ALLOW_SCHOOL_ORG;
 	public static boolean ALLOW_FDD_ON_RVW_DATE;
+	public static boolean ALLOW_NPA_PROVISION;
 	public static boolean ALLOW_UNACCURED_PENALITY_SOA;
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static

@@ -75,4 +75,6 @@ public interface ProvisionService {
 	FinanceProfitDetail getProfitDetailById(String finReference);
 
 	List<Provision> getProcessedProvisions();
+
+	Provision getProvisionById(String finReference, String tableType);
 }

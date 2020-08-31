@@ -3337,6 +3337,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 								StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
 					}
 					agreement.setCustPerAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
+					agreement.setLovDescCustPerAddrZIP(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrZip()));
 				} else if (customerAddres.getCustAddrType().equals("REGADD")) {
 					agreement.setCustRegAddrHNbr(customerAddres.getCustAddrHNbr());
 					agreement.setCustRegFlatNbr(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
@@ -3352,6 +3353,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 								StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
 					}
 					agreement.setCustRegAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
+					agreement.setLovDescCustRegAddrZIP(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrZip()));
 				} else if (customerAddres.getCustAddrType().equals("BUS")) {
 					agreement.setCustOfcAddrHNbr(customerAddres.getCustAddrHNbr());
 					agreement.setCustOfcFlatNbr(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
@@ -3367,6 +3369,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 								StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
 					}
 					agreement.setCustOfcAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
+					agreement.setLovDescCustOfcAddrZIP(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrZip()));
 				}
 			}
 		}
@@ -3483,6 +3486,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		agreement.setCustAddrLine1(StringUtils.trimToEmpty(customerAddres.getCustAddrLine1()));
 		agreement.setCustAddrLine2(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
 		agreement.setCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
+		agreement.setLovDescCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrZip()));
 	}
 
 	private void setAddressDetails(CoApplicant coapplicant, CustomerAddres customerAddres) {
@@ -3499,6 +3503,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		coapplicant.setCustAddrLine1(StringUtils.trimToEmpty(customerAddres.getCustAddrLine1()));
 		coapplicant.setCustAddrLine2(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
 		coapplicant.setCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
+		coapplicant.setLovDescCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrZip()));
 	}
 
 	private void setMandateDetails(FinanceDetail detail, AgreementDetail agreement) {

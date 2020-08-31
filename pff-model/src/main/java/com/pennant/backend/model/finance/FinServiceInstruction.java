@@ -59,7 +59,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	@XmlElement(name = "reCalToDate")
 	private Date recalToDate;
 	@XmlElement(name = "stpProcess")
-	private boolean nonStp;
+	private boolean nonStp = true;
 	@XmlElement
 	private String processStage;
 	@XmlElement

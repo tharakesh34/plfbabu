@@ -429,6 +429,8 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 		int formatter = CurrencyUtil.getFormat(finMain.getFinCcy());
 
 		boolean readOnly = isReadOnly("FinFeeReceiptDialog_paidAmount");
+		//As per IMD CHANGES fields should be readonly.
+		readOnly = true;
 
 		if (finFeeReceipts != null && !finFeeReceipts.isEmpty()) {
 			for (FinFeeReceipt finFeeReceipt : finFeeReceipts) {
@@ -440,7 +442,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				lc.setParent(item);
 
 				// Receipt Reference
-				lc = new Listcell(finFeeReceipt.getReceiptReference());
+				lc = new Listcell(String.valueOf(finFeeReceipt.getReceiptID()));
 				lc.setParent(item);
 
 				// Receipt Amount

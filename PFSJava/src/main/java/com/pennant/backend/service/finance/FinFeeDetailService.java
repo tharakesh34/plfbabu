@@ -122,6 +122,8 @@ public interface FinFeeDetailService {
 
 	List<FinFeeDetail> getFinFeeDetailsByReferenceId(long referenceId, String eventCodeRef, String type); //TO get the Servicing Fees
 
+	void updateFeesFromUpfront(FinFeeDetail finFeeDetail, String type);
+
 	Map<Long, List<FinFeeReceipt>> getUpfromtReceiptMap(List<FinFeeReceipt> finFeeReceipt);
 
 }

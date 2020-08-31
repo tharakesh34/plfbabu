@@ -964,7 +964,9 @@ public class PennantConstants {
 	public static final String DBD_AND_MBD_SEPARATELY = "SEPRT";
 	public static final String DBD_AND_MBD_TOGETHER = "TOGTHR";
 	public static final String DBD_PERCENTAGE_CALCULATED_ON = "INVAMT";
-
+	public static final String NPA_PAYMENT_APPORTIONMENT_YES = "Y";
+	public static final String NPA_PAYMENT_APPORTIONMENT_NO = "N";
+	public static final String SELECT_LABEL = "---Select---";
 	//Emi Clearance
 	public static final String WAITING_CLEARANCE = "WTCLR";
 	public static final String CLEARED = "CLRD";

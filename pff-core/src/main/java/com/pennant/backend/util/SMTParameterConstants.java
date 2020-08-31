@@ -67,7 +67,6 @@ public class SMTParameterConstants {
 	public static final String FEESALLOWZERO = "FEESALLOWZERO";
 	public static final String ELGMETHOD = "ELGMETHOD";
 	public static final String ALW_DIFF_RPYHCY_NPA = "ALW_DIFF_RPYHCY_NPA";
-	public static final String RPYHCY_ON_NPA = "RPYHCY_ON_NPA";
 	public static final String DISB_PAID_STATUS = "DISB_PAID_STATUS";
 	public static final String IS_CREDITREVIEW_TAB_REQ = "IS_CREDITREVIEW_TAB_REQ";
 	public static final String PRESENTMENT_RESPONSE_ROW_LENGTH = "PRESENTMENT_RESPONSE_ROW_LENGTH";
@@ -336,4 +335,10 @@ public class SMTParameterConstants {
 	public static final String ALLOW_EOD_START_ON_SAME_DAY = "ALLOW_EOD_START_ON_SAME_DAY";
 	public static final String ALLOW_MULITIPLE_EODS_ON_SAME_DAY = "ALLOW_MULITIPLE_EODS_ON_SAME_DAY";
 	public static final String AUTO_KNOCKOFF_THRESHOLD = "AUTO_KNOCKOFF_THRESHOLD";
+
+	public static final String NPA_TAGGING = "NPA_TAGGING";
+	public static final String RPYHCY_ON_NPA = "RPYHCY_ON_NPA";
+	public static final String PROVISION_BOOKS = "PROVISION_BOOKS";
+	public static final String PROVISION_EFF_POSTDATE = "PROVISION_EFF_POSTDATE";
+
 }

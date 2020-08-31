@@ -79,6 +79,7 @@ import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
+import com.pennant.backend.dao.financemanagement.ProvisionMovementDAO;
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
@@ -134,7 +135,8 @@ abstract public class ServiceHelper implements Serializable {
 	private PostingsPreparationUtil postingsPreparationUtil;
 	//over due
 	private FinODDetailsDAO finODDetailsDAO;
-	private ProvisionDAO provisionDAO;
+	protected ProvisionDAO provisionDAO;
+	protected ProvisionMovementDAO provisionMovementDAO;
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
 	private RuleExecutionUtil ruleExecutionUtil;
 	private RuleDAO ruleDAO;
@@ -489,10 +491,6 @@ abstract public class ServiceHelper implements Serializable {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}
 
-	public ProvisionDAO getProvisionDAO() {
-		return provisionDAO;
-	}
-
 	public void setProvisionDAO(ProvisionDAO provisionDAO) {
 		this.provisionDAO = provisionDAO;
 	}
@@ -555,6 +553,10 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
 		this.finServiceInstructionDAO = finServiceInstructionDAO;
+	}
+
+	public void setProvisionMovementDAO(ProvisionMovementDAO provisionMovementDAO) {
+		this.provisionMovementDAO = provisionMovementDAO;
 	}
 
 }

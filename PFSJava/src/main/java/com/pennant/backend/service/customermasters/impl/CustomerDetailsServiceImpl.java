@@ -2353,49 +2353,65 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			ErrorDetail errorDetail = new ErrorDetail();
 			for (CustomerAddres adress : custAddress) {
 				auditDetail.setErrorDetail(validateMasterCode("AddressType", adress.getCustAddrType()));
-				if (StringUtils.isNotBlank(adress.getCustAddrZIP())) {
-					auditDetail.setErrorDetail(validateMasterCode("PinCode", adress.getCustAddrZIP()));
-					PinCode pincode = pinCodeDAO.getPinCode(adress.getCustAddrZIP(), "_AView");
-					if (pincode != null) {
-						if (StringUtils.isNotBlank(adress.getCustAddrCountry())
-								&& !adress.getCustAddrCountry().equalsIgnoreCase(pincode.getpCCountry())) {
-
-							String[] valueParm = new String[2];
-							valueParm[0] = adress.getCustAddrCountry();
-							valueParm[1] = adress.getCustAddrZIP();
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm));
-							auditDetail.setErrorDetail(errorDetail);
+				if (adress.getPinCodeId() != null && adress.getPinCodeId() < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "PinCodeId";
+					valueParm[1] = "0";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+				} else {
+					if (StringUtils.isNotBlank(adress.getCustAddrZIP()) && (adress.getPinCodeId() != null)) {
+						auditDetail.setErrorDetail(validateMasterCode("PinCode", adress.getCustAddrZIP()));
+						PinCode pincode = pinCodeDAO.getPinCodeById(adress.getPinCodeId(), "_AView");
+						if (pincode != null) {
+							if (pincode.getPinCode().equals(adress.getCustAddrZIP())) {
+								pinCodeValidation(pincode, adress, auditDetail, errorDetail);
+							} else {
+								String[] valueParm = new String[2];
+								valueParm[0] = "PinCode " + adress.getCustAddrZIP();
+								valueParm[1] = "PinCodeId " + String.valueOf(adress.getPinCodeId());
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("99017", "", valueParm));
+								auditDetail.setErrorDetail(errorDetail);
+							}
 						} else {
-							adress.setCustAddrCountry(pincode.getpCCountry());
-						}
-
-						Province province = getProvinceDAO().getProvinceById(adress.getCustAddrCountry(),
-								pincode.getpCProvince(), "");
-						if (province != null && StringUtils.isNotBlank(adress.getCustAddrProvince())
-								&& !adress.getCustAddrProvince().equalsIgnoreCase(province.getCPProvince())) {
-
-							String[] valueParm = new String[2];
-							valueParm[0] = adress.getCustAddrProvince();
-							valueParm[1] = adress.getCustAddrZIP();
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm));
+							String[] valueParm = new String[1];
+							valueParm[0] = "PinCodeId " + String.valueOf(adress.getPinCodeId());
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
-						} else {
-							adress.setCustAddrProvince(pincode.getpCProvince());
 						}
-
-						if (StringUtils.isNotBlank(adress.getCustAddrCity())
-								&& !adress.getCustAddrCity().equalsIgnoreCase(pincode.getCity())) {
-
-							String[] valueParm = new String[2];
-							valueParm[0] = adress.getCustAddrCity();
-							valueParm[1] = adress.getCustAddrZIP();
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm));
-							auditDetail.setErrorDetail(errorDetail);
-
-						} else {
-							adress.setCustAddrCity(pincode.getCity());
+					} else {
+						if (StringUtils.isNotBlank(adress.getCustAddrZIP()) && (adress.getPinCodeId() == null)) {
+							int pinCodeCount = pinCodeDAO.getPinCodeCount(adress.getCustAddrZIP(), "_AView");
+							String[] valueParm = new String[1];
+							switch (pinCodeCount) {
+							case 0:
+								valueParm[0] = "PinCode " + adress.getCustAddrZIP();
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm));
+								auditDetail.setErrorDetail(errorDetail);
+								break;
+							case 1:
+								PinCode pincode = pinCodeDAO.getPinCode(adress.getCustAddrZIP(), "_AView");
+								adress.setPinCodeId(pincode.getPinCodeId());
+								pinCodeValidation(pincode, adress, auditDetail, errorDetail);
+								break;
+							default:
+								valueParm[0] = "PinCodeId";
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("51004", "", valueParm));
+								auditDetail.setErrorDetail(errorDetail);
+							}
+						} else if (adress.getPinCodeId() != null && StringUtils.isBlank(adress.getCustAddrZIP())) {
+							PinCode pincode = pinCodeDAO.getPinCodeById(adress.getPinCodeId(), "_AView");
+							if (pincode != null) {
+								adress.setCustAddrZIP(pincode.getPinCode());
+								pinCodeValidation(pincode, adress, auditDetail, errorDetail);
+								;
+							} else {
+								String[] valueParm = new String[1];
+								valueParm[0] = "PinCodeId " + String.valueOf(adress.getPinCodeId());
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm));
+								auditDetail.setErrorDetail(errorDetail);
+							}
 						}
-
 					}
 				}
 				if (StringUtils.isNotBlank(adress.getCustAddrZIP())) {
@@ -2859,6 +2875,52 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
+	}
+
+	private void pinCodeValidation(PinCode pincode, CustomerAddres adress, AuditDetail auditDetail,
+			ErrorDetail errorDetail) {
+		if (pincode != null) {
+			if (StringUtils.isNotBlank(adress.getCustAddrCountry())
+					&& !adress.getCustAddrCountry().equalsIgnoreCase(pincode.getpCCountry())) {
+
+				String[] valueParm = new String[2];
+				valueParm[0] = adress.getCustAddrCountry();
+				valueParm[1] = adress.getCustAddrZIP();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm));
+				auditDetail.setErrorDetail(errorDetail);
+			} else {
+				adress.setCustAddrCountry(pincode.getpCCountry());
+			}
+
+			Province province = getProvinceDAO().getProvinceById(adress.getCustAddrCountry(), pincode.getpCProvince(),
+					"");
+			if (province != null && StringUtils.isNotBlank(adress.getCustAddrProvince())
+					&& !adress.getCustAddrProvince().equalsIgnoreCase(province.getCPProvince())) {
+
+				String[] valueParm = new String[2];
+				valueParm[0] = adress.getCustAddrProvince();
+				valueParm[1] = adress.getCustAddrZIP();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm));
+				auditDetail.setErrorDetail(errorDetail);
+			} else {
+				adress.setCustAddrProvince(pincode.getpCProvince());
+			}
+
+			if (StringUtils.isNotBlank(adress.getCustAddrCity())
+					&& !adress.getCustAddrCity().equalsIgnoreCase(pincode.getCity())) {
+
+				String[] valueParm = new String[2];
+				valueParm[0] = adress.getCustAddrCity();
+				valueParm[1] = adress.getCustAddrZIP();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm));
+				auditDetail.setErrorDetail(errorDetail);
+
+			} else {
+				adress.setCustAddrCity(pincode.getCity());
+			}
+
+		}
+
 	}
 
 	private ErrorDetail validateCardSalesListData(List<CustCardSales> cardSaleDetailsList,

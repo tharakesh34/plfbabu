@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="saisandeep.b">
+		<createTable tableName="AdtFinFeeRefundHeader">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="LinkedTranId" type="bigint" />
+
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+
+	<changeSet id="1.1" author="saisandeep.b">
+		<sql>
+			<![CDATA[	
+					ALTER TABLE AdtFinFeeRefundHeader ADD CONSTRAINT  PK_AdtFinFeeRefundHeader PRIMARY KEY (AuditId, AuditDate,AuditSeq,AuditImage);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="2" author="saisandeep.b">
+		<createTable tableName="AdtFinFeeRefundDetails">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="Id" type="bigint" />
+			<column name="HeaderId" type="bigint" />
+			<column name="FeeId" type="bigint" />
+			<column name="refundAmount" type="bigint" />
+			<column name="refundAmtGST" type="bigint" />
+			<column name="refundAmtOriginal" type="bigint" />
+
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="2.1" author="saisandeep.b">
+		<sql>
+			<![CDATA[	
+					ALTER TABLE AdtFinFeeRefundDetails ADD CONSTRAINT  PK_AdtFinFeeRefundDetails PRIMARY KEY (AuditId, AuditDate,AuditSeq,AuditImage);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="3" author="saisandeep.b">
+		<comment>ST#55 and TK#135 bankbranchid column added to capture bank branch details in IMD for CHEQUE and DD</comment>
+		<addColumn tableName="AdtFinReceiptDetail">
+			<column name="bankbranchid" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="4" author="saisandeep.b" dbms="mssql">
+		<comment>ST#55 and TK#135 bankbranchid column added to capture bank branch details in IMD for CHEQUE and DD</comment>
+		<sql>
+			<![CDATA[
+				ALTER TABLE AdtFinReceiptDetail ADD CONSTRAINT DF_adtFRD_bankbranchid DEFAULT 0 FOR bankbranchid;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="4" author="saisandeep.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="bankbranchid" tableName="AdtFinReceiptDetail" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="5" author="saisandeep.b">
+		<dropNotNullConstraint tableName="AdtFinFeeDetail" columnName="TaxHeaderId" columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="6" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				update AdtFinFeeDetail set TaxHeaderId = null where TaxHeaderId <=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- ST#931 - Pin Code Changes change logs start -->
+
+	<changeSet id="ST#931.1" author="Gopalaswamy.M">
+		<addColumn tableName="ADTRMTBRANCHES">
+			<column name="PinCodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#931.2" author="Gopalaswamy.M">
+		<addColumn tableName="ADTENTITY">
+			<column name="PinCodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#931.3" author="Gopalaswamy.M">
+		<addColumn tableName="ADTTAXDETAIL">
+			<column name="PinCodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#931.4" author="Gopalaswamy.M">
+		<addColumn tableName="ADTCUSTOMERADDRESSES">
+			<column name="PinCodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#931.5" author="Gopalaswamy.M">
+		<addColumn tableName="ADTBUILDERCOMPANY">
+			<column name="PinCodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#931.6" author="Gopalaswamy.M">
+		<addColumn tableName="ADTAMTVEHICLEDEALER">
+			<column name="PinCodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#931.7" author="Gopalaswamy.M">
+		<addColumn tableName="ADTFinTaxDetail">
+			<column name="PinCodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<!-- ST#931 - Pin Code Changes change logs End -->
+
+	<!-- ST#540 - NPA & Provision Change Set's Start -->
+	<changeSet id="ST#540.01" author="Tejaswi.b">
+		<createTable tableName="ADTASSET_CLSSFICATN_HEADER">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="StageOrder" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#540.02" author="Tejaswi.b">
+		<createTable tableName="ADTASSET_CLSSFICATN_DETAILS">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#540.03" author="Vijayakumar.k">
+		<createTable tableName="AdtNPA_PROVISION_HEADER">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="Entity" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="FinType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#540.04" author="Vijayakumar.k">
+		<createTable tableName="AdtNPA_PROVISION_DETAILS">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="HeaderId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="AssetClassificationId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="NpaActive" type="boolean">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="DPDdays" type="int">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="NPARepayApprtnmnt" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="IntSecPerc" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="IntUnSecPerc" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="RegSecPerc" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="RegUnSecPerc" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+
+	<changeSet id="ST#540.04.1" author="Tejaswi.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="StageOrder" tableName="AdtASSET_CLSSFICATN_HEADER" defaultValue="0" />
+		<addDefaultValue columnName="Active" tableName="AdtASSET_CLSSFICATN_HEADER" defaultValue="0" />
+		<addDefaultValue columnName="Version" tableName="AdtASSET_CLSSFICATN_HEADER" defaultValue="0" />
+
+		<addDefaultValue columnName="Version" tableName="AdtASSET_CLSSFICATN_DETAILS" defaultValue="0" />
+
+		<addDefaultValue columnName="Version" tableName="AdtNPA_PROVISION_HEADER" defaultValue="0" />
+
+		<addDefaultValue columnName="NpaActive" tableName="AdtNPA_PROVISION_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="DPDdays" tableName="AdtNPA_PROVISION_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="IntSecPerc" tableName="AdtNPA_PROVISION_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="IntUnSecPerc" tableName="AdtNPA_PROVISION_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="RegSecPerc" tableName="AdtNPA_PROVISION_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="RegUnSecPerc" tableName="AdtNPA_PROVISION_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="Version" tableName="AdtNPA_PROVISION_DETAILS" defaultValue="0" />
+	</changeSet>
+
+
+	<changeSet id="ST#540.04.1" author="Tejaswi.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE AdtASSET_CLSSFICATN_HEADER ADD CONSTRAINT DF_ADTASSET_CLSSFICATN_HDR_SO DEFAULT 0 FOR StageOrder;
+				ALTER TABLE AdtASSET_CLSSFICATN_HEADER ADD CONSTRAINT DF_ADTASSET_CLSSFICATN_HDR_ACT DEFAULT 0 FOR Active;
+				ALTER TABLE AdtASSET_CLSSFICATN_HEADER ADD CONSTRAINT DF_ADTASSET_CLSSFICATN_HDR_VRS DEFAULT 0 FOR Version;
+				            
+				ALTER TABLE AdtASSET_CLSSFICATN_DETAILS ADD CONSTRAINT DF_ADTASSET_CLSSFCATN_DTLS_VRS DEFAULT 0 FOR Version;
+				            
+				ALTER TABLE AdtNPA_PROVISION_HEADER ADD CONSTRAINT DF_ADTNPA_PROVISION_HEADER_VRS DEFAULT 0 FOR Version;
+				            
+				ALTER TABLE AdtNPA_PROVISION_DETAILS ADD CONSTRAINT DF_ADTNPA_PROVISION_DTL_NACT DEFAULT 0 FOR NpaActive;
+				ALTER TABLE AdtNPA_PROVISION_DETAILS ADD CONSTRAINT DF_ADTNPA_PROVISION_DTL_DPDAYS DEFAULT 0 FOR DPDdays;
+				ALTER TABLE AdtNPA_PROVISION_DETAILS ADD CONSTRAINT DF_ADTNPA_PROVISION_DTL_ISP DEFAULT 0 FOR IntSecPerc;
+				ALTER TABLE AdtNPA_PROVISION_DETAILS ADD CONSTRAINT DF_ADTNPA_PROVISION_DTL_IUSP DEFAULT 0 FOR IntUnSecPerc;
+				ALTER TABLE AdtNPA_PROVISION_DETAILS ADD CONSTRAINT DF_ADTNPA_PROVISION_DTL_RSP DEFAULT 0 FOR RegSecPerc;
+				ALTER TABLE AdtNPA_PROVISION_DETAILS ADD CONSTRAINT DF_ADTNPA_PROVISION_DTL_RSUP DEFAULT 0 FOR RegUnSecPerc;
+				ALTER TABLE AdtNPA_PROVISION_DETAILS ADD CONSTRAINT DF_ADTNPA_PROVISION_DTL_VRS DEFAULT 0 FOR Version;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#540.05.1" author="Tejaswi.b">
+		<addColumn tableName="AdtFinProvisions">
+			<column name="AssetCode" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#540.05.2" author="Tejaswi.b">
+		<addColumn tableName="AdtFinProvisions">
+			<column name="AssetStageOrdr" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#540.05.3" author="Tejaswi.b">
+		<addColumn tableName="AdtFinProvisions">
+			<column name="NPA" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#540.05.4" author="Tejaswi.b">
+		<addColumn tableName="AdtFinProvisions">
+			<column name="ManualProvision" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#540.05.5" author="Tejaswi.b">
+		<addColumn tableName="AdtFinProvisions">
+			<column name="ProvLinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#540.05.6" author="Tejaswi.b">
+		<addColumn tableName="AdtFinProvisions">
+			<column name="ProvChgLinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#540.05.7" author="Tejaswi.b">
+		<addColumn tableName="AdtFinProvisions">
+			<column name="PrvovisionRate" type="decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#540.6" author="Tejaswi.b">
+		<modifyDataType tableName="AdtFinProvisions" columnName="UseNFProv" newDataType="boolean" />
+		<modifyDataType tableName="AdtFinProvisions" columnName="AutoReleaseNFP" newDataType="boolean" />
+	</changeSet>
+
+	<!-- ST#540 - NPA & Provision Change Set's End -->
+</databaseChangeLog>

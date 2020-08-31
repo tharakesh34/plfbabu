@@ -556,4 +556,81 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public Long getInvoiceIdByTranId(Long tranId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" InvoiceId");
+		sql.append(" from gst_invoice_txn");
+		sql.append("  Where TransactionId = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { tranId }, new RowMapper<Long>() {
+				@Override
+				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+					return (JdbcUtil.getLong(rs.getLong("InvoiceId")));
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public List<GSTInvoiceTxnDetails> getTxnListByInvoiceId(Long invoiceId) {
+
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, InvoiceId, FeeCode, FeeAmount, CGST_RATE, CGST_AMT, SGST_RATE, SGST_AMT, IGST_RATE");
+		sql.append(", IGST_AMT, UGST_RATE, UGST_AMT, CESS_RATE, CESS_AMT");
+		sql.append(" from gst_invoice_txn_details");
+		sql.append(" Where InvoiceId = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index, invoiceId);
+				}
+			}, new RowMapper<GSTInvoiceTxnDetails>() {
+				@Override
+				public GSTInvoiceTxnDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+					GSTInvoiceTxnDetails txndetails = new GSTInvoiceTxnDetails();
+
+					txndetails.setId(rs.getLong("Id"));
+					txndetails.setInvoiceId(rs.getLong("InvoiceId"));
+					txndetails.setFeeCode(rs.getString("FeeCode"));
+					txndetails.setFeeAmount(rs.getBigDecimal("FeeAmount"));
+					txndetails.setCGST_RATE(rs.getBigDecimal("CGST_RATE"));
+					txndetails.setCGST_AMT(rs.getBigDecimal("CGST_AMT"));
+					txndetails.setSGST_RATE(rs.getBigDecimal("SGST_RATE"));
+					txndetails.setSGST_AMT(rs.getBigDecimal("SGST_AMT"));
+					txndetails.setIGST_RATE(rs.getBigDecimal("IGST_RATE"));
+					txndetails.setIGST_AMT(rs.getBigDecimal("IGST_AMT"));
+					txndetails.setUGST_RATE(rs.getBigDecimal("UGST_RATE"));
+					txndetails.setUGST_AMT(rs.getBigDecimal("UGST_AMT"));
+					txndetails.setCESS_RATE(rs.getBigDecimal("CESS_RATE"));
+					txndetails.setCESS_AMT(rs.getBigDecimal("CESS_AMT"));
+
+					return txndetails;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
 }

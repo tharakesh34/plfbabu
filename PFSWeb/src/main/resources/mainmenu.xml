@@ -545,6 +545,16 @@
 			rightName="menuItem_Verification_PersonalDiscussion" />
 	</menu>
 
+	<!-- Provision -->
+	<menu id="menu_Category_Provision">
+		<menuItem id="menu_Item_AssetClassificationHeader" zulNavigation="/WEB-INF/pages/ApplicationMaster/AssetClassificationHeader/AssetClassificationHeaderList.zul"
+			rightName="menuItem_ApplicationMaster_AssetClassificationHeader" />
+		<menuItem id="menu_Item_NPAProvisionHeader" zulNavigation="/WEB-INF/pages/ApplicationMaster/NPAProvisionHeader/NPAProvisionHeaderList.zul"
+			rightName="menuItem_ApplicationMaster_NPAProvisionHeader" />
+		<menuItem id="menu_Item_ManualProvisioning" zulNavigation="/WEB-INF/pages/ApplicationMaster/ManualProvisioning/ManualProvisioningList.zul"
+			rightName="menuItem_ApplicationMaster_ManualProvisioning" />
+	</menu>
+
 	<!-- Sampling -->
 	<menu id="menu_Category_Sampling">
 		<menuItem id="menu_Item_Sampling" zulNavigation="/WEB-INF/pages/Sampling/SamplingList.zul" rightName="menuItem_Sampling" />
@@ -610,6 +620,8 @@
 				rightName="menuItem_FinanceManagement_FeeReceipts" />
 			<menuItem id="menu_Item_FeeReceiptCancellation" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=F"
 				rightName="menuItem_FinanceManagement_FeeReceiptCancellation" />
+			<menuItem id="menu_Item_FinFeeRefunds" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FinFeeRefundsList.zul"
+				rightName="menuItem_FinanceManagement_FinFeeRefunds" />
 			<menuItem id="menu_Item_DepositDetails" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/DepositDetailsList.zul"
 				rightName="menuItem_FinanceManagement_DepositDetails" />
 			<menuItem id="menu_Item_ReceiptUpload" zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=N"
@@ -934,6 +946,8 @@
 				rightName="menuItem_Enquiry_ReceiptEnquiry" />
 			<menuItem id="menu_Item_FinanceTaxDetailEnquiry" zulNavigation="/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailList.zul?enqiryModule=Y"
 				rightName="menuItem_Enquiry_FinanceTaxDetailEnquiry" />
+			<menuItem id="menu_Item_FinFeeRefundEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FinFeeRefundsList.zul?enqiryModule=Y"
+				rightName="menuItem_Enquiry_FinFeeRefundEnquiry" />
 			<menuItem id="menu_Item_PaymentInstructionsEnquiry" zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul?enqiryModule=Y"
 				rightName="menuItem_payment_PaymentInstructionsEnquiry" />
 
@@ -987,6 +1001,17 @@
 				rightName="menuItem_PresentmentDetail_PresentmentEnquiry" />
 			<menuItem id="menu_Item_PresentmentFileImport_Report" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_PresentmentDetail_PresentmentFileImport" />
+		</menu>
+
+		<!--NPA Provision Enquiry -->
+		<menu id="menu_Category_NPAProvisionEnquiry">
+			<menuItem id="menu_Item_AssetClassificationHeaderEnquiry"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/AssetClassificationHeader/AssetClassificationHeaderList.zul?enqiryModule=Y"
+				rightName="menuItem_ApplicationMaster_AssetClassificationHeaderEnquiry" />
+			<menuItem id="menu_Item_NPAProvisionHeaderEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/NPAProvisionHeader/NPAProvisionHeaderList.zul?enqiryModule=Y"
+				rightName="menuItem_ApplicationMaster_NPAProvisionHeaderEnquiry" />
+			<menuItem id="menu_Item_ManualProvisioningEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/ManualProvisioning/ManualProvisioningList.zul?enqiryModule=Y"
+				rightName="menuItem_ApplicationMaster_NPAProvisionHeaderEnquiry" />
 		</menu>
 		<menu id="menu_Item_MastersEnquiry">
 			<menuItem id="menu_Item_GSTRateEnquiry" zulNavigation="/WEB-INF/pages/RMTMasters/GSTRate/GSTRateEnquiryList.zul?enqiryModule=Y"
@@ -1112,6 +1137,8 @@
 				rightName="menu_Item_WriteoffReport" />
 			<menuItem id="menu_Item_NPAReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_CustomerTemplates_SOA" />
+			<menuItem id="menu_Item_NPAProvisionReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menuItem_NPAProvisionReport" />
 			<menuItem id="menu_Item_PaymentSchedule" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_CustomerTemplates_SOA" />
 			<menuItem id="menu_Item_BriefDealInformation" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"

@@ -66,6 +66,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -75,7 +76,10 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.BatchUtil;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.ProvisionConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.EodService;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
@@ -90,6 +94,11 @@ public class MicroEOD implements Tasklet {
 	private PlatformTransactionManager transactionManager;
 	private DataSource dataSource;
 	private CustomerDAO customerDAO;
+
+	private boolean executeNPAAndProvision;
+	private boolean customerProvision;
+	private String provisionBooks;
+	private Date provisionEffectiveDate;
 
 	// ##_0.2
 	private static final String CUSTOMER_SQL = "Select CustID, LoanExist, LimitRebuild from CustomerQueuing  Where ThreadID = ? and Progress= ?";
@@ -139,6 +148,30 @@ public class MicroEOD implements Tasklet {
 		amzMethodRule = ruleDAO.getAmountRule(AmortizationConstants.AMZ_METHOD_RULE,
 				AmortizationConstants.AMZ_METHOD_RULE, AmortizationConstants.AMZ_METHOD_RULE);
 
+		// Load SMT Parameters here and set into custEODEvent to reduce the number of DB hits
+
+		if (ImplementationConstants.ALLOW_NPA_PROVISION) {
+			logger.info("NPA and Provisining Enabled");
+
+			executeNPAAndProvision = true;
+			provisionBooks = SysParamUtil.getValueAsString(SMTParameterConstants.PROVISION_BOOKS);
+			String npaTagging = SysParamUtil.getValueAsString(SMTParameterConstants.NPA_TAGGING);
+
+			if (ProvisionConstants.NPA_TAGGING_CUSTOMER.equals(npaTagging)) {
+				customerProvision = true;
+			}
+
+			String provEffPostDate = SysParamUtil.getValueAsString(SMTParameterConstants.PROVISION_EFF_POSTDATE);
+
+			if (PennantConstants.NO.equals(provEffPostDate)) {
+				provisionEffectiveDate = SysParamUtil.getPostDate();
+			}
+
+			logger.info("ProvisionBooks >> {}", provisionBooks);
+			logger.info("NPA Tagging >> {}", npaTagging);
+			logger.info("Customer Provision >> {}", customerProvision);
+		}
+
 		//to hold the exception till the process completed for all the customers
 		List<Exception> exceptions = new ArrayList<Exception>(1);
 
@@ -161,6 +194,14 @@ public class MicroEOD implements Tasklet {
 				CustEODEvent custEODEvent = new CustEODEvent();
 				custEODEvent.setProvisionRule(provisionRule);
 				custEODEvent.setAmzMethodRule(amzMethodRule);
+
+				/* Set SMT Parameter values to CustEODEvent */
+
+				/* NPA and Provisioning Parameters setting */
+				custEODEvent.setExecuteNPAaAndProvision(executeNPAAndProvision);
+				custEODEvent.setProvisionBooks(provisionBooks);
+				custEODEvent.setCustomerProvision(customerProvision);
+				custEODEvent.setProvisionEffectiveDate(provisionEffectiveDate);
 
 				if (customerQueuing.isLoanExist()) {
 					customerQueuing.setLoanExist(false);

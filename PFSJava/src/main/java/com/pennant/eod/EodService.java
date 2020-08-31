@@ -123,8 +123,10 @@ public class EodService {
 			//customer status update
 			custEODEvent = latePayMarkingService.processCustomerStatus(custEODEvent);
 
-			//NPA Service
-			custEODEvent = npaService.processNPABuckets(custEODEvent);
+			if (custEODEvent.isExecuteNPAAndProvision()) {
+				custEODEvent = npaService.processProvisions(custEODEvent);
+			}
+
 		}
 
 		//LatePay Due creation Service
@@ -148,6 +150,11 @@ public class EodService {
 
 		//Accrual posted on EOD only
 		custEODEvent = accrualService.processAccrual(custEODEvent);
+
+		//NPA Accounting
+		if (custEODEvent.isExecuteNPAAndProvision()) {
+			custEODEvent = npaService.processAccounting(custEODEvent);
+		}
 
 		// Penalty Accrual posted on EOD only
 		custEODEvent = latePayDueCreationService.processLatePayAccrual(custEODEvent);
