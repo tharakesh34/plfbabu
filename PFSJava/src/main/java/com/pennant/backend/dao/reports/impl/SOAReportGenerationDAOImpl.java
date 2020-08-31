@@ -360,7 +360,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(" on FW.FinReference = MA.FinReference and FW.WaiverID = MAM.WaiverID");
 		sql.append(" where FW.Adviseid  in  (-1, -2, -3) and F.FeeTypeCode is null ");
 		sql.append(
-				" ) ma where ma.FinReference = :FinReference and ma.WaivedAmount >0 and (ma.currwaivergst > 0 or ma.curractualwaiver <=600)");
+				" ) ma where ma.FinReference = :FinReference and ma.WaivedAmount >0 and (ma.currwaivergst > 0 or (ma.curractualwaiver != 0 and ma.curractualwaiver <=600))");
 		sql.append(" order by ma.MovementId, ma.Adviseid");
 
 		logger.trace(Literal.SQL + sql.toString());
