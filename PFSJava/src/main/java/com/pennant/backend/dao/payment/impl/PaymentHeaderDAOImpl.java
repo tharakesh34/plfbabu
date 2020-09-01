@@ -246,7 +246,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		sql.append("  FT.FinDivision FinPurpose, FM.CalRoundingMode, FM.RoundingTarget,");
 		sql.append("  FM.FinBranch,FM.CustId, CU.CUSTCIF LovDescCustCif, CU.CUSTSHRTNAME LovDescCustShrtName,");
 		sql.append("  CURR.CCYCODE finCcy, FM.FINSTARTDATE, FM.MATURITYDATE,DIV.EntityCode LOVDESCENTITYCODE ");
-		sql.append(", FM.ClosingStatus, ");
+		sql.append(", FM.ClosingStatus");
 		sql.append(" FROM FinanceMainMaintenance_View FM ");
 		sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID");
 		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");

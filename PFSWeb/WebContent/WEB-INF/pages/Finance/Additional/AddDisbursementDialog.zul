@@ -34,13 +34,6 @@
 								</hbox>
 							</row>
 
-							<row id="row_Qdp">
-								<label value="${c:l('label_AddDisbursementDialog_QDP.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<checkbox id="qDP" />
-								</hbox>
-							</row>
 							<row>
 								<label id="label_AddDisbursementDialog_Amount" value="${c:l('label_AddDisbursementDialog_Amount.value')}" />
 								<currencyBox id="disbAmount" />
