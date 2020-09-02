@@ -3055,6 +3055,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		String allocateMthd = getComboboxValue(this.allocationMethod);
 
 		String allocationtype = receiptData.getReceiptHeader().getAllocationType();
+		
+		if (StringUtils.equals(RepayConstants.ALLOCATION_NPFT, allocate.getAllocationType())
+				|| StringUtils.equals(RepayConstants.ALLOCATION_FUT_NPFT, allocate.getAllocationType())) {
+			return;
+		}
+		
 		Listitem item = new Listitem();
 		Listcell lc = null;
 		addBoldTextCell(item, allocate.getTypeDesc(), allocate.isSubListAvailable(), idx);
@@ -3223,7 +3229,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		for (ReceiptAllocationDetail allocate : allocList) {
 
-			if (!RepayConstants.ALLOCATION_EMI.equals(allocate.getAllocationType())) {
+			if (!RepayConstants.ALLOCATION_EMI.equals(allocate.getAllocationType())
+					&& !RepayConstants.ALLOCATION_NPFT.equals(allocate.getAllocationType())
+					&& !RepayConstants.ALLOCATION_FUT_NPFT.equals(allocate.getAllocationType())) {
 				totRecv = totRecv.add(allocate.getTotRecv());
 				totGST = totGST.add(allocate.getDueGST());
 				totDue = totDue.add(allocate.getTotalDue());
