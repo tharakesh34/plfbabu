@@ -9139,6 +9139,7 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO"/>
 	</bean>
 
 	<bean id="finChequeHeaderService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

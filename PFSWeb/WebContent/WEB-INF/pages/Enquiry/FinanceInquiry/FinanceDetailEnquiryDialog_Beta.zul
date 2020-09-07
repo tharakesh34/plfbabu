@@ -450,6 +450,8 @@
 													<space spacing="2px" />
 													<textbox id="finOverDueStatus" width="150px" maxlength="25" style="text-align:right" readonly="true" />
 													<intbox id="finOverDueDays" width="75px" readonly="true"></intbox>
+													<space spacing="3px"/>
+													<label id="provision_AssetStage" width="100px"/>
 												</hbox>
 											</row>
 

@@ -93,7 +93,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	private FinanceMainDAO financeMainDAO;
 	private FinanceTypeDAO financeTypeDAO;
 	private CustomerDetailsService customerDetailsService;
-	private JountAccountDetailDAO jointAccountDetailDAO;
+	private JountAccountDetailDAO jountAccountDetailDAO;
 
 	/**
 	 * @return the auditHeaderDAO
@@ -136,6 +136,10 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
+	}
+	
+	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
+		this.jountAccountDetailDAO = jountAccountDetailDAO;
 	}
 
 	/**
@@ -787,7 +791,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		scheduleData.setFinanceType(financeType);
 		financeDetail.setCustomerDetails(
 				customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_View"));
-		financeDetail.setJountAccountDetailList(jointAccountDetailDAO.getJountAccountDetailByFinnRef(finReference));
+		financeDetail.setJountAccountDetailList(jountAccountDetailDAO.getJountAccountDetailByFinnRef(finReference));
 		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}

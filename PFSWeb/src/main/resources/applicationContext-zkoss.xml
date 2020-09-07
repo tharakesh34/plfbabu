@@ -3852,6 +3852,7 @@
 		scope="prototype">
 		<property name="vASRecordingService" ref="vASRecordingService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="financeDetailService" ref="financeDetailService"/>
 	</bean>
 
 	<bean id="vASRecordingDialogCtrl" class="com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl"
@@ -5289,7 +5290,6 @@
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="financeMainService" ref="financeMainService" />
-		<property name="collateralSetupService" ref="collateralSetupService" />
 	</bean>
 
 	<bean id="linkedLoansDialogCtrl" class="com.pennant.webui.financemanagement.receipts.LinkedLoansDialogCtrl"

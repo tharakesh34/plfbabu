@@ -68,8 +68,10 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.configuration.VASRecordingService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -172,7 +174,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	private transient VASRecordingService vASRecordingService;
 	private transient FinanceWorkFlowService financeWorkFlowService;
 	private transient WorkFlowDetails workFlowDetails = null;
-
+	private transient FinanceDetailService financeDetailService;
 	private String module = null;
 
 	/**
@@ -425,6 +427,12 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		arg.put("vASRecording", vASRecording);
 		arg.put("vASRecordingListCtrl", this);
 		arg.put("module", module);
+		//passing financeDetail object for pre and post script validations
+		if (vASRecording.getPrimaryLinkRef() != null && getFinanceDetailService() != null) {
+			FinanceDetail financeDetail = getFinanceDetailService()
+					.getFinanceDetailsForPmay(vASRecording.getPrimaryLinkRef());
+			arg.put("financeDetail", financeDetail);
+		}
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/VASRecording/VASRecordingDialog.zul", null, arg);
@@ -469,5 +477,13 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
+	}
+
+	public FinanceDetailService getFinanceDetailService() {
+		return financeDetailService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 }
