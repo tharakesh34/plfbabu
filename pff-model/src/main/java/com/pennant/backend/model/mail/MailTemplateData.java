@@ -146,15 +146,6 @@ public class MailTemplateData {
 	private String auditYear;
 	private int auditPeriod;
 
-	// Treasury Investment
-	private String investmentRef;
-	private String totPrincipalAmt;
-	private String startDate;
-	private String principalInvested;
-	private String principalMaturity;
-	private String principalDueToInvest;
-	private String avgPftRate;
-
 	// Provision
 	private String principalDue;
 	private String profitDue;
@@ -876,62 +867,6 @@ public class MailTemplateData {
 
 	public void setAuditPeriod(int auditPeriod) {
 		this.auditPeriod = auditPeriod;
-	}
-
-	public String getInvestmentRef() {
-		return investmentRef;
-	}
-
-	public void setInvestmentRef(String investmentRef) {
-		this.investmentRef = investmentRef;
-	}
-
-	public String getTotPrincipalAmt() {
-		return totPrincipalAmt;
-	}
-
-	public void setTotPrincipalAmt(String totPrincipalAmt) {
-		this.totPrincipalAmt = totPrincipalAmt;
-	}
-
-	public String getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(String startDate) {
-		this.startDate = startDate;
-	}
-
-	public String getPrincipalInvested() {
-		return principalInvested;
-	}
-
-	public void setPrincipalInvested(String principalInvested) {
-		this.principalInvested = principalInvested;
-	}
-
-	public String getPrincipalMaturity() {
-		return principalMaturity;
-	}
-
-	public void setPrincipalMaturity(String principalMaturity) {
-		this.principalMaturity = principalMaturity;
-	}
-
-	public String getPrincipalDueToInvest() {
-		return principalDueToInvest;
-	}
-
-	public void setPrincipalDueToInvest(String principalDueToInvest) {
-		this.principalDueToInvest = principalDueToInvest;
-	}
-
-	public String getAvgPftRate() {
-		return avgPftRate;
-	}
-
-	public void setAvgPftRate(String avgPftRate) {
-		this.avgPftRate = avgPftRate;
 	}
 
 	public String getGraceTerms() {

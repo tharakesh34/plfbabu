@@ -399,48 +399,8 @@ public class PostingsPreparationUtil implements Serializable {
 		boolean postingSuccess = true;// interface not implemented for postings
 										// so after developed need to change as
 										// false
-		String errorMsg = null;
-
-		List<Object> returnList = new ArrayList<Object>();
-		/*
-		 * try { // Call To Finance Disbursement Cancellation posting interface List<FinanceCancellation> list =
-		 * getFinanceCancellationProcess().fetchCancelledFinancePostings( finReference, linkedTranId); if (list != null
-		 * && list.size() > 0) { FinanceCancellation cancellation = list.get(0); //Check For errors if
-		 * (StringUtils.isBlank(cancellation.getDsRspErrD())) { if (!StringUtils.equals(cancellation.getDsReqLnkTID(),
-		 * "XXXX")) { updateCancelledPosting(list); } postingSuccess = true; } } } catch (InterfaceException e) {
-		 * logger.debug(e); errorMsg = e.getErrorMessage(); } catch (Exception e) { logger.debug(e); errorMsg =
-		 * e.getMessage(); }
-		 * 
-		 * returnList.add(postingSuccess); returnList.add(errorMsg);
-		 * 
-		 * logger.debug("Leaving");
-		 */
-		return returnList;
+		return new ArrayList<Object>();
 	}
-
-	/**
-	 * To Update Posting with the Response from the Finance Disbursement Cancellation Interface. <br>
-	 * IN PostingsPreparationUtil.java
-	 * 
-	 * @param financeCancellations
-	 *//*
-		 * private void updateCancelledPosting(List<FinanceCancellation> financeCancellations) {
-		 * logger.debug("Entering");
-		 * 
-		 * // Create object for postings(Posting table object) List<ReturnDataSet> returnDataSets = new
-		 * ArrayList<ReturnDataSet>(financeCancellations.size()); ReturnDataSet dataSet = null; for (FinanceCancellation
-		 * finCanl : financeCancellations) { dataSet = new ReturnDataSet();
-		 * dataSet.setLinkedTranId(Long.parseLong(finCanl.getDsRspLnkTID()));
-		 * dataSet.setPostref(finCanl.getDsRspPostRef()); dataSet.setFinReference(finCanl.getDsRspFinRef());
-		 * dataSet.setFinEvent(finCanl.getDsRspFinEvent()); dataSet.setPostDate(DateUtility.convertDateFromAS400(new
-		 * BigDecimal(finCanl.getDsRspPOD()))); dataSet.setAccount(finCanl.getDsRspAB() + finCanl.getDsRspAN() +
-		 * finCanl.getDsRspAS()); dataSet.setPostStatus(finCanl.getDsRspStatus());
-		 * dataSet.setErrorId(finCanl.getDsRspErr()); dataSet.setErrorMsg(finCanl.getDsRspErrD());
-		 * returnDataSets.add(dataSet); }
-		 * 
-		 * if (!returnDataSets.isEmpty()) { getPostingsDAO().updateBatch(returnDataSets, ""); } logger.debug("Leaving");
-		 * }
-		 */
 
 	/**
 	 * Method to prepare accounting entries for FinancePostings
@@ -966,13 +926,6 @@ public class PostingsPreparationUtil implements Serializable {
 	public void setFinContributorDetailDAO(FinContributorDetailDAO finContributorDetailDAO) {
 		this.finContributorDetailDAO = finContributorDetailDAO;
 	}
-
-	/*
-	 * public void setFinanceCancellationProcess(FinanceCancellationProcess financeCancellationProcess) {
-	 * this.financeCancellationProcess = financeCancellationProcess; }
-	 * 
-	 * public FinanceCancellationProcess getFinanceCancellationProcess() { return financeCancellationProcess; }
-	 */
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;

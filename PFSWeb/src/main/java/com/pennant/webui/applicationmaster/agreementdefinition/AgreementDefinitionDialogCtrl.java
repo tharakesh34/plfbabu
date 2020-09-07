@@ -86,7 +86,8 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/ApplicationMaster/AgreementDefinition
+ * This is the controller class for the
+ * /WEB-INF/pages/ApplicationMaster/AgreementDefinition
  * /agreementDefinitionDialog.zul file.
  */
 public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefinition> {
@@ -94,8 +95,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	private static final Logger logger = Logger.getLogger(AgreementDefinitionDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component
+	 * with the same 'id' in the ZUL-file are getting autoWired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_AgreementDefinitionDialog; // autoWired
 	protected Textbox aggCode; // autoWired
@@ -161,8 +163,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected AgreementDefinition object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected AgreementDefinition object
+	 * in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -255,7 +258,8 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A
+	 * right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -302,8 +306,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 
 	public void onCheck$allowMultiple(Event event) {
 		logger.debug("Entering" + event.toString());
-		this.moduleType.setSelectedIndex(0);
-		this.moduleType.setErrorMessage("");
+		/*
+		 * this.moduleType.setSelectedIndex(0); this.moduleType.setErrorMessage("");
+		 */
 		doCheckAllowMuliple();
 		logger.debug("Leaving" + event.toString());
 	}
@@ -312,8 +317,10 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		logger.debug("Entering");
 		this.moduleType.setDisabled(true);
 		if (this.allowMultiple.isChecked()) {
-			this.space_ModuleType.setSclass(PennantConstants.mandateSclass);
-			this.moduleType.setDisabled(isReadOnly("AgreementDefinitionDialog_aggType"));
+			/*
+			 * this.space_ModuleType.setSclass(PennantConstants.mandateSclass);
+			 * this.moduleType.setDisabled(isReadOnly("AgreementDefinitionDialog_aggType"));
+			 */
 
 		} else {
 			this.space_ModuleType.setSclass("");
@@ -385,8 +392,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -410,8 +416,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aAgreementDefinition
-	 *            AgreementDefinition
+	 * @param aAgreementDefinition AgreementDefinition
 	 */
 	public void doWriteBeanToComponents(AgreementDefinition aAgreementDefinition) {
 		logger.debug("Entering");
@@ -425,7 +430,6 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		this.aggIsActive.setChecked(aAgreementDefinition.isAggIsActive());
 		this.recordStatus.setValue(aAgreementDefinition.getRecordStatus());
 		fillComboBox(this.aggType, aAgreementDefinition.getAggtype(), PennantStaticListUtil.getAgreementType(), "");
-		fillComboBox(this.moduleType, aAgreementDefinition.getModuleType(), PennantStaticListUtil.getModulType(), "");
 		this.allowMultiple.setChecked(aAgreementDefinition.isAllowMultiple());
 		if (this.agreementDefinition.isNewRecord()) {
 			fillComboBox(this.moduleName, PennantConstants.WORFLOW_MODULE_FINANCE,
@@ -464,27 +468,33 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		 * (aAgreementDefinition.getAggImage() != null) { final InputStream data = new
 		 * ByteArrayInputStream(aAgreementDefinition.getAggImage());
 		 * 
-		 * if("JPEG".equals(docType)){ amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data); } else
-		 * if("PNG".equals(docType)){ amedia = new AMedia("document.png", "png", "image/png", data); } else
-		 * if("GIF".equals(docType)){ amedia = new AMedia("document.gif", "gif", "image/gif", data); } else
-		 * if("PDF".equals(docType)){ amedia = new AMedia("document.pdf", "pdf", "application/pdf", data); } else
-		 * if("TEXT".equals(docType)){ amedia = new AMedia("document.txt", "txt", "text/plain", data); }
+		 * if("JPEG".equals(docType)){ amedia = new AMedia("document.jpg", "jpeg",
+		 * "image/jpeg", data); } else if("PNG".equals(docType)){ amedia = new
+		 * AMedia("document.png", "png", "image/png", data); } else
+		 * if("GIF".equals(docType)){ amedia = new AMedia("document.gif", "gif",
+		 * "image/gif", data); } else if("PDF".equals(docType)){ amedia = new
+		 * AMedia("document.pdf", "pdf", "application/pdf", data); } else
+		 * if("TEXT".equals(docType)){ amedia = new AMedia("document.txt", "txt",
+		 * "text/plain", data); }
 		 * 
 		 * try{ if (docType.equals("WORD")) {
 		 * 
-		 * FileOutputStream out = new FileOutputStream(aAgreementDefinition.getAggReportName());
+		 * FileOutputStream out = new
+		 * FileOutputStream(aAgreementDefinition.getAggReportName());
 		 * out.write(aAgreementDefinition.getAggImage()); out.close();
 		 * 
 		 * Document doc = new Document(aAgreementDefinition.getAggReportName());
 		 * 
 		 * String pdfFileName = aAgreementDefinition.getAggReportName().substring(0,
-		 * aAgreementDefinition.getAggReportName().lastIndexOf(".")); pdfFileName = pdfFileName +".pdf";
+		 * aAgreementDefinition.getAggReportName().lastIndexOf(".")); pdfFileName =
+		 * pdfFileName +".pdf";
 		 * 
-		 * doc.save(pdfFileName, SaveFormat.PDF); amedia = new AMedia("document.pdf", "pdf", "application/pdf", new
-		 * FileInputStream(pdfFileName));
+		 * doc.save(pdfFileName, SaveFormat.PDF); amedia = new AMedia("document.pdf",
+		 * "pdf", "application/pdf", new FileInputStream(pdfFileName));
 		 * 
 		 * 
-		 * } }catch (Exception e) { logger.warn("Exception: ", e); } agreementDocView.setContent(amedia); }
+		 * } }catch (Exception e) { logger.warn("Exception: ", e); }
+		 * agreementDocView.setContent(amedia); }
 		 */
 
 		logger.debug("Leaving");
@@ -547,15 +557,16 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 			wve.add(we);
 		}
 
-		try {
-			if (this.allowMultiple.isChecked() && "#".equals(getComboboxValue(this.moduleType))) {
-				throw new WrongValueException(this.moduleType, Labels.getLabel("STATIC_INVALID",
-						new String[] { Labels.getLabel("label_AgreementDefinitionDialog_ModuleType.value") }));
-			}
-			aAgreementDefinition.setModuleType(getComboboxValue(this.moduleType));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
+		/*
+		 * try { if (this.allowMultiple.isChecked() &&
+		 * "#".equals(getComboboxValue(this.moduleType))) { throw new
+		 * WrongValueException(this.moduleType, Labels.getLabel("STATIC_INVALID", new
+		 * String[] {
+		 * Labels.getLabel("label_AgreementDefinitionDialog_ModuleType.value") })); }
+		 * else if (this.moduleType.getValue() != "") {
+		 * aAgreementDefinition.setModuleType(getComboboxValue(this.moduleType)); } }
+		 * catch (WrongValueException we) { wve.add(we); }
+		 */
 		try {
 			aAgreementDefinition.setAutoGeneration(this.autoGeneration.isChecked());
 		} catch (WrongValueException we) {
@@ -736,7 +747,8 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param aAgreementDefinition
 	 * @throws Exception
@@ -820,9 +832,10 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		}
 
 		/*
-		 * if (!this.aggReportPath.isReadonly()){ this.aggReportPath.setConstraint(new SimpleConstraint(
-		 * PennantConstants.PATH_REGEX, Labels.getLabel( "MAND_FIELD_ALPHANUMERIC_SPECIALCHARS",new
-		 * String[]{Labels.getLabel( "label_AgreementDefinitionDialog_AggReportPath.value")}))); }
+		 * if (!this.aggReportPath.isReadonly()){ this.aggReportPath.setConstraint(new
+		 * SimpleConstraint( PennantConstants.PATH_REGEX, Labels.getLabel(
+		 * "MAND_FIELD_ALPHANUMERIC_SPECIALCHARS",new String[]{Labels.getLabel(
+		 * "label_AgreementDefinitionDialog_AggReportPath.value")}))); }
 		 */
 		logger.debug("Leaving");
 	}
@@ -1015,7 +1028,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		this.aggDesc.setValue("");
 		this.aggReportName.setValue("");
 		this.agrRule.setValue("");
-		//added 3 new Fields
+		// added 3 new Fields
 		this.docType.setValue("");
 		this.autoGeneration.setValue("");
 		this.autoDownload.setValue("");
@@ -1089,11 +1102,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAgreementDefinition
-	 *            (AgreementDefinition)
+	 * @param aAgreementDefinition (AgreementDefinition)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType             (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1182,11 +1193,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1278,8 +1287,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1295,8 +1303,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1324,42 +1331,56 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	}
 
 	/*
-	 * public void onUpload$brwAgreementDoc(UploadEvent event) { logger.debug("Entering" + event.toString()); Media
-	 * media = event.getMedia();
+	 * public void onUpload$brwAgreementDoc(UploadEvent event) {
+	 * logger.debug("Entering" + event.toString()); Media media = event.getMedia();
 	 * 
-	 * if (!PennantAppUtil.uploadDocFormatValidation(media)) { return; } browseDoc(media, getAgreementDefinition());
-	 * logger.debug("Leaving" + event.toString()); }
+	 * if (!PennantAppUtil.uploadDocFormatValidation(media)) { return; }
+	 * browseDoc(media, getAgreementDefinition()); logger.debug("Leaving" +
+	 * event.toString()); }
 	 */
 
 	/*
-	 * private void browseDoc(Media media, AgreementDefinition agreementDefinition) { logger.debug("Entering"); try {
-	 * boolean isSupported = true; String docType = ""; String fileName = media.getName(); String mediaDocType =
-	 * media.getContentType(); if (mediaDocType.equals("image/gif")) { docType = "GIF"; } else if
-	 * (mediaDocType.equals("image/png")) { docType = "PNG"; } else if (mediaDocType.equals("image/jpeg")) { docType =
-	 * "JPEG"; } else if (mediaDocType.equals("application/pdf")) { docType = "PDF"; } else if
-	 * (mediaDocType.equals("application/msword")) { docType = "WORD"; } else if (mediaDocType.equals("text/plain")) {
-	 * docType = "TEXT"; } else { isSupported = false;
+	 * private void browseDoc(Media media, AgreementDefinition agreementDefinition)
+	 * { logger.debug("Entering"); try { boolean isSupported = true; String docType
+	 * = ""; String fileName = media.getName(); String mediaDocType =
+	 * media.getContentType(); if (mediaDocType.equals("image/gif")) { docType =
+	 * "GIF"; } else if (mediaDocType.equals("image/png")) { docType = "PNG"; } else
+	 * if (mediaDocType.equals("image/jpeg")) { docType = "JPEG"; } else if
+	 * (mediaDocType.equals("application/pdf")) { docType = "PDF"; } else if
+	 * (mediaDocType.equals("application/msword")) { docType = "WORD"; } else if
+	 * (mediaDocType.equals("text/plain")) { docType = "TEXT"; } else { isSupported
+	 * = false;
 	 * MessageUtil.showErrorMessage("Un Supported Format.only "+PennantConstants
-	 * .AGREEMENT_DEFINITION_DOCS+" are allowed"); } if (isSupported) { byte[] imageData = null; if(media.isBinary()) {
-	 * imageData = IOUtils.toByteArray(media.getStreamData()); } else { imageData =
-	 * IOUtils.toByteArray(media.getReaderData()); } agreementDefinition.setAggImage(imageData);
-	 * agreementDefinition.setAggtype(docType); this.aggReportName.setValue(fileName); //
-	 * this.aggReportPath.setValue(fileName); if(docType.equals("WORD")) { FileOutputStream out = new
-	 * FileOutputStream(fileName); out.write(imageData); out.close(); Document doc = new Document(fileName); String
-	 * pdfFileName = fileName.substring(0, media.getName().lastIndexOf(".")); pdfFileName = pdfFileName +".pdf";
-	 * doc.save(pdfFileName, SaveFormat.PDF); imageData = IOUtils.toByteArray(new FileInputStream(pdfFileName)); }
-	 * if("JPEG".equals(docType)){ this.agreementDocView.setContent(new AMedia("document.jpg", "image/jpeg",
-	 * mediaDocType, imageData)); } else if("PNG".equals(docType)){ this.agreementDocView.setContent(new
-	 * AMedia("document.png", "image/png", mediaDocType, imageData)); } else if("GIF".equals(docType)){
-	 * this.agreementDocView.setContent(new AMedia("document.gif", "image/gif", mediaDocType, imageData)); } else
-	 * if("PDF".equals(docType) || "WORD".equals(docType)){ this.agreementDocView.setContent(new AMedia("document.pdf",
-	 * "pdf", "application/pdf", imageData)); } else if("TEXT".equals(docType)){ this.agreementDocView.setContent(new
-	 * AMedia("document.txt", "txt", "text/plain", imageData)); }
+	 * .AGREEMENT_DEFINITION_DOCS+" are allowed"); } if (isSupported) { byte[]
+	 * imageData = null; if(media.isBinary()) { imageData =
+	 * IOUtils.toByteArray(media.getStreamData()); } else { imageData =
+	 * IOUtils.toByteArray(media.getReaderData()); }
+	 * agreementDefinition.setAggImage(imageData);
+	 * agreementDefinition.setAggtype(docType);
+	 * this.aggReportName.setValue(fileName); //
+	 * this.aggReportPath.setValue(fileName); if(docType.equals("WORD")) {
+	 * FileOutputStream out = new FileOutputStream(fileName); out.write(imageData);
+	 * out.close(); Document doc = new Document(fileName); String pdfFileName =
+	 * fileName.substring(0, media.getName().lastIndexOf(".")); pdfFileName =
+	 * pdfFileName +".pdf"; doc.save(pdfFileName, SaveFormat.PDF); imageData =
+	 * IOUtils.toByteArray(new FileInputStream(pdfFileName)); }
+	 * if("JPEG".equals(docType)){ this.agreementDocView.setContent(new
+	 * AMedia("document.jpg", "image/jpeg", mediaDocType, imageData)); } else
+	 * if("PNG".equals(docType)){ this.agreementDocView.setContent(new
+	 * AMedia("document.png", "image/png", mediaDocType, imageData)); } else
+	 * if("GIF".equals(docType)){ this.agreementDocView.setContent(new
+	 * AMedia("document.gif", "image/gif", mediaDocType, imageData)); } else
+	 * if("PDF".equals(docType) || "WORD".equals(docType)){
+	 * this.agreementDocView.setContent(new AMedia("document.pdf", "pdf",
+	 * "application/pdf", imageData)); } else if("TEXT".equals(docType)){
+	 * this.agreementDocView.setContent(new AMedia("document.txt", "txt",
+	 * "text/plain", imageData)); }
 	 * 
 	 * }
 	 * 
 	 * 
-	 * } catch (Exception e) { logger.warn("Exception: ", e); } logger.debug("Leaving" + event.toString()); }
+	 * } catch (Exception e) { logger.warn("Exception: ", e); }
+	 * logger.debug("Leaving" + event.toString()); }
 	 */
 
 	public void doDisable(boolean dsiable) {

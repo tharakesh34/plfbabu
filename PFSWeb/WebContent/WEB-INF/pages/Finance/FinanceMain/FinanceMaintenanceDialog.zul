@@ -376,17 +376,6 @@
 														<combobox id="grcPftDaysBasis" width="275px" readonly="true" disabled="true" />
 													</hbox>
 												</row>
-												<row id="row_GrcAdvBaseRate" visible="false">
-													<label id="label_FinanceMainDialog_GrcAdvBaseRate" value="${c:l('label_FinanceMainDialog_GrcAdvBaseRate.value')}" />
-													<ratebox id="grcAdvRate" />
-												</row>
-												<row id="row_GrcAdvPftRate" visible="false">
-													<label id="label_FinanceMainDialog_GrcAdvPftRate" value="${c:l('label_FinanceMainDialog_GrcAdvPftRate.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<decimalbox id="grcAdvPftRate" width="125px" maxlength="15" style="text-align:right" />
-													</hbox>
-												</row>
 												<row id="row_FinGrcRates" visible="false">
 													<label id="label_IjarahFinanceMainDialog_FinGrcMinRate" value="${c:l('label_IjarahFinanceMainDialog_FinGrcMinRate.value')}" />
 													<hbox>
@@ -528,23 +517,6 @@
 														<space spacing="2px" sclass="mandatory" />
 														<combobox id="repayRateBasis" width="275px" readonly="true" tabindex="-1" />
 													</hbox>
-												</row>
-												<row id="row_RpyAdvBaseRate" visible="false">
-													<label id="label_FinanceMainDialog_RpyAdvBaseRate" value="${c:l('label_FinanceMainDialog_RpyAdvBaseRate.value')}" />
-													<ratebox id="rpyAdvRate" />
-												</row>
-												<row id="row_RpyAdvPftRate" visible="false">
-													<label id="label_FinanceMainDialog_RpyAdvPftRate" value="${c:l('label_FinanceMainDialog_RpyAdvPftRate.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<decimalbox id="rpyAdvPftRate" width="125px" maxlength="15" style="text-align:right" />
-													</hbox>
-												</row>
-												<row id="row_supplementRent" visible="false">
-													<label id="label_FinanceMainDialog_SupplementRent" value="${c:l('label_FinanceMainDialog_SupplementRent.value')}" />
-													<currencyBox id="supplementRent" />
-													<label id="label_FinanceMainDialog_IncreasedCost" value="${c:l('label_FinanceMainDialog_IncreasedCost.value')}" />
-													<currencyBox id="increasedCost" />
 												</row>
 												<row id="row_FinRepRates" visible="false">
 													<label id="label_FinanceMainDialog_FinMinRate" value="${c:l('label_FinanceMainDialog_FinMinRate.value')}" />
@@ -776,40 +748,6 @@
 													<hbox>
 														<space spacing="2px" />
 														<checkbox id="odTDSApplicable" checked="false" />
-													</hbox>
-												</row>
-											</rows>
-										</grid>
-									</groupbox>
-									<groupbox id="gb_ddaRequest" visible="false" closable="true">
-										<caption label="${c:l('label_FinanceMainDialog_dda')}" />
-										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-											<columns>
-												<column width="220px" />
-												<column />
-												<column width="220px" />
-												<column />
-											</columns>
-											<rows>
-												<row>
-													<label id="label_FinanceMainDialog_BankName" value="${c:l('label_FinanceMainDialog_BankName.value')}" />
-													<extendedcombobox id="bankName" />
-													<label id="label_FinanceMainDialog_IBAN" value="${c:l('label_FinanceMainDialog_IBAN.value')}" />
-													<hbox>
-														<space spacing="2px" sclass="mandatory" />
-														<uppercasebox id="iban" maxlength="23" width="250px" />
-													</hbox>
-												</row>
-												<row>
-													<label id="label_FinanceMainDialog_AccountType" value="${c:l('label_FinanceMainDialog_AccountType.value')}" />
-													<hbox>
-														<space spacing="2px" sclass="mandatory" />
-														<combobox id="accountType" width="150px" readonly="true" tabindex="-1" />
-													</hbox>
-													<label id="label_Finance_IfscCode" value="${c:l('label_FinanceMainDialog_IfscCode.value')}" />
-													<hbox id="hbox_Finance_IfscCode">
-														<space spacing="2px" sclass="mandatory" />
-														<uppercasebox id="ifscCode" maxlength="9" width="150px" />
 													</hbox>
 												</row>
 											</rows>

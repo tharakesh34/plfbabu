@@ -6,13 +6,12 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.script.Bindings;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -62,6 +61,7 @@ import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.service.hook.PostDeviationHook;
 import com.rits.cloning.Cloner;
+import com.pennanttech.pennapps.core.script.ScriptEngine;
 
 public class DeviationExecutionCtrl {
 	private static final Logger logger = Logger.getLogger(DeviationExecutionCtrl.class);
@@ -108,14 +108,14 @@ public class DeviationExecutionCtrl {
 	 * @return
 	 * @throws ScriptException
 	 */
-	public void checkProductDeviations(FinanceDetail financeDetail) throws ScriptException {
+	public void checkProductDeviations(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the script engine with the required bindings.
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 
-		ScriptEngine engine = prepareScriptEngine(financeMain, financeType);
+		Map<String, Object> dataMap = getDataMap(financeMain, financeType);
 
 		// Get the product deviations that were defined for the finance type.
 		List<DeviationHeader> deviationHeaders = getProductDeviatations(financeType.getFinType());
@@ -135,7 +135,7 @@ public class DeviationExecutionCtrl {
 			}
 
 			// Execute the deviation rule and get the deviated value.
-			Object result = executeRule(deviationParam.getFormula(), engine);
+			Object result = executeRule(deviationParam.getFormula(), dataMap);
 
 			if (result != null) {
 				processAutoDeviation(DeviationConstants.CAT_AUTO, DeviationConstants.TY_PRODUCT, null, result, null,
@@ -151,8 +151,7 @@ public class DeviationExecutionCtrl {
 	/**
 	 * Check custom deviations and add to finance deviations, if any.
 	 * 
-	 * @param financeDetail
-	 *            Finance detail object.
+	 * @param financeDetail Finance detail object.
 	 */
 	@SuppressWarnings("unchecked")
 	public void checkCustomDeviations(FinanceDetail financeDetail) {
@@ -205,14 +204,15 @@ public class DeviationExecutionCtrl {
 			}
 		}
 
-		//Setting the collateral setup list
+		// Setting the collateral setup list
 		getCollateralSetupFetchingService().getCollateralSetupList(aFinanceDetail, true);
 
 		// Call the customization hook.
 		String deviationFilePath = SysParamUtil.getValueAsString(SMTParameterConstants.CUSTOM_DEVIATION_FILE_PATH);
 		List<FinanceDeviations> deviations = postDeviationHook.raiseDeviations(aFinanceDetail, deviationFilePath);
 
-		// Remove the deviations that are invalid like duplicate code, invalid delegator etc.
+		// Remove the deviations that are invalid like duplicate code, invalid delegator
+		// etc.
 		deviations = deviationHelper.getValidCustomDeviations(deviations, delegators);
 
 		// Clear the existing deviations.
@@ -277,7 +277,7 @@ public class DeviationExecutionCtrl {
 	 * @throws ScriptException
 	 */
 	public FinanceDeviations checkEligibilityDeviations(FinanceEligibilityDetail finElgDetail,
-			FinanceDetail financeDetail) throws ScriptException {
+			FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
@@ -309,7 +309,7 @@ public class DeviationExecutionCtrl {
 		switch (ruleReturnType) {
 		case DECIMAL:
 			if (object != null && object instanceof BigDecimal) {
-				//unFormating object
+				// unFormating object
 				int formatter = CurrencyUtil.getFormat(finCcy);
 				object = PennantApplicationUtil.unFormateAmount((BigDecimal) object, formatter);
 			}
@@ -329,7 +329,7 @@ public class DeviationExecutionCtrl {
 			finElgDetail.setRuleResult(resultValue);
 			break;
 
-		case OBJECT: //FIXME to discuss with Sathish
+		case OBJECT: // FIXME to discuss with Sathish
 			RuleResult ruleResult = (RuleResult) object;
 			Object resultval = ruleResult.getValue();
 			Object resultvalue = ruleResult.getDeviation();
@@ -358,7 +358,7 @@ public class DeviationExecutionCtrl {
 			break;
 
 		default:
-			//do-nothing
+			// do-nothing
 			break;
 		}
 
@@ -773,7 +773,8 @@ public class DeviationExecutionCtrl {
 	}
 
 	/**
-	 * will return the new deviation if, it is not in the current deviation or previously Rejected
+	 * will return the new deviation if, it is not in the current deviation or
+	 * previously Rejected
 	 * 
 	 * @param deviationHeader
 	 * @param object
@@ -800,7 +801,8 @@ public class DeviationExecutionCtrl {
 	}
 
 	/**
-	 * To fill the deviations, it will remove the deviation with current role and will add the new deviations.
+	 * To fill the deviations, it will remove the deviation with current role and
+	 * will add the new deviations.
 	 * 
 	 * @param newList
 	 * @param role
@@ -879,13 +881,13 @@ public class DeviationExecutionCtrl {
 	}
 
 	/**
-	 * Check whether the deviation is already available in the approved list of deviations.
+	 * Check whether the deviation is already available in the approved list of
+	 * deviations.
 	 * 
-	 * @param list
-	 *            The list of deviations.
-	 * @param deviation
-	 *            The deviation to check.
-	 * @return <code>true</code> if the deviation is in approved list of deviations; otherwise <code>false</code>.
+	 * @param list      The list of deviations.
+	 * @param deviation The deviation to check.
+	 * @return <code>true</code> if the deviation is in approved list of deviations;
+	 *         otherwise <code>false</code>.
 	 */
 	private boolean isInApprovedList(List<FinanceDeviations> list, FinanceDeviations deviation) {
 		logger.trace(Literal.ENTERING);
@@ -904,7 +906,8 @@ public class DeviationExecutionCtrl {
 	}
 
 	/**
-	 * to check given deviation not in the current list with different role but same value.
+	 * to check given deviation not in the current list with different role but same
+	 * value.
 	 * 
 	 * @param list
 	 * @param deviations
@@ -933,7 +936,8 @@ public class DeviationExecutionCtrl {
 	}
 
 	/**
-	 * will return the false if, it is not in the current deviation or previous deviation
+	 * will return the false if, it is not in the current deviation or previous
+	 * deviation
 	 * 
 	 * @param deviationHeader
 	 * @param object
@@ -961,10 +965,9 @@ public class DeviationExecutionCtrl {
 	 * @param financeType
 	 * @return
 	 */
-	private ScriptEngine prepareScriptEngine(FinanceMain financeMain, FinanceType financeType) {
+	private Map<String, Object> getDataMap(FinanceMain financeMain, FinanceType financeType) {
 		logger.debug(" Entering ");
-
-		ScriptEngineManager factory = new ScriptEngineManager();
+		Map<String, Object> dataMap = new HashedMap();
 
 		FinanceMain main = new FinanceMain();
 		BeanUtils.copyProperties(financeMain, main);
@@ -976,34 +979,37 @@ public class DeviationExecutionCtrl {
 		main.setDownPayment(
 				CalculationUtil.getConvertedAmount(main.getFinCcy(), type.getFinCcy(), main.getDownPayment()));
 
-		Bindings bindings = factory.getBindings();
-		bindings.put("fm", main);
-		bindings.put("ft", type);
-		ScriptEngine engine = factory.getEngineByName("JavaScript");
+		dataMap.put("fm", main);
+		dataMap.put("ft", type);
 
 		logger.debug(" Leaving ");
-		return engine;
+		return dataMap;
 	}
 
 	/**
-	 * To execute the Product deviation rule which does not contain any assignment in the rule to result the value . so
-	 * we will assign the defined to result and will execute the rule
+	 * To execute the Product deviation rule which does not contain any assignment
+	 * in the rule to result the value . so we will assign the defined to result and
+	 * will execute the rule
 	 * 
 	 * @param rule
 	 * @param engine
 	 * @return
-	 * @throws ScriptException
 	 */
-	private Object executeRule(String rule, ScriptEngine engine) throws ScriptException {
+	private Object executeRule(String rule, Map<String, Object> dataMap) {
 		logger.debug(" Entering ");
+		Map<String, Object> scriptDataMap = new HashMap<String, Object>();
 
-		try {
-			String jsfunction = "function Rule(){ Result = " + rule + "}Rule();";
-			engine.eval(jsfunction);
+		try (ScriptEngine scriptEngine = new ScriptEngine()) {
+			rule = "Result = " + rule + ";";
+
+			for (Entry<String, Object> entry : dataMap.entrySet()) {
+				scriptDataMap.put(entry.getKey(), entry.getValue());
+			}
+
+			Object result = scriptEngine.getResultAsObject(rule, scriptDataMap);
 			logger.debug(" Leaving ");
-			return engine.get("Result");
-		} catch (ScriptException scriptException) {
-			throw scriptException;
+
+			return result;
 		} catch (Exception e) {
 			logger.debug(e);
 		}
@@ -1034,19 +1040,14 @@ public class DeviationExecutionCtrl {
 	}
 
 	/**
-	 * Process the deviation and consider / ignore based on the result and previous history of the deviation, if
-	 * available.
+	 * Process the deviation and consider / ignore based on the result and previous
+	 * history of the deviation, if available.
 	 * 
-	 * @param header
-	 *            Deviation header object.
-	 * @param category
-	 *            Category of the deviation.
-	 * @param module
-	 *            Type of deviation.
-	 * @param reference
-	 *            Finance reference number.
-	 * @param result
-	 *            Deviated value.
+	 * @param header    Deviation header object.
+	 * @param category  Category of the deviation.
+	 * @param module    Type of deviation.
+	 * @param reference Finance reference number.
+	 * @param result    Deviated value.
 	 */
 	private void processAutoDeviation(String category, String module, String code, Object result, String approverRole,
 			String reference, DeviationHeader header, String desc) {
@@ -1068,8 +1069,10 @@ public class DeviationExecutionCtrl {
 		boolean approvedDeviationExists = DeviationUtil.isExists(getApprovedFinanceDeviations(), module, code);
 		boolean currentDeviationExists = DeviationUtil.isExists(getFinanceDeviations(), module, code);
 
-		// Two values to be considered 1) Null means No Deviation, 2) Empty means Deviation Not Allowed.
-		// So empty check should not be required until unless all cases have been changed.
+		// Two values to be considered 1) Null means No Deviation, 2) Empty means
+		// Deviation Not Allowed.
+		// So empty check should not be required until unless all cases have been
+		// changed.
 		if (approverRole == null) {
 			/* No deviation found. */
 			if (approvedDeviationExists) {

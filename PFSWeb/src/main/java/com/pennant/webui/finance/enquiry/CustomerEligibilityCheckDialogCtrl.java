@@ -48,8 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -97,15 +95,17 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityCheck.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityCheck.zul file.
  */
 public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerEligibilityCheck> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(CustomerEligibilityCheckDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component
+	 * with the same 'id' in the ZUL-file are getting autoWired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_EligibilityCheck; // autoWired
 
@@ -113,7 +113,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	protected Groupbox gb_BasicDetails; // autoWired
 	protected Groupbox gb_KeyDetails; // autoWired
 
-	//Basic Details
+	// Basic Details
 	protected ExtendedCombobox finType; // autoWired
 	protected Textbox custCIF; // autoWired
 	protected Label custShrtName; // autoWired
@@ -161,8 +161,9 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected financeMain object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected financeMain object in a
+	 * Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -319,7 +320,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 			}
 		}
 
-		//Design Feild Details List on Screen with Filled Data or Without
+		// Design Feild Details List on Screen with Filled Data or Without
 		Label label;
 		Row row = null;
 		CustomerEligibilityCheck custElgCheck = setCustomerEligibilityData(getCustomer());
@@ -445,7 +446,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	private CustomerEligibilityCheck setCustomerEligibilityData(Customer customer) {
 		logger.debug("Entering");
 
-		//Customer Eligibility Amounts Calculation
+		// Customer Eligibility Amounts Calculation
 		String currency = "";
 		String productCode = "";
 		if ("FINANCE".equals(this.elgModule.getValue()) && getFinanceType() != null) {
@@ -470,7 +471,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	/**
 	 * On click event for stimulate button
 	 */
-	public void onClick$btnStimulate(Event event) throws InterruptedException, ScriptException {
+	public void onClick$btnStimulate(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
 		try {
@@ -582,7 +583,8 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 					} else {
 						resultValue = "0";
 					}
-					eligibilityRule.setElgAmount(new BigDecimal(resultValue)); //FIXME	only amount field is available, logic to be verified.
+					eligibilityRule.setElgAmount(new BigDecimal(resultValue)); // FIXME only amount field is available,
+																				// logic to be verified.
 					break;
 
 				case OBJECT:
@@ -593,7 +595,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 					break;
 
 				default:
-					//do-nothing
+					// do-nothing
 					break;
 				}
 

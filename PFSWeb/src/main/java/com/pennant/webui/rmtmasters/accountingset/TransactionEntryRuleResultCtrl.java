@@ -1,10 +1,8 @@
 package com.pennant.webui.rmtmasters.accountingset;
 
 import java.math.BigDecimal;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.zkoss.codemirror.Codemirror;
@@ -19,21 +17,25 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Window;
 
+import com.pennanttech.pennapps.core.script.ScriptEngine;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/finance/parameters/projectSummaryDialog.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/finance/parameters/projectSummaryDialog.zul file.
  */
 public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -546886879998950467L;
 	private static final Logger logger = Logger.getLogger(TransactionEntryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component
+	 * with the same 'id' in the ZUL-file are getting autowired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_TransactionEntryRuleResult; // autowired
 
@@ -60,8 +62,9 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected TransactionEntry object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected TransactionEntry object in
+	 * a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -107,54 +110,50 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 	 * @throws InterruptedException
 	 * @throws ScriptException
 	 */
-	public void onClick$btn_Stimulate(Event event) throws InterruptedException, ScriptException {
-		logger.debug("Entering" + event.toString());
+	public void onClick$btn_Stimulate(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		Map<String, Object> dataMap = new HashMap<String, Object>();
 
-		// create a script engine manager
-		ScriptEngineManager factory = new ScriptEngineManager();
-		// create a JavaScript engine
-		ScriptEngine engine = factory.getEngineByName("JavaScript");
-		// evaluate JavaScript code from String
-		try {
-			for (int i = 0; i < variables.size(); i++) {
-				JSONObject variable = (JSONObject) variables.get(i);
-				if (!"Result".equals(variable.get("name"))) {
-					amountValueBox = (Decimalbox) rows_Fields.getFellowIfAny(variable.get("name").toString().trim());
+		try (ScriptEngine scriptEngine = new ScriptEngine()) {
+			dataMap.put("Result", BigDecimal.ZERO);
+			dataMap = putBindings(dataMap);
+			String rule = transactionEntryDialogCtrl.amountRule.getValue();
+			BigDecimal tempResult =scriptEngine.getResultAsBigDecimal(rule, dataMap);
 
-					BigDecimal compValue = amountValueBox.getValue();
-					if (compValue == null) {
-						compValue = BigDecimal.ZERO;
-					}
-
-					compValue = PennantApplicationUtil.unFormateAmount(compValue, PennantConstants.defaultCCYDecPos);
-
-					// bindings to the engine
-					engine.put(amountValueBox.getId().trim(), compValue);
-				}
-			}
-
-			// Execute the engine
-			String rule = "function Eligibility(){" + transactionEntryDialogCtrl.amountRule.getValue()
-					+ "}Eligibility();";
-			engine.eval(rule);
-
-			// make result row visible and set value
-			Object result = engine.get("Result");
 			this.rowResult.setVisible(true);
-			BigDecimal tempResult = new BigDecimal(result.toString());
 			tempResult = PennantApplicationUtil.formateAmount(tempResult, PennantConstants.defaultCCYDecPos);
 			this.result.setValue(String.valueOf(tempResult));
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving" + event.toString());
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private Map<String, Object> putBindings(Map<String, Object> dataMap) {
+		for (Object variable : variables) {
+			JSONObject jsonObject = (JSONObject) variable;
+
+			if ("Result".equals(jsonObject.get("name"))) {
+				continue;
+			}
+			Decimalbox amountValueBox = (Decimalbox) rows_Fields
+					.getFellowIfAny(jsonObject.get("name").toString().trim());
+			BigDecimal compValue = amountValueBox.getValue();
+			if (compValue == null) {
+				compValue = BigDecimal.ZERO;
+			}
+
+			compValue = PennantApplicationUtil.unFormateAmount(compValue, PennantConstants.defaultCCYDecPos);
+			dataMap.put(amountValueBox.getId().trim(), compValue);
+		}
+		return dataMap;
 	}
 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);

@@ -20,7 +20,6 @@ public class FinanceReference {
 	private List<FinanceReferenceDetail> financeDedupeList;
 	private List<FinanceReferenceDetail> customerDedupeList;
 	private List<FinanceReferenceDetail> blackListDedupeList;
-	private List<FinanceReferenceDetail> policeDedupeList;
 	private List<FinanceReferenceDetail> returnChequeList;
 	private List<FinanceReferenceDetail> limitCodeDetailList;
 	private List<FinanceReferenceDetail> tatNotificationList;
@@ -131,14 +130,6 @@ public class FinanceReference {
 
 	public void setBlackListDedupeList(List<FinanceReferenceDetail> blackListDedupeList) {
 		this.blackListDedupeList = blackListDedupeList;
-	}
-
-	public List<FinanceReferenceDetail> getPoliceDedupeList() {
-		return policeDedupeList;
-	}
-
-	public void setPoliceDedupeList(List<FinanceReferenceDetail> policeDedupeList) {
-		this.policeDedupeList = policeDedupeList;
 	}
 
 	public String getWorkFlowType() {

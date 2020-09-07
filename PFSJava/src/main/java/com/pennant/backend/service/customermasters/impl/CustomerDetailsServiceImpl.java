@@ -199,7 +199,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.constants.InterfaceConstants;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
@@ -3867,7 +3866,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			// begin 09-05-18
 			if (!SysParamUtil.isAllowed("GCD_FINONE_PROC_REQD")) {
 				customerDetails.setReturnStatus(new WSReturnStatus());
-				customerDetails.getReturnStatus().setReturnCode(InterfaceConstants.SUCCESS_CODE);
+				customerDetails.getReturnStatus().setReturnCode("0000");
 				return auditHeader;
 			}
 			// end
@@ -3876,7 +3875,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 			WSReturnStatus status = customerDetails.getReturnStatus();
 
-			if ((status != null) && (!InterfaceConstants.SUCCESS_CODE.equals(status.getReturnCode()))) {
+			if ((status != null) && (!"0000".equals(status.getReturnCode()))) {
 				logger.debug("Failure Entering");
 				errorParm[1] = status.getReturnText();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(

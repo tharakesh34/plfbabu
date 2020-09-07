@@ -4,15 +4,15 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-aggregator</artifactId>
-	<version>5.9.0</version>
+	<version>6.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
 		<client.code>core</client.code>
 		<pff.version>5.9.0</pff.version>
+		<pff.version>6.0.0-SNAPSHOT</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.8</jdk.version>
+		<jdk.version>14</jdk.version>
 		<spring.version>4.0.5.RELEASE</spring.version>
 		<spring.security.version>3.2.5.RELEASE</spring.security.version>
 		<spring.batch.version>3.0.8.RELEASE</spring.batch.version>
@@ -49,7 +49,6 @@
 		<module>../pff-interface-${client.code}</module>
 		<module>../pff-extension</module>
 		<module>../pff-extension-${client.code}</module>
-		<module>../PLFInterface</module>
 		<module>../PFSJava</module>
 		<module>../PFSBatch</module>
 		<module>../PFSWeb</module>
@@ -58,7 +57,7 @@
 	</modules>
 
 	<dependencyManagement>
-		<dependencies>
+			<dependencies>
 			<!-- pennApps Framework -->
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
@@ -383,7 +382,7 @@
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
-			<version>1.1.4</version>
+			<version>1.2.0</version>
 		</dependency>
 
 		<!-- Testing Framework -->
@@ -401,18 +400,11 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.8.0</version>
 				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-					<!-- <fork>true</fork> -->
-					<meminitial>128m</meminitial>
-					<maxmem>1024m</maxmem>
-					<compilerArguments>
-						<verbose />
-						<bootclasspath>${java.home}/lib/rt.jar${path.separator}${java.home}/lib/jce.jar</bootclasspath>
-					</compilerArguments>
+					<release>${jdk.version}</release>
 				</configuration>
 			</plugin>
 		</plugins>

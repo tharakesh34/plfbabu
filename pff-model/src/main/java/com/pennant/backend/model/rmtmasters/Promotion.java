@@ -52,7 +52,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -130,7 +129,6 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 	private String lovValue;
 
 	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
-	private List<FinTypeInsurances> finTypeInsurancesList = new ArrayList<FinTypeInsurances>();
 	private List<FinTypeAccounting> finTypeAccountingList = new ArrayList<FinTypeAccounting>();
 
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -439,14 +437,6 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 
 	public void setFinTypeFeesList(List<FinTypeFees> finTypeFeesList) {
 		this.finTypeFeesList = finTypeFeesList;
-	}
-
-	public List<FinTypeInsurances> getFinTypeInsurancesList() {
-		return finTypeInsurancesList;
-	}
-
-	public void setFinTypeInsurancesList(List<FinTypeInsurances> finTypeInsurancesList) {
-		this.finTypeInsurancesList = finTypeInsurancesList;
 	}
 
 	public List<FinTypeAccounting> getFinTypeAccountingList() {

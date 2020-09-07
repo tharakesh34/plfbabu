@@ -21,7 +21,6 @@ public class RuleConstants {
 	public static final String MODULE_LMTLINE = "LMTLINE";
 	public static final String MODULE_IRLFILTER = "IRFILTER";
 	public static final String MODULE_LTVRULE = "LTVRULE";
-	public static final String MODULE_INSRULE = "INSRULE";
 	public static final String MODULE_BOUNCE = "BOUNCE";
 	public static final String MODULE_GSTRULE = "GSTRULE"; // GST Rules
 	public static final String MODULE_LPPRULE = "LPPRULE"; // LPP Rules

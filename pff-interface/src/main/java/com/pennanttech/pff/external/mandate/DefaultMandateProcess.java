@@ -471,6 +471,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 					updateMandateResponse(respMandate);
 					logMandate(respBatchId, respMandate);
 				} else {
+					respMandate.setMICR(mandate.getMICR());
 					validateMandate(respMandate, mandate, remarks);
 
 					if (remarks.length() > 0) {

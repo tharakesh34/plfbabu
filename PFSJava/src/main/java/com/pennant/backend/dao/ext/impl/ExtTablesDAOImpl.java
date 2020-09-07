@@ -9,16 +9,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.CallableStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.ext.ExtTablesDAO;
 import com.pennant.backend.model.finance.ExtTable;
-import com.pennant.backend.model.finance.salary.FinSalariedPayment;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO {
@@ -26,62 +22,6 @@ public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO
 
 	public ExtTablesDAOImpl() {
 		super();
-	}
-
-	@Override
-	public List<ExtTable> getPDDetails() {
-
-		ExtTable autoHunting = new ExtTable();
-
-		StringBuilder selectSql = new StringBuilder("SELECT Id, AccountBalance,Processed ");
-		selectSql.append(" From AHB_L_AUTOHUNT_UPD where Processed=0 ");
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(autoHunting);
-		RowMapper<ExtTable> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtTable.class);
-
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	@Override
-	public void deleteByid(ExtTable autoHunting) {
-		logger.debug("Entering");
-
-		StringBuilder sql = new StringBuilder("DELETE From AHB_L_AUTOHUNT_UPD");
-		sql.append(" where Id = :Id");
-
-		logger.debug("Sql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(autoHunting);
-
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void updateByid(ExtTable autoHunting) {
-		logger.debug("Entering");
-
-		StringBuilder sql = new StringBuilder("Update AHB_L_AUTOHUNT_UPD set Processed=1 ");
-		sql.append(" where Id = :Id");
-
-		logger.debug("Sql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(autoHunting);
-
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void updateBatch(List<ExtTable> autoHunting) {
-		logger.debug("Entering");
-
-		StringBuilder sql = new StringBuilder("Update AHB_L_AUTOHUNT_UPD set Processed=1 ");
-		sql.append(" where Id = :Id");
-
-		logger.debug("Sql: " + sql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(autoHunting.toArray());
-
-		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -217,25 +157,6 @@ public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		this.jdbcTemplate.update(deleteSql.toString(), new MapSqlParameterSource());
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for adding Salaried Finance Next installment details
-	 * 
-	 */
-	@Override
-	public void saveFinSalariedPayment(FinSalariedPayment salariedPayment) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder();
-
-		insertSql.append(" Insert Into FinSalariedPayment");
-		insertSql.append(" (FinReference, PriAccount, SecAccount, NextPayDate, NextPayment, ValueDate)");
-		insertSql.append(" Values(:FinReference, :PriAccount, :SecAccount, :NextPayDate, :NextPayment, :ValueDate)");
-
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salariedPayment);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 

@@ -311,15 +311,6 @@ public class FinanceDataValidation {
 			return finScheduleData;
 		}
 
-		// Insurance validations
-		if (finScheduleData.getInsuranceList() != null && !finScheduleData.getInsuranceList().isEmpty()) {
-			errorDetails = insuranceValidations(vldGroup, finScheduleData, isAPICall);
-			if (!errorDetails.isEmpty()) {
-				finScheduleData.setErrorDetails(errorDetails);
-				return finScheduleData;
-			}
-		}
-
 		// Step validations
 		if (finScheduleData.getStepPolicyDetails() != null && !finScheduleData.getStepPolicyDetails().isEmpty()) {
 			errorDetails = stepValidations(vldGroup, finScheduleData, isAPICall);
@@ -3230,9 +3221,6 @@ public class FinanceDataValidation {
 		// Validate Grace Payment and Methods
 		errorDetails = graceSchdValidation(finScheduleData);
 
-		// Validate Grace Advised Rates
-		errorDetails = graceAdvRateValidation(finScheduleData);
-
 		// Validate Grace Dates
 		errorDetails = graceDatesValidation(finScheduleData);
 
@@ -4231,76 +4219,6 @@ public class FinanceDataValidation {
 			}
 		}
 		return errorDetails;
-	}
-
-	/*
-	 * _______________________________________________________________________________________________________________
-	 * ADVISED GRACE RATE
-	 * _______________________________________________________________________________________________________________
-	 */
-
-	private List<ErrorDetail> graceAdvRateValidation(FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
-		BigDecimal zeroValue = BigDecimal.ZERO;
-
-		if (!StringUtils.equals(finMain.getProductCategory(), FinanceConstants.PRODUCT_STRUCTMUR)) {
-			if (finMain.getGrcAdvPftRate().compareTo(zeroValue) != 0
-					|| StringUtils.isNotBlank(finMain.getGrcAdvBaseRate())
-					|| finMain.getGrcAdvMargin().compareTo(zeroValue) != 0) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90176", null)));
-			}
-		}
-
-		// Actual Rate
-		if (finMain.getGrcAdvPftRate().compareTo(zeroValue) < 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "Grace Advice";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90153", valueParm)));
-		}
-
-		// Both Grace and Base Rates found
-		if (StringUtils.isNotBlank(finMain.getGrcAdvBaseRate())) {
-			if (finMain.getGrcAdvPftRate().compareTo(zeroValue) != 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Grace Advise";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90154", valueParm)));
-			}
-		}
-
-		// Base Rate requested?
-		if (StringUtils.isNotBlank(finMain.getGrcAdvBaseRate())) {
-			// Allow Base Rate?
-			if (StringUtils.isBlank(financeType.getGrcAdvBaseRate())) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "Grace Advised";
-				valueParm[1] = finMain.getFinType();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90136", valueParm)));
-			} else {
-				// Base Rate code found?
-				String brCode = finMain.getGrcAdvBaseRate();
-				String currency = finMain.getFinCcy();
-
-				int rcdCount = baseRateDAO.getBaseRateCountById(brCode, currency, "");
-				if (rcdCount <= 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = brCode;
-					valueParm[1] = finMain.getFinCcy();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90137", valueParm)));
-				}
-			}
-		}
-
-		// Margin
-		if (finMain.getGrcAdvMargin().compareTo(zeroValue) != 0 && StringUtils.isBlank(finMain.getGrcAdvBaseRate())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "Grace Advise";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90155", valueParm)));
-		}
-
-		return errorDetails;
-
 	}
 
 	/*
@@ -5477,8 +5395,6 @@ public class FinanceDataValidation {
 			detail.getCustomerEligibilityCheck().setDownpaySupl(financeMain.getDownPaySupl());
 			detail.getCustomerEligibilityCheck().setStepFinance(financeMain.isStepFinance());
 			detail.getCustomerEligibilityCheck().setFinRepayMethod(financeMain.getFinRepayMethod());
-			detail.getCustomerEligibilityCheck()
-					.setAlwDPSP(detail.getFinScheduleData().getFinanceType().isAllowDownpayPgm());
 			detail.getCustomerEligibilityCheck().setAlwPlannedDefer(financeMain.getPlanDeferCount() > 0 ? true : false);
 			detail.getCustomerEligibilityCheck().setInstallmentAmount(financeMain.getFirstRepay());
 			detail.getCustomerEligibilityCheck().setSalariedCustomer(customer.isSalariedCustomer());
@@ -5510,7 +5426,6 @@ public class FinanceDataValidation {
 
 			detail.getCustomerEligibilityCheck().setReqFinPurpose(financeMain.getFinPurpose());
 			financeMain.setCustDSR(detail.getCustomerEligibilityCheck().getDSCR());
-			detail.getCustomerEligibilityCheck().setAgreeName(financeMain.getAgreeName());
 			detail.getFinScheduleData().setFinanceMain(financeMain);
 		}
 		return detail;

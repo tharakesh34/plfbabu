@@ -46,7 +46,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.constants.InterfaceConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -532,7 +531,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 					}
 					lc = new Listcell(fieldValue);
 					for (int k = 0; k < ruleFields.length; k++) {
-						if (!StringUtils.equals(ruleFields[k], InterfaceConstants.DEDUP_CORE)) {
+						if (!StringUtils.equals(ruleFields[k], "Core")) {
 							if (StringUtils.equals(fieldMethod, "get" + ruleFields[k])) {
 								if (StringUtils.equals(ruleFields[k], MOB_NUM)
 										|| StringUtils.equals(ruleFields[k], CRCPR)) {
@@ -560,7 +559,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 
 					if (dateFieldValue != null && curdateFieldValue != null) {
 						for (int k = 0; k < ruleFields.length; k++) {
-							if (!StringUtils.equals(ruleFields[k], InterfaceConstants.DEDUP_CORE)) {
+							if (!StringUtils.equals(ruleFields[k], "Core")) {
 								if (StringUtils.equals(fieldMethod, "get" + ruleFields[k])) {
 									if (dateFieldValue.compareTo(curdateFieldValue) == 0) {
 										lc.setStyle(COLOR);

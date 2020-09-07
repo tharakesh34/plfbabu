@@ -689,8 +689,6 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		//Fee Details
 		schedule.setSchdFeePaid(schedule.getSchdFeePaid().subtract(repayment.getSchdFeePaid()));
 		schedule.setSchdInsPaid(schedule.getSchdInsPaid().subtract(repayment.getSchdInsPaid()));
-		schedule.setSuplRentPaid(schedule.getSuplRentPaid().subtract(repayment.getSchdSuplRentPaid()));
-		schedule.setIncrCostPaid(schedule.getIncrCostPaid().subtract(repayment.getSchdIncrCostPaid()));
 
 		// Finance Schedule Profit Balance Check
 		schedule.setSchPriPaid(false);
@@ -826,7 +824,6 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			finDetail.getDisbursementDetails().get(i).setFinReference(finDetail.getFinanceMain().getFinReference());
 			finDetail.getDisbursementDetails().get(i).setDisbReqDate(curBDay);
 			finDetail.getDisbursementDetails().get(i).setDisbIsActive(true);
-			finDetail.getDisbursementDetails().get(i).setDisbDisbursed(true);
 			finDetail.getDisbursementDetails().get(i).setLogKey(logKey);
 		}
 		getFinanceDisbursementDAO().saveList(finDetail.getDisbursementDetails(), tableType, false);

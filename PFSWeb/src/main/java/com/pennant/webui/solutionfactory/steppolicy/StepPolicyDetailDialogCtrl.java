@@ -42,6 +42,7 @@
 package com.pennant.webui.solutionfactory.steppolicy;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -195,7 +196,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 
 		this.rateMargin.setMaxlength(13);
 		this.rateMargin.setFormat(PennantApplicationUtil.getRateFormate(9));
-		this.rateMargin.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.rateMargin.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.rateMargin.setScale(9);
 
 		if (isWorkFlowEnabled()) {

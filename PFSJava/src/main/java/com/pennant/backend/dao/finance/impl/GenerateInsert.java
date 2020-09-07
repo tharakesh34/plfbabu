@@ -31,13 +31,12 @@ public class GenerateInsert {
 		sql.append(", AllowedDefFrqChange, AvailedDefFrqChange, RecalType, FinIsActive, FinAssetValue");
 		sql.append(", disbAccountId, repayAccountId, LastRepayDate, LastRepayPftDate, LastRepayRvwDate");
 		sql.append(", LastRepayCpzDate, AllowGrcRepay, GrcSchdMthd, GrcMargin, RepayMargin, FinCommitmentRef");
-		sql.append(", FinLimitRef, DepreciationFrq, FinCurrAssetValue, NextDepDate, LastDepDate, FinAccount");
+		sql.append(", FinLimitRef, DepreciationFrq, FinCurrAssetValue, NextDepDate, LastDepDate");
 		sql.append(", FinCustPftAccount, ClosingStatus, FinApprovedDate, DedupFound, SkipDedup, Blacklisted");
 		sql.append(", GrcProfitDaysBasis, StepFinance, StepPolicy, AlwManualSteps, NoOfSteps, StepType");
 		sql.append(", AnualizedPercRate, EffectiveRateOfReturn, FinRepayPftOnFrq, LinkedFinRef, GrcMinRate");
 		sql.append(", GrcMaxRate, GrcMaxAmount, RpyMinRate, RpyMaxRate, ManualSchedule, TakeOverFinance");
-		sql.append(", GrcAdvBaseRate, GrcAdvMargin, GrcAdvPftRate, RpyAdvBaseRate, RpyAdvMargin, RpyAdvPftRate");
-		sql.append(", SupplementRent, IncreasedCost, feeAccountId, MinDownPayPerc, TDSApplicable, InsuranceAmt");
+		sql.append(", feeAccountId, MinDownPayPerc, TDSApplicable, InsuranceAmt");
 		sql.append(", AlwBPI, BpiTreatment, PlanEMIHAlw, PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax");
 		sql.append(", PlanEMIHLockPeriod, PlanEMICpz, CalRoundingMode, RoundingTarget, AlwMultiDisb");
 		sql.append(", FinRepayMethod, FeeChargeAmt, BpiAmount, DeductFeeDisb, RvwRateApplFor, SchCalOnRvw");
@@ -47,12 +46,12 @@ public class GenerateInsert {
 		sql.append(", AllowRevolving, appliedLoanAmt, FinIsRateRvwAtGrcEnd, Version, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
+		sql.append(", MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
 		sql.append(", CustDSR, LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason, InitiateUser");
 		sql.append(", BankName, Iban, AccountType, DdaReferenceNo, DeviationApproval, FinPreApprovedRef");
 		sql.append(", MandateID, JointAccount, JointCustId, DownPayAccount, SecurityDeposit, RcdMaintainSts");
-		sql.append(", FinCancelAc, NextUserId, Priority, RolloverFrq, NextRolloverDate, ShariaStatus");
-		sql.append(", InitiateDate, MMAId, AccountsOfficer, ApplicationNo, DsaCode, DroplineFrq, FirstDroplineDate");
+		sql.append(", FinCancelAc, NextUserId, Priority");
+		sql.append(", InitiateDate, AccountsOfficer, ApplicationNo, DsaCode, DroplineFrq, FirstDroplineDate");
 		sql.append(", PftServicingODLimit, ReferralId, EmployeeName, DmaCode, SalesDepartment, QuickDisb");
 		sql.append(", WifReference, UnPlanEMIHLockPeriod, UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi");
 		sql.append(", MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod");

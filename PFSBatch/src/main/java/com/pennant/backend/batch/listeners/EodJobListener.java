@@ -23,6 +23,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
@@ -57,6 +58,7 @@ public class EodJobListener implements JobExecutionListener {
 	public void afterJob(JobExecution jobExecution) {
 		logger.debug(Literal.ENTERING);
 
+		RuleExecutionUtil.EOD_SCRIPT_ENGINE_MAP.clear();
 		PennantConstants.EOD_DELAY_REQ = false;
 		List<EODConfig> eodList = eODConfigDAO.getEODConfig();
 		Date eodDate = SysParamUtil.getAppValueDate();
@@ -264,7 +266,8 @@ public class EodJobListener implements JobExecutionListener {
 	@Override
 	public void beforeJob(JobExecution arg0) {
 		logger.debug(Literal.ENTERING);
-
+		RuleExecutionUtil.EOD_SCRIPT_ENGINE_MAP.clear();
+		
 		ExecutionContext executionContext = arg0.getExecutionContext();
 		if (executionContext.get("APP_VALUEDATE") == null) {
 			executionContext.put("APP_VALUEDATE", SysParamUtil.getAppValueDate());

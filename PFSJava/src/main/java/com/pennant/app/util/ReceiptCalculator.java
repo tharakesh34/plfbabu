@@ -294,7 +294,6 @@ public class ReceiptCalculator implements Serializable {
 		repayMain.setDateMatuirty(financeMain.getMaturityDate());
 		repayMain.setAccrued(receiptData.getAccruedTillLBD());
 		repayMain.setRepayAccountId(financeMain.getRepayAccountId());
-		repayMain.setFinAccount(financeMain.getFinAccount());
 		repayMain.setFinCustPftAccount(financeMain.getFinCustPftAccount());
 		repayMain.setPendindODCharges(receiptData.getPendingODC());
 		repayMain.setEarlyPayEffectOn(financeMain.getLovDescFinScheduleOn());

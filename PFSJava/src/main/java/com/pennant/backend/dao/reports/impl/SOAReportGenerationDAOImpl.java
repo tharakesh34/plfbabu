@@ -1161,7 +1161,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		source.addValue("FinReference", finReference);
 
 		StringBuilder selectSql = new StringBuilder("Select FinReference, DisbDate, DisbSeq, ");
-		selectSql.append(" DisbAmount, DisbReqDate, DisbDisbursed, DisbIsActive ");
+		selectSql.append(" DisbAmount, DisbReqDate, DisbIsActive ");
 		selectSql.append(" From FinDisbursementDetails");
 		selectSql.append(" Where FinReference =:FinReference");
 

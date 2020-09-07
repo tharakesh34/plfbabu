@@ -56,7 +56,7 @@ public class TrailBalance implements Tasklet {
 
 			DataEngineStatus status = TrailBalanceEngine.EXTRACT_STATUS;
 			status.setStatus("I");
-			new Thread(new TrailBalanceProcessThread(new Long(1000))).start();
+			new Thread(new TrailBalanceProcessThread(Long.valueOf(1000))).start();
 			BatchUtil.setExecutionStatus(context, status);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -88,7 +88,8 @@ public class TrailBalance implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Trail Balance Request Service started...");
-				//new TrailBalanceEngine(dataSource, userId, valueDate, appDate).extractReport(TrailBalanceEngine.Dimension.STATE);
+				// new TrailBalanceEngine(dataSource, userId, valueDate,
+				// appDate).extractReport(TrailBalanceEngine.Dimension.STATE);
 			} catch (Exception e) {
 				TrailBalanceEngine.EXTRACT_STATUS.setStatus("F");
 				logger.error(Literal.EXCEPTION, e);

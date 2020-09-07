@@ -76,10 +76,10 @@
 											</hbox>
 										</row>
 										<row>
-											<label value="${c:l('label_FinanceCustomerList_CustArabicName.value')}" />
+											<label value="${c:l('label_FinanceCustomerList_CustLocalLngName.value')}" />
 											<hbox>
 												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custArabicName" maxlength="50" width="250px" style="overflow: hidden;" />
+												<textbox id="custLocalLngName" maxlength="50" width="250px" style="overflow: hidden;" />
 											</hbox>
 											<label id="label_FinanceCustomerList_CustDOB" value="${c:l('label_FinanceCustomerList_CustDOB.value')}" />
 											<hbox>

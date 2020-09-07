@@ -1,6 +1,7 @@
 package com.pennant.webui.applicationmaster.assignment;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -311,15 +312,15 @@ public class AssignmentRateDialogCtrl extends GFCBaseCtrl<AssignmentRate> {
 		this.effectiveDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.mclrRate.setMaxlength(13);
 		this.mclrRate.setFormat(PennantConstants.rateFormate9);
-		this.mclrRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.mclrRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.mclrRate.setScale(9);
 		this.bankSpreadRate.setMaxlength(13);
 		this.bankSpreadRate.setFormat(PennantConstants.rateFormate9);
-		this.bankSpreadRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.bankSpreadRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.bankSpreadRate.setScale(9);
 		this.opexRate.setMaxlength(13);
 		this.opexRate.setFormat(PennantConstants.rateFormate9);
-		this.opexRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.opexRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.opexRate.setScale(9);
 		this.resetFrequency.setMaxlength(50);
 		logger.debug(Literal.LEAVING);

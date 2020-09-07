@@ -178,7 +178,6 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	protected Button btnSearchFinanceDedupe;
 	protected Button btnSearchCustomerDedupe;
 	protected Button btnSearchBlackListDedupe;
-	protected Button btnSearchPoliceDedupe;
 	protected Button btnSearchReturnCheque;
 	protected Button btnSearchLimitService;
 	protected Button btnSearchTatNotification;
@@ -929,7 +928,6 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_FINDEDUP
 				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_CUSTDEDUP
 				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_BLACKLIST
-				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_POLICEDEDUP
 				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_RETURNCHQ
 				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_AGREEMENT
 				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_LIMIT
@@ -1346,28 +1344,6 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("QueryModule", FinanceConstants.DEDUP_BLACKLIST, Filter.OP_EQUAL);
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "DedupParm",
-				filters);
-		if (dataObject instanceof String) {
-			this.lovDescRefDesc.setValue("");
-		} else {
-			DedupParm details = (DedupParm) dataObject;
-			if (details != null) {
-				this.finRefId.setValue(details.getQueryId());
-				this.lovDescRefDesc.setValue(details.getQueryCode() + "-" + details.getQueryDesc());
-				getFinanceReferenceDetail().setLovDescNamelov(details.getQueryCode());
-				getFinanceReferenceDetail().setLovDescRefDesc(details.getQueryDesc());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onClick$btnSearchPoliceDedupe(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("QueryModule", FinanceConstants.DEDUP_POLICE, Filter.OP_EQUAL);
 
 		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "DedupParm",
 				filters);
@@ -2029,48 +2005,6 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			CheckOverride();
 			break;
 
-		case FinanceConstants.PROCEDT_POLICEDEDUP:
-
-			// For validations
-			this.showInStage.setReadonly(true);// not required
-			this.allowInputInStage.setReadonly(true);// not required
-			this.mandInputInStage.setReadonly(false);
-			this.overRide.setDisabled(false);
-			this.overRideValue.setReadonly(false);
-			this.rowOverRide.setVisible(true);
-			this.overRideValue.setLeft(Labels.getLabel("label_FinanceReferenceDetailDialog_OverRideValue.value"));
-
-			// error labels
-			this.showInStage.setLeft("");
-			this.allowInputInStage.setLeft("");
-			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-
-			// LOV List
-			this.btnSearchPoliceDedupe.setVisible(true);
-
-			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId
-					.setValue(Labels.getLabel("label_FinRefDialogLink_CustPolice.value"));
-
-			// ROWS WITH LIST Boxes
-			this.rowSingleListbox.setVisible(true);// Show
-
-			// labels of list boxes
-			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage
-					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-
-			// List headers of list boxes
-			this.listheadShowInStage.setLabel("");// not required
-			this.listheadAllowInputInStage.setLabel("");// not required
-			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-
-			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_CustPolice.title"));
-			CheckOverride();
-			break;
-
 		case FinanceConstants.PROCEDT_RETURNCHQ:
 
 			// For validations
@@ -2292,9 +2226,6 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		case FinanceConstants.PROCEDT_BLACKLIST:
 			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxBlackListRules);
 			break;
-		case FinanceConstants.PROCEDT_POLICEDEDUP:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxPoliceRules);
-			break;
 		case FinanceConstants.PROCEDT_RETURNCHQ:
 			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxReturnCheques);
 			break;
@@ -2390,9 +2321,6 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			break;
 		case FinanceConstants.PROCEDT_BLACKLIST:
 			processDelet(finRefDetail, getFinanceReferenceDetailDialogCtrl().listBoxBlackListRules);
-			break;
-		case FinanceConstants.PROCEDT_POLICEDEDUP:
-			processDelet(finRefDetail, getFinanceReferenceDetailDialogCtrl().listBoxPoliceRules);
 			break;
 		case FinanceConstants.PROCEDT_RETURNCHQ:
 			processDelet(finRefDetail, getFinanceReferenceDetailDialogCtrl().listBoxReturnCheques);

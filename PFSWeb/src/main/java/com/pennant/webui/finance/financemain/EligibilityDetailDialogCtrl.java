@@ -49,8 +49,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.script.ScriptException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -93,27 +91,29 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
  */
 public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(EligibilityDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component
+	 * with the same 'id' in the ZUL-file are getting autoWired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_EligibilityDetailDialog; // autoWired
 	protected Borderlayout borderlayoutEligibilityDetail; // autoWired
 
-	//Finance Eligibility Details Tab
+	// Finance Eligibility Details Tab
 	protected Button btnElgRule; // autoWired
 	protected Label label_ElgRuleSummaryVal; // autoWired
 	protected Listbox listBoxFinElgRef; // autoWired
 
 	List<FinanceEligibilityDetail> eligibilityRuleList = null;
 
-	//External Fields usage for Individuals ----> Eligibility Details
+	// External Fields usage for Individuals ----> Eligibility Details
 
 	private transient boolean custisEligible = true;
 	private boolean isWIF = false;
@@ -146,8 +146,9 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected financeMain object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected financeMain object in a
+	 * Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -175,7 +176,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		}
 
 		if (arguments.containsKey("roleCode")) {
-			//this.userRole = arguments.get("roleCode").toString();
+			// this.userRole = arguments.get("roleCode").toString();
 		}
 
 		doShowDialog();
@@ -185,7 +186,8 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws InterruptedException
@@ -193,7 +195,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	public void doShowDialog() throws InterruptedException {
 		logger.debug("Entering");
 		try {
-			// append finance basic details 
+			// append finance basic details
 			appendFinBasicDetails();
 
 			eligibilityRuleList = getFinanceDetail().getElgRuleList();
@@ -204,15 +206,15 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 				deviationExecutionCtrl = (DeviationExecutionCtrl) getFinanceMainDialogCtrl().getClass()
 						.getMethod("getDeviationExecutionCtrl").invoke(getFinanceMainDialogCtrl());
 
-				//Set Eligibility based on deviations and rule result
+				// Set Eligibility based on deviations and rule result
 				for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityRuleList) {
 					setStatusByDevaition(financeEligibilityDetail);
 				}
 
-				//Fill eligibility details
+				// Fill eligibility details
 				doFillFinEligibilityDetails(eligibilityRuleList);
 
-				//Set eligibility grtoup status
+				// Set eligibility grtoup status
 				setCustEligibilityGropuStatus();
 			}
 
@@ -427,7 +429,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	 * @param isSave
 	 * @throws ScriptException
 	 */
-	public void doCheckFinEligibility(boolean isSave) throws ScriptException {
+	public void doCheckFinEligibility(boolean isSave) {
 		logger.debug(Literal.ENTERING);
 
 		// Clear eligibility summary status.
@@ -513,15 +515,15 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 
 		deviationExecutionCtrl.fillDeviationListbox(elgDeviations, getUserRole(), DeviationConstants.TY_ELIGIBILITY);
 
-		//Set Eligibility based on deviations and rule result
+		// Set Eligibility based on deviations and rule result
 		for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityRuleList) {
 			setStatusByDevaition(financeEligibilityDetail);
 		}
 
-		//Fill eligibility details
+		// Fill eligibility details
 		doFillFinEligibilityDetails(eligibilityRuleList);
 
-		//Set eligibility group status
+		// Set eligibility group status
 		setCustEligibilityGropuStatus();
 
 		logger.debug(Literal.LEAVING);
@@ -536,7 +538,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	 * @throws ScriptException
 	 */
 	public FinanceDeviations doExecuteAndCheckDeviations(FinanceEligibilityDetail finElgDet,
-			FinanceDetail aFinanceDetail) throws ScriptException {
+			FinanceDetail aFinanceDetail) {
 
 		CustomerEligibilityCheck customerEligibilityCheck = aFinanceDetail.getCustomerEligibilityCheck();
 		String finCcy = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinCcy();
@@ -675,10 +677,10 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		}
 		aFinanceDetail = null;
 
-		//Fill eligibility details
+		// Fill eligibility details
 		doFillWIFFinEligibilityDetails(this.eligibilityRuleList);
 
-		//Set eligibility group status
+		// Set eligibility group status
 		setCustEligibilityGropuStatus();
 
 		logger.debug("Leaving");
@@ -699,19 +701,19 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 				Listitem item = new Listitem();
 				Listcell lc;
 
-				//Rule Source
+				// Rule Source
 				lc = new Listcell("");
 				lc.setParent(item);
 
-				//Rule Code
+				// Rule Code
 				lc = new Listcell(detail.getLovDescElgRuleCode());
 				lc.setParent(item);
 
-				//Rule Code Desc
+				// Rule Code Desc
 				lc = new Listcell(detail.getLovDescElgRuleCodeDesc());
 				lc.setParent(item);
 
-				//Can Override
+				// Can Override
 				lc = new Listcell();
 				Checkbox cbOverride = new Checkbox();
 				cbOverride.setDisabled(true);
@@ -726,11 +728,11 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 				lc.appendChild(cbOverride);
 				lc.setParent(item);
 
-				//Override Value
+				// Override Value
 				lc = new Listcell(overridePerc);
 				lc.setParent(item);
 
-				//If Rule Not Executed 
+				// If Rule Not Executed
 				if (StringUtils.isEmpty(detail.getRuleResult())) {
 					lc = new Listcell("");
 					lc.setParent(item);
@@ -741,9 +743,9 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 					lc = new Listcell("");
 					lc.setParent(item);
 				} else {
-					//If Decimal Result for Eligibility
+					// If Decimal Result for Eligibility
 					if (RuleConstants.RETURNTYPE_DECIMAL.equals(detail.getRuleResultType())) {
-						//IF Error in Executing the Rule
+						// IF Error in Executing the Rule
 						if ("E".equals(detail.getRuleResult())) {
 							lc = new Listcell(Labels.getLabel("common.InSuffData"));
 							lc.setStyle("font-weight:bold;color:red;");
@@ -751,7 +753,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 
 							lc = new Listcell("");
 							lc.setParent(item);
-							//IF DSR Calculation Rule
+							// IF DSR Calculation Rule
 						} else if (RuleConstants.ELGRULE_DSRCAL.equals(detail.getLovDescElgRuleCode())
 								|| RuleConstants.ELGRULE_PDDSRCAL.equals(detail.getLovDescElgRuleCode())) {
 

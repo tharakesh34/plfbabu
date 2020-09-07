@@ -9,10 +9,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "finGrcRateType", "lovDescFinGrcRateTypeName", "finGrcIntRate", "finGrcBaseRate",
-		"lovDescFinGrcBaseRateName", "finGrcSplRate", "lovDescFinGrcSplRateName", "finGrcMargin", "grcAdvBaseRate",
-		"grcAdvBaseRateDesc", "grcAdvMargin", "grcAdvPftRate", "fInGrcMinRate", "finGrcMaxRate", "finGrcDftIntFrq",
-		"finIsAlwGrcRepay", "finGrcSchdMthd", "finGrcIsIntCpz", "finGrcCpzFrq", "finGrcIsRvwAlw", "finGrcRvwFrq",
-		"finGrcRvwRateApplFor", "finIsIntCpzAtGrcEnd" })
+		"lovDescFinGrcBaseRateName", "finGrcSplRate", "lovDescFinGrcSplRateName", "finGrcMargin", "fInGrcMinRate",
+		"finGrcMaxRate", "finGrcDftIntFrq", "finIsAlwGrcRepay", "finGrcSchdMthd", "finGrcIsIntCpz", "finGrcCpzFrq",
+		"finGrcIsRvwAlw", "finGrcRvwFrq", "finGrcRvwRateApplFor", "finIsIntCpzAtGrcEnd" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GraceDetail implements Serializable {
 
@@ -38,10 +37,6 @@ public class GraceDetail implements Serializable {
 	@XmlElement(name = "grcSpecialRateCodeDesc")
 	private String lovDescFinGrcSplRateName;
 	private BigDecimal finGrcMargin = BigDecimal.ZERO;
-	private String grcAdvBaseRate;
-	private String grcAdvBaseRateDesc;
-	private BigDecimal grcAdvMargin = BigDecimal.ZERO;
-	private BigDecimal grcAdvPftRate = BigDecimal.ZERO;
 	private BigDecimal fInGrcMinRate = BigDecimal.ZERO;
 	private BigDecimal finGrcMaxRate = BigDecimal.ZERO;
 
@@ -124,38 +119,6 @@ public class GraceDetail implements Serializable {
 
 	public void setFinGrcMargin(BigDecimal finGrcMargin) {
 		this.finGrcMargin = finGrcMargin;
-	}
-
-	public String getGrcAdvBaseRate() {
-		return grcAdvBaseRate;
-	}
-
-	public void setGrcAdvBaseRate(String grcAdvBaseRate) {
-		this.grcAdvBaseRate = grcAdvBaseRate;
-	}
-
-	public String getGrcAdvBaseRateDesc() {
-		return grcAdvBaseRateDesc;
-	}
-
-	public void setGrcAdvBaseRateDesc(String grcAdvBaseRateDesc) {
-		this.grcAdvBaseRateDesc = grcAdvBaseRateDesc;
-	}
-
-	public BigDecimal getGrcAdvMargin() {
-		return grcAdvMargin;
-	}
-
-	public void setGrcAdvMargin(BigDecimal grcAdvMargin) {
-		this.grcAdvMargin = grcAdvMargin;
-	}
-
-	public BigDecimal getGrcAdvPftRate() {
-		return grcAdvPftRate;
-	}
-
-	public void setGrcAdvPftRate(BigDecimal grcAdvPftRate) {
-		this.grcAdvPftRate = grcAdvPftRate;
 	}
 
 	public BigDecimal getfInGrcMinRate() {

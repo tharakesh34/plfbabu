@@ -68,7 +68,6 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -719,28 +718,6 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	/**
-	 * Method for save the Handling Instruction request and response details
-	 * 
-	 * @param handlingInstruction
-	 */
-	@Override
-	public void saveHandlInstructionDetails(HandlingInstruction handlingInstruction) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder insertSql = new StringBuilder("Insert Into HandleInstructionLog");
-		insertSql.append(
-				" (ReferenceNum, MaintenanceCode, FinanceRef, InstallmentDate, NewMaturityDate, Remarks, TimeStamp)");
-		insertSql.append(
-				" Values(:ReferenceNum, :MaintenanceCode, :FinanceRef, :InstallmentDate, :NewMaturityDate, :Remarks, :TimeStamp)");
-
-		logger.debug("insertSql: " + insertSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(handlingInstruction);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**

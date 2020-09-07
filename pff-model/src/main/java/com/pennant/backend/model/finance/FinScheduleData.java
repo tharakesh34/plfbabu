@@ -75,7 +75,7 @@ import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
-		"feeDues", "foreClosureFees", "insuranceList", "stepPolicyDetails", "financeScheduleDetails",
+		"feeDues", "foreClosureFees", "stepPolicyDetails", "financeScheduleDetails",
 		"finODPenaltyRate", "apiPlanEMIHmonths", "apiPlanEMIHDates", "finODDetails", "financeSummary",
 		"vasRecordingList", "outstandingPri", "subventionDetail", "receiptAllocations", "returnStatus" })
 @XmlRootElement(name = "financeSchedule")
@@ -123,9 +123,6 @@ public class FinScheduleData implements Serializable {
 	private Date finSuspDate;
 	private String feeEvent;
 
-	@XmlElement(name = "insurance")
-	private List<Insurance> insuranceList = new ArrayList<>();//DDP : TO BE REMOVED TODO
-	private List<FinInsurances> finInsuranceList = new ArrayList<>();
 	@XmlElement(name = "rateInstruction")
 	private List<RateInstruction> rateInstruction = new ArrayList<>();
 	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<>();
@@ -428,14 +425,6 @@ public class FinScheduleData implements Serializable {
 		this.feeEvent = feeEvent;
 	}
 
-	public List<Insurance> getInsuranceList() {
-		return insuranceList;
-	}
-
-	public void setInsuranceList(List<Insurance> insuranceList) {
-		this.insuranceList = insuranceList;
-	}
-
 	public List<RateInstruction> getRateInstruction() {
 		return rateInstruction;
 	}
@@ -500,14 +489,6 @@ public class FinScheduleData implements Serializable {
 
 	public void setPlanEMIHDates(List<Date> planEMIHDates) {
 		this.planEMIHDates = planEMIHDates;
-	}
-
-	public List<FinInsurances> getFinInsuranceList() {
-		return finInsuranceList;
-	}
-
-	public void setFinInsuranceList(List<FinInsurances> finInsuranceList) {
-		this.finInsuranceList = finInsuranceList;
 	}
 
 	public List<FinODDetails> getFinODDetails() {

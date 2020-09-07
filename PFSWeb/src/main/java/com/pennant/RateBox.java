@@ -43,6 +43,7 @@
 package com.pennant;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
@@ -96,7 +97,7 @@ public class RateBox extends Hbox {
 		marginRate = new Decimalbox();
 		marginRate.setMaxlength(13);
 		marginRate.setFormat(PennantConstants.rateFormate9);
-		marginRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		marginRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		marginRate.setScale(9);
 		marginRate.setPlaceholder("margin");
 		marginRate.setHeight("23px");
@@ -109,7 +110,7 @@ public class RateBox extends Hbox {
 		effRate.setReadonly(true);
 		effRate.setMaxlength(13);
 		effRate.setFormat(PennantConstants.rateFormate9);
-		effRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		effRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		effRate.setScale(9);
 		effRate.setHeight("23px");
 		effRate.setWidth("79px");

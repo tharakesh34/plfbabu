@@ -312,13 +312,6 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.transcationCode.setMaxlength(8);
 		this.rvsTransactionCode.setMaxlength(8);
 
-		if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_AHB)) {
-			this.label_TransactionEntryDialog_PostToCore.setVisible(false);
-			this.hbox_PostToCore.setVisible(false);
-			this.row_Account.setVisible(false);
-			this.postToCore.setChecked(true);
-		}
-
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -635,12 +628,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		}
 
 		try {
-			if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_AHB)) {
-				aTransactionEntry.setPostToSys(this.postToCore.isChecked() ? AccountConstants.POSTTOSYS_CORE
-						: (this.postToERP.isChecked() ? AccountConstants.POSTTOSYS_GLNPL : ""));
-			} else {
-				aTransactionEntry.setPostToSys(AccountConstants.POSTTOSYS_GLNPL);
-			}
+			aTransactionEntry.setPostToSys(AccountConstants.POSTTOSYS_GLNPL);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1366,13 +1354,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		logger.debug("Entering" + event.toString());
 
 		Object dataObject = null;
-		if (ImplementationConstants.CLIENT_NAME.equals(ImplementationConstants.CLIENT_AIB)) {
-			Filter[] filter = new Filter[1];
-			filter[0] = new Filter("CustSysAc", "1", Filter.OP_EQUAL);
-			dataObject = ExtendedSearchListBox.show(this.window_TransactionEntryDialog, "AccountType", filter);
-		} else {
-			dataObject = ExtendedSearchListBox.show(this.window_TransactionEntryDialog, "AccountType");
-		}
+		dataObject = ExtendedSearchListBox.show(this.window_TransactionEntryDialog, "AccountType");
 
 		if (dataObject instanceof String) {
 			this.accountType.setValue(dataObject.toString());
@@ -2048,20 +2030,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 				this.lovDescAccountSubHeadRuleName.setValue("");
 				this.openNewFinAc.setChecked(false);
 			} else if (value.equals(AccountConstants.TRANACC_GLNPL) || value.equals(AccountConstants.TRANACC_BUILD)) {
-				if (ImplementationConstants.CLIENT_NAME.equals(ImplementationConstants.CLIENT_AIB)) {
-					this.btnSearchAccountType.setVisible(false);
-					this.btnSearchSystemIntAccount.setVisible(true);
-					this.btnSearchSystemIntAccount
-							.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
-					this.accountType.setValue(null);
-					this.spSubHead.setSclass("mandatory");
-				} else {
-					this.btnSearchAccountType.setVisible(true);
-					this.btnSearchSystemIntAccount.setVisible(false);
-					this.btnSearchAccountType
-							.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
-					this.accountType.setValue(null);
-				}
+				this.btnSearchAccountType.setVisible(true);
+				this.btnSearchSystemIntAccount.setVisible(false);
+				this.btnSearchAccountType
+						.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
+				this.accountType.setValue(null);
 				this.spAccountType.setSclass("mandatory");
 				this.btnSearchAccountSubHeadRule
 						.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountSubHeadEule"));

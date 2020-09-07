@@ -1146,23 +1146,23 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		errParm[0] = PennantJavaUtil.getLabel("FeeType") + ":" + valueParm[0];
 
 		if (finFeeDetail.isNew()) { // for New record or new record into work
-										// flow
+									// flow
 
 			if (!finFeeDetail.isWorkflow()) {// With out Work flow only new
-													// records
+												// records
 				if (befFinFeeDetail != null) { // Record Already Exists in the
-													// table then error
+												// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (finFeeDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																									// records
+																								// records
 																								// type
 																								// is
 																								// new
 					if (befFinFeeDetail != null || tempFinFinDetail != null) { // if
-																					// records
+																				// records
 																				// already
 																				// exists
 																				// in
@@ -1183,10 +1183,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!finFeeDetail.isWorkflow()) { // With out Work flow for update
-													// and delete
+												// and delete
 
 				if (befFinFeeDetail == null) { // if records not exists in the
-													// main table
+												// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -1207,7 +1207,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			} else {
 
 				if (tempFinFinDetail == null) { // if records not exists in the
-													// Work flow table
+												// Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -1274,22 +1274,22 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		errParm[0] = PennantJavaUtil.getLabel("FeeType") + ":" + valueParm[0];
 
 		if (finFeeReceipt.isNew()) { // for New record or new record into work
-											// flow
+										// flow
 			if (!finFeeReceipt.isWorkflow()) {// With out Work flow only new
-													// records
+												// records
 				if (befFinFeeReceipt != null) { // Record Already Exists in the
-													// table then error
+												// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (finFeeReceipt.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																									// records
+																								// records
 																								// type
 																								// is
 																								// new
 					if (befFinFeeReceipt != null || tempFinFeeReceipt != null) { // if
-																						// records
+																					// records
 																					// already
 																					// exists
 																					// in
@@ -1310,9 +1310,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!finFeeReceipt.isWorkflow()) { // With out Work flow for update
-													// and delete
+												// and delete
 				if (befFinFeeReceipt == null) { // if records not exists in the
-													// main table
+												// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -1332,7 +1332,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				}
 			} else {
 				if (tempFinFeeReceipt == null) { // if records not exists in the
-														// Work flow table
+													// Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

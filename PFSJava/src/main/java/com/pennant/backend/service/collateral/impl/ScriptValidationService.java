@@ -2,11 +2,9 @@ package com.pennant.backend.service.collateral.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
-import javax.script.Bindings;
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
-import javax.script.SimpleBindings;
+import com.pennanttech.pennapps.core.script.ScriptEngine;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
@@ -21,41 +19,37 @@ public class ScriptValidationService {
 
 	private static final Logger logger = Logger.getLogger(ScriptValidationService.class);
 
-	private ScriptEngine scriptEngine;
 	private List<Object> objectList = null;
 
-	/**
-	 * Method for setting Pre Validation Script default Values to Extended field Details
-	 * 
-	 * @param script
-	 * @param paramMap
-	 * @return
-	 * @throws ScriptException
-	 */
-	public ScriptErrors setPreValidationDefaults(String script, Map<String, Object> paramMap) throws ScriptException {
+	public ScriptErrors setPreValidationDefaults(String script, Map<String, Object> paramMap) {
 		logger.debug(Literal.ENTERING);
 
-		Bindings bindings = new SimpleBindings();
+		Map<String, Object> dataMap = new HashMap<String, Object>();
 		ScriptErrors defaults = new ScriptErrors();
 
-		setObjectsTobindings(bindings);
+		try (ScriptEngine scriptEngine = new ScriptEngine()) {
+			dataMap = setObjectsTobindings(dataMap);
 
-		bindings.put("defaults", defaults);
-		if (paramMap != null) {
-			bindings.putAll(paramMap);
+			dataMap.put("defaults", defaults);
+			if (paramMap != null) {
+				dataMap.putAll(paramMap);
+			}
+			scriptEngine.getResultAsObject(script, dataMap);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION);
 		}
-		getScriptEngine().eval(script, bindings);
 
 		logger.debug(Literal.LEAVING);
 		return defaults;
 	}
 
 	/**
-	 * Setting the multiple objects into bindings for setting the default values to components from prescript
+	 * Setting the multiple objects into bindings for setting the default values to
+	 * components from prescript
 	 * 
 	 * @param bindings
 	 */
-	private void setObjectsTobindings(Bindings bindings) {
+	private Map<String, Object> setObjectsTobindings(Map<String, Object> datMap) {
 		logger.debug(Literal.ENTERING);
 
 		List<Object> objectList = getObjectList();
@@ -68,16 +62,17 @@ public class ScriptValidationService {
 					Object clonedObject = cloner.deepClone(object);
 
 					if (clonedObject instanceof FinanceDetail) {
-						bindings.put("fd", clonedObject);
+						datMap.put("fd", clonedObject);
 					}
 					if (clonedObject instanceof CustomerDetails) {
-						bindings.put("cu", clonedObject);
+						datMap.put("cu", clonedObject);
 					}
 				}
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
+		return datMap;
 	}
 
 	/**
@@ -90,28 +85,21 @@ public class ScriptValidationService {
 	public ScriptErrors getPostValidationErrors(String script, Map<String, Object> fieldValueMap) {
 		logger.debug(Literal.ENTERING);
 
-		Bindings bindings = new SimpleBindings();
+		Map<String, Object> dataMap = new HashMap<String, Object>();
 		ScriptErrors errors = new ScriptErrors();
-		bindings.put("errors", errors);
-		if (fieldValueMap != null) {
-			bindings.putAll(fieldValueMap);
-		}
-		try {
-			getScriptEngine().eval(script, bindings);
-		} catch (ScriptException e) {
+
+		try (ScriptEngine scriptEngine = new ScriptEngine()) {
+			dataMap.put("errors", errors);
+			if (fieldValueMap != null) {
+				dataMap.putAll(fieldValueMap);
+			}
+			scriptEngine.getResultAsObject(script, dataMap);
+		} catch (Exception e) {
 			logger.error(e);
 		}
 
 		logger.debug(Literal.LEAVING);
 		return errors;
-	}
-
-	public ScriptEngine getScriptEngine() {
-		return scriptEngine;
-	}
-
-	public void setScriptEngine(ScriptEngine scriptEngine) {
-		this.scriptEngine = scriptEngine;
 	}
 
 	public List<Object> getObjectList() {

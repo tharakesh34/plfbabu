@@ -176,7 +176,7 @@ public class CorporateCustomerDetailDAOImpl extends BasicDao<CorporateCustomerDe
 		insertSql.append(" (CustId, Name, PhoneNumber, EmailId, BussCommenceDate, ServCommenceDate,");
 		insertSql.append(" BankRelationshipDate, PaidUpCapital, AuthorizedCapital, ReservesAndSurPlus,");
 		insertSql.append(" IntangibleAssets, TangibleNetWorth, LongTermLiabilities, CapitalEmployed,");
-		insertSql.append(" Investments, NonCurrentAssets, NetWorkingCapital, NetSales, OtherIncome,");
+		insertSql.append(" NonCurrentAssets, NetWorkingCapital, NetSales, OtherIncome,");
 		insertSql.append(" NetProfitAfterTax, Depreciation, CashAccurals, AnnualTurnover, ReturnOnCapitalEmp,");
 		insertSql.append(" CurrentAssets, CurrentLiabilities, CurrentBookValue, CurrentMarketValue,");
 		insertSql.append(" PromotersShare, AssociatesShare, PublicShare, FinInstShare, Others, ");

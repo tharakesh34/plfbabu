@@ -208,12 +208,6 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 		// set Field Properties
 		doSetFieldProperties();
 
-		// set Label Properties
-		productCode = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
-		if (FinanceConstants.PRODUCT_MUSHARAKA.equals(productCode)) {
-			doSetLabels();
-		}
-
 		doShowDialog(this.financeDetail);
 		logger.debug("Leaving " + event.toString());
 	}
@@ -248,12 +242,6 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 		this.avgMudaribRate.setMaxlength(13);
 		this.avgMudaribRate.setScale(9);
 		this.avgMudaribRate.setFormat(PennantConstants.rateFormate9);
-		if (financeDetail.getFinScheduleData().getFinanceType().getFinCategory()
-				.equals(FinanceConstants.PRODUCT_MUSHARAKA)) {
-			this.avgMudaribRate.setVisible(false);
-			this.label_FinanceMainDialog_AvgMudaribRate.setVisible(false);
-			this.listheader_MudaribPerc.setVisible(false);
-		}
 
 		logger.debug("Leaving");
 	}

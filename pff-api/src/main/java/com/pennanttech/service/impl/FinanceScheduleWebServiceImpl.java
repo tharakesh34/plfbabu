@@ -174,7 +174,6 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 		response.setRepayInstructions(null);
 		response.setRateInstruction(null);
 		response.setFinFeeDetailList(null);
-		response.setInsuranceList(null);
 		response.setStepPolicyDetails(null);
 		response.setFinanceScheduleDetails(null);
 		response.setPlanEMIHDates(null);

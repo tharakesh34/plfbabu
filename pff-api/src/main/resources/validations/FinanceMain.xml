@@ -143,36 +143,6 @@
 					}
 				</element>
 			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>90242%%grcAdvMargin</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-				</groups>
-				<element name="lang">javascript</element>
-				<element name="script">
-					if (_this.grcAdvMargin !=null &amp;&amp; _this.grcAdvMargin != "") {
-					true;
-					} else {
-					false
-					}
-				</element>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>90242%%grcAdvPftRate</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-				</groups>
-				<element name="lang">javascript</element>
-				<element name="script">
-					if (_this.grcAdvPftRate !=null &amp;&amp; _this.grcAdvPftRate != "") {
-					true;
-					} else {
-					false
-					}
-				</element>
-			</constraint>
 			
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>90242%%grcMaxAmount</message>
@@ -259,66 +229,6 @@
 				<element name="lang">javascript</element>
 				<element name="script">
 					if (_this.rpyMaxRate !=null &amp;&amp; _this.rpyMaxRate != "") {
-					true;
-					} else {
-					false
-					}
-				</element>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>90242%%rpyAdvMargin</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-				</groups>
-				<element name="lang">javascript</element>
-				<element name="script">
-					if (_this.rpyAdvMargin !=null &amp;&amp; _this.rpyAdvMargin != "") {
-					true;
-					} else {
-					false
-					}
-				</element>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>90242%%rpyAdvPftRate</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-				</groups>
-				<element name="lang">javascript</element>
-				<element name="script">
-					if (_this.rpyAdvPftRate !=null &amp;&amp; _this.rpyAdvPftRate != "") {
-					true;
-					} else {
-					false
-					}
-				</element>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>90242%%supplementRent</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-				</groups>
-				<element name="lang">javascript</element>
-				<element name="script">
-					if (_this.supplementRent !=null &amp;&amp; _this.supplementRent != "") {
-					true;
-					} else {
-					false
-					}
-				</element>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>90242%%increasedCost</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-				</groups>
-				<element name="lang">javascript</element>
-				<element name="script">
-					if (_this.increasedCost !=null &amp;&amp; _this.increasedCost != "") {
 					true;
 					} else {
 					false

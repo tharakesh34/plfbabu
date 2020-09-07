@@ -353,7 +353,8 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			doSetRequiredDetails(financeDetail, loanWithWIF, financeMain.getUserDetails(), stp, false, false);
 			// PSD #146217 Disbursal Instruction is not getting created.
-			// Disbursement Instruction is calculation fails if alwBpiTreatment is true so calling this after schedule calculation.
+			// Disbursement Instruction is calculation fails if alwBpiTreatment is true so
+			// calling this after schedule calculation.
 			if (!financeMain.isAlwBPI()) {
 				if (stp) {
 					finScheduleData.getDisbursementDetails().clear();
@@ -1504,7 +1505,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				Collections.sort(finStepDetails, new Comparator<FinanceStepPolicyDetail>() {
 					@Override
 					public int compare(FinanceStepPolicyDetail b1, FinanceStepPolicyDetail b2) {
-						return (new Integer(b1.getStepNo()).compareTo(new Integer(b2.getStepNo())));
+						return (Integer.valueOf(b1.getStepNo()).compareTo(Integer.valueOf(b2.getStepNo())));
 					}
 				});
 
@@ -1513,7 +1514,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 
-		//pslDetails defaults
+		// pslDetails defaults
 		PSLDetail pslDetail = financeDetail.getPslDetail();
 		if (pslDetail != null) {
 			if (!moveLoanStage) {
@@ -2775,7 +2776,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	private void prepareResponse(FinanceDetail financeDetail) {
 		financeDetail.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 		financeDetail.getFinScheduleData().setFinReference(null);
-		financeDetail.getFinScheduleData().setInsuranceList(null);
 		financeDetail.getFinScheduleData().setStepPolicyDetails(null);
 		financeDetail.getFinScheduleData().setPlanEMIHDates(null);
 		financeDetail.getFinScheduleData().setPlanEMIHmonths(null);
@@ -2791,7 +2791,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
 			@Override
 			public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
-				return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
+				return (Integer.valueOf(b1.getDisbSeq()).compareTo(Integer.valueOf(b2.getDisbSeq())));
 			}
 		});
 
@@ -3011,7 +3011,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				receiptHeaderMap.put(header.getReceiptID(), header);
 			}
 			for (FinFeeDetail feeDtl : detail.getFinFeeDetailList()) {// iterating
-																			// existing
+																		// existing
 																		// finfee
 																		// details
 																		// list
@@ -3022,7 +3022,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
 						if (finFeeDetail.getFinFeeReceipts() != null && finFeeDetail.getFinFeeReceipts().size() > 0) {
 							for (FinFeeReceipt feeReceipt : finFeeDetail.getFinFeeReceipts()) {// iterating
-																									// receipt
+																								// receipt
 																								// details
 								if (receiptHeaderMap.containsKey(feeReceipt.getReceiptID())) {
 
@@ -3129,7 +3129,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		if (detail.getFinFeeDetailList() != null && detail.getFinFeeDetailList().size() > 0 && errorDetails.isEmpty()) {
 			for (FinFeeDetail feeDtl : detail.getFinFeeDetailList()) {// iterating
-																			// existing
+																		// existing
 																		// finfee
 																		// details
 																		// list
@@ -3556,7 +3556,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		finScheduleData.setRateInstruction(null);
 		finScheduleData.setFeeDues(null);
 		finScheduleData.setFinFeeDetailList(null);
-		finScheduleData.setInsuranceList(null);
 		finScheduleData.setStepPolicyDetails(null);
 		finScheduleData.setFinanceScheduleDetails(null);
 		finScheduleData.setApiPlanEMIHDates(null);
@@ -3623,7 +3622,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			}
 
-			//setting the values for the co_applicant
+			// setting the values for the co_applicant
 			List<JointAccountDetail> jountAccountDetailList = finDetail.getJountAccountDetailList();
 
 			for (JointAccountDetail detail : jountAccountDetailList) {

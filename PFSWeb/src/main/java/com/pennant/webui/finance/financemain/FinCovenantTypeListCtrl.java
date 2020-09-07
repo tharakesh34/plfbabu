@@ -364,7 +364,6 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param commodityHeader
 	 * 
 	 */
 	public void doWriteBeanToComponents() {

@@ -78,18 +78,17 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"alwManualSteps", "stepPolicy", "stepType", "graceTerms", "grcPeriodEndDate", "grcRateBasis", "grcPftRate",
 		"graceBaseRate", "graceSpecialRate", "grcMargin", "grcProfitDaysBasis", "grcPftFrq", "nextGrcPftDate",
 		"grcPftRvwFrq", "nextGrcPftRvwDate", "grcCpzFrq", "nextGrcCpzDate", "allowGrcRepay", "grcSchdMthd",
-		"grcMinRate", "grcMaxRate", "grcMaxAmount", "grcAdvPftRate", "grcAdvBaseRate", "grcAdvMargin", "numberOfTerms",
-		"reqRepayAmount", "repayRateBasis", "repayProfitRate", "repayBaseRate", "repaySpecialRate", "repayMargin",
-		"scheduleMethod", "repayFrq", "nextRepayDate", "repayPftFrq", "nextRepayPftDate", "repayRvwFrq",
-		"nextRepayRvwDate", "repayCpzFrq", "nextRepayCpzDate", "maturityDate", "finRepayPftOnFrq", "rpyMinRate",
-		"rpyMaxRate", "rpyAdvPftRate", "rpyAdvBaseRate", "rpyAdvMargin", "supplementRent", "increasedCost",
-		"rolloverFrq", "nextRolloverDate", "finContractDate", "finPurpose", "finLimitRef", "finCommitmentRef",
-		"repayAccountId", "depreciationFrq", "dsaCode", "accountsOfficer", "salesDepartment", "dmaCode", "referralId",
-		"employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi",
-		"maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHAlwInGrace",
-		"planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate",
-		"lastDisbDate", "stage", "status", "product", "advTerms", "closedDate", "fixedRateTenor", "fixedTenorRate",
-		"eligibilityMethod", "connector", "legalRequired" })
+		"grcMinRate", "grcMaxRate", "grcMaxAmount", "numberOfTerms", "reqRepayAmount", "repayRateBasis",
+		"repayProfitRate", "repayBaseRate", "repaySpecialRate", "repayMargin", "scheduleMethod", "repayFrq",
+		"nextRepayDate", "repayPftFrq", "nextRepayPftDate", "repayRvwFrq", "nextRepayRvwDate", "repayCpzFrq",
+		"nextRepayCpzDate", "maturityDate", "finRepayPftOnFrq", "rpyMinRate", "nextRolloverDate", "finContractDate",
+		"finPurpose", "finLimitRef", "finCommitmentRef", "repayAccountId", "depreciationFrq", "dsaCode",
+		"accountsOfficer", "salesDepartment", "dmaCode", "referralId", "employeeName", "quickDisb",
+		"unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays", "alwBPI",
+		"bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHAlwInGrace", "planEMIHMethod", "planEMIHMaxPerYear",
+		"planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate", "lastDisbDate", "stage", "status",
+		"product", "advTerms", "closedDate", "fixedRateTenor", "fixedTenorRate", "eligibilityMethod", "connector",
+		"legalRequired" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -102,7 +101,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String finReference;
 
 	private String linkedFinRef;
-	private String investmentRef = "";
 	@XmlElement
 	private String finType;
 	private String lovDescFinTypeName;
@@ -159,8 +157,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String finRemarks;
 	private long initiateUser;
 	private Date initiateDate;
-	private long mMAId;
-	private String agreeName;
 	private boolean finIsAlwMD;
 	@XmlElement
 	private long accountsOfficer;
@@ -177,7 +173,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date lovDescCustDOB;
 	private String lovDescRequestStage;
 	private String lovDescQueuePriority;
-	private String lovDescMMAReference;
 	@XmlElement(name = "tdsApplicable")
 	private boolean tDSApplicable;
 	@XmlElement
@@ -207,12 +202,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private boolean alwManualSteps;
 	private int noOfSteps = 0;
-	private boolean shariaApprovalReq;
-	private String shariaStatus;
 	private String rejectStatus;
 	private String rejectReason;
-	private boolean isPaymentToBank;
-	private boolean isPayToDevSelCust;
 	private boolean scheduleChange;
 
 	private BigDecimal adjOrgBal = BigDecimal.ZERO;
@@ -232,7 +223,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String applicationNo;
 	private String swiftBranchCode;
-	private String finBranchContact;
 
 	private boolean allowDrawingPower;
 	private boolean allowRevolving;
@@ -285,14 +275,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal grcMaxAmount = BigDecimal.ZERO;
 	private boolean grcFrqEditable;
 
-	// Advised profit Rates
-	@XmlElement
-	private String grcAdvBaseRate;
-	@XmlElement
-	private BigDecimal grcAdvMargin = BigDecimal.ZERO;
-	@XmlElement
-	private BigDecimal grcAdvPftRate = BigDecimal.ZERO;
-
 	// ===========================================
 	// ==========Repay Period Details=============
 	// ===========================================
@@ -342,24 +324,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement(name = "repayMaxRate")
 	private BigDecimal rpyMaxRate = BigDecimal.ZERO;
 
-	@XmlElement(name = "repayAdvBaseRate")
-	private String rpyAdvBaseRate;
-	@XmlElement(name = "repayAdvMargin")
-	private BigDecimal rpyAdvMargin = BigDecimal.ZERO;
-	@XmlElement(name = "repayAdvPftRate")
-	private BigDecimal rpyAdvPftRate = BigDecimal.ZERO;
-	@XmlElement
-	private BigDecimal supplementRent = BigDecimal.ZERO;
-	@XmlElement
-	private BigDecimal increasedCost = BigDecimal.ZERO;
-	private BigDecimal curSuplRent = BigDecimal.ZERO;
-	private BigDecimal curIncrCost = BigDecimal.ZERO;
 	private boolean frqEditable = false;
-
-	@XmlElement
-	private String rolloverFrq;
-	@XmlElement
-	private Date nextRolloverDate;
 
 	//PV: 10MAY17: remove from exlcuded fields
 	private String calRoundingMode;
@@ -506,7 +471,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	private boolean lovDescIsSchdGenerated = false;
 	private String lovDescProductCodeName;
-	private BigDecimal availCommitAmount = BigDecimal.ZERO;
 	private long jointCustId;
 	private String lovDescJointCustCIF;
 	private String lovDescJointCustShrtName;
@@ -537,14 +501,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal amountBD = BigDecimal.ZERO;
 	private BigDecimal amountUSD = BigDecimal.ZERO;
 	private BigDecimal maturity = BigDecimal.ZERO;
-	private boolean fundsAvailConfirmed;
-	private boolean policeCaseFound = false;
-	private boolean policeCaseOverride = false;
 	private boolean chequeFound = false;
 	private boolean chequeOverride = false;
 	private BigDecimal score = BigDecimal.ZERO;
 	private boolean smecustomer = false;
-	private boolean cadrequired = false;
 	private boolean feeExists = false;
 	private String receiptMode;
 	private String receiptModeStatus;
@@ -572,16 +532,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String lovDescAssignMthd;
 	private Map<String, String> lovDescBaseRoleCodeMap = null;
 	private String lovDescFirstTaskOwner;
-
-	// ===========================================
-	// =========DDA Registration Fields==========
-	// ===========================================
-
-	private String bankName;
-	private String bankNameDesc;
-	private String iban;
-	private String accountType;
-	private String ddaReferenceNo;
 
 	// ===========================================
 	// =========Schedule Calculator Purpose ======
@@ -808,32 +758,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("amountBD");
 		excludeFields.add("maturity");
 		excludeFields.add("amountUSD");
-		excludeFields.add("availCommitAmount");
 		excludeFields.add("name");
-		excludeFields.add("fundsAvailConfirmed");
 		excludeFields.add("pftIntact");
 		excludeFields.add("adjTerms");
 		excludeFields.add("blacklistOverride");
-		excludeFields.add("policeCaseFound");
-		excludeFields.add("policeCaseOverride");
 		excludeFields.add("score");
 		excludeFields.add("chequeFound");
 		excludeFields.add("chequeOverride");
 		excludeFields.add("curFinAmount");
 		excludeFields.add("financingAmount");
 		excludeFields.add("smecustomer");
-		excludeFields.add("cadrequired");
-		excludeFields.add("grcAdvBaseRateDesc");
-		excludeFields.add("rpyAdvBaseRateDesc");
 		excludeFields.add("bankNameDesc");
 		excludeFields.add("mMADate");
 		excludeFields.add("custStsDescription");
-		excludeFields.add("shariaApprovalReq");
 		excludeFields.add("rejectStatus");
 		excludeFields.add("rejectReason");
 		excludeFields.add("feeExists");
-		excludeFields.add("isPaymentToBank");
-		excludeFields.add("isPayToDevSelCust");
 		excludeFields.add("totalPriAmt");
 		excludeFields.add("desiredProfit");
 		excludeFields.add("pftForSelectedPeriod");
@@ -855,17 +795,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("recalEndDate");
 		excludeFields.add("procMethod");
 		excludeFields.add("secondaryAccount");
-		excludeFields.add("agreeName");
 		excludeFields.add("finIsAlwMD");
 		excludeFields.add("dsaCodeDesc");
 		excludeFields.add("dsaName");
 		excludeFields.add("finWriteoffAc");
-		excludeFields.add("lovDecMMAReference");
 		excludeFields.add("numOfMonths");
 		excludeFields.add("ifscCode");
 		excludeFields.add("refundAmount");
-		excludeFields.add("curSuplRent");
-		excludeFields.add("curIncrCost");
 		excludeFields.add("schPriDue");
 		excludeFields.add("schPftDue");
 		excludeFields.add("preApprovalFinance");
@@ -885,7 +821,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("calGrcTerms");
 		excludeFields.add("calGrcEndDate");
 		excludeFields.add("tDSAmount");
-
+		excludeFields.add("availcommitamount");
 		excludeFields.add("nextRoleCodeDesc");
 		excludeFields.add("secUsrFullName");
 		excludeFields.add("workFlowType");
@@ -948,7 +884,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("repayAmount");
 		excludeFields.add("entityDesc");
 		excludeFields.add("entityCode");
-		excludeFields.add("finBranchContact");
 		excludeFields.add("nextUsrName");
 
 		//Payment type check
@@ -2231,14 +2166,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.approved = approved;
 	}
 
-	public void setAvailCommitAmount(BigDecimal availCommitAmount) {
-		this.availCommitAmount = availCommitAmount;
-	}
-
-	public BigDecimal getAvailCommitAmount() {
-		return availCommitAmount;
-	}
-
 	public BigDecimal getSecurityDeposit() {
 		return securityDeposit;
 	}
@@ -2255,28 +2182,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.deductFeeDisb = deductFeeDisb;
 	}
 
-	public boolean isFundsAvailConfirmed() {
-		return fundsAvailConfirmed;
-	}
-
-	public void setFundsAvailConfirmed(boolean fundsAvailConfirmed) {
-		this.fundsAvailConfirmed = fundsAvailConfirmed;
-	}
-
 	public void setLovDescCustCoreBank(String lovDescCustCoreBank) {
 		this.lovDescCustCoreBank = lovDescCustCoreBank;
 	}
 
 	public String getLovDescCustCoreBank() {
 		return lovDescCustCoreBank;
-	}
-
-	public String getInvestmentRef() {
-		return investmentRef;
-	}
-
-	public void setInvestmentRef(String investmentRef) {
-		this.investmentRef = investmentRef;
 	}
 
 	public int getGraceTerms() {
@@ -2359,44 +2270,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.noOfSteps = noOfSteps;
 	}
 
-	public boolean isShariaApprovalReq() {
-		return shariaApprovalReq;
-	}
-
-	public void setShariaApprovalReq(boolean shariaApprovalReq) {
-		this.shariaApprovalReq = shariaApprovalReq;
-	}
-
-	public String getShariaStatus() {
-		return shariaStatus;
-	}
-
-	public void setShariaStatus(String shariaStatus) {
-		this.shariaStatus = shariaStatus;
-	}
-
 	public boolean isPftIntact() {
 		return pftIntact;
 	}
 
 	public void setPftIntact(boolean pftIntact) {
 		this.pftIntact = pftIntact;
-	}
-
-	public boolean isPaymentToBank() {
-		return isPaymentToBank;
-	}
-
-	public void setPaymentToBank(boolean isPaymentToBank) {
-		this.isPaymentToBank = isPaymentToBank;
-	}
-
-	public boolean isPayToDevSelCust() {
-		return isPayToDevSelCust;
-	}
-
-	public void setPayToDevSelCust(boolean isPayToDevSelCust) {
-		this.isPayToDevSelCust = isPayToDevSelCust;
 	}
 
 	public int getAdjTerms() {
@@ -2551,22 +2430,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.lovDescNextUsersRolesMap = lovDescNextUsersRolesMap;
 	}
 
-	public boolean isPoliceCaseFound() {
-		return policeCaseFound;
-	}
-
-	public void setPoliceCaseFound(boolean policeCaseFound) {
-		this.policeCaseFound = policeCaseFound;
-	}
-
-	public boolean isPoliceCaseOverride() {
-		return policeCaseOverride;
-	}
-
-	public void setPoliceCaseOverride(boolean policeCaseOverride) {
-		this.policeCaseOverride = policeCaseOverride;
-	}
-
 	public BigDecimal getScore() {
 		return score;
 	}
@@ -2581,14 +2444,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setSmecustomer(boolean smecustomer) {
 		this.smecustomer = smecustomer;
-	}
-
-	public boolean isCadrequired() {
-		return cadrequired;
-	}
-
-	public void setCadrequired(boolean cadrequired) {
-		this.cadrequired = cadrequired;
 	}
 
 	public String getLovDescAssignMthd() {
@@ -2687,132 +2542,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.financingAmount = financingAmount;
 	}
 
-	public String getGrcAdvBaseRate() {
-		return grcAdvBaseRate;
-	}
-
-	public void setGrcAdvBaseRate(String grcAdvBaseRate) {
-		this.grcAdvBaseRate = grcAdvBaseRate;
-	}
-
-	public BigDecimal getGrcAdvMargin() {
-		return grcAdvMargin;
-	}
-
-	public void setGrcAdvMargin(BigDecimal grcAdvMargin) {
-		this.grcAdvMargin = grcAdvMargin;
-	}
-
-	public BigDecimal getGrcAdvPftRate() {
-		return grcAdvPftRate;
-	}
-
-	public void setGrcAdvPftRate(BigDecimal grcAdvPftRate) {
-		this.grcAdvPftRate = grcAdvPftRate;
-	}
-
-	public String getRpyAdvBaseRate() {
-		return rpyAdvBaseRate;
-	}
-
-	public void setRpyAdvBaseRate(String rpyAdvBaseRate) {
-		this.rpyAdvBaseRate = rpyAdvBaseRate;
-	}
-
-	public BigDecimal getRpyAdvMargin() {
-		return rpyAdvMargin;
-	}
-
-	public void setRpyAdvMargin(BigDecimal rpyAdvMargin) {
-		this.rpyAdvMargin = rpyAdvMargin;
-	}
-
-	public BigDecimal getRpyAdvPftRate() {
-		return rpyAdvPftRate;
-	}
-
-	public void setRpyAdvPftRate(BigDecimal rpyAdvPftRate) {
-		this.rpyAdvPftRate = rpyAdvPftRate;
-	}
-
-	public BigDecimal getSupplementRent() {
-		return supplementRent;
-	}
-
-	public void setSupplementRent(BigDecimal supplementRent) {
-		this.supplementRent = supplementRent;
-	}
-
-	public BigDecimal getIncreasedCost() {
-		return increasedCost;
-	}
-
-	public void setIncreasedCost(BigDecimal increasedCost) {
-		this.increasedCost = increasedCost;
-	}
-
-	public String getRolloverFrq() {
-		return rolloverFrq;
-	}
-
-	public void setRolloverFrq(String rolloverFrq) {
-		this.rolloverFrq = rolloverFrq;
-	}
-
-	public Date getNextRolloverDate() {
-		return nextRolloverDate;
-	}
-
-	public void setNextRolloverDate(Date nextRolloverDate) {
-		this.nextRolloverDate = nextRolloverDate;
-	}
-
 	public long getInitiateUser() {
 		return initiateUser;
 	}
 
 	public void setInitiateUser(long initiateUser) {
 		this.initiateUser = initiateUser;
-	}
-
-	public String getBankName() {
-		return bankName;
-	}
-
-	public void setBankName(String bankName) {
-		this.bankName = bankName;
-	}
-
-	public String getIban() {
-		return iban;
-	}
-
-	public void setIban(String iban) {
-		this.iban = iban;
-	}
-
-	public String getAccountType() {
-		return accountType;
-	}
-
-	public void setAccountType(String accountType) {
-		this.accountType = accountType;
-	}
-
-	public String getDdaReferenceNo() {
-		return ddaReferenceNo;
-	}
-
-	public void setDdaReferenceNo(String ddaReferenceNo) {
-		this.ddaReferenceNo = ddaReferenceNo;
-	}
-
-	public String getBankNameDesc() {
-		return bankNameDesc;
-	}
-
-	public void setBankNameDesc(String bankNameDesc) {
-		this.bankNameDesc = bankNameDesc;
 	}
 
 	public String getCustStsDescription() {
@@ -2999,14 +2734,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.secondaryAccount = secondaryAccount;
 	}
 
-	public String getAgreeName() {
-		return agreeName;
-	}
-
-	public void setAgreeName(String agreeName) {
-		this.agreeName = agreeName;
-	}
-
 	public String getFinCancelAc() {
 		return finCancelAc;
 	}
@@ -3023,28 +2750,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.lovDescAccountsOfficer = lovDescAccountsOfficer;
 	}
 
-	public long getMMAId() {
-		return mMAId;
-	}
-
-	public void setMMAId(long mMAId) {
-		this.mMAId = mMAId;
-	}
-
 	public String getFinWriteoffAc() {
 		return finWriteoffAc;
 	}
 
 	public void setFinWriteoffAc(String finWriteoffAc) {
 		this.finWriteoffAc = finWriteoffAc;
-	}
-
-	public String getLovDescMMAReference() {
-		return lovDescMMAReference;
-	}
-
-	public void setLovDescMMAReference(String lovDescMMAReference) {
-		this.lovDescMMAReference = lovDescMMAReference;
 	}
 
 	public String getIfscCode() {
@@ -3093,22 +2804,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setRefundAmount(BigDecimal refundAmount) {
 		this.refundAmount = refundAmount;
-	}
-
-	public BigDecimal getCurSuplRent() {
-		return curSuplRent;
-	}
-
-	public void setCurSuplRent(BigDecimal curSuplRent) {
-		this.curSuplRent = curSuplRent;
-	}
-
-	public BigDecimal getCurIncrCost() {
-		return curIncrCost;
-	}
-
-	public void setCurIncrCost(BigDecimal curIncrCost) {
-		this.curIncrCost = curIncrCost;
 	}
 
 	public BigDecimal getSchPriDue() {
@@ -3325,14 +3020,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setApplicationNo(String applicationNo) {
 		this.applicationNo = applicationNo;
-	}
-
-	public long getmMAId() {
-		return mMAId;
-	}
-
-	public void setmMAId(long mMAId) {
-		this.mMAId = mMAId;
 	}
 
 	public boolean isFinIsAlwMD() {
@@ -4171,13 +3858,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	 * this.getClass().getDeclaredFields()[i].get(this)); } } catch (SecurityException | IllegalArgumentException |
 	 * IllegalAccessException e) { e.printStackTrace(); } } return financeMainmap; }
 	 */
-	public String getFinBranchContact() {
-		return finBranchContact;
-	}
-
-	public void setFinBranchContact(String finBranchContact) {
-		this.finBranchContact = finBranchContact;
-	}
 
 	public BigDecimal getRepayAmount() {
 		return repayAmount;

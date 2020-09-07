@@ -73,26 +73,12 @@
 										<decimalbox id="schdl_totalPft" width="150px" tabindex="-1" readonly="true"
 											style="border:none; background-color:white ;font-weight:bold;" />
 									</row>
-									<row id="row_istisna" visible="false" height="24px">
-										<label id="label_ScheduleDetailDialog_Graceprofit" />
-										<decimalbox id="schdl_Graceprofit" tabindex="-1" readonly="true" width="150px"
-											style="border:none; background-color:white ;font-weight:bold;" />
-										<label id="label_ScheduleDetailDialog_Repayprofit" />
-										<decimalbox id="schdl_Repayprofit" tabindex="-1" readonly="true" width="150px"
-											style="border:none; background-color:white ;font-weight:bold;" />
-									</row>
 									<row id="row_ContractPrice" height="24px">
 										<label id="label_ScheduleDetailDialog_ContractPrice" />
 										<decimalbox id="schdl_contractPrice" tabindex="-1" readonly="true" width="150px"
 											style="border:none; background-color:white ;font-weight:bold;" />
 										<label id="label_FinanceMainDialog_EffectiveRateOfReturn" />
 										<label id="effectiveRateOfReturn" style="font-weight:bold;color:#FF6600;" />
-									</row>
-									<row id="row_Musharak" visible="false" height="24px">
-										<label id="label_ScheduleDetailDialog_BankShare" />
-										<label id="schdl_BankShare" style="font-weight:bold;" />
-										<label id="label_ScheduleDetailDialog_NonBankShare" />
-										<label id="schdl_NonBankShare" style="font-weight:bold;" />
 									</row>
 								</rows>
 							</grid>
@@ -120,16 +106,11 @@
 											<listheader id="listheader_ScheduleDetailDialog_Date" hflex="min" value="" />
 											<listheader id="listheader_ScheduleDetailDialog_ScheduleEvent" hflex="min" />
 											<listheader id="listheader_ScheduleDetailDialog_CalProfit" hflex="min" align="right" />
-											<!-- <listheader id="listheader_ScheduleDetailDialog_SupplementRent" hflex="min" visible="false" align="right" 
-												/> <listheader id="listheader_ScheduleDetailDialog_IncreasedCost" hflex="min" visible="false" align="right" /> <listheader 
-												id="listheader_ScheduleDetailDialog_SchAdvProfit" hflex="min" visible="false" align="right" /> -->
 											<listheader id="listheader_ScheduleDetailDialog_SchFee" hflex="min" align="right" visible="false" />
 											<listheader id="listheader_ScheduleDetailDialog_TDSAmount" label="${c:l('listheader_TDSAmount.label')}"
 												hflex="min" align="right" visible="false" />
 											<listheader id="listheader_ScheduleDetailDialog_SchProfit" hflex="min" align="right" />
 											<listheader id="listheader_ScheduleDetailDialog_Principal" hflex="min" align="right" />
-											<!-- <listheader id="listheader_ScheduleDetailDialog_AdvTotal" hflex="min" visible="false" align="right" /> <listheader 
-												id="listheader_ScheduleDetailDialog_Rebate" hflex="min" visible="false" align="right" /> -->
 											<listheader id="listheader_ScheduleDetailDialog_Total" hflex="min" align="right" />
 											<!-- <listheader id="listheader_ScheduleDetailDialog_MultipleDisbursment" hflex="min" visible ="false"/> -->
 											<listheader id="listheader_ScheduleDetailDialog_ScheduleEndBal" hflex="min" align="right" />

@@ -16,8 +16,6 @@ import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
-import com.pennant.backend.model.finance.FinInsurances;
-import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -90,11 +88,6 @@ public class InstallmentDueService extends ServiceHelper {
 			finEODEvent.setFinFeeScheduleDetails(finFeeScheduleDetailDAO.getFeeSchdTPost(finReference, valueDate));
 		}
 
-		dueAmount = curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid());
-		if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
-			finEODEvent.setFinSchFrqInsurances(finInsurancesDAO.getInsSchdToPost(finReference, valueDate));
-		}
-
 		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, profiDetails, finEODEvent.getFinanceScheduleDetails(),
 				AccountEventConstants.ACCEVENT_INSTDATE, valueDate, curSchd.getSchDate());
@@ -138,16 +131,6 @@ public class InstallmentDueService extends ServiceHelper {
 				dataMap.put(feeSchd.getFeeTypeCode() + "_SCH", feeSchd.getSchAmount());
 				dataMap.put(feeSchd.getFeeTypeCode() + "_P", feeSchd.getPaidAmount());
 				dataMap.put(feeSchd.getFeeTypeCode() + "_W", feeSchd.getWaiverAmount());
-			}
-		}
-
-		List<FinSchFrqInsurance> finInsList = finEODEvent.getFinSchFrqInsurances();
-		if (finInsList != null && !finInsList.isEmpty()) {
-			for (FinSchFrqInsurance insschd : finInsList) {
-				//"_C" Should be there to post then amount
-				dataMap.put(insschd.getInsuranceType() + "_C", insschd.getAmount());
-				dataMap.put(insschd.getInsuranceType() + "_SCH", insschd.getAmount());
-				dataMap.put(insschd.getInsuranceType() + "_P", insschd.getInsurancePaid());
 			}
 		}
 
@@ -303,18 +286,6 @@ public class InstallmentDueService extends ServiceHelper {
 			}
 		}
 
-		//prepare schedule based insurance
-		List<FinInsurances> totIns = financeDetail.getFinScheduleData().getFinInsuranceList();
-		List<FinSchFrqInsurance> totfinschIns = new ArrayList<FinSchFrqInsurance>();
-		if (totIns != null && !totIns.isEmpty()) {
-			for (FinInsurances finInsurances : totIns) {
-				for (FinSchFrqInsurance finSchFrqInsurance : finInsurances.getFinSchFrqInsurances()) {
-					finSchFrqInsurance.setInsuranceType(finInsurances.getInsuranceType());
-					totfinschIns.add(finSchFrqInsurance);
-				}
-			}
-		}
-
 		//check the schedule is back dated or not if yes then post them
 		for (FinanceScheduleDetail financeScheduleDetail : list) {
 
@@ -338,7 +309,6 @@ public class InstallmentDueService extends ServiceHelper {
 			}
 
 			List<FinFeeScheduleDetail> feelist = new ArrayList<FinFeeScheduleDetail>();
-			List<FinSchFrqInsurance> finInsList = new ArrayList<FinSchFrqInsurance>();
 
 			dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
 
@@ -347,15 +317,6 @@ public class InstallmentDueService extends ServiceHelper {
 				for (FinFeeScheduleDetail finFeeScheduleDetail : finFeeSchdDet) {
 					if (finFeeScheduleDetail.getSchDate().compareTo(curSchd.getSchDate()) == 0) {
 						feelist.add(finFeeScheduleDetail);
-					}
-				}
-			}
-
-			dueAmount = curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid());
-			if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
-				for (FinSchFrqInsurance finSchFrqInsurance : totfinschIns) {
-					if (finSchFrqInsurance.getInsSchDate().compareTo(curSchd.getSchDate()) == 0) {
-						finInsList.add(finSchFrqInsurance);
 					}
 				}
 			}
@@ -395,15 +356,6 @@ public class InstallmentDueService extends ServiceHelper {
 					dataMap.put(feeSchd.getFeeTypeCode() + "_SCH", feeSchd.getSchAmount());
 					dataMap.put(feeSchd.getFeeTypeCode() + "_P", feeSchd.getPaidAmount());
 					dataMap.put(feeSchd.getFeeTypeCode() + "_W", feeSchd.getWaiverAmount());
-				}
-			}
-
-			if (finInsList != null && !finInsList.isEmpty()) {
-				for (FinSchFrqInsurance insschd : finInsList) {
-					//"_C" Should be there to post then amount
-					dataMap.put(insschd.getInsuranceType() + "_C", insschd.getAmount());
-					dataMap.put(insschd.getInsuranceType() + "_SCH", insschd.getAmount());
-					dataMap.put(insschd.getInsuranceType() + "_P", insschd.getInsurancePaid());
 				}
 			}
 

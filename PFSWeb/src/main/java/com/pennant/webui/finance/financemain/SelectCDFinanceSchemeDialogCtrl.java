@@ -114,7 +114,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.component.Uppercasebox;
-import com.pennant.constants.InterfaceConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -978,7 +977,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 							throw new InterfaceException("9999", "Customer Not found.");
 						}
 					} else {
-						throw new InterfaceException(InterfaceConstants.CUST_NOT_FOUND, "Customer Not found.");
+						throw new InterfaceException("----", "Customer Not found.");
 					}
 				}
 
@@ -987,7 +986,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 			}
 
 		} catch (InterfaceException pfe) {
-			if (StringUtils.equals(pfe.getErrorCode(), InterfaceConstants.CUST_NOT_FOUND)) {
+			if (StringUtils.equals(pfe.getErrorCode(), "----")) {
 				if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 					int conf = MessageUtil.confirm(Labels.getLabel("Cust_NotFound_NewCustomer"));
 

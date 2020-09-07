@@ -63,7 +63,6 @@ public class PathUtil {
 
 	// Agreement Detail Paths
 	public static final String FINANCE_AGREEMENTS = "Agreements";
-	public static final String MMA_AGREEMENTS = "Agreements/MMAgreements";
 	public static final String FINANCE_INTERESTCERTIFICATE = "/Agreements/InterestCertificate";
 	public static final String FINANCE_LOANCLOSURE = "Agreements/LoanClosureLetter";
 

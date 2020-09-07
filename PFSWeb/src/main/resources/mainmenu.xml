@@ -224,8 +224,8 @@
 				rightName="menuItem_ApplicationMaster_ExpenseType" />
 			<menuItem id="menu_Item_FeeType" zulNavigation="/WEB-INF/pages/FeeType/FeeType/FeeTypeList.zul" rightName="menuItem_FeeType_FeeType" />
 			<menuItem id="menu_Item_Flag" zulNavigation="/WEB-INF/pages/ApplicationMaster/Flag/FlagList.zul" rightName="menuItem_ApplicationMaster_Flags" />
-			<menuItem id="menu_Item_InsuranceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeList.zul"
-				rightName="menuItem_applicationmasters_InsuranceType" />
+			<!-- <menuItem id="menu_Item_InsuranceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeList.zul"
+				rightName="menuItem_applicationmasters_InsuranceType" /> -->
 			<!-- <menuItem id="menu_Item_MandateCheckDigit" zulNavigation="/WEB-INF/pages/ApplicationMaster/MandateCheckDigit/MandateCheckDigitList.zul" 
 				rightName="menuItem_ApplicationMaster_MandateCheckDigit" /> -->
 			<menuItem id="menu_Item_TaxDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailList.zul"
@@ -283,8 +283,6 @@
 				rightName="menuItem_RulesFactory_CustDedupParm" />
 			<menuItem id="menu_Item_BlackListDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/BlackListDedupParmList.zul"
 				rightName="menuItem_RulesFactory_BlackListDedupParm" />
-			<menuItem id="menu_Item_PoliceDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/PoliceDedupParmList.zul"
-				rightName="menuItem_RulesFactory_PoliceDedupParm" />
 			<menuItem id="menu_Item_LoanDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/LoanDedupParmList.zul"
 				rightName="menuItem_RulesFactory_LoanDedupParm" />
 			<menuItem id="menu_Item_CollateralDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/CollateralDedupParmList.zul"
@@ -697,8 +695,6 @@
 				rightName="menuItem_FinanceManagement_ReSchedule" />
 			<menuItem id="menu_Item_UnPlannedEmi" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 				rightName="menuItem_FinanceManagement_UnPlannedEmi" />
-			<!-- <menuItem id="menu_Item_IjaraBulkRate" zulNavigation="/WEB-INF/pages/FinanceManagement/BulkRateChange/BulkRateChangeList.zul" 
-				rightName="menuItem_FinanceManagement_BulkRateChange" /> -->
 			<menuItem id="menu_Item_FeeWaivers" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 				rightName="menu_Item_FeeWaiverHeader" />
 		</menu>
@@ -1487,8 +1483,6 @@
 			" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_AccountMappingEnquiry"/> -->
 		<!-- <menuItem id="menu_Item_FinanceApplicationCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceApplicationCode/FinanceApplicationCodeList.zul" 
 			rightName="menuItem_ApplicationMaster_FinanceApplicationCode"/> -->
-		<!-- <menuItem id="menu_Item_CommodityBrokerDetail" zulNavigation="/WEB-INF/pages/Finance/Commodity/CommodityBrokerDetail/CommodityBrokerDetailList.zul" 
-			rightName="menuItem_ApplicationMaster_CommodityBrokerDetail" /> -->
 		<!-- <menuItem id="menu_Item_CommodityDetail" zulNavigation="/WEB-INF/pages/Finance/Commodity/CommodityDetail/CommodityDetailList.zul" 
 			rightName="menuItem_ApplicationMaster_CommodityDetail" /> -->
 		<!-- <menuItem id="menu_Item_CorpRelationCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/CorpRelationCode/CorpRelationCodeList.zul" 
@@ -1499,8 +1493,6 @@
 			rightName="menuItem_ApplicationMaster_CustomerNotesType" /> -->
 		<!-- <menuItem id="menu_Item_InterestRateType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InterestRateType/InterestRateTypeList.zul" 
 			rightName="menuItem_ApplicationMaster_InterestRateType"/> -->
-		<!-- <menuItem id="menu_Item_PoliceCaseCustomers" zulNavigation="/WEB-INF/pages/ApplicationMaster/PoliceCase/PoliceCaseList.zul" 
-			rightName="menuItem_ApplicationMaster_PoliceCaseCustomers" /> -->
 		<!-- <menuItem id="menu_Item_PresentmentReasonCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PresentmentReasonCode/PresentmentReasonCodeList.zul" 
 			rightName="menuItem_PresentmentReasonCode_PresentmentReasonCode" /> -->
 		<!-- <menuItem id="menu_Item_ReturnedCheque" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReturnedCheques/ReturnedChequeList.zul" 
@@ -1511,12 +1503,6 @@
 			/> -->
 		<!-- <menuItem id="menu_Item_SplRateCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/SplRateCode/SplRateCodeList.zul" 
 			rightName="menuItem_ApplicationMaster_SplRateCode" /> -->
-		<!-- <menuItem id="menu_Item_CommodityInventory" zulNavigation="/WEB-INF/pages/Commodity/CommodityInventory/CommodityInventoryList.zul" 
-			rightName="menuItem_Commodity_CommodityInventory" /> -->
-		<!-- <menuItem id="menu_Item_SukukBond" zulNavigation="/WEB-INF/pages/ApplicationMaster/SukukBond/SukukBondList.zul" rightName="menuItem_ApplicationMasters_SukukBond" 
-			/> -->
-		<!-- <menuItem id="menu_Item_SukukBroker" zulNavigation="/WEB-INF/pages/ApplicationMaster/SukukBroker/SukukBrokerList.zul" 
-			rightName="menuItem_ApplicationMasters_SukukBroker" /> -->
 		<!-- <menuItem id="menu_Item_TakafulProvider" zulNavigation="/WEB-INF/pages/ApplicationMaster/TakafulProvider/TakafulProviderList.zul" 
 			rightName="menuItem_ApplicationMaster_TakafulProvider"/> -->
 		<!-- <menuItem id="menu_Item_InsuranceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeList.zul" 
@@ -1610,8 +1596,6 @@
 	<!-- Customers -->
 	<!-- <menuItem id="menu_Item_ProspectCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/ProspectCustomer/ProspectCustomerDialog.zul" 
 		rightName="menuItem_CustomerMasters_ProspectCustomer" /> -->
-	<menuItem id="menu_Item_UpdateCoreCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/UpdateCoreCustomer/UpdateCoreCustomerDialog.zul"
-		rightName="menuItem_CustomerMasters_UpdateCoreCustomer" />
 	<!-- <menuItem id="menu_Item_MandateStatusUpdate" zulNavigation="/WEB-INF/pages/Mandate/MandateFileUploadList.zul" rightName="menuItem_MandateFileUpload"/> -->
 	<!-- <menuItem id="menu_Item_CustomerAddres" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresList.zul" 
 		rightName="menuItem_CustomerMasters_CustomerAddres" /> -->
@@ -1641,21 +1625,14 @@
 		rightName="menuItem_CustomerMasters_CustomerRating" /> -->
 
 	<!-- Loan Origination -->
-	<!-- <menuItem id="menu_Item_DealFinance" zulNavigation="/WEB-INF/pages/Finance/TreasuaryFinance/DealFinanceList.zul" rightName="menuItem_Finance_InvestmentFinanceDeals"/> -->
 	<!-- <menuItem id="menu_Item_FinancePreApproval" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinancePreApprovalList.zul?requestSource=PreApproval" 
 		rightName="menuItem_Finance_FinancePreApproval" /> -->
-	<!-- <menuItem id="menu_Item_NewTreasuaryFinance" zulNavigation="/WEB-INF/pages/Finance/TreasuaryFinance/TreasuaryFinHeaderList.zul" 
-		rightName="menuItem_Finance_InvestmentFinance" /> -->
 	<!-- <menuItem id="menu_Item_ManualAssignment" zulNavigation="/WEB-INF/pages/Finance/QueueAssignment/ManualAssignmentList.zul" 
 		rightName="menuItem_Assignment" /> -->
 	<!-- <menuItem id="menu_Item_QDEFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/QDEFinanceMainList.zul?requestSource=QDE" 
 		rightName="menuItem_Finance_QDEFinanceMain" /> -->
 	<!-- <menuItem id="menu_Item_PaymentOrderAuth" zulNavigation="/WEB-INF/pages/Finance/PaymentOrderAuth/PaymentOrderAuthList.zul" 
 		rightName="menu_Item_PaymentOrderAuth" /> -->
-	<!-- <menuItem id="menu_Item_MMAgreementsGen" zulNavigation="/WEB-INF/pages/ApplicationMaster/MMAgreements/MMAgreementsList.zul" 
-		rightName="menu_Item_MMAgreements" /> -->
-	<!-- <menuItem id="menu_Item_AgreementGeneration" zulNavigation="/WEB-INF/pages/Reports/AgreementGenerationDialog.zul" rightName="menu_Item_AgreementGeneration" 
-		/> -->
 	<!-- <menuItem id="menu_Item_ExtFinance" zulNavigation="/WEB-INF/pages/Finance/ExternalFinance/ExtFinanceUploadDialog.zul" 
 		/> -->
 	<!-- <menuItem id="menu_Item_ExtFinanceLimit" zulNavigation="/WEB-INF/pages/Finance/ExternalFinance/ExtFinanceLimitUploadDialog.zul" 
@@ -1663,7 +1640,6 @@
 
 	<!-- Loan Management -->
 	<!-- <menuItem id="menu_Item_DatedSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_DatedSchedule"/> -->
-	<!-- <menuItem id="menu_Item_AdvPftRateChange" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_AdvPftRateChange"/> -->
 	<!-- <menuItem id="menu_Item_BulkDeferment" zulNavigation="/WEB-INF/pages/FinanceManagement/BulkDefermentChange/BulkDefermentChangeList.zul" 
 		rightName="menuItem_FinanceManagement_BulkDefermentChange"/> -->
 	<menuItem id="menu_Item_ChangeProfit" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
@@ -1696,21 +1672,15 @@
 		rightName="menuItem_FinanceManagement_CoreProvision" />
 	<menuItem id="menu_Item_CancelRepay" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 		rightName="menuItem_FinanceManagement_RepayCancel" />
-	<!-- <menuItem id="menu_Item_RolloverFinance" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_RolloverFinance"/> -->
 	<!-- <menuItem id="menu_Item_SchdRepayment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_SchdlRepayment" 
 		/> -->
-	<!-- <menuItem id="menu_Item_SuplRentIncrCost" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_SuplRentIncrCost"/> -->
 	<!-- <menuItem id="menu_Item_InsClaim" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul" 
 		rightName="menuItem_FinanceManagement_TakafulClaim"/> -->
 	<!-- <menuItem id="menu_Item_InsChange" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_TakafulRate"/> -->
 	<!-- <menuItem id="menu_Item_TimelyClosure" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul" 
 		rightName="menuItem_FinanceManagement_TimelyClosure"/> -->
-	<!-- <menuItem id="menu_Item_TakafulPremiumExclude" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-		rightName="menuItem_FinanceManagement_TakafulPremiumExclude"/> -->
 	<!-- <menuItem id="menu_Item_RlsHoldDisbursment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_RlsHoldDisbursment"/> -->
 	<!-- <menuItem id="menu_Item_SubSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_SubSchedule"/> -->
-	<!-- <menuItem id="menu_Item_FairValueRevaluation" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" 
-		rightName="menuItem_FinanceManagement_FairValueRevaluation"/> -->
 
 	<!-- Misc... -->
 	<!-- <menu id="menu_Category_Facility" rightName="menuCat_Facility"> <menuItem id="menu_Item_Facility_CORP" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityCorpList.zul" 
@@ -1770,8 +1740,6 @@
 		rightName="menuItem_Enquiry_CustEligibility" /> -->
 	<!-- <menuItem id="menu_Item_PromotionPick" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/PromotionPickList.zul" 
 		rightName="menuItem_Enquiry_PromotionPick" /> -->
-	<!-- <menuItem id="menu_Item_CommodityInventoryEnquiry" zulNavigation="/WEB-INF/pages/Commodity/CommodityInventory/CommodityInventoryList.zul?enqiryModule=Y" 
-		rightName="menuItem_Commodity_CommodityInventoryEnquiry"/> -->
 	<!-- <menuItem id="menu_Item_DeviationEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DeviationEnquiryList.zul" 
 		rightName= "menuItem_Enquiry_DeviationEnquiry"/> -->
 	<!-- <menuItem id="menu_Item_DDAEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DDAEnquiryList.zul" rightName= 

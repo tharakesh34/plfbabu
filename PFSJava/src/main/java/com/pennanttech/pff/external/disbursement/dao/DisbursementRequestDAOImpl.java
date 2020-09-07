@@ -157,7 +157,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 							// default data
 							req.setPaymentDetail1(DISB_FI_EMAIL);
 							req.setHeaderId(requestData.getHeaderId());
-							req.setRespBatchId(new Long(0));
+							req.setRespBatchId(Long.valueOf(0));
 
 							long id = insertDisbursement(req);
 							req.setId(id);

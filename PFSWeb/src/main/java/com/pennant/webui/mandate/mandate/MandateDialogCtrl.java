@@ -1828,6 +1828,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		try {
 			if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
+				if(this.partnerBank.getObject() != null && this.partnerBank.getObject() != "" ) {
 				FinTypePartnerBank partBank = (FinTypePartnerBank) this.partnerBank.getObject();
 				if (partBank != null && partBank.getPartnerBankID() != 0) {
 					aMandate.setPartnerBankId(partBank.getPartnerBankID());
@@ -1836,6 +1837,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				} else {
 					aMandate.setPartnerBankId(0);
 				}
+			}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

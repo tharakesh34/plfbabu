@@ -43,6 +43,7 @@
 package com.pennant.webui.finance.additional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -241,7 +242,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.numberOfTerms.setMaxlength(3);
 		this.repayPftRate.setMaxlength(13);
 		this.repayPftRate.setFormat(PennantConstants.rateFormate9);
-		this.repayPftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.repayPftRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.repayPftRate.setScale(9);
 		this.grcPeriodEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextGrcRepayDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -362,11 +363,6 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		//ROI should be kept restricted. Disable the ROI field from re-schedulement screen.
 		//this.rate.setReadonly(true);
 		//this.repayPftRate.setReadonly(true);
-
-		if (StringUtils.equals(aFinSchData.getFinanceType().getFinCategory(), FinanceConstants.PRODUCT_QARDHASSAN)) {
-			this.row_Rate.setVisible(false);
-			this.row_PftIntact.setVisible(false);
-		}
 
 		this.repayFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
 		this.repayFrq.setValue(aFinanceMain.getRepayFrq());
@@ -617,21 +613,6 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 											new String[] {
 													Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"),
 													DateUtility.formatToLongDate(fromDate) }));
-						} else if (!financeMain.isNewRecord() && !StringUtils.trimToEmpty(financeMain.getRecordType())
-								.equals(PennantConstants.RECORD_TYPE_NEW)) {
-
-							if (StringUtils.trimToEmpty(getFinScheduleData().getFinanceType().getFinCategory())
-									.equals(FinanceConstants.PRODUCT_IJARAH)
-									|| StringUtils.trimToEmpty(getFinScheduleData().getFinanceType().getFinCategory())
-											.equals(FinanceConstants.PRODUCT_FWIJARAH)) {
-								Date curBussDate = DateUtility.getAppDate();
-								if (this.grcPeriodEndDate.getValue().compareTo(curBussDate) <= 0) {
-									throw new WrongValueException(this.grcPeriodEndDate,
-											Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL", new String[] {
-													Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"),
-													Labels.getLabel("label_ReScheduleDialog_CurBussDate.value") }));
-								}
-							}
 						}
 					}
 				}

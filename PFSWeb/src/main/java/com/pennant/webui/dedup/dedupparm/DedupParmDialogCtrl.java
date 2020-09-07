@@ -247,7 +247,6 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			if (arguments.containsKey("dedupParmListCtrl")) {
 				if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER)
 						|| moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
-						|| moduleName.equals(FinanceConstants.DEDUP_POLICE)
 						|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
 					this.rowCustCtgCode.setVisible(true);
 					this.row_Collateral.setVisible(false);
@@ -415,8 +414,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 */
 	public void doWriteBeanToComponents(DedupParm aDedupParm) {
 		logger.debug("Entering");
-		if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
-				|| moduleName.equals(FinanceConstants.DEDUP_POLICE)) {
+		if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)) {
 			fillComboBox(this.custCtgCode, aDedupParm.getQuerySubCode(), this.custCategoryList, "");
 		} else if (moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
 			custCategoryList = PennantStaticListUtil.getLimitCategories();
@@ -453,7 +451,6 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		try {
 			if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER)
 					|| moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
-					|| moduleName.equals(FinanceConstants.DEDUP_POLICE)
 					|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
 				if (!this.custCtgCode.isDisabled() && this.custCtgCode.getSelectedIndex() < 1) {
 					this.sQLQuery.setValue("");
@@ -581,8 +578,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			}
 
 			if (StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_CUSTOMER)
-					|| StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_BLACKLIST)
-					|| StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_POLICE)) {
+					|| StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_BLACKLIST)) {
 				if (!aDedupParm.isNewRecord()) {
 					objectFieldList = (List<BuilderTable>) getDedupFieldsService().getFieldList(
 							this.custCtgCode.getSelectedItem().getValue().toString() + aDedupParm.getQueryModule());
@@ -1351,7 +1347,6 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		}
 		String resultQuery = "";
 		if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
-				|| moduleName.equals(FinanceConstants.DEDUP_POLICE)
 				|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
 			resultQuery = "select " + PennantConstants.CUST_DEDUP_LIST_FIELDS + " from CustomersDedup_View";
 			if (!this.custCtgCode.isDisabled() && this.custCtgCode.getSelectedIndex() < 1) {
@@ -1374,7 +1369,6 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		}
 
 		if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
-				|| moduleName.equals(FinanceConstants.DEDUP_POLICE)
 				|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
 			resultQuery = resultQuery + " and lovDescCustCtgType='"
 					+ this.custCtgCode.getSelectedItem().getValue().toString() + "'";

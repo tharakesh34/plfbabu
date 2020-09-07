@@ -200,7 +200,6 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param commodityHeader
 	 * 
 	 */
 	public void doWriteBeanToComponents() {

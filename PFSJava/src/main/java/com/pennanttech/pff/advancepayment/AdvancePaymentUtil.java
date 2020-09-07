@@ -722,7 +722,6 @@ public class AdvancePaymentUtil {
 		case FinanceConstants.FINSER_EVENT_ORG:
 		case FinanceConstants.FINSER_EVENT_ADDDISB:
 		case FinanceConstants.FINSER_EVENT_RATECHG:
-		case FinanceConstants.BULK_RATE_CHG:
 		case FinanceConstants.FINSER_EVENT_ADDTERM:
 		case FinanceConstants.FINSER_EVENT_RMVTERM:
 		case FinanceConstants.FINSER_EVENT_CANCELDISB:

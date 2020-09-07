@@ -259,12 +259,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "FinContributorDetailDialog");
 		}
 
-		// set Field Properties
-		doSetFieldProperties();
-		if (this.contributorDetailsDialogCtrl != null && this.contributorDetailsDialogCtrl.getFinanceDetail()
-				.getFinScheduleData().getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_MUSHARAKA)) {
-			dosetLabels();
-		}
 		doShowDialog(getFinContributorDetail());
 
 		//Calling SelectCtrl For proper selection of Customer
@@ -304,11 +298,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 			this.groupboxWf.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
-		}
-
-		if (this.contributorDetailsDialogCtrl != null && this.contributorDetailsDialogCtrl.getFinanceDetail()
-				.getFinScheduleData().getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_MUSHARAKA)) {
-			this.row_mudaribPerc.setVisible(false);
 		}
 
 		logger.debug("Leaving");

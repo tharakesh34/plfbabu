@@ -1172,43 +1172,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getGrcSchdMthd(),
 						PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,POSINT,");
 			}
-			if ((StringUtils.equalsIgnoreCase(getFinScheduleData().getFinanceType().getFinCategory(),
-					FinanceConstants.PRODUCT_IJARAH)
-					|| StringUtils.equalsIgnoreCase(getFinScheduleData().getFinanceType().getFinCategory(),
-							FinanceConstants.PRODUCT_FWIJARAH))
-					&& getFinScheduleData().getFinanceType().isFinIsAlwMD()
-					&& getFinScheduleData().getFinanceMain().isAllowGrcPeriod()) {
-
-				if (this.fromDate.getValue() != null) {
-					if (getFinScheduleData().getFinanceType().isFinIsAlwMD()) {
-
-						List<FinanceDisbursement> list = getFinScheduleData().getDisbursementDetails();
-						BigDecimal totDisbAmt = BigDecimal.ZERO;
-						for (FinanceDisbursement disbursement : list) {
-							totDisbAmt = totDisbAmt.add(disbursement.getDisbAmount());
-						}
-
-						grcEndDisbAmount = getFinScheduleData().getFinanceMain().getFinAssetValue()
-								.subtract(totDisbAmt);
-
-						if (grcEndDisbAmount.compareTo(BigDecimal.ZERO) > 0) {
-							this.row_assetUtilization.setVisible(false);
-						} else {
-							this.row_assetUtilization.setVisible(false);
-							this.alwAssetUtilize.setChecked(false);
-						}
-					} else {
-						this.row_assetUtilization.setVisible(false);
-						this.alwAssetUtilize.setChecked(false);
-					}
-				} else {
-					this.row_assetUtilization.setVisible(false);
-					this.alwAssetUtilize.setChecked(false);
-				}
-
-				//	fillSchDates(cbFromDate, getFinScheduleData());
-				//fillSchDates(cbTillDate, getFinScheduleData());
-			}
 
 		} else {
 			if (isOverDraft) {

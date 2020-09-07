@@ -43,6 +43,7 @@
 package com.pennant.webui.applicationmaster.splrate;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -184,7 +185,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 		this.sREffDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.sRRate.setMaxlength(13);
 		this.sRRate.setFormat(PennantConstants.rateFormate9);
-		this.sRRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.sRRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.sRRate.setScale(9);
 
 		this.sRType.setMandatoryStyle(true);

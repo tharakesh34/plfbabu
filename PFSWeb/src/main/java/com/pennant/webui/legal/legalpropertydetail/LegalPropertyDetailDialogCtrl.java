@@ -43,6 +43,7 @@
 package com.pennant.webui.legal.legalpropertydetail;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -227,7 +228,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 
 		this.measurement.setMaxlength(18);
 		this.measurement.setFormat(PennantConstants.rateFormate3);
-		this.measurement.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.measurement.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.measurement.setScale(3);
 
 		this.registrationOffice.setMaxlength(200);

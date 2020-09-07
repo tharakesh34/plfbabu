@@ -168,7 +168,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label custLngg;
 	protected Label custLnggDesc;
 	protected Label custDOBB;
-	protected Label custArabicName;
+	protected Label custLocalLngName;
 	protected Label custNationality;
 	protected Label custNationalitydesc;
 	protected Label custRO1;
@@ -213,7 +213,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label custBaseCcyDescc;
 	protected Label custTypeCodee;
 	protected Label custTypeCodeDescc;
-	protected Label custArabicNamee;
 	protected Label custNationalityy;
 	protected Label custNationalitydescc;
 	protected Label custROO1;
@@ -249,7 +248,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label recordStatus3;
 	protected Label recordType1;
 	protected Groupbox gb_information;
-	protected Space space_CustArabicName;
+	protected Space space_CustLocalLngName;
 	protected Checkbox salaryTransferred;
 	protected Image customerPic3;
 	protected Image leftBar;
@@ -643,10 +642,10 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				custSts.setStyle("color:orange;");
 				custSts.setValue("- - - - - - - - -");
 			}
-			custArabicName.setValue(aCustomer.getCustShrtNameLclLng());
+			custLocalLngName.setValue(aCustomer.getCustShrtNameLclLng());
 			if (StringUtils.isEmpty(aCustomer.getCustShrtNameLclLng())) {
-				custArabicName.setStyle("color:orange; font:12px");
-				custArabicName.setValue("- - - - - - - - -");
+				custLocalLngName.setStyle("color:orange; font:12px");
+				custLocalLngName.setValue("- - - - - - - - -");
 			}
 			custNationality.setValue(aCustomer.getCustNationality() + ", ");
 			custNationalitydesc.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustNationalityName()));
@@ -1015,11 +1014,11 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				i++;
 			}
 			custShrtName2.setValue(aCustomer.getCustShrtName());
-			custArabicNamee.setValue(aCustomer.getCustShrtName());
+			custLocalLngName.setValue(aCustomer.getCustShrtName());
 
 			if (aCustomer.getCustShrtName() == null) {
-				custArabicNamee.setStyle("color:orange; font:12px");
-				custArabicNamee.setValue("- - - - - - - - -");
+				custLocalLngName.setStyle("color:orange; font:12px");
+				custLocalLngName.setValue("- - - - - - - - -");
 			}
 			custNationalityy.setValue(aCustomer.getCustNationality() + ", ");
 			custNationalitydescc.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustNationalityName()));

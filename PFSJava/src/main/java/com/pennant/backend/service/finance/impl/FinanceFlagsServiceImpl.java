@@ -86,18 +86,6 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 		return getFinFlagsHeaderDAO().getFinFlagsHeaderByRef(finReference, "_View");
 	}
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table SukukBrokers/SukukBrokers_Temp
-	 * by using SukukBrokerDAO's save method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using SukukBrokerDAO's update method 3) Audit the record in to AuditHeader and AdtSukukBrokers
-	 * by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		return saveOrUpdate(auditHeader, false);
@@ -652,21 +640,6 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 		return auditDetail;
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getFinFlagsHeaderDAO().delete with
-	 * parameters sukukBroker,"" b) NEW Add new record in to main table by using getFinFlagsHeaderDAO().save with
-	 * parameters FinanceFlag,"" c) EDIT Update record in the main table by using getFinFlagsHeaderDAO().update with
-	 * parameters FinanceFlag,"" 3) Delete the record from the workFlow table by using getFinFlagsHeaderDAO().delete
-	 * with parameters FinanceFlag,"_Temp" 4) Audit the record in to AuditHeader and AdtFinanceFlag by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceFlag by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		String tranType = "";

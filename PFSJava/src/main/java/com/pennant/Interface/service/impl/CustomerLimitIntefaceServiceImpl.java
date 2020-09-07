@@ -6,8 +6,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zkplus.spring.SpringUtil;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
@@ -20,17 +18,13 @@ import com.pennant.backend.model.limits.LimitUtilization;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.coreinterface.model.CustomerLimit;
-import com.pennant.coreinterface.model.limit.CustomerLimitDetail;
 import com.pennant.coreinterface.model.limit.CustomerLimitPosition;
 import com.pennant.coreinterface.model.limit.CustomerLimitSummary;
-import com.pennant.coreinterface.model.limit.CustomerLimitUtilization;
-import com.pennant.coreinterface.process.CustomerLimitProcess;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceService {
 	private static Logger logger = Logger.getLogger(CustomerLimitIntefaceServiceImpl.class);
 
-	protected CustomerLimitProcess customerLimitProcess;
 	protected LimitInterfaceDAO limitInterfaceDAO;
 	protected ClosedFacilityDAO closedFacilityDAO;
 
@@ -42,62 +36,14 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	public Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize) throws InterfaceException {
 		logger.debug("Entering");
 
-		Map<String, Object> customerLimitMap = null;
-		try {
-			if (customerLimitProcess != null) {
-				customerLimitMap = customerLimitProcess.fetchCustLimitEnqList(pageNo, pageSize);
-
-				if (customerLimitMap.containsKey("CustLimitList")) {
-					@SuppressWarnings("unchecked")
-					List<CustomerLimit> list = (List<CustomerLimit>) customerLimitMap.get("CustLimitList");
-					List<com.pennant.backend.model.customermasters.CustomerLimit> custLimitList = new ArrayList<com.pennant.backend.model.customermasters.CustomerLimit>();
-					com.pennant.backend.model.customermasters.CustomerLimit limit = null;
-					for (CustomerLimit customerLimit : list) {
-
-						limit = new com.pennant.backend.model.customermasters.CustomerLimit();
-						limit.setCustCIF(customerLimit.getCustMnemonic());
-						limit.setCustLocation(customerLimit.getCustLocation());
-						limit.setCustShortName(customerLimit.getCustName());
-						limit.setLimitCategory(customerLimit.getLimitCategory());
-						limit.setCurrency(customerLimit.getLimitCurrency());
-						limit.setEarliestExpiryDate(customerLimit.getLimitExpiry());
-						limit.setBranch(customerLimit.getLimitBranch());
-						limit.setRepeatThousands("Y".equals(customerLimit.getRepeatThousands()) ? true : false);
-						limit.setCheckLimit("Y".equals(customerLimit.getCheckLimit()) ? true : false);
-						limit.setSeqNum(customerLimit.getSeqNum());
-
-						custLimitList.add(limit);
-					}
-
-					customerLimitMap.put("CustLimitList", custLimitList);
-				} else {
-					customerLimitMap.put("CustLimitList", null);
-				}
-			}
-
-		} catch (InterfaceException e) {
-			throw e;
-		}
-
-		logger.debug("Leaving");
-		return customerLimitMap;
+		return null;
 	}
 
 	@Override
 	public List<CustomerLimit> fetchLimitDetails(CustomerLimit custLimit) throws InterfaceException {
 		logger.debug("Entering");
 
-		List<CustomerLimit> customerLimits = null;
-		try {
-			if (customerLimitProcess != null) {
-				customerLimits = customerLimitProcess.fetchLimitDetails(custLimit);
-			}
-		} catch (InterfaceException e) {
-			throw e;
-		}
-
-		logger.debug("Leaving");
-		return customerLimits;
+		return null;
 	}
 
 	public static List<CustomerLimitSummary> getCustomerLimitSummary(String customerid) {
@@ -153,18 +99,7 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	public List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit customerLimit) throws InterfaceException {
 		logger.debug("Entering");
 
-		List<CustomerLimit> customerLimits = null;
-		try {
-			if (customerLimitProcess != null) {
-				customerLimits = customerLimitProcess.fetchGroupLimitDetails(customerLimit);
-			}
-
-		} catch (InterfaceException e) {
-			throw e;
-		}
-
-		logger.debug("Leaving");
-		return customerLimits;
+		return null;
 	}
 
 	/**
@@ -177,17 +112,7 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	@Override
 	public LimitDetail getLimitDetail(String limitRef, String branchCode) throws InterfaceException {
 		logger.debug("Entering");
-		if (customerLimitProcess != null) {
-			CustomerLimitDetail coreLimitDetail = customerLimitProcess.getLimitDetails(limitRef, branchCode);
-			LimitDetail limitDetail = null;
-			if (coreLimitDetail != null) {
-				limitDetail = new LimitDetail();
-				BeanUtils.copyProperties(coreLimitDetail, limitDetail);
-			}
 
-			logger.debug("Leaving");
-			return limitDetail;
-		}
 		return null;
 	}
 
@@ -202,22 +127,6 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	public LimitUtilization doPredealCheck(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
-		if (limitUtilReq == null) {
-			return null;
-		}
-		CustomerLimitUtilization coreLimitUtilReq = new CustomerLimitUtilization();
-		BeanUtils.copyProperties(limitUtilReq, coreLimitUtilReq);
-		if (customerLimitProcess != null) {
-			CustomerLimitUtilization coreLimitUtilReply = customerLimitProcess.doPredealCheck(coreLimitUtilReq);
-			LimitUtilization limitUtilization = null;
-			if (coreLimitUtilReply != null) {
-				limitUtilization = new LimitUtilization();
-				BeanUtils.copyProperties(coreLimitUtilReply, limitUtilization);
-			}
-
-			logger.debug("Leaving");
-			return limitUtilization;
-		}
 		return null;
 	}
 
@@ -232,22 +141,6 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	public LimitUtilization doReserveUtilization(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
-		if (limitUtilReq == null) {
-			return null;
-		}
-		CustomerLimitUtilization coreLimitUtilReq = new CustomerLimitUtilization();
-		BeanUtils.copyProperties(limitUtilReq, coreLimitUtilReq);
-		if (customerLimitProcess != null) {
-			CustomerLimitUtilization coreLimitUtilReply = customerLimitProcess.doReserveUtilization(coreLimitUtilReq);
-			LimitUtilization limitUtilization = null;
-			if (coreLimitUtilReply != null) {
-				limitUtilization = new LimitUtilization();
-				BeanUtils.copyProperties(coreLimitUtilReply, limitUtilization);
-			}
-
-			logger.debug("Leaving");
-			return limitUtilization;
-		}
 		return null;
 	}
 
@@ -262,23 +155,6 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	public LimitUtilization doOverrideAndReserveUtil(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
-		if (limitUtilReq == null) {
-			return null;
-		}
-		CustomerLimitUtilization coreLimitUtilReq = new CustomerLimitUtilization();
-		BeanUtils.copyProperties(limitUtilReq, coreLimitUtilReq);
-		if (customerLimitProcess != null) {
-			CustomerLimitUtilization coreLimitUtilReply = customerLimitProcess
-					.doOverrideAndReserveUtil(coreLimitUtilReq);
-			LimitUtilization limitUtilization = null;
-			if (coreLimitUtilReply != null) {
-				limitUtilization = new LimitUtilization();
-				BeanUtils.copyProperties(coreLimitUtilReply, limitUtilization);
-			}
-
-			logger.debug("Leaving");
-			return limitUtilization;
-		}
 		return null;
 	}
 
@@ -293,22 +169,6 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	public LimitUtilization doConfirmReservation(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
-		if (limitUtilReq == null) {
-			return null;
-		}
-		CustomerLimitUtilization coreLimitUtilReq = new CustomerLimitUtilization();
-		BeanUtils.copyProperties(limitUtilReq, coreLimitUtilReq);
-		if (customerLimitProcess != null) {
-			CustomerLimitUtilization coreLimitUtilReply = customerLimitProcess.doConfirmReservation(coreLimitUtilReq);
-			LimitUtilization limitUtilization = null;
-			if (coreLimitUtilReply != null) {
-				limitUtilization = new LimitUtilization();
-				BeanUtils.copyProperties(coreLimitUtilReply, limitUtilization);
-			}
-
-			logger.debug("Leaving");
-			return limitUtilization;
-		}
 		return null;
 
 	}
@@ -324,22 +184,6 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	public LimitUtilization doCancelReservation(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
-		if (limitUtilReq == null) {
-			return null;
-		}
-		CustomerLimitUtilization coreLimitUtilReq = new CustomerLimitUtilization();
-		BeanUtils.copyProperties(limitUtilReq, coreLimitUtilReq);
-		if (customerLimitProcess != null) {
-			CustomerLimitUtilization coreLimitUtilReply = customerLimitProcess.doCancelReservation(coreLimitUtilReq);
-			LimitUtilization limitUtilization = null;
-			if (coreLimitUtilReply != null) {
-				limitUtilization = new LimitUtilization();
-				BeanUtils.copyProperties(coreLimitUtilReply, limitUtilization);
-			}
-
-			logger.debug("Leaving");
-			return limitUtilization;
-		}
 		return null;
 	}
 
@@ -354,25 +198,7 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	public LimitUtilization doCancelUtilization(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
-		if (limitUtilReq == null) {
-			return null;
-		}
-		CustomerLimitUtilization coreLimitUtilReq = new CustomerLimitUtilization();
-		BeanUtils.copyProperties(limitUtilReq, coreLimitUtilReq);
-		if (customerLimitProcess != null) {
-			CustomerLimitUtilization coreLimitUtilReply = customerLimitProcess.doCancelUtilization(coreLimitUtilReq);
-			LimitUtilization limitUtilization = null;
-			if (coreLimitUtilReply != null) {
-				limitUtilization = new LimitUtilization();
-				BeanUtils.copyProperties(coreLimitUtilReply, limitUtilization);
-			}
-
-			logger.debug("Leaving");
-			return limitUtilization;
-		} else {
-			return null;
-		}
-
+		return null;
 	}
 
 	/**
@@ -384,22 +210,6 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	public LimitUtilization doLimitAmendment(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
-		if (limitUtilReq == null) {
-			return null;
-		}
-		CustomerLimitUtilization coreLimitUtilReq = new CustomerLimitUtilization();
-		BeanUtils.copyProperties(limitUtilReq, coreLimitUtilReq);
-		if (customerLimitProcess != null) {
-			CustomerLimitUtilization coreLimitUtilReply = customerLimitProcess.doLimitAmendment(coreLimitUtilReq);
-			LimitUtilization limitUtilization = null;
-			if (coreLimitUtilReply != null) {
-				limitUtilization = new LimitUtilization();
-				BeanUtils.copyProperties(coreLimitUtilReply, limitUtilization);
-			}
-
-			logger.debug("Leaving");
-			return limitUtilization;
-		}
 		return null;
 	}
 
@@ -490,15 +300,6 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 		logger.debug("Entering");
 
 		return getLimitInterfaceDAO().saveClosedFacilityDetails(proClFacilityList);
-	}
-
-	/*
-	 * public CustomerLimitProcess getCustomerLimitProcess() { return customerLimitProcess; }
-	 */
-
-	@Autowired(required = false)
-	public void setCustomerLimitProcess(CustomerLimitProcess customerLimitProcess) {
-		this.customerLimitProcess = customerLimitProcess;
 	}
 
 	public LimitInterfaceDAO getLimitInterfaceDAO() {

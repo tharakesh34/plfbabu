@@ -190,7 +190,7 @@ public class FinStatementController extends SummaryDetailService {
 				if (StringUtils.equals(APIConstants.STMT_FORECLOSURE, serviceName)) {
 					Cloner cloner = new Cloner();
 					FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
-					//get FinODDetails
+					// get FinODDetails
 					List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 					aFinanceDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
 					financeDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
@@ -347,7 +347,6 @@ public class FinStatementController extends SummaryDetailService {
 			throws IllegalAccessException, InvocationTargetException {
 		financeDetail.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 		financeDetail.getFinScheduleData().setFinReference(null);
-		financeDetail.getFinScheduleData().setInsuranceList(null);
 		financeDetail.getFinScheduleData().setStepPolicyDetails(null);
 		financeDetail.getFinScheduleData().setPlanEMIHDates(null);
 		financeDetail.getFinScheduleData().setPlanEMIHmonths(null);
@@ -365,12 +364,12 @@ public class FinStatementController extends SummaryDetailService {
 		financeDetail.setDocumentDetailsList(null);
 		financeDetail.setCollateralAssignmentList(null);
 
-		//disbursement Dates
+		// disbursement Dates
 		List<FinanceDisbursement> disbList = financeDetail.getFinScheduleData().getDisbursementDetails();
 		Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
 			@Override
 			public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
-				return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
+				return (Integer.valueOf(b1.getDisbSeq()).compareTo(Integer.valueOf(b2.getDisbSeq())));
 			}
 		});
 
@@ -450,8 +449,8 @@ public class FinStatementController extends SummaryDetailService {
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
-		//Repayments Posting Process Execution
-		//=====================================
+		// Repayments Posting Process Execution
+		// =====================================
 		Date valueDate = finServiceInst.getFromDate();
 
 		List<ReceiptAllocationDetail> allocations = calEarlySettleAmount(finScheduleData, valueDate);
@@ -755,10 +754,10 @@ public class FinStatementController extends SummaryDetailService {
 	 * @return stmtResponse
 	 */
 	public FinStatementResponse getReportSatatement(FinStatementRequest statementRequest) {
-		//TODO FIXME
+		// TODO FIXME
 		logger.debug(Literal.ENTERING);
 
-		//Temporary FIX
+		// Temporary FIX
 		FinStatementResponse stmtResponse;
 		try {
 			String finRefernce = statementRequest.getFinReference();
@@ -789,7 +788,8 @@ public class FinStatementController extends SummaryDetailService {
 					if (document != null) {
 						String location = null;
 						if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)) {
-							//location = moveToS3Bucket(document, finReference, statementRequest.getType(), soa.getFinDivision());
+							// location = moveToS3Bucket(document, finReference, statementRequest.getType(),
+							// soa.getFinDivision());
 						}
 						stmtResponse = new FinStatementResponse();
 
@@ -802,7 +802,7 @@ public class FinStatementController extends SummaryDetailService {
 						if (StringUtils.isNotBlank(location)) {
 							logger.debug("prepare response");
 							stmtResponse.setFinReference(finReference);
-							//stmtResponse.setLocation(location);
+							// stmtResponse.setLocation(location);
 							stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 						} else {
 							stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -857,7 +857,8 @@ public class FinStatementController extends SummaryDetailService {
 				if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)
 						|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD)
 						|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC)) {
-					//location = moveToS3Bucket(document, statementRequest.getFinReference(), statementRequest.getType(), null);
+					// location = moveToS3Bucket(document, statementRequest.getFinReference(),
+					// statementRequest.getType(), null);
 				}
 
 				if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC_REPORT)
@@ -871,7 +872,7 @@ public class FinStatementController extends SummaryDetailService {
 
 				if (StringUtils.isNotBlank(location)) {
 					stmtResponse.setFinReference(statementRequest.getFinReference());
-					//stmtResponse.setLocation(location);
+					// stmtResponse.setLocation(location);
 					stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 				} else {
 					stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());

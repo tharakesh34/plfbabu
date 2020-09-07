@@ -91,8 +91,7 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 		lc = new Listcell(
 				String.valueOf(financeMain.getGraceTerms() + financeMain.getCalTerms() + financeMain.getAdvTerms()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(financeMain.getMaturityDate() == null
-				? financeMain.getNextRolloverDate() : financeMain.getMaturityDate()));
+		lc = new Listcell(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
 		lc.setParent(item);
 		lc = new Listcell(financeMain.getFinCcy());
 		lc.setParent(item);

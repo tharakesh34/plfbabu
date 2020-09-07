@@ -53,7 +53,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -115,7 +114,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.PTCKeditor;
 import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.coreinterface.model.CustomerLimit;
-import com.pennant.coreinterface.process.CustomerDataProcess;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -279,7 +277,6 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	// ServiceDAOs / Domain Classes
 	private transient FacilityService facilityService;
 	private transient PagedListService pagedListService;
-	private CustomerDataProcess customerDataProcess;
 	private CustomerLimitIntefaceService customerLimitIntefaceService;
 	private FacilityDocumentDetailDialogCtrl facilityDocumentDetailDialogCtrl;
 	private FacilityCheckListReferenceDialogCtrl facilityCheckListReferenceDialogCtrl;
@@ -1731,42 +1728,6 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 						return false;
 					}
 
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_checkDDAResponse)) {
-
-					//					FinanceDetail tFinanceDetail=  (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					//					FinanceMain financeMain=tFinanceDetail.getFinScheduleData().getFinanceMain();
-					//					
-					//					if(StringUtils.equals(financeMain.getFinRepayMethod(),FinanceConstants.REPAYMTH_AUTODDA)){
-					//						String ddaStatus = getDdaControllerService().checkDDAApproval(financeMain.getFinReference());
-					//
-					//						if(StringUtils.equals(ddaStatus, PennantConstants.DDA_ACK_APPROVED)) {
-					//							processCompleted = true;
-					//						} else if(StringUtils.equals(ddaStatus, PennantConstants.DDA_NAK)) {
-					//							PTMessageUtils.showErrorMessage(Labels.getLabel("DDA_APPROVAL_REJECTED"));
-					//							processCompleted = false;
-					//						} else if(StringUtils.equals(ddaStatus, PennantConstants.DDA_PENDING)) {
-					//							PTMessageUtils.showInfoMessage(Labels.getLabel("DDA_APPROVAL_PENDING"));
-					//							processCompleted = false;
-					//						} else {
-					//							processCompleted = false;
-					//						}
-					//					}else{
-					//						processCompleted = true;
-					//					}
-
-					processCompleted = true;
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_sendDDARequest)) {
-
-					//Initiate DDA Registration process
-					/*
-					 * String finRepayMethod = afinanceMain.getFinRepayMethod();
-					 * if(StringUtils.equals(finRepayMethod,FinanceConstants.REPAYMTH_AUTODDA)){
-					 * this.repayAcctId.setReadonly(false); this.repayAcctId.setMandatoryStyle(true);
-					 * getDdaControllerService().doDDARequestProcess(aFinanceDetail); } else {
-					 * this.repayAcctId.setMandatoryStyle(false);
-					 */ processCompleted = true;
-					//						}
 				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckDeviations)) {
 					/*
 					 * List<FinanceDeviations> list = aFinanceDetail.getFinanceDeviations(); if (list!=null &&
@@ -2016,8 +1977,6 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	private void doFillCustomerCollateral(String custCIF) {
 		logger.debug("Entering");
 		try {
-			if (customerDataProcess != null)
-				collateralsFromEquation = customerDataProcess.getCustomerCollateral(custCIF);
 			doFillCustomerEquationCollateral();
 		} catch (Exception e) {
 			logger.debug(e);
@@ -2481,14 +2440,6 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 
 	public CustomerLimitIntefaceService getCustomerLimitIntefaceService() {
 		return customerLimitIntefaceService;
-	}
-
-	/*
-	 * public CustomerDataProcess getCustomerDataProcess() { return customerDataProcess; }
-	 */
-	@Autowired(required = false)
-	public void setCustomerDataProcess(CustomerDataProcess customerDataProcess) {
-		this.customerDataProcess = customerDataProcess;
 	}
 
 	public void setFacilityDocumentDetailDialogCtrl(FacilityDocumentDetailDialogCtrl facilityDocumentDetailDialogCtrl) {

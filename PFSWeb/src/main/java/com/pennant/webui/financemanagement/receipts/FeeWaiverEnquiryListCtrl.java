@@ -344,9 +344,6 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 
 		}
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TFPREMIUMEXCL)) {
-			this.listheader_RecordStatus.setVisible(false);
-		}
 		if (isEnquiry) {
 			this.listheader_FinProduct.setVisible(false);
 			//this.listheader_CustCIF.setVisible(false);
@@ -1087,8 +1084,7 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		//Filter[] rcdTypeFilter = new Filter[2];
 		//rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
 		//	rcdTypeFilter[1] = new Filter("RecordType", "", Filter.OP_EQUAL);
-		if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)
+		if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)
 				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
 			//this.searchObject.addFilterOr(rcdTypeFilter);
 		}

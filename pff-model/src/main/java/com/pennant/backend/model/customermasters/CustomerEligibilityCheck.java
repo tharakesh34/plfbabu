@@ -30,22 +30,9 @@ public class CustomerEligibilityCheck implements Serializable {
 	private String custOtherIncome;
 	private BigDecimal custOtherIncomeAmt = BigDecimal.ZERO;
 
-	private String sellerType;
-	private String vehicleCtg;
-	private String emiratesReg;
-	private boolean thirdPartyReg = false;
-	private String vehicleFinFor;
-	private String agreeName;
-	private String assetProduct;
-	private String propertyCategory;
-	private String assetPurpose;
-	private boolean approvedDealerExists;
-	private boolean nonApprovedDealerExists;
-
 	private int noOfTerms;
 	private String finRepayMethod;
 	private boolean stepFinance;
-	private boolean alwDPSP;
 	private boolean alwPlannedDefer;
 
 	private BigDecimal tenure = BigDecimal.ZERO;
@@ -361,22 +348,6 @@ public class CustomerEligibilityCheck implements Serializable {
 		this.custCtgCode = custCtgCode;
 	}
 
-	public String getSellerType() {
-		return sellerType;
-	}
-
-	public void setSellerType(String sellerType) {
-		this.sellerType = sellerType;
-	}
-
-	public boolean isThirdPartyReg() {
-		return thirdPartyReg;
-	}
-
-	public void setThirdPartyReg(boolean thirdPartyReg) {
-		this.thirdPartyReg = thirdPartyReg;
-	}
-
 	public BigDecimal getFinProfitRate() {
 		return finProfitRate;
 	}
@@ -391,14 +362,6 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public void setStepFinance(boolean stepFinance) {
 		this.stepFinance = stepFinance;
-	}
-
-	public boolean isAlwDPSP() {
-		return alwDPSP;
-	}
-
-	public void setAlwDPSP(boolean alwDPSP) {
-		this.alwDPSP = alwDPSP;
 	}
 
 	public boolean isAlwPlannedDefer() {
@@ -447,22 +410,6 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public void setDownpaySupl(BigDecimal downpaySupl) {
 		this.downpaySupl = downpaySupl;
-	}
-
-	public String getVehicleCtg() {
-		return vehicleCtg;
-	}
-
-	public void setVehicleCtg(String vehicleCtg) {
-		this.vehicleCtg = vehicleCtg;
-	}
-
-	public String getEmiratesReg() {
-		return emiratesReg;
-	}
-
-	public void setEmiratesReg(String emiratesReg) {
-		this.emiratesReg = emiratesReg;
 	}
 
 	public BigDecimal getCustYearOfExp() {
@@ -635,36 +582,12 @@ public class CustomerEligibilityCheck implements Serializable {
 		ConstructStage = constructStage;
 	}
 
-	public String getVehicleFinFor() {
-		return vehicleFinFor;
-	}
-
-	public void setVehicleFinFor(String vehicleFinFor) {
-		this.vehicleFinFor = vehicleFinFor;
-	}
-
-	public String getAgreeName() {
-		return agreeName;
-	}
-
-	public void setAgreeName(String agreeName) {
-		this.agreeName = agreeName;
-	}
-
 	public String getReqFinType() {
 		return reqFinType;
 	}
 
 	public void setReqFinType(String reqFinType) {
 		this.reqFinType = reqFinType;
-	}
-
-	public String getPropertyCategory() {
-		return propertyCategory;
-	}
-
-	public void setPropertyCategory(String propertyCategory) {
-		this.propertyCategory = propertyCategory;
 	}
 
 	public boolean isDdaModifiedCheck() {
@@ -681,38 +604,6 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public void setRefundAmount(BigDecimal refundAmount) {
 		this.refundAmount = refundAmount;
-	}
-
-	public String getAssetProduct() {
-		return assetProduct;
-	}
-
-	public void setAssetProduct(String assetProduct) {
-		this.assetProduct = assetProduct;
-	}
-
-	public String getAssetPurpose() {
-		return assetPurpose;
-	}
-
-	public void setAssetPurpose(String assetPurpose) {
-		this.assetPurpose = assetPurpose;
-	}
-
-	public boolean isApprovedDealerExists() {
-		return approvedDealerExists;
-	}
-
-	public void setApprovedDealerExists(boolean approvedDealerExists) {
-		this.approvedDealerExists = approvedDealerExists;
-	}
-
-	public boolean isNonApprovedDealerExists() {
-		return nonApprovedDealerExists;
-	}
-
-	public void setNonApprovedDealerExists(boolean nonApprovedDealerExists) {
-		this.nonApprovedDealerExists = nonApprovedDealerExists;
 	}
 
 	public BigDecimal getCoAppRepayBank() {

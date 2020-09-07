@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -59,8 +57,9 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	private static final Logger logger = Logger.getLogger(ExtendedFieldCaptureDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component
+	 * with the same 'id' in the ZUL-file are getting autoWired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ExtendedFieldCaptureDialog;
 	protected Tabpanel extendedFieldTabPanel;
@@ -166,7 +165,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 			generator.setReadOnly(!isReadOnly);
 		}
 
-		//Pre-Validation Checking & Setting Defaults
+		// Pre-Validation Checking & Setting Defaults
 		Map<String, Object> fieldValuesMap = null;
 		if (getExtendedFieldRender().getMapValues() != null) {
 			fieldValuesMap = getExtendedFieldRender().getMapValues();
@@ -174,7 +173,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 
 		if (newRecord) {
 
-			//get pre-validation script if record is new
+			// get pre-validation script if record is new
 			String preValidationScript = getExtendedFieldRenderDialogCtrl().getPreValidationScript();
 			if (StringUtils.isNotEmpty(preValidationScript)) {
 				ScriptErrors defaults = getScriptValidationService().setPreValidationDefaults(preValidationScript,
@@ -212,7 +211,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 			generator.renderWindow(getExtendedFieldHeader(), newRecord);
 			// Height Calculation
 			int height = borderLayoutHeight - 100;
-			//this.window_ExtendedFieldCaptureDialog.setHeight(height + "px");
+			// this.window_ExtendedFieldCaptureDialog.setHeight(height + "px");
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -235,8 +234,8 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	 * @throws NoSuchFieldException
 	 */
 	public void onClick$btnSave(Event event)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException,
-			ScriptException, IOException, NoSuchMethodException, NoSuchFieldException, SecurityException {
+			throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException, IOException,
+			NoSuchMethodException, NoSuchFieldException, SecurityException {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -245,8 +244,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug("Entering");
@@ -306,11 +304,9 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -388,8 +384,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 */
-	public void doSave()
-			throws InterruptedException, ParseException, ScriptException, IOException, NoSuchMethodException,
+	public void doSave() throws InterruptedException, ParseException, IOException, NoSuchMethodException,
 			NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		logger.debug("Entering");
 
@@ -530,7 +525,8 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 				ExtendedFieldRender fieldRender = getExtendedFieldRenderDialogCtrl().getExtendedFieldRenderList()
 						.get(i);
 
-				if (fieldRender.getSeqNo() == aExetendedFieldRender.getSeqNo()) { // Both Current and Existing list Seqno same
+				if (fieldRender.getSeqNo() == aExetendedFieldRender.getSeqNo()) { // Both Current and Existing list
+																					// Seqno same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -638,8 +634,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -721,8 +716,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());

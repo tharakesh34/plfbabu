@@ -43,6 +43,7 @@
 package com.pennant.webui.financemanagement.receipts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -210,7 +211,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 		this.transactionAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.transactionAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.transactionAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.transactionAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.transactionAmount.setScale(PennantConstants.defaultCCYDecPos);
 
 		this.depositSlipNumber.setMaxlength(20);

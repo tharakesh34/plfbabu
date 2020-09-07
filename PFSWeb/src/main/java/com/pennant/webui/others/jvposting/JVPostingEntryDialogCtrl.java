@@ -43,6 +43,7 @@
 package com.pennant.webui.others.jvposting;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -787,7 +788,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 
 		this.exchangeRate.setMaxlength(13);
 		this.exchangeRate.setFormat(PennantConstants.rateFormate9);
-		this.exchangeRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.exchangeRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.exchangeRate.setScale(9);
 
 		this.batch.setMaxlength(50);

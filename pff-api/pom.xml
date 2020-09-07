@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>5.9.0</version>
+		<version>6.0.0-SNAPSHOT</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 	<groupId>${pff.groupId}</groupId>
@@ -21,17 +21,6 @@
 		<dependency>
 			<groupId>com.pennanttech.pennapps</groupId>
 			<artifactId>pennapps-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${pff.groupId}</groupId>
-			<artifactId>PLFInterface</artifactId>
-			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>${pff.groupId}</groupId>
@@ -238,6 +227,22 @@
 			<artifactId>groovy</artifactId>
 			<version>2.0.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.woodstox/woodstox-core -->
+		<dependency>
+    		<groupId>com.fasterxml.woodstox</groupId>
+    		<artifactId>woodstox-core</artifactId>
+    		<version>5.0.3</version>
+		</dependency>
+		<dependency>
+   			<groupId>javax.xml.ws</groupId>
+    			<artifactId>jaxws-api</artifactId>
+    			<version>2.3.1</version>
+		</dependency>
+		<dependency>
+   			<groupId>org.glassfish.main.javaee-api</groupId>
+    			<artifactId>javax.jws</artifactId>
+    			<version>3.1.2.2</version>
+		 </dependency>
 	</dependencies>
 
 	<build>

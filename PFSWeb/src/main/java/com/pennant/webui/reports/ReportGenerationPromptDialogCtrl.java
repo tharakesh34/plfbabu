@@ -1801,7 +1801,6 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 				if ((!isExcel && !this.rows_formatType.isVisible())
 						|| (this.rows_formatType.isVisible() && this.pdfFormat.isChecked())) {
-
 					buf = JasperRunManager.runReportToPdf(reportSrc, argsMap, con);
 					HashMap<String, Object> auditMap = new HashMap<String, Object>(4);
 					auditMap.put("reportBuffer", buf);

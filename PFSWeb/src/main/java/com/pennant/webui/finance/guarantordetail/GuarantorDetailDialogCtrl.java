@@ -44,6 +44,7 @@
 package com.pennant.webui.finance.guarantordetail;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -912,7 +913,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.guarantorCIFName.setMaxlength(100);
 		this.guranteePercentage.setMaxlength(5);
 		this.guranteePercentage.setFormat(PennantConstants.rateFormate2);
-		this.guranteePercentage.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.guranteePercentage.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.guranteePercentage.setScale(2);
 		this.mobileNo.setMaxlength(13);
 		this.emailId.setMaxlength(200);

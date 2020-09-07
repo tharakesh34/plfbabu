@@ -2471,7 +2471,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			for (int i = 0; i < scheduleData.getDisbursementDetails().size(); i++) {
 				scheduleData.getDisbursementDetails().get(i).setFinReference(scheduleData.getFinReference());
 				scheduleData.getDisbursementDetails().get(i).setDisbIsActive(true);
-				scheduleData.getDisbursementDetails().get(i).setDisbDisbursed(true);
 				scheduleData.getDisbursementDetails().get(i).setLogKey(logKey);
 			}
 			financeDisbursementDAO.saveList(scheduleData.getDisbursementDetails(), tableType, false);
@@ -5881,18 +5880,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				fullyPaid = false;
 				break;
 			}
-
-			// Supplementary Rent
-			if ((curSchd.getSuplRent().subtract(curSchd.getSuplRentPaid())).compareTo(BigDecimal.ZERO) > 0) {
-				fullyPaid = false;
-				break;
-			}
-
-			// Increased Cost
-			if ((curSchd.getIncrCost().subtract(curSchd.getIncrCostPaid())).compareTo(BigDecimal.ZERO) > 0) {
-				fullyPaid = false;
-				break;
-			}
 		}
 
 		// Check Penalty Paid Fully or not
@@ -6289,7 +6276,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			financeDetail.setAccountingEventCode(eventCode);
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			financeDetail.getFinScheduleData().getFinanceMain().setUserDetails(userDetails);
-			financeDetail.setEtihadCreditBureauDetail(null);
 		}
 
 		logger.debug("Leaving");

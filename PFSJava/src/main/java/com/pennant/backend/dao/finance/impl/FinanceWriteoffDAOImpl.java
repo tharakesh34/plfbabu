@@ -48,9 +48,9 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 		selectSql.append(
 				" CurODPri , CurODPft , UnPaidSchdPri , UnPaidSchdPft , PenaltyAmount , ProvisionedAmount , WriteoffPrincipal , ");
 		selectSql.append(" WriteoffProfit , AdjAmount , Remarks, WrittenoffAcc, ");
-		selectSql.append(" WrittenoffIns,WrittenoffIncrCost,WrittenoffSuplRent,WrittenoffSchFee, ");
-		selectSql.append(" UnpaidIns,UnpaidIncrCost,UnpaidSuplRent,UnpaidSchFee, ");
-		selectSql.append(" WriteoffIns,WriteoffIncrCost,WriteoffSuplRent,WriteoffSchFee ");
+		selectSql.append(" WrittenoffIns,WrittenoffSchFee, ");
+		selectSql.append(" UnpaidIns,UnpaidSchFee, ");
+		selectSql.append(" WriteoffIns,WriteoffSchFee ");
 		selectSql.append(" From FinWriteoffDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
@@ -167,17 +167,17 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 				" (FinReference , WriteoffDate , SeqNo , WrittenoffPri , WrittenoffPft , CurODPri , CurODPft , ");
 		insertSql.append(" UnPaidSchdPri , UnPaidSchdPft , PenaltyAmount , ProvisionedAmount , WriteoffPrincipal , ");
 		insertSql.append(" WriteoffProfit , AdjAmount , Remarks, WrittenoffAcc, ");
-		insertSql.append(" WrittenoffIns,WrittenoffIncrCost,WrittenoffSuplRent,WrittenoffSchFee, ");
-		insertSql.append(" UnpaidIns,UnpaidIncrCost,UnpaidSuplRent,UnpaidSchFee,");
-		insertSql.append(" WriteoffIns,WriteoffIncrCost,WriteoffSuplRent,WriteoffSchFee)");
+		insertSql.append(" WrittenoffIns,WrittenoffSchFee, ");
+		insertSql.append(" UnpaidIns,UnpaidSchFee,");
+		insertSql.append(" WriteoffIns,WriteoffSchFee)");
 		insertSql.append(
 				" Values(:FinReference , :WriteoffDate , :SeqNo , :WrittenoffPri , :WrittenoffPft , :CurODPri , :CurODPft , ");
 		insertSql.append(
 				" :UnPaidSchdPri , :UnPaidSchdPft , :PenaltyAmount , :ProvisionedAmount , :WriteoffPrincipal , ");
 		insertSql.append(" :WriteoffProfit , :AdjAmount , :Remarks, :WrittenoffAcc,");
-		insertSql.append(" :WrittenoffIns,:WrittenoffIncrCost,:WrittenoffSuplRent,:WrittenoffSchFee, ");
-		insertSql.append(" :UnpaidIns,:UnpaidIncrCost,:UnpaidSuplRent,:UnpaidSchFee,");
-		insertSql.append(" :WriteoffIns,:WriteoffIncrCost,:WriteoffSuplRent,:WriteoffSchFee)");
+		insertSql.append(" :WrittenoffIns,:WrittenoffSchFee, ");
+		insertSql.append(" :UnpaidIns,:UnpaidSchFee,");
+		insertSql.append(" :WriteoffIns,:WriteoffSchFee)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -213,13 +213,11 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 		updateSql.append(
 				" WriteoffPrincipal=:WriteoffPrincipal , WriteoffProfit=:WriteoffProfit , AdjAmount=:AdjAmount , Remarks=:Remarks, WrittenoffAcc=:WrittenoffAcc,");
 		updateSql.append(" WrittenoffIns=:WrittenoffIns, ");
-		updateSql.append(
-				" WrittenoffIncrCost=:WrittenoffIncrCost,WrittenoffSuplRent=:WrittenoffSuplRent,WrittenoffSchFee=:WrittenoffSchFee,");
+		updateSql.append(" WrittenoffSchFee=:WrittenoffSchFee,");
 		updateSql.append(" UnpaidIns=:UnpaidIns, ");
-		updateSql.append(" UnpaidIncrCost=:UnpaidIncrCost,UnpaidSuplRent=:UnpaidSuplRent,UnpaidSchFee=:UnpaidSchFee,");
+		updateSql.append("UnpaidSchFee=:UnpaidSchFee,");
 		updateSql.append(" WriteoffIns=:WriteoffIns, ");
-		updateSql.append(
-				" WriteoffIncrCost=:WriteoffIncrCost,WriteoffSuplRent=:WriteoffSuplRent,WriteoffSchFee=:WriteoffSchFee");
+		updateSql.append(" WriteoffSchFee=:WriteoffSchFee");
 		updateSql.append(" Where FinReference =:FinReference");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -345,7 +343,7 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 		// Get Sum of Total Payment Amount(profits and Principals)
 		StringBuilder selectSql = new StringBuilder(
 				" select sum(WriteoffPrincipal )+sum(WriteoffProfit) + sum(WriteoffIns) + ");
-		selectSql.append(" sum(WriteoffIncrCost) + sum(WriteoffSuplRent) + sum(WriteoffSchFee) ");
+		selectSql.append(" sum(WriteoffSchFee) ");
 		selectSql.append(" from FinWriteoffDetail  where FinReference = :FinReference ");
 
 		logger.debug("selectSql: " + selectSql.toString());

@@ -1,6 +1,7 @@
 package com.pennanttech.pff.service.sampling;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -628,12 +629,12 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			BigDecimal principle = new BigDecimal(100000);
 
 			BigDecimal r = rate.divide(new BigDecimal(100).multiply(new BigDecimal(frqequency)), 10,
-					BigDecimal.ROUND_HALF_DOWN);
+					RoundingMode.HALF_DOWN);
 			BigDecimal nTimesOfr = (r.add(BigDecimal.ONE)).pow(noOfTerms);
 			BigDecimal numerator = principle.multiply(nTimesOfr).multiply(r);
 			BigDecimal denominator = nTimesOfr.subtract(BigDecimal.ONE);
 
-			BigDecimal emi = numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN);
+			BigDecimal emi = numerator.divide(denominator, 10, RoundingMode.HALF_DOWN);
 			emi = emi.multiply(new BigDecimal(100));
 			sampling.setEmi(emi);
 		}
@@ -756,11 +757,13 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 						field.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 								: String.valueOf(extFieldMap.get("TaskId")));
 						extFieldMap.remove("TaskId");
-						field.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null")
-								? "" : String.valueOf(extFieldMap.get("NextTaskId")));
+						field.setNextTaskId(
+								StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+										: String.valueOf(extFieldMap.get("NextTaskId")));
 						extFieldMap.remove("NextTaskId");
-						field.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null")
-								? "" : String.valueOf(extFieldMap.get("RecordType")));
+						field.setRecordType(
+								StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+										: String.valueOf(extFieldMap.get("RecordType")));
 						extFieldMap.remove("RecordType");
 						field.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
 						extFieldMap.remove("WorkflowId");
@@ -1065,11 +1068,11 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
+	 * businessValidation method do the following steps. 1) get the details from the
+	 * auditHeader. 2) fetch the details from the tables 3) Validate the Record
+	 * based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -1126,9 +1129,10 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from samplingDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign the
-	 * to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch
+	 * conditions Fetch the error details from samplingDAO.getErrorDetail with Error
+	 * ID and language as parameters. if any error/Warnings then assign the to
+	 * auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -1389,12 +1393,9 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 	/**
 	 * 
-	 * @param type
-	 *            Collateral Type
-	 * @param reference
-	 *            Collateral reference
-	 * @param samplingId
-	 *            Collateral sequence
+	 * @param type       Collateral Type
+	 * @param reference  Collateral reference
+	 * @param samplingId Collateral sequence
 	 * @return Return Extended collateral fields.
 	 */
 	@Override

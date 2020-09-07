@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptException;
-
 import org.apache.log4j.Logger;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.zk.ui.event.Event;
@@ -190,7 +188,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * On click event for stimulate button
 	 */
-	public void onClick$btn_Stimulate(Event event) throws InterruptedException, ScriptException {
+	public void onClick$btn_Stimulate(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
 		HashMap<String, Object> map = new HashMap<String, Object>();

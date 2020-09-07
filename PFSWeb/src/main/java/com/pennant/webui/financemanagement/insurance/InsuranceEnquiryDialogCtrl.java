@@ -3,8 +3,6 @@ package com.pennant.webui.financemanagement.insurance;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.script.ScriptException;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.zk.ui.event.Event;

@@ -43,6 +43,7 @@
 package com.pennant.webui.systemmasters.country;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
@@ -189,15 +190,15 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		this.countryDesc.setMaxlength(50);
 		this.countryParentLimit.setMaxlength(21);
 		this.countryParentLimit.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.countryParentLimit.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.countryParentLimit.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.countryParentLimit.setScale(0);
 		this.countryResidenceLimit.setMaxlength(21);
 		this.countryResidenceLimit.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.countryResidenceLimit.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.countryResidenceLimit.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.countryResidenceLimit.setScale(0);
 		this.countryRiskLimit.setMaxlength(21);
 		this.countryRiskLimit.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.countryRiskLimit.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.countryRiskLimit.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.countryRiskLimit.setScale(0);
 
 		if (isWorkFlowEnabled()) {

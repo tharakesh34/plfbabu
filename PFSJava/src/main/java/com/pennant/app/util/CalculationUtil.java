@@ -319,7 +319,7 @@ public class CalculationUtil implements Serializable {
 		/*
 		 * interest= (Principal * Days Factor * Rate)/100
 		 */
-		MathContext mathContext = new MathContext(BigDecimal.ROUND_UP);
+		MathContext mathContext = new MathContext(RoundingMode.UP.ordinal());
 		BigDecimal daysFactor = getInterestDays(dtStart, dtEnd, strDaysBasis);
 		BigDecimal interest = ((principalAmount.multiply(daysFactor, mathContext)).multiply(rate, mathContext))
 				.divide(BigDecimal.valueOf(100));
@@ -331,7 +331,7 @@ public class CalculationUtil implements Serializable {
 		/*
 		 * interest= (Principal * Days Factor * Rate)/100
 		 */
-		MathContext mathContext = new MathContext(BigDecimal.ROUND_UP);
+		MathContext mathContext = new MathContext(RoundingMode.UP.ordinal());
 		BigDecimal interest = ((principalAmount.multiply(daysFactor, mathContext)).multiply(rate, mathContext))
 				.divide(BigDecimal.valueOf(100));
 		return interest;
@@ -413,7 +413,7 @@ public class CalculationUtil implements Serializable {
 			return 360 * (yearOfEnd - yearOfStart) + (30 * (monthOfEnd - monthOfStart)) + (dayOfEnd - dayOfStart);
 
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_ISDA)) {
-			//return getIDB_ACT_ISDA(startCalendar, endCalendar);
+			// return getIDB_ACT_ISDA(startCalendar, endCalendar);
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_365FIXED)
 				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_360)
 				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAP)
@@ -430,7 +430,8 @@ public class CalculationUtil implements Serializable {
 
 			/*
 			 * if (startCalendar.get(Calendar.YEAR) == endCalendar.get(Calendar.YEAR) &&
-			 * startCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH)) { noOfmonths = noOfmonths + 1; }
+			 * startCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH)) {
+			 * noOfmonths = noOfmonths + 1; }
 			 */
 
 			int numberOfDays = (int) (noOfmonths * 30);
@@ -500,13 +501,13 @@ public class CalculationUtil implements Serializable {
 
 		if (rate.compareTo(BigDecimal.ZERO) != 0) {
 			BigDecimal r = rate.divide(new BigDecimal(100).multiply(new BigDecimal(frqequency)), 10,
-					BigDecimal.ROUND_HALF_DOWN);
+					RoundingMode.HALF_DOWN);
 			BigDecimal nTimesOfr = (r.add(BigDecimal.ONE)).pow(noOfTerms);
 			BigDecimal numerator = principle.multiply(nTimesOfr).multiply(r);
 			BigDecimal denominator = nTimesOfr.subtract(BigDecimal.ONE);
-			return numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN);
+			return numerator.divide(denominator, 10, RoundingMode.HALF_DOWN);
 		} else {
-			return principle.divide(BigDecimal.valueOf(noOfTerms), 10, BigDecimal.ROUND_HALF_DOWN);
+			return principle.divide(BigDecimal.valueOf(noOfTerms), 10, RoundingMode.HALF_DOWN);
 		}
 
 	}
@@ -530,7 +531,7 @@ public class CalculationUtil implements Serializable {
 
 		actualAmount = (actualAmount.multiply(sellRate).multiply(toCurrency.getCcyMinorCcyUnits()))
 				.divide(buyRate.multiply(fromCurrency.getCcyMinorCcyUnits()), 0, RoundingMode.HALF_DOWN);
-		actualAmount = actualAmount.setScale(0, BigDecimal.ROUND_HALF_DOWN);
+		actualAmount = actualAmount.setScale(0, RoundingMode.HALF_DOWN);
 
 		return actualAmount;
 
@@ -660,18 +661,14 @@ public class CalculationUtil implements Serializable {
 	}
 
 	/**
-	 * calculate average profit rate [avgProfitRate = (profitAmt * 100)/(Days Factor * principalAmt )]
+	 * calculate average profit rate [avgProfitRate = (profitAmt * 100)/(Days Factor
+	 * * principalAmt )]
 	 * 
-	 * @param (Date)
-	 *            startDate
-	 * @param (Date)
-	 *            maturityDate
-	 * @param (String)
-	 *            profitDaysBasis
-	 * @param (BigDecimal)
-	 *            principalAmt
-	 * @param (BigDecimal)
-	 *            maturityAmount
+	 * @param (Date)       startDate
+	 * @param (Date)       maturityDate
+	 * @param (String)     profitDaysBasis
+	 * @param (BigDecimal) principalAmt
+	 * @param (BigDecimal) maturityAmount
 	 * @return(BigDecimal) avgProfitRate
 	 */
 	public static BigDecimal calcAvgProfitRate(Date startDate, Date maturityDate, String profitDaysBasis,
@@ -748,16 +745,11 @@ public class CalculationUtil implements Serializable {
 	/**
 	 * This method returns the anualizedPercRate using the below values:
 	 * 
-	 * @param finAmount
-	 *            The Finance Amount
-	 * @param downPayment
-	 *            The Down Payment Amount
-	 * @param repayPftFrq
-	 *            The Repay Profit Frequency
-	 * @param numberOfTerms
-	 *            No of Terms
-	 * @param totalProfit
-	 *            Total Profit Amount
+	 * @param finAmount     The Finance Amount
+	 * @param downPayment   The Down Payment Amount
+	 * @param repayPftFrq   The Repay Profit Frequency
+	 * @param numberOfTerms No of Terms
+	 * @param totalProfit   Total Profit Amount
 	 * @return The anualizedPercRate value for the above parameters
 	 */
 	public static BigDecimal calulateAunalizedPercRate(BigDecimal finAmount, BigDecimal downPayment, String repayPftFrq,
@@ -772,13 +764,19 @@ public class CalculationUtil implements Serializable {
 						.multiply(totalProfit).multiply(new BigDecimal(100)))
 				.divide((new BigDecimal("12").multiply(new BigDecimal(numberOfTerms))
 						.multiply(new BigDecimal(numberOfTerms).add(new BigDecimal("1"))))
-								.multiply(new BigDecimal("4").multiply(finAmount.subtract(downPayment) // downPayment is subtracted (### 28-11-2016 - PSD Ticket ID 124367)
-		).add(totalProfit)), 2, BigDecimal.ROUND_HALF_DOWN);
+								.multiply(new BigDecimal("4").multiply(finAmount.subtract(downPayment) // downPayment is
+																										// subtracted
+																										// (###
+																										// 28-11-2016 -
+																										// PSD Ticket ID
+																										// 124367)
+								).add(totalProfit)), 2, RoundingMode.HALF_DOWN);
 		return anualizedPercRate;
 	}
 
 	/**
-	 * This method takes the paymentFrequency as "M0031".. and returns the number of terms in one year
+	 * This method takes the paymentFrequency as "M0031".. and returns the number of
+	 * terms in one year
 	 * 
 	 * @param Paymentfrequency
 	 * @return the number of terms in one year as int value
@@ -860,17 +858,17 @@ public class CalculationUtil implements Serializable {
 		return amount;
 	}
 
-	//This formula applicable only for 30/360 with Fixed periods only
+	// This formula applicable only for 30/360 with Fixed periods only
 	public static BigDecimal calDepositPV(BigDecimal fv, BigDecimal intRate, int terms, String frq, String roundingMode,
 			int roundingTarget) {
 		BigDecimal pv = BigDecimal.ZERO;
 
-		//Future Value is ZERO
+		// Future Value is ZERO
 		if (fv.compareTo(BigDecimal.ZERO) == 0) {
 			return pv;
 		}
 
-		//Interest Rate = 0
+		// Interest Rate = 0
 		if (intRate.compareTo(BigDecimal.ZERO) == 0) {
 			pv = roundAmount(fv, roundingMode, roundingTarget);
 			return pv;
@@ -888,7 +886,7 @@ public class CalculationUtil implements Serializable {
 		return pv;
 	}
 
-	//This formula applicable only for 30/360 with Fixed periods only
+	// This formula applicable only for 30/360 with Fixed periods only
 	public static BigDecimal calLoanPVAdvance(BigDecimal intRate, int terms, BigDecimal pmt, BigDecimal fv, int type,
 			String frq, String roundingMode, int roundingTarget) {
 		BigDecimal pv = BigDecimal.ZERO;

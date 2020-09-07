@@ -117,9 +117,7 @@ import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
-import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
-import com.pennant.backend.dao.policecase.PoliceCaseDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
@@ -151,13 +149,11 @@ import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinIRRDetails;
-import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
-import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinStageAccountingLog;
@@ -173,12 +169,10 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.RepayData;
-import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
-import com.pennant.backend.model.finance.salary.FinSalariedPayment;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -191,16 +185,13 @@ import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.impl.CollateralAssignmentValidation;
 import com.pennant.backend.service.collateral.impl.FinAssetTypesValidation;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.finance.contractor.ContractorAssetDetailService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
-import com.pennant.backend.service.finance.impl.FinInsuranceValidation;
 import com.pennant.backend.service.finance.putcall.FinOptionService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -249,7 +240,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected FinanceStepDetailDAO financeStepDetailDAO;
 	protected BlackListCustomerDAO blacklistCustomerDAO;
 	protected FinanceDedupeDAO financeDedupeDAO;
-	protected PoliceCaseDAO policeCaseDAO;
 	protected CustomerDedupDAO customerDedupDAO;
 	protected FinStageAccountingLogDAO finStageAccountingLogDAO;
 	protected FinCollateralsDAO finCollateralsDAO;
@@ -275,24 +265,17 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected AgreementDetailService agreementDetailService;
 	protected ScoringDetailService scoringDetailService;
 	protected CheckListDetailService checkListDetailService;
-	protected ContractorAssetDetailService contractorAssetDetailService;
 	protected CustomerDetailsService customerDetailsService;
 	protected FinCollateralService finCollateralService;
-	protected EtihadCreditBureauDetailService etihadCreditBureauDetailService;
-	protected BundledProductsDetailService bundledProductsDetailService;
-	protected FinAssetEvaluationService finAssetEvaluationService;
 	protected FinAdvancePaymentsService finAdvancePaymentsService;
 	protected FinFeeDetailService finFeeDetailService;
 	protected FinCovenantTypeService finCovenantTypeService;
 	protected RepaymentPostingsUtil repayPostingUtil;
 	protected SecondaryAccountDAO secondaryAccountDAO;
-	protected AgreementFieldsDetailService agreementFieldsDetailService;
 	protected FinFlagDetailsDAO finFlagDetailsDAO;
 	protected FinServiceInstrutionDAO finServiceInstructionDAO;
 	protected CollateralAssignmentValidation collateralAssignmentValidation;
 	protected CollateralAssignmentDAO collateralAssignmentDAO;
-	protected FinInsurancesDAO finInsurancesDAO;
-	protected FinInsuranceValidation finInsuranceValidation;
 	protected FinAssetTypesValidation finAssetTypesValidation;
 	protected FinAssetTypeDAO finAssetTypeDAO;
 	protected DisbursementPostings disbursementPostings;
@@ -599,203 +582,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		logger.debug("Leaving");
 		return auditDetails;
-	}
-
-	/**
-	 * Methods for Creating List of Audit Details with detailed fields
-	 * 
-	 * @param detail
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
-	public List<AuditDetail> setInsuranceDetailsAuditData(FinanceDetail detail, String auditTranType, String method) {
-		logger.debug("Entering");
-
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		FinInsurances object = new FinInsurances();
-		String[] fields = PennantJavaUtil.getFieldDetails(object, object.getExcludeFields());
-
-		for (int i = 0; i < detail.getFinScheduleData().getFinInsuranceList().size(); i++) {
-			FinInsurances insuranceDetails = detail.getFinScheduleData().getFinInsuranceList().get(i);
-
-			if (StringUtils.isEmpty(insuranceDetails.getRecordType())) {
-				continue;
-			}
-
-			insuranceDetails.setWorkflowId(detail.getFinScheduleData().getFinanceMain().getWorkflowId());
-			boolean isRcdType = false;
-
-			if (insuranceDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				insuranceDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (insuranceDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				insuranceDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType = true;
-			} else if (insuranceDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				insuranceDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType = true;
-			}
-
-			if ("saveOrUpdate".equals(method) && (isRcdType)) {
-				insuranceDetails.setNewRecord(true);
-			}
-
-			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (insuranceDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (insuranceDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| insuranceDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-				}
-			}
-
-			insuranceDetails.setRecordStatus(detail.getFinScheduleData().getFinanceMain().getRecordStatus());
-			insuranceDetails.setUserDetails(detail.getFinScheduleData().getFinanceMain().getUserDetails());
-			insuranceDetails.setLastMntOn(detail.getFinScheduleData().getFinanceMain().getLastMntOn());
-
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], insuranceDetails.getBefImage(),
-					insuranceDetails));
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-	}
-
-	public List<AuditDetail> processFinInsuranceDetails(List<AuditDetail> auditDetails, String type,
-			FinanceDetail detail, boolean isWif) {
-
-		logger.debug("Entering");
-
-		FinanceMain financeMain = detail.getFinScheduleData().getFinanceMain();
-
-		for (int i = 0; i < auditDetails.size(); i++) {
-			FinInsurances finInsurance = (FinInsurances) auditDetails.get(i).getModelData();
-			boolean saveRecord = false;
-			boolean updateRecord = false;
-			boolean deleteRecord = false;
-			boolean approveRec = false;
-			long insId = 0;
-
-			if (StringUtils.equals(finInsurance.getPaymentMethod(), InsuranceConstants.PAYTYPE_SCH_FRQ)) {
-				for (int j = 0; j < finInsurance.getFinSchFrqInsurances().size(); j++) {
-					FinSchFrqInsurance finSchFrqInsurance = finInsurance.getFinSchFrqInsurances().get(j);
-					finSchFrqInsurance.setLastMntBy(financeMain.getLastMntBy());
-					finSchFrqInsurance.setLastMntOn(financeMain.getLastMntOn());
-					finSchFrqInsurance.setRecordStatus(financeMain.getRecordStatus());
-					finSchFrqInsurance.setRoleCode(financeMain.getRoleCode());
-					finSchFrqInsurance.setNextRoleCode(financeMain.getNextRoleCode());
-					finSchFrqInsurance.setRecordType(financeMain.getRecordType());
-					finSchFrqInsurance.setWorkflowId(financeMain.getWorkflowId());
-				}
-			}
-
-			boolean SaveList = false;
-			boolean deleteList = false;
-
-			String rcdType = "";
-			String recordStatus = "";
-			if (StringUtils.isEmpty(type)) {
-				approveRec = true;
-				finInsurance.setRoleCode("");
-				finInsurance.setNextRoleCode("");
-				finInsurance.setTaskId("");
-				finInsurance.setNextTaskId("");
-			}
-			finInsurance.setReference(detail.getFinScheduleData().getFinanceMain().getFinReference());
-			finInsurance.setWorkflowId(0);
-
-			if (finInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (finInsurance.isNewRecord()) {
-				saveRecord = true;
-				if (finInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					finInsurance.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (finInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					finInsurance.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (finInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					finInsurance.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-
-			} else if (finInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (finInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord = true;
-			} else if (finInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if (approveRec) {
-					deleteRecord = true;
-				} else if (finInsurance.isNew()) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			}
-			if (approveRec) {
-				rcdType = finInsurance.getRecordType();
-				recordStatus = finInsurance.getRecordStatus();
-				finInsurance.setRecordType("");
-				finInsurance.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-			if (saveRecord) {
-				insId = getFinInsurancesDAO().save(finInsurance, type, isWif);
-				if (finInsurance.isInsuranceReq()
-						&& StringUtils.equals(finInsurance.getPaymentMethod(), InsuranceConstants.PAYTYPE_SCH_FRQ)) {
-					SaveList = true;
-				}
-			}
-
-			if (updateRecord) {
-				insId = finInsurance.getInsId();
-				getFinInsurancesDAO().update(finInsurance, type, isWif);
-				deleteList = true;
-				if (finInsurance.isInsuranceReq()
-						&& StringUtils.equals(finInsurance.getPaymentMethod(), InsuranceConstants.PAYTYPE_SCH_FRQ)) {
-					SaveList = true;
-				}
-			}
-
-			if (deleteRecord) {
-				getFinInsurancesDAO().delete(finInsurance, type, isWif);
-				deleteList = true;
-			}
-
-			if (approveRec) {
-				finInsurance.setRecordType(rcdType);
-				finInsurance.setRecordStatus(recordStatus);
-			}
-
-			if (SaveList || deleteList) {
-
-				// Delete Existing List from Tables
-				if (deleteList) {
-					getFinInsurancesDAO().deleteFreqBatch(insId, isWif, type);
-				}
-
-				// Insert / update(reinsert) details
-				if (SaveList) {
-
-					List<FinSchFrqInsurance> list = finInsurance.getFinSchFrqInsurances();
-					for (int j = 0; j < list.size(); j++) {
-						list.get(j).setInsId(insId);
-					}
-
-					// Save List of Insurance details for schedule frequency
-					getFinInsurancesDAO().saveFreqBatch(list, isWif, type);
-
-				}
-			}
-			auditDetails.get(i).setModelData(finInsurance);
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-
 	}
 
 	/**
@@ -1447,8 +1233,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			}
 		}
 
-		aeEvent.setModuleDefiner(StringUtils.isEmpty(financeDetail.getModuleDefiner())
-				? FinanceConstants.FINSER_EVENT_ORG : financeDetail.getModuleDefiner());
+		aeEvent.setModuleDefiner(
+				StringUtils.isEmpty(financeDetail.getModuleDefiner()) ? FinanceConstants.FINSER_EVENT_ORG
+						: financeDetail.getModuleDefiner());
 		if (financeDetail.getModuleDefiner().equals(FinanceConstants.FINSER_EVENT_ORG)) {
 			//FIXME: PV. 18AUG19. Some confusion. As downpayment was not deducted from current asset value earlier addiing now gives double impact. 
 			//amountCodes.setDisburse(finMain.getFinCurrAssetValue().add(finMain.getDownPayment()));
@@ -2390,35 +2177,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			}
 		}
 
-		// Save Salaried Installment Details
-		FinSalariedPayment salariedPayment = new FinSalariedPayment();
-		salariedPayment.setFinReference(finScheduleData.getFinanceMain().getFinReference());
-		salariedPayment.setPriAccount(finScheduleData.getFinanceMain().getRepayAccountId());
-
-		List<SecondaryAccount> accList = finScheduleData.getFinanceMain().getSecondaryAccount();
-		String secAccount = "";
-		if (accList != null && !accList.isEmpty()) {
-			for (int i = 0; i < accList.size(); i++) {
-				secAccount = secAccount.concat(accList.get(i).getAccountNumber() + ",");
-			}
-			if (secAccount.endsWith(",")) {
-				secAccount = secAccount.substring(0, secAccount.length() - 2);
-			}
-		}
-		salariedPayment.setSecAccount(secAccount);
-		if (!dftZeoPay) {
-			salariedPayment.setNextPayDate(newSchd.getSchDate());
-			salariedPayment.setNextPayment(newSchd.getProfitSchd().add(newSchd.getPrincipalSchd())
-					.subtract(newSchd.getSchdPftPaid().subtract(newSchd.getSchdPriPaid())));
-		} else {
-			salariedPayment.setNextPayDate(oldSchd.getSchDate());
-			salariedPayment.setNextPayment(BigDecimal.ZERO);
-		}
-		salariedPayment.setValueDate(DateUtility.getSysDate());
-
-		// Save Next Payment Detail
-		getExtTablesDAO().saveFinSalariedPayment(salariedPayment);
-
 		logger.debug("Leaving");
 	}
 
@@ -2541,7 +2299,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			disbursement.setFinReference(finDetail.getFinReference());
 			disbursement.setDisbReqDate(curBDay);
 			disbursement.setDisbIsActive(true);
-			disbursement.setDisbDisbursed(true);
 			disbursement.setLogKey(logKey);
 
 			if (disbursement.getInstructionUID() == Long.MIN_VALUE) {
@@ -3184,14 +2941,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.checkListDetailService = checkListDetailService;
 	}
 
-	public ContractorAssetDetailService getContractorAssetDetailService() {
-		return contractorAssetDetailService;
-	}
-
-	public void setContractorAssetDetailService(ContractorAssetDetailService contractorAssetDetailService) {
-		this.contractorAssetDetailService = contractorAssetDetailService;
-	}
-
 	public PostingsDAO getPostingsDAO() {
 		return postingsDAO;
 	}
@@ -3400,14 +3149,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.financeDedupeDAO = financeDedupeDAO;
 	}
 
-	public PoliceCaseDAO getPoliceCaseDAO() {
-		return policeCaseDAO;
-	}
-
-	public void setPoliceCaseDAO(PoliceCaseDAO policeCaseDAO) {
-		this.policeCaseDAO = policeCaseDAO;
-	}
-
 	public CustomerDedupDAO getCustomerDedupDAO() {
 		return customerDedupDAO;
 	}
@@ -3438,30 +3179,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setFinCollateralService(FinCollateralService finCollateralService) {
 		this.finCollateralService = finCollateralService;
-	}
-
-	public EtihadCreditBureauDetailService getEtihadCreditBureauDetailService() {
-		return etihadCreditBureauDetailService;
-	}
-
-	public void setEtihadCreditBureauDetailService(EtihadCreditBureauDetailService etihadCreditBureauDetailService) {
-		this.etihadCreditBureauDetailService = etihadCreditBureauDetailService;
-	}
-
-	public BundledProductsDetailService getBundledProductsDetailService() {
-		return bundledProductsDetailService;
-	}
-
-	public void setBundledProductsDetailService(BundledProductsDetailService bundledProductsDetailService) {
-		this.bundledProductsDetailService = bundledProductsDetailService;
-	}
-
-	public FinAssetEvaluationService getFinAssetEvaluationService() {
-		return finAssetEvaluationService;
-	}
-
-	public void setFinAssetEvaluationService(FinAssetEvaluationService finAssetEvaluationService) {
-		this.finAssetEvaluationService = finAssetEvaluationService;
 	}
 
 	public FinAdvancePaymentsService getFinAdvancePaymentsService() {
@@ -3502,14 +3219,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setSecondaryAccountDAO(SecondaryAccountDAO secondaryAccountDAO) {
 		this.secondaryAccountDAO = secondaryAccountDAO;
-	}
-
-	public AgreementFieldsDetailService getAgreementFieldsDetailService() {
-		return agreementFieldsDetailService;
-	}
-
-	public void setAgreementFieldsDetailService(AgreementFieldsDetailService agreementFieldsDetailService) {
-		this.agreementFieldsDetailService = agreementFieldsDetailService;
 	}
 
 	public ExtTablesDAO getExtTablesDAO() {
@@ -3557,21 +3266,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
 		this.collateralAssignmentDAO = collateralAssignmentDAO;
-	}
-
-	public FinInsurancesDAO getFinInsurancesDAO() {
-		return finInsurancesDAO;
-	}
-
-	public void setFinInsurancesDAO(FinInsurancesDAO finInsurancesDAO) {
-		this.finInsurancesDAO = finInsurancesDAO;
-	}
-
-	public FinInsuranceValidation getFinInsuranceValidation() {
-		if (finInsuranceValidation == null) {
-			this.finInsuranceValidation = new FinInsuranceValidation(finInsurancesDAO);
-		}
-		return finInsuranceValidation;
 	}
 
 	public FinAssetTypesValidation getFinAssetTypesValidation() {
@@ -3760,10 +3454,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setCollateralAssignmentValidation(CollateralAssignmentValidation collateralAssignmentValidation) {
 		this.collateralAssignmentValidation = collateralAssignmentValidation;
-	}
-
-	public void setFinInsuranceValidation(FinInsuranceValidation finInsuranceValidation) {
-		this.finInsuranceValidation = finInsuranceValidation;
 	}
 
 	public void setFinAssetTypesValidation(FinAssetTypesValidation finAssetTypesValidation) {

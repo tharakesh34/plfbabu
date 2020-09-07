@@ -60,14 +60,14 @@ public class CIBILServiceImpl implements CIBILService {
 				}
 
 				// Non Banking Customers needs to prepared
-				//guarenters = cibildao.getGuarantorsDetails(finReference, false);
+				// guarenters = cibildao.getGuarantorsDetails(finReference, false);
 				for (Long custId : guarenters) {
-					//CustomerDetails guarenter = new CustomerDetails();
-					//guarenter.setCustomer(cibildao.getExternalCustomer(custId));
-					//guarenter.setAddressList(cibildao.getExternalCustomerAddres(custId));
-					//guarenter.setCustomerPhoneNumList(cibildao.getExternalCustomerPhoneNumbers(custId));
-					//guarenter.setCustomerDocumentsList(cibildao.getExternalCustomerDocuments(custId));
-					//guarenterList.add(guarenter);
+					// CustomerDetails guarenter = new CustomerDetails();
+					// guarenter.setCustomer(cibildao.getExternalCustomer(custId));
+					// guarenter.setAddressList(cibildao.getExternalCustomerAddres(custId));
+					// guarenter.setCustomerPhoneNumList(cibildao.getExternalCustomerPhoneNumbers(custId));
+					// guarenter.setCustomerDocumentsList(cibildao.getExternalCustomerDocuments(custId));
+					// guarenterList.add(guarenter);
 				}
 
 				finance.setFinGuarenters(guarenterList);
@@ -110,7 +110,7 @@ public class CIBILServiceImpl implements CIBILService {
 
 	@Override
 	public long extractCustomers(String segmentType) throws Exception {
-		return new Long(cibildao.extractCustomers(segmentType));
+		return Long.valueOf(cibildao.extractCustomers(segmentType));
 	}
 
 	@Override

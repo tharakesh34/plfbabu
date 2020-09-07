@@ -173,10 +173,10 @@ public class FinanceDetailController extends SummaryDetailService {
 				AuditHeader auditHeader = new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null,
 						null, null, auditDetail, financeMain.getUserDetails(),
 						new HashMap<String, ArrayList<ErrorDetail>>());
-				//get the header details from the request
+				// get the header details from the request
 				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 						.get(APIHeader.API_HEADER_KEY);
-				//set the headerDetails to AuditHeader
+				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
 				// save the finance details into main table
 				auditHeader = getFinanceDetailService().doApprove(auditHeader, true);
@@ -328,10 +328,10 @@ public class FinanceDetailController extends SummaryDetailService {
 					feeDetail.setFixedAmount(vasRecording.getFee());
 					feeDetail.setAlwDeviation(true);
 					feeDetail.setMaxWaiverPerc(BigDecimal.valueOf(100));
-					//feeDetail.setAlwModifyFee(true);
+					// feeDetail.setAlwModifyFee(true);
 					feeDetail.setAlwModifyFeeSchdMthd(true);
 					feeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
-					//Fee Details set to the VasRecording
+					// Fee Details set to the VasRecording
 					vasRecording.setWaivedAmt(feeDetail.getWaivedAmount());
 					vasRecording.setPaidAmt(feeDetail.getPaidAmount());
 				}
@@ -374,7 +374,7 @@ public class FinanceDetailController extends SummaryDetailService {
 				Collections.sort(finStepDetails, new Comparator<FinanceStepPolicyDetail>() {
 					@Override
 					public int compare(FinanceStepPolicyDetail b1, FinanceStepPolicyDetail b2) {
-						return (new Integer(b1.getStepNo()).compareTo(new Integer(b2.getStepNo())));
+						return (Integer.valueOf(b1.getStepNo()).compareTo(Integer.valueOf(b2.getStepNo())));
 					}
 				});
 				// method for prepare step installments
@@ -382,7 +382,7 @@ public class FinanceDetailController extends SummaryDetailService {
 			}
 		}
 
-		finScheduleData.getFinanceMain().setCalculateRepay(true);//FIXME: why this field
+		finScheduleData.getFinanceMain().setCalculateRepay(true);// FIXME: why this field
 
 		// Disbursement details
 		FinanceDisbursement disbursementDetails = new FinanceDisbursement();
@@ -451,9 +451,9 @@ public class FinanceDetailController extends SummaryDetailService {
 			// set fee paid amounts based on schedule method
 			finScheduleData.setFinFeeDetailList(getUpdatedFees(finScheduleData.getFinFeeDetailList()));
 
-			//summary
+			// summary
 			FinanceDetail response = new FinanceDetail();
-			//used for AEAMOUNTS class 
+			// used for AEAMOUNTS class
 			response.setFinReference(financeMain.getFinReference());
 			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			;
@@ -478,7 +478,6 @@ public class FinanceDetailController extends SummaryDetailService {
 		response.setRepayInstructions(null);
 		response.setRateInstruction(null);
 		response.setFinFeeDetailList(null);
-		response.setInsuranceList(null);
 		response.setStepPolicyDetails(null);
 		response.setFinanceScheduleDetails(null);
 		response.setPlanEMIHDates(null);
@@ -510,12 +509,12 @@ public class FinanceDetailController extends SummaryDetailService {
 
 			if (financeDetail != null) {
 				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-				//setting Disb first and lastDates
+				// setting Disb first and lastDates
 				List<FinanceDisbursement> disbList = financeDetail.getFinScheduleData().getDisbursementDetails();
 				Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
 					@Override
 					public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
-						return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
+						return (Integer.valueOf(b1.getDisbSeq()).compareTo(Integer.valueOf(b2.getDisbSeq())));
 					}
 				});
 
@@ -529,7 +528,8 @@ public class FinanceDetailController extends SummaryDetailService {
 					}
 				}
 
-				// Avoid Grace Period details into the marshaling in case of Allow grace is false
+				// Avoid Grace Period details into the marshaling in case of Allow grace is
+				// false
 				if (!financeMain.isAllowGrcPeriod()) {
 					financeMain.setGrcPeriodEndDate(null);
 					financeMain.setGrcRateBasis(null);
@@ -548,9 +548,6 @@ public class FinanceDetailController extends SummaryDetailService {
 					financeMain.setGrcSchdMthd(null);
 					financeMain.setGrcMinRate(null);
 					financeMain.setGrcMaxRate(null);
-					financeMain.setGrcAdvPftRate(null);
-					financeMain.setGrcAdvBaseRate(null);
-					financeMain.setGrcAdvMargin(null);
 				}
 
 				// Summary details
@@ -559,7 +556,7 @@ public class FinanceDetailController extends SummaryDetailService {
 				response.setFinFeeDetailList(getUpdatedFees(response.getFinFeeDetailList()));
 				response.setFinanceSummary(getFinanceSummary(financeDetail));
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-				//get FinODDetails
+				// get FinODDetails
 				List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 				response.setFinODDetails(finODDetailsList);
 				// to remove un-necessary objects from response make them as null

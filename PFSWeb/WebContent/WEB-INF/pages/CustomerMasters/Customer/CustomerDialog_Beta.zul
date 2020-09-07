@@ -161,10 +161,10 @@
 
 												<row>
 
-													<label id="label_ArabicName" value="${c:l('label_CustomerDialog_FatherOrSpouse.value')}" />
+													<label id="label_LocalLngName" value="${c:l('label_CustomerDialog_FatherOrSpouse.value')}" />
 													<hbox>
-														<space id="space_CustArabicName" spacing="2px" sclass="mandatory" />
-														<textbox id="custArabicName" maxlength="50" width="250px" />
+														<space id="space_CustLocalLngName" spacing="2px" sclass="mandatory" />
+														<textbox id="custLocalLngName" maxlength="50" width="250px" />
 													</hbox>
 
 													<label id="label_CustomerDialog_motherMaidenName" value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}" />
@@ -300,8 +300,8 @@
 
 												</row>
 
-												<!-- <row> <label id="label_ArabicName" value="${c:l('label_CustomerDialog_CustArabicName.value')}" /> <hbox> 
-													<space id="space_CustArabicName" spacing="2px" sclass="mandatory" /> <textbox id="custArabicName" maxlength="50" width="250px" 
+												<!-- <row> <label id="label_LocalLngName" value="${c:l('label_CustomerDialog_CustLocalLngName.value')}" /> <hbox> 
+													<space id="space_CustLocalLngName" spacing="2px" sclass="mandatory" /> <textbox id="custLocalLngName" maxlength="50" width="250px" 
 													/> </hbox> </row> -->
 
 												<row id="row_custTradeLicenceNum" visible="false">

@@ -36,7 +36,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
@@ -131,9 +130,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean finIsAlwEarlyRpy;
 	private boolean finIsAlwEarlySettle;
 	private int finODRpyTries;
-	private String finDepositRestrictedTo;
-	private int finAEBuyOrInception;
-	private int finAESellOrMaturity;
 	private boolean finIsActive;
 	private String finScheduleOn;
 	private String alwEarlyPayMethods;
@@ -153,8 +149,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean finPftUnChanged;
 	private Date startDate;
 	private Date endDate;
-	private boolean allowDownpayPgm;
-	private boolean alwAdvanceRent;
 	private boolean manualSchedule;
 	private boolean applyGrcPricing;
 	private long grcPricingMethod;
@@ -192,15 +186,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private int roundingTarget = 0;
 	private boolean developerFinance;
 
-	// Advised profit Rates
-	private String grcAdvBaseRate;
-	private String grcAdvBaseRateDesc;
-	private BigDecimal grcAdvMargin = BigDecimal.ZERO;
-	private BigDecimal grcAdvPftRate = BigDecimal.ZERO;
-	private String rpyAdvBaseRate;
-	private String rpyAdvBaseRateDesc;
-	private BigDecimal rpyAdvMargin = BigDecimal.ZERO;
-	private BigDecimal rpyAdvPftRate = BigDecimal.ZERO;
 	private boolean alwMultiPartyDisb;
 	private boolean tdsApplicable;
 	private boolean tdsAllowToModify;
@@ -210,10 +195,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	//Profit on past Due
 	private String pastduePftCalMthd;
 	private BigDecimal pastduePftMargin = BigDecimal.ZERO;
-
-	//RollOver Details
-	private boolean rollOverFinance;
-	private String rollOverFrq;
 
 	//Overdue Penalty Details
 	private boolean applyODPenalty;
@@ -296,11 +277,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String lovDescFinProvisionAcTypeName;
 	private String lovDescWorkFlowRolesName;
 	private String lovDescWorkFlowTypeName;
-	private String lovDescFinDepositRestrictedTo;
-	private String lovDescFinAEBuyOrInceptionName;
-	private String lovDescEVFinAEBuyOrInceptionName;
-	private String lovDescFinAESellOrMaturityName;
-	private String lovDescEVFinAESellOrMaturityName;
 	private String lovDescPromoFinTypeDesc;
 	private String productCategory;
 
@@ -308,7 +284,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean promotionType = false;
 
 	private List<FinTypeAccount> finTypeAccounts = new ArrayList<FinTypeAccount>();
-	private List<FinTypeInsurances> finTypeInsurances = new ArrayList<FinTypeInsurances>();
 	private List<FinTypeAccounting> finTypeAccountingList = new ArrayList<FinTypeAccounting>();
 	private Map<String, Long> finTypeAccountingMap = new HashMap<String, Long>();
 	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
@@ -373,8 +348,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("finTypeAccounts");
 		excludeFields.add("finTypeAccountingList");
-		excludeFields.add("grcAdvBaseRateDesc");
-		excludeFields.add("rpyAdvBaseRateDesc");
 		excludeFields.add("downPayRuleCode");
 		excludeFields.add("downPayRuleDesc");
 		excludeFields.add("finSuspTrigger");
@@ -1063,70 +1036,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.planDeferCount = planDeferCount;
 	}
 
-	public void setFinDepositRestrictedTo(String finDepositRestrictedTo) {
-		this.finDepositRestrictedTo = finDepositRestrictedTo;
-	}
-
-	public String getFinDepositRestrictedTo() {
-		return finDepositRestrictedTo;
-	}
-
-	public void setLovDescFinDepositRestrictedTo(String lovDescFinDepositRestrictedTo) {
-		this.lovDescFinDepositRestrictedTo = lovDescFinDepositRestrictedTo;
-	}
-
-	public String getLovDescFinDepositRestrictedTo() {
-		return lovDescFinDepositRestrictedTo;
-	}
-
-	public void setFinAEBuyOrInception(int finAEBuyOrInception) {
-		this.finAEBuyOrInception = finAEBuyOrInception;
-	}
-
-	public int getFinAEBuyOrInception() {
-		return finAEBuyOrInception;
-	}
-
-	public void setLovDescFinAEBuyOrInceptionName(String lovDescFinAEBuyOrInceptionName) {
-		this.lovDescFinAEBuyOrInceptionName = lovDescFinAEBuyOrInceptionName;
-	}
-
-	public String getLovDescFinAEBuyOrInceptionName() {
-		return lovDescFinAEBuyOrInceptionName;
-	}
-
-	public void setLovDescEVFinAEBuyOrInceptionName(String lovDescEVFinAEBuyOrInceptionName) {
-		this.lovDescEVFinAEBuyOrInceptionName = lovDescEVFinAEBuyOrInceptionName;
-	}
-
-	public String getLovDescEVFinAEBuyOrInceptionName() {
-		return lovDescEVFinAEBuyOrInceptionName;
-	}
-
-	public void setFinAESellOrMaturity(int finAESellOrMaturity) {
-		this.finAESellOrMaturity = finAESellOrMaturity;
-	}
-
-	public int getFinAESellOrMaturity() {
-		return finAESellOrMaturity;
-	}
-
-	public void setLovDescFinAESellOrMaturityName(String lovDescFinAESellOrMaturityName) {
-		this.lovDescFinAESellOrMaturityName = lovDescFinAESellOrMaturityName;
-	}
-
-	public String getLovDescFinAESellOrMaturityName() {
-		return lovDescFinAESellOrMaturityName;
-	}
-
-	public void setLovDescEVFinAESellOrMaturityName(String lovDescEVFinAESellOrMaturityName) {
-		this.lovDescEVFinAESellOrMaturityName = lovDescEVFinAESellOrMaturityName;
-	}
-
-	public String getLovDescEVFinAESellOrMaturityName() {
-		return lovDescEVFinAESellOrMaturityName;
-	}
-
 	public String getLovDescWorkFlowRolesName() {
 		return lovDescWorkFlowRolesName;
 	}
@@ -1515,22 +1424,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.pastduePftMargin = pastduePftMargin;
 	}
 
-	public boolean isAllowDownpayPgm() {
-		return allowDownpayPgm;
-	}
-
-	public boolean isAlwAdvanceRent() {
-		return alwAdvanceRent;
-	}
-
-	public void setAlwAdvanceRent(boolean alwAdvanceRent) {
-		this.alwAdvanceRent = alwAdvanceRent;
-	}
-
-	public void setAllowDownpayPgm(boolean allowDownPayPgm) {
-		this.allowDownpayPgm = allowDownPayPgm;
-	}
-
 	public String getLovDescPromoFinTypeDesc() {
 		return lovDescPromoFinTypeDesc;
 	}
@@ -1553,86 +1446,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setAlwMultiPartyDisb(boolean alwMultiPartyDisb) {
 		this.alwMultiPartyDisb = alwMultiPartyDisb;
-	}
-
-	public String getGrcAdvBaseRate() {
-		return grcAdvBaseRate;
-	}
-
-	public void setGrcAdvBaseRate(String grcAdvBaseRate) {
-		this.grcAdvBaseRate = grcAdvBaseRate;
-	}
-
-	public BigDecimal getGrcAdvMargin() {
-		return grcAdvMargin;
-	}
-
-	public void setGrcAdvMargin(BigDecimal grcAdvMargin) {
-		this.grcAdvMargin = grcAdvMargin;
-	}
-
-	public BigDecimal getGrcAdvPftRate() {
-		return grcAdvPftRate;
-	}
-
-	public void setGrcAdvPftRate(BigDecimal grcAdvPftRate) {
-		this.grcAdvPftRate = grcAdvPftRate;
-	}
-
-	public String getRpyAdvBaseRate() {
-		return rpyAdvBaseRate;
-	}
-
-	public void setRpyAdvBaseRate(String rpyAdvBaseRate) {
-		this.rpyAdvBaseRate = rpyAdvBaseRate;
-	}
-
-	public BigDecimal getRpyAdvMargin() {
-		return rpyAdvMargin;
-	}
-
-	public void setRpyAdvMargin(BigDecimal rpyAdvMargin) {
-		this.rpyAdvMargin = rpyAdvMargin;
-	}
-
-	public BigDecimal getRpyAdvPftRate() {
-		return rpyAdvPftRate;
-	}
-
-	public void setRpyAdvPftRate(BigDecimal rpyAdvPftRate) {
-		this.rpyAdvPftRate = rpyAdvPftRate;
-	}
-
-	public String getGrcAdvBaseRateDesc() {
-		return grcAdvBaseRateDesc;
-	}
-
-	public void setGrcAdvBaseRateDesc(String grcAdvBaseRateDesc) {
-		this.grcAdvBaseRateDesc = grcAdvBaseRateDesc;
-	}
-
-	public String getRpyAdvBaseRateDesc() {
-		return rpyAdvBaseRateDesc;
-	}
-
-	public void setRpyAdvBaseRateDesc(String rpyAdvBaseRateDesc) {
-		this.rpyAdvBaseRateDesc = rpyAdvBaseRateDesc;
-	}
-
-	public boolean isRollOverFinance() {
-		return rollOverFinance;
-	}
-
-	public void setRollOverFinance(boolean rollOverFinance) {
-		this.rollOverFinance = rollOverFinance;
-	}
-
-	public String getRollOverFrq() {
-		return rollOverFrq;
-	}
-
-	public void setRollOverFrq(String rollOverFrq) {
-		this.rollOverFrq = rollOverFrq;
 	}
 
 	public HashMap<String, Object> getDeclaredFieldValues() {
@@ -1809,14 +1622,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		} else {
 			return finTypeAccountingMap.get(eventCode);
 		}
-	}
-
-	public List<FinTypeInsurances> getFinTypeInsurances() {
-		return finTypeInsurances;
-	}
-
-	public void setFinTypeInsurances(List<FinTypeInsurances> finTypeInsurances) {
-		this.finTypeInsurances = finTypeInsurances;
 	}
 
 	public boolean isAlwBPI() {

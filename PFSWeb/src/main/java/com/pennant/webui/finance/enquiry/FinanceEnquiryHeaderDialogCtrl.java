@@ -88,7 +88,6 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
-import com.pennant.backend.model.finance.DDAProcessData;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
@@ -107,7 +106,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleReportData;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceSuspHead;
-import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
@@ -401,14 +399,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				financeSummary = getFinanceDetailService().getFinanceProfitDetails(this.finReference);
 				map.put("financeSummary", financeSummary);
 
-				// finance Contract Asset Details
-				List<ContractorAssetDetail> assetDetails = null;
-				if (FinanceConstants.PRODUCT_ISTISNA
-						.equals(finScheduleData.getFinanceMain().getLovDescProductCodeName())) {
-					assetDetails = getFinanceDetailService().getContractorAssetDetailList(finReference);
-				}
 				finScheduleData.getFinanceMain().setLovDescProductCodeName(enquiry.getLovDescProductCodeName());
-				map.put("assetDetailList", assetDetails);
 				map.put("finScheduleData", finScheduleData);
 				map.put("financeDetail", financeDetail);
 				map.put("contributorHeader", contributorHeader);
@@ -564,21 +555,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("inprocessLoanEnqList", inprocessLoanEnqList);
 			path = "/WEB-INF/pages/Finance/FinanceMain/DeviationDetailDialog.zul";
 
-		} else if ("DDAENQ".equals(this.enquiryType)) {
-			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_DDAEnquiry"));
-
-			JdbcSearchObject<DDAProcessData> jdbcSearchObject = new JdbcSearchObject<DDAProcessData>();
-			jdbcSearchObject.addTabelName("DDAReferenceLog");
-			jdbcSearchObject.addFilterEqual("FinRefence", this.finReference);
-			jdbcSearchObject.setSearchClass(DDAProcessData.class);
-			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-			List<DDAProcessData> list = pagedListService.getBySearchObject(jdbcSearchObject);
-
-			map.put("approvalEnquiry", "");
-			map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
-			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
-			map.put("list", list);
-			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/DDAEnquiryDialog.zul";
 		} else if ("FINMANDENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinMandateEnquiry"));
 

@@ -136,7 +136,7 @@ public class RepayConstants {
 	public static final String ALLOCATION_LPFT = "LPFT";
 	public static final String ALLOCATION_ODC = "ODC";
 	public static final String ALLOCATION_FEE = "FEE";
-	public static final String ALLOCATION_INS = "INS";
+	//public static final String ALLOCATION_INS = "INS";
 	public static final String ALLOCATION_MANADV = "MANADV";
 	public static final String ALLOCATION_BOUNCE = "BOUNCE";
 

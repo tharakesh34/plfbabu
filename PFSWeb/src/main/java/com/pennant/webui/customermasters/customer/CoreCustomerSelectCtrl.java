@@ -392,31 +392,28 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 				try {
 					primaryIdNumber = primaryID.getValue();
 					// Verifying/Validating the PAN Number
-					if (isRetailCustomer && primaryAccountService.panValidationRequired()) {
-						try {
-							PrimaryAccount primaryAccount = new PrimaryAccount();
-							primaryAccount.setPanNumber(primaryID.getValue());
-							primaryAccount = primaryAccountService.retrivePanDetails(primaryAccount);
-							String custFName = StringUtils.trimToEmpty(primaryAccount.getCustFName());
-							String custMName = StringUtils.trimToEmpty(primaryAccount.getCustMName());
-							String custLName = StringUtils.trimToEmpty(primaryAccount.getCustLName());
-
-							primaryIdName = custFName.concat(" ").concat(custMName).concat(" ").concat(custLName);
-
-							if (StringUtils.isNotBlank(primaryIdName)) {
-								MessageUtil.showMessage(String.format("%s PAN validation successfull.", primaryIdName));
-							} else {
-								MessageUtil.showMessage(String.format("%s PAN already verified", primaryID.getValue()));
-
-							}
-						} catch (InterfaceException e) {
-							if (MessageUtil.YES == MessageUtil
-									.confirm(e.getErrorMessage() + "\n" + "Are you sure you want to continue ?")) {
-							} else {
-								return;
-							}
-						}
-					}
+					/*
+					 * if (isRetailCustomer && primaryAccountService.panValidationRequired()) { try
+					 * { PrimaryAccount primaryAccount = new PrimaryAccount();
+					 * primaryAccount.setPanNumber(primaryID.getValue()); primaryAccount =
+					 * primaryAccountService.retrivePanDetails(primaryAccount); String custFName =
+					 * StringUtils.trimToEmpty(primaryAccount.getCustFName()); String custMName =
+					 * StringUtils.trimToEmpty(primaryAccount.getCustMName()); String custLName =
+					 * StringUtils.trimToEmpty(primaryAccount.getCustLName());
+					 * 
+					 * primaryIdName =
+					 * custFName.concat(" ").concat(custMName).concat(" ").concat(custLName);
+					 * 
+					 * if (StringUtils.isNotBlank(primaryIdName)) {
+					 * MessageUtil.showMessage(String.format("%s PAN validation successfull.",
+					 * primaryIdName)); } else {
+					 * MessageUtil.showMessage(String.format("%s PAN already verified",
+					 * primaryID.getValue()));
+					 * 
+					 * } } catch (InterfaceException e) { if (MessageUtil.YES == MessageUtil
+					 * .confirm(e.getErrorMessage() + "\n" + "Are you sure you want to continue ?"))
+					 * { } else { return; } } }
+					 */
 
 				} catch (WrongValueException e) {
 					wve.add(e);

@@ -230,11 +230,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Decimalbox insPayment;
 	protected Decimalbox schdFeeAmount;
 	protected Decimalbox crInsAmount;
-	protected Decimalbox suplRentAmount;
-	protected Decimalbox incrCostAmount;
 	protected Row row_InsFee;
 	protected Row row_SchdFee;
-	protected Row row_SuplRentNIncrCost;
 	protected Decimalbox totPenaltyAmt;
 	protected Combobox earlyRpyEffectOnSchd;
 	protected Decimalbox totRefundAmt;
@@ -253,8 +250,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	// List Header Details on payent Details
 	protected Listheader listheader_InsPayment;
 	protected Listheader listheader_SchdFee;
-	protected Listheader listheader_SuplRent;
-	protected Listheader listheader_IncrCost;
 
 	//Effective Schedule Tab Details
 	protected Label finSchType;
@@ -1633,30 +1628,15 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							// Check Available Funding Account Balance
 							boolean accountTypeFound = false;
 							if (getFinanceType() != null) {
-								if (StringUtils.trimToEmpty(getFinanceType().getFinDivision())
-										.equals(FinanceConstants.FIN_DIVISION_TREASURY)) {
-									String acType = SysParamUtil.getValueAsString("ALWFULLPAY_TSR_ACTYPE");
 
-									//Account Type Check
-									String[] acTypeList = acType.split(",");
-									for (int i = 0; i < acTypeList.length; i++) {
-										if (iAccount.getAcType().equals(acTypeList[i].trim())) {
-											accountTypeFound = true;
-											break;
-										}
-									}
-
-								} else {
-
-									//Account Type Check
-									String acType = SysParamUtil.getValueAsString("ALWFULLPAY_NONTSR_ACTYPE");
-									String[] acTypeList = acType.split(",");
-									for (int i = 0; i < acTypeList.length; i++) {
-										if (iAccount != null && StringUtils.trimToEmpty(iAccount.getAcType())
-												.equals(acTypeList[i].trim())) {
-											accountTypeFound = true;
-											break;
-										}
+								//Account Type Check
+								String acType = SysParamUtil.getValueAsString("ALWFULLPAY_NONTSR_ACTYPE");
+								String[] acTypeList = acType.split(",");
+								for (int i = 0; i < acTypeList.length; i++) {
+									if (iAccount != null && StringUtils.trimToEmpty(iAccount.getAcType())
+											.equals(acTypeList[i].trim())) {
+										accountTypeFound = true;
+										break;
 									}
 								}
 							}
@@ -1884,8 +1864,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.insRefundAmt.setValue(PennantApplicationUtil.formateAmount(header.getInsRefund(), finFormatter));
 			this.insPayment.setValue(PennantApplicationUtil.formateAmount(header.getTotalIns(), finFormatter));
 			this.schdFeeAmount.setValue(PennantApplicationUtil.formateAmount(header.getTotalSchdFee(), finFormatter));
-			this.suplRentAmount.setValue(PennantApplicationUtil.formateAmount(header.getTotalSuplRent(), finFormatter));
-			this.incrCostAmount.setValue(PennantApplicationUtil.formateAmount(header.getTotalIncrCost(), finFormatter));
 			fillComboBox(earlyRpyEffectOnSchd, header.getEarlyPayEffMtd(), earlyRpyEffectList, "");
 			fillComboBox(this.paymentApportionment, header.getPayApportionment(), payApprtnList, "");
 			this.earlySettlementDate.setValue(header.getEarlyPayDate());
@@ -1984,8 +1962,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		header.setInsRefund(PennantApplicationUtil.unFormateAmount(this.insRefundAmt.getValue(), finFormatter));
 		header.setTotalIns(PennantApplicationUtil.unFormateAmount(this.insPayment.getValue(), finFormatter));
 		header.setTotalSchdFee(PennantApplicationUtil.unFormateAmount(this.schdFeeAmount.getValue(), finFormatter));
-		header.setTotalSuplRent(PennantApplicationUtil.unFormateAmount(this.suplRentAmount.getValue(), finFormatter));
-		header.setTotalIncrCost(PennantApplicationUtil.unFormateAmount(this.incrCostAmount.getValue(), finFormatter));
 		header.setEarlyPayEffMtd(this.earlyRpyEffectOnSchd.getSelectedItem().getValue().toString());
 		header.setEarlyPayDate(this.earlySettlementDate.getValue());
 		header.setPayApportionment(this.paymentApportionment.getSelectedItem().getValue().toString());
@@ -2088,8 +2064,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		amountCodes.setInsRefund(PennantApplicationUtil.unFormateAmount(this.insRefundAmt.getValue(), format));
 		amountCodes.setInsPay(PennantApplicationUtil.unFormateAmount(this.insPayment.getValue(), format));
 		amountCodes.setSchFeePay(PennantApplicationUtil.unFormateAmount(this.schdFeeAmount.getValue(), format));
-		amountCodes.setSuplRentPay(PennantApplicationUtil.unFormateAmount(this.suplRentAmount.getValue(), format));
-		amountCodes.setIncrCostPay(PennantApplicationUtil.unFormateAmount(this.incrCostAmount.getValue(), format));
 
 		Map<String, Object> dataMap = aeEvent.getDataMap();
 
@@ -2291,9 +2265,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				String method = serviceTasks.split(";")[0];
 
-				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
-					processCompleted = true;
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
 				} else if (StringUtils.trimToEmpty(method).contains(FinanceConstants.method_scheduleChange)) {
 					List<String> finTypeList = getFinanceDetailService().getScheduleEffectModuleList(true);
@@ -2454,8 +2426,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		BigDecimal totInsPaid = BigDecimal.ZERO;
 		BigDecimal totSchdFeePaid = BigDecimal.ZERO;
-		BigDecimal totSchdSuplRentPaid = BigDecimal.ZERO;
-		BigDecimal totSchdIncrCostPaid = BigDecimal.ZERO;
 
 		Listcell lc;
 		Listitem item;
@@ -2549,19 +2519,9 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				lc.setStyle("text-align:right;");
 				totSchdFeePaid = totSchdFeePaid.add(repaySchd.getSchdFeePayNow());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdSuplRentPayNow(), finFormatter));
-				lc.setStyle("text-align:right;");
-				totSchdSuplRentPaid = totSchdSuplRentPaid.add(repaySchd.getSchdSuplRentPayNow());
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdIncrCostPayNow(), finFormatter));
-				lc.setStyle("text-align:right;");
-				totSchdIncrCostPaid = totSchdIncrCostPaid.add(repaySchd.getSchdIncrCostPayNow());
-				lc.setParent(item);
 
 				BigDecimal netPay = repaySchd.getProfitSchdPayNow().add(repaySchd.getPrincipalSchdPayNow())
-						.add(repaySchd.getSchdInsPayNow()).add(repaySchd.getSchdFeePayNow())
-						.add(repaySchd.getSchdSuplRentPayNow()).add(repaySchd.getSchdIncrCostPayNow())
-						.subtract(refundPft);
+						.add(repaySchd.getSchdInsPayNow()).add(repaySchd.getSchdFeePayNow()).subtract(refundPft);
 				lc = new Listcell(PennantAppUtil.amountFormate(netPay, finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -2583,8 +2543,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Fee Details
 			this.insPayment.setValue(PennantAppUtil.formateAmount(totInsPaid, finFormatter));
 			this.schdFeeAmount.setValue(PennantAppUtil.formateAmount(totSchdFeePaid, finFormatter));
-			this.suplRentAmount.setValue(PennantAppUtil.formateAmount(totSchdSuplRentPaid, finFormatter));
-			this.incrCostAmount.setValue(PennantAppUtil.formateAmount(totSchdIncrCostPaid, finFormatter));
 
 			//Summary Details
 			Map<String, BigDecimal> paymentMap = new HashMap<String, BigDecimal>();
@@ -2595,8 +2553,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			paymentMap.put("insPaid", totInsPaid);
 			paymentMap.put("schdFeePaid", totSchdFeePaid);
-			paymentMap.put("schdSuplRentPaid", totSchdSuplRentPaid);
-			paymentMap.put("schdIncrCostPaid", totSchdIncrCostPaid);
 
 			doFillSummaryDetails(paymentMap);
 		}
@@ -2643,16 +2599,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("schdFeePaid"));
 			this.listheader_SchdFee.setVisible(true);
 			fillListItem(Labels.getLabel("listcell_schdFeePayNow.label"), paymentMap.get("schdFeePaid"));
-		}
-		if (paymentMap.get("schdSuplRentPaid").compareTo(BigDecimal.ZERO) > 0) {
-			totalSchAmount = totalSchAmount.add(paymentMap.get("schdSuplRentPaid"));
-			this.listheader_SuplRent.setVisible(true);
-			fillListItem(Labels.getLabel("listcell_schdSuplRentPayNow.label"), paymentMap.get("schdSuplRentPaid"));
-		}
-		if (paymentMap.get("schdIncrCostPaid").compareTo(BigDecimal.ZERO) > 0) {
-			totalSchAmount = totalSchAmount.add(paymentMap.get("schdIncrCostPaid"));
-			this.listheader_IncrCost.setVisible(true);
-			fillListItem(Labels.getLabel("listcell_schdIncrCostPayNow.label"), paymentMap.get("schdIncrCostPaid"));
 		}
 
 		fillListItem(Labels.getLabel("listcell_totalSchAmount.label"), totalSchAmount);
@@ -2838,9 +2784,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 							|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0
 							|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0
-							|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0
-							|| curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0
-							|| curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0) {
+							|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0) {
 
 						futureInstPaid = true;
 						break;
@@ -2885,29 +2829,13 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					// Check Available Funding Account Balance
 					boolean accountTypeFound = false;
 					if (getFinanceType() != null) {
-						if (StringUtils.trimToEmpty(getFinanceType().getFinDivision())
-								.equals(FinanceConstants.FIN_DIVISION_TREASURY)) {
-							String acType = SysParamUtil.getValueAsString("ALWFULLPAY_TSR_ACTYPE");
-
-							//Account Type Check
-							String[] acTypeList = acType.split(",");
-							for (int i = 0; i < acTypeList.length; i++) {
-								if (StringUtils.equals(iAccount.getAcType(), acTypeList[i].trim())) {
-									accountTypeFound = true;
-									break;
-								}
-							}
-
-						} else {
-
-							//Account Type Check
-							String acType = SysParamUtil.getValueAsString("ALWFULLPAY_NONTSR_ACTYPE");
-							String[] acTypeList = acType.split(",");
-							for (int i = 0; i < acTypeList.length; i++) {
-								if (StringUtils.equals(iAccount.getAcType(), acTypeList[i].trim())) {
-									accountTypeFound = true;
-									break;
-								}
+						//Account Type Check
+						String acType = SysParamUtil.getValueAsString("ALWFULLPAY_NONTSR_ACTYPE");
+						String[] acTypeList = acType.split(",");
+						for (int i = 0; i < acTypeList.length; i++) {
+							if (StringUtils.equals(iAccount.getAcType(), acTypeList[i].trim())) {
+								accountTypeFound = true;
+								break;
 							}
 						}
 					}

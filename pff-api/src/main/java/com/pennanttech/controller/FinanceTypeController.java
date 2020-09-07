@@ -20,7 +20,6 @@ import com.pennanttech.ws.model.financetype.BasicDetail;
 import com.pennanttech.ws.model.financetype.FinanceTypeRequest;
 import com.pennanttech.ws.model.financetype.FinanceTypeResponse;
 import com.pennanttech.ws.model.financetype.GraceDetail;
-import com.pennanttech.ws.model.financetype.Insurance;
 import com.pennanttech.ws.model.financetype.OverdueDetail;
 import com.pennanttech.ws.model.financetype.OverdueProfitDetail;
 import com.pennanttech.ws.model.financetype.ProductType;
@@ -52,7 +51,6 @@ public class FinanceTypeController {
 					FinanceConstants.MODULEID_PROMOTION, true);
 			financeType.setFInTypeFromPromotiion(promotion);
 			financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());
-			financeType.setFinTypeInsurances(promotion.getFinTypeInsurancesList());
 			financeType.setFinTypeAccountingList(promotion.getFinTypeAccountingList());
 		}
 
@@ -94,13 +92,6 @@ public class FinanceTypeController {
 				OverdueProfitDetail overduProfit = new OverdueProfitDetail();
 				BeanUtils.copyProperties(financeType, overduProfit);
 				response.setOverdueProfitDetail(overduProfit);
-			}
-
-			// prepare FinanceType Insurance details
-			if (finTypeRequest.isInsuranceDetailReq()) {
-				Insurance insurance = new Insurance();
-				BeanUtils.copyProperties(financeType, insurance);
-				response.setInsurance(insurance);
 			}
 
 			// prepare FinanceType Step details

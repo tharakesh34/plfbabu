@@ -191,8 +191,6 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TCDView"));
 			financeReference.setBlackListDedupeList(
 					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TBDView"));
-			financeReference.setPoliceDedupeList(
-					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TPCView"));
 			financeReference.setReturnChequeList(
 					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TRCView"));
 			financeReference.setLimitCodeDetailList(

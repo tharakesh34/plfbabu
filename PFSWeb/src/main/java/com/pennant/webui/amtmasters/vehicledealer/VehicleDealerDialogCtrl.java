@@ -153,7 +153,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	protected ExtendedCombobox accountingSetId;
 	protected Label label_VehicleDealerDialog_AccountingTreatment;
 	protected long accountid;
-	protected Combobox sellerType; // autowired
+	//protected Combobox sellerType; // autowired
 	protected Textbox cityName; // autoWired
 	protected Space space_Code;
 	protected Textbox code;
@@ -200,7 +200,6 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private final List<ValueLabel> paymentModes = PennantStaticListUtil.getPaymentModes();
 	private final List<ValueLabel> commisionPaidList = PennantStaticListUtil.getCommisionPaidList();
-	private final List<ValueLabel> sellerTypes = PennantStaticListUtil.getSellerTypes();
 	private final List<ValueLabel> accountTypes = PennantStaticListUtil.getAccountTypes();
 	private transient String sDealerCountry;
 	private transient String sDealerProvince;
@@ -307,7 +306,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.dealerAddress3.setMaxlength(100);
 		this.dealerAddress4.setMaxlength(100);
 		this.dealerType.setMaxlength(50);
-		this.sellerType.setMaxlength(50);
+		//this.sellerType.setMaxlength(50);
 		this.cityName.setMaxlength(50);
 		this.code.setMaxlength(20);
 		this.dealerCountry.setMandatoryStyle(true);
@@ -842,7 +841,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.active.setChecked(aVehicleDealer.isActive());
 		this.accountingSetId.setValue(aVehicleDealer.getAccountingSetCode());
 		this.commisionCalRule.setValue(aVehicleDealer.getCalculationRule());
-		fillComboBox(sellerType, aVehicleDealer.getSellerType(), sellerTypes, "");
+		//fillComboBox(sellerType, aVehicleDealer.getSellerType(), sellerTypes, "");
 		this.recordStatus.setValue(aVehicleDealer.getRecordStatus());
 		if (aVehicleDealer.isNew() || (aVehicleDealer.getRecordType() != null ? aVehicleDealer.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
@@ -1117,17 +1116,15 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			wve.add(we);
 		}
 
-		try {
-			if (this.sellerType.getSelectedItem().getValue().equals(PennantConstants.List_Select)
-					&& !this.sellerType.isVisible()) {
-				throw new WrongValueException(this.sellerType, Labels.getLabel("FIELD_IS_MAND",
-						new String[] { Labels.getLabel("label_VehicleDealerDialog_SellerType.value") }));
-			}
-
-			aVehicleDealer.setSellerType(this.sellerType.getSelectedItem().getValue().toString());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
+		/*
+		 * try { if (this.sellerType.getSelectedItem().getValue().equals(PennantConstants.List_Select) &&
+		 * !this.sellerType.isVisible()) { throw new WrongValueException(this.sellerType,
+		 * Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_VehicleDealerDialog_SellerType.value")
+		 * })); }
+		 * 
+		 * aVehicleDealer.setSellerType(this.sellerType.getSelectedItem().getValue().toString()); } catch
+		 * (WrongValueException we) { wve.add(we); }
+		 */
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -1385,7 +1382,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.emirates.setConstraint("");
 		this.dealerPoBox.setConstraint("");
 		this.zipCode.setConstraint("");
-		this.sellerType.setConstraint("");
+		//this.sellerType.setConstraint("");
 		this.cityName.setConstraint("");
 		this.shortCode.setConstraint("");
 		this.panNumber.setConstraint("");
@@ -1449,7 +1446,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		if (getVehicleDealer().isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			this.dealerType.setDisabled(false);
-			this.sellerType.setDisabled(false);
+			//this.sellerType.setDisabled(false);
 		} else {
 			this.emirates.setMandatoryStyle(true);
 			this.commisionCalRule.setMandatoryStyle(true);
@@ -1482,7 +1479,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.commisionPaid.setDisabled(isReadOnly("VehicleDealerDialog_" + module + "_CommisionPaidAt"));
 		this.commisionCalRule.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_CalculationRule"));
 		this.dealerPoBox.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_PoBox"));
-		this.sellerType.setDisabled(isReadOnly("VehicleDealerDialog_" + module + "_SellerType"));
+		//this.sellerType.setDisabled(isReadOnly("VehicleDealerDialog_" + module + "_SellerType"));
 		this.cityName.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_dealerCity"));
 		this.zipCode.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_ZipCode"));
 
@@ -1552,7 +1549,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.iBANnumber.setReadonly(true);
 		this.dealerPoBox.setReadonly(true);
 		this.accountNumber.setReadonly(true);
-		this.sellerType.setDisabled(true);
+		//this.sellerType.setDisabled(true);
 		this.cityName.setReadonly(true);
 		this.zipCode.setReadonly(true);
 		this.active.setDisabled(true);
@@ -1602,7 +1599,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.iBANnumber.setValue("");
 		this.dealerPoBox.setValue("");
 		this.accountNumber.setValue("");
-		this.sellerType.setValue("");
+		//this.sellerType.setValue("");
 		this.cityName.setText("");
 		this.zipCode.setValue("");
 		this.shortCode.setValue("");
@@ -2145,7 +2142,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.commisionCalRule.setErrorMessage("");
 		this.iBANnumber.setErrorMessage("");
 		this.dealerPoBox.setErrorMessage("");
-		this.sellerType.setErrorMessage("");
+		//this.sellerType.setErrorMessage("");
 		this.cityName.setErrorMessage("");
 		this.zipCode.setErrorMessage("");
 		this.taxNumber.setErrorMessage("");

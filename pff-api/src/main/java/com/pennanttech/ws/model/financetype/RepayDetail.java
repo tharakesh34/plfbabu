@@ -9,16 +9,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "finRateType", "lovDescFinRateTypeName", "finIntRate", "finBaseRate", "lovDescFinBaseRateName",
-		"finSplRate", "lovDescFinSplRateName", "finMargin", "rpyAdvBaseRate", "rpyAdvBaseRateDesc", "rpyAdvMargin",
-		"rpyAdvPftRate", "fInMinRate", "finMaxRate", "finDftIntFrq", "finRepayPftOnFrq", "finRpyFrq", "finSchdMthd",
-		"lovDescFinSchdMthdName", "finIsIntCpz", "finCpzFrq", "finIsRvwAlw", "finRvwFrq", "finRvwRateApplFor",
-		"finSchCalCodeOnRvw", "finMinTerm", "finMaxTerm", "finDftTerms", "fInRepayMethod", "lovDescFInRepayMethodName",
-		"finIsAlwPartialRpy", "finIsAlwDifferment", "finMaxDifferment", "alwPlanDeferment", "planDeferCount",
-		"finScheduleOn", "alwEarlyPayMethods", "finDepreciationFrq", "finPftUnChanged", "equalRepayment",
-		"finHistRetension", "finODRpyTries", "finAlwRateChangeAnyDate", "finIsAlwEarlyRpy", "finIsAlwEarlySettle",
-		"planEMIHAlw", "planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz",
-		"unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "fddLockPeriod", "maxUnplannedEmi", "maxReAgeHolidays",
-		"frequencyDays" })
+		"finSplRate", "lovDescFinSplRateName", "finMargin", "fInMinRate", "finMaxRate", "finDftIntFrq",
+		"finRepayPftOnFrq", "finRpyFrq", "finSchdMthd", "lovDescFinSchdMthdName", "finIsIntCpz", "finCpzFrq",
+		"finIsRvwAlw", "finRvwFrq", "finRvwRateApplFor", "finSchCalCodeOnRvw", "finMinTerm", "finMaxTerm",
+		"finDftTerms", "fInRepayMethod", "lovDescFInRepayMethodName", "finIsAlwPartialRpy", "finIsAlwDifferment",
+		"finMaxDifferment", "alwPlanDeferment", "planDeferCount", "finScheduleOn", "alwEarlyPayMethods",
+		"finDepreciationFrq", "finPftUnChanged", "equalRepayment", "finHistRetension", "finODRpyTries",
+		"finAlwRateChangeAnyDate", "finIsAlwEarlyRpy", "finIsAlwEarlySettle", "planEMIHAlw", "planEMIHMethod",
+		"planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "unPlanEMIHLockPeriod", "unPlanEMICpz",
+		"reAgeCpz", "fddLockPeriod", "maxUnplannedEmi", "maxReAgeHolidays", "frequencyDays" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RepayDetail implements Serializable {
 
@@ -44,10 +43,6 @@ public class RepayDetail implements Serializable {
 	@XmlElement(name = "rpySpecialRateCodeDesc")
 	private String lovDescFinSplRateName;
 	private BigDecimal finMargin = BigDecimal.ZERO;
-	private String rpyAdvBaseRate;
-	private String rpyAdvBaseRateDesc;
-	private BigDecimal rpyAdvMargin = BigDecimal.ZERO;
-	private BigDecimal rpyAdvPftRate = BigDecimal.ZERO;
 
 	@XmlElement(name = "finMinRate")
 	private BigDecimal fInMinRate = BigDecimal.ZERO;
@@ -168,38 +163,6 @@ public class RepayDetail implements Serializable {
 
 	public void setFinMargin(BigDecimal finMargin) {
 		this.finMargin = finMargin;
-	}
-
-	public String getRpyAdvBaseRate() {
-		return rpyAdvBaseRate;
-	}
-
-	public void setRpyAdvBaseRate(String rpyAdvBaseRate) {
-		this.rpyAdvBaseRate = rpyAdvBaseRate;
-	}
-
-	public String getRpyAdvBaseRateDesc() {
-		return rpyAdvBaseRateDesc;
-	}
-
-	public void setRpyAdvBaseRateDesc(String rpyAdvBaseRateDesc) {
-		this.rpyAdvBaseRateDesc = rpyAdvBaseRateDesc;
-	}
-
-	public BigDecimal getRpyAdvMargin() {
-		return rpyAdvMargin;
-	}
-
-	public void setRpyAdvMargin(BigDecimal rpyAdvMargin) {
-		this.rpyAdvMargin = rpyAdvMargin;
-	}
-
-	public BigDecimal getRpyAdvPftRate() {
-		return rpyAdvPftRate;
-	}
-
-	public void setRpyAdvPftRate(BigDecimal rpyAdvPftRate) {
-		this.rpyAdvPftRate = rpyAdvPftRate;
 	}
 
 	public BigDecimal getfInMinRate() {

@@ -18,8 +18,6 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal totalPftPaid = BigDecimal.ZERO;
 	private BigDecimal totalPftBal = BigDecimal.ZERO;
 	private BigDecimal totalPftPaidInAdv = BigDecimal.ZERO;
-	private BigDecimal totalAdvPftSchd = BigDecimal.ZERO; //New Field 
-	private BigDecimal totalRbtSchd = BigDecimal.ZERO; //New Field 
 	private BigDecimal totalpriSchd = BigDecimal.ZERO;
 	private BigDecimal totalPriPaid = BigDecimal.ZERO;
 	private BigDecimal totalPriPaidInAdv = BigDecimal.ZERO; //New Field 
@@ -29,8 +27,6 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal tdPftCpz = BigDecimal.ZERO;
 	private BigDecimal tdSchdPftPaid = BigDecimal.ZERO;
 	private BigDecimal tdSchdPftBal = BigDecimal.ZERO;
-	private BigDecimal tdSchdAdvPft = BigDecimal.ZERO; //New Field 
-	private BigDecimal tdSchdRbt = BigDecimal.ZERO; //New Field
 	private BigDecimal pftAmz = BigDecimal.ZERO;
 	private BigDecimal pftAmzNormal = BigDecimal.ZERO; //New Field 
 	private BigDecimal pftAmzPD = BigDecimal.ZERO; //New Field 
@@ -84,14 +80,7 @@ public class FinanceProfitDetail implements Serializable {
 	private int NOInst = 0;
 	private int NOPaidInst = 0;
 	private int NOODInst = 0;
-	private String FinAccount;
-	private String FinAcType;
-	private String DisbAccountId;
 	private String DisbActCcy;
-	private String RepayAccountId;
-	private String FinCustPftAccount;
-	private String IncomeAccount; //Pending
-	private String UEIncomeSuspAccount; //Pending
 	private String FinCommitmentRef;
 	private boolean FinIsActive;
 	private Date firstRepayDate;
@@ -690,68 +679,12 @@ public class FinanceProfitDetail implements Serializable {
 		NOODInst = nOODInst;
 	}
 
-	public String getFinAccount() {
-		return FinAccount;
-	}
-
-	public void setFinAccount(String finAccount) {
-		FinAccount = finAccount;
-	}
-
-	public String getFinAcType() {
-		return FinAcType;
-	}
-
-	public void setFinAcType(String finAcType) {
-		FinAcType = finAcType;
-	}
-
-	public String getDisbAccountId() {
-		return DisbAccountId;
-	}
-
-	public void setDisbAccountId(String disbAccountId) {
-		DisbAccountId = disbAccountId;
-	}
-
 	public String getDisbActCcy() {
 		return DisbActCcy;
 	}
 
 	public void setDisbActCcy(String disbActCcy) {
 		DisbActCcy = disbActCcy;
-	}
-
-	public String getRepayAccountId() {
-		return RepayAccountId;
-	}
-
-	public void setRepayAccountId(String repayAccountId) {
-		RepayAccountId = repayAccountId;
-	}
-
-	public String getFinCustPftAccount() {
-		return FinCustPftAccount;
-	}
-
-	public void setFinCustPftAccount(String finCustPftAccount) {
-		FinCustPftAccount = finCustPftAccount;
-	}
-
-	public String getIncomeAccount() {
-		return IncomeAccount;
-	}
-
-	public void setIncomeAccount(String incomeAccount) {
-		IncomeAccount = incomeAccount;
-	}
-
-	public String getUEIncomeSuspAccount() {
-		return UEIncomeSuspAccount;
-	}
-
-	public void setUEIncomeSuspAccount(String uEIncomeSuspAccount) {
-		UEIncomeSuspAccount = uEIncomeSuspAccount;
 	}
 
 	public String getFinCommitmentRef() {
@@ -906,44 +839,12 @@ public class FinanceProfitDetail implements Serializable {
 		this.depreciatePri = depreciatePri;
 	}
 
-	public BigDecimal getTotalAdvPftSchd() {
-		return totalAdvPftSchd;
-	}
-
-	public void setTotalAdvPftSchd(BigDecimal totalAdvPftSchd) {
-		this.totalAdvPftSchd = totalAdvPftSchd;
-	}
-
-	public BigDecimal getTotalRbtSchd() {
-		return totalRbtSchd;
-	}
-
-	public void setTotalRbtSchd(BigDecimal totalRbtSchd) {
-		this.totalRbtSchd = totalRbtSchd;
-	}
-
 	public BigDecimal getTotalPriPaidInAdv() {
 		return totalPriPaidInAdv;
 	}
 
 	public void setTotalPriPaidInAdv(BigDecimal totalPriPaidInAdv) {
 		this.totalPriPaidInAdv = totalPriPaidInAdv;
-	}
-
-	public BigDecimal getTdSchdAdvPft() {
-		return tdSchdAdvPft;
-	}
-
-	public void setTdSchdAdvPft(BigDecimal tdSchdAdvPft) {
-		this.tdSchdAdvPft = tdSchdAdvPft;
-	}
-
-	public BigDecimal getTdSchdRbt() {
-		return tdSchdRbt;
-	}
-
-	public void setTdSchdRbt(BigDecimal tdSchdRbt) {
-		this.tdSchdRbt = tdSchdRbt;
 	}
 
 	public BigDecimal getPftAmzNormal() {

@@ -73,7 +73,8 @@ public class SummaryDetailService {
 			finPftDetail = accrualService.calProfitDetails(financeMain, curSchd.getFinanceScheduleDetails(),
 					finPftDetail, DateUtility.getAppDate());
 
-			// override repay profit rate with FinProfitdetail calculated value(which is latest).
+			// override repay profit rate with FinProfitdetail calculated value(which is
+			// latest).
 			financeMain.setRepayProfitRate(finPftDetail.getCurReducingRate());
 			summary.setTotalCpz(finPftDetail.getTotalPftCpz());
 			summary.setTotalProfit(finPftDetail.getTotalPftSchd());
@@ -87,7 +88,8 @@ public class SummaryDetailService {
 			summary.setNextRepayAmount(finPftDetail.getNSchdPri().add(finPftDetail.getNSchdPft()));
 
 			// Total future Installments
-			//int futureInst = financeMain.getCalTerms() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
+			// int futureInst = financeMain.getCalTerms() - (finPftDetail.getNOPaidInst() +
+			// finPftDetail.getNOODInst());
 			summary.setFutureInst(finPftDetail.getFutureInst());
 			summary.setFutureTenor(
 					DateUtility.getMonthsBetween(finPftDetail.getNSchdDate(), finPftDetail.getMaturityDate()));
@@ -106,7 +108,8 @@ public class SummaryDetailService {
 				summary.setAvailableAmt(summary.getSanctionAmt().subtract(summary.getUtilizedAmt()));
 			}
 
-			// As part of Bajaj implementation this field is required for GetLoan & SOA API's only.
+			// As part of Bajaj implementation this field is required for GetLoan & SOA
+			// API's only.
 			summary.setAdvPaymentAmount(BigDecimal.ZERO);
 
 			// set Finance closing status
@@ -127,7 +130,7 @@ public class SummaryDetailService {
 					Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
 						@Override
 						public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
-							return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
+							return (Integer.valueOf(b1.getDisbSeq()).compareTo(Integer.valueOf(b2.getDisbSeq())));
 						}
 					});
 
@@ -429,7 +432,8 @@ public class SummaryDetailService {
 	}
 
 	public FinScheduleData resetScheduleDetail(FinScheduleData finScheduleData) {
-		// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases
+		// Resetting Maturity Terms & Summary details rendering in case of Reduce
+		// maturity cases
 		if (finScheduleData == null || finScheduleData.getFinanceScheduleDetails() == null) {
 			return finScheduleData;
 		}

@@ -45,8 +45,7 @@ public class GenerateUpdate {
 		updateSql.append(" NSchdDate = :NSchdDate, NSchdPri = :NSchdPri, NSchdPft = :NSchdPft, ");
 		updateSql.append(" NSchdPriDue = :NSchdPriDue, NSchdPftDue = :NSchdPftDue,");
 		updateSql.append(" AccumulatedDepPri = :AccumulatedDepPri, DepreciatePri = :DepreciatePri,");
-		updateSql.append(" TdSchdAdvPft = :TdSchdAdvPft, TdSchdRbt = :TdSchdRbt, TotalAdvPftSchd = :TotalAdvPftSchd,");
-		updateSql.append(" TotalRbtSchd = :TotalRbtSchd, TotalPriPaidInAdv = :TotalPriPaidInAdv,");
+		updateSql.append(" TotalPriPaidInAdv = :TotalPriPaidInAdv,");
 		updateSql.append(" FinStatus = :FinStatus, FinStsReason = :FinStsReason, FinWorstStatus = :FinWorstStatus, ");
 		updateSql.append(
 				" BaseRateCode =:BaseRateCode,SplRateCode=:SplRateCode, BaseRate=:BaseRate ,SplRate=:SplRate ,MrgRate=:MrgRate , TdTdsAmount=:TdTdsAmount ,TdTdsPaid =:TdTdsPaid, TdTdsBal=:TdTdsBal ,TdsAccrued=:TdsAccrued,NoInstEarlyStl=:NOInst,");

@@ -228,9 +228,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Textbox custFirstName; // autowired
 	protected Textbox custMiddleName; // autowired
 	protected Textbox custLastName; // autowired
-	protected Textbox custArabicName; // autowired
 	protected Combobox residentialStatus; // autowired
-	protected Space space_CustArabicName; // autowired
+	protected Textbox custLocalLngName; // autowired
+	protected Space space_CustLocalLngName; // autowired
 	protected Textbox motherMaidenName; // autowired
 	protected ExtendedCombobox custLng; // autowired
 	protected Textbox custSts; // autowired
@@ -295,7 +295,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label label_CustomerDialog_MonthlyIncome;
 	protected Label label_CustomerDialog_CustCOB;
 	protected Label label_CustomerDialog_Target;
-	protected Label label_ArabicName;
+	protected Label label_LocalLngName;
 	protected Label label_CustSubSegment;
 	protected Label label_CustRelatedParty;
 	protected Label label_CustomerDialog_CustLastName;
@@ -808,7 +808,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custFirstName.setMaxlength(50);
 		this.custMiddleName.setMaxlength(50);
 		this.custLastName.setMaxlength(50);
-		this.custArabicName.setMaxlength(50);
+		this.custLocalLngName.setMaxlength(50);
 		this.motherMaidenName.setMaxlength(50);
 		this.custTradeLicenceNum.setMaxlength(50);
 		this.custRelatedParty.setMaxlength(200);
@@ -1246,7 +1246,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.grid_ExtendedDetails.setVisible(false);
 		}
 
-		this.custArabicName.setValue(StringUtils.trimToEmpty(aCustomer.getCustShrtNameLclLng()));
+		this.custLocalLngName.setValue(StringUtils.trimToEmpty(aCustomer.getCustShrtNameLclLng()));
 		this.motherMaidenName.setValue(StringUtils.trimToEmpty(aCustomer.getCustMotherMaiden()));
 		this.custCtgCode.setValue(aCustomer.getCustCtgCode());
 		this.custDftBranch.setValue(aCustomer.getCustDftBranch());
@@ -1527,7 +1527,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			wve.add(we);
 		}
 		try {
-			aCustomer.setCustShrtNameLclLng(this.custArabicName.getValue());
+			aCustomer.setCustShrtNameLclLng(this.custLocalLngName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2253,13 +2253,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.label_CustomerDialog_CustCOB.setValue(Labels.getLabel("label_CustomerDialog_CustCOB.value"));
 			this.directorDetails.setVisible(false);
 			this.gb_rating.setVisible(false);
-			this.label_ArabicName.setVisible(true);
+			this.label_LocalLngName.setVisible(true);
 			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)) {
-				this.space_CustArabicName.setSclass(PennantConstants.mandateSclass);
+				this.space_CustLocalLngName.setSclass(PennantConstants.mandateSclass);
 			} else {
-				this.space_CustArabicName.setSclass("");
+				this.space_CustLocalLngName.setSclass("");
 			}
-			this.custArabicName.setVisible(true);
+			this.custLocalLngName.setVisible(true);
 			this.tabfinancial.setVisible(ImplementationConstants.ALLOW_CUSTOMER_INCOMES);
 			this.label_CustRelatedParty.setVisible(true);
 			this.hbox_CustRelatedParty.setVisible(true);
@@ -2301,9 +2301,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.gb_rating.setVisible(getUserWorkspace().isAllowed("CustomerDialog_ShowCustomerRatings"));
 			this.gp_CustEmployeeDetails.setVisible(false);
 			this.row_EmploymentDetails.setVisible(false);
-			this.label_ArabicName.setVisible(false);
-			this.space_CustArabicName.setSclass("");
-			this.custArabicName.setVisible(false);
+			this.label_LocalLngName.setVisible(false);
+			this.space_CustLocalLngName.setSclass("");
+			this.custLocalLngName.setVisible(false);
 			this.directorDetails.setVisible(ImplementationConstants.ALLOW_CUSTOMER_SHAREHOLDERS);
 			this.label_CustRelatedParty.setVisible(false);
 			this.hbox_CustRelatedParty.setVisible(false);
@@ -2377,8 +2377,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (StringUtils.isEmpty(this.custLastName.getValue())) {
 				this.custLastName.setReadonly(isReadOnly("CustomerDialog_custLastName"));
 			}
-			if (StringUtils.isEmpty(this.custArabicName.getValue())) {
-				this.custArabicName.setReadonly(isReadOnly("CustomerDialog_custArabicName"));
+			if (StringUtils.isEmpty(this.custLocalLngName.getValue())) {
+				this.custLocalLngName.setReadonly(isReadOnly("CustomerDialog_custLocalLngName"));
 			}
 			if (StringUtils.isEmpty(this.motherMaidenName.getValue())) {
 				this.motherMaidenName.setReadonly(isReadOnly("CustomerDialog_custMotherMaiden"));
@@ -2522,9 +2522,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
 			}
 
-			if (!this.custArabicName.isReadonly()) {
-				this.custArabicName.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustArabicName.value"),
+			if (!this.custLocalLngName.isReadonly()) {
+				this.custLocalLngName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustLocalLngName.value"),
 								PennantRegularExpressions.REGEX_CUST_NAME,
 								SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)));
 			}
@@ -2759,7 +2759,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custFirstName.setConstraint("");
 		this.custMiddleName.setConstraint("");
 		this.custLastName.setConstraint("");
-		this.custArabicName.setConstraint("");
+		this.custLocalLngName.setConstraint("");
 		this.motherMaidenName.setConstraint("");
 		this.custDOB.setConstraint("");
 		this.eidNumber.setConstraint("");
@@ -2831,7 +2831,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custMiddleName.setErrorMessage("");
 		Clients.clearWrongValue(this.custMiddleName);
 		this.custLastName.setErrorMessage("");
-		this.custArabicName.setErrorMessage("");
+		this.custLocalLngName.setErrorMessage("");
 		this.motherMaidenName.setErrorMessage("");
 		this.custDftBranch.setErrorMessage("");
 		this.custGenderCode.setErrorMessage("");
@@ -2963,7 +2963,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.custFirstName.setReadonly(isReadOnly("CustomerDialog_custFirstName"));
 				this.custMiddleName.setReadonly(isReadOnly("CustomerDialog_custMiddleName"));
 				this.custLastName.setReadonly(isReadOnly("CustomerDialog_custLastName"));
-				this.custArabicName.setReadonly(isReadOnly("CustomerDialog_custLastName"));
+				this.custLocalLngName.setReadonly(isReadOnly("CustomerDialog_custLastName"));
 				this.motherMaidenName.setReadonly(isReadOnly("CustomerDialog_custMotherMaiden"));
 				this.custDftBranch.setReadonly(isReadOnly("CustomerDialog_custDftBranch"));
 				this.custBaseCcy.setReadonly(isReadOnly("CustomerDialog_custBaseCcy"));
@@ -3006,7 +3006,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.custFirstName.setReadonly(true);
 				this.custMiddleName.setReadonly(true);
 				this.custLastName.setReadonly(true);
-				this.custArabicName.setReadonly(true);
+				this.custLocalLngName.setReadonly(true);
 				this.motherMaidenName.setReadonly(true);
 				this.custDftBranch.setReadonly(true);
 				this.custBaseCcy.setReadonly(true);
@@ -3078,7 +3078,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custFirstName.setReadonly(true);
 		this.custMiddleName.setReadonly(true);
 		this.custLastName.setReadonly(true);
-		this.custArabicName.setReadonly(true);
+		this.custLocalLngName.setReadonly(true);
 		this.motherMaidenName.setReadonly(true);
 		this.custDftBranch.setReadonly(true);
 		this.custBaseCcy.setReadonly(true);
@@ -3255,7 +3255,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custFirstName.setValue("");
 		this.custMiddleName.setValue("");
 		this.custLastName.setValue("");
-		this.custArabicName.setValue("");
+		this.custLocalLngName.setValue("");
 		this.motherMaidenName.setValue("");
 		this.custRO1.setValue("");
 		this.custRO1.setDescription("");

@@ -184,8 +184,6 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			this.ruleModuleName = "LimitDefRule";
 		} else if (RuleConstants.MODULE_LPPRULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "LPPRule";
-		} else if (RuleConstants.MODULE_INSRULE.equals(ruleModuleValue)) {
-			this.ruleModuleName = "InsuranceRule";
 		} else if (RuleConstants.MODULE_BOUNCE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "BOUNCE";
 		} else if (RuleConstants.MODULE_STGACRULE.equals(ruleModuleValue)) {

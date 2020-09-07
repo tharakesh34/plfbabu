@@ -28,7 +28,8 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 		logger.debug("Entering");
 
 		if (taxHeader.isNewRecord()) {
-			getTaxHeaderDetailsDAO().save(taxHeader, tableType);
+			long taxHeaderId = getTaxHeaderDetailsDAO().save(taxHeader, tableType);
+			taxHeader.setHeaderId(taxHeaderId);
 		} else {
 			getTaxHeaderDetailsDAO().update(taxHeader, tableType);
 		}

@@ -58,14 +58,12 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.service.rmtmasters.FinTypeAccountingService;
 import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
-import com.pennant.backend.service.rmtmasters.FinTypeInsurancesService;
 import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -98,7 +96,6 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	private PromotionService promotionService;
 	// Child Services
 	private FinTypeFeesService finTypeFeesService;
-	private FinTypeInsurancesService finTypeInsurancesService;
 	private FinTypeAccountingService finTypeAccountingService;
 
 	private String finCcy = "";
@@ -365,13 +362,10 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		if (wve.isEmpty()) {
 
-			List<FinTypeInsurances> finTypeInsurancesList = new ArrayList<>();
 			List<FinTypeAccounting> finTypeAccountingList = new ArrayList<>();
 			List<FinTypeFees> finTypeFeesList = getFinTypeFeesService()
 					.getApprovedFinTypeFeesById(aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
 			if (!consumerDurable) {
-				finTypeInsurancesList = getFinTypeInsurancesService().getApprovedFinTypeInsuranceListByID(
-						aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
 				finTypeAccountingList = getFinTypeAccountingService().getApprovedFinTypeAccountingListByID(
 						aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
 			}
@@ -390,20 +384,6 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				finTypeFee.setNewRecord(true);
 			}
 
-			//Insurances
-			for (FinTypeInsurances finTypeInsurances : finTypeInsurancesList) {
-				finTypeInsurances.setVersion(1);
-				finTypeInsurances.setRecordType(PennantConstants.RCD_ADD);
-				finTypeInsurances.setRecordStatus("");
-				finTypeInsurances.setTaskId("");
-				finTypeInsurances.setNextTaskId("");
-				finTypeInsurances.setRoleCode("");
-				finTypeInsurances.setNextRoleCode("");
-				finTypeInsurances.setModuleId(FinanceConstants.MODULEID_PROMOTION);
-				finTypeInsurances.setFinType(aPromotion.getPromotionCode());
-				finTypeInsurances.setNewRecord(true);
-			}
-
 			//Accounting
 			for (FinTypeAccounting finTypeAccounting : finTypeAccountingList) {
 				finTypeAccounting.setVersion(1);
@@ -419,7 +399,6 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			}
 
 			aPromotion.setFinTypeFeesList(finTypeFeesList);
-			aPromotion.setFinTypeInsurancesList(finTypeInsurancesList);
 			aPromotion.setFinTypeAccountingList(finTypeAccountingList);
 		} else {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -497,14 +476,6 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 	public void setFinTypeFeesService(FinTypeFeesService finTypeFeesService) {
 		this.finTypeFeesService = finTypeFeesService;
-	}
-
-	public FinTypeInsurancesService getFinTypeInsurancesService() {
-		return finTypeInsurancesService;
-	}
-
-	public void setFinTypeInsurancesService(FinTypeInsurancesService finTypeInsurancesService) {
-		this.finTypeInsurancesService = finTypeInsurancesService;
 	}
 
 	public FinTypeAccountingService getFinTypeAccountingService() {

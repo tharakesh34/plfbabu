@@ -110,21 +110,6 @@
 		<property name="suspensePostingUtil" ref="suspensePostingUtil" />
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	<!-- Future Account Holds -->
-	<bean id="futureInstallmentHoldsTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="transactionManager" />
-		<property name="target" ref="futureInstallmentHoldsTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="futureInstallmentHoldsTarget" class="com.pennant.backend.endofday.tasklet.FutureInstallmentHolds">
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-	</bean>
 	<!-- Provisions Postings TBD -->
 	<bean id="provisionPostingsTasklet" class="com.pennant.backend.endofday.tasklet.ProvisionPostings">
 		<property name="financeMainDAO" ref="financeMainDAO" />
@@ -161,20 +146,6 @@
 	</bean>
 	<bean id="commitmentExpiryProcessTarget" class="com.pennant.backend.endofday.tasklet.CommitmentExpiryProcess">
 		<property name="dataSource" ref="dataSource" />
-	</bean>
-	<!-- Month End Download Details Updation -->
-	<bean id="monthEndDownloadProcessTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="transactionManager" />
-		<property name="target" ref="monthEndDownloadProcessTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="monthEndDownloadProcessTarget" class="com.pennant.backend.endofday.tasklet.MonthEndDownloadProcess">
-		<property name="dailyDownloadInterfaceService" ref="dailyDownloadInterfaceService" />
-		<property name="accountNumberUtil" ref="accountNumberUtil" />
 	</bean>
 
 	<bean id="processInActiveFinancesTaskLet" class="com.pennant.backend.endofday.tasklet.ProcessInActiveFinances" />

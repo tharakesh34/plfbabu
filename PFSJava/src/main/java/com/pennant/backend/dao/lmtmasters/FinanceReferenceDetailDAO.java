@@ -48,7 +48,6 @@ import java.util.Map;
 
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 
 public interface FinanceReferenceDetailDAO {
 
@@ -83,8 +82,6 @@ public interface FinanceReferenceDetailDAO {
 	FinanceReferenceDetail getTemplateId(String financeType, String finEvent, String roleCode, String lovCodeList);
 
 	List<FinanceReferenceDetail> getFinanceRefListByFinType(String product, String type);
-
-	void saveHandlInstructionDetails(HandlingInstruction handlingInstruction);
 
 	FinCollaterals getFinCollaterals(String finReference, String collateralType);
 

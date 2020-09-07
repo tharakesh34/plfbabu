@@ -204,11 +204,11 @@
 								<hbox>
 									<extendedcombobox id="accountingSetId" />
 								</hbox>
-								<label id="label_VehicleDealerDialog_SellerType" value="${c:l('label_VehicleDealerDialog_SellerType.value')}" />
+								<!-- <label id="label_VehicleDealerDialog_SellerType" value="${c:l('label_VehicleDealerDialog_SellerType.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
 									<combobox id="sellerType" />
-								</hbox>
+								</hbox> -->
 							</row>
 							<row id="row_8" visible="false">
 								<label id="label_VehicleDealerDialog_PANNumber" value="${c:l('label_VehicleDealerDialog_PANNumber.value')}" />

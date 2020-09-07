@@ -240,7 +240,6 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		}
 
 		setMainWindow(window_LiabilityFinanceMainDialog);
-		setProductCode("Murabaha");
 
 		this.basicDetailTabDiv.setHeight(this.borderLayoutHeight - 100 - 52 + "px");
 
@@ -732,9 +731,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 				String method = serviceTasks.split(";")[0];
 
-				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
-					processCompleted = true;
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
 				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckFurtherWF)) {
 
@@ -1174,15 +1171,9 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 		String repayMethod = aFinanceMain.getFinRepayMethod();
 		if (StringUtils.isEmpty(repayMethod)) {
-			if (!getFinanceDetail().getCustomerDetails().getCustomer().isSalariedCustomer()) {
-				repayMethod = FinanceConstants.REPAYMTH_AUTODDA;
-			} else {
-				repayMethod = FinanceConstants.REPAYMTH_AUTO;
-			}
+			repayMethod = FinanceConstants.REPAYMTH_AUTO;
 		}
 		fillComboBox(this.finRepayMethod, repayMethod, PennantStaticListUtil.getRepayMethods(), "");
-		fillComboBox(this.accountType, "", PennantStaticListUtil.getAccountTypes(), "");
-		doCheckDDA();
 
 		this.commitmentRef.setValue(aFinanceMain.getFinCommitmentRef(),
 				StringUtils.trimToEmpty(aFinanceMain.getFinCommitmentRef()));
@@ -1247,12 +1238,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 			this.row_downPayBank.setVisible(true);
 			this.row_downPaySupl.setVisible(true);
-			if (getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_ISTISNA)
-					|| getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_SUKUK)) {
-				this.downPayPercentage.setVisible(true);
-			} else {
-				this.row_downPayPercentage.setVisible(true);
-			}
+			this.row_downPayPercentage.setVisible(true);
 			this.downPayAccount.setValue(aFinanceMain.getDownPayAccount());
 			this.downPayBank.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPayBank(), format));
 			this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(), format));
@@ -1270,12 +1256,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 			if (this.downPayBank.isReadonly() && this.downPaySupl.isReadonly()
 					&& aFinanceMain.getDownPayment().compareTo(BigDecimal.ZERO) == 0) {
-				if (getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_ISTISNA)
-						|| getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_SUKUK)) {
-					this.downPayPercentage.setVisible(false);
-				} else {
-					this.row_downPayPercentage.setVisible(false);
-				}
+				this.row_downPayPercentage.setVisible(false);
 			}
 
 			if (this.downPaySupl.isReadonly() && aFinanceMain.getDownPaySupl().compareTo(BigDecimal.ZERO) == 0) {
@@ -1290,25 +1271,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			this.downPaySupl.setMandatory(false);
 		}
 
-		if (financeType.isAllowDownpayPgm()) {
-			this.row_downPaySupl.setVisible(true);
-			this.downPayAccount.setReadonly(true);
-			this.downPayBank.setReadonly(true);
-			this.downPayAccount.setValue(SysParamUtil.getValueAsString("AHB_DOWNPAY_AC"));
-		}
 		setDownPayPercentage();
 		setNetFinanceAmount(true);
-		// Setting DownPayment Supplier to Invisible state to some of the
-		// Products
-		if (getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_MUSHARAKA)
-				|| getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_SUKUKNRM)
-				|| getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_ISTISNA)) {
-			this.row_downPaySupl.setVisible(false);
-			this.downPaySupl.setReadonly(true);
-		}
-		if (getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_ISTISNA)) {
-			this.disbAcctId.setReadonly(true);
-		}
 
 		this.finPurpose.setValue(aFinanceMain.getFinPurpose());
 		if (StringUtils.isNotBlank(aFinanceMain.getFinPurpose())) {
@@ -1332,16 +1296,6 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 					&& getFinanceDetail().getFinScheduleData().getStepPolicyDetails() == null) {
 				getFinanceDetail().getFinScheduleData().resetStepPolicyDetails(null);
 			}
-		}
-
-		if (StringUtils.isNotEmpty(aFinanceMain.getShariaStatus())
-				&& !StringUtils.equals(PennantConstants.SHARIA_STATUS_NOTREQUIRED, aFinanceMain.getShariaStatus())) {
-			this.shariaApprovalReq.setChecked(true);
-		} else {
-			this.shariaApprovalReq.setChecked(false);
-		}
-		if (StringUtils.equals(PennantConstants.SHARIA_STATUS_DECLINED, aFinanceMain.getShariaStatus())) {
-			this.shariaApprovalReq.setDisabled(true);
 		}
 
 		// Finance MainDetails Tab ---> 2. Grace Period Details
@@ -1421,21 +1375,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 						PennantApplicationUtil.formatRate(aFinanceMain.getGrcPftRate().doubleValue(), 2));
 				this.finGrcMinRate.setValue(BigDecimal.ZERO);
 				this.finGrcMaxRate.setValue(BigDecimal.ZERO);
-
-				this.grcAdvRate.setBaseValue("");
-				this.grcAdvRate.setBaseDescription("");
-				this.grcAdvRate.setMarginText("");
-				this.grcAdvPftRate.setText("");
 			}
-
-			// Advised profit Rates
-			doCheckAdviseRates(aFinanceMain.getGrcAdvBaseRate(), aFinanceMain.getRpyAdvBaseRate(), true,
-					financeType.getFinCategory());
-			this.grcAdvRate.setBaseValue(aFinanceMain.getGrcAdvBaseRate());
-			this.grcAdvRate.setMarginValue(aFinanceMain.getGrcAdvMargin());
-			this.grcAdvPftRate.setValue(aFinanceMain.getGrcAdvPftRate());
-			calAdvPftRate(this.grcAdvRate.getBaseValue(), this.finCcy.getValue(), this.grcAdvRate.getMarginValue(),
-					BigDecimal.ZERO, BigDecimal.ZERO, this.grcAdvRate.getEffRateComp());
 
 			this.grcPftFrqRow.setVisible(true);
 			this.gracePftFrq.setDisabled(isReadOnly("FinanceMainDialog_gracePftFrq"));
@@ -1571,19 +1511,6 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			this.finMaxRate.setValue(BigDecimal.ZERO);
 		}
 
-		// Advised profit Rates
-		doCheckAdviseRates(aFinanceMain.getGrcAdvBaseRate(), aFinanceMain.getRpyAdvBaseRate(), false,
-				financeType.getFinCategory());
-		this.rpyAdvRate.setBaseValue(aFinanceMain.getRpyAdvBaseRate());
-		this.rpyAdvRate.setMarginValue(aFinanceMain.getRpyAdvMargin());
-		this.rpyAdvPftRate.setValue(aFinanceMain.getRpyAdvPftRate());
-		calAdvPftRate(this.rpyAdvRate.getBaseValue(), this.finCcy.getValue(), this.rpyAdvRate.getMarginValue(),
-				BigDecimal.ZERO, BigDecimal.ZERO, this.rpyAdvRate.getEffRateComp());
-
-		// External Charges For Ijarah
-		this.supplementRent.setValue(PennantAppUtil.formateAmount(aFinanceMain.getSupplementRent(), format));
-		this.increasedCost.setValue(PennantAppUtil.formateAmount(aFinanceMain.getIncreasedCost(), format));
-
 		this.repayFrq.setDisabled(isReadOnly("FinanceMainDialog_repayFrq"));
 		if (StringUtils.isNotEmpty(aFinanceMain.getRepayFrq())
 				|| !aFinanceMain.getRepayFrq().equals(PennantConstants.List_Select)) {
@@ -1630,11 +1557,6 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			readOnlyComponent(true, this.nextRepayCpzDate);
 		}
 
-		if (this.rolloverFrqRow.isVisible() && (StringUtils.isNotEmpty(aFinanceMain.getRolloverFrq())
-				|| !aFinanceMain.getRolloverFrq().equals(PennantConstants.List_Select))) {
-			this.rolloverFrq.setValue(aFinanceMain.getRolloverFrq());
-		}
-
 		if (!aFinanceMain.isNew() || !StringUtils.isNotBlank(aFinanceMain.getFinReference())) {
 			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
 
@@ -1645,7 +1567,6 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		}
 
 		this.nextRepayDate_two.setValue(aFinanceMain.getNextRepayDate());
-		this.nextRollOverDate_two.setValue(aFinanceMain.getNextRolloverDate());
 		this.nextRepayRvwDate_two.setValue(aFinanceMain.getNextRepayRvwDate());
 		this.nextRepayCpzDate_two.setValue(aFinanceMain.getNextRepayCpzDate());
 		this.nextRepayPftDate_two.setValue(aFinanceMain.getNextRepayPftDate());
@@ -1711,15 +1632,6 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			fillComboBox(this.oDChargeType, "", PennantStaticListUtil.getODCChargeType(), "");
 		}
 
-		// FinanceMain Details Tab ---> 5. DDA Registration Details
-		if (this.gb_ddaRequest.isVisible()) {
-			this.bankName.setValue(aFinanceMain.getBankName());
-			this.bankName.setDescription(aFinanceMain.getBankNameDesc());
-			this.iban.setValue(aFinanceMain.getIban());
-			fillComboBox(this.accountType, aFinanceMain.getAccountType(), PennantStaticListUtil.getAccountTypes(), "");
-		}
-
-		this.availCommitAmount = aFinanceMain.getAvailCommitAmount();
 		this.recordStatus.setValue(getLiabilityRequest().getRecordStatus());
 
 		if (aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails().size() > 0) {

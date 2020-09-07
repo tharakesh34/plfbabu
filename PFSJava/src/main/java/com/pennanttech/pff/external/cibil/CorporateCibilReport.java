@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -1590,7 +1591,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			value = BigDecimal.ZERO;
 		}
 
-		value = value.setScale(0, BigDecimal.ROUND_DOWN);
+		value = value.setScale(0, RoundingMode.DOWN);
 
 		addField(record, value.toString());
 	}

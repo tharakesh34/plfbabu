@@ -448,15 +448,6 @@
 											</row>
 											<row visible="false">
 												<label
-													id="label_FinanceTypeDialog_AllowAdvanceRent"
-													value="${c:l('label_FinanceTypeDialog_AllowAdvanceRentAllow.value')}" />
-												<hbox>
-													<space
-														spacing="2px" />
-													<checkbox
-														id="alwAdvanceRent" checked="false" />
-												</hbox>
-												<label
 													id="label_FinanceTypeDialog_AllowRIAInvestment"
 													value="${c:l('label_FinanceTypeDialog_AllowRIAInvestment.value')}" />
 												<hbox>
@@ -483,18 +474,6 @@
 												</hbox>
 											</row>
 											<row
-												id="row_allowDownpayPgm" visible="false">
-												<label
-													id="label_FinanceTypeDialog_AllowDownpayPgm"
-													value="${c:l('label_FinanceTypeDialog_AllowDownpayPgm.value')}" />
-												<hbox>
-													<space
-														spacing="2px" />
-													<checkbox
-														id="allowDownpayPgm" checked="false" />
-												</hbox>
-											</row>
-											<row
 												id='row_finDepreciation'>
 												<label
 													id="label_FinanceTypeDialog_FinDepreciationReq"
@@ -517,22 +496,6 @@
 													<checkbox
 														id="alwMultiPartyDisb" checked="false" />
 												</hbox>
-											</row>
-											<row visible="false">
-												<label
-													id="label_FinanceTypeDialog_RolloverFinance"
-													value="${c:l('label_FinanceTypeDialog_RolloverFinance.value')}" />
-												<hbox>
-													<space
-														spacing="2px" />
-													<checkbox
-														id="rolloverFinance" checked="false" />
-												</hbox>
-												<label
-													id="label_FinanceTypeDialog_RollOverFrq"
-													value="${c:l('label_FinanceTypeDialog_RollOverFrq.value')}" />
-												<frequencybox
-													id="rollOverFrq" />
 											</row>
 											<row visible="false">
 												<label
@@ -739,35 +702,6 @@
 											<ratebox
 												id="financeGrcBaseRate" />
 
-										</row>
-										<row id="row_GrcAdvBaseRate"
-											visible="false">
-											<label
-												id="label_FinanceTypeDialog_GrcAdvBaseRate"
-												value="${c:l('label_FinanceTypeDialog_GrcAdvBaseRate.value')}" />
-											<extendedcombobox
-												id="grcAdvBaseRate" />
-											<label
-												id="label_FinanceTypeDialog_GrcAdvPftRate"
-												value="${c:l('label_FinanceTypeDialog_GrcAdvPftRate.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox
-													id="grcAdvPftRate" width="125px" maxlength="15"
-													style="text-align:right" />
-											</hbox>
-										</row>
-										<row id="row_GrcAdvMargin"
-											visible="false">
-											<label
-												id="label_FinanceTypeDialog_GrcAdvMargin"
-												value="${c:l('label_FinanceTypeDialog_GrcAdvMargin.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox
-													id="grcAdvMargin" width="125px" maxlength="15"
-													style="text-align:right" />
-											</hbox>
 										</row>
 										<row id="row_FinGrcRates"
 											visible="false">
@@ -1018,38 +952,6 @@
 												</hbox>
 											</row>
 
-
-											<row id="row_RpyAdvBaseRate"
-												visible="false">
-												<label
-													id="label_FinanceTypeDialog_RpyAdvBaseRate"
-													value="${c:l('label_FinanceTypeDialog_RpyAdvBaseRate.value')}" />
-												<extendedcombobox
-													id="rpyAdvBaseRate" />
-												<label
-													id="label_FinanceTypeDialog_RpyAdvPftRate"
-													value="${c:l('label_FinanceTypeDialog_RpyAdvPftRate.value')}" />
-												<hbox>
-													<space
-														spacing="2px" />
-													<decimalbox
-														id="rpyAdvPftRate" width="125px" maxlength="15"
-														style="text-align:right" />
-												</hbox>
-											</row>
-											<row id="row_RpyAdvMargin"
-												visible="false">
-												<label
-													id="label_FinanceTypeDialog_RpyAdvMargin"
-													value="${c:l('label_FinanceTypeDialog_RpyAdvMargin.value')}" />
-												<hbox>
-													<space
-														spacing="2px" />
-													<decimalbox
-														id="rpyAdvMargin" width="125px" maxlength="15"
-														style="text-align:right" />
-												</hbox>
-											</row>
 											<row id="row_FinRepRates"
 												visible="false">
 												<label

@@ -72,7 +72,6 @@ public class AutoDisbursementService extends ServiceHelper {
 		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 
-		curDisbursment.setDisbDisbursed(true);
 		//FIXME how to handle in case of cancellation
 		curDisbursment.setLinkedTranId(aeEvent.getLinkedTranId());
 		curDisbursment.setPosted(true);

@@ -76,7 +76,6 @@ import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.applicationmaster.Branch;
-import com.pennant.backend.model.applicationmaster.ChequePurpose;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.applicationmaster.QBFieldDetail;
@@ -92,9 +91,6 @@ import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.dedup.DynamicCollateralType;
-import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
-import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
-import com.pennant.backend.model.finance.commodity.CommodityDetail;
 import com.pennant.backend.model.finance.psl.PSLCategory;
 import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.limit.LimitGroup;
@@ -356,7 +352,6 @@ public class PennantAppUtil {
 		excludeModules.add("FinBlacklistCustomer");
 		excludeModules.add("ChangeGestation");
 		excludeModules.add("ChangeFrequency");
-		excludeModules.add("PoliceCaseCustomers");
 		excludeModules.add("StepPolicyDetail");
 		excludeModules.add("RejectFinanceMain");
 		excludeModules.add("ReinstateFinance");
@@ -411,7 +406,6 @@ public class PennantAppUtil {
 		excludeModules.add("CheckListDetail");
 		excludeModules.add("Collateral");
 		excludeModules.add("CommitmentMovement");
-		excludeModules.add("ContractorAssetDetail");
 		excludeModules.add("CorpScoreGroupDetail");
 		excludeModules.add("CustomerDocument");
 		excludeModules.add("CustomerDetails");
@@ -507,14 +501,9 @@ public class PennantAppUtil {
 		excludeModules.add("SecurityUser");
 		excludeModules.add("PriorityValuation");
 		excludeModules.add("MortgageUnit");
-		excludeModules.add("VesselType");
 		excludeModules.add("PaymentTo");
 		excludeModules.add("AgreementFieldDetails");
-		excludeModules.add("BulkRateChangeDetails");
-		excludeModules.add("BulkRateChangeHeader");
-		excludeModules.add("BundledProductsDetail");
 		excludeModules.add("CMTFinanceType");
-		excludeModules.add("COMMMUR_MMA");
 		excludeModules.add("ChequeFinance");
 		excludeModules.add("CollateralAssignment");
 		excludeModules.add("CollateralDetail");
@@ -534,7 +523,6 @@ public class PennantAppUtil {
 		excludeModules.add("EarlyPayment");
 		excludeModules.add("EquipmentLoanDetail");
 		excludeModules.add("ErrorDetail");
-		excludeModules.add("EtihadCreditBureauDetail");
 		excludeModules.add("FinAdvancePayments");
 		excludeModules.add("FinAssetEvaluation");
 		excludeModules.add("FinCollaterals");
@@ -546,7 +534,6 @@ public class PennantAppUtil {
 		excludeModules.add("HomeLoanDetail");
 		excludeModules.add("InventoryDetail");
 		excludeModules.add("InventorySettlement");
-		excludeModules.add("InvestmentLoanDetail");
 		excludeModules.add("InvoiceFinance");
 		excludeModules.add("LiabilityRequest");
 		excludeModules.add("LimitCodeDetail");
@@ -571,20 +558,13 @@ public class PennantAppUtil {
 		excludeModules.add("QueueAssignment");
 		excludeModules.add("QueueAssignmentHeader");
 		excludeModules.add("RlsHoldDisbursement");
-		excludeModules.add("Rollover");
 		excludeModules.add("SecurityRoleEnq");
-		excludeModules.add("ShipLoanDetail");
-		excludeModules.add("SukukBrokerBonds");
-		excludeModules.add("SukukLoanDetail");
-		excludeModules.add("SuplRentIncrCost");
 		excludeModules.add("SysNotification");
 		excludeModules.add("TATNotificationCode");
 		excludeModules.add("InsuranceChange");
 		excludeModules.add("TakeoverDetail");
 		excludeModules.add("TaskOwners");
-		excludeModules.add("VesselDetail");
 		excludeModules.add("WriteOffPay");
-		excludeModules.add("AdvPftRateChange");
 
 		if (isforAudit) {
 			excludeModules.add("WIFFinanceMain");
@@ -599,17 +579,12 @@ public class PennantAppUtil {
 			excludeModules.add("FinCreditReviewDetails");
 			excludeModules.add("BankDetail");
 			excludeModules.add("BlackListCustomers");
-			excludeModules.add("CommodityBrokerDetail");
-			excludeModules.add("CommodityDetail");
-			excludeModules.add("PoliceCaseDetail");
-			excludeModules.add("TakafulProvider");
 			excludeModules.add("TargetDetail");
 			excludeModules.add("OtherBankFinanceType");
 			excludeModules.add("SecurityUsers");
 			excludeModules.add("Commitment");
 			excludeModules.add("Rule");
 			excludeModules.add("FinanceDedup");
-			excludeModules.add("PoliceCase");
 			excludeModules.add("Provision");
 			excludeModules.add("DedupParm");
 			excludeModules.add("Query");
@@ -620,7 +595,6 @@ public class PennantAppUtil {
 			excludeModules.add("PromotionWorkFlow");
 			excludeModules.add("FinanceRepayPriority");
 			excludeModules.add("StepPolicyHeader");
-			excludeModules.add("InvestmentFinHeader");
 			excludeModules.add("SecurityUsers");
 			excludeModules.add("SecurityRoleGroups");
 			excludeModules.add("SecurityRoleGroups");
@@ -1371,72 +1345,6 @@ public class PennantAppUtil {
 		return custRelationList;
 	}
 
-	/**
-	 * To get list of Broker Commodity Details from BrokerCommodityDetail table To filling Commodity Values of
-	 * BrokerCode and CommodityCode into selection search box.
-	 * 
-	 * @return commodityList
-	 */
-	public static List<ValueLabel> getCommodityValues() {
-		ArrayList<ValueLabel> commodityList = new ArrayList<ValueLabel>();
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		JdbcSearchObject<CommodityDetail> searchObject = new JdbcSearchObject<CommodityDetail>(CommodityDetail.class);
-		searchObject.addTabelName("FCMTCommodityDetail");
-		searchObject.addField("CommodityCode");
-		searchObject.addField("CommodityName");
-		List<CommodityDetail> appList = pagedListService.getBySearchObject(searchObject);
-		for (int i = 0; i < appList.size(); i++) {
-			ValueLabel commodity = new ValueLabel(appList.get(i).getCommodityCode(), appList.get(i).getCommodityName());
-			commodityList.add(commodity);
-		}
-		return commodityList;
-	}
-
-	/**
-	 * To get list of Broker Codes from FCMTBrokerDetail table To filling Broker Code Combo box.
-	 * 
-	 * @return brokerCodeList
-	 */
-	public static List<ValueLabel> getBrokerCode() {
-
-		ArrayList<ValueLabel> brokerCodeList = new ArrayList<ValueLabel>();
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		JdbcSearchObject<CommodityBrokerDetail> searchObject = new JdbcSearchObject<CommodityBrokerDetail>(
-				CommodityBrokerDetail.class);
-		searchObject.addTabelName("FCMTBrokerDetail");
-		searchObject.addField("BrokerCode");
-		List<CommodityBrokerDetail> appList = pagedListService.getBySearchObject(searchObject);
-		for (int i = 0; i < appList.size(); i++) {
-			ValueLabel brokerCode = new ValueLabel(appList.get(i).getBrokerCode(), appList.get(i).getBrokerCode());
-			brokerCodeList.add(brokerCode);
-		}
-
-		return brokerCodeList;
-	}
-
-	/**
-	 * To get list of Commodity Codes based on the selected Broker Code from BrokerCommodityDetail table To filling
-	 * Commodity Code Combo box.
-	 * 
-	 * @return commodityCodeList
-	 */
-	public static List<BrokerCommodityDetail> getBrokerCommodityCodes(String brokerCode) {
-
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-
-		JdbcSearchObject<BrokerCommodityDetail> searchObject = new JdbcSearchObject<BrokerCommodityDetail>(
-				BrokerCommodityDetail.class);
-		searchObject.addTabelName("BrokerCommodityDetail_Aview");
-		searchObject.addFilter(new Filter("BrokerCode", brokerCode, Filter.OP_EQUAL));
-		searchObject.addField("CommodityCode");
-		searchObject.addField("LovDescCommodityDesc");
-		searchObject.addField("CommodityUnitCode");
-		searchObject.addField("CommodityUnitName");
-		List<BrokerCommodityDetail> commodityCodeList = pagedListService.getBySearchObject(searchObject);
-
-		return commodityCodeList;
-	}
-
 	public static List<ValueLabel> getFlagDetails() {
 		ArrayList<ValueLabel> flagList = new ArrayList<ValueLabel>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
@@ -1450,26 +1358,6 @@ public class PennantAppUtil {
 			flagList.add(flag);
 		}
 		return flagList;
-	}
-
-	/**
-	 * To get list of Commodity Codes from FCMTCommodityDetail table To filling Commodity Code Combo box.
-	 * 
-	 * @return commodityCodeList
-	 */
-	public static List<ValueLabel> getCommodityCodes() {
-		ArrayList<ValueLabel> commodityList = new ArrayList<ValueLabel>();
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		JdbcSearchObject<CommodityDetail> searchObject = new JdbcSearchObject<CommodityDetail>(CommodityDetail.class);
-		searchObject.addTabelName("FCMTCommodityDetail");
-		searchObject.addField("CommodityCode");
-		searchObject.addField("CommodityName");
-		List<CommodityDetail> appList = pagedListService.getBySearchObject(searchObject);
-		for (int i = 0; i < appList.size(); i++) {
-			ValueLabel commodity = new ValueLabel(appList.get(i).getCommodityName(), appList.get(i).getCommodityName());
-			commodityList.add(commodity);
-		}
-		return commodityList;
 	}
 
 	public static List<DeviationParam> getDeviationParams() {
@@ -1787,25 +1675,6 @@ public class PennantAppUtil {
 			list = new ArrayList<LimitGroupLines>();
 		}
 		return list;
-	}
-
-	public static ArrayList<ValueLabel> getChqPurposeCodes(Boolean filter) {
-		ArrayList<ValueLabel> chequePurposeCodes = new ArrayList<ValueLabel>();
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-
-		JdbcSearchObject<ChequePurpose> searchObject = new JdbcSearchObject<ChequePurpose>(ChequePurpose.class);
-		if (filter) {
-			searchObject.addFilter(new Filter("Active", "1", Filter.OP_EQUAL));
-		}
-		searchObject.addTabelName("ChequePurpose_AView");
-
-		List<ChequePurpose> appList = pagedListService.getBySearchObject(searchObject);
-		for (int i = 0; i < appList.size(); i++) {
-			ValueLabel pftRateLabel = new ValueLabel(String.valueOf(appList.get(i).getCode()),
-					appList.get(i).getDescription());
-			chequePurposeCodes.add(pftRateLabel);
-		}
-		return chequePurposeCodes;
 	}
 
 	public static SubSegment getSegmentDetails(String subSegmentcode) {

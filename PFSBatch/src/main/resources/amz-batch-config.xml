@@ -115,7 +115,6 @@
 	<!-- Beans -->
 
 	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil">
-		<property name="scriptEngine" ref="scriptEngine" />
 		<property name="globalVariableService" ref="globalVariableService" />
 	</bean>
 
@@ -131,15 +130,6 @@
 	<bean id="finExpenseDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinExpenseDetailsDAOImpl" parent="sequenceDao" />
 
 	<bean id="manualAdviseDAO" class="com.pennant.backend.dao.finance.impl.ManualAdviseDAOImpl" parent="sequenceDao" />
-
-	<!-- Helpers -->
-
-	<bean id="scriptEngine" class="javax.script.ScriptEngine" factory-method="getEngineByName" factory-bean="scriptEngineManager">
-		<constructor-arg value="javascript" />
-	</bean>
-
-	<bean id="scriptEngineManager" class="javax.script.ScriptEngineManager" />
-
 
 	<!-- Postings -->
 	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="sequenceDao">

@@ -181,7 +181,6 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 				&& !StringUtils.equals(PennantConstants.WORFLOW_MODULE_COMMITMENT, this.module)) {
 			if (isPromotion) {
 				this.searchObject.addFilter(new Filter("lovDescProductName", "", Filter.OP_NOT_EQUAL));
-				this.searchObject.addFilter(new Filter("ReferenceId", 0, Filter.OP_EQUAL));
 			} else {
 				this.searchObject.addFilter(new Filter("lovDescProductName", "", Filter.OP_EQUAL));
 			}

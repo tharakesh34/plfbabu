@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -79,7 +77,7 @@ public class ExtendedFieldCtrl {
 	/**
 	 * Method for Rendering the Extended field details
 	 */
-	public void render() throws ScriptException {
+	public void render() {
 		logger.debug(Literal.ENTERING);
 		renderData();
 		logger.debug(Literal.LEAVING);
@@ -91,7 +89,7 @@ public class ExtendedFieldCtrl {
 	 * @param objectList
 	 * @throws ScriptException
 	 */
-	public void render(List<Object> objectList) throws ScriptException {
+	public void render(List<Object> objectList) {
 		logger.debug(Literal.ENTERING);
 		scriptValidationService.setObjectList(objectList);
 		renderData();
@@ -103,7 +101,7 @@ public class ExtendedFieldCtrl {
 	 * 
 	 * @throws ScriptException
 	 */
-	private void renderData() throws ScriptException {
+	private void renderData() {
 		// Extended Field Details auto population / Rendering into Screen
 		this.generator = new ExtendedFieldsGenerator();
 		this.generator.setTabpanel(tabpanel);
@@ -182,7 +180,8 @@ public class ExtendedFieldCtrl {
 			generator.setParentTab(parentTab);
 		}
 
-		// If Validation Required is false, then No need to fetch data with applying constraints
+		// If Validation Required is false, then No need to fetch data with applying
+		// constraints
 		boolean makeReadOnly = this.isReadOnly;
 		if (!validationReq) {
 			makeReadOnly = true;
@@ -239,7 +238,8 @@ public class ExtendedFieldCtrl {
 				}
 			}
 		}
-		//component visibility based validation thrown in this method, if the component is not visible validation not thrown
+		// component visibility based validation thrown in this method, if the component
+		// is not visible validation not thrown
 		generator.showErrorDetails(wveMap, compList, notInputElements);
 	}
 
@@ -265,44 +265,40 @@ public class ExtendedFieldCtrl {
 	/**
 	 * Method to show error details if occurred
 	 * 
-	 * @param Tab
-	 *            tab
-	 * @param ArrayList<WrongValueException>
-	 *            wve
+	 * @param Tab                            tab
+	 * @param ArrayList<WrongValueException> wve
 	 **/
-	//	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
-	//		logger.debug(Literal.ENTERING);
+	// private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+	// logger.debug(Literal.ENTERING);
 	//
-	//		if (wve.size() > 0) {
-	//			logger.debug("Throwing occured Errors By using WrongValueException");
-	//			if (this.parentTab != null) {
-	//				this.parentTab.setSelected(true);
-	//			}
-	//			this.tab.setSelected(true);
+	// if (wve.size() > 0) {
+	// logger.debug("Throwing occured Errors By using WrongValueException");
+	// if (this.parentTab != null) {
+	// this.parentTab.setSelected(true);
+	// }
+	// this.tab.setSelected(true);
 	//
-	//			WrongValueException[] wvea = new WrongValueException[wve.size()];
-	//			for (int i = 0; i < wve.size(); i++) {
-	//				wvea[i] = wve.get(i);
-	//				if (i == 0) {
-	//					Component comp = wvea[i].getComponent();
-	//					if (comp instanceof HtmlBasedComponent) {
-	//						Clients.scrollIntoView(comp);
-	//					}
-	//				}
-	//				logger.debug(wvea[i]);
-	//			}
-	//			throw new WrongValuesException(wvea);
-	//		}
-	//		logger.debug(Literal.LEAVING);
-	//	}
+	// WrongValueException[] wvea = new WrongValueException[wve.size()];
+	// for (int i = 0; i < wve.size(); i++) {
+	// wvea[i] = wve.get(i);
+	// if (i == 0) {
+	// Component comp = wvea[i].getComponent();
+	// if (comp instanceof HtmlBasedComponent) {
+	// Clients.scrollIntoView(comp);
+	// }
+	// }
+	// logger.debug(wvea[i]);
+	// }
+	// throw new WrongValuesException(wvea);
+	// }
+	// logger.debug(Literal.LEAVING);
+	// }
 
 	/**
 	 * Method Getting the extended field header details
 	 * 
-	 * @param String
-	 *            module
-	 * @param String
-	 *            subModule
+	 * @param String module
+	 * @param String subModule
 	 **/
 	public ExtendedFieldHeader getExtendedFieldHeader(String module, String subModule, String event) {
 		ExtendedFieldHeader extendedFieldHeader = extFieldConfigService.getApprovedExtendedFieldHeaderByModule(module,
@@ -314,10 +310,8 @@ public class ExtendedFieldCtrl {
 	/**
 	 * Method Getting the extended field header details
 	 * 
-	 * @param String
-	 *            module
-	 * @param String
-	 *            subModule
+	 * @param String module
+	 * @param String subModule
 	 **/
 	public ExtendedFieldHeader getExtendedFieldHeader(String module, String subModule) {
 		ExtendedFieldHeader extendedFieldHeader = extFieldConfigService.getApprovedExtendedFieldHeaderByModule(module,
@@ -329,10 +323,8 @@ public class ExtendedFieldCtrl {
 	/**
 	 * Method Getting the extended field header details
 	 * 
-	 * @param String
-	 *            module
-	 * @param String
-	 *            subModule
+	 * @param String module
+	 * @param String subModule
 	 **/
 	public ExtendedFieldHeader getExtendedFieldHeader(String module, String subModule, int extendedType) {
 		ExtendedFieldHeader extendedFieldHeader = extFieldConfigService.getApprovedExtendedFieldHeaderByModule(module,
@@ -344,8 +336,7 @@ public class ExtendedFieldCtrl {
 	/**
 	 * Method Getting the extended field render details
 	 * 
-	 * @param String
-	 *            reference
+	 * @param String reference
 	 **/
 	public ExtendedFieldRender getExtendedFieldRender(String reference) {
 
@@ -389,11 +380,13 @@ public class ExtendedFieldCtrl {
 			extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 					: String.valueOf(extFieldMap.get("TaskId")));
 			extFieldMap.remove("TaskId");
-			extendedFieldRender.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null")
-					? "" : String.valueOf(extFieldMap.get("NextTaskId")));
+			extendedFieldRender
+					.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+							: String.valueOf(extFieldMap.get("NextTaskId")));
 			extFieldMap.remove("NextTaskId");
-			extendedFieldRender.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null")
-					? "" : String.valueOf(extFieldMap.get("RecordType")));
+			extendedFieldRender
+					.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+							: String.valueOf(extFieldMap.get("RecordType")));
 			extFieldMap.remove("RecordType");
 			extendedFieldRender.setWorkflowId(Long.valueOf(String.valueOf(extFieldMap.get("WorkflowId"))));
 			extFieldMap.remove("WorkflowId");
@@ -406,10 +399,8 @@ public class ExtendedFieldCtrl {
 	/**
 	 * Method Getting the extended field render details
 	 * 
-	 * @param String
-	 *            reference
-	 * @param String
-	 *            tableName
+	 * @param String reference
+	 * @param String tableName
 	 **/
 	public ExtendedFieldRender getExtendedFieldRender(String reference, String tableName) {
 
@@ -440,11 +431,13 @@ public class ExtendedFieldCtrl {
 			extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 					: String.valueOf(extFieldMap.get("TaskId")));
 			extFieldMap.remove("TaskId");
-			extendedFieldRender.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null")
-					? "" : String.valueOf(extFieldMap.get("NextTaskId")));
+			extendedFieldRender
+					.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+							: String.valueOf(extFieldMap.get("NextTaskId")));
 			extFieldMap.remove("NextTaskId");
-			extendedFieldRender.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null")
-					? "" : String.valueOf(extFieldMap.get("RecordType")));
+			extendedFieldRender
+					.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+							: String.valueOf(extFieldMap.get("RecordType")));
 			extFieldMap.remove("RecordType");
 			extendedFieldRender.setWorkflowId(Long.valueOf(String.valueOf(extFieldMap.get("WorkflowId"))));
 			extFieldMap.remove("WorkflowId");
@@ -457,10 +450,8 @@ public class ExtendedFieldCtrl {
 	/**
 	 * Method Getting the extended field render details
 	 * 
-	 * @param String
-	 *            reference
-	 * @param String
-	 *            tableName
+	 * @param String reference
+	 * @param String tableName
 	 **/
 	public ExtendedFieldRender getExtendedFieldRender(String reference, String tableName, String type) {
 
@@ -491,11 +482,13 @@ public class ExtendedFieldCtrl {
 			extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 					: String.valueOf(extFieldMap.get("TaskId")));
 			extFieldMap.remove("TaskId");
-			extendedFieldRender.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null")
-					? "" : String.valueOf(extFieldMap.get("NextTaskId")));
+			extendedFieldRender
+					.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+							: String.valueOf(extFieldMap.get("NextTaskId")));
 			extFieldMap.remove("NextTaskId");
-			extendedFieldRender.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null")
-					? "" : String.valueOf(extFieldMap.get("RecordType")));
+			extendedFieldRender
+					.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+							: String.valueOf(extFieldMap.get("RecordType")));
 			extFieldMap.remove("RecordType");
 			extendedFieldRender.setWorkflowId(Long.valueOf(String.valueOf(extFieldMap.get("WorkflowId"))));
 			extFieldMap.remove("WorkflowId");
@@ -508,10 +501,8 @@ public class ExtendedFieldCtrl {
 	/**
 	 * Method Getting the extended field render details
 	 * 
-	 * @param String
-	 *            reference
-	 * @param String
-	 *            tableName
+	 * @param String reference
+	 * @param String tableName
 	 **/
 	public List<ExtendedFieldRender> getExtendedFieldRenderList(String reference, String tableName, String type) {
 
@@ -536,16 +527,17 @@ public class ExtendedFieldCtrl {
 				extFieldMap.remove("LastMntOn");
 				extendedFieldRender.setLastMntBy(Long.valueOf(String.valueOf(extFieldMap.get("LastMntBy"))));
 				extFieldMap.remove("LastMntBy");
-				extendedFieldRender
-						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
-								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extendedFieldRender.setRecordStatus(
+						StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RecordStatus")));
 				extFieldMap.remove("RecordStatus");
-				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
-						? "" : String.valueOf(extFieldMap.get("RoleCode")));
-				extFieldMap.remove("RoleCode");
 				extendedFieldRender
-						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
-								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+						.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RoleCode")));
+				extFieldMap.remove("RoleCode");
+				extendedFieldRender.setNextRoleCode(
+						StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+								: String.valueOf(extFieldMap.get("NextRoleCode")));
 				extFieldMap.remove("NextRoleCode");
 				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 						: String.valueOf(extFieldMap.get("TaskId")));
@@ -570,10 +562,8 @@ public class ExtendedFieldCtrl {
 	/**
 	 * Method Getting the extended field render details
 	 * 
-	 * @param String
-	 *            reference
-	 * @param String
-	 *            tableName
+	 * @param String reference
+	 * @param String tableName
 	 **/
 	public List<ExtendedFieldRender> getExtendedFieldRendeList(long id, String tableName, String type) {
 
@@ -594,28 +584,29 @@ public class ExtendedFieldCtrl {
 					extFieldMap.remove("LastMntOn");
 					extendedFieldRender.setLastMntBy(Long.valueOf(String.valueOf(extFieldMap.get("LastMntBy"))));
 					extFieldMap.remove("LastMntBy");
-					extendedFieldRender
-							.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
-									? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+					extendedFieldRender.setRecordStatus(
+							StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+									: String.valueOf(extFieldMap.get("RecordStatus")));
 					extFieldMap.remove("RecordStatus");
 					extendedFieldRender
 							.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
 									: String.valueOf(extFieldMap.get("RoleCode")));
 					extFieldMap.remove("RoleCode");
-					extendedFieldRender
-							.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
-									? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+					extendedFieldRender.setNextRoleCode(
+							StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+									: String.valueOf(extFieldMap.get("NextRoleCode")));
 					extFieldMap.remove("NextRoleCode");
-					extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null")
-							? "" : String.valueOf(extFieldMap.get("TaskId")));
+					extendedFieldRender
+							.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
+									: String.valueOf(extFieldMap.get("TaskId")));
 					extFieldMap.remove("TaskId");
-					extendedFieldRender
-							.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null")
-									? "" : String.valueOf(extFieldMap.get("NextTaskId")));
+					extendedFieldRender.setNextTaskId(
+							StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+									: String.valueOf(extFieldMap.get("NextTaskId")));
 					extFieldMap.remove("NextTaskId");
-					extendedFieldRender
-							.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null")
-									? "" : String.valueOf(extFieldMap.get("RecordType")));
+					extendedFieldRender.setRecordType(
+							StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+									: String.valueOf(extFieldMap.get("RecordType")));
 					extFieldMap.remove("RecordType");
 					extendedFieldRender.setWorkflowId(Long.valueOf(String.valueOf(extFieldMap.get("WorkflowId"))));
 					extFieldMap.remove("WorkflowId");
@@ -664,22 +655,24 @@ public class ExtendedFieldCtrl {
 
 	public void createEnquiryTab(Tabpanel tabPanel) {
 
-		//		Tabbox tabbox=new Tabbox();
-		//		tab = new Tab(this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName());
-		//		tab.setId("Tab" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName());
-		//		Tabs tabs=new Tabs();
-		//		tabs.appendChild(tab);
-		//		tabbox.appendChild(tabs);
-		//		Tabpanels tabPanels=new Tabpanels();
-		//		tabbox.appendChild(tabPanels);
+		// Tabbox tabbox=new Tabbox();
+		// tab = new Tab(this.extendedFieldHeader.getModuleName() +
+		// this.extendedFieldHeader.getSubModuleName());
+		// tab.setId("Tab" + this.extendedFieldHeader.getModuleName() +
+		// this.extendedFieldHeader.getSubModuleName());
+		// Tabs tabs=new Tabs();
+		// tabs.appendChild(tab);
+		// tabbox.appendChild(tabs);
+		// Tabpanels tabPanels=new Tabpanels();
+		// tabbox.appendChild(tabPanels);
 		tabpanel = tabPanel;
 		tabpanel.setId(
 				"TabPanel" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName());
 		tabpanel.setStyle("overflow:auto");
 		tabpanel.setHeight("100%");
-		//		tabpanel.setParent(tabPanels);
+		// tabpanel.setParent(tabPanels);
 		// it store all tabpanel id (for pdf extraction)
-		//		tabPanel.appendChild(tabbox);
+		// tabPanel.appendChild(tabbox);
 		tabPanelsMap.put(
 				"TabPanel" + this.extendedFieldHeader.getModuleName() + this.extendedFieldHeader.getSubModuleName(),
 				tabpanel);
@@ -844,48 +837,42 @@ public class ExtendedFieldCtrl {
 	}
 
 	/**
-	 * @param parentTab
-	 *            the parentTab to set
+	 * @param parentTab the parentTab to set
 	 */
 	public void setParentTab(Tab parentTab) {
 		this.parentTab = parentTab;
 	}
 
 	/**
-	 * @param extendedFieldHeader
-	 *            the extendedFieldHeader to set
+	 * @param extendedFieldHeader the extendedFieldHeader to set
 	 */
 	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
 		this.extendedFieldHeader = extendedFieldHeader;
 	}
 
 	/**
-	 * @param extendedFieldRender
-	 *            the extendedFieldRender to set
+	 * @param extendedFieldRender the extendedFieldRender to set
 	 */
 	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
 		this.extendedFieldRender = extendedFieldRender;
 	}
 
 	/**
-	 * @param generator
-	 *            the generator to set
+	 * @param generator the generator to set
 	 */
 	public void setGenerator(ExtendedFieldsGenerator generator) {
 		this.generator = generator;
 	}
 
 	/**
-	 * @param ccyFormat
-	 *            the ccyFormat to set
+	 * @param ccyFormat the ccyFormat to set
 	 */
 	public void setCcyFormat(int ccyFormat) {
 		this.ccyFormat = ccyFormat;
 	}
 
 	/**
-	 * @param enqiryModule
-	 *            the enqiryModule to set
+	 * @param enqiryModule the enqiryModule to set
 	 */
 	public void setEnqiryModule(boolean enqiryModule) {
 		if (enqiryModule) {
@@ -894,56 +881,49 @@ public class ExtendedFieldCtrl {
 	}
 
 	/**
-	 * @param isReadOnly
-	 *            the isReadOnly to set
+	 * @param isReadOnly the isReadOnly to set
 	 */
 	public void setReadOnly(boolean isReadOnly) {
 		this.isReadOnly = isReadOnly;
 	}
 
 	/**
-	 * @param tab
-	 *            the tab to set
+	 * @param tab the tab to set
 	 */
 	public void setTab(Tab tab) {
 		this.tab = tab;
 	}
 
 	/**
-	 * @param tabpanel
-	 *            the tabpanel to set
+	 * @param tabpanel the tabpanel to set
 	 */
 	public void setTabpanel(Tabpanel tabpanel) {
 		this.tabpanel = tabpanel;
 	}
 
 	/**
-	 * @param isNewRecord
-	 *            the isNewRecord to set
+	 * @param isNewRecord the isNewRecord to set
 	 */
 	public void setNewRecord(boolean isNewRecord) {
 		this.isNewRecord = isNewRecord;
 	}
 
 	/**
-	 * @param scriptValidationService
-	 *            the scriptValidationService to set
+	 * @param scriptValidationService the scriptValidationService to set
 	 */
 	public static void setScriptValidationService(ScriptValidationService scriptValidationService) {
 		ExtendedFieldCtrl.scriptValidationService = scriptValidationService;
 	}
 
 	/**
-	 * @param extFieldConfigService
-	 *            the extFieldConfigService to set
+	 * @param extFieldConfigService the extFieldConfigService to set
 	 */
 	public static void setExtFieldConfigService(ExtFieldConfigService extFieldConfigService) {
 		ExtendedFieldCtrl.extFieldConfigService = extFieldConfigService;
 	}
 
 	/**
-	 * @param extendedFieldRenderDAO
-	 *            the extendedFieldRenderDAO to set
+	 * @param extendedFieldRenderDAO the extendedFieldRenderDAO to set
 	 */
 	public static void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		ExtendedFieldCtrl.extendedFieldRenderDAO = extendedFieldRenderDAO;

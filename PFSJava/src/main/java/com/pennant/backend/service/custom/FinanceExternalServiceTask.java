@@ -13,7 +13,6 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -23,19 +22,14 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.servicetask.ServiceTaskDetail;
-import com.pennant.backend.service.collateral.CollateralMarkProcess;
-import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.finance.CustomServiceTask;
 import com.pennant.backend.service.legal.LegalDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.constants.InterfaceConstants;
-import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -88,8 +82,6 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	@Autowired(required = false)
 	private LegalDetailService legalDetailService;
 
-	private CollateralMarkProcess collateralMarkProcess;
-	private DDAControllerService ddaControllerService;
 	private ServiceTaskDAO serviceTaskDAO;
 
 	@Override
@@ -115,29 +107,8 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				auditHeader = doCheckExceptions(auditHeader);
 				taskExecuted = true;
 				break;
-			case PennantConstants.method_doCheckLPOApproval:
-				errors = doCollateralMark(afinanceDetail.getFinanceCollaterals());
-				if (!errors.isEmpty()) {
-					auditHeader.getErrorMessage().addAll(errors);
-				}
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_checkDDAResponse:
-				errors = checkDDAResponse(afinanceDetail);
-				if (!errors.isEmpty()) {
-					auditHeader.getErrorMessage().addAll(errors);
-				}
-				taskExecuted = true;
-				break;
 			case PennantConstants.method_doClearQueues:
 				afinanceDetail.getFinScheduleData().getFinanceMain().setNextTaskId("");
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_doFundsAvailConfirmed:
-				errors = doFundsAvailConfirmed(afinanceDetail);
-				if (!errors.isEmpty()) {
-					auditHeader.getErrorMessage().addAll(errors);
-				}
 				taskExecuted = true;
 				break;
 			case PennantConstants.method_doCheckProspectCustomer:
@@ -146,18 +117,6 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				break;
 			case PennantConstants.method_doCheckSMECustomer:
 				doCheckSMECustomer(afinanceDetail);
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_sendDDARequest:
-				errors = sendDDARequest(afinanceDetail);
-				if (!errors.isEmpty()) {
-					auditHeader.getErrorMessage().addAll(errors);
-				}
-				taskExecuted = true;
-				break;
-			case PennantConstants.method_doCheckShariaRequired:
-				//Setting this property which is used in workflow condition post sharia
-				afinanceMain.setShariaApprovalReq(true);//FIXME:what is the default value for sharia required
 				taskExecuted = true;
 				break;
 			case PennantConstants.method_externalDedup:
@@ -456,33 +415,6 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		afinanceDetail.getFinScheduleData().getFinanceMain().setScore(afinanceDetail.getScore());
 	}
 
-	/**
-	 * Method for send DDA request to interface
-	 * 
-	 * @param afinanceDetail
-	 * @return
-	 */
-	private List<ErrorDetail> sendDDARequest(FinanceDetail afinanceDetail) {
-		logger.debug(Literal.ENTERING);
-		List<ErrorDetail> errors = new ArrayList<>();
-		String finRepayMethod = afinanceDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
-		if (StringUtils.equals(finRepayMethod, FinanceConstants.REPAYMTH_AUTODDA)) {
-			try {
-				getDdaControllerService().doDDARequestProcess(afinanceDetail, false);
-				boolean isAllowDpSp = afinanceDetail.getFinScheduleData().getFinanceType().isAllowDownpayPgm();
-				if (isAllowDpSp) {
-					boolean ahaDpEnable = true;
-					getDdaControllerService().doDDARequestProcess(afinanceDetail, ahaDpEnable);
-				}
-			} catch (InterfaceException e) {
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail(e.getErrorCode(), e.getErrorMessage(), null)));
-			}
-		}
-
-		logger.debug(Literal.LEAVING);
-		return errors;
-	}
-
 	private void doCheckProspectCustomer(FinanceDetail afinanceDetail) {
 		if (afinanceDetail.getCustomerDetails() != null) {
 			CustEmployeeDetail custempDetail = afinanceDetail.getCustomerDetails().getCustEmployeeDetail();
@@ -503,63 +435,6 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Method for checking fundsAvail confirmation
-	 * 
-	 * @param afinanceDetail
-	 * @return
-	 */
-	private List<ErrorDetail> doFundsAvailConfirmed(FinanceDetail afinanceDetail) {
-		logger.debug(Literal.ENTERING);
-		List<ErrorDetail> errors = new ArrayList<>();
-		String nextRoleCode = StringUtils
-				.trimToEmpty(afinanceDetail.getFinScheduleData().getFinanceMain().getNextRoleCode());
-		String nextRoleCodes[] = nextRoleCode.split(",");
-
-		if (nextRoleCodes.length > 1) {
-			afinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(false);
-			errors.add(ErrorUtil
-					.getErrorDetail(new ErrorDetail("9999", Labels.getLabel("message.Conformation_Check"), null)));
-		} else {
-			afinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(true);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return errors;
-	}
-
-	/**
-	 * Method for checking DDA Response
-	 * 
-	 * @param afinanceDetail
-	 * @return
-	 */
-	private List<ErrorDetail> checkDDAResponse(FinanceDetail afinanceDetail) {
-		logger.debug(Literal.ENTERING);
-		List<ErrorDetail> errors = new ArrayList<>();
-		FinanceMain financeMain = afinanceDetail.getFinScheduleData().getFinanceMain();
-		if (StringUtils.equals(financeMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTODDA)) {
-			try {
-				boolean ddaStatus = getDdaControllerService().validateDDAStatus(financeMain.getFinReference());
-				boolean ddaDpSpStatus = true;
-				boolean isAllowDpSp = afinanceDetail.getFinScheduleData().getFinanceType().isAllowDownpayPgm();
-				if (isAllowDpSp) {
-					String linkedRef = financeMain.getFinReference() + "_DP";
-					ddaDpSpStatus = getDdaControllerService().validateDDAStatus(linkedRef);
-				}
-
-				if (ddaStatus && ddaDpSpStatus) {
-					//processCompleted = true;//FIXME:change the condition
-				}
-			} catch (InterfaceException pfe) {
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail(pfe.getErrorCode(), pfe.getErrorMessage(), null)));
-			}
-		}
-
-		logger.debug(Literal.LEAVING);
-		return errors;
 	}
 
 	/**
@@ -594,50 +469,6 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
-	}
-
-	/**
-	 * Method for send Collateral mark request to interface
-	 * 
-	 * @param list
-	 * @return
-	 * @throws InterfaceException
-	 * @throws InterruptedException
-	 */
-	private List<ErrorDetail> doCollateralMark(List<FinCollaterals> list) {
-		logger.debug(Literal.ENTERING);
-
-		List<ErrorDetail> errors = new ArrayList<>();
-		if (list != null && !list.isEmpty()) {
-			CollateralMark collateralMarkRply = getCollateralMarkProcess().markCollateral(list);
-			if (collateralMarkRply != null) {
-				if (!StringUtils.equals(collateralMarkRply.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
-					errors.add(ErrorUtil
-							.getErrorDetail(new ErrorDetail("9999", collateralMarkRply.getReturnText(), null)));
-				}
-			} else {
-				errors.add(ErrorUtil
-						.getErrorDetail(new ErrorDetail("9999", Labels.getLabel("COLLATERAL_MARK_FAILED"), null)));
-			}
-		}
-		logger.debug(Literal.LEAVING);
-		return errors;
-	}
-
-	public CollateralMarkProcess getCollateralMarkProcess() {
-		return collateralMarkProcess;
-	}
-
-	public void setCollateralMarkProcess(CollateralMarkProcess collateralMarkProcess) {
-		this.collateralMarkProcess = collateralMarkProcess;
-	}
-
-	public DDAControllerService getDdaControllerService() {
-		return ddaControllerService;
-	}
-
-	public void setDdaControllerService(DDAControllerService ddaControllerService) {
-		this.ddaControllerService = ddaControllerService;
 	}
 
 	public void setServiceTaskDAO(ServiceTaskDAO serviceTaskDAO) {

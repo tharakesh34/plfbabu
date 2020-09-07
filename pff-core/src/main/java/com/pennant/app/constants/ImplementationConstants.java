@@ -22,14 +22,15 @@ public class ImplementationConstants {
 		// Notes:
 		// The below are the steps that are required to extend the constants.
 		// 1. Interface, IFeatureExtension, will be available in pff-core.
-		// 2. The implementation class, FeatureExtension, for the above interface will be available in both
-		//    - pff-extension-core (dummy implementation and can be used for testing the constants as well)
-		//    - pff-extension-client
+		// 2. The implementation class, FeatureExtension, for the above interface will
+		// be available in both
+		// - pff-extension-core (dummy implementation and can be used for testing the
+		// constants as well)
+		// - pff-extension-client
 
 		Map<String, Object> extensions = getFeatureExtensions();
 
 		IMPLEMENTATION_CONVENTIONAL = getValueAsBoolean(extensions, "IMPLEMENTATION_CONVENTIONAL", true);
-		IMPLEMENTATION_ISLAMIC = getValueAsBoolean(extensions, "IMPLEMENTATION_ISLAMIC", false);
 		ALLOW_FINACTYPES = getValueAsBoolean(extensions, "ALLOW_FINACTYPES", false);
 		ALLOW_CAPITALIZE = getValueAsBoolean(extensions, "ALLOW_CAPITALIZE", true);
 		LIMIT_INTERNAL = getValueAsBoolean(extensions, "LIMIT_INTERNAL", true);
@@ -49,7 +50,6 @@ public class ImplementationConstants {
 		LP_MARK_FIRSTDAY = getValueAsBoolean(extensions, "LP_MARK_FIRSTDAY", true);
 		LPP_CALC_SOD = getValueAsBoolean(extensions, "LPP_CALC_SOD", true);
 		AUTO_ALLOWED = getValueAsBoolean(extensions, "AUTO_ALLOWED", false);
-		DDA_ALLOWED = getValueAsBoolean(extensions, "DDA_ALLOWED", false);
 		DDM_ALLOWED = getValueAsBoolean(extensions, "DDM_ALLOWED", true);
 		ECS_ALLOWED = getValueAsBoolean(extensions, "ECS_ALLOWED", true);
 		NACH_ALLOWED = getValueAsBoolean(extensions, "NACH_ALLOWED", true);
@@ -57,25 +57,19 @@ public class ImplementationConstants {
 		PREAPPROVAL_ALLOWED = getValueAsBoolean(extensions, "PREAPPROVAL_ALLOWED", false);
 		ALLOW_DEVIATIONS = getValueAsBoolean(extensions, "ALLOW_DEVIATIONS", true);
 		LATEPAY_PROFIT_CAL_ON_DAYZERO = getValueAsBoolean(extensions, "LATEPAY_PROFIT_CAL_ON_DAYZERO", true);
-		REBATE_CAPPED_BY_FINANCE = getValueAsBoolean(extensions, "REBATE_CAPPED_BY_FINANCE", false);
-		ALLOW_EXPENSE_TRACKING = getValueAsBoolean(extensions, "ALLOW_EXPENSE_TRACKING", false);
 		ADD_FEEINFTV_ONCALC = getValueAsBoolean(extensions, "ADD_FEEINFTV_ONCALC", true);
 		ALLOW_FIN_SALARY_PAYMENT = getValueAsBoolean(extensions, "ALLOW_FIN_SALARY_PAYMENT", true);
 		ALLOW_SPECIALRATE = getValueAsBoolean(extensions, "ALLOW_SPECIALRATE", false);
 		ACCOUNTS_APPLICABLE = getValueAsBoolean(extensions, "ACCOUNTS_APPLICABLE", false);
 		ALLOW_MANUAL_SCHEDULE = getValueAsBoolean(extensions, "ALLOW_MANUAL_SCHEDULE", false);
-		ALLOW_INDICATIVE_RATE = getValueAsBoolean(extensions, "ALLOW_INDICATIVE_RATE", false);
 		CAPTURE_APPLICATION_NUMBER = getValueAsBoolean(extensions, "CAPTURE_APPLICATION_NUMBER", true);
 		ALLOW_PLANNED_EMIHOLIDAY = getValueAsBoolean(extensions, "ALLOW_PLANNED_EMIHOLIDAY", true);
 		ALLOW_UNPLANNED_EMIHOLIDAY = getValueAsBoolean(extensions, "ALLOW_UNPLANNED_EMIHOLIDAY", true);
 		ALLOW_REAGE = getValueAsBoolean(extensions, "ALLOW_REAGE", true);
-		ALLOW_DOWNPAY_SUPPORTPGM = getValueAsBoolean(extensions, "ALLOW_DOWNPAY_SUPPORTPGM", false);
 		ALLOW_BPI_TREATMENT = getValueAsBoolean(extensions, "ALLOW_BPI_TREATMENT", true);
 		INTERESTON_PASTDUE_PRINCIPAL = getValueAsBoolean(extensions, "INTERESTON_PASTDUE_PRINCIPAL", true);
 		ALLOW_PLANNED_DEFERMENTS = getValueAsBoolean(extensions, "ALLOW_PLANNED_DEFERMENTS", false);
 		ALLOW_PRICINGPOLICY = getValueAsBoolean(extensions, "ALLOW_PRICINGPOLICY", false);
-		ALLOW_CREDITBUREAU = getValueAsBoolean(extensions, "ALLOW_CREDITBUREAU", false);
-		ALLOW_BUNDLEDPRODUCT = getValueAsBoolean(extensions, "ALLOW_BUNDLEDPRODUCT", false);
 		ALLOW_COMMITMENT = getValueAsBoolean(extensions, "ALLOW_COMMITMENT", false);
 		ALLOW_PFTUNCHG = getValueAsBoolean(extensions, "ALLOW_PFTUNCHG", false);
 		COLLATERAL_DELINK_AUTO = getValueAsBoolean(extensions, "COLLATERAL_DELINK_AUTO", false);
@@ -85,7 +79,7 @@ public class ImplementationConstants {
 		ALLOW_PHONETYPE_PRIORITY = getValueAsBoolean(extensions, "ALLOW_PHONETYPE_PRIORITY", false);
 		ALLOW_DEPRECIATION = getValueAsBoolean(extensions, "ALLOW_DEPRECIATION", false);
 		EARLYPAY_ADJ_PRI = getValueAsBoolean(extensions, "EARLYPAY_ADJ_PRI", true);
-		ALLOW_INSURANCE = getValueAsBoolean(extensions, "ALLOW_INSURANCE", false);
+		// ALLOW_INSURANCE = getValueAsBoolean(extensions, "ALLOW_INSURANCE", false);
 		ALLOW_RIA = getValueAsBoolean(extensions, "ALLOW_RIA", false);
 		ALLOW_ADDDBSF = getValueAsBoolean(extensions, "ALLOW_ADDDBSF", false);
 		UPFRONT_ADJUST_PAYABLEADVISE = getValueAsBoolean(extensions, "UPFRONT_ADJUST_PAYABLEADVISE", false);
@@ -161,8 +155,6 @@ public class ImplementationConstants {
 
 		REPAY_HIERARCHY_METHOD = getValueAsString(extensions, "REPAY_HIERARCHY_METHOD", "FCIP");
 		REPAY_INTEREST_HIERARCHY = getValueAsString(extensions, "REPAY_INTEREST_HIERARCHY", "LI");
-		CLIENT_AIB = getValueAsString(extensions, "CLIENT_AIB", "AIB");
-		CLIENT_AHB = getValueAsString(extensions, "CLIENT_AHB", "AHB");
 		CLIENT_BFL = getValueAsString(extensions, "CLIENT_BFL", "BFL");
 		CLIENT_NAME = getValueAsString(extensions, "CLIENT_NAME", "BFL");
 		NBFC = getValueAsString(extensions, "NBFC", "NBFC");
@@ -172,10 +164,9 @@ public class ImplementationConstants {
 		LPP_GST_DUE_ON = getValueAsString(extensions, "LPP_GST_DUE_ON", "A");
 		GST_SCHD_CAL_ON = getValueAsString(extensions, "GST_SCHD_CAL_ON", "I");
 		ALLOW_AMOIUNT_INTEGRAL_PART = getValueAsString(extensions, "ALLOW_AMOIUNT_INTEGRAL_PART", "Y");
-	}
 
+	}
 	public static boolean IMPLEMENTATION_CONVENTIONAL;
-	public static boolean IMPLEMENTATION_ISLAMIC;
 	public static boolean ALLOW_FINACTYPES;
 	public static boolean ALLOW_CAPITALIZE;
 	public static boolean LIMIT_INTERNAL;
@@ -195,7 +186,6 @@ public class ImplementationConstants {
 	public static boolean LP_MARK_FIRSTDAY;
 	public static boolean LPP_CALC_SOD;
 	public static boolean AUTO_ALLOWED;
-	public static boolean DDA_ALLOWED;
 	public static boolean DDM_ALLOWED;
 	public static boolean ECS_ALLOWED;
 	public static boolean NACH_ALLOWED;
@@ -203,25 +193,19 @@ public class ImplementationConstants {
 	public static boolean PREAPPROVAL_ALLOWED;
 	public static boolean ALLOW_DEVIATIONS;
 	public static boolean LATEPAY_PROFIT_CAL_ON_DAYZERO;
-	public static boolean REBATE_CAPPED_BY_FINANCE;
-	public static boolean ALLOW_EXPENSE_TRACKING;
 	public static boolean ADD_FEEINFTV_ONCALC;
 	public static boolean ALLOW_FIN_SALARY_PAYMENT;
 	public static boolean ALLOW_SPECIALRATE;
 	public static boolean ACCOUNTS_APPLICABLE;
 	public static boolean ALLOW_MANUAL_SCHEDULE;
-	public static boolean ALLOW_INDICATIVE_RATE;
 	public static boolean CAPTURE_APPLICATION_NUMBER;
 	public static boolean ALLOW_PLANNED_EMIHOLIDAY;
 	public static boolean ALLOW_UNPLANNED_EMIHOLIDAY;
 	public static boolean ALLOW_REAGE;
-	public static boolean ALLOW_DOWNPAY_SUPPORTPGM;
 	public static boolean ALLOW_BPI_TREATMENT;
 	public static boolean INTERESTON_PASTDUE_PRINCIPAL;
 	public static boolean ALLOW_PLANNED_DEFERMENTS;
 	public static boolean ALLOW_PRICINGPOLICY;
-	public static boolean ALLOW_CREDITBUREAU;
-	public static boolean ALLOW_BUNDLEDPRODUCT;
 	public static boolean ALLOW_COMMITMENT;
 	public static boolean ALLOW_PFTUNCHG;
 	public static boolean COLLATERAL_DELINK_AUTO;
@@ -231,7 +215,7 @@ public class ImplementationConstants {
 	public static boolean ALLOW_PHONETYPE_PRIORITY;
 	public static boolean ALLOW_DEPRECIATION;
 	public static boolean EARLYPAY_ADJ_PRI;
-	public static boolean ALLOW_INSURANCE;
+	// public static boolean ALLOW_INSURANCE;
 	public static boolean ALLOW_RIA;
 	public static boolean ALLOW_ADDDBSF;
 	public static boolean UPFRONT_ADJUST_PAYABLEADVISE;
@@ -302,8 +286,6 @@ public class ImplementationConstants {
 
 	public static String REPAY_HIERARCHY_METHOD;
 	public static String REPAY_INTEREST_HIERARCHY;
-	public static String CLIENT_AIB;
-	public static String CLIENT_AHB;
 	public static String CLIENT_BFL;
 	public static String CLIENT_NAME;
 	public static String NBFC;
@@ -328,7 +310,8 @@ public class ImplementationConstants {
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;
 		try {
-			Object object = Class.forName("com.pennanttech.extension.implementation.FeatureExtension").newInstance();
+			Object object = Class.forName("com.pennanttech.extension.implementation.FeatureExtension")
+					.getDeclaredConstructor().newInstance();
 			if (object != null) {
 				featureExtension = (IFeatureExtension) object;
 				return featureExtension.getCustomConstants();

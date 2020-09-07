@@ -244,10 +244,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 															 */
 		this.eventCode.setValidateColumns(new String[] { "AEEventCode" });
 
-		if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_AHB)) {
-			this.listheader_Account.setVisible(false);
-			this.listheader_PostToSystem.setVisible(false);
-		}
+		this.listheader_Account.setVisible(false);
+		this.listheader_PostToSystem.setVisible(false);
 
 		this.hbox_EntryByInvestment.setVisible(ImplementationConstants.ALLOW_RIA);
 		this.listheader_ByInvestor.setVisible(ImplementationConstants.ALLOW_RIA);

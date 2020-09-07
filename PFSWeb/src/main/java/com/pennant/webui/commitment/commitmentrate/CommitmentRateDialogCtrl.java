@@ -43,6 +43,7 @@
 package com.pennant.webui.commitment.commitmentrate;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -435,12 +436,12 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 
 		this.cmtActualRate.setMaxlength(13);
 		this.cmtActualRate.setFormat(PennantConstants.rateFormate9);
-		this.cmtActualRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.cmtActualRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.cmtActualRate.setScale(9);
 
 		this.cmtCalculatedRate.setMaxlength(13);
 		this.cmtCalculatedRate.setFormat(PennantConstants.rateFormate9);
-		this.cmtCalculatedRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.cmtCalculatedRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.cmtCalculatedRate.setScale(9);
 
 		if (isWorkFlowEnabled()) {

@@ -72,8 +72,6 @@ public class AssetConstants {
 	public static final String UNIQUE_ID_TAX = "TAX";
 	public static final String UNIQUE_ID_COLLATERAL = "COLLATERAL";
 	public static final String UNIQUE_ID_VAS = "VAS";
-	public static final String UNIQUE_ID_ETIHADCB = "ETIHADCB";
-	public static final String UNIQUE_ID_BUNDLEDPRODUCTS = "BUNDLEDP";
 	public static final String UNIQUE_ID_AGREEMENTFIELDS = "AGMNTFLDS";
 	public static final String UNIQUE_ID_STAGEACCOUNTING = "STAGEACC";
 	public static final String UNIQUE_ID_ACCOUNTING = "ACCNTNG";

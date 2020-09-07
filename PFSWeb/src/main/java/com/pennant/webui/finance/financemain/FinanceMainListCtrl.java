@@ -86,7 +86,6 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceMainExt;
 import com.pennant.backend.model.finance.TATDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -95,7 +94,6 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.finance.FinChangeCustomerService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceEligibility;
-import com.pennant.backend.service.finance.FinanceMainExtService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -206,7 +204,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected int oldVar_sortOperator_Branch = -1; // autowired
 
 	private DedupParmService dedupParmService;
-	private FinanceMainExtService financeMainExtService;
 	private FinChangeCustomerService finChangeCustomerService;
 
 	private String CREATE_CIF = "CREATECIF";
@@ -618,18 +615,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 					// CIF not Exists
 					doReserveCIF(financeDetail, CREATE_CIF);
-				} else {
-
-					// CIF Exists & Validate Is Customer Account created or not
-					String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-					boolean processFlag = true;
-					FinanceMainExt financeMainExt = getFinanceMainExtService().getNstlAccNumber(finReference,
-							processFlag);
-					if (financeMainExt != null) {
-						if (StringUtils.isBlank(financeMainExt.getNstlAccNum())) {
-							doReserveCIF(financeDetail, CREATE_ACCOUNT);
-						}
-					}
 				}
 			}
 
@@ -835,53 +820,11 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 
 			switch (productType) {
-			case FinanceConstants.PRODUCT_IJARAH:
-				zulPath.append("IjarahFinanceMainDialog.zul");
-				break;
-			case FinanceConstants.PRODUCT_FWIJARAH:
-				zulPath.append("FwdIjarahFinanceMainDialog.zul");
-				break;
-			case FinanceConstants.PRODUCT_ISTISNA:
-				zulPath.append("IstisnaFinanceMainDialog.zul");
-				break;
-			case FinanceConstants.PRODUCT_MUDARABA:
-				zulPath.append("MudarabaFinanceMainDialog.zul");
-				break;
-			case FinanceConstants.PRODUCT_MURABAHA:
-				zulPath.append("MurabahaFinanceMainDialog.zul");
-				break;
-			case FinanceConstants.PRODUCT_MUSHARAKA:
-				zulPath.append("MusharakFinanceMainDialog.zul");
-				break;
-			case FinanceConstants.PRODUCT_TAWARRUQ:
-				zulPath.append("TawarruqFinanceMainDialog.zul");
-				break;
-			case FinanceConstants.PRODUCT_SUKUK:
-				zulPath.append("SukukFinanceMainDialog.zul");
-				break;
-			case FinanceConstants.PRODUCT_SUKUKNRM:
-				zulPath.append("SukuknrmFinanceMainDialog.zul");
-				break;
-			case FinanceConstants.PRODUCT_ISTNORM:
-				zulPath.append("IstnormFinanceMainDialog.zul");
-				break;
-			case FinanceConstants.PRODUCT_MUSAWAMA:
-				zulPath.append("MusawamaFinanceMainDialog.zul");
-				break;
 			case FinanceConstants.PRODUCT_CONVENTIONAL:
 				zulPath.append("ConvFinanceMainDialog.zul");
 				break;
 			case FinanceConstants.PRODUCT_CD:
 				zulPath.append("CDFinanceMainDialog.zul");
-				break;
-			case FinanceConstants.PRODUCT_QARDHASSAN:
-				zulPath.append("QardHassanFinanceMainDialog.zul");
-				break;
-			case FinanceConstants.PRODUCT_STRUCTMUR:
-				zulPath.append("StructuredMurabahaFinanceMainDialog.zul");
-				break;
-			case FinanceConstants.PRODUCT_WAKALA:
-				zulPath.append("CorporateWakalaFinanceMainDialog.zul");
 				break;
 			case FinanceConstants.PRODUCT_ODFACILITY:
 				zulPath.append("ODFacilityFinanceMainDialog.zul");
@@ -997,14 +940,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (usrfinRolesList == null || usrfinRolesList.isEmpty()) {
 			return;
 		}
-
-		// FIXME: Below fields are not part of ZUL or visible FALSE
-		/*
-		 * this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL)); this.searchObj.addFilter(new
-		 * Filter("DeviationApproval", 0, Filter.OP_EQUAL)); this.searchObj.addFilter(new Filter("RecordType",
-		 * PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL)); this.searchObj.addFilter(new Filter("RcdMaintainSts",
-		 * "", Filter.OP_EQUAL));
-		 */
 
 		this.searchObj.addFilter(new Filter("DeviationApproval", 0, Filter.OP_EQUAL));
 		if (FinanceConstants.FINSER_EVENT_PREAPPROVAL.equals(this.requestSource)) {
@@ -1511,14 +1446,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	public void setSearchObj(JdbcSearchObject<FinanceMain> searchObj) {
 		this.searchObj = searchObj;
-	}
-
-	public FinanceMainExtService getFinanceMainExtService() {
-		return financeMainExtService;
-	}
-
-	public void setFinanceMainExtService(FinanceMainExtService financeMainExtService) {
-		this.financeMainExtService = financeMainExtService;
 	}
 
 	public FinChangeCustomerService getFinChangeCustomerService() {

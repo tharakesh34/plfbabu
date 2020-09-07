@@ -91,8 +91,6 @@ import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.backend.service.collateral.CollateralMarkProcess;
-import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
@@ -114,11 +112,9 @@ import com.rits.cloning.Cloner;
 public class FinanceCancellationServiceImpl extends GenericFinanceDetailService implements FinanceCancellationService {
 	private static final Logger logger = Logger.getLogger(FinanceCancellationServiceImpl.class);
 
-	private DDAControllerService ddaControllerService;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private LimitInterfaceDAO limitInterfaceDAO;
 	private CustomerLimitIntefaceService custLimitIntefaceService;
-	private CollateralMarkProcess collateralMarkProcess;
 	private LimitCheckDetails limitCheckDetails;
 	private LimitManagement limitManagement;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
@@ -220,8 +216,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
 	 * Do Add or Update the Record a) Add new Record for the new record in the DB table FinanceMain/FinanceMain_Temp by
 	 * using FinanceMainDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
-	 * by using FinanceMainDAO's update method 3) Audit the record in to AuditHeader and AdtFinanceMain by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * by using FinanceMainDAO's update method
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -625,13 +620,9 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		} else {
 			List<FinCollaterals> collateralList = financeDetail.getFinanceCollaterals();
 			if (collateralList != null && !collateralList.isEmpty()) {
-				getCollateralMarkProcess().deMarkCollateral(financeDetail.getFinanceCollaterals());
+				// Release the collateral.
 			}
 		}
-
-		// send DDA Cancellation Request to Interface
-		//==========================================
-		getDdaControllerService().cancelDDARegistration(financeMain.getFinReference());
 
 		// send Cancel Utilization Request to ACP Interface and save log details
 		//=======================================
@@ -1050,15 +1041,6 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-
-	public DDAControllerService getDdaControllerService() {
-		return ddaControllerService;
-	}
-
-	public void setDdaControllerService(DDAControllerService ddaControllerService) {
-		this.ddaControllerService = ddaControllerService;
-	}
-
 	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
 		return financeReferenceDetailDAO;
 	}
@@ -1081,14 +1063,6 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setCustLimitIntefaceService(CustomerLimitIntefaceService custLimitIntefaceService) {
 		this.custLimitIntefaceService = custLimitIntefaceService;
-	}
-
-	public CollateralMarkProcess getCollateralMarkProcess() {
-		return collateralMarkProcess;
-	}
-
-	public void setCollateralMarkProcess(CollateralMarkProcess collateralMarkProcess) {
-		this.collateralMarkProcess = collateralMarkProcess;
 	}
 
 	public LimitCheckDetails getLimitCheckDetails() {

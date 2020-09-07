@@ -223,12 +223,11 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Total Schedule Payments
 		BigDecimal totalPayAmount = rpyQueueHeader.getPrincipal().add(rpyQueueHeader.getProfit())
 				.add(rpyQueueHeader.getLateProfit()).add(rpyQueueHeader.getFee()).add(rpyQueueHeader.getInsurance())
-				.add(rpyQueueHeader.getSuplRent()).add(rpyQueueHeader.getIncrCost()).add(rpyQueueHeader.getPenalty());
+				.add(rpyQueueHeader.getPenalty());
 
 		BigDecimal totalWaivedAmount = rpyQueueHeader.getPriWaived().add(rpyQueueHeader.getPftWaived())
 				.add(rpyQueueHeader.getLatePftWaived()).add(rpyQueueHeader.getFeeWaived())
-				.add(rpyQueueHeader.getInsWaived()).add(rpyQueueHeader.getSuplRentWaived())
-				.add(rpyQueueHeader.getIncrCostWaived()).add(rpyQueueHeader.getPenaltyWaived())
+				.add(rpyQueueHeader.getInsWaived()).add(rpyQueueHeader.getPenaltyWaived())
 				.add(rpyQueueHeader.getAdviseAmount());
 
 		boolean bouncePaidExists = true;
@@ -607,13 +606,12 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Total Payment Amount
 		BigDecimal rpyTotal = rpyQueueHeader.getPrincipal().add(rpyQueueHeader.getProfit()).add(rpyQueueHeader.getFee())
 				.add(rpyQueueHeader.getLateProfit()).add(rpyQueueHeader.getInsurance())
-				.add(rpyQueueHeader.getSuplRent()).add(rpyQueueHeader.getIncrCost()).add(rpyQueueHeader.getPenalty());
+				.add(rpyQueueHeader.getPenalty());
 
 		// Total Payment Amount
 		BigDecimal waivedTotal = rpyQueueHeader.getPriWaived().add(rpyQueueHeader.getPftWaived())
 				.add(rpyQueueHeader.getFeeWaived()).add(rpyQueueHeader.getLatePftWaived())
-				.add(rpyQueueHeader.getInsWaived()).add(rpyQueueHeader.getSuplRentWaived())
-				.add(rpyQueueHeader.getIncrCostWaived()).add(rpyQueueHeader.getPenaltyWaived());
+				.add(rpyQueueHeader.getInsWaived()).add(rpyQueueHeader.getPenaltyWaived());
 
 		// If Postings Process only for Excess Accounts
 		if ((rpyTotal.add(waivedTotal)).compareTo(BigDecimal.ZERO) == 0) {
@@ -830,17 +828,6 @@ public class RepaymentPostingsUtil implements Serializable {
 				break;
 			}
 
-			// Supplementary Rent
-			if ((curSchd.getSuplRent().subtract(curSchd.getSuplRentPaid())).compareTo(BigDecimal.ZERO) > 0) {
-				fullyPaid = false;
-				break;
-			}
-
-			// Increased Cost
-			if ((curSchd.getIncrCost().subtract(curSchd.getIncrCostPaid())).compareTo(BigDecimal.ZERO) > 0) {
-				fullyPaid = false;
-				break;
-			}
 		}
 
 		// Check Penalty Paid Fully or not
@@ -959,8 +946,6 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Fee Details
 		amountCodes.setSchFeePay(rpyQueueHeader.getFee());
 		amountCodes.setInsPay(rpyQueueHeader.getInsurance());
-		amountCodes.setSuplRentPay(rpyQueueHeader.getSuplRent());
-		amountCodes.setIncrCostPay(rpyQueueHeader.getIncrCost());
 
 		// Waived Amounts
 		amountCodes.setPriWaived(rpyQueueHeader.getPriWaived());
@@ -1653,10 +1638,6 @@ public class RepaymentPostingsUtil implements Serializable {
 				.add(finRepayQueue.getSchdFeeWaivedNow()));
 		schedule.setSchdInsPaid(schedule.getSchdInsPaid().add(finRepayQueue.getSchdInsPayNow())
 				.add(finRepayQueue.getSchdInsWaivedNow()));
-		schedule.setSuplRentPaid(schedule.getSuplRentPaid().add(finRepayQueue.getSchdSuplRentPayNow())
-				.add(finRepayQueue.getSchdSuplRentWaivedNow()));
-		schedule.setIncrCostPaid(schedule.getIncrCostPaid().add(finRepayQueue.getSchdIncrCostPayNow())
-				.add(finRepayQueue.getSchdIncrCostWaivedNow()));
 
 		schedule.setSchdPftPaid(schedule.getSchdPftPaid().add(finRepayQueue.getSchdPftPayNow())
 				.add(finRepayQueue.getSchdPftWaivedNow()));
@@ -1720,8 +1701,6 @@ public class RepaymentPostingsUtil implements Serializable {
 		//Fee Details
 		repayment.setSchdFeePaid(queue.getSchdFeePayNow().add(queue.getSchdFeeWaivedNow()));
 		repayment.setSchdInsPaid(queue.getSchdInsPayNow().add(queue.getSchdInsWaivedNow()));
-		repayment.setSchdSuplRentPaid(queue.getSchdSuplRentPayNow().add(queue.getSchdSuplRentWaivedNow()));
-		repayment.setSchdIncrCostPaid(queue.getSchdIncrCostPayNow().add(queue.getSchdIncrCostWaivedNow()));
 
 		repayment.setPenaltyPaid(queue.getPenaltyPayNow());
 		repayment.setPenaltyWaived(queue.getWaivedAmount());

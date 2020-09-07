@@ -138,15 +138,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		Date grcEndDate = getDate(finHeaderList, 5);
 		Boolean allowgrace = getBoolean(finHeaderList, 6);
-		String finCategory = getString(finHeaderList, 8);
 		this.finBasic_custShrtName.setValue(getString(finHeaderList, 9));
-		if (StringUtils.equals(finCategory, FinanceConstants.PRODUCT_ISTISNA)) {
-			allowgrace = true;
-		}
-
-		if (StringUtils.equals(finCategory, FinanceConstants.PRODUCT_QARDHASSAN)) {
-			this.row_ProfitDays.setVisible(false);
-		}
 
 		if (allowgrace) {
 			this.finBasic_grcEndDate.setValue(DateUtility.formatToLongDate(grcEndDate));

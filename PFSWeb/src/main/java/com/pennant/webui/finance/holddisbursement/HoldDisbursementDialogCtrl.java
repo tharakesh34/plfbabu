@@ -43,6 +43,7 @@
 package com.pennant.webui.finance.holddisbursement;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
@@ -186,15 +187,15 @@ public class HoldDisbursementDialogCtrl extends GFCBaseCtrl<HoldDisbursement> {
 		//this.totalLoanAmt.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.totalLoanAmt.setFormat(PennantConstants.rateFormate9);
 
-		this.totalLoanAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.totalLoanAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.totalLoanAmt.setScale(PennantConstants.defaultCCYDecPos);
 		this.disbursedAmount.setMaxlength(18);
 		this.disbursedAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.disbursedAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.disbursedAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.disbursedAmount.setScale(PennantConstants.defaultCCYDecPos);
 		this.holdLimitAmount.setMaxlength(18);
 		this.holdLimitAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.holdLimitAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.holdLimitAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.holdLimitAmount.setScale(PennantConstants.defaultCCYDecPos);
 		this.remarks.setMaxlength(100);
 

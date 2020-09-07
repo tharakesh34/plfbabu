@@ -51,14 +51,10 @@ import java.util.Map;
 import org.springframework.dao.DataAccessException;
 
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
-import com.pennant.backend.model.ddapayments.DDAPayments;
-import com.pennant.backend.model.finance.BulkDefermentChange;
-import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceSummary;
-import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.UserPendingCases;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -147,10 +143,6 @@ public interface FinanceMainDAO {
 
 	FinanceSummary getFinanceProfitDetails(String finRef);
 
-	List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
-
-	List<BulkDefermentChange> getBulkDefermentFinList(Date fromDate, Date toDate);
-
 	Boolean saveRejectFinanceDetails(FinanceMain financeMain);
 
 	List<AvailFinance> getFinanceDetailByCmtRef(String cmtRef, long custId);
@@ -189,17 +181,6 @@ public interface FinanceMainDAO {
 	void saveFinanceSnapshot(FinanceMain financeMain);
 
 	FinanceMain getFinanceMainByRef(String reference, String type, boolean isRejectFinance);
-
-	// Rollover Finance Details
-	List<String> getRollOverLimitRefList();
-
-	List<String> getRollOverFinTypeList(String limitRef);
-
-	List<Date> getRollOverDateList(String limitRef, String finType);
-
-	List<RolledoverFinanceDetail> getFinanceList(String limitRef, String finType, Date rolloverDate);
-
-	List<DDAPayments> getDDAPaymentsList(String repaymthAutodda, Date appDate);
 
 	FinanceMain getFinanceMainForManagerCheque(String finReference, String type);
 
@@ -263,8 +244,6 @@ public interface FinanceMainDAO {
 	List<FinanceMain> getFinMainsForEODByCustId(long custId, boolean isActive);
 
 	FinanceMain getFinMainsForEODByFinRef(String finReference, boolean isActive);
-
-	int getFinanceMainByBank(String bankCode, String type);
 
 	void updateFinanceInEOD(FinanceMain financeMain, List<String> updateFields, boolean rateRvw);
 

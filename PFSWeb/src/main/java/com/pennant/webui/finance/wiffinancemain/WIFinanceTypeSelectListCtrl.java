@@ -244,9 +244,8 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			filters[0] = new Filter("FinDivision", FinanceConstants.FIN_DIVISION_RETAIL, Filter.OP_EQUAL);
 			filters[1] = new Filter("ProductCategory", "ODFCLITY", Filter.OP_NOT_EQUAL);
 		} else if (StringUtils.equals(loanType, FinanceConstants.FIN_DIVISION_CORPORATE)) {
-			filters = new Filter[2];
-			filters[0] = new Filter("FinCategory", FinanceConstants.PRODUCT_ISTISNA, Filter.OP_NOT_EQUAL);
-			filters[1] = new Filter("ProductCategory", "ODFCLITY", Filter.OP_NOT_EQUAL);
+			filters = new Filter[1];
+			filters[0] = new Filter("ProductCategory", "ODFCLITY", Filter.OP_NOT_EQUAL);
 		} else if (StringUtils.equals(loanType, FinanceConstants.FIN_DIVISION_FACILITY)) {
 			filters = new Filter[2];
 			List<String> divList = new ArrayList<String>(2);
@@ -468,8 +467,8 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 		} else {
 			this.custID.setValue(Long.valueOf(0));
 			this.custShrtName.setValue("");
-			throw new WrongValueException(this.lovDescCustCIF, Labels.getLabel("FIELD_NO_INVALID",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_CustID.value") }));
+			throw new WrongValueException(this.lovDescCustCIF,
+					Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CustCIF.value") }));
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -667,12 +666,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			this.financeDetail.getFinScheduleData().setFinODPenaltyRate(finOdPenalty);
 			this.financeDetail.getFinScheduleData().setFinanceType(financeType);
 			this.financeDetail.setNewRecord(true);
-			if (financeType.getFinCategory().equals(FinanceConstants.PRODUCT_ISTISNA)) {
-				this.financeDetail.getFinScheduleData().getFinanceMain()
-						.setAllowGrcPeriod(financeType.isFInIsAlwGrace());
-			} else {
-				this.financeDetail.getFinScheduleData().getFinanceMain().setAllowGrcPeriod(false);
-			}
+			this.financeDetail.getFinScheduleData().getFinanceMain().setAllowGrcPeriod(false);
 
 			//Step Policy Details
 			if (financeType.isStepFinance()) {
@@ -745,13 +739,6 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 							.setLovDescCustShrtName(this.custShrtName.getValue());
 					this.financeDetail.getFinScheduleData().getFinanceMain().setFinBranch(finBranch);
 
-					IndicativeTermDetail termDetail = new IndicativeTermDetail();
-					termDetail.setCustId(this.custID.longValue());
-					termDetail.setLovDescCustCIF(this.lovDescCustCIF.getValue());
-					termDetail.setLovDescCustShrtName(this.custShrtName.getValue());
-					termDetail.setNewRecord(true);
-					termDetail.setWorkflowId(0);
-					this.financeDetail.setIndicativeTermDetail(termDetail);
 				} else {
 					if (this.custID.longValue() != 0) {
 						wifcustomer.setExistCustID(this.custID.longValue());

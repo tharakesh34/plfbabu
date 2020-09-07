@@ -884,7 +884,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			 * mapDateSeq.put(scheduleData.getDisbursementDetails().get(i).getDisbDate(), seqNo);
 			 * scheduleData.getDisbursementDetails().get(i).setDisbSeq(seqNo);
 			 * scheduleData.getDisbursementDetails().get(i).setDisbIsActive(true);
-			 * scheduleData.getDisbursementDetails().get(i).setDisbDisbursed(true);
 			 * scheduleData.getDisbursementDetails().get(i).setLogKey(logKey); }
 			 * getFinanceDisbursementDAO().saveList(scheduleData.getDisbursementDetails(), tableType, false);
 			 * 

@@ -52,8 +52,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -400,7 +398,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws ParseException
 	 * @throws ScriptException
 	 */
-	public void onClick$btnCancel(Event event) throws ParseException, InterruptedException, ScriptException {
+	public void onClick$btnCancel(Event event) throws ParseException, InterruptedException {
 		doCancel();
 	}
 
@@ -596,7 +594,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws ScriptException
 	 * 
 	 */
-	private void doCancel() throws ParseException, InterruptedException, ScriptException {
+	private void doCancel() throws ParseException, InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		doWriteBeanToComponents(this.vASRecording.getBefImage());
@@ -1090,7 +1088,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 */
 	public void doWriteBeanToComponents(VASRecording aVASRecording)
-			throws ParseException, InterruptedException, ScriptException {
+			throws ParseException, InterruptedException {
 		logger.debug(Literal.ENTERING);
 		if (rebookingProcess) {
 			this.gb_RebookingDetail.setVisible(true);
@@ -1267,7 +1265,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 * @throws ScriptException
 	 */
-	private void appendExtendedFieldDetails(VASRecording aVASRecording) throws ScriptException {
+	private void appendExtendedFieldDetails(VASRecording aVASRecording) {
 		logger.debug(Literal.ENTERING);
 
 		// Extended Field Details auto population / Rendering into Screen

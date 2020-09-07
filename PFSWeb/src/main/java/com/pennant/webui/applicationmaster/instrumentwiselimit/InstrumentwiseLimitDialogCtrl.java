@@ -43,6 +43,7 @@
 package com.pennant.webui.applicationmaster.instrumentwiselimit;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -191,37 +192,37 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 		this.paymentMinAmtperTrans.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.paymentMinAmtperTrans
 				.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.paymentMinAmtperTrans.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.paymentMinAmtperTrans.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.paymentMinAmtperTrans.setScale(PennantConstants.defaultCCYDecPos);
 
 		this.paymentMaxAmtperTran.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.paymentMaxAmtperTran.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.paymentMaxAmtperTran.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.paymentMaxAmtperTran.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.paymentMaxAmtperTran.setScale(PennantConstants.defaultCCYDecPos);
 
 		this.paymentMaxAmtperDay.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.paymentMaxAmtperDay.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.paymentMaxAmtperDay.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.paymentMaxAmtperDay.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.paymentMaxAmtperDay.setScale(PennantConstants.defaultCCYDecPos);
 
 		this.receiptMinAmtperTran.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.receiptMinAmtperTran.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.receiptMinAmtperTran.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.receiptMinAmtperTran.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.receiptMinAmtperTran.setScale(PennantConstants.defaultCCYDecPos);
 
 		this.receiptMaxAmtperTran.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.receiptMaxAmtperTran.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.receiptMaxAmtperTran.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.receiptMaxAmtperTran.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.receiptMaxAmtperTran.setScale(PennantConstants.defaultCCYDecPos);
 
 		this.receiptMaxAmtperDay.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.receiptMaxAmtperDay.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.receiptMaxAmtperDay.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.receiptMaxAmtperDay.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.receiptMaxAmtperDay.setScale(PennantConstants.defaultCCYDecPos);
 
 		this.maxAmtPerInstruction.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.maxAmtPerInstruction.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.maxAmtPerInstruction.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.maxAmtPerInstruction.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.maxAmtPerInstruction.setScale(PennantConstants.defaultCCYDecPos);
 
 		setStatusDetails();

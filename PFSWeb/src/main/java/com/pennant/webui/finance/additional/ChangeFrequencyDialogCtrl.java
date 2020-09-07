@@ -435,23 +435,6 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 									new String[] {
 											Labels.getLabel("label_ChangeFrequencyDialog_GrcPeriodEndDate.value"),
 											DateUtility.formatToLongDate(fromDate) }));
-						} else if (!financeMain.isNewRecord() && !StringUtils.trimToEmpty(financeMain.getRecordType())
-								.equals(PennantConstants.RECORD_TYPE_NEW)) {
-
-							if (StringUtils.equals(getFinScheduleData().getFinanceType().getFinCategory(),
-									FinanceConstants.PRODUCT_IJARAH)
-									|| StringUtils.equals(getFinScheduleData().getFinanceType().getFinCategory(),
-											FinanceConstants.PRODUCT_FWIJARAH)) {
-								Date curBussDate = DateUtility.getAppDate();
-								if (this.grcPeriodEndDate.getValue().compareTo(curBussDate) <= 0) {
-									throw new WrongValueException(this.grcPeriodEndDate,
-											Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL", new String[] {
-													Labels.getLabel(
-															"label_ChangeFrequencyDialog_GrcPeriodEndDate.value"),
-													Labels.getLabel(
-															"label_ChangeFrequencyDialog_CurBussDate.value") }));
-								}
-							}
 						}
 					}
 				}

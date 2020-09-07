@@ -208,14 +208,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 			filterList = (List<Filter>) arguments.get("filtersList");
 		}
 
-		if (StringUtils.isNotBlank(finDivision)) {
-			if (StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_COMMERCIAL)
-					|| StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_RETAIL)) {
-				filterList.add(new Filter("custDftBranch", PennantConstants.IBD_Branch, Filter.OP_NOT_EQUAL));
-			} else if (StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_CORPORATE)) {
-				filterList.add(new Filter("custDftBranch", PennantConstants.IBD_Branch, Filter.OP_EQUAL));
-			}
-		}
 		doSetFieldProperties();
 		// Stored search object and paging
 

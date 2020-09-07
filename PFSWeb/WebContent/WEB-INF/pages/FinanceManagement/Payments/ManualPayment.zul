@@ -252,18 +252,6 @@
 											<decimalbox id="schdFeeAmount" width="150px" readonly="true" />
 										</hbox>
 									</row>
-									<row id="row_SuplRentNIncrCost" visible="false">
-										<label id="label_PaymentDialog_SuplRentAmount" value="${c:l('label_PaymentDialog_SuplRentAmount.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="suplRentAmount" width="150px" readonly="true" />
-										</hbox>
-										<label id="label_PaymentDialog_IncrCostAmount" value="${c:l('label_PaymentDialog_IncrCostAmount.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="incrCostAmount" width="150px" readonly="true" />
-										</hbox>
-									</row>
 								</rows>
 							</grid>
 						</tabpanel>
@@ -414,10 +402,6 @@
 										visible="false" hflex="min" />
 									<listheader id="listheader_SchdFee" label="${c:l('listheader_SchdFee.label')}" sort="false" visible="false"
 										hflex="min" />
-									<listheader id="listheader_SuplRent" label="${c:l('listheader_SuplRent.label')}" sort="false"
-										visible="false" hflex="min" />
-									<listheader id="listheader_IncrCost" label="${c:l('listheader_IncrCost.label')}" sort="false"
-										visible="false" hflex="min" />
 									<listheader label="${c:l('listheader_NetPayment.label')}" sort="false" hflex="min" />
 									<listheader label="${c:l('listheader_RpyAmtBal.label')}" sort="false" hflex="min" />
 								</listhead>
@@ -499,19 +483,14 @@
 										label="${c:l('listheader_ScheduleEvent.label')}" />
 									<listheader id="listheader_ScheduleDetailDialog_CalProfit" hflex="min" align="right"
 										label="${c:l('listheader_CalProfit.label')}" />
-									<listheader id="listheader_ScheduleDetailDialog_SupplementRent" hflex="min" visible="false" align="right" />
-									<listheader id="listheader_ScheduleDetailDialog_IncreasedCost" hflex="min" visible="false" align="right" />
 									<listheader id="listheader_ScheduleDetailDialog_SchFee" hflex="min" align="right"
 										label="${c:l('listheader_SchFee.label')}" visible="false" />
 									<listheader id="listheader_ScheduleDetailDialog_TDSAmount" hflex="min" align="right"
 										label="${c:l('listheader_TDSAmount.label')}" />
-									<listheader id="listheader_ScheduleDetailDialog_SchAdvProfit" hflex="min" visible="false" align="right" />
 									<listheader id="listheader_ScheduleDetailDialog_SchProfit" hflex="min" align="right"
 										label="${c:l('listheader_SchProfit.label')}" />
 									<listheader id="listheader_ScheduleDetailDialog_Principal" hflex="min" align="right"
 										label="${c:l('listheader_Principal.label')}" />
-									<listheader id="listheader_ScheduleDetailDialog_AdvTotal" hflex="min" visible="false" align="right" />
-									<listheader id="listheader_ScheduleDetailDialog_Rebate" hflex="min" visible="false" align="right" />
 									<listheader id="listheader_ScheduleDetailDialog_Total" hflex="min" align="right"
 										label="${c:l('listheader_Total.label')}" />
 									<listheader id="listheader_ScheduleDetailDialog_ScheduleEndBal" hflex="min" align="right"

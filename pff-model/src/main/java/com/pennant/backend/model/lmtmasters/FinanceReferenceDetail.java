@@ -107,7 +107,6 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 	private boolean allowPostpone;
 	private boolean allowExpire;
 	private String alertType;
-	private boolean allowMultiple;
 	private String moduleType;
 	private boolean resendReq;
 
@@ -491,14 +490,6 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity implements En
 
 	public void setAlertType(String alertType) {
 		this.alertType = alertType;
-	}
-
-	public boolean isAllowMultiple() {
-		return allowMultiple;
-	}
-
-	public void setAllowMultiple(boolean allowMultiple) {
-		this.allowMultiple = allowMultiple;
 	}
 
 	public String getModuleType() {

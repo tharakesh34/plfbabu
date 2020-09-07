@@ -53,10 +53,8 @@ import com.pennant.backend.dao.collateral.FacilityDetailDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.facility.FacilityDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.TreasuaryFinHeaderDAO;
 import com.pennant.backend.model.collateral.FacilityDetail;
 import com.pennant.backend.model.facility.Facility;
-import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -70,7 +68,6 @@ public class ReferenceUtil implements Serializable {
 	private static Logger logger = Logger.getLogger(ReferenceUtil.class);
 
 	private static FinanceMainDAO financeMainDAO;
-	private static TreasuaryFinHeaderDAO treasuaryFinHeaderDAO;
 	private static FacilityDAO facilityDAO;
 	private static FacilityDetailDAO facilityDetailDAO;
 	private static CollateralSetupDAO collateralSetupDAO;
@@ -388,83 +385,12 @@ public class ReferenceUtil implements Serializable {
 
 	}
 
-	public static long genInvetmentNewRef() {
-		logger.debug(Literal.ENTERING);
-
-		long investmentRef = 0;
-
-		long befSeqNumber = sequenceGenetor.getSeqNumber("SeqInvestment");
-
-		String seqNumString = String.valueOf(befSeqNumber).trim();
-
-		long dateYYJDay = 0;
-		long seqNumber = 1;
-
-		if (seqNumString.length() <= 5) {
-			try {
-				dateYYJDay = Long.parseLong(seqNumString);
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-				seqNumber = 1;
-			}
-		} else if (seqNumString.length() > 5) {
-
-			try {
-				dateYYJDay = Long.parseLong(seqNumString.substring(0, 5));
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-				seqNumber = 1;
-			}
-
-			try {
-				seqNumber = Long.parseLong(StringUtils.trim(seqNumString.substring(5)));
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-				seqNumber = 1;
-			}
-		}
-
-		if (dateYYJDay != DateUtility.getDateYYJDay()) {
-			dateYYJDay = DateUtility.getDateYYJDay();
-			seqNumber = 1;
-		} else {
-			//seqNumber = seqNumber + 1;
-		}
-		boolean status = true;
-
-		while (status) {
-			investmentRef = Long.parseLong(
-					String.valueOf(dateYYJDay).concat(StringUtils.leftPad(String.valueOf(seqNumber), 6, '0')));
-			InvestmentFinHeader investmentFinHeader = getTreasuaryFinHeaderDAO()
-					.getTreasuaryFinHeaderById(String.valueOf(investmentRef), "_View");
-			if (investmentFinHeader != null) {
-				seqNumber = seqNumber + 1;
-			} else {
-				status = false;
-			}
-		}
-		sequenceGenetor.setSeqNumber("SeqInvestment", investmentRef);
-
-		logger.debug(String.format("Back Office Reference %s", investmentRef));
-		logger.debug(Literal.LEAVING);
-		return investmentRef;
-
-	}
-
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		ReferenceUtil.financeMainDAO = financeMainDAO;
 	}
 
 	public static FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
-	}
-
-	public static TreasuaryFinHeaderDAO getTreasuaryFinHeaderDAO() {
-		return treasuaryFinHeaderDAO;
-	}
-
-	public void setTreasuaryFinHeaderDAO(TreasuaryFinHeaderDAO treasuaryFinHeaderDAO) {
-		ReferenceUtil.treasuaryFinHeaderDAO = treasuaryFinHeaderDAO;
 	}
 
 	public void setFacilityDAO(FacilityDAO facilityDAO) {

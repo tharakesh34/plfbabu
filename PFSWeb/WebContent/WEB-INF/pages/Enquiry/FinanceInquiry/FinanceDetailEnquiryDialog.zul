@@ -1206,8 +1206,6 @@
 												<decimalbox id="disb_totalBilling" tabindex="-1" disabled="true" sclass="decimalToString" />
 											</row>
 											<row>
-												<label id="label_DisbursementDetailDialog_ConsultFee" value="${c:l('label_DisbursementDetailDialog_ConsultFee.value')}" />
-												<decimalbox id="disb_consultFee" tabindex="-1" disabled="true" sclass="decimalToString" />
 												<label id="label_DisbursementDetailDialog_TotalCost" value="${c:l('label_DisbursementDetailDialog_TotalCost.value')}" />
 												<decimalbox id="disb_totalCost" tabindex="-1" disabled="true" sclass="decimalToString" />
 											</row>

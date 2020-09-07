@@ -258,8 +258,6 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 							|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0
 							|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0
-							|| curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0
-							|| curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0
 							|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0) {
 						continue;
 

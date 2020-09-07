@@ -143,7 +143,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			String eventCode) {
 		logger.debug("Entering");
 
-		//Finance Details
+		// Finance Details
 		FinanceDetail financeDetail = new FinanceDetail();
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
 		scheduleData.setFinReference(finReference);
@@ -154,7 +154,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		setDasAndDmaData(financeDetail.getFinScheduleData().getFinanceMain());
 
-		//Finance Schedule Details
+		// Finance Schedule Details
 		scheduleData.setFinanceScheduleDetails(
 				getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
 
@@ -211,25 +211,25 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				}
 			}
 		}
-		//Finance Customer Details			
+		// Finance Customer Details
 		if (scheduleData.getFinanceMain().getCustID() != 0
 				&& scheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
 			financeDetail.setCustomerDetails(getCustomerDetailsService()
 					.getCustomerDetailsById(scheduleData.getFinanceMain().getCustID(), true, "_View"));
 		}
 
-		//Finance Agreement Details	
-		//=======================================
+		// Finance Agreement Details
+		// =======================================
 		String finType = scheduleData.getFinanceType().getFinType();
 		financeDetail
 				.setAggrementList(getAgreementDetailService().getAggrementDetailList(finType, procEdtEvent, userRole));
 
-		// Finance Check List Details 
-		//=======================================
+		// Finance Check List Details
+		// =======================================
 		getCheckListDetailService().setFinanceCheckListDetails(financeDetail, finType, procEdtEvent, userRole);
 
-		//Finance Fee Charge Details
-		//=======================================
+		// Finance Fee Charge Details
+		// =======================================
 		List<Long> accSetIdList = new ArrayList<Long>();
 		accSetIdList
 				.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType(finType, procEdtEvent, null, "_ACView"));
@@ -238,21 +238,21 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 					getTransactionEntryDAO().getListFeeChargeRules(accSetIdList, eventCode, "_AView", 0));
 		}
 
-		//Finance Flag Details
+		// Finance Flag Details
 		financeDetail.setFinFlagsDetails(
 				getFinFlagDetailsDAO().getFinFlagsByFinRef(finReference, FinanceConstants.MODULE_NAME, "_View"));
 
-		//Finance Stage Accounting Posting Details 
-		//=======================================
+		// Finance Stage Accounting Posting Details
+		// =======================================
 		financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(finType,
 				StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
 				FinanceConstants.PROCEDT_STAGEACC, userRole, "_AEView", true));
 
-		//Finance Guaranteer Details		
+		// Finance Guaranteer Details
 		if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
 			financeDetail.setGurantorsDetailList(getGuarantorDetailService().getGuarantorDetail(finReference, "_View"));
 
-			//Finance Joint Account Details
+			// Finance Joint Account Details
 			financeDetail.setJountAccountDetailList(
 					getJointAccountDetailService().getJoinAccountDetail(finReference, "_View"));
 
@@ -266,10 +266,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 		}
 
-		//Mandate
+		// Mandate
 		financeDetail.setMandate(mandateDAO.getMandateById(finMain.getMandateID(), ""));
 
-		//Finance Overdue Penalty Rate Details
+		// Finance Overdue Penalty Rate Details
 		scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
 
 		// Document Details
@@ -298,15 +298,16 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table FinanceMain/FinanceMain_Temp by
-	 * using FinanceMainDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
-	 * by using FinanceMainDAO's update method 3) Audit the record in to AuditHeader and AdtFinanceMain by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business
+	 * validation by using businessValidation(auditHeader) method if there is any
+	 * error or warning message then return the auditHeader. 2) Do Add or Update the
+	 * Record a) Add new Record for the new record in the DB table
+	 * FinanceMain/FinanceMain_Temp by using FinanceMainDAO's save method b) Update
+	 * the Record in the table. based on the module workFlow Configuration. by using
+	 * FinanceMainDAO's update method 3) Audit the record in to AuditHeader and
+	 * AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -348,8 +349,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 		}
 
-		//Finance Stage Accounting Process
-		//=======================================
+		// Finance Stage Accounting Process
+		// =======================================
 		auditHeader = executeStageAccounting(auditHeader);
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
@@ -363,7 +364,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			financeMain.setRcdMaintainSts("");
 		}
 
-		//Finance Penalty OD Rate Details
+		// Finance Penalty OD Rate Details
 		FinODPenaltyRate penaltyRate = financeDetail.getFinScheduleData().getFinODPenaltyRate();
 		FinWriteoffPayment finWriteoffPay = financeDetail.getFinwriteoffPayment();
 		if (penaltyRate == null) {
@@ -383,11 +384,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		penaltyRate.setFinEffectDate(DateUtility.getSysDate());
 
 		// Finance Main Details Save And Update
-		//=======================================
+		// =======================================
 		if (financeMain.isNew()) {
 			getFinanceMainDAO().save(financeMain, tableType, false);
 
-			//Finance Penalty OD Rate Details
+			// Finance Penalty OD Rate Details
 			getFinODPenaltyRateDAO().save(penaltyRate, tableType.getSuffix());
 
 			if (finWriteoffPay != null) {
@@ -399,7 +400,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		} else {
 			getFinanceMainDAO().update(financeMain, tableType, false);
 
-			//Finance Penalty OD Rate Details
+			// Finance Penalty OD Rate Details
 			if (tableType == TableType.MAIN_TAB) {
 				FinODPenaltyRate oldPenaltyRate = getFinODPenaltyRateDAO()
 						.getFinODPenaltyRateByRef(financeMain.getFinReference(), "");
@@ -419,15 +420,15 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		// set Finance Check List audit details to auditDetails
-		//=======================================
+		// =======================================
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
 			auditDetails
 					.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType.getSuffix(), serviceUID));
 		}
 
 		// set Guarantor Details Audit
-		//=======================================
-		//String auditTranType = auditHeader.getAuditTranType();
+		// =======================================
+		// String auditTranType = auditHeader.getAuditTranType();
 		if (financeDetail.getGurantorsDetailList() != null && !financeDetail.getGurantorsDetailList().isEmpty()
 				&& financeDetail.getGurantorsDetailList().size() > 0) {
 			financeDetail.setGurantorsDetailList(financeDetail.getGurantorsDetailList());
@@ -437,7 +438,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		// set JountAccount Details Audit
-		//=======================================
+		// =======================================
 
 		if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()
 				&& financeDetail.getJountAccountDetailList().size() > 0) {
@@ -457,7 +458,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
 			// set Finance Collateral Details Audit
-			//=======================================
+			// =======================================
 			if (financeDetail.getCollateralAssignmentList() != null
 					&& !financeDetail.getCollateralAssignmentList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
@@ -466,7 +467,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				auditDetails.addAll(details);
 			}
 		} else {
-			//=======================================
+			// =======================================
 
 			if (financeDetail.getFinanceCollaterals() != null && !financeDetail.getFinanceCollaterals().isEmpty()) {
 				financeDetail.setFinanceCollaterals(financeDetail.getFinanceCollaterals());
@@ -679,13 +680,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFinanceMainDAO().delete with parameters financeMain,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or warning
+	 * message then return the auditHeader. 2) Delete the record from the workFlow
+	 * table by using getFinanceMainDAO().delete with parameters financeMain,"_Temp"
+	 * 3) Audit the record in to AuditHeader and AdtFinanceMain by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -713,7 +715,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		// Cancel All Transactions done by Finance Reference
-		//=======================================
+		// =======================================
 		cancelStageAccounting(financeMain.getFinReference(), financeDetail.getModuleDefiner());
 
 		// Fee charges deletion
@@ -721,7 +723,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				"_Temp");
 
 		// Checklist Details delete
-		//=======================================
+		// =======================================
 		auditDetailList.addAll(getCheckListDetailService().delete(financeDetail, "_Temp", tranType));
 
 		// Save Document Details
@@ -736,7 +738,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		// set Guarantor Details Audit
-		//=======================================
+		// =======================================
 		if (financeDetail.getGurantorsDetailList() != null && !financeDetail.getGurantorsDetailList().isEmpty()) {
 			for (GuarantorDetail guarantorDetails : financeDetail.getGurantorsDetailList()) {
 				guarantorDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
@@ -747,7 +749,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		// set JointAccount Details Audit
-		//=======================================
+		// =======================================
 		if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
 			for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
 				jointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
@@ -769,7 +771,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		}
 
-		//Collateral assignment Details
+		// Collateral assignment Details
 		if (financeDetail.getCollateralAssignmentList() != null
 				&& !financeDetail.getCollateralAssignmentList().isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
@@ -811,7 +813,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		auditHeader.setAuditDetails(auditDetailList);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		//Reset Finance Detail Object for Service Task Verifications
+		// Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
 		logger.debug("Leaving");
@@ -819,18 +821,21 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getFinanceMainDAO().delete with
-	 * parameters financeMain,"" b) NEW Add new record in to main table by using getFinanceMainDAO().save with
-	 * parameters financeMain,"" c) EDIT Update record in the main table by using getFinanceMainDAO().update with
-	 * parameters financeMain,"" 3) Delete the record from the workFlow table by using getFinanceMainDAO().delete with
-	 * parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader and AdtFinanceMain by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceMain by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or warning
+	 * message then return the auditHeader. 2) based on the Record type do following
+	 * actions a) DELETE Delete the record from the main table by using
+	 * getFinanceMainDAO().delete with parameters financeMain,"" b) NEW Add new
+	 * record in to main table by using getFinanceMainDAO().save with parameters
+	 * financeMain,"" c) EDIT Update record in the main table by using
+	 * getFinanceMainDAO().update with parameters financeMain,"" 3) Delete the
+	 * record from the workFlow table by using getFinanceMainDAO().delete with
+	 * parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader and
+	 * AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5)
+	 * Audit the record in to AuditHeader and AdtFinanceMain by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -852,15 +857,15 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		Date curBDay = DateUtility.getAppDate();
-		//Finance Stage Accounting Process
-		//=======================================
+		// Finance Stage Accounting Process
+		// =======================================
 		auditHeader = executeStageAccounting(auditHeader);
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
 
-		//Finance Write off Posting Process Execution
-		//=====================================
+		// Finance Write off Posting Process Execution
+		// =====================================
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceProfitDetail profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(financeMain.getFinReference());
 		long serviceUID = Long.MIN_VALUE;
@@ -889,7 +894,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 					financeMain.getMaturityDate());
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
-			//FinanceWriteoffPayment set the writeoffPayAmount,WriteoffPayAccount 
+			// FinanceWriteoffPayment set the writeoffPayAmount,WriteoffPayAccount
 			if (financeDetail.getFinwriteoffPayment() != null) {
 				amountCodes.setWoPayAmt(financeDetail.getFinwriteoffPayment().getWriteoffPayAmount());
 			}
@@ -919,14 +924,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		financeMain.setRecordType("");
 		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
 
-		//Save Finance WriteOffPayment Details
+		// Save Finance WriteOffPayment Details
 		FinWriteoffPayment financeWriteoffPayment = financeDetail.getFinwriteoffPayment();
 		if (financeDetail.getFinwriteoffPayment() != null) {
 			financeWriteoffPayment.setLinkedTranId(linkedTranId);
 			getFinanceWriteoffDAO().saveFinWriteoffPayment(financeWriteoffPayment, "");
 		}
 
-		//Finance Penalty OD Rate Details
+		// Finance Penalty OD Rate Details
 		FinODPenaltyRate penaltyRate = financeDetail.getFinScheduleData().getFinODPenaltyRate();
 		if (penaltyRate == null) {
 			penaltyRate = new FinODPenaltyRate();
@@ -960,7 +965,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		// set Check list details Audit
-		//=======================================
+		// =======================================
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
 			auditDetails.addAll(getCheckListDetailService().doApprove(financeDetail, "", serviceUID));
 		}
@@ -990,7 +995,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
 			// Collateral Assignments Details
-			//=======================================
+			// =======================================
 			if (financeDetail.getCollateralAssignmentList() != null
 					&& !financeDetail.getCollateralAssignmentList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
@@ -1016,8 +1021,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			auditDetails.addAll(details);
 		}
 
-		//Finance Profit Details Updation - Repayment Account
-		getProfitDetailsDAO().updateRpyAccount(financeMain.getFinReference(), financeMain.getRepayAccountId());
+		// Finance Profit Details Updation - Repayment Account
+		/*
+		 * getProfitDetailsDAO().updateRpyAccount(financeMain.getFinReference(),
+		 * financeMain.getRepayAccountId());
+		 */
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
@@ -1029,7 +1037,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 					financeDetail.getFinwriteoffPayment().getSeqNo(), "_Temp");
 		}
 
-		//Guarantor Details
+		// Guarantor Details
 		if (financeDetail.getGurantorsDetailList() != null && !financeDetail.getGurantorsDetailList().isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("GuarantorDetails");
 			List<GuarantorDetail> guarantorDetail = new ArrayList<GuarantorDetail>();
@@ -1040,7 +1048,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			auditDetailList
 					.addAll(getGuarantorDetailService().delete(guarantorDetail, "_Temp", PennantConstants.TRAN_WF));
 		}
-		//JointAccount Details
+		// JointAccount Details
 		if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("JointAccountDetails");
 			List<JointAccountDetail> jointAccountDetail = new ArrayList<JointAccountDetail>();
@@ -1053,11 +1061,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		// Checklist Details delete
-		//=======================================
+		// =======================================
 		auditDetailList.addAll(getCheckListDetailService().delete(financeDetail, "_Temp", tranType));
 
-		//Fee Charge Details Clearing before 
-		//=======================================
+		// Fee Charge Details Clearing before
+		// =======================================
 		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false,
 				"_Temp");
 
@@ -1073,8 +1081,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		}
 
-		//FinanceMain Details Clearing before 
-		//=======================================
+		// FinanceMain Details Clearing before
+		// =======================================
 		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
 
 		// Collateral assignment Details
@@ -1142,7 +1150,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		//Reset Finance Detail Object for Service Task Verifications
+		// Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 		getFinStageAccountingLogDAO().update(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false);
 		logger.debug("Leaving");
@@ -1150,13 +1158,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getFinanceMainDAO().getErrorDetail with Error ID and
-	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the
+	 * auditHeader. 2) fetch the details from the tables 3) Validate the Record
+	 * based on the record details. 4) Validate for any business validation. 5) for
+	 * any mismatch conditions Fetch the error details from
+	 * getFinanceMainDAO().getErrorDetail with Error ID and language as parameters.
+	 * 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -1172,12 +1181,12 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String usrLanguage = financeMain.getUserDetails().getLanguage();
 
-		//Collateral Assignments details
-		//=======================================
+		// Collateral Assignments details
+		// =======================================
 		if (financeDetail.getCollateralAssignmentList() != null
 				&& !financeDetail.getCollateralAssignmentList().isEmpty()) {
 
-			//CoOwnerDetails Validation
+			// CoOwnerDetails Validation
 			List<CollateralAssignment> assignments = financeDetail.getCollateralAssignmentList();
 			if (assignments != null && !assignments.isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
@@ -1192,7 +1201,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			details = getFlagDetailValidation().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
-		//Joint Account  Details Validation
+		// Joint Account Details Validation
 		List<JointAccountDetail> finJoinAccDetailList = financeDetail.getJountAccountDetailList();
 		if (finJoinAccDetailList != null && !finJoinAccDetailList.isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("JointAccountDetails");
@@ -1200,7 +1209,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 					usrLanguage);
 			auditDetails.addAll(details);
 		}
-		//Guarantor Account  Details Validation
+		// Guarantor Account Details Validation
 		List<GuarantorDetail> guarantorAccDetailList = financeDetail.getGurantorsDetailList();
 		if (guarantorAccDetailList != null && !guarantorAccDetailList.isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("GuarantorDetails");
@@ -1319,10 +1328,12 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 		}
 
-		// Checking , if Customer is in EOD process or not. if Yes, not allowed to do an action
+		// Checking , if Customer is in EOD process or not. if Yes, not allowed to do an
+		// action
 		int eodProgressCount = getCustomerQueuingDAO().getProgressCountByCust(financeMain.getCustID());
 
-		// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
+		// If Customer Exists in EOD Processing, Not allowed to Maintenance till
+		// completion
 		if (eodProgressCount > 0) {
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 					new ErrorDetail(PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
@@ -1330,7 +1341,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		FinWriteoffPayment finWriteoffPay = financeDetail.getFinwriteoffPayment();
 		if (finWriteoffPay != null) {
-			//Save Finance WriteOff Details
+			// Save Finance WriteOff Details
 			BigDecimal financeWriteoffDetailAmt = getFinanceWriteoffDAO()
 					.getTotalFinWriteoffDetailAmt(financeMain.getFinReference());
 			BigDecimal finWriteoffPayAmt = getFinanceWriteoffDAO()
@@ -1379,14 +1390,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			auditDetails.addAll(auditDetailMap.get("FinFlagsDetail"));
 		}
 
-		//Finance Document Details
+		// Finance Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
-		//Finance Checklist Details
-		//=======================================
+		// Finance Checklist Details
+		// =======================================
 		List<FinanceCheckListReference> financeCheckList = financeDetail.getFinanceCheckList();
 
 		if (StringUtils.equals(method, "saveOrUpdate")) {
@@ -1396,16 +1407,16 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 		}
 
-		//Finance Guarantor Details
-		//=======================================
+		// Finance Guarantor Details
+		// =======================================
 		List<GuarantorDetail> finGuarantor = financeDetail.getGurantorsDetailList();
 		if (finGuarantor != null && !finGuarantor.isEmpty()) {
 			auditDetailMap.put("GuarantorDetails", setGuarantorDetailAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("GuarantorDetails"));
 		}
 
-		//Joint Account Details
-		//=======================================
+		// Joint Account Details
+		// =======================================
 		List<JointAccountDetail> finJointAccoutnDetail = financeDetail.getJountAccountDetailList();
 		if (finJointAccoutnDetail != null && !finJointAccoutnDetail.isEmpty()) {
 			auditDetailMap.put("JointAccountDetails",
@@ -1416,7 +1427,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
 
 			// Collateral Assignment Details
-			//=======================================
+			// =======================================
 			if (financeDetail.getCollateralAssignmentList() != null
 					&& financeDetail.getCollateralAssignmentList().size() > 0) {
 				auditDetailMap.put("CollateralAssignments",
@@ -1424,8 +1435,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				auditDetails.addAll(auditDetailMap.get("CollateralAssignments"));
 			}
 		} else {
-			//Finance Collaterals Details
-			//=======================================
+			// Finance Collaterals Details
+			// =======================================
 			List<FinCollaterals> finCollateral = financeDetail.getFinanceCollaterals();
 			if (finCollateral != null && !finCollateral.isEmpty()) {
 				auditDetailMap.put("FinCollateral",
@@ -1583,7 +1594,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				recordStatus = guarantorDetail.getRecordStatus();
 				guarantorDetail.setRecordType("");
 				guarantorDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				//10-Jul-2018 BUG FIX related to Audit issue  TktNo:126609
+				// 10-Jul-2018 BUG FIX related to Audit issue TktNo:126609
 				if (!guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					guarantorDetail.setBefImage(
 							getGuarantorDetailDAO().getGuarantorDetailById(guarantorDetail.getGuarantorId(), ""));
@@ -1687,7 +1698,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				recordStatus = jointAccountDetail.getRecordStatus();
 				jointAccountDetail.setRecordType("");
 				jointAccountDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				//10-Jul-2018 BUG FIX related to Audit issue  TktNo:126609
+				// 10-Jul-2018 BUG FIX related to Audit issue TktNo:126609
 				if (!jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					jointAccountDetail.setBefImage(getJountAccountDetailDAO()
 							.getJountAccountDetailById(jointAccountDetail.getJointAccountId(), ""));

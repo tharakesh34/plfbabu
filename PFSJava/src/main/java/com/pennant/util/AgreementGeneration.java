@@ -96,7 +96,6 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
-import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
@@ -147,10 +146,8 @@ import com.pennant.backend.model.finance.AgreementDetail.LoanQryDetails;
 import com.pennant.backend.model.finance.AgreementDetail.Score;
 import com.pennant.backend.model.finance.AgreementDetail.SourcingDetail;
 import com.pennant.backend.model.finance.AgreementDetail.VerificationDetail;
-import com.pennant.backend.model.finance.AgreementFieldDetails;
 import com.pennant.backend.model.finance.CustomerAgreementDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennant.backend.model.finance.FinAssetEvaluation;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinIRRDetails;
@@ -199,7 +196,6 @@ import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.applicationmaster.BranchService;
-import com.pennant.backend.service.applicationmaster.MMAgreementService;
 import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
@@ -264,7 +260,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 	private NotesService notesService;
 	private FinanceDetailService financeDetailService;
-	private MMAgreementService mMAgreementService;
 
 	@Autowired
 	private CustomerDetailsService customerDetailsService;
@@ -492,7 +487,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
 					|| e.getMessage().equals("Template site does not exist.")
 					|| e.getMessage().equals("Template does not exist."))) {
-				//throw new Exception("Template does not exists.Please configure Template.");
+				// throw new Exception("Template does not exists.Please configure Template.");
 				AppException exception = new AppException("Template does not exists.Please configure Template.");
 				MessageUtil.showError(exception);
 			} else {
@@ -534,7 +529,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 		String finRef = financeMain.getFinReference();
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
-		String mMAReference = financeMain.getLovDescMMAReference();
 		agreement.setLpoDate(appDate);
 		agreement.setLovDescEligibilityMethod(financeMain.getLovDescEligibilityMethod());
 		agreement.setFinRef(financeMain.getFinReference());
@@ -570,7 +564,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					agreement.setCustId(customer.getCustID());
 					agreement.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
 					agreement.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
-					agreement.setCustArabicName(StringUtils.trimToEmpty(customer.getCustShrtNameLclLng()));
+					agreement.setCustLocalLngName(StringUtils.trimToEmpty(customer.getCustShrtNameLclLng()));
 					agreement.setCustPassport(StringUtils.trimToEmpty(customer.getCustPassportNo()));
 					agreement.setCustDOB(DateUtility.formatToLongDate(customer.getCustDOB()));
 					agreement.setCustRO1(StringUtils.trimToEmpty(customer.getLovDescCustRO1Name()));
@@ -1453,10 +1447,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				agreement = getFinRepayHeaderDetails(agreement, detail.getFinRepayHeader(), formatter);
 			}
 
-			if (detail.getAgreementFieldDetails() != null) {
-				agreement = getAgreementArabicFieldDetails(agreement, detail.getAgreementFieldDetails(), formatter);
-			}
-
 			// -----------------Customer Credit Review Details
 
 			if (CollectionUtils.isEmpty(agreement.getCrdRevElgProfitAndLoss())) {
@@ -1851,17 +1841,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					agreement = getCustomerFinanceDetails(agreement, formatter);
 				}
 
-				// -------------------Group Recommendations List
-				// MMAgreement Details
-				agreement = setGroupRecommendations(agreement, finRef);
-				if (mMAReference != null && !StringUtils.equals(mMAReference, "")) {
-					agreement = setMMAgreementGenDetails(agreement, appDate, formatter, mMAReference);
-				}
-				// --------------------Asset Evalution Details
-				if (detail.getFinAssetEvaluation() != null) {
-					agreement = getFinAssetEvaluationDetails(agreement, detail.getFinAssetEvaluation(), formatter,
-							financeMain.getFinCcy());
-				}
 				// Co-applicant details
 				setCoapplicantDetails(detail, agreement, aggModuleDetails);
 				// Mandate details
@@ -2377,8 +2356,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	}
 
 	/**
-	 * Populate the query details associated to the loan by calling the queryDetailsservice by sending the loan
-	 * reference.
+	 * Populate the query details associated to the loan by calling the
+	 * queryDetailsservice by sending the loan reference.
 	 * 
 	 * @param agreement
 	 * @param finRef
@@ -2424,14 +2403,16 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						verificationData
 								.setCompletionDate(DateUtility.formatToLongDate(verification.getVerificationDate()));
 						String initialStatus = (null != RequestType.getType(verification.getRequestType()))
-								? RequestType.getType(verification.getRequestType()).getValue() : null;
+								? RequestType.getType(verification.getRequestType()).getValue()
+								: null;
 						verificationData.setInitialStatus(StringUtils.trimToEmpty(initialStatus));
 						verificationData
 								.setRecommanditionStatus(StringUtils.trimToEmpty(verification.getVerificationStatus()));
 						verificationData.setRemarks(StringUtils.trimToEmpty(verification.getDecisionRemarks()));
 						String finalDecision = (null != Decision.getType(verification.getDecision())
 								&& 0 != verification.getDecision())
-										? Decision.getType(verification.getDecision()).getValue() : null;
+										? Decision.getType(verification.getDecision()).getValue()
+										: null;
 						verificationData.setFinalDecision(StringUtils.trimToEmpty(finalDecision));
 						verificationData.setAgencyName(StringUtils.trimToEmpty(verification.getAgencyName()));
 
@@ -2854,7 +2835,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			BigDecimal totalNoCreditTran = BigDecimal.valueOf(divider, 0);
 			BigDecimal avgCreditTran = BigDecimal.ZERO;
 			if (totalNoCreditTran.compareTo(BigDecimal.ZERO) > 0) {
-				avgCreditTran = totalCreditTanAmt.divide(totalNoCreditTran, 2);
+				avgCreditTran = totalCreditTanAmt.divide(totalNoCreditTran, RoundingMode.CEILING);
 			}
 			BankingDetail bankingDetail = agreement.new BankingDetail();
 			bankingDetail.setApplicantType(StringUtils.trimToEmpty(applicantType));
@@ -3662,45 +3643,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		return agreement;
 	}
 
-	private AgreementDetail getAgreementArabicFieldDetails(AgreementDetail agreement,
-			AgreementFieldDetails aAgreementFieldDetails, int formatter) {
-
-		agreement.setCustCityArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getCustCity()));
-		agreement.setBuildUpAreaArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getBuiltupAreainSqft()));
-		agreement.setCustNationalityArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getCustNationality()));
-		agreement.setPlotUnitNumberArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getPlotOrUnitNo()));
-		agreement.setOtherbankNameArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getOtherbankName()));
-		agreement.setPropertyTypeArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getPropertyType()));
-		agreement.setSectorOrCommArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getSectorOrCommunity()));
-		agreement.setFinAmountInArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getFinAmount()));
-		agreement.setUnitAreaInSqftArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getPlotareainsqft()));
-		agreement.setPropertyLocArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getPropertyLocation()));
-		agreement.setSellerInternalArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getSellerInternal()));
-		agreement.setOtherBankAmtArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getOtherBankAmt()));
-		agreement.setCustJointNameArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getJointApplicant()));
-		agreement.setCollateralArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getCollateral1()));
-		agreement.setCollateralAuthArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getCollateralAuthority()));
-		agreement.setPropertyUseArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getPropertyUse()));
-		agreement.setSellerNationalityArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getSellerNationality()));
-		agreement.setSellerCntbAmtArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getSellerCntbAmt()));
-		agreement.setCustCntAmtArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getCustCntAmt()));
-		agreement.setSellerNameArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getSellerName()));
-		agreement.setSellerAddrArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getSellerPobox()));
-
-		return agreement;
-	}
-
-	private AgreementDetail getFinAssetEvaluationDetails(AgreementDetail agreement,
-			FinAssetEvaluation finAssetEvaluation, int formatter, String finCCy) throws Exception {
-		agreement.setMarketValue(
-				PennantApplicationUtil.amountFormate(finAssetEvaluation.getMarketValueAED(), formatter));
-		agreement.setMarketValueInWords(NumberToEnglishWords
-				.getAmountInText(
-						PennantApplicationUtil.formateAmount(finAssetEvaluation.getMarketValueAED(), formatter), finCCy)
-				.toUpperCase());
-		return agreement;
-	}
-
 	private AgreementDetail getScheduleDetails(AgreementDetail agreement, FinanceDetail detail, int formatter) {
 		List<FinanceScheduleDetail> finschdetails = detail.getFinScheduleData().getFinanceScheduleDetails();
 		Date nextRepDate = detail.getFinScheduleData().getFinanceMain().getNextRepayDate();
@@ -3738,19 +3680,13 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					.setSchTotalPriAmt(PennantApplicationUtil.amountFormate(finSchDetail.getRepayAmount(), formatter));
 			scheduleData.setClosingBalance(
 					PennantApplicationUtil.amountFormate(finSchDetail.getClosingBalance(), formatter));
-			scheduleData.setSuplRent(PennantApplicationUtil.amountFormate(finSchDetail.getSuplRent(), formatter));
 			scheduleData.setSchdSeqNo(String.valueOf(seqNO++));
 			scheduleData.setInsSchd(PennantApplicationUtil.amountFormate(finSchDetail.getInsSchd(), formatter));
 			defDates = defDates.concat(DateUtility.formatToLongDate(finSchDetail.getDefSchdDate()) + ",");
-			scheduleData.setSchAdvPft(PennantApplicationUtil.amountFormate(finSchDetail.getAdvProfit(), formatter));
-			scheduleData
-					.setAdvPayment(PennantApplicationUtil.amountFormate(finSchDetail.getAdvRepayAmount(), formatter));
 			agreement.getScheduleData().add(scheduleData);
 			if (finSchDetail.isRepayOnSchDate() && !isSchdPftFirstInst) {
 				agreement.setSchdPftFirstInstl(
 						String.valueOf(PennantApplicationUtil.amountFormate(finSchDetail.getProfitSchd(), formatter)));
-				agreement.setSchdAdvPftFirstInstl(
-						String.valueOf(PennantApplicationUtil.amountFormate(finSchDetail.getAdvProfit(), formatter)));
 				isSchdPftFirstInst = true;
 			}
 			if (seqNO == 2) {
@@ -3766,14 +3702,16 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	private AgreementDetail getCollateralDetails(AgreementDetail agreement, FinanceDetail aFinanceDetail,
 			int formatter) {
 		/*
-		 * List<FinCollaterals> finCollateralslist = detail.getFinanceCollaterals(); agreement.setCollateralData(new
-		 * ArrayList<AgreementDetail.FinCollaterals>());
+		 * List<FinCollaterals> finCollateralslist = detail.getFinanceCollaterals();
+		 * agreement.setCollateralData(new ArrayList<AgreementDetail.FinCollaterals>());
 		 * 
 		 * for (FinCollaterals finCollaterals : finCollateralslist) {
-		 * com.pennant.backend.model.finance.AgreementDetail.FinCollaterals collateralData = agreement.new
-		 * FinCollaterals(); collateralData.setCollateralType(finCollaterals.getCollateralType());
+		 * com.pennant.backend.model.finance.AgreementDetail.FinCollaterals
+		 * collateralData = agreement.new FinCollaterals();
+		 * collateralData.setCollateralType(finCollaterals.getCollateralType());
 		 * collateralData.setReference(finCollaterals.getReference());
-		 * collateralData.setCollateralAmt(PennantAppUtil.amountFormate( finCollaterals.getValue(), formatter));
+		 * collateralData.setCollateralAmt(PennantAppUtil.amountFormate(
+		 * finCollaterals.getValue(), formatter));
 		 * agreement.getCollateralData().add(collateralData);
 		 * 
 		 * }
@@ -3928,57 +3866,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 			}
 		}
-		return agreement;
-	}
-
-	private AgreementDetail setMMAgreementGenDetails(AgreementDetail agreement, String appDate, int ccyformatt,
-			String mMAReference) throws Exception {
-		MMAgreement mMAgreement = getmMAgreementService().getMMAgreementByIdMMARef(mMAReference);
-
-		if (agreement != null) {
-			if (mMAgreement != null) {
-				agreement.setmMADate(DateUtility.formatToLongDate(mMAgreement.getContractDate()));
-				agreement.setCustCIF(mMAgreement.getCustCIF());
-				agreement.setCustName(mMAgreement.getCustShrtName());
-				agreement.setmMAPurchRegOffice(mMAgreement.getLovDescPurchRegOffice());
-				agreement.setmMAContractAmt(
-						PennantApplicationUtil.amountFormate(mMAgreement.getContractAmt(), ccyformatt));
-				agreement.setmMAPurchaddress(mMAgreement.getPurchaddress());
-				agreement.setAttention(mMAgreement.getAttention());
-				agreement.setmMAFax(mMAgreement.getFax());
-				agreement.setmMARate(String.valueOf(mMAgreement.getRate()));
-				agreement.setmMAFOLIssueDate(DateUtility.formatToLongDate(mMAgreement.getfOLIssueDate()));
-				agreement.setMaturityDate(DateUtility.formatToLongDate(mMAgreement.getMaturityDate()));
-				agreement.setmMAFacilityLimit(
-						PennantApplicationUtil.amountFormate(mMAgreement.getFacilityLimit(), ccyformatt));
-				String word = NumberToEnglishWords.getAmountInText(
-						PennantApplicationUtil.formateAmount(mMAgreement.getFacilityLimit(), ccyformatt),
-						agreement.getFinCcy());
-				agreement.setFacLimitInWords(word);
-				agreement.setmMAMinAmount(PennantApplicationUtil.amountFormate(mMAgreement.getMinAmount(), ccyformatt));
-				if (mMAgreement.getProfitRate() != null) {
-					agreement.setmMAPftRate(
-							PennantApplicationUtil.formatRate(mMAgreement.getProfitRate().doubleValue(), 2));
-				}
-				agreement.setmMAMargin(PennantApplicationUtil.formatRate(mMAgreement.getMargin().doubleValue(), 9));
-				agreement.setmMAMinRate(PennantApplicationUtil.formatRate(mMAgreement.getMinRate().doubleValue(), 9));
-				agreement.setmMAMLatePayRate(
-						PennantApplicationUtil.formatRate(mMAgreement.getLatePayRate().doubleValue(), 9));
-				agreement.setmMANumberOfTerms(String.valueOf(mMAgreement.getNumberOfTerms()));
-				agreement.setmMAProfitPeriod(String.valueOf(mMAgreement.getProfitPeriod()));
-				agreement.setFolReference(String.valueOf(mMAgreement.getfOlReference()));
-				agreement.setAvlPerDays(String.valueOf(mMAgreement.getAvlPerDays()));
-				agreement.setMaxCapProfitRate(
-						PennantApplicationUtil.formatRate(mMAgreement.getMaxCapProfitRate().doubleValue(), 9));
-				agreement
-						.setMinCapRate(PennantApplicationUtil.formatRate(mMAgreement.getMinCapRate().doubleValue(), 9));
-				agreement.setFacOfferLetterDate(DateUtility.formatToLongDate(mMAgreement.getFacOfferLetterDate()));
-				agreement.setPmaryRelOfficer(String.valueOf(mMAgreement.getPmaryRelOfficer()));
-				agreement.setmMAFOLPeriod(String.valueOf(mMAgreement.getProfitPeriod()));
-				agreement.setBaseRateCode(mMAgreement.getBaseRateCode());
-			}
-		}
-
 		return agreement;
 	}
 
@@ -4172,15 +4059,10 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					.setEffPftRate(PennantApplicationUtil.formatRate(main.getEffectiveRateOfReturn().doubleValue(), 2));
 			agreement.setMaturityDate(DateUtility.formatToLongDate(main.getMaturityDate()));
 			agreement.setProfit(String.valueOf(PennantApplicationUtil.amountFormate(main.getTotalProfit(), formatter)));
-			agreement.setBankName(StringUtils.trimToEmpty(main.getBankName()));
-			agreement.setAccountType(StringUtils.trimToEmpty(main.getAccountType()));
-			agreement.setIban(StringUtils.trimToEmpty(main.getIban()));
-			agreement.setDdaPurposeCode(PennantConstants.REQ_TYPE_REG);
 
 			agreement.setCustDSR(String.valueOf(main.getCustDSR() == null ? "0.00" : main.getCustDSR()));
 			agreement.setAssetValue(PennantApplicationUtil.amountFormate(main.getFinAmount(), formatter));
 			agreement.setSchdInst(String.valueOf(main.getNumberOfTerms()));
-			agreement.setIfscCode(main.getIfscCode());
 			agreement.setSecSixTermAmt(PennantApplicationUtil.amountFormate(
 					main.getTotalRepayAmt().divide(new BigDecimal(6), RoundingMode.HALF_DOWN), formatter));
 			agreement.setTotalRepayAmt(PennantApplicationUtil.amountFormate(main.getTotalRepayAmt(), formatter));
@@ -4210,7 +4092,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							(main.getFinAmount().subtract(main.getDownPayment()))
 									.divide(main.getFinAmount().multiply(new BigDecimal(100)), RoundingMode.HALF_DOWN),
 							formatter));
-			agreement.setFacilityAmt(PennantApplicationUtil.amountFormate(main.getAvailCommitAmount(), formatter));
+			// agreement.setFacilityAmt(PennantApplicationUtil.amountFormate(main.getAvailCommitAmount(),
+			// formatter));
 			agreement.setTotalPrice(
 					PennantApplicationUtil.amountFormate(main.getFinAmount().add(main.getTotalProfit()), formatter));
 			List<FeeRule> feeChargesList = detail.getFinScheduleData().getFeeRules();
@@ -4581,7 +4464,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	}
 
 	/**
-	 * When Advence Payment Detials not Available then Advence Payment Detials Set Empty Data in Agreements
+	 * When Advence Payment Detials not Available then Advence Payment Detials Set
+	 * Empty Data in Agreements
 	 * 
 	 * @param agreement
 	 */
@@ -4647,7 +4531,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	}
 
 	/**
-	 * When Advence Payment Detials not Available then Advence Payment Detials Set Empty Data in Agreements
+	 * When Advence Payment Detials not Available then Advence Payment Detials Set
+	 * Empty Data in Agreements
 	 * 
 	 * @param agreement
 	 */
@@ -4746,7 +4631,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 	/**
 	 * 
-	 * Method refers to set Customer extended fields Descriptions from Extended Combo box in Extended details.
+	 * Method refers to set Customer extended fields Descriptions from Extended
+	 * Combo box in Extended details.
 	 * 
 	 * @param detail
 	 * 
@@ -4877,14 +4763,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
-	}
-
-	public MMAgreementService getmMAgreementService() {
-		return mMAgreementService;
-	}
-
-	public void setmMAgreementService(MMAgreementService mMAgreementService) {
-		this.mMAgreementService = mMAgreementService;
 	}
 
 	public SecurityUserService getSecurityUserService() {
