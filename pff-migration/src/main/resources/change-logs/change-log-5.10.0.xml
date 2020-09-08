@@ -5153,6 +5153,7 @@
 		<comment>ST#1 TK#96</comment>
 		<addColumn tableName="projectunits_temp">
 			<column name="rateAsPerSuperBuiltUpArea" type="decimal(18,0)" />
+
 		</addColumn>
 	</changeSet>
 
@@ -5440,14 +5441,14 @@
 	</changeSet>
 
 	<changeSet id="510" author="SaiDurga.V">
-		<comment> ST#4  TK#156â€‹</comment>
+		<comment> ST#4  TK#156​</comment>
 		<addColumn tableName="blacklistcustomer">
 			<column name="address" type="varchar(2000)" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="511" author="SaiDurga.V">
-		<comment> ST#4  TK#156â€‹</comment>
+		<comment> ST#4  TK#156​</comment>
 		<addColumn tableName="blacklistcustomer_temp">
 			<column name="address" type="varchar(2000)" />
 		</addColumn>
@@ -8144,6 +8145,7 @@
 	</changeSet>
 
 	<changeSet id="689" author="rajesh.n" dbms="mssql">
+
 		<comment> ST#27 and TK#118 </comment>
 		<sql>
 			ALTER TABLE SynopsisDetails_temp ALTER COLUMN detailsofGroupCompaniesIfAny varchar(max);
@@ -9953,11 +9955,14 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="39_pre" author="Somasekhar" dbms="postgresql">
+	<changeSet id="39.1_pre" author="Somasekhar" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
-			select deps_save_and_drop_dependencies ('plf', 'financemain'); 
-			select deps_save_and_drop_dependencies ('plf', 'financemain_temp'); 
+			select deps_save_and_drop_dependencies ('plf', 'financemain_aview');
+			select deps_save_and_drop_dependencies ('plf', 'financemain_dview'); 
+			select deps_save_and_drop_dependencies ('plf', 'financemain_lview'); 
+			select deps_save_and_drop_dependencies ('plf', 'financemain_view');  
+			select deps_save_and_drop_dependencies ('plf', 'financemain_tview'); 
 		]]>
 		</sql>
 	</changeSet>
@@ -10051,6 +10056,7 @@
 			t7.fintypedesc AS lovdescfintypename,
 			t7.finmaxamount AS lovdescfinmaxamt,
 			t7.finminamount AS lovdescfinminamount,
+
 			t1.mindownpayperc,
 			t7.finisalwdifferment AS lovdescfinalwdeferment,
 			t7.finisdwpayrequired AS lovdescdwnpayreq,
@@ -11391,16 +11397,18 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="39_post" author="Somasekhar" dbms="postgresql">
+	<changeSet id="39.1_post" author="Somasekhar" dbms="postgresql">
 		<sql>
  		 <![CDATA[ 
 	
-			select deps_restore_dependencies ('plf', 'financemain'); 
-			select deps_restore_dependencies ('plf', 'financemain_temp'); 
+			select deps_restore_dependencies ('plf', 'financemain_aview'); 
+			select deps_restore_dependencies ('plf', 'financemain_dview'); 
+			select deps_restore_dependencies ('plf', 'financemain_lview'); 
+			select deps_restore_dependencies ('plf', 'financemain_view'); 
+			select deps_restore_dependencies ('plf', 'financemain_tview'); 
 		 ]]>
 		</sql>
 	</changeSet>
-
 
 	<changeSet id="45" author="Somasekhar">
 		<createView viewName="findisbursementdetails_view" replaceIfExists="true">
@@ -13791,6 +13799,7 @@ UNION ALL
 						cs.collateraltype
 						FROM collateralassignment_temp ca
 						JOIN collateralsetup cs ON ca.collateralref = cs.collateralref
+
 						JOIN customers cu ON cu.custid = cs.depositorid
 						LEFT JOIN ( SELECT t1.collateralref,
 								sum(t1.assignperc) AS totassignperc
@@ -15207,6 +15216,7 @@ UNION ALL
 					ce.custemptype,
 					et.emptypedesc AS lovdesccustemptypename,
 					ce.version,
+
 					ce.lastmntby,
 					ce.lastmnton,
 					ce.recordstatus,
@@ -25572,7 +25582,7 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="400" author="saidurge.v">
-		<comment>ST#4_TK#156​</comment>
+		<comment>ST#4_TK#156?</comment>
 		<sql>
 			<![CDATA[
 				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
