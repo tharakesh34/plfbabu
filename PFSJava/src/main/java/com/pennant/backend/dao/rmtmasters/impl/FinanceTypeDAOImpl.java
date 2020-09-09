@@ -353,6 +353,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setAlwSanctionAmtOverride(rs.getBoolean("AlwSanctionAmtOverride"));
 							ft.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
 							ft.setAllowedLoanPurposes(rs.getString("AllowedLoanPurposes"));
+							ft.setAllowedLoanPurposes(rs.getString("SpecificLoanPurposes"));
 							ft.setGrcAdjReq(rs.getBoolean("GrcAdjReq"));
 							ft.setGrcPeriodAftrFullDisb(rs.getBoolean("GrcPeriodAftrFullDisb"));
 							ft.setAutoIncrGrcEndDate(rs.getBoolean("AutoIncrGrcEndDate"));
@@ -360,7 +361,6 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setMaxAutoIncrAllowed(rs.getInt("MaxAutoIncrAllowed"));
 							ft.setAlwLoanSplit(rs.getBoolean("AlwLoanSplit"));
 							ft.setSplitLoanType(rs.getString("SplitLoanType"));
-							ft.setInstBasedSchd(rs.getBoolean("InstBasedSchd"));
 
 							if (StringUtils.trimToEmpty(type).contains("View")) {
 								ft.setFinCategoryDesc(rs.getString("FinCategoryDesc"));
