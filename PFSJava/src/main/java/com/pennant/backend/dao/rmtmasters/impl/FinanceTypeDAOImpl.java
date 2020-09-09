@@ -353,6 +353,14 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setAlwSanctionAmtOverride(rs.getBoolean("AlwSanctionAmtOverride"));
 							ft.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
 							ft.setAllowedLoanPurposes(rs.getString("AllowedLoanPurposes"));
+							ft.setGrcAdjReq(rs.getBoolean("GrcAdjReq"));
+							ft.setGrcPeriodAftrFullDisb(rs.getBoolean("GrcPeriodAftrFullDisb"));
+							ft.setAutoIncrGrcEndDate(rs.getBoolean("AutoIncrGrcEndDate"));
+							ft.setGrcAutoIncrMonths(rs.getInt("GrcAutoIncrMonths"));
+							ft.setMaxAutoIncrAllowed(rs.getInt("MaxAutoIncrAllowed"));
+							ft.setAlwLoanSplit(rs.getBoolean("AlwLoanSplit"));
+							ft.setSplitLoanType(rs.getString("SplitLoanType"));
+							ft.setInstBasedSchd(rs.getBoolean("InstBasedSchd"));
 
 							if (StringUtils.trimToEmpty(type).contains("View")) {
 								ft.setFinCategoryDesc(rs.getString("FinCategoryDesc"));
@@ -645,6 +653,14 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setAllowedLoanPurposes(rs.getString("AllowedLoanPurposes"));
 							ft.setAllowedOCRS(rs.getString("AllowedOCRS"));
 							ft.setSpecificLoanPurposes(rs.getString("SpecificLoanPurposes"));
+							ft.setGrcAdjReq(rs.getBoolean("GrcAdjReq"));
+							ft.setGrcPeriodAftrFullDisb(rs.getBoolean("GrcPeriodAftrFullDisb"));
+							ft.setAutoIncrGrcEndDate(rs.getBoolean("AutoIncrGrcEndDate"));
+							ft.setGrcAutoIncrMonths(rs.getInt("GrcAutoIncrMonths"));
+							ft.setMaxAutoIncrAllowed(rs.getInt("MaxAutoIncrAllowed"));
+							ft.setAlwLoanSplit(rs.getBoolean("AlwLoanSplit"));
+							ft.setSplitLoanType(rs.getString("SplitLoanType"));
+							ft.setInstBasedSchd(rs.getBoolean("InstBasedSchd"));
 
 							if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 								ft.setDownPayRuleCode(rs.getString("DownPayRuleCode"));
