@@ -8264,9 +8264,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		// if Loan Start Date is higher than application Date
-		autoFinStartDateUpdation(getFinanceDetail());
-
 		FinanceDetail aFinanceDetail = new FinanceDetail();
 		Cloner cloner = new Cloner();
 		aFinanceDetail = cloner.deepClone(getFinanceDetail());
