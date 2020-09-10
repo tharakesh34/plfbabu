@@ -2031,6 +2031,27 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 					custCIFList.add(guarantorDetail.getGuarantorCIF());
 				}
 			}
+		} else {
+
+			readOnlyComponent(true, this.custRef);
+			readOnlyAllComponents();
+
+			this.taxExempted.setChecked(false);
+			this.addrLine1.setValue("");
+			this.addrLine2.setValue("");
+			this.addrLine3.setValue("");
+			this.addrLine4.setValue("");
+			this.taxNumber.setValue("");
+			this.country.setValue("");
+			this.country.setDescription("");
+			this.province.setValue("");
+			this.province.setDescription("");
+			this.city.setValue("");
+			this.city.setDescription("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
+			this.addressDetail.setValue("");
+			this.addressDetail.setDescription("");
 		}
 		// set CustomerReference as Filter for finLimitRef
 		Filter custRefFilter[] = new Filter[1];
