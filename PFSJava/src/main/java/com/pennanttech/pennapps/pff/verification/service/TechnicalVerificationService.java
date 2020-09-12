@@ -53,7 +53,7 @@ public interface TechnicalVerificationService {
 
 	List<Verification> getTvValuation(List<Long> verificationIDs, String type);
 
-	Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName);
+	Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName, String docvalue);
 
 	public void getDocumentImage(TechnicalVerification tv);
 

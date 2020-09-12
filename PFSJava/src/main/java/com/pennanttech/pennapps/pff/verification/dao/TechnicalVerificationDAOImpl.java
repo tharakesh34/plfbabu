@@ -34,9 +34,11 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -381,9 +383,8 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 	}
 
 	@Override
-	public Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName) {
+	public Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName, String column) {
 		
-		String column = ImplementationConstants.VER_TV_COLL_ED_PROP_VAL_COLUMN;
 			
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select T1.").append(column).append(" from (select T1.");
@@ -416,8 +417,13 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 	@Override
 	public String getPropertyCity(String collRef, String subModuleName) {
 				
-		String column = ImplementationConstants.VER_TV_COLL_ED_ADDR_COLUMN;
-
+		String column = "CITY";
+		//Agency filter issue based on Collateral City
+		String value = SysParamUtil.getValueAsString(SMTParameterConstants.COLLATERAL_ADDRESSCITY_FOR_VERIFICATIONS);
+		if (StringUtils.isNotBlank(value)) {
+			column = value;
+		}
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select t.").append(column).append(" from (select T1.").append(column);
 		sql.append(", T1.reference from collateral_");

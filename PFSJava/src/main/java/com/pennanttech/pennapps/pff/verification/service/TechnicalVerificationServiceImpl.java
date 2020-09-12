@@ -930,8 +930,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	}
 
 	@Override
-	public Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName) {
-		return technicalVerificationDAO.getCostOfPropertyValue(collRef, subModuleName);
+	public Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName, String column) {
+		return technicalVerificationDAO.getCostOfPropertyValue(collRef, subModuleName, column);
 	}
 
 	@Override

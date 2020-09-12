@@ -36,7 +36,7 @@ public interface TechnicalVerificationDAO extends BasicCrudDao<TechnicalVerifica
 
 	void updateValuationAmount(Verification verification, TableType tableType);
 
-	Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName);
+	Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName, String column);
 
 	String getPropertyCity(String collRef, String subModuleName);
 
