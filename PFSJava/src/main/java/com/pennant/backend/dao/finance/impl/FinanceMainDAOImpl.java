@@ -1731,7 +1731,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql.append(", :ReqLoanAmt, :ReqLoanTenor, :FinOcrRequired, :OfferProduct, :OfferAmount");
 		insertSql.append(", :CustSegmentation, :BaseProduct, :ProcessType, :BureauTimeSeries, :CampaignName");
 		insertSql.append(", :ExistingLanRefNo, :LeadSource, :PoSource, :Rsa, :Verification, :SourcingBranch");
-		insertSql.append(", :SourChannelCategory, :AsmName, :OfferId");
+		insertSql.append(", :SourChannelCategory, :AsmName, :OfferId, :AlwLoanSplit");
 		insertSql.append(", :AlwGrcAdj, :EndGrcPeriodAftrFullDisb, :AutoIncGrcEndDate)");
 
 		logger.debug("insertSql: " + insertSql.toString());
