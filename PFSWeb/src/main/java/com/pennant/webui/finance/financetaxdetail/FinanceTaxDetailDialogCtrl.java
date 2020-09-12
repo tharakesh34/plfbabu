@@ -634,23 +634,58 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	private void setCustCIFFilter(boolean flag) {
 		logger.debug("Entering");
 
-		Object dataObject = custRef.getObject();
-		custID = 0;
-		if (dataObject instanceof String) {
-			this.custRef.setValue(dataObject.toString());
-			this.custRef.setDescription(dataObject.toString());
-		} else {
-			Customer customer = (Customer) dataObject;
+		String applicable = this.applicableFor.getSelectedItem().getValue();
+		this.custRef.setValue("");
+		this.custRef.setDescription("");
+		this.custRef.setErrorMessage("");
+		this.custRef.setConstraint("");
+
+		if (PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER.equals(applicable)) {
+			Customer customer = null;
+			List<CustomerAddres> addressList = null;
+			if (fromLoan) {
+				customer = this.financeDetail.getCustomerDetails().getCustomer();
+				addressList = this.financeDetail.getCustomerDetails().getAddressList();
+			} else {
+				String finRef = this.finReference.getValue();
+				if (StringUtils.isNotBlank(finRef)) {
+					FinanceMain finMain = this.financeTaxDetailService.getFinanceDetailsForService(finRef, "_View",
+							false);
+					customer = this.financeTaxDetailService.getCustomerByID(finMain.getCustID());
+					if (StringUtils.isNotBlank(addressDetail.getValue())) {
+						CustomerAddres addres = getCustomerAddresDAO().getHighPriorityCustAddr(finMain.getCustID(),
+								"_AView");
+						String addrLine1 = getCommaSeperate(addres.getCustAddrHNbr(), addres.getCustFlatNbr(),
+								addres.getCustAddrStreet(), addres.getCustAddrLine1());
+						this.addrLine1.setValue(addrLine1);
+						this.addrLine2.setValue(addres.getCustAddrLine2());
+						this.addrLine3.setValue(addres.getCustAddrLine3());
+						this.addrLine4.setValue(addres.getCustAddrLine4());
+						this.country.setValue(addres.getCustAddrCountry(), addres.getLovDescCustAddrCountryName());
+						this.province.setValue(addres.getCustAddrProvince(), addres.getLovDescCustAddrProvinceName());
+						this.city.setValue(addres.getCustAddrCity(), addres.getLovDescCustAddrCityName());
+						this.pinCode.setValue(addres.getCustAddrZIP(), addres.getLovDescCustAddrZip());
+					}
+
+				}
+			}
+
 			if (customer != null) {
 				this.custRef.setValue(customer.getCustCIF());
 				this.custRef.setDescription(customer.getCustShrtName());
 				this.taxCustId = customer.getCustID();
-				custID = customer.getCustID();
-				if (ImplementationConstants.OLD_ADDRESSCOPY_REQUIRED) {
-					CustomerAddres customerAddres = this.financeTaxDetailService
-							.getHighPriorityCustAddr(customer.getCustID());
-					if (null != customerAddres) {
-						this.addrLine1.setValue(customerAddres.getCustAddrHNbr());
+			}
+			if (CollectionUtils.isNotEmpty(addressList) && flag) {
+				for (CustomerAddres customerAddres : addressList) {
+					if (StringUtils.equals(PennantConstants.KYC_PRIORITY_VERY_HIGH,
+							String.valueOf(customerAddres.getCustAddrPriority()))) {
+						String addrLine1 = getCommaSeperate(customerAddres.getCustAddrHNbr(),
+								customerAddres.getCustFlatNbr(), customerAddres.getCustAddrStreet(),
+								customerAddres.getCustAddrLine1());
+						this.addrLine1.setValue(addrLine1);
+						this.addrLine2.setValue(customerAddres.getCustAddrLine2());
+						this.addrLine3.setValue(customerAddres.getCustAddrLine3());
+						this.addrLine4.setValue(customerAddres.getCustAddrLine4());
 						this.country.setValue(customerAddres.getCustAddrCountry(),
 								customerAddres.getLovDescCustAddrCountryName());
 						this.province.setValue(customerAddres.getCustAddrProvince(),
@@ -661,11 +696,104 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 					}
 				}
 			}
+
+			readOnlyComponentChecking();
+			readOnlyComponent(true, this.custRef);
+			if (customer != null) {
+				this.addressDetail
+						.setFilters(new Filter[] { new Filter("CustID", customer.getCustID(), Filter.OP_EQUAL) });
+			}
+		} else if (PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(applicable)) {
+			if (flag) {
+				resetData();
+			}
+			List<String> custCIFList = new ArrayList<>();
+
+			if (fromLoan) {
+				if (jntDialogCtrl != null) {
+					for (Customer customer : jntDialogCtrl.getJointAccountCustomers()) {
+						custCIFList.add(customer.getCustCIF());
+					}
+				}
+			} else {
+				for (JointAccountDetail jointAccDet : getJointAccountDetailList()) {
+					custCIFList.add(jointAccDet.getCustCIF());
+				}
+			}
+
+			if (custCIFList.isEmpty()) {
+				custCIFList.add("");
+			}
+
+			// set CustomerReference as Filter for finLimitRef
+			Filter custRefFilter[] = new Filter[1];
+			if (CollectionUtils.isNotEmpty(custCIFList)) {
+				custRefFilter[0] = new Filter("CustCif", custCIFList, Filter.OP_IN);
+			} else {
+				custRefFilter[0] = new Filter("CustCif", "", Filter.OP_IN);
+			}
+			this.custRef.setFilters(custRefFilter);
+			readOnlyComponentChecking();
+
+			if (finReference.getValue().isEmpty()) {
+				this.custRef.setFilters(null);
+			}
+			this.addressDetail.setFilters(new Filter[] { new Filter("CustID", 0, Filter.OP_EQUAL) });
+		} else if (PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(applicable)) {
+			List<String> guarantorDetails = new ArrayList<>();
+
+			if (fromLoan) {
+				if (jntDialogCtrl != null) {
+					for (Customer jntDet : jntDialogCtrl.getGuarantorCustomers()) {
+						guarantorDetails.add(jntDet.getCustCIF());
+					}
+				}
+			} else {
+				for (GuarantorDetail guarantorDetail : getGurantorsDetailList()) {
+					guarantorDetails.add(guarantorDetail.getGuarantorCIF());
+				}
+			}
+			if (guarantorDetails.isEmpty()) {
+				guarantorDetails.add("");
+			}
+
+			// set CustomerReference as Filter for finLimitRef
+			Filter custRefFilter[] = new Filter[1];
+			if (CollectionUtils.isNotEmpty(guarantorDetails)) {
+				custRefFilter[0] = new Filter("CustCif", guarantorDetails, Filter.OP_IN);
+			} else {
+				custRefFilter[0] = new Filter("CustCif", "", Filter.OP_IN);
+			}
+			this.custRef.setFilters(custRefFilter);
+
+			if (finReference.getValue().isEmpty()) {
+				this.custRef.setFilters(null);
+			}
+			readOnlyComponentChecking();
+			this.addressDetail.setFilters(new Filter[] { new Filter("CustID", 0, Filter.OP_EQUAL) });
+		} else {
+			readOnlyComponent(true, this.custRef);
+			readOnlyAllComponents();
+
+			this.taxExempted.setChecked(false);
+			this.addrLine1.setValue("");
+			this.addrLine2.setValue("");
+			this.addrLine3.setValue("");
+			this.addrLine4.setValue("");
+			this.taxNumber.setValue("");
+			this.country.setValue("");
+			this.country.setDescription("");
+			this.province.setValue("");
+			this.province.setDescription("");
+			this.city.setValue("");
+			this.city.setDescription("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
+			this.addressDetail.setValue("");
+			this.addressDetail.setDescription("");
 		}
-		if (null == dataObject) {
-			resetData();
-		}
-		logger.debug(Literal.LEAVING);
+
+		logger.debug("Leaving");
 	}
 
 	private void readOnlyComponentChecking() {
@@ -2108,6 +2236,14 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 	public void setGstnValidationService(GSTNValidationService gstnValidationService) {
 		this.gstnValidationService = gstnValidationService;
+	}
+
+	public CustomerAddresDAO getCustomerAddresDAO() {
+		return customerAddresDAO;
+	}
+
+	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
+		this.customerAddresDAO = customerAddresDAO;
 	}
 
 }

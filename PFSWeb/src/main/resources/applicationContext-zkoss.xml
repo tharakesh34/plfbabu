@@ -4432,6 +4432,7 @@
 	<bean id="financeTaxDetailListCtrl" class="com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
 	</bean>
 	<bean id="financeTaxDetailDialogCtrl" class="com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailDialogCtrl"
 		parent="basisCtrl" scope="prototype">
