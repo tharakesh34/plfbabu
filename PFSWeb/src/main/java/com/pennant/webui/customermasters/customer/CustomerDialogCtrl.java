@@ -4732,7 +4732,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private boolean validateEmailDetails(Tab tab) {
 		logger.debug("Entering");
 		boolean isMandAddExist = false;
-		if (this.customerEmailDetailList.isEmpty()) {
+		if (CollectionUtils.isEmpty(customerEmailDetailList)) {
 			return !isMandAddExist;
 		} else {
 			for (CustomerEMail custEmail : this.customerEmailDetailList) {
