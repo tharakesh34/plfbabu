@@ -160,7 +160,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 
 		registerField("Id");
 		registerField("Name");
-		registerField("FileName", SortOrder.ASC);
+		registerField("FileName");
 		registerField("FileLocation");
 		registerField("Status");
 		registerField("EndTime");
