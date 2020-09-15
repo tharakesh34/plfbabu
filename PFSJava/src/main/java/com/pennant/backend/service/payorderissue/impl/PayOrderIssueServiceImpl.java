@@ -730,8 +730,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 					int count = pennyDropDAO.getPennyDropCount(finAdvancePay.getBeneficiaryAccNo(),
 							finAdvancePay.getiFSC());
 					if (count == 0) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41020", errParm, valueParm), usrLanguage));
+					/*	auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41020", errParm, valueParm), usrLanguage));*/
 					}
 				}
 			}
