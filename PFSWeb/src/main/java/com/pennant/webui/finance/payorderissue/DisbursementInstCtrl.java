@@ -339,7 +339,7 @@ public class DisbursementInstCtrl {
 							}
 
 							VASProviderAccDetail vasProviderAccDetail = vASProviderAccDetailDAO
-									.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(), "_view");
+									.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(), vasDetail.getEntityCode(), "_view");
 							if (vasProviderAccDetail != null) {
 								Listitem item = new Listitem();
 								lc = new Listcell("");
