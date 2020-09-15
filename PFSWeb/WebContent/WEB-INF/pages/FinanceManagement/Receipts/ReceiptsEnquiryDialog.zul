@@ -204,6 +204,14 @@
 														<datebox id="realizationDate" width="100px" disabled="true" />
 													</hbox>
 												</row>
+												<row>
+													<label id="label_ReceiptPayment_KnockOffType"
+														value="${c:l('label_ReceiptPayment_KnockOffType.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="knockOffType" width="190px" disabled="true" />
+													</hbox>
+												</row>
 												<row id="row_BounceReason" visible="false">
 													<label id="label_ReceiptDialog_BounceReason" value="${c:l('label_ReceiptDialog_BounceReason.value')}" />
 													<extendedcombobox id="bounceCode" />
