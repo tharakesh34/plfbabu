@@ -572,6 +572,13 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		this.address3.setValue(aBuilderCompany.getAddress3());
 		this.city.setValue(aBuilderCompany.getCity());
 		this.state.setValue(aBuilderCompany.getState());
+
+		if (aBuilderCompany.getPinCodeId() != null) {
+			this.code.setAttribute("pinCodeId", aBuilderCompany.getPinCodeId());
+		} else {
+			this.code.setAttribute("pinCodeId", null);
+		}
+
 		this.code.setValue(StringUtils.trimToEmpty(aBuilderCompany.getCode()),
 				StringUtils.trimToEmpty(aBuilderCompany.getAreaName()));
 		this.devavailablity.setValue(aBuilderCompany.getDevavailablity());
@@ -611,6 +618,14 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		this.recordStatus.setValue(aBuilderCompany.getRecordStatus());
 		doEnableRequiredFields(aBuilderCompany.getApfType());
 
+		if (!aBuilderCompany.isNew()) {
+			Filter[] filterPin = new Filter[1];
+
+			if (aBuilderCompany.getCity() != null && !aBuilderCompany.getCity().isEmpty()) {
+				filterPin[0] = new Filter("City", aBuilderCompany.getCity(), Filter.OP_EQUAL);
+				this.code.setFilters(filterPin);
+			}
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -688,6 +703,14 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 			wve.add(we);
 		}
 		try {
+			Object obj = this.code.getAttribute("pinCodeId");
+			if (obj != null) {
+				if (!StringUtils.isEmpty(obj.toString())) {
+					aBuilderCompany.setPinCodeId(Long.valueOf((obj.toString())));
+				}
+			} else {
+				aBuilderCompany.setPinCodeId(null);
+			}
 			aBuilderCompany.setCode(this.code.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);

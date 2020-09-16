@@ -195,6 +195,15 @@ public class AEAmounts implements Serializable {
 
 		advancePaymentService.setIntAdvFlag(fm, amountCodes);
 
+		// NPA and Provision
+		amountCodes.setAmzS(pftDetail.getPftAmzSusp());
+		amountCodes.setAccrueS(pftDetail.getPftAccrueSusp());
+
+		if (pftDetail.getCurODDays() > 0 && pftDetail.getPftAmzSusp().compareTo(BigDecimal.ZERO) > 0) {
+			amountCodes.setAmz(BigDecimal.ZERO);
+			amountCodes.setAccrue(BigDecimal.ZERO);
+		}
+
 		logger.debug("Leaving");
 		return aeEvent;
 

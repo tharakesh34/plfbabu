@@ -15,7 +15,6 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -57,7 +56,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.validation.AddDisbursementGroup;
 import com.pennant.validation.AddRateChangeGroup;
@@ -579,13 +578,18 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private boolean checkUpFrontDuplicateRequest(FinServiceInstruction finServiceInstruction, String moduleDefiner) {
 		List<FinReceiptDetail> receiptDetails = finReceiptDetailDAO
 				.getFinReceiptDetailByReference(finServiceInstruction.getFinReference());
-		if (finServiceInstruction.getReceiptDetail() != null) {
-			if (receiptDetails != null && !receiptDetails.isEmpty()) {
-				for (FinReceiptDetail finReceiptDetail : receiptDetails) {
-					if (finReceiptDetail.getAmount().compareTo(finServiceInstruction.getAmount()) == 0
-							&& StringUtils.equals(finReceiptDetail.getTransactionRef(),
-									finServiceInstruction.getReceiptDetail().getTransactionRef())) {
-						return true;
+		String paymentMode = finServiceInstruction.getPaymentMode();
+		if (paymentMode.equals(RepayConstants.RECEIPTMODE_RTGS) || paymentMode.equals(RepayConstants.RECEIPTMODE_NEFT)
+				|| paymentMode.equals(RepayConstants.RECEIPTMODE_IMPS)
+				|| paymentMode.equals(RepayConstants.RECEIPTMODE_ESCROW)) {
+			if (finServiceInstruction.getReceiptDetail() != null) {
+				if (receiptDetails != null && !receiptDetails.isEmpty()) {
+					for (FinReceiptDetail finReceiptDetail : receiptDetails) {
+						if (finReceiptDetail.getAmount().compareTo(finServiceInstruction.getAmount()) == 0
+								&& StringUtils.equals(finReceiptDetail.getTransactionRef(),
+										finServiceInstruction.getReceiptDetail().getTransactionRef())) {
+							return true;
+						}
 					}
 				}
 			}

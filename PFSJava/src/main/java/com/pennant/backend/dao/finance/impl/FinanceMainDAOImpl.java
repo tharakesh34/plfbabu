@@ -3905,12 +3905,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append("select fm.FinType, AutoRejectionDays, FinReference, FinStartDate");
 		sql.append(" From FinanceMain_Temp fm");
 		sql.append(" Inner join RMTFinanceTypes ft on ft.FinType = fm.FinType");
-		sql.append(" where ft.AutoRejectionDays > 0 and fm.RecordType = :RecordType");
+		sql.append(" where ft.AutoRejectionDays > 0 and fm.RecordType = :RecordType and fm.FinIsActive = :FinIsActive");
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("RecordType", "NEW");
+		parameterSource.addValue("FinIsActive", 1);
 
-		logger.debug("selectSql: " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), parameterSource, new RowMapper<FinanceMain>() {
@@ -3927,7 +3928,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			});
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
@@ -5959,10 +5960,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public List<UserPendingCases> getUserPendingCasesDetails(long usrId, String roleCodes) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder(" SELECT t1.finreference, t1.recordstatus");
-		sql.append(" ,t1.rolecode, t2.roledesc FROM financemain_temp t1");
-		sql.append("  JOIN secroles t2 ON t1.nextrolecode=t2.rolecd");
-		sql.append(" Where t1.nextrolecode = :rolecd");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("  T1.finreference, T1.recordstatus");
+		sql.append(", T1.rolecode, T2.roledesc, T1.FinType, T1.InitiateDate");
+		sql.append(", T3.CustShrtName, T3.PhoneNumber");
+		sql.append(" FROM Financemain_Temp T1");
+		sql.append(" JOIN Secroles T2 ON T1.nextrolecode = T2.rolecd");
+		sql.append(" JOIN Customers T3 ON T1.custid = T3.custid");
+		sql.append(" Where T1.nextrolecode = :rolecd");
 
 		logger.trace(Literal.SQL + sql.toString());
 

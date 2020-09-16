@@ -53,7 +53,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	private static final Logger logger = Logger.getLogger(ManualProvisioningDialogCtrl.class);
 
 	protected Window window_ManualProvisioningDialog;
-	
+
 	//Loan Summary
 	protected Textbox finReference;
 	protected Textbox customer;
@@ -64,7 +64,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	protected CurrencyBox pricipalOutstanding;
 	protected CurrencyBox totalOverdue;
 	protected Intbox dPD;
-	
+
 	//Current NPA Summary
 	protected Textbox regStage;
 	protected Textbox internalStage;
@@ -73,7 +73,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	protected CurrencyBox regProvisionAmount;
 	protected CurrencyBox internalProvisionAmount;
 	protected Checkbox currManualProvision;
-	
+
 	//New NPA Summary
 	protected Combobox newRegStage;
 	protected Combobox newInternalStage;
@@ -82,7 +82,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	protected CurrencyBox newRegProvisionAmount;
 	protected CurrencyBox newInternalProvisionAmount;
 	protected Checkbox manualProvision;
-	
+
 	protected String enquiry;
 	private List<ValueLabel> assetStageList;
 	private Provision provision;
@@ -178,7 +178,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		this.internalStage.setMaxlength(8);
 		this.newRegStage.setMaxlength(20);
 		this.newInternalStage.setMaxlength(20);
-		
+
 		if (StringUtils.equals(ProvisionConstants.PROVISION_BOOKS_REG,
 				SysParamUtil.getValueAsString(SMTParameterConstants.PROVISION_BOOKS))) {
 			provisionInternal = false;
@@ -306,7 +306,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			if (provisionInternal) {
 				this.internalStage.setValue(provision.getOldProvision().getAssetCode());
 				this.internalProvisionPercentage.setValue(provision.getOldProvision().getPrvovisionRate());
-				this.internalProvisionAmount.setValue(PennantApplicationUtil.formateAmount(provision.getOldProvision().getProvisionedAmt(), format));
+				this.internalProvisionAmount.setValue(
+						PennantApplicationUtil.formateAmount(provision.getOldProvision().getProvisionedAmt(), format));
 
 				this.regStage.setValue("");
 				this.regProvisionPercentage.setValue(BigDecimal.ZERO);
@@ -315,7 +316,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			} else {
 				this.regStage.setValue(provision.getOldProvision().getAssetCode());
 				this.regProvisionPercentage.setValue(provision.getOldProvision().getPrvovisionRate());
-				this.regProvisionAmount.setValue(PennantApplicationUtil.formateAmount(provision.getOldProvision().getProvisionedAmt(), format));
+				this.regProvisionAmount.setValue(
+						PennantApplicationUtil.formateAmount(provision.getOldProvision().getProvisionedAmt(), format));
 
 				this.internalStage.setValue("");
 				this.internalProvisionPercentage.setValue(BigDecimal.ZERO);
@@ -328,7 +330,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			if (provisionInternal) {
 				this.internalStage.setValue(provision.getOldProvision().getAssetCode());
 				this.internalProvisionPercentage.setValue(provision.getOldProvision().getPrvovisionRate());
-				this.internalProvisionAmount.setValue(PennantApplicationUtil.formateAmount(provision.getOldProvision().getProvisionedAmt(), format));
+				this.internalProvisionAmount.setValue(
+						PennantApplicationUtil.formateAmount(provision.getOldProvision().getProvisionedAmt(), format));
 
 				this.regStage.setValue("");
 				this.regProvisionPercentage.setValue(BigDecimal.ZERO);
@@ -337,7 +340,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			} else {
 				this.regStage.setValue(provision.getOldProvision().getAssetCode());
 				this.regProvisionPercentage.setValue(provision.getOldProvision().getPrvovisionRate());
-				this.regProvisionAmount.setValue(PennantApplicationUtil.formateAmount(provision.getOldProvision().getProvisionedAmt(), format));
+				this.regProvisionAmount.setValue(
+						PennantApplicationUtil.formateAmount(provision.getOldProvision().getProvisionedAmt(), format));
 
 				this.internalStage.setValue("");
 				this.internalProvisionPercentage.setValue(BigDecimal.ZERO);
@@ -350,7 +354,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		if (provisionInternal) {
 			fillComboBox(this.newInternalStage, provision.getAssetCode(), this.assetStageList, "");
 			this.newInternalProvisionPercentage.setValue(provision.getPrvovisionRate());
-			this.newInternalProvisionAmount.setValue(PennantApplicationUtil.formateAmount(provision.getProvisionedAmt(), format));
+			this.newInternalProvisionAmount
+					.setValue(PennantApplicationUtil.formateAmount(provision.getProvisionedAmt(), format));
 
 			fillComboBox(this.newRegStage, "", this.assetStageList, "");
 			this.newRegProvisionPercentage.setValue(BigDecimal.ZERO);
@@ -359,7 +364,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		} else {
 			fillComboBox(this.newRegStage, provision.getAssetCode(), this.assetStageList, "");
 			this.newRegProvisionPercentage.setValue(provision.getPrvovisionRate());
-			this.newRegProvisionAmount.setValue(PennantApplicationUtil.formateAmount(provision.getProvisionedAmt(), format));
+			this.newRegProvisionAmount
+					.setValue(PennantApplicationUtil.formateAmount(provision.getProvisionedAmt(), format));
 
 			fillComboBox(this.newInternalStage, "", this.assetStageList, "");
 			this.newInternalProvisionPercentage.setValue(BigDecimal.ZERO);
@@ -381,14 +387,14 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
-		
+
 		if (provisionInternal) {
 			try {
 				provision.setAssetCode(this.newInternalStage.getSelectedItem().getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			try {
 				provision.setPrvovisionRate(this.newInternalProvisionPercentage.getValue());
 			} catch (WrongValueException we) {
@@ -407,33 +413,33 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			try {
 				provision.setPrvovisionRate(this.newRegProvisionPercentage.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			try {
-				provision.setProvisionedAmt(PennantApplicationUtil
-						.unFormateAmount(this.newRegProvisionAmount.getValidateValue(), format));
+				provision.setProvisionedAmt(
+						PennantApplicationUtil.unFormateAmount(this.newRegProvisionAmount.getValidateValue(), format));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 		}
-		
+
 		try {
 			provision.setAssetStageOrdr(getNpaProvisionDetail().getAssetStageOrder());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			provision.setManualProvision(this.manualProvision.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 
 		if (!wve.isEmpty()) {
@@ -466,7 +472,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 				if (StringUtils.isNotBlank(provision.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
-				if(enqiryModule){
+				if (enqiryModule) {
 					this.btnNotes.setVisible(false);
 				}
 				doEdit();
@@ -493,10 +499,10 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 		setValidationOn(true);
-		if(provisionInternal){
+		if (provisionInternal) {
 			this.newInternalStage.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_ManualProvisioningDialog_NewInternalStage.value"), assetStageList, true));
-		}else{
+		} else {
 			this.newRegStage.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_ManualProvisioningDialog_NewRegStage.value"), assetStageList, true));
 		}
@@ -555,7 +561,6 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			this.newRegProvisionAmount.setReadonly(isReadOnly("ManualProvisioning_NewRegProvisionAmount"));
 			this.newInternalProvisionAmount.setReadonly(isReadOnly("ManualProvisioning_NewInternalProvisionAmount"));
 
-			
 		}
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -865,9 +870,9 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		return processCompleted;
 	}
 
-	
 	/**
 	 * NPA Stage List
+	 * 
 	 * @param provision2
 	 * @return
 	 */
@@ -877,7 +882,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 		if (CollectionUtils.isNotEmpty(details)) {
 			for (NPAProvisionDetail provisionDetail : details) {
-				stageList.add(new ValueLabel(provisionDetail.getAssetCode(), String.valueOf(provisionDetail.getAssetCode())));
+				stageList.add(
+						new ValueLabel(provisionDetail.getAssetCode(), String.valueOf(provisionDetail.getAssetCode())));
 				if (StringUtils.equals(provisionDetail.getAssetCode(), provision.getAssetCode())) {
 					setNpaProvisionDetail(provisionDetail);
 				}
@@ -888,22 +894,23 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 	/**
 	 * NPA Stage selection
+	 * 
 	 * @param event
 	 */
 	public void onSelect$newRegStage(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		String stage = newRegStage.getSelectedItem().getLabel();
-		
+
 		this.newRegProvisionPercentage.setValue(BigDecimal.ZERO);
 		this.newRegProvisionAmount.setValue(BigDecimal.ZERO);
-		
+
 		for (NPAProvisionDetail detail : provision.getNpaHeader().getProvisionDetailsList()) {
 			if (StringUtils.equals(detail.getAssetCode(), stage)) {
-				
+
 				BigDecimal provisonAmt = (provision.getPriBal().multiply(detail.getRegSecPerc()))
 						.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
-				
+
 				this.newRegProvisionPercentage.setValue(detail.getRegSecPerc());
 				this.newRegProvisionAmount.setValue(PennantApplicationUtil.formateAmount(provisonAmt, format));
 				break;
@@ -918,24 +925,25 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 	/**
 	 * NPA Stage selection
+	 * 
 	 * @param event
 	 */
 	public void onSelect$newInternalStage(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		String stage = newInternalStage.getSelectedItem().getLabel();
-		
+
 		this.newInternalProvisionPercentage.setValue(BigDecimal.ZERO);
 		this.newInternalProvisionAmount.setValue(BigDecimal.ZERO);
-		
+
 		for (NPAProvisionDetail detail : provision.getNpaHeader().getProvisionDetailsList()) {
 			if (StringUtils.equals(detail.getAssetCode(), stage)) {
-				
-				BigDecimal provisonAmt = (provision.getPriBal().multiply(detail.getRegSecPerc()))
+
+				BigDecimal provisonAmt = (provision.getPriBal().multiply(detail.getIntSecPerc()))
 						.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
-				
+
 				this.newInternalProvisionAmount.setValue(PennantApplicationUtil.formateAmount(provisonAmt, format));
-				this.newInternalProvisionPercentage.setValue(detail.getRegSecPerc());
+				this.newInternalProvisionPercentage.setValue(detail.getIntSecPerc());
 				setNpaProvisionDetail(detail);
 				break;
 			} else {
@@ -946,6 +954,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * Get Audit Header Details
 	 * 

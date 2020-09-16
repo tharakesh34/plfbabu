@@ -1567,9 +1567,13 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		}
 
 		ArrayList<String> list = new ArrayList<>();
-		list.add(RepayConstants.ALLOCATION_BOUNCE);
-		list.add(RepayConstants.ALLOCATION_ODC);
-		list.add(RepayConstants.ALLOCATION_LPFT);
+
+		if (!ImplementationConstants.ALLOW_TDS_ON_FEE) {
+			list.add(RepayConstants.ALLOCATION_BOUNCE);
+			list.add(RepayConstants.ALLOCATION_ODC);
+			list.add(RepayConstants.ALLOCATION_LPFT);
+		}
+
 		list.add("KOFF_EMI");
 		list.add("KOFF_LPI");
 

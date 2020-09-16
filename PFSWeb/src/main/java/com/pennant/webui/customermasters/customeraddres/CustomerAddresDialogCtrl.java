@@ -500,6 +500,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 		if (aCustomerAddres.getPinCodeId() != null) {
 			this.custAddrZIP.setAttribute("pinCodeId", aCustomerAddres.getPinCodeId());
+		} else {
+			this.custAddrZIP.setAttribute("pinCodeId", null);
 		}
 
 		this.custAddrZIP.setValue(aCustomerAddres.getCustAddrZIP(), aCustomerAddres.getLovDescCustAddrZip());
@@ -530,16 +532,44 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 		fillComboBox(this.custAddrPriority, String.valueOf(aCustomerAddres.getCustAddrPriority()), CustomerPriorityList,
 				"");
-		this.recordStatus.setValue(aCustomerAddres.getRecordStatus());
-		Filter[] filters = new Filter[1];
+
+		ArrayList<Filter> filters = new ArrayList<Filter>();
+
+		if (this.custAddrCountry.getValue() != null && !this.custAddrCountry.getValue().isEmpty()) {
+			Filter filterPin0 = new Filter("PCCountry", this.custAddrCountry.getValue(), Filter.OP_EQUAL);
+			filters.add(filterPin0);
+		}
+
+		if (this.custAddrProvince.getValue() != null && !this.custAddrProvince.getValue().isEmpty()) {
+			Filter filterPin1 = new Filter("PCProvince", this.custAddrProvince.getValue(), Filter.OP_EQUAL);
+			filters.add(filterPin1);
+		}
+
+		if (this.custAddrCity.getValue() != null && !this.custAddrCity.getValue().isEmpty()) {
+			Filter filterPin2 = new Filter("City", this.custAddrCity.getValue(), Filter.OP_EQUAL);
+			filters.add(filterPin2);
+		}
+
+		Filter[] filterPin3 = new Filter[1];
 		if (!StringUtils.isEmpty(this.custCIF.getValue())) {
 			if (isFinanceProcess && custCIFs != null) {
-				filters[0] = new Filter("CustCIF", custCIFs, Filter.OP_IN);
+				filterPin3[0] = new Filter("CustCIF", custCIFs, Filter.OP_IN);
 			} else {
-				filters[0] = new Filter("CustCIF", this.custCIF.getValue(), Filter.OP_NOT_EQUAL);
+				filterPin3[0] = new Filter("CustCIF", this.custCIF.getValue(), Filter.OP_NOT_EQUAL);
 			}
-			custCifAlternate.setFilters(filters);
+
+			filters.add(filterPin3[0]);
+			custCifAlternate.setFilters(filterPin3);
 		}
+
+		Filter[] filterPin = new Filter[filters.size()];
+		for (int i = 0; i < filters.size(); i++) {
+			filterPin[i] = filters.get(i);
+		}
+		this.custAddrZIP.setFilters(filterPin);
+
+		this.recordStatus.setValue(aCustomerAddres.getRecordStatus());
+
 		logger.debug("Leaving");
 	}
 
@@ -620,11 +650,15 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		}
 		try {
 			Object obj = this.custAddrZIP.getAttribute("pinCodeId");
+
 			if (obj != null) {
 				if (!StringUtils.isEmpty(obj.toString())) {
 					aCustomerAddres.setPinCodeId(Long.valueOf((obj.toString())));
 				}
+			} else {
+				aCustomerAddres.setPinCodeId(null);
 			}
+
 			aCustomerAddres.setCustAddrZIP(this.custAddrZIP.getValue());
 			aCustomerAddres.setLovDescCustAddrZip(this.custAddrZIP.getDescription());
 		} catch (WrongValueException we) {

@@ -142,6 +142,9 @@ public class InstitutionLimitRebuild {
 			financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), sqlQuery, false));
 			financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), sqlQuery, true));
 
+			financeMains.forEach(financeMain -> {
+				financeMain.setOsPriBal(limitDetailDAO.getOsPriBal(financeMain.getFinReference()));
+			});
 			Map<Long, List<FinanceMain>> custmains = new HashMap<Long, List<FinanceMain>>();
 
 			StepUtil.INSTITUTION_LIMITS_UPDATE.setTotalRecords(financeMains.size());
@@ -227,7 +230,7 @@ public class InstitutionLimitRebuild {
 		BigDecimal tranReseervAmt = finMain.getFinAssetValue();
 
 		if (finMain.isLimitValid()) {
-			//check the there is block in not then don not proceed
+			// check the there is block in not then don not proceed
 			LimitTransactionDetail transaction = getTransaction(finRef, inProgressHeaderID, 0);
 			if (transaction == null) {
 				// then no need block the amount
@@ -254,7 +257,7 @@ public class InstitutionLimitRebuild {
 		// convert to limit currency
 		BigDecimal limitReserveAmt = CalculationUtil.getConvertedAmount(finCcy, limitCcy, tranReseervAmt);
 		BigDecimal limitUtilisedAmt = CalculationUtil.getConvertedAmount(finCcy, limitCcy, tranUtilisedAmt);
-
+		BigDecimal osPriBal = CalculationUtil.getConvertedAmount(finCcy, limitCcy, finMain.getOsPriBal());
 		// update reserve and utilization
 		for (LimitDetails details : list) {
 			LimitDetails limitToUpdate = getLimitdetails(limitDetailsList, details);
@@ -262,12 +265,16 @@ public class InstitutionLimitRebuild {
 			// add to reserve
 			limitToUpdate.setReservedLimit(limitToUpdate.getReservedLimit().add(limitReserveAmt));
 
+			// add to osPriBal
+			limitToUpdate.setOsPriBal(limitToUpdate.getOsPriBal().add(osPriBal));
+
 			// if records are not approved then we are considering reserve only
 			if (finMain.isLimitValid()) {
 				continue;
 			}
 
-			//not required in case of multiple disbursement with max disbursement check
+			// not required in case of multiple disbursement with max
+			// disbursement check
 			if (addTempblock) {
 				// for Under process loans in addDisbursment
 				LimitTransactionDetail transaction = getTransaction(finRef, inProgressHeaderID, -1);

@@ -55,6 +55,7 @@ import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
 import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -91,7 +92,9 @@ public class NPAService extends ServiceHelper {
 		String strCustId = custEODEvent.getCustIdAsString();
 		logger.info("Provision Calculation started fro the Customer ID {}", strCustId);
 
-		if (!(DateUtil.compare(custEODEvent.getEodDate(), DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0)) {
+		Date eodDate = custEODEvent.getEodDate();
+		Date monthEnd = DateUtil.getMonthEnd(eodDate);
+		if (!(DateUtil.compare(eodDate, monthEnd) == 0)) {
 			return custEODEvent;
 		}
 
@@ -171,9 +174,8 @@ public class NPAService extends ServiceHelper {
 		provision.setDueFromDate(pftDetail.getPrvODDate());
 		provision.setDueDays(pftDetail.getCurODDays());
 
-		//Calculating Provision Amount
-		BigDecimal provisonAmt = (provision.getPriBal().multiply(provision.getPrvovisionRate()))
-				.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+		BigDecimal provisonAmt = calculateProvisionAmount(valueDate, finEODEvent.getFinanceScheduleDetails(),
+				provision.getPrvovisionRate());
 
 		provision.setProvisionAmtCal(provisonAmt);
 		provision.setProvisionedAmt(provisonAmt);
@@ -192,6 +194,38 @@ public class NPAService extends ServiceHelper {
 		logger.info("Provision Calculation completed fro the FinReference  {}", finReference);
 
 		return finEODEvent;
+	}
+
+	private BigDecimal calculateProvisionAmount(Date valueDate, List<FinanceScheduleDetail> schdules,
+			BigDecimal prvovisionRate) {
+		Date monthStart = DateUtil.getMonthStart(valueDate);
+		Date monthEnd = DateUtil.getMonthEnd(valueDate);
+
+		BigDecimal provisonAmt = BigDecimal.ZERO;
+
+		for (FinanceScheduleDetail schd : schdules) {
+			if (schd.getSchDate().compareTo(monthStart) >= 0 && schd.getSchDate().compareTo(monthEnd) <= 0) {
+				provisonAmt = schd.getClosingBalance();
+				break;
+			}
+		}
+
+		for (FinanceScheduleDetail schd : schdules) {
+			if (schd.getSchDate().compareTo(valueDate) <= 0) {
+				provisonAmt = provisonAmt.add(schd.getPrincipalSchd());
+				provisonAmt = provisonAmt.add(schd.getProfitSchd());
+
+				provisonAmt = provisonAmt.subtract(schd.getSchdPriPaid());
+				provisonAmt = provisonAmt.subtract(schd.getSchdPftPaid());
+
+				provisonAmt = provisonAmt.subtract(schd.getSchdPftWaiver());
+			}
+		}
+
+		//Calculating Provision Amount
+		provisonAmt = provisonAmt.multiply(prvovisionRate).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+
+		return provisonAmt;
 	}
 
 	private Provision getProvision(FinEODEvent finEODEvent, String provisionBooks) throws SQLException {
@@ -498,6 +532,9 @@ public class NPAService extends ServiceHelper {
 				eventCode, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
 
 		aeEvent.setValueDate(custEODEvent.getProvisionEffectiveDate());
+		if (aeEvent.getValueDate() == null) {
+			aeEvent.setValueDate(custEODEvent.getEodValueDate());
+		}
 
 		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
 		aeAmountCodes.setProvDue(provision.getProvisionDue());

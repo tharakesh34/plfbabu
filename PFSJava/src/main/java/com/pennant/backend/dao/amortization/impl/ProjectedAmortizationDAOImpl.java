@@ -360,7 +360,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, AccruedOn, AMZPercentage, PartialAMZPerc, MonthEnd");
 		sql.append(" from ProjectedAccruals");
-		sql.append("  Where FinReference = ? AND AccruedOn >= ?");
+		sql.append("  Where FinReference = ? AND AccruedOn >= ? order by AccruedOn");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -796,6 +796,9 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 				} else if (App.DATABASE == Database.ORACLE) {
 					logger.trace(Literal.SQL + UPDATE_ORCL_RC);
 					return this.jdbcTemplate.update(UPDATE_ORCL_RC, source);
+				} else {
+					logger.trace(Literal.SQL + UPDATE_SQL);
+					return this.jdbcTemplate.update(UPDATE_SQL, source);
 				}
 			}
 

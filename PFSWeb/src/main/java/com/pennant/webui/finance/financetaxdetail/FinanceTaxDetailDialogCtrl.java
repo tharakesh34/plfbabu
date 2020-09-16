@@ -1190,6 +1190,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 		if (aFinanceTaxDetail.getPinCodeId() != null) {
 			this.pinCode.setAttribute("pinCodeId", aFinanceTaxDetail.getPinCodeId());
+		} else {
+			this.pinCode.setAttribute("pinCodeId", null);
 		}
 
 		this.pinCode.setValue(aFinanceTaxDetail.getPinCode(), aFinanceTaxDetail.getPinCodeName());
@@ -1232,6 +1234,31 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			}
 		} else {
 			setCustomerFilters(this.applicableFor.getSelectedItem().getValue(), false);
+		}
+
+		if (!aFinanceTaxDetail.isNew()) {
+			ArrayList<Filter> filters = new ArrayList<Filter>();
+
+			if (this.country.getValue() != null && !this.country.getValue().isEmpty()) {
+				Filter filterPin0 = new Filter("PCCountry", this.country.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin0);
+			}
+
+			if (this.province.getValue() != null && !this.province.getValue().isEmpty()) {
+				Filter filterPin1 = new Filter("PCProvince", this.province.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin1);
+			}
+
+			if (this.city.getValue() != null && !this.city.getValue().isEmpty()) {
+				Filter filterPin2 = new Filter("City", this.city.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin2);
+			}
+
+			Filter[] filterPin = new Filter[filters.size()];
+			for (int i = 0; i < filters.size(); i++) {
+				filterPin[i] = filters.get(i);
+			}
+			this.pinCode.setFilters(filterPin);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1355,6 +1382,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 				if (!StringUtils.isEmpty(obj.toString())) {
 					aFinanceTaxDetail.setPinCodeId(Long.valueOf((obj.toString())));
 				}
+			} else {
+				aFinanceTaxDetail.setPinCodeId(null);
 			}
 			aFinanceTaxDetail.setPinCode(this.pinCode.getValue());
 		} catch (WrongValueException we) {

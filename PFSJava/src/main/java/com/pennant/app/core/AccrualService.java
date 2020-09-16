@@ -679,23 +679,12 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	private void setProvisionData(FinanceProfitDetail pftDetail) {
-		if (pftDetail.getCurODDays() >= 0) {
+		if (pftDetail.getCurODDays() > 0) {
 			BigDecimal pftAmz = pftDetail.getPftAmz();
-			BigDecimal pftAmzNormal = pftDetail.getPftAmzNormal();
-			BigDecimal pftAmzPD = pftDetail.getPftAmzPD();
 
-			/*
-			 * pftDetail.setPftAmzSusp(pftAmz.subtract(pftAmzNormal).subtract(pftAmzPD));
-			 * pftDetail.setPftAccrueSusp(pftDetail.getPftAccrued().subtract(pftDetail.getPftAccrueSusp()));
-			 */
 			pftDetail.setPftAmzSusp(pftAmz);
 			pftDetail.setPftAccrueSusp(pftDetail.getPftAccrued());
 
-			pftDetail.setPftAmz(BigDecimal.ZERO);
-			pftDetail.setPftAccrued(BigDecimal.ZERO);
-		} else {
-			pftDetail.setPftAmzSusp(BigDecimal.ZERO);
-			pftDetail.setPftAccrueSusp(BigDecimal.ZERO);
 		}
 		pftDetail.setPftInSusp(false);
 	}

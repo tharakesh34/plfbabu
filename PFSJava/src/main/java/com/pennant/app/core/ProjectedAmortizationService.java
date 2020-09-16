@@ -87,6 +87,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class ProjectedAmortizationService {
@@ -1220,9 +1221,9 @@ public class ProjectedAmortizationService {
 	}
 
 	private String prepareMapKey(Date monthEndDate, ProjectedAmortization incomeAMZ) {
-
+		String srtMonthEndDate = DateUtil.format(monthEndDate, DateFormat.LONG_DATE);
 		StringBuilder key = new StringBuilder();
-		key.append(monthEndDate + "_");
+		key.append(srtMonthEndDate + "_");
 		key.append(incomeAMZ.getIncomeType() + "_");
 		key.append(incomeAMZ.getReferenceID());
 

@@ -450,6 +450,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		if (dataObject instanceof String) {
 			this.city.setValue("");
 			this.city.setDescription("");
+			this.city.setAttribute("City", null);
 			fillPindetails(null, null);
 		} else {
 			City city = (City) dataObject;
@@ -460,6 +461,10 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 				this.province.setValue(city.getPCProvince());
 				this.province.setDescription(city.getLovDescPCProvinceName());
 				cityValue = this.city.getValue();
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+				cityValue = city.getPCCity();
+				fillPindetails(cityValue, this.province.getValue());
 			} else {
 				fillCitydetails(province.getValue());
 			}
@@ -595,6 +600,25 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 
 		this.recordStatus.setValue(aBuilderGroup.getRecordStatus());
 
+		if (!aBuilderGroup.isNew()) {
+			ArrayList<Filter> filters = new ArrayList<Filter>();
+
+			if (aBuilderGroup.getProvince() != null && !aBuilderGroup.getProvince().isEmpty()) {
+				Filter filterPin1 = new Filter("PCProvince", this.province.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin1);
+			}
+			if (aBuilderGroup.getCity() != null && !aBuilderGroup.getCity().isEmpty()) {
+				Filter filterPin2 = new Filter("City", this.city.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin2);
+			}
+			Filter[] filterPin = new Filter[filters.size()];
+
+			for (int i = 0; i < filters.size(); i++) {
+				filterPin[i] = filters.get(i);
+			}
+			this.pinCode.setFilters(filterPin);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -639,7 +663,12 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		//Province
 		try {
 			this.province.getValidatedValue();
-			aBuilderGroup.setProvince(this.province.getValue());
+			Object obj = this.province.getAttribute("Province");
+			if (obj != null) {
+				aBuilderGroup.setProvince(obj.toString());
+			} else {
+				aBuilderGroup.setProvince(null);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -649,6 +678,9 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 			Object obj = this.pinCode.getAttribute("PinCode");
 			if (obj != null) {
 				aBuilderGroup.setPinCodeId(Long.parseLong(obj.toString()));
+			} else {
+				aBuilderGroup.setPinCodeId(null);
+				aBuilderGroup.setPoBox(this.pinCode.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

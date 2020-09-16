@@ -1082,8 +1082,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 		}
 
-		if ("doReject".equalsIgnoreCase(method) || "doApprove".equalsIgnoreCase(method)
-				|| "saveOrUpdate".equalsIgnoreCase(method)) {
+		if ("doReject".equalsIgnoreCase(method) || "doApprove".equalsIgnoreCase(method)) {
 			List<FinFeeDetail> feeDetails = finScheduleData.getFinFeeDetailList();
 			BigDecimal totalPaidFee = BigDecimal.ZERO;
 			List<Long> feeIds = new ArrayList<Long>(1);

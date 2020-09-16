@@ -6770,17 +6770,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			apiCall = true;
 		}
 		if (isAutoReject) {
-			financeMain = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "_Temp", false);
+			financeMain = financeMainDAO.getFinanceMainById(financeMain.getFinReference(), "_Temp", false);
 			//TODO for API Fix me Issue in Reject Loan 
 			if (apiCall) {
 				if (financeMain == null) {
 					financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 				}
 				financeMain.setFinSourceID(PennantConstants.FINSOURCE_ID_API);
-				financeMain.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
-				financeMain.setNextTaskId("");
-				financeMain.setNextRoleCode("");
 			}
+			financeMain.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
+			financeMain.setNextTaskId("");
+			financeMain.setNextRoleCode("");
 
 			FinScheduleData finScheduleData = new FinScheduleData();
 			finScheduleData.setFinanceMain(financeMain);
@@ -6800,11 +6800,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// PSD #139669 - Rejection of Loan under loan queue gives 900 error
 		financeMain.setFinIsActive(false);
 		//TODO for API Fix me
-		FinanceMain financeMainAvl = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "_Temp",
-				false);
-		financeMain.setLastMntOn(new Timestamp(DateUtility.getAppDate().getTime()));
+		FinanceMain financeMainAvl = financeMainDAO.getFinanceMainById(financeMain.getFinReference(), "_Temp", false);
+		financeMain.setLastMntOn(new Timestamp(SysParamUtil.getAppDate().getTime()));
 		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && financeMainAvl != null) {
-			getFinanceMainDAO().updateRejectFinanceMain(financeMain, TableType.TEMP_TAB, isWIF);
+			financeMainDAO.updateRejectFinanceMain(financeMain, TableType.TEMP_TAB, isWIF);
 		}
 
 		// Cancel All Transactions done by Finance Reference
@@ -7276,55 +7275,56 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	private FinanceDetail getAutoRejDetails(FinanceDetail financeDetail, String type, boolean isWIF) {
 		logger.debug(Literal.ENTERING);
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+
 		String finReference = financeMain.getFinReference();
 		CustomerDetails customerDetails = new CustomerDetails();
-		financeDetail.getFinScheduleData().setDisbursementDetails(
-				getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
-		financeDetail.setAdvancePaymentsList(
-				getFinAdvancePaymentsService().getFinAdvancePaymentsById(finReference, "_View"));
-		financeDetail.getFinScheduleData()
-				.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(financeMain.getFinType(), "_AView"));
-		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(financeMain.getCustID()));
+
+		finScheduleData.setDisbursementDetails(
+				financeDisbursementDAO.getFinanceDisbursementDetails(finReference, type, false));
+		financeDetail
+				.setAdvancePaymentsList(finAdvancePaymentsService.getFinAdvancePaymentsById(finReference, "_View"));
+		finScheduleData.setFinanceType(financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "_AView"));
+		customerDetails.setCustomer(customerDAO.getCustomerByID(financeMain.getCustID()));
 		financeDetail.setCustomerDetails(customerDetails);
-		financeDetail.getFinScheduleData().setFinanceScheduleDetails(
-				getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, isWIF));
-		financeDetail.getFinScheduleData().setOverdraftScheduleDetails(
-				getOverdraftScheduleDetailDAO().getOverdraftScheduleDetails(finReference, type, isWIF));
+		finScheduleData
+				.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finReference, type, isWIF));
+		finScheduleData.setOverdraftScheduleDetails(
+				overdraftScheduleDetailDAO.getOverdraftScheduleDetails(finReference, type, isWIF));
 		financeDetail.setDocumentDetailsList(
-				getDocumentDetailsDAO().getDocumentDetailsByRef(finReference, FinanceConstants.MODULE_NAME, type));
-		financeDetail.setCollaterals(getCollateralSetupService().getCollateralDetails(finReference, true));
-		financeDetail.setCollateralAssignmentList(getCollateralAssignmentDAO()
-				.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, type));
-		financeDetail.setCovenantTypeList(
-				getFinCovenantTypeService().getFinCovenantDocTypeByFinRef(finReference, type, false));
+				documentDetailsDAO.getDocumentDetailsByRef(finReference, FinanceConstants.MODULE_NAME, type));
+		financeDetail.setCollaterals(collateralSetupService.getCollateralDetails(finReference, true));
+		financeDetail.setCollateralAssignmentList(collateralAssignmentDAO.getCollateralAssignmentByFinRef(finReference,
+				FinanceConstants.MODULE_NAME, type));
+		financeDetail
+				.setCovenantTypeList(finCovenantTypeService.getFinCovenantDocTypeByFinRef(finReference, type, false));
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
 			financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.TEMP_TAB));
 		}
 
 		financeDetail.setFinanceCheckList(checkListDetailService.getCheckListByFinRef(finReference, type));
-		financeDetail.setFinAssetTypesList(getFinAssetTypeDAO().getFinAssetTypesByFinRef(finReference, type));
+		financeDetail.setFinAssetTypesList(finAssetTypeDAO.getFinAssetTypesByFinRef(finReference, type));
 		financeDetail.setExtendedFieldRenderList(
 				getExtendedAssetDetails(finReference, financeDetail.getFinAssetTypesList()));
-		financeDetail.setFinanceCollaterals(getFinCollateralService().getFinCollateralsByRef(finReference, type));
-		financeDetail.getFinScheduleData()
-				.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, type));
+		financeDetail.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finReference, type));
+		finScheduleData.setFinFeeDetailList(finFeeDetailDAO.getFinFeeDetailByFinRef(finReference, false, type));
 		List<Long> feeIds = new ArrayList<Long>();
-		for (FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+		for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
 			feeIds.add(finFeeDetail.getFeeID());
 		}
 
 		if (!feeIds.isEmpty()) {
-			financeDetail.getFinScheduleData()
-					.setFinFeeReceipts(getFinFeeDetailService().getFinFeeReceiptsById(feeIds, type));
+			finScheduleData.setFinFeeReceipts(finFeeDetailService.getFinFeeReceiptsById(feeIds, type));
 		}
 		if (financeMain.getMandateID() != 0) {
-			financeDetail.setMandate(getFinMandateService().getMnadateByID(financeMain.getMandateID()));
+			financeDetail.setMandate(finMandateService.getMnadateByID(financeMain.getMandateID()));
 		}
 		financeDetail.setFinFlagsDetails(
 				getFinFlagDetailsDAO().getFinFlagsByFinRef(finReference, FinanceConstants.MODULE_NAME, type));
-		financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, type));
+		financeDetail.setFinanceTaxDetail(financeTaxDetailDAO.getFinanceTaxDetail(finReference, type));
 		financeDetail.setChequeHeader(finChequeHeaderService.getChequeHeaderByRef(finReference));
 		/*
 		 * List<LegalDetail> ligelDetailsList = legalDetailService.getLegalDetailByFinreference(finReference); if

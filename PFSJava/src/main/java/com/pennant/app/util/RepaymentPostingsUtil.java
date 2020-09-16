@@ -1272,17 +1272,15 @@ public class RepaymentPostingsUtil implements Serializable {
 					.compareTo(financeProfitDetail.getTotalPftSchd()) >= 0) {
 				amountCodes.setUnAccruedPaid(
 						financeProfitDetail.getTotalPftSchd().subtract(financeProfitDetail.getPrvMthAmz()));
-
-				if (ImplementationConstants.ALLOW_NPA_PROVISION) {
-					boolean isExists = provisionDAO.isProvisionExists(financeMain.getFinReference(),
-							TableType.MAIN_TAB);
-					//NPA Provision related 
-					if (isExists && financeProfitDetail.getCurODDays() > 0) {
-						amountCodes.setRpPftPr(amountCodes.getRpPft());
-						amountCodes.setRpTotPr(amountCodes.getRpTot());
-						amountCodes.setRpPft(BigDecimal.ZERO);
-						amountCodes.setRpTot(BigDecimal.ZERO);
-					}
+			}
+			if (ImplementationConstants.ALLOW_NPA_PROVISION) {
+				boolean isExists = provisionDAO.isProvisionExists(financeMain.getFinReference(), TableType.MAIN_TAB);
+				// NPA Provision related
+				if (isExists && financeProfitDetail.getCurODDays() > 0) {
+					amountCodes.setRpPftPr(amountCodes.getRpPft());
+					amountCodes.setRpTotPr(amountCodes.getRpTot());
+					amountCodes.setRpPft(BigDecimal.ZERO);
+					amountCodes.setRpTot(BigDecimal.ZERO);
 				}
 			}
 		}

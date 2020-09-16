@@ -105,7 +105,6 @@ import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.perfios.PerfiosTransactionDAO;
 import com.pennant.backend.dao.rmtmasters.CustomerTypeDAO;
 import com.pennant.backend.dao.smtmasters.CountryDAO;
@@ -167,7 +166,6 @@ import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.perfios.PerfiosHeader;
 import com.pennant.backend.model.perfios.PerfiosTransaction;
 import com.pennant.backend.model.reports.AvailPastDue;
@@ -337,7 +335,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	//PAN 4th Letter Mapping
 	private CustTypePANMappingService custTypePANMappingService;
-	private JountAccountDetailDAO jountAccountDetailDAO;
 
 	public CustomerDetailsServiceImpl() {
 		super();
@@ -840,12 +837,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		List<CustomerFinanceDetail> customerFinanceDetail = approvalStatusEnquiryService
 				.getListOfCustomerFinanceById(id, null);
-
-		customerFinanceDetail.forEach(customerFinDetail -> {
-			List<JointAccountDetail> jointAccountDetailList = jountAccountDetailDAO
-					.getJountAccountDetailByFinRef(customerFinDetail.getFinReference(), "_View");
-			customerFinDetail.setJointAccountDetails(jointAccountDetailList);
-		});
 
 		customerDetails.setCustomerFinanceDetailList(customerFinanceDetail);
 
@@ -8510,10 +8501,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	public void setdMSQueueDAO(DMSQueueDAO dMSQueueDAO) {
 		this.dMSQueueDAO = dMSQueueDAO;
-	}
-
-	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
-		this.jountAccountDetailDAO = jountAccountDetailDAO;
 	}
 
 }

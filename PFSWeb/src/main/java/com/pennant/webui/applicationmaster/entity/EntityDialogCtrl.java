@@ -595,8 +595,9 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 		if (aEntity.getPinCodeId() != null) {
 			this.pinCode.setAttribute("pinCodeId", aEntity.getPinCodeId());
+		} else {
+			this.pinCode.setAttribute("pinCodeId", null);
 		}
-
 		this.pinCode.setValue(aEntity.getPinCode(), aEntity.getPinCodeName());
 		this.active.setChecked(aEntity.isActive());
 		this.gstinAvailable.setChecked(aEntity.isGstinAvailable());
@@ -627,6 +628,32 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		this.cINNumber.setValue(aEntity.getcINNumber());
 
 		this.recordStatus.setValue(aEntity.getRecordStatus());
+
+		if (!aEntity.isNew()) {
+			ArrayList<Filter> filters = new ArrayList<Filter>();
+
+			if (this.country.getValue() != null && !this.country.getValue().isEmpty()) {
+				Filter filterPin0 = new Filter("PCCountry", country.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin0);
+			}
+
+			if (this.stateCode.getValue() != null && !this.stateCode.getValue().isEmpty()) {
+				Filter filterPin1 = new Filter("PCProvince", stateCode.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin1);
+			}
+
+			if (this.cityCode.getValue() != null && !this.cityCode.getValue().isEmpty()) {
+				Filter filterPin2 = new Filter("City", this.cityCode.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin2);
+			}
+
+			Filter[] filterPin = new Filter[filters.size()];
+			for (int i = 0; i < filters.size(); i++) {
+				filterPin[i] = filters.get(i);
+			}
+			this.pinCode.setFilters(filterPin);
+
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -696,6 +723,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 				if (!StringUtils.isEmpty(obj.toString())) {
 					aEntity.setPinCodeId(Long.valueOf((obj.toString())));
 				}
+			} else {
+				aEntity.setPinCodeId(null);
 			}
 			aEntity.setPinCode(this.pinCode.getValue());
 		} catch (WrongValueException we) {

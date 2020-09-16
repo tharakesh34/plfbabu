@@ -780,6 +780,28 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	}
 
 	@Override
+	public BigDecimal getOsPriBal(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		BigDecimal totalPriBal = BigDecimal.ZERO;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select TotalPriBal");
+		sql.append(" From FinPFTDetails");
+		sql.append(" Where FinReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			totalPriBal = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+					BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return totalPriBal;
+	}
+
+	@Override
 	public int getLimitHeaderIDByCustId(long customerId) {
 		logger.debug(Literal.ENTERING);
 

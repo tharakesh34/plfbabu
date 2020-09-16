@@ -296,7 +296,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.promotion);
-			if (this.promotion.isNew()) {
+			if (this.promotion.isNew() && consumerDurable) {
 				doEnable();
 			}
 

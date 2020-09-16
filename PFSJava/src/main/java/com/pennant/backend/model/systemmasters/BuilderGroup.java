@@ -83,7 +83,7 @@ public class BuilderGroup extends AbstractWorkflowEntity implements Entity {
 	private String cityName;
 	private String province;
 	private String provinceName;
-	private long pinCodeId;
+	private Long pinCodeId;
 	private String poBox;
 	private String areaName;
 	private BigDecimal expLmtOnAmt = BigDecimal.ZERO;
@@ -239,11 +239,11 @@ public class BuilderGroup extends AbstractWorkflowEntity implements Entity {
 		this.provinceName = provinceName;
 	}
 
-	public long getPinCodeId() {
+	public Long getPinCodeId() {
 		return pinCodeId;
 	}
 
-	public void setPinCodeId(long pinCodeId) {
+	public void setPinCodeId(Long pinCodeId) {
 		this.pinCodeId = pinCodeId;
 	}
 

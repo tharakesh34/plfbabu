@@ -335,6 +335,7 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 		if (aCluster.getClusterType() != null) {
 			ClusterHierarchy acClusterHierarchey = new ClusterHierarchy();
 			acClusterHierarchey.setClusterType(aCluster.getClusterType());
+			acClusterHierarchey.setEntity((aCluster.getEntity()));
 			this.clusterType.setObject(acClusterHierarchey);
 			onChangeClusterType();
 		}
@@ -428,18 +429,16 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 		while (it.hasNext()) {
 			ClusterHierarchy clusterHierarchey = it.next();
 			if (StringUtils.equals(selectedClusterType, clusterHierarchey.getClusterType())) {
-				if (it.hasNext()) {
-					parentCluster = it.next().getClusterType();
-					if (!isReadOnly("ClusterDialog_Parent")) {
-						this.parent.setReadonly(false);
-					}
-					Filter[] clusterTypeFilter = new Filter[1];
-					clusterTypeFilter[0] = new Filter("clusterType", parentCluster, Filter.OP_EQUAL);
-					this.parent.setFilters(clusterTypeFilter);
-				} else {
-					parentCluster = null;
+				parentCluster = clusterHierarchey.getClusterType();
+				if (!isReadOnly("ClusterDialog_Parent")) {
+					this.parent.setReadonly(false);
 				}
-
+				Filter[] clusterTypeFilter = new Filter[1];
+				clusterTypeFilter[0] = new Filter("clusterType", parentCluster, Filter.OP_EQUAL);
+				this.parent.setFilters(clusterTypeFilter);
+				break;
+			} else {
+				parentCluster = null;
 			}
 		}
 		if (parentCluster == null) {

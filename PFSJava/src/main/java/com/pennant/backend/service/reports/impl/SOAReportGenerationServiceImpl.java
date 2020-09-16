@@ -1125,6 +1125,15 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			BigDecimal bounceGreaterZeroAdviseAmount = BigDecimal.ZERO;
 			BigDecimal bounceZeroPaidAmount = BigDecimal.ZERO;
 			BigDecimal bounceGreaterZeroPaidAmount = BigDecimal.ZERO;
+			BigDecimal adviseAmt = BigDecimal.ZERO;
+			BigDecimal bounceWaivedAmount = BigDecimal.ZERO;
+
+			for (ManualAdvise manualAdvise : manualAdviseList) {
+				if (manualAdvise.getBounceID() > 0) {
+					adviseAmt = adviseAmt.add(manualAdvise.getAdviseAmount());
+					bounceWaivedAmount = bounceWaivedAmount.add(manualAdvise.getWaivedAmount());
+				}
+			}
 
 			for (ManualAdvise manualAdvise : manualAdviseList) {
 				if (manualAdvise.getAdviseType() == 2 && manualAdvise.getBalanceAmt() != null) {
@@ -1183,13 +1192,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						if (currWaiverGst == null) {
 							currWaiverGst = BigDecimal.ZERO;
 						}
-						bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount
-								.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
+						bounceGreaterZeroAdviseAmount = adviseAmt.subtract(bounceWaivedAmount);
 
 						if (bounceFeeType != null && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE
 								.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
-							BigDecimal gstAmount = GSTCalculator.getTotalGST(finReference,
-									manualAdvise.getAdviseAmount(), bounceFeeType.getTaxComponent());
+							BigDecimal gstAmount = GSTCalculator.getTotalGST(finReference, adviseAmt,
+									bounceFeeType.getTaxComponent());
 							gstAmount = gstAmount.subtract(currWaiverGst);
 							bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(gstAmount);
 						}
@@ -1678,7 +1686,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					soaTranReport.setValueDate(ma.getValueDate());
 					soaTranReport.setCreditAmount(ma.getWaivedAmount());
 					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(ma.getTaxComponent())) {
-						soaTranReport.setCreditAmount(ma.getWaivedAmount().add(ma.getCurrWaiverGst()));
+						if (ma.getWaivedAmount().compareTo(ma.getCurrWaiverGst()) < 0) {
+							soaTranReport.setCreditAmount(ma.getWaivedAmount());
+						} else {
+							soaTranReport.setCreditAmount(ma.getWaivedAmount().add(ma.getCurrWaiverGst()));
+						}
 					}
 					soaTranReport.setDebitAmount(BigDecimal.ZERO);
 					soaTranReport.setPriority(15);

@@ -2399,7 +2399,7 @@ public class ReceiptCalculator implements Serializable {
 		BigDecimal percMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).add(totalPerc), 20,
 				RoundingMode.HALF_DOWN);
 		paidAmount = netAmount.multiply(percMultiplier);
-		//paidAmount = CalculationUtil.roundAmount(paidAmount, tdsRoundMode, tdsRoundingTarget);
+		paidAmount = CalculationUtil.roundAmount(paidAmount, tdsRoundMode, tdsRoundingTarget);
 		return paidAmount;
 	}
 
@@ -2505,10 +2505,15 @@ public class ReceiptCalculator implements Serializable {
 		setReceiptCategory(rch.getReceiptPurpose());
 
 		// Penal after schedule collection OR along
-		String repayHierarchy = scheduleData.getFinanceType().getRpyHierarchy();
+		/* String repayHierarchy = scheduleData.getFinanceType().getRpyHierarchy(); */
 
 		String finReference = scheduleData.getFinanceMain().getFinReference();
-		repayHierarchy = getRepayHierarchyOnNPA(finReference);
+		String repayHierarchy = getRepayHierarchyOnNPA(finReference);
+
+		if ("".equals(repayHierarchy)) {
+			repayHierarchy = scheduleData.getFinanceType().getRpyHierarchy();
+		}
+
 		if (repayHierarchy.contains("CS")) {
 			rch.setPenalSeparate(true);
 		} else {

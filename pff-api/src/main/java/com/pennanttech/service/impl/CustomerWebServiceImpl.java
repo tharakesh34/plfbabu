@@ -26,6 +26,7 @@ import com.pennant.backend.dao.customermasters.FinCreditRevSubCategoryDAO;
 import com.pennant.backend.dao.dedup.DedupFieldsDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -49,6 +50,7 @@ import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
@@ -145,6 +147,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private FinanceMainService financeMainService;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
+	private JountAccountDetailDAO jountAccountDetailDAO;
 
 	/**
 	 * Method for create customer in PLF system.
@@ -3596,6 +3599,12 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 					response.getCustomerFinanceDetailList().addAll(customerFinanceDetail);
 				}
 				if (CollectionUtils.isNotEmpty(response.getCustomerFinanceDetailList())) {
+					response.getCustomerFinanceDetailList().forEach(customerFinDetail -> {
+						List<JointAccountDetail> jointAccountDetailList = jountAccountDetailDAO
+								.getJountAccountDetailByFinRef(customerFinDetail.getFinReference(), "_View");
+						customerFinDetail.setJointAccountDetails(jointAccountDetailList);
+					});
+
 					for (CustomerFinanceDetail cfd : response.getCustomerFinanceDetailList()) {
 						cfd.setStage(cfd.getNextRoleCode());
 						cfd.setCurOddays(financeProfitDetailDAO.getCurOddays(cfd.getFinReference(), ""));
@@ -4151,4 +4160,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		this.approvalStatusEnquiryDAO = approvalStatusEnquiryDAO;
 	}
 
+	@Autowired
+	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
+		this.jountAccountDetailDAO = jountAccountDetailDAO;
+	}
 }

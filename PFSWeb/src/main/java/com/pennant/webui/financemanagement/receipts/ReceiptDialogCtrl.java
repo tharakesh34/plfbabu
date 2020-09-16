@@ -3054,6 +3054,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		String allocateMthd = getComboboxValue(this.allocationMethod);
 
 		String allocationtype = receiptData.getReceiptHeader().getAllocationType();
+
+		if (StringUtils.equals(RepayConstants.ALLOCATION_NPFT, allocate.getAllocationType())
+				|| StringUtils.equals(RepayConstants.ALLOCATION_FUT_NPFT, allocate.getAllocationType())) {
+			return;
+		}
+
 		Listitem item = new Listitem();
 		Listcell lc = null;
 		addBoldTextCell(item, allocate.getTypeDesc(), allocate.isSubListAvailable(), idx);
@@ -3222,7 +3228,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		for (ReceiptAllocationDetail allocate : allocList) {
 
-			if (!RepayConstants.ALLOCATION_EMI.equals(allocate.getAllocationType())) {
+			if (!RepayConstants.ALLOCATION_EMI.equals(allocate.getAllocationType())
+					&& !RepayConstants.ALLOCATION_NPFT.equals(allocate.getAllocationType())
+					&& !RepayConstants.ALLOCATION_FUT_NPFT.equals(allocate.getAllocationType())) {
 				totRecv = totRecv.add(allocate.getTotRecv());
 				totGST = totGST.add(allocate.getDueGST());
 				totDue = totDue.add(allocate.getTotalDue());
@@ -3515,8 +3523,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal[] emiSplit = receiptCalculator.getEmiSplit(receiptData, paidAmount);
 		for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
 			if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PFT)) {
-				if (emiSplit[1].compareTo(allocteDtl.getTotalDue().subtract(allocteDtl.getWaivedAmount())) > 0) {
-					emiSplit[1] = allocteDtl.getTotalDue().subtract(allocteDtl.getWaivedAmount());
+				if (emiSplit[2].compareTo(allocteDtl.getTotalDue().subtract(allocteDtl.getWaivedAmount())) > 0) {
+					emiSplit[2] = allocteDtl.getTotalDue().subtract(allocteDtl.getWaivedAmount());
 				}
 				allocteDtl.setTotalPaid(emiSplit[1]);
 				allocteDtl.setPaidAmount(emiSplit[2]);

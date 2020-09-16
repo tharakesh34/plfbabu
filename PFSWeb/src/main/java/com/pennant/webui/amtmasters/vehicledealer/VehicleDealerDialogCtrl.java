@@ -790,6 +790,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 		if (aVehicleDealer.getPinCodeId() != null) {
 			this.zipCode.setAttribute("pinCodeId", aVehicleDealer.getPinCodeId());
+		} else {
+			this.zipCode.setAttribute("pinCodeId", null);
 		}
 
 		this.zipCode.setValue(aVehicleDealer.getZipCode(), aVehicleDealer.getAreaName());
@@ -857,6 +859,31 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
+		}
+
+		if (!aVehicleDealer.isNew()) {
+			ArrayList<Filter> filters = new ArrayList<Filter>();
+
+			if (this.dealerCountry.getValue() != null && !this.dealerCountry.getValue().isEmpty()) {
+				Filter filterPin0 = new Filter("PCCountry", dealerCountry.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin0);
+			}
+
+			if (this.dealerProvince.getValue() != null && !this.dealerProvince.getValue().isEmpty()) {
+				Filter filterPin1 = new Filter("PCProvince", this.dealerProvince.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin1);
+			}
+
+			if (this.dealerCity.getValue() != null && !this.dealerCity.getValue().isEmpty()) {
+				Filter filterPin2 = new Filter("City", this.dealerCity.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin2);
+			}
+
+			Filter[] filterPin = new Filter[filters.size()];
+			for (int i = 0; i < filters.size(); i++) {
+				filterPin[i] = filters.get(i);
+			}
+			this.zipCode.setFilters(filterPin);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -955,6 +982,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 				if (!StringUtils.isEmpty(obj.toString())) {
 					aVehicleDealer.setPinCodeId(Long.valueOf((obj.toString())));
 				}
+			} else {
+				aVehicleDealer.setPinCodeId(null);
 			}
 			aVehicleDealer.setZipCode(this.zipCode.getValue());
 		} catch (WrongValueException we) {

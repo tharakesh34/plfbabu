@@ -1296,8 +1296,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" MA.WaivedCGST, MA.WaivedSGST, MA.WaivedUGST, MA.WaivedIGST, MA.WaivedCESS, MA.DUECREATION");
 		sql.append(" From MANUALADVISE_Aview  MA");
 		sql.append(" Left join FEETYPES FT on MA.FEETYPEID = FT.FEETYPEID");
-		sql.append(
-				" Where (MA.advisetype = :AdviseType And (MA.AdviseAmount - MA.PaidAmount - MA.WaivedAmount) > 0) and FinReference = :FinReference");
+		sql.append(" Where FinReference = :FinReference");
 		sql.append(" ORDER by MA.adviseID");
 
 		logger.trace(Literal.SQL + sql.toString());

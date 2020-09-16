@@ -476,10 +476,6 @@ public class CustomerController extends GenericService<Object> {
 
 				}
 			}
-		} else if (CollectionUtils.isEmpty(customerIncomes) && StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
-			//setting the default income and expense details based on system param
-			customerDetails.setNewRecord(true);
-			customerDetailsService.prepareDefaultIncomeExpenseList(customerDetails);
 		}
 		String docCategory = null;
 		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {

@@ -490,6 +490,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 
 		if (aBranch.getPinCodeId() != null) {
 			this.pinCode.setAttribute("pinCodeId", aBranch.getPinCodeId());
+		} else {
+			this.pinCode.setAttribute("pinCodeId", null);
 		}
 
 		this.pinCode.setValue(aBranch.getPinCode(), aBranch.getPinAreaDesc());
@@ -554,8 +556,28 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			Filter[] filterCity = new Filter[1];
 			filterCity[0] = new Filter("PCProvince", sBranchProvince, Filter.OP_EQUAL);
 			this.branchCity.setFilters(filterCity);
-			Filter[] filterPin = new Filter[1];
-			filterPin[0] = new Filter("City", sBranchCity, Filter.OP_EQUAL);
+
+			ArrayList<Filter> filters = new ArrayList<Filter>();
+
+			if (sBranchCountry != null && !sBranchCountry.isEmpty()) {
+				Filter filterPin0 = new Filter("PCCountry", sBranchCountry, Filter.OP_EQUAL);
+				filters.add(filterPin0);
+			}
+
+			if (sBranchProvince != null && !sBranchProvince.isEmpty()) {
+				Filter filterPin1 = new Filter("PCProvince", sBranchProvince, Filter.OP_EQUAL);
+				filters.add(filterPin1);
+			}
+
+			if (sBranchCity != null && !sBranchCity.isEmpty()) {
+				Filter filterPin2 = new Filter("City", sBranchCity, Filter.OP_EQUAL);
+				filters.add(filterPin2);
+			}
+
+			Filter[] filterPin = new Filter[filters.size()];
+			for (int i = 0; i < filters.size(); i++) {
+				filterPin[i] = filters.get(i);
+			}
 			this.pinCode.setFilters(filterPin);
 		}
 		logger.debug("Leaving");

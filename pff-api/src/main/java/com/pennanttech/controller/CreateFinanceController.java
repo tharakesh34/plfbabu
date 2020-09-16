@@ -477,6 +477,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				schdDetail.setNextRoleCode(roleCode);
 				schdDetail.setTaskId(taskid);
 				schdDetail.setNextTaskId(financeMain.getNextTaskId());
+				//set the finreference to the financescheduledetails
+				schdDetail.setFinReference(financeMain.getFinReference());
 				if (StringUtils.isBlank(schdDetail.getBaseRate())) {
 					schdDetail.setBaseRate(null);
 				}
