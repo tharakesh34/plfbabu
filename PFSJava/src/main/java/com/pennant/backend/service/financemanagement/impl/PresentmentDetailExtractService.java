@@ -22,6 +22,7 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -102,6 +103,9 @@ public class PresentmentDetailExtractService {
 				pDetail.setEmiNo(rs.getInt("EMINO"));
 				pDetail.setSchSeq(rs.getInt("SCHSEQ"));
 				pDetail.setDefSchdDate(rs.getDate("DEFSCHDDATE"));
+				pDetail.setBpiOrHoliday(rs.getString("BPIORHOLIDAY"));
+				pDetail.setBpiTreatment(rs.getString("BPITREATMENT"));
+
 
 				BigDecimal schAmtDue = rs.getBigDecimal("PROFITSCHD").add(rs.getBigDecimal("PRINCIPALSCHD"))
 						.add(rs.getBigDecimal("FEESCHD")).subtract(rs.getBigDecimal("SCHDPRIPAID"))
@@ -235,6 +239,9 @@ public class PresentmentDetailExtractService {
 				pDetail.setEmiNo(rs.getInt("EMINO"));
 				pDetail.setSchSeq(rs.getInt("SCHSEQ"));
 				pDetail.setDefSchdDate(rs.getDate("DEFSCHDDATE"));
+				pDetail.setBpiOrHoliday(rs.getString("BPIORHOLIDAY"));
+				pDetail.setBpiTreatment(rs.getString("BPITREATMENT"));
+
 
 				BigDecimal schAmtDue = rs.getBigDecimal("PROFITSCHD").add(rs.getBigDecimal("PRINCIPALSCHD"))
 						.add(rs.getBigDecimal("FEESCHD")).subtract(rs.getBigDecimal("SCHDPRIPAID"))
@@ -518,7 +525,14 @@ public class PresentmentDetailExtractService {
 		} else {
 			advanceType = AdvanceType.getType(prd.getAdvType());
 		}
-
+		
+		if (StringUtils.equals(prd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
+			if (StringUtils.equals(prd.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)
+					&& SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)) {
+				advanceType = AdvanceType.AF;
+			}
+		}
+		
 		if (advanceType == null) {
 			return;
 		}

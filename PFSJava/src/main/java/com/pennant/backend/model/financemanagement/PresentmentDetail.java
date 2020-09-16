@@ -108,6 +108,9 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private Date grcPeriodEndDate;
 	private BigDecimal advAdjusted = BigDecimal.ZERO;
 	private Date appDate;
+	private String bpiOrHoliday;
+	private String bpiTreatment;
+
 
 	public String getMandateStatus() {
 		return mandateStatus;
@@ -129,6 +132,8 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("advAdjusted");
 		excludeFields.add("advStage");
 		excludeFields.add("partnerBankId");
+		excludeFields.add("bpiOrHoliday");
+		excludeFields.add("bpiTreatment");
 		return excludeFields;
 	}
 
@@ -539,6 +544,22 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setAppDate(Date appDate) {
 		this.appDate = appDate;
+	}
+
+	public String getBpiOrHoliday() {
+		return bpiOrHoliday;
+	}
+
+	public void setBpiOrHoliday(String bpiOrHoliday) {
+		this.bpiOrHoliday = bpiOrHoliday;
+	}
+
+	public String getBpiTreatment() {
+		return bpiTreatment;
+	}
+
+	public void setBpiTreatment(String bpiTreatment) {
+		this.bpiTreatment = bpiTreatment;
 	}
 
 }
