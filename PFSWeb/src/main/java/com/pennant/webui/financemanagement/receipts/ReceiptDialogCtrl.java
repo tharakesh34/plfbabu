@@ -4269,6 +4269,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			wve.add(we);
 		}
 
+		try {
+			header.setExtReference(this.externalRefrenceNumber.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		doRemoveValidation();
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
