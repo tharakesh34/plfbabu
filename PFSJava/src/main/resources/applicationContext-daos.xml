@@ -2120,7 +2120,6 @@
 		<property name="perfiosTransactionDAO" ref="perfiosTransactionDAO" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="dMSQueueDAO" ref="dMSQueueDAO" />
-		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
