@@ -6636,4 +6636,21 @@ UNION ALL
 		]]>
 	</sql>
 </changeSet>
+
+<changeSet id="55" author="Manoj.P">
+		<sql>
+			<![CDATA[
+				Delete from plf.RBFieldDetails where rbmodule='ELGRULE'and rbevent ='ELGRULE'and rbfldname = 'LOAN_HL_CARPETAREA';
+				Delete from plf.RBFieldDetails where rbmodule='ELGRULE'and rbevent ='ELGRULE'and rbfldname = 'LOAN_HL_HOUSEHOLDINCOME';
+				Delete from plf.RBFieldDetails where rbmodule='ELGRULE'and rbevent ='ELGRULE'and rbfldname = 'LOAN_HL_HOUSINGSCHEME';
+				Delete from plf.RBFieldDetails where rbmodule='ELGRULE'and rbevent ='ELGRULE'and rbfldname = 'LOAN_HL_PUCCAHOUSE';
+
+				Insert into plf.RBFieldDetails values ('ELGRULE', 'ELGRULE', 'LOAN_HL_CARPETAREA', 'What is the Carpet Area of the [proposed] dwelling unit in Sq.Feet?', 'Decimal', 18, 1, 0, '', 'static,calvalue','');
+				Insert into plf.RBFieldDetails values ('ELGRULE', 'ELGRULE', 'LOAN_HL_HOUSEHOLDINCOME', 'Household annual income[Income of self & spouse from all sources]?', 'Decimal', 18, 1, 0, '', 'static,calvalue','');
+				Insert into plf.RBFieldDetails values ('ELGRULE', 'ELGRULE', 'LOAN_HL_HOUSINGSCHEME', 'Have you or your spouse availed of a Central Assistance under any Housing Scheme from Government of India?', 'nvarchar', 5, 0, 1, '', 'static','');
+				Insert into plf.RBFieldDetails values ('ELGRULE', 'ELGRULE', 'LOAN_HL_PUCCAHOUSE', 'Do you or your spouse individually or jointly own a pucca house in any part of India?', 'nvarchar', 5, 0, 1, '', 'static','');
+
+		]]>
+			</sql>
+	</changeSet>
 </databaseChangeLog>
