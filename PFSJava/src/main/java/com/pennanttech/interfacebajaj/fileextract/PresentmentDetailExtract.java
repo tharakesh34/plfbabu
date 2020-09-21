@@ -611,12 +611,16 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							continue;
 						}
 
-						processInactiveLoan(presentmentRef);
+						boolean processReceipt = processInactiveLoan(presentmentRef);
 						if (RepayConstants.PEXC_SUCCESS.equals(status)) {
 							successCount++;
 							updatePresentmentDetails(presentmentRef, status);
 							updatePresentmentHeader(presentmentRef, status, status);
 							presentmentDetailService.updateFinanceDetails(presentmentRef);
+							PresentmentDetail presntmntDetail = isPresentmentResponseIsExist(presentmentRef);
+							if (!processReceipt) {
+								presentmentDetailService.processSuccessPresentments(presntmntDetail.getReceiptID());
+							}
 							updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_REALISED);
 							saveBatchLog(batchId, status, presentmentRef, null);
 							//Send customer notification for successful presentment
