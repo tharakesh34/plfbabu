@@ -60,6 +60,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.util.PennantConstants;
@@ -113,6 +114,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	protected Listbox sortOperator_PinCode;
 
 	private transient FinanceTaxDetailService financeTaxDetailService;
+	private transient CustomerAddresDAO customerAddresDAO;
 
 	/**
 	 * default constructor.<br>
@@ -337,5 +339,13 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 
 	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
 		this.financeTaxDetailService = financeTaxDetailService;
+	}
+
+	public CustomerAddresDAO getCustomerAddresDAO() {
+		return customerAddresDAO;
+	}
+
+	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
+		this.customerAddresDAO = customerAddresDAO;
 	}
 }
