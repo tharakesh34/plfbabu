@@ -40,4 +40,6 @@ public interface DocumentDetailsDAO {
 
 	long getDocIdByDocTypeAndFinRef(String finReference, String docCategory, String type);
 
+	void deleteDocumentByDocumentId(DocumentDetails documentDetails, String type);
+
 }

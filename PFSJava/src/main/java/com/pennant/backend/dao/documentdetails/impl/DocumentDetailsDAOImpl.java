@@ -54,6 +54,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -521,5 +522,27 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 			logger.warn(Literal.EXCEPTION, e);
 			return 0;
 		}
+	}
+
+	@Override
+	public void deleteDocumentByDocumentId(DocumentDetails documentDetails, String type) {
+
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Delete from COVENANT_DOCUMENTS");
+		sql.append(type);
+		sql.append(" Where DocumentId = :DocumentId");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("DocumentId", documentDetails.getDocId());
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			jdbcTemplate.update(sql.toString(), source);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		} catch (Exception e) {
+		}
+		logger.debug(Literal.LEAVING);
 	}
 }

@@ -999,7 +999,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				if (deleteRecord && ((StringUtils.isEmpty(type) && !isTempRecord) || (StringUtils.isNotEmpty(type)))) {
 					if (!type.equals(PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
 						getDocumentDetailsDAO().delete(documentDetails, type);
-						covenantsService.deleteDocumentByDocumentId(documentDetails.getDocId(), type);
+						if (covenantsService != null) {
+							covenantsService.deleteDocumentByDocumentId(documentDetails.getDocId(), type);
+						} else {
+							getDocumentDetailsDAO().deleteDocumentByDocumentId(documentDetails, type);
+						}
 					}
 				}
 
