@@ -760,7 +760,7 @@ public class RepaymentProcessUtil {
 						// Waiver GST only in case Due Created & GST Invoice raised
 						if (movement.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
 							// Setting Debit Invoice ID
-							long dbInvID = manualAdviseDAO.getDebitInvoiceID(movement.getAdviseID());
+							Long dbInvID = manualAdviseDAO.getDebitInvoiceID(movement.getAdviseID());
 							movement.setDebitInvoiceId(dbInvID);
 							waivedMovementList.add(movement);
 

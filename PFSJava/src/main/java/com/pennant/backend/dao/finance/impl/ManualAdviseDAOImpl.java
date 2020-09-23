@@ -1926,7 +1926,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	@Override
-	public long getDebitInvoiceID(long adviseID) {
+	public Long getDebitInvoiceID(long adviseID) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -1937,15 +1937,14 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		long debitInvoiceID = 0;
 		try {
-			debitInvoiceID = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
 		} catch (EmptyResultDataAccessException e) {
-			debitInvoiceID = 0;
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
-		logger.debug("Leaving");
-		return debitInvoiceID;
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**
