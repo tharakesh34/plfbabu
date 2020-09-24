@@ -1105,32 +1105,32 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.gb_gracePeriodDetails.setVisible(false);
 		}
-		if (aFinanceMain.isAlwGrcAdj()) {
-			this.numberOfTerms_two.setValue(aFinanceMain.getNumberOfTerms());
+		
+		FinanceProfitDetail financeProfitDetail = financeProfitDetailDAO
+				.getPftDetailForEarlyStlReport(aFinanceMain.getFinReference());
+		int NOInst = 0;
+		if (financeProfitDetail != null) {
+			NOInst = financeProfitDetail.getNOInst();
+			aFinanceMain.setNOInst(NOInst);
+		}
 
-		} else {
-			FinanceProfitDetail financeProfitDetail = financeProfitDetailDAO
-					.getPftDetailForEarlyStlReport(aFinanceMain.getFinReference());
-			int NOInst = 0;
-			if (financeProfitDetail != null) {
-				NOInst = financeProfitDetail.getNOInst();
-				aFinanceMain.setNOInst(NOInst);
-			}
-			//PSD# 145740:-The No.of terms are displayed incorrect in Loan basic details screen.
-			this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
-			this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
-			fillComboBox(this.repayRateBasis, aFinanceMain.getRepayRateBasis(),
-					PennantStaticListUtil.getInterestRateType(false), "");
+		// PSD# 145740:-The No.of terms are displayed incorrect in Loan basic
+		// details screen.
+		this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
 
-			this.repayProfitRate.setValue(aFinanceMain.getRepayProfitRate());
-			if (StringUtils.isNotBlank(aFinanceMain.getRepayBaseRate())) {
-				this.repayBaseRate.setValue(aFinanceMain.getRepayBaseRate());
-				this.repaySpecialRate.setValue(aFinanceMain.getRepaySpecialRate());
-				this.repayMargin.setValue(aFinanceMain.getRepayMargin());
-				RateDetail rateDetail = RateUtil.rates(aFinanceMain.getRepayBaseRate(), aFinanceMain.getFinCcy(),
-						StringUtils.trimToEmpty(aFinanceMain.getRepaySpecialRate()),
-						aFinanceMain.getRepayMargin() == null ? BigDecimal.ZERO : aFinanceMain.getRepayMargin(),
-						aFinanceMain.getRpyMinRate(), aFinanceMain.getRpyMaxRate());
+		this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
+		fillComboBox(this.repayRateBasis, aFinanceMain.getRepayRateBasis(),
+				PennantStaticListUtil.getInterestRateType(false), "");
+
+		this.repayProfitRate.setValue(aFinanceMain.getRepayProfitRate());
+		if (StringUtils.isNotBlank(aFinanceMain.getRepayBaseRate())) {
+			this.repayBaseRate.setValue(aFinanceMain.getRepayBaseRate());
+			this.repaySpecialRate.setValue(aFinanceMain.getRepaySpecialRate());
+			this.repayMargin.setValue(aFinanceMain.getRepayMargin());
+			RateDetail rateDetail = RateUtil.rates(aFinanceMain.getRepayBaseRate(), aFinanceMain.getFinCcy(),
+					StringUtils.trimToEmpty(aFinanceMain.getRepaySpecialRate()),
+					aFinanceMain.getRepayMargin() == null ? BigDecimal.ZERO : aFinanceMain.getRepayMargin(),
+					aFinanceMain.getRpyMinRate(), aFinanceMain.getRpyMaxRate());
 				this.repayEffectiveRate
 						.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 			} else {
@@ -1222,7 +1222,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.rowDefferments.setVisible(false);
 			}
 
-		}
+		
 
 		if (StringUtils.isNotBlank(aFinanceMain.getLinkedFinRef())) {
 			this.row_LinkedFinRef.setVisible(true);
