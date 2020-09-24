@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-	<include file="change-logs/change-log-5.0.5.xml" />
+	<!-- <include file="change-logs/change-log-5.0.5.xml" />
 	<include file="change-logs/change-log-5.0.10.xml" />
 	<include file="change-logs/change-log-dms.xml" />
 	<include file="change-logs/change-log-5.3.0.xml" />
 	<include file="change-logs/change-log-5.4.0.xml" />
-	<include file="change-logs/change-log-5.5.0.xml" /> 
+	<include file="change-logs/change-log-5.5.0.xml" />
 	<include file="change-logs/change-log-5.6.0.xml" />
 	<include file="change-logs/change-log-5.7.0.xml" />
 	<include file="change-logs/change-log-5.8.0.xml" />
-	<include file="change-logs/change-log-5.9.0.xml" />
-	<include file="change-logs/change-log-meta-data.xml" />
+	<include file="change-logs/change-log-5.9.0.xml" /> -->
+	<!-- <include file="change-logs/change-log-meta-data.xml" /> -->
 
+	<include file="change-logs/00-fresh-instalation.xml" />
 </databaseChangeLog>

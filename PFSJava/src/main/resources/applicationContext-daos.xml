@@ -9540,9 +9540,9 @@
 
 
 	<!-- QDP Changes -->
-	<bean id="finAutoApprovalProcess" class="com.pennant.app.core.FinAutoApprovalProcess">
+	<!-- <bean id="finAutoApprovalProcess" class="com.pennant.app.core.FinAutoApprovalProcess">
 		<property name="transactionManager" ref="transactionManager" />
-	</bean>
+	</bean> -->
 
 	<bean id="finAutoApprovalDetailDAO" class="com.pennanttech.pff.logging.dao.impl.FinAutoApprovalDetailDAOImpl"
 		parent="sequenceDao" />
@@ -9610,9 +9610,9 @@
 	</bean>
 
 	<bean id="masterDefTempDAO" class="com.pennanttech.pff.backend.dao.MasterDefDAOImpl" parent="basicDao" />
-	<bean id="configurationService" class="com.pennanttech.pff.backend.service.ConfigurationServiceImpl" init-method="init">
+	<!-- <bean id="configurationService" class="com.pennanttech.pff.backend.service.ConfigurationServiceImpl" init-method="init">
 		<property name="masterDefDAO" ref="masterDefTempDAO" />
-	</bean>
+	</bean> -->
 	<!-- Cluster and User Hierarchy Changes -->
 	<bean id="securityUserAccessDAO" class="com.pennant.backend.dao.administration.impl.SecurityUserAccessDAOImpl"
 		parent="secSequenceDao" />
