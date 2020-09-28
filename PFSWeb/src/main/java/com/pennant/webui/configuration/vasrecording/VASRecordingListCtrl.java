@@ -428,12 +428,11 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		arg.put("vASRecordingListCtrl", this);
 		arg.put("module", module);
 		//passing financeDetail object for pre and post script validations
-		if (vASRecording.getPrimaryLinkRef() != null && getFinanceDetailService() != null) {
-			FinanceDetail financeDetail = getFinanceDetailService()
-					.getFinanceDetailsForPmay(vASRecording.getPrimaryLinkRef());
-			arg.put("financeDetail", financeDetail);
-		}
-
+		/*
+		 * if (vASRecording.getPrimaryLinkRef() != null && getFinanceDetailService() != null) { FinanceDetail
+		 * financeDetail = getFinanceDetailService() .getFinanceDetailsForPmay(vASRecording.getPrimaryLinkRef());
+		 * arg.put("financeDetail", financeDetail); }
+		 */
 		try {
 			Executions.createComponents("/WEB-INF/pages/VASRecording/VASRecordingDialog.zul", null, arg);
 		} catch (Exception e) {
