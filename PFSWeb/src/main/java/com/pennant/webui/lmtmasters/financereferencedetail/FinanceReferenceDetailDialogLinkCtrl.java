@@ -2253,6 +2253,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			} else {
 				if (financeReferenceDetail.getRecordType().equals(PennantConstants.RCD_DEL)) {
 					financeReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				} else if (StringUtils.isEmpty(financeReferenceDetail.getRecordType())) {
+					financeReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 			}
 		} else {
