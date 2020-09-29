@@ -500,9 +500,9 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 			return errorsList;
 		}
 
-		if (StringUtils.isEmpty(financeTaxDetail.getPinCode())) {
+		if (StringUtils.isEmpty(financeTaxDetail.getPinCode()) && financeTaxDetail.getPinCodeId() == null) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "pincode";
+			valueParm[0] = "PinCode or PinCodeId";
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 
 			return errorsList;
@@ -518,7 +518,61 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 			return errorsList;
 		}
 
-		PinCode validPincode = pinCodeDAO.getPinCode(financeTaxDetail.getPinCode(), "_AView");
+		PinCode validPincode = null;
+		if (financeTaxDetail.getPinCodeId() != null && financeTaxDetail.getPinCodeId() < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "PinCodeId";
+			valueParm[1] = "0";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm)));
+		} else {
+			if (StringUtils.isNotBlank(financeTaxDetail.getPinCode()) && (financeTaxDetail.getPinCodeId() != null)) {
+				validPincode = pinCodeDAO.getPinCodeById(financeTaxDetail.getPinCodeId(), "_AView");
+				if (validPincode == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "PinCodeId " + String.valueOf(financeTaxDetail.getPinCodeId());
+					errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm)));
+					return errorsList;
+				} else if (!validPincode.getPinCode().equals(financeTaxDetail.getPinCode())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "PinCode " + financeTaxDetail.getPinCode();
+					valueParm[1] = "PinCodeId " + String.valueOf(financeTaxDetail.getPinCodeId());
+					errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("99017", "", valueParm)));
+					return errorsList;
+				}
+			} else {
+				if (StringUtils.isNotBlank(financeTaxDetail.getPinCode())
+						&& (financeTaxDetail.getPinCodeId() == null)) {
+					int pinCodeCount = pinCodeDAO.getPinCodeCount(financeTaxDetail.getPinCode(), "_AView");
+					String[] valueParm = new String[1];
+					switch (pinCodeCount) {
+					case 0:
+						valueParm[0] = "PinCode " + financeTaxDetail.getPinCode();
+						errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm)));
+						break;
+					case 1:
+						validPincode = pinCodeDAO.getPinCode(financeTaxDetail.getPinCode(), "_AView");
+						financeTaxDetail.setPinCodeId(validPincode.getPinCodeId());
+						break;
+					default:
+						valueParm[0] = "PinCodeId";
+						errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("51004", "", valueParm)));
+						return errorsList;
+					}
+				} else if (financeTaxDetail.getPinCodeId() != null
+						&& StringUtils.isBlank(financeTaxDetail.getPinCode())) {
+					validPincode = pinCodeDAO.getPinCodeById(financeTaxDetail.getPinCodeId(), "_AView");
+					if (validPincode != null) {
+						financeTaxDetail.setPinCode(validPincode.getPinCode());
+					} else {
+						String[] valueParm = new String[1];
+						valueParm[0] = "PinCodeId " + String.valueOf(financeTaxDetail.getPinCodeId());
+						errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm)));
+						return errorsList;
+					}
+				}
+			}
+		}
+
 		if (validPincode != null) {
 			/* validate country, state, city */
 			Country validCountry = countryDAO.getCountryById(financeTaxDetail.getCountry(), "");

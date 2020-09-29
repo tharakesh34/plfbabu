@@ -1279,8 +1279,13 @@ public class RepaymentPostingsUtil implements Serializable {
 				if (isExists && financeProfitDetail.getCurODDays() > 0) {
 					amountCodes.setRpPftPr(amountCodes.getRpPft());
 					amountCodes.setRpTotPr(amountCodes.getRpTot());
+					amountCodes.setPriPr(amountCodes.getPri());
+					amountCodes.setPriSPr(amountCodes.getPriS());
 					amountCodes.setRpPft(BigDecimal.ZERO);
 					amountCodes.setRpTot(BigDecimal.ZERO);
+				} else {
+					amountCodes.setPriPr(BigDecimal.ZERO);
+					amountCodes.setPriSPr(BigDecimal.ZERO);
 				}
 			}
 		}

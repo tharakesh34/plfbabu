@@ -256,7 +256,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" Id, HeaderId, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal,");
+		sql.append(" Id, HeaderId, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal, RefundAmtTds,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -282,11 +282,11 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		StringBuilder sql = new StringBuilder("insert into FinFeeRefundDetails");
 		sql.append(type);
 
-		sql.append("(Id, HeaderId, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal,");
+		sql.append("(Id, HeaderId, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal, RefundAmtTDS,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId )");
 		sql.append(" Values ");
-		sql.append("(:Id, :HeaderId, :FeeId, :RefundAmount, :RefundAmtGST, :RefundAmtOriginal,");
+		sql.append("(:Id, :HeaderId, :FeeId, :RefundAmount, :RefundAmtGST, :RefundAmtOriginal, :RefundAmtTDS,");
 		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
 
@@ -392,7 +392,8 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		prvsFinFeeRefund.setFeeId(feeID);
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select Sum(refundAmount) as TotRefundAmount, ");
-		sql.append(" Sum(refundAmtGST) as TotRefundAmtGST, Sum(refundAmtOriginal) as TotRefundAmtOriginal ");
+		sql.append(" Sum(refundAmtGST) as TotRefundAmtGST, Sum(refundAmtOriginal) as TotRefundAmtOriginal ,");
+		sql.append(" Sum(refundAmtTDS) as TotRefundAmtTDS");
 		sql.append(" FROM  FinFeeRefundDetails");
 		sql.append(" Where FeeId =:FeeId");
 		logger.trace(Literal.SQL + sql.toString());

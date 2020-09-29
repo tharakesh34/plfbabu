@@ -277,10 +277,6 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	 */
 	@Override
 	public List<FinFeeDetail> getPaidFinFeeDetails(final String reference, String type) {
-		FinFeeDetail finFeeDetail = new FinFeeDetail();
-		finFeeDetail.setFinReference(reference);
-		finFeeDetail.setOriginationFee(true);
-
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
@@ -290,14 +286,16 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", RemainingFeeOriginal, VasReference, Status, ReferenceId");
 		sql.append(", FeeScheduleMethod, ActPercentage, PaidTDS, RemTDS, NetTDS");
 		sql.append(", TaxHeaderId, TaxApplicable, ActualAmount");
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent");
+			sql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent, TdsReq");
 		}
+
 		sql.append(", WaivedGST, ReferenceId");
 		sql.append(" from FinFeeDetail");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ? And ActualAmount > 0 ");
-		sql.append(" AND FeeScheduleMethod ='DISB' AND OriginationFee = ? ");
+		sql.append(" Where FinReference = ? and ActualAmount > ?");
+		sql.append(" and FeeScheduleMethod = ? and OriginationFee = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -306,8 +304,11 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
 					int index = 1;
-					ps.setString(index++, finFeeDetail.getFinReference());
-					ps.setBoolean(index, finFeeDetail.isOriginationFee());
+
+					ps.setString(index++, reference);
+					ps.setInt(index++, 0);
+					ps.setString(index++, "DISB");
+					ps.setInt(index, 1);
 				}
 			}, new RowMapper<FinFeeDetail>() {
 				@Override
@@ -342,9 +343,16 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 					ffd.setPaidTDS(rs.getBigDecimal("PaidTDS"));
 					ffd.setRemTDS(rs.getBigDecimal("RemTDS"));
 					ffd.setNetTDS(rs.getBigDecimal("NetTDS"));
-					ffd.setFeeTypeCode(rs.getString("FeeTypeCode"));
-					ffd.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-					ffd.setTaxComponent(rs.getString("TaxComponent"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						ffd.setFeeTypeCode(rs.getString("FeeTypeCode"));
+						ffd.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+						ffd.setTaxComponent(rs.getString("TaxComponent"));
+						ffd.setTdsReq(rs.getBoolean("TdsReq"));
+					}
+
+					ffd.setWaivedGST(rs.getBigDecimal("WaivedGST"));
+					ffd.setReferenceId(JdbcUtil.getLong(rs.getLong("ReferenceId")));
 
 					return ffd;
 				}
@@ -1064,6 +1072,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(" RemainingFee = :RemainingFee,");
 		sql.append(" RemainingFeeOriginal = :RemainingFeeOriginal, ");
 		sql.append(" RemainingFeeGST = :RemainingFeeGST ");
+		sql.append(", PaidTDS = :PaidTDS, RemTDS = :RemTDS");
 		sql.append(" Where FeeID = :FeeID ");
 
 		logger.debug(Literal.SQL + sql.toString());

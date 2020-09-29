@@ -1408,7 +1408,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 								Labels.getLabel("FeeDetail_PaidAmount"), String.valueOf(BigDecimal.ZERO) }));
 					}
 					if (validate && BigDecimal.valueOf(paidBox.doubleValue())
-							.compareTo(PennantApplicationUtil.formateAmount(fee.getActualAmount(), formatter)) > 0) {
+							.compareTo(PennantApplicationUtil.formateAmount(fee.getNetAmount(), formatter)) > 0) {
 						throw new WrongValueException(paidBox,
 								Labels.getLabel("label_FeeDetail_Validation_Exceed",
 										new String[] { Labels.getLabel("FeeDetail_PaidAmount"),
@@ -3340,27 +3340,34 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 						BigDecimal totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
 						fraction = fraction.add(totPerc.divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN));
 					}
-					fraction = fraction.subtract(tdsPerc.divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN));
+					//fraction = fraction.subtract(tdsPerc.divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN));
 
 					if (inclusiveGST) {
-
-						BigDecimal orgAmt = feeDetails.getNetAmount().divide(fraction, 0, RoundingMode.HALF_DOWN);
+						BigDecimal orgAmt = feeDetails.getCalculatedAmount().divide(fraction, 0,
+								RoundingMode.HALF_DOWN);
 						orgAmt = CalculationUtil.roundAmount(orgAmt, finMain.getCalRoundingMode(),
 								finMain.getRoundingTarget());
 
-						// NET Amount Calculations
-						tdsNetFee = (orgAmt.multiply(tdsPerc)).divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN);
-						tdsNetFee = CalculationUtil.roundAmount(tdsNetFee, tdsRoundMode, tdsRoundingTarget);
+						feeDetails.setActualAmount(orgAmt);
+						feeDetails.setActualAmountOriginal(orgAmt);
+						feeDetails.setNetAmount(feeDetails.getActualAmount().subtract(feeDetails.getWaivedAmount()));
+						feeDetails.setNetAmountOriginal(feeDetails.getNetAmount());
 
-						taxSplit = GSTCalculator.getInclusiveGST(tdsNetFee.add(feeDetails.getNetAmount()),
-								taxPercentages);
+						taxSplit = GSTCalculator.getExclusiveGST(feeDetails.getNetAmount(), taxPercentages);
 						feeDetails.setNetAmountGST(taxSplit.gettGST());
 						feeDetails.setActualAmountGST(taxSplit.gettGST());
-						feeDetails.setNetAmountOriginal(
-								feeDetails.getNetAmount().subtract(feeDetails.getNetAmountGST()).add(tdsNetFee));
-						feeDetails.setActualAmountOriginal(
-								feeDetails.getNetAmountOriginal().add(feeDetails.getWaivedAmount()));
 
+						feeDetails.setActualAmount(
+								feeDetails.getCalculatedAmount().subtract(feeDetails.getNetAmountGST()));
+						feeDetails.setActualAmountOriginal(
+								feeDetails.getCalculatedAmount().subtract(feeDetails.getNetAmountGST()));
+						feeDetails.setNetAmount(feeDetails.getActualAmount().subtract(feeDetails.getWaivedAmount()));
+						feeDetails.setNetAmountOriginal(feeDetails.getNetAmount());
+
+						// NET Amount Calculations
+						tdsNetFee = (feeDetails.getNetAmount().multiply(tdsPerc)).divide(new BigDecimal(100), 9,
+								RoundingMode.HALF_DOWN);
+						tdsNetFee = CalculationUtil.roundAmount(tdsNetFee, tdsRoundMode, tdsRoundingTarget);
 					} else {
 
 						tdsNetFee = (feeDetails.getNetAmountOriginal().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
@@ -3371,13 +3378,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					// Paid Amount Calculations
 					if (!exclusiveGST) {
 
-						BigDecimal paidOrAmt = feeDetails.getPaidAmount().divide(fraction, 0, RoundingMode.HALF_DOWN);
-						paidOrAmt = CalculationUtil.roundAmount(paidOrAmt, finMain.getCalRoundingMode(),
-								finMain.getRoundingTarget());
-						tdsPaidFee = (paidOrAmt.multiply(tdsPerc)).divide(new BigDecimal(100), 0,
-								RoundingMode.HALF_DOWN);
-						tdsPaidFee = CalculationUtil.roundAmount(tdsPaidFee, tdsRoundMode, tdsRoundingTarget);
-
+						tdsPaidFee = feeDetails.getPaidTDS();
 						if (inclusiveGST) {
 							taxSplit = GSTCalculator.getInclusiveGST(tdsPaidFee.add(feeDetails.getPaidAmount()),
 									taxPercentages);

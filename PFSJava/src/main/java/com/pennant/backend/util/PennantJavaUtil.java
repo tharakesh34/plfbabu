@@ -2778,7 +2778,7 @@ public class PennantJavaUtil {
 				new ModuleMapping("NPATemplateType", NPATemplateType.class, new String[] { "NPA_TEMPLATE_TYPES" }, null,
 						new String[] { "Id", "Code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 350));
 		ModuleUtil.register("Provision",
-				new ModuleMapping("Provision", Provision.class, new String[] { "FinProvisions", "FinProvisions_AView" },
+				new ModuleMapping("Provision", Provision.class, new String[] { "PROVISIONS", "PROVISIONS_AView" },
 						masterWF, new String[] { "FinReference", "FinBranch" }, null, 600));
 
 		ModuleUtil.register("ManualAdvise",

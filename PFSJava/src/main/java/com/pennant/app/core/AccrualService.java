@@ -685,6 +685,11 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setPftAmzSusp(pftAmz);
 			pftDetail.setPftAccrueSusp(pftDetail.getPftAccrued());
 
+			pftDetail.setPftAmz(BigDecimal.ZERO);
+			pftDetail.setPftAccrued(BigDecimal.ZERO);
+		} else {
+			pftDetail.setPftAmzSusp(BigDecimal.ZERO);
+			pftDetail.setPftAccrueSusp(BigDecimal.ZERO);
 		}
 		pftDetail.setPftInSusp(false);
 	}

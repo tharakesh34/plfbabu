@@ -45,6 +45,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.FinStatementController;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pffws.FinStatementRestService;
 import com.pennanttech.pffws.FinStatementSoapService;
 import com.pennanttech.util.APIConstants;
@@ -635,22 +636,37 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		String[] logFields = new String[1];
 		logFields[0] = statementRequest.getCif();
 		APIErrorHandlerService.logKeyFields(logFields);
-
+		FinanceMain financeMain = null;
+		Date fromDate = statementRequest.getFromDate();
 		String finReference = statementRequest.getFinReference();
+
 		if (StringUtils.isBlank(finReference)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finReference";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return response;
 		} else {
-			int count = financeMainDAO.getFinanceCountById(finReference, "", false);
-			if (count <= 0) {
+			financeMain = financeMainDAO.getFinanceMainForPftCalc(finReference);
+			if (financeMain == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finReference;
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 				return response;
 			}
 		}
+
+		if (fromDate != null) {
+			if (DateUtil.compare(fromDate, financeMain.getFinStartDate()) < 0
+					|| DateUtil.compare(financeMain.getMaturityDate(), fromDate) < 0) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "FromDate";
+				valueParm[1] = "FinStartDate";
+				valueParm[2] = "MaturityDate";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30567", valueParm));
+				return response;
+			}
+		}
+
 		statementRequest.setDays(1);
 
 		// call controller to get fore-closure letter 

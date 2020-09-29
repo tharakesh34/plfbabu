@@ -223,8 +223,8 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 		this.finBranch.setValue(provision.getFinBranch());
 		this.finType.setValue(provision.getFinType());
 		this.custID.setValue(provision.getCustID());
-		this.lovDescCustCIF.setValue(provision.getLovDescCustCIF());
-		this.custShrtName.setValue(provision.getLovDescCustShrtName());
+		this.lovDescCustCIF.setValue(provision.getCustCIF());
+		this.custShrtName.setValue(provision.getCustShrtName());
 		this.useNFProv.setChecked(aProvisionMovement.isUseNFProv());
 		this.autoReleaseNFP.setChecked(aProvisionMovement.isAutoReleaseNFP());
 		this.provisionedAmt.setValue(aProvisionMovement.getProvisionedAmt());

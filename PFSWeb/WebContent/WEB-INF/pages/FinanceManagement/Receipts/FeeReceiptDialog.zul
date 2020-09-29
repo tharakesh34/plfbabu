@@ -136,21 +136,46 @@
 							<groupbox id="gb_FeeDetail" style="border:0px;" visible="false">
 								<listbox id="listBoxFeeDetail" fixedLayout="false" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false" sizedByContent="true">
 									<listhead sizable="false">
-										<listheader id="listheader_FeeDetailList_FeeType" label="${c:l('listheader_FeeDetailList_FeeType.label')}" sort="false" />
-										<listheader id="listheader_FeeDetailList_NetAmountOriginal" align="right" label="${c:l('listheader_FeeDetailList_NetAmountOriginal.label')}" sort="false" />
-										<listheader id="listheader_FeeDetailList_NetAmountOriginalGST" align="right" label="${c:l('listheader_FeeDetailList_NetAmountOriginalGST.label')}" sort="false" />
-										<listheader id="listheader_FeeDetailList_TotNetAmountOriginalGST" align="right" label="${c:l('listheader_FeeDetailList_TotNetAmountOriginalGST.label')}" sort="false" />
-										<listheader id="listheader_FeeDetailList_PaidAmount" align="right" label="${c:l('listheader_FeeDetailList_PaidAmount.label')}" sort="false" />
-										<listheader id="listheader_FeeDetailList_PaidGST" align="right" label="${c:l('listheader_FeeDetailList_PaidGST.label')}" sort="false" />
-										<listheader id="listheader_FeeDetailList_TotalPaidAmount" align="right" label="${c:l('listheader_FeeDetailList_TotalPaidAmount.label')}" sort="false" />
-										<listheader id="listheader_FeeDetailList_RemainingFee" label="${c:l('listheader_FeeDetailList_RemainingFee.label')}" sort="false" style="font-size: 11px;" width="100px" />
+										<listheader id="listheader_FeeDetailList_FeeType"
+											label="${c:l('listheader_FeeDetailList_FeeType.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_NetAmountOriginal" align="right"
+											label="${c:l('listheader_FeeDetailList_NetAmountOriginal.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_NetAmountOriginalGST" align="right"
+											label="${c:l('listheader_FeeDetailList_NetAmountOriginalGST.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_NetAmountOriginalTDS" align="right"
+											label="${c:l('listheader_FeeDetailList_NetAmountOriginalTDS.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_TotNetAmountOriginalGST" align="right"
+											label="${c:l('listheader_FeeDetailList_TotNetAmountOriginalGST.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_PaidAmount" align="right"
+											label="${c:l('listheader_FeeDetailList_PaidAmount.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_PaidGST" align="right"
+											label="${c:l('listheader_FeeDetailList_PaidGST.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_PaidTDS" align="right"
+											label="${c:l('listheader_FeeDetailList_PaidTDS.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_TotalPaidAmount" align="right"
+											label="${c:l('listheader_FeeDetailList_TotalPaidAmount.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_RemainingFee"
+											label="${c:l('listheader_FeeDetailList_RemainingFee.label')}" sort="false" style="font-size: 11px;"
+											width="100px" />
 
-										<listheader id="listheader_FeeDetailList_RemainingGST" label="${c:l('listheader_FeeDetailList_RemainingGST.label')}" sort="false" style="font-size: 11px;" width="100px" />
-										<listheader id="listheader_FeeDetailList_TotalRemaining" label="${c:l('listheader_FeeDetailList_TotalRemaining.label')}" sort="false" style="font-size: 11px;" width="100px" />
+										<listheader id="listheader_FeeDetailList_RemainingGST"
+											label="${c:l('listheader_FeeDetailList_RemainingGST.label')}" sort="false" style="font-size: 11px;"
+											width="100px" />
+										<listheader id="listheader_FeeDetailList_RemainingTDS"
+											label="${c:l('listheader_FeeDetailList_RemainingTDS.label')}" sort="false" style="font-size: 11px;"
+											width="100px" />
+										<listheader id="listheader_FeeDetailList_TotalRemaining"
+											label="${c:l('listheader_FeeDetailList_TotalRemaining.label')}" sort="false" style="font-size: 11px;"
+											width="100px" />
 
-										<listheader id="listheader_FeeDetailList_AllocatedAmount" align="right" label="${c:l('listheader_FeeDetailList_AllocatedAmount.label')}" sort="false" />
-										<listheader id="listheader_FeeDetailList_AllocatedAmountGST" align="right" label="${c:l('listheader_FeeDetailList_AllocatedAmountGST.label')}" sort="false" />
-										<listheader id="listheader_FeeDetailList_AllocatedAmtTotal" align="right" label="${c:l('listheader_FeeDetailList_AllocatedAmtTotal.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_AllocatedAmount" align="right"
+											label="${c:l('listheader_FeeDetailList_AllocatedAmount.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_AllocatedAmountGST" align="right"
+											label="${c:l('listheader_FeeDetailList_AllocatedAmountGST.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_AllocatedAmountTDS" align="right"
+											label="${c:l('listheader_FeeDetailList_AllocatedAmountTDS.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_AllocatedAmtTotal" align="right"
+											label="${c:l('listheader_FeeDetailList_AllocatedAmtTotal.label')}" sort="false" />
 									</listhead>
 								</listbox>
 							</groupbox>

@@ -160,7 +160,7 @@ public class FinStatementController extends SummaryDetailService {
 	 * @param finreferencecList
 	 * @throws ServiceException
 	 */
-	public FinStatementResponse getStatement(List<String> finReferences, String serviceName, int days) {
+	public FinStatementResponse getStatement(List<String> finReferences, String serviceName, int days, Date fromDate) {
 		logger.debug(Literal.ENTERING);
 
 		FinStatementResponse stmtResponse = new FinStatementResponse();
@@ -194,7 +194,7 @@ public class FinStatementController extends SummaryDetailService {
 					List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 					aFinanceDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
 					financeDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
-					financeDetail = getForeClosureDetails(financeDetail, days);
+					financeDetail = getForeClosureDetails(financeDetail, days, fromDate);
 
 					FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 					finScheduleData
@@ -240,7 +240,7 @@ public class FinStatementController extends SummaryDetailService {
 	 * @return
 	 * @throws Exception
 	 */
-	private FinanceDetail getForeClosureDetails(FinanceDetail financeDetail, int days) throws Exception {
+	private FinanceDetail getForeClosureDetails(FinanceDetail financeDetail, int days, Date fromDate) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -264,10 +264,10 @@ public class FinStatementController extends SummaryDetailService {
 		List<FinFeeDetail> foreClosureFees = new ArrayList<FinFeeDetail>();
 		List<FinFeeDetail> feeDues = new ArrayList<FinFeeDetail>();
 		try {
-			for (int i = 0; i < days; i++) {
+			if (fromDate != null) {
 				Cloner cloner = new Cloner();
 				FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
-				serviceInstruction.setFromDate(DateUtility.addDays(DateUtility.getAppDate(), i));
+				serviceInstruction.setFromDate(fromDate);
 				aFinanceDetail = doProcessPayments(aFinanceDetail, serviceInstruction);
 
 				scheduleData.setOutstandingPri(aFinanceDetail.getFinScheduleData().getOutstandingPri());
@@ -275,6 +275,19 @@ public class FinStatementController extends SummaryDetailService {
 				foreClosureFees = aFinanceDetail.getFinScheduleData().getForeClosureFees();
 				foreClosureList.add(aFinanceDetail.getForeClosureDetails().get(0));
 				finOdDetaiList.add(aFinanceDetail.getFinScheduleData().getFinODDetails().get(0));
+			} else {
+				for (int i = 0; i < days; i++) {
+					Cloner cloner = new Cloner();
+					FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
+					serviceInstruction.setFromDate(DateUtility.addDays(SysParamUtil.getAppDate(), i));
+					aFinanceDetail = doProcessPayments(aFinanceDetail, serviceInstruction);
+
+					scheduleData.setOutstandingPri(aFinanceDetail.getFinScheduleData().getOutstandingPri());
+					feeDues = aFinanceDetail.getFinScheduleData().getFeeDues();
+					foreClosureFees = aFinanceDetail.getFinScheduleData().getForeClosureFees();
+					foreClosureList.add(aFinanceDetail.getForeClosureDetails().get(0));
+					finOdDetaiList.add(aFinanceDetail.getFinScheduleData().getFinODDetails().get(0));
+				}
 			}
 
 			scheduleData.setFinReference(finReference);
@@ -340,7 +353,7 @@ public class FinStatementController extends SummaryDetailService {
 	public FinStatementResponse getStatement(FinStatementRequest statementRequest, String serviceName) {
 		List<String> references = new ArrayList<String>();
 		references.add(statementRequest.getFinReference());
-		return getStatement(references, serviceName, statementRequest.getDays());
+		return getStatement(references, serviceName, statementRequest.getDays(), statementRequest.getFromDate());
 	}
 
 	private void prepareResponse(FinanceDetail financeDetail, String servicName)
@@ -578,6 +591,9 @@ public class FinStatementController extends SummaryDetailService {
 	private List<ReceiptAllocationDetail> calEarlySettleAmount(FinScheduleData finScheduleData, Date valueDate) {
 		logger.debug(Literal.ENTERING);
 
+		String TDS_ROUNDING_MODE = SysParamUtil.getValueAsString(CalculationConstants.TDS_ROUNDINGMODE);
+		int TDS_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+
 		BigDecimal tdsMultiplier = BigDecimal.ONE;
 		if (finScheduleData.getFinanceMain().isTDSApplicable()) {
 
@@ -617,7 +633,9 @@ public class FinStatementController extends SummaryDetailService {
 				if (finScheduleData.getFinanceMain().isTDSApplicable()) {
 					BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
 					BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-					tdsAccruedTillNow = tdsAccruedTillNow.add(pft.subtract(actualPft));
+					BigDecimal tds = pft.subtract(actualPft);
+					tds = CalculationUtil.roundAmount(tds, TDS_ROUNDING_MODE, TDS_ROUNDING_TARGET);
+					tdsAccruedTillNow = tdsAccruedTillNow.add(tds);
 				}
 
 			} else if (DateUtil.compare(valueDate, schdDate) == 0) {
@@ -633,7 +651,9 @@ public class FinStatementController extends SummaryDetailService {
 
 				if (finScheduleData.getFinanceMain().isTDSApplicable()) {
 					BigDecimal actualPft = remPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-					tdsAccruedTillNow = tdsAccruedTillNow.add(remPft.subtract(actualPft));
+					BigDecimal tds = remPft.subtract(actualPft);
+					tds = CalculationUtil.roundAmount(tds, TDS_ROUNDING_MODE, TDS_ROUNDING_TARGET);
+					tdsAccruedTillNow = tdsAccruedTillNow.add(tds);
 				}
 				partAccrualReq = false;
 
@@ -653,8 +673,9 @@ public class FinStatementController extends SummaryDetailService {
 					if (finScheduleData.getFinanceMain().isTDSApplicable()) {
 						BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier, 0,
 								RoundingMode.HALF_DOWN);
-						tdsAccruedTillNow = tdsAccruedTillNow
-								.add(accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft));
+						BigDecimal tds = accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft);
+						tds = CalculationUtil.roundAmount(tds, TDS_ROUNDING_MODE, TDS_ROUNDING_TARGET);
+						tdsAccruedTillNow = tdsAccruedTillNow.add(tds);
 					}
 				}
 			}

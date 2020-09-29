@@ -73,7 +73,6 @@ import com.pennant.backend.service.financemanagement.ProvisionMovementService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.financemanagement.provision.ProvisionListCtrl;
 import com.pennant.webui.financemanagement.provisionmovement.model.ProvisionMovementListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -231,22 +230,24 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 		this.finBranch.setValue(aProvision.getFinBranch());
 		this.finType.setValue(aProvision.getFinType());
 		this.custID.setValue(aProvision.getCustID());
-		this.lovDescCustCIF.setValue(aProvision.getLovDescCustCIF());
-		this.custShrtName.setValue(aProvision.getLovDescCustShrtName());
-		this.useNFProv.setChecked(aProvision.isUseNFProv());
-		this.autoReleaseNFP.setChecked(aProvision.isAutoReleaseNFP());
+		this.lovDescCustCIF.setValue(aProvision.getCustCIF());
+		this.custShrtName.setValue(aProvision.getCustShrtName());
+		//this.useNFProv.setChecked(aProvision.isUseNFProv());
+		//this.autoReleaseNFP.setChecked(aProvision.isAutoReleaseNFP());
 		this.provisionedAmt.setValue(aProvision.getProvisionedAmt());
-		this.principalDue.setValue(PennantAppUtil.formateAmount(aProvision.getPrincipalDue(), format));
-		this.profitDue.setValue(PennantAppUtil.formateAmount(aProvision.getProfitDue(), format));
-		this.dueTotal.setValue(
-				PennantAppUtil.formateAmount(aProvision.getPrincipalDue().add(aProvision.getProfitDue()), format));
-		this.nonFormulaProv.setValue(
-				PennantAppUtil.formateAmount(aProvision.getNonFormulaProv().add(aProvision.getProfitDue()), format));
+		/*
+		 * this.principalDue.setValue(PennantAppUtil.formateAmount(aProvision.getPrincipalDue(), format));
+		 * this.profitDue.setValue(PennantAppUtil.formateAmount(aProvision.getProfitDue(), format));
+		 * this.dueTotal.setValue(
+		 * PennantAppUtil.formateAmount(aProvision.getPrincipalDue().add(aProvision.getProfitDue()), format));
+		 */
+		//this.nonFormulaProv.setValue(
+		//		PennantAppUtil.formateAmount(aProvision.getNonFormulaProv().add(aProvision.getProfitDue()), format));
 		this.dueFromDate.setValue(aProvision.getDueFromDate());
 		this.lastFullyPaidDate.setValue(aProvision.getLastFullyPaidDate());
-		this.calProvisionedAmt.setValue(aProvision.getProvisionAmtCal());
+		//this.calProvisionedAmt.setValue(aProvision.getProvisionAmtCal());
 
-		doFilllistbox(aProvision.getProvisionMovementList());
+		//doFilllistbox(aProvision.getProvisionMovementList());
 
 		logger.debug("Leaving");
 	}

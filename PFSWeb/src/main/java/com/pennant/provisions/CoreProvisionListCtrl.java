@@ -138,24 +138,16 @@ public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("extPagedListService");
 		List<Provision> provisionList = pagedListService.getBySearchObject(searchObject);
-		List<Provision> processedProvisions = getProvisionService().getProcessedProvisions();
+		//List<Provision> processedProvisions = getProvisionService().getProcessedProvisions();
 
-		if (processedProvisions.isEmpty()) {
-			// render provisionList if processed provisions are empty
-			getPagedListWrapper().initList(provisionList, this.listBoxProvisions, this.pagingCoreProvisionList);
-		} else {
-			for (Provision provision : processedProvisions) {
-				Iterator<Provision> it = provisionList.iterator();
-				while (it.hasNext()) {
-					Provision provisions = (Provision) it.next();
-					if (provision.getFinReference().equals(provisions.getFinReference())) {
-						it.remove();
-					}
-				}
-			}
-			getPagedListWrapper().initList(provisionList, this.listBoxProvisions, this.pagingCoreProvisionList);
-		}
-
+		/*
+		 * if (processedProvisions.isEmpty()) { // render provisionList if processed provisions are empty
+		 * getPagedListWrapper().initList(provisionList, this.listBoxProvisions, this.pagingCoreProvisionList); } else {
+		 * for (Provision provision : processedProvisions) { Iterator<Provision> it = provisionList.iterator(); while
+		 * (it.hasNext()) { Provision provisions = (Provision) it.next(); if
+		 * (provision.getFinReference().equals(provisions.getFinReference())) { it.remove(); } } }
+		 * getPagedListWrapper().initList(provisionList, this.listBoxProvisions, this.pagingCoreProvisionList); }
+		 */
 		this.listBoxProvisions.setItemRenderer(new CoreProvisionListModelItemRender());
 		listBoxProvisions.setCheckmark(true);
 		listBoxProvisions.setMultiple(true);

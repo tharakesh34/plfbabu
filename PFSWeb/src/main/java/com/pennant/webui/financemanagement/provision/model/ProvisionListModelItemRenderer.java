@@ -77,11 +77,11 @@ public class ProvisionListModelItemRenderer implements ListitemRenderer<Provisio
 		Listcell lc;
 		lc = new Listcell(provision.getFinReference());
 		lc.setParent(item);
-		lc = new Listcell(provision.getLovDescCustCIF());
+		lc = new Listcell(provision.getCustCIF());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateDate(provision.getProvisionCalDate(), PennantConstants.dateFormat));
+		lc = new Listcell(PennantAppUtil.formateDate(provision.getProvisionDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(provision.getProvisionAmtCal(), format));
+		lc = new Listcell(PennantAppUtil.amountFormate(provision.getProvisionedAmt(), format));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.amountFormate(provision.getProvisionedAmt(), format));
@@ -90,7 +90,7 @@ public class ProvisionListModelItemRenderer implements ListitemRenderer<Provisio
 		lc = new Listcell();
 		final Checkbox cbUseNFProv = new Checkbox();
 		cbUseNFProv.setDisabled(true);
-		cbUseNFProv.setChecked(provision.isUseNFProv());
+		//	cbUseNFProv.setChecked(provision.isUseNFProv());
 		lc.appendChild(cbUseNFProv);
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.formateDate(provision.getDueFromDate(), PennantConstants.dateFormat));

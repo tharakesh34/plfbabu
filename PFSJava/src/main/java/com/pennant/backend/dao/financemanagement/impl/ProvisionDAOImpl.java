@@ -42,28 +42,32 @@
 */
 package com.pennant.backend.dao.financemanagement.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.Provision;
-import com.pennant.backend.model.financemanagement.ProvisionMovement;
+import com.pennant.backend.model.financemanagement.ProvisionAmount;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.eod.constants.EodConstants;
-import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -71,18 +75,12 @@ import com.pennanttech.pff.core.TableType;
  * DAO methods implementation for the <b>Provision model</b> class.<br>
  * 
  */
-public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDAO {
+public class ProvisionDAOImpl extends SequenceDao<Provision> implements ProvisionDAO {
 	private static Logger logger = Logger.getLogger(ProvisionDAOImpl.class);
 
 	public ProvisionDAOImpl() {
 		super();
 	}
-
-	/**
-	 * This method set the Work Flow id based on the module name and return the new Provision
-	 * 
-	 * @return Provision
-	 */
 
 	@Override
 	public Provision getProvision() {
@@ -96,163 +94,295 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 		return provision;
 	}
 
-	/**
-	 * This method get the module from method getProvision() and set the new record flag as true and return Provision()
-	 * 
-	 * @return Provision
-	 */
-
 	@Override
-	public Provision getNewProvision() {
-		logger.debug(Literal.ENTERING);
-		Provision provision = getProvision();
-		provision.setNewRecord(true);
-		logger.debug(Literal.LEAVING);
-		return provision;
-	}
-
-	/**
-	 * Fetch the Record Provision details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return Provision
-	 */
-	@Override
-	public Provision getProvisionById(final String id, String type) {
+	public Provision getProvisionById(final String finReference, TableType tableType, boolean isMovement) {
 		logger.debug(Literal.ENTERING);
 
-		Provision provision = new Provision();
-		provision.setId(id);
-
-		StringBuilder sql = new StringBuilder("Select FinReference, FinBranch, FinType, ");
-		sql.append(" CustID, ProvisionCalDate, ProvisionedAmt, ProvisionAmtCal, ProvisionDue, ");
-		sql.append(" NonFormulaProv, UseNFProv, AutoReleaseNFP, PrincipalDue, ProfitDue, ");
-		sql.append(" DueFromDate, LastFullyPaidDate, DueDays, priBal, AssetCode,");
-		sql.append(" AssetStageOrdr, NPA, ManualProvision,PrvovisionRate,");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(" FinCcy, lovDescCustCIF, lovDescCustShrtName , ");
+		StringBuilder sql = null;
+		if (isMovement) {
+			sql = getMovementsQuery(tableType);
+		} else {
+			sql = getSelectQuery(tableType);
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, ");
-		sql.append(" NextTaskId, RecordType, WorkflowId");
-		sql.append(" From FinProvisions");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference =:FinReference");
+		sql.append(" Where FinReference = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		RowMapper<Provision> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Provision.class);
-
-		try {
-			provision = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			provision = null;
-		}
-		logger.debug(Literal.LEAVING);
-		return provision;
-	}
-
-	/**
-	 * This method Deletes the Record from the FinProvisions or FinProvisions_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Provision by key FinReference
-	 * 
-	 * @param Provision
-	 *            (provision)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public void delete(Provision provision, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Delete From FinProvisions");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference =:FinReference");
-		logger.debug(Literal.SQL + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * This method insert new Records into FinProvisions or FinProvisions_Temp.
-	 *
-	 * save Provision
-	 * 
-	 * @param Provision
-	 *            (provision)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
-	@Override
-	public String save(Provision provision, String type) {
-		StringBuilder sql = new StringBuilder("Insert Into FinProvisions");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (FinReference, FinBranch, FinType, CustID, ProvisionCalDate,");
-		sql.append(" ProvisionedAmt, ProvisionAmtCal, ProvisionDue, NonFormulaProv, UseNFProv, AutoReleaseNFP,");
-		sql.append(" PrincipalDue, ProfitDue, DueFromDate, LastFullyPaidDate, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		sql.append(" RecordType, WorkflowId,");
-		sql.append(" DueDays,DpdBucketID,NpaBucketID,PftBal,PriBal,PrvovisionRate,");
-		sql.append(" AssetCode, assetStageOrdr, NPA, ProvLinkedTranId, ProvChgLinkedTranId, ManualProvision) ");
-		sql.append(" Values(:FinReference, :FinBranch, :FinType, :CustID, :ProvisionCalDate,");
-		sql.append(" :ProvisionedAmt, :ProvisionAmtCal, :ProvisionDue, :NonFormulaProv,");
-		sql.append(" :UseNFProv, :AutoReleaseNFP, :PrincipalDue, :ProfitDue, :DueFromDate, :LastFullyPaidDate, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,  ");
-		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId,");
-		sql.append(" :DueDays,:DpdBucketID,:NpaBucketID,:PftBal,:PriBal,:PrvovisionRate,");
-		sql.append(" :AssetCode, :AssetStageOrdr, :Npa, :ProvLinkedTranId, :ProvChgLinkedTranId, :ManualProvision) ");
 		logger.trace(Literal.SQL + sql.toString());
 
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+					new ProvisionRowMapper(tableType));
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+
+	}
+
+	private StringBuilder getSelectQuery(TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit, ProfitAccruedAndDue");
+		sql.append(
+				", ProfitAccruedAndNotDue, CollateralValue, DueFromDate, LastFullyPaidDate, DueDays, CurrBucket, Dpd, ProvisionDate, ProvisionedAmt");
+		sql.append(", AssetCode, AssetStageOrder, Npa, ManualProvision, LinkedTranId, ChgLinkedTranId");
+		sql.append(", Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (tableType.getSuffix().toLowerCase().contains("view")) {
+			sql.append(", FinBranch, FinType, CustID, CustCIF, CustShrtName, FinIsActive");
+		}
+		sql.append(" from PROVISIONS");
+		sql.append(tableType.getSuffix());
+		return sql;
+	}
+
+	private StringBuilder getMovementsQuery(TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(
+				" Id, ProvisionId, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit, ProfitAccruedAndDue");
+		sql.append(
+				", ProfitAccruedAndNotDue, CollateralValue, DueFromDate, LastFullyPaidDate, DueDays, CurrBucket, Dpd, ProvisionDate, ProvisionedAmt");
+		sql.append(", AssetCode, AssetStageOrder, Npa, ManualProvision, LinkedTranId, ChgLinkedTranId");
+		sql.append(", Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (tableType.getSuffix().toLowerCase().contains("view")) {
+			sql.append(", FinBranch, FinType, CustID, CustCIF, CustShrtName");
+		}
+		sql.append(" from PROVISION_MOVEMENTS");
+		sql.append(tableType.getSuffix());
+		return sql;
+	}
+
+	@Override
+	public Provision getProvisionById(final long id, TableType tableType, boolean isMovement) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		if (isMovement) {
+			sql = getMovementsQuery(tableType);
+		} else {
+			sql = getSelectQuery(tableType);
+		}
+		sql.append(" Where id = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
+					new ProvisionRowMapper(tableType));
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+
+	}
+
+	@Override
+	public void delete(Provision provision, TableType type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Delete From PROVISIONS");
+		sql.append(type.getSuffix());
+		sql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql.toString());
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public long save(Provision provision, TableType tableType) {
+		if (provision.getId() <= 0) {
+			provision.setId(getNextValue("SEQPROVISIONS"));
+		}
+
+		StringBuilder sql = new StringBuilder("insert into PROVISIONS");
+		sql.append(tableType.getSuffix());
+		sql.append("(Id, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit");
+		sql.append(" , ProfitAccruedAndDue, ProfitAccruedAndNotDue, CollateralValue");
+		sql.append(", DueFromDate, LastFullyPaidDate, DueDays, CurrBucket, Dpd, ProvisionDate, ProvisionedAmt");
+		sql.append(", AssetCode, AssetStageOrder, Npa, ManualProvision, LinkedTranId, ChgLinkedTranId");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?");
+		sql.append(")");
+
+		jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+
+				ps.setLong(index++, JdbcUtil.setLong(provision.getId()));
+				ps.setString(index++, provision.getFinReference());
+				ps.setBigDecimal(index++, provision.getClosingBalance());
+				ps.setBigDecimal(index++, provision.getOutStandPrincipal());
+				ps.setBigDecimal(index++, provision.getOutStandProfit());
+				ps.setBigDecimal(index++, provision.getProfitAccruedAndDue());
+				ps.setBigDecimal(index++, provision.getProfitAccruedAndNotDue());
+				ps.setBigDecimal(index++, provision.getCollateralValue());
+				ps.setDate(index++, JdbcUtil.getDate(provision.getDueFromDate()));
+				ps.setDate(index++, JdbcUtil.getDate(provision.getLastFullyPaidDate()));
+				ps.setInt(index++, provision.getDueDays());
+				ps.setInt(index++, provision.getCurrBucket());
+				ps.setInt(index++, provision.getDpd());
+				ps.setDate(index++, JdbcUtil.getDate(provision.getProvisionDate()));
+				ps.setBigDecimal(index++, provision.getProvisionedAmt());
+				ps.setString(index++, provision.getAssetCode());
+				ps.setInt(index++, provision.getAssetStageOrder());
+				ps.setBoolean(index++, provision.isNpa());
+				ps.setBoolean(index++, provision.isManualProvision());
+				ps.setLong(index++, JdbcUtil.setLong(provision.getLinkedTranId()));
+				ps.setLong(index++, JdbcUtil.setLong(provision.getChgLinkedTranId()));
+				ps.setInt(index++, provision.getVersion());
+				ps.setLong(index++, JdbcUtil.setLong(provision.getLastMntBy()));
+				ps.setTimestamp(index++, provision.getLastMntOn());
+				ps.setString(index++, provision.getRecordStatus());
+				ps.setString(index++, provision.getRoleCode());
+				ps.setString(index++, provision.getNextRoleCode());
+				ps.setString(index++, provision.getTaskId());
+				ps.setString(index++, provision.getNextTaskId());
+				ps.setString(index++, provision.getRecordType());
+				ps.setLong(index++, JdbcUtil.setLong(provision.getWorkflowId()));
+			}
+		});
+
 		return provision.getId();
 	}
 
-	/**
-	 * This method updates the Record FinProvisions or FinProvisions_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Provision by key FinReference and Version
-	 * 
-	 * @param Provision
-	 *            (provision)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
+	@Override
+	public long saveMovements(Provision provision, TableType tableType) {
+
+		if (provision.getId() <= 0) {
+			provision.setId(getNextValue("SEQPROVISIONS"));
+		}
+		StringBuilder sql = new StringBuilder("insert into PROVISION_MOVEMENTS");
+		sql.append(tableType.getSuffix());
+		sql.append("(Id, ProvisionId, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit");
+		sql.append(" , ProfitAccruedAndDue, ProfitAccruedAndNotDue, CollateralValue");
+		sql.append(", DueFromDate, LastFullyPaidDate, DueDays, CurrBucket, Dpd, ProvisionDate, ProvisionedAmt");
+		sql.append(", AssetCode, AssetStageOrder, Npa, ManualProvision, LinkedTranId, ChgLinkedTranId");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?");
+		sql.append(")");
+
+		jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+
+				ps.setLong(index++, JdbcUtil.setLong(provision.getId()));
+				ps.setLong(index++, JdbcUtil.setLong(provision.getProvisionId()));
+				ps.setString(index++, provision.getFinReference());
+				ps.setBigDecimal(index++, provision.getClosingBalance());
+				ps.setBigDecimal(index++, provision.getOutStandPrincipal());
+				ps.setBigDecimal(index++, provision.getOutStandProfit());
+				ps.setBigDecimal(index++, provision.getProfitAccruedAndDue());
+				ps.setBigDecimal(index++, provision.getProfitAccruedAndNotDue());
+				ps.setBigDecimal(index++, provision.getCollateralValue());
+				ps.setDate(index++, JdbcUtil.getDate(provision.getDueFromDate()));
+				ps.setDate(index++, JdbcUtil.getDate(provision.getLastFullyPaidDate()));
+				ps.setInt(index++, provision.getDueDays());
+				ps.setInt(index++, provision.getCurrBucket());
+				ps.setInt(index++, provision.getDpd());
+				ps.setDate(index++, JdbcUtil.getDate(provision.getProvisionDate()));
+				ps.setBigDecimal(index++, provision.getProvisionedAmt());
+				ps.setString(index++, provision.getAssetCode());
+				ps.setInt(index++, provision.getAssetStageOrder());
+				ps.setBoolean(index++, provision.isNpa());
+				ps.setBoolean(index++, provision.isManualProvision());
+				ps.setLong(index++, JdbcUtil.setLong(provision.getLinkedTranId()));
+				ps.setLong(index++, JdbcUtil.setLong(provision.getChgLinkedTranId()));
+				ps.setInt(index++, provision.getVersion());
+				ps.setLong(index++, JdbcUtil.setLong(provision.getLastMntBy()));
+				ps.setTimestamp(index++, provision.getLastMntOn());
+				ps.setString(index++, provision.getRecordStatus());
+				ps.setString(index++, provision.getRoleCode());
+				ps.setString(index++, provision.getNextRoleCode());
+				ps.setString(index++, provision.getTaskId());
+				ps.setString(index++, provision.getNextTaskId());
+				ps.setString(index++, provision.getRecordType());
+				ps.setLong(index++, JdbcUtil.setLong(provision.getWorkflowId()));
+			}
+		});
+
+		return provision.getId();
+	}
 
 	@Override
-	public void update(Provision provision, String type) {
+	public void saveAmounts(List<ProvisionAmount> provisionAmounts, TableType tableType, boolean isMovement) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder(" insert into PROVISION");
+		if (isMovement) {
+			sql.append("_MOVMENT_AMOUNTS");
+		} else {
+			sql.append("_AMOUNTS");
+		}
+
+		sql.append(tableType.getSuffix());
+		sql.append("(Id, ProvisionId, ProvisionType, AssetCode , ProvisionPer, ProvisionAmtCal");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?");
+		sql.append(")");
+
+		jdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ProvisionAmount provisionAmount = provisionAmounts.get(i);
+				int index = 1;
+				if (provisionAmount.getId() == Long.MIN_VALUE || isMovement) {
+					provisionAmount.setId(getNextValue("SEQPROVISION_AMOUNTS"));
+				}
+				ps.setLong(index++, JdbcUtil.setLong(provisionAmount.getId()));
+				ps.setLong(index++, provisionAmount.getProvisionId());
+				ps.setString(index++, provisionAmount.getProvisionType());
+				ps.setString(index++, provisionAmount.getAssetCode());
+				ps.setBigDecimal(index++, provisionAmount.getProvisionPer());
+				ps.setBigDecimal(index++, provisionAmount.getProvisionAmtCal());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return provisionAmounts.size();
+			}
+		});
+
+	}
+
+	@Override
+	public void update(Provision provision, TableType type) {
 		int recordCount = 0;
 		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder("Update FinProvisions");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set FinBranch = :FinBranch,");
-		sql.append(" FinType = :FinType, CustID = :CustID, ProvisionCalDate = :ProvisionCalDate,");
-		sql.append(" ProvisionedAmt = :ProvisionedAmt, ProvisionAmtCal = :ProvisionAmtCal,");
-		sql.append(" ProvisionDue = :ProvisionDue, NonFormulaProv = :NonFormulaProv,");
-		sql.append(" UseNFProv = :UseNFProv, AutoReleaseNFP = :AutoReleaseNFP,");
-		sql.append(" PrincipalDue = :PrincipalDue, ProfitDue = :ProfitDue, ");
-		sql.append(" DueFromDate = :DueFromDate, LastFullyPaidDate = :LastFullyPaidDate, ");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,");
-		sql.append(" AssetCode = :AssetCode, assetStageOrdr = :assetStageOrdr, NPA = :Npa, ");
-		sql.append(" PrvovisionRate = :PrvovisionRate, provLinkedTranId = :provLinkedTranId,");
-		sql.append(" provChgLinkedTranId = :provChgLinkedTranId, manualProvision = :manualProvision ");
-		sql.append(" Where FinReference =:FinReference");
+		StringBuilder sql = new StringBuilder("Update PROVISIONS");
+		sql.append(type.getSuffix());
+		sql.append(" Set ");
+		sql.append(
+				"  FinReference = :FinReference, ClosingBalance = :ClosingBalance, OutStandPrincipal = :OutStandPrincipal");
+		sql.append(
+				", OutStandProfit = :OutStandProfit, ProfitAccruedAndDue = :ProfitAccruedAndDue, ProfitAccruedAndNotDue = :ProfitAccruedAndNotDue");
+		sql.append(
+				", CollateralValue = :CollateralValue, DueFromDate = :DueFromDate, LastFullyPaidDate = :LastFullyPaidDate");
+		sql.append(
+				", DueDays = :DueDays, CurrBucket = :CurrBucket, Dpd = :Dpd, ProvisionDate = :ProvisionDate, ProvisionedAmt = :ProvisionedAmt,AssetCode = :AssetCode");
+		sql.append(
+				", AssetStageOrder = :AssetStageOrder, Npa = :Npa, ManualProvision = :ManualProvision , Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
+		sql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode");
+		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId");
+		sql.append(", NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append("  Where Id= :Id");
 
 		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
@@ -263,132 +393,24 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for updating Provisioned Amount in Finance Provision Record
-	 * 
-	 * @param provisionMovement
-	 * @param type
-	 */
 	@Override
-	public void updateProvAmt(ProvisionMovement provisionMovement, String type) {
-		int recordCount = 0;
+	public void updateAmounts(List<ProvisionAmount> provisionAmounts, TableType type) {
+		int[] recordCount = null;
 		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder("Update FinProvisions");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set ProvisionedAmt = :ProvisionedAmt, ProvisionDue = :ProvisionDue ");
-		sql.append(" Where FinReference =:FinReference ");
+		StringBuilder sql = new StringBuilder("Update PROVISION_AMOUNTS");
+		sql.append(type.getSuffix());
+		sql.append(" Set ");
+		sql.append(" AssetCode = :AssetCode, ProvisionPer = :ProvisionPer, ProvisionAmtCal = :ProvisionAmtCal");
+		sql.append(" Where Id= :Id");
+
 		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
-		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
-		if (recordCount <= 0) {
+		recordCount = jdbcTemplate.batchUpdate(sql.toString(),
+				SqlParameterSourceUtils.createBatch(provisionAmounts.toArray()));
+		if (recordCount == null || recordCount.length <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public List<Provision> getProcessedProvisions() {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select  FinReference, provisionCalDate,provisionAmt as provisionedAmt, provisionAmtCal,");
-		sql.append(" nonFormulaProv, useNFProv, prevProvisionCalDate, prevProvisionedAmt, transRef");
-		sql.append(" From FinProcessedprovisions");
-
-		logger.debug(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new Provision());
-		RowMapper<Provision> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Provision.class);
-
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
-	}
-
-	@Override
-	public String saveProcessedProvisions(Provision provision) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Insert Into FinProcessedprovisions");
-		sql.append(" (FinReference, provisionCalDate, provisionAmt, provisionAmtCal, nonFormulaProv,");
-		sql.append(" useNFProv, prevProvisionCalDate, prevProvisionedAmt, transRef)");
-		sql.append(" Values(:FinReference, :ProvisionCalDate, :ProvisionedAmt, :ProvisionAmtCal, ");
-		sql.append(" :NonFormulaProv, :UseNFProv, :PrevProvisionCalDate, :PrevProvisionedAmt, :TransRef)");
-		logger.debug(Literal.SQL + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		try {
-			this.jdbcTemplate.update(sql.toString(), beanParameters);
-		} catch (DataAccessException e) {
-			logger.debug(e);
-		}
-		logger.debug(Literal.LEAVING);
-		return provision.getId();
-	}
-
-	@Override
-	public Provision getCurNPABucket(final String id) {
-		Provision provision = new Provision();
-		provision.setId(id);
-
-		StringBuilder sql = new StringBuilder("Select NpaBucketID ");
-		sql.append(" From FinProvisions");
-		if (App.DATABASE == Database.SQL_SERVER) {
-			sql.append(EodConstants.SQL_NOLOCK);
-		}
-		sql.append(" Where FinReference =:FinReference");
-
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		RowMapper<Provision> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Provision.class);
-
-		try {
-			provision = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-			provision = null;
-		}
-		return provision;
-	}
-
-	@Override
-	public void updateProvisonAmounts(Provision provision) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder("Update FinProvisions");
-		sql.append(" Set ProvisionCalDate = :ProvisionCalDate,ProvisionAmtCal=:ProvisionAmtCal,");
-		sql.append(" ProvisionedAmt = :ProvisionedAmt, DueDays = :DueDays, DpdBucketID = :DpdBucketID,");
-		sql.append(" NpaBucketID = :NpaBucketID, PftBal = :PftBal, PriBal = :PriBal,");
-		sql.append(" PrvovisionRate = :PrvovisionRate, DueFromDate =:DueFromDate ");
-		sql.append(" Where FinReference =:FinReference ");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public Provision getDMProvisionById(final String id, String type) {
-		Provision provision = new Provision();
-
-		provision.setId(id);
-
-		StringBuilder sql = new StringBuilder("Select FinReference, FinBranch, FinType, ");
-		sql.append(" CustID, ProvisionCalDate, ProvisionedAmt, ProvisionAmtCal, ProvisionDue, ");
-		sql.append(" NonFormulaProv, UseNFProv, AutoReleaseNFP, PrincipalDue, ProfitDue, ");
-		sql.append(" DueFromDate, LastFullyPaidDate ");
-		sql.append(" From FinProvisions");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference =:FinReference");
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		RowMapper<Provision> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Provision.class);
-
-		try {
-			provision = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			provision = null;
-		}
-		return provision;
 	}
 
 	@Override
@@ -396,7 +418,7 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = null;
-		StringBuilder sql = new StringBuilder("Select Count(*) From FinProvisions");
+		StringBuilder sql = new StringBuilder("Select Count(*) From PROVISIONS");
 		sql.append(StringUtils.trimToEmpty(type.getSuffix()));
 		sql.append(" Where FinReference =:FinReference");
 
@@ -404,11 +426,119 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 
 		source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
+
 		if (jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
 			return true;
 		}
 		logger.debug(Literal.LEAVING);
 		return false;
+	}
+
+	public class ProvisionRowMapper implements RowMapper<Provision> {
+		TableType tableType = null;
+
+		public ProvisionRowMapper(TableType tableType) {
+			this.tableType = tableType;
+		}
+
+		@Override
+		public Provision mapRow(ResultSet rs, int arg1) throws SQLException {
+			Provision provision = new Provision();
+			provision.setId(rs.getLong("Id"));
+			provision.setFinReference(rs.getString("FinReference"));
+			provision.setClosingBalance(rs.getBigDecimal("ClosingBalance"));
+			provision.setOutStandPrincipal(rs.getBigDecimal("outStandPrincipal"));
+			provision.setOutStandProfit(rs.getBigDecimal("OutStandProfit"));
+			provision.setProfitAccruedAndDue(rs.getBigDecimal("ProfitAccruedAndDue"));
+			provision.setProfitAccruedAndNotDue(rs.getBigDecimal("ProfitAccruedAndNotDue"));
+			provision.setCollateralValue(rs.getBigDecimal("CollateralValue"));
+			provision.setDueFromDate(rs.getTimestamp("DueFromDate"));
+			provision.setLastFullyPaidDate(rs.getTimestamp("LastFullyPaidDate"));
+			provision.setDueDays(rs.getInt("DueDays"));
+			provision.setCurrBucket(rs.getInt("CurrBucket"));
+			provision.setDpd(rs.getInt("Dpd"));
+			provision.setProvisionDate(rs.getTimestamp("ProvisionDate"));
+			provision.setProvisionedAmt(rs.getBigDecimal("ProvisionedAmt"));
+			provision.setAssetCode(rs.getString("AssetCode"));
+			provision.setAssetStageOrder(rs.getInt("AssetStageOrder"));
+			provision.setNpa(rs.getBoolean("Npa"));
+			provision.setManualProvision(rs.getBoolean("ManualProvision"));
+			provision.setLinkedTranId(rs.getLong("LinkedTranId"));
+			provision.setChgLinkedTranId(rs.getLong("ChgLinkedTranId"));
+			provision.setVersion(rs.getInt("Version"));
+			provision.setLastMntBy(rs.getLong("LastMntBy"));
+			provision.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			provision.setRecordStatus(rs.getString("RecordStatus"));
+			provision.setRoleCode(rs.getString("RoleCode"));
+			provision.setNextRoleCode(rs.getString("NextRoleCode"));
+			provision.setTaskId(rs.getString("TaskId"));
+			provision.setNextTaskId(rs.getString("NextTaskId"));
+			provision.setRecordType(rs.getString("RecordType"));
+			provision.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (tableType.getSuffix().toLowerCase().contains("view")) {
+				provision.setFinBranch(rs.getString("FinBranch"));
+				provision.setFinType(rs.getString("FinType"));
+				provision.setCustID(rs.getLong("CustID"));
+				provision.setCustCIF(rs.getString("CustCIF"));
+				provision.setCustShrtName(rs.getString("CustShrtName"));
+				//provision.setFinCcy(rs.getString("FinCcy"));
+			}
+
+			return provision;
+		}
+
+	}
+
+	@Override
+	public void deleteAmounts(long provisionId, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from PROVISION_AMOUNTS");
+		sql.append(tableType.getSuffix());
+		sql.append(" where provisionId = :ProvisionId ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		ProvisionAmount provisionAmount = new ProvisionAmount();
+		provisionAmount.setProvisionId(provisionId);
+		;
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(provisionAmount);
+		jdbcTemplate.update(sql.toString(), paramSource);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public List<ProvisionAmount> getProvisionAmounts(long id, TableType tableType) {
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append("id, provisionId, provisionType, provisionPer, provisionAmtCal,AssetCode");
+
+		sql.append(" from PROVISION_AMOUNTS");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where provisionId = :provisionId");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		ProvisionAmount provisionAmount = new ProvisionAmount();
+		provisionAmount.setProvisionId(id);
+		;
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(provisionAmount);
+		RowMapper<ProvisionAmount> rowMapper = BeanPropertyRowMapper.newInstance(ProvisionAmount.class);
+
+		List<ProvisionAmount> idList = null;
+		try {
+			idList = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			idList = new ArrayList<>();
+		}
+
+		logger.debug(Literal.LEAVING);
+		return idList;
 	}
 
 }

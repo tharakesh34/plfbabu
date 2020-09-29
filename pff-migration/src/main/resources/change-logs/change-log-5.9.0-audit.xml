@@ -141,11 +141,7 @@
 	<changeSet id="4" author="saisandeep.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="bankbranchid" tableName="AdtFinReceiptDetail" defaultValue="0" />
 	</changeSet>
-
-	<changeSet id="5" author="saisandeep.b">
-		<dropNotNullConstraint tableName="AdtFinFeeDetail" columnName="TaxHeaderId" columnDataType="bigint" />
-	</changeSet>
-
+	
 	<changeSet id="6" author="saisandeep.b">
 		<sql>
 			<![CDATA[
@@ -153,6 +149,34 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+
+	<changeSet id="5.0" author="Adarsh" dbms="oracle">
+	<preConditions onFail="MARK_RAN" onError="CONTINUE">
+    <sqlCheck expectedResult="N">
+      SELECT Nullable
+      FROM user_tab_columns
+      WHERE table_name = 'AdtFinFeeDetail'
+      AND column_name = 'TaxHeaderId'
+    </sqlCheck>
+	</preConditions>
+	<dropNotNullConstraint tableName="AdtFinFeeDetail" columnName="TaxHeaderId"/>
+	</changeSet>
+
+		<!-- <changeSet id="5" author="saisandeep.b" dbms="postgresql">
+			<dropNotNullConstraint tableName="AdtFinFeeDetail" columnName="TaxHeaderId" columnDataType="bigint" />
+		</changeSet> -->
+
+	
+		
+	  <changeSet id="5.0" author="Adarsh" dbms="postgresql, mssql">
+	  <preConditions onFail="MARK_RAN" onError="CONTINUE">
+		<sqlCheck expectedResult="NO">
+		  select is_nullable from information_schema.columns where table_name='AdtFinFeeDetail' and column_name='TaxHeaderId';
+	    </sqlCheck>
+	  </preConditions>
+	  <dropNotNullConstraint tableName="AdtFinFeeDetail" columnName="TaxHeaderId" columnDataType="bigint"/>
+	  </changeSet>	
 
 	<!-- ST#931 - Pin Code Changes change logs start -->
 
@@ -461,15 +485,154 @@
 	</changeSet>
 	
 	<changeSet id="ST#540.05.7" author="Tejaswi.b">
-		<addColumn tableName="AdtFinProvisions">
-			<column name="PrvovisionRate" type="decimal(5,2)" />
-		</addColumn>
+		<preConditions onFail="MARK_RAN" > 
+            <not>	
+				<columnExists tableName="AdtFinProvisions" columnName="PrvovisionRate" />
+            </not>
+            </preConditions>
+            <addColumn tableName="AdtFinProvisions">
+				<column name="PrvovisionRate" type="decimal(5,2)" />
+		    </addColumn>
 	</changeSet>
+			
 	
 	<changeSet id="ST#540.6" author="Tejaswi.b">
 		<modifyDataType tableName="AdtFinProvisions" columnName="UseNFProv" newDataType="boolean" />
 		<modifyDataType tableName="AdtFinProvisions" columnName="AutoReleaseNFP" newDataType="boolean" />
 	</changeSet>
+	
+	
+	<changeSet id="ST#540.07" author="Vijayakumar.k">
+		<createTable tableName="ADTPROVISIONS">
+
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="ClosingBalance" type="decimal(18,0)" />
+			<column name="OutStandPrincipal" type="decimal(18,0)" />
+			<column name="OutStandProfit" type="decimal(18,0)" />
+			<column name="ProfitAccruedAndDue" type="decimal(18,0)" />
+			<column name="ProfitAccruedAndNotDue" type="decimal(18,0)" />
+			<column name="CollateralValue" type="decimal(18,0)" />
+			<column name="DueFromDate" type="datetime" />
+			<column name="LastFullyPaidDate" type="datetime" />
+			<column name="CurrBucket" type="int" />
+			<column name="DueDays" type="int" />
+			<column name="DPD" type="int" />
+			<column name="ProvisionDate" type="datetime" />
+			<column name="ProvisionedAmt" type="decimal(18,0)" />
+			<column name="Assetcode" type="varchar(8)" />
+			<column name="Assetstageorder" type="int" />
+			<column name="Npa" type="boolean" />
+			<column name="ManualProvision" type="boolean" />
+			<column name="LinkedTranId" type="bigint" />
+			<column name="ChgLinkedTranId" type="bigint" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#540.07.1" author="Vijayakumar.k"  dbms="oracle,postgresql">
+		<addDefaultValue  tableName="ADTPROVISIONS" columnName="ManualProvision"	 defaultValue="0"/>
+	</changeSet>       	
+	
+	<changeSet id="ST#540.07.1" author="Vijayakumar.k" dbms="MSSQL">
+      <sql>
+		ALTER TABLE ADTPROVISIONS ADD CONSTRAINT DF_ADTPRV_T_ManualProvision	 DEFAULT '0' FOR ManualProvision;
+	  </sql>
+	</changeSet> 
+	
+	<changeSet id="ST#540.08" author="Vijayakumar.k">
+		<createTable tableName="ADTPROVISION_AMOUNTS">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint" />
+			<column name="ProvisionId" type="bigInt" />
+			<column name="ProvisionType" type="varchar(10)" />
+			<column name="ProvisionPer" type="decimal(5,2)" />
+			<column name="ProvisionAmtCal" type="decimal(18,0)" />
+			<column name="AssetCode" type="varchar(8)" />
+		</createTable>
+	</changeSet>
+	
 
 	<!-- ST#540 - NPA & Provision Change Set's End -->
+	
+	<changeSet id="7.1_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtfinfeerefunddetails');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="7.1" author="saisandeep.b">
+		<modifyDataType tableName="AdtFinFeeRefundDetails" columnName="refundAmount" newDataType="numeric(18,0)" />
+		<modifyDataType tableName="AdtFinFeeRefundDetails" columnName="refundAmtGST" newDataType="numeric(18,0)" />
+		<modifyDataType tableName="AdtFinFeeRefundDetails" columnName="refundAmtOriginal" newDataType="numeric(18,0)" />
+	</changeSet>
+	
+	<changeSet id="7.1_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'adtfinfeerefunddetails');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="8" author="saisandeep.b">
+		<addColumn tableName="AdtFinFeeRefundDetails">
+			<column name="refundAmtTDS" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="DE#1438.1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtfinfeedetail');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#1438.1" author="Gopal.p">
+		<modifyDataType tableName="AdtFinFeeDetail" columnName="ActPercentage" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="DE#1438.1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'adtfinfeedetail');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -5226,14 +5226,62 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
 			}
 
-			if (StringUtils.isBlank(finTaxDetail.getPinCode())) {
+			if (StringUtils.isBlank(finTaxDetail.getPinCode()) && finTaxDetail.getPinCodeId() == null) {
 				String[] valueParm = new String[2];
-				valueParm[0] = App.getLabel("label_PinCode");
+				valueParm[0] = "PinCodeId or PinCode";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 				return errorDetails;
 			}
 
-			PinCode pincode = pinCodeDAO.getPinCode(finTaxDetail.getPinCode(), "_AView");
+			PinCode pincode = null;
+			if (finTaxDetail.getPinCodeId() != null && finTaxDetail.getPinCodeId() < 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "PinCodeId";
+				valueParm[1] = "0";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm)));
+			} else {
+				if (StringUtils.isNotBlank(finTaxDetail.getPinCode()) && (finTaxDetail.getPinCodeId() != null)) {
+					pincode = pinCodeDAO.getPinCodeById(finTaxDetail.getPinCodeId(), "_AView");
+					if (pincode == null) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "PinCodeId " + String.valueOf(finTaxDetail.getPinCodeId());
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm)));
+					} else if (!pincode.getPinCode().equals(finTaxDetail.getPinCode())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "PinCode " + finTaxDetail.getPinCode();
+						valueParm[1] = "PinCodeId " + String.valueOf(finTaxDetail.getPinCodeId());
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("99017", "", valueParm)));
+					}
+				} else {
+					if (StringUtils.isNotBlank(finTaxDetail.getPinCode()) && (finTaxDetail.getPinCodeId() == null)) {
+						int pinCodeCount = pinCodeDAO.getPinCodeCount(finTaxDetail.getPinCode(), "_AView");
+						String[] valueParm = new String[1];
+						switch (pinCodeCount) {
+						case 0:
+							valueParm[0] = "PinCode " + finTaxDetail.getPinCode();
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm)));
+							break;
+						case 1:
+							pincode = pinCodeDAO.getPinCode(finTaxDetail.getPinCode(), "_AView");
+							finTaxDetail.setPinCodeId(pincode.getPinCodeId());
+							break;
+						default:
+							valueParm[0] = "PinCodeId";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("51004", "", valueParm)));
+						}
+					} else if (finTaxDetail.getPinCodeId() != null && StringUtils.isBlank(finTaxDetail.getPinCode())) {
+						pincode = pinCodeDAO.getPinCodeById(finTaxDetail.getPinCodeId(), "_AView");
+						if (pincode != null) {
+							finTaxDetail.setPinCode(pincode.getPinCode());
+						} else {
+							String[] valueParm = new String[1];
+							valueParm[0] = "PinCodeId " + String.valueOf(finTaxDetail.getPinCodeId());
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm)));
+						}
+					}
+				}
+			}
+
 			Province province = null;
 			if (pincode != null) {
 				if (StringUtils.isNotBlank(finTaxDetail.getCountry())

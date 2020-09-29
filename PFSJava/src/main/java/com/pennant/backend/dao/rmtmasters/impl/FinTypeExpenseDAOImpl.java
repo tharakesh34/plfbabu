@@ -43,12 +43,17 @@
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -60,6 +65,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinTypeExpense model</b> class.<br>
@@ -139,24 +145,74 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 
 	@Override
 	public List<FinTypeExpense> getFinTypeExpenseListByFinType(String finType, String type) {
-		logger.debug("Entering");
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("FinType", finType);
-		StringBuilder selectSql = new StringBuilder("SELECT FinType,FinTypeExpenseID,ExpenseTypeID, CalculationType, ");
-		selectSql.append(" Amount, Percentage, CalculateOn, AmortReq, TaxApplicable, Active,");
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, FinEvent");
-		if (type.contains("View")) {
-			selectSql.append(" ,ExpenseTypeCode, ExpenseTypeDesc");
-		}
-		selectSql.append(" FROM FinTypeExpenses");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType = :FinType ");
+		logger.debug(Literal.ENTERING);
 
-		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<FinTypeExpense> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeExpense.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinType = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinTypeExpenseRowMapper rowMapper = new FinTypeExpenseRowMapper(type);
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finType);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
+	public List<FinTypeExpense> getLoanQueueExpenseListByFinType(String finType, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinType = ? and Active = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinTypeExpenseRowMapper rowMapper = new FinTypeExpenseRowMapper(type);
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finType);
+					ps.setInt(index++, 1);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinType, FinTypeExpenseID, ExpenseTypeID, CalculationType, Amount, Percentage");
+		sql.append(", CalculateOn, AmortReq, TaxApplicable, Active, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", FinEvent");
+
+		if (type.contains("View")) {
+			sql.append(", ExpenseTypeCode, ExpenseTypeDesc");
+		}
+
+		sql.append(" From FinTypeExpenses");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		return sql;
 	}
 
 	/**
@@ -361,6 +417,49 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 		}
 		logger.debug("Leaving");
 		return count > 0 ? true : false;
+	}
+
+	public class FinTypeExpenseRowMapper implements RowMapper<FinTypeExpense> {
+		private String type;
+
+		public FinTypeExpenseRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public FinTypeExpense mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinTypeExpense fte = new FinTypeExpense();
+
+			fte.setFinType(rs.getString("FinType"));
+			fte.setFinTypeExpenseID(rs.getLong("FinTypeExpenseID"));
+			fte.setExpenseTypeID(rs.getLong("ExpenseTypeID"));
+			fte.setCalculationType(rs.getString("CalculationType"));
+			fte.setAmount(rs.getBigDecimal("Amount"));
+			fte.setPercentage(rs.getBigDecimal("Percentage"));
+			fte.setCalculateOn(rs.getString("CalculateOn"));
+			fte.setAmortReq(rs.getBoolean("AmortReq"));
+			fte.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+			fte.setActive(rs.getBoolean("Active"));
+			fte.setVersion(rs.getInt("Version"));
+			fte.setLastMntBy(rs.getLong("LastMntBy"));
+			fte.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			fte.setRecordStatus(rs.getString("RecordStatus"));
+			fte.setRoleCode(rs.getString("RoleCode"));
+			fte.setNextRoleCode(rs.getString("NextRoleCode"));
+			fte.setTaskId(rs.getString("TaskId"));
+			fte.setNextTaskId(rs.getString("NextTaskId"));
+			fte.setRecordType(rs.getString("RecordType"));
+			fte.setWorkflowId(rs.getLong("WorkflowId"));
+			fte.setFinEvent(rs.getString("FinEvent"));
+
+			if (type.contains("View")) {
+				fte.setExpenseTypeCode(rs.getString("ExpenseTypeCode"));
+				fte.setExpenseTypeDesc(rs.getString("ExpenseTypeDesc"));
+			}
+
+			return fte;
+		}
+
 	}
 
 }

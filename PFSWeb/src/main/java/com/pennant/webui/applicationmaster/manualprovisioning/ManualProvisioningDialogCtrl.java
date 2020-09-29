@@ -34,6 +34,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.financemanagement.Provision;
+import com.pennant.backend.model.financemanagement.ProvisionAmount;
 import com.pennant.backend.service.financemanagement.ProvisionService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -88,10 +89,11 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	private Provision provision;
 	private transient ManualProvisioningListCtrl manualProvisioningListCtrl;
 	private transient ProvisionService provisionService;
-	private NPAProvisionDetail npaProvisionDetail;
 	private boolean provisionInternal = false;
 	private int format = 2;
 	private transient boolean validationOn;
+	private List<NPAProvisionDetail> provisionDetails = null;
+	private boolean isSecured = false;
 
 	/**
 	 * default constructor.<br>
@@ -186,8 +188,15 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 				SysParamUtil.getValueAsString(SMTParameterConstants.PROVISION_BOOKS))) {
 			provisionInternal = true;
 		}
+
 		this.assetStageList = getNPAStageList(provision);
 		setStatusDetails();
+
+		if (isWorkFlowEnabled()) {
+			this.groupboxWf.setVisible(true);
+		} else {
+			this.groupboxWf.setVisible(false);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -201,7 +210,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ManualProvisioningDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ManualProvisioningDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ManualProvisioningDialog_btnDelete"));
+		this.btnDelete.setVisible(false);
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ManualProvisioningDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
@@ -288,9 +297,14 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		FinanceProfitDetail finProfitDetail = provision.getFinanceDetail().getFinScheduleData().getFinPftDeatil();
 		format = CurrencyUtil.getFormat(aFinanceMain.getFinCcy());
 
+		if (provision.getCollateralValue() != null) {
+			if (provision.getCollateralValue().compareTo(BigDecimal.ZERO) > 0) {
+				setSecured(true);
+			}
+		}
 		//Loan Summary
 		this.finReference.setValue(provision.getFinReference());
-		this.customer.setValue(provision.getLovDescCustCIF() + "-" + provision.getLovDescCustShrtName());
+		this.customer.setValue(provision.getCustCIF() + "-" + provision.getCustShrtName());
 		this.finType.setValue(provision.getFinType());
 		this.finAmount.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinAmount(), format));
 		this.finStartDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getFinStartDate()));
@@ -303,76 +317,75 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 		//Current NPA Provision Summary
 		if (provision.getOldProvision() != null) {
-			if (provisionInternal) {
-				this.internalStage.setValue(provision.getOldProvision().getAssetCode());
-				this.internalProvisionPercentage.setValue(provision.getOldProvision().getPrvovisionRate());
-				this.internalProvisionAmount.setValue(
-						PennantApplicationUtil.formateAmount(provision.getOldProvision().getProvisionedAmt(), format));
+			List<ProvisionAmount> provisionAmounts = provision.getOldProvision().getProvisionAmounts();
+			for (ProvisionAmount provisionAmount : provisionAmounts) {
+				if (isSecured()) {
+					if (ProvisionConstants.PROVISION_BOOKS_INT_SEC.equals(provisionAmount.getProvisionType())) {
+						this.internalStage.setValue(provisionAmount.getAssetCode());
+						this.internalProvisionPercentage.setValue(provisionAmount.getProvisionPer());
+						this.internalProvisionAmount.setValue(
+								PennantApplicationUtil.formateAmount(provisionAmount.getProvisionAmtCal(), format));
+					} else if (ProvisionConstants.PROVISION_BOOKS_REG_SEC.equals(provisionAmount.getProvisionType())) {
+						this.regStage.setValue(provisionAmount.getAssetCode());
+						this.regProvisionPercentage.setValue(provisionAmount.getProvisionPer());
+						this.regProvisionAmount.setValue(
+								PennantApplicationUtil.formateAmount(provisionAmount.getProvisionAmtCal(), format));
+					}
 
-				this.regStage.setValue("");
-				this.regProvisionPercentage.setValue(BigDecimal.ZERO);
-				this.regProvisionAmount.setValue(BigDecimal.ZERO);
-
-			} else {
-				this.regStage.setValue(provision.getOldProvision().getAssetCode());
-				this.regProvisionPercentage.setValue(provision.getOldProvision().getPrvovisionRate());
-				this.regProvisionAmount.setValue(
-						PennantApplicationUtil.formateAmount(provision.getOldProvision().getProvisionedAmt(), format));
-
-				this.internalStage.setValue("");
-				this.internalProvisionPercentage.setValue(BigDecimal.ZERO);
-				this.internalProvisionAmount.setValue(BigDecimal.ZERO);
-
+				} else {
+					if (ProvisionConstants.PROVISION_BOOKS_INT_UN_SEC.equals(provisionAmount.getProvisionType())) {
+						this.internalStage.setValue(provisionAmount.getAssetCode());
+						this.internalProvisionPercentage.setValue(provisionAmount.getProvisionPer());
+						this.internalProvisionAmount.setValue(
+								PennantApplicationUtil.formateAmount(provisionAmount.getProvisionAmtCal(), format));
+					} else if (ProvisionConstants.PROVISION_BOOKS_REG_UN_SEC
+							.equals(provisionAmount.getProvisionType())) {
+						this.regStage.setValue(provisionAmount.getAssetCode());
+						this.regProvisionPercentage.setValue(provisionAmount.getProvisionPer());
+						this.regProvisionAmount.setValue(
+								PennantApplicationUtil.formateAmount(provisionAmount.getProvisionAmtCal(), format));
+					}
+				}
 			}
 			this.currManualProvision.setChecked(provision.getOldProvision().isManualProvision());
-		} else {
+		}
 
-			if (provisionInternal) {
-				this.internalStage.setValue(provision.getOldProvision().getAssetCode());
-				this.internalProvisionPercentage.setValue(provision.getOldProvision().getPrvovisionRate());
-				this.internalProvisionAmount.setValue(
-						PennantApplicationUtil.formateAmount(provision.getOldProvision().getProvisionedAmt(), format));
-
-				this.regStage.setValue("");
-				this.regProvisionPercentage.setValue(BigDecimal.ZERO);
-				this.regProvisionAmount.setValue(BigDecimal.ZERO);
+		//New Provision 
+		List<ProvisionAmount> provisionAmounts = provision.getProvisionAmounts();
+		for (ProvisionAmount provisionAmount : provisionAmounts) {
+			if (isSecured()) {
+				if (ProvisionConstants.PROVISION_BOOKS_INT_SEC.equals(provisionAmount.getProvisionType())) {
+					this.newInternalStage.setAttribute("Object", provisionAmount);
+					fillComboBox(this.newInternalStage, provisionAmount.getAssetCode(), this.assetStageList, "");
+					this.newInternalProvisionPercentage.setValue(provisionAmount.getProvisionPer());
+					this.newInternalProvisionAmount.setValue(
+							PennantApplicationUtil.formateAmount(provisionAmount.getProvisionAmtCal(), format));
+				} else if (ProvisionConstants.PROVISION_BOOKS_REG_SEC.equals(provisionAmount.getProvisionType())) {
+					this.newRegStage.setAttribute("Object", provisionAmount);
+					fillComboBox(this.newRegStage, provisionAmount.getAssetCode(), this.assetStageList, "");
+					this.newRegProvisionPercentage.setValue(provisionAmount.getProvisionPer());
+					this.newRegProvisionAmount.setValue(
+							PennantApplicationUtil.formateAmount(provisionAmount.getProvisionAmtCal(), format));
+				}
 
 			} else {
-				this.regStage.setValue(provision.getOldProvision().getAssetCode());
-				this.regProvisionPercentage.setValue(provision.getOldProvision().getPrvovisionRate());
-				this.regProvisionAmount.setValue(
-						PennantApplicationUtil.formateAmount(provision.getOldProvision().getProvisionedAmt(), format));
-
-				this.internalStage.setValue("");
-				this.internalProvisionPercentage.setValue(BigDecimal.ZERO);
-				this.internalProvisionAmount.setValue(BigDecimal.ZERO);
-
+				if (ProvisionConstants.PROVISION_BOOKS_INT_UN_SEC.equals(provisionAmount.getProvisionType())) {
+					this.newInternalStage.setAttribute("Object", provisionAmount);
+					fillComboBox(this.newInternalStage, provisionAmount.getAssetCode(), this.assetStageList, "");
+					this.newInternalProvisionPercentage.setValue(provisionAmount.getProvisionPer());
+					this.newInternalProvisionAmount.setValue(
+							PennantApplicationUtil.formateAmount(provisionAmount.getProvisionAmtCal(), format));
+				} else if (ProvisionConstants.PROVISION_BOOKS_REG_UN_SEC.equals(provisionAmount.getProvisionType())) {
+					this.newRegStage.setAttribute("Object", provisionAmount);
+					fillComboBox(this.newRegStage, provisionAmount.getAssetCode(), this.assetStageList, "");
+					this.newRegProvisionPercentage.setValue(provisionAmount.getProvisionPer());
+					this.newRegProvisionAmount.setValue(
+							PennantApplicationUtil.formateAmount(provisionAmount.getProvisionAmtCal(), format));
+				}
 			}
 		}
 
-		//New NPA Provision
-		if (provisionInternal) {
-			fillComboBox(this.newInternalStage, provision.getAssetCode(), this.assetStageList, "");
-			this.newInternalProvisionPercentage.setValue(provision.getPrvovisionRate());
-			this.newInternalProvisionAmount
-					.setValue(PennantApplicationUtil.formateAmount(provision.getProvisionedAmt(), format));
-
-			fillComboBox(this.newRegStage, "", this.assetStageList, "");
-			this.newRegProvisionPercentage.setValue(BigDecimal.ZERO);
-			this.newRegProvisionAmount.setValue(BigDecimal.ZERO);
-
-		} else {
-			fillComboBox(this.newRegStage, provision.getAssetCode(), this.assetStageList, "");
-			this.newRegProvisionPercentage.setValue(provision.getPrvovisionRate());
-			this.newRegProvisionAmount
-					.setValue(PennantApplicationUtil.formateAmount(provision.getProvisionedAmt(), format));
-
-			fillComboBox(this.newInternalStage, "", this.assetStageList, "");
-			this.newInternalProvisionPercentage.setValue(BigDecimal.ZERO);
-			this.newInternalProvisionAmount.setValue(BigDecimal.ZERO);
-		}
 		this.manualProvision.setChecked(provision.isManualProvision());
-
 		this.recordStatus.setValue(provision.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
@@ -387,16 +400,9 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
-
 		if (provisionInternal) {
 			try {
 				provision.setAssetCode(this.newInternalStage.getSelectedItem().getValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				provision.setPrvovisionRate(this.newInternalProvisionPercentage.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -407,15 +413,11 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+
+			provision.setAssetStageOrder(getAssetStageOrder(this.newInternalStage.getSelectedItem().getValue()));
 		} else {
 			try {
 				provision.setAssetCode(this.newRegStage.getSelectedItem().getValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				provision.setPrvovisionRate(this.newRegProvisionPercentage.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -426,12 +428,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-		}
 
-		try {
-			provision.setAssetStageOrdr(getNpaProvisionDetail().getAssetStageOrder());
-		} catch (WrongValueException we) {
-			wve.add(we);
+			provision.setAssetStageOrder(getAssetStageOrder(this.newRegStage.getSelectedItem().getValue()));
 		}
 
 		try {
@@ -450,9 +448,51 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			throw new WrongValuesException(wvea);
 		}
 
+		List<ProvisionAmount> provisionAmountList = provision.getProvisionAmounts();
+		ProvisionAmount intProvisionAmt = (ProvisionAmount) this.newInternalStage.getAttribute("Object");
+		String intProvisionType = intProvisionAmt.getProvisionType();
+		ProvisionAmount regProvisionAmt = (ProvisionAmount) this.newRegStage.getAttribute("Object");
+		String regProvisionType = regProvisionAmt.getProvisionType();
+
+		for (ProvisionAmount provAmt : provisionAmountList) {
+			String provisionType = provAmt.getProvisionType();
+			if (StringUtils.equals(provisionType, intProvisionType)) {
+				provAmt.setAssetCode(getComboboxValue(this.newInternalStage));
+				provAmt.setProvisionPer(this.newInternalProvisionPercentage.getValue());
+				provAmt.setProvisionAmtCal(PennantApplicationUtil
+						.unFormateAmount(this.newInternalProvisionAmount.getValidateValue(), format));
+			} else {
+
+				if (StringUtils.equals(provisionType, regProvisionType)) {
+					provAmt.setAssetCode(getComboboxValue(this.newRegStage));
+					provAmt.setProvisionPer(this.newRegProvisionPercentage.getValue());
+					provAmt.setProvisionAmtCal(PennantApplicationUtil
+							.unFormateAmount(this.newRegProvisionAmount.getValidateValue(), format));
+				}
+			}
+		}
 		provision.setRecordStatus(this.recordStatus.getValue());
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Setting Asset Stage Order
+	 * 
+	 * @param value
+	 * @return
+	 */
+	private int getAssetStageOrder(String assetCode) {
+		List<NPAProvisionDetail> provisionDetails = getProvisionDetails();
+
+		if (CollectionUtils.isNotEmpty(provisionDetails)) {
+			for (NPAProvisionDetail npaProvisionDetail : provisionDetails) {
+				if (StringUtils.equals(assetCode, npaProvisionDetail.getAssetCode())) {
+					return npaProvisionDetail.getAssetStageOrder();
+				}
+			}
+		}
+		return 0;
 	}
 
 	/**
@@ -575,6 +615,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
+		this.btnDelete.setVisible(false);
 
 		logger.debug("Leaving ");
 	}
@@ -877,16 +918,15 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	 * @return
 	 */
 	private List<ValueLabel> getNPAStageList(Provision provision) {
+
 		List<NPAProvisionDetail> details = provision.getNpaHeader().getProvisionDetailsList();
+		setProvisionDetails(details);
 		List<ValueLabel> stageList = new ArrayList<ValueLabel>(details.size());
 
 		if (CollectionUtils.isNotEmpty(details)) {
 			for (NPAProvisionDetail provisionDetail : details) {
 				stageList.add(
 						new ValueLabel(provisionDetail.getAssetCode(), String.valueOf(provisionDetail.getAssetCode())));
-				if (StringUtils.equals(provisionDetail.getAssetCode(), provision.getAssetCode())) {
-					setNpaProvisionDetail(provisionDetail);
-				}
 			}
 		}
 		return stageList;
@@ -907,18 +947,19 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 		for (NPAProvisionDetail detail : provision.getNpaHeader().getProvisionDetailsList()) {
 			if (StringUtils.equals(detail.getAssetCode(), stage)) {
-
-				BigDecimal provisonAmt = (provision.getPriBal().multiply(detail.getRegSecPerc()))
-						.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
-
-				this.newRegProvisionPercentage.setValue(detail.getRegSecPerc());
+				BigDecimal perc = detail.getRegUnSecPerc();
+				if (isSecured()) {
+					perc = detail.getRegSecPerc();
+				}
+				BigDecimal provisonAmt = (provision.getClosingBalance().multiply(perc)).divide(new BigDecimal(100), 0,
+						RoundingMode.HALF_DOWN);
+				this.newRegProvisionPercentage.setValue(perc);
 				this.newRegProvisionAmount.setValue(PennantApplicationUtil.formateAmount(provisonAmt, format));
 				break;
 			} else {
 				this.newRegProvisionPercentage.setValue(BigDecimal.ZERO);
 				this.newRegProvisionAmount.setValue(BigDecimal.ZERO);
 			}
-			setNpaProvisionDetail(detail);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -938,18 +979,18 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 		for (NPAProvisionDetail detail : provision.getNpaHeader().getProvisionDetailsList()) {
 			if (StringUtils.equals(detail.getAssetCode(), stage)) {
-
-				BigDecimal provisonAmt = (provision.getPriBal().multiply(detail.getIntSecPerc()))
-						.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
-
+				BigDecimal perc = detail.getIntUnSecPerc();
+				if (isSecured()) {
+					perc = detail.getIntSecPerc();
+				}
+				BigDecimal provisonAmt = (provision.getClosingBalance().multiply(perc)).divide(new BigDecimal(100), 0,
+						RoundingMode.HALF_DOWN);
 				this.newInternalProvisionAmount.setValue(PennantApplicationUtil.formateAmount(provisonAmt, format));
-				this.newInternalProvisionPercentage.setValue(detail.getIntSecPerc());
-				setNpaProvisionDetail(detail);
+				this.newInternalProvisionPercentage.setValue(perc);
 				break;
 			} else {
 				this.newInternalProvisionPercentage.setValue(BigDecimal.ZERO);
 				this.newInternalProvisionAmount.setValue(BigDecimal.ZERO);
-				setNpaProvisionDetail(null);
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -993,14 +1034,6 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		return provisionService;
 	}
 
-	public NPAProvisionDetail getNpaProvisionDetail() {
-		return npaProvisionDetail;
-	}
-
-	public void setNpaProvisionDetail(NPAProvisionDetail npaProvisionDetail) {
-		this.npaProvisionDetail = npaProvisionDetail;
-	}
-
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
@@ -1008,4 +1041,21 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
+
+	public List<NPAProvisionDetail> getProvisionDetails() {
+		return provisionDetails;
+	}
+
+	public void setProvisionDetails(List<NPAProvisionDetail> provisionDetails) {
+		this.provisionDetails = provisionDetails;
+	}
+
+	public boolean isSecured() {
+		return isSecured;
+	}
+
+	public void setSecured(boolean isSecured) {
+		this.isSecured = isSecured;
+	}
+
 }

@@ -417,7 +417,62 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		}
-		PinCode pincode = pinCodeDAO.getPinCode(customerAddres.getCustAddrZIP(), "_AView");
+		PinCode pincode = null;
+		if (customerAddres.getPinCodeId() != null && customerAddres.getPinCodeId() < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "PinCodeId";
+			valueParm[1] = "0";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+			auditDetail.setErrorDetail(errorDetail);
+		} else {
+			if (StringUtils.isNotBlank(customerAddres.getCustAddrZIP()) && (customerAddres.getPinCodeId() != null)) {
+				pincode = pinCodeDAO.getPinCodeById(customerAddres.getPinCodeId(), "_AView");
+				if (pincode == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "PinCodeId " + String.valueOf(customerAddres.getPinCodeId());
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+				} else if (!pincode.getPinCode().equals(customerAddres.getCustAddrZIP())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "PinCode " + customerAddres.getCustAddrZIP();
+					valueParm[1] = "PinCodeId " + String.valueOf(customerAddres.getPinCodeId());
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("99017", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+				}
+			} else {
+				if (StringUtils.isNotBlank(customerAddres.getCustAddrZIP())
+						&& (customerAddres.getPinCodeId() == null)) {
+					int pinCodeCount = pinCodeDAO.getPinCodeCount(customerAddres.getCustAddrZIP(), "_AView");
+					String[] valueParm = new String[1];
+					switch (pinCodeCount) {
+					case 0:
+						valueParm[0] = "PinCode " + customerAddres.getCustAddrZIP();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm));
+						auditDetail.setErrorDetail(errorDetail);
+						break;
+					case 1:
+						pincode = pinCodeDAO.getPinCode(customerAddres.getCustAddrZIP(), "_AView");
+						customerAddres.setPinCodeId(pincode.getPinCodeId());
+						break;
+					default:
+						valueParm[0] = "PinCodeId";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("51004", "", valueParm));
+						auditDetail.setErrorDetail(errorDetail);
+					}
+				} else if (customerAddres.getPinCodeId() != null
+						&& StringUtils.isBlank(customerAddres.getCustAddrZIP())) {
+					pincode = pinCodeDAO.getPinCodeById(customerAddres.getPinCodeId(), "_AView");
+					if (pincode != null) {
+						customerAddres.setCustAddrZIP(pincode.getPinCode());
+					} else {
+						String[] valueParm = new String[1];
+						valueParm[0] = "PinCodeId " + String.valueOf(customerAddres.getPinCodeId());
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm));
+						auditDetail.setErrorDetail(errorDetail);
+					}
+				}
+			}
+		}
 		if (pincode != null) {
 			if (StringUtils.isNotBlank(customerAddres.getCustAddrCountry())
 					&& !customerAddres.getCustAddrCountry().equalsIgnoreCase(pincode.getpCCountry())) {

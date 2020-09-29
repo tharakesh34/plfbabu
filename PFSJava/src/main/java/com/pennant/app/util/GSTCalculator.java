@@ -458,7 +458,6 @@ public class GSTCalculator {
 	}
 
 	private static Branch deriveGSTBranch(String finBranch) {
-		Branch branch = branchDAO.getBranchById(finBranch, "");
 		if (GST_DEFAULT_FROM_STATE_PARAM == null) {
 			GST_DEFAULT_FROM_STATE_PARAM = SMTParameterConstants.GST_DEFAULT_FROM_STATE;
 			GST_DEFAULT_FROM_STATE = SysParamUtil.isAllowed(GST_DEFAULT_FROM_STATE_PARAM);
@@ -467,11 +466,14 @@ public class GSTCalculator {
 					GST_DEFAULT_STATE_CODE = SysParamUtil
 							.getValueAsString(SMTParameterConstants.GST_DEFAULT_STATE_CODE);
 				}
-				String defaultFinBranch = GST_DEFAULT_STATE_CODE;
-				branch = branchDAO.getBranchById(defaultFinBranch, "");
 			}
 		}
-		return branch;
+
+		if (GST_DEFAULT_FROM_STATE) {
+			finBranch = GST_DEFAULT_STATE_CODE;
+		}
+
+		return branchDAO.getBranchById(finBranch, "");
 	}
 
 	private static BigDecimal getRuleResult(String sqlRule, Map<String, Object> executionMap, String finCcy) {

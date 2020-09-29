@@ -2552,13 +2552,18 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	public void calculateGST(FinFeeDetail finFeeDetail, Map<String, BigDecimal> taxPercentages) {
 		FinFeeReceipt finFeeReceipt = finFeeDetail.getFinFeeReceipts().get(0);
 		BigDecimal canlFeeAmt = finFeeReceipt.getPaidAmount();
+		BigDecimal canlTdsAmt = finFeeReceipt.getPaidTds();
 		BigDecimal remPaid = BigDecimal.ZERO;
+		BigDecimal remTds = BigDecimal.ZERO;
 		remPaid = finFeeDetail.getPaidAmount().subtract(canlFeeAmt);
+		remTds = finFeeDetail.getPaidTDS().subtract(canlTdsAmt);
 
 		finFeeDetail.setPaidAmount(remPaid);
 		finFeeDetail.setPaidAmountOriginal(remPaid);
+		finFeeDetail.setPaidTDS(remTds);
 		FinanceMain financeMain = null;
 		finFeeDetail.setPaidCalcReq(true);
+		finFeeDetail.setPrvTaxComponent(finFeeDetail.getTaxComponent());
 		finFeeDetail.setTaxComponent(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
 		feeReceiptService.calculateFees(finFeeDetail, financeMain, taxPercentages);
 	}
@@ -2639,70 +2644,71 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	public void calculateGSTForCredit(List<FinFeeDetail> finFeeDetailsList, Map<String, BigDecimal> taxPercentages,
 			Long oldLinkTranId) {
 		Long invoiceId = gstInvoiceTxnDAO.getInvoiceIdByTranId(oldLinkTranId);
+		if (invoiceId != null) {
+			List<GSTInvoiceTxnDetails> txnDetailsList = gstInvoiceTxnDAO.getTxnListByInvoiceId(invoiceId);
+			for (GSTInvoiceTxnDetails txnDetails : txnDetailsList) {
+				for (FinFeeDetail finFeeDetail : finFeeDetailsList) {
 
-		List<GSTInvoiceTxnDetails> txnDetailsList = gstInvoiceTxnDAO.getTxnListByInvoiceId(invoiceId);
-		for (GSTInvoiceTxnDetails txnDetails : txnDetailsList) {
-			for (FinFeeDetail finFeeDetail : finFeeDetailsList) {
-
-				if (!StringUtils.equals(finFeeDetail.getFeeTypeCode(), txnDetails.getFeeCode())) {
-					continue;
-				}
-
-				finFeeDetail.setWaivedAmount(txnDetails.getFeeAmount());
-				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-				Taxes cgstTax = null;
-				Taxes sgstTax = null;
-				Taxes igstTax = null;
-				Taxes ugstTax = null;
-				Taxes cessTax = null;
-
-				if (taxHeader == null) {
-					taxHeader = new TaxHeader();
-					taxHeader.setNewRecord(true);
-					taxHeader.setRecordType(PennantConstants.RCD_ADD);
-					taxHeader.setVersion(taxHeader.getVersion() + 1);
-					finFeeDetail.setTaxHeader(taxHeader);
-				}
-
-				List<Taxes> taxDetails = taxHeader.getTaxDetails();
-
-				if (CollectionUtils.isNotEmpty(taxDetails)) {
-					for (Taxes taxes : taxDetails) {
-						String taxType = taxes.getTaxType();
-						switch (taxType) {
-						case RuleConstants.CODE_CGST:
-							cgstTax = taxes;
-							cgstTax.setWaivedTax(txnDetails.getCGST_AMT());
-							break;
-						case RuleConstants.CODE_SGST:
-							sgstTax = taxes;
-							sgstTax.setWaivedTax(txnDetails.getSGST_AMT());
-							break;
-						case RuleConstants.CODE_IGST:
-							igstTax = taxes;
-							igstTax.setWaivedTax(txnDetails.getIGST_AMT());
-							break;
-						case RuleConstants.CODE_UGST:
-							ugstTax = taxes;
-							ugstTax.setWaivedTax(txnDetails.getUGST_AMT());
-							break;
-						case RuleConstants.CODE_CESS:
-							cessTax = taxes;
-							cessTax.setWaivedTax(txnDetails.getCESS_AMT());
-							break;
-						default:
-							break;
-						}
-
+					if (!StringUtils.equals(finFeeDetail.getFeeTypeCode(), txnDetails.getFeeCode())) {
+						continue;
 					}
-				}
 
-				BigDecimal gstAmount = cgstTax.getWaivedTax().add(sgstTax.getWaivedTax()).add(igstTax.getWaivedTax())
-						.add(ugstTax.getWaivedTax()).add(cessTax.getWaivedTax());
-				finFeeDetail.setWaivedGST(gstAmount);
+					finFeeDetail.setWaivedAmount(txnDetails.getFeeAmount());
+					TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+					Taxes cgstTax = null;
+					Taxes sgstTax = null;
+					Taxes igstTax = null;
+					Taxes ugstTax = null;
+					Taxes cessTax = null;
 
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equalsIgnoreCase(finFeeDetail.getTaxComponent())) {
-					finFeeDetail.setWaivedAmount(txnDetails.getFeeAmount().add(finFeeDetail.getWaivedGST()));
+					if (taxHeader == null) {
+						taxHeader = new TaxHeader();
+						taxHeader.setNewRecord(true);
+						taxHeader.setRecordType(PennantConstants.RCD_ADD);
+						taxHeader.setVersion(taxHeader.getVersion() + 1);
+						finFeeDetail.setTaxHeader(taxHeader);
+					}
+
+					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+
+					if (CollectionUtils.isNotEmpty(taxDetails)) {
+						for (Taxes taxes : taxDetails) {
+							String taxType = taxes.getTaxType();
+							switch (taxType) {
+							case RuleConstants.CODE_CGST:
+								cgstTax = taxes;
+								cgstTax.setWaivedTax(txnDetails.getCGST_AMT());
+								break;
+							case RuleConstants.CODE_SGST:
+								sgstTax = taxes;
+								sgstTax.setWaivedTax(txnDetails.getSGST_AMT());
+								break;
+							case RuleConstants.CODE_IGST:
+								igstTax = taxes;
+								igstTax.setWaivedTax(txnDetails.getIGST_AMT());
+								break;
+							case RuleConstants.CODE_UGST:
+								ugstTax = taxes;
+								ugstTax.setWaivedTax(txnDetails.getUGST_AMT());
+								break;
+							case RuleConstants.CODE_CESS:
+								cessTax = taxes;
+								cessTax.setWaivedTax(txnDetails.getCESS_AMT());
+								break;
+							default:
+								break;
+							}
+
+						}
+					}
+
+					BigDecimal gstAmount = cgstTax.getWaivedTax().add(sgstTax.getWaivedTax())
+							.add(igstTax.getWaivedTax()).add(ugstTax.getWaivedTax()).add(cessTax.getWaivedTax());
+					finFeeDetail.setWaivedGST(gstAmount);
+
+					if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equalsIgnoreCase(finFeeDetail.getTaxComponent())) {
+						finFeeDetail.setWaivedAmount(txnDetails.getFeeAmount().add(finFeeDetail.getWaivedGST()));
+					}
 				}
 			}
 		}

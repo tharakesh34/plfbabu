@@ -7325,6 +7325,10 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		<property name="pinCodeDAO" ref="pinCodeDAO" />
+		<property name="countryDAO" ref="countryDAO" />
+		<property name="cityDAO" ref="cityDAO" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
 	</bean>
 
 	<!-- CollateralStructure -->

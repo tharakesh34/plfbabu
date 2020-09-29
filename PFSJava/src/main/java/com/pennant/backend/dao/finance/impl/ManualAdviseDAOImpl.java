@@ -1927,7 +1927,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public Long getDebitInvoiceID(long adviseID) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AdviseID", adviseID);

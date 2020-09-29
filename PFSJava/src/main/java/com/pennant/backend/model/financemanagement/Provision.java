@@ -44,6 +44,7 @@
 package com.pennant.backend.model.financemanagement;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -61,100 +62,92 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class Provision extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	private String finReference = null;
+
+	private long id = Long.MIN_VALUE;
+	private long provisionId = Long.MIN_VALUE;
+	private String finReference;
+	private BigDecimal closingBalance;
+	private BigDecimal outStandPrincipal;
+	private BigDecimal outStandProfit;
+	private BigDecimal profitAccruedAndDue;
+	private BigDecimal profitAccruedAndNotDue;
+	private BigDecimal collateralValue = BigDecimal.ZERO;
+	private Date dueFromDate;
+	private Date lastFullyPaidDate;
+	private int dueDays;
+	private int currBucket;
+	private int dpd;
+	private Date provisionDate;
+	private BigDecimal provisionedAmt;
+	private BigDecimal provisionRate = BigDecimal.ZERO;
+	private String assetCode;
+	private int assetStageOrder;
+	private boolean npa;
+	private boolean manualProvision;
+	private long linkedTranId = Long.MIN_VALUE;
+	private long chgLinkedTranId = Long.MIN_VALUE;
+
+	private List<ProvisionAmount> provisionAmounts = new ArrayList<>();
 	private String finBranch;
 	private String finType;
 	private boolean finIsActive;
 	private long custID;
-	private Date provisionCalDate;
-	private BigDecimal provisionedAmt = BigDecimal.ZERO;
-	private BigDecimal provisionAmtCal = BigDecimal.ZERO;
-	private BigDecimal provisionDue = BigDecimal.ZERO;
-	private BigDecimal nonFormulaProv = BigDecimal.ZERO;
-	private boolean useNFProv;
-	private boolean autoReleaseNFP;
-	private BigDecimal principalDue = BigDecimal.ZERO;
-	private BigDecimal profitDue = BigDecimal.ZERO;
-	private Date dueFromDate;
-	private Date lastFullyPaidDate;
-	private boolean newRecord = false;
-	private String lovValue;
-	private Provision befImage;
-	private LoggedInUser userDetails;
-	private Date prevProvisionCalDate;
-	private BigDecimal prevProvisionedAmt;
-	private String transRef;
-
-	private String finCcy;
-	private String lovDescCustCIF;
-	private String lovDescCustShrtName;
-	private String lovDescFinDivision;
-	private int dueDays;
-	private long dpdBucketID;
-	private long npaBucketID;
-	private BigDecimal pftBal;
-	private BigDecimal priBal;
-	private BigDecimal prvovisionRate;
-
-	private String assetCode;
-	private int assetStageOrdr;
-	private boolean npa;
-	private long provLinkedTranId;
-	private long provChgLinkedTranId;
-	private boolean manualProvision;
+	private String custCIF;
+	private String custShrtName;
 	private boolean assetFwdMov;
 	private boolean assetBkwMov;
-
-	private Provision oldProvision;
-	private ProvisionMovement provisionMovement;
 	private FinanceDetail financeDetail;
 	private NPAProvisionHeader npaHeader;
+	private String finCcy;
 
-	private List<ProvisionMovement> provisionMovementList = new ArrayList<ProvisionMovement>();
-	private String rcdAction = "";
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
+	private boolean newRecord = false;
+	private Provision befImage;
+	private Provision oldProvision;
+	private LoggedInUser userDetails;
 
 	public Provision() {
 		super();
 	}
 
-	public Provision(String id) {
-		super();
-		this.setId(id);
-	}
-
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		excludeFields.add("financeDetail");
-		excludeFields.add("prevProvisionCalDate");
-		excludeFields.add("prevProvisionedAmt");
-		excludeFields.add("transRef");
-		excludeFields.add("financeDetail");
-		excludeFields.add("rcdAction");
-		excludeFields.add("npaHeader");
-		excludeFields.add("finCcy");
-		excludeFields.add("oldProvision");
+
+		excludeFields.add("provisionAmounts");
+		excludeFields.add("provisionId");
+		excludeFields.add("finBranch");
+		excludeFields.add("custID");
+		excludeFields.add("custCIF");
+		excludeFields.add("custShrtName");
 		excludeFields.add("assetFwdMov");
 		excludeFields.add("assetBkwMov");
-		excludeFields.add("provisionMovement");
+		excludeFields.add("finCcy");
+		excludeFields.add("oldProvision");
 		excludeFields.add("financeDetail");
+		excludeFields.add("finType");
+		excludeFields.add("provisionRate");
 		excludeFields.add("finIsActive");
+
 		return excludeFields;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public String getId() {
-		return finReference;
+	public boolean isNew() {
+		return isNewRecord();
 	}
 
-	public void setId(String id) {
-		this.finReference = id;
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public long getProvisionId() {
+		return provisionId;
+	}
+
+	public void setProvisionId(long provisionId) {
+		this.provisionId = provisionId;
 	}
 
 	public String getFinReference() {
@@ -163,6 +156,150 @@ public class Provision extends AbstractWorkflowEntity {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
+	}
+
+	public BigDecimal getClosingBalance() {
+		return closingBalance;
+	}
+
+	public void setClosingBalance(BigDecimal closingBalance) {
+		this.closingBalance = closingBalance;
+	}
+
+	public BigDecimal getOutStandPrincipal() {
+		return outStandPrincipal;
+	}
+
+	public void setOutStandPrincipal(BigDecimal outStandPrincipal) {
+		this.outStandPrincipal = outStandPrincipal;
+	}
+
+	public BigDecimal getOutStandProfit() {
+		return outStandProfit;
+	}
+
+	public void setOutStandProfit(BigDecimal outStandProfit) {
+		this.outStandProfit = outStandProfit;
+	}
+
+	public BigDecimal getProfitAccruedAndDue() {
+		return profitAccruedAndDue;
+	}
+
+	public void setProfitAccruedAndDue(BigDecimal profitAccruedAndDue) {
+		this.profitAccruedAndDue = profitAccruedAndDue;
+	}
+
+	public BigDecimal getProfitAccruedAndNotDue() {
+		return profitAccruedAndNotDue;
+	}
+
+	public void setProfitAccruedAndNotDue(BigDecimal profitAccruedAndNotDue) {
+		this.profitAccruedAndNotDue = profitAccruedAndNotDue;
+	}
+
+	public Date getDueFromDate() {
+		return dueFromDate;
+	}
+
+	public void setDueFromDate(Date dueFromDate) {
+		this.dueFromDate = dueFromDate;
+	}
+
+	public Date getLastFullyPaidDate() {
+		return lastFullyPaidDate;
+	}
+
+	public void setLastFullyPaidDate(Date lastFullyPaidDate) {
+		this.lastFullyPaidDate = lastFullyPaidDate;
+	}
+
+	public int getDueDays() {
+		return dueDays;
+	}
+
+	public void setDueDays(int dueDays) {
+		this.dueDays = dueDays;
+	}
+
+	public int getCurrBucket() {
+		return currBucket;
+	}
+
+	public void setCurrBucket(int currBucket) {
+		this.currBucket = currBucket;
+	}
+
+	public int getDpd() {
+		return dpd;
+	}
+
+	public void setDpd(int dpd) {
+		this.dpd = dpd;
+	}
+
+	public Date getProvisionDate() {
+		return provisionDate;
+	}
+
+	public void setProvisionDate(Date provisionDate) {
+		this.provisionDate = provisionDate;
+	}
+
+	public BigDecimal getProvisionedAmt() {
+		return provisionedAmt;
+	}
+
+	public void setProvisionedAmt(BigDecimal provisionedAmt) {
+		this.provisionedAmt = provisionedAmt;
+	}
+
+	public String getAssetCode() {
+		return assetCode;
+	}
+
+	public void setAssetCode(String assetCode) {
+		this.assetCode = assetCode;
+	}
+
+	public int getAssetStageOrder() {
+		return assetStageOrder;
+	}
+
+	public void setAssetStageOrder(int assetStageOrder) {
+		this.assetStageOrder = assetStageOrder;
+	}
+
+	public boolean isNpa() {
+		return npa;
+	}
+
+	public void setNpa(boolean npa) {
+		this.npa = npa;
+	}
+
+	public boolean isManualProvision() {
+		return manualProvision;
+	}
+
+	public void setManualProvision(boolean manualProvision) {
+		this.manualProvision = manualProvision;
+	}
+
+	public long getLinkedTranId() {
+		return linkedTranId;
+	}
+
+	public void setLinkedTranId(long linkedTranId) {
+		this.linkedTranId = linkedTranId;
+	}
+
+	public long getChgLinkedTranId() {
+		return chgLinkedTranId;
+	}
+
+	public void setChgLinkedTranId(long chgLinkedTranId) {
+		this.chgLinkedTranId = chgLinkedTranId;
 	}
 
 	public String getFinBranch() {
@@ -189,308 +326,20 @@ public class Provision extends AbstractWorkflowEntity {
 		this.custID = custID;
 	}
 
-	public Date getProvisionCalDate() {
-		return provisionCalDate;
+	public String getCustCIF() {
+		return custCIF;
 	}
 
-	public void setProvisionCalDate(Date provisionCalDate) {
-		this.provisionCalDate = provisionCalDate;
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
 	}
 
-	public BigDecimal getProvisionedAmt() {
-		return provisionedAmt;
+	public String getCustShrtName() {
+		return custShrtName;
 	}
 
-	public void setProvisionedAmt(BigDecimal provisionedAmt) {
-		this.provisionedAmt = provisionedAmt;
-	}
-
-	public BigDecimal getProvisionAmtCal() {
-		return provisionAmtCal;
-	}
-
-	public void setProvisionAmtCal(BigDecimal provisionAmtCal) {
-		this.provisionAmtCal = provisionAmtCal;
-	}
-
-	public BigDecimal getProvisionDue() {
-		return provisionDue;
-	}
-
-	public void setProvisionDue(BigDecimal provisionDue) {
-		this.provisionDue = provisionDue;
-	}
-
-	public BigDecimal getNonFormulaProv() {
-		return nonFormulaProv;
-	}
-
-	public void setNonFormulaProv(BigDecimal nonFormulaProv) {
-		this.nonFormulaProv = nonFormulaProv;
-	}
-
-	public boolean isUseNFProv() {
-		return useNFProv;
-	}
-
-	public void setUseNFProv(boolean useNFProv) {
-		this.useNFProv = useNFProv;
-	}
-
-	public boolean isAutoReleaseNFP() {
-		return autoReleaseNFP;
-	}
-
-	public void setAutoReleaseNFP(boolean autoReleaseNFP) {
-		this.autoReleaseNFP = autoReleaseNFP;
-	}
-
-	public BigDecimal getPrincipalDue() {
-		return principalDue;
-	}
-
-	public void setPrincipalDue(BigDecimal principalDue) {
-		this.principalDue = principalDue;
-	}
-
-	public BigDecimal getProfitDue() {
-		return profitDue;
-	}
-
-	public void setProfitDue(BigDecimal profitDue) {
-		this.profitDue = profitDue;
-	}
-
-	public Date getDueFromDate() {
-		return dueFromDate;
-	}
-
-	public void setDueFromDate(Date dueFromDate) {
-		this.dueFromDate = dueFromDate;
-	}
-
-	public Date getLastFullyPaidDate() {
-		return lastFullyPaidDate;
-	}
-
-	public void setLastFullyPaidDate(Date lastFullyPaidDate) {
-		this.lastFullyPaidDate = lastFullyPaidDate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
-	public String getLovValue() {
-		return lovValue;
-	}
-
-	public void setLovValue(String lovValue) {
-		this.lovValue = lovValue;
-	}
-
-	public Provision getBefImage() {
-		return this.befImage;
-	}
-
-	public void setBefImage(Provision beforeImage) {
-		this.befImage = beforeImage;
-	}
-
-	public LoggedInUser getUserDetails() {
-		return userDetails;
-	}
-
-	public void setUserDetails(LoggedInUser userDetails) {
-		this.userDetails = userDetails;
-	}
-
-	public String getLovDescCustCIF() {
-		return lovDescCustCIF;
-	}
-
-	public void setLovDescCustCIF(String lovDescCustCIF) {
-		this.lovDescCustCIF = lovDescCustCIF;
-	}
-
-	public String getLovDescCustShrtName() {
-		return lovDescCustShrtName;
-	}
-
-	public void setLovDescCustShrtName(String lovDescCustShrtName) {
-		this.lovDescCustShrtName = lovDescCustShrtName;
-	}
-
-	public void setProvisionMovementList(List<ProvisionMovement> provisionMovementList) {
-		this.provisionMovementList = provisionMovementList;
-	}
-
-	public List<ProvisionMovement> getProvisionMovementList() {
-		return provisionMovementList;
-	}
-
-	public FinanceDetail getFinanceDetail() {
-		return financeDetail;
-	}
-
-	public void setFinanceDetail(FinanceDetail financeDetail) {
-		this.financeDetail = financeDetail;
-	}
-
-	public String getLovDescFinDivision() {
-		return lovDescFinDivision;
-	}
-
-	public void setLovDescFinDivision(String lovDescFinDivision) {
-		this.lovDescFinDivision = lovDescFinDivision;
-	}
-
-	public Date getPrevProvisionCalDate() {
-		return prevProvisionCalDate;
-	}
-
-	public void setPrevProvisionCalDate(Date prevProvisionCalDate) {
-		this.prevProvisionCalDate = prevProvisionCalDate;
-	}
-
-	public BigDecimal getPrevProvisionedAmt() {
-		return prevProvisionedAmt;
-	}
-
-	public void setPrevProvisionedAmt(BigDecimal prevProvisionedAmt) {
-		this.prevProvisionedAmt = prevProvisionedAmt;
-	}
-
-	public String getTransRef() {
-		return transRef;
-	}
-
-	public void setTransRef(String transRef) {
-		this.transRef = transRef;
-	}
-
-	public String getFinCcy() {
-		return finCcy;
-	}
-
-	public void setFinCcy(String finCcy) {
-		this.finCcy = finCcy;
-	}
-
-	public int getDueDays() {
-		return dueDays;
-	}
-
-	public void setDueDays(int dueDays) {
-		this.dueDays = dueDays;
-	}
-
-	public long getDpdBucketID() {
-		return dpdBucketID;
-	}
-
-	public void setDpdBucketID(long dpdBucketID) {
-		this.dpdBucketID = dpdBucketID;
-	}
-
-	public long getNpaBucketID() {
-		return npaBucketID;
-	}
-
-	public void setNpaBucketID(long npaBucketID) {
-		this.npaBucketID = npaBucketID;
-	}
-
-	public BigDecimal getPftBal() {
-		return pftBal;
-	}
-
-	public void setPftBal(BigDecimal pftBal) {
-		this.pftBal = pftBal;
-	}
-
-	public BigDecimal getPriBal() {
-		return priBal;
-	}
-
-	public void setPriBal(BigDecimal priBal) {
-		this.priBal = priBal;
-	}
-
-	public BigDecimal getPrvovisionRate() {
-		return prvovisionRate;
-	}
-
-	public void setPrvovisionRate(BigDecimal prvovisionRate) {
-		this.prvovisionRate = prvovisionRate;
-	}
-
-	public String getRcdAction() {
-		return rcdAction;
-	}
-
-	public void setRcdAction(String rcdAction) {
-		this.rcdAction = rcdAction;
-	}
-
-	public String getAssetCode() {
-		return assetCode;
-	}
-
-	public void setAssetCode(String assetCode) {
-		this.assetCode = assetCode;
-	}
-
-	public int getAssetStageOrdr() {
-		return assetStageOrdr;
-	}
-
-	public void setAssetStageOrdr(int assetStageOrdr) {
-		this.assetStageOrdr = assetStageOrdr;
-	}
-
-	public long getProvLinkedTranId() {
-		return provLinkedTranId;
-	}
-
-	public void setProvLinkedTranId(long provLinkedTranId) {
-		this.provLinkedTranId = provLinkedTranId;
-	}
-
-	public long getProvChgLinkedTranId() {
-		return provChgLinkedTranId;
-	}
-
-	public void setProvChgLinkedTranId(long provChgLinkedTranId) {
-		this.provChgLinkedTranId = provChgLinkedTranId;
-	}
-
-	public NPAProvisionHeader getNpaHeader() {
-		return npaHeader;
-	}
-
-	public void setNpaHeader(NPAProvisionHeader npaHeader) {
-		this.npaHeader = npaHeader;
-	}
-
-	public boolean isNpa() {
-		return npa;
-	}
-
-	public void setNpa(boolean npa) {
-		this.npa = npa;
-	}
-
-	public boolean isManualProvision() {
-		return manualProvision;
-	}
-
-	public void setManualProvision(boolean manualProvision) {
-		this.manualProvision = manualProvision;
+	public void setCustShrtName(String custShrtName) {
+		this.custShrtName = custShrtName;
 	}
 
 	public boolean isAssetFwdMov() {
@@ -509,12 +358,44 @@ public class Provision extends AbstractWorkflowEntity {
 		this.assetBkwMov = assetBkwMov;
 	}
 
-	public ProvisionMovement getProvisionMovement() {
-		return provisionMovement;
+	public List<ProvisionAmount> getProvisionAmounts() {
+		return provisionAmounts;
 	}
 
-	public void setProvisionMovement(ProvisionMovement provisionMovement) {
-		this.provisionMovement = provisionMovement;
+	public void setProvisionAmounts(List<ProvisionAmount> provisionAmounts) {
+		this.provisionAmounts = provisionAmounts;
+	}
+
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
+	public Provision getBefImage() {
+		return befImage;
+	}
+
+	public void setBefImage(Provision befImage) {
+		this.befImage = befImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
 	}
 
 	public Provision getOldProvision() {
@@ -523,6 +404,42 @@ public class Provision extends AbstractWorkflowEntity {
 
 	public void setOldProvision(Provision oldProvision) {
 		this.oldProvision = oldProvision;
+	}
+
+	public NPAProvisionHeader getNpaHeader() {
+		return npaHeader;
+	}
+
+	public void setNpaHeader(NPAProvisionHeader npaHeader) {
+		this.npaHeader = npaHeader;
+	}
+
+	public String getFinCcy() {
+		return finCcy;
+	}
+
+	public void setFinCcy(String finCcy) {
+		this.finCcy = finCcy;
+	}
+
+	public BigDecimal getCollateralValue() {
+		return collateralValue;
+	}
+
+	public void setCollateralValue(BigDecimal collateralValue) {
+		this.collateralValue = collateralValue;
+	}
+
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public BigDecimal getProvisionRate() {
+		return provisionRate;
+	}
+
+	public void setProvisionRate(BigDecimal provisionRate) {
+		this.provisionRate = provisionRate;
 	}
 
 	public boolean isFinIsActive() {

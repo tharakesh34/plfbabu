@@ -441,6 +441,12 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 
 		List<NPAProvisionDetail> provisionDetailsList = this.nPAProvisionDetailDAO
 				.getNPAProvisionDetailList(provisionHeader.getId(), tableType);
+
+		if (StringUtils.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL, provisionHeader.getRecordType())) {
+			provisionHeader.setProvisionDetailsList(provisionDetailsList);
+			return provisionHeader;
+		}
+
 		List<AssetClassificationDetail> detailsList = this.assetClassificationHeaderDAO
 				.getAssetClassificationDetails(provisionHeader.getFinType(), TableType.AVIEW);
 
@@ -461,6 +467,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 						provisionDetail.setAssetClassificationId(classificationHeader.getId());
 						provisionDetail.setAssetCode(classificationHeader.getCode());
 						provisionDetail.setAssetStageOrder(classificationHeader.getStageOrder());
+						provisionDetail.setNewPrvDetail(true);
 						provisionDetailsList.add(provisionDetail);
 					}
 				}

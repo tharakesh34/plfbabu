@@ -59,7 +59,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 	protected Listbox sortOperator_FinReference;
 	protected Listbox sortOperator_FinType;
 	private String module = null;
-	
+
 	private transient ProvisionService provisionService;
 	private transient FinanceDetailService financeDetailService;
 	private transient NPAProvisionHeaderService nPAProvisionHeaderService;
@@ -72,13 +72,19 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 	protected void doSetProperties() {
 		super.moduleCode = "Provision";
 		super.pageRightName = "ManualProvisioningList";
-		super.tableName = "FinProvisions_AView";
-		super.queueTableName = "FinProvisions_View";
-		super.enquiryTableName = "FinProvisions_View";
+		super.tableName = "Provisions_AView";
+		super.queueTableName = "Provisions_View";
+		super.enquiryTableName = "Provisions_View";
 
 		this.module = getArgument("enqiryModule");
 	}
-	
+
+	protected void doAddFilters() {
+		super.doAddFilters();
+		if (!enqiryModule) {
+			this.searchObject.addFilterEqual("FinIsActive", 1);
+		}
+	}
 
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
@@ -103,12 +109,13 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 					true);
 		}
 
-		registerField("lovDescCustCIF", listheader_CIFNo, SortOrder.NONE, cifNo, sortOperator_CIFNo, Operators.STRING);
+		registerField("CustCIF", listheader_CIFNo, SortOrder.NONE, cifNo, sortOperator_CIFNo, Operators.STRING);
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);
 		registerField("finType", listheader_FinType, SortOrder.NONE, finType, sortOperator_FinType, Operators.STRING);
-		registerField("lovDescCustShrtName");
-		registerField("lovDescCustShrtName", listheader_CustName);
+		registerField("CustShrtName");
+		registerField("finIsActive");
+		registerField("CustShrtName", listheader_CustName);
 		registerField("manualProvision", listheader_ManualProvisioning);
 		registerField("assetCode", listheader_AssetStage);
 
@@ -160,7 +167,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -175,9 +182,10 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxManualProvisioning.getSelectedItem();
 		final Provision aProvision = (Provision) selectedItem.getAttribute("data");
-		
-		Provision provision = provisionService.getProvisionById(aProvision.getFinReference(), false);
-		
+
+		String finType = null;
+		Provision provision = provisionService.getProvisionById(aProvision.getFinReference(), TableType.VIEW);
+
 		if (provision == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
@@ -189,17 +197,18 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 					.getFinProfitDetailsById(provision.getFinReference());
 			if (finPftDetail != null) {
 				financeDetail.getFinScheduleData().setFinPftDeatil(finPftDetail);
-			}
+				finType = finPftDetail.getFinType();
 
+			}
+			provision.setFinType(finType);
 			financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(false);
-			
 			if (financeDetail != null) {
 				provision.setFinanceDetail(financeDetail);
 			}
-			
+
 			NPAProvisionHeader npaHeader = this.nPAProvisionHeaderService.getNPAHeaderByFinType(provision.getFinType(),
 					TableType.AVIEW);
-			
+
 			if (npaHeader != null) {
 				provision.setNpaHeader(npaHeader);
 			}
@@ -210,12 +219,13 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 		whereCond.append(" AND  version=");
 		whereCond.append(provision.getVersion());
 
-		if (doCheckAuthority(provision, whereCond.toString(), new Object[] { provision.getFinReference(), provision.getVersion() })) {
+		if (doCheckAuthority(provision, whereCond.toString(),
+				new Object[] { provision.getFinReference(), provision.getVersion() })) {
 			if (isWorkFlowEnabled() && provision.getWorkflowId() == 0) {
 				provision.setWorkflowId(getWorkFlowId());
 			}
-			
-			Provision oldProvision = provisionService.getProvisionById(aProvision.getFinReference(), "_AView");
+
+			Provision oldProvision = provisionService.getProvisionById(aProvision.getFinReference(), TableType.AVIEW);
 			provision.setOldProvision(oldProvision);
 			doShowDialogPage(provision);
 		} else {
@@ -290,7 +300,6 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 		search();
 	}
 
-	
 	//Getters and Setters
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;

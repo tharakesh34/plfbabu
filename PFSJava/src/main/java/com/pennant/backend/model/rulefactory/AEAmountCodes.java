@@ -59,6 +59,9 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal priSP = BigDecimal.ZERO;
 	private BigDecimal rpPft = BigDecimal.ZERO;
 	private BigDecimal rpPftPr = BigDecimal.ZERO;
+	private BigDecimal priPr = BigDecimal.ZERO;
+	private BigDecimal priSPr = BigDecimal.ZERO;
+
 	private BigDecimal rpTds = BigDecimal.ZERO;
 	private BigDecimal pftDuePaid = BigDecimal.ZERO;
 	private BigDecimal priDuePaid = BigDecimal.ZERO;
@@ -1671,6 +1674,22 @@ public class AEAmountCodes implements Serializable {
 
 	public void setRpPftPr(BigDecimal rpPftPr) {
 		this.rpPftPr = rpPftPr;
+	}
+
+	public BigDecimal getPriPr() {
+		return priPr;
+	}
+
+	public void setPriPr(BigDecimal priPr) {
+		this.priPr = priPr;
+	}
+
+	public BigDecimal getPriSPr() {
+		return priSPr;
+	}
+
+	public void setPriSPr(BigDecimal priSPr) {
+		this.priSPr = priSPr;
 	}
 
 	public BigDecimal getRpTotPr() {

@@ -1749,6 +1749,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		if (ImplementationConstants.ALLOW_TDS_ON_FEE) {
 			feeMap.put("_TDS_N", Labels.getLabel("label_TransactionEntryDialog_N_TDS"));
 			feeMap.put("_TDS_P", Labels.getLabel("label_TransactionEntryDialog_P_TDS"));
+			feeMap.put("_TDS_R", Labels.getLabel("label_TransactionEntryDialog_R_TDS"));
 		}
 
 		return feeMap;

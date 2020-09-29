@@ -57,7 +57,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.Provision;
-import com.pennant.backend.model.financemanagement.ProvisionMovement;
+import com.pennant.backend.model.financemanagement.ProvisionAmount;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
@@ -90,7 +90,7 @@ public class NPAService extends ServiceHelper {
 	 */
 	public CustEODEvent processProvisions(CustEODEvent custEODEvent) throws Exception {
 		String strCustId = custEODEvent.getCustIdAsString();
-		logger.info("Provision Calculation started fro the Customer ID {}", strCustId);
+		logger.info("Provision Calculation started for the Customer ID {}", strCustId);
 
 		Date eodDate = custEODEvent.getEodDate();
 		Date monthEnd = DateUtil.getMonthEnd(eodDate);
@@ -114,13 +114,14 @@ public class NPAService extends ServiceHelper {
 			for (FinEODEvent finEODEvent : finEODEvents) {
 				Provision provisionDet = new Provision();
 
-				provisionDet.setPrvovisionRate(provision.getPrvovisionRate());
+				provisionDet.setProvisionRate(provision.getProvisionRate());
 				provisionDet.setAssetCode(provision.getAssetCode());
-				provisionDet.setAssetStageOrdr(provision.getAssetStageOrdr());
+				provisionDet.setAssetStageOrder(provision.getAssetStageOrder());
 				provisionDet.setNpa(provision.isNpa());
 				provisionDet.setManualProvision(false);
+				provisionDet.getProvisionAmounts().addAll(provision.getProvisionAmounts());
 
-				findProvision(finEODEvent, valueDate, provisionBooks, provision);
+				findProvision(finEODEvent, valueDate, provisionBooks, provisionDet);
 			}
 		} else {
 			for (FinEODEvent finEODEvent : finEODEvents) {
@@ -128,7 +129,7 @@ public class NPAService extends ServiceHelper {
 			}
 		}
 
-		logger.info("Provision Calculation completd fro the Customer ID {}", strCustId);
+		logger.info("Provision Calculation completd for the Customer ID {}", strCustId);
 		return custEODEvent;
 
 	}
@@ -137,10 +138,10 @@ public class NPAService extends ServiceHelper {
 			Provision provision) throws SQLException {
 		String finReference = finEODEvent.getFinProfitDetail().getFinReference();
 
-		logger.info("Provision Calculation started fro the FinReference  {}", finReference);
+		logger.info("Provision Calculation started for the FinReference  {}", finReference);
 
 		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
-		Provision oldProvision = provisionDAO.getProvisionById(finReference, TableType.MAIN_TAB.getSuffix());
+		Provision oldProvision = provisionDAO.getProvisionById(finReference, TableType.MAIN_TAB, false);
 		if (oldProvision != null && oldProvision.isManualProvision()) {
 			return finEODEvent;
 		}
@@ -150,7 +151,7 @@ public class NPAService extends ServiceHelper {
 		}
 
 		if (provision == null) {
-			logger.info("Provision Calculation completed fro the FinReference  {}", finReference);
+			logger.info("Provision Calculation completed for the FinReference  {}", finReference);
 
 			return finEODEvent;
 		}
@@ -159,11 +160,8 @@ public class NPAService extends ServiceHelper {
 		provision.setFinBranch(pftDetail.getFinBranch());
 		provision.setFinType(pftDetail.getFinType());
 		provision.setCustID(pftDetail.getCustId());
-		provision.setProvisionCalDate(valueDate);
-		provision.setPftBal(pftDetail.getTotalPftBal());
-		provision.setPriBal(pftDetail.getTotalPriBal());
-		provision.setPrincipalDue(pftDetail.getODPrincipal());
-		provision.setProfitDue(pftDetail.getODProfit());
+		provision.setProvisionDate(valueDate);
+
 		Date lastFullypaid = pftDetail.getFullPaidDate();
 
 		if (lastFullypaid == null) {
@@ -174,58 +172,70 @@ public class NPAService extends ServiceHelper {
 		provision.setDueFromDate(pftDetail.getPrvODDate());
 		provision.setDueDays(pftDetail.getCurODDays());
 
-		BigDecimal provisonAmt = calculateProvisionAmount(valueDate, finEODEvent.getFinanceScheduleDetails(),
-				provision.getPrvovisionRate());
+		provision.setOutStandPrincipal(pftDetail.getTotalPriBal());
+		provision.setOutStandProfit(pftDetail.getTotalPftBal());
 
-		provision.setProvisionAmtCal(provisonAmt);
-		provision.setProvisionedAmt(provisonAmt);
+		List<FinanceScheduleDetail> schdules = finEODEvent.getFinanceScheduleDetails();
+		calculateProvisionAmount(valueDate, schdules, provision);
 
-		//Executing accounting process
-		setAssetMovement(finEODEvent, provision, oldProvision, valueDate);
+		provision.setProfitAccruedAndNotDue(pftDetail.getAmzTillLBD());
+		// Executing accounting process
+		setAssetMovement(provision, oldProvision, valueDate);
 
-		provision.setDpdBucketID(0);
+		provision.setCurrBucket(pftDetail.getDueBucket());
+		provision.setDpd(pftDetail.getCurODDays());
 		provision.setLastMntBy(1000);
 		provision.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
-		provision.setProvisionMovement(getProvisionMovement(provision));
 		finEODEvent.getFinProfitDetail().setProvision(true);
 		finEODEvent.getProvisions().add(provision);
 
-		logger.info("Provision Calculation completed fro the FinReference  {}", finReference);
+		logger.info("Provision Calculation completed for the FinReference  {}", finReference);
 
 		return finEODEvent;
 	}
 
-	private BigDecimal calculateProvisionAmount(Date valueDate, List<FinanceScheduleDetail> schdules,
-			BigDecimal prvovisionRate) {
+	private void calculateProvisionAmount(Date valueDate, List<FinanceScheduleDetail> schdules, Provision provision) {
 		Date monthStart = DateUtil.getMonthStart(valueDate);
 		Date monthEnd = DateUtil.getMonthEnd(valueDate);
 
-		BigDecimal provisonAmt = BigDecimal.ZERO;
+		BigDecimal provisionedAmt = BigDecimal.ZERO;
 
 		for (FinanceScheduleDetail schd : schdules) {
 			if (schd.getSchDate().compareTo(monthStart) >= 0 && schd.getSchDate().compareTo(monthEnd) <= 0) {
-				provisonAmt = schd.getClosingBalance();
+				provisionedAmt = schd.getClosingBalance();
 				break;
 			}
 		}
 
+		BigDecimal principalDue = BigDecimal.ZERO;
+		BigDecimal profitAccruedAndDue = BigDecimal.ZERO;
+
 		for (FinanceScheduleDetail schd : schdules) {
 			if (schd.getSchDate().compareTo(valueDate) <= 0) {
-				provisonAmt = provisonAmt.add(schd.getPrincipalSchd());
-				provisonAmt = provisonAmt.add(schd.getProfitSchd());
+				principalDue = principalDue.add(schd.getPrincipalSchd());
+				principalDue = principalDue.subtract(schd.getSchdPriPaid());
 
-				provisonAmt = provisonAmt.subtract(schd.getSchdPriPaid());
-				provisonAmt = provisonAmt.subtract(schd.getSchdPftPaid());
+				profitAccruedAndDue = profitAccruedAndDue.add(schd.getProfitSchd());
+				profitAccruedAndDue = profitAccruedAndDue.subtract(schd.getSchdPftPaid());
+				profitAccruedAndDue = profitAccruedAndDue.subtract(schd.getSchdPftWaiver());
 
-				provisonAmt = provisonAmt.subtract(schd.getSchdPftWaiver());
 			}
 		}
+		provisionedAmt = provisionedAmt.add(principalDue).add(profitAccruedAndDue);
+		provision.setClosingBalance(provisionedAmt);
+		provision.setProfitAccruedAndDue(profitAccruedAndDue);
 
-		//Calculating Provision Amount
-		provisonAmt = provisonAmt.multiply(prvovisionRate).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+		// Calculating Provision Amount
+		for (ProvisionAmount provisonAmt : provision.getProvisionAmounts()) {
+			BigDecimal provisionAmtCal = provisionedAmt.multiply(provisonAmt.getProvisionPer())
+					.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+			provisonAmt.setProvisionAmtCal(provisionAmtCal);
+		}
 
-		return provisonAmt;
+		provision.setProvisionedAmt(provisionedAmt.multiply(provision.getProvisionRate()).divide(new BigDecimal(100), 0,
+				RoundingMode.HALF_DOWN));
+
 	}
 
 	private Provision getProvision(FinEODEvent finEODEvent, String provisionBooks) throws SQLException {
@@ -239,7 +249,7 @@ public class NPAService extends ServiceHelper {
 		NPAProvisionHeader provisionHeader = nPAProvisionHeaderDAO.getNPAProvisionByFintype(finType,
 				TableType.MAIN_TAB);
 
-		//If Provision details are not available against the loan type.
+		// If Provision details are not available against the loan type.
 		if (provisionHeader == null) {
 			return provision;
 		}
@@ -247,7 +257,7 @@ public class NPAService extends ServiceHelper {
 		List<NPAProvisionDetail> provisionDetails = this.nPAProvisionDetailDAO
 				.getNPAProvisionDetailList(provisionHeader.getId(), TableType.AVIEW);
 
-		//If Provision Percentages are not available against the loan type.
+		// If Provision Percentages are not available against the loan type.
 		if (CollectionUtils.isEmpty(provisionDetails)) {
 			return provision;
 		}
@@ -284,44 +294,88 @@ public class NPAService extends ServiceHelper {
 
 		provision = new Provision();
 
-		//Getting Provision Rate
-		BigDecimal provisionRate = getProvisionRate(finEODEvent, provisionDetail, provisionBooks);
-		provision.setPrvovisionRate(provisionRate);
+		// Getting Provision Rate
+		setProvisionAmounts(finEODEvent, provisionDetail, provision);
+
+		provision = setProvisionRate(finEODEvent, provision, provisionDetail, provisionBooks);
+
 		provision.setAssetCode(provisionDetail.getAssetCode());
-		provision.setAssetStageOrdr(provisionDetail.getAssetStageOrder());
+		provision.setAssetStageOrder(provisionDetail.getAssetStageOrder());
 		provision.setNpa(provisionDetail.isnPAActive());
 		provision.setManualProvision(false);
 
 		return provision;
 	}
 
-	private BigDecimal getProvisionRate(FinEODEvent finEODEvent, NPAProvisionDetail provisionDetail,
+	private void setProvisionAmounts(FinEODEvent finEODEvent, NPAProvisionDetail provisionDetail, Provision provision) {
+
+		ProvisionAmount pa = null;
+
+		pa = new ProvisionAmount();
+		pa.setProvisionType(ProvisionConstants.PROVISION_BOOKS_REG_SEC);
+		pa.setProvisionPer(provisionDetail.getRegSecPerc());
+		pa.setAssetCode(provisionDetail.getAssetCode());
+		provision.getProvisionAmounts().add(pa);
+
+		pa = new ProvisionAmount();
+		pa.setProvisionType(ProvisionConstants.PROVISION_BOOKS_REG_UN_SEC);
+		pa.setProvisionPer(provisionDetail.getRegUnSecPerc());
+		pa.setAssetCode(provisionDetail.getAssetCode());
+		provision.getProvisionAmounts().add(pa);
+
+		pa = new ProvisionAmount();
+		pa.setProvisionType(ProvisionConstants.PROVISION_BOOKS_INT_SEC);
+		pa.setProvisionPer(provisionDetail.getIntSecPerc());
+		pa.setAssetCode(provisionDetail.getAssetCode());
+		provision.getProvisionAmounts().add(pa);
+
+		pa = new ProvisionAmount();
+		pa.setProvisionType(ProvisionConstants.PROVISION_BOOKS_INT_UN_SEC);
+		pa.setProvisionPer(provisionDetail.getIntUnSecPerc());
+		pa.setAssetCode(provisionDetail.getAssetCode());
+		provision.getProvisionAmounts().add(pa);
+
+	}
+
+	/**
+	 * Getting Provision Rate
+	 * 
+	 * @param finEODEvent
+	 * @param provisionDetail
+	 * @param provisionBooks
+	 * @return
+	 */
+	private Provision setProvisionRate(FinEODEvent finEODEvent, Provision provision, NPAProvisionDetail provisionDetail,
 			String provisionBooks) {
 
-		String finReference = finEODEvent.getFinanceMain().getFinReference();
-		boolean isSecured = this.collateralAssignmentDAO.isSecuredLoan(finReference, TableType.MAIN_TAB);
+		boolean isSecured = this.collateralAssignmentDAO.isSecuredLoan(finEODEvent.getFinanceMain().getFinReference(),
+				TableType.MAIN_TAB);
 
-		BigDecimal provisionRate = BigDecimal.ZERO;
-		if (ProvisionConstants.PROVISION_BOOKS_REG.equals(ProvisionConstants.PROVISION_BOOKS_REG)) {
+		if (StringUtils.equals(ProvisionConstants.PROVISION_BOOKS_REG, provisionBooks)) {
 			if (isSecured) {
-				provisionRate = provisionDetail.getRegSecPerc();
+				provision.setProvisionRate(provisionDetail.getRegSecPerc());
 			} else {
-				provisionRate = provisionDetail.getRegUnSecPerc();
+				provision.setProvisionRate(provisionDetail.getRegUnSecPerc());
 			}
-		} else if (ProvisionConstants.PROVISION_BOOKS_INT.equals(provisionBooks)) {
+		} else if (StringUtils.equals(ProvisionConstants.PROVISION_BOOKS_INT, provisionBooks)) {
 			if (isSecured) {
-				provisionRate = provisionDetail.getIntSecPerc();
+				provision.setProvisionRate(provisionDetail.getIntSecPerc());
 			} else {
-				provisionRate = provisionDetail.getIntUnSecPerc();
+				provision.setProvisionRate(provisionDetail.getIntUnSecPerc());
 			}
 		}
 
-		return provisionRate;
+		if (isSecured) {
+			provision = setCollateralValue(finEODEvent, provision);
+		} else {
+			provision.setCollateralValue(BigDecimal.ZERO);
+		}
+
+		return provision;
 	}
 
-	private void setAssetMovement(FinEODEvent finEODEvent, Provision provision, Provision oldProvision,
-			Date eodValueDate) {
-		//Getting Old Provision details 
+	private void setAssetMovement(Provision provision, Provision oldProvision, Date eodValueDate) {
+		// Getting Old Provision details
 		if (oldProvision == null) {
 			provision.setAssetFwdMov(provision.isNpa());
 		} else {
@@ -334,6 +388,18 @@ public class NPAService extends ServiceHelper {
 	}
 
 	/**
+	 * Set Collateral Value
+	 * 
+	 * @param finEODEvent
+	 * @param provision
+	 */
+	private Provision setCollateralValue(FinEODEvent finEODEvent, Provision provision) {
+		provision.setCollateralValue(
+				this.collateralAssignmentDAO.getCollateralValue(finEODEvent.getFinanceMain().getFinReference()));
+		return provision;
+	}
+
+	/**
 	 * Checking the If NPA repay Heirarchy Required or not against the loan type
 	 * 
 	 * @param finReference
@@ -342,7 +408,7 @@ public class NPAService extends ServiceHelper {
 	public boolean isNAPRepayHierarchyReq(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		Provision provision = provisionDAO.getProvisionById(finReference, TableType.MAIN_TAB.getSuffix());
+		Provision provision = provisionDAO.getProvisionById(finReference, TableType.MAIN_TAB, false);
 		if (provision == null) {
 			return false;
 		}
@@ -350,7 +416,7 @@ public class NPAService extends ServiceHelper {
 		NPAProvisionHeader provisionHeader = nPAProvisionHeaderDAO.getNPAProvisionByFintype(provision.getFinType(),
 				TableType.MAIN_TAB);
 
-		//If Provision details are not available against the loan type.
+		// If Provision details are not available against the loan type.
 		if (provisionHeader == null) {
 			return false;
 		}
@@ -358,7 +424,7 @@ public class NPAService extends ServiceHelper {
 		List<NPAProvisionDetail> provisionDetails = this.nPAProvisionDetailDAO
 				.getNPAProvisionDetailList(provisionHeader.getId(), TableType.AVIEW);
 
-		//If Provision Percentages are not available against the loan type.
+		// If Provision Percentages are not available against the loan type.
 		if (CollectionUtils.isEmpty(provisionDetails)) {
 			return false;
 		}
@@ -401,16 +467,16 @@ public class NPAService extends ServiceHelper {
 				continue;
 			}
 
-			if (provision.getAssetStageOrdr() > maxProvision.getAssetStageOrdr()) {
+			if (provision.getAssetStageOrder() > maxProvision.getAssetStageOrder()) {
 				maxProvision.setAssetCode(provision.getAssetCode());
-				maxProvision.setAssetStageOrdr(provision.getAssetStageOrdr());
-				maxProvision.setPrvovisionRate(provision.getPrvovisionRate());
+				maxProvision.setAssetStageOrder(provision.getAssetStageOrder());
 				maxProvision.setNpa(provision.isNpa());
-			} else if (provision.getAssetStageOrdr() == maxProvision.getAssetStageOrdr()) {
+				maxProvision.getProvisionAmounts().addAll(provision.getProvisionAmounts());
+			} else if (provision.getAssetStageOrder() == maxProvision.getAssetStageOrder()) {
 				if (provision.isNpa() && !maxProvision.isNpa()) {
 					maxProvision.setAssetCode(provision.getAssetCode());
-					maxProvision.setAssetStageOrdr(provision.getAssetStageOrdr());
-					maxProvision.setPrvovisionRate(provision.getPrvovisionRate());
+					maxProvision.setAssetStageOrder(provision.getAssetStageOrder());
+					maxProvision.getProvisionAmounts().addAll(provision.getProvisionAmounts());
 					maxProvision.setNpa(provision.isNpa());
 				}
 			}
@@ -420,36 +486,6 @@ public class NPAService extends ServiceHelper {
 			return null;
 		}
 		return maxProvision;
-	}
-
-	private ProvisionMovement getProvisionMovement(Provision provision) {
-		ProvisionMovement movement = new ProvisionMovement();
-
-		movement.setProvCalDate(provision.getProvisionCalDate());
-		movement.setFinReference(provision.getFinReference());
-		movement.setProvMovementDate(provision.getProvisionCalDate());
-		movement.setProvMovementSeq(1);
-		movement.setProvisionedAmt(provision.getProvisionedAmt());
-		movement.setProvisionAmtCal(provision.getProvisionedAmt());
-		movement.setProvisionDue(provision.getProvisionDue());
-		movement.setProvisionPostSts("R");
-		movement.setNonFormulaProv(provision.getNonFormulaProv());
-		movement.setUseNFProv(provision.isUseNFProv());
-		movement.setAutoReleaseNFP(provision.isAutoReleaseNFP());
-		movement.setPrincipalDue(provision.getPrincipalDue());
-		movement.setProfitDue(provision.getProfitDue());
-		movement.setDueFromDate(provision.getDueFromDate());
-		movement.setLastFullyPaidDate(provision.getLastFullyPaidDate());
-		movement.setDueDays(provision.getDueDays());
-		movement.setPriBal(provision.getPriBal());
-
-		movement.setAssetCode(provision.getAssetCode());
-		movement.setAssetStageOrdr(provision.getAssetStageOrdr());
-		movement.setNpa(provision.isNpa());
-		movement.setPrvovisionRate(provision.getPrvovisionRate());
-		movement.setManualProvision(provision.isManualProvision());
-
-		return movement;
 	}
 
 	public CustEODEvent processAccounting(CustEODEvent custEODEvent) throws Exception {
@@ -469,13 +505,13 @@ public class NPAService extends ServiceHelper {
 					continue;
 				}
 
-				//Process Provision Accounting.
+				// Process Provision Accounting.
 				finEODEvent = processProvAccounting(finEODEvent, custEODEvent, provision);
 
-				//Process Provision Accounting Reversal.
+				// Process Provision Accounting Reversal.
 				finEODEvent = processProvAccountingReversal(finEODEvent, custEODEvent, provision);
 
-				//Process NPAChange Accounting.
+				// Process NPAChange Accounting.
 				finEODEvent = processNPAChgAccounting(finEODEvent, custEODEvent, provision);
 			}
 		}
@@ -500,7 +536,6 @@ public class NPAService extends ServiceHelper {
 
 		aeEvent.setValueDate(SysParamUtil.getPostDate());
 		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
-		aeAmountCodes.setProvDue(provision.getProvisionDue());
 		aeAmountCodes.setProvAmt(provision.getProvisionedAmt());
 
 		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
@@ -508,8 +543,7 @@ public class NPAService extends ServiceHelper {
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 		aeEvent = postAccountingEOD(aeEvent);
 
-		provision.setProvLinkedTranId(aeEvent.getLinkedTranId());
-		provision.getProvisionMovement().setLinkedTranId(aeEvent.getLinkedTranId());
+		provision.setLinkedTranId(aeEvent.getLinkedTranId());
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 
 		return finEODEvent;
@@ -537,7 +571,6 @@ public class NPAService extends ServiceHelper {
 		}
 
 		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
-		aeAmountCodes.setProvDue(provision.getProvisionDue());
 		aeAmountCodes.setProvAmt(provision.getProvisionedAmt());
 
 		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
@@ -545,8 +578,7 @@ public class NPAService extends ServiceHelper {
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 		aeEvent = postAccountingEOD(aeEvent);
 
-		provision.setProvLinkedTranId(aeEvent.getLinkedTranId());
-		provision.getProvisionMovement().setLinkedTranId(aeEvent.getLinkedTranId());
+		provision.setLinkedTranId(aeEvent.getLinkedTranId());
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 
 		return finEODEvent;
@@ -565,8 +597,7 @@ public class NPAService extends ServiceHelper {
 			return finEODEvent;
 		}
 
-		provision.setProvChgLinkedTranId(aeEvent.getLinkedTranId());
-		provision.getProvisionMovement().setProvChgLinkedTranId(aeEvent.getLinkedTranId());
+		provision.setChgLinkedTranId(aeEvent.getLinkedTranId());
 		aeEvent = postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 
@@ -588,19 +619,18 @@ public class NPAService extends ServiceHelper {
 
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(main, finPftDetail, finEODEvent.getFinanceScheduleDetails(),
 				eventCode, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
-		//Old
-		//-- PFTAMZ(amz) - TDSCHDPFT(pftS)
-		//--TDSCHDPFTBAL(PftSB)
-		//--TDSCHDPFTBAL(pftSB)+TOTALPRIBAL(priAB)
-		//--TOTALPRIBAL(priAB)-TDSCHDPRI(priS)
+		// Old
+		// -- PFTAMZ(amz) - TDSCHDPFT(pftS)
+		// --TDSCHDPFTBAL(PftSB)
+		// --TDSCHDPFTBAL(pftSB)+TOTALPRIBAL(priAB)
+		// --TOTALPRIBAL(priAB)-TDSCHDPRI(priS)
 
-		//New 
-		//TDSCHDPFTBAL(pftSB)+TDSCHDPRIBAL(PriSB)	//1 Leg
-		//TDSCHDPFTBAL(PftSB)	//2 Leg
-		//TOTALPRISCHD(pri) - TDSCHDPRI(priS)//3 Leg  
+		// New
+		// TDSCHDPFTBAL(pftSB)+TDSCHDPRIBAL(PriSB) //1 Leg
+		// TDSCHDPFTBAL(PftSB) //2 Leg
+		// TOTALPRISCHD(pri) - TDSCHDPRI(priS)//3 Leg
 
 		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
-		aeAmountCodes.setProvDue(provision.getProvisionDue());
 		aeAmountCodes.setProvAmt(provision.getProvisionedAmt());
 
 		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
@@ -609,7 +639,7 @@ public class NPAService extends ServiceHelper {
 		return aeEvent;
 	}
 
-	//Getters and setters
+	// Getters and setters
 	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
 		this.collateralAssignmentDAO = collateralAssignmentDAO;
 	}
@@ -621,4 +651,5 @@ public class NPAService extends ServiceHelper {
 	public void setnPAProvisionDetailDAO(NPAProvisionDetailDAO nPAProvisionDetailDAO) {
 		this.nPAProvisionDetailDAO = nPAProvisionDetailDAO;
 	}
+
 }

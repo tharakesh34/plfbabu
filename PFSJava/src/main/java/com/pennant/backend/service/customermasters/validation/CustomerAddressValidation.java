@@ -118,17 +118,18 @@ public class CustomerAddressValidation {
 
 		auditDetail.setErrorDetail(screenValidations(customerAddres));
 
-		boolean isServiceable = getCustomerAddresDAO().isServiceable(customerAddres.getPinCodeId());
+		if (customerAddres.getPinCodeId() != null) {
+			boolean isServiceable = getCustomerAddresDAO().isServiceable(customerAddres.getPinCodeId());
 
-		if (!isServiceable) {
-			valueParm[0] = StringUtils.trimToEmpty(customerAddres.getCustAddrZIP());
-			valueParm[1] = StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrZip());
+			if (!isServiceable) {
+				valueParm[0] = StringUtils.trimToEmpty(customerAddres.getCustAddrZIP());
+				valueParm[1] = StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrZip());
 
-			errParm[0] = PennantJavaUtil.getLabel("label_PinCode") + "-" + valueParm[0] + " For "
-					+ PennantJavaUtil.getLabel("label_AreaName") + "-" + valueParm[1];
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "81005", errParm, null));
+				errParm[0] = PennantJavaUtil.getLabel("label_PinCode") + "-" + valueParm[0] + " For "
+						+ PennantJavaUtil.getLabel("label_AreaName") + "-" + valueParm[1];
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "81005", errParm, null));
+			}
 		}
-
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !customerAddres.isWorkflow()) {
@@ -153,7 +154,7 @@ public class CustomerAddressValidation {
 							Labels.getLabel("listheader_CustAddrType.label"), customerAddres.getCustAddrType() },
 					new String[] {});
 		}
-		
+
 		//FIXME MUR the below is commented in HL
 		if (StringUtils.isBlank(customerAddres.getCustAddrStreet())) {
 			return new ErrorDetail(PennantConstants.KEY_FIELD, "30535",

@@ -16928,7 +16928,7 @@ UNION ALL
 
 
 
-	<changeSet id="ST#1211.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#1211.1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 		<![CDATA[
 			select deps_save_and_drop_dependencies('plf','int_disbursement_request_view');
@@ -16936,7 +16936,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1211.1" author="Gopal.p">
+	<changeSet id="ST#1211.1.1" author="Gopal.p">
 		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT FA.PAYMENTID,
@@ -16953,6 +16953,8 @@ UNION ALL
 				THEN 'D'
 				WHEN FA.PAYMENTTYPE = 'CHEQUE'
 				THEN 'C'
+				WHEN FA.PAYMENTTYPE = 'IFT'
+				THEN 'I'
 				ELSE FA.PAYMENTTYPE
 				END DISBURSEMENT_TYPE,
 				FA.AMTTOBERELEASED,
@@ -17083,6 +17085,8 @@ UNION ALL
 				THEN 'D'
 				WHEN PI.PAYMENTTYPE = 'CHEQUE'
 				THEN 'C'
+				WHEN PI.PAYMENTTYPE = 'IFT'
+				THEN 'I'
 				ELSE PI.PAYMENTTYPE
 				END DISBURSEMENT_TYPE,
 				PI.PAYMENTAMOUNT  AMTTOBERELEASED,
@@ -17210,6 +17214,8 @@ UNION ALL
 				WHEN
 				PI.PAYMENTTYPE = 'CHEQUE'
 				THEN 'C'
+				WHEN PI.PAYMENTTYPE = 'IFT'
+				THEN 'I'
 				ELSE PI.PAYMENTTYPE
 				END DISBURSEMENT_TYPE,
 				PI.PAYMENTAMOUNT  AMTTOBERELEASED,
@@ -17286,7 +17292,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#1211.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#1211.1.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			select deps_restore_dependencies('plf','int_disbursement_request_view');
 		</sql>
@@ -23556,7 +23562,339 @@ UNION ALL
 		 ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1211.36_pre" author="Gopal.P" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeereceipts_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1211.36" author="Gopal.P">
+		<comment>Added new column to store Paid TDS</comment>
+		<createView viewName="FINFEERECEIPTS_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.Id,
+					T1.FEEID,
+					T1.RECEIPTID,
+					T1.PAIDAMOUNT,
+					T1.Version,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T2.AMOUNT ReceiptAmount,
+					T2.TRANSACTIONREF,
+					T2.FAVOURNUMBER,
+					T3.FEETYPEID,
+					T3.VASREFERENCE ,
+					T4.FeeTypeCode,
+					T4.FeeTypeDesc,
+					T3.FINREFERENCE,
+					T5.RECEIPTMODE ReceiptType,
+					T1.PAIDTDS
+				FROM FinFeeReceipts_Temp T1
+				INNER JOIN FINRECEIPTDETAIL_Temp T2 ON T1.ReceiptID = T2.RECEIPTID
+				INNER JOIN FinFeeDetail_View T3 ON T1.FeeId = T3.FEEID
+				LEFT JOIN FeeTypes T4 ON T3.FeeTypeId = T4.FeeTypeId
+				INNER JOIN FINRECEIPTHEADER_Temp T5 ON T1.RECEIPTID = T5.RECEIPTID
+			 ]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#1211.36_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeereceipts_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1211.37_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeereceipts_aview');
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="ST#1211.37" author="Gopal.p">
+		<comment>Added new column to store Paid TDS</comment>
+		<createView viewName="FINFEERECEIPTS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.Id,
+					T1.FEEID,
+					T1.RECEIPTID,
+					T1.PAIDAMOUNT,
+					T1.Version ,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T2.AMOUNT ReceiptAmount,
+					T2.TRANSACTIONREF,
+					T2.FAVOURNUMBER,
+					T3.FEETYPEID,
+					T3.VASREFERENCE ,
+					T4.FeeTypeCode,
+					T4.FeeTypeDesc,
+					T3.FINREFERENCE,
+					T5.RECEIPTMODE ReceiptType,
+					T1.PAIDTDS
+				FROM FinFeeReceipts T1
+				INNER JOIN FINRECEIPTDETAIL T2 ON T1.ReceiptID = T2.RECEIPTID
+				INNER JOIN FinFeeDetail_View T3 ON T1.FeeId = T3.FEEID
+				LEFT JOIN FeeTypes T4 ON T3.FeeTypeId = T4.FeeTypeId
+				INNER JOIN FINRECEIPTHEADER T5 ON T1.RECEIPTID = T5.RECEIPTID	
+			 ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1211.37_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeereceipts_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1211.38_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeereceipts_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1211.38" author="Gopal.p">
+		<comment>Added new column to store Paid TDS</comment>
+		<createView viewName="FINFEERECEIPTS_VIEW" replaceIfExists="true">
+		   <![CDATA[
+				SELECT T1.Id,
+					T1.FEEID,
+					T1.RECEIPTID,
+					T1.PAIDAMOUNT,
+					T1.Version ,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T2.AMOUNT ReceiptAmount,
+					T2.TRANSACTIONREF,
+					T2.FAVOURNUMBER,
+					T3.FEETYPEID,
+					T3.VASREFERENCE ,
+					T4.FeeTypeCode,
+					T4.FeeTypeDesc,
+					T3.FINREFERENCE,
+					T5.RECEIPTMODE ReceiptType,
+					T1.PAIDTDS
+				FROM FinFeeReceipts_Temp T1
+				INNER JOIN FINRECEIPTDETAIL T2 ON T1.ReceiptID = T2.RECEIPTID
+				INNER JOIN FinFeeDetail_view T3 ON T1.FeeId = T3.FEEID
+				LEFT JOIN FeeTypes T4 ON T3.FeeTypeId = T4.FeeTypeId
+				INNER JOIN FINRECEIPTHEADER T5 ON T1.RECEIPTID = T5.RECEIPTID
+				UNION ALL
+				SELECT T1.Id,
+					T1.FEEID,
+					T1.RECEIPTID,
+					T1.PAIDAMOUNT,
+					T1.Version ,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T2.AMOUNT ReceiptAmount,
+					T2.TRANSACTIONREF,
+					T2.FAVOURNUMBER,
+					T3.FEETYPEID,
+					T3.VASREFERENCE,
+					T4.FeeTypeCode,
+					T4.FeeTypeDesc,
+					T3.FINREFERENCE,
+					T5.RECEIPTMODE ReceiptType,
+					T1.PAIDTDS
+				FROM FinFeeReceipts T1
+				INNER JOIN FINRECEIPTDETAIL T2 ON T1.ReceiptID = T2.RECEIPTID
+				INNER JOIN FinFeeDetail_view T3 ON T1.FeeId = T3.FEEID
+				LEFT JOIN FeeTypes T4 ON T3.FeeTypeId = T4.FeeTypeId
+				INNER JOIN FINRECEIPTHEADER T5 ON T1.RECEIPTID = T5.RECEIPTID
+				WHERE (NOT EXISTS(SELECT 1 FROM FinFeeReceipts_Temp WHERE (Id = T1.Id)))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#1211.38_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeereceipts_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1211.39_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeerefunddetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1211.39" author="Gopal.p">
+		<createView viewName="FinFeeRefundDetails_View" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.Id,
+					T1.HeaderId,
+					T1.FeeId,
+					T1.refundAmount,
+					T1.refundAmtGST,
+					T1.refundAmtOriginal,
+					T1.Version,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T1.refundAmtTDS
+				FROM FinFeeRefundDetails_temp T1
+				UNION ALL
+				SELECT T1.Id,
+					T1.HeaderId,
+					T1.FeeId,
+					T1.refundAmount,
+					T1.refundAmtGST,
+					T1.refundAmtOriginal,
+					T1.Version,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T1.refundAmtTDS
+				FROM FinFeeRefundDetails T1
+				WHERE NOT EXISTS(SELECT 1 FROM FinFeeRefundDetails_temp WHERE Id =T1.Id)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1211.39_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeerefunddetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1211.40_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeerefunddetails_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1211.40" author="Gopal.p">
+		<createView viewName="FinFeeRefundDetails_TView" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.Id,
+					T1.HeaderId,
+					T1.FeeId,
+					T1.refundAmount,
+					T1.refundAmtGST,
+					T1.refundAmtOriginal,
+					T1.Version,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T1.refundAmtTDS
+				FROM FinFeeRefundDetails_temp T1
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1211.40_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeerefunddetails_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1211.41_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeerefunddetails_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1211.41" author="Gopal.p">
+		<createView viewName="FinFeeRefundDetails_AView" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.Id,
+					T1.HeaderId,
+					T1.FeeId,
+					T1.refundAmount,
+					T1.refundAmtGST,
+					T1.refundAmtOriginal,
+					T1.Version,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T1.refundAmtTDS
+				FROM FinFeeRefundDetails T1
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1211.41_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeerefunddetails_aview');
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="8" author="saiDurga.v">
 		<sql>
@@ -27529,31 +27867,38 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-<changeSet id="624" author="Manoj.P">
-	<createView viewName="Int_Mandate_Request_view" replaceIfExists="true">
-			 SELECT m.mandateid,
-		    m.documentname,
-		    bd.bankshortcode AS bankcode,
-		    bd.bankname,
-		        CASE
-		            WHEN lb.branchcode IS NULL THEN cb.branchcode
-		            ELSE lb.branchcode
+	<changeSet id="624.1_pre" author="Manoj.P" dbms="postgresql">
+		<sql>
+		<![CDATA[
+			select deps_save_and_drop_dependencies ('plf', 'int_mandate_request_view');
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="624.1" author="Manoj.P">
+		<createView viewName="Int_Mandate_Request_view" replaceIfExists="true">
+			<![CDATA[			
+			 	SELECT m.mandateid,
+		    		m.documentname,
+		    		bd.bankshortcode AS bankcode,
+				    bd.bankname,
+		        CASE WHEN lb.branchcode IS NULL THEN cb.branchcode
+		        	ELSE lb.branchcode
 		        END AS branchcode,
-		        CASE
-		            WHEN lb.branchdesc IS NULL THEN cb.branchdesc
+		        CASE WHEN lb.branchdesc IS NULL THEN cb.branchdesc
 		            ELSE lb.branchdesc
 		        END AS branchdesc,
-		    cust.custcif,
-		    cust.custshrtname,
-		    cust.custcorebank,
-		    ft.fintypedesc AS fintype,
-		    fin.finreference,
-		    COALESCE((( SELECT sum(t.totalamount) AS sum
+			    cust.custcif,
+			    cust.custshrtname,
+			    cust.custcorebank,
+		    	ft.fintypedesc AS fintype,
+			    fin.finreference,
+			    COALESCE((( SELECT sum(t.totalamount) AS sum
 		           FROM ( SELECT max(fsd.repayamount + fsd.feeschd) AS totalamount
 		                   FROM plf.finscheduledetails fsd
 		                     JOIN plf.financemain fm ON fm.finreference = fsd.finreference AND fm.custid = m.custid
 		                  GROUP BY fm.finreference) t)) / ccy.ccyminorccyunits, 0) AS cust_emi,
-		    COALESCE((( SELECT sum(t.totalamount) AS sum
+			    COALESCE((( SELECT sum(t.totalamount) AS sum
 		           FROM ( SELECT max(fsd.repayamount + fsd.feeschd) AS totalamount
 		                   FROM plf.finscheduledetails fsd
 		                  WHERE (fsd.repayonschdate = 1 OR fsd.pftonschdate = 1) AND (fsd.finreference IN ( SELECT financemain.finreference
@@ -27564,74 +27909,83 @@ UNION ALL
 		            WHEN 1 THEN 'new open ecs'
 		            ELSE 'no  open ecs'
 		        END AS openmandate,
-		    m.accnumber,
+			    m.accnumber,
 		        CASE
 		            WHEN m.acctype = '10' THEN 'savings account'
 		            WHEN m.acctype = '11' THEN 'current account'
 		            WHEN m.acctype = '11' THEN 'cash credit account'
 		            ELSE m.acctype
 		        END AS acctype,
-		    m.accholdername,
-		    bb.micr,
-		    bb.ifsc,
-		    bb.addofbranch,
-		    ( SELECT min(finpftdetails.firstrepaydate) AS min
-		           FROM plf.finpftdetails
-		          WHERE (finpftdetails.finreference IN ( SELECT financemain.finreference
+		   			m.accholdername,
+				    bb.micr,
+				    bb.ifsc,
+				    bb.addofbranch,
+		    		(SELECT min(finpftdetails.firstrepaydate) AS min
+		        	   FROM plf.finpftdetails
+			          WHERE (finpftdetails.finreference IN ( SELECT financemain.finreference
 		                   FROM plf.financemain
 		                  WHERE financemain.mandateid = m.mandateid))) AS firstduedate,
-		    ( SELECT max(finscheduledetails.schdate) AS max
-		           FROM plf.finscheduledetails
-		          WHERE (finscheduledetails.repayonschdate = 1 OR finscheduledetails.pftonschdate = 1) AND (finscheduledetails.finreference IN ( SELECT financemain.finreference
+			    	(SELECT max(finscheduledetails.schdate) AS max
+			           FROM plf.finscheduledetails
+		    	      WHERE (finscheduledetails.repayonschdate = 1 OR finscheduledetails.pftonschdate = 1) AND (finscheduledetails.finreference IN ( SELECT financemain.finreference
 		                   FROM plf.financemain
 		                  WHERE financemain.mandateid = m.mandateid))) AS emienddate,
-		    COALESCE(m.maxlimit, 0) AS maxlimit,
-		    COALESCE(( SELECT sum(t.mandatedebitamount) AS sum
-		           FROM ( SELECT max(finscheduledetails.repayamount + finscheduledetails.feeschd) AS mandatedebitamount
+		    		COALESCE(m.maxlimit, 0) AS maxlimit,
+			    	COALESCE(( SELECT sum(t.mandatedebitamount) AS sum
+			           FROM ( SELECT max(finscheduledetails.repayamount + finscheduledetails.feeschd) AS mandatedebitamount
 		                   FROM plf.finscheduledetails
 		                  WHERE (finscheduledetails.repayonschdate = 1 OR finscheduledetails.pftonschdate = 1) AND (finscheduledetails.finreference IN ( SELECT financemain.finreference
 		                           FROM plf.financemain
 		                          WHERE financemain.mandateid = m.mandateid))
 		                  GROUP BY finscheduledetails.finreference) t), 0) / ccy.ccyminorccyunits AS debitamount,
-		    fin.numberofterms,
-		    m.periodicity,
-		    m.startdate,
-		    m.expirydate,
-		    fin.applicationno,
-		    m.mandatetype,
-		    m.status,
-		    m.inputdate,
-		    m.recordstatus,
-		    m.recordtype,
-		    m.mandateccy,
-		    COALESCE(ccy.ccyminorccyunits, 100) AS ccyminorccyunits,
-		    m.entitycode,
-		    cp.phonenumber,
-		    ce.custemail,
-		    pb.partnerbankname,
-		    m.lastmnton,
-		    bb.branchdesc AS bank_branch_name,
-		    et.entitydesc,
-		    pb.utilitycode,
-		    pb.sponsorbankcode,
-		    pb.branchifsccode
-		   FROM plf.mandates m
-		     JOIN plf.bankbranches bb ON bb.bankbranchid = m.bankbranchid
-		     JOIN plf.bmtbankdetail bd ON bd.bankcode = bb.bankcode
-		     JOIN plf.customers cust ON cust.custid = m.custid
-		     JOIN plf.rmtbranches cb ON cb.branchcode = cust.custdftbranch
-		     LEFT JOIN plf.partnerbanks pb ON pb.partnerbankid = m.partnerbankid
-		     LEFT JOIN plf.customeremails ce ON ce.custid = cust.custid AND ce.custemailpriority = 5
-		     LEFT JOIN plf.customerphonenumbers cp ON cp.phonecustid = cust.custid AND cp.phonetypepriority = 5
-		     LEFT JOIN plf.rmtcurrencies ccy ON ccy.ccycode = m.mandateccy
-		     LEFT JOIN plf.financemain fin ON m.orgreference = fin.finreference
-		     LEFT JOIN plf.rmtbranches lb ON lb.branchcode = fin.finbranch
-		     LEFT JOIN plf.rmtfinancetypes ft ON fin.fintype = ft.fintype
-		     LEFT JOIN plf.entity et ON m.entitycode = et.entitycode
-		  WHERE m.status = 'NEW' AND NOT (m.mandateid IN ( SELECT mandate_requests.mandateid
+				    fin.numberofterms,
+				    m.periodicity,
+			    	m.startdate,
+			    	m.expirydate,
+				    fin.applicationno,
+				    m.mandatetype,
+				    m.status,
+		    		m.inputdate,
+				    m.recordstatus,
+				    m.recordtype,
+				    m.mandateccy,
+		    		COALESCE(ccy.ccyminorccyunits, 100) AS ccyminorccyunits,
+			    	m.entitycode,
+				    cp.phonenumber,
+				    ce.custemail,
+			    	pb.partnerbankname,
+				    m.lastmnton,
+			    	bb.branchdesc AS bank_branch_name,
+				    et.entitydesc,
+				    pb.utilitycode,
+			    	pb.sponsorbankcode,
+				    pb.branchifsccode
+			   FROM plf.mandates m
+			   JOIN plf.bankbranches bb ON bb.bankbranchid = m.bankbranchid
+		       JOIN plf.bmtbankdetail bd ON bd.bankcode = bb.bankcode
+		       JOIN plf.customers cust ON cust.custid = m.custid
+		       JOIN plf.rmtbranches cb ON cb.branchcode = cust.custdftbranch
+		       LEFT JOIN plf.partnerbanks pb ON pb.partnerbankid = m.partnerbankid
+		       LEFT JOIN plf.customeremails ce ON ce.custid = cust.custid AND ce.custemailpriority = 5
+		       LEFT JOIN plf.customerphonenumbers cp ON cp.phonecustid = cust.custid AND cp.phonetypepriority = 5
+		       LEFT JOIN plf.rmtcurrencies ccy ON ccy.ccycode = m.mandateccy
+		       LEFT JOIN plf.financemain fin ON m.orgreference = fin.finreference
+		       LEFT JOIN plf.rmtbranches lb ON lb.branchcode = fin.finbranch
+		       LEFT JOIN plf.rmtfinancetypes ft ON fin.fintype = ft.fintype
+		       LEFT JOIN plf.entity et ON m.entitycode = et.entitycode
+		  	   WHERE m.status = 'NEW' AND NOT (m.mandateid IN ( SELECT mandate_requests.mandateid
 		           FROM plf.mandate_requests
 		          WHERE mandate_requests.status = 'AC' OR mandate_requests.status = 'NEW'))
+			]]>		
 		</createView>
-</changeSet>
+	</changeSet>
+	
+		<changeSet id="ST#624.1_post" author="Manoj.P" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'int_mandate_request_view');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

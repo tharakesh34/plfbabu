@@ -19,6 +19,8 @@ public class FinFeeRefundDetails extends AbstractWorkflowEntity implements Entit
 	private BigDecimal refundAmount = BigDecimal.ZERO;
 	//GST
 	private BigDecimal refundAmtGST = BigDecimal.ZERO;
+	//TDS
+	private BigDecimal refundAmtTDS = BigDecimal.ZERO;
 	//Without GST
 	private BigDecimal refundAmtOriginal = BigDecimal.ZERO;
 
@@ -88,6 +90,14 @@ public class FinFeeRefundDetails extends AbstractWorkflowEntity implements Entit
 
 	public void setRefundAmtGST(BigDecimal refundAmtGST) {
 		this.refundAmtGST = refundAmtGST;
+	}
+
+	public BigDecimal getRefundAmtTDS() {
+		return refundAmtTDS;
+	}
+
+	public void setRefundAmtTDS(BigDecimal refundAmtTDS) {
+		this.refundAmtTDS = refundAmtTDS;
 	}
 
 	public BigDecimal getRefundAmtOriginal() {

@@ -1177,8 +1177,8 @@
 				rightName="menu_Item_WriteoffReport" />
 			<menuItem id="menu_Item_NPAReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_CustomerTemplates_SOA" />
-			<menuItem id="menu_Item_NPAProvisionReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menuItem_NPAProvisionReport" />
+			<menuItem id="menu_Item_NPAProvision" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_NPAProvision" />
 			<menuItem id="menu_Item_PaymentSchedule" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_CustomerTemplates_SOA" />
 			<menuItem id="menu_Item_BriefDealInformation" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"

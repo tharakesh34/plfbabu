@@ -77,6 +77,7 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 	private long assetClassificationId = 0;
 	private String assetCode;
 	private int assetStageOrder;
+	private boolean newPrvDetail;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -98,6 +99,7 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 		excludeFields.add("assetStageOrder");
 		excludeFields.add("entity");
 		excludeFields.add("finType");
+		excludeFields.add("newPrvDetail");
 		return excludeFields;
 	}
 
@@ -255,6 +257,14 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 
 	public void setFinType(String finType) {
 		this.finType = finType;
+	}
+
+	public boolean isNewPrvDetail() {
+		return newPrvDetail;
+	}
+
+	public void setNewPrvDetail(boolean newPrvDetail) {
+		this.newPrvDetail = newPrvDetail;
 	}
 
 }

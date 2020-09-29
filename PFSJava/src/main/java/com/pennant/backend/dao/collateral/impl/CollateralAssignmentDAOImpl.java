@@ -665,4 +665,29 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		}
 		return 0;
 	}
+
+	@Override
+	public BigDecimal getCollateralValue(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT sum(CS.collateralValue) CollateralValue from COLLATERALASSIGNMENT CA Inner Join");
+		sql.append(" COLLATERALSETUP CS ON CA.COLLATERALREF= CS.COLLATERALREF Where CA.Reference = :Reference");
+		sql.append(" GROUP by CA.Reference");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", finReference);
+
+		BigDecimal collateralValue = BigDecimal.ZERO;
+		try {
+			logger.debug(Literal.LEAVING);
+			collateralValue = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+		}
+
+		return collateralValue;
+
+	}
 }

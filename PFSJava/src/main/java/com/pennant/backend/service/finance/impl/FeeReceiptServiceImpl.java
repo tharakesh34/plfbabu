@@ -784,7 +784,9 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 			dataMap.put(feeTypeCode + "_C", finFeeDetail.getActualAmount());
 			dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmountOriginal());
+			dataMap.put(feeTypeCode + "_TDS_P", finFeeDetail.getPaidTDS());
 			dataMap.put(feeTypeCode + "_N", finFeeDetail.getNetAmount());
+			dataMap.put(feeTypeCode + "_TDS_N", finFeeDetail.getNetTDS());
 
 			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
 				dataMap.put(feeTypeCode + "_W",
@@ -1162,17 +1164,22 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
 			FinFeeReceipt finFeeReceipt = finFeeDetail.getFinFeeReceipts().get(0);
 			BigDecimal paidAmt = finFeeReceipt.getPaidAmount();
+			BigDecimal paidTds = finFeeReceipt.getPaidTds();
 			finFeeDetail.setPaidCalcReq(true);
 
 			//In case of approve need to calculate complete paid amount GST because it is updating on fees
 			if (isApprove) {
 				paidAmt = paidAmt.add(finFeeDetail.getPaidAmount());
+				paidTds = paidTds.add(finFeeDetail.getPaidTDS());
 			}
 
 			finFeeDetail.setPaidAmount(paidAmt);
 			finFeeDetail.setPaidAmountOriginal(paidAmt);
+			finFeeDetail.setPaidTDS(paidTds);
 			FinanceMain financeMain = null;
+			finFeeDetail.setPrvTaxComponent(finFeeDetail.getTaxComponent());
 			finFeeDetail.setTaxComponent(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+			finFeeDetail.setUpfrontFee(true);
 			calculateFees(finFeeDetail, financeMain, taxPercentages);
 		}
 		logger.debug(Literal.LEAVING);

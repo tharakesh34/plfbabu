@@ -26,6 +26,7 @@ import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.financemanagement.Provision;
+import com.pennant.backend.model.financemanagement.ProvisionAmount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
@@ -500,12 +501,44 @@ public class LoadFinanceData extends ServiceHelper {
 	private void saveProvisions(FinEODEvent finEODEvent) {
 		for (Provision provision : finEODEvent.getProvisions()) {
 
-			provisionDAO.delete(provision, TableType.MAIN_TAB.getSuffix());
-			provisionDAO.save(provision, TableType.MAIN_TAB.getSuffix());
+			Provision oldProvision = provisionDAO.getProvisionById(provision.getFinReference(), TableType.MAIN_TAB,
+					false);
 
-			if (provision.getProvisionMovement() != null) {
-				provisionMovementDAO.save(provision.getProvisionMovement(), TableType.MAIN_TAB.getSuffix());
+			long provisionId = Long.MIN_VALUE;
+			if (oldProvision != null) {
+				provisionId = oldProvision.getId();
+				provision.setId(provisionId);
+				provisionDAO.update(provision, TableType.MAIN_TAB);
+			} else {
+				provisionId = provisionDAO.save(provision, TableType.MAIN_TAB);
 			}
+
+			provision.setId(Long.MIN_VALUE);
+			provision.setProvisionId(provisionId);
+			provisionDAO.saveMovements(provision, TableType.MAIN_TAB);
+
+			List<ProvisionAmount> list = provision.getProvisionAmounts();
+			for (ProvisionAmount provisionAmount : list) {
+				provisionAmount.setProvisionId(provisionId);
+			}
+
+			if (oldProvision != null) {
+				List<ProvisionAmount> oldAmounts = provisionDAO.getProvisionAmounts(oldProvision.getId(),
+						TableType.MAIN_TAB);
+				List<ProvisionAmount> provisionAmounts = provision.getProvisionAmounts();
+				for (ProvisionAmount oldAmount : oldAmounts) {
+					for (ProvisionAmount provisionAmount : provisionAmounts) {
+						if (StringUtils.equals(oldAmount.getProvisionType(), provisionAmount.getProvisionType())) {
+							provisionAmount.setId(oldAmount.getId());
+						}
+					}
+				}
+				provisionDAO.updateAmounts(provisionAmounts, TableType.MAIN_TAB);
+			} else {
+				provisionDAO.saveAmounts(list, TableType.MAIN_TAB, false);
+			}
+			provisionDAO.saveAmounts(list, TableType.MAIN_TAB, true);
+
 		}
 	}
 

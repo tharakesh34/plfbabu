@@ -211,7 +211,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 					financeWriteoff.setCurODPft(detail.getODProfit());
 					financeWriteoff.setPenaltyAmount(detail.getPenaltyDue());
 				}
-				Provision provision = getProvisionDAO().getProvisionById(finReference, "");
+				Provision provision = getProvisionDAO().getProvisionById(finReference, TableType.MAIN_TAB, true);
 				if (provision != null) {
 					financeWriteoff.setProvisionedAmount(provision.getProvisionedAmt());
 				}

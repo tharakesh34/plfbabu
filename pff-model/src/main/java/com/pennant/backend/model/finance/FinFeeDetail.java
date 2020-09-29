@@ -158,6 +158,8 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private boolean isPaidFromUpfront = false;
 	private boolean isPaidFromLoanApproval = false;
 	private boolean paidCalcReq = false;
+	private String prvTaxComponent = "I";
+	private boolean upfrontFee;
 
 	public FinFeeDetail() {
 		super();
@@ -196,6 +198,9 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("isPaidFromUpfront");
 		excludeFields.add("isPaidFromLoanApproval");
 		excludeFields.add("paidCalcReq");
+		excludeFields.add("prvTaxComponent");
+		excludeFields.add("upfrontFee");
+
 		return excludeFields;
 	}
 
@@ -790,4 +795,21 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	public void setPaidCalcReq(boolean paidCalcReq) {
 		this.paidCalcReq = paidCalcReq;
 	}
+
+	public String getPrvTaxComponent() {
+		return prvTaxComponent;
+	}
+
+	public void setPrvTaxComponent(String prvTaxComponent) {
+		this.prvTaxComponent = prvTaxComponent;
+	}
+
+	public boolean isUpfrontFee() {
+		return upfrontFee;
+	}
+
+	public void setUpfrontFee(boolean upfrontFee) {
+		this.upfrontFee = upfrontFee;
+	}
+
 }

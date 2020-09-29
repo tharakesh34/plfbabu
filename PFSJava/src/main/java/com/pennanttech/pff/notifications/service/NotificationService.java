@@ -1144,18 +1144,18 @@ public class NotificationService extends GenericService<Notification> {
 
 		// Provision Data Preparation For Notifications
 		data.setFinReference(provision.getFinReference());
-		data.setCustShrtName(provision.getLovDescCustShrtName());
-		data.setCustCIF(provision.getLovDescCustCIF());
+		data.setCustShrtName(provision.getCustShrtName());
+		data.setCustCIF(provision.getCustCIF());
 		data.setFinBranch(provision.getFinBranch());
 		int format = CurrencyUtil.getFormat(provision.getFinCcy());
-		data.setPrincipalDue(PennantApplicationUtil.amountFormate(provision.getPrincipalDue(), format));
-		data.setProfitDue(PennantApplicationUtil.amountFormate(provision.getProfitDue(), format));
-		data.setTotalDue(PennantApplicationUtil.amountFormate(provision.getPrincipalDue().add(provision.getProfitDue()),
-				format));
+		//data.setPrincipalDue(PennantApplicationUtil.amountFormate(provision.getPrincipalDue(), format));
+		//data.setProfitDue(PennantApplicationUtil.amountFormate(provision.getProfitDue(), format));
+		//data.setTotalDue(PennantApplicationUtil.amountFormate(provision.getPrincipalDue().add(provision.getProfitDue()),
+		//		format));
 		data.setDueFromDate(DateUtility.formatToLongDate(provision.getDueFromDate()));
-		data.setNonFormulaProv(PennantApplicationUtil.amountFormate(provision.getNonFormulaProv(), format));
+		//data.setNonFormulaProv(PennantApplicationUtil.amountFormate(provision.getNonFormulaProv(), format));
 		data.setProvisionedAmt(PennantApplicationUtil.amountFormate(provision.getProvisionedAmt(), format));
-		data.setProvisionedAmtCal(PennantApplicationUtil.amountFormate(provision.getProvisionAmtCal(), format));
+		//data.setProvisionedAmtCal(PennantApplicationUtil.amountFormate(provision.getProvisionAmtCal(), format));
 
 		// Role Code For Alert Notification
 		List<SecurityRole> securityRoles = PennantApplicationUtil.getRoleCodeDesc(provision.getRoleCode());

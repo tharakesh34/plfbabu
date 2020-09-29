@@ -68,6 +68,7 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal availableAmount = BigDecimal.ZERO;
 	private BigDecimal paidAmount = BigDecimal.ZERO;
 	private BigDecimal remainingFee = BigDecimal.ZERO;
+	private BigDecimal paidTds = BigDecimal.ZERO;
 
 	private boolean newRecord = false;
 	private boolean exist = true;
@@ -99,7 +100,7 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("remainingFee");
 		excludeFields.add("exist");
 		excludeFields.add("vasReference");
-
+		excludeFields.add("paidTds");
 		return excludeFields;
 	}
 
@@ -260,4 +261,13 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 	public void setFeeTypeDesc(String feeTypeDesc) {
 		this.feeTypeDesc = feeTypeDesc;
 	}
+
+	public BigDecimal getPaidTds() {
+		return paidTds;
+	}
+
+	public void setPaidTds(BigDecimal paidTds) {
+		this.paidTds = paidTds;
+	}
+
 }

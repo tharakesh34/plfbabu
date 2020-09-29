@@ -116,6 +116,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	private String sezCertificateNo;
 	private Date sezValueDate;
 	private String addressDetail;
+	@XmlElement
 	private Long pinCodeId;
 
 	public boolean isNew() {

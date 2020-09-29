@@ -86,4 +86,6 @@ public interface CollateralAssignmentDAO {
 
 	boolean isSecuredLoan(String finReference, TableType tableType);
 
+	BigDecimal getCollateralValue(String finReference);
+
 }

@@ -415,6 +415,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ aNPAProvisionHeader.getFinType() + " - " + aNPAProvisionHeader.getFinTypeName();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			doClearProvisionDeatils(aNPAProvisionHeader);
 			if (StringUtils.trimToEmpty(aNPAProvisionHeader.getRecordType()).equals("")) {
 				aNPAProvisionHeader.setVersion(aNPAProvisionHeader.getVersion() + 1);
 				aNPAProvisionHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -442,6 +443,14 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doClearProvisionDeatils(NPAProvisionHeader aNPAProvisionHeader) {
+		for (int i = 0; i < aNPAProvisionHeader.getProvisionDetailsList().size(); i++) {
+			if (aNPAProvisionHeader.getProvisionDetailsList().get(i).isNewPrvDetail()) {
+				aNPAProvisionHeader.getProvisionDetailsList().remove(i);
+			}
+		}
 	}
 
 	/**

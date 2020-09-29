@@ -97,7 +97,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT ID, FeeID, ReceiptID, PaidAmount,");
 		selectSql.append(
-				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PaidTds");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
@@ -157,7 +157,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, FeeID, ReceiptID, PaidAmount, Version, LastMntBy, LastMntOn, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PaidTds");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", ReceiptAmount, FeeTypeCode, FeeTypeDesc, FeeTypeId, ReceiptType");
@@ -209,6 +209,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 					gstD.setNextTaskId(rs.getString("NextTaskId"));
 					gstD.setRecordType(rs.getString("RecordType"));
 					gstD.setWorkflowId(rs.getLong("WorkflowId"));
+					gstD.setPaidTds(rs.getBigDecimal("PaidTds"));
 
 					if (StringUtils.trimToEmpty(type).contains("View")) {
 						gstD.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
@@ -291,10 +292,10 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (Id, FeeID, ReceiptID, PaidAmount, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, PaidTds)");
 		insertSql.append(" Values( :Id, :FeeID, :ReceiptID, :PaidAmount,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :PaidTds)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeReceipt);
@@ -331,7 +332,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 				"  Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
 		updateSql.append(
 				"  RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		updateSql.append("  RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append("  RecordType = :RecordType, WorkflowId = :WorkflowId, PaidTds = :PaidTds");
 		updateSql.append("  Where Id = :Id ");
 
 		if (!type.endsWith("_Temp")) {
@@ -360,7 +361,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 		StringBuilder selectSql = new StringBuilder(" SELECT ID, FeeID, ReceiptID, PaidAmount,");
 		selectSql.append(
-				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PaidTds");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
 					",ReceiptAmount, FeeTypeCode, FeeTypeDesc, FeeTypeID, ReceiptType, transactionRef, favourNumber, vasReference,FeeTypeId ");
@@ -431,7 +432,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT ID, FeeID, ReceiptID, PaidAmount,  Version, LastMntBy, LastMntOn, RecordStatus,");
-		sql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		sql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PaidTds");
 		sql.append(" From FinFeeReceipts");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" WHERE  ReceiptID = :ReceiptID");

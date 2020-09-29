@@ -11,7 +11,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 public class ManualProvisioningListItemRenderer implements ListitemRenderer<Provision>, Serializable {
 
@@ -27,9 +26,9 @@ public class ManualProvisioningListItemRenderer implements ListitemRenderer<Prov
 		int format = CurrencyUtil.getFormat(provision.getFinCcy());
 
 		Listcell lc;
-		lc = new Listcell(provision.getLovDescCustCIF());
+		lc = new Listcell(provision.getCustCIF());
 		lc.setParent(item);
-		lc = new Listcell(provision.getLovDescCustShrtName());
+		lc = new Listcell(provision.getCustShrtName());
 		lc.setParent(item);
 		lc = new Listcell(provision.getFinReference());
 		lc.setParent(item);

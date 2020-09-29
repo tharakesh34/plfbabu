@@ -3494,6 +3494,14 @@
 		</sql>
 	</changeSet>
 
+	<!-- <changeSet id="ST#931.66_pre" author="GopalaSwamy.M">
+		<dropPrimaryKey constraintName="pk_rmtprovincevscity" tableName="RMTProvinceVsCity" />
+	</changeSet>
+
+	<changeSet id="ST#931.66" author="GopalaSwamy.M">
+		<addPrimaryKey tableName="RMTProvinceVsCity" constraintName="pk_rmtprovincevscity" columnNames="pccountry,pcprovince,pccity" />
+	</changeSet> -->
+
 	<!-- ST#931 - Pin Code Changes change logs end -->
 
 	<!-- Payment Instructions change log start -->
@@ -4958,447 +4966,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#540.36.1" author="Tejaswi.b">
-		<addColumn tableName="FinProvisions">
-			<column name="AssetCode" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.36.2" author="Tejaswi.b">
-		<addColumn tableName="FinProvisions">
-			<column name="AssetStageOrdr" type="int" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.36.3" author="Tejaswi.b">
-		<addColumn tableName="FinProvisions">
-			<column name="NPA" type="boolean" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.36.4" author="Tejaswi.b">
-		<addColumn tableName="FinProvisions">
-			<column name="ManualProvision" type="boolean" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.36.5" author="Tejaswi.b">
-		<addColumn tableName="FinProvisions">
-			<column name="ProvLinkedTranId" type="bigint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.36.6" author="Tejaswi.b">
-		<addColumn tableName="FinProvisions">
-			<column name="ProvChgLinkedTranId" type="bigint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.37.1" author="Tejaswi.b">
-		<addColumn tableName="FinProvisions_Temp">
-			<column name="AssetCode" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.37.2" author="Tejaswi.b">
-		<addColumn tableName="FinProvisions_Temp">
-			<column name="AssetStageOrdr" type="int" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.37.3" author="Tejaswi.b">
-		<addColumn tableName="FinProvisions_Temp">
-			<column name="NPA" type="boolean" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.37.4" author="Tejaswi.b">
-		<addColumn tableName="FinProvisions_Temp">
-			<column name="ManualProvision" type="boolean" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.37.5" author="Tejaswi.b">
-		<addColumn tableName="FinProvisions_Temp">
-			<column name="ProvLinkedTranId" type="bigint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.37.6" author="Tejaswi.b">
-		<addColumn tableName="FinProvisions_Temp">
-			<column name="ProvChgLinkedTranId" type="bigint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.38" author="Tejaswi.b" dbms="postgresql, oracle">
-		<addDefaultValue columnName="assetStageOrdr" tableName="FinProvisions_Temp" defaultValue="0" />
-		<addDefaultValue columnName="assetStageOrdr" tableName="finprovisions" defaultValue="0" />
-		<addDefaultValue columnName="NPA" tableName="FinProvisions_Temp" defaultValue="0" />
-		<addDefaultValue columnName="NPA" tableName="finprovisions" defaultValue="0" />
-		<addDefaultValue columnName="manualProvision" tableName="FinProvisions_Temp" defaultValue="0" />
-		<addDefaultValue columnName="manualProvision" tableName="finprovisions" defaultValue="0" />
-		<addDefaultValue columnName="provLinkedTranId" tableName="FinProvisions_Temp" defaultValue="0" />
-		<addDefaultValue columnName="provLinkedTranId" tableName="finprovisions" defaultValue="0" />
-		<addDefaultValue columnName="provChgLinkedTranId" tableName="FinProvisions_Temp" defaultValue="0" />
-		<addDefaultValue columnName="provChgLinkedTranId" tableName="finprovisions" defaultValue="0" />
-	</changeSet>
-
-	<changeSet id="ST#540.38" author="Tejaswi.b" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE finprovisions ADD CONSTRAINT DF_FinProvisions_ASO DEFAULT 0 FOR assetStageOrdr;
-				ALTER TABLE finprovisions ADD CONSTRAINT DF_FinProvisions_NPA DEFAULT 0 FOR NPA;
-				ALTER TABLE finprovisions ADD CONSTRAINT DF_FinProvisions_MNP DEFAULT 0 FOR manualProvision;
-				ALTER TABLE finprovisions ADD CONSTRAINT DF_FinProvisions_PLT DEFAULT 0 FOR provLinkedTranId;
-				ALTER TABLE finprovisions ADD CONSTRAINT DF_FinProvisions_PCLT DEFAULT 0 FOR provChgLinkedTranId;
-				ALTER TABLE FinProvisions_Temp ADD CONSTRAINT DF_FinProvisions_T_ASO  DEFAULT 0 FOR assetStageOrdr;
-				ALTER TABLE FinProvisions_Temp ADD CONSTRAINT DF_FinProvisions_T_NPA  DEFAULT 0 FOR NPA;
-				ALTER TABLE FinProvisions_Temp ADD CONSTRAINT DF_FinProvisions_T_MNP  DEFAULT 0 FOR manualProvision;
-				ALTER TABLE FinProvisions_Temp ADD CONSTRAINT DF_FinProvisions_T_PLT  DEFAULT 0 FOR provLinkedTranId;
-				ALTER TABLE FinProvisions_Temp ADD CONSTRAINT DF_FinProvisions_T_PCLT DEFAULT 0 FOR provChgLinkedTranId;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#540.39" author="Tejaswi.b">
-		<sql>
-			<![CDATA[
-				Update finprovisions set assetStageOrdr = 0;
-				Update FinProvisions_Temp set assetStageOrdr = 0;
-				Update finprovisions set NPA = 0;
-				Update FinProvisions_Temp set NPA = 0;
-				Update finprovisions set manualProvision = 0;
-				Update FinProvisions_Temp set manualProvision = 0;
-				Update finprovisions set provLinkedTranId = 0;
-				Update FinProvisions_Temp set provLinkedTranId = 0;
-				Update finprovisions set provChgLinkedTranId = 0;
-				Update FinProvisions_Temp set provChgLinkedTranId = 0;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#540.40.1_pre" author="Tejaswi.b" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'finprovisions_aview');
-		 	]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#540.40.1" author="Tejaswi.b">
-		<createView viewName="FinProvisions_AView" replaceIfExists="true">
-			<![CDATA[
-				 SELECT t1.finreference,
-	    			t1.finbranch,
-	   				t1.fintype,
-	    			t1.custid,
-	    			t1.provisioncaldate,
-	    			t1.provisionedamt,
-	    			t1.provisionamtcal,
-	    			t1.provisiondue,
-	    			t1.nonformulaprov,
-	    			t1.usenfprov,
-	    			t1.principaldue,
-	    			t1.profitdue,
-	    			t1.autoreleasenfp,
-	    			t1.duefromdate,
-	    			t1.lastfullypaiddate,
-	    			t4.custcif AS lovdesccustcif,
-	    			t4.custshrtname AS lovdesccustshrtname,
-	    			t2.finccy,
-	    			t1.version,
-	    			t1.lastmnton,
-	    			t1.lastmntby,
-	    			t1.recordstatus,
-	    			t1.rolecode,
-	    			t1.nextrolecode,
-	    			t1.taskid,
-	    			t1.nexttaskid,
-	    			t1.recordtype,
-	    			t1.workflowid,
-					t1.duedays,
-	    			t1.assetcode,
-	    			t1.assetstageordr,
-	    			t1.npa,
-	    			t1.manualProvision,
-	    			t1.provLinkedtranid,
-	    			t1.provChgLinkedTranId,
-	    			t1.priBal,
-	    			t1.prvovisionRate,
-	    			t2.finIsActive
-	   		FROM FinProvisions t1
-	     	JOIN FinanceMain t2 ON t1.finreference = t2.finreference
-	     	LEFT JOIN Customers t4 ON t1.custid = t4.custid
-     	  ]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="ST#540.40.1_post" author="Tejaswi.b" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'finprovisions_aview');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#540.41.1_pre" author="Tejaswi.b" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'finprovisions_view');
-		 	]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#540.41.1" author="Tejaswi.b">
-		<createView viewName="FinProvisions_View" replaceIfExists="true">
-			<![CDATA[
-				 SELECT t1.finreference,
-	    			t1.finbranch,
-	    			t1.fintype,
-	    			t1.custid,
-	    			t1.provisioncaldate,
-	    			t1.provisionedamt,
-	    			t1.provisionamtcal,
-	    			t1.provisiondue,
-	    			t1.nonformulaprov,
-	    			t1.usenfprov,
-	    			t1.principaldue,
-	    			t1.profitdue,
-	    			t1.autoreleasenfp,
-	    			t1.duefromdate,
-	    			t1.lastfullypaiddate,
-	    			t4.custcif AS lovdesccustcif,
-	    			t4.custshrtname AS lovdesccustshrtname,
-	    			t2.finccy,
-	    			t1.version,
-	    			t1.lastmnton,
-	    			t1.lastmntby,
-	    			t1.recordstatus,
-	    			t1.rolecode,
-	    			t1.nextrolecode,
-	    			t1.taskid,
-	    			t1.nexttaskid,
-	    			t1.recordtype,
-	    			t1.workflowid,
-	    			t5.findivision AS lovdescfindivision,
-					t1.duedays,
-	    			t1.assetcode,
-	    			t1.assetstageordr,
-	    			t1.npa,
-	    			t1.manualProvision,
-	    			t1.provLinkedtranid,
-	    			t1.provChgLinkedTranId,
-	    			t1.priBal,
-	    			t1.prvovisionRate,
-	    			t2.finIsActive
-	   			FROM FinProvisions_Temp t1
-	     		JOIN FinanceMain t2 ON t1.finreference= t2.finreference
-	     		LEFT JOIN Customers t4 ON t1.custid = t4.custid
-	     		JOIN RMTFinanceTypes t5 ON t2.fintype = t5.fintype
-				UNION ALL
-	 			SELECT t1.finreference,
-	    			t1.finbranch,
-	    			t1.fintype,
-	    			t1.custid,
-	    			t1.provisioncaldate,
-	    			t1.provisionedamt,
-	   	 			t1.provisionamtcal,
-	    			t1.provisiondue,
-	    			t1.nonformulaprov,
-	    			t1.usenfprov,
-	    			t1.principaldue,
-	    			t1.profitdue,
-	    			t1.autoreleasenfp,
-	    			t1.duefromdate,
-	    			t1.lastfullypaiddate,
-	    			t4.custcif AS lovdesccustcif,
-	    			t4.custshrtname AS lovdesccustshrtname,
-	    			t2.finccy,
-	    			t1.version,
-	    			t1.lastmnton,
-	    			t1.lastmntby,
-	    			t1.recordstatus,
-	    			t1.rolecode,
-	    			t1.nextrolecode,
-	    			t1.taskid,
-	    			t1.nexttaskid,
-	    			t1.recordtype,
-	    			t1.workflowid,
-	    			t5.findivision AS lovdescfindivision,
-					t1.duedays,
-	    			t1.assetcode,
-	    			t1.assetstageordr,
-	    			t1.npa,
-	    			t1.manualProvision,
-	    			t1.provLinkedtranid,
-	    			t1.provChgLinkedTranId,
-	    			t1.priBal,
-	    			t1.prvovisionRate,
-	    			t2.finIsActive
-	   			FROM FinProvisions t1
-	     		JOIN FinanceMain t2 ON t1.finreference= t2.finreference
-	     		LEFT JOIN Customers t4 ON t1.custid = t4.custid
-	     		JOIN RMTFinanceTypes t5 ON t2.fintype= t5.fintype
-	  			WHERE NOT (EXISTS ( SELECT 1
-	           	FROM FinProvisions_Temp
-	          	WHERE FinProvisions_Temp.finreference= t1.finreference))
-	          ]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="ST#540.41.1_post" author="Tejaswi.b" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'finprovisions_view');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#540.42.1" author="Tejaswi.b">
-		<addColumn tableName="FinProvmovements">
-			<column name="AssetCode" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.42.2" author="Tejaswi.b">
-		<addColumn tableName="FinProvmovements">
-			<column name="AssetStageOrdr" type="int" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.42.3" author="Tejaswi.b">
-		<addColumn tableName="FinProvmovements">
-			<column name="NPA" type="boolean" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.42.4" author="Tejaswi.b">
-		<addColumn tableName="FinProvmovements">
-			<column name="ManualProvision" type="boolean" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.42.5" author="Tejaswi.b">
-		<addColumn tableName="FinProvmovements">
-			<column name="ProvChgLinkedTranId" type="bigint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.42.6" author="Tejaswi.b">
-		<addColumn tableName="FinProvmovements">
-			<column name="PrvovisionRate" type="decimal(13,9)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.42.7" author="Tejaswi.b">
-		<addColumn tableName="FinProvmovements">
-			<column name="DueDays" type="int" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.42.8" author="Tejaswi.b">
-		<addColumn tableName="FinProvmovements">
-			<column name="PriBal" type="decimal(18)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#540.43" author="Tejaswi.b" dbms="postgresql, oracle">
-		<addDefaultValue columnName="assetStageOrdr" tableName="FinProvmovements" defaultValue="0" />
-		<addDefaultValue columnName="NPA" tableName="FinProvmovements" defaultValue="0" />
-		<addDefaultValue columnName="manualProvision" tableName="FinProvmovements" defaultValue="0" />
-		<addDefaultValue columnName="provChgLinkedTranId" tableName="FinProvmovements" defaultValue="0" />
-		<addDefaultValue columnName="PrvovisionRate" tableName="FinProvmovements" defaultValue="0.00" />
-		<addDefaultValue columnName="DueDays" tableName="FinProvmovements" defaultValue="0" />
-		<addDefaultValue columnName="PriBal" tableName="FinProvmovements" defaultValue="0" />
-	</changeSet>
-
-
-	<changeSet id="ST#540.43" author="Tejaswi.b" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_ASO DEFAULT 0 FOR assetStageOrdr;
-				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_NPA DEFAULT 0 FOR NPA;
-				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_MNP DEFAULT 0 FOR manualProvision;
-				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_PCLT DEFAULT 0 FOR provChgLinkedTranId;
-				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_PSR DEFAULT 0 FOR PrvovisionRate;
-				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_DD DEFAULT 0 FOR DueDays;
-				ALTER TABLE FinProvmovements ADD CONSTRAINT DF_FinProvmovements_PB DEFAULT 0 FOR PriBal;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#540.44" author="Tejaswi.b">
-		<sql>
-			<![CDATA[
-				Update FinProvmovements set assetStageOrdr = 0;
-				Update FinProvmovements set NPA = 0;
-				Update FinProvmovements set manualProvision = 0;
-				Update FinProvmovements set provChgLinkedTranId = 0;
-				Update FinProvmovements set PrvovisionRate = 0.00;
-				Update FinProvmovements set DueDays = 0;
-				Update FinProvmovements set PriBal = 0;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#540.45_pre" author="Tejaswi.b" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'finprovmovements_aview');
-		 	]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#540.45" author="Tejaswi.b">
-		<createView viewName="FinProvmovements_AView" replaceIfExists="true">
-			<![CDATA[
-				 SELECT finreference,
-    				provmovementdate,
-    				provmovementseq,
-    				provcaldate,
-    				provisionedamt,
-    				provisionamtcal,
-    				provisiondue,
-    				provisionpoststs,
-    				nonformulaprov,
-    				usenfprov,
-    				autoreleasenfp,
-    				principaldue,
-    				profitdue,
-    				duefromdate,
-    				lastfullypaiddate,
-    				linkedtranid,
-    				assetcode,
-	    			assetstageordr,
-	    			npa,
-	    			manualProvision,
-	    			provChgLinkedTranId,
-	    			prvovisionRate,
-	    			duedays,
-	    			PriBal
-   				FROM FinProvmovements
-     	  ]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="ST#540.45_post" author="Tejaswi.b" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'finprovmovements_aview');
-			]]>
-		</sql>
-	</changeSet>
-
-
-	<changeSet id="ST#540.46" author="Durgaprasad G">
-		<sql>
-		  <![CDATA[
-				 update  SMTPARAMETERS set SYSPARMVALUE = 'N' Where SYSPARMCODE = 'ALW_DIFF_RPYHCY_NPA';
-		  	]]>
-		</sql>
-	</changeSet>
-
-
 	<changeSet id="ST#540.47" author="Vijayakumar.K">
 		<sql>
 			 <![CDATA[
@@ -5446,10 +5013,6 @@
 			'Asset Classification Details','Enquiry',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0);
 			]]>
 		</sql>
-	</changeSet>
-
-	<changeSet id="ST#540.49" author="Durgaprasad G">
-		<dropPrimaryKey tableName="FinProvMovements" constraintName="pk_finprovmovements" />
 	</changeSet>
 
 	<changeSet id="ST#540.50" author="Durgaprasad G">
@@ -5535,7 +5098,1935 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="ST#540.55" author="Durgaprasad G">
+		<sql>
+		   <![CDATA[
+			Delete from BMTAMOUNTCODES Where ALLOWEDEVENT = 'REPAY' and AMOUNTCODE = 'ae_pri';
+			Delete from BMTAMOUNTCODES Where ALLOWEDEVENT = 'REPAY' and AMOUNTCODE = 'ae_priS';
+			Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('REPAY',0,'ae_pri','Total Principal Scheduled.',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('REPAY',0,'ae_priS','Till Date Principal Scheduled.',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#540.56" author="Vijayakumar.k">
+		<createSequence sequenceName="SEQPROVISIONS" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+
+	<changeSet id="ST#540.57" author="Vijayakumar.k">
+		<createSequence sequenceName="SEQPROVISION_AMOUNTS" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+
+	<changeSet id="ST#540.57.1" author="Vijayakumar.k">
+		<createSequence sequenceName="SEQPROVISION_MOVEMENTS" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+
+	<changeSet id="ST#540.58" author="Vijayakumar.k">
+		<createTable tableName="PROVISIONS">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ClosingBalance" type="decimal(18,0)" />
+			<column name="OutStandPrincipal" type="decimal(18,0)" />
+			<column name="OutStandProfit" type="decimal(18,0)" />
+			<column name="ProfitAccruedAndDue" type="decimal(18,0)" />
+			<column name="ProfitAccruedAndNotDue" type="decimal(18,0)" />
+			<column name="CollateralValue" type="decimal(18,0)" />
+			<column name="DueFromDate" type="datetime" />
+			<column name="LastFullyPaidDate" type="datetime" />
+			<column name="CurrBucket" type="int" />
+			<column name="DueDays" type="int" />
+			<column name="DPD" type="int" />
+			<column name="ProvisionDate" type="datetime" />
+			<column name="ProvisionedAmt" type="decimal(18,0)" />
+			<column name="AssetCode" type="varchar(8)" />
+			<column name="Assetstageorder" type="int" />
+			<column name="Npa" type="boolean" defaultValue="0"/>
+			<column name="ManualProvision" type="boolean" defaultValue="0"/>
+			<column name="LinkedTranId" type="bigint" />
+			<column name="ChgLinkedTranId" type="bigint" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#540.59" author="Vijayakumar.k">
+		<addPrimaryKey tableName="PROVISIONS" columnNames="Id" constraintName="PK_PROVISIONS" />
+	</changeSet>
+
+	<changeSet id="ST#540.60" author="Vijayakumar.k">
+		<addForeignKeyConstraint constraintName="FK_PROV_FR" referencedTableName="FinanceMain"
+			baseColumnNames="FinReference" baseTableName="PROVISIONS" referencedColumnNames="FinReference" />
+	</changeSet>
+
+	<changeSet id="ST#540.61" author="Vijayakumar.k">
+		<createIndex tableName="PROVISIONS" indexName="IDX_PROVISIONS_FR">
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#540.62" author="Vijayakumar.k">
+		<createTable tableName="PROVISIONS_TEMP">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ClosingBalance" type="decimal(18,0)" />
+			<column name="OutStandPrincipal" type="decimal(18,0)" />
+			<column name="OutStandProfit" type="decimal(18,0)" />
+			<column name="ProfitAccruedAndDue" type="decimal(18,0)" />
+			<column name="ProfitAccruedAndNotDue" type="decimal(18,0)" />
+			<column name="CollateralValue" type="decimal(18,0)" />
+			<column name="DueFromDate" type="datetime" />
+			<column name="LastFullyPaidDate" type="datetime" />
+			<column name="CurrBucket" type="int" />
+			<column name="DueDays" type="int" />
+			<column name="DPD" type="int" />
+			<column name="ProvisionDate" type="datetime" />
+			<column name="ProvisionedAmt" type="decimal(18,0)" />
+			<column name="AssetCode" type="varchar(8)" />
+			<column name="Assetstageorder" type="int" />
+			<column name="Npa" type="boolean" defaultValue="0"/>
+			<column name="ManualProvision" type="boolean" />
+			<column name="LinkedTranId" type="bigint" />
+			<column name="ChgLinkedTranId" type="bigint" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#540.63" author="Vijayakumar.k">
+		<addPrimaryKey tableName="PROVISIONS_TEMP" columnNames="Id" constraintName="PK_PROVISIONS_TEMP" />
+	</changeSet>
+
+	<changeSet id="ST#540.64" author="Vijayakumar.k">
+		<addForeignKeyConstraint constraintName="FK_PROV_T_FR" referencedTableName="FinanceMain"
+			baseColumnNames="FinReference" baseTableName="PROVISIONS_TEMP" referencedColumnNames="FinReference" />
+	</changeSet>
+
+	<changeSet id="ST#540.65" author="Vijayakumar.k">
+		<createIndex tableName="PROVISIONS_TEMP" indexName="IDX_PROV_T_FR">
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#540.66" author="Vijayakumar.k">
+		<createTable tableName="PROVISION_MOVEMENTS">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProvisionId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ClosingBalance" type="decimal(18,0)" />
+			<column name="OutStandPrincipal" type="decimal(18,0)" />
+			<column name="OutStandProfit" type="decimal(18,0)" />
+			<column name="ProfitAccruedAndDue" type="decimal(18,0)" />
+			<column name="ProfitAccruedAndNotDue" type="decimal(18,0)" />
+			<column name="CollateralValue" type="decimal(18,0)" />
+			<column name="DueFromDate" type="datetime" />
+			<column name="LastFullyPaidDate" type="datetime" />
+			<column name="CurrBucket" type="int" />
+			<column name="DueDays" type="int" />
+			<column name="DPD" type="int" />
+			<column name="ProvisionDate" type="datetime" />
+			<column name="ProvisionedAmt" type="decimal(18,0)" />
+			<column name="AssetCode" type="varchar(8)" />
+			<column name="Assetstageorder" type="int" />
+			<column name="Npa" type="boolean" />
+			<column name="ManualProvision" type="boolean" />
+			<column name="LinkedTranId" type="bigint" />
+			<column name="ChgLinkedTranId" type="bigint" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	
+	<changeSet id="ST#540.66.1" author="Vijayakumar.k"  dbms="oracle,postgresql">
+		<addDefaultValue  tableName="PROVISIONS_TEMP" columnName="ManualProvision"	 defaultValue="0"/>
+		<addDefaultValue  tableName="PROVISION_MOVEMENTS" columnName="ManualProvision"	 defaultValue="0"/>
+	</changeSet>       	
+	
+	<changeSet id="ST#540.66.1" author="Vijayakumar.k" dbms="MSSQL">
+      <sql>
+		ALTER TABLE PROVISIONS_TEMP ADD CONSTRAINT DF_PRV_T_ManualProvision	 DEFAULT '0' FOR ManualProvision;
+		ALTER TABLE PROVISION_MOVEMENTS ADD CONSTRAINT DF_PRV_MVT_MNPR	 DEFAULT '0' FOR ManualProvision;
+	  </sql>
+	</changeSet> 
+
+	<changeSet id="ST#540.67" author="Vijayakumar.k">
+		<addPrimaryKey tableName="PROVISION_MOVEMENTS" columnNames="Id" constraintName="PK_PROV_MOVEMENTS" />
+	</changeSet>
+
+	<changeSet id="ST#540.68" author="Vijayakumar.k">
+		<addForeignKeyConstraint constraintName="FK_PROV_MOVEMENT_FR" referencedTableName="FinanceMain"
+			baseColumnNames="FinReference" baseTableName="PROVISION_MOVEMENTS" referencedColumnNames="FinReference" />
+	</changeSet>
+
+	<changeSet id="ST#540.68.1" author="Vijayakumar.k">
+		<addForeignKeyConstraint constraintName="FK_PROV_MOVEMENT_PID" referencedTableName="PROVISIONS"
+			baseColumnNames="ProvisionId" baseTableName="PROVISION_MOVEMENTS" referencedColumnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#540.69" author="Vijayakumar.k">
+		<createIndex tableName="PROVISION_MOVEMENTS" indexName="IDX_PROV_MOV_T_FR">
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#540.69.1" author="Vijayakumar.k">
+		<createIndex tableName="PROVISION_MOVEMENTS" indexName="IDX_PROV_MOV_T_PID">
+			<column name="ProvisionId" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#540.70" author="Vijayakumar.k">
+		<createTable tableName="PROVISION_AMOUNTS">
+			<column name="Id" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ProvisionId" type="bigInt" />
+			<column name="ProvisionType" type="varchar(10)" />
+			<column name="AssetCode" type="varchar(8)" />
+			<column name="ProvisionPer" type="decimal(5,2)" />
+			<column name="ProvisionAmtCal" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#540.71" author="Vijayakumar.k">
+		<addPrimaryKey tableName="PROVISION_AMOUNTS" columnNames="Id" constraintName="PK_PROVISION_AMOUNTS" />
+	</changeSet>
+
+	<changeSet id="ST#540.72" author="Vijayakumar.k">
+		<addForeignKeyConstraint constraintName="FK_PROV_AMOUNTS_PID" referencedTableName="PROVISIONS"
+			baseColumnNames="ProvisionId" baseTableName="PROVISION_AMOUNTS" referencedColumnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#540.73" author="Vijayakumar.k">
+		<createIndex tableName="PROVISION_AMOUNTS" indexName="IDX_PROV_AMOUNTS_PID">
+			<column name="ProvisionId" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#540.74" author="Vijayakumar.k">
+		<createTable tableName="PROVISION_AMOUNTS_TEMP">
+			<column name="Id" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ProvisionId" type="bigInt" />
+			<column name="ProvisionType" type="varchar(10)" />
+			<column name="AssetCode" type="varchar(8)" />
+			<column name="ProvisionPer" type="decimal(5,2)" />
+			<column name="ProvisionAmtCal" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#540.75" author="Vijayakumar.k">
+		<addPrimaryKey tableName="PROVISION_AMOUNTS_TEMP" columnNames="Id" constraintName="PK_PROVISION_AMOUNTS_TEMP" />
+	</changeSet>
+
+	<changeSet id="ST#540.76" author="Vijayakumar.k">
+		<addForeignKeyConstraint constraintName="FK_PROV_AMOUNTS_T_PID" referencedTableName="PROVISIONS_TEMP"
+			baseColumnNames="ProvisionId" baseTableName="PROVISION_AMOUNTS_TEMP" referencedColumnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#540.77" author="Vijayakumar.k">
+		<createIndex tableName="PROVISION_AMOUNTS_TEMP" indexName="IDX_PROV_AMOUNTS_T_PID">
+			<column name="ProvisionId" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#540.78" author="Vijayakumar.k">
+		<createTable tableName="PROVISION_MOVMENT_AMOUNTS">
+			<column name="Id" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ProvisionId" type="bigInt" />
+			<column name="ProvisionType" type="varchar(10)" />
+			<column name="AssetCode" type="varchar(8)" />
+			<column name="ProvisionPer" type="decimal(5,2)" />
+			<column name="ProvisionAmtCal" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#540.79" author="Vijayakumar.k">
+		<addPrimaryKey tableName="PROVISION_MOVMENT_AMOUNTS" columnNames="Id" constraintName="PK_PROV_MOVMENT_AMOUNTS" />
+	</changeSet>
+
+	<changeSet id="ST#540.80" author="Vijayakumar.k">
+		<addForeignKeyConstraint constraintName="FK_PROV_AMOUNTS_MOV_PID" referencedTableName="PROVISIONS"
+			baseColumnNames="ProvisionId" baseTableName="PROVISION_MOVMENT_AMOUNTS" referencedColumnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#540.81" author="Vijayakumar.k">
+		<createIndex tableName="PROVISION_MOVMENT_AMOUNTS" indexName="IDX_PROV_AMOUNT_MOV_PID">
+			<column name="ProvisionId" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#540.82" author="Vijayakumar.k">
+		<createTable tableName="PROVISION_MOVMENT_AMOUNTS_TEMP">
+			<column name="Id" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ProvisionId" type="bigInt" />
+			<column name="ProvisionType" type="varchar(10)" />
+			<column name="AssetCode" type="varchar(8)" />
+			<column name="ProvisionPer" type="decimal(5,2)" />
+			<column name="ProvisionAmtCal" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#540.83" author="Vijayakumar.k">
+		<addPrimaryKey tableName="PROVISION_MOVMENT_AMOUNTS_TEMP" columnNames="Id" constraintName="PK_PROV_MOVMENT_AMOUNT_TEMP" />
+	</changeSet>
+
+	<changeSet id="ST#540.84" author="Vijayakumar.k">
+		<addForeignKeyConstraint constraintName="FK_PROV_AMOUNTS_MOV_T_PID" referencedTableName="PROVISIONS_TEMP"
+			baseColumnNames="ProvisionId" baseTableName="PROVISION_MOVMENT_AMOUNTS_TEMP" referencedColumnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#540.85" author="Vijayakumar.k">
+		<createIndex tableName="PROVISION_MOVMENT_AMOUNTS_TEMP" indexName="IDX_PROV_AMOUNTS_MOV_T_PID">
+			<column name="ProvisionId" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#540.86" author="Vijayakumar.k">
+		<createView viewName="PROVISIONS_VIEW" replaceIfExists="true">
+				<![CDATA[
+					select Id
+					, pa.Finreference
+					, Closingbalance
+					, Outstandprincipal
+					, Outstandprofit
+					, Profitaccruedanddue
+					, Profitaccruedandnotdue
+					, Collateralvalue
+					, Duefromdate
+					, Lastfullypaiddate
+					, Currbucket
+					, Duedays
+					, Dpd
+					, Provisiondate
+					, Provisionedamt
+					, AssetCode
+					, Assetstageorder
+					, Npa
+					, Manualprovision
+					, Linkedtranid
+					, Chglinkedtranid
+					, pa.Version
+					, pa.Lastmntby
+					, pa.Lastmnton
+					, pa.Recordstatus
+					, pa.Rolecode
+					, pa.Nextrolecode
+					, pa.Taskid
+					, pa.Nexttaskid
+					, pa.Recordtype
+					, pa.WorkflowId 
+					, fm.FinType
+					, fm.FinBranch
+					, fm.FinIsActive
+					, c.CustID
+					, c.CustCIF
+					, c.CustShrtName
+					from PROVISIONS_TEMP pa
+					inner join FINANCEMAIN fm on fm.FinReference = pa.Finreference
+					inner join CUSTOMERS c on c.custId = fm.custID
+					union all
+					select Id
+					, pa.Finreference
+					, Closingbalance
+					, Outstandprincipal
+					, Outstandprofit
+					, Profitaccruedanddue
+					, Profitaccruedandnotdue
+					, Collateralvalue
+					, Duefromdate
+					, Lastfullypaiddate
+					, Currbucket
+					, Duedays
+					, Dpd
+					, Provisiondate
+					, Provisionedamt
+					, AssetCode
+					, Assetstageorder
+					, Npa
+					, Manualprovision
+					, Linkedtranid
+					, Chglinkedtranid
+					, pa.Version
+					, pa.Lastmntby
+					, pa.Lastmnton
+					, pa.Recordstatus
+					, pa.Rolecode
+					, pa.Nextrolecode
+					, pa.Taskid
+					, pa.Nexttaskid
+					, pa.Recordtype
+					, pa.WorkflowId 
+					, fm.FinType
+					, fm.FinBranch
+					, fm.FinIsActive
+					, c.CustID
+					, c.CustCIF
+					, c.CustShrtName
+					from PROVISIONS pa
+					inner join FINANCEMAIN fm on fm.FinReference = pa.Finreference
+					inner join CUSTOMERS c on c.custId = fm.custID
+					WHERE NOT (EXISTS ( SELECT 1 
+								FROM PROVISIONS_TEMP
+								WHERE PROVISIONS_TEMP.ID = pa.id))
+				]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#540.87" author="Vijayakumar.k">
+		<createView viewName="PROVISIONS_AVIEW" replaceIfExists="true">
+				<![CDATA[
+					select Id
+					, pa.Finreference
+					, Closingbalance
+					, Outstandprincipal
+					, Outstandprofit
+					, Profitaccruedanddue
+					, Profitaccruedandnotdue
+					, Collateralvalue
+					, Duefromdate
+					, Lastfullypaiddate
+					, Currbucket
+					, Duedays
+					, Dpd
+					, Provisiondate
+					, Provisionedamt
+					, AssetCode
+					, Assetstageorder
+					, Npa
+					, Manualprovision
+					, Linkedtranid
+					, Chglinkedtranid
+					, pa.Version
+					, pa.Lastmntby
+					, pa.Lastmnton
+					, pa.Recordstatus
+					, pa.Rolecode
+					, pa.Nextrolecode
+					, pa.Taskid
+					, pa.Nexttaskid
+					, pa.Recordtype
+					, pa.WorkflowId 
+					, fm.FinType
+					, fm.FinBranch
+					, fm.FinIsActive
+					, c.CustID
+					, c.CustCIF
+					, c.CustShrtName
+					from PROVISIONS pa
+					inner join FINANCEMAIN fm on fm.FinReference = pa.Finreference
+					inner join CUSTOMERS c on c.custId = fm.custID
+				]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#540.88" author="Vijayakumar.k">
+		<createView viewName="PROVISION_MOVEMENTS_VIEW" replaceIfExists="true">
+				<![CDATA[
+					select Id
+					, pa.Finreference
+					, Closingbalance
+					, Outstandprincipal
+					, Outstandprofit
+					, Profitaccruedanddue
+					, Profitaccruedandnotdue
+					, Collateralvalue
+					, Duefromdate
+					, Lastfullypaiddate
+					, Currbucket
+					, Duedays
+					, Dpd
+					, Provisiondate
+					, Provisionedamt
+					, AssetCode
+					, Assetstageorder
+					, Npa
+					, Manualprovision
+					, Linkedtranid
+					, Chglinkedtranid
+					, pa.Version
+					, pa.Lastmntby
+					, pa.Lastmnton
+					, pa.Recordstatus
+					, pa.Rolecode
+					, pa.Nextrolecode
+					, pa.Taskid
+					, pa.Nexttaskid
+					, pa.Recordtype
+					, pa.WorkflowId 
+					, fm.FinType
+					, fm.FinBranch
+					, c.CustID
+					, c.CustCIF
+					, c.CustShrtName
+					from PROVISION_MOVEMENTS pa
+					inner join FINANCEMAIN fm on fm.FinReference = pa.Finreference
+					inner join CUSTOMERS c on c.custId = fm.custID
+				]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#540.89" author="Vijayakumar.k">
+		<createView viewName="PROVISION_AMOUNTS_VIEW" replaceIfExists="true">
+				<![CDATA[
+					select 
+					pa.Id
+					, Provisionid
+					, Provisiontype
+					, pa.AssetCode
+					, Provisionper
+					, Provisionamtcal
+					from PROVISION_AMOUNTS_TEMP PA
+					INNER JOIN PROVISIONS_TEMP P ON P.ID = PA.Provisionid
+					UNION ALL
+					select 
+					pa.Id
+					, Provisionid
+					, Provisiontype
+					, pa.AssetCode
+					, Provisionper
+					, Provisionamtcal
+					from PROVISION_AMOUNTS PA
+					INNER JOIN PROVISIONS P ON P.ID = PA.Provisionid
+					WHERE NOT (EXISTS ( SELECT 1 FROM PROVISION_AMOUNTS_TEMP WHERE ID = pa.id))
+				]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#540.90" author="Vijayakumar.k">
+		<createView viewName="PROVISION_AMOUNTS_AVIEW" replaceIfExists="true">
+				<![CDATA[
+					select 
+					pa.Id
+					, Provisionid
+					, Provisiontype
+					, pa.AssetCode
+					, Provisionper
+					, Provisionamtcal
+					from PROVISION_AMOUNTS PA
+					INNER JOIN PROVISIONS P ON P.ID = PA.Provisionid
+				]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#540.91" author="Vijayakumar.K">
+		<sql>
+		 <![CDATA[
+				delete from reportlist where code='Provision';
+				Insert into REPORTLIST
+				(CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ)
+				values
+				('Provision','Provision','listheader_CIFNo.label,listheader_CustName.label,listheader_FinReference.label,listheader_FinType.label,listheader_ManualProvisioning.label,listheader_AssetStage.label,label.RecordStatus,label.RecordType',
+				'CustCIF,CustShrtName,finReference,finType,manualProvision,assetCode,RECORDSTATUS,RECORDTYPE',
+				'long,String,String,String,boolean,String,String,String',null,'ReportList08',
+				'Manual Provision Details','Enquiry',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0);
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#540.92" author="Vijayakumar.K">
+		<sql>
+		 <![CDATA[
+			delete from secgrouprights where rightid in (select rightid from secrights where rightname='menuItem_NPAProvisionReport');
+			delete from secrights WHERE rightname='menuItem_NPAProvisionReport';
+
+			delete from secgrouprights where rightid in (select rightid from secrights where rightname='menu_Item_NPAProvision');
+			delete from secrights WHERE rightname='menu_Item_NPAProvision';
+
+			UPDATE SeqSecRights SET SEQNO= (SELECT MAX(RightId) FROM SecRights);
+			UPDATE SeqSecGroupRights SET SEQNO = (SELECT MAX(GrpRightId) FROM SecGroupRights);
+								
+			INSERT into SecRights Values ((select max(RightId)+1 from SecRights),0,'menu_Item_NPAProvision','MENU',0,1000,current_timestamp,'Approved', '', '', '', '', '', 0);
+			INSERT into SecGroupRights values((Select max(GrpRightId) + 1 from SecGroupRights), (Select GrpId from SecGroups where GrpCode = 'REPORTS_ADMIN'), (Select RightId from SecRights where RightName = 'menu_Item_NPAProvision'), 1, 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+								
+			UPDATE SeqSecRights SET SEQNO= (SELECT MAX(RightId) FROM SecRights);
+			UPDATE SeqSecGroupRights SET SEQNO = (SELECT MAX(GrpRightId) FROM SecGroupRights);
+			
+			delete from reportfilterfields WHERE reportid IN (select REPORTID  from ReportConfiguration where menuitemcode = 'menuItem_NPAProvision');
+			delete from reportconfiguration  where menuitemcode='menuItem_NPAProvision';
+			
+			INSERT INTO reportconfiguration 
+			(reportid, reportname, reportheading, promptrequired, reportjaspername, datasourcename, showtemplibrary, menuitemcode, version, lastmntby, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, lastmnton, alwmultiformat, wherecondition, schedulereq) 
+			VALUES ((select max(reportid) + 1  from reportconfiguration), 'Excel:NPA Provision Report', 'NPA Provision Report', 1, 'NPAProvision', 'dataSource', 1, 'menu_Item_NPAProvision', 1, 1000, '', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 0, 0, 0);
+
+			INSERT INTO reportfilterfields 
+			(reportid, fieldid, fieldname, fieldtype, fieldlabel, fielddbname, apputilmethodname, modulename, lovhiddenfieldmethod, lovtextfieldmethod, multiselectsearch, fieldlength, fieldmaxvalue, fieldminvalue, seqorder, mandatory, fieldconstraint, fielderrormessage, wherecondition, staticvalue, fieldwidth, filterrequired, defaultfilter, version, lastmntby, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, lastmnton, filterfileds) 
+			VALUES ((select reportid from ReportConfiguration where menuitemcode = 'menu_Item_NPAProvision'), 1, 'Entity', 'LOVSEARCH', 'Entity', 'et.entitycode', '', 'Entity', 'getEntityCode', 'getEntityDesc', 0, 0, 0, 0, 1, 1, '', '', '', '', 150, 0, '=', 1, 1000, 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, '');
+
+			INSERT INTO reportfilterfields 
+			(reportid, fieldid, fieldname, fieldtype, fieldlabel, fielddbname, apputilmethodname, modulename, lovhiddenfieldmethod, lovtextfieldmethod, multiselectsearch, fieldlength, fieldmaxvalue, fieldminvalue, seqorder, mandatory, fieldconstraint, fielderrormessage, wherecondition, staticvalue, fieldwidth, filterrequired, defaultfilter, version, lastmntby, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, lastmnton, filterfileds) 
+			VALUES ((select reportid from ReportConfiguration where menuitemcode = 'menu_Item_NPAProvision'), 2, 'FinType', 'LOVSEARCH', 'Loan Type', 'fm.fintype', NULL, 'FinanceType', 'getFinType', 'getFinTypeDesc', 0, 0, 0, 0, 2, 0, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, NULL);
+			
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#540.93" author="Vijayakumar.k">
+		<sql>
+		   <![CDATA[
+		    Delete from BMTAMOUNTCODES Where ALLOWEDEVENT = 'REPAY' and AMOUNTCODE = 'ae_pri';
+			Delete from BMTAMOUNTCODES Where ALLOWEDEVENT = 'REPAY' and AMOUNTCODE = 'ae_priS';
+			Delete from BMTAMOUNTCODES Where ALLOWEDEVENT = 'REPAY' and AMOUNTCODE = 'ae_priPr';
+			Delete from BMTAMOUNTCODES Where ALLOWEDEVENT = 'REPAY' and AMOUNTCODE = 'ae_priSPr';
+			Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('REPAY',0,'ae_priPr','Total Principal Scheduled.',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('REPAY',0,'ae_priSPr','Till Date Principal Scheduled.',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+
+
 	<!-- ST#540 - NPA & Provision Change Sets End -->
 
+	<changeSet id="DE#26_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'int_disbursement_request_view');
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="DE#26" author="vijaya.a">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FA.PAYMENTID,
+				FA.FINREFERENCE,
+				'D' CHANNEL,
+				0 PROVIDERID,
+				CASE
+				WHEN FA.PAYMENTTYPE = 'NEFT'
+				THEN 'N'
+				WHEN FA.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN
+				FA.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN FA.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				WHEN FA.PAYMENTTYPE = 'IFT'
+				THEN 'I'
+				ELSE FA.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				FA.AMTTOBERELEASED,
+				FA.DISBDATE,
+				FA.LLDATE,
+				FA.PAYABLELOC,
+				FA.PRINTINGLOC,
+				CU.CUSTCIF,
+				CU.CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				CE.CUSTEMAIL CUSTOMER_EMAIL,
+				CS.CPPROVINCENAME CUSTOMER_STATE,
+				CC.PCCITYNAME CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				PBD.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				PBD.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				FA.BENEFICIARYACCNO,
+				CASE
+				WHEN FA.PAYMENTTYPE = 'CHEQUE'
+				OR FA.PAYMENTTYPE = 'DD'
+				THEN
+				FA.LIABILITYHOLDNAME
+				ELSE FA.BENEFICIARYNAME
+				END BENEFICIARYNAME,
+				(FA.PHONECOUNTRYCODE ${call.concatenate} FA.PHONEAREACODE) ${call.concatenate} FA.PHONENUMBER BENEFICIARY_MOBILE,
+				BCE.CUSTEMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				BRCA.CustAddrHNbr ${call.concatenate}','${call.concatenate} BRCA.CustAddrStreet ${call.concatenate}','${call.concatenate} BRC.PCCITYNAME ${call.concatenate}','${call.concatenate} BRS.CPPROVINCENAME  BENFICIARY_ADDRESS1,
+				'' BENFICIARY_ADDRESS2,
+				'' BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				FA.STATUS,
+				FA.DESCRIPTION REMARKS,
+				FA.PAYMENTTYPE,
+				FM.FINTYPE,
+				PB.PARTNERBANKID
+				PARTNERBANK_ID,
+				PB.PARTNERBANKCODE PARTNERBANK_CODE,
+				FA.INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.FILENAME,
+				FM.FINISACTIVE,
+				SMD.ENTITYCODE,
+				FA.HOLDDISBURSEMENT HOLDDISBURSEMENT,
+				PB.ACCOUNTNO PARTNERBANK_ACCOUNT
+				FROM FINADVANCEPAYMENTS FA
+				JOIN
+				(SELECT FINANCEMAIN_TEMP.CUSTID,
+				FINANCEMAIN_TEMP.FINREFERENCE,
+				FINANCEMAIN_TEMP.FINTYPE,
+				FINANCEMAIN_TEMP.FINISACTIVE
+				FROM FINANCEMAIN_TEMP
+				UNION ALL
+				SELECT T2.CUSTID,
+				T2.FINREFERENCE,
+				T2.FINTYPE,
+				T2.FINISACTIVE
+				FROM FINANCEMAIN T2
+				WHERE NOT (EXISTS
+				( SELECT 1 FROM
+				FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE))) FM
+				ON FM.FINREFERENCE = FA.FINREFERENCE
+				JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID	
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE	= FA.DISBCCY
+				JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+				LEFT JOIN CUSTOMEREMAILS CE	ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID	AND CA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE =	BB.BANKCODE
+				LEFT JOIN ( SELECT PB_1.PARTNERBANKID,	
+				PBD_1.BANKNAME,
+				PBB.BRANCHDESC,
+				PBBRC.PCCITYNAME,
+				PBBRS.CPPROVINCENAME FROM PARTNERBANKS PB_1
+				JOIN BANKBRANCHES PBB ON PBB.BRANCHCODE = PB_1.BANKBRANCHCODE AND PBB.BANKCODE = PB_1.BANKCODE
+				JOIN BMTBANKDETAIL PBD_1 ON PBD_1.BANKCODE = PBB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY PBBRC ON PBBRC.PCCITY = PBB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS ON PBBRS.CPPROVINCE = PBBRC.PCPROVINCE
+				) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+				LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND
+				BR.ACCNUMBER = FA.BENEFICIARYACCNO AND BR.CUSTID = FM.CUSTID
+				LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID
+				AND BCE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES	BRCA ON	BRCA.CUSTID = BR.CUSTID
+				AND BRCA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY =	BRCA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				LEFT JOIN RMTFINANCETYPES RFT ON FM.FINTYPE = RFT.FINTYPE
+				LEFT JOIN SMTDIVISIONDETAIL SMD	ON RFT.FINDIVISION = SMD.DIVISIONCODE
+				WHERE FA.STATUS = 'APPROVED' AND NOT (FA.PAYMENTID IN ( 
+				SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
+				AND NOT	(FA.PAYMENTID IN ( SELECT FINADVANCEPAYMENTS_TEMP.PAYMENTID FROM FINADVANCEPAYMENTS_TEMP))
+				UNION ALL
+				SELECT
+				PI.PAYMENTINSTRUCTIONID PAYMENTID,
+				PH.FINREFERENCE,
+				PH.PAYMENTTYPE CHANNEL,
+				0 PROVIDERID,
+				CASE
+				WHEN PI.PAYMENTTYPE =
+				'NEFT'
+				THEN 'N'
+				WHEN PI.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN PI.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN PI.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				WHEN PI.PAYMENTTYPE = 'IFT'
+				THEN 'I'
+				ELSE PI.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				PI.PAYMENTAMOUNT  AMTTOBERELEASED,
+				PI.POSTDATE
+				DISBDATE,
+				PI.POSTDATE LLDATE,
+				PI.PAYABLELOC,
+				PI.PRINTINGLOC,
+				CU.CUSTCIF,
+				CU.CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				CE.CUSTEMAIL
+				CUSTOMER_EMAIL,
+				CS.CPPROVINCENAME CUSTOMER_STATE,
+				CC.PCCITYNAME CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				PI.ACCOUNTNO BENEFICIARYACCNO,
+				CASE
+				WHEN PI.PAYMENTTYPE = 'CHEQUE'
+				OR PI.PAYMENTTYPE = 'DD'
+				THEN
+				PI.FAVOURNAME
+				ELSE PI.ACCTHOLDERNAME
+				END BENEFICIARYNAME,
+				PI.PHONECOUNTRYCODE ${call.concatenate} PI.PHONENUMBER BENEFICIARY_MOBILE,
+				BCE.CUSTEMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				'' BENFICIARY_ADDRESS1,
+				'' BENFICIARY_ADDRESS2,
+				'' BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				PI.STATUS,
+				PI.REMARKS,
+				PI.PAYMENTTYPE,
+				FM.FINTYPE,
+				PB.PARTNERBANKID PARTNERBANK_ID,
+				PB.PARTNERBANKCODE
+				PARTNERBANK_CODE,
+				PI.POSTDATE INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.FILENAME,
+				FM.FINISACTIVE,
+				SMD.ENTITYCODE,
+				0 HOLDDISBURSEMENT,
+				PB.ACCOUNTNO
+				PARTNERBANK_ACCOUNTNO
+				FROM PAYMENTINSTRUCTIONS PI
+				JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID
+				JOIN (SELECT
+				FINANCEMAIN.CUSTID,
+				FINANCEMAIN.FINREFERENCE,
+				FINANCEMAIN.FINTYPE,
+				FINANCEMAIN.FINISACTIVE
+				FROM FINANCEMAIN
+				UNION ALL
+				SELECT T2.CUSTID,
+				T2.FINREFERENCE,
+				T2.FINTYPE,
+				T2.FINISACTIVE
+				FROM FINANCEMAIN_TEMP T2
+				WHERE NOT (EXISTS
+				( SELECT 1 FROM
+				FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE))) FM ON FM.FINREFERENCE = PH.FINREFERENCE
+				JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PI.PARTNERBANKID
+				LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				LEFT JOIN CUSTOMERPHONENUMBERS CM ON CM.PHONECUSTID = CU.CUSTID
+				AND CM.PHONETYPECODE = 'MOBILE1' AND CM.PHONETYPEPRIORITY = 5
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = PI.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY	BBRC ON BBRC.PCCITY = BB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS	ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = PI.BANKBRANCHID
+				AND BR.ACCNUMBER = PI.ACCOUNTNO	AND BR.CUSTID = FM.CUSTID
+				LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				LEFT JOIN CUSTOMEREMAILS BCE ON	BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID	AND	BRCA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				LEFT JOIN RMTFINANCETYPES RFT ON FM.FINTYPE = RFT.FINTYPE
+				LEFT JOIN SMTDIVISIONDETAIL SMD	ON RFT.FINDIVISION = SMD.DIVISIONCODE
+				WHERE PI.STATUS = 'APPROVED'
+				AND NOT
+				(PI.PAYMENTINSTRUCTIONID IN
+				( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM
+				DISBURSEMENT_REQUESTS
+				))
+				UNION ALL
+				SELECT PI.ID PAYMENTID,
+				VR.PRIMARYLINKREF FINREFERENCE,
+				'I' CHANNEL,
+				PI.PROVIDERID,
+				CASE
+				WHEN
+				PI.PAYMENTTYPE = 'NEFT'
+				THEN 'N'
+				WHEN PI.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN PI.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN
+				PI.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				WHEN PI.PAYMENTTYPE = 'IFT'
+				THEN 'I'
+				ELSE PI.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				PI.PAYMENTAMOUNT  AMTTOBERELEASED,
+				PI.PAYMENTDATE DISBDATE,
+				PI.PAYMENTDATE LLDATE,
+				'' PAYABLELOC,
+				'' PRINTINGLOC,
+				'' CUSTCIF,
+				'' CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				'' CUSTOMER_EMAIL,
+				'' CUSTOMER_STATE,
+				'' CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				VPA.ACCOUNTNUMBER BENEFICIARYACCNO,
+				AVD.DEALERNAME BENEFICIARYNAME,
+				AVD.DEALERTELEPHONE
+				BENEFICIARY_MOBILE,
+				AVD.EMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				AVD.DEALERADDRESS1 BENFICIARY_ADDRESS1,
+				AVD.DEALERADDRESS2 BENFICIARY_ADDRESS2,
+				AVD.DEALERADDRESS3 BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				PI.STATUS,
+				PI.REMARKS,
+				PI.PAYMENTTYPE,
+				'' FINTYPE,
+				PB.PARTNERBANKID PARTNERBANK_ID,
+				PB.PARTNERBANKCODE PARTNERBANK_CODE,
+				PI.PAYMENTDATE INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.FILENAME,
+				1 FINISACTIVE,
+				PI.ENTITYCODE,
+				0 HOLDDISBURSEMENT,
+				PB.ACCOUNTNO PARTNERBANK_ACCOUNT
+				FROM INSURANCEPAYMENTINSTRUCTIONS PI
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				JOIN PARTNERBANKS PB ON	PB.PARTNERBANKID = PI.PARTNERBANKID
+				JOIN VASPROVIDERACCDETAIL VPA ON VPA.PROVIDERID = PI.PROVIDERID
+				JOIN AMTVEHICLEDEALER AVD ON AVD.DEALERID = VPA.PROVIDERID
+				JOIN VASRECORDING VR ON VR.PAYMENTINSID = PI.ID
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = VPA.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY BBRC ON BBRC.PCCITY	= BB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS	ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY =	AVD.DEALERCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				WHERE PI.STATUS = 'APPROVED' AND PI.PAYMENTAMOUNT > 0
+				AND NOT (PI.ID IN( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
+			 ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="DE#26_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'int_disbursement_request_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#1425.1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'receiptdetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#1425.1" author="Gopal.p">
+		<createView viewName="RECEIPTDETAILS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t4.custcif,
+				    t1.reference,
+				    t3.fintype,
+				    t1.receiptid,
+				    t1.receiptdate,
+				    t1.receiptamount,
+				    t2.depositdate,
+				    t2.bankcode AS depositbank,
+				        CASE
+				            WHEN t1.receiptpurpose = 'EarlyPayment' THEN 'Partial Payment'
+				            ELSE t1.receiptpurpose
+				        END AS receiptpurpose,
+				    t1.receiptmode,
+				    t1.bouncedate AS canceldate,
+				    t2.valuedate,
+				    t2.payagainstid,
+				    t1.bouncedate,
+				    t1.realizationdate,
+				    t1.cancelreason,
+				    t3.closingstatus,
+				    t3.finbranch,
+				    t3.fincurrassetvalue,
+				    t3.productcategory,
+				    t6.partnerbankcode,
+				    t2.transactionref,
+				    t2.fundingac,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t5.roledesc AS lovdescrequeststage,
+				    t2.paymenttype,
+				    t1.receiptmodestatus,
+				    t1.actfinreceipt,
+				    t2.favournumber,
+				    t1.knockofftype,
+					tx.RECEIPTSEQID
+				   FROM finreceiptheader_temp t1
+					 INNER JOIN (Select max(receiptseqId) receiptSeqId, RECEIPTID  from FinReceiptDetail_Temp group by RECEIPTID) tx on tx.receiptid = t1.receiptid
+					 INNER JOIN FinReceiptDetail_Temp t2 ON t1.receiptid = t2.receiptid and t2.receiptseqid = tx.receiptSeqId
+				     LEFT JOIN financemain t3 ON t1.reference = t3.finreference
+				     LEFT JOIN customers t4 ON t3.custid = t4.custid
+				     JOIN secroles t5 ON t1.nextrolecode = t5.rolecd
+				     LEFT JOIN partnerbanks t6 ON t6.partnerbankid = t2.fundingac
+				UNION ALL
+			 	SELECT t4.custcif,
+				    t1.reference,
+				    t3.fintype,
+				    t1.receiptid,
+				    t1.receiptdate,
+				    t1.receiptamount,
+				    t2.depositdate,
+				    t2.bankcode AS depositbank,
+				        CASE
+				            WHEN t1.receiptpurpose = 'EarlyPayment' THEN 'Partial Payment'
+				            ELSE t1.receiptpurpose
+				        END AS receiptpurpose,
+				    t1.receiptmode,
+				    t1.bouncedate AS canceldate,
+				    t2.valuedate,
+				    t2.payagainstid,
+				    t1.bouncedate,
+				    t1.realizationdate,
+				    t1.cancelreason,
+				    t3.closingstatus,
+				    t3.finbranch,
+				    t3.fincurrassetvalue,
+				    t3.productcategory,
+				    t6.partnerbankcode,
+				    t2.transactionref,
+				    t2.fundingac,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t5.roledesc AS lovdescrequeststage,
+				    t2.paymenttype,
+				    t1.receiptmodestatus,
+				    t1.actfinreceipt,
+				    t2.favournumber,
+				    t1.knockofftype,
+					tx.RECEIPTSEQID
+				   FROM finreceiptheader t1
+				     INNER JOIN (Select max(receiptseqId) receiptSeqId, RECEIPTID  from FinReceiptDetail group by RECEIPTID) tx on tx.receiptid = t1.receiptid
+				     INNER JOIN finreceiptdetail t2 ON t1.receiptid = t2.receiptid and t2.receiptseqid = tx.receiptSeqId
+				     LEFT JOIN financemain t3 ON t1.reference = t3.finreference
+				     LEFT JOIN customers t4 ON t3.custid = t4.custid
+				     LEFT JOIN secroles t5 ON t1.nextrolecode = t5.rolecd
+				     LEFT JOIN partnerbanks t6 ON t6.partnerbankid = t2.fundingac
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM finreceiptheader_temp
+				          WHERE finreceiptheader_temp.receiptid = t1.receiptid))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="DE#1425.1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'receiptdetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="46_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeerefunddetails');
+				select deps_save_and_drop_dependencies ('plf', 'finfeerefunddetails_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="46" author="saisandeep.b">
+		<modifyDataType tableName="FinFeeRefundDetails" columnName="refundAmount" newDataType="decimal(18,0)" />
+		<modifyDataType tableName="FinFeeRefundDetails" columnName="refundAmtGST" newDataType="decimal(18,0)" />
+		<modifyDataType tableName="FinFeeRefundDetails" columnName="refundAmtOriginal" newDataType="decimal(18,0)" />
+	</changeSet>
+
+	<changeSet id="47" author="saisandeep.b">
+		<modifyDataType tableName="FinFeeRefundDetails_Temp" columnName="refundAmount" newDataType="decimal(18,0)" />
+		<modifyDataType tableName="FinFeeRefundDetails_Temp" columnName="refundAmtGST" newDataType="decimal(18,0)" />
+		<modifyDataType tableName="FinFeeRefundDetails_Temp" columnName="refundAmtOriginal" newDataType="decimal(18,0)" />
+	</changeSet>
+
+	<changeSet id="47_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeerefunddetails');
+				select deps_restore_dependencies ('plf', 'finfeerefunddetails_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="48" author="saisandeep.b">
+		<addColumn tableName="FinFeeRefundDetails">
+			<column name="refundAmtTDS" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="49" author="saisandeep.b">
+		<addColumn tableName="FinFeeRefundDetails_Temp">
+			<column name="refundAmtTDS" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="50_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeerefunddetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="50" author="saisandeep.b">
+		<createView viewName="FinFeeRefundDetails_View" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.Id,
+					T1.HeaderId,
+					T1.FeeId,
+					T1.refundAmount,
+					T1.refundAmtGST,
+					T1.refundAmtOriginal,
+					T1.Version,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T1.refundAmtTDS
+				FROM FinFeeRefundDetails_temp T1
+				UNION ALL
+				SELECT T1.Id,
+					T1.HeaderId,
+					T1.FeeId,
+					T1.refundAmount,
+					T1.refundAmtGST,
+					T1.refundAmtOriginal,
+					T1.Version,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T1.refundAmtTDS
+				FROM FinFeeRefundDetails T1
+				WHERE NOT EXISTS(SELECT 1 FROM FinFeeRefundDetails_temp WHERE Id =T1.Id)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="50_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeerefunddetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="51_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeerefunddetails_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="51" author="saisandeep.b">
+		<createView viewName="FinFeeRefundDetails_TView" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.Id,
+					T1.HeaderId,
+					T1.FeeId,
+					T1.refundAmount,
+					T1.refundAmtGST,
+					T1.refundAmtOriginal,
+					T1.Version,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T1.refundAmtTDS
+				FROM FinFeeRefundDetails_temp T1
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="51_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeerefunddetails_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="52_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeerefunddetails_aview');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="52" author="saisandeep.b">
+		<createView viewName="FinFeeRefundDetails_AView" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.Id,
+					T1.HeaderId,
+					T1.FeeId,
+					T1.refundAmount,
+					T1.refundAmtGST,
+					T1.refundAmtOriginal,
+					T1.Version,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T1.refundAmtTDS
+				FROM FinFeeRefundDetails T1
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="52_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeerefunddetails_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="53_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeedetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="53" author="saisandeep.b">
+		<createView viewName="FINFEEDETAIL_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				 SELECT T1.FEEID,
+					T1.FINREFERENCE,
+					T1.ORIGINATIONFEE,
+					T1.FINEVENT,
+					T1.FEETYPEID,
+					T1.FEESEQ,
+					T1.FEEORDER,
+					T1.CALCULATEDAMOUNT,
+					T1.ACTUALAMOUNT,
+					T1.WAIVEDAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.FEESCHEDULEMETHOD,
+					T1.TERMS,
+					T1.REMAININGFEE,
+					T1.PAYMENTREF,
+					T1.CALCULATIONTYPE,
+					T1.RULECODE,
+					T1.FIXEDAMOUNT,
+					T1.PERCENTAGE,
+					T1.CALCULATEON,
+					T1.ALWDEVIATION,
+					T1.MAXWAIVERPERC,
+					T1.ALWMODIFYFEE,
+					T1.ALWMODIFYFEESCHDMTHD,
+					T1.VASREFERENCE,
+					T1.TAXAPPLICABLE,
+					T1.TAXCOMPONENT,
+					T1.PAIDAMOUNTORIGINAL,
+					T1.PAIDAMOUNTGST,
+					T1.NETAMOUNTORIGINAL,
+					T1.NETAMOUNTGST,
+					T1.NETAMOUNT,
+					T1.REMAININGFEEORIGINAL,
+					T1.REMAININGFEEGST,
+					T1.ACTUALAMOUNTORIGINAL,
+					T1.ACTUALAMOUNTGST,
+					T1.FEEAMZ,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.TRANSACTIONID,
+					T1.WORKFLOWID,
+					T2.FEETYPECODE,
+					T2.FEETYPEDESC,
+					T1.STATUS,
+					T1.REFUNDABLE,
+					T1.INSTRUCTIONUID,
+					T1.ACTPERCENTAGE,
+					T1.WAIVEDGST,
+					T1.REFERENCEID,
+					T1.TAXHEADERID,
+					T1.PAIDTDS,
+					T1.REMTDS,
+					T1.NETTDS,
+					T2.TDSREQ
+				FROM FINFEEDETAIL T1
+				LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+		     ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="53_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeedetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="54_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeedetail_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="54" author="saisandeep.b">
+		<createView viewName="FINFEEDETAIL_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				 SELECT T1.FEEID,
+					T1.FINREFERENCE,
+					T1.ORIGINATIONFEE,
+					T1.FINEVENT,
+					T1.FEETYPEID,
+					T1.FEESEQ,
+					T1.FEEORDER,
+					T1.CALCULATEDAMOUNT,
+					T1.ACTUALAMOUNT,
+					T1.WAIVEDAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.FEESCHEDULEMETHOD,
+					T1.TERMS,
+					T1.REMAININGFEE,
+					T1.PAYMENTREF,
+					T1.CALCULATIONTYPE,
+					T1.RULECODE,
+					T1.FIXEDAMOUNT,
+					T1.PERCENTAGE,
+					T1.CALCULATEON,
+					T1.ALWDEVIATION,
+					T1.MAXWAIVERPERC,
+					T1.ALWMODIFYFEE,
+					T1.ALWMODIFYFEESCHDMTHD,
+					T1.VASREFERENCE,
+					T1.STATUS,
+					T1.TAXAPPLICABLE,
+					T1.TAXCOMPONENT,
+					T1.PAIDAMOUNTORIGINAL,
+					T1.PAIDAMOUNTGST,
+					T1.NETAMOUNTORIGINAL,
+					T1.NETAMOUNTGST,
+					T1.NETAMOUNT,
+					T1.REMAININGFEEORIGINAL,
+					T1.REMAININGFEEGST,
+					T1.ACTUALAMOUNTORIGINAL,
+					T1.ACTUALAMOUNTGST,
+					T1.FEEAMZ,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.TRANSACTIONID,
+					T1.WORKFLOWID,
+					T2.FEETYPECODE,
+					T2.FEETYPEDESC,
+					T1.REFUNDABLE,
+					T1.INSTRUCTIONUID,
+					T1.ACTPERCENTAGE,
+					T1.WAIVEDGST,
+					T1.REFERENCEID,
+					T1.TAXHEADERID,
+					T1.PAIDTDS,
+					T1.REMTDS,
+					T1.NETTDS,
+					T2.TDSREQ
+				FROM FINFEEDETAIL_TEMP T1
+				LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+		     ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="54_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeedetail_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="55_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeedetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="55" author="saisandeep.b">
+		<createView viewName="FINFEEDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+				 SELECT T1.FEEID,
+					T1.FINREFERENCE,
+					T1.ORIGINATIONFEE,
+					T1.FINEVENT,
+					T1.FEETYPEID,
+					T1.FEESEQ,
+					T1.FEEORDER,
+					T1.CALCULATEDAMOUNT,
+					T1.ACTUALAMOUNT,
+					T1.WAIVEDAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.FEESCHEDULEMETHOD,
+					T1.TERMS,
+					T1.REMAININGFEE,
+					T1.PAYMENTREF,
+					T1.CALCULATIONTYPE,
+					T1.RULECODE,
+					T1.FIXEDAMOUNT,
+					T1.PERCENTAGE,
+					T1.CALCULATEON,
+					T1.ALWDEVIATION,
+					T1.MAXWAIVERPERC,
+					T1.ALWMODIFYFEE,
+					T1.ALWMODIFYFEESCHDMTHD,
+					T1.VASREFERENCE,
+					T1.STATUS,
+					T1.TAXAPPLICABLE,
+					T1.TAXCOMPONENT,
+					T1.PAIDAMOUNTORIGINAL,
+					T1.PAIDAMOUNTGST,
+					T1.NETAMOUNTORIGINAL,
+					T1.NETAMOUNTGST,
+					T1.NETAMOUNT,
+					T1.REMAININGFEEORIGINAL,
+					T1.REMAININGFEEGST,
+					T1.ACTUALAMOUNTORIGINAL,
+					T1.ACTUALAMOUNTGST,
+					T1.FEEAMZ,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.TRANSACTIONID,
+					T1.WORKFLOWID,
+					T2.FEETYPECODE,
+					T2.FEETYPEDESC,
+					T1.REFUNDABLE,
+					T1.INSTRUCTIONUID,
+					T1.ACTPERCENTAGE,
+					T1.WAIVEDGST,
+					T1.REFERENCEID,
+					T1.TAXHEADERID,
+					T1.PAIDTDS,
+					T1.REMTDS,
+					T1.NETTDS,
+					T2.TDSREQ
+				FROM FINFEEDETAIL_TEMP T1
+				LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+				UNION ALL
+				SELECT T1.FEEID,
+					T1.FINREFERENCE,
+					T1.ORIGINATIONFEE,
+					T1.FINEVENT,
+					T1.FEETYPEID,
+					T1.FEESEQ,
+					T1.FEEORDER,
+					T1.CALCULATEDAMOUNT,
+					T1.ACTUALAMOUNT,
+					T1.WAIVEDAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.FEESCHEDULEMETHOD,
+					T1.TERMS,
+					T1.REMAININGFEE,
+					T1.PAYMENTREF,
+					T1.CALCULATIONTYPE,
+					T1.RULECODE,
+					T1.FIXEDAMOUNT,
+					T1.PERCENTAGE,
+					T1.CALCULATEON,
+					T1.ALWDEVIATION,
+					T1.MAXWAIVERPERC,
+					T1.ALWMODIFYFEE,
+					T1.ALWMODIFYFEESCHDMTHD,
+					T1.VASREFERENCE,
+					T1.STATUS,
+					T1.TAXAPPLICABLE,
+					T1.TAXCOMPONENT,
+					T1.PAIDAMOUNTORIGINAL,
+					T1.PAIDAMOUNTGST,
+					T1.NETAMOUNTORIGINAL,
+					T1.NETAMOUNTGST,
+					T1.NETAMOUNT,
+					T1.REMAININGFEEORIGINAL,
+					T1.REMAININGFEEGST,
+					T1.ACTUALAMOUNTORIGINAL,
+					T1.ACTUALAMOUNTGST,
+					T1.FEEAMZ,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.TRANSACTIONID,
+					T1.WORKFLOWID,
+					T2.FEETYPECODE,
+					T2.FEETYPEDESC,
+					T1.REFUNDABLE,
+					T1.INSTRUCTIONUID,
+					T1.ACTPERCENTAGE,
+					T1.WAIVEDGST,
+					T1.REFERENCEID,
+					T1.TAXHEADERID,
+					T1.PAIDTDS,
+					T1.REMTDS,
+					T1.NETTDS,
+					T2.TDSREQ
+				FROM FINFEEDETAIL T1
+				LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID 
+				WHERE NOT (EXISTS  ( SELECT 1 FROM FINFEEDETAIL_TEMP WHERE FINFEEDETAIL_TEMP.FEEID = T1.FEEID))
+		   	 ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="55_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeedetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#159680.1" author="SaiVarun.r">
+		<createView viewName="COMMODITIES_AVIEW" replaceIfExists="true">
+     	  <![CDATA[
+			 SELECT T1.ID,
+	 		        T2.CODE COMMODITYTYPECODE,
+	    			T1.COMMODITYTYPE,
+	    			T1.CODE,
+	    			T2.DESCRIPTION,
+	    			T1.CURRENTVALUE,
+	    			T1.HSNCODE,
+	    			T1.ALERTSREQUIRED,
+	    			T1.ALERTTYPE,
+	    			T1.ALERTTOROLES,
+	    			T1.USERTEMPLATE,
+	    			T3.TEMPLATECODE USERTEMPLATECODE,
+					T3.TEMPLATEDESC USERTEMPLATENAME,
+	    			T1.CUSTOMERTEMPLATE,
+	    			T4.TEMPLATECODE CUSTOMERTEMPLATECODE,
+					T4.TEMPLATEDESC CUSTOMERTEMPLATENAME,
+	    			T2.UNITTYPE,
+	    			T1.ACTIVE,
+	    			T1.VERSION,
+	    			T1.LASTMNTBY,
+	    			T1.LASTMNTON,
+	    			T1.RECORDSTATUS,
+	    			T1.ROLECODE,
+	    			T1.NEXTROLECODE,
+	    			T1.TASKID,
+	    			T1.NEXTTASKID,
+	    			T1.RECORDTYPE,
+	    			T1.WORKFLOWID
+	   			  FROM COMMODITIES T1
+	     		  JOIN COMMODITY_TYPES T2 ON T2.ID = T1.COMMODITYTYPE
+	     		  LEFT JOIN TEMPLATES T3 ON T3.TEMPLATEID = T1.USERTEMPLATE
+		          LEFT JOIN TEMPLATES T4 ON T4.TEMPLATEID = T1.CUSTOMERTEMPLATE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="DE#1438.1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeedetail');
+				select deps_save_and_drop_dependencies ('plf', 'finfeedetail_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#1438.1_Pre" author="Gopal.p" dbms="mssql">
+    	<dropDefaultValue columnDataType="smallint"
+            columnName="ActPercentage"
+            tableName="FinFeeDetail"/>
+	</changeSet>
+	
+	
+	 <changeSet id="DE#1438.2_pre" author="Gopal.p" dbms="mssql">
+    	<dropDefaultValue columnDataType="smallint"
+            columnName="ACTPERCENTAGE"
+            tableName="FINFEEDETAIL_TEMP"/>
+	</changeSet> 
+	
+	<changeSet id="DE#1438.1" author="Gopal.p">
+		<modifyDataType tableName="FinFeeDetail" columnName="ActPercentage" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="DE#1438.2" author="Gopal.p">
+		<modifyDataType tableName="FinFeeDetail_Temp" columnName="ActPercentage" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="DE#1438.1.1" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				UPDATE FINFEEDETAIL set ACTPERCENTAGE = 0 where ACTPERCENTAGE is null;
+				UPDATE FINFEEDETAIL_TEMP set ACTPERCENTAGE = 0 where ACTPERCENTAGE is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#1438.2.1" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINFEEDETAIL ADD CONSTRAINT DF_FINFEEDETAIL_ACTPERCENTAGE DEFAULT 0 FOR ACTPERCENTAGE;
+				ALTER TABLE FINFEEDETAIL_TEMP ADD CONSTRAINT DF_FINFEEDETAIL_TEMP_ACTPERCENTAGE DEFAULT 0 FOR ACTPERCENTAGE;
+			]]>
+		</sql>
+	</changeSet>
+
+	
+	
+	
+	
+	<changeSet id="DE#1438.1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeedetail');
+				select deps_restore_dependencies ('plf', 'finfeedetail_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="56" author="saisandeep.b">
+		<addColumn tableName="FinFeeReceipts">
+			<column name="PaidTds" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="57" author="saisandeep.b">
+		<addColumn tableName="FinFeeReceipts_Temp">
+			<column name="PaidTds" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="58_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeereceipts_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="58" author="saisandeep.b">
+		<comment>Added new column to store Paid TDS</comment>
+		<createView viewName="FINFEERECEIPTS_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.Id,
+					T1.FEEID,
+					T1.RECEIPTID,
+					T1.PAIDAMOUNT,
+					T1.Version,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T2.AMOUNT ReceiptAmount,
+					T2.TRANSACTIONREF,
+					T2.FAVOURNUMBER,
+					T3.FEETYPEID,
+					T3.VASREFERENCE ,
+					T4.FeeTypeCode,
+					T4.FeeTypeDesc,
+					T3.FINREFERENCE,
+					T5.RECEIPTMODE ReceiptType,
+					T1.PAIDTDS
+				FROM FinFeeReceipts_Temp T1
+				INNER JOIN FINRECEIPTDETAIL_Temp T2 ON T1.ReceiptID = T2.RECEIPTID
+				INNER JOIN FinFeeDetail_View T3 ON T1.FeeId = T3.FEEID
+				LEFT JOIN FeeTypes T4 ON T3.FeeTypeId = T4.FeeTypeId
+				INNER JOIN FINRECEIPTHEADER_Temp T5 ON T1.RECEIPTID = T5.RECEIPTID
+			 ]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="58_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeereceipts_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="59_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeereceipts_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="59" author="saisandeep.b">
+		<comment>Added new column to store Paid TDS</comment>
+		<createView viewName="FINFEERECEIPTS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.Id,
+					T1.FEEID,
+					T1.RECEIPTID,
+					T1.PAIDAMOUNT,
+					T1.Version ,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T2.AMOUNT ReceiptAmount,
+					T2.TRANSACTIONREF,
+					T2.FAVOURNUMBER,
+					T3.FEETYPEID,
+					T3.VASREFERENCE ,
+					T4.FeeTypeCode,
+					T4.FeeTypeDesc,
+					T3.FINREFERENCE,
+					T5.RECEIPTMODE ReceiptType,
+					T1.PAIDTDS
+				FROM FinFeeReceipts T1
+				INNER JOIN FINRECEIPTDETAIL T2 ON T1.ReceiptID = T2.RECEIPTID
+				INNER JOIN FinFeeDetail_View T3 ON T1.FeeId = T3.FEEID
+				LEFT JOIN FeeTypes T4 ON T3.FeeTypeId = T4.FeeTypeId
+				INNER JOIN FINRECEIPTHEADER T5 ON T1.RECEIPTID = T5.RECEIPTID	
+			 ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="59_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeereceipts_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="60_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeereceipts_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="60" author="saisandeep.b">
+		<comment>Added new column to store Paid TDS</comment>
+		<createView viewName="FINFEERECEIPTS_VIEW" replaceIfExists="true">
+		   <![CDATA[
+				SELECT T1.Id,
+					T1.FEEID,
+					T1.RECEIPTID,
+					T1.PAIDAMOUNT,
+					T1.Version ,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T2.AMOUNT ReceiptAmount,
+					T2.TRANSACTIONREF,
+					T2.FAVOURNUMBER,
+					T3.FEETYPEID,
+					T3.VASREFERENCE ,
+					T4.FeeTypeCode,
+					T4.FeeTypeDesc,
+					T3.FINREFERENCE,
+					T5.RECEIPTMODE ReceiptType,
+					T1.PAIDTDS
+				FROM FinFeeReceipts_Temp T1
+				INNER JOIN FINRECEIPTDETAIL T2 ON T1.ReceiptID = T2.RECEIPTID
+				INNER JOIN FinFeeDetail_view T3 ON T1.FeeId = T3.FEEID
+				LEFT JOIN FeeTypes T4 ON T3.FeeTypeId = T4.FeeTypeId
+				INNER JOIN FINRECEIPTHEADER T5 ON T1.RECEIPTID = T5.RECEIPTID
+				UNION ALL
+				SELECT T1.Id,
+					T1.FEEID,
+					T1.RECEIPTID,
+					T1.PAIDAMOUNT,
+					T1.Version ,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T2.AMOUNT ReceiptAmount,
+					T2.TRANSACTIONREF,
+					T2.FAVOURNUMBER,
+					T3.FEETYPEID,
+					T3.VASREFERENCE,
+					T4.FeeTypeCode,
+					T4.FeeTypeDesc,
+					T3.FINREFERENCE,
+					T5.RECEIPTMODE ReceiptType,
+					T1.PAIDTDS
+				FROM FinFeeReceipts T1
+				INNER JOIN FINRECEIPTDETAIL T2 ON T1.ReceiptID = T2.RECEIPTID
+				INNER JOIN FinFeeDetail_view T3 ON T1.FeeId = T3.FEEID
+				LEFT JOIN FeeTypes T4 ON T3.FeeTypeId = T4.FeeTypeId
+				INNER JOIN FINRECEIPTHEADER T5 ON T1.RECEIPTID = T5.RECEIPTID
+				WHERE (NOT EXISTS(SELECT 1 FROM FinFeeReceipts_Temp WHERE (Id = T1.Id)))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="60_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeereceipts_view');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

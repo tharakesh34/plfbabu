@@ -43,6 +43,7 @@
 package com.pennant.webui.financemanagement.receipts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +68,7 @@ import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -78,9 +80,13 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AccountEngineExecution;
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.GSTCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -91,7 +97,6 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.PrvsFinFeeRefund;
-import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -166,12 +171,22 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	private final String FINFEEREFUNDDETAIL = "FINFEEREFUNDDETAIL";
 	private final String ALLOCATED_AMOUNT = "ALLOCATED_AMOUNT";
 	private final String ALLOCATED_AMT_GST = "ALLOCATED_AMT_GST";
+	private final String ALLOCATED_AMT_TDS = "ALLOCATED_AMT_TDS";
 	private final String ALLOCATES_AMT_TOTAL = "ALLOCATES_AMT_TOTAL";
+	private final String FINFEEDETAIL = "FINFEEDETAIL";
 
 	private static final String FORMATTER = "FORMATTER";
 	private static final String LISTITEM_SUMMARY = "LISTITEM_SUMMARY";
 	private List<FinFeeReceipt> currentFinReceipts = new ArrayList<FinFeeReceipt>();
 	private List<FinFeeReceipt> oldFinReceipts = new ArrayList<FinFeeReceipt>();
+
+	private static BigDecimal tdsPerc = null;
+	private static String tdsRoundMode = null;
+	private static int tdsRoundingTarget = 0;
+
+	protected Listheader listheader_FinFeeRefundList_PaidTDS;
+	protected Listheader listheader_FinFeeRefundList_TotPrvsRefundTDS;
+	protected Listheader listheader_FinFeeRefundList_AllocatedRefundTDS;
 
 	/**
 	 * default constructor.<br>
@@ -667,7 +682,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 					wve.add(we);
 				}
 			} else {
-				Listcell refundAmtLC = list.get(7);
+				Listcell refundAmtLC = list.get(10);
 				Decimalbox refundAmt = (Decimalbox) refundAmtLC.getFirstChild();
 				try {
 					refundAmt.getValue();
@@ -735,6 +750,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		logger.debug(Literal.ENTERING);
 		Listcell lc;
 		Listitem item;
+		setParms();
 		List<FinFeeDetail> feeDetails = feeRefundHeader.getFinFeeDetailList();
 		List<FinFeeRefundDetails> refundDetailList = feeRefundHeader.getFinFeeRefundDetails();
 		this.listBoxFeeDetail.getItems().clear();
@@ -743,6 +759,9 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 			boolean readOnly = getUserWorkspace().isAllowed("FinFeeRefundDialog_Refund");
 			this.gb_FeeDetail.setVisible(true);
 
+			this.listheader_FinFeeRefundList_PaidTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
+			this.listheader_FinFeeRefundList_TotPrvsRefundTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
+			this.listheader_FinFeeRefundList_AllocatedRefundTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
 			for (int i = 0; i < feeDetails.size(); i++) {
 				FinFeeDetail fee = feeDetails.get(i);
 				item = new Listitem();
@@ -781,6 +800,11 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
+				//Paid TDS
+				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getPaidTDS(), finFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
 				//Total Paid Amount
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getPaidAmount(), finFormatter));
 				lc.setStyle("text-align:right;");
@@ -795,6 +819,12 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 				//Early Refund Amount  GST
 				lc = new Listcell(
 						PennantApplicationUtil.amountFormate(prvsFinFeeRefund.getTotRefundAmtGST(), finFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				//Early Refund Amount  TDS
+				lc = new Listcell(
+						PennantApplicationUtil.amountFormate(prvsFinFeeRefund.getTotRefundAmtTDS(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -819,6 +849,13 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 				lc = new Listcell();
 				lc.setStyle("text-align:right;");
 				lc.appendChild(allocAmtGstBox);
+				lc.setParent(item);
+
+				Decimalbox allocAmtTdsBox = getDecimalbox(finFormatter, true);
+				allocAmtTdsBox.setValue(PennantAppUtil.formateAmount(curFinFeeRefund.getRefundAmtTDS(), finFormatter));
+				lc = new Listcell();
+				lc.setStyle("text-align:right;");
+				lc.appendChild(allocAmtTdsBox);
 				lc.setParent(item);
 
 				//Refund Amount total
@@ -849,8 +886,11 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 				map.put(FINFEEREFUNDDETAIL, curFinFeeRefund);
 				map.put(ALLOCATED_AMOUNT, allocAmtBox);
 				map.put(ALLOCATED_AMT_GST, allocAmtGstBox);
+				map.put(ALLOCATED_AMT_TDS, allocAmtTdsBox);
 				map.put(ALLOCATES_AMT_TOTAL, totAllocAmtTotBox);
+				map.put(FINFEEDETAIL, fee);
 				map.put(FORMATTER, finFormatter);
+
 				totAllocAmtTotBox.addForward("onChange", window_FinFeeRefundDialog, "onChangeFeeAmount", map);
 			}
 
@@ -901,23 +941,33 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		FinFeeRefundDetails finFeeRefund = (FinFeeRefundDetails) map.get(FINFEEREFUNDDETAIL);
 		Decimalbox allocAmtBox = (Decimalbox) map.get(ALLOCATED_AMOUNT);
 		Decimalbox allocAmtGstBox = (Decimalbox) map.get(ALLOCATED_AMT_GST);
+		Decimalbox allocAmtTdsBox = (Decimalbox) map.get(ALLOCATED_AMT_TDS);
 		Decimalbox totAllocAmtTotBox = (Decimalbox) map.get(ALLOCATES_AMT_TOTAL);
+		FinFeeDetail fee = (FinFeeDetail) map.get(FINFEEDETAIL);
 		int formatter = (int) map.get(FORMATTER);
 
 		BigDecimal allocatedAmtGST = BigDecimal.ZERO;
+		BigDecimal allocatedAmtTDS = BigDecimal.ZERO;
 		BigDecimal allocatedAmtTOT = PennantAppUtil.unFormateAmount(totAllocAmtTotBox.getValue(), formatter);
 
 		if (finFeeRefund.isTaxApplicable()) {
-			TaxAmountSplit taxSplit = null;
-			taxSplit = GSTCalculator.getInclusiveGST(allocatedAmtTOT, taxPercentages);
-			allocatedAmtGST = taxSplit.gettGST();
+
+			allocatedAmtGST = GSTCalculator.getInclusiveGST(allocatedAmtTOT.add(fee.getNetTDS()), taxPercentages)
+					.gettGST();
+			BigDecimal calcAmt = allocatedAmtTOT.subtract(allocatedAmtGST).add(fee.getNetTDS());
+			if (fee.isTdsReq()) {
+				allocatedAmtTDS = (calcAmt.multiply(tdsPerc)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+				allocatedAmtTDS = CalculationUtil.roundAmount(allocatedAmtTDS, tdsRoundMode, tdsRoundingTarget);
+			}
 		}
 
 		finFeeRefund.setRefundAmount(allocatedAmtTOT);
 		finFeeRefund.setRefundAmtGST(allocatedAmtGST);
-		finFeeRefund.setRefundAmtOriginal(allocatedAmtTOT.subtract(allocatedAmtGST));
+		finFeeRefund.setRefundAmtTDS(allocatedAmtTDS);
+		finFeeRefund.setRefundAmtOriginal(allocatedAmtTOT.subtract(allocatedAmtGST).add(allocatedAmtTDS));
 		allocAmtBox.setValue(PennantAppUtil.formateAmount(finFeeRefund.getRefundAmtOriginal(), formatter));
 		allocAmtGstBox.setValue(PennantAppUtil.formateAmount(allocatedAmtGST, formatter));
+		allocAmtTdsBox.setValue(PennantAppUtil.formateAmount(allocatedAmtTDS, formatter));
 		totAllocAmtTotBox.setValue(PennantAppUtil.formateAmount(allocatedAmtTOT, formatter));
 		doFillSummaryDetails(listBoxFeeDetail);
 		logger.debug(Literal.LEAVING);
@@ -938,7 +988,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		item.setId(LISTITEM_SUMMARY);
 		lc = new Listcell(Labels.getLabel("listcell_Total.label"));
 		item.setStyle("font-weight:bold;background-color: #C0EBDF;");
-		lc.setSpan(9);
+		lc.setSpan(12);
 		lc.setParent(item);
 
 		lc = new Listcell();
@@ -968,7 +1018,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 				continue;
 			} else {
 				//Total remaining
-				Listcell totRemLC = list.get(9);
+				Listcell totRemLC = list.get(12);
 				Decimalbox totRemBox = (Decimalbox) totRemLC.getFirstChild();
 				totRefund = totRefund.add(totRemBox.getValue());
 			}
@@ -1358,6 +1408,14 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	 */
 	private void refreshList() {
 		finFeeRefundListCtrl.search();
+	}
+
+	private void setParms() {
+		if (tdsPerc == null || tdsRoundMode == null || tdsRoundingTarget == 0) {
+			tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+		}
 	}
 
 	// ******************************************************//

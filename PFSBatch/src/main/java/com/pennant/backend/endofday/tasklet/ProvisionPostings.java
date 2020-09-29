@@ -169,7 +169,7 @@ public class ProvisionPostings implements Tasklet {
 						movement.setLinkedTranId(aeEvent.getLinkedTranId());
 
 						//Update Provision Movement Details
-						getProvisionDAO().updateProvAmt(movement, "");
+						//	getProvisionDAO().updateProvAmt(movement, "");
 						getProvisionMovementDAO().update(movement, "");
 
 						postings++;

@@ -16986,7 +16986,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
 			}
 
-			dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmountOriginal());
+			dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmount());
 
 			// GST
 			dataMap.put(feeTypeCode + "_N", finFeeDetail.getNetAmount());

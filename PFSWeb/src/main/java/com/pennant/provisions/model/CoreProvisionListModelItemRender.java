@@ -26,34 +26,34 @@ public class CoreProvisionListModelItemRender implements ListitemRenderer<Provis
 		Listcell lc;
 		lc = new Listcell(provisions.getFinReference());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(provisions.getProvisionCalDate()));
+		//lc = new Listcell(DateUtility.formatToLongDate(provisions.getProvisionCalDate()));
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.amountFormate(provisions.getProvisionedAmt(), 2));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(provisions.getProvisionAmtCal(), 2));
+		//lc = new Listcell(PennantAppUtil.amountFormate(provisions.getProvisionAmtCal(), 2));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(provisions.getNonFormulaProv(), 2));
+		//lc = new Listcell(PennantAppUtil.amountFormate(provisions.getNonFormulaProv(), 2));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
 		lc = new Listcell();
 		final Checkbox cbIsInternalAc = new Checkbox();
 		cbIsInternalAc.setDisabled(true);
-		cbIsInternalAc.setChecked(provisions.isUseNFProv());
+		//cbIsInternalAc.setChecked(provisions.isUseNFProv());
 		lc.appendChild(cbIsInternalAc);
 		lc.setStyle("text-align:center");
 		lc.setParent(item);
 
-		lc = new Listcell(DateUtility.formatToLongDate(provisions.getPrevProvisionCalDate()));
+		//	lc = new Listcell(DateUtility.formatToLongDate(provisions.getPrevProvisionCalDate()));
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(provisions.getPrevProvisionedAmt(), 2));
+		//lc = new Listcell(PennantAppUtil.amountFormate(provisions.getPrevProvisionedAmt(), 2));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(provisions.getTransRef());
+		//lc = new Listcell(provisions.getTransRef());
 		lc.setParent(item);
 
 		item.setAttribute("data", provisions);

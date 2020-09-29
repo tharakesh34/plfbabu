@@ -779,7 +779,8 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			if (refundDetail.isTaxApplicable()) {
 				TaxAmountSplit taxAmountSplit = null;
 
-				taxAmountSplit = GSTCalculator.getInclusiveGST(refundDetail.getRefundAmount(), taxPercentages);
+				taxAmountSplit = GSTCalculator.getInclusiveGST(
+						refundDetail.getRefundAmount().add(refundDetail.getRefundAmtTDS()), taxPercentages);
 				totPaidAmt = totPaidAmt.add(refundDetail.getRefundAmount());
 
 				dataMap.put(feeTypeCode + "_CGST_R", taxAmountSplit.getcGST());
@@ -787,6 +788,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 				dataMap.put(feeTypeCode + "_IGST_R", taxAmountSplit.getiGST());
 				dataMap.put(feeTypeCode + "_UGST_R", taxAmountSplit.getuGST());
 				dataMap.put(feeTypeCode + "_CESS_R", taxAmountSplit.getCess());
+				dataMap.put(feeTypeCode + "_TDS_R", refundDetail.getRefundAmtTDS());
 			} else {
 				totPaidAmt = totPaidAmt.add(refundDetail.getRefundAmtOriginal());
 			}

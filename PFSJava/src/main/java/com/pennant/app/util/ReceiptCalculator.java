@@ -2403,6 +2403,12 @@ public class ReceiptCalculator implements Serializable {
 		return paidAmount;
 	}
 
+	public BigDecimal getPaidAmountAbs(ReceiptAllocationDetail allocate, BigDecimal netAmount) {
+		BigDecimal paidAmount = BigDecimal.ZERO;
+		paidAmount = allocate.getTotalDue().subtract(allocate.getDueGST().subtract(allocate.getTdsDue()));
+		return paidAmount;
+	}
+
 	public BigDecimal getExclusiveGSTAmount(ReceiptAllocationDetail allocate, BigDecimal netAmount) {
 		BigDecimal paidAmount = BigDecimal.ZERO;
 		BigDecimal totalPerc = allocate.getPercCGST().add(allocate.getPercIGST())
@@ -4380,12 +4386,23 @@ public class ReceiptCalculator implements Serializable {
 		allocate.setPaidAvailable(allocate.getPaidAvailable().subtract(paidNow));
 		allocate.setWaivedAvailable(allocate.getWaivedAvailable().subtract(waivedNow));
 
-		BigDecimal paidAmount = getPaidAmount(allocate, paidNow);
+		BigDecimal paidAmount = BigDecimal.ZERO;
+		if (allocate.getTotalDue().compareTo(paidNow) == 0) {
+			paidAmount = getPaidAmountAbs(allocate, paidNow);
+		} else {
+			paidAmount = getPaidAmount(allocate, paidNow);
+		}
 		// GST calculation for Paid and waived amounts(always Paid Amount we are
 		// taking the inclusive type here because we are doing reverse
 		// calculation here)
 
-		BigDecimal waivedAmount = getPaidAmount(allocate, waivedNow);
+		BigDecimal waivedAmount = BigDecimal.ZERO;
+
+		if (allocate.getTotalDue().compareTo(waivedNow) == 0) {
+			waivedAmount = getPaidAmountAbs(allocate, waivedNow);
+		} else {
+			waivedAmount = getPaidAmount(allocate, waivedNow);
+		}
 		if (allocate.getDueGST().compareTo(BigDecimal.ZERO) > 0) {
 			if (paidNow.compareTo(BigDecimal.ZERO) > 0) {
 				calAllocationPaidGST(detail, paidAmount, allocate, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE);

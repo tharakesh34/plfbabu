@@ -9078,7 +9078,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			if (ImplementationConstants.ALLOW_NPA_PROVISION) {
-				Provision provision = provisionDAO.getProvisionById(finReference, "_View");
+				Provision provision = provisionDAO.getProvisionById(finReference, TableType.VIEW, false);
 				if (provision != null) {
 					summary.setAssetCode(provision.getAssetCode());
 				}
@@ -11125,7 +11125,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private List<FinTypeExpense> saveFinExpenseDetails(FinanceMain financeMain) {
 
 		List<FinTypeExpense> finTypeExpenseList = getFinTypeExpenseDAO()
-				.getFinTypeExpenseListByFinType(financeMain.getFinType(), "");
+				.getLoanQueueExpenseListByFinType(financeMain.getFinType(), "");
 
 		if (CollectionUtils.isNotEmpty(finTypeExpenseList)) {
 

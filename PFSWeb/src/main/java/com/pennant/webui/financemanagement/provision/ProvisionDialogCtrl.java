@@ -436,16 +436,18 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		this.finBranch.setValue(aProvision.getFinBranch());
 		this.finType.setValue(aProvision.getFinType());
 		this.custID.setValue(aProvision.getCustID());
-		this.lovDescCustCIF.setValue(aProvision.getLovDescCustCIF());
-		this.custShrtName.setValue(aProvision.getLovDescCustShrtName());
-		this.useNFProv.setChecked(aProvision.isUseNFProv());
-		this.autoReleaseNFP.setChecked(aProvision.isAutoReleaseNFP());
-		this.principalDue.setValue(PennantAppUtil.formateAmount(aProvision.getPrincipalDue(), format));
-		this.profitDue.setValue(PennantAppUtil.formateAmount(aProvision.getProfitDue(), format));
-		this.dueTotal.setValue(
-				PennantAppUtil.formateAmount(aProvision.getPrincipalDue().add(aProvision.getProfitDue()), format));
-		this.nonFormulaProv.setValue(PennantAppUtil.formateAmount(aProvision.getNonFormulaProv(), format));
-		this.calProvisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionAmtCal(), format));
+		this.lovDescCustCIF.setValue(aProvision.getCustCIF());
+		this.custShrtName.setValue(aProvision.getCustShrtName());
+		//this.useNFProv.setChecked(aProvision.isUseNFProv());
+		//this.autoReleaseNFP.setChecked(aProvision.isAutoReleaseNFP());
+		//this.principalDue.setValue(PennantAppUtil.formateAmount(aProvision.getPrincipalDue(), format));
+		//this.profitDue.setValue(PennantAppUtil.formateAmount(aProvision.getProfitDue(), format));
+		/*
+		 * this.dueTotal.setValue(
+		 * PennantAppUtil.formateAmount(aProvision.getPrincipalDue().add(aProvision.getProfitDue()), format));
+		 */
+		//this.nonFormulaProv.setValue(PennantAppUtil.formateAmount(aProvision.getNonFormulaProv(), format));
+		//this.calProvisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionAmtCal(), format));
 		this.provisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionedAmt(), format));
 
 		this.dueFromDate.setValue(aProvision.getDueFromDate());
@@ -542,17 +544,17 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 			wve.add(we);
 		}
 		try {
-			aProvision.setLovDescCustShrtName(this.custShrtName.getValue());
+			//aProvision.setLovDescCustShrtName(this.custShrtName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aProvision.setUseNFProv(this.useNFProv.isChecked());
+			//aProvision.setUseNFProv(this.useNFProv.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aProvision.setAutoReleaseNFP(this.autoReleaseNFP.isChecked());
+			//aProvision.setAutoReleaseNFP(this.autoReleaseNFP.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -569,24 +571,20 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 											String.valueOf(this.principalDue.getValue()) }));
 				}
 			}
-			aProvision.setNonFormulaProv(PennantAppUtil.unFormateAmount(this.nonFormulaProv.getValue(), format));
+			//	aProvision.setNonFormulaProv(PennantAppUtil.unFormateAmount(this.nonFormulaProv.getValue(), format));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
+		/*
+		 * try { aProvision.setPrincipalDue(PennantAppUtil.unFormateAmount(this.principalDue.getValue(), format)); }
+		 * catch (WrongValueException we) { wve.add(we); } try {
+		 * aProvision.setProfitDue(PennantAppUtil.unFormateAmount(this.profitDue.getValue(), format)); } catch
+		 * (WrongValueException we) { wve.add(we); }
+		 */
 		try {
-			aProvision.setPrincipalDue(PennantAppUtil.unFormateAmount(this.principalDue.getValue(), format));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aProvision.setProfitDue(PennantAppUtil.unFormateAmount(this.profitDue.getValue(), format));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aProvision.setProvisionAmtCal(PennantAppUtil.unFormateAmount(this.calProvisionedAmt.getValue(), format));
+			//	aProvision.setProvisionAmtCal(PennantAppUtil.formateAmount(this.calProvisionedAmt.getValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -608,7 +606,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		}
 		try {
 			Date appDate = DateUtility.getAppDate();
-			aProvision.setProvisionCalDate(appDate);
+			aProvision.setProvisionDate(appDate);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1243,17 +1241,18 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 			getProvision().setFinBranch(finMain.getFinBranch());
 			getProvision().setFinType(finMain.getFinType());
 			getProvision().setCustID(finMain.getCustID());
-			getProvision().setLovDescCustCIF(finMain.getLovDescCustCIF());
-			getProvision().setLovDescCustShrtName(finMain.getLovDescCustShrtName());
+			getProvision().setCustCIF(finMain.getLovDescCustCIF());
+			getProvision().setCustShrtName(finMain.getLovDescCustShrtName());
 			Date appDate = DateUtility.getAppDate();
 			getProvision().setDueFromDate(appDate);
 			getProvision().setFinCcy(finMain.getFinCcy());
 
 			OverdueChargeRecovery odcharges = getOverdueChargeRecoveryService()
 					.getOverdueChargeRecovery(StringUtils.trim(finMain.getFinReference()));
-			getProvision().setPrincipalDue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPriDue(), format));
-			getProvision().setProfitDue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPftDue(), format));
-
+			/*
+			 * getProvision().setPrincipalDue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPriDue(), format));
+			 * getProvision().setProfitDue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPftDue(), format));
+			 */
 			// Last Fully Paid Date Details
 			FinanceProfitDetail detail = getProvisionService().getProfitDetailById(finMain.getFinReference());
 			if (detail != null) {

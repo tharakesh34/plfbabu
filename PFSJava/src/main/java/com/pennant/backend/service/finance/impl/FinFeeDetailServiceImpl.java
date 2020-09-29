@@ -139,6 +139,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	private TaxHeaderDetailsService taxHeaderDetailsService;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
+	private BigDecimal tdsPerc = null;
+	private String tdsRoundMode = null;
+	private int tdsRoundingTarget = 0;
+
 	public FinFeeDetailServiceImpl() {
 		super();
 	}
@@ -1779,8 +1783,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					finFeeDetail.getTaxComponent())) {
 
 				//Net Amount
-				BigDecimal totalNetFee = finFeeDetail.getNetAmount().subtract(waivedAmount)
-						.add(finFeeDetail.getNetTDS());
+				BigDecimal totalNetFee = finFeeDetail.getCalculatedAmount().subtract(waivedAmount);
+
+				if (!finFeeDetail.getPrvTaxComponent().equals(finFeeDetail.getTaxComponent())) {
+					totalNetFee = totalNetFee.add(finFeeDetail.getNetAmountGST());
+				}
 
 				taxSplit = GSTCalculator.getInclusiveGST(totalNetFee, taxPercentages);
 
@@ -1824,15 +1831,15 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				// Paid Amounts
 				BigDecimal totalPaidFee = finFeeDetail.getPaidAmount().add(finFeeDetail.getPaidTDS());
 				if (finFeeDetail.isPaidCalcReq()) {
-					taxSplit = GSTCalculator.getInclusiveGST(totalPaidFee, taxPercentages);
 
+					taxSplit = GSTCalculator.getInclusiveGST(totalPaidFee, taxPercentages);
 					cgstTax.setPaidTax(taxSplit.getcGST());
 					sgstTax.setPaidTax(taxSplit.getsGST());
 					igstTax.setPaidTax(taxSplit.getiGST());
 					ugstTax.setPaidTax(taxSplit.getuGST());
 					cessTax.setPaidTax(taxSplit.getCess());
 
-					finFeeDetail.setPaidAmountOriginal(taxSplit.getNetAmount().subtract(taxSplit.gettGST()));
+					finFeeDetail.setPaidAmountOriginal(totalPaidFee.subtract(taxSplit.gettGST()));
 					finFeeDetail.setPaidAmountGST(taxSplit.gettGST());
 				}
 
@@ -1850,6 +1857,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 						.add(ugstTax.getRemFeeTax()).add(cessTax.getRemFeeTax());
 				finFeeDetail.setRemainingFeeGST(totRemGST);
 				finFeeDetail.setRemainingFeeOriginal(remainingAmountOriginal);
+				finFeeDetail.setRemTDS(finFeeDetail.getNetTDS().subtract(finFeeDetail.getPaidTDS()));
 				finFeeDetail.setRemainingFee(remainingAmountOriginal.add(totRemGST).subtract(finFeeDetail.getRemTDS()));
 
 				// Waived Amounts
@@ -1936,6 +1944,14 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		logger.debug(Literal.LEAVING);
 		return result;
+	}
+
+	private void setParms() {
+		if (tdsPerc == null || tdsRoundMode == null || tdsRoundingTarget == 0) {
+			tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+		}
 	}
 
 	@Override
