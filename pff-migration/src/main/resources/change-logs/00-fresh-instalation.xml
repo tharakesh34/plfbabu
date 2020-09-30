@@ -29,8 +29,9 @@
 	</changeSet>
 	
 	<!-- <include file="change-logs/01_security.xml" /> -->
-	<include file="change-logs/02_default_data.xml" />
+	<!-- <include file="change-logs/02_default_data.xml" />
 	<include file="change-logs/03_smtparameters_data.xml" />
-	<include file="change-logs/04_sample_data.xml" />
+	<include file="change-logs/04_sample_data.xml" /> -->
+	<include file="change-logs/05_default-workflows.xml" />
 	
 </databaseChangeLog>
