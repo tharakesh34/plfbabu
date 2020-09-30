@@ -4823,7 +4823,6 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
-		<property name="verificationService" ref="verificationService" />
 	</bean>
 
 	<bean id="tvInitiationListCtrl" class="com.pennant.webui.verification.tv.TVInitiationListCtrl" parent="basisListCtrl"
