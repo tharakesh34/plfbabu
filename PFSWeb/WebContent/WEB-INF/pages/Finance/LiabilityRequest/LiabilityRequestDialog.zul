@@ -108,8 +108,6 @@
 															<label id="custShrtName" style="margin-left:10px;display:inline-block;padding-top:3px;" />
 															<button id="viewCustInfo" image="/images/icons/more.png" tooltiptext="${c:l('tooltip_Custinfo')}" visible="false" />
 														</hbox>
-														<label id="label_FinanceMainDialog_FinBranch" value="${c:l('label_FinanceMainDialog_FinBranch.value')}" />
-														<extendedcombobox id="finBranch" />
 													</row>
 													<row>
 														<label id="label_FinanceMainDialog_FinStartDate" value="${c:l('label_FinanceMainDialog_FinStartDate.value')}" />
@@ -279,27 +277,6 @@
 															<checkbox id="allowDrawingPower" checked="false" />
 														</hbox>
 													</row>
-													<row id="row_tDSPercentage" visible="false">
-														<label id="label_tDSPercentage" value="${c:l('label_FinanceMainDialog_tDSPercentage.value')}" />
-														<hbox id="hbox_tDSPercentage">
-															<space spacing="2px" />
-															<decimalbox id="tDSPercentage" width="72px" />
-														</hbox>
-														<label id="label_FinanceMainDialog_TDSLimitAmt" value="${c:l('label_FinanceMainDialog_TDSLimitAmt.value')}" />
-														<currencyBox id="tDSLimitAmt" />
-													</row>
-													<row id="row_tDSEndDate" visible="false">
-														<label id="label_FinanceMainDialog_tDSStartDate" value="${c:l('label_FinanceMainDialog_tDSStartDate.value')}" />
-														<hbox>
-															<space spacing="2px" />
-															<datebox id="tDSStartDate" width="120px" />
-														</hbox>
-														<label id="label_FinanceMainDialog_tDSEndDate" value="${c:l('label_FinanceMainDialog_tDSEndDate.value')}" />
-														<hbox>
-															<space spacing="2px" />
-															<datebox id="tDSEndDate" width="120px" />
-														</hbox>
-													</row>
 													<row id="row_FinRateRvw" visible="false">
 														<label id="label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd" value="${c:l('label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd.value')}" visible="false" />
 														<hbox id="hbox_finIsRateRvwAtGrcEnd" visible="false">
@@ -378,12 +355,6 @@
 															<checkbox id="shariaApprovalReq" />
 														</hbox>
 													</row>
-													<row id="row_accountsOfficer">
-														<label id="label_FinanceMainDialog_AccountsOfficer" value="${c:l('label_FinanceMainDialog_AccountsOfficer.value')}" />
-														<extendedcombobox id="accountsOfficer" />
-														<label id="label_FinanceMainDialog_DSACode" value="${c:l('label_FinanceMainDialog_DSACode.value')}" />
-														<extendedcombobox id="dsaCode" />
-													</row>
 													<!-- Facility Details Start -->
 													<row id="row_commitment">
 														<label id="label_FinanceMainDialog_CommitRef" value="${c:l('label_FinanceMainDialog_CommitRef.value')}" />
@@ -459,12 +430,12 @@
 															<extendedcombobox id="dmaCode" />
 														</hbox>
 													</row>
-													<row id="row_salesDept">
+												    <row id="row_salesDept">
 														<label id="label_FinanceMainDialog_SalesDepartment" value="${c:l('label_FinanceMainDialog_SalesDepartment.value')}" />
 														<hbox>
 															<extendedcombobox id="salesDepartment" />
 														</hbox>
-													</row>
+													</row> 
 													<row>
 														<label id="label_FinanceMainDialog_QuickDisb" value="${c:l('label_FinanceMainDialog_QuickDisb.value')}" />
 														<hbox>
@@ -516,10 +487,6 @@
 															<checkbox id="legalRequired" checked="false" />
 														</hbox>
 													</row>
-													<row id="row_Connector">
-														<label id="label_FinanceMainDialog_Connector" value="${c:l('label_FinanceMainDialog_Connector.value')}" />
-														<extendedcombobox id="connector" width="200px" />
-													</row>
 												</rows>
 											</grid>
 										</groupbox>
@@ -549,28 +516,16 @@
 														<label id="label_FinanceMainDialog_EmployeeName" value="${c:l('label_FinanceMainDialog_EmployeeName.value')}" />
 														<extendedcombobox id="employeeName" />
 													</row>
-													<row id="row_ReferralId">
-														<label id="label_FinanceMainDialog_ReferralId" value="${c:l('label_FinanceMainDialog_ReferralId.value')}" />
-														<extendedcombobox id="referralId" />
-														<label id="label_FinanceMainDialog_DmaCode" value="${c:l('label_FinanceMainDialog_DmaCode.value')}" />
-														<extendedcombobox id="dmaCode" />
-													</row>
 
 													<row>
 														<label id="label_FinanceMainDialog_ASMName" value="${c:l('label_FinanceMainDialog_ASMName.value')}" />
 														<extendedcombobox id="asmName" />
-														<label id="label_FinanceMainDialog_DSACode" value="${c:l('label_FinanceMainDialog_DSACode.value')}" />
-														<extendedcombobox id="dsaCode" />
+														 <label id="label_FinanceMainDialog_DSACode" value="${c:l('label_FinanceMainDialog_DSACode.value')}" />
+														<extendedcombobox id="dsaCode" /> 
 													</row>
 													<row id="row_accountsOfficer">
 														<label id="label_FinanceMainDialog_AccountsOfficer" value="${c:l('label_FinanceMainDialog_AccountsOfficer.value')}" />
 														<extendedcombobox id="accountsOfficer" />
-													</row>
-													<row>
-														<label id="label_FinanceMainDialog_SalesDepartment" value="${c:l('label_FinanceMainDialog_SalesDepartment.value')}" />
-														<extendedcombobox id="salesDepartment" />
-														<label id="label_FinanceMainDialog_FinPurpose" value="${c:l('label_FinanceMainDialog_FinPurpose.value')}" />
-														<extendedcombobox id="finPurpose" />
 													</row>
 													<row>
 														<label id="label_FinanceMainDialog_ReqloanTenor" value="${c:l('label_FinanceMainDialog_ReqloanTenor.value')}" />
@@ -1127,26 +1082,6 @@
 															<datebox id="odMaturityDate" width="120px" />
 														</hbox>
 													</row>
-													<row id="row_advTypes" visible="false">
-														<label value="${c:l('label_financemainDialog_AdvanceType.value')}" />
-														<hbox>
-															<space spacing="2px" />
-															<combobox id="advType" />
-														</hbox>
-														<label value="${c:l('label_financemainDialog_AdvanceTerms.value')}" />
-														<hbox>
-															<space spacing="2px" />
-															<intbox id="advTerms" />
-														</hbox>
-													</row>
-
-													<row id="row_advStages" visible="false">
-														<label value="${c:l('label_FinanceTypeDialog_AdvanceStage.value')}" />
-														<hbox>
-															<space spacing="2px" />
-															<combobox id="advStage" />
-														</hbox>
-													</row>
 													<row id="row_advEMITerms" visible="false">
 														<label id="label_FinanceMainDialog_AdvEMITerms" value="${c:l('label_FinanceMainDialog_AdvEMITerms.value')}" />
 														<hbox>
@@ -1231,6 +1166,13 @@
 															<checkbox id="odTDSApplicable" checked="false" />
 														</hbox>
 													</row>
+													<row id="row_AllowLoanTypes" visible="false">
+												       <label id="label_FinanceTypeDialog_AllowLoanSplit" value="${c:l('label_FinanceTypeDialog_AllowLoanSplit.value')}" />
+												       <hbox>
+													      <space spacing="2px" />
+													      <checkbox id="alwLoanSplit" checked="false" />
+												       </hbox>
+												   </row>
 												</rows>
 											</grid>
 										</groupbox>
