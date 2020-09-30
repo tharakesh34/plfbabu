@@ -5154,6 +5154,7 @@
 		<addColumn tableName="projectunits_temp">
 			<column name="rateAsPerSuperBuiltUpArea" type="decimal(18,0)" />
 
+
 		</addColumn>
 	</changeSet>
 
@@ -5441,14 +5442,14 @@
 	</changeSet>
 
 	<changeSet id="510" author="SaiDurga.V">
-		<comment> ST#4  TK#156​</comment>
+		<comment> ST#4  TK#156?</comment>
 		<addColumn tableName="blacklistcustomer">
 			<column name="address" type="varchar(2000)" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="511" author="SaiDurga.V">
-		<comment> ST#4  TK#156​</comment>
+		<comment> ST#4  TK#156?</comment>
 		<addColumn tableName="blacklistcustomer_temp">
 			<column name="address" type="varchar(2000)" />
 		</addColumn>
@@ -7148,7 +7149,7 @@
 		<addNotNullConstraint tableName="financemain" columnName="pMay" columnDataType="boolean" />
 	</changeSet>
 
-	<changeSet id="608" author="Ganesh.P">
+	<!-- <changeSet id="608" author="Ganesh.P">
 		<createTable tableName="FinFeeRefundHeader">
 			<column name="HeaderId" type="bigint">
 				<constraints primaryKey="true" />
@@ -7172,7 +7173,7 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="609" author="Ganesh.P" dbms="mssql">
 		<sql>
@@ -7189,7 +7190,7 @@
 		<addDefaultValue columnName="Version" tableName="FinFeeRefundHeader" defaultValue="0" />
 		<addDefaultValue columnName="WorkflowId" tableName="FinFeeRefundHeader" defaultValue="0" />
 	</changeSet>
-
+<!-- 
 	<changeSet id="611" author="Ganesh.P">
 		<createTable tableName="FinFeeRefundHeader_TEMP">
 			<column name="HeaderId" type="bigint">
@@ -7214,7 +7215,7 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="612" author="Ganesh.P" dbms="mssql">
 		<sql>
@@ -7231,7 +7232,7 @@
 		<addDefaultValue columnName="WorkflowId" tableName="FinFeeRefundHeader_TEMP" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="614" author="Ganesh.P">
+	<!-- <changeSet id="614" author="Ganesh.P">
 		<createTable tableName="FinFeeRefundDetails">
 			<column name="Id" type="bigint">
 				<constraints primaryKey="true" />
@@ -7261,7 +7262,7 @@
 			</column>
 		</createTable>
 	</changeSet>
-
+ -->
 	<changeSet id="615" author="Ganesh.P" dbms="mssql">
 		<sql>
 		<![CDATA[
@@ -7278,12 +7279,12 @@
 	</changeSet>
 
 
-	<changeSet id="617" author="Ganesh.P">
+<!-- 	<changeSet id="617" author="Ganesh.P">
 		<addForeignKeyConstraint constraintName="FK_FinFeeRefundDetails" baseTableName="FinFeeRefundDetails"
 			baseColumnNames="HeaderId" referencedColumnNames="HeaderId" referencedTableName="FinFeeRefundHeader" />
 	</changeSet>
-
-	<changeSet id="618" author="Ganesh.P">
+ -->
+	<!-- <changeSet id="618" author="Ganesh.P">
 		<createTable tableName="FinFeeRefundDetails_Temp">
 			<column name="Id" type="bigint">
 				<constraints primaryKey="true" />
@@ -7313,7 +7314,7 @@
 			</column>
 		</createTable>
 	</changeSet>
-
+ -->
 	<changeSet id="619" author="Ganesh.P" dbms="mssql">
 		<sql>
 		<![CDATA[
@@ -7328,11 +7329,11 @@
 		<addDefaultValue columnName="Version" tableName="FinFeeRefundDetails_Temp" defaultValue="0" />
 		<addDefaultValue columnName="WorkflowId" tableName="FinFeeRefundDetails_Temp" defaultValue="0" />
 	</changeSet>
-
+<!-- 
 	<changeSet id="621" author="Ganesh.P">
 		<addForeignKeyConstraint constraintName="FK_FinFeeRefundDetails_Temp" baseTableName="FinFeeRefundDetails_Temp"
 			baseColumnNames="HeaderId" referencedColumnNames="HeaderId" referencedTableName="FinFeeRefundHeader_TEMP" />
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="622" author="Ganesh.p" dbms="mssql">
 		<createTable tableName="SeqFinFeeRefundHeader">
@@ -8420,12 +8421,12 @@
 		<addPrimaryKey columnNames="FINREFERENCE,FINEVENT,FEETYPEID" constraintName="PK_FINFEECONFIG" tableName="finfeeconfig" />
 	</changeSet>
 
-	<changeSet id="805" author="rajesh.n">
+	<!-- <changeSet id="805" author="rajesh.n">
 		<comment>ST#55 and TK#135 bankbranchid column added to capture bank branch details in IMD for CHEQUE and DD</comment>
 		<addColumn tableName="FinReceiptDetail">
 			<column name="bankbranchid" type="bigint" />
 		</addColumn>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="806" author="rajesh.n" dbms="mssql">
 		<comment>ST#55 and TK#135 bankbranchid column added to capture bank branch details in IMD for CHEQUE and DD</comment>
@@ -8439,14 +8440,14 @@
 	<changeSet id="807" author="rajesh.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="bankbranchid" tableName="FinReceiptDetail" defaultValue="0" />
 	</changeSet>
-
+<!-- 
 	<changeSet id="808" author="rajesh.n">
 		<comment>ST#55 and TK#135 bankbranchid column added to capture bank branch details in IMD for CHEQUE and DD</comment>
 		<addColumn tableName="FinReceiptDetail_temp">
 			<column name="bankbranchid" type="bigint" />
 		</addColumn>
 
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="809" author="rajesh.n" dbms="mssql">
 		<comment>ST#55 and TK#135 bankbranchid column added to capture bank branch details in IMD for CHEQUE and DD</comment>
@@ -20186,6 +20187,7 @@ UNION ALL
 					ELSE T8.TRANSACTIONREF
 					END) TRANSACTIONREF,
 					T1.CASHIERBRANCH,
+
 					T1.INITIATEDATE,
 					T4.FINDIVISION LOVDESCFINDIVISION,
 					T2.BUSINESSVERTICAL,
@@ -24550,6 +24552,7 @@ UNION ALL
 		<sql>
 			<![CDATA[ 	
 				INSERT INTO SecRights values ((select max(RIGHTID)+1 from SecRights), 2,'CustomerDocumentDialog_remarks',
+
 				'CustomerDocumentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
 			
 				INSERT INTO SecGroupRights values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode='CUSTOMERDOCUMENT_MAKER'),
@@ -24570,14 +24573,14 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-
+<!-- 
 	<changeSet id="270" author="Shinde.b">
 		<sql>
 		 <![CDATA[ 
 			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','custAddrCity','custAddress City','nchar',1,'1','0',' ','static,global,dbvalue','City');
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 
 	<changeSet id="300.1" author="rohit.s">
@@ -25213,7 +25216,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-
+<!-- 
 	<changeSet id="362" author="Shinde.b">
 		<sql>
 	    <![CDATA[ 
@@ -25240,7 +25243,7 @@ UNION ALL
 	      ]]>
 		</sql>
 	</changeSet>
-
+ 
 	<changeSet id="363" author="Shinde.b">
 		<sql>
 	   <![CDATA[ 
@@ -25267,7 +25270,7 @@ UNION ALL
  				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('SUBHEAD','SUBHEAD','splRule','Special Rule Value','nchar',1,'1','0',' ','static,global,dbvalue','  ');
 	      ]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 
 	<changeSet id="365" author="rajesh.n">
@@ -25688,14 +25691,14 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="387" author="rajesh.n">
+	<!-- <changeSet id="387" author="rajesh.n">
 		<comment>PLF_CORE_ST#6, TK#49</comment>
 		<sql>
             <![CDATA[
                   insert into STAGETABDETAIL (tabid, tabcode, tabdescription, active) values (17, 'OCR', 'OCR Details', 1);
             ]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="388" author="venkatesh.ch">
 		<comment>PSD # 148614 </comment>
@@ -26483,6 +26486,7 @@ UNION ALL
 				DELETE FROM smtparameters WHERE sysparmcode = 'EXCLUDE_RECALTYPE_VAL_IN_ADDRATECHNG';
 				DELETE FROM smtparameters WHERE sysparmcode = 'EXCLUDE_RECALTYPE_VAL_IN_RECAL';
 				INSERT INTO smtparameters(sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist,sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid,nexttaskid, recordtype, workflowid) VALUES ('EXCLUDE_RECALTYPE_VAL_IN_ADDDISB','Recal Type dropdown values exclude in Disbursement','String',0,'N',20,0,null,null,'Recal Type dropdown values exclude',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+
 				INSERT INTO smtparameters(sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist,sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid,nexttaskid, recordtype, workflowid) VALUES ('EXCLUDE_RECALTYPE_VAL_IN_ADDRATECHNG','Recal Type dropdown values exclude in Add Rate Change','String',0,'N',20,0,null,null,'Recal Type dropdown values exclude',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
 				INSERT INTO smtparameters(sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist,sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid,nexttaskid, recordtype, workflowid) VALUES ('EXCLUDE_RECALTYPE_VAL_IN_RECAL','Recal Type dropdown values exclude in Recalculate','String',0,'N',20,0,null,null,'Recal Type dropdown values exclude',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
 			]]>
@@ -26590,7 +26594,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="440.0" author="madhuri.n">
+	<!-- <changeSet id="440.0" author="madhuri.n">
 		<comment>secrights  data </comment>
 		<sql>
 			<![CDATA[
@@ -26612,7 +26616,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-
+ -->
 
 	<changeSet id="442" author="rajesh.n">
 		<sql>
@@ -26830,13 +26834,13 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="456" author="rajesh.n">
+	<!-- <changeSet id="456" author="rajesh.n">
 		<sql>
 			<![CDATA[
 				insert into STAGETABDETAIL (tabid, tabcode, tabdescription, active) values (18, 'PMAY', 'PMAY Details', 1);
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="457" author="rajesh.n">
 		<sql>
@@ -26857,7 +26861,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
+<!-- 
 	<changeSet id="459" author="Ganesh.P">
 		<sql>
 			<![CDATA[
@@ -26869,7 +26873,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
+ -->
 	<changeSet id="460" author="Ganesh.P">
 		<sql>
 			<![CDATA[
@@ -26879,7 +26883,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="461" author="Ganesh.P">
+<!-- 	<changeSet id="461" author="Ganesh.P">
 		<comment>FinFeeRefund Security Operations</comment>
 		<sql>
 				<![CDATA[
@@ -26894,8 +26898,8 @@ UNION ALL
 					]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="462" author="Ganesh.P">
+ -->
+	<!-- <changeSet id="462" author="Ganesh.P">
 		<comment>FinFeeRefund Security Operations</comment>
 		<sql>
 			<![CDATA[
@@ -26929,7 +26933,7 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
-
+ 
 	<changeSet id="463" author="Ganesh.P">
 		<sql>
 			<![CDATA[
@@ -26961,7 +26965,7 @@ UNION ALL
 				UPDATE SeqSecRoleGroups SET SeqNo = (Select MAX(RoleID) + 1 from SecRoleGroups_View);
 					]]>
 		</sql>
-	</changeSet>
+	</changeSet>-->
 
 	<changeSet id="466" author="Ganesh.P">
 		<sql>
@@ -26972,7 +26976,7 @@ UNION ALL
 					]]>
 		</sql>
 	</changeSet>
-
+<!-- 
 	<changeSet id="467" author="Ganesh.P">
 		<sql>
 			<![CDATA[
@@ -26985,7 +26989,7 @@ UNION ALL
 			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights_View);
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="468" author="Ganesh.P">
 		<sql>
@@ -27010,7 +27014,7 @@ UNION ALL
 			 	]]>
 		</sql>
 	</changeSet>
-
+<!-- 
 	<changeSet id="470" author="Ganesh.P">
 		<sql>
 			<![CDATA[
@@ -27019,7 +27023,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-
+ -->
 
 	<changeSet id="471" author="rajesh.n">
 		<sql>
@@ -27538,7 +27542,7 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
-
+<!-- 
 	<changeSet id="521" author="Venkatesh">
 		<comment>ST#524</comment>
 		<sql>
@@ -27564,7 +27568,7 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
-
+ -->
 	<changeSet id="520" author="pruthiviraj">
 		<sql>
 			<![CDATA[
@@ -27874,6 +27878,7 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
+
 	
 	<changeSet id="624.1" author="Manoj.P">
 		<createView viewName="Int_Mandate_Request_view" replaceIfExists="true">

@@ -853,7 +853,13 @@
 			<column name="DL" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
-
+	
+	<changeSet id="87" author="saidurga.v">
+		<comment>ST#4_TK#17</comment>
+		<addColumn tableName="adtblacklistcustomer">
+			<column name="Forged_Document_Type" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="88" author="saidurga.v">
 		<comment>ST#4_TK#17</comment>
@@ -1599,7 +1605,7 @@
 	</changeSet>
 
 	<changeSet id="173" author="SaiDurga.V">
-		<comment> ST#4  TK#156â€‹</comment>
+		<comment> ST#4  TK#156​</comment>
 		<addColumn tableName="adtblacklistcustomer">
 			<column name="address" type="varchar(2000)" />
 		</addColumn>
@@ -1882,7 +1888,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="198" author="Ganesh.P">
+	<!-- <changeSet id="198" author="Ganesh.P">
 		<createTable tableName="AdtFinFeeRefundHeader">
 			<column name="AuditId" type="bigint">
 				<constraints nullable="false" />
@@ -1911,7 +1917,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
+ --><!-- 
 	<changeSet id="199" author="Ganesh.P">
 		<createTable tableName="AdtFinFeeRefundDetails">
 			<column name="AuditId" type="bigint">
@@ -1944,7 +1950,7 @@
 			<column name="recordtype" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="198" author="rajesh.n">
 		<addColumn tableName="ADTCUSTOMER_RETAIL_ED">
