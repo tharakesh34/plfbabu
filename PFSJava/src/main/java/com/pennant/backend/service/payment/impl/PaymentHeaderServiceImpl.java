@@ -815,42 +815,42 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 							cessTax = taxes;
 						}
 					}
-				}
 
-				//CGST
-				BigDecimal gstAmount = BigDecimal.ZERO;
-				if (eventMapping.containsKey(feeTypeCode + "_CGST_P")) {
-					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CGST_P");
-				}
-				eventMapping.put(feeTypeCode + "_CGST_P", gstAmount.add(cgstTax.getPaidTax()));
+					//CGST
+					BigDecimal gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_CGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CGST_P");
+					}
+					eventMapping.put(feeTypeCode + "_CGST_P", gstAmount.add(cgstTax.getPaidTax()));
 
-				//SGST
-				gstAmount = BigDecimal.ZERO;
-				if (eventMapping.containsKey(feeTypeCode + "_SGST_P")) {
-					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_SGST_P");
-				}
-				eventMapping.put(feeTypeCode + "_SGST_P", gstAmount.add(sgstTax.getPaidTax()));
+					//SGST
+					gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_SGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_SGST_P");
+					}
+					eventMapping.put(feeTypeCode + "_SGST_P", gstAmount.add(sgstTax.getPaidTax()));
 
-				//UGST
-				gstAmount = BigDecimal.ZERO;
-				if (eventMapping.containsKey(feeTypeCode + "_UGST_P")) {
-					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_UGST_P");
-				}
-				eventMapping.put(feeTypeCode + "_UGST_P", gstAmount.add(ugstTax.getPaidTax()));
+					//UGST
+					gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_UGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_UGST_P");
+					}
+					eventMapping.put(feeTypeCode + "_UGST_P", gstAmount.add(ugstTax.getPaidTax()));
 
-				//IGST
-				gstAmount = BigDecimal.ZERO;
-				if (eventMapping.containsKey(feeTypeCode + "_IGST_P")) {
-					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_IGST_P");
-				}
-				eventMapping.put(feeTypeCode + "_IGST_P", gstAmount.add(igstTax.getPaidTax()));
+					//IGST
+					gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_IGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_IGST_P");
+					}
+					eventMapping.put(feeTypeCode + "_IGST_P", gstAmount.add(igstTax.getPaidTax()));
 
-				//CESS
-				gstAmount = BigDecimal.ZERO;
-				if (eventMapping.containsKey(feeTypeCode + "_CESS_P")) {
-					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CESS_P");
+					//CESS
+					gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_CESS_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CESS_P");
+					}
+					eventMapping.put(feeTypeCode + "_CESS_P", gstAmount.add(cessTax.getPaidTax()));
 				}
-				eventMapping.put(feeTypeCode + "_CESS_P", gstAmount.add(cessTax.getPaidTax()));
 
 			case RepayConstants.EXAMOUNTTYPE_EXCESS:
 				excessAmount = excessAmount.add(paymentDetail.getAmount());
@@ -883,14 +883,14 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 					}
 				}
 			}
-
-			long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-					AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
-
-			aeEvent.getAcSetIDList().add(accountsetId);
-
-			logger.debug(Literal.LEAVING);
 		}
+
+		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
+				AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
+
+		aeEvent.getAcSetIDList().add(accountsetId);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
