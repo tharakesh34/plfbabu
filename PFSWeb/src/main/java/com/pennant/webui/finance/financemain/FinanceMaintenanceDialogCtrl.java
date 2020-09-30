@@ -2105,11 +2105,13 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					|| selectedUserAction.getLabel().contains("Resubmit")
 					|| selectedUserAction.getLabel().contains("Decline"))) {
 
-				boolean isActive = getFinanceMaintenanceService().isFinActive(aFinanceMain.getFinReference());
-				if (!isActive) {
-					MessageUtil
-							.showError("Loan is in inactive state. Please check and cancel the basic details action.");
-					return;
+				if (!(StringUtils.equals(PennantConstants.TRAN_WF, aFinanceMain.getClosingStatus()))) {
+					boolean isActive = getFinanceMaintenanceService().isFinActive(aFinanceMain.getFinReference());
+					if (!isActive) {
+						MessageUtil.showError(
+								"Loan is in inactive state. Please check and cancel the basic details action.");
+						return;
+					}
 				}
 			}
 		}
