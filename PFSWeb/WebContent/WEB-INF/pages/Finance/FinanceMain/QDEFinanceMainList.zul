@@ -114,6 +114,13 @@
 									</hbox>
 								</row>
 								<row visible="false">
+									<label id="label_FinanceMainSearch_Branch" value="${c:l('label_FinanceMainSearch_Branch.value')}" />
+									<listbox id="sortOperator_Branch" width="43px" mold="select" rows="1" />
+									<hbox>
+										<textbox id="branchCode" width="150px" />
+										<button id="btnSearchBranch" tooltiptext="${c:l('label_FinanceMainSearch_btnSearchBranch.tooltiptext')}"
+											image="/images/icons/LOVSearch.png" autodisable="btnSearchCustCIF,btnSearchBranch,btnSearchFinType" />
+									</hbox>
 									<label id="label_FinanceMainSearch_FinPromotion" value="${c:l('label_FinanceMainSearch_FinPromotion.value')}" />
 									<listbox id="sortOperator_finPromotion" width="43px" mold="select" rows="1" />
 									<textbox id="finPromotion" width="180px" />
@@ -133,6 +140,14 @@
 									<label id="label_FinanceMainSearch_RecordType" value="${c:l('label_FinanceMainSearch_RecordType.value')}" />
 									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="180px" mold="select" />
+								</row>
+								<row visible="false">
+									<label id="label_FinanceMainDialog_ApplicationNo" value="${c:l('label_FinanceMainDialog_ApplicationNo.value')}" />
+									<listbox id="sortOperator_applicationNo" width="43px" mold="select" rows="1" />
+									<textbox id="applicationNo" width="170px" visible="true" />
+									<label id="label_FinanceMainSearch_OfferId" value="${c:l('label_FinanceMainSearch_OfferId.value')}" />
+									<listbox id="sortOperator_offerId" width="43px" mold="select" rows="1" />
+									<textbox id="offerId" width="170px" />
 								</row>
 							</rows>
 						</grid>
@@ -167,6 +182,10 @@
 									hflex="min" />
 								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
 									hflex="min" visible="false" />
+								<listheader id="listheader_ApplicationNo" label="${c:l('listheader_ApplicationNo.label')}" sort="auto"
+									hflex="min" visible="false"/>
+								<listheader id="listheader_OfferId" label="${c:l('listheader_OfferId.label')}" sort="auto" hflex="min"
+									visible="false" />	
 							</listhead>
 
 						</listbox>
