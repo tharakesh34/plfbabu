@@ -28001,5 +28001,157 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#160772_pre" author="Savitri.N" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'postings_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#160772" author="Savitri.N">
+		<createView viewName="POSTINGS_VIEW" replaceIfExists="true">
+			<![CDATA[	
+				SELECT t1.linkedtranid,
+					t1.postref,
+					t1.postingid,
+					t1.finreference,
+					t1.finevent,
+					t1.postdate,
+					t1.valuedate,
+					t1.appvaluedate,
+					t1.appdate,
+					t1.trancode,
+					t1.revtrancode,
+					t1.drorcr,
+					t1.account,
+					t1.postamount,
+					t1.poststatus,
+					t1.errorid,
+					t1.errormsg,
+					t2.aeeventcodedesc lovdesceventcodename,
+					t1.shadowposting,
+					t1.trandesc,
+					t1.amounttype,
+					t1.acccy,
+					t1.postbranch,
+					t1.userbranch,
+					t1.tranorderid,
+					t1.transorder
+				FROM postings t1
+				JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
+				JOIN (SELECT financemain.finreference 
+					  FROM financemain
+					  UNION
+					  SELECT financemain_temp.finreference
+					  FROM financemain_temp) t3 ON t3.finreference = t1.finreference
+					  WHERE t1.finevent <> ALL (ARRAY['VASFEE', 'JVPOST'])
+				UNION ALL
+				SELECT t1.linkedtranid,
+					t1.postref,
+					t1.postingid,
+					t3.primarylinkref finreference,
+					t1.finevent,
+					t1.postdate,
+					t1.valuedate,
+					t1.appvaluedate,
+					t1.appdate,
+					t1.trancode,
+					t1.revtrancode,
+					t1.drorcr,
+					t1.account,
+					t1.postamount,
+					t1.poststatus,
+					t1.errorid,
+					t1.errormsg,
+					t2.aeeventcodedesc lovdesceventcodename,
+					t1.shadowposting,
+					t1.trandesc,
+					t1.amounttype,
+					t1.acccy,
+					t1.postbranch,
+					t1.userbranch,
+					t1.tranorderid,
+					t1.transorder
+				FROM postings t1
+				JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
+				JOIN vasrecording t3 ON t3.vasreference = t1.finreference
+				WHERE t1.finevent = 'VASFEE'
+				UNION ALL
+				SELECT t1.linkedtranid,
+					t1.postref,
+					t1.postingid,
+					t3.reference finreference,
+					t1.finevent,
+					t1.postdate,
+					t1.valuedate,
+					t1.appvaluedate,
+					t1.appdate,
+					t1.trancode,
+					t1.revtrancode,
+					t1.drorcr,
+					t1.account,
+					t1.postamount,
+					t1.poststatus,
+					t1.errorid,
+					t1.errormsg,
+					t2.aeeventcodedesc lovdesceventcodename,
+					t1.shadowposting,
+					t1.trandesc,
+					t1.amounttype,
+					t1.acccy,
+					t1.postbranch,
+					t1.userbranch,
+					t1.tranorderid,
+					t1.transorder
+				FROM postings t1
+				JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
+				JOIN jvpostings t3 ON t3.batchreference::character varying(20) = t1.finreference
+				JOIN financemain t4 ON t3.reference = t4.finreference
+				WHERE t1.finevent = 'JVPOST'
+				UNION ALL
+				SELECT t1.linkedtranid,
+					t1.postref,
+					t1.postingid,
+					t4.finreference,
+					t1.finevent,
+					t1.postdate,
+					t1.valuedate,
+					t1.appvaluedate,
+					t1.appdate,
+					t1.trancode,
+					t1.revtrancode,
+					t1.drorcr,
+					t1.account,
+					t1.postamount,
+					t1.poststatus,
+					t1.errorid,
+					t1.errormsg,
+					t2.aeeventcodedesc lovdesceventcodename,
+					t1.shadowposting,
+					t1.trandesc,
+					t1.amounttype,
+					t1.acccy,
+					t1.postbranch,
+					t1.userbranch,
+					t1.tranorderid,
+					t1.transorder
+				FROM postings t1
+				JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
+				JOIN feepostings t3 ON t3.postid::character varying(20) = t1.finreference
+				JOIN financemain t4 ON t3.reference = t4.finreference
+				WHERE t1.finevent = 'MANFEE'
+			]]>		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#160772_post" author="Savitri.N" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'postings_view');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
