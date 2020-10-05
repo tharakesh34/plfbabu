@@ -295,7 +295,7 @@ public class NPAService extends ServiceHelper {
 		provision = new Provision();
 
 		// Getting Provision Rate
-		setProvisionAmounts(finEODEvent, provisionDetail, provision);
+		setProvisionAmounts(provisionDetail, provision);
 
 		provision = setProvisionRate(finEODEvent, provision, provisionDetail, provisionBooks);
 
@@ -307,7 +307,7 @@ public class NPAService extends ServiceHelper {
 		return provision;
 	}
 
-	private void setProvisionAmounts(FinEODEvent finEODEvent, NPAProvisionDetail provisionDetail, Provision provision) {
+	private void setProvisionAmounts(NPAProvisionDetail provisionDetail, Provision provision) {
 
 		ProvisionAmount pa = null;
 
@@ -471,13 +471,19 @@ public class NPAService extends ServiceHelper {
 				maxProvision.setAssetCode(provision.getAssetCode());
 				maxProvision.setAssetStageOrder(provision.getAssetStageOrder());
 				maxProvision.setNpa(provision.isNpa());
+				maxProvision.setProvisionRate(provision.getProvisionRate());
+				maxProvision.setCollateralValue(provision.getCollateralValue());
+				maxProvision.getProvisionAmounts().clear();
 				maxProvision.getProvisionAmounts().addAll(provision.getProvisionAmounts());
 			} else if (provision.getAssetStageOrder() == maxProvision.getAssetStageOrder()) {
 				if (provision.isNpa() && !maxProvision.isNpa()) {
 					maxProvision.setAssetCode(provision.getAssetCode());
 					maxProvision.setAssetStageOrder(provision.getAssetStageOrder());
-					maxProvision.getProvisionAmounts().addAll(provision.getProvisionAmounts());
+					maxProvision.setProvisionRate(provision.getProvisionRate());
 					maxProvision.setNpa(provision.isNpa());
+					maxProvision.setCollateralValue(provision.getCollateralValue());
+					maxProvision.getProvisionAmounts().clear();
+					maxProvision.getProvisionAmounts().addAll(provision.getProvisionAmounts());
 				}
 			}
 		}
