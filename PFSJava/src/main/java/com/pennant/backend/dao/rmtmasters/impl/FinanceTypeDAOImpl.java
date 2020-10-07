@@ -353,7 +353,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setAlwSanctionAmtOverride(rs.getBoolean("AlwSanctionAmtOverride"));
 							ft.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
 							ft.setAllowedLoanPurposes(rs.getString("AllowedLoanPurposes"));
-							ft.setAllowedLoanPurposes(rs.getString("SpecificLoanPurposes"));
+							ft.setSpecificLoanPurposes(rs.getString("SpecificLoanPurposes"));
 							ft.setGrcAdjReq(rs.getBoolean("GrcAdjReq"));
 							ft.setGrcPeriodAftrFullDisb(rs.getBoolean("GrcPeriodAftrFullDisb"));
 							ft.setAutoIncrGrcEndDate(rs.getBoolean("AutoIncrGrcEndDate"));
