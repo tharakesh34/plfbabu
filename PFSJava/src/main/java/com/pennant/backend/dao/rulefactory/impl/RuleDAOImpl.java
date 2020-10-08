@@ -142,86 +142,82 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	@Override
 	public Rule getActiveRuleByID(final String id, final String module, final String event, String type,
 			boolean active) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		Rule rule = new Rule();
-		rule.setRuleCode(id);
-		rule.setRuleModule(module);
-		rule.setRuleEvent(event);
-		rule.setActive(active);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" RuleId, RuleCode, RuleModule, RuleEvent, RuleCodeDesc, AllowDeviation");
+		sql.append(", CalFeeModify, FeeToFinance, WaiverDecider, Waiver, WaiverPerc, SQLRule");
+		sql.append(", ActualBlock, SeqOrder, ReturnType, DeviationType, GroupId, Revolving");
+		sql.append(", FixedOrVariableLimit, Active,  Fields, FeeTypeID");
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" SELECT RuleId, RuleCode, RuleModule,RuleEvent, RuleCodeDesc,AllowDeviation,CalFeeModify, FeeToFinance, ");
-		sql.append(
-				" WaiverDecider , Waiver, WaiverPerc, SQLRule, ActualBlock,SeqOrder, ReturnType, DeviationType, GroupId,  Revolving,FixedOrVariableLimit,Active,");
-		sql.append(" Fields, FeeTypeID,");
-		if (type.contains("View")) {
-			sql.append(" lovDescGroupName , FeeTypeCode, FeeTypeDesc, ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", LovDescGroupName , FeeTypeCode, FeeTypeDesc");
 		}
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From Rules");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(
-				" Where RuleCode =:RuleCode AND RuleModule =:RuleModule AND RuleEvent =:RuleEvent AND Active = :Active");
-		sql.append(" Order BY SeqOrder ");
-
-		logger.debug("selectSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
+		sql.append(" Where RuleCode = ? and RuleModule = ? and RuleEvent =? and Active = ?");
+		sql.append(" Order BY SeqOrder");
 
 		try {
-			rule = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, new RowMapper<Rule>() {
-				@Override
-				public Rule mapRow(ResultSet rs, int rowNum) throws SQLException {
-					Rule rule = new Rule();
-					rule.setTaskId(rs.getString("TaskId"));
-					rule.setRuleId(rs.getLong("RuleId"));
-					rule.setDeviationType(rs.getString("DeviationType"));
-					rule.setFixedOrVariableLimit(rs.getString("FixedOrVariableLimit"));
-					rule.setFeeTypeID(rs.getLong("FeeTypeID"));
-					rule.setWorkflowId(rs.getLong("WorkflowId"));
-					rule.setRuleEvent(rs.getString("RuleEvent"));
-					rule.setRoleCode(rs.getString("RoleCode"));
-					rule.setWaiverDecider(rs.getString("WaiverDecider"));
-					rule.setNextRoleCode(rs.getString("NextRoleCode"));
-					rule.setRecordType(rs.getString("RecordType"));
-					rule.setVersion(rs.getInt("Version"));
-					rule.setNextTaskId(rs.getString("NextTaskId"));
-					rule.setRecordStatus(rs.getString("RecordStatus"));
-					rule.setFeeToFinance(rs.getString("FeeToFinance"));
-					rule.setRuleCodeDesc(rs.getString("RuleCodeDesc"));
-					rule.setCalFeeModify(rs.getBoolean("CalFeeModify"));
-					rule.setLastMntBy(rs.getLong("LastMntBy"));
-					rule.setAllowDeviation(rs.getBoolean("AllowDeviation"));
-					rule.setReturnType(rs.getString("ReturnType"));
-					rule.setWaiverPerc(rs.getBigDecimal("WaiverPerc"));
-					rule.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					rule.setGroupId(rs.getLong("GroupId"));
-					rule.setActive(rs.getBoolean("Active"));
-					rule.setFields(rs.getString("Fields"));
-					rule.setSeqOrder(rs.getInt("SeqOrder"));
-					rule.setRevolving(rs.getBoolean("Revolving"));
-					rule.setRuleModule(rs.getString("RuleModule"));
-					rule.setSQLRule(rs.getString("SQLRule"));
-					rule.setWaiver(rs.getBoolean("Waiver"));
-					rule.setRuleCode(rs.getString("RuleCode"));
-					rule.setActualBlock(rs.getString("ActualBlock"));
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { id, module, event, active },
+					new RowMapper<Rule>() {
 
-					if (type.contains("View")) {
-						rule.setFeeTypeCode(rs.getString("FeeTypeCode"));
-						rule.setLovDescGroupName(rs.getString("lovDescGroupName"));
-						rule.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-					}
-					return rule;
-				}
-			});
+						@Override
+						public Rule mapRow(ResultSet rs, int i) throws SQLException {
+							Rule rule = new Rule();
 
+							rule.setRuleId(rs.getLong("RuleId"));
+							rule.setRuleCode(rs.getString("RuleCode"));
+							rule.setRuleModule(rs.getString("RuleModule"));
+							rule.setRuleEvent(rs.getString("RuleEvent"));
+							rule.setRuleCodeDesc(rs.getString("RuleCodeDesc"));
+							rule.setAllowDeviation(rs.getBoolean("AllowDeviation"));
+							rule.setCalFeeModify(rs.getBoolean("CalFeeModify"));
+							rule.setFeeToFinance(rs.getString("FeeToFinance"));
+							rule.setWaiverDecider(rs.getString("WaiverDecider"));
+							rule.setWaiver(rs.getBoolean("Waiver"));
+							rule.setWaiverPerc(rs.getBigDecimal("WaiverPerc"));
+							rule.setSQLRule(rs.getString("SQLRule"));
+							rule.setActualBlock(rs.getString("ActualBlock"));
+							rule.setSeqOrder(rs.getInt("SeqOrder"));
+							rule.setReturnType(rs.getString("ReturnType"));
+							rule.setDeviationType(rs.getString("DeviationType"));
+							rule.setGroupId(rs.getLong("GroupId"));
+							rule.setRevolving(rs.getBoolean("Revolving"));
+							rule.setFixedOrVariableLimit(rs.getString("FixedOrVariableLimit"));
+							rule.setActive(rs.getBoolean("Active"));
+							rule.setFields(rs.getString("Fields"));
+							rule.setFeeTypeID(rs.getLong("FeeTypeID"));
+
+							if (StringUtils.trimToEmpty(type).contains("View")) {
+								rule.setLovDescGroupName(rs.getString("LovDescGroupName"));
+								rule.setFeeTypeCode(rs.getString("FeeTypeCode"));
+								rule.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+							}
+
+							rule.setVersion(rs.getInt("Version"));
+							rule.setLastMntBy(rs.getLong("LastMntBy"));
+							rule.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							rule.setRecordStatus(rs.getString("RecordStatus"));
+							rule.setRoleCode(rs.getString("RoleCode"));
+							rule.setNextRoleCode(rs.getString("NextRoleCode"));
+							rule.setTaskId(rs.getString("TaskId"));
+							rule.setNextTaskId(rs.getString("NextTaskId"));
+							rule.setRecordType(rs.getString("RecordType"));
+							rule.setWorkflowId(rs.getLong("WorkflowId"));
+
+							return rule;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+
 		logger.debug(Literal.LEAVING);
-		return rule;
+		return null;
 	}
 
 	@Override
