@@ -358,6 +358,13 @@
 										<textbox id="additionalField13" width="180px" />
 									</hbox>
 								</row>
+								<row>
+									<label id="label_BlacklistCustomerDialog_AdditionalField14" value="${c:l('label_BlacklistCustomerDialog_AdditionalField14.value')}" />
+									<hbox>
+										<space id="space_AdditionalField14" spacing="2px" />
+										<textbox id="additionalField14" width="180px" />
+									</hbox>
+								</row>
 							</rows>
 						</grid>
 					</groupbox>
