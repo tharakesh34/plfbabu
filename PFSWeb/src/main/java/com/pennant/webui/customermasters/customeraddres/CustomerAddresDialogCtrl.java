@@ -558,7 +558,6 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				filterPin3[0] = new Filter("CustCIF", this.custCIF.getValue(), Filter.OP_NOT_EQUAL);
 			}
 
-			filters.add(filterPin3[0]);
 			custCifAlternate.setFilters(filterPin3);
 		}
 
