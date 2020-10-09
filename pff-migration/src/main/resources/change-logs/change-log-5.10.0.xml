@@ -2095,7 +2095,7 @@
 		</sql>
 	</changeSet>
 
-
+<!-- 
 	<changeSet id="331" author="Lakshmi.N">
 		<sql>
 	<![CDATA[
@@ -2111,7 +2111,7 @@
 	]]>
 		</sql>
 	</changeSet>
-
+ -->
 	<changeSet id="333" author="rajesh.n">
 		<comment>ST#1 TK#14</comment>
 		<addColumn tableName="BANKINFODETAIL">
@@ -2178,23 +2178,6 @@
 				select deps_restore_dependencies ('plf', 'blacklistcustomer');
 				select deps_restore_dependencies ('plf', 'blacklistcustomer_temp');
 			]]>
-		</sql>
-	</changeSet>
-
-
-	<changeSet id="331" author="Lakshmi.N">
-		<sql>
-	<![CDATA[
-    	ALTER TABLE finchangecustomer DROP CONSTRAINT finchangecustomer_finreference_key;
-		]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="332" author="Lakshmi.N">
-		<sql>
-	<![CDATA[
-    ALTER TABLE finchangecustomer_temp DROP CONSTRAINT finchangecustomer_temp_finreference_key;
-	]]>
 		</sql>
 	</changeSet>
 
@@ -4698,6 +4681,7 @@
 				UPDATE BuilderProjcet_temp Set constructedArea = 0;
 			]]>
 		</sql>
+
 	</changeSet>
 
 	<changeSet id="429" author="Saikiran.v" dbms="mssql">
@@ -5730,6 +5714,7 @@
 			t1.projectenddate,
 			t1.remarks,
 			t2.segmentation,
+
 			t1.commencementcertificateno,
 			t1.commencecrtfctissuingauthority,
 			t1.totalplotarea,
@@ -6830,13 +6815,13 @@
 			columnDataType="smallint" />
 	</changeSet>
 
-	<changeSet id="578" author="rajesh.n">
+<!-- 	<changeSet id="578" author="rajesh.n">
 		<addColumn tableName="CUSTOMER_RETAIL_ED_Temp">
 			<column name="SPOUSENAME" type="VARCHAR(50)" />
 		</addColumn>
 
 	</changeSet>
-
+ 
 	<changeSet id="579" author="rajesh.n">
 		<addColumn tableName="CUSTOMER_RETAIL_ED">
 			<column name="SPOUSENAME" type="VARCHAR(50)" />
@@ -6977,6 +6962,7 @@
 			<column name="PMAYLAN" type="VARCHAR(20)" />
 		</addColumn>
 	</changeSet>
+	-->
 
 	<changeSet id="600.2" author="rajesh.n">
 		<sql>
@@ -7175,7 +7161,7 @@
 		</createTable>
 	</changeSet> -->
 
-	<changeSet id="609" author="Ganesh.P" dbms="mssql">
+<!-- 	<changeSet id="609" author="Ganesh.P" dbms="mssql">
 		<sql>
 		<![CDATA[
 			alter table FinFeeRefundHeader add constraint df_FINFEEREF_version default 0 for Version;
@@ -7183,7 +7169,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+ -->
 
 	<changeSet id="610" author="Ganesh.p" dbms="postgresql, oracle">
 		<comment>adding default constraint</comment>
@@ -7216,7 +7202,7 @@
 			</column>
 		</createTable>
 	</changeSet> -->
-
+<!-- 
 	<changeSet id="612" author="Ganesh.P" dbms="mssql">
 		<sql>
 		<![CDATA[
@@ -7225,7 +7211,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+ -->
 	<changeSet id="613" author="Ganesh.p" dbms="postgresql, oracle">
 		<comment>adding default constraint</comment>
 		<addDefaultValue columnName="Version" tableName="FinFeeRefundHeader_TEMP" defaultValue="0" />
@@ -7262,7 +7248,7 @@
 			</column>
 		</createTable>
 	</changeSet>
- -->
+ --><!-- 
 	<changeSet id="615" author="Ganesh.P" dbms="mssql">
 		<sql>
 		<![CDATA[
@@ -7270,7 +7256,7 @@
 			alter table	FinFeeRefundDetails add constraint df_FINFEEREFDTLS_workflowId default 0 for WorkflowId;
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="616" author="Ganesh.p" dbms="postgresql, oracle">
 		<comment>adding default constraint</comment>
@@ -7314,7 +7300,7 @@
 			</column>
 		</createTable>
 	</changeSet>
- -->
+ --><!-- 
 	<changeSet id="619" author="Ganesh.P" dbms="mssql">
 		<sql>
 		<![CDATA[
@@ -7322,7 +7308,7 @@
 			alter table	FinFeeRefundDetails_Temp add constraint df_FINFEEREFDTLST_workflowId default 0 for WorkflowId;
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="620" author="Ganesh.p" dbms="postgresql, oracle">
 		<comment>adding default constraint</comment>
@@ -7335,7 +7321,7 @@
 			baseColumnNames="HeaderId" referencedColumnNames="HeaderId" referencedTableName="FinFeeRefundHeader_TEMP" />
 	</changeSet> -->
 
-	<changeSet id="622" author="Ganesh.p" dbms="mssql">
+<!-- 	<changeSet id="622" author="Ganesh.p" dbms="mssql">
 		<createTable tableName="SeqFinFeeRefundHeader">
 			<column name="SeqNo" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
@@ -7345,13 +7331,13 @@
 			</column>
 		</createTable>
 	</changeSet>
-
-	<changeSet id="623" author="Ganesh.p" dbms="postgre,oracle">
+ -->
+	<!-- <changeSet id="623" author="Ganesh.p" dbms="postgre,oracle">
 		<comment>Sequence For FinFeeRefundHeader</comment>
 		<createSequence sequenceName="SeqFinFeeRefundHeader" incrementBy="1" startValue="1" minValue="1"
 			maxValue="999999999999999999" />
-	</changeSet>
-
+	</changeSet> -->
+<!-- 
 	<changeSet id="624" author="Ganesh.p" dbms="mssql">
 		<createTable tableName="SeqFinFeeRefundDetails">
 			<column name="SeqNo" type="bigint" autoIncrement="true">
@@ -7362,12 +7348,12 @@
 			</column>
 		</createTable>
 	</changeSet>
-
-	<changeSet id="625" author="Ganesh.p" dbms="postgre,oracle">
+ -->
+	<!-- <changeSet id="625" author="Ganesh.p" dbms="postgre,oracle">
 		<comment>Sequence For FinFeeRefundDetails</comment>
 		<createSequence sequenceName="SeqFinFeeRefundDetails" incrementBy="1" startValue="1" minValue="1"
 			maxValue="999999999999999999" />
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="626" author="lakshmi">
 		<addColumn tableName="FinTypeFees_TEMP">
@@ -7465,16 +7451,16 @@
 		]]>
 		</sql>
 	</changeSet>
-
+<!-- 
 	<changeSet id="639" author="lakshmi">
 		<addUniqueConstraint columnNames="RULEMODULE, RULEEVENT,RULECODE,ACTIVE,VERSION" constraintName="UC_RULES"
 			tableName="RULES" />
-	</changeSet>
+	</changeSet> -->
 
-	<changeSet id="640" author="lakshmi">
+	<!-- <changeSet id="640" author="lakshmi">
 		<addUniqueConstraint columnNames="RULEMODULE, RULEEVENT,RULECODE,ACTIVE,VERSION" constraintName="UC_RULES_TEMP"
 			tableName="RULES_temp" />
-	</changeSet>
+	</changeSet> -->
 
 
 	<changeSet id="641_pre" author="lakshmi" dbms="mssql">
@@ -8428,14 +8414,14 @@
 		</addColumn>
 	</changeSet> -->
 
-	<changeSet id="806" author="rajesh.n" dbms="mssql">
+	<!-- <changeSet id="806" author="rajesh.n" dbms="mssql">
 		<comment>ST#55 and TK#135 bankbranchid column added to capture bank branch details in IMD for CHEQUE and DD</comment>
 		<sql>
 			<![CDATA[
 				ALTER TABLE FinReceiptDetail ADD CONSTRAINT DF_FinReceiptDetail_bankbranchid DEFAULT 0 FOR bankbranchid;
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="807" author="rajesh.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="bankbranchid" tableName="FinReceiptDetail" defaultValue="0" />
@@ -8448,7 +8434,7 @@
 		</addColumn>
 
 	</changeSet> -->
-
+<!-- 
 	<changeSet id="809" author="rajesh.n" dbms="mssql">
 		<comment>ST#55 and TK#135 bankbranchid column added to capture bank branch details in IMD for CHEQUE and DD</comment>
 		<sql>
@@ -8457,7 +8443,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+ -->
 	<changeSet id="810" author="rajesh.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="bankbranchid" tableName="FinReceiptDetail_temp" defaultValue="0" />
 	</changeSet>
@@ -9058,6 +9044,7 @@
 			   t1.alwadvancerent,
 			   t1.grcadvbaserate,
 			   t1.grcadvmargin,
+
 			   t1.grcadvpftrate,
 			   t1.rpyadvbaserate,
 			   t1.rpyadvmargin,
@@ -13764,7 +13751,7 @@ UNION ALL
 	<changeSet id="HL_21_pre" author="rajesh.n" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
-			select deps_save_and_drop_dependencies ('plf', 'CollateralAssignment_tview'); 
+			select deps_save_and_drop_dependencies ('plf', 'collateralassignment_tview'); 
 		]]>
 		</sql>
 	</changeSet>
@@ -13825,7 +13812,7 @@ UNION ALL
 	<changeSet id="HL_21_post" author="rajesh.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
-					select deps_restore_dependencies ('plf', 'CollateralAssignment_tview');	
+					select deps_restore_dependencies ('plf', 'collateralassignment_tview');	
 			]]>
 		</sql>
 	</changeSet>
@@ -13835,7 +13822,7 @@ UNION ALL
 	<changeSet id="HL_22_pre" author="rajesh.n" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
-			select deps_save_and_drop_dependencies ('plf', 'CollateralAssignment_aview'); 
+			select deps_save_and_drop_dependencies ('plf', 'collateralassignment_aview'); 
 		]]>
 		</sql>
 	</changeSet>
@@ -13897,7 +13884,7 @@ UNION ALL
 	<changeSet id="HL_22_post" author="rajesh.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
-					select deps_restore_dependencies ('plf', 'CollateralAssignment_aview');	
+					select deps_restore_dependencies ('plf', 'collateralassignment_aview');	
 			]]>
 		</sql>
 	</changeSet>
@@ -13977,7 +13964,7 @@ UNION ALL
 	<changeSet id="HL_24_pre" author="rajesh.n" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
-			select deps_save_and_drop_dependencies ('plf', 'CollateralAssignment_view'); 
+			select deps_save_and_drop_dependencies ('plf', 'collateralassignment_view'); 
 		]]>
 		</sql>
 	</changeSet>
@@ -14087,7 +14074,7 @@ UNION ALL
 	<changeSet id="HL_25_post" author="rajesh.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
-					select deps_restore_dependencies ('plf', 'CollateralAssignment_view');	
+					select deps_restore_dependencies ('plf', 'collateralassignment_view');	
 			]]>
 		</sql>
 	</changeSet>
@@ -15949,7 +15936,7 @@ UNION ALL
 			c.custResidentialSts,
 			c.qualification,
 			c.custFlag,
-			COALESCE(t4.roledesc, fn_get_roledesc(c.nextrolecode)) lovdescrequeststage,
+			COALESCE(t4.roledesc, ${add.schema}fn_get_roledesc(c.nextrolecode)) lovdescrequeststage,
 			c.margindeviation,
              c.custCRCPR,
             c.phoneNumber
@@ -15987,7 +15974,7 @@ UNION ALL
 			c.custResidentialSts,
 			c.qualification,
 			c.custFlag,
-			COALESCE(t4.roledesc, fn_get_roledesc(c.nextrolecode)) lovdescrequeststage,
+			COALESCE(t4.roledesc, ${add.schema}fn_get_roledesc(c.nextrolecode)) lovdescrequeststage,
 			c.margindeviation,
             c.custCRCPR,
             c.phoneNumber
@@ -19384,7 +19371,7 @@ UNION ALL
 				     JOIN financemain_view fm ON fm.finreference = v.keyreference
 				  WHERE NOT (EXISTS ( SELECT 1
 				           FROM verification_tv_temp
-				          WHERE verification_tv_temp.verificationid = tv.verificationid));
+				          WHERE verification_tv_temp.verificationid = tv.verificationid))
 		  		]]>
 		</createView>
 	</changeSet>
@@ -19400,7 +19387,7 @@ UNION ALL
 	<changeSet id="ST#1211.12_pre" author="Gopal.p" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
-			select deps_save_and_drop_dependencies ('plf', 'INT_MANDATE_REQUEST_VIEW'); 
+			select deps_save_and_drop_dependencies ('plf', 'int_mandate_request_view'); 
 		]]>
 		</sql>
 	</changeSet>
@@ -19490,7 +19477,7 @@ UNION ALL
 	<changeSet id="ST#1211.12_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
-					select deps_restore_dependencies ('plf', 'INT_MANDATE_REQUEST_VIEW');	
+					select deps_restore_dependencies ('plf', 'int_mandate_request_view');	
 			]]>
 		</sql>
 	</changeSet>
@@ -19498,7 +19485,7 @@ UNION ALL
 	<changeSet id="ST#1211.13_pre" author="Gopal.p" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
-			select deps_save_and_drop_dependencies ('plf', 'FinanceMain_LView'); 
+			select deps_save_and_drop_dependencies ('plf', 'financemain_lview'); 
 		]]>
 		</sql>
 	</changeSet>
@@ -19586,7 +19573,7 @@ UNION ALL
 	<changeSet id="ST#1211.13_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
-					select deps_restore_dependencies ('plf', 'FinanceMain_LView');	
+					select deps_restore_dependencies ('plf', 'financemain_lview');	
 			]]>
 		</sql>
 	</changeSet>
@@ -23116,7 +23103,7 @@ UNION ALL
 				     LEFT JOIN PINCODES T6 ON T1.PINCODEID = T6.PINCODEID
 				     LEFT JOIN BANKBRANCHES T7 ON T1.BANKBRANCHID = T7.BANKBRANCHID
 				     LEFT JOIN RMTCUSTTYPES T8 ON T1.ENTITYTYPE = T8.CUSTTYPECODE
-				     LEFT JOIN BMTBANKDETAIL T9 ON T9.BANKCODE = T7.BANKCODE;
+				     LEFT JOIN BMTBANKDETAIL T9 ON T9.BANKCODE = T7.BANKCODE
 			]]>
 	   </createView>
 	</changeSet>
@@ -23209,7 +23196,7 @@ UNION ALL
 					 LEFT JOIN PINCODES T6 ON T1.PINCODEID = T6.PINCODEID
 					 LEFT JOIN BANKBRANCHES T7 ON T1.BANKBRANCHID = T7.BANKBRANCHID
 					 LEFT JOIN RMTCUSTTYPES T8 ON T1.ENTITYTYPE = T8.CUSTTYPECODE
-					 LEFT JOIN BMTBANKDETAIL T9 ON T9.BANKCODE = T7.BANKCODE;
+					 LEFT JOIN BMTBANKDETAIL T9 ON T9.BANKCODE = T7.BANKCODE
 			]]>
 		</createView>
 	</changeSet>
@@ -23379,7 +23366,7 @@ UNION ALL
 			   LEFT JOIN RMTCUSTTYPES T8 ON T1.ENTITYTYPE = T8.CUSTTYPECODE
 			   LEFT JOIN BMTBANKDETAIL T9 ON T9.BANKCODE = T7.BANKCODE
 			   LEFT JOIN CUSTOMERS T10 ON T1.CUSTID = T10.CUSTID
-			   WHERE NOT (EXISTS ( SELECT 1 FROM BUILDERCOMPANY_TEMP  WHERE BUILDERCOMPANY_TEMP.ID = T1.ID));
+			   WHERE NOT (EXISTS ( SELECT 1 FROM BUILDERCOMPANY_TEMP  WHERE BUILDERCOMPANY_TEMP.ID = T1.ID))
 			]]>
 		</createView>
 	</changeSet>
@@ -24453,14 +24440,14 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
-	<changeSet id="240" author="satish.s" dbms="mssql">
+	<!-- <changeSet id="240" author="satish.s" dbms="mssql">
 		<comment>ST#12_TK#11</comment>
 		<sql>
 		<![CDATA[
 			insert into SECUSERS values ((select max(usrid)+1 from SecUsers), 'PLFADMIN', '$2a$10$6KGimuN2yKz/PsOSNjtY3ezf3ic.xlmXWEXjTiieDh3hONtWWyIGm', 'S000', 'System', NULL, 'Administrator', NULL, NULL, 1, null, null, 0, 0, '2025-6-6' , 0, 'EN', 1, 'PFF', '1000', 'FINANCE', null, 0, 1, 110, 1000, '2019-7-2' , 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 'DEFAULT', '2019-7-22', '2019-7-22' , 'DAO', 'USER', '2038-8-18', null, 0, null, null);
 		]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<!-- <changeSet id="240" author="satish.s" dbms="postgresql,oracle"> <comment>ST#12_TK#11</comment> <sql> <![CDATA[ insert 
 		into SECUSERS values ((select max(usrid)+1 from SecUsers), 'PLFADMIN', '$2a$10$6KGimuN2yKz/PsOSNjtY3ezf3ic.xlmXWEXjTiieDh3hONtWWyIGm', 
@@ -25993,7 +25980,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="402" author="rajesh.n" dbms="mssql">
+	<changeSet id="402.0" author="rajesh.n" dbms="mssql">
 		<sql>
             <![CDATA[
             Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
@@ -26519,7 +26506,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="433" author="rajesh.n" dbms="mssql">
+	<changeSet id="433.0" author="rajesh.n" dbms="mssql">
 		<sql>
 			<![CDATA[
 					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
@@ -26556,7 +26543,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="435" author="rajesh.n" dbms="mssql">
+	<changeSet id="435.0" author="rajesh.n" dbms="mssql">
 		<comment>PD and Synopsys issue in Financial Summary screen</comment>
 		<sql>
 			<![CDATA[
@@ -26841,7 +26828,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet> -->
-
+<!-- 
 	<changeSet id="457" author="rajesh.n">
 		<sql>
 			<![CDATA[
@@ -26851,7 +26838,7 @@ UNION ALL
 				Update financemain_temp SET pMay = 0 WHERE pMay IS NULL;
 		]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="458" author="Ganesh.P">
 		<sql>
@@ -27900,14 +27887,14 @@ UNION ALL
 			    fin.finreference,
 			    COALESCE((( SELECT sum(t.totalamount) AS sum
 		           FROM ( SELECT max(fsd.repayamount + fsd.feeschd) AS totalamount
-		                   FROM plf.finscheduledetails fsd
-		                     JOIN plf.financemain fm ON fm.finreference = fsd.finreference AND fm.custid = m.custid
+		                   FROM finscheduledetails fsd
+		                     JOIN financemain fm ON fm.finreference = fsd.finreference AND fm.custid = m.custid
 		                  GROUP BY fm.finreference) t)) / ccy.ccyminorccyunits, 0) AS cust_emi,
 			    COALESCE((( SELECT sum(t.totalamount) AS sum
 		           FROM ( SELECT max(fsd.repayamount + fsd.feeschd) AS totalamount
-		                   FROM plf.finscheduledetails fsd
+		                   FROM finscheduledetails fsd
 		                  WHERE (fsd.repayonschdate = 1 OR fsd.pftonschdate = 1) AND (fsd.finreference IN ( SELECT financemain.finreference
-		                           FROM plf.financemain
+		                           FROM financemain
 		                          WHERE financemain.mandateid = m.mandateid))
 		                  GROUP BY fsd.finreference) t)) / ccy.ccyminorccyunits, 0) AS emi,
 		        CASE m.openmandate
@@ -27926,21 +27913,21 @@ UNION ALL
 				    bb.ifsc,
 				    bb.addofbranch,
 		    		(SELECT min(finpftdetails.firstrepaydate) AS min
-		        	   FROM plf.finpftdetails
+		        	   FROM finpftdetails
 			          WHERE (finpftdetails.finreference IN ( SELECT financemain.finreference
-		                   FROM plf.financemain
+		                   FROM financemain
 		                  WHERE financemain.mandateid = m.mandateid))) AS firstduedate,
 			    	(SELECT max(finscheduledetails.schdate) AS max
-			           FROM plf.finscheduledetails
+			           FROM finscheduledetails
 		    	      WHERE (finscheduledetails.repayonschdate = 1 OR finscheduledetails.pftonschdate = 1) AND (finscheduledetails.finreference IN ( SELECT financemain.finreference
-		                   FROM plf.financemain
+		                   FROM financemain
 		                  WHERE financemain.mandateid = m.mandateid))) AS emienddate,
 		    		COALESCE(m.maxlimit, 0) AS maxlimit,
 			    	COALESCE(( SELECT sum(t.mandatedebitamount) AS sum
 			           FROM ( SELECT max(finscheduledetails.repayamount + finscheduledetails.feeschd) AS mandatedebitamount
-		                   FROM plf.finscheduledetails
+		                   FROM finscheduledetails
 		                  WHERE (finscheduledetails.repayonschdate = 1 OR finscheduledetails.pftonschdate = 1) AND (finscheduledetails.finreference IN ( SELECT financemain.finreference
-		                           FROM plf.financemain
+		                           FROM financemain
 		                          WHERE financemain.mandateid = m.mandateid))
 		                  GROUP BY finscheduledetails.finreference) t), 0) / ccy.ccyminorccyunits AS debitamount,
 				    fin.numberofterms,
@@ -27965,21 +27952,21 @@ UNION ALL
 				    pb.utilitycode,
 			    	pb.sponsorbankcode,
 				    pb.branchifsccode
-			   FROM plf.mandates m
-			   JOIN plf.bankbranches bb ON bb.bankbranchid = m.bankbranchid
-		       JOIN plf.bmtbankdetail bd ON bd.bankcode = bb.bankcode
-		       JOIN plf.customers cust ON cust.custid = m.custid
-		       JOIN plf.rmtbranches cb ON cb.branchcode = cust.custdftbranch
-		       LEFT JOIN plf.partnerbanks pb ON pb.partnerbankid = m.partnerbankid
-		       LEFT JOIN plf.customeremails ce ON ce.custid = cust.custid AND ce.custemailpriority = 5
-		       LEFT JOIN plf.customerphonenumbers cp ON cp.phonecustid = cust.custid AND cp.phonetypepriority = 5
-		       LEFT JOIN plf.rmtcurrencies ccy ON ccy.ccycode = m.mandateccy
-		       LEFT JOIN plf.financemain fin ON m.orgreference = fin.finreference
-		       LEFT JOIN plf.rmtbranches lb ON lb.branchcode = fin.finbranch
-		       LEFT JOIN plf.rmtfinancetypes ft ON fin.fintype = ft.fintype
-		       LEFT JOIN plf.entity et ON m.entitycode = et.entitycode
+			   FROM mandates m
+			   JOIN bankbranches bb ON bb.bankbranchid = m.bankbranchid
+		       JOIN bmtbankdetail bd ON bd.bankcode = bb.bankcode
+		       JOIN customers cust ON cust.custid = m.custid
+		       JOIN rmtbranches cb ON cb.branchcode = cust.custdftbranch
+		       LEFT JOIN partnerbanks pb ON pb.partnerbankid = m.partnerbankid
+		       LEFT JOIN customeremails ce ON ce.custid = cust.custid AND ce.custemailpriority = 5
+		       LEFT JOIN customerphonenumbers cp ON cp.phonecustid = cust.custid AND cp.phonetypepriority = 5
+		       LEFT JOIN rmtcurrencies ccy ON ccy.ccycode = m.mandateccy
+		       LEFT JOIN financemain fin ON m.orgreference = fin.finreference
+		       LEFT JOIN rmtbranches lb ON lb.branchcode = fin.finbranch
+		       LEFT JOIN rmtfinancetypes ft ON fin.fintype = ft.fintype
+		       LEFT JOIN entity et ON m.entitycode = et.entitycode
 		  	   WHERE m.status = 'NEW' AND NOT (m.mandateid IN ( SELECT mandate_requests.mandateid
-		           FROM plf.mandate_requests
+		           FROM mandate_requests
 		          WHERE mandate_requests.status = 'AC' OR mandate_requests.status = 'NEW'))
 			]]>		
 		</createView>
@@ -28013,7 +28000,7 @@ UNION ALL
 	<changeSet id="PSD#160772" author="Savitri.N">
 		<createView viewName="POSTINGS_VIEW" replaceIfExists="true">
 			<![CDATA[	
-				SELECT t1.linkedtranid,
+					SELECT t1.linkedtranid,
 					t1.postref,
 					t1.postingid,
 					t1.finreference,
@@ -28046,7 +28033,7 @@ UNION ALL
 					  UNION
 					  SELECT financemain_temp.finreference
 					  FROM financemain_temp) t3 ON t3.finreference = t1.finreference
-					  WHERE t1.finevent <> ALL (ARRAY['VASFEE', 'JVPOST'])
+					  WHERE t1.finevent  NOT IN ('VASFEE', 'JVPOST')
 				UNION ALL
 				SELECT t1.linkedtranid,
 					t1.postref,
@@ -28082,7 +28069,7 @@ UNION ALL
 				SELECT t1.linkedtranid,
 					t1.postref,
 					t1.postingid,
-					t3.reference finreference,
+					cast(T3.Reference as varchar(20)) Finreference,
 					t1.finevent,
 					t1.postdate,
 					t1.valuedate,
@@ -28107,7 +28094,7 @@ UNION ALL
 					t1.transorder
 				FROM postings t1
 				JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
-				JOIN jvpostings t3 ON t3.batchreference::character varying(20) = t1.finreference
+				JOIN jvpostings t3 ON cast(T3.batchreference as varchar(20))= t1.finreference
 				JOIN financemain t4 ON t3.reference = t4.finreference
 				WHERE t1.finevent = 'JVPOST'
 				UNION ALL
@@ -28139,9 +28126,10 @@ UNION ALL
 					t1.transorder
 				FROM postings t1
 				JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
-				JOIN feepostings t3 ON t3.postid::character varying(20) = t1.finreference
+				JOIN feepostings t3 ON cast(t3.postid as  varchar(20))= t1.finreference
 				JOIN financemain t4 ON t3.reference = t4.finreference
 				WHERE t1.finevent = 'MANFEE'
+
 			]]>		
 		</createView>
 	</changeSet>
