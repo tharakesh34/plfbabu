@@ -1117,12 +1117,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.defaultOCR.setDescColumn("OcrDescription");
 		this.defaultOCR.setValidateColumns(new String[] { "OcrID" });
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_SPLIT)) {
+		if (ImplementationConstants.ALLOW_LOAN_SPLIT) {
 			this.row_AllowLoanTypes.setVisible(true);
 		}
 
 		// Inst Based Schd
-		this.row_InstBasedSchd.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.IS_INST_BASED_SCHD_REQ));
+		this.row_InstBasedSchd.setVisible(ImplementationConstants.ALLOW_INST_BASED_SCHD);
 		logger.debug(Literal.LEAVING);
 
 	}

@@ -64,6 +64,7 @@ import org.zkoss.zul.Vlayout;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
@@ -1191,14 +1192,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 		}
 		//Piramal change to hide the employment details section based on system param
-		String empSectionReq = SysParamUtil.getValueAsString(SMTParameterConstants.CUST_EMPLOYEEMENTDETAILS_REQUIRED);
-		if (PennantConstants.NO.equals(empSectionReq)) {
-			hbox_empDetails.setVisible(false);
-			listBoxCustomerEmploymentDetail.setVisible(false);
-		} else if (PennantConstants.YES.equals(empSectionReq)) {
-			hbox_empDetails.setVisible(true);
-			listBoxCustomerEmploymentDetail.setVisible(true);
-		}
+		hbox_empDetails.setVisible(ImplementationConstants.CUST_EMP_DETAILS_REQ);
+		listBoxCustomerEmploymentDetail.setVisible(ImplementationConstants.CUST_EMP_DETAILS_REQ);
 		doFillDownload(prepareList());
 		logger.debug("Leaving");
 	}

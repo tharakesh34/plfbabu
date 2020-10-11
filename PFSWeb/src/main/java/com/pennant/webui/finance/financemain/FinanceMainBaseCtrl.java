@@ -1764,7 +1764,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.gb_repaymentDetails.setVisible(isReadOnly("FinanceMainDialog_gb_repaymentDetails"));
 		this.gb_OverDuePenalty.setVisible(isReadOnly("FinanceMainDialog_gb_OverDuePenalty"));
 
-		if (!financeMain.isNew() && SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_SPLIT)) {
+		if (!financeMain.isNew() && ImplementationConstants.ALLOW_LOAN_SPLIT) {
 			this.row_AllowLoanTypes.setVisible(true);
 		}
 		if (financeMain.getParentRef() != null && StringUtils.isNotBlank(financeMain.getParentRef())) {

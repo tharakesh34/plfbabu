@@ -2680,14 +2680,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			//this.label_CustomerDialog_ResidentialStatus.setVisible(true);
 			//this.space_Residential.setVisible(true);
 			//this.custResidentialStstus.setVisible(true);
-			//hide the employment details section based on system @param
-			String empSectionReq = SysParamUtil
-					.getValueAsString(SMTParameterConstants.CUST_EMPLOYEEMENTDETAILS_REQUIRED);
-			if (PennantConstants.NO.equals(empSectionReq)) {
-				row_EmploymentDetails.setVisible(false);
-			} else if (PennantConstants.YES.equals(empSectionReq)) {
-				row_EmploymentDetails.setVisible(true);
-			}
+			row_EmploymentDetails.setVisible(ImplementationConstants.CUST_EMP_DETAILS_REQ);
 			this.space_applicationNo.setVisible(true);
 			this.label_CustomerDialog_ApplicationNo.setVisible(true);
 			this.applicationNo.setVisible(true);
@@ -2727,11 +2720,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.space_CustArabicName.setSclass("");
 			this.custArabicName.setVisible(false);
 			//change to Disable the ShareHolder TAB section based on system @param
-			if (SysParamUtil.isAllowed(SMTParameterConstants.CUST_SHAREHOLDERTAB_REQUIRED)) {
-				directorDetails.setVisible(true);
-			} else {
-				directorDetails.setVisible(false);
-			}
+			directorDetails.setVisible(ImplementationConstants.CUST_SHARE_HOLDER_TAB_REQ);
 			this.label_CustRelatedParty.setVisible(false);
 			this.hbox_CustRelatedParty.setVisible(false);
 			this.label_CustSegment.setVisible(false);
