@@ -148,14 +148,21 @@ public class ImplementationConstants {
 		ALLOW_NPA_PROVISION = getValueAsBoolean(extensions, "ALLOW_NPA_PROVISION", false);
 		ALLOW_UNACCURED_PENALITY_SOA = getValueAsBoolean(extensions, "ALLOW_UNACCURED_PENALITY_SOA", true);
 
+		// FROM HL
+		ALLOW_LOAN_SPLIT = getValueAsBoolean(extensions, "ALLOW_LOAN_SPLIT", false);
+		ALLOW_INST_BASED_SCHD = getValueAsBoolean(extensions, "ALLOW_INST_BASED_SCHD", false);
+		
+		
 		SHOW_CUSTOM_BLACKLIST_FIELDS = getValueAsBoolean(extensions, "SHOW_CUSTOM_BLACKLIST_FIELDS", false);
 		DSA_CODE_READONLY_FIELD = getValueAsBoolean(extensions, "DSA_CODE_READONLY_FIELD", false);
 		COAPP_PANNUMBER_NON_MANDATORY = getValueAsBoolean(extensions, "COAPP_PANNUMBER_NON_MANDATORY", false);
 		GENERATECIBIL_BTN_MANDATORY = getValueAsBoolean(extensions, "GENERATECIBIL_BTN_MANDATORY", false);
 		ALLOW_ALL_SERV_RCDS = getValueAsBoolean(extensions, "ALLOW_ALL_SERV_RCDS", false);
 		TV_FINALVAL_AMOUNT_VALD = getValueAsBoolean(extensions, "TV_FINALVAL_AMOUNT_VALD", false);
-		TV_FINALVAL_AMOUNT_VALD = getValueAsBoolean(extensions, "FEE_CAL_ON_RULE", false);
+		FEE_CAL_ON_RULE = getValueAsBoolean(extensions, "FEE_CAL_ON_RULE", false);
 		OLD_ADDRESSCOPY_REQUIRED = getValueAsBoolean(extensions, "OLD_ADDRESSCOPY_REQUIRED", false);
+		CUST_EMP_DETAILS_REQ = getValueAsBoolean(extensions, "CUST_EMP_DETAILS_REQ", true);
+		CUST_SHARE_HOLDER_TAB_REQ = getValueAsBoolean(extensions, "CUST_SHARE_HOLDER_TAB_REQ", true);
 
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
@@ -312,9 +319,15 @@ public class ImplementationConstants {
 	public static boolean COAPP_PANNUMBER_NON_MANDATORY;
 	public static boolean GENERATECIBIL_BTN_MANDATORY;
 	public static boolean TV_FINALVAL_AMOUNT_VALD;
-
+	
 	// FIXME>>HL >>
+	public static boolean ALLOW_LOAN_SPLIT;
+	public static boolean ALLOW_INST_BASED_SCHD;
+	
 	public static boolean FEE_CAL_ON_RULE;
+	public static boolean CUST_EMP_DETAILS_REQ;
+	public static boolean CUST_SHARE_HOLDER_TAB_REQ;
+	
 	//FIXME>>HL >>
 
 	public static boolean ALLOW_NPA_PROVISION;

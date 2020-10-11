@@ -87,7 +87,6 @@ public class SMTParameterConstants {
 	public static final String CUST_CHANGE_ROLES = "CUST_CHANGE_ROLES";
 	public static final String CREDITREVIEW_TAB = "CREDITREVIEW_TAB";
 	public static final String CUST_EXT_DEVIATIONS = "CUST_EXT_DEVIATIONS";
-	public static final String ALLOW_SPLIT = "ALLOW_SPLIT";
 
 	/**
 	 * NO_ADJ = No Adjustment, leave the Profit Fraction ADJ_LAST_INST = All Profit Fractions adjust to last schedule
@@ -285,10 +284,6 @@ public class SMTParameterConstants {
 	public static final String CHECK_USER_ACCESS_AUTHORITY = "CHECK_USER_ACCESS_AUTHORITY";
 
 	// FIXME HL SMT Parameters
-	//System param value to display employment section 
-	public static final String CUST_EMPLOYEEMENTDETAILS_REQUIRED = "CUST_EMPLOYEEMENTDETAILSREQUIRED";
-	//System param value to display ShareHolder Tab section 
-	public static final String CUST_SHAREHOLDERTAB_REQUIRED = "CUST_SHAREHOLDERTAB_REQUIRED";
 	//System param value to allow default income and expenses 
 	public static final String DEFAULT_INCOMETYPES_REQUIRED = "DEFAULT_INCOMETYPES_REQUIRED";
 	public static final String CREDIT_ELG_PARAMS = "CREDIT_ELG_PARAMS";
@@ -318,6 +313,7 @@ public class SMTParameterConstants {
 	public static final String PMAY_PRODUCT = "PMAY_PRODUCT";
 	public static final String PMAY_URL_INTIAL_REQUEST = "PMAY_URL_INTIAL_REQUEST";
 	public static final String PMAY_URL_RESPONSE = "PMAY_URL_RESPONSE";
+	
 	public static final String FINTYPEFEE_PERCENTAGE_TYPE_REQUIRED = "FINTYPEFEE_PERCENTAGE_TYPE_REQUIRED";
 	public static final String ALLOW_DEFAULT_MANDATE_REQ = "ALLOW_DEFAULT_MANDATE_REQ";
 	public static final String LIST_RENDER_ON_LOAD = "LIST_RENDER_ON_LOAD";
@@ -410,8 +406,6 @@ public class SMTParameterConstants {
 	public static final String IS_DATA_SYNC_REQ_BY_APP_DATE = "IS_DATA_SYNC_REQ_BY_APP_DATE";
 	//Co-Applicant Black list Dedup
 	public static final String COAPP_BLACKLIST_DEDUP_REQ = "COAPP_BLACKLIST_DEDUP_REQ";
-	//Allow Instruction Based Schedule
-	public static final String IS_INST_BASED_SCHD_REQ = "IS_INST_BASED_SCHD_REQ";
 	public static final String ALW_VERIFICATION_SYNC = "ALW_VERIFICATION_SYNC";
 	//Allow to calculate derived EMI
 	public static final String DERIVED_EMI_REQ = "DERIVED_EMI_REQ";
