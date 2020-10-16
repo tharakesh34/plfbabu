@@ -358,6 +358,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setGrcPeriodAftrFullDisb(rs.getBoolean("GrcPeriodAftrFullDisb"));
 							ft.setAutoIncrGrcEndDate(rs.getBoolean("AutoIncrGrcEndDate"));
 							ft.setGrcAutoIncrMonths(rs.getInt("GrcAutoIncrMonths"));
+							ft.setThrldtoMaintainGrcPrd(rs.getInt("Thrldtomaintaingrcprd"));
 							ft.setMaxAutoIncrAllowed(rs.getInt("MaxAutoIncrAllowed"));
 							ft.setAlwLoanSplit(rs.getBoolean("AlwLoanSplit"));
 							ft.setSplitLoanType(rs.getString("SplitLoanType"));
