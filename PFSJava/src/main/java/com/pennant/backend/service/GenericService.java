@@ -143,9 +143,11 @@ public abstract class GenericService<T> {
 	}
 
 	protected void saveDocument(DMSModule dm, DMSModule dsm, DocumentDetails dd) {
-		/*
-		 * if ((dd.getDocRefId() != null && dd.getDocRefId() > 0) || dd.getDocImage() == null) { return; }
-		 */
+
+		if ((dd.getDocRefId() != null && dd.getDocRefId() > 0) || dd.getDocImage() == null) {
+			return;
+		}
+
 		String finReference = dd.getFinReference();
 
 		if (dd.getCustId() == null || dd.getCustId() <= 0) {
