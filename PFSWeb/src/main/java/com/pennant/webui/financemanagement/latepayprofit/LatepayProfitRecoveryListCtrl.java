@@ -284,7 +284,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 		List<OverdueChargeRecovery> lpiListTodisplay = new ArrayList<OverdueChargeRecovery>();
 
-		FinanceMain finMian = financeMainDAO.getFinanceMainById(finReference, "", false);
+		FinanceMain finMian = financeMainDAO.getFinanceMainById(finReference, "_View", false);
 		if ((PennantConstants.YES.equals(this.recoveryCode.getValue())
 				&& StringUtils.equals(CalculationConstants.PDPFTCAL_NOTAPP, finMian.getPastduePftCalMthd()))) {
 			//If the enquiry type as a Interest over due enquiry, and past due calc method as a NotApplicable then no need show the enquiry.
