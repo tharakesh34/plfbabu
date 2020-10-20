@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>5.10.0-CLIX_R1-SNAPSHOT</version>
+		<version>5.10.0-SNAPSHOT</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 	<groupId>${pff.groupId}</groupId>
@@ -233,6 +233,30 @@
 			<artifactId>jasperreports</artifactId>
 			<version>${jasperreports.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-chart-themes</artifactId>
+			<version>4.0.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.pennant.jasper</groupId>
+			<artifactId>TrebuchetMS</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>com.pennant.jasper</groupId>
+			<artifactId>w3c</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.w3c.css</groupId>
+			<artifactId>sac</artifactId>
+			<version>1.3</version>
+		</dependency>		
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy</artifactId>
