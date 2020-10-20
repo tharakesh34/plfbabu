@@ -386,28 +386,14 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		logger.debug(Literal.ENTERING);
 
 		Object dataObject = province.getObject();
-		String pcProvince = null;
-		if (dataObject instanceof String) {
-			fillPindetails(null, null);
+		if (dataObject instanceof String || dataObject == null) {
+			this.province.setValue("");
+			this.province.setDescription("");
+			this.province.setAttribute("Province", null);
 		} else {
-			Province province = (Province) dataObject;
-			if (province == null) {
-				fillPindetails(null, null);
-			}
-			if (province != null) {
-				this.province.setErrorMessage("");
-				pcProvince = this.province.getValue();
-				fillPindetails(null, pcProvince);
-			}
+			Province details = (Province) dataObject;
+			this.province.setAttribute("Province", details.getId());
 		}
-
-		this.city.setObject("");
-		this.pinCode.setObject("");
-		this.city.setValue("");
-		this.city.setDescription("");
-		this.pinCode.setValue("");
-		this.pinCode.setDescription("");
-		fillCitydetails(pcProvince);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -490,9 +476,9 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		logger.debug(Literal.ENTERING);
 
 		this.pinCode.setModuleName("PinCode");
-		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setValueColumn("PinCodeId");
 		this.pinCode.setDescColumn("AreaName");
-		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		this.pinCode.setValidateColumns(new String[] { "PinCodeId" });
 		Filter[] filters = new Filter[1];
 
 		if (cityValue != null && !cityValue.isEmpty()) {
