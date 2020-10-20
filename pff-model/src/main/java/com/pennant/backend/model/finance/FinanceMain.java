@@ -1074,6 +1074,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 		excludeFields.add("loanSplitted");
 		excludeFields.add("custEmpType");
+		excludeFields.add("planEMIHAlwInGrace");
 		return excludeFields;
 	}
 	// ******************************************************//

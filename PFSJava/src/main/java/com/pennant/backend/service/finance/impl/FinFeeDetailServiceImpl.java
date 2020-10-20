@@ -95,11 +95,8 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
-import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
-import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.smtmasters.PFSParameter;
-import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.TaxHeaderDetailsService;
@@ -404,7 +401,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 						getFinFeeDetailDAO().update(fee, false, "");
 					}
 				} else {
+					if (fee.isTaxApplicable()) {
 					fee.setFeeID(getFinFeeDetailDAO().save(fee, isWIF, tableType));
+					}
 				}
 
 				if (!fee.getFinFeeScheduleDetailList().isEmpty()) {
