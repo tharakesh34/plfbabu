@@ -121,6 +121,7 @@ public class Provision extends AbstractWorkflowEntity {
 		excludeFields.add("assetFwdMov");
 		excludeFields.add("assetBkwMov");
 		excludeFields.add("finCcy");
+		excludeFields.add("npaHeader");
 		excludeFields.add("oldProvision");
 		excludeFields.add("financeDetail");
 		excludeFields.add("finType");
