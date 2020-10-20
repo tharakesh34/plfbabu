@@ -77,7 +77,6 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
@@ -249,6 +248,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 				if (isWorkFlowEnabled()) {
 					this.userAction = setListRecordStatus(this.userAction);
 					getUserWorkspace().allocateMenuRoleAuthorities(getRole(), this.pageRightName, this.pageRightName);
+					this.btnNotes.setVisible(true);
 				} else {
 					this.south.setHeight("0px");
 				}
@@ -657,6 +657,15 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
+	}
+
+	public void onClick$btnNotes(Event event) throws Exception {
+		doShowNotes(this.financedetail.getFinScheduleData().getFinanceMain());
+	}
+
+	@Override
+	public String getReference() {
+		return this.financedetail.getFinScheduleData().getFinanceMain().getFinReference();
 	}
 
 	private void doSave() {

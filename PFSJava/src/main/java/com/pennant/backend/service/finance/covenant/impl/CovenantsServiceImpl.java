@@ -141,6 +141,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 					document.setLastMntBy(covenant.getLastMntBy());
 					document.setLastMntOn(covenant.getLastMntOn());
 					document.setReferenceId(covenant.getKeyReference());
+					document.setFinReference(covenant.getKeyReference());
 					documents.add(document);
 				}
 			} else if (CollectionUtils.isNotEmpty(covenant.getCovenantDocuments())) {//we are preparing document list by using covenants doc
@@ -150,6 +151,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 						covenantDocument.getDocumentDetail().setLastMntOn(covenant.getLastMntOn());
 						covenantDocument.getDocumentDetail().setDocName(covenantDocument.getDocName());
 						covenantDocument.getDocumentDetail().setReferenceId(covenant.getKeyReference());
+						covenantDocument.getDocumentDetail().setFinReference(covenant.getKeyReference());
 						documents.add(covenantDocument.getDocumentDetail());
 					}
 				}
