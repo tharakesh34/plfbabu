@@ -4498,6 +4498,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Schedule Details
 				// =======================================
 				listSave(finScheduleData, "", isWIF, 0, serviceUID);
+				getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(), moduleDefiner, "_Temp");
 
 				// IRR Schedule Details
 				irrScheduleDetailDAO.saveList(finScheduleData.getIrrSDList());
