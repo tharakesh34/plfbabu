@@ -3468,7 +3468,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// save Legal Vetting Initiation details
 		// =======================================
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
-			if (financeDetail.isVettingInitTab()) {
+			if (financeDetail.isVettingInitTab() && financeDetail.getLegalVetting() != null) {
 				Verification verification = financeDetail.getLegalVetting();
 				verification.setVerificationType(VerificationType.VETTING.getKey());
 				adtVerifications.addAll(
