@@ -459,7 +459,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	@Override
 	public List<String> getCollateralTypes(String keyreference) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select distinct collateraltype ");
+		sql.append("select ca.collateraltype ");
 		sql.append(" from collateralassignment_view ca");
 		sql.append(" inner join collateralsetup_view cs on cs.collateralref = ca.collateralref");
 		sql.append(" where ca.reference = :keyreference");
