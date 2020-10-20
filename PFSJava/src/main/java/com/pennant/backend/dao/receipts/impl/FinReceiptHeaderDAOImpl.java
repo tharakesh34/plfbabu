@@ -1004,7 +1004,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		StringBuilder sql = new StringBuilder(" Select count(*) from finreceiptdetail");
 		sql.append(type);
 		sql.append(" where REFERENCE= :REFERENCE and PAYMENTTYPE= :RECEIPTMODE and FAVOURNUMBER= :FAVOURNUMBER");
-		sql.append(" and BANKCODE = :BANKCODE STATUS NOT IN ('B','C')  ");
+		sql.append(" and BANKCODE = :BANKCODE and STATUS NOT IN ('B','C')  ");
 		logger.debug(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
