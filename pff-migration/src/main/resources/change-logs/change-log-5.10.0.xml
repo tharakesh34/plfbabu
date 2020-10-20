@@ -28195,4 +28195,13 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#161082" author="kavya.n">
+		<sql>
+			<![CDATA[
+					Update SecGroups set RoleCode = '', NextRoleCode = '', TaskId = '', NextTaskId = '', RecordType = '' where GrpCode = 'OCR_Maker';
+					Update SecGroups set RoleCode = '', NextRoleCode = '', TaskId = '', NextTaskId = '', RecordType = '' where GrpCode = 'OCR_Approver';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
