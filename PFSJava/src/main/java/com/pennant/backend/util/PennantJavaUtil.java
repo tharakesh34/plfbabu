@@ -228,7 +228,6 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
 import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.fees.FeePostings;
-import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.AgreementFieldDetails;
 import com.pennant.backend.model.finance.AutoKnockOff;
 import com.pennant.backend.model.finance.AutoKnockOffFeeMapping;
@@ -248,6 +247,7 @@ import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.EtihadCreditBureauDetail;
 import com.pennant.backend.model.finance.FacilityType;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -2628,12 +2628,12 @@ public class PennantJavaUtil {
 		ModuleUtil.register("CustomerRebuild",
 				new ModuleMapping("LimitHeader", LimitHeader.class, new String[] { "LimitHeader", "LimitHeader_AView" },
 						null, new String[] { "CustomerId", "CustCIF", "LimitStructureCode" },
-						new String[][] { { "Active", "0", "1" } }, 500));
+						new Object[][] { { "Active", "0", 1 } }, 500));
 
 		ModuleUtil.register("CustomerGrpRebuild",
 				new ModuleMapping("LimitHeader", LimitHeader.class, new String[] { "LimitHeader", "LimitHeader_AView" },
 						null, new String[] { "CustomerGroup", "CustGrpCode", "LimitStructureCode" },
-						new String[][] { { "Active", "0", "1" } }, 500));
+						new Object[][] { { "Active", "0", 1 } }, 500));
 
 		// LIMIT MODULE END
 
