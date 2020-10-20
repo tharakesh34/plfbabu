@@ -28162,4 +28162,37 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#161018.1" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+					Update SecGroups set RoleCode = NULL, NextRoleCode = NULL, TaskId = NULL, NextTaskId = NULL, RecordType = NULL where GrpCode = 'VETTING_RECORDING_MAKER';
+					Update SecGroups set RoleCode = NULL, NextRoleCode = NULL, TaskId = NULL, NextTaskId = NULL, RecordType = NULL where GrpCode = 'VETTING_RECORDING_APPROVER';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#161018.2" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+			
+			delete secroles where rolecd = 'VETTING_MAKER';
+			delete secroles where rolecd = 'VETTING_APPROVER';
+			
+			UPDATE SeqSecRoles SET SeqNo = (Select MAX(RoleID) + 1 from SecRoles_View);
+			
+			INSERT INTO SecRoles VALUES ((select max(RoleID) + 1 from SecRoles), 1, 'VETTING_MAKER', 'VETTING_MAKER', '', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			INSERT INTO SecRoles VALUES ((select max(RoleID) + 1 from SecRoles), 1, 'VETTING_APPROVER', 'VETTING_APPROVER', '', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			
+			UPDATE SeqSecRoles SET SeqNo = (Select MAX(RoleID) + 1 from SecRoles_View);
+			
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			
+			INSERT INTO SECROLEGROUPS values ((SELECT MAX(RoleGrpID)+1 from SECROLEGROUPS), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'VETTING_RECORDING_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'VETTING_MAKER'), 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			INSERT INTO SECROLEGROUPS values ((SELECT MAX(RoleGrpID)+1 from SECROLEGROUPS), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'VETTING_RECORDING_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'VETTING_APPROVER'), 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
