@@ -28141,5 +28141,25 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="PSD#161239.1" author="Savitri.N">
+		<sql>
+			<![CDATA[
+				UPDATE Verifications SET verificationcategory = 0 where verificationcategory is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#161239.2" author="Savitri.N" dbms="postgresql, oracle">
+		<addDefaultValue columnName="verificationcategory" tableName="Verifications" defaultValue="0" />
+	</changeSet>	
+	
+	<changeSet id="PSD#161239.2" author="Savitri.N" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE Verifications ADD CONSTRAINT DF_VERIFICATIONS_VC DEFAULT 0 FOR VERIFICATIONCATEGORY;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
