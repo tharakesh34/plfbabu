@@ -24365,13 +24365,13 @@ UNION ALL
 
 
 
-	<changeSet id="221" author="Shinde.b" dbms="mssql">
+	<!-- <changeSet id="221" author="Shinde.b" dbms="mssql">
 		<sql>
    		  <![CDATA[
        		 Insert into REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) values ('InterfaceConfiguration','InterfaceConfiguration','listheader_InterfaceConfigurationList_Code.label,listheader_InterfaceConfigurationList_Description.label,listheader_InterfaceConfigurationList_Type.label,listheader_InterfaceConfigurationList_NotificationType.label,listheader_InterfaceConfigurationList_active.label','code,description,type,active','String,String,String,Boolean',null,'ReportList04','InterfaceConfiguration ','Enquiry',0,1000,'2019-10-08','Approved',null,null,null,null,null,0,0);
         	 ]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 
 	<changeSet id="233" author="satish.s">
@@ -25069,14 +25069,14 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="339" author="Mangapathi.s">
+	<!-- <changeSet id="339" author="Mangapathi.s">
 		<comment>Cibil Button Right</comment>
 		<sql>
 		<![CDATA[
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerDialog_btn_GenerateCibil','CustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 
 	<changeSet id="344" author="rohit.s" dbms="postgresql,oracle">
@@ -28175,8 +28175,8 @@ UNION ALL
 		<sql>
 			<![CDATA[
 			
-			delete secroles where rolecd = 'VETTING_MAKER';
-			delete secroles where rolecd = 'VETTING_APPROVER';
+			delete from secroles where rolecd = 'VETTING_MAKER';
+			delete from secroles where rolecd = 'VETTING_APPROVER';
 			
 			UPDATE SeqSecRoles SET SeqNo = (Select MAX(RoleID) + 1 from SecRoles_View);
 			

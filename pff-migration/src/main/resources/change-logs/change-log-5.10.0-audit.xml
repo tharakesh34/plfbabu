@@ -1952,7 +1952,7 @@
 		</createTable>
 	</changeSet> -->
 
-	<changeSet id="198" author="rajesh.n">
+	<!-- <changeSet id="198" author="rajesh.n">
 		<addColumn tableName="ADTCUSTOMER_RETAIL_ED">
 			<column name="SPOUSENAME" type="VARCHAR(50)" />
 		</addColumn>
@@ -1997,7 +1997,7 @@
 			<column name="SPOUSEMOBILENO" type="VARCHAR(10)" />
 		</addColumn>
 	</changeSet>
-
+ -->
 	<changeSet id="205.0" author="rajesh.n">
 		<sql>
 			drop table adtPMAY;
@@ -2048,7 +2048,7 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="206" author="rajesh.n">
+	<!-- <changeSet id="206" author="rajesh.n">
 		<addColumn tableName="ADTCUSTOMER_RETAIL_ED">
 			<column name="SPOUSEDOB" type="datetime" />
 		</addColumn>
@@ -2070,7 +2070,8 @@
 		<addColumn tableName="ADTCUSTOMER_RETAIL_ED">
 			<column name="SPOUSEALTERNEMAIL" type="VARCHAR(60)" />
 		</addColumn>
-	</changeSet>
+	</changeSet> -->
+	
 	<changeSet id="210" author="rajesh.n">
 		<addColumn tableName="adtfinancemain">
 			<column name="pMay" type="boolean" defaultValue="0" />
