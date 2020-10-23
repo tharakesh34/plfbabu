@@ -6569,6 +6569,7 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="processCustomer*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -9143,7 +9144,7 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO"/>
+		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
 	</bean>
 
 	<bean id="finChequeHeaderService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
