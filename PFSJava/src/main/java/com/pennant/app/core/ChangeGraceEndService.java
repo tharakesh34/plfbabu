@@ -140,7 +140,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 						break;
 					}
 					//we need to break the loop if future  emi's are greater than Threshold Gestation Period
-					if (pendingGraceEMICount >= thrldtoMaintainGrcPrd) {
+					if (pendingGraceEMICount > thrldtoMaintainGrcPrd) {
 						thrldfound = true;
 						break;
 					}
