@@ -406,14 +406,9 @@ public class ReceiptCalculator implements Serializable {
 							allocate.setWaivedAmount(alloc.getWaivedAmount());
 							BigDecimal dueAmount;
 							BigDecimal paidAmount;
-							boolean excluseTax = false;
-							if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
-								dueAmount = allocate.getTotalDue().subtract(allocate.getDueGST())
-										.subtract(alloc.getWaivedAmount());
-								excluseTax = true;
-							} else {
-								dueAmount = allocate.getTotalDue().subtract(alloc.getWaivedAmount());
-							}
+
+							dueAmount = allocate.getTotalDue().subtract(alloc.getWaivedAmount());
+
 							// Waiver GST Calculation
 							if (StringUtils.isNotBlank(allocate.getTaxType())
 									&& allocate.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
@@ -435,9 +430,6 @@ public class ReceiptCalculator implements Serializable {
 										calAllocationPaidGST(receiptData.getFinanceDetail(), totalPaid, allocate,
 												allocate.getTaxType());
 
-										if (excluseTax) {
-											paidAmount = paidAmount.add(allocate.getPaidGST());
-										}
 									}
 									allocate.setTdsPaid(allocate.getTdsPaid());
 									allocate.setTotalPaid(paidAmount.add(allocate.getTdsPaid()));
