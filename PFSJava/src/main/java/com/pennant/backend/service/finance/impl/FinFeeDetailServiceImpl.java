@@ -401,9 +401,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 						getFinFeeDetailDAO().update(fee, false, "");
 					}
 				} else {
-					if (fee.isTaxApplicable()) {
 					fee.setFeeID(getFinFeeDetailDAO().save(fee, isWIF, tableType));
-					}
 				}
 
 				if (!fee.getFinFeeScheduleDetailList().isEmpty()) {
