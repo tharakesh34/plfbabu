@@ -109,6 +109,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager;
 import com.pennant.util.ErrorControl;
@@ -169,6 +170,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 
 	//Mapping Fields.
 	private final String FINFEEREFUNDDETAIL = "FINFEEREFUNDDETAIL";
+	private final String PRVFINFEEREFUNDDETAIL = "PRVFINFEEREFUNDDETAIL";
 	private final String ALLOCATED_AMOUNT = "ALLOCATED_AMOUNT";
 	private final String ALLOCATED_AMT_GST = "ALLOCATED_AMT_GST";
 	private final String ALLOCATED_AMT_TDS = "ALLOCATED_AMT_TDS";
@@ -183,6 +185,8 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	private static BigDecimal tdsPerc = null;
 	private static String tdsRoundMode = null;
 	private static int tdsRoundingTarget = 0;
+	private String taxRoundMode = null;
+	private int taxRoundingTarget = 0;
 
 	protected Listheader listheader_FinFeeRefundList_PaidTDS;
 	protected Listheader listheader_FinFeeRefundList_TotPrvsRefundTDS;
@@ -884,6 +888,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put(FINFEEREFUNDDETAIL, curFinFeeRefund);
+				map.put(PRVFINFEEREFUNDDETAIL, prvsFinFeeRefund);
 				map.put(ALLOCATED_AMOUNT, allocAmtBox);
 				map.put(ALLOCATED_AMT_GST, allocAmtGstBox);
 				map.put(ALLOCATED_AMT_TDS, allocAmtTdsBox);
@@ -939,6 +944,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 
 		Map<String, Object> map = (Map<String, Object>) event.getData();
 		FinFeeRefundDetails finFeeRefund = (FinFeeRefundDetails) map.get(FINFEEREFUNDDETAIL);
+		PrvsFinFeeRefund prvFinFeeRefund = (PrvsFinFeeRefund) map.get(PRVFINFEEREFUNDDETAIL);
 		Decimalbox allocAmtBox = (Decimalbox) map.get(ALLOCATED_AMOUNT);
 		Decimalbox allocAmtGstBox = (Decimalbox) map.get(ALLOCATED_AMT_GST);
 		Decimalbox allocAmtTdsBox = (Decimalbox) map.get(ALLOCATED_AMT_TDS);
@@ -948,24 +954,50 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 
 		BigDecimal allocatedAmtGST = BigDecimal.ZERO;
 		BigDecimal allocatedAmtTDS = BigDecimal.ZERO;
+		BigDecimal allocatedAmt = BigDecimal.ZERO;
 		BigDecimal allocatedAmtTOT = PennantAppUtil.unFormateAmount(totAllocAmtTotBox.getValue(), formatter);
 
 		if (finFeeRefund.isTaxApplicable()) {
+			BigDecimal netAmountOriginal = fee.getNetAmount();
+			BigDecimal netTDS = fee.getNetTDS();
 
-			allocatedAmtGST = GSTCalculator.getInclusiveGST(allocatedAmtTOT.add(fee.getNetTDS()), taxPercentages)
-					.gettGST();
-			BigDecimal calcAmt = allocatedAmtTOT.subtract(allocatedAmtGST).add(fee.getNetTDS());
 			if (fee.isTdsReq()) {
-				allocatedAmtTDS = (calcAmt.multiply(tdsPerc)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+				allocatedAmtTDS = (netTDS.multiply(allocatedAmtTOT)).divide(netAmountOriginal, 2,
+						RoundingMode.HALF_DOWN);
 				allocatedAmtTDS = CalculationUtil.roundAmount(allocatedAmtTDS, tdsRoundMode, tdsRoundingTarget);
 			}
+
+			BigDecimal fraction = BigDecimal.ONE;
+			BigDecimal totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST).subtract(tdsPerc);
+			fraction = fraction.add(totPerc.divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN));
+
+			BigDecimal orgAmt = allocatedAmtTOT.divide(fraction, 0, RoundingMode.HALF_DOWN);
+			orgAmt = CalculationUtil.roundAmount(orgAmt, taxRoundMode, taxRoundingTarget);
+			allocatedAmtGST = GSTCalculator.getExclusiveGST(orgAmt, taxPercentages).gettGST();
+
+			allocatedAmt = allocatedAmtTOT.subtract(allocatedAmtGST).add(allocatedAmtTDS);
+
+			BigDecimal diffAmt = BigDecimal.ZERO;
+			BigDecimal diffGST = BigDecimal.ZERO;
+			BigDecimal diffTDS = BigDecimal.ZERO;
+			BigDecimal remAmt = fee.getPaidAmount().subtract(prvFinFeeRefund.getTotRefundAmount());
+			if (allocatedAmtTOT.compareTo(remAmt) == 0) {
+				diffAmt = fee.getPaidAmountOriginal()
+						.subtract(prvFinFeeRefund.getTotRefundAmtOriginal().add(allocatedAmt));
+				diffGST = fee.getPaidAmountGST().subtract(prvFinFeeRefund.getTotRefundAmtGST().add(allocatedAmtGST));
+				diffTDS = fee.getPaidTDS().subtract(prvFinFeeRefund.getTotRefundAmtTDS().add(allocatedAmtTDS));
+			}
+
+			allocatedAmt = allocatedAmt.add(diffAmt);
+			allocatedAmtGST = allocatedAmtGST.add(diffGST);
+			allocatedAmtTDS = allocatedAmtTDS.add(diffTDS);
 		}
 
 		finFeeRefund.setRefundAmount(allocatedAmtTOT);
 		finFeeRefund.setRefundAmtGST(allocatedAmtGST);
 		finFeeRefund.setRefundAmtTDS(allocatedAmtTDS);
-		finFeeRefund.setRefundAmtOriginal(allocatedAmtTOT.subtract(allocatedAmtGST).add(allocatedAmtTDS));
-		allocAmtBox.setValue(PennantAppUtil.formateAmount(finFeeRefund.getRefundAmtOriginal(), formatter));
+		finFeeRefund.setRefundAmtOriginal(allocatedAmt);
+		allocAmtBox.setValue(PennantAppUtil.formateAmount(allocatedAmt, formatter));
 		allocAmtGstBox.setValue(PennantAppUtil.formateAmount(allocatedAmtGST, formatter));
 		allocAmtTdsBox.setValue(PennantAppUtil.formateAmount(allocatedAmtTDS, formatter));
 		totAllocAmtTotBox.setValue(PennantAppUtil.formateAmount(allocatedAmtTOT, formatter));
@@ -1411,10 +1443,13 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	}
 
 	private void setParms() {
-		if (tdsPerc == null || tdsRoundMode == null || tdsRoundingTarget == 0) {
+		if (tdsPerc == null || tdsRoundMode == null || tdsRoundingTarget == 0 || taxRoundMode == null
+				|| taxRoundingTarget == 0) {
 			tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 			tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
 			tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+			taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+			taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 		}
 	}
 

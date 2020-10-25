@@ -136,10 +136,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	private TaxHeaderDetailsService taxHeaderDetailsService;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
-	private BigDecimal tdsPerc = null;
-	private String tdsRoundMode = null;
-	private int tdsRoundingTarget = 0;
-
 	public FinFeeDetailServiceImpl() {
 		super();
 	}
@@ -1842,7 +1838,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 				// Remaining Fee
 				BigDecimal remainingAmountOriginal = finFeeDetail.getActualAmountOriginal()
-						.subtract(finFeeDetail.getPaidAmountOriginal()).subtract(waivedAmount);
+						.subtract(finFeeDetail.getPaidAmountOriginal());
 				//taxSplit = GSTCalculator.getInclusiveGST(remainingAmountOriginal, taxPercentages);
 				cgstTax.setRemFeeTax(cgstTax.getNetTax().subtract(cgstTax.getPaidTax()));
 				sgstTax.setRemFeeTax(sgstTax.getNetTax().subtract(sgstTax.getPaidTax()));
@@ -1941,14 +1937,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		logger.debug(Literal.LEAVING);
 		return result;
-	}
-
-	private void setParms() {
-		if (tdsPerc == null || tdsRoundMode == null || tdsRoundingTarget == 0) {
-			tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-			tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-			tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
-		}
 	}
 
 	@Override

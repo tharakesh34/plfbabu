@@ -1590,7 +1590,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				dataMap.put(feeTypeCode + "_W", isPreIncomized ? BigDecimal.ZERO : fee.getWaivedAmount());
 			}
 
-			dataMap.put(feeTypeCode + "_P", isPreIncomized ? BigDecimal.ZERO : fee.getPaidAmountOriginal());
+			dataMap.put(feeTypeCode + "_P", isPreIncomized ? BigDecimal.ZERO : fee.getPaidAmount());
 
 			// GST Added
 			dataMap.put(feeTypeCode + "_N", isPreIncomized ? BigDecimal.ZERO : fee.getNetAmount());

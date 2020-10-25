@@ -812,6 +812,7 @@ public class AccountEngineExecution implements Serializable {
 			if (ImplementationConstants.ALLOW_TDS_ON_FEE) {
 				addZeroifNotContains(dataMap, feeCode + "_TDS_N");
 				addZeroifNotContains(dataMap, feeCode + "_TDS_P");
+				addZeroifNotContains(dataMap, feeCode + "_TDS_R");
 			}
 
 			String[] payTypes = { "EX_", "EA_", "PA_", "PB_" };
