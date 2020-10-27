@@ -802,7 +802,13 @@ public class FeeCalculator implements Serializable {
 			if (finPft != null) {
 				BigDecimal outStandingFeeBal = financeScheduleDetailDAO.getOutStandingBalFromFees(fm.getFinReference());
 				dataMap.put("totalOutStanding", finPft.getTotalPftBal());
-				dataMap.put("principalOutStanding", finPft.getTotalPriBal());
+				if (receiptData.isForeClosureEnq()) {
+					dataMap.put("principalOutStanding",
+							finPft.getTotalPriBal().subtract(receiptData.getOrgFinPftDtls().getTdSchdPriBal()));
+				} else {
+					dataMap.put("principalOutStanding", finPft.getTotalPriBal());
+				}
+				dataMap.put("principalSchdOutstanding", finPft.getTotalpriSchd().subtract(finPft.getTdSchdPri()));
 				dataMap.put("totOSExcludeFees", finPft.getTotalPftBal().add(finPft.getTotalPriBal()));
 				dataMap.put("totOSIncludeFees",
 						finPft.getTotalPftBal().add(finPft.getTotalPriBal()).add(outStandingFeeBal));
