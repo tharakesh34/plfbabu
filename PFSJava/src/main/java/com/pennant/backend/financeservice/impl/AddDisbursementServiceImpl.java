@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.core.ChangeGraceEndService;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -46,6 +47,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 	private FinanceStepDetailDAO financeStepDetailDAO;
 	private FinanceDataValidation financeDataValidation;
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
+	private ChangeGraceEndService changeGraceEndService;
 
 	/**
 	 * Method for perform add disbursement action
@@ -115,22 +117,45 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		//financeMain.setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
 		//financeMain.setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 		finSchData = ScheduleCalculator.addDisbursement(finScheduleData, amount, addFeeFinance, alwAssetUtilize);
+		
+		// Under Construction : End Grace Period After Full Disbursement
+		BigDecimal disbAmount = BigDecimal.ZERO;
 
-		// Plan EMI Holidays Resetting after Add Disbursement
-		if (finSchData.getFinanceMain().isPlanEMIHAlw()) {
-			finSchData.getFinanceMain().setEventFromDate(financeMain.getRecalFromDate());
-			finSchData.getFinanceMain().setEventToDate(finSchData.getFinanceMain().getMaturityDate());
-			finSchData.getFinanceMain().setRecalFromDate(financeMain.getRecalFromDate());
-			finSchData.getFinanceMain().setRecalToDate(finSchData.getFinanceMain().getMaturityDate());
-			finSchData.getFinanceMain().setRecalSchdMethod(finSchData.getFinanceMain().getScheduleMethod());
+		for (FinanceDisbursement curDisb : finScheduleData.getDisbursementDetails()) {
 
-			if (StringUtils.equals(finSchData.getFinanceMain().getPlanEMIHMethod(),
-					FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-				finSchData = ScheduleCalculator.getFrqEMIHoliday(finSchData);
-			} else {
-				finSchData = ScheduleCalculator.getAdhocEMIHoliday(finSchData);
+			if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
+				continue;
+			}
+
+			disbAmount = disbAmount.add(curDisb.getDisbAmount());
+		}
+		
+		if (financeMain.isAllowGrcPeriod() && financeMain.isEndGrcPeriodAftrFullDisb()) {
+			if (financeMain.getFinAssetValue().compareTo(disbAmount.add(amount)) == 0
+					&& financeMain.getGrcPeriodEndDate().compareTo(financeMain.getEventFromDate()) > 0) {
+
+				// reset grace n repay fields and end grace period
+				finSchData = getChangeGraceEndService().changeGraceEnd(finSchData, true);
+			}
+		} else {
+			if (finSchData.getFinanceMain().isPlanEMIHAlw()) {
+				finSchData.getFinanceMain().setEventFromDate(financeMain.getRecalFromDate());
+				finSchData.getFinanceMain().setEventToDate(finSchData.getFinanceMain().getMaturityDate());
+				finSchData.getFinanceMain().setRecalFromDate(financeMain.getRecalFromDate());
+				finSchData.getFinanceMain().setRecalToDate(finSchData.getFinanceMain().getMaturityDate());
+				finSchData.getFinanceMain().setRecalSchdMethod(finSchData.getFinanceMain().getScheduleMethod());
+
+				if (StringUtils.equals(finSchData.getFinanceMain().getPlanEMIHMethod(),
+						FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+					finSchData = ScheduleCalculator.getFrqEMIHoliday(finSchData);
+				} else {
+					finSchData = ScheduleCalculator.getAdhocEMIHoliday(finSchData);
+				}
 			}
 		}
+
+		// Plan EMI Holidays Resetting after Add Disbursement
+		
 
 		BigDecimal newTotalPft = finSchData.getFinanceMain().getTotalGrossPft();
 		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
@@ -557,6 +582,14 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public ChangeGraceEndService getChangeGraceEndService() {
+		return changeGraceEndService;
+	}
+
+	public void setChangeGraceEndService(ChangeGraceEndService changeGraceEndService) {
+		this.changeGraceEndService = changeGraceEndService;
 	}
 
 }

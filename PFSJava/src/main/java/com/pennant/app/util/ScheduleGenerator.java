@@ -391,6 +391,30 @@ public class ScheduleGenerator {
 			}
 
 		}
+		
+		// SATYA : Disbursement Details from Grace End onwards
+		for (FinanceDisbursement disbursementDetail : finScheduleData.getDisbursementDetails()) {
+
+			Date disbDate = formatDate(disbursementDetail.getDisbDate());
+
+			if (disbDate.compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
+				continue;
+			}
+
+			BigDecimal prvTermDisbAmount = BigDecimal.ZERO;
+			FinanceScheduleDetail schedule = new FinanceScheduleDetail();
+
+			if (finScheduleData.getScheduleMap() != null && finScheduleData.getScheduleMap().containsKey(disbDate)) {
+
+				schedule = finScheduleData.getScheduleMap().get(disbDate);
+				prvTermDisbAmount = schedule.getDisbAmount();
+			}
+
+			schedule.setDisbOnSchDate(true);
+			schedule.setFeeChargeAmt(disbursementDetail.getFeeChargeAmt());
+			schedule.setInsuranceAmt(disbursementDetail.getInsuranceAmt());
+			schedule.setDisbAmount(disbursementDetail.getDisbAmount().add(prvTermDisbAmount));
+		}
 
 		finScheduleData.getScheduleMap().clear();
 		financeMain.setSkipRateReset(true);
@@ -1389,6 +1413,16 @@ public class ScheduleGenerator {
 
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
+	}
+	
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 */
+	private static Date formatDate(Date date) {
+		return DateUtility.getDate(DateUtility.format(date, PennantConstants.DBDateFormat),
+				PennantConstants.DBDateFormat);
 	}
 
 }

@@ -7208,6 +7208,7 @@
 		<property name="financeDataValidation" ref="financeDataValidation" />
 		<property name="finServiceInstrutionDAO" ref="finServiceInstructionDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="changeGraceEndService" ref="changeGraceEndService" />
 	</bean>
 
 	<bean id="addDatedScheduleService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
