@@ -45,7 +45,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FeeCalculator implements Serializable {
@@ -802,11 +801,10 @@ public class FeeCalculator implements Serializable {
 			if (finPft != null) {
 				BigDecimal outStandingFeeBal = financeScheduleDetailDAO.getOutStandingBalFromFees(fm.getFinReference());
 				dataMap.put("totalOutStanding", finPft.getTotalPftBal());
+				dataMap.put("principalOutStanding", finPft.getTotalpriSchd().subtract(finPft.getTdSchdPri()));
 				if (receiptData.isForeClosureEnq()) {
 					dataMap.put("principalOutStanding",
 							finPft.getTotalPriBal().subtract(receiptData.getOrgFinPftDtls().getTdSchdPriBal()));
-				} else {
-					dataMap.put("principalOutStanding", finPft.getTotalPriBal());
 				}
 				dataMap.put("principalSchdOutstanding", finPft.getTotalpriSchd().subtract(finPft.getTdSchdPri()));
 				dataMap.put("totOSExcludeFees", finPft.getTotalPftBal().add(finPft.getTotalPriBal()));
