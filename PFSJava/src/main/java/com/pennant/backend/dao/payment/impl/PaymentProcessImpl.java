@@ -36,6 +36,8 @@ public class PaymentProcessImpl implements PaymentProcess {
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private InsuranceDetailService insuranceDetailService;
 	private PlatformTransactionManager transactionManager;
+	private static String PAID_STATUS = "E";
+	private static String REALIZED_STATUS = "P";
 
 	@Override
 	public void process(PaymentInstruction paymentInstruction) {
@@ -105,14 +107,20 @@ public class PaymentProcessImpl implements PaymentProcess {
 		logger.debug(Literal.ENTERING);
 
 		try {
+
+			String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
+			if (StringUtils.isNotBlank(disbStatus)) {
+				PAID_STATUS = disbStatus;
+			}
+
 			String paymentType = instruction.getPaymentType();
 
-			if (StringUtils.equals("E", instruction.getStatus())) {
+			if (StringUtils.equals(PAID_STATUS, instruction.getStatus())) {
 				instruction.setStatus(DisbursementConstants.STATUS_PAID);
 				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
 					insuranceDetailService.executeVasPaymentsAccountingProcess(instruction);
 				}
-			} else if (StringUtils.equals("P", instruction.getStatus())) {
+			} else if (StringUtils.equals(REALIZED_STATUS, instruction.getStatus())) {
 				instruction.setStatus(DisbursementConstants.STATUS_REALIZED);
 				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
 					insuranceDetailService.executeVasPaymentsAccountingProcess(instruction);

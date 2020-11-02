@@ -52,6 +52,7 @@ import java.util.Random;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.CollectionUtils;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
@@ -390,45 +391,50 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		BeanUtils.copyProperties((Branch) auditHeader.getAuditDetail().getModelData(), branch);
 		getBranchDAO().delete(branch, TableType.TEMP_TAB);
 
-		if ((PennantConstants.RECORD_TYPE_UPD.equals(branch.getRecordType()))
-				|| PennantConstants.RECORD_TYPE_DEL.equals(branch.getRecordType())) {
-			securityUserAccessDAO.deleteDivisionBranchesByBranchCodeAndUserId(branch.getBranchCode());
+		Long clusterId = branch.getClusterId();
+		List<SecurityUserAccess> securityUserAccessList = null;
+
+		if (clusterId != null) {
+			securityUserAccessList = securityUserAccessDAO.getSecUserAccessByClusterId(clusterId);
 		}
 
-		List<SecurityUserAccess> securityUserAccessList = new ArrayList<>();
-
-		if (!PennantConstants.RECORD_TYPE_DEL.equals(branch.getRecordType())) {
-			Long clusterId = branch.getClusterId();
-
-			if (clusterId != null) {
-				securityUserAccessList = securityUserAccessDAO.getSecUserAccessByClusterId(clusterId);
-			}
-
+		String recordType = branch.getRecordType();
+		if (!CollectionUtils.isEmpty(securityUserAccessList)) {
 			for (SecurityUserAccess securityUserAccess : securityUserAccessList) {
-				long lastMntBy = securityUserAccess.getLastMntBy();
-				Timestamp lastMntOn = new Timestamp(System.currentTimeMillis());
-				SecurityUserDivBranch securityUserDivBranch = new SecurityUserDivBranch();
-				securityUserDivBranch.setUsrID(securityUserAccess.getUsrId());
-				securityUserDivBranch.setUserDivision(securityUserAccess.getDivision());
-				securityUserDivBranch.setUserBranch(branch.getId());
-				securityUserDivBranch.setVersion(1);
-				securityUserDivBranch.setLastMntBy(lastMntBy);
-				securityUserDivBranch.setLastMntOn(lastMntOn);
-				securityUserDivBranch.setRecordStatus("Approved");
-				securityUserDivBranch.setRoleCode("");
-				securityUserDivBranch.setNextRoleCode("");
-				securityUserDivBranch.setTaskId("");
-				securityUserDivBranch.setNextTaskId("");
-				securityUserDivBranch.setWorkflowId(0);
-				long userId = securityUserDAO.saveDivBranchDetails(securityUserDivBranch, "");
+				long usrId = securityUserAccess.getUsrId();
+				String division = securityUserAccess.getDivision();
+
+				if ((PennantConstants.RECORD_TYPE_UPD.equals(recordType))
+						|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+					securityUserAccessDAO.deleteDivisionBranches(branch.getBranchCode(), usrId, division);
+				}
+
+				if (!PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+					long lastMntBy = securityUserAccess.getLastMntBy();
+					Timestamp lastMntOn = new Timestamp(System.currentTimeMillis());
+					SecurityUserDivBranch securityUserDivBranch = new SecurityUserDivBranch();
+					securityUserDivBranch.setUsrID(usrId);
+					securityUserDivBranch.setUserDivision(division);
+					securityUserDivBranch.setUserBranch(branch.getId());
+					securityUserDivBranch.setVersion(1);
+					securityUserDivBranch.setLastMntBy(lastMntBy);
+					securityUserDivBranch.setLastMntOn(lastMntOn);
+					securityUserDivBranch.setRecordStatus("Approved");
+					securityUserDivBranch.setRoleCode("");
+					securityUserDivBranch.setNextRoleCode("");
+					securityUserDivBranch.setTaskId("");
+					securityUserDivBranch.setNextTaskId("");
+					securityUserDivBranch.setWorkflowId(0);
+					securityUserDAO.saveDivBranchDetails(securityUserDivBranch, "");
+				}
 			}
 		}
 
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(branch.getRecordType())) {
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(recordType)) {
 			auditHeader.getAuditDetail().setBefImage(branchDAO.getBranchById(branch.getBranchCode(), ""));
 		}
 
-		if (branch.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
 			getBranchDAO().delete(branch, TableType.MAIN_TAB);
@@ -440,7 +446,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 			branch.setNextTaskId("");
 			branch.setWorkflowId(0);
 
-			if (branch.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (recordType.equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				branch.setRecordType("");
 				getBranchDAO().save(branch, TableType.MAIN_TAB);

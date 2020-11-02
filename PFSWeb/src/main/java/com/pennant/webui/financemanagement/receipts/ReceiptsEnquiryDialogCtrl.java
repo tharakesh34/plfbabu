@@ -224,6 +224,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Combobox receiptChannel;
 	protected Combobox subReceiptMode;
 	protected Datebox receiptDate;
+	protected Datebox receivedDate;
 	protected CurrencyBox receiptAmount;
 	protected Combobox excessAdjustTo;
 	protected Decimalbox remBalAfterAllocation;
@@ -577,6 +578,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.ENTERING);
 
 		this.receiptDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.receivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.paidByCustomer.setFormat(amountFormat);
 		this.receiptAmount.setProperties(true, formatter);
 		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -1176,6 +1178,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		fillComboBox(receiptPurpose, rch.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		this.receiptMode.setValue(rch.getReceiptMode());
 		this.receiptDate.setValue(rch.getReceiptDate());
+		this.receivedDate.setValue(rch.getReceivedDate());
 		this.receiptAmount.setValue(rch.getReceiptAmount());
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(rch.getReceiptAmount(), formatter));
 
@@ -1194,6 +1197,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.postBranch.setValue(rch.getPostBranch(), rch.getPostBranchDesc());
 		this.cashierBranch.setValue(rch.getCashierBranch(), rch.getCashierBranchDesc());
 		this.finDivision.setValue(rch.getFinDivision(), rch.getFinDivisionDesc());
+		this.valueDate.setValue(rch.getValueDate());
 
 		if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(rch.getKnockOffType())) {
 			this.knockOffType.setValue("Auto");

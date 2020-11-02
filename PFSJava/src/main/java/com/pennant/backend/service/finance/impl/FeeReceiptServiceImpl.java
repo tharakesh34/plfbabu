@@ -912,6 +912,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			header.setRoleCode(roleCode);
 			header.setWorkflowId(workFlowId);
 		}
+		header.setTransactionRef(finServInst.getReceiptDetail().getFavourNumber());
+		header.setBankCode(finServInst.getReceiptDetail().getBankCode());
 
 		FinReceiptDetail fsiReceiptDtl = finServInst.getReceiptDetail();
 		FinReceiptDetail receiptDetail = new FinReceiptDetail();

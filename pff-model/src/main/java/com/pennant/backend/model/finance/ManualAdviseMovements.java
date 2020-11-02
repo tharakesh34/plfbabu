@@ -20,6 +20,18 @@ public class ManualAdviseMovements implements Serializable {
 	private BigDecimal tdsPaid = BigDecimal.ZERO;
 	private String status;
 
+	// GST Paid Fields
+	private BigDecimal paidCGST = BigDecimal.ZERO;
+	private BigDecimal paidSGST = BigDecimal.ZERO;
+	private BigDecimal paidUGST = BigDecimal.ZERO;
+	private BigDecimal paidIGST = BigDecimal.ZERO;
+
+	// GST Waiver Fields
+	private BigDecimal waivedCGST = BigDecimal.ZERO;
+	private BigDecimal waivedSGST = BigDecimal.ZERO;
+	private BigDecimal waivedUGST = BigDecimal.ZERO;
+	private BigDecimal waivedIGST = BigDecimal.ZERO;
+
 	private boolean taxApplicable;
 	private String taxComponent;
 	private int adviseType;
@@ -89,6 +101,70 @@ public class ManualAdviseMovements implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public BigDecimal getPaidCGST() {
+		return paidCGST;
+	}
+
+	public void setPaidCGST(BigDecimal paidCGST) {
+		this.paidCGST = paidCGST;
+	}
+
+	public BigDecimal getPaidSGST() {
+		return paidSGST;
+	}
+
+	public void setPaidSGST(BigDecimal paidSGST) {
+		this.paidSGST = paidSGST;
+	}
+
+	public BigDecimal getPaidUGST() {
+		return paidUGST;
+	}
+
+	public void setPaidUGST(BigDecimal paidUGST) {
+		this.paidUGST = paidUGST;
+	}
+
+	public BigDecimal getPaidIGST() {
+		return paidIGST;
+	}
+
+	public void setPaidIGST(BigDecimal paidIGST) {
+		this.paidIGST = paidIGST;
+	}
+
+	public BigDecimal getWaivedCGST() {
+		return waivedCGST;
+	}
+
+	public void setWaivedCGST(BigDecimal waivedCGST) {
+		this.waivedCGST = waivedCGST;
+	}
+
+	public BigDecimal getWaivedSGST() {
+		return waivedSGST;
+	}
+
+	public void setWaivedSGST(BigDecimal waivedSGST) {
+		this.waivedSGST = waivedSGST;
+	}
+
+	public BigDecimal getWaivedUGST() {
+		return waivedUGST;
+	}
+
+	public void setWaivedUGST(BigDecimal waivedUGST) {
+		this.waivedUGST = waivedUGST;
+	}
+
+	public BigDecimal getWaivedIGST() {
+		return waivedIGST;
+	}
+
+	public void setWaivedIGST(BigDecimal waivedIGST) {
+		this.waivedIGST = waivedIGST;
 	}
 
 	public long getReceiptID() {

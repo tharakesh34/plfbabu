@@ -99,6 +99,8 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 					} else if (PennantConstants.DOC_TYPE_RAR.equals(docDetail.getDoctype())) {
 						amedia = new AMedia(docDetail.getDocName(), "x-rar-compressed", "application/x-rar-compressed",
 								data);
+					} else {
+						amedia = new AMedia(docDetail.getDocName(), null, null, data);
 					}
 					document.setContent(amedia);
 				}

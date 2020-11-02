@@ -37,6 +37,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
@@ -80,6 +81,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 	protected Longbox receiptId;
 	protected Datebox receiptDate;
+	protected Datebox receivedDate;
 	protected Decimalbox receiptAmount;
 	protected Combobox receiptMode;
 	protected Combobox receiptPurpose;
@@ -96,6 +98,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listheader listheader_FinReference;
 	protected Listheader listheader_ReceiptId;
 	protected Listheader listheader_ReceiptDate;
+	protected Listheader listheader_ReceivedDate;
 	protected Listheader listheader_ReceiptMode;
 	protected Listheader listheader_ReceiptAmount;
 	protected Listheader listheader_ReceiptPurpose;
@@ -115,6 +118,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listbox sortOperator_loanReference;
 	protected Listbox sortOperator_receiptId;
 	protected Listbox sortOperator_receiptDate;
+	protected Listbox sortOperator_receivedDate;
 	protected Listbox sortOperator_receiptMode;
 	protected Listbox sortOperator_receiptPurpose;
 	protected Listbox sortOperator_receiptAmount;
@@ -216,6 +220,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				Operators.NUMERIC);
 		registerField("receiptDate", listheader_ReceiptDate, SortOrder.NONE, receiptDate, sortOperator_receiptDate,
 				Operators.DATE);
+		registerField("receivedDate", listheader_ReceivedDate, SortOrder.NONE, receivedDate, sortOperator_receiptDate,
+				Operators.DATE);
 		registerField("receiptPurpose", listheader_ReceiptPurpose, SortOrder.NONE, receiptPurpose,
 				sortOperator_receiptPurpose, Operators.DEFAULT);
 		registerField("custCIF", listheader_CustCIF, SortOrder.NONE, customer, sortOperator_customer, Operators.STRING);
@@ -239,7 +245,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			registerField("paymentType", listheader_ExcessType);
 			registerField("receiptMode", listheader_ReceiptMode, SortOrder.NONE, receiptMode, sortOperator_receiptMode,
 					Operators.DEFAULT);
-			registerField("favourNumber");
 		}
 		//Bug fix while click on list header of knock off from in Knock off maker and approver 
 		if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)
@@ -579,6 +584,10 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					PennantAppUtil.formateDate(finReceiptHeader.getReceiptDate(), DateFormat.SHORT_DATE.getPattern()));
 			lc.setParent(item);
 
+			lc = new Listcell(
+					PennantAppUtil.formateDate(finReceiptHeader.getReceivedDate(), DateFormat.SHORT_DATE.getPattern()));
+			lc.setParent(item);
+
 			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(finReceiptHeader.getKnockOffType())) {
 				lc = new Listcell("Auto");
 			} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(finReceiptHeader.getKnockOffType())) {
@@ -610,14 +619,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc = new Listcell(finReceiptHeader.getPaymentType());
 			lc.setParent(item);
 
-			if (RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(finReceiptHeader.getReceiptMode())
-					|| RepayConstants.RECEIPTMODE_DD.equalsIgnoreCase(finReceiptHeader.getReceiptMode())) {
-				lc = new Listcell(finReceiptHeader.getFavourNumber());
-				lc.setParent(item);
-			} else {
-				lc = new Listcell(finReceiptHeader.getTransactionRef());
-				lc.setParent(item);
-			}
+			lc = new Listcell(finReceiptHeader.getTransactionRef());
+			lc.setParent(item);
 
 			lc = new Listcell(PennantAppUtil.amountFormate(finReceiptHeader.getReceiptAmount(),
 					PennantConstants.defaultCCYDecPos));
@@ -718,7 +721,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			return;
 		}
 
-		finReceiptHeader.setValueDate(finReceiptHeader.getReceiptDate());
 		// Role Code State Checking
 		String userRole = finReceiptHeader.getNextRoleCode();
 
@@ -936,6 +938,14 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			FinReceiptHeader finReceiptHeader = receiptService.getFinReceiptHeaderById(receiptId, false, "_View");
 			finReceiptHeader.setValueDate(finReceiptHeader.getReceiptDate());
 			setWorkflowDetails(finReceiptHeader.getFinType(), false);
+
+			for (FinReceiptDetail receiptDetail : finReceiptHeader.getReceiptDetails()) {
+				if (!(RepayConstants.RECEIPTMODE_EMIINADV.equals(receiptDetail.getPaymentType())
+						|| RepayConstants.RECEIPTMODE_EXCESS.equals(receiptDetail.getPaymentType())
+						|| RepayConstants.RECEIPTMODE_PAYABLE.equals(receiptDetail.getPaymentType()))) {
+					finReceiptHeader.setDepositDate(receiptDetail.getDepositDate());
+				}
+			}
 
 			String whereCond = " Reference='" + finReceiptHeader.getReference() + "'";
 			if (!(doCheckAuthority(finReceiptHeader, whereCond)

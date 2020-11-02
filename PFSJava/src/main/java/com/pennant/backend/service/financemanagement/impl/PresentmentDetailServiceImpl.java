@@ -969,10 +969,6 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		this.financeTypeDAO = financeTypeDAO;
 	}
 
-	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
-		this.finODDetailsDAO = finODDetailsDAO;
-	}
-
 	@Override
 	public List<PresentmentHeader> getPresenmentHeaderList(Date fromDate, Date toDate, int status) {
 		return this.presentmentDetailDAO.getPresentmentHeaderList(fromDate, toDate, status);
@@ -1006,6 +1002,10 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
+	}
+
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
 }

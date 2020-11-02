@@ -215,6 +215,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						gstAmt = manualAdvise.getPaidCGST().add(manualAdvise.getPaidIGST().add(manualAdvise
 								.getPaidSGST().add(manualAdvise.getPaidUGST().add(manualAdvise.getPaidCESS()))));
 
+						gstAmt = gstAmt.add(manualAdvise.getPaidCGST().add(manualAdvise.getPaidIGST()
+								.add(manualAdvise.getPaidSGST().add(manualAdvise.getPaidUGST()))));
 						waivedAmt = waivedAmt.add(manualAdvise.getWaivedAmount());
 
 						if (currWaiverGst != null && currWaiverGst.compareTo(BigDecimal.ZERO) > 0) {
@@ -279,7 +281,11 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				} else {
 					feeWaiverDetail.setFeeTypeDesc(Labels.getLabel("label_ReceiptDialog_BounceCharge.value"));
 				}
-
+				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(feeWaiverDetail.getTaxComponent())) {
+					receivedAmt = receivedAmt.add(gstAmt);
+					gstAmt = BigDecimal.ZERO;
+				}
+				feeWaiverDetail.setReceivedAmount(receivedAmt);
 				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(feeWaiverDetail.getTaxComponent())) {
 					receivedAmt = receivedAmt.add(gstAmt);
 					gstAmt = BigDecimal.ZERO;
@@ -340,7 +346,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 				prepareGST(feeWaiverDetail, receivableAmt, gstPercentages);
 
-				feeWaiverDetail.setReceivedAmount(receivedAmt);
 				feeWaiverDetail.setWaivedAmount(waivedAmt);
 				feeWaiverDetail.setBalanceAmount(
 						feeWaiverDetail.getReceivableAmount().subtract(feeWaiverDetail.getCurrWaiverAmount()));
@@ -851,10 +856,29 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		FinanceDetail financeDetail = new FinanceDetail();
 		FinanceMain financeMain = this.financeMainDAO.getFinanceMainById(finReference, "", false);
 		financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+		List<FinanceScheduleDetail> scheduleDetails = this.financeScheduleDetailDAO.getFinScheduleDetails(finReference,
+				"", false);
+		financeDetail.getFinScheduleData().setFinanceScheduleDetails(scheduleDetails);
 		financeDetail.getFinScheduleData()
 				.setFinanceType(financeTypeDAO.getFinanceTypeByFinType(financeMain.getFinType()));
 		financeDetail.setCustomerDetails(null);
 		financeDetail.setFinanceTaxDetail(null);
+
+		// Profit Details
+		if (financeDetail != null) {
+			FinanceProfitDetail pftDetail = profitDetailsDAO.getFinProfitDetailsById(finReference);
+
+			// Overdue Details
+			List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(finReference);
+
+			financeMain = repayPostingUtil.updateStatus(financeMain, DateUtility.getAppDate(),
+					financeDetail.getFinScheduleData().getFinanceScheduleDetails(), pftDetail, overdueList, null,
+					false);
+
+			if (!financeMain.isFinIsActive()) {
+				financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
+			}
+		}
 
 		AEEvent aeEvent = null;
 		boolean isSchdUpdated = false;
@@ -1382,7 +1406,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				curwaivedAmt = curwaivedAmt.subtract(profitBal);
 				finRepaymentList.add(prepareRepayments(profitBal, tds, schDetail, financeMain, feeWaiverHeader));
 				repaySchDetList.add(prepareRepaySchDetails(profitBal, schDetail, financeMain, feeWaiverHeader, tds));
-				totPftBal = totPftBal.add(totPftBal);
+				totPftBal = totPftBal.add(profitBal);
 				// Partial Adjustment
 			} else if (profitBal.compareTo(curwaivedAmt) > 0) {
 
@@ -1534,7 +1558,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				curwaivedAmt = curwaivedAmt.subtract(profitBal);
 				finRepaymentList.add(prepareRepayments(profitBal, tds, schDetail, financeMain, feeWaiverHeader));
 				repaySchDetList.add(prepareRepaySchDetails(profitBal, schDetail, financeMain, feeWaiverHeader, tds));
-				totPftBal = totPftBal.add(totPftBal);
+				totPftBal = totPftBal.add(profitBal);
 				// Partial Adjustment
 			} else if (profitBal.compareTo(curwaivedAmt) > 0) {
 
@@ -1703,7 +1727,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		repayment.setFinReference(schDetail.getFinReference());
 		repayment.setFinSchdDate(schDetail.getSchDate());
 		repayment.setFinRpyFor(FinanceConstants.SCH_TYPE_SCHEDULE);
-		repayment.setLinkedTranId(0);// FIXME
+		repayment.setLinkedTranId(0);
 		repayment.setReceiptId(0);
 		repayment.setFinPostDate(SysParamUtil.getAppDate());
 		repayment.setFinValueDate(SysParamUtil.getAppValueDate());
@@ -1711,9 +1735,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		repayment.setFinType(fm.getFinType());
 		repayment.setFinCustID(fm.getCustID());
 
-		repayment.setFinSchdPriPaid(schDetail.getSchdPriPaid());
+		repayment.setFinSchdPriPaid(BigDecimal.ZERO);
 		repayment.setFinSchdPftPaid(profitBal);
-		repayment.setFinTotSchdPaid(schDetail.getSchdPftPaid().add(schDetail.getSchdPriPaid()));
+		repayment.setFinTotSchdPaid(profitBal);
 
 		// Fee Details
 		repayment.setFinFee(BigDecimal.ZERO);
@@ -1779,6 +1803,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					&& !RepayConstants.ALLOCATION_PFT.equals(waiverdetail.getFeeTypeCode())
 					&& waiverdetail.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 
+				BigDecimal curwaivedAmt = waiverdetail.getCurrWaiverAmount();
+				BigDecimal curActualwaivedAmt = waiverdetail.getCurrActualWaiver();
 				for (ManualAdvise advise : manualAdviseList) {
 					if (advise.getBounceID() != 0 && waiverdetail.getAdviseId() == -3) {
 						ManualAdviseMovements movement = prepareAdviseWaiver(waiverdetail, advise);
@@ -1794,6 +1820,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						}
 					}
 				}
+				waiverdetail.setCurrWaiverAmount(curwaivedAmt);
+				waiverdetail.setCurrActualWaiver(curActualwaivedAmt);
 			}
 		}
 
@@ -1827,11 +1855,12 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					advise.setWaivedAmount(advise.getWaivedAmount().add(advise.getBalanceAmt()));
 					curActualwaivedAmt = curActualwaivedAmt.subtract(advise.getBalanceAmt());
 					waiverdetail.setCurrActualWaiver(curActualwaivedAmt);
+					amountWaived = advise.getBalanceAmt();
 					advise.setBalanceAmt(BigDecimal.ZERO);
 					curActualwaivedAmt = BigDecimal.ZERO;
 
 				}
-
+				waiverdetail.setCurrActualWaiver(waiverdetail.getCurrActualWaiver().subtract(amountWaived));
 				taxSplit = GSTCalculator.getExclusiveGST(amountWaived, gstPercentages);
 				waiverdetail.setCurrWaiverAmount(amountWaived.add(taxSplit.gettGST()));
 			} else {
@@ -1847,9 +1876,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					curwaivedAmt = curwaivedAmt.subtract(advise.getBalanceAmt());
 					waiverdetail.setCurrWaiverAmount(curwaivedAmt);
 					curwaivedAmt = BigDecimal.ZERO;
+					amountWaived = advise.getBalanceAmt();
 					advise.setBalanceAmt(BigDecimal.ZERO);
 				}
-
+				waiverdetail.setCurrWaiverAmount(waiverdetail.getCurrWaiverAmount().subtract(amountWaived));
 				taxSplit = GSTCalculator.getInclusiveGST(amountWaived, gstPercentages);
 			}
 
@@ -1872,6 +1902,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				curwaivedAmt = BigDecimal.ZERO;
 				advise.setBalanceAmt(BigDecimal.ZERO);
 			}
+			waiverdetail.setCurrWaiverAmount(waiverdetail.getCurrWaiverAmount().subtract(amountWaived));
 		}
 
 		advise.setVersion(advise.getVersion() + 1);
@@ -1882,7 +1913,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			movement.setAdviseID(advise.getAdviseID());
 			movement.setMovementDate(SysParamUtil.getAppDate());
 			movement.setMovementAmount(waiverdetail.getCurrWaiverAmount());
-			movement.setPaidAmount(advise.getPaidAmount());
+			movement.setPaidAmount(BigDecimal.ZERO);
 			movement.setWaivedAmount(amountWaived);
 			movement.setReceiptID(0);
 			movement.setReceiptSeqID(0);

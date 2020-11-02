@@ -1402,18 +1402,18 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 			int retValue = auditHeader.getProcessStatus();
 			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 				for (JVPostingEntry entry : jvPostingEntryList) {
-					if (entry.isNew()) {
-						if (StringUtils.equals(entry.getTxnEntry(), AccountConstants.TRANTYPE_DEBIT)) {
-							entry.setAccount(entry.getDebitAccount());
-							entry.setAcType(entry.getDebitAcType());
-							entry.setAccountName(entry.getDebitAcname());
-						} else {
-							entry.setAccount(entry.getAccount());
-							entry.setAcType(entry.getAcType());
-							entry.setAccountName(entry.getAccountName());
-						}
+					if (StringUtils.equals(entry.getTxnEntry(), AccountConstants.TRANTYPE_DEBIT)) {
+						entry.setAccount(entry.getDebitAccount());
+						entry.setAcType(entry.getDebitAcType());
+						entry.setAccountName(entry.getDebitAcname());
+					} else {
+						entry.setAccount(entry.getAccount());
+						entry.setAcType(entry.getAcType());
+						entry.setAccountName(entry.getAccountName());
 					}
+
 				}
+
 				getJVPostingDialogCtrl().doFillJVPostingEntryDetails(this.jvPostingEntryList);
 				// send the data back to main screen
 				getJVPostingDialogCtrl().setProceed(false);

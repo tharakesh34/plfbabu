@@ -11,6 +11,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -159,5 +160,9 @@ public interface ReceiptService {
 	boolean isPartialSettlementInitiated(String finreference);
 
 	String getLoanReferenc(String finreference, String fileName);
+
+	List<FinExcessAmount> xcessList(String finreference);
+
+	FinReceiptData recalculateReceipt(FinReceiptData receiptData);
 
 }

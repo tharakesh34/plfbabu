@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -77,6 +78,7 @@ import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
 import com.ibm.icu.text.SimpleDateFormat;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
@@ -101,7 +103,7 @@ import com.pennanttech.pff.model.IDBInterfaceLogDetail;
 
 /**
  * This is the controller class for the
- * /WEB-INF/pages/ExternalInterface/InterfaceConfiguration/externalInterfaceConfigurationDialog.zul file. <br>
+ * /WEB-INF/pages/ExternalInterface/ExternalInterfaceConfiguration/InterfaceServiceList.zul file. <br>
  */
 public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration> {
 
@@ -122,28 +124,29 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	protected Listheader listheader_InterfaceService_StatusDesc;
 	protected Listheader listheader_InterfaceService_ReProcess;
 	protected Listbox sortOperator_Status;
-	protected Listbox listBoxExternalInterfaceDialog; // per
+	protected Listbox listBoxExternalInterfaceDialog;
 	protected Listheader listheader_InterfaceService_ErrorDesc;
 	protected Datebox fromDate;
 	protected Textbox reference;
 	protected Listbox sortOperator_Reference;
 	protected Listbox sortOperator_ToDate;
 	protected Listbox sortOperator_fromDate;
-	private InterfaceConfiguration interfaceDeatilData; // overhanded
+	private InterfaceConfiguration interfaceDeatilData;
 	protected Datebox toDate;
 	protected Grid searchGrid;
 	protected Combobox status;
 	protected Label interfaceCaption;
 	private String bussinessDate = null;
-	// per
-	// param
 	private transient PagedListService pagedListService;
 	protected Button btnSearch;
+
 	@Autowired
 	private ReInitiateProcessService reInititateService;
 	private List<ValueLabel> statusList = PennantStaticListUtil.getInterfaceStatusList();
 	protected List<SearchFilterControl> searchControls = new ArrayList<SearchFilterControl>();
 	private String reInitiateService = App.getProperty("external.interface.service.reInitiate");
+
+	private static final String INTERFACE = "INTERFACE";
 
 	/**
 	 * default constructor.<br>
@@ -186,7 +189,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	}
 
 	public void doShowDialog(InterfaceConfiguration interfaceConfiguration) {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		paging_interfaceService.setPageSize(getPageSize());
 		paging_interfaceService.setDetailed(true);
@@ -202,7 +205,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 
 	private void addSearchControl() {
 		searchControls.add(new SearchFilterControl("status", this.status, sortOperator_Status, Operators.STRING));
-		if (StringUtils.equalsIgnoreCase(interfaceDeatilData.getType(), "INTERFACE")) {
+		if (StringUtils.equalsIgnoreCase(interfaceDeatilData.getType(), INTERFACE)) {
 			searchControls
 					.add(new SearchFilterControl("REQSENTON", this.fromDate, sortOperator_fromDate, Operators.DATE));
 			searchControls.add(new SearchFilterControl("REQSENTON", this.toDate, sortOperator_ToDate, Operators.DATE));
@@ -218,16 +221,16 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	}
 
 	public void onClick$btnSearch(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<InterfaceServiceLog> filteredPOs = searchInterfaceDeatils(interfaceDeatilData);
 		doFillInterfaceServiceDetails(filteredPOs);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onInterfaceDetailItemDoubleClicked(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxExternalInterfaceDialog.getSelectedItem();
@@ -243,10 +246,8 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 
 	protected Map<String, Object> getDefaultArguments() {
 		HashMap<String, Object> aruments = new HashMap<>();
-
 		aruments.put("moduleCode", moduleCode);
 		aruments.put("enqiryModule", enqiryModule);
-
 		return aruments;
 	}
 
@@ -262,15 +263,16 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 					"/WEB-INF/pages/ExternalInterface/ExternalInterfaceConfiguration/InterfaceServiceDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
+			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<InterfaceServiceLog> searchInterfaceDeatils(InterfaceConfiguration interfaceConf) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (this.fromDate.getValue() == null || this.toDate.getValue() == null) {
 			MessageUtil.showError("Please Enter From Date and To Date ");
@@ -281,7 +283,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 
 		PagedListService pagedListService = getPagedListService();
 		searchObject = new JdbcSearchObject<InterfaceServiceLog>(InterfaceServiceLog.class);
-		if (StringUtils.equalsIgnoreCase(interfaceConf.getType(), "INTERFACE")) {
+		if (StringUtils.equalsIgnoreCase(interfaceConf.getType(), INTERFACE)) {
 			searchObject.addTabelName("InterfaceLogDetails");
 			searchObject.addField("REFERENCE");
 			searchObject.addField("SERVICENAME");
@@ -300,6 +302,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 			searchObject.addField("RECORDS_PROCESSED");
 			searchObject.addField("START_DATE");
 			searchObject.addField("END_DATE");
+			searchObject.addField("EodDate");
 			searchObject.addField("STATUS");
 			searchObject.addField("STATUS_DESC");
 			searchObject.addField("INTERFACE_INFO");
@@ -315,7 +318,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 
 					searchObject.addFilterOr(filters);
 				} else {
-					if (StringUtils.equalsIgnoreCase(interfaceConf.getType(), "INTERFACE")) {
+					if (StringUtils.equalsIgnoreCase(interfaceConf.getType(), INTERFACE)) {
 						if (StringUtils.equalsIgnoreCase("REQSENTON", filter.getProperty())) {
 							Date date = (Date) filter.getValue();
 							if (filter.getOperator() == 4) {
@@ -359,41 +362,38 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 
 		this.paging_interfaceService.setTotalSize(srBySearchObject.getTotalCount());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return srBySearchObject.getResult();
 	}
 
+	@SuppressWarnings("rawtypes")
 	public final class OnPagingEventListener implements EventListener {
 		@Override
 		public void onEvent(Event event) throws Exception {
-
 			final PagingEvent pe = (PagingEvent) event;
 			final int pageNo = pe.getActivePage();
 			final int start = pageNo * getPageSize();
-
-			// refresh the list
 			refreshModel(start);
 		}
-
 	}
 
 	void refreshModel(int start) {
 		searchObject.setFirstResult(start);
 		searchObject.setMaxResults(getPageSize());
-
-		// clear old data
-		// clear();
 		doFillInterfaceServiceDetails(getPagedListService().getBySearchObject(this.searchObject));
 	}
 
-	public void doFillInterfaceServiceDetails(List<InterfaceServiceLog> list) {
-		logger.debug("Entering");
+	public void doFillInterfaceServiceDetails(List<InterfaceServiceLog> serviceLogList) {
+		logger.debug(Literal.ENTERING);
+
 		this.listBoxExternalInterfaceDialog.getItems().clear();
-		if (list != null) {
-			if (StringUtils.equalsIgnoreCase(interfaceDeatilData.getType(), "INTERFACE")) {
+
+		if (CollectionUtils.isNotEmpty(serviceLogList)) {
+
+			if (StringUtils.equalsIgnoreCase(interfaceDeatilData.getType(), INTERFACE)) {
 				listheader_InterfaceService_Error.setVisible(true);
 				listheader_InterfaceService_ErrorDesc.setVisible(true);
-				for (InterfaceServiceLog interfaceDetails : list) {
+				for (InterfaceServiceLog interfaceDetails : serviceLogList) {
 
 					Listitem item = new Listitem();
 					Listcell lc;
@@ -414,19 +414,15 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 					this.listBoxExternalInterfaceDialog.appendChild(item);
 					item.setAttribute("id", interfaceDetails);
 					ComponentsCtrl.applyForward(item, "onDoubleClick=onInterfaceDetailItemDoubleClicked");
-
 				}
-
 			} else {
 				boolean suntechFlag = false;
-				boolean buttonFlag = false;
 				int i = 0;
-				if (list != null && !list.isEmpty())
+				if (CollectionUtils.isNotEmpty(serviceLogList))
 					if (StringUtils.isNotEmpty(reInitiateService)) {
 						String[] reProcess = reInitiateService.split(",");
 						for (String process : reProcess) {
-							if (StringUtils.containsIgnoreCase(list.get(0).getInterface_Name(), process)) {
-								buttonFlag = true;
+							if (StringUtils.containsIgnoreCase(serviceLogList.get(0).getInterface_Name(), process)) {
 								listheader_InterfaceService_ReProcess.setVisible(true);
 								if (StringUtils.containsIgnoreCase(process, "SUNTECH")) {
 									suntechFlag = true;
@@ -436,76 +432,89 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 						}
 					}
 
-				listheader_InterfaceService_RecordProcessed.setVisible(true);
-				listheader_InterfaceService_StatusDesc.setVisible(true);
+				this.listheader_InterfaceService_RecordProcessed.setVisible(true);
+				this.listheader_InterfaceService_StatusDesc.setVisible(true);
 
-				listheader_InterfaceService_Error.setVisible(false);
-				listheader_InterfaceService_ErrorDesc.setVisible(false);
-				for (InterfaceServiceLog interfaceDetails : list) {
+				this.listheader_InterfaceService_Error.setVisible(false);
+				this.listheader_InterfaceService_ErrorDesc.setVisible(false);
+
+				for (InterfaceServiceLog interfaceServiceLog : serviceLogList) {
 
 					Listitem item = new Listitem();
 					Listcell lc;
-					if (StringUtils.isNotBlank(interfaceDetails.getInterface_Info())) {
-						if (StringUtils.containsIgnoreCase(interfaceDetails.getInterface_Name(), "GLEMS_Exposure")
-								|| StringUtils.containsIgnoreCase(interfaceDetails.getInterface_Name(), "OGL")) {
-							lc = new Listcell(interfaceDetails.getInterface_Info());
+					if (StringUtils.isNotBlank(interfaceServiceLog.getInterface_Info())) {
+
+						if (StringUtils.containsIgnoreCase(interfaceServiceLog.getInterface_Name(), "GLEMS_Exposure")
+								|| StringUtils.containsIgnoreCase(interfaceServiceLog.getInterface_Name(), "OGL")) {
+							lc = new Listcell(interfaceServiceLog.getInterface_Info());
 							lc.setParent(item);
 						} else {
-							lc = new Listcell(interfaceDetails.getRef_num());
+							lc = new Listcell(interfaceServiceLog.getRef_num());
 							lc.setParent(item);
 						}
 					} else {
-						lc = new Listcell(interfaceDetails.getRef_num());
+						lc = new Listcell(interfaceServiceLog.getRef_num());
 						lc.setParent(item);
 					}
 
 					lc = new Listcell(
-							PennantAppUtil.formateDate(interfaceDetails.getStart_Date(), "dd-MM-yyyy HH:mm:ss"));
+							PennantAppUtil.formateDate(interfaceServiceLog.getStart_Date(), "dd-MM-yyyy HH:mm:ss"));
 					lc.setParent(item);
+
 					lc = new Listcell(
-							PennantAppUtil.formateDate(interfaceDetails.getEnd_Date(), "dd-MM-yyyy HH:mm:ss"));
+							PennantAppUtil.formateDate(interfaceServiceLog.getEnd_Date(), "dd-MM-yyyy HH:mm:ss"));
 					lc.setParent(item);
-					lc = new Listcell(interfaceDetails.getStatus());
+
+					lc = new Listcell(interfaceServiceLog.getStatus());
 					lc.setParent(item);
+
 					lc = new Listcell("");
 					lc.setParent(item);
+
 					lc = new Listcell("");
 					lc.setParent(item);
-					lc = new Listcell(interfaceDetails.getRecords_Processed());
+
+					lc = new Listcell(interfaceServiceLog.getRecords_Processed());
 					lc.setParent(item);
-					lc = new Listcell(interfaceDetails.getStatus_Desc());
+
+					lc = new Listcell(interfaceServiceLog.getStatus_Desc());
 					lc.setParent(item);
 
 					Button reProcess = new Button();
-					reProcess.addForward("onClick", self, "onClickReprocess", interfaceDetails);
-
+					reProcess.addForward("onClick", self, "onClickReprocess", interfaceServiceLog);
 					reProcess.setLabel("Re-Process");
-					if (!suntechFlag)
+
+					if (!suntechFlag) {
 						reProcess.setDisabled(true);
-					else {
-						if (StringUtils.containsIgnoreCase(interfaceDetails.getStatus(), "SUCCESS"))
+					} else {
+						if (StringUtils.containsIgnoreCase(interfaceServiceLog.getStatus(), "SUCCESS"))
 							reProcess.setDisabled(true);
 					}
-					if (!suntechFlag && StringUtils.containsIgnoreCase(interfaceDetails.getStatus(), "FAILED")) {
+
+					if (!suntechFlag && StringUtils.containsIgnoreCase(interfaceServiceLog.getStatus(), "FAILED")) {
 						try {
 							bussinessDate = getBussinessDate();
-							if (StringUtils.equalsIgnoreCase(bussinessDate, interfaceDetails.getInterface_Info()))
+							Date appDate = DateUtility.addDays(DateUtility.getAppDate(), -1);
+							if (StringUtils.equalsIgnoreCase(bussinessDate, interfaceServiceLog.getInterface_Info())) {
 								reProcess.setDisabled(false);
+							} else if (DateUtility.compare(appDate, interfaceServiceLog.getEodDate()) == 0) {
+								reProcess.setDisabled(false);
+							}
 						} catch (Exception e) {
-							// TODO: handle exception
+							logger.error(Literal.EXCEPTION, e);
 						}
 					}
+
 					lc = new Listcell();
 					lc.setId("reProcess".concat(String.valueOf(i)));
 					lc.appendChild(reProcess);
 					lc.setParent(item);
 					this.listBoxExternalInterfaceDialog.appendChild(item);
 					i++;
-					buttonFlag = true;
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClickReprocess(ForwardEvent event) {
@@ -521,8 +530,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 			reInititateService.processErrorRecords(detail);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 
@@ -554,15 +562,15 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(SysParamUtil.getAppDate());
 		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
-		// convert to date
 		Date dt = cal.getTime();
 		if (dt != null) {
 			try {
 				bussinessDate = new SimpleDateFormat("dd-MM-yyyy").format(dt.getTime());
 			} catch (Exception e) {
-				// TODO: handle exception
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 		return bussinessDate;
 	}
+
 }

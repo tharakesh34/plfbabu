@@ -90,7 +90,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	protected Listheader listheader_FinODCCPenalty; // autowired
 	protected Listheader listheader_FinODCRecoverySts; // autowired
 
-	// Filtering Fields 
+	// Filtering Fields
 
 	protected Datebox finSchdDate; // autowired
 	protected Listbox sortOperator_finSchdDate; // autowired
@@ -133,7 +133,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 	private Textbox recoveryCode;
 	private String finReference = "";
-	//private int ccyFormatter = 0;
+	// private int ccyFormatter = 0;
 
 	@Autowired
 	private FinODDetailsDAO finODDetailsDAO;
@@ -287,7 +287,8 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		FinanceMain finMian = financeMainDAO.getFinanceMainById(finReference, "_View", false);
 		if ((PennantConstants.YES.equals(this.recoveryCode.getValue())
 				&& StringUtils.equals(CalculationConstants.PDPFTCAL_NOTAPP, finMian.getPastduePftCalMthd()))) {
-			//If the enquiry type as a Interest over due enquiry, and past due calc method as a NotApplicable then no need show the enquiry.
+			// If the enquiry type as a Interest over due enquiry, and past due
+			// calc method as a NotApplicable then no need show the enquiry.
 		} else {
 			List<FinODDetails> list = finODDetailsDAO.getFinODBalByFinRef(finReference);
 			List<FinanceScheduleDetail> schlist = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finReference);
@@ -319,8 +320,9 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		// Defualt Sort on the table
 		this.detailSearchObject.addSort("FinReference", false);
 
-		//		this.listBoxLatepayProfitRecovery.setModel(new GroupsModelArray(
-		//				getPagedListService().getBySearchObject(detailSearchObject).toArray(),new OverdueChargeRecoveryComparator()));
+		// this.listBoxLatepayProfitRecovery.setModel(new GroupsModelArray(
+		// getPagedListService().getBySearchObject(detailSearchObject).toArray(),new
+		// OverdueChargeRecoveryComparator()));
 		logger.debug("Leaving");
 	}
 
@@ -410,7 +412,8 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 */
 	public void onClick$button_OverdueChargeRecoveryList_NewOverdueChargeRecovery(Event event) throws Exception {
 		logger.debug(event.toString());
-		// create a new OverdueChargeRecovery object, We GET it from the backend.
+		// create a new OverdueChargeRecovery object, We GET it from the
+		// backend.
 		final OverdueChargeRecovery aOverdueChargeRecovery = getOverdueChargeRecoveryService()
 				.getNewOverdueChargeRecovery();
 		showDetailView(aOverdueChargeRecovery);
@@ -568,7 +571,9 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 			// Scheduled Date
 			if (this.finSchdDate.getValue() != null) {
-				//searchObj = getSearchFilter(searchObj,this.sortOperator_finSchdDate.getSelectedItem(), this.finSchdDate.getValue() , "finSchdDate");
+				// searchObj =
+				// getSearchFilter(searchObj,this.sortOperator_finSchdDate.getSelectedItem(),
+				// this.finSchdDate.getValue() , "finSchdDate");
 
 				searchObj.addFilter(new Filter("finSchdDate",
 						DateUtility.format(this.finSchdDate.getValue(), PennantConstants.DBDateFormat),
@@ -576,27 +581,29 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			}
 			// Overdue Date
 			if (this.finODDate.getValue() != null) {
-				//searchObj = getSearchFilter(searchObj,this.sortOperator_finODDate.getSelectedItem(), this.finODDate.getValue() , "finODDate");
+				// searchObj =
+				// getSearchFilter(searchObj,this.sortOperator_finODDate.getSelectedItem(),
+				// this.finODDate.getValue() , "finODDate");
 
 				searchObj.addFilter(new Filter("finODDate",
 						DateUtility.format(this.finODDate.getValue(), PennantConstants.DBDateFormat), Filter.OP_EQUAL));
 			}
-			// Overdue Principle 
+			// Overdue Principle
 			if (this.finODPrinciple.getValue() != null) {
 				searchObj = getSearchFilter(searchObj, this.sortOperator_finODPrincpl.getSelectedItem(),
 						this.finODPrinciple.getValue(), "finODPri");
 			}
-			// Overdue Profit 
+			// Overdue Profit
 			if (this.finODProfit.getValue() != null) {
 				searchObj = getSearchFilter(searchObj, this.sortOperator_finODProfit.getSelectedItem(),
 						this.finODProfit.getValue(), "finODPft");
 			}
-			// Overdue Total 
+			// Overdue Total
 			if (this.finODTotal.getValue() != null) {
 				searchObj = getSearchFilter(searchObj, this.sortOperator_finODTotal.getSelectedItem(),
 						this.finODTotal.getValue(), "finODTot");
 			}
-			// Overdue Waived 
+			// Overdue Waived
 			if (this.finODWaived.getValue() != null) {
 				searchObj = getSearchFilter(searchObj, this.sortOperator_finODWaived.getSelectedItem(),
 						this.finODWaived.getValue(), "finODCWaiverPaid");
@@ -610,7 +617,8 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			}
 
 			// Set the ListModel for the articles.
-			//getPagedListWrapper().init(this.searchObj, this.listBoxLatepayProfitRecovery,this.pagingLatepayProfitRecoveryList);
+			// getPagedListWrapper().init(this.searchObj,
+			// this.listBoxLatepayProfitRecovery,this.pagingLatepayProfitRecoveryList);
 		} else {
 			this.searchObj.addFilter(new Filter("FinReference", this.finReference, Filter.OP_EQUAL));
 		}

@@ -799,8 +799,14 @@ public class FinStatementController extends SummaryDetailService {
 							fromdate, todate, true);
 
 					List<Object> list = new ArrayList<Object>();
+
 					list.add(soa.getSoaSummaryReports());
 					list.add(soa.getTransactionReports());
+					list.add(soa.getApplicantDetails());
+					list.add(soa.getOtherFinanceDetails());
+					list.add(soa.getSheduleReports());
+					list.add(soa.getInterestRateDetails());
+
 					String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
 					LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 					String userName = userDetails.getUserName();

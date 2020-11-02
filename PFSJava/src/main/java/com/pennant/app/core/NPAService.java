@@ -117,6 +117,7 @@ public class NPAService extends ServiceHelper {
 				provisionDet.setProvisionRate(provision.getProvisionRate());
 				provisionDet.setAssetCode(provision.getAssetCode());
 				provisionDet.setAssetStageOrder(provision.getAssetStageOrder());
+				provisionDet.setCollateralValue(provision.getCollateralValue());
 				provisionDet.setNpa(provision.isNpa());
 				provisionDet.setManualProvision(false);
 				provisionDet.getProvisionAmounts().addAll(provision.getProvisionAmounts());

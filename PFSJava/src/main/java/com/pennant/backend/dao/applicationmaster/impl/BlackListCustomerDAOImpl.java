@@ -238,7 +238,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 		} else {
 			selectSql = new StringBuilder(" Select CustCIF , CustFName , CustLName , ");
 			selectSql.append(
-					" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer, CustIsActive, ReasonCode, Source ");
+					" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer, CustIsActive, ReasonCode, Source, CustCompName ");
 			selectSql.append(" From BlackListCustomer_AView ");
 		}
 		selectSql.append(watchRule);

@@ -1,5 +1,5 @@
 /**
-D * Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -376,7 +376,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.mandateRef);
 		}
 
-		//Accounts should be displayed only to the Banks
+		// Accounts should be displayed only to the Banks
 		if (!ImplementationConstants.ACCOUNTS_APPLICABLE) {
 			this.row_DisbAccId.setVisible(false);
 			this.downPayAccount.setVisible(false);
@@ -384,7 +384,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		this.finAssetValue.setProperties(false, format);
 		this.finCurrentAssetValue.setProperties(false, format);
-		//Field visibility & Naming for FinAsset value and finCurrent asset value by  OD/NONOD.
+		// Field visibility & Naming for FinAsset value and finCurrent asset
+		// value by OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
 		logger.debug("Leaving");
 	}
@@ -716,13 +717,13 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Accounting
 			appendAccountingDetailTab(true);
 		}
-		//Append Extended Field Details
+		// Append Extended Field Details
 		appendExtendedFieldDetails(aFinanceDetail, moduleDefiner);
 
 		// fill the components with the Finance Flags Data and Display
 		doFillFinFlagsList(aFinanceDetail.getFinFlagsDetails());
 
-		//Showing Product Details for Promotion Type
+		// Showing Product Details for Promotion Type
 		this.finDivisionName.setValue(aFinanceDetail.getFinScheduleData().getFinanceType().getFinDivision() + " - "
 				+ aFinanceDetail.getFinScheduleData().getFinanceType().getLovDescFinDivisionName());
 		if (StringUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinanceType().getProduct())) {
@@ -937,7 +938,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 			if (this.row_FinAssetValue.isVisible()) {
-				//Validate if the total disbursement amount exceeds maximum disbursement Amount 
+				// Validate if the total disbursement amount exceeds maximum
+				// disbursement Amount
 				if (((StringUtils.isEmpty(moduleDefiner)
 						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)))) {
 					if (this.finCurrentAssetValue.getActualValue() != null
@@ -952,13 +954,15 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.isReadonly()
 						? this.finAssetValue.getActualValue() : this.finAssetValue.getValidateValue(), format));
 			}
-			//Validation  on finAsset And fin Current Asset value based on field visibility
+			// Validation on finAsset And fin Current Asset value based on field
+			// visibility
 
 			if (!isOverDraft) {
 				if (financeType.isFinIsAlwMD()) {
 					if (this.row_FinAssetValue.isVisible() && StringUtils.isEmpty(moduleDefiner)) {
 
-						//If max disbursement amount less than prinicpal amount validate the amount
+						// If max disbursement amount less than prinicpal amount
+						// validate the amount
 						aFinanceMain.setFinAssetValue(
 								PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), format));
 						aFinanceMain.setFinCurrAssetValue(
@@ -1940,7 +1944,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						refreshMaintainList();
 					}
 
-					// Mail Alert Notification for Customer/Dealer/Provider...etc
+					// Mail Alert Notification for
+					// Customer/Dealer/Provider...etc
 					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 
 						FinanceMain financeMain = afinanceDetail.getFinScheduleData().getFinanceMain();
@@ -1998,7 +2003,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finWriteoffPayAmount.setReadonly(isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 			this.finWriteoffPayAmount.setMandatory(!isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
-			//PSD# 145425
+			// PSD# 145425
 			if (PennantConstants.RCD_STATUS_RESUBMITTED
 					.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus())
 					|| (PennantConstants.RCD_STATUS_SAVED
@@ -2714,7 +2719,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (collateralList != null && !collateralList.isEmpty() && prvCollateralList != null
 				&& !prvCollateralList.isEmpty()) {
-			// Compare prvCollateral List and current Collateral List to find Mark collateral
+			// Compare prvCollateral List and current Collateral List to find
+			// Mark collateral
 			for (FinCollaterals collateral : collateralList) {
 				for (FinCollateralMark prvCollateral : prvCollateralList) {
 					if (!StringUtils.equals(collateral.getReference(), prvCollateral.getDepositID())) {
@@ -2729,7 +2735,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			List<FinCollateralMark> collatDeMarkList = new ArrayList<FinCollateralMark>();
 
-			// Compare prvCollateral List and current Collateral List to find DE-Mark collateral
+			// Compare prvCollateral List and current Collateral List to find
+			// DE-Mark collateral
 			for (FinCollateralMark prvCollateral : prvCollateralList) {
 				for (FinCollaterals collateral : collateralList) {
 					if (!StringUtils.equals(collateral.getReference(), prvCollateral.getDepositID())) {
@@ -3563,7 +3570,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (flagMap.containsKey(flagCode)) {
 				// Do Nothing
 
-				//Removing from map to identify existing modifications
+				// Removing from map to identify existing modifications
 				flagMap.remove(flagCode);
 			} else {
 				FinFlagsDetail afinFlagsDetail = new FinFlagsDetail();
@@ -3577,7 +3584,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
-		//Removing unavailable records from DB by using Workflow details
+		// Removing unavailable records from DB by using Workflow details
 		if (flagMap.size() > 0) {
 			for (int i = 0; i < finFlagsDetailList.size(); i++) {
 				FinFlagsDetail finFlagsDetail = finFlagsDetailList.get(i);
@@ -3619,9 +3626,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	private void addMandateFiletrs(String repaymethod, long custid) {
 
-		// 1.Mandate Swap is allowed after the registration process is completed 
-		// 2.Mandate already tagged to the current loan should also made available.
-		// 3.Open mandate should be made available even it is linked to another loan
+		// 1.Mandate Swap is allowed after the registration process is completed
+		// 2.Mandate already tagged to the current loan should also made
+		// available.
+		// 3.Open mandate should be made available even it is linked to another
+		// loan
 		// 4.Mandate should be active
 		// 5.For ECS registration not required
 

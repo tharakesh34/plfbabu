@@ -66,6 +66,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
@@ -355,7 +356,11 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			sql.append(
 					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where  Status =1 OR  Status =2 OR Status =3 )) ");
 
-			sql.append(" ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
+			if (ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK) {
+				sql.append("ORDER BY T1.DEFSCHDDATE, T6.BANKCODE, T7.EntityCode, T4.PARTNERBANKID");
+			} else {
+				sql.append("ORDER BY T1.DEFSCHDDATE, T6.BANKCODE, T7.EntityCode");
+			}
 
 			//sql.append(" AND T6.ExcludeReason = '0' AND T6.ExcludeReason <> '6'  AND T6.STATUS <> 'A')  ORDER BY T1.DEFSCHDDATE ");
 

@@ -30,6 +30,7 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	private String custLName;
 	@XmlElement(name = "shrttName")
 	private String custShrtName;
+	@XmlElement
 	private String custCompName;
 	@XmlElement
 	private Date custDOB;

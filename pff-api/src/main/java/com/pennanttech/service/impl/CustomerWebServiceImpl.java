@@ -3485,6 +3485,10 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 					if (feild.getName().equalsIgnoreCase("CustPassportNo")) {
 						blackListCustomers.setCustPassportNo(String.valueOf(feild.getValue()));
 					}
+
+					if (feild.getName().equalsIgnoreCase("CustCompName")) {
+						blackListCustomers.setCustCompName(String.valueOf(feild.getValue()));
+					}
 				}
 
 			}

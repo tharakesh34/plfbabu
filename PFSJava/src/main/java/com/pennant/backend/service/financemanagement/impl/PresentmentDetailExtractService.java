@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
@@ -105,7 +106,6 @@ public class PresentmentDetailExtractService {
 				pDetail.setDefSchdDate(rs.getDate("DEFSCHDDATE"));
 				pDetail.setBpiOrHoliday(rs.getString("BPIORHOLIDAY"));
 				pDetail.setBpiTreatment(rs.getString("BPITREATMENT"));
-
 
 				BigDecimal schAmtDue = rs.getBigDecimal("PROFITSCHD").add(rs.getBigDecimal("PRINCIPALSCHD"))
 						.add(rs.getBigDecimal("FEESCHD")).subtract(rs.getBigDecimal("SCHDPRIPAID"))
@@ -209,14 +209,17 @@ public class PresentmentDetailExtractService {
 				Date defSchDate = rs.getDate("DEFSCHDDATE");
 				String bankCode = rs.getString("BANKCODE");
 				String entity = rs.getString("ENTITYCODE");
+				long partnerBankId = rs.getLong("PARTNERBANKID");
 				if (defSchDate != null) {
 					if (!map.containsKey(defSchDate)
 							|| (!map.containsKey(bankCode)
-									&& SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK))
+									&& SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK)
+									&& ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK)
 							|| !map.containsKey(entity)) {
 						ph.setSchdate(defSchDate);
 						ph.setBankCode(bankCode);
 						ph.setEntityCode(entity);
+						ph.setPartnerBankId(partnerBankId);
 						if (ph.getId() != Long.MIN_VALUE) {
 							ph.setId(Long.MIN_VALUE);
 						}
@@ -241,7 +244,6 @@ public class PresentmentDetailExtractService {
 				pDetail.setDefSchdDate(rs.getDate("DEFSCHDDATE"));
 				pDetail.setBpiOrHoliday(rs.getString("BPIORHOLIDAY"));
 				pDetail.setBpiTreatment(rs.getString("BPITREATMENT"));
-
 
 				BigDecimal schAmtDue = rs.getBigDecimal("PROFITSCHD").add(rs.getBigDecimal("PRINCIPALSCHD"))
 						.add(rs.getBigDecimal("FEESCHD")).subtract(rs.getBigDecimal("SCHDPRIPAID"))
@@ -525,14 +527,14 @@ public class PresentmentDetailExtractService {
 		} else {
 			advanceType = AdvanceType.getType(prd.getAdvType());
 		}
-		
+
 		if (StringUtils.equals(prd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 			if (StringUtils.equals(prd.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)
 					&& SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)) {
 				advanceType = AdvanceType.AF;
 			}
 		}
-		
+
 		if (advanceType == null) {
 			return;
 		}

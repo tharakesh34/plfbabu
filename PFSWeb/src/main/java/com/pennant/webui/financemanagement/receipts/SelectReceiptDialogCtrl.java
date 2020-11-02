@@ -65,6 +65,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.financemanagement.paymentMode.ReceiptListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -443,8 +444,13 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (row_DepositDate.isVisible()) {
-			this.depositDate.setConstraint(new PTDateValidator(label, true, finReceiptHeader.getReceiptDate(),
-					SysParamUtil.getAppDate(), true));
+			if (row_ReceiptStatus.isVisible()) {
+				this.depositDate.setConstraint(
+						new PTDateValidator(label, true, finReceiptHeader.getDepositDate(), appDate, true));
+			} else {
+				this.depositDate.setConstraint(
+						new PTDateValidator(label, true, finReceiptHeader.getReceiptDate(), appDate, true));
+			}
 		}
 
 		if (this.row_ReceiptStatus.isVisible()) {
@@ -510,6 +516,31 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					executeMap = receiptDetail.getDeclaredFieldValues();
 				}
 				if (FinanceConstants.DEPOSIT_MAKER.equals(module)) {
+					if (DateUtil.compare(this.depositDate.getValue(), appDate) > 0) {
+						MessageUtil.showError("Deposit date cannot be greater than " + appDate);
+						return;
+					}
+					Date valueDate = receiptHeader.getValueDate();
+					if (DateUtil.compare(appDate, valueDate) > 0) {
+						if (DateUtil.compare(this.depositDate.getValue(), valueDate) < 0) {
+							MessageUtil.showError("Deposit date cannot be less than " + valueDate + " for receiptId "
+									+ receiptHeader.getReceiptID());
+							return;
+						}
+					}
+					receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_INITIATED);
+				}
+
+				if (FinanceConstants.REALIZATION_MAKER.equals(module)) {
+					if (DateUtil.compare(this.depositDate.getValue(), appDate) > 1) {
+						MessageUtil.showError("Realization date cannot be greater than " + appDate);
+						return;
+					}
+					if (DateUtil.compare(this.depositDate.getValue(), receiptHeader.getDepositDate()) < 0) {
+						MessageUtil.showError("Realization date cannot be less than " + receiptHeader.getDepositDate()
+								+ " for receiptId " + receiptHeader.getReceiptID());
+						return;
+					}
 					receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_INITIATED);
 				}
 				if (FinanceConstants.REALIZATION_MAKER.equals(roleCode)) {

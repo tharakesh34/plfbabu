@@ -840,8 +840,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		fsi.setReceiptPurpose(method);
 		fsi.setFromDate(fsi.getValueDate());
 
-		rch.setReceiptDate(fsi.getReceivedDate());
+		rch.setReceiptDate(SysParamUtil.getAppDate());
 		rch.setValueDate(fsi.getValueDate());
+		rch.setReceivedDate(fsi.getReceivedDate());
 		rcd.setValueDate(fsi.getValueDate());
 		rcd.setReceivedDate(fsi.getReceivedDate());
 

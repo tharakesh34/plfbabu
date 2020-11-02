@@ -63,6 +63,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.model.reason.details.ReasonDetails;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -164,10 +165,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private long mMAId;
 	private String agreeName;
 	private boolean finIsAlwMD;
-	@XmlElement
 	private long accountsOfficer;
-	@XmlElement
+	@XmlElement(name = "accountsOfficer")
+	private long accountsOfficerReference;
 	private String dsaCode;
+	@XmlElement(name = "dsaCode")
+	private String dsaCodeReference;
 	private String dsaName;
 	private String dsaCodeDesc;
 	private String lovDescAccountsOfficer;
@@ -231,7 +234,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	//Payment type check
 	private boolean chequeOrDDAvailable;
-	private boolean neftAvailable; //If NEFT/IMPS/RTGS Available
+	private boolean neftAvailable; // If NEFT/IMPS/RTGS Available
 
 	// Commercial Workflow Purpose
 	private String approved;
@@ -264,7 +267,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean resetNxtRpyInstReq = false;
 	private boolean resetOrgBal = true;
 	private String lovDescEntityCode;
-	//private String parentRef = "";
+	// private String parentRef = "";
 	private String parentRef = "";
 
 	// Deviation Process
@@ -405,7 +408,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private Date nextRolloverDate;
 
-	//PV: 10MAY17: remove from exlcuded fields
+	// PV: 10MAY17: remove from exlcuded fields
 	private String calRoundingMode;
 	private int roundingTarget;
 
@@ -683,8 +686,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String salesDepartment;
 	private String salesDepartmentDesc;
-	@XmlElement
 	private String dmaCode;
+	@XmlElement(name = "dmaCode")
+	private String dmaCodeReference;
 	private String dmaCodeDesc;
 	private String dmaName;
 	@XmlElement
@@ -718,7 +722,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String status;
 
-	//For Fee Reca Calculation
+	// For Fee Reca Calculation
 	private BigDecimal recalFee = BigDecimal.ZERO;
 	private int recalTerms = 0;
 
@@ -727,13 +731,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean modifyBpi = false;
 
 	// Service task specific implemented fields
-	//FIXME: DDP: how to pass the below values from extended fields to workflow.
+	// FIXME: DDP: how to pass the below values from extended fields to
+	// workflow.
 	private boolean rcu;
 	private boolean dedupMatch;
 	private boolean hunterGo = true;
 	private boolean bureau;
 
-	//GST Columns Added
+	// GST Columns Added
 	private BigDecimal recalCGSTFee = BigDecimal.ZERO;
 	private BigDecimal recalIGSTFee = BigDecimal.ZERO;
 	private BigDecimal recalSGSTFee = BigDecimal.ZERO;
@@ -752,9 +757,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private boolean legalRequired;
 
-	private boolean depositProcess = false; // added for Cash Management 
-	@XmlElement
+	private boolean depositProcess = false; // added for Cash Management
+
 	private long connector;
+	@XmlElement(name = "connector")
+	private String connectorReference;
 	private String connectorCode;
 	private String connectorDesc;
 
@@ -773,7 +780,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Map<String, String> attributes = new HashMap<>();
 	private BigDecimal repayAmount = BigDecimal.ZERO;
 	private String entityCode;
-	//### 10-09-2018,Ticket id:124998
+	// ### 10-09-2018,Ticket id:124998
 	private String entityDesc;
 
 	// tasks #1152 Business Vertical Tagged with Loan
@@ -829,9 +836,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String hunterStatus;
 	private int autoRejectionDays;
 
-	//QDP AutoApprove Changes.
+	// QDP AutoApprove Changes.
 	private boolean autoApprove = false;
 	private Date eodValueDate;
+	private boolean simulateAccounting;
+	private List<ReturnDataSet> returnDataSet;
 
 	private boolean pmay = false;
 	//OCR changes
@@ -925,6 +934,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("agreeName");
 		excludeFields.add("finIsAlwMD");
 		excludeFields.add("dsaCodeDesc");
+		excludeFields.add("dsaCodeReference");
 		excludeFields.add("dsaName");
 		excludeFields.add("finWriteoffAc");
 		excludeFields.add("lovDecMMAReference");
@@ -946,6 +956,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("disbInstList");
 		excludeFields.add("validateMain");
 		excludeFields.add("salesDepartmentDesc");
+		excludeFields.add("dmaCodeReference");
+		excludeFields.add("accountsOfficerReference");
+		excludeFields.add("connectorReference");
 		excludeFields.add("dmaCodeDesc");
 		excludeFields.add("dmaName");
 		excludeFields.add("referralIdDesc");
@@ -977,7 +990,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("resetNxtRpyInstReq");
 		excludeFields.add("postingId");
 
-		//GST
+		// GST
 		excludeFields.add("recalCGSTFee");
 		excludeFields.add("recalIGSTFee");
 		excludeFields.add("recalSGSTFee");
@@ -999,7 +1012,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("lovEligibilityMethod");
 		excludeFields.add("lovDescEligibilityMethod");
 
-		//Cash Management
+		// Cash Management
 		excludeFields.add("depositProcess");
 
 		excludeFields.add("connectorCode");
@@ -1018,7 +1031,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("finBranchContact");
 		excludeFields.add("nextUsrName");
 
-		//Payment type check
+		// Payment type check
 		excludeFields.add("chequeOrDDAvailable");
 		excludeFields.add("neftAvailable");
 
@@ -1026,7 +1039,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("businessVerticalCode");
 		excludeFields.add("businessVerticalDesc");
 
-		// As part of receipt merging 
+		// As part of receipt merging
 		excludeFields.add("alwFlexi");
 		excludeFields.add("flexiAmount");
 		excludeFields.add("chgDropLineSchd");
@@ -1056,7 +1069,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("cancelRemarks");
 		excludeFields.add("extendedFields");
 		excludeFields.add("autoApprove");
-		//hunterStatus
+		// hunterStatus
 		excludeFields.add("hunterStatus");
 		excludeFields.add("autoRejectionDays");
 		excludeFields.add("osPriBal");
@@ -1075,6 +1088,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("loanSplitted");
 		excludeFields.add("custEmpType");
 		excludeFields.add("planEMIHAlwInGrace");
+		excludeFields.add("simulateAccounting");
+		excludeFields.add("returnDataSet");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -2506,7 +2521,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void getDeclaredFieldValues(HashMap<String, Object> fieldsAndValuesMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				//"fm_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				// "fm_" Should be in small case only, if we want to change the
+				// case we need to update the configuration fields as well.
 				fieldsAndValuesMap.put("fm_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
 				if ("extendedFields".equals(this.getClass().getDeclaredFields()[i].getName())) {
@@ -3867,7 +3883,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.lovDescSourceCity = lovDescSourceCity;
 	}
 
-	//GST
+	// GST
 
 	public BigDecimal getRecalIGSTFee() {
 		return recalIGSTFee;
@@ -4251,9 +4267,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	/*
 	 * public HashMap<String, Object> getExtendedFieldValues() { HashMap<String, Object> financeMainmap = new
 	 * HashMap<String, Object>(); for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) { try { if
-	 * ("extendedFields".equals(this.getClass().getDeclaredFields()[i].getName())) {
+	 * ("extendedFields".equals(this.getClass().getDeclaredFields()[i].getName() )) {
 	 * financeMainmap.putAll(extendedFields); } else if
-	 * (!"serialVersionUID".equals(this.getClass().getDeclaredFields()[i].getName())) {
+	 * (!"serialVersionUID".equals(this.getClass().getDeclaredFields()[i]. getName())) {
 	 * financeMainmap.put(this.getClass().getDeclaredFields()[i].getName(),
 	 * this.getClass().getDeclaredFields()[i].get(this)); } } catch (SecurityException | IllegalArgumentException |
 	 * IllegalAccessException e) { e.printStackTrace(); } } return financeMainmap; }
@@ -5039,4 +5055,53 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setCustEmpType(String custEmpType) {
 		this.custEmpType = custEmpType;
 	}
+
+	public String getConnectorReference() {
+		return connectorReference;
+	}
+
+	public void setConnectorReference(String connectorReference) {
+		this.connectorReference = connectorReference;
+	}
+
+	public String getDsaCodeReference() {
+		return dsaCodeReference;
+	}
+
+	public void setDsaCodeReference(String dsaCodeReference) {
+		this.dsaCodeReference = dsaCodeReference;
+	}
+
+	public long getAccountsOfficerReference() {
+		return accountsOfficerReference;
+	}
+
+	public void setAccountsOfficerReference(long accountsOfficerReference) {
+		this.accountsOfficerReference = accountsOfficerReference;
+	}
+
+	public String getDmaCodeReference() {
+		return dmaCodeReference;
+	}
+
+	public void setDmaCodeReference(String dmaCodeReference) {
+		this.dmaCodeReference = dmaCodeReference;
+	}
+
+	public boolean isSimulateAccounting() {
+		return simulateAccounting;
+	}
+
+	public void setSimulateAccounting(boolean simulateAccounting) {
+		this.simulateAccounting = simulateAccounting;
+	}
+
+	public List<ReturnDataSet> getReturnDataSet() {
+		return returnDataSet;
+	}
+
+	public void setReturnDataSet(List<ReturnDataSet> returnDataSet) {
+		this.returnDataSet = returnDataSet;
+	}
+
 }

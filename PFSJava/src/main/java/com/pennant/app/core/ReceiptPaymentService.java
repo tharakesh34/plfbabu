@@ -151,6 +151,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setEffectSchdMethod(PennantConstants.List_Select);
 		header.setActFinReceipt(true);
 		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
+		header.setReceivedDate(businessDate);
 
 		if (!isPDetailsExits) {
 			header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
@@ -241,6 +242,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
 		header.setPostBranch("EOD");//FIXME
 		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		header.setReceivedDate(businessDate);
 
 		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 

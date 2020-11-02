@@ -55,11 +55,11 @@ public class InterfaceServiceLog extends AbstractWorkflowEntity {
 	private String status_Desc;
 	private String interface_Info;
 	private Date end_Date;
+	private Date eodDate;
 	private InterfaceServiceLog befImage;
 
 	public InterfaceServiceLog() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public InterfaceServiceLog(String id) {
@@ -226,6 +226,14 @@ public class InterfaceServiceLog extends AbstractWorkflowEntity {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public Date getEodDate() {
+		return eodDate;
+	}
+
+	public void setEodDate(Date eodDate) {
+		this.eodDate = eodDate;
 	}
 
 }

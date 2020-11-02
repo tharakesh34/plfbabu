@@ -173,7 +173,7 @@ public class LoadFinanceData extends ServiceHelper {
 				}
 
 				// Installment Due Exist
-				dueAmount = curSchd.getCpzAmount();
+				dueAmount = curSchd.getCpzAmount().subtract(curSchd.getCpzBalance());
 				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 					finEODEvent.setIdxDue(i);
 					custEODEvent.setDueExist(true);

@@ -287,19 +287,22 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 	}
 
 	@Override
-	public void deleteDivisionBranchesByBranchCodeAndUserId(String branchCode) {
+	public void deleteDivisionBranches(String branchCode, long userId, String userDivision) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("delete from SecurityUserDivBranch ");
 		sql.append("where UserBranch = :UserBranch ");
+		sql.append("and UsrID = :UsrID and UserDivision = :UserDivision ");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
 		parameterSource.addValue("UserBranch", branchCode);
+		parameterSource.addValue("UsrID", userId);
+		parameterSource.addValue("UserDivision", userDivision);
 
 		this.jdbcTemplate.update(sql.toString(), parameterSource);
 		logger.debug(Literal.LEAVING);

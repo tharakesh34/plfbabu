@@ -84,7 +84,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	protected Date loanClosureIntTillDate;
 
 	private Date depositDate;
-	private String depositBank;
 	private Date cancelDate;
 	private String lovDescRequestStage;
 
@@ -170,7 +169,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private long batchId;
 	private long bounceId;
 	private String custBaseCcy;
-	private String favourNumber;
 	private Long reasonCode;
 	private List<DocumentDetails> documentDetails = new ArrayList<>(1);;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -178,6 +176,11 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private Long partnerBankId;
 	private String receiptSource;
 	private Long linkedTranId;
+	private BigDecimal refWaiverAmt = BigDecimal.ZERO; // default value 0
+	private String source = "PLF";
+	private Date recAppDate;
+	private Date receivedDate; // Payment date
+	private String bankCode;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -216,7 +219,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("lpiIdx");
 		excludeFields.add("lppIdx");
 		excludeFields.add("isPenalSeparate");
-		excludeFields.add("valueDate");
 		excludeFields.add("totalPastDues");
 		excludeFields.add("totalAdvises");
 		excludeFields.add("totalXcess");
@@ -260,7 +262,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("loanClosureReceiptDate");
 		excludeFields.add("loanClosureIntTillDate");
 		excludeFields.add("depositDate");
-		excludeFields.add("depositBank");
 		excludeFields.add("cancelDate");
 		excludeFields.add("partnerBankCode");
 		excludeFields.add("waivedAmt");
@@ -284,11 +285,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("batchId");
 		excludeFields.add("bounceId");
 		excludeFields.add("custBaseCcy");
-		excludeFields.add("favourNumber");
-		excludeFields.add("documentDetails");
-		excludeFields.add("auditDetailMap");
-		excludeFields.add("prvReceiptPurpose");
-		excludeFields.add("partnerBankId");
 		excludeFields.add("receiptSource");
 		excludeFields.add("linkedTranId");
 
@@ -1060,14 +1056,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		this.depositDate = depositDate;
 	}
 
-	public String getDepositBank() {
-		return depositBank;
-	}
-
-	public void setDepositBank(String depositBank) {
-		this.depositBank = depositBank;
-	}
-
 	public Date getCancelDate() {
 		return cancelDate;
 	}
@@ -1418,14 +1406,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		this.custBaseCcy = custBaseCcy;
 	}
 
-	public String getFavourNumber() {
-		return favourNumber;
-	}
-
-	public void setFavourNumber(String favourNumber) {
-		this.favourNumber = favourNumber;
-	}
-
 	public Long getReasonCode() {
 		return reasonCode;
 	}
@@ -1496,6 +1476,46 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setLinkedTranId(Long linkedTranId) {
 		this.linkedTranId = linkedTranId;
+	}
+
+	public BigDecimal getRefWaiverAmt() {
+		return refWaiverAmt;
+	}
+
+	public void setRefWaiverAmt(BigDecimal refWaiverAmt) {
+		this.refWaiverAmt = refWaiverAmt;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public Date getRecAppDate() {
+		return recAppDate;
+	}
+
+	public void setRecAppDate(Date recAppDate) {
+		this.recAppDate = recAppDate;
+	}
+
+	public Date getReceivedDate() {
+		return receivedDate;
+	}
+
+	public void setReceivedDate(Date receivedDate) {
+		this.receivedDate = receivedDate;
+	}
+
+	public String getBankCode() {
+		return bankCode;
+	}
+
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
 	}
 
 }

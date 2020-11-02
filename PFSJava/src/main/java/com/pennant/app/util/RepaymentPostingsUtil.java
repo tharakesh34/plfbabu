@@ -118,6 +118,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class RepaymentPostingsUtil implements Serializable {
@@ -316,7 +317,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	private List<Object> doOverduePostings(AEEvent aeEvent, List<FinRepayQueue> finRepayQueueList, Date postDate,
 			Date dateValueDate, FinanceMain financeMain, FinRepayQueueHeader repayQueueHeader)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.info(Literal.ENTERING);
 
 		//repayQueueHeader.setLppAmzReqonME(feeType.isAmortzReq());
 
@@ -337,7 +338,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 			aeEvent = (AEEvent) returnList.get(0);
 			if (!aeEvent.isPostingSucess()) {
-				logger.debug("Leaving");
+				logger.info(Literal.LEAVING);
 				return returnList;
 			}
 
@@ -363,7 +364,10 @@ public class RepaymentPostingsUtil implements Serializable {
 				detail.setTotPenaltyPaid(repayQueue.getPenaltyPayNow());
 				detail.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())).negate());
 				detail.setTotWaived(repayQueue.getWaivedAmount());
-				getFinODDetailsDAO().updateTotals(detail);
+
+				if (!aeEvent.isSimulateAccounting()) {
+					finODDetailsDAO.updateTotals(detail);
+				}
 			}
 		}
 
@@ -371,7 +375,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		returnList.add(aeEvent);
 		returnList.add(taxIncome);
 
-		logger.debug("Leaving");
+		logger.info(Literal.LEAVING);
 		return returnList;
 	}
 
@@ -575,7 +579,12 @@ public class RepaymentPostingsUtil implements Serializable {
 			actReturnList.add(BigDecimal.ZERO);
 		}
 		actReturnList.add(aeEvent.getTransOrder());
-		logger.debug("Leaving");
+
+		if (financeMain.isSimulateAccounting()) {
+			financeMain.setReturnDataSet(aeEvent.getReturnDataSet());
+		}
+
+		logger.debug(Literal.LEAVING);
 		return actReturnList;
 	}
 
@@ -986,7 +995,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			}
 
 			// If Final Schedule not exists on Approved Schedule details
-			if (oldLastSchd == null) {
+			if (oldLastSchd == null || !oldLastSchd.isFrqDate()) {
 				// Last Schedule Interest Amounts Paid
 				if (amountCodes.getPftWaived()
 						.compareTo(lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid())) > 0) {
@@ -1004,235 +1013,63 @@ public class RepaymentPostingsUtil implements Serializable {
 					amountCodes.setLastSchPftWaived(amountCodes.getPftWaived());
 				}
 
-				// Profit Due Paid
-				if (amountCodes.getPftWaived()
-						.compareTo(lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid())) > 0) {
-					amountCodes.setPftDuePaid(amountCodes.getRpPft());
-				} else {
-					amountCodes.setPftDuePaid(amountCodes.getRpPft()
-							.subtract(lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid()))
-							.add(amountCodes.getPftWaived()));
-				}
-
-				// Profit Due Waived
-				if (amountCodes.getPftWaived()
-						.compareTo(lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid())) > 0) {
-					amountCodes.setPftDueWaived(amountCodes.getPftWaived()
-							.subtract(lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid())));
-				} else {
-					amountCodes.setPftDueWaived(BigDecimal.ZERO);
-				}
-
-				// Principal Due Paid
-				if (amountCodes.getPriWaived()
-						.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
-					amountCodes.setPriDuePaid(amountCodes.getRpPri());
-				} else {
-					amountCodes.setPriDuePaid(amountCodes.getRpPri()
-							.subtract(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid()))
-							.add(amountCodes.getPriWaived()));
-				}
-
-				// Principal Due Waived
-				if (amountCodes.getPriWaived()
-						.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
-					amountCodes.setPriDueWaived(amountCodes.getPriWaived()
-							.subtract(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())));
-				} else {
-					amountCodes.setPriDueWaived(BigDecimal.ZERO);
-				}
 			} else {
 
 				// Last Schedule Interest Amounts Paid
 				amountCodes.setLastSchPftPaid(BigDecimal.ZERO);
 				amountCodes.setLastSchPftWaived(BigDecimal.ZERO);
-
-				// Profit Due Paid
-				amountCodes.setPftDuePaid(amountCodes.getRpPft().subtract(rpyQueueHeader.getFutProfit()));
-
-				// Profit Due Waived
-				amountCodes.setPftDueWaived(amountCodes.getPftWaived().subtract(rpyQueueHeader.getFutPftWaived()));
-
-				amountCodes.setPriDuePaid(amountCodes.getRpPri().subtract(rpyQueueHeader.getFutPrincipal()));
-				amountCodes.setPriDueWaived(amountCodes.getPriWaived().subtract(rpyQueueHeader.getFutPriWaived()));
-
-				/*
-				 * BigDecimal lastSchdPriBal = lastSchd.getPrincipalSchd()
-				 * .subtract(oldLastSchd.getPrincipalSchd().subtract(oldLastSchd.getSchdPriPaid()));
-				 * 
-				 * // Principal Due Paid if (amountCodes.getPriWaived().compareTo(lastSchdPriBal) > 0) {
-				 * 
-				 * } else { amountCodes.setPriDuePaid(
-				 * amountCodes.getRpPri().subtract(lastSchdPriBal).add(amountCodes.getPriWaived())); }
-				 * 
-				 * // Principal Due Waived if (amountCodes.getPriWaived().compareTo(lastSchdPriBal) > 0) {
-				 * amountCodes.setPriDueWaived(amountCodes.getPriWaived().subtract(lastSchdPriBal)); } else {
-				 * amountCodes.setPriDueWaived(BigDecimal.ZERO); }
-				 */
 			}
+			//Total Future Profit amount
+			BigDecimal totFutPft = rpyQueueHeader.getFutProfit().add(rpyQueueHeader.getFutPftWaived());
 
-			Date curMonthStartDate = DateUtility.getMonthStart(lastSchd.getSchDate());
+			//UnAccrual Amounts
+			BigDecimal unaccrue = (financeProfitDetail.getTotalPftSchd().add(financeProfitDetail.getTdPftCpz()))
+					.subtract(financeProfitDetail.getAmzTillLBD());
 
-			// UnAccrual Calculation
-			BigDecimal unaccrue = BigDecimal.ZERO;
-			/*
-			 * if(DateUtility.compare(curMonthStartDate, finMain.getFinStartDate()) <= 0){ curMonthStartDate =
-			 * finMain.getFinStartDate(); unaccrue = lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid());
-			 * }else{ int curDays = DateUtility.getDaysBetween(lastPrvSchd.getSchDate(), lastSchd.getSchDate()); int
-			 * daysTillTodayFromMS = DateUtility.getDaysBetween(curMonthStartDate, lastSchd.getSchDate());
-			 * 
-			 * // If Previous schedule date greater than current last installment month start date
-			 * if(DateUtility.compare(curMonthStartDate, lastPrvSchd.getSchDate()) < 0){
-			 * 
-			 * int daysFromMSToPrvInst = DateUtility.getDaysBetween(curMonthStartDate, lastPrvSchd.getSchDate());
-			 * BigDecimal eachDayPft = lastPrvSchd.getProfitSchd().divide(new BigDecimal(lastPrvSchd.getNoOfDays()), 9,
-			 * RoundingMode.HALF_DOWN); BigDecimal totalPftFromPrvSchd = eachDayPft.multiply(new
-			 * BigDecimal(daysFromMSToPrvInst));
-			 * 
-			 * // If Last Previous Installment was paid already
-			 * if(lastPrvSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0){ BigDecimal balPrvSchdPft =
-			 * lastPrvSchd.getProfitSchd().subtract(lastPrvSchd.getSchdPftPaid());
-			 * if(totalPftFromPrvSchd.compareTo(balPrvSchdPft) > 0){ totalPftFromPrvSchd = balPrvSchdPft; } }
-			 * 
-			 * unaccrue = lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid()).add(totalPftFromPrvSchd); }else{
-			 * unaccrue = (lastSchd.getProfitSchd().divide(new BigDecimal(curDays), 9,
-			 * RoundingMode.HALF_DOWN)).multiply(new BigDecimal(daysTillTodayFromMS));
-			 * if(lastSchd.getSchdPftPaid().compareTo(lastSchd.getProfitSchd().subtract(unaccrue)) > 0){ BigDecimal diff
-			 * = lastSchd.getSchdPftPaid().subtract(lastSchd.getProfitSchd().subtract(unaccrue)); unaccrue =
-			 * unaccrue.subtract(diff); } } unaccrue = CalculationUtil.roundAmount(unaccrue,
-			 * finMain.getCalRoundingMode(), finMain.getRoundingTarget()); }
-			 */
+			// Accrued Amount
+			BigDecimal accrue = totFutPft.subtract(unaccrue);
 
-			// Without Recalculation of Unaccrue to make exact value , subtracting total previous month accrual from actual total profit
-			//unaccrue = totalPftSchdNew.subtract(newProfitDetail.getPrvMthAmz());//IF UMFC EXISTS
-
-			if (oldLastSchd == null) {
-				FinanceScheduleDetail lastPrvSchd = scheduleDetails.get(schSize - 2);
-				if (DateUtility.compare(curMonthStartDate, lastPrvSchd.getSchDate()) <= 0) {
-
-					// Accrual amounts
-					amountCodes.setAccruedPaid(BigDecimal.ZERO);
-					amountCodes.setAccrueWaived(BigDecimal.ZERO);
-
-					//UnAccrual Amounts
-					unaccrue = financeProfitDetail.getTotalPftSchd().subtract(financeProfitDetail.getAmzTillLBD());
-
-					// UnAccrue Paid
-					if (amountCodes.getPftWaived().compareTo(unaccrue) > 0) {
-						amountCodes.setUnAccruedPaid(BigDecimal.ZERO);
-					} else {
-						amountCodes.setUnAccruedPaid(unaccrue.subtract(amountCodes.getPftWaived()));
-					}
-
-					// UnAccrue Waived
-					if (amountCodes.getPftWaived().compareTo(unaccrue) >= 0) {
-						amountCodes.setUnAccrueWaived(unaccrue);
-					} else {
-						amountCodes.setUnAccrueWaived(amountCodes.getPftWaived());
-					}
-				} else {
-
-					//UnAccrual Amounts
-					unaccrue = financeProfitDetail.getTotalPftSchd().subtract(financeProfitDetail.getPrvMthAmz());
-
-					// UnAccrue Paid
-					if (amountCodes.getPftWaived().compareTo(unaccrue) > 0) {
-						amountCodes.setUnAccruedPaid(BigDecimal.ZERO);
-					} else {
-						amountCodes.setUnAccruedPaid(unaccrue.subtract(amountCodes.getPftWaived()));
-					}
-
-					// UnAccrue Waived
-					if (amountCodes.getPftWaived().compareTo(unaccrue) >= 0) {
-						amountCodes.setUnAccrueWaived(unaccrue);
-					} else {
-						amountCodes.setUnAccrueWaived(amountCodes.getPftWaived());
-					}
-
-					//Accrual amounts
-					/*
-					 * BigDecimal accrue = financeProfitDetail.getTotalPftSchd()
-					 * .subtract(financeProfitDetail.getAmzTillLBD()).subtract(unaccrue);
-					 */
-
-					/*
-					 * modified the above on 25th Dec-19, to ensure accrual amount posting will happen during
-					 * fore-closer.
-					 */
-
-					BigDecimal accrue = rpyQueueHeader.getFutProfit().subtract(unaccrue);
-
-					// Accrual Paid
-					if (amountCodes.getPftWaived().compareTo(unaccrue.add(accrue)) >= 0) {
-						amountCodes.setAccruedPaid(BigDecimal.ZERO);
-					} else {
-						if (amountCodes.getPftWaived().compareTo(unaccrue) >= 0) {
-							amountCodes.setAccruedPaid(accrue.add(unaccrue).subtract(amountCodes.getPftWaived()));
-						} else {
-							amountCodes.setAccruedPaid(accrue);
-						}
-					}
-
-					// Accrual Waived
-					if (amountCodes.getPftWaived().compareTo(accrue.add(unaccrue)) >= 0) {
-						amountCodes.setAccrueWaived(accrue);
-					} else {
-						if (amountCodes.getPftWaived().compareTo(unaccrue) >= 0) {
-							amountCodes.setAccrueWaived(amountCodes.getPftWaived().subtract(unaccrue));
-						} else {
-							amountCodes.setAccrueWaived(BigDecimal.ZERO);
-						}
-					}
-				}
-				// Future Principal Paid
-				if (amountCodes.getPriWaived()
-						.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
-					amountCodes.setFuturePriPaid(BigDecimal.ZERO);
-				} else {
-					amountCodes.setFuturePriPaid(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())
-							.subtract(amountCodes.getPriWaived()));
-				}
-
-				// Future Principal Waived
-				if (amountCodes.getPriWaived()
-						.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
-					amountCodes.setFuturePriWaived(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid()));
-				} else {
-					amountCodes.setFuturePriWaived(amountCodes.getPriWaived());
-				}
-			} else {
-
-				// Accrual amounts
-				amountCodes.setAccruedPaid(BigDecimal.ZERO);
-				amountCodes.setAccrueWaived(BigDecimal.ZERO);
-
-				// UnAccrual amounts
+			// UnAccrue Paid
+			if (rpyQueueHeader.getFutPftWaived().compareTo(unaccrue) > 0) {
 				amountCodes.setUnAccruedPaid(BigDecimal.ZERO);
-				amountCodes.setUnAccrueWaived(BigDecimal.ZERO);
-
-				amountCodes.setFuturePriPaid(rpyQueueHeader.getFutPrincipal());
-				amountCodes.setFuturePriWaived(rpyQueueHeader.getFutPriWaived());
-
-				BigDecimal lastSchdPriBal = lastSchd.getPrincipalSchd()
-						.subtract(oldLastSchd.getPrincipalSchd().subtract(oldLastSchd.getSchdPriPaid()));
-
-				/*
-				 * // Future Principal Paid if (amountCodes.getPriWaived().compareTo(lastSchdPriBal) > 0) {
-				 * amountCodes.setFuturePriPaid(BigDecimal.ZERO); } else {
-				 * amountCodes.setFuturePriPaid(lastSchdPriBal.subtract(amountCodes.getPriWaived())); }
-				 */
-				// Future Principal Waived
-				/*
-				 * if (amountCodes.getPriWaived().compareTo(lastSchdPriBal) > 0) {
-				 * amountCodes.setFuturePriWaived(lastSchdPriBal); } else {
-				 * amountCodes.setFuturePriWaived(amountCodes.getPriWaived()); }
-				 */
+			} else {
+				amountCodes.setUnAccruedPaid(unaccrue.subtract(rpyQueueHeader.getFutPftWaived()));
 			}
+
+			// UnAccrue Waived
+			if (rpyQueueHeader.getFutPftWaived().compareTo(unaccrue) >= 0) {
+				amountCodes.setUnAccrueWaived(unaccrue);
+			} else {
+				amountCodes.setUnAccrueWaived(rpyQueueHeader.getFutPftWaived());
+			}
+
+			// Accrual Paid
+			if (rpyQueueHeader.getFutPftWaived().compareTo(unaccrue.add(accrue)) >= 0) {
+				amountCodes.setAccruedPaid(BigDecimal.ZERO);
+			} else {
+				if (rpyQueueHeader.getFutPftWaived().compareTo(unaccrue) >= 0) {
+					amountCodes.setAccruedPaid(accrue.add(unaccrue).subtract(rpyQueueHeader.getFutPftWaived()));
+				} else {
+					amountCodes.setAccruedPaid(accrue);
+				}
+			}
+
+			// Accrual Waived
+			if (rpyQueueHeader.getFutPftWaived().compareTo(accrue.add(unaccrue)) >= 0) {
+				amountCodes.setAccrueWaived(accrue);
+			} else {
+				if (rpyQueueHeader.getFutPftWaived().compareTo(unaccrue) >= 0) {
+					amountCodes.setAccrueWaived(rpyQueueHeader.getFutPftWaived().subtract(unaccrue));
+				} else {
+					amountCodes.setAccrueWaived(BigDecimal.ZERO);
+				}
+			}
+
+			// TDS for Last Installment
+			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 
 			if (lastSchd.isTDSApplicable()) {
-				// TDS for Last Installment
-				BigDecimal tdsPerc = new BigDecimal(
-						SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+
 				amountCodes.setLastSchTds((amountCodes.getLastSchPftPaid().multiply(tdsPerc))
 						.divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN));
 
@@ -1251,12 +1088,15 @@ public class RepaymentPostingsUtil implements Serializable {
 					amountCodes.setUnAccruedTds(amountCodes.getLastSchTds());
 				}
 
-				// TDS Due
-				amountCodes.setDueTds((amountCodes.getPftDuePaid().multiply(tdsPerc)).divide(BigDecimal.valueOf(100), 0,
-						RoundingMode.HALF_DOWN));
 			} else {
 				amountCodes.setLastSchTds(BigDecimal.ZERO);
 				amountCodes.setDueTds(BigDecimal.ZERO);
+			}
+
+			// TDS Due
+			if (financeMain.isTDSApplicable()) {
+				amountCodes.setDueTds((amountCodes.getPftDuePaid().multiply(tdsPerc)).divide(BigDecimal.valueOf(100), 0,
+						RoundingMode.HALF_DOWN));
 			}
 
 			// Balance SubVention Amount
@@ -1362,6 +1202,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 
 		aeEvent.setDataMap(dataMap);
+		aeEvent.setSimulateAccounting(financeMain.isSimulateAccounting());
 
 		// Accounting Entry Execution
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
@@ -1414,7 +1255,9 @@ public class RepaymentPostingsUtil implements Serializable {
 					invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED_TAX_CREDIT);
 					invoiceDetail.setDbInvoiceID(invoiceID);
 
-					gstInvoiceTxnService.schdDueTaxInovicePrepration(invoiceDetail);
+					if (!aeEvent.isSimulateAccounting()) {
+						gstInvoiceTxnService.schdDueTaxInovicePrepration(invoiceDetail);
+					}
 				}
 			}
 
@@ -1441,7 +1284,10 @@ public class RepaymentPostingsUtil implements Serializable {
 			invoiceDetail.setFpftAmount(fpftpaid);
 			invoiceDetail.setDbInvSetReq(false);
 			invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
-			gstInvoiceTxnService.schdDueTaxInovicePrepration(invoiceDetail);
+
+			if (!aeEvent.isSimulateAccounting()) {
+				gstInvoiceTxnService.schdDueTaxInovicePrepration(invoiceDetail);
+			}
 		}
 
 		//Overdue Details Updation for Paid Penalty

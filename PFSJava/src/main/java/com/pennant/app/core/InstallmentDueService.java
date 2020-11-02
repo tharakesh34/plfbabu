@@ -315,6 +315,7 @@ public class InstallmentDueService extends ServiceHelper {
 			}
 		}
 
+		BigDecimal totPft = BigDecimal.ZERO;
 		//check the schedule is back dated or not if yes then post them
 		for (FinanceScheduleDetail financeScheduleDetail : list) {
 
@@ -332,6 +333,7 @@ public class InstallmentDueService extends ServiceHelper {
 			// Installment Due Exist
 			BigDecimal dueAmount = curSchd.getPrincipalSchd().add(curSchd.getProfitSchd())
 					.subtract(curSchd.getSchdPriPaid()).subtract(curSchd.getSchdPftPaid());
+			totPft = totPft.add(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 
 			if (dueAmount.compareTo(BigDecimal.ZERO) <= 0) {
 				continue;
@@ -420,6 +422,7 @@ public class InstallmentDueService extends ServiceHelper {
 				if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && linkedTranId > 0) {
 					createInovice(financeDetail, curSchd, linkedTranId);
 				}
+				profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(totPft));
 			} else {
 				aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
 				datasets.addAll(aeEvent.getReturnDataSet());

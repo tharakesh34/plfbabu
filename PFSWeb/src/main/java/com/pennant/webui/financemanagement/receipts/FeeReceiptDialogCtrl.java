@@ -1242,6 +1242,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					header.getReceiptDetails().add(receiptDetail);
 				}
 				header.setRemarks(this.remarks.getValue());
+				header.setTransactionRef(this.favourNo.getValue());
+				header.setBankCode(this.bankCode.getValue());
 				for (FinReceiptDetail receiptDetail : header.getReceiptDetails()) {
 					receiptDetail.setAmount(header.getReceiptAmount());
 					receiptDetail.setPaymentType(header.getReceiptMode());

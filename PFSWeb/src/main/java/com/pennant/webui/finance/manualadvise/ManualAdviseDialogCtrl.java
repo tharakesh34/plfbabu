@@ -792,8 +792,24 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
 
+				BigDecimal totalPaidGst = movement.getPaidCGST().add(movement.getPaidUGST()).add(movement.getPaidSGST())
+						.add(movement.getPaidIGST());
+
+				lc = new Listcell(
+						PennantApplicationUtil.amountFormate(totalPaidGst, PennantConstants.defaultCCYDecPos));
+				lc.setStyle("text-align:right;");
+				item.appendChild(lc);
+
 				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getWaivedAmount(),
 						PennantConstants.defaultCCYDecPos));
+				lc.setStyle("text-align:right;");
+				item.appendChild(lc);
+
+				BigDecimal totalWaivedGST = movement.getWaivedCGST().add(movement.getWaivedUGST())
+						.add(movement.getWaivedSGST()).add(movement.getWaivedIGST());
+
+				lc = new Listcell(
+						PennantApplicationUtil.amountFormate(totalWaivedGST, PennantConstants.defaultCCYDecPos));
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
 

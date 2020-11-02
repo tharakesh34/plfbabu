@@ -1229,7 +1229,9 @@ public class FinanceDataValidation {
 			}
 		}
 
-		if (StringUtils.isNotBlank(finMain.getDsaCode())) {
+		String dsaCodeRef = finMain.getDsaCodeReference();
+
+		if (StringUtils.isNotBlank(dsaCodeRef)) {
 			/*
 			 * RelationshipOfficer relationshipOfficer = relationshipOfficerService
 			 * .getApprovedRelationshipOfficerById(finMain.getDsaCode()); if (relationshipOfficer == null) { String[]
@@ -1237,8 +1239,7 @@ public class FinanceDataValidation {
 			 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm))); }
 			 */
 
-			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(finMain.getDsaCode(), "DSA",
-					"");
+			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(dsaCodeRef, "DSA", "");
 			if (vehicleDealer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getDsaCode();
@@ -1247,7 +1248,7 @@ public class FinanceDataValidation {
 				finMain.setDsaCode(String.valueOf(vehicleDealer.getDealerId()));
 			}
 		}
-		if (finMain.getAccountsOfficer() != 0) {
+		if (finMain.getAccountsOfficerReference() != 0) {
 			/*
 			 * VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(finMain
 			 * .getAccountsOfficer()); if (vehicleDealer == null) { String[] valueParm = new String[1]; valueParm[0] =
@@ -1255,7 +1256,7 @@ public class FinanceDataValidation {
 			 * ErrorDetail("90501", valueParm))); }
 			 */
 			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(
-					String.valueOf(finMain.getAccountsOfficer()), VASConsatnts.VASAGAINST_PARTNER, "");
+					String.valueOf(finMain.getAccountsOfficerReference()), VASConsatnts.VASAGAINST_PARTNER, "");
 			if (vehicleDealer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = String.valueOf(finMain.getAccountsOfficer());
@@ -1287,15 +1288,15 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
 			}
 		}
-		if (StringUtils.isNotBlank(finMain.getDmaCode())) {
+		if (StringUtils.isNotBlank(finMain.getDmaCodeReference())) {
 			/*
 			 * RelationshipOfficer relationshipOfficer = relationshipOfficerService
 			 * .getApprovedRelationshipOfficerById(finMain.getDmaCode()); if (relationshipOfficer == null) { String[]
 			 * valueParm = new String[1]; valueParm[0] = finMain.getDsaCode();
 			 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm))); }
 			 */
-			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(finMain.getDmaCode(), "DMA",
-					"");
+			VehicleDealer vehicleDealer = vehicleDealerService
+					.getApprovedVehicleDealerById(finMain.getDmaCodeReference(), "DMA", "");
 			if (vehicleDealer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getDmaCode();
@@ -1335,9 +1336,9 @@ public class FinanceDataValidation {
 			}
 		}
 		// Validate Connecter
-		if (finMain.getConnector() > 0) {
+		if (StringUtils.isNotBlank(finMain.getConnectorReference())) {
 			VehicleDealer vehicleDealer = vehicleDealerService
-					.getApprovedVehicleDealerById(String.valueOf(finMain.getConnector()), "CONN", "");
+					.getApprovedVehicleDealerById(finMain.getConnectorReference(), "CONN", "");
 			if (vehicleDealer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = String.valueOf(finMain.getConnector());
@@ -4383,7 +4384,8 @@ public class FinanceDataValidation {
 		BigDecimal zeroValue = BigDecimal.ZERO;
 		final String REPAY = "Repay";
 
-		//Consumer durables will take the defaulted rate. No validation required
+		// Consumer durables will take the defaulted rate. No validation
+		// required
 		if (StringUtils.equals(FinanceConstants.PRODUCT_CD, finMain.getProductCategory())) {
 			return errorDetails;
 		}

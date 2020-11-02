@@ -124,6 +124,7 @@ import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -1610,9 +1611,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return aAuditHeader;
 		}
 		if (StringUtils.equals(FinanceConstants.REALIZATION_APPROVER, roleCode)) {
-			if (((StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
+			if ((StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
 					FinanceConstants.FINSER_EVENT_SCHDRPY)
-					&& StringUtils.isEmpty(receiptData.getReceiptHeader().getPrvReceiptPurpose())))
+					&& StringUtils.isEmpty(receiptData.getReceiptHeader().getPrvReceiptPurpose()))
 					&& (StringUtils.equals(receiptData.getReceiptHeader().getReceiptMode(),
 							RepayConstants.RECEIPTMODE_CHEQUE)
 							|| StringUtils.equals(receiptData.getReceiptHeader().getReceiptMode(),
@@ -1623,12 +1624,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
-		if (!aAuditHeader.isNextProcess()) {
-			return aAuditHeader;
-		}
-
-		long serviceUID = Long.MIN_VALUE;
 		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 		if (receiptData.getFinanceDetail().getFinScheduleData().getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
@@ -1637,6 +1632,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			receiptData.getFinanceDetail().getFinScheduleData().setFinServiceInstruction(finServInst);
 		}
 
+		if (!StringUtils.equalsIgnoreCase(PennantConstants.FINSOURCE_ID_API, receiptData.getSourceId())
+				&& !receiptData.getFinanceDetail().getFinScheduleData().getFinServiceInstruction().isReceiptUpload()) {
+			if ((StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
+					FinanceConstants.FINSER_EVENT_EARLYRPY)
+					|| StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
+							FinanceConstants.FINSER_EVENT_EARLYSETTLE))) {
+
+				aAuditHeader = approveValidation(aAuditHeader, "doApprove");
+			}
+		}
+
+		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
+		if (!aAuditHeader.isNextProcess()) {
+			return aAuditHeader;
+		}
+
+		long serviceUID = Long.MIN_VALUE;
 		for (FinServiceInstruction finSerList : receiptData.getFinanceDetail().getFinScheduleData()
 				.getFinServiceInstructions()) {
 			if (finSerList.getInstructionUID() == Long.MIN_VALUE) {
@@ -1698,6 +1710,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rch.getReceiptMode())) {
 			rch.setRealizationDate(rch.getValueDate());
+			rch.setReceivedDate(rch.getValueDate());
 		}
 
 		finReceiptHeaderDAO.generatedReceiptID(rch);
@@ -1712,6 +1725,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setWorkflowId(0);
 		rch.setActFinReceipt(financeMain.isFinIsActive());
 		rch.setValueDate(receiptData.getValueDate());
+		rch.setReceiptDate(appDate);
 
 		if (rch.getReceiptMode() != null && rch.getSubReceiptMode() == null) {
 			rch.setSubReceiptMode(rch.getReceiptMode());
@@ -4094,11 +4108,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		if (fsi.getValueDate() == null) {
-			fsi.setValueDate(rcd.getReceivedDate());
+			fsi.setValueDate(rch.getValueDate());
 		}
 
 		if (rch.getValueDate() == null) {
-			rch.setValueDate(fsi.getValueDate());
+			rch.setValueDate(rcd.getReceivedDate());
 		}
 
 		String finReference = fsi.getFinReference();
@@ -4190,8 +4204,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (methodCtg == 1 || methodCtg == 2) {
 				if (fsi.getValueDate().compareTo(DateUtility.addDays(DateUtility.getMonthStart(appDate), -1)) < 0) {
 					parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
-					parm1 = DateUtility.formatToLongDate(appDate);
-					// parm2 = String.valueOf(paramDays);
+					parm1 = DateUtility.formatToLongDate(DateUtility.addDays(DateUtility.getMonthStart(appDate), -1));
 					finScheduleData = setErrorToFSD(finScheduleData, "RU0010", parm0, parm1);
 					return receiptData;
 				}
@@ -4230,8 +4243,24 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					}
 				}
 			}
-		}
 
+			// Early Settlement OR Early Settlement Inquiry
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
+				Date lastReceivedDate = null;
+				if (methodCtg == 2 || methodCtg == 3) {
+					lastReceivedDate = getMaxReceiptDate(fsi.getFinReference());
+				} else if (methodCtg == 1) {
+					lastReceivedDate = finReceiptDetailDAO.getMaxReceiptDate(finReference,
+							FinanceConstants.FINSER_EVENT_EARLYRPY, TableType.VIEW);
+				}
+				if (lastReceivedDate != null && fsi.getValueDate().compareTo(lastReceivedDate) < 0) {
+					parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
+					parm1 = DateUtility.formatToLongDate(lastReceivedDate);
+					finScheduleData = setErrorToFSD(finScheduleData, "RU0011", parm0, parm1);
+					return receiptData;
+				}
+			}
+		}
 		// Instrumentwise Limits
 		ErrorDetail errorDetail = doInstrumentValidation(receiptData);
 		if (errorDetail != null) {
@@ -4409,6 +4438,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		rcd.setValueDate(rch.getValueDate());
 		rch.setRemarks(rcd.getRemarks());
+		rch.setSource(PennantConstants.FINSOURCE_ID_API);
 
 		if (rch.getReceiptMode() != null && (rch.getSubReceiptMode() == null || rch.getSubReceiptMode().isEmpty())) {
 			rch.setSubReceiptMode(rch.getReceiptMode());
@@ -5507,6 +5537,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch = recData.getReceiptHeader();
 		recData.setValueDate(rch.getValueDate());
 		rch.setValueDate(null);
+		rch.setReceiptDate(SysParamUtil.getAppDate());
 		recData.setBuildProcess("I");
 		recData.setAllocList(rch.getAllocations());
 		recData.setForeClosure(isForeClosure);
@@ -6152,6 +6183,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			Cloner cloner = new Cloner();
 			FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
 			receiptData.getFinanceDetail().setFinScheduleData(finScheduleData);
+			receiptData.getReceiptHeader().setValueDate(rch.getValueDate());
 
 			receiptData.setDueAdjusted(true);
 			if (receiptPurposeCtg == 2) {
@@ -6779,6 +6811,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			FinReceiptDetail rcd = new FinReceiptDetail();
 			rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+			rcd.setValueDate(rch.getValueDate());
 
 			if (StringUtils.equals(payable.getPayableType(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
 				rcd.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
@@ -6918,6 +6951,82 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			// finReceiptDetail);
 		}
 		logger.debug("Leaving");
+	}
+
+	private AuditHeader approveValidation(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+
+		FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+		Date valueDate = receiptData.getReceiptHeader().getValueDate();
+
+		Date lastReceivedDate = getMaxReceiptDate(receiptData.getFinReference());
+		if (lastReceivedDate != null
+				&& DateUtility.compare(receiptData.getReceiptHeader().getValueDate(), lastReceivedDate) < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = DateUtility.formatToLongDate(receiptData.getReceiptHeader().getValueDate());
+			valueParm[1] = DateUtility.formatToLongDate(lastReceivedDate);
+			auditHeader.getAuditDetail().setErrorDetail(ErrorUtil
+					.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "RU0011", valueParm, valueParm)));
+			auditHeader.setErrorList(auditHeader.getAuditDetail().getErrorDetails());
+		}
+		Date prvSchdDate = null;
+		FinanceScheduleDetail prvSchd = null;
+		prvSchd = getFinanceScheduleDetailDAO().getPrvSchd(receiptData.getFinReference(), DateUtility.getAppDate());
+
+		if (prvSchd != null) {
+			prvSchdDate = prvSchd.getSchDate();
+		}
+
+		if (prvSchdDate != null && receiptData.getReceiptHeader().getValueDate() != null
+				&& DateUtility.compare(receiptData.getReceiptHeader().getValueDate(), prvSchdDate) < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = DateUtility.formatToLongDate(receiptData.getReceiptHeader().getValueDate());
+			valueParm[1] = DateUtility.formatToLongDate(prvSchdDate);
+			auditHeader.getAuditDetail().setErrorDetail(ErrorUtil
+					.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "RU0012", valueParm, valueParm)));
+			auditHeader.setErrorList(auditHeader.getAuditDetail().getErrorDetails());
+		}
+
+		if (valueDate != null && valueDate.compareTo(DateUtility.getMonthStart(DateUtility.getAppDate())) < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = DateUtility.formatToLongDate(valueDate);
+			valueParm[1] = DateUtility.formatToLongDate(DateUtility.getMonthStart(DateUtility.getAppDate()));
+			auditHeader.getAuditDetail().setErrorDetail(ErrorUtil
+					.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "RU0010", valueParm, valueParm)));
+			auditHeader.setErrorList(auditHeader.getAuditDetail().getErrorDetails());
+		}
+
+		if (StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
+				FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			if (receiptData.getReceiptHeader().getPartPayAmount().compareTo(BigDecimal.ZERO) <= 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = receiptData.getReceiptHeader().getReceiptPurpose();
+				valueParm[1] = receiptData.getReceiptHeader().getReceiptPurpose();
+				auditHeader.getAuditDetail().setErrorDetail(ErrorUtil
+						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "90332", valueParm, valueParm)));
+				auditHeader.setErrorList(auditHeader.getAuditDetail().getErrorDetails());
+			}
+			BigDecimal closingBal = getClosingBalance(receiptData.getReceiptHeader().getReference(),
+					receiptData.getReceiptHeader().getValueDate());
+			BigDecimal diff = closingBal.subtract(receiptData.getReceiptHeader().getPartPayAmount());
+
+			FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+
+			if (diff.compareTo(new BigDecimal(100)) < 0) {
+
+				String[] valueParm = new String[2];
+				valueParm[0] = String.valueOf(PennantApplicationUtil.formateAmount(closingBal,
+						CurrencyUtil.getFormat(financeMain.getFinCcy())));
+				valueParm[1] = String.valueOf(PennantApplicationUtil.formateAmount(closingBal,
+						CurrencyUtil.getFormat(financeMain.getFinCcy())));
+				auditHeader.getAuditDetail().setErrorDetail(ErrorUtil
+						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "91127", valueParm, valueParm)));
+				auditHeader.setErrorList(auditHeader.getAuditDetail().getErrorDetails());
+			}
+		}
+		auditHeader = nextProcess(auditHeader);
+		logger.debug("Leaving");
+		return auditHeader;
 	}
 
 	@Override
@@ -7072,4 +7181,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
 		this.feeReceiptService = feeReceiptService;
 	}
+
+	public List<FinExcessAmount> xcessList(String finreference) {
+		return finExcessAmountDAO.getExcessAmountsByRef(finreference);
+	}
+
 }

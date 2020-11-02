@@ -36,6 +36,8 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -381,6 +383,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 
 		if (rpdList != null) {
+			rpdList = sortRpdListByValueDate(rpdList);
 			for (int i = 0; i < rpdList.size(); i++) {
 				FinanceRepayments rpd = rpdList.get(i);
 
@@ -440,6 +443,20 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 
 		logger.debug("Leaving");
+	}
+
+	public List<FinanceRepayments> sortRpdListByValueDate(List<FinanceRepayments> rpdList) {
+
+		if (rpdList != null && rpdList.size() > 0) {
+			Collections.sort(rpdList, new Comparator<FinanceRepayments>() {
+				@Override
+				public int compare(FinanceRepayments detail1, FinanceRepayments detail2) {
+					return DateUtility.compare(detail1.getFinValueDate(), detail2.getFinValueDate());
+				}
+			});
+		}
+
+		return rpdList;
 	}
 
 	public void updateFinPftDetails(FinanceProfitDetail pftDetail, List<FinODDetails> fodList, Date valueDate)

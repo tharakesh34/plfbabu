@@ -171,6 +171,13 @@
 													<label value="${c:l('label_ReceiptDialog_ReceiptAmount.value')}" />
 													<currencyBox id="receiptAmount" disabled="true" />
 												</row>
+												<row>
+												<label id="label_ReceiptPayment_ReceivedDate" value="${c:l('label_ReceiptPayment_ReceivedDate.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<datebox id="receivedDate" width="190px" disabled="true"/>
+													</hbox>
+												</row>
 												<row visible="false">
 													<label value="${c:l('label_ReceiptDialog_ExcessAdjustTo.value')}" />
 													<hbox>

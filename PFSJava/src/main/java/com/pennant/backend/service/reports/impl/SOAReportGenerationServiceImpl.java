@@ -131,6 +131,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
@@ -1869,7 +1870,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							String receiptModeStatus = StringUtils.trimToEmpty(finReceiptHeader.getReceiptModeStatus());
 							//30-08-2019:Receipt date and value date should populate in SOA
 							Date receiptDate = finReceiptHeader.getReceiptDate();
-							Date receivedDate = finReceiptDetail.getValueDate();
+							Date receivedDate = finReceiptHeader.getReceivedDate();
 
 							String favourNumber = finReceiptDetail.getFavourNumber();
 
@@ -1997,7 +1998,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 										soaTranReport = new SOATransactionReport();
 										soaTranReport.setEvent(rHTdsAdjust + finRef);
 										soaTranReport.setTransactionDate(receiptDate);
-										soaTranReport.setValueDate(receiptDate);
+										soaTranReport.setValueDate(receivedDate);
 										soaTranReport.setCreditAmount(finReceiptAllocationDetail.getPaidAmount());
 										soaTranReport.setDebitAmount(BigDecimal.ZERO);
 										soaTranReport.setPriority(21);
@@ -2373,14 +2374,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			}
 
 			//LPP Penalty UnAccrued Paid on Receipts
-			if (ImplementationConstants.ALLOW_UNACCURED_PENALITY_SOA) {
-				List<FinTaxIncomeDetail> incomeList = getFinODAmzTaxDetailDAO().getFinTaxIncomeList(finReference,
-						"LPP");
+			if (ImplementationConstants.SOA_SHOW_UNACCURED_PENALITY) {
+				List<FinTaxIncomeDetail> incomeList = finODAmzTaxDetailDAO.getFinTaxIncomeList(finReference, "LPP");
 				if (incomeList != null && !incomeList.isEmpty()) {
 					for (FinTaxIncomeDetail detail : incomeList) {
 						soaTranReport = new SOATransactionReport();
-						soaTranReport
-								.setEvent(penaltyUnAccrued + DateUtility.format(detail.getValueDate(), "dd/MM/yyyy"));
+						soaTranReport.setEvent(penaltyUnAccrued + DateUtil.format(detail.getValueDate(), "dd/MM/yyyy"));
 						soaTranReport.setTransactionDate(detail.getPostDate());
 						soaTranReport.setValueDate(detail.getValueDate());
 						soaTranReport.setDebitAmount(detail.getReceivedAmount());

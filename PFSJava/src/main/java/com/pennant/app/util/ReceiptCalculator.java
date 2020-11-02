@@ -1622,7 +1622,7 @@ public class ReceiptCalculator implements Serializable {
 			FinRepayHeader rph = new FinRepayHeader();
 			rcd.setRepayHeader(rph);
 			if (rcd.getDueAmount().compareTo(BigDecimal.ZERO) > 0) {
-				rch.setBalAmount(payNow);
+				rch.setBalAmount(payNow.add(rch.getRefWaiverAmt()));
 				rph.setFinReference(rch.getReference());
 				rph.setValueDate(rch.getValueDate());
 				if (receiptData.isEarlySettle()) {

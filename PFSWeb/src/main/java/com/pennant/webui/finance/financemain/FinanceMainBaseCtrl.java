@@ -4090,6 +4090,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			this.gracePeriodEndDate_two.setValue(aFinanceMain.getGrcPeriodEndDate());
+			this.gracePeriodEndDate.setValue(aFinanceMain.getGrcPeriodEndDate());
 			fillComboBox(this.grcRateBasis, aFinanceMain.getGrcRateBasis(),
 					PennantStaticListUtil.getInterestRateType(!aFinanceMain.isMigratedFinance()), ",C,D,");
 
@@ -10949,10 +10950,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void onChange$gracePeriodEndDate(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
-		if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+		if (StringUtils.isNotEmpty(moduleDefiner)
+				&& !StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+
 			return;
 		} else {
-			if (this.graceTerms.isReadonly() && !this.gracePeriodEndDate.isReadonly()
+			if (!this.graceTerms.isReadonly() && !this.gracePeriodEndDate.isReadonly()
 					&& !this.manualSchedule.isChecked()) {
 				if (this.gracePeriodEndDate.getValue() != null || this.gracePeriodEndDate_two.getValue() != null) {
 					if (this.finStartDate.getValue().compareTo(this.nextGrcPftDate_two.getValue()) == 0) {
@@ -17077,7 +17080,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				vasFeeWaived = vasFeeWaived.add(finFeeDetail.getWaivedAmount());
 			}
 
-			//TDS
+			// TDS
 			dataMap.put(feeTypeCode + "_TDS_N", finFeeDetail.getNetTDS());
 			dataMap.put(feeTypeCode + "_TDS_P", finFeeDetail.getPaidTDS());
 		}

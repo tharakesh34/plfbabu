@@ -44,6 +44,7 @@
 
 package com.pennant.backend.dao.reports.impl;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -92,6 +94,7 @@ import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -461,30 +464,47 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	public List<FinReceiptHeader> getFinReceiptHeaders(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		FinReceiptHeader finReceiptHeader = new FinReceiptHeader();
-		finReceiptHeader.setReference(finReference);
-		List<FinReceiptHeader> list;
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ReceiptID, ReceiptModeStatus, ReceiptDate, ReceiptMode, BounceDate");
+		sql.append(", ReceiptPurpose, RefWaiverAmt, RecAppDate, ReceivedDate");
+		sql.append(" From FinReceiptHeader");
+		sql.append(" Where Reference = ?");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql
-				.append(" SELECT ReceiptID,ReceiptModeStatus,ReceiptDate,ReceiptMode,BounceDate From FinReceiptHeader");
-		selectSql.append(" Where Reference = :Reference");
-
-		logger.trace(Literal.SQL + selectSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finReceiptHeader);
-		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinReceiptHeader.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			list = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+
+					ps.setString(index, finReference);
+				}
+			}, new RowMapper<FinReceiptHeader>() {
+
+				@Override
+				public FinReceiptHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinReceiptHeader frh = new FinReceiptHeader();
+					frh.setReceiptID(rs.getLong("ReceiptID"));
+					frh.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
+					frh.setReceiptDate(JdbcUtil.getDate(rs.getDate("ReceiptDate")));
+					frh.setReceiptMode(rs.getString("ReceiptMode"));
+					frh.setBounceDate(JdbcUtil.getDate(rs.getDate("BounceDate")));
+					frh.setReceiptPurpose(rs.getString("ReceiptPurpose"));
+					frh.setRefWaiverAmt(rs.getBigDecimal("RefWaiverAmt"));
+					frh.setRecAppDate(JdbcUtil.getDate(rs.getDate("RecAppDate")));
+					frh.setReceivedDate(JdbcUtil.getDate(rs.getDate("ReceivedDate")));
+
+					return frh;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			list = new ArrayList<>();
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-
-		return list;
+		return new ArrayList<>();
 	}
 
 	/**

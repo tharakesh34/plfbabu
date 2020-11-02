@@ -404,6 +404,10 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				chkFirstRpyDate = true;
 			}
 
+			if (financeMain.isTDSApplicable()) {
+				curSchd.setTDSApplicable(true);
+			}
+
 			if (fromDate.compareTo(financeMain.getGrcPeriodEndDate()) > 0) {
 				if (i != 0 && curSchd.getSchDate().compareTo(fromDate) > 0) {
 					curSchd.setCalculatedRate(scheduleData.getFinanceScheduleDetails().get(i - 1).getCalculatedRate());

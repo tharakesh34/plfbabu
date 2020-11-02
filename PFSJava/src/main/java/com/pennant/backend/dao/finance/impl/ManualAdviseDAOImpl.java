@@ -582,6 +582,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" T1.MovementID, T1.MovementDate, T1.MovementAmount");
 		sql.append(", T1.PaidAmount, T1.WaivedAmount, T1.Status, T2.ReceiptMode, T1.TaxHeaderId");
+		sql.append(", T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST");
+		sql.append(", T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST");
 		sql.append(" from ManualAdviseMovements");
 		sql.append(" T1 LEFT OUTER JOIN FinReceiptHeader T2 ON T1.ReceiptID = T2.ReceiptID");
 		sql.append(" Where AdviseID = ?");
@@ -598,18 +600,26 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			}, new RowMapper<ManualAdviseMovements>() {
 				@Override
 				public ManualAdviseMovements mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ManualAdviseMovements manualAdviseMovements = new ManualAdviseMovements();
+					ManualAdviseMovements mam = new ManualAdviseMovements();
 
-					manualAdviseMovements.setMovementID(rs.getLong("MovementID"));
-					manualAdviseMovements.setMovementDate(rs.getTimestamp("MovementDate"));
-					manualAdviseMovements.setMovementAmount(rs.getBigDecimal("MovementAmount"));
-					manualAdviseMovements.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					manualAdviseMovements.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-					manualAdviseMovements.setStatus(rs.getString("Status"));
-					manualAdviseMovements.setReceiptMode(rs.getString("ReceiptMode"));
-					manualAdviseMovements.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+					mam.setMovementID(rs.getLong("MovementID"));
+					mam.setMovementDate(rs.getTimestamp("MovementDate"));
+					mam.setMovementAmount(rs.getBigDecimal("MovementAmount"));
+					mam.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+					mam.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+					mam.setStatus(rs.getString("Status"));
+					mam.setReceiptMode(rs.getString("ReceiptMode"));
+					mam.setTaxHeaderId(rs.getLong("TaxHeaderId"));
+					mam.setPaidCGST(rs.getBigDecimal("PaidCGST"));
+					mam.setPaidSGST(rs.getBigDecimal("PaidSGST"));
+					mam.setPaidUGST(rs.getBigDecimal("PaidUGST"));
+					mam.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+					mam.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
+					mam.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
+					mam.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
+					mam.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
 
-					return manualAdviseMovements;
+					return mam;
 				}
 			});
 		} catch (EmptyResultDataAccessException e) {

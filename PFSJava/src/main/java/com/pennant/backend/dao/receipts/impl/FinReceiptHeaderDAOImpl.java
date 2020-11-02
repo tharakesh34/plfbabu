@@ -75,6 +75,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -128,7 +129,9 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", GstLppAmount, ExtReference, Module, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber");
 		sql.append(", CollectionAgentId, ActFinReceipt, FinDivision, PostBranch, ReasonCode, CancelRemarks");
 		sql.append(", KnockOffType, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId )");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate, PartnerBankId");
+		sql.append(", PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate )");
 		sql.append(" Values");
 		sql.append(" (:ReceiptID, :ReceiptDate , :ReceiptType, :RecAgainst, :Reference, :ReceiptPurpose");
 		sql.append(", :RcdMaintainSts, :ReceiptMode, :ExcessAdjustTo , :AllocationType, :ReceiptAmount");
@@ -139,7 +142,9 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", :subReceiptMode, :receiptChannel, :receivedFrom, :panNumber, :collectionAgentId");
 		sql.append(", :ActFinReceipt, :FinDivision, :PostBranch, :ReasonCode, :CancelRemarks");
 		sql.append(", :KnockOffType, :Version, :LastMntOn, :LastMntBy, :RecordStatus, :RoleCode, :NextRoleCode");
-		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId");
+		sql.append(", :RefWaiverAmt, :Source, :ValueDate, :TransactionRef, :DepositDate, :PartnerBankId");
+		sql.append(", :PrvReceiptPurpose, :ReceiptSource, :RecAppDate, :ReceivedDate)");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -173,6 +178,10 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", NextRoleCode=:NextRoleCode, TaskId=:TaskId, NextTaskId=:NextTaskId, RecordType=:RecordType");
 		sql.append(", WorkflowId=:WorkflowId, FinDivision = :FinDivision, PostBranch = :PostBranch");
 		sql.append(", ReasonCode = :ReasonCode, CancelRemarks = :CancelRemarks, KnockOffType = :KnockOffType");
+		sql.append(", RefWaiverAmt = :RefWaiverAmt, Source = :Source, ValueDate = :ValueDate");
+		sql.append(", TransactionRef = :TransactionRef, DepositDate = :DepositDate, PartnerBankId = :PartnerBankId");
+		sql.append(", PrvReceiptPurpose = :PrvReceiptPurpose, ReceiptSource = :ReceiptSource");
+		sql.append(", RecAppDate = :RecAppDate, ReceivedDate = :ReceivedDate");
 		sql.append(" Where ReceiptID =:ReceiptID");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -235,6 +244,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", ExtReference, Module, FinDivision, PostBranch, ActFinReceipt, ReasonCode, CancelRemarks");
 		sql.append(", KnockOffType, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate, PartnerBankId");
+		sql.append(", PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc");
@@ -310,7 +321,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		source.addValue("Reference", finReference);
 		source.addValue("ReceivedDate", cancelReqDate);
 
-		StringBuilder sql = new StringBuilder(" Select RH.ReceiptID ReceiptId , RD.ReceivedDate ValueDate");
+		StringBuilder sql = new StringBuilder(" Select RH.ReceiptID ReceiptId , RH.ReceivedDate ValueDate");
 		sql.append(", (RH.ReceiptAmount + Rh.WaviedAmt ) Amount, Rh.WaviedAmt ");
 		sql.append(" From FinReceiptHeader RH INNER JOIN FinReceiptDetail RD ON RH.ReceiptID = RD.ReceiptID");
 		sql.append(" Where RH.Reference =:Reference AND  RD.ReceivedDate >= :ReceivedDate");
@@ -1162,6 +1173,16 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			rh.setWorkflowId(rs.getLong("WorkflowId"));
 			rh.setCancelRemarks(rs.getString("CancelRemarks"));
 			rh.setKnockOffType(rs.getString("KnockOffType"));
+			rh.setRefWaiverAmt(rs.getBigDecimal("RefWaiverAmt"));
+			rh.setSource(rs.getString("Source"));
+			rh.setValueDate(rs.getDate("ValueDate"));
+			rh.setTransactionRef(rs.getString("TransactionRef"));
+			rh.setDepositDate(rs.getDate("DepositDate"));
+			rh.setPartnerBankId(JdbcUtil.setLong(rs.getLong("PartnerBankId")));
+			rh.setPrvReceiptPurpose(rs.getString("PrvReceiptPurpose"));
+			rh.setReceiptSource(rs.getString("ReceiptSource"));
+			rh.setRecAppDate(rs.getDate("RecAppDate"));
+			rh.setReceivedDate(rs.getDate("ReceivedDate"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				rh.setFinType(rs.getString("FinType"));

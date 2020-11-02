@@ -2573,6 +2573,7 @@
 		<property name="partnerBankService" ref="partnerBankService" />
 		<property name="notificationService" ref="notificationService" />
 		<property name="feeCalculator" ref="feeCalculator" />
+		<property name="repayProcessUtil" ref="repayProcessUtil" />
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->

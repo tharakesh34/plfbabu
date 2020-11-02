@@ -1139,6 +1139,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(" from FinODDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinReference = ?");
+		sql.append(" order by FinODSchdDate");
 
 		logger.trace(Literal.SQL + sql.toString());
 

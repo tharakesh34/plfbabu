@@ -61,6 +61,7 @@ public class AEEvent implements Serializable {
 	private boolean uAmzExists = false;
 	private boolean cpzChgExists = false;
 	private boolean bpiIncomized = false;
+	private boolean simulateAccounting;
 
 	// Advise Movement
 	private ManualAdviseMovements movement;
@@ -412,4 +413,11 @@ public class AEEvent implements Serializable {
 		this.movement = movement;
 	}
 
+	public boolean isSimulateAccounting() {
+		return simulateAccounting;
+	}
+
+	public void setSimulateAccounting(boolean simulateAccounting) {
+		this.simulateAccounting = simulateAccounting;
+	}
 }

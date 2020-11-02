@@ -41,6 +41,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
@@ -61,6 +62,7 @@ import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -224,6 +226,8 @@ public class CreateFinanceController extends SummaryDetailService {
 	private FinanceDeviationsService deviationDetailsService;
 	private ReceiptCalculator receiptCalculator;
 	private FeeTypeDAO feeTypeDAO;
+	private VehicleDealerDAO vehicleDealerDao;
+	private VehicleDealer vehicleDealer;
 
 	/**
 	 * Method for process create finance request
@@ -2790,6 +2794,30 @@ public class CreateFinanceController extends SummaryDetailService {
 				.setStatus(financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus());
 		financeDetail.getFinScheduleData().getFinanceMain()
 				.setStage(financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode());
+		if (StringUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinanceMain().getDmaCode())) {
+			vehicleDealer = vehicleDealerDao.getVehicleDealerById(
+					Long.valueOf((financeDetail.getFinScheduleData().getFinanceMain().getDmaCode())), "");
+			financeDetail.getFinScheduleData().getFinanceMain().setDmaCodeReference(vehicleDealer.getCode());
+		}
+
+		if (financeDetail.getFinScheduleData().getFinanceMain().getAccountsOfficer() > 0) {
+			vehicleDealer = vehicleDealerDao.getVehicleDealerById(vehicleDealer.getCode(),
+					vehicleDealer.getDealerType(), "");
+			financeDetail.getFinScheduleData().getFinanceMain()
+					.setAccountsOfficerReference(Long.valueOf(vehicleDealer.getCode()));
+		}
+
+		if (StringUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinanceMain().getDsaCode())) {
+			vehicleDealer = vehicleDealerDao.getVehicleDealerById(
+					Long.valueOf((financeDetail.getFinScheduleData().getFinanceMain().getDsaCode())), "");
+			financeDetail.getFinScheduleData().getFinanceMain().setDsaCodeReference(vehicleDealer.getCode());
+		}
+
+		if (financeDetail.getFinScheduleData().getFinanceMain().getConnector() > 0) {
+			vehicleDealer = vehicleDealerDao
+					.getVehicleDealerById(((financeDetail.getFinScheduleData().getFinanceMain().getConnector())), "");
+			financeDetail.getFinScheduleData().getFinanceMain().setConnectorReference(vehicleDealer.getCode());
+		}
 		// disbursement Dates
 		List<FinanceDisbursement> disbList = financeDetail.getFinScheduleData().getDisbursementDetails();
 		Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
@@ -4273,4 +4301,10 @@ public class CreateFinanceController extends SummaryDetailService {
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
 	}
+
+	@Autowired
+	public void setVehicleDealerDao(VehicleDealerDAO vehicleDealerDao) {
+		this.vehicleDealerDao = vehicleDealerDao;
+	}
+
 }

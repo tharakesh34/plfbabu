@@ -863,6 +863,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
+
+		int currFormatter = CurrencyUtil.getFormat(getJVPosting().getCurrency());
 		this.batchReference.setMaxlength(50);
 
 		this.expReference.setMandatoryStyle(false);
@@ -900,11 +902,10 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.debitCount.setMaxlength(10);
 		this.creditsCount.setMaxlength(10);
 		this.totDebitsByBatchCcy.setMaxlength(18);
-		this.totDebitsByBatchCcy.setFormat(PennantApplicationUtil.amountFormate(this.totDebitsByBatchCcy.getValue(),
-				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		this.totDebitsByBatchCcy.setFormat(PennantApplicationUtil.getAmountFormate(currFormatter));
 		this.totCreditsByBatchCcy.setMaxlength(18);
-		this.totCreditsByBatchCcy.setFormat(PennantApplicationUtil.amountFormate(this.totCreditsByBatchCcy.getValue(),
-				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		this.totCreditsByBatchCcy.setFormat(PennantApplicationUtil.getAmountFormate(currFormatter));
+
 		/*
 		 * this.expAmount.setMaxlength(18); this.expAmount.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		 * this.expAmount.setScale(2);

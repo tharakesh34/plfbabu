@@ -309,13 +309,17 @@ public class RepaymentProcessUtil {
 			entryDetail.setSchdlRecal(false);
 			entryDetail.setPostDate(postDate);
 			entryDetail.setReversalCompleted(false);
-			logKey = getFinLogEntryDetailDAO().save(entryDetail);
 
-			// Save Schedule Details For Future Modifications
-			FinScheduleData oldFinSchdData = getFinSchDataByFinRef(finReference, "");
-			oldFinSchdData.setFinanceMain(financeMain);
-			oldFinSchdData.setFinReference(finReference);
-			listSave(oldFinSchdData, "_Log", logKey);
+			if (!financeMain.isSimulateAccounting()) {
+				logKey = getFinLogEntryDetailDAO().save(entryDetail);
+
+				// Save Schedule Details For Future Modifications
+				FinScheduleData oldFinSchdData = getFinSchDataByFinRef(finReference, "");
+				oldFinSchdData.setFinanceMain(financeMain);
+				oldFinSchdData.setFinReference(finReference);
+				listSave(oldFinSchdData, "_Log", logKey);
+			}
+
 		}
 
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, receiptPurpose)
@@ -339,8 +343,10 @@ public class RepaymentProcessUtil {
 
 		boolean feesExecuted = false;
 
-		long postingId = postingsDAO.getPostingId();
-		financeMain.setPostingId(postingId);
+		if (!financeMain.isSimulateAccounting()) {
+			long postingId = postingsDAO.getPostingId();
+			financeMain.setPostingId(postingId);
+		}
 
 		// Accounting Postings Process Execution
 		AEEvent aeEvent = new AEEvent();
@@ -446,11 +452,16 @@ public class RepaymentProcessUtil {
 		 * branchCashDetailDAO.updateBranchCashDetail(rch.getUserDetails().getBranchCode(), receiptFromBank,
 		 * CashManagementConstants.Add_Receipt_Amount); }
 		 */
-		
+
 		String finType = financeMain.getFinType();
 		String cashierBranch = rch.getCashierBranch();
 		String entityCode = financeMain.getEntityCode();
-		
+
+		if (StringUtils.equals(financeMain.getProductCategory(), FinanceConstants.PRODUCT_GOLD)
+				&& rch.getRefWaiverAmt().compareTo(BigDecimal.ZERO) > 0) {
+			extDataMap.put("ae_refWaiver", rch.getRefWaiverAmt());
+		}
+
 		aeEvent.setCustID(financeMain.getCustID());
 		aeEvent.setFinReference(finReference);
 		aeEvent.setFinType(finType);
@@ -569,95 +580,118 @@ public class RepaymentProcessUtil {
 		}
 
 		List<Object> returnList = null;
-		if (adjustedToReceipt.compareTo(BigDecimal.ZERO) > 0) {
-			/*
-			 * At the time of EOD postDate should not be APP date we need to consider value date hence parameterized the
-			 * postDate
-			 */
 
-			returnList = doRepayPostings(financeDetail, rch, extDataMap, gstExecutionMap, postingDate,
-					rph.getRepayID());
+		if (adjustedToReceipt.compareTo(BigDecimal.ZERO) <= 0) {
+			dataMap.putAll(extDataMap);
+			Map<String, Object> glSubHeadCodes = financeMain.getGlSubHeadCodes();
+			dataMap.put("emptype", glSubHeadCodes.get("emptype"));
+			aeEvent.setDataMap(dataMap);
+			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
+			rph.setLinkedTranId(aeEvent.getLinkedTranId());
 
-			if (!(Boolean) returnList.get(0)) {
-				String errParm = (String) returnList.get(1);
-				throw new InterfaceException("9999", errParm);
-			}
-			int transOrder = 0;
-			linkedTranId = (long) returnList.get(1);
-			for (FinReceiptDetail rcDtl : rch.getReceiptDetails()) {
-				FinRepayHeader rpyh = rcDtl.getRepayHeader();
-				if (rpyh != null) {
-					rpyh.setLinkedTranId(linkedTranId);
-				}
-			}
-			rph.setLinkedTranId(linkedTranId);
-			transOrder = (int) returnList.get(7);
-			rph.setValueDate(postDate);
-			scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(2);
+			extDataMap = null;
+			returnList = new ArrayList<>();
+			returnList.add(scheduleDetails);
+			returnList.add(uAmz);
+			returnList.add(uLpi);
+			returnList.add(uGstLpi);
+			returnList.add(uLpp);
+			returnList.add(uGstLpp);
+			returnList.add(cpzChg);
 
-			if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
-				createDebitInvoice(linkedTranId, financeDetail);
+			return returnList;
+		}
+
+		/*
+		 * At the time of EOD postDate should not be APP date we need to consider value date hence parameterized the
+		 * postDate
+		 */
+
+		returnList = doRepayPostings(financeDetail, rch, extDataMap, gstExecutionMap, postingDate, rph.getRepayID());
+
+		if (!(Boolean) returnList.get(0)) {
+			String errParm = (String) returnList.get(1);
+			throw new InterfaceException("9999", errParm);
+		}
+		int transOrder = 0;
+		linkedTranId = (long) returnList.get(1);
+		for (FinReceiptDetail rcDtl : rch.getReceiptDetails()) {
+			FinRepayHeader rpyh = rcDtl.getRepayHeader();
+			if (rpyh != null) {
+				rpyh.setLinkedTranId(linkedTranId);
 			}
+		}
+		rph.setLinkedTranId(linkedTranId);
+		transOrder = (int) returnList.get(7);
+		rph.setValueDate(postDate);
+		scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(2);
+
+		// Unrealized Income amount
+		uAmz = uAmz.add((BigDecimal) returnList.get(3));
+		rph.setRealizeUnAmz(uAmz);
+
+		// Unrealized LPI Amount
+		uLpi = uLpi.add((BigDecimal) returnList.get(5));
+		uGstLpi = uGstLpi.add((BigDecimal) returnList.get(5));
+		rph.setRealizeUnLPI(uLpi);
+
+		// Capitalization Change Amount
+		cpzChg = cpzChg.add((BigDecimal) returnList.get(6));
+		rph.setCpzChg(cpzChg);
+
+		// LPP Income Amount
+		FinTaxIncomeDetail taxIncome = (FinTaxIncomeDetail) returnList.get(8);
+		if (taxIncome != null) {
+			uLpp = uLpp.add(taxIncome.getReceivedAmount());
+			uGstLpp = uGstLpp.add(CalculationUtil.getTotalGST(taxIncome));
+		}
+
+		// Setting/Maintaining Log key for Last log of Schedule Details
+		rcdList.get(rcdList.size() - 1).setLogKey(logKey);
+
+		if (financeMain.isSimulateAccounting()) {
+			extDataMap = null;
+			returnList = new ArrayList<>();
+			returnList.add(scheduleDetails);
+			returnList.add(uAmz);
+			returnList.add(uLpi);
+			returnList.add(uGstLpi);
+			returnList.add(uLpp);
+			returnList.add(uGstLpp);
+			returnList.add(cpzChg);
+
+			return returnList;
+		}
+
+		if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
+			createDebitInvoice(linkedTranId, financeDetail);
 
 			// Waiver Fees Invoice Preparation
 			if (ImplementationConstants.TAX_DFT_CR_INV_REQ) {
 				createCreditInvoice(linkedTranId, financeDetail);
 			}
+		}
 
-			// Unrealized Income amount
-			uAmz = uAmz.add((BigDecimal) returnList.get(3));
-			rph.setRealizeUnAmz(uAmz);
-
-			// Unrealized LPI Amount
-			uLpi = uLpi.add((BigDecimal) returnList.get(5));
-			uGstLpi = uGstLpi.add((BigDecimal) returnList.get(5));
-			rph.setRealizeUnLPI(uLpi);
-
-			// Capitalization Change Amount
-			cpzChg = cpzChg.add((BigDecimal) returnList.get(6));
-			rph.setCpzChg(cpzChg);
-
-			// LPP Income Amount
-			FinTaxIncomeDetail taxIncome = (FinTaxIncomeDetail) returnList.get(8);
-			if (taxIncome != null) {
-				uLpp = uLpp.add(taxIncome.getReceivedAmount());
-				uGstLpp = uGstLpp.add(CalculationUtil.getTotalGST(taxIncome));
-			}
-
-			// Setting/Maintaining Log key for Last log of Schedule Details
-			rcdList.get(rcdList.size() - 1).setLogKey(logKey);
-
-			/* Preparing GST Invoice Report for Manual Advises and Bounce */
-
-			if (financeDetail != null) {
-				if (CollectionUtils.isNotEmpty(movements)) {
-					if (generateInvoice(financeDetail, movements, linkedTranId)) {
-						payableAdvMovements.clear();
-					}
-				}
-
-				if (CollectionUtils.isNotEmpty(payableAdvMovements)) {
-					InvoiceDetail invoiceDetail = new InvoiceDetail();
-					invoiceDetail.setLinkedTranId(linkedTranId);
-					invoiceDetail.setFinanceDetail(financeDetail);
-					invoiceDetail.setMovements(payableAdvMovements);
-					invoiceDetail.setWaiver(false);
-					invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
-
-					this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
-
+		/* Preparing GST Invoice Report for Manual Advises and Bounce */
+		if (financeDetail != null) {
+			if (CollectionUtils.isNotEmpty(movements)) {
+				if (generateInvoice(financeDetail, movements, linkedTranId)) {
 					payableAdvMovements.clear();
 				}
 			}
 
-		} else {
-			dataMap.putAll(extDataMap);
-			Map<String, Object> glSubHeadCodes = financeMain.getGlSubHeadCodes();
-			dataMap.put("emptype", glSubHeadCodes.get("emptype"));
-			aeEvent.setDataMap(dataMap);
-			aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
-			rph.setLinkedTranId(aeEvent.getLinkedTranId());
+			if (CollectionUtils.isNotEmpty(payableAdvMovements)) {
+				InvoiceDetail invoiceDetail = new InvoiceDetail();
+				invoiceDetail.setLinkedTranId(linkedTranId);
+				invoiceDetail.setFinanceDetail(financeDetail);
+				invoiceDetail.setMovements(payableAdvMovements);
+				invoiceDetail.setWaiver(false);
+				invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
 
+				this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
+
+				payableAdvMovements.clear();
+			}
 		}
 
 		extDataMap = null;
@@ -670,7 +704,7 @@ public class RepaymentProcessUtil {
 		returnList.add(uGstLpp);
 		returnList.add(cpzChg);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return returnList;
 	}
@@ -789,6 +823,12 @@ public class RepaymentProcessUtil {
 					}
 				}
 			}
+		}
+
+		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
+
+		if (fm.isSimulateAccounting()) {
+			return generateInvoice;
 		}
 
 		//GST Invoice for Bounce/Manual Advise

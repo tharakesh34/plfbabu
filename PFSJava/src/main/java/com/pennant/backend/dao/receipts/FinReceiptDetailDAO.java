@@ -59,4 +59,7 @@ public interface FinReceiptDetailDAO {
 	void updateReceiptStatusByReceiptId(long receiptId, String status);
 
 	BigDecimal getUtilizedPartPayAmtByDate(FinReceiptHeader receiptHeader, Date startDate, Date endDate);
+
+	Date getMaxReceiptDate(String finReference, String receiptPurpose, TableType tableType);
+
 }

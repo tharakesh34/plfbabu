@@ -636,7 +636,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @return
 	 */
 	public AEEvent postAccounting(AEEvent aeEvent) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean isNewTranID = false;
 		if (aeEvent.getLinkedTranId() <= 0) {
@@ -657,11 +657,11 @@ public class PostingsPreparationUtil implements Serializable {
 			return aeEvent;
 		}
 
-		getPostingsDAO().saveBatch(returnDatasetList, isNewTranID);
+		if (!aeEvent.isSimulateAccounting()) {
+			postingsDAO.saveBatch(returnDatasetList, isNewTranID);
+		}
 
-		// getAccountProcessUtil().procAccountUpdate(returnDatasetList);
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return aeEvent;
 	}
 

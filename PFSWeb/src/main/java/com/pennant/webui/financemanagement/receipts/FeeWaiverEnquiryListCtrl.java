@@ -930,19 +930,28 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		// Default Sort on the table
-		StringBuilder whereClause = new StringBuilder(" FinIsActive = 1 ");
 
-		if (App.DATABASE == Database.ORACLE) {
-			whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '" + moduleDefiner + "' ) ");
+		StringBuilder whereClause = new StringBuilder();
+		if (!isEnquiry) {
+			whereClause.append(" FinIsActive = 1");
+			if (App.DATABASE == Database.ORACLE) {
+				whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '" + moduleDefiner + "' ) ");
+			} else {
+				// for postgredb sometimes record type is null or empty('')
+				whereClause.append(" AND ( (RcdMaintainSts IS NULL or RcdMaintainSts = '') OR RcdMaintainSts = '"
+						+ moduleDefiner + "' ) ");
+			}
+
+			// Filtering added based on user branch and division
+			whereClause.append(" AND FinReference IN (Select FinReference from FeeWaiverHeader)");
+			whereClause.append(" ) AND ( " + getUsrFinAuthenticationQry(false));
+
 		} else {
-			// for postgredb sometimes record type is null or empty('')
-			whereClause.append(" AND ( (RcdMaintainSts IS NULL or RcdMaintainSts = '') OR RcdMaintainSts = '"
-					+ moduleDefiner + "' ) ");
-		}
+			// Filtering added based on user branch and division
+			whereClause.append(" FinReference IN (Select FinReference from FeeWaiverHeader)");
+			whereClause.append(" ) AND ( " + getUsrFinAuthenticationQry(false));
 
-		// Filtering added based on user branch and division
-		whereClause.append(" AND FinReference IN (Select FinReference from FeeWaiverHeader)");
-		whereClause.append(" ) AND ( " + getUsrFinAuthenticationQry(false));
+		}
 
 		searchObject.addWhereClause(whereClause.toString());
 		setSearchObj(searchObject);

@@ -260,7 +260,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(
-				" Select T1.RECEIPTID, T2.TRANSACTIONREF, T2.FAVOURNUMBER ,T1.RECEIPTMODE PaymentType, T2.AMOUNT ");
+				" Select T1.RECEIPTID, T1.TRANSACTIONREF, T2.FAVOURNUMBER ,T1.RECEIPTMODE PaymentType, T1.ReceiptAmount");
 		selectSql.append(" From FINRECEIPTHEADER T1 ");
 		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
 		selectSql.append(" where ReceiptPurpose = :ReceiptPurpose And T2.Status <> :Status");
@@ -290,7 +290,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" select MAX(T2.receivedDate)");
+		selectSql.append(" select MAX(T1.ReceivedDate)");
 		selectSql.append(" From FINRECEIPTHEADER T1 ");
 		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
 		selectSql.append(" where T1.Reference = :FinReference AND T2.Status NOT IN('C','B') ");
@@ -324,7 +324,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(
-				" Select T1.Reference,T2.PaymentType,T1.ReceiptPurpose, T2.TRANSACTIONREF, T2.AMOUNT, T2.ReceivedDate");
+				" Select T1.Reference,T1.ReceiptMode,T1.ReceiptPurpose, T2.TRANSACTIONREF, T1.ReceiptAmount, T1.ReceivedDate");
 		selectSql.append(" From FINRECEIPTHEADER T1");
 		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
 		selectSql.append(" where Reference = '" + finReference + "'");
@@ -395,7 +395,8 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" T1.Reference,T2.PaymentType,T1.ReceiptPurpose, T2.TRANSACTIONREF, T2.AMOUNT, T2.ReceivedDate");
+		sql.append(
+				" T1.Reference, T1.ReceiptMode, T1.ReceiptPurpose, T1.TRANSACTIONREF, T1.ReceiptAmount, T1.ReceivedDate");
 		sql.append(" From FINRECEIPTHEADER T1");
 		sql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
 		sql.append(" where Reference = :Reference");
@@ -442,10 +443,10 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(
-				" select T2.receiptid, T2.receiptseqid, T2.receipttype ,T2.paymentto, T2.paymenttype, T2.payagainstid, ");
-		selectSql.append(" T2.amount, T2.favournumber, T2.valuedate, T2.bankcode, T2.favourname, T2.depositdate, ");
+				" select T1.receiptid, T2.receiptseqid, T2.receipttype ,T2.paymentto, T1.ReceiptMode, T2.payagainstid, ");
+		selectSql.append(" T2.amount, T2.favournumber, T1.ValueDate, T2.bankcode, T2.favourname, T1.Depositdate, ");
 		selectSql.append(
-				" T2.depositno, T2.paymentref, T2.transactionref, T2.chequeacno, T2.fundingac, T2.receiveddate, ");
+				" T2.depositno, T2.paymentref, T1.TransactionRef, T2.chequeacno, T2.fundingac, T1.ReceivedDate, ");
 		selectSql.append(" T2.status, T2.payorder, T2.logkey ");
 		selectSql.append(" From FINRECEIPTHEADER");
 		selectSql.append(StringUtils.trim(type));
@@ -729,5 +730,23 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 			return BigDecimal.ZERO;
 		}
 		return value;
+	}
+
+	@Override
+	public Date getMaxReceiptDate(String finReference, String receiptPurpose, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", finReference);
+		source.addValue("ReceiptPurpose", receiptPurpose);
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select MAX(RECEIPTDATE)  From FINRECEIPTHEADER");
+		selectSql.append(tableType.getSuffix());
+		selectSql.append(" where Reference = :Reference AND ReceiptPurpose = :ReceiptPurpose ");
+
+		logger.debug(Literal.SQL + selectSql.toString());
+
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
 	}
 }

@@ -107,7 +107,7 @@
 									<currencyBox id="receiptAmount" width="125px" />
 								</row>
 								<row>
-									<label id="label_ReceiptPayment_ReceiptDate" value="${c:l('label_ReceiptPayment_ReceiptDate.value')}"
+									<label id="label_ReceiptPayment_ReceiptDate" value="${c:l('label_ReceiptPayment_Receipt_Date.value')}"
 										style="padding-left:12px;" />
 									<hbox>
 										<space spacing="2px" />
