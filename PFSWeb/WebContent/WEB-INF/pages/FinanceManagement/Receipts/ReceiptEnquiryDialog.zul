@@ -96,11 +96,19 @@
 									<columns>
 										<column width="200px" />
 										<column />
+										<column width="200px" />
+										<column />
 									</columns>
 									<rows>
 										<row>
-											<label value="${c:l('label_ReceiptDialog_CustID.value')}" />
-											<extendedcombobox id="custID" />
+											<label
+												value="${c:l('label_ReceiptDialog_CustID.value')}" />
+											<extendedcombobox
+												id="custID" />
+											<label
+												value="${c:l('label_ReceiptEnquiryDialog_extReference.value')}" />
+											<textbox id="extReference"
+												width="180px" readonly="true" />
 										</row>
 									</rows>
 								</grid>
@@ -140,6 +148,8 @@
 										<row>
 											<label id="label_ReceiptDialog_CashierBranch" value="${c:l('label_ReceiptDialog_CashierBranch.value')}" />
 											<extendedcombobox id="cashierBranch" />
+											<label id="labelCustomerFinType" value="${c:l('label_ReceiptDialog_FinType.value')}" visible="false"/>
+											<textbox id="customerFinType" visible="false" readonly="true"/>
 										</row>
 									</rows>
 								</grid>

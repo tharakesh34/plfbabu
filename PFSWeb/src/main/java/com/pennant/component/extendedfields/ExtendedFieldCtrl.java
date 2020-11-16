@@ -134,41 +134,39 @@ public class ExtendedFieldCtrl {
 		}
 
 		// setting the pre and post validation scripts
-		if (!this.isReadOnly) {
-			if (getUserWorkspace() != null) {
-				String pageName = PennantApplicationUtil.getExtendedFieldPageName(extendedFieldHeader);
-				if (StringUtils.isNotBlank(pageName)) {
-					getUserWorkspace().allocateAuthorities(pageName, getUserRole());
-				}
+		if (getUserWorkspace() != null) {
+			String pageName = PennantApplicationUtil.getExtendedFieldPageName(extendedFieldHeader);
+			if (StringUtils.isNotBlank(pageName)) {
+				getUserWorkspace().allocateAuthorities(pageName, getUserRole());
 			}
-			// get pre-validation script if record is new
-			if (StringUtils.trimToNull(this.extendedFieldHeader.getPreValidation()) != null) {
-				ScriptErrors defaults = scriptValidationService
-						.setPreValidationDefaults(this.extendedFieldHeader.getPreValidation(), fieldValuesMap);
+		}
+		// get pre-validation script if record is new
+		if (StringUtils.trimToNull(this.extendedFieldHeader.getPreValidation()) != null) {
+			ScriptErrors defaults = scriptValidationService
+					.setPreValidationDefaults(this.extendedFieldHeader.getPreValidation(), fieldValuesMap);
 
-				// Overriding Default values
-				List<ScriptError> defaultList = defaults.getAll();
-				for (int i = 0; i < defaultList.size(); i++) {
-					ScriptError dftKeyValue = defaultList.get(i);
-					try {
-						//setting the default values to the extended field for pre-scripting
-						ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(),
-								extendedFieldHeader.getExtendedFieldDetails());
-						if (detail != null && detail.isValFromScript()) {
-							detail.setFieldList(dftKeyValue.getValue());
-							if (fieldValuesMap.containsKey(detail.getFieldName())) {
-								//defaults should be populated when a new record is open other wise DB value need to be displayed
-								String value = fieldValuesMap.get(detail.getFieldName()).toString();
-								if ("#".equals(value) || "0".equals(value) || StringUtils.isBlank(value)) {//combobox,numeric,text
-									fieldValuesMap.put(detail.getFieldName(), dftKeyValue.getValue());
-								}
+			// Overriding Default values
+			List<ScriptError> defaultList = defaults.getAll();
+			for (int i = 0; i < defaultList.size(); i++) {
+				ScriptError dftKeyValue = defaultList.get(i);
+				try {
+					//setting the default values to the extended field for pre-scripting
+					ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(),
+							extendedFieldHeader.getExtendedFieldDetails());
+					if (detail != null && detail.isValFromScript()) {
+						detail.setFieldList(dftKeyValue.getValue());
+						if (fieldValuesMap.containsKey(detail.getFieldName())) {
+							//defaults should be populated when a new record is open other wise DB value need to be displayed
+							String value = fieldValuesMap.get(detail.getFieldName()).toString();
+							if ("#".equals(value) || "0".equals(value) || StringUtils.isBlank(value)) {//combobox,numeric,text
+								fieldValuesMap.put(detail.getFieldName(), dftKeyValue.getValue());
 							}
-						} else if (fieldValuesMap.containsKey(dftKeyValue.getProperty())) {
-							fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
 						}
-					} catch (Exception e) {
-						logger.debug(Literal.EXCEPTION + "Error while setting default values");
+					} else if (fieldValuesMap.containsKey(dftKeyValue.getProperty())) {
+						fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
 					}
+				} catch (Exception e) {
+					logger.debug(Literal.EXCEPTION + "Error while setting default values");
 				}
 			}
 		}

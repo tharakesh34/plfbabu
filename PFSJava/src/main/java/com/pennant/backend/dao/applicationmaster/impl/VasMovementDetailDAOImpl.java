@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -50,6 +51,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -58,6 +60,8 @@ import com.pennant.backend.model.finance.VasMovementDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>VasMovementDetail model</b> class.<br>
@@ -242,4 +246,54 @@ public class VasMovementDetailDAOImpl extends BasicDao<VasMovementDetail> implem
 		logger.debug("Leaving");
 	}
 
+	@Override
+	public List<VasMovementDetail> getVasMovementDetailByRef(String finReference, String type) {
+		logger.debug(Literal.ENTERING);
+		VasMovementDetail vasMovementDetail = new VasMovementDetail();
+		vasMovementDetail.setFinReference(finReference);
+		List<VasMovementDetail> vasMovementDetailList = null;
+		StringBuilder selectSql = new StringBuilder("Select");
+		selectSql.append(" VasMovementId,VasMovementDetailId,FinReference,VasReference,");
+		selectSql.append(" MovementDate, MovementAmt,VasProvider,VasProduct,VasAmount");
+		selectSql.append(" From VasMovementDetails");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vasMovementDetail);
+		RowMapper<VasMovementDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(VasMovementDetail.class);
+
+		try {
+			vasMovementDetailList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			vasMovementDetailList = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return vasMovementDetailList;
+	}
+
+	@Override
+	public BigDecimal getVasMovementDetailByRef(String finReference, String finStartDate, String finEndDate,
+			String type) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("FinstartDate", DateUtil.parse(finStartDate, "dd/MM/yyyy"));
+		source.addValue("FinEndDate", DateUtil.parse(finEndDate, "dd/MM/yyyy"));
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT SUM(MovementAmt) ");
+		selectSql.append(" From VasMovementDetails");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference");
+		selectSql.append(" And MOVEMENTDATE >=:FinstartDate and MOVEMENTDATE <=:FinEndDate");
+		logger.debug("selectSql: " + selectSql.toString());
+		BigDecimal movementAmt = this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+		if (movementAmt == null) {
+			movementAmt = BigDecimal.ZERO;
+		}
+		return movementAmt;
+	}
 }

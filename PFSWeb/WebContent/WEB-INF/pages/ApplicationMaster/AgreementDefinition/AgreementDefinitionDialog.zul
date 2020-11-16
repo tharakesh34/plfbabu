@@ -114,6 +114,11 @@
 									<space spacing="2px" />
 									<checkbox id="autoGeneration" checked="false" />
 								</hbox>
+								<label id="label_PwdProtected" value="${c:l('label_AgreementDefinitionDialog_PwdProtected.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="pwdProtected" checked="false" />
+								</hbox>
 							</row>
 
 							<row id="auto_check" visible="false">

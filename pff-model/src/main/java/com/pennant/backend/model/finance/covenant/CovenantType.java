@@ -66,6 +66,7 @@ public class CovenantType extends AbstractWorkflowEntity {
 	private long id = Long.MIN_VALUE;
 	@XmlElement
 	private String code;
+	@XmlElement
 	private String description;
 	@XmlElement
 	private String category;
@@ -77,9 +78,11 @@ public class CovenantType extends AbstractWorkflowEntity {
 	private int maxAllowedDays;
 	private String allowedPaymentModes;
 	private boolean alertsRequired;
+	@XmlElement
 	private String frequency;
 	private int graceDays = 0;
 	private int alertDays = 0;
+	@XmlElement
 	private String alertType;
 	private String alertTypeName;
 	private String alertToRoles;
@@ -98,6 +101,14 @@ public class CovenantType extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	@XmlElement
 	private String covenantType;
+	@XmlElement(name = "alertsRequired")
+	private String strAlertsRequired;
+	@XmlElement(name = "graceDays")
+	public Integer lGraceDays;
+	@XmlElement(name = "alertDays")
+	public Integer lAlertDays;
+	@XmlElement(name = "allowPostPonement")
+	private String strAllowPostPonement;
 
 	public CovenantType() {
 		super();
@@ -124,6 +135,10 @@ public class CovenantType extends AbstractWorkflowEntity {
 		//excludeFields.add("otc");
 		//excludeFields.add("pdd");
 		//excludeFields.add("CovenantTypeId");
+		excludeFields.add("strAlertsRequired");
+		excludeFields.add("lGraceDays");
+		excludeFields.add("lAlertDays");
+		excludeFields.add("strAllowPostPonement");
 		return excludeFields;
 	}
 
@@ -365,6 +380,38 @@ public class CovenantType extends AbstractWorkflowEntity {
 
 	public void setCovenantType(String covenantType) {
 		this.covenantType = covenantType;
+	}
+
+	public String getStrAlertsRequired() {
+		return strAlertsRequired;
+	}
+
+	public void setStrAlertsRequired(String strAlertsRequired) {
+		this.strAlertsRequired = strAlertsRequired;
+	}
+
+	public Integer getlGraceDays() {
+		return lGraceDays;
+	}
+
+	public void setlGraceDays(Integer lGraceDays) {
+		this.lGraceDays = lGraceDays;
+	}
+
+	public Integer getlAlertDays() {
+		return lAlertDays;
+	}
+
+	public void setlAlertDays(Integer lAlertDays) {
+		this.lAlertDays = lAlertDays;
+	}
+
+	public String getStrAllowPostPonement() {
+		return strAllowPostPonement;
+	}
+
+	public void setStrAllowPostPonement(String strAllowPostPonement) {
+		this.strAllowPostPonement = strAllowPostPonement;
 	}
 
 }

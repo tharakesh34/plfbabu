@@ -34,6 +34,9 @@ public class ExternalDocument implements Serializable {
 	private String docSource;
 	private String imageIndex;
 	private String custId;
+	private String docTypeDesc;
+	private String owner;
+	private String author;
 
 	public ExternalDocument() {
 		// TODO Auto-generated constructor stub
@@ -263,4 +266,27 @@ public class ExternalDocument implements Serializable {
 		this.custId = custId;
 	}
 
+	public String getDocTypeDesc() {
+		return docTypeDesc;
+	}
+
+	public void setDocTypeDesc(String docTypeDesc) {
+		this.docTypeDesc = docTypeDesc;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
 }

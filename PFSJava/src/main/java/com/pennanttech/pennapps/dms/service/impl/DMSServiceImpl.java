@@ -45,9 +45,11 @@ public class DMSServiceImpl implements DMSService {
 		documentManager.setCustId(dmsQueue.getCustId());
 		documentManager.setDocURI(StringUtils.trimToNull(dmsQueue.getDocUri()));
 
-		long docManagerId = documentManagerDAO.save(documentManager);
+		if (dmsQueue.getDocManagerID() == 0 || dmsQueue.getDocManagerID() == Long.MIN_VALUE) {
+			long docManagerId = documentManagerDAO.save(documentManager);
+			dmsQueue.setDocManagerID(docManagerId);
+		}
 
-		dmsQueue.setDocManagerID(docManagerId);
 		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
 			dMSQueueDAO.log(dmsQueue);
 		}
@@ -186,25 +188,14 @@ public class DMSServiceImpl implements DMSService {
 		logger.debug(Literal.LEAVING);
 		return docImage;
 	}
-	
+
 	@Override
-    public DMSQueue isExistDocuri(String docUri,String reference){
-    	logger.debug(Literal.ENTERING);
-    	if(StringUtils.isBlank(docUri) || StringUtils.isBlank(reference)){
-    		return null;
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
-    	return dMSQueueDAO.isExistDocuri(docUri, reference);
-    }
-	
-	@Override
-	public void updateDMSQueue(DMSQueue dmsQueue){
+	public void updateDMSQueue(DMSQueue dmsQueue) {
 		logger.debug(Literal.ENTERING);
 		dMSQueueDAO.updateDMSQueue(dmsQueue);
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public Long getCustomerIdByFin(String FinReference) {
 		return financeMainDAO.getCustomerIdByFin(FinReference);

@@ -120,6 +120,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 							ftd.setPinCode(rs.getString("PinCode"));
 							ftd.setSezCertificateNo(rs.getString("SezCertificateNo"));
 							ftd.setSezValueDate(rs.getTimestamp("SezValueDate"));
+
 							if (StringUtils.trimToEmpty(type).contains("View")) {
 								ftd.setCountryName(rs.getString("CountryName"));
 								ftd.setProvinceName(rs.getString("ProvinceName"));
@@ -128,6 +129,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 								ftd.setCustCIF(rs.getString("CustCIF"));
 								ftd.setCustShrtName(rs.getString("CustShrtName"));
 							}
+
 							ftd.setVersion(rs.getInt("Version"));
 							ftd.setLastMntOn(rs.getTimestamp("LastMntOn"));
 							ftd.setLastMntBy(rs.getLong("LastMntBy"));

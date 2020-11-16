@@ -381,7 +381,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setEntityCode(details.getEntityCode());
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
 		// Setting FinReference instead of provider ID
-		aeEvent.setFinReference(details.getFinReference());
+		aeEvent.setFinReference(details.getVasReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		aeEvent.setCcy(details.getPaymentCCy());
 		aeEvent.setCcy("INR");
@@ -596,7 +596,9 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	public void doApproveVASInsurance(List<VASRecording> vasRecording, LoggedInUser loginUser) {
 		logger.debug(Literal.ENTERING);
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+		//TODO:GANESH
+		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)
+				&& SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_INSPAYINST)) {
 			for (VASRecording vasDetail : vasRecording) {
 
 				VASConfiguration configuration = vasDetail.getVasConfiguration();

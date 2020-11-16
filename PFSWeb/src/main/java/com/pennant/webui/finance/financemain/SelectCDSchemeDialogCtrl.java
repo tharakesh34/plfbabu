@@ -580,9 +580,10 @@ public class SelectCDSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		if (this.newCust.isChecked() && isNewCustomer) {
 			CustomerDedup customerDedup = doSetCustomerDedup(customerDetails);
+			String type = financeDetail.getFinScheduleData().getFinanceMain().getFinType();
 			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
 			List<CustomerDedup> customerDedupList = FetchCustomerDedupDetails.fetchCustomerDedupDetails(getRole(),
-					customerDedup, curLoginUser);
+					customerDedup, curLoginUser, type);
 			customerDetails.setCustomerDedupList(customerDedupList);
 			financeDetail.setCustomerDedupList(customerDedupList);
 		}

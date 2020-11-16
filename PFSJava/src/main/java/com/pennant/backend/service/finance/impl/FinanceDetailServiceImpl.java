@@ -186,6 +186,7 @@ import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -245,7 +246,6 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -632,6 +632,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Finance Receipt Details
 		scheduleData.setFinReceiptDetails(
 				getFinFeeDetailService().getFinReceiptDetais(finReference, financeMain.getCustID()));
+		//to load Upfront Fee Details by LeadId 
+		if (StringUtils.isNotEmpty(financeMain.getOfferId())) {
+			// Finance Fee Details
+			List<FinReceiptDetail> finReceiptDetails = getFinFeeDetailService()
+					.getFinReceiptDetais(financeMain.getOfferId(), financeMain.getCustID());
+			if (scheduleData.getFinReceiptDetails() != null) {
+				scheduleData.getFinReceiptDetails().addAll(finReceiptDetails);
+			} else {
+				scheduleData.setFinReceiptDetails(finReceiptDetails);
+			}
+		}
 		List<Long> feeIds = new ArrayList<Long>();
 		for (FinFeeDetail finFeeDetail : scheduleData.getFinFeeDetailList()) {
 			feeIds.add(finFeeDetail.getFeeID());
@@ -872,9 +883,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// SynopsisDetails details
-		if (financeDetail.getSynopsisDetails() != null) {
-			financeDetail.setSynopsisDetails(synopsisDetailsService.getSynopsisDetails(finReference));
-		}
+		financeDetail.setSynopsisDetails(synopsisDetailsService.getSynopsisDetails(finReference));
 		// Finance OCR Details
 		financeDetail.setFinOCRHeader(finOCRHeaderService.getFinOCRHeaderByRef(finReference, "_View"));
 		// PMAY
@@ -1342,6 +1351,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					wifcustomer.setCustID(0);
 					wifcustomer.setNewRecord(true);
 					financeDetail.setCustomer(wifcustomer);
+				} else {
+					financeDetail.getCustomer().setNewRecord(false);
 				}
 			}
 		}
@@ -7890,10 +7901,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		//OCR Details Validation
-		if (financeDetail.getFinOCRHeader() != null) {
-			FinOCRHeader finOCRHeader = financeDetail.getFinOCRHeader();
-			AuditDetail finOCRHeaderAudit = new AuditDetail(auditTranType, 1, finOCRHeader.getBefImage(), finOCRHeader);
-			auditDetails.add(finOCRHeaderService.validate(finOCRHeaderAudit, auditTranType, method));
+
+		if (financeMain.isFinOcrRequired()) {
+			if (financeDetail.getFinOCRHeader() != null) {
+				FinOCRHeader finOCRHeader = financeDetail.getFinOCRHeader();
+				AuditDetail finOCRHeaderAudit = new AuditDetail(auditTranType, 1, finOCRHeader.getBefImage(),
+						finOCRHeader);
+				auditDetails.add(finOCRHeaderService.validate(finOCRHeaderAudit, auditTranType, method));
+			}
 		}
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
@@ -11062,11 +11077,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings) {
-		return processVasAccounting(aeEvent, vasRecordings, false);
-	}
-
-	@Override
 	public FinanceMain getFinanceMainForBatch(String finReference) {
 		return getFinanceMainDAO().getFinanceMainForBatch(finReference);
 	}
@@ -11190,11 +11200,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 		return txnAmount;
-	}
-
-	@Override
-	public List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings) {
-		return processInsPayAccounting(aeEvent, vasRecordings, false);
 	}
 
 	// ******************************************************//

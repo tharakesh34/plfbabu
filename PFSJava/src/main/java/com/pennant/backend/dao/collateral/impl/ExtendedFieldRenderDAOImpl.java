@@ -173,6 +173,48 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		return renderMap;
 	}
 
+	/**
+	 * Get Extended field details Maps by Reference
+	 */
+	@Override
+	public Map<String, Object> getExtendedField(String reference, int seqNo, String tableName, String type) {
+		logger.debug("Entering");
+
+		Map<String, Object> renderMap = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+		source.addValue("SeqNo", seqNo);
+
+		StringBuilder selectSql = null;
+		if (StringUtils.startsWithIgnoreCase(type, "_View")) {
+			selectSql = new StringBuilder("Select * from (Select * from ");
+			selectSql.append(tableName);
+			selectSql.append("_Temp");
+			selectSql.append(" T1  UNION ALL  Select * from ");
+			selectSql.append(tableName);
+			selectSql.append(" T1  WHERE NOT EXISTS (SELECT 1 FROM ");
+			selectSql.append(tableName);
+			selectSql.append("_Temp");
+			selectSql.append(" where  Reference =T1.Reference)) T WHERE T.Reference = :Reference and SeqNo= :SeqNo ");
+		} else {
+			selectSql = new StringBuilder("Select * from ");
+			selectSql.append(tableName);
+			selectSql.append(StringUtils.trimToEmpty(type));
+			selectSql.append(" where  Reference = :Reference and SeqNo= :SeqNo ");
+		}
+
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			renderMap = this.jdbcTemplate.queryForMap(selectSql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exceprtion ", e);
+			renderMap = null;
+		}
+
+		logger.debug("Leaving");
+		return renderMap;
+	}
+
 	@Override
 	public void update(String reference, int seqNo, Map<String, Object> mappedValues, String type, String tableName) {
 		logger.debug("Entering");

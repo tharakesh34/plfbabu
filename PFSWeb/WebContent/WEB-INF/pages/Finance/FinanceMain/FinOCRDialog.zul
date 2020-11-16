@@ -44,16 +44,35 @@
 													<space spacing="2px" sclass="mandatory" />
 													<intbox id="customerPortion" width="150px" />
 												</hbox>
-												<label id="label_OCRApplicableOn" value="${c:l('label_FinOCRDialog_OCRApplicableOn.value')}" />
+												<label id="label_OCRType" value="${c:l('label_FinOCRDialog_OCRType.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
-													<combobox id="ocrApplicableOn" width="150px" />
+													<combobox id="ocrType" width="150px" />
 												</hbox>
 											</row>
+											
 											<row>
-												<label id="label_SplitApplicable" value="${c:l('label_FinOCRDialog_SplitApplicable.value')}" />
-												<checkbox id="splitApplicable" checked="false" />
+												<label id="label_Totaldemand" value="${c:l('label_FinOCRDialog_Totaldemand.value')}" />
+												<hbox>
+													<currencyBox id="totalDemand" width="150px" />
+												</hbox>
+												<label id="label_OCRTotalReceivable" value="${c:l('label_FinOCRDialog_TotalOCRReceivable.value')}" />
+												<hbox>
+													<currencyBox id="totalReceivable" width="150px" />
+												</hbox>
 											</row>
+											
+											<row>
+												<label id="label_TDTotaldemand" value="${c:l('label_FinOCRDialog_TDTotaldemand.value')}" />
+												<hbox>
+													<currencyBox id="tdTotalDemand" width="150px" />
+												</hbox>
+												<label id="label_TDOCRTotalReceivable" value="${c:l('label_FinOCRDialog_TDTotalOCRReceivable.value')}" />
+												<hbox>
+													<currencyBox id="tdTotalReceivable" width="150px" />
+												</hbox>
+											</row>
+										
 										</rows>
 									</grid>
 									<div sclass="z-toolbar" height="28px" id="ocrStepsDiv">
@@ -94,6 +113,32 @@
 							</tabpanel>
 
 							<tabpanel style="overflow:auto" id="tp_OCRCapture">
+							<groupbox id="finOCRCaptureDetails" sclass="gb-dialog">
+							<caption label="${c:l('gp_OCRDetails')}"></caption>
+							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:none">
+									<columns>
+											<column width="15%" />
+											<column width="35%" />
+											<column width="15%" />
+											<column width="35%" />
+										</columns>
+										<rows>
+											<row>
+												<label id="label_OCRLoanReference" value="${c:l('label_FinOCRCaptureDialog_LoanReference.value')}" />
+												<textbox id="loanReference" />
+												<label id="label_OCRReceivble" value="${c:l('label_FinOCRCaptureDialog_OCRReceivble.value')}" />
+												<currencyBox id="ocrCprTotReceivble" />
+
+									    </row>
+									    <row>
+												<label id="label_OCRTotalDemand" value="${c:l('label_FinOCRCaptureDialog_OCRTotalDemand.value')}" />
+												<currencyBox id="ocrTotalDemand" />
+												<label id="label_OCRTotalPaid" value="${c:l('label_FinOCRCaptureDialog_OCRTotalPaid.value')}" />
+												<currencyBox id="ocrTotalPaid" />
+									    </row>	
+										</rows>	
+									</grid>
+
 								<div sclass="z-toolbar" height="28px" id="ocrCaptureDiv">
 									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 										<!-- CRUD BUTTONS -->
@@ -102,24 +147,28 @@
 												sclass="z-toolbarbutton" />
 										</toolbar>
 									</hbox>
+									
 								</div>
 								<listbox id="listBoxOCRCapture" fixedLayout="true" sizedByContent="true" span="true"
 									emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" multiple="false">
 									<listhead sizable="false">
-										<listheader id="listheader_FinOCRDialog_TrancheNo" label="${c:l('listheader_FinOCRDialog_TrancheNumber.label')}"
+										<listheader id="listheader_FinOCRDialog_ReceiptNumber" label="${c:l('listheader_FinOCRDialog_ReceiptNumber.label')}"
 											sort="false" hflex="min" />
 										<listheader id="listheader_FinOCRDialog_BuilderDemand" label="${c:l('listheader_FinOCRDialog_BuilderDemand.label')}"
 											sort="false" hflex="min" />
-										<listheader id="listheader_FinOCRDialog_FinancerContribution" label="${c:l('listheader_FinOCRDialog_FinancerContribution.label')}"
+										<listheader id="listheader_FinOCRDialog_OCRPaid" label="${c:l('listheader_FinOCRDialog_OCRPaid.label')}"
 											sort="false" hflex="min" />
-										<listheader id="listheader_FinOCRDialog_OCRPaidWithTranche" label="${c:l('listheader_FinOCRDialog_OCRPaidWithTranche.label')}"
+										<listheader id="listheader_FinOCRDialog_OCRDate" label="${c:l('listheader_FinOCRDialog_OCRDate.label')}"
 											sort="false" hflex="min" />
+										<listheader id="listheader_FinOCRDialog_OCRRemarks" label="${c:l('listheader_FinOCRDialog_OCRRemarks.label')}"
+											sort="false" hflex="min" />	
 										<listheader id="listheader_FinOCRDialogCapture_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
 											sort="false" hflex="min" />
 										<listheader id="listheader_FinOCRDialogCapture_RecordType" label="${c:l('label.RecordType')}" sort="false"
 											hflex="min" />
 									</listhead>
 								</listbox>
+								</groupbox>
 							</tabpanel>
 						</tabpanels>
 					</tabbox>

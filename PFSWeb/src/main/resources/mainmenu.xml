@@ -129,6 +129,7 @@
 				rightName="menuItem_SystemMaster_PRelationCode" />
 			<menuItem id="menu_Item_Qualification" zulNavigation="/WEB-INF/pages/SystemMaster/Qualification/QualificationList.zul"
 				rightName="menuItem_SystemMaster_Qualification" />
+			<menuItem id="menu_Item_OCR" zulNavigation="/WEB-INF/pages/OCR/OCRHeaderList.zul" rightName="menuItem_SystemMaster_OCRHeader" />		
 		</menu>
 		<menu id="menu_Category_BusinessPartners">
 			<menu id="menu_Category_Agencies">
@@ -280,7 +281,6 @@
 
 		<menuItem id="menu_Item_InterfaceMapping" zulNavigation="/WEB-INF/pages/InterfaceMapping/InterfaceMappingList.zul"
 			rightName="menuItem_CollectionInterface_InterfaceMapping" />
-		<menuItem id="menu_Item_OCR" zulNavigation="/WEB-INF/pages/OCR/OCRHeaderList.zul" rightName="menuItem_SystemMaster_OCRHeader" />
 	</menu>
 
 	<!-- Rules Factory -->
@@ -304,6 +304,8 @@
 				rightName="menuItem_RulesFactory_Notifications" />
 			<menuItem id="menu_Item_ScoringMetrics" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ScoringRuleList.zul"
 				rightName="menuItem_RulesFactory_Notifications" />
+			<menuItem id="menu_Item_BRERule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/BRERuleList.zul"
+				rightName="menuItem_RulesFactory_BRERules" />
 		</menu>
 		<menu id="menu_Category_NotificationRules">
 			<menuItem id="menu_Item_MailTemplate" zulNavigation="/WEB-INF/pages/Mail/MailTemplate/MailTemplateList.zul"
@@ -462,6 +464,7 @@
 			rightName="menuItem_Commitment_Commitment" />
 		<menuItem id="menu_Item_CKYCProcess" zulNavigation="/WEB-INF/pages/CustomerMasters/CKYC/CKYCProcess.zul"
 			rightName="menuItem_CKYCProcess" />
+		
 		<!-- <menuItem id="menu_Item_CommCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CommCreditAppReview"/> 
 			<menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/> -->
 	</menu>
@@ -750,6 +753,9 @@
 		</menu>
 		<menuItem id="menu_Item_LoanDownSizing" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 			rightName="menuItem_FinanceManagement_LoanDownSizing" />
+			
+		<menuItem id="menu_Item_DMSRetrievalProcess" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/DMSRetrievalProcess.zul"
+			rightName="menuItem_DMSRetrievalProcess" />
 	</menu>
 
 	<!-- Menu for Receipts -->
@@ -1229,6 +1235,8 @@
 				rightName="menu_Item_PDCChequeRealization" />
 			<menuItem id="menu_Item_EMIDueReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_EMIDueReport" />
+			<menuItem id="menu_Item_GSTReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_GSTReport" />
 		</menu>
 
 		<menu id="menu_Category_Legal">
@@ -1369,7 +1377,8 @@
 			<menuItem id="menu_Item_PaymentTypeReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_FinDeptReports_PastDue" />
 		</menu>
-
+        <menuItem id="menu_Item_MiscellaneouspostUploadStsrpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menu_Item_MiscellaneouspostUploadStsrpt"/>
+	    <menuItem id="menu_Item_LoanMasterReport" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/LoanMasterReport.zul"  rightName="menu_Item_LoanMasterReport"/>
 		<!-- <menu id="menu_Category_SCM" rightName=""> <menuItem id="menu_Item_DeliveryOrder" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
 			rightName="" /> <menuItem id="menu_Item_GoodsReceipt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
 			rightName="" /> </menu> -->

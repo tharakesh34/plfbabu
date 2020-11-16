@@ -2,6 +2,7 @@ package com.pennant.backend.model.spreadsheet;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class CustomerSalaried implements Serializable {
 
@@ -36,6 +37,23 @@ public class CustomerSalaried implements Serializable {
 	private BigDecimal ids = BigDecimal.ZERO;
 	private BigDecimal od = BigDecimal.ZERO;
 	private BigDecimal salAdv = BigDecimal.ZERO;
+	private String finRef = "";
+	//Customer Details
+	private String custRelation = "";
+	private String custName = "";
+	private String cibilScore;
+	private int riskScore;
+	private String custQual = "";
+	private String custDOB;
+	private Date dob;
+	private int workExp;
+	private String custType = "";
+	private String custEmpType = "";
+	private int custAge;
+	//Valuation amounts
+	private BigDecimal docValue = BigDecimal.ZERO;
+	private BigDecimal valuation1 = BigDecimal.ZERO;
+	private BigDecimal valuation2 = BigDecimal.ZERO;
 
 	public CustomerSalaried() {
 		super();
@@ -263,6 +281,126 @@ public class CustomerSalaried implements Serializable {
 
 	public void setSalAdv(BigDecimal salAdv) {
 		this.salAdv = salAdv;
+	}
+
+	public String getFinRef() {
+		return finRef;
+	}
+
+	public void setFinRef(String finRef) {
+		this.finRef = finRef;
+	}
+
+	public String getCustRelation() {
+		return custRelation;
+	}
+
+	public void setCustRelation(String custRelation) {
+		this.custRelation = custRelation;
+	}
+
+	public String getCustName() {
+		return custName;
+	}
+
+	public void setCustName(String custName) {
+		this.custName = custName;
+	}
+
+	public String getCibilScore() {
+		return cibilScore;
+	}
+
+	public void setCibilScore(String cibilScore) {
+		this.cibilScore = cibilScore;
+	}
+
+	public int getRiskScore() {
+		return riskScore;
+	}
+
+	public void setRiskScore(int riskScore) {
+		this.riskScore = riskScore;
+	}
+
+	public String getCustDOB() {
+		return custDOB;
+	}
+
+	public void setCustDOB(String custDOB) {
+		this.custDOB = custDOB;
+	}
+
+	public String getCustQual() {
+		return custQual;
+	}
+
+	public void setCustQual(String custQual) {
+		this.custQual = custQual;
+	}
+
+	public int getWorkExp() {
+		return workExp;
+	}
+
+	public void setWorkExp(int workExp) {
+		this.workExp = workExp;
+	}
+
+	public String getCustType() {
+		return custType;
+	}
+
+	public void setCustType(String custType) {
+		this.custType = custType;
+	}
+
+	public String getCustEmpType() {
+		return custEmpType;
+	}
+
+	public void setCustEmpType(String custEmpType) {
+		this.custEmpType = custEmpType;
+	}
+
+	public int getCustAge() {
+		return custAge;
+	}
+
+	public void setCustAge(int custAge) {
+		this.custAge = custAge;
+	}
+
+	public BigDecimal getDocValue() {
+		return docValue;
+	}
+
+	public void setDocValue(BigDecimal docValue) {
+		this.docValue = docValue;
+	}
+
+	public BigDecimal getValuation1() {
+		return valuation1;
+	}
+
+	public void setValuation1(BigDecimal valuation1) {
+		this.valuation1 = valuation1;
+	}
+
+	public BigDecimal getValuation2() {
+		return valuation2;
+	}
+
+	public void setValuation2(BigDecimal valuation2) {
+		this.valuation2 = valuation2;
+	}
+
+	public Date getDob() {
+		return dob;
+	}
+
+	public void setDob(Date dob) {
+		this.dob = dob;
 	}
 
 }

@@ -122,7 +122,7 @@ public class PresentmentDetailExtractService {
 				pDetail.settDSAmount(rs.getBigDecimal("TDSAMOUNT"));
 				pDetail.setSchInsDue(BigDecimal.ZERO);
 				pDetail.setSchPenaltyDue(BigDecimal.ZERO);
-				//pDetail.setAdvanceAmt(schAmtDue);
+				pDetail.setAdvanceAmt(BigDecimal.ZERO);
 				pDetail.setAdviseAmt(BigDecimal.ZERO);
 				pDetail.setExcessID(0);
 				pDetail.setReceiptID(0);
@@ -260,7 +260,7 @@ public class PresentmentDetailExtractService {
 				pDetail.settDSAmount(rs.getBigDecimal("TDSAMOUNT"));
 				pDetail.setSchInsDue(BigDecimal.ZERO);
 				pDetail.setSchPenaltyDue(BigDecimal.ZERO);
-				pDetail.setAdvanceAmt(schAmtDue);
+				pDetail.setAdvanceAmt(BigDecimal.ZERO);
 				pDetail.setAdviseAmt(BigDecimal.ZERO);
 				pDetail.setExcessID(0);
 				pDetail.setReceiptID(0);

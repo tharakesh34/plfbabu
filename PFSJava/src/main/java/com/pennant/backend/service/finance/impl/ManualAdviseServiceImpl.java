@@ -293,9 +293,11 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public ManualAdvise getAdviceFeeType(ManualAdvise manualAdvise) {
 		FeeType javaFeeType = this.feeTypeService.getApprovedFeeTypeById(manualAdvise.getFeeTypeID());
-		com.pennant.backend.model.finance.FeeType modelFeeType = new com.pennant.backend.model.finance.FeeType();
-		BeanUtils.copyProperties(javaFeeType, modelFeeType);
-		manualAdvise.setFeeType(modelFeeType);
+		if (javaFeeType != null) {
+			com.pennant.backend.model.finance.FeeType modelFeeType = new com.pennant.backend.model.finance.FeeType();
+			BeanUtils.copyProperties(javaFeeType, modelFeeType);
+			manualAdvise.setFeeType(modelFeeType);
+		}
 		return manualAdvise;
 	}
 

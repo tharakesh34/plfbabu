@@ -63,10 +63,10 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	protected Uppercasebox ocrID;
 	protected Textbox ocrDescription;
 	protected Intbox customerPortion;
-	protected Combobox ocrApplicableOn;
-	protected Checkbox splitApplicable;
+	protected Combobox ocrType;
+	//protected Checkbox splitApplicable;
 	protected Checkbox active; // autoWired
-	protected Label label_OCRDialog_OCRApplicableOn;
+	protected Label label_OCRDialog_OCRType;
 	protected Groupbox ocrSteps;
 	protected Button btnNew_OCRSteps;
 	protected Listbox listBoxOCRStepsDetail;
@@ -156,7 +156,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		this.ocrID.setMaxlength(20);
 		this.ocrDescription.setMaxlength(100);
 		this.customerPortion.setMaxlength(2);
-		this.ocrApplicableOn.setMaxlength(30);
+		this.ocrType.setMaxlength(30);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -277,13 +277,17 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		this.ocrID.setValue(aOCRHeader.getOcrID());
 		this.ocrDescription.setValue(aOCRHeader.getOcrDescription());
 		this.customerPortion.setValue(aOCRHeader.getCustomerPortion());
-		fillComboBox(this.ocrApplicableOn, aOCRHeader.getOcrApplicable(), ocrApplicableList, "");
-		this.splitApplicable.setChecked(aOCRHeader.isSplitApplicable());
+		fillComboBox(this.ocrType, aOCRHeader.getOcrType(), ocrApplicableList, "");
+		if (aOCRHeader.getOcrType() == null) {
+			this.ocrType.setSelectedIndex(1);
+		}
+		//this.splitApplicable.setChecked(aOCRHeader.isSplitApplicable());
 		this.recordStatus.setValue(aOCRHeader.getRecordStatus());
 		this.active.setChecked(aOCRHeader.isActive());
-		if (aOCRHeader.isSplitApplicable()) {
+		if (StringUtils.equals(PennantConstants.SEGMENTED_VALUE, aOCRHeader.getOcrType())) {
 			this.ocrSteps.setVisible(true);
 			this.listBoxOCRStepsDetail.setVisible(true);
+			this.ocrType.setDisabled(true);
 		}
 		doFillOCRDetails(aOCRHeader.getOcrDetailList());
 		if (aOCRHeader.isNew()) {
@@ -324,24 +328,21 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 
 		// Applicable on
 		try {
-			String strOCRApplicableOn = null;
-			if (this.ocrApplicableOn.getSelectedItem() != null) {
-				strOCRApplicableOn = this.ocrApplicableOn.getSelectedItem().getValue().toString();
+			String strOCRType = null;
+			if (this.ocrType.getSelectedItem() != null) {
+				strOCRType = this.ocrType.getSelectedItem().getValue().toString();
 			}
-			if (strOCRApplicableOn != null && !PennantConstants.List_Select.equals(strOCRApplicableOn)) {
-				aOCRHeader.setOcrApplicable(strOCRApplicableOn);
+			if (strOCRType != null && !PennantConstants.List_Select.equals(strOCRType)) {
+				aOCRHeader.setOcrType(strOCRType);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//Split Applicable
-		try {
-			aOCRHeader.setSplitApplicable(this.splitApplicable.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
+		/*
+		 * //Split Applicable try { //aOCRHeader.setSplitApplicable(this.splitApplicable.isChecked()); } catch
+		 * (WrongValueException we) { wve.add(we); }
+		 */
 		//Active
 		try {
 			aOCRHeader.setActive(this.active.isChecked());
@@ -418,12 +419,12 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 
 		if (!this.ocrID.isReadonly()) {
 			this.ocrID.setConstraint(new PTStringValidator(Labels.getLabel("label_OCRDialog_OCRID.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.ocrDescription.isReadonly()) {
 			this.ocrDescription
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_OCRDialog_OCRDescription.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.customerPortion.isReadonly()) {
 			this.customerPortion
@@ -431,8 +432,8 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 							PennantConstants.defaultCCYDecPos, true, false, 0, 100));
 		}
 		//Applicable On
-		if (!this.ocrApplicableOn.isDisabled() && this.label_OCRDialog_OCRApplicableOn.isVisible()) {
-			this.ocrApplicableOn.setConstraint(new StaticListValidator(ocrApplicableList,
+		if (!this.ocrType.isDisabled() && this.label_OCRDialog_OCRType.isVisible()) {
+			this.ocrType.setConstraint(new StaticListValidator(ocrApplicableList,
 					Labels.getLabel("label_OCRDialog_OCRApplicableOn.value")));
 		}
 		logger.debug(Literal.LEAVING);
@@ -447,7 +448,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		this.ocrID.setConstraint("");
 		this.ocrDescription.setConstraint("");
 		this.customerPortion.setConstraint("");
-		this.ocrApplicableOn.setConstraint("");
+		this.ocrType.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -460,7 +461,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		this.ocrID.setErrorMessage("");
 		this.ocrDescription.setErrorMessage("");
 		this.customerPortion.setErrorMessage("");
-		this.ocrApplicableOn.setErrorMessage("");
+		this.ocrType.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -530,8 +531,8 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		}
 		this.ocrDescription.setReadonly(isReadOnly("OCRHeaderDialog_OCRDescription"));
 		this.customerPortion.setReadonly(isReadOnly("OCRHeaderDialog_CustomerPortion"));
-		this.ocrApplicableOn.setDisabled(isReadOnly("OCRHeaderDialog_OCRApplicableOn"));
-		this.splitApplicable.setDisabled(isReadOnly("OCRHeaderDialog_SplitApplicable"));
+		this.ocrType.setDisabled(isReadOnly("OCRHeaderDialog_OCRApplicableOn"));
+		//this.splitApplicable.setDisabled(isReadOnly("OCRHeaderDialog_SplitApplicable"));
 		this.active.setDisabled(isReadOnly("OCRHeaderDialog_Active"));
 		this.btnNew_OCRSteps.setVisible(!isReadOnly("button_OCRHeaderDialog_btnNew_OCRSteps")); //fix me
 
@@ -560,8 +561,8 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		this.ocrID.setReadonly(true);
 		this.ocrDescription.setReadonly(true);
 		this.customerPortion.setReadonly(true);
-		this.ocrApplicableOn.setDisabled(true);
-		this.splitApplicable.setDisabled(true);
+		this.ocrType.setDisabled(true);
+		//this.splitApplicable.setDisabled(true);
 		this.active.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
@@ -584,8 +585,8 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		// remove validation, if there are a save before
 		this.ocrID.setValue("");
 		this.ocrDescription.setValue("");
-		this.ocrApplicableOn.setValue("");
-		this.splitApplicable.setChecked(false);
+		this.ocrType.setValue("");
+		//this.splitApplicable.setChecked(false);
 		this.active.setChecked(false);
 		logger.debug(Literal.LEAVING);
 	}
@@ -889,16 +890,16 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	public void onCheck$splitApplicable(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		if (this.splitApplicable.isChecked()) {
-			this.ocrSteps.setVisible(true);
-		} else {
-			if (checkOCRStepsDeleted()) {
-				MessageUtil.showError(Labels.getLabel("label_OCRDetailDialog_OCRStepsDeletionAlert.value"));
-				this.splitApplicable.setChecked(true);
-				return;
-			}
-			this.ocrSteps.setVisible(false);
+		/*
+		 * if (this.splitApplicable.isChecked()) { this.ocrSteps.setVisible(true); } else {
+		 */
+		if (checkOCRStepsDeleted()) {
+			MessageUtil.showError(Labels.getLabel("label_OCRDetailDialog_OCRStepsDeletionAlert.value"));
+			//this.splitApplicable.setChecked(true);
+			return;
 		}
+		this.ocrSteps.setVisible(false);
+		//}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1062,6 +1063,21 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		}
 
 		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	public void onSelect$ocrType(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		String ocr = ocrType.getSelectedItem().getValue();
+		if (PennantConstants.SEGMENTED_VALUE.equals(ocr)) {
+			this.ocrSteps.setVisible(true);
+			this.listBoxOCRStepsDetail.setVisible(true);
+		} else {
+			this.ocrSteps.setVisible(false);
+			this.listBoxOCRStepsDetail.setVisible(false);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void validateOCRSteps(List<OCRDetail> list) {

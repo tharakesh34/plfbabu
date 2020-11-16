@@ -56,17 +56,19 @@
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start" sclass="toolbar-start">
 								<button id="btnNew" visible="false" tooltiptext="${c:l('btnNew.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
 								<button id="btnEdit" visible="false" tooltiptext="${c:l('btnEdit.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
 								<button id="btnDelete" visible="false" tooltiptext="${c:l('btnDelete.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
+								<button id="btnReverse" label="${c:l('label_btnReverse')}" visible="false" tooltiptext="${c:l('btnReverse.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
 								<button id="btnSave" visible="false" tooltiptext="${c:l('btnSave.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
 								<button id="btnCancel" visible="false" tooltiptext="${c:l('btnCancel.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
 								<button id="btnNotes" visible="false" tooltiptext="${c:l('btnNotes.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
 							</toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center">
@@ -107,7 +109,7 @@
 										</hbox>
 									</row>
 
-									<row>
+									<row id ="row_DisbDate">
 										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbDate.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
@@ -116,8 +118,22 @@
 											<decimalbox id="disbDateAmount" readonly="true" width="155px"
 												style="border:none; background-color:white ;font-weight:bold; text-align:left;" />
 										</hbox>
-
-										<label id="label_llDate" value="${c:l('label_FinAdvancePaymentsDialog_LLDate.value')}" />
+									</row>
+									<row id="row_vasReference">
+										<label
+											value="${c:l('label_FinAdvancePaymentsDialog_VasReference.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox id="vasReference"
+												width="155px" />
+											<decimalbox id="vasAmount"
+												readonly="true" width="155px"
+												style="border:none; background-color:white ;font-weight:bold; text-align:left;" />
+										</hbox>
+									</row>
+									<row>
+									<label id="label_llDate" value="${c:l('label_FinAdvancePaymentsDialog_LLDate.value')}" />
 										<hbox id="hbox_llDate">
 											<space spacing="2px" sclass="mandatory" />
 											<datebox id="llDate" width="155px" />
@@ -151,7 +167,7 @@
 											<textbox id="transactionRef" width="150px" />
 										</hbox>
 									</row>
-									<row>
+									<row id ="row_disbdetails">
 										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbursementAddedAmount.value')}" />
 										<hbox>
 											<currencyBox id="disbursementAddedAmount" />
@@ -162,7 +178,7 @@
 											<currencyBox id="totalDisbursementAmount" />
 										</hbox>
 									</row>
-									<row>
+									<row id ="row_expensedetails">
 										<label value="${c:l('label_FinAdvancePaymentsDialog_OtherExpenses.value')}" />
 										<hbox>
 											<currencyBox id="otherExpenses" />

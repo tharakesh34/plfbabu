@@ -1,7 +1,9 @@
 
 package com.pennant.backend.dao.ckyc;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.cky.CKYCDtl20;
 import com.pennant.backend.model.cky.CKYCDtl30;
@@ -58,13 +60,13 @@ public interface CKYCDAO {
 
 	int saveDtl70(CKYCDtl70 dtl70);
 
-	List<CustomerAddres> getCustomerAddresByCustomer(long custId, String ckycNo);
+	List<CustomerAddres> getCustomerAddresById(long custId, String ckycNo);
 
-	List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomer(long custId, String ckycNo);
+	List<CustomerPhoneNumber> getCustomerPhoneNumberById(long custId, String ckycNo);
 
-	List<CustomerEMail> getCustomerEmailByCustomer(long id, String ckycNo);
+	List<CustomerEMail> getCustomerEmailById(long custId, String ckycNo);
 
-	List<CustomerDocument> getCustomerId(long custId, String ckycNo);
+	List<CustomerDocument> getcustDocsByCustId(long custId, String ckycNo);
 
 	CKYCLog applicantNameFlag(long custId, String ckycNo);
 
@@ -85,4 +87,14 @@ public interface CKYCDAO {
 	boolean cleanData();
 
 	int updateCkycNo(String ckycNo, String batchNo, String rowNo);
+
+	int getCustId(String ckycNo);
+
+	void updateCustomerWithCKycNo(int custId, String ckycNo);
+
+	String getLeadIdByCustId(long custId);
+
+	Map<String, Object> getcKYCdocMaster();
+
+	Timestamp getLastMntOn(String custId, String ckycNo);
 }

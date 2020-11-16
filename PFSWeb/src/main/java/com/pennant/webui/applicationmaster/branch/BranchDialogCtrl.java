@@ -512,7 +512,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.cluster.setValue(aBranch.getClusterCode());
 		this.cluster.setDescription(aBranch.getClusterName());
 
-		if (aBranch.getClusterId() != null) {
+		if (aBranch.getClusterId() != null && aBranch.getClusterId() > 0) {
 			Cluster acluster = new Cluster();
 			acluster.setId(aBranch.getClusterId());
 			this.cluster.setObject(acluster);
@@ -757,6 +757,12 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			aBranch.setPinCode(this.pinCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
+		}
+
+		if (aBranch.getClusterId() != null) {
+			if (aBranch.getClusterId() == 0) {
+				aBranch.setClusterId(null);
+			}
 		}
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {

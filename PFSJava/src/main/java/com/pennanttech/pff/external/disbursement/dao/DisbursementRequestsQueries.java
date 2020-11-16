@@ -37,7 +37,7 @@ public class DisbursementRequestsQueries {
 		sql.append(", BENFICIARY_ADDRESS4, BENFICIARY_ADDRESS5, PAYMENT_DETAIL1, PAYMENT_DETAIL2, PAYMENT_DETAIL3");
 		sql.append(", PAYMENT_DETAIL4, PAYMENT_DETAIL5, PAYMENT_DETAIL6, PAYMENT_DETAIL7, STATUS, REMARKS, CHANNEL");
 		sql.append(", PARTNERBANK_ID PARTNER_BANK_ID, PARTNERBANK_CODE PARTNER_BANK_CODE, PARTNERBANK_ACCOUNT");
-		sql.append(", PARTNERBANK_ACCOUNT PARTNERBANK_ACCOUNT, ALWFILEDOWNLOAD ALW_FILE_DOWNLOAD");
+		sql.append(", PARTNERBANK_ACCOUNT PARTNERBANK_ACCOUNT, ALWFILEDOWNLOAD ALW_FILE_DOWNLOAD, CHEQUE_NUMBER");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
 		sql.append(" WHERE PAYMENTID IN (SELECT PAYMENTID FROM DISBURSEMENT_REQUESTS_HEADER WHERE ID=(:HEADER_ID))");
 
@@ -84,7 +84,7 @@ public class DisbursementRequestsQueries {
 		sql.append(", BENFICIARY_ADDRESS4, BENFICIARY_ADDRESS5, PAYMENT_DETAIL1, PAYMENT_DETAIL2, PAYMENT_DETAIL3");
 		sql.append(", PAYMENT_DETAIL4, PAYMENT_DETAIL5, PAYMENT_DETAIL6, PAYMENT_DETAIL7, STATUS, REMARKS");
 		sql.append(", CHANNEL, BATCH_ID, AUTO_DOWNLOAD, HEADER_ID");
-		sql.append(", PARTNERBANK_ID, PARTNERBANK_CODE, PARTNERBANK_ACCOUNT)");
+		sql.append(", PARTNERBANK_ID, PARTNERBANK_CODE, PARTNERBANK_ACCOUNT, CHEQUE_NUMBER)");
 		sql.append(" Values (");
 		sql.append(" :DisbursementId, :CustCIF, :FinReference, :DisbursementAmount, :DisbursementType");
 		sql.append(", :DisbursementDate, :DraweeLocation, :PrintLocation, :CustomerName, :CustomerMobile");
@@ -96,7 +96,7 @@ public class DisbursementRequestsQueries {
 		sql.append(", :BenficiaryAddress4, :BenficiaryAddress5, :PaymentDetail1, :PaymentDetail2, :PaymentDetail3");
 		sql.append(", :PaymentDetail4, :PaymentDetail5, :PaymentDetail6, :PaymentDetail7, :Status, :Remarks");
 		sql.append(", :Channel, :HeaderId, :AutoDownload, :HeaderId");
-		sql.append(", :PartnerBankId, :PartnerBankCode, :PartnerBankAccount)");
+		sql.append(", :PartnerBankId, :PartnerBankCode, :PartnerBankAccount, :ChequeNumber)");
 
 		insertQuery = sql.toString();
 		logger.trace(Literal.SQL + insertQuery.toString());

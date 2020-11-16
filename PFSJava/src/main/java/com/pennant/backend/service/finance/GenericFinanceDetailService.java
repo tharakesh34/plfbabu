@@ -214,6 +214,7 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
@@ -1470,40 +1471,37 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	}
 
 	/**
-	 * Method for Preparing List of Entries based on recordings for VAS
+	 * TODO:GANESH make this method as common for both Financemainbase ctrl and this <br>
+	 * Method for set the Accounting data, which is required on VAS accounting.
 	 * 
-	 * @param aeEvent
+	 * @param advancePaymentsList
 	 * @param vasRecordingList
-	 * @return
 	 */
-	protected List<ReturnDataSet> processVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList,
-			boolean doPostings) throws InterfaceException {
-
-		List<ReturnDataSet> datasetList = new ArrayList<>();
-		if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
-
-			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
-			for (VASRecording recording : vasRecordingList) {
-				recording.getDeclaredFieldValues(aeEvent.getDataMap());
-				aeEvent.getAcSetIDList().clear();
-				aeEvent.getAcSetIDList().add(recording.getFeeAccounting());
-				aeEvent.setFinReference(recording.getVasReference());
-
-				// For GL Code
-				VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(recording.getProductCode());
-				aeEvent.getDataMap().put("ae_productCode", vehicleDealer.getProductShortCode());
-				aeEvent.getDataMap().put("ae_dealerCode", vehicleDealer.getDealerShortCode());
-
-				aeEvent.setLinkedTranId(0);
-				if (doPostings) {
-					aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
-				} else {
-					aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
+	private void prepareVasAccountingData(List<FinAdvancePayments> advancePaymentsList,
+			List<VASRecording> vasRecordingList) {
+		logger.debug(Literal.ENTERING);
+		if (CollectionUtils.isEmpty(advancePaymentsList) || CollectionUtils.isEmpty(vasRecordingList)) {
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+		for (VASRecording recording : vasRecordingList) {
+			VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(recording.getProductCode());
+			if (vehicleDealer == null) {
+				continue;
+			}
+			for (FinAdvancePayments finAdvancePayment : advancePaymentsList) {
+				if (StringUtils.equalsIgnoreCase(recording.getVasReference(), finAdvancePayment.getVasReference())) {
+					finAdvancePayment.setProductShortCode(vehicleDealer.getProductShortCode());
+					finAdvancePayment.setDealerShortCode(vehicleDealer.getDealerShortCode());
+					break;
 				}
-				datasetList.addAll(aeEvent.getReturnDataSet());
 			}
 		}
-		return datasetList;
+		logger.debug(Literal.LEAVING);
 	}
 
 	protected Map<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, Object> dataMap,
@@ -1981,6 +1979,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSN)
 					|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSP)) {
 
+				if (isNew) {
+					prepareVasAccountingData(financeDetail.getAdvancePaymentsList(),
+							financeDetail.getFinScheduleData().getVasRecordingList());
+				}
+
 				Map<Integer, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(
 						financeDetail.getAdvancePaymentsList(), financeDetail.getFinScheduleData().getFinanceMain(),
 						auditHeader.getAuditBranchCode());
@@ -2002,10 +2005,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		// VAS Recording Accounting Entries
 		if (isNew) {
-			if (financeDetail.getFinScheduleData().getVasRecordingList() != null
-					&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
-				processVasAccounting(aeEvent, financeDetail.getFinScheduleData().getVasRecordingList(), true);
-			}
 			installmentDueService.processbackDateInstallmentDues(financeDetail, pftDetail, SysParamUtil.getAppDate(),
 					true, auditHeader.getAuditBranchCode());
 			/*
@@ -3090,45 +3089,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		// Saving Tax Details
 		this.manualAdviseDAO.saveDueTaxDetail(detail);
-	}
-
-	/**
-	 * Method for Preparing List of Entries based on recordings for Insurance Payment
-	 * 
-	 * @param aeEvent
-	 * @param vasRecordingList
-	 * @return
-	 */
-	protected List<ReturnDataSet> processInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList,
-			boolean doPostings) throws InterfaceException {
-
-		List<ReturnDataSet> datasetList = new ArrayList<>();
-		if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
-			long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_INSPAY,
-					AccountEventConstants.ACCEVENT_INSPAY);
-			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
-			for (VASRecording recording : vasRecordingList) {
-				recording.getDeclaredFieldValues(aeEvent.getDataMap());
-				aeEvent.setFinReference(recording.getVasReference());
-
-				//For GL Code
-				VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(recording.getProductCode());
-				aeEvent.getDataMap().put("ae_productCode", vehicleDealer.getProductShortCode());
-				aeEvent.getDataMap().put("ae_dealerCode", vehicleDealer.getDealerShortCode());
-				aeEvent.getDataMap().put("id_totPayAmount", recording.getFee());
-
-				aeEvent.setLinkedTranId(0);
-				aeEvent.getAcSetIDList().clear();
-				aeEvent.getAcSetIDList().add(accountsetId);
-				if (doPostings) {
-					aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
-				} else {
-					aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
-				}
-				datasetList.addAll(aeEvent.getReturnDataSet());
-			}
-		}
-		return datasetList;
 	}
 
 	// ******************************************************//

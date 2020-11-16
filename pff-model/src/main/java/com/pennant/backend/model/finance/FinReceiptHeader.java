@@ -181,6 +181,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private Date recAppDate;
 	private Date receivedDate; // Payment date
 	private String bankCode;
+	private Date presentmentSchDate;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -287,6 +288,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("custBaseCcy");
 		excludeFields.add("receiptSource");
 		excludeFields.add("linkedTranId");
+		excludeFields.add("presentmentSchDate");
+		excludeFields.add("documentDetails");
 
 		return excludeFields;
 	}
@@ -1516,6 +1519,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setBankCode(String bankCode) {
 		this.bankCode = bankCode;
+	}
+
+	public Date getPresentmentSchDate() {
+		return presentmentSchDate;
+	}
+
+	public void setPresentmentSchDate(Date presentmentSchDate) {
+		this.presentmentSchDate = presentmentSchDate;
 	}
 
 }

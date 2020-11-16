@@ -71,25 +71,21 @@
 									<space spacing="2px" sclass="mandatory" />
 									<intbox id="customerPortion" width="72px" />
 								</hbox>
-								<label id="label_OCRDialog_OCRApplicableOn" value="${c:l('label_OCRDialog_OCRApplicableOn.value')}"
+								<label id="label_OCRDialog_OCRType" value="${c:l('label_OCRDialog_OCRType.value')}"
 									visible="true" />
-								<hbox id="hlayout_OCRApplicableOn" visible="true">
-									<space id="space_OCRApplicableOn" spacing="2px" sclass="mandatory" />
-									<combobox id="ocrApplicableOn" width="150px" />
+								<hbox id="hlayout_OCRDialog_OCRType" visible="true">
+									<space id="space_ocrType" spacing="2px" sclass="mandatory" />
+									<combobox id="ocrType" width="150px" />
 								</hbox>
 							</row>
 							<row visible="true">
-								<label id="label_OCRDialog_SplitApplicable" value="${c:l('label_OCRDialog_SplitApplicable.value')}" />
-								<hbox id="hlayout_SplitApplicable">
-									<space id="space_SplitApplicable" spacing="2px" />
-									<checkbox id="splitApplicable" />
-								</hbox>
 								<label id="label_OCRDialog_Active" value="${c:l('label_OCRDialog_Active.value')}" />
 								<hbox id="hlayout_Active">
 									<space id="space_Active" spacing="2px" />
 									<checkbox id="active" />
 								</hbox>
 							</row>
+							
 						</rows>
 					</grid>
 					<groupbox sclass="gb_dialog" style="border:none;" visible="false" id="ocrSteps">

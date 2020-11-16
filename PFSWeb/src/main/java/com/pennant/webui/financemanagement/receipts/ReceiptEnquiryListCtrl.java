@@ -65,6 +65,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listheader listheader_ReceiptCustName;
 	protected Listheader listheader_ReceiptStatus;
 	protected Listheader listheader_ReceiptReceiptId;
+	protected Listheader listheader_ReceiptExtReference;
 
 	protected Button btnNew;
 	protected Button btnSearch;
@@ -78,6 +79,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Textbox finBranch;
 	protected Uppercasebox transactionRef;
 	protected Longbox receiptId;
+	protected Uppercasebox externalReference;
 
 	protected Listbox sortOperator_ReceiptReference;
 	protected Listbox sortOperator_ReceiptCustomer;
@@ -88,6 +90,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listbox sortOperator_ReceiptFinBranch;
 	protected Listbox sortOperator_ReceiptTranRef;
 	protected Listbox sortOperator_ReceiptReceiptId;
+	protected Listbox sortOperator_ExternalReference;
 
 	protected int oldVar_sortOperator_custCIF;
 	protected int oldVar_sortOperator_finType;
@@ -136,7 +139,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		registerButton(btnSearch);
 
 		registerField("finCcy");
-		registerField("receiptId", listheader_ReceiptReceiptId, SortOrder.ASC, receiptId, sortOperator_ReceiptReceiptId,
+		registerField("receiptID", listheader_ReceiptReceiptId, SortOrder.ASC, receiptId, sortOperator_ReceiptReceiptId,
 				Operators.NUMERIC);
 		registerField("reference", listheader_ReceiptReference, SortOrder.ASC, receiptReference,
 				sortOperator_ReceiptReference, Operators.STRING);
@@ -161,7 +164,8 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		registerField("receiptDate");
 
 		registerField("ReceiptModeStatus", listheader_ReceiptStatus);
-
+		registerField("ExtReference", listheader_ReceiptExtReference, SortOrder.NONE, externalReference,
+				sortOperator_ExternalReference, Operators.STRING);
 		// Render the page and display the data.
 		doRenderPage();
 		if (enqiryModule) {

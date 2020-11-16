@@ -243,4 +243,6 @@
 	<bean id="masterDataPreparationTaskLet" class="com.pennant.backend.endofday.tasklet.MasterDataPreparation">
 		<property name="extractData" ref="extractData" />
 	</bean>
+	
+	<bean id="dmsRetrieveProcessTaskLet" class="com.pennant.backend.endofday.tasklet.DMSRetrieveProcess" />
 </beans>

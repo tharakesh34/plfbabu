@@ -59,7 +59,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	private MandateController mandateController;
 	private CustomerDetailsService customerDetailsService;
 	private BankBranchService bankBranchService;
-	private MandateService mandateService;;
+	private MandateService mandateService;
 	private BankDetailService bankDetailService;
 	private FinanceMainService financeMainService;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -798,6 +798,17 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				paramValue[0] = "mandateRef";
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", paramValue));
 				return response;
+			} else {
+				//Validating duplicate UMRN 
+				int count = mandateService.getMandateByMandateRef(mandate.getMandateRef());
+				if (count > 0) {
+					response = new Mandate();
+					String[] paramValue = new String[2];
+					paramValue[0] = "mandateRef with ";
+					paramValue[1] = mandate.getMandateRef();
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41001", paramValue));
+					return response;
+				}
 			}
 			if (mandate.isSwapIsActive() && StringUtils.isBlank(mandate.getOrgReference())) {
 				response = new Mandate();

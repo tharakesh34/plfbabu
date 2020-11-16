@@ -197,9 +197,9 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPosting);
 		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				//throw new ConcurrencyException();
-			}
+			/*
+			 * if (recordCount <= 0) { //throw new ConcurrencyException(); }
+			 */
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -221,7 +221,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	 */
 	public long getReferenceSequence() {
 		// Fetching the sequence number for reference.
-		return getNextValue("SeqMscPostRef");
+		return getNextId("SeqMscPostRef");
 	}
 
 	@Override

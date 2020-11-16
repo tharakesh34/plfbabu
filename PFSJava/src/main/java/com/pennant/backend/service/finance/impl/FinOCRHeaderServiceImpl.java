@@ -1,7 +1,9 @@
 package com.pennant.backend.service.finance.impl;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,6 +21,7 @@ import com.pennant.backend.dao.finance.FinOCRHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinOCRCapture;
 import com.pennant.backend.model.finance.FinOCRDetail;
 import com.pennant.backend.model.finance.FinOCRHeader;
@@ -28,6 +31,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinOCRHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -82,12 +86,11 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	@Override
 	public FinOCRHeader getApprovedFinOCRHeaderByRef(String finReference, String type) {
 		FinOCRHeader finOCRHeader = null;
-		finOCRHeader = finOCRHeaderDAO.getFinOCRHeaderByRef(finReference, "_AView");
+		finOCRHeader = finOCRHeaderDAO.getFinOCRHeaderByRef(finReference, type);
 		if (finOCRHeader != null) {
 			//getting the OCR Step Details
 			finOCRHeader.setDefinitionApproved(true);
-			finOCRHeader
-					.setOcrDetailList(finOCRDetailDAO.getFinOCRDetailsByHeaderID(finOCRHeader.getHeaderID(), "_AView"));
+			finOCRHeader.setOcrDetailList(finOCRDetailDAO.getFinOCRDetailsByHeaderID(finOCRHeader.getHeaderID(), type));
 			finOCRHeader.setFinOCRCapturesList(finOCRCaptureDAO.getFinOCRCaptureDetailsByRef(finReference, type));
 		}
 
@@ -374,7 +377,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 		int finPortionHeader = 0;
 		int totalCustPortion = 0;
 		int totalFinPortion = 0;
-		if (finOCRHeader.getSplitApplicable()) {
+		if (StringUtils.equals(PennantConstants.SEGMENTED_VALUE, finOCRHeader.getOcrType())) {
 			custPortionHeader = finOCRHeader.getCustomerPortion();
 			finPortionHeader = 100 - custPortionHeader;
 			//checking ocr step details are available or not
@@ -419,6 +422,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 					return auditDetail;
 				}
 			}
+
 			//API check, by passing OCR steps with out split applicable
 		} else {
 			if (!CollectionUtils.isEmpty(finOCRHeader.getOcrDetailList())) {
@@ -432,6 +436,12 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 					}
 				}
 			}
+		}
+		if (finOCRHeader.getTotalDemand().compareTo(BigDecimal.ZERO) == 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Total Demand  Field should be more than 0 (zero) ";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("OCR001", valueParm)));
+			return auditDetail;
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -874,6 +884,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 			FinOCRCapture finOCRCapture = (FinOCRCapture) auditDetails.get(i).getModelData();
+			finOCRCapture.setFinReference(finOCRHeader.getFinReference());
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -925,10 +936,12 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 				finOCRCapture.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
+				getDocument(finOCRCapture);
 				finOCRCaptureDAO.save(finOCRCapture, type);
 			}
 
 			if (updateRecord) {
+				getDocument(finOCRCapture);
 				finOCRCaptureDAO.update(finOCRCapture, type);
 			}
 
@@ -945,6 +958,42 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
+	}
+
+	@Override
+	public byte[] getDocumentManImage(long docRef) {
+		return getDocumentImage(docRef);
+	}
+
+	private void getDocument(FinOCRCapture finOCRCapture) {
+		DocumentDetails dd = new DocumentDetails();
+		dd.setFinReference(finOCRCapture.getFinReference());
+		dd.setDocName(finOCRCapture.getFileName());
+		dd.setDocImage(finOCRCapture.getDocImage());
+		if (finOCRCapture.getDocumentRef() != null && finOCRCapture.getDocumentRef() > 0
+				&& !finOCRCapture.isNewRecord()) {
+			byte[] olddocumentManager = getDocumentImage(finOCRCapture.getDocumentRef());
+			if (olddocumentManager != null) {
+				byte[] arr1 = olddocumentManager;
+				byte[] arr2 = finOCRCapture.getDocImage();
+				if (!Arrays.equals(arr1, arr2)) {
+
+					dd.setDocImage(finOCRCapture.getDocImage());
+					saveDocument(DMSModule.FINANCE, DMSModule.OCR, dd);
+					finOCRCapture.setDocumentRef(dd.getDocRefId());
+				}
+			} else {
+				if (finOCRCapture.getDocImage() != null) {
+					saveDocument(DMSModule.FINANCE, DMSModule.OCR, dd);
+					finOCRCapture.setDocumentRef(dd.getDocRefId());
+				}
+			}
+		} else {
+			dd.setDocImage(finOCRCapture.getDocImage());
+			dd.setUserDetails(finOCRCapture.getUserDetails());
+			saveDocument(DMSModule.FINANCE, DMSModule.OCR, dd);
+			finOCRCapture.setDocumentRef(dd.getDocRefId());
+		}
 	}
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {

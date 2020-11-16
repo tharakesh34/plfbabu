@@ -45,6 +45,7 @@ package com.pennant.webui.dedup.dedupparm;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -55,8 +56,10 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -92,6 +95,21 @@ public class DedupValidation implements Serializable {
 					aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType(), ref, role, window, curLoginUser);
 			if (!processCompleted) {
 				return false;
+			}
+			if (SysParamUtil.isAllowed(SMTParameterConstants.COAPP_BLACKLIST_DEDUP_REQ)) {
+				List<JointAccountDetail> details = aFinanceDetail.getJountAccountDetailList();
+				String finType = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType();
+				if (CollectionUtils.isNotEmpty(details)) {
+					for (JointAccountDetail coapplicant : details) {
+						CustomerDetails customerDetails = coapplicant.getCustomerDetails();
+						CustomerDetails customerDedup = FetchCustomerDedupDetails.getCustomerDedup(role,
+								customerDetails, window, curLoginUser, finType);
+
+						if (customerDedup.getCustomer().isDedupFound() && !customerDedup.getCustomer().isSkipDedup()) {
+							return false;
+						}
+					}
+				}
 			}
 
 			//Finance Dedup List Process Checking

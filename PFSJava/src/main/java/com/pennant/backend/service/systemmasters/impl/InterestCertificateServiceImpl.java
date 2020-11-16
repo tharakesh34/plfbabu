@@ -44,10 +44,12 @@
 package com.pennant.backend.service.systemmasters.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -55,9 +57,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.VasMovementDetailDAO;
+import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.systemmasters.InterestCertificateDAO;
 import com.pennant.backend.model.agreement.InterestCertificate;
+import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.AgreementDetail;
+import com.pennant.backend.model.finance.AgreementDetail.CoApplicant;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.InterestCertificateService;
@@ -76,6 +85,13 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 	private ExtendedFieldService extendedFieldService;
 	private InterestCertificateDAO interestCertificateDAO;
 	private FinanceMainDAO financeMainDAO;
+	private VASRecordingDAO vASRecordingDAO;
+	private VasMovementDetailDAO vasMovementDetailDAO;
+	private BigDecimal totalvasAmt = BigDecimal.ZERO;
+	private BigDecimal totalLoanAmt = BigDecimal.ZERO;
+	private BigDecimal totalDisbAmt = BigDecimal.ZERO;
+	private BigDecimal loanRatio = BigDecimal.ZERO;
+	private BigDecimal vasRatio = BigDecimal.ZERO;
 
 	public InterestCertificateServiceImpl() {
 		super();
@@ -101,10 +117,21 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 		}
 		// Get Co-Applicants
 
-		List<String> coApplicantList = interestCertificateDAO.getCoApplicantNames(finReference);
+		List<Customer> coApplicantList = interestCertificateDAO.getCoApplicantNames(finReference);
 		StringBuilder coapplicant = new StringBuilder();
-		for (String object : coApplicantList) {
-			coapplicant.append(",").append(object);
+		for (Customer coApplicant : coApplicantList) {
+			coapplicant.append(",").append(StringUtils.trimToEmpty(coApplicant.getCustShrtName()));
+			AgreementDetail agreementDetail = new AgreementDetail();
+			CoApplicant coApp = agreementDetail.new CoApplicant();
+			coApp.setCustName(StringUtils.trimToEmpty(coApplicant.getCustShrtName()));
+			coApp.setCustSalutation(StringUtils.trimToEmpty(coApplicant.getCustSalutationCode()));
+			intCert.getCoApplicantList().add(coApp);
+		}
+
+		if (CollectionUtils.isEmpty(coApplicantList)) {
+			AgreementDetail agreementDetail = new AgreementDetail();
+			CoApplicant coApp = agreementDetail.new CoApplicant();
+			intCert.getCoApplicantList().add(coApp);
 		}
 
 		if (StringUtils.contains(coapplicant, ",")) {
@@ -207,7 +234,8 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 		if (collateralRef != null) {
 			String collateralType = interestCertificateDAO.getCollateralType(collateralRef);
 			if (collateralType != null) {
-				for (int j = 1; j <= 5; j++) {
+				int fields = SysParamUtil.getValueAsInt("COL_ADDR_FIELD_COUNT");
+				for (int j = 1; j <= fields; j++) {
 					String ColumnField = interestCertificateDAO.getCollateralTypeField("PROVISIONALCERTIFICATE",
 							"COLLATERAL_" + collateralType + "_ED", "Addresstype" + j);
 					if (ColumnField != null) {
@@ -225,9 +253,70 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 				}
 			}
 		}
+
+		//Ratio based division for Loan repay amount and Insurance amount.
+		getAmountsByRef(finReference, intCert.getFinCurrAssetvalue(), startDate, endDate);
+		intCert.setPriPaid(intCert.getFinSchdPriPaid().multiply(loanRatio));
+		intCert.setVasPriPaid(intCert.getFinSchdPriPaid().multiply(vasRatio));
+		intCert.setPftPaid(intCert.getFinSchdPftPaid().multiply(loanRatio));
+		intCert.setVasPftPaid(intCert.getFinSchdPftPaid().multiply(vasRatio));
+		resetAmounts();
+
 		logger.debug(Literal.LEAVING);
 		return intCert;
 
+	}
+
+	public void getAmountsByRef(String finReference, BigDecimal finCurrAssetValue, String startDate, String endDate) {
+		logger.debug(Literal.ENTERING);
+		//total disbursement amount
+		totalDisbAmt = PennantApplicationUtil.formateAmount(finCurrAssetValue, 2);
+		processVasRecordingDetails(finReference, startDate, endDate);
+		calculateRatio();
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void calculateRatio() {
+		//Considering the total loan amount as totalDisbAmt + totalvasAmt for calculation
+		totalLoanAmt = totalDisbAmt.add(totalvasAmt);
+		//calculating the total loan ratio from total loan amount including VAS amount
+		if (totalvasAmt.compareTo(BigDecimal.ZERO) > 0 && totalLoanAmt.compareTo(BigDecimal.ZERO) > 0) {
+			//vas ratio
+			vasRatio = totalvasAmt.divide(totalLoanAmt, 2, RoundingMode.HALF_UP);
+		}
+		//calculating the total loan ratio from total loan amount including VAS
+		if (totalDisbAmt.compareTo(BigDecimal.ZERO) > 0 && totalLoanAmt.compareTo(BigDecimal.ZERO) > 0) {
+			//loan ratio
+			loanRatio = totalDisbAmt.divide(totalLoanAmt, 2, RoundingMode.HALF_UP);
+		}
+	}
+
+	private void processVasRecordingDetails(String finReference, String startDate, String endDate) {
+		logger.debug(Literal.ENTERING);
+		List<VASRecording> recordings = vASRecordingDAO.getVASRecordingsByLinkRef(finReference, "");
+		//calculate totalVasAmt
+		if (CollectionUtils.isNotEmpty(recordings)) {
+			for (VASRecording vasRecording : recordings) {
+				totalvasAmt = totalvasAmt.add(PennantApplicationUtil.formateAmount(vasRecording.getFee(), 2));
+			}
+		}
+		//Get VAS Movements
+		BigDecimal movementAmount = vasMovementDetailDAO.getVasMovementDetailByRef(finReference, startDate, endDate,
+				"");
+		if (movementAmount.compareTo(BigDecimal.ZERO) > 0 && totalvasAmt.compareTo(BigDecimal.ZERO) > 0) {
+			movementAmount = PennantApplicationUtil.formateAmount(movementAmount, 2);
+			//Reduce the movement amount from total VAS outstanding amount.
+			totalvasAmt = totalvasAmt.subtract(movementAmount);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void resetAmounts() {
+		totalvasAmt = BigDecimal.ZERO;
+		totalLoanAmt = BigDecimal.ZERO;
+		totalDisbAmt = BigDecimal.ZERO;
+		loanRatio = BigDecimal.ZERO;
+		vasRatio = BigDecimal.ZERO;
 	}
 
 	@Override
@@ -248,4 +337,13 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 		this.extendedFieldService = extendedFieldService;
 	}
 
+	@Autowired(required = false)
+	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
+		this.vASRecordingDAO = vASRecordingDAO;
+	}
+
+	@Autowired(required = false)
+	public void setVasMovementDetailDAO(VasMovementDetailDAO vasMovementDetailDAO) {
+		this.vasMovementDetailDAO = vasMovementDetailDAO;
+	}
 }

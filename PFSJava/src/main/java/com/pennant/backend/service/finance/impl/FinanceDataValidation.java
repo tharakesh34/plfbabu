@@ -8,9 +8,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,8 +43,10 @@ import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.loanquery.QueryCategoryDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
@@ -54,10 +58,12 @@ import com.pennant.backend.dao.systemmasters.GenderDAO;
 import com.pennant.backend.dao.systemmasters.LoanPurposeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.dao.systemmasters.SalutationDAO;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -81,6 +87,9 @@ import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinOCRCapture;
+import com.pennant.backend.model.finance.FinOCRDetail;
+import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -90,6 +99,9 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.covenant.Covenant;
+import com.pennant.backend.model.finance.covenant.CovenantDocument;
+import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
@@ -101,6 +113,8 @@ import com.pennant.backend.model.legal.LegalPropertyDetail;
 import com.pennant.backend.model.loanquery.QueryCategory;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.ocrmaster.OCRDetail;
+import com.pennant.backend.model.ocrmaster.OCRHeader;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -133,6 +147,7 @@ import com.pennant.backend.service.systemmasters.DepartmentService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
+import com.pennant.backend.service.systemmasters.OCRHeaderService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -150,9 +165,12 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
+import com.pennanttech.pff.staticlist.AppStaticList;
 
 public class FinanceDataValidation {
 	private static final Logger logger = Logger.getLogger(FinanceDataValidation.class);
@@ -199,6 +217,9 @@ public class FinanceDataValidation {
 	private PSLDetailDAO pSLDetailDAO;
 	private GenderDAO genderDAO;
 	private CustomerEMailService customerEMailService;
+	private OCRHeaderService ocrHeaderService;
+	private CovenantTypeDAO covenantTypeDAO;
+	private FinCovenantTypeDAO finCovenantTypeDAO;
 
 	public void setQueryCategoryDAO(QueryCategoryDAO queryCategoryDAO) {
 		this.queryCategoryDAO = queryCategoryDAO;
@@ -218,7 +239,7 @@ public class FinanceDataValidation {
 	 * @return
 	 */
 	public FinScheduleData financeDataValidation(String vldGroup, FinScheduleData finScheduleData, boolean apiFlag,
-			FinanceDetail finDetail) {
+			FinanceDetail finDetail, boolean isEMI) {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinanceType financeType = finScheduleData.getFinanceType();
@@ -240,7 +261,7 @@ public class FinanceDataValidation {
 		}
 
 		// Basic Details validation
-		errorDetails = basicValidation(vldGroup, finScheduleData, isAPICall, finDetail);
+		errorDetails = basicValidation(vldGroup, finScheduleData, isAPICall, finDetail, isEMI);
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
@@ -372,13 +393,271 @@ public class FinanceDataValidation {
 		}
 
 		errorDetails.addAll(finODPenaltyRateValidation(finScheduleData));
-
+		//OCR Validations
+		errorDetails.addAll(finOCRValidation(finDetail));
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
 		}
 
 		return finScheduleData;
+	}
+
+	/**
+	 * This method will validate the OCR Details
+	 * 
+	 * @param finDetail
+	 * @return
+	 */
+	private List<ErrorDetail> finOCRValidation(FinanceDetail finDetail) {
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+		if (finDetail != null) {
+			String[] valueParm = new String[1];
+			FinanceMain financeMain = finDetail.getFinScheduleData().getFinanceMain();
+			FinanceType financeType = finDetail.getFinScheduleData().getFinanceType();
+			if (financeMain != null) {
+				//check OCR Header details are passed over the request if it required?
+				FinOCRHeader finOCRHeader = finDetail.getFinOCRHeader();
+				if (financeMain.isFinOcrRequired() && finOCRHeader == null) {
+					//check default OCR configured in the loan type or not
+					if (financeType != null && !StringUtils.isEmpty(financeType.getDefaultOCR())) {
+						//get default OCR header details from loan type
+						OCRHeader ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(financeType.getDefaultOCR(),
+								TableType.AVIEW.getSuffix());
+						finDetail.setFinOCRHeader(copyOCRHeaderProperties(ocrHeader));
+					} else {
+						//If default OCR not configured in Loan Type?
+						valueParm[0] = "finOCRHeader";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+						return errorDetails;
+					}
+				} else if (!financeMain.isFinOcrRequired() && finOCRHeader != null) {
+					//If OCR required marked as false but passed OCR details in request
+					valueParm[0] = "finOcrRequired";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					return errorDetails;
+				} else if (finOCRHeader != null) {
+					//OCR ID
+					String ocrID = finOCRHeader.getOcrID();
+					if (StringUtils.isEmpty(ocrID)) {
+						valueParm[0] = "ocrID";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+						return errorDetails;
+					}
+					//Check OCR ID is available in Loan type allowed OCR's
+					if (financeType != null && !StringUtils.isEmpty(financeType.getAllowedOCRS())) {
+						List<String> detailsList = Arrays.asList(financeType.getAllowedOCRS().split(","));
+						if (detailsList != null && !detailsList.contains(ocrID)) {
+							valueParm = new String[2];
+							valueParm[0] = "ocrID: " + ocrID;
+							valueParm[1] = financeType.getFinType();
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90285", valueParm)));
+							return errorDetails;
+						} else if (detailsList != null && detailsList.contains(ocrID)) {
+							//get  OCR header details
+							OCRHeader ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(ocrID,
+									TableType.AVIEW.getSuffix());
+							//Overriding with Master Data 
+							FinOCRHeader finOCRHeaderTemp = copyOCRHeaderProperties(ocrHeader);
+							//check OCR Description is Passed in the request if not override with Master Data 
+							if (StringUtils.isEmpty(finOCRHeader.getOcrDescription())) {
+								finOCRHeader.setOcrDescription(finOCRHeaderTemp.getOcrDescription());
+							}
+							//check CustomerPorsion is Passed in the request if not override with Master Data 
+							if (finOCRHeader.getCustomerPortion() <= 0) {
+								finOCRHeader.setCustomerPortion(finOCRHeaderTemp.getCustomerPortion());
+							}
+							//check OCR Type is Passed in the request if not override with Master Data 
+							if (StringUtils.isEmpty(finOCRHeader.getOcrType())) {
+								finOCRHeader.setOcrType(finOCRHeaderTemp.getOcrType());
+							}
+
+							//check totalDemand is Passed in the request if not override with Master Data  
+							if (BigDecimal.ZERO.compareTo(finOCRHeader.getTotalDemand()) >= 0) {
+								finOCRHeader.setTotalDemand(finOCRHeaderTemp.getTotalDemand());
+							}
+
+							if (PennantConstants.SEGMENTED_VALUE.equals(finOCRHeader.getOcrType())) {
+								//OCR Step details are overriding with Master data if not available in the request
+								if (CollectionUtils.isEmpty(finOCRHeader.getOcrDetailList())) {
+									finOCRHeader.setOcrDetailList(finOCRHeaderTemp.getOcrDetailList());
+								}
+							}
+						}
+					}
+					//customerPortion
+					if (finOCRHeader.getCustomerPortion() <= 0) {
+						valueParm[0] = "customerPortion";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+						return errorDetails;
+					}
+					//ocrType
+					if (StringUtils.isEmpty(finOCRHeader.getOcrType())) {
+						valueParm[0] = "ocrType";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+						return errorDetails;
+					} else {
+						List<ValueLabel> detail = PennantStaticListUtil.getOCRApplicableList();
+
+						boolean ocrType = false;
+						for (ValueLabel value : detail) {
+							if (StringUtils.equals(value.getValue(), finOCRHeader.getOcrType())) {
+								ocrType = true;
+								break;
+							}
+						}
+						if (!ocrType) {
+							String acceptedModes = "";
+							for (ValueLabel valueLabel : detail) {
+								acceptedModes = acceptedModes.concat(valueLabel.getValue()).concat(", ");
+							}
+							if (acceptedModes.endsWith(", ")) {
+								acceptedModes = StringUtils.substring(acceptedModes, 0, acceptedModes.length() - 2);
+							}
+							valueParm = new String[3];
+							valueParm[0] = "ocrType";
+							valueParm[1] = "ocrTypes";
+							valueParm[2] = acceptedModes;
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90264", valueParm)));
+							return errorDetails;
+						}
+						//totalDemand
+						if (BigDecimal.ZERO.compareTo(finOCRHeader.getTotalDemand()) >= 0) {
+							valueParm = new String[2];
+							valueParm[0] = "totalDemand";
+							valueParm[1] = "/ equal to zero";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30507", valueParm)));
+							return errorDetails;
+						}
+
+						//OCR Definition Validations
+						if (PennantConstants.SEGMENTED_VALUE.equals(finOCRHeader.getOcrType())) {
+							//OCR Step details
+							if (CollectionUtils.isEmpty(finOCRHeader.getOcrDetailList())) {
+								valueParm = new String[1];
+								valueParm[0] = "ocrDetailList";
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+								return errorDetails;
+							} else {
+								final Set<Integer> duplicate = new HashSet<>();
+								//check step sequence for definition
+								for (FinOCRDetail finOCRDetail : finOCRHeader.getOcrDetailList()) {
+									int stepSequence = finOCRDetail.getStepSequence();
+									if (stepSequence > 0 && !duplicate.add(stepSequence)) {
+										valueParm = new String[2];
+										valueParm[0] = "stepSequence";
+										valueParm[1] = String.valueOf(stepSequence);
+										errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41001", valueParm)));
+										return errorDetails;
+									} else if (stepSequence <= 0) {
+										valueParm = new String[2];
+										valueParm[0] = "stepSequence";
+										valueParm[1] = "1";
+										errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90205", valueParm)));
+										return errorDetails;
+									}
+								}
+							}
+							//Can OCR Step details are acceptable for Prorata?	
+						} else if (PennantConstants.PRORATA_VALUE.equals(finOCRHeader.getOcrType())) {
+							if (!CollectionUtils.isEmpty(finOCRHeader.getOcrDetailList())) {
+								valueParm = new String[2];
+								valueParm[0] = "ocrDetailList";
+								valueParm[1] = "OCR Type:" + PennantConstants.SEGMENTED_VALUE;
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
+								return errorDetails;
+							}
+						}
+
+						//OCR Capture validations
+						if (CollectionUtils.isNotEmpty(finOCRHeader.getFinOCRCapturesList())) {
+							final Set<Integer> duplicate = new HashSet<>();
+							//check step sequence for definition
+							for (FinOCRCapture finOCRCapture : finOCRHeader.getFinOCRCapturesList()) {
+								int receiptSequence = finOCRCapture.getDisbSeq();
+								if (receiptSequence > 0 && !duplicate.add(receiptSequence)) {
+									valueParm = new String[2];
+									valueParm[0] = "receiptSeq in finOCRCapturesList";
+									valueParm[1] = String.valueOf(receiptSequence);
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41001", valueParm)));
+									return errorDetails;
+								} else if (receiptSequence <= 0) {
+									valueParm = new String[2];
+									valueParm[0] = "receiptSeq in finOCRCapturesList";
+									valueParm[1] = "1";
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90205", valueParm)));
+									return errorDetails;
+								}
+								//Demand Amount
+								if (BigDecimal.ZERO.compareTo(finOCRCapture.getDemandAmount()) >= 0) {
+									valueParm = new String[2];
+									valueParm[0] = "demandAmount in finOCRCapturesList";
+									valueParm[1] = "zero";
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+									return errorDetails;
+								}
+								//Paid amount
+								if (BigDecimal.ZERO.compareTo(finOCRCapture.getPaidAmount()) >= 0) {
+									valueParm = new String[2];
+									valueParm[0] = "paidAmount in finOCRCapturesList";
+									valueParm[1] = "zero";
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+									return errorDetails;
+								}
+								//Receipt date
+								if (finOCRCapture.getReceiptDate() == null) {
+									valueParm = new String[1];
+									valueParm[0] = "receiptDate in finOCRCapturesList";
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+									return errorDetails;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return errorDetails;
+	}
+
+	/**
+	 * This method will map the master data to fin ocr
+	 * 
+	 * @param ocrHeader
+	 * @return
+	 */
+	private FinOCRHeader copyOCRHeaderProperties(OCRHeader ocrHeader) {
+		FinOCRHeader finOCRHeader = new FinOCRHeader();
+		finOCRHeader.setNewRecord(true);
+		List<FinOCRDetail> finOCRDetailList = new ArrayList<>();
+		if (ocrHeader != null) {
+			finOCRHeader.setOcrType(ocrHeader.getOcrType());
+			finOCRHeader.setOcrID(ocrHeader.getOcrID());
+			finOCRHeader.setOcrDescription(ocrHeader.getOcrDescription());
+			finOCRHeader.setCustomerPortion(ocrHeader.getCustomerPortion());
+			if (StringUtils.isBlank(finOCRHeader.getRecordType())) {
+				finOCRHeader.setVersion(finOCRHeader.getVersion() + 1);
+				finOCRHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			}
+			//setting the work flow values for 
+			if (!CollectionUtils.isEmpty(ocrHeader.getOcrDetailList())) {
+				for (OCRDetail ocrDetail : ocrHeader.getOcrDetailList()) {
+					FinOCRDetail finOCRDetail = new FinOCRDetail();
+					finOCRDetail.setStepSequence(ocrDetail.getStepSequence());
+					finOCRDetail.setContributor(ocrDetail.getContributor());
+					finOCRDetail.setCustomerContribution(ocrDetail.getCustomerContribution());
+					finOCRDetail.setFinancerContribution(ocrDetail.getFinancerContribution());
+					finOCRDetail.setNewRecord(true);
+					if (StringUtils.isBlank(finOCRDetail.getRecordType())) {
+						finOCRDetail.setVersion(finOCRDetail.getVersion() + 1);
+						finOCRDetail.setRecordType(PennantConstants.RCD_ADD);
+					}
+					finOCRDetailList.add(finOCRDetail);
+				}
+			}
+			finOCRHeader.setOcrDetailList(finOCRDetailList);
+		}
+		return finOCRHeader;
 	}
 
 	private List<ErrorDetail> vasFeeValidations(String vldGroup, FinScheduleData finScheduleData) {
@@ -1395,6 +1674,13 @@ public class FinanceDataValidation {
 			}
 
 			errorDetails = mandateValidation(financeDetail, PennantConstants.VLD_CRT_LOAN);
+			if (!errorDetails.isEmpty()) {
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
+			}
+			if (CollectionUtils.isNotEmpty(financeDetail.getCovenants()))
+				errorDetails = covenantValidation(financeDetail.getFinScheduleData().getFinanceMain(),
+						financeDetail.getCovenants(), "LOS");
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
@@ -3015,7 +3301,7 @@ public class FinanceDataValidation {
 	 */
 
 	private List<ErrorDetail> basicValidation(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall,
-			FinanceDetail finDetail) {
+			FinanceDetail finDetail, boolean isEMI) {
 		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinanceType financeType = finScheduleData.getFinanceType();
@@ -3034,15 +3320,16 @@ public class FinanceDataValidation {
 
 		// Finance start date
 		Date appDate = SysParamUtil.getAppDate();
-		Date minReqFinStartDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
-		if (finMain.getFinStartDate().compareTo(minReqFinStartDate) <= 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = SysParamUtil.getValueAsString("BACKDAYS_STARTDATE");
-			valueParm[1] = DateUtility.format(DateUtility.addDays(minReqFinStartDate, 1),
-					PennantConstants.XMLDateFormat);
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90134", valueParm)));
+		if (!isEMI) {
+			Date minReqFinStartDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
+			if (finMain.getFinStartDate().compareTo(minReqFinStartDate) <= 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = SysParamUtil.getValueAsString("BACKDAYS_STARTDATE");
+				valueParm[1] = DateUtility.format(DateUtility.addDays(minReqFinStartDate, 1),
+						PennantConstants.XMLDateFormat);
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90134", valueParm)));
+			}
 		}
-
 		Date maxReqFinStartDate = DateUtility.addDays(appDate, +SysParamUtil.getValueAsInt("FUTUREDAYS_STARTDATE") + 1);
 		if (finMain.getFinStartDate().compareTo(maxReqFinStartDate) > 0) {
 			String[] valueParm = new String[2];
@@ -6524,6 +6811,744 @@ public class FinanceDataValidation {
 		}
 		return errorDetails;
 	}
+
+	//CovenantValidations
+	public List<ErrorDetail> covenantValidation(FinanceMain financeMain, List<Covenant> covenantsList, String module) {
+		logger.debug(Literal.ENTERING);
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+		CovenantType aCovenantType = null;
+		//Category Validations
+		if (covenantsList.size() > 1) {
+			Set<String> uniqueCovenantSet = new HashSet<String>();
+			long count = covenantsList.stream()
+					.filter(covenant -> uniqueCovenantSet.add(covenant.getCategory() + covenant.getCovenantTypeId()))
+					.count();
+			if (count < covenantsList.size()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Combination of Catergory & CovenantTypeId";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
+				return errorDetails;
+			}
+		}
+		for (Covenant covenant : covenantsList) {
+
+			List<CovenantType> covenantTypeList = covenantTypeDAO.getCvntTypesByCatgy(covenant.getCategory(), "");
+
+			if (StringUtils.isBlank(covenant.getCategory())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Category";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				return errorDetails;
+			} else {
+				List<Property> covenantCategories = AppStaticList.getCovenantCategories();
+				List<Object> keys = new ArrayList<Object>();
+				for (Property property : covenantCategories) {
+					keys.add(property.getKey());
+				}
+				if (!(keys.contains(covenant.getCategory()))) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "CategoryName";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
+					return errorDetails;
+				}
+			}
+
+			//validating the covenant Id
+			if (covenant.getCovenantTypeId() <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "CovenantTypeId";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				return errorDetails;
+			} else {
+				aCovenantType = covenantTypeDAO.getCovenantType(covenant.getCovenantTypeId(), "");
+				if (aCovenantType == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "CovenantType";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
+					return errorDetails;
+				}
+			}
+
+			long count = covenantTypeList.stream()
+					.filter(covenantType -> covenantType.getId() == covenant.getCovenantTypeId()).count();
+			covenant.setCovenantType(aCovenantType.getCovenantType());
+			if (count == 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "CovenantTypeId " + covenant.getCovenantTypeId();
+				valueParm[1] = "Matched With Category " + covenant.getCategory();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41000", valueParm)));
+				return errorDetails;
+			}
+
+			if (StringUtils.isNotBlank(covenant.getDescription())
+					&& covenant.getDescription().toCharArray().length > 500) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Description";
+				valueParm[1] = "500";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
+				return errorDetails;
+			}
+
+			String covenantType = aCovenantType.getCovenantType();
+
+			boolean aPDD = false;
+			boolean aOTC = false;
+			switch (covenantType) {
+			case "PDD":
+				aPDD = true;
+				break;
+			case "OTC":
+				aOTC = true;
+				break;
+			}
+
+			boolean isPdd = StringUtils.equals("Y", covenant.getStrPdd());
+			boolean isOtc = StringUtils.equals("Y", covenant.getStrOtc());
+
+			//validating the PDD 
+			if (covenant.getStrPdd() != null && !(isPdd || StringUtils.equals("N", covenant.getStrPdd()))) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Pdd";
+				valueParm[1] = "Y or N";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+				return errorDetails;
+			}
+
+			//validating the OTC
+			if (covenant.getStrOtc() != null && !(isOtc || StringUtils.equals("N", covenant.getStrOtc()))) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Otc";
+				valueParm[1] = "Y or N";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+				return errorDetails;
+			}
+
+			if ((StringUtils.isBlank(covenant.getMandatoryRole()) && !isPdd && !isOtc) && !(aPDD || aOTC)
+					&& !covenant.isAllowWaiver()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "OTC";
+				StringBuilder sb = new StringBuilder();
+				sb.append("OR PDD");
+				if (StringUtils.equals("LOS", covenant.getModule())) {
+					sb.append(" OR Mandatory Role");
+				}
+				valueParm[1] = sb.toString();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90123", valueParm)));
+				return errorDetails;
+			}
+
+			if (covenant.getStrDocumentReceived() != null
+					&& !(StringUtils.equals("Y", covenant.getStrDocumentReceived())
+							|| StringUtils.equals("N", covenant.getStrDocumentReceived()))) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "DocumentReceived";
+				valueParm[1] = "Y or N";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+				return errorDetails;
+			}
+
+			if (isPdd && isOtc) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "PDD";
+				valueParm[1] = "OTC";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90123", valueParm)));
+				return errorDetails;
+			}
+			if (StringUtils.isNotBlank(covenant.getMandatoryRole()) && isPdd) {
+
+				String[] valueParm = new String[2];
+				valueParm[0] = "PDD";
+				valueParm[1] = "Mandatory Role";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90123", valueParm)));
+				return errorDetails;
+			}
+			if (StringUtils.isNotBlank(covenant.getMandatoryRole()) && isOtc) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "OTC";
+				valueParm[1] = "Mandatory Role";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90123", valueParm)));
+				return errorDetails;
+			}
+
+			if (StringUtils.equals("LOS", module)) {
+				if ("LOS".equals(covenant.getCovenantType()) && covenant.getMandatoryRole() == null) {
+					if (!isPdd || isOtc) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "Mandatory Role";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+						return errorDetails;
+					}
+
+				}
+			}
+
+			if (StringUtils.isNotBlank(covenant.getMandatoryRole())) {
+				SecurityRole secRole = finCovenantTypeDAO.isMandRoleExists(covenant.getMandatoryRole());
+				if (secRole == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "MandatoryRole";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
+					return errorDetails;
+				} else {
+					covenant.setMandRoleDescription(secRole.getRoleDesc());
+				}
+			}
+			Date maturityDate = null;
+			if (StringUtils.equals("LOS", module)) {
+				maturityDate = financeMain.getCalMaturity();
+			} else
+				maturityDate = financeMain.getMaturityDate();
+			Date loanStartDate = financeMain.getFinStartDate();
+
+			//validating the Receivable Date
+			if (isPdd) {
+				if (covenant.getReceivableDate() == null) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "PDD - Y";
+					valueParm[1] = "ReceivableDate";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91132", valueParm)));
+					return errorDetails;
+				} else if (DateUtil.compare(covenant.getReceivableDate(), loanStartDate) < 0
+						|| DateUtil.compare(covenant.getReceivableDate(), maturityDate) > 0) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "ReceivableDate";
+					valueParm[1] = "Loan StartDate";
+					valueParm[2] = "MaturityDate";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30567", valueParm)));
+					return errorDetails;
+				}
+			} else if (covenant.getReceivableDate() != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "ReceivableDate";
+				valueParm[1] = "When PDD is N or Not Passed";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+				return errorDetails;
+			} else if (isOtc && covenant.getReceivableDate() != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "ReceivableDate";
+				valueParm[1] = "When Otc is Y";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+				return errorDetails;
+			}
+
+			if (isPdd && covenant.getStrDocumentReceived() != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "DocumentReceived";
+				valueParm[1] = "When PDD is Y";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+				return errorDetails;
+			}
+
+			//validating the Frequency
+			if (StringUtils.isNotBlank(covenant.getFrequency())) {
+				List<Property> listFrequency = AppStaticList.getFrequencies();
+				List<Object> Frequency = new ArrayList<Object>();
+				for (Property property : listFrequency) {
+					Frequency.add(property.getKey());
+				}
+				if (!(Frequency.contains(covenant.getFrequency()))) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Frequency";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
+					return errorDetails;
+				}
+			}
+
+			//validating the Alerts
+			boolean alertReqd = StringUtils.equals("Y", covenant.getStrAlertsRequired());
+			if (covenant.getFrequency() == null && covenant.getStrAlertsRequired() != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "AlertsRequired";
+				valueParm[1] = "When Frequency is Empty";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+				return errorDetails;
+			}
+			if (covenant.getStrAlertsRequired() != null
+					&& !(alertReqd || StringUtils.equals("N", covenant.getStrAlertsRequired()))) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "AlertsRequired";
+				valueParm[1] = "Y or N";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+				return errorDetails;
+			}
+
+			//validating the alerts required fields---non mandatory field
+			if (alertReqd && StringUtils.isNotBlank(covenant.getAlertType())) {
+				List<Property> listAlertType = AppStaticList.getAlertsFor();
+				List<Object> alertUsers = new ArrayList<Object>();
+				for (Property property : listAlertType) {
+					alertUsers.add(property.getKey());
+				}
+				if (!(alertUsers.contains(covenant.getAlertType()))) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Alert Type";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
+					return errorDetails;
+				}
+			} else if (StringUtils.isNotBlank(covenant.getAlertType())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Alert Type";
+				valueParm[1] = "AlertsRequired is N";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+				return errorDetails;
+			}
+
+			boolean isExist;
+			//validating the alerts required field
+			if (alertReqd && StringUtils.isNotBlank(covenant.getNotifyTo())
+					&& !StringUtils.equals(covenant.getAlertType(), "Customer")) {
+				String[] roles = covenant.getNotifyTo().split(",");
+				if (roles.length > 5) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Number of Roles to Notify";
+					valueParm[1] = "5";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
+					return errorDetails;
+				}
+				for (String role : roles) {
+					isExist = false;
+					List<String> rules = covenantTypeDAO.getRules();
+					for (String newRole : rules) {
+						if (StringUtils.equals(newRole, role)) {
+							isExist = true;
+							break;
+						}
+					}
+					if (!isExist) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "NotifyTo:" + role;
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
+						return errorDetails;
+					}
+				}
+			} else if (StringUtils.isNotBlank(covenant.getNotifyTo())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "NotifyTo";
+				valueParm[1] = "AlertsRequired is N or Not Passed";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+				return errorDetails;
+			} else if (alertReqd && StringUtils.isBlank(covenant.getNotifyTo())
+					&& StringUtils.equals(covenant.getAlertType(), "User")) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "For this AlertType : User";
+				valueParm[1] = "Notify to";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91132", valueParm)));
+				return errorDetails;
+			}
+
+			// grace days
+			if (alertReqd && covenant.getlGraceDays() != null) {
+				if (covenant.getlGraceDays() >= 30) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "GraceDays";
+					valueParm[1] = "30";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
+					return errorDetails;
+				}
+
+			} else if (covenant.getlGraceDays() != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "GraceDays";
+				valueParm[1] = "AlertsRequired is N or Not Passed";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+				return errorDetails;
+			}
+
+			if (alertReqd && covenant.getlAlertDays() != null) {
+				if (covenant.getlAlertDays() >= 180) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "AlertDays";
+					valueParm[1] = "180";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
+					return errorDetails;
+				}
+
+			} else if (covenant.getlAlertDays() != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "AlertDays";
+				valueParm[1] = "AlertsRequired is N or Not Passed";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+				return errorDetails;
+			}
+
+			//validating the CovenantDocuments
+			List<CovenantDocument> covenantDocumentsList = covenant.getCovenantDocuments();
+			for (CovenantDocument covenantDocument : covenantDocumentsList) {
+
+				if (StringUtils.isBlank(covenantDocument.getDoctype())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "DocType";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					return errorDetails;
+				}
+				String category = documentTypeDAO.getDocCategoryByDocType(covenantDocument.getDoctype(), "_aView");
+				if (!StringUtils.equals(category, DocumentCategories.COVENANT.getKey())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "DocType";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
+					return errorDetails;
+				}
+				Date frequencyDate = covenantDocument.getFrequencyDate();
+
+				if (covenant.getFrequency() == null && frequencyDate != null) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "FrequencyDate	";
+					valueParm[1] = "When Frequency is Empty";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+					return errorDetails;
+				}
+
+				List<Date> freqList = null;
+				if (covenant.getFrequency() != null) {
+					boolean freqDateSent = frequencyDate == null;
+					switch (covenant.getFrequency()) {
+					case "M":
+						if (freqDateSent) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "FrequencyDate";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+							return errorDetails;
+						}
+						freqList = getFrequency(loanStartDate, maturityDate, 1);
+						break;
+
+					case "Q":
+						if (freqDateSent) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "FrequencyDate";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+							return errorDetails;
+						}
+						freqList = getFrequency(loanStartDate, maturityDate, 3);
+						break;
+
+					case "H":
+						if (freqDateSent) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "FrequencyDate";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+							return errorDetails;
+						}
+						freqList = getFrequency(loanStartDate, maturityDate, 6);
+						break;
+
+					case "A":
+						if (freqDateSent) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "FrequencyDate";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+							return errorDetails;
+						}
+						freqList = getFrequency(loanStartDate, maturityDate, 12);
+						break;
+
+					default:
+						if (frequencyDate != null) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Frequency Date";
+							valueParm[1] = "Frequency" + covenant.getFrequency();
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+							return errorDetails;
+						}
+					}
+				}
+				if (frequencyDate != null && freqList != null && (!freqList.contains(frequencyDate))) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "FrequencyDate";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
+					return errorDetails;
+				}
+
+			}
+			Set<String> documentTypeSet = new HashSet<String>();
+
+			long uniqueCount = covenantDocumentsList.stream()
+					.filter(covenantDocument -> documentTypeSet.add(covenantDocument.getDoctype())).count();
+
+			if (uniqueCount < covenantDocumentsList.size()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "DocType";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
+				return errorDetails;
+			}
+
+			if (StringUtils.isNotBlank(covenant.getAdditionalField2())
+					&& covenant.getAdditionalField2().toCharArray().length > 500) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Standard Value";
+				valueParm[1] = "500";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
+				return errorDetails;
+			}
+
+			if (StringUtils.isNotBlank(covenant.getAdditionalField3())
+					&& covenant.getAdditionalField3().toCharArray().length > 500) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Actual Value";
+				valueParm[1] = "500";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
+				return errorDetails;
+			}
+
+			if (!StringUtils.equals(module, "LOS")) {
+
+				if (covenant.getStrAllowPostPonement() != null
+						&& !(StringUtils.equals("Y", covenant.getStrAllowPostPonement())
+								|| StringUtils.equals("N", covenant.getStrAllowPostPonement()))) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "AllowPostPonement";
+					valueParm[1] = "Y or N";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+					return errorDetails;
+				}
+
+				boolean allowPostPonement = StringUtils.equals("Y", covenant.getStrAllowPostPonement());
+
+				if (!isPdd && covenant.getStrAllowPostPonement() != null) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "AllowPostPonement";
+					valueParm[1] = "When PDD is N  or Not Passed";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+					return errorDetails;
+				}
+
+				if (covenant.getExtendedDate() == null && allowPostPonement) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "ExtendedDate";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					return errorDetails;
+				} else if (covenant.getExtendedDate() != null && !allowPostPonement) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "ExtendedDate";
+					valueParm[1] = "When AllowPostPonement is N or Not Passed";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+					return errorDetails;
+				} else if (DateUtil.compare(covenant.getExtendedDate(), SysParamUtil.getAppDate()) > 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "ExtendedDate";
+					valueParm[1] = "Application Date";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
+					return errorDetails;
+				}
+			}
+		}
+		if (errorDetails.isEmpty()) {
+			processCovenantDetails(covenantsList, financeMain, aCovenantType);
+		}
+		logger.debug(Literal.LEAVING);
+		return errorDetails;
+	}
+
+	private List<Date> getFrequency(final Date startDate, final Date endDate, int frequency) {
+		logger.debug(Literal.ENTERING);
+		List<Date> list = new ArrayList<>();
+		if (startDate == null || endDate == null) {
+			return list;
+		}
+
+		Date tempStartDate = (Date) startDate.clone();
+		Date tempEndDate = (Date) endDate.clone();
+
+		while (DateUtility.compare(tempStartDate, tempEndDate) <= 0) {
+			//			String key = DateUtil.format(tempStartDate, DateFormat.LONG_DATE);
+			list.add(tempStartDate);
+			tempStartDate = DateUtil.addMonths(tempStartDate, frequency);
+		}
+		logger.debug(Literal.LEAVING);
+		return list;
+
+	}
+
+	private void processCovenantDetails(List<Covenant> covenantsList, FinanceMain financeMain,
+			CovenantType aCovenantType) {
+		logger.debug(Literal.ENTERING);
+		for (Covenant covenant : covenantsList) {
+
+			if (StringUtils.isBlank(covenant.getDescription())) {
+				covenant.setRemarks(aCovenantType.getDescription());
+			} else {
+				covenant.setRemarks(covenant.getDescription());
+			}
+			covenant.setCovenantType(aCovenantType.getCovenantType());
+
+			if (covenant.isAllowWaiver()) {
+				covenant.setPdd(false);
+				covenant.setOtc(false);
+				covenant.setReceivableDate(null);
+				covenant.setDocumentReceived(false);
+				covenant.setDocumentReceivedDate(null);
+				covenant.setFrequency(null);
+				covenant.setNextFrequencyDate(null);
+				covenant.setGraceDueDate(null);
+				covenant.setNotifyTo(null);
+				covenant.setAlertsRequired(false);
+				covenant.setAlertType(null);
+				covenant.setAlertDays(0);
+				covenant.setGraceDays(0);
+				covenant.setMandatoryRole(null);
+				covenant.setExtendedDate(null);
+				covenant.setAdditionalField3(null);
+				covenant.setAdditionalField2(null);
+				covenant.setAllowPostPonement(false);
+				covenant.setExtendedDate(null);
+			}
+
+			else {
+				if (StringUtils.isBlank(covenant.getStrAlertsRequired())) {
+					covenant.setAlertsRequired(aCovenantType.isAlertsRequired());
+				} else if (covenant.getStrAlertsRequired().equals("Y"))
+					covenant.setAlertsRequired(true);
+
+				if (!covenant.isAlertsRequired()) {
+					covenant.setAlertType(null);
+					covenant.setNotifyTo(null);
+					covenant.setGraceDays(0);
+					covenant.setAlertDays(0);
+				}
+
+				setFrequencyDateField(covenant.getFrequency(), financeMain, covenant, aCovenantType);
+
+				if (StringUtils.isBlank(covenant.getStrPdd())) {
+					if ("PDD".equals(aCovenantType.getCovenantType())) {
+						covenant.setPdd(true);
+					}
+				} else if (StringUtils.equals("Y", covenant.getStrPdd())) {
+					covenant.setPdd(true);
+				}
+
+				if (covenant.isPdd()) {
+					covenant.setMandatoryRole(null);
+					covenant.setOtc(false);
+				} else {
+					covenant.setReceivableDate(null);
+				}
+
+				if (StringUtils.isBlank(covenant.getStrOtc())) {
+					if ("OTC".equals(aCovenantType.getCovenantType())) {
+						covenant.setOtc(true);
+					}
+				} else if (StringUtils.equals("Y", covenant.getStrOtc())) {
+					covenant.setOtc(true);
+				}
+
+				if (covenant.isOtc()) {
+					if (StringUtils.isBlank(covenant.getStrPdd())) {
+						covenant.setPdd(false);
+					}
+					covenant.setMandatoryRole(null);
+				}
+
+				if (StringUtils.isBlank(covenant.getNotifyTo())) {
+					covenant.setAlertToRoles(null);
+				} else {
+					covenant.setAlertToRoles(covenant.getNotifyTo());
+				}
+
+				if (StringUtils.isBlank(covenant.getFrequency())) {
+					covenant.setFrequency(aCovenantType.getFrequency());
+				}
+
+				if (StringUtils.isBlank(covenant.getAlertType())) {
+					covenant.setAlertType(aCovenantType.getAlertType());
+				}
+
+				if (StringUtils.equals(covenant.getAlertType(), "Customer")) {
+					covenant.setAlertToRoles(null);
+				}
+
+				if (covenant.getlGraceDays() == null) {
+					covenant.setGraceDays(aCovenantType.getGraceDays());
+				} else
+					covenant.setGraceDays(covenant.getlGraceDays());
+
+				if (covenant.getlAlertDays() == null) {
+					covenant.setAlertDays(aCovenantType.getAlertDays());
+				} else
+					covenant.setAlertDays(covenant.getlAlertDays());
+
+				if (covenant.getNotifyTo() == null) {
+					covenant.setAlertToRoles(aCovenantType.getAlertToRoles());
+				}
+
+				if (!covenant.isAlertsRequired()) {
+					covenant.setAlertType(null);
+					covenant.setNotifyTo(null);
+					covenant.setGraceDays(0);
+					covenant.setAlertDays(0);
+				}
+
+				if (StringUtils.equals("Y", covenant.getStrAllowPostPonement())) {
+					covenant.setAllowPostPonement(true);
+				}
+
+			}
+
+		}
+
+	}
+
+	public void onCheckLOS(String covenantType, Covenant covenant) {
+		if ("LOS".equals(covenantType)) {
+			covenant.setPdd(true);
+			covenant.setOtc(true);
+
+		} else {
+			covenant.setPdd(false);
+			covenant.setOtc(false);
+		}
+	}
+
+	public void setFrequencyDateField(String strFrequencyType, FinanceMain financeMain, Covenant covenant,
+			CovenantType aCovenant) {
+
+		Date frequencyDate = financeMain.getFinStartDate();
+
+		if (strFrequencyType == null || frequencyDate == null) {
+			return;
+		}
+		Date appDate = SysParamUtil.getAppDate();
+
+		if (DateUtility.compare(appDate, frequencyDate) < 0) {
+			frequencyDate = DateUtil.addMonths(frequencyDate, 1);
+		}
+
+		if ("M".equals(strFrequencyType)) {
+			frequencyDate = DateUtil.addMonths(frequencyDate, 1);
+		} else if ("Q".equals(strFrequencyType)) {
+			frequencyDate = DateUtil.addMonths(frequencyDate, 3);
+		} else if ("H".equals(strFrequencyType)) {
+			frequencyDate = DateUtil.addMonths(frequencyDate, 6);
+		} else if ("A".equals(strFrequencyType)) {
+			frequencyDate = DateUtil.addMonths(frequencyDate, 12);
+		} else if ("O".equals(strFrequencyType)) {
+			if (covenant != null && !covenant.isAlertsRequired()) {
+				frequencyDate = null;
+			}
+		}
+
+		if (frequencyDate != null) {
+			if ("O".equals(strFrequencyType) && covenant.isAlertsRequired()) {
+				covenant.setNextFrequencyDate(covenant.getReceivableDate());
+			} else {
+				covenant.setNextFrequencyDate(frequencyDate);
+			}
+
+			Date covenantNextFrequencyDate = covenant.getNextFrequencyDate();
+
+			int covenantGraceDays = 0;
+			if (covenant.getlGraceDays() != null) {
+				covenantGraceDays = aCovenant.getGraceDays();
+			}
+
+			if (covenantNextFrequencyDate != null) {
+				covenant.setGraceDueDate(DateUtil.addDays(covenantNextFrequencyDate, covenantGraceDays));
+			}
+		} else {
+			covenant.setNextFrequencyDate(null);
+			covenant.setGraceDueDate(null);
+		}
+		logger.debug(Literal.LEAVING);
+	}
 	/*
 	 * ######################################################################### #######################################
 	 * DEFAULT SETTER GETTER METHODS #########################################################################
@@ -6716,5 +7741,21 @@ public class FinanceDataValidation {
 
 	public void setCustomerEMailService(CustomerEMailService customerEMailService) {
 		this.customerEMailService = customerEMailService;
+	}
+
+	public OCRHeaderService getOcrHeaderService() {
+		return ocrHeaderService;
+	}
+
+	public void setOcrHeaderService(OCRHeaderService ocrHeaderService) {
+		this.ocrHeaderService = ocrHeaderService;
+	}
+
+	public void setCovenantTypeDAO(CovenantTypeDAO covenantTypeDAO) {
+		this.covenantTypeDAO = covenantTypeDAO;
+	}
+
+	public void setFinCovenantTypeDAO(FinCovenantTypeDAO finCovenantTypeDAO) {
+		this.finCovenantTypeDAO = finCovenantTypeDAO;
 	}
 }

@@ -221,6 +221,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private SamplingService samplingService;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	public String newCustCIF;
+	public String applicationNo;
+	public String leadId;
 
 	/**
 	 * default constructor.<br>
@@ -321,6 +323,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 			if (arguments.containsKey("primaryCustID")) {
 				primaryCustId = (String) arguments.get("primaryCustID");
+			}
+
+			if (arguments.containsKey("applicationNo")) {
+				applicationNo = (String) arguments.get("applicationNo");
+			}
+
+			if (arguments.containsKey("leadId")) {
+				leadId = (String) arguments.get("leadId");
 			}
 
 			doLoadWorkFlow(this.jountAccountDetail.isWorkflow(), this.jountAccountDetail.getWorkflowId(),
@@ -742,6 +752,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		arg.put("newRecord", customerDetails.getCustomer().isNew());
 		arg.put("fromLoan", true);
 		arg.put("coAppFilter", cif);
+		arg.put("applicationNo", applicationNo);
+		arg.put("leadId", leadId);
 		if (financeMain != null && StringUtils.isNotEmpty(financeMain.getFinReference())) {
 			arg.put("finReference", financeMain.getFinReference());
 		} else if (jountAccountDetail != null && StringUtils.isNotEmpty(jountAccountDetail.getFinReference())) {

@@ -900,7 +900,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 								jointAccountDetail.getCustomerDetails().getCustomer().getCustShrtName());
 						customerDoumentMap.put(customerDocument.getCustDocCategory(), customerDocument);
 					}
-					map.put(jointAccountDetail.getCustomerDetails().getCustomer().getCasteId(), customerDoumentMap);
+					map.put(jointAccountDetail.getCustomerDetails().getCustomer().getCustID(), customerDoumentMap);
 				}
 			}
 		}
@@ -935,8 +935,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				document = customerDoumentMap.get(rcuDocument.getDocCategory());
 			} else if (rcuDocument.getDocumentType() == DocumentType.COAPPLICANT.getKey()) {
 				docType = DocumentType.COAPPLICANT.getKey();
-				if (map.containsKey(item.getCustId())) {
-					document = map.get(item.getCustId()).get(rcuDocument.getDocCategory());
+				if (map.containsKey(rcuDocument.getDocumentId())) {
+					document = map.get(rcuDocument.getDocumentId()).get(rcuDocument.getDocCategory());
 				}
 			}
 			if (document != null) {
@@ -1303,6 +1303,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private void setVerificationData(FinanceDetail financeDetail, Verification verification,
 			VerificationType verificationType) {
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
+		List<JointAccountDetail> jointaccountdetails = financeDetail.getJountAccountDetailList();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		verification.setModule(Module.LOAN.getKey());
 		verification.setCreatedOn(SysParamUtil.getAppDate());
@@ -1314,17 +1315,29 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			verification.setCustomerName(customer.getCustShrtName());
 		}
 		if (verificationType != VerificationType.FI) {
-			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
-			verification.setCustId(customer.getCustID());
-			verification.setCustomerName(customer.getCustShrtName());
+			if (!StringUtils.equals(verification.getReferenceType(), DocumentType.COAPPLICANT.getValue())) {
+				verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+				verification.setCustId(customer.getCustID());
+				verification.setCustomerName(customer.getCustShrtName());
+			}
 		}
 		if (verificationType == VerificationType.LV) {
 			if (verification.getReference() == null) {
 				verification.setReference(customer.getCustCIF());
 			}
-		} else if (verificationType == VerificationType.RCU) {
-			if (verification.getReference() == null) {
+		} else if (verificationType == VerificationType.RCU && verification.getReference() == null) {
+			if (!StringUtils.equals(verification.getReferenceType(), DocumentType.COAPPLICANT.getValue())) {
 				verification.setReference(customer.getCustCIF());
+			} else {
+				if (CollectionUtils.isNotEmpty(jointaccountdetails)) {
+					for (JointAccountDetail jointAccountDetail : jointaccountdetails) {
+						if (verification.getCustId() != null
+								&& jointAccountDetail.getCustID() == verification.getCustId()) {
+							verification.setReference(jointAccountDetail.getCustCIF());
+							break;
+						}
+					}
+				}
 			}
 		} else if (verificationType != VerificationType.PD) {
 			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());

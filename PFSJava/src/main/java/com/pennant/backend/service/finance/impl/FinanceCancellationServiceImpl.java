@@ -64,6 +64,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
+import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -77,6 +78,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -103,6 +105,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -128,6 +131,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	@Autowired(required = false)
 	private NotificationService notificationService;
+	private VASRecordingDAO vASRecordingDAO;
 	private long tempWorkflowId;
 
 	ReasonDetailDAO reasonDetailDAO;
@@ -951,18 +955,34 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 					new ErrorDetail(PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
 		}
 
-		/*
-		 * List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList(); if (list != null && !list.isEmpty())
-		 * { for (FinAdvancePayments finAdvPayment : list) { if (StringUtils.equals(finAdvPayment.getStatus(),
-		 * DisbursementConstants.STATUS_PAID)) { //Disbursement instructions should be cancelled before canceling a
-		 * loan. auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new ErrorDetail(PennantConstants.KEY_FIELD,
-		 * "60406", errParm, valueParm), usrLanguage)); }
-		 * 
-		 * if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON)) { //Disbursement
-		 * instructions should be cancelled before canceling a loan.
-		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new ErrorDetail(PennantConstants.KEY_FIELD, "60408",
-		 * errParm, valueParm), usrLanguage)); } } }
-		 */
+		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
+		if (CollectionUtils.isNotEmpty(list)) {
+			//Disbursement instructions should be reversed before canceling loan
+			for (FinAdvancePayments finAdvPayment : list) {
+				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_PAID)) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "60406", errParm, valueParm), usrLanguage));
+				}
+
+				// instructions should be cancelled before canceling a loan.
+				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON)) { //Disbursement
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "60408", errParm, valueParm), usrLanguage));
+				}
+			}
+		}
+
+		List<VASRecording> vasRecordings = vASRecordingDAO
+				.getVASRecordingsStatusByReference(financeMain.getFinReference(), "");
+		//Checking VAS instruction status.
+		if (CollectionUtils.isNotEmpty(vasRecordings)) {
+			for (VASRecording vasRecording : vasRecordings) {
+				if (!StringUtils.equals(vasRecording.getVasStatus(), VASConsatnts.STATUS_CANCEL)) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "60214", errParm, valueParm), usrLanguage));
+				}
+			}
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
@@ -1151,4 +1171,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		this.reasonDetailDAO = reasonDetailDAO;
 	}
 
+	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
+		this.vASRecordingDAO = vASRecordingDAO;
+	}
 }

@@ -3,6 +3,7 @@ package com.pennanttech.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -15,7 +16,9 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
+import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
+import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
@@ -32,9 +35,11 @@ import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.applicationmaster.LoanPendingDetails;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -45,7 +50,9 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
@@ -82,6 +89,7 @@ import com.pennanttech.controller.FinServiceInstController;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.FinServiceInstRESTService;
 import com.pennanttech.pffws.FinServiceInstSOAPService;
 import com.pennanttech.util.APIConstants;
@@ -121,6 +129,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private SecurityUserDAO securityUserDAO;
 	private FinanceTaxDetailService financeTaxDetailService;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
+	private CustomerDetailsService customerDetailsService;
+	private BranchDAO branchDAO;
 
 	/**
 	 * Method for perform addRateChange operation
@@ -539,14 +549,83 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		// for logging purpose
 		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
-		if (finServiceInstruction.getAmount() == null) {
-			finServiceInstruction.setAmount(BigDecimal.ZERO);
-		}
+
 		// bean validations
 		validationUtility.validate(finServiceInstruction, UpfrontFeesGroup.class);
 
+		if (StringUtils.isBlank(finServiceInstruction.getFinReference())
+				&& StringUtils.isBlank(finServiceInstruction.getExternalReference())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "finReference";
+			valueParm[1] = "externalReference";
+			return errorDetails("90123", valueParm);
+		} else if (StringUtils.isNotBlank(finServiceInstruction.getFinReference())
+				&& StringUtils.isNotBlank(finServiceInstruction.getExternalReference())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "finReference";
+			valueParm[1] = "externalReference";
+			return errorDetails("30511", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(finServiceInstruction.getFinReference())) {
+			finServiceInstruction.setFromBranch("");
+			finServiceInstruction.setToBranch("");
+			finServiceInstruction.setFinType("");
+			finServiceInstruction.setCustCIF("");
+		} else {
+			// for logging purpose
+			APIErrorHandlerService.logReference(finServiceInstruction.getExternalReference());
+
+			if (StringUtils.isBlank(finServiceInstruction.getFromBranch())) {
+				String valueParm[] = new String[1];
+				valueParm[0] = "fromBranch";
+				return errorDetails("90502", valueParm);
+			}
+
+			if (StringUtils.isBlank(finServiceInstruction.getFinType())) {
+				String valueParm[] = new String[1];
+				valueParm[0] = "finType";
+				return errorDetails("90502", valueParm);
+			}
+
+			if (StringUtils.isBlank(finServiceInstruction.getCustCIF())) {
+				String valueParm[] = new String[1];
+				valueParm[0] = "cif";
+				return errorDetails("90502", valueParm);
+			}
+
+			Branch fromBranch = branchDAO.getBranchById(finServiceInstruction.getFromBranch(), "");
+			if (fromBranch == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finServiceInstruction.getFromBranch();
+				return errorDetails("90129", valueParm);
+			}
+
+			Customer customer = customerDetailsService.checkCustomerByCIF(finServiceInstruction.getCustCIF(),
+					TableType.MAIN_TAB.getSuffix());
+			if (customer == null) {
+				String valueParm[] = new String[1];
+				valueParm[0] = finServiceInstruction.getCustCIF();
+				return errorDetails("90101", valueParm);
+			}
+			finServiceInstruction.setCustID(customer.getCustID());
+
+			int count = receiptService.geFeeReceiptCountByExtReference(Objects.toString(customer.getCustID(), ""),
+					FinanceConstants.FINSER_EVENT_FEEPAYMENT, finServiceInstruction.getExternalReference());
+			if (count > 0) {
+				String valueParm[] = new String[3];
+				valueParm[0] = "Invalid CIF";
+				valueParm[1] = finServiceInstruction.getCustCIF();
+				valueParm[2] = "externalreference is already assigned to another customer.";
+				return errorDetails("30550", valueParm);
+			}
+		}
+
+		if (finServiceInstruction.getAmount() == null) {
+			finServiceInstruction.setAmount(BigDecimal.ZERO);
+		}
+
 		String moduleDefiner = FinanceConstants.FINSER_EVENT_FEEPAYMENT;
-		//String eventCode = AccountEventConstants.ACCEVENT_REPAY;
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
@@ -556,7 +635,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		//vlidate duplicate record
 		boolean dedupFound = checkUpFrontDuplicateRequest(finServiceInstruction, moduleDefiner);
 		if (dedupFound) {
-			return errorDetails();
+			String valueParm[] = new String[1];
+			valueParm[0] = "transaction";
+			return errorDetails("41014", valueParm);
 		}
 		// execute manual payment service
 		financeDetail = finServiceInstController.doFeePayment(finServiceInstruction);
@@ -565,19 +646,24 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		return financeDetail;
 	}
 
-	private FinanceDetail errorDetails() {
+	private FinanceDetail errorDetails(String errorCode, String parameter[]) {
 		FinanceDetail financeDetail;
 		financeDetail = new FinanceDetail();
 		doEmptyResponseObject(financeDetail);
-		String valueParm[] = new String[1];
-		valueParm[0] = "transaction";
-		financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("41014", valueParm));
+		financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorCode, parameter));
 		return financeDetail;
 	}
 
 	private boolean checkUpFrontDuplicateRequest(FinServiceInstruction finServiceInstruction, String moduleDefiner) {
-		List<FinReceiptDetail> receiptDetails = finReceiptDetailDAO
-				.getFinReceiptDetailByReference(finServiceInstruction.getFinReference());
+
+		List<FinReceiptDetail> receiptDetails = null;
+		if (StringUtils.isNotBlank(finServiceInstruction.getFinReference())) {
+			receiptDetails = finReceiptDetailDAO
+					.getFinReceiptDetailByReference(finServiceInstruction.getFinReference());
+		} else {
+			receiptDetails = finReceiptDetailDAO
+					.getFinReceiptDetailByReference(Objects.toString(finServiceInstruction.getCustID(), ""));
+		}
 		String paymentMode = finServiceInstruction.getPaymentMode();
 		if (paymentMode.equals(RepayConstants.RECEIPTMODE_RTGS) || paymentMode.equals(RepayConstants.RECEIPTMODE_NEFT)
 				|| paymentMode.equals(RepayConstants.RECEIPTMODE_IMPS)
@@ -1975,6 +2061,61 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		return response;
 	}
 
+	@Override
+	public WSReturnStatus updateCovenants(FinanceDetail financeDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		List<ErrorDetail> errorDetails;
+		try {
+
+			FinanceMain financeMain = null;
+			String finReference = financeDetail.getFinReference();
+			List<Covenant> covenantsList = financeDetail.getCovenants();
+
+			//validating the covenants if same covenant type and same category name
+
+			if (finReference == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FinReference";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			} else {
+				financeMain = financeMainDAO.getFinanceMain(finReference, new String[] { "FinIsActive", "FinStartDate",
+						"MaturityDate, WorkFlowId, CustId, FinReference" }, "");
+				if (financeMain == null || !financeMain.isFinIsActive()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finReference;
+					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+				}
+			}
+
+			financeMain.setUserDetails(SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser()));
+
+			if (covenantsList == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "CovenatDetails ";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
+			// for logging purpose
+			APIErrorHandlerService.logReference(finReference);
+
+			errorDetails = financeDataValidation.covenantValidation(financeMain, covenantsList, null);
+
+			for (ErrorDetail errorDetail : errorDetails) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+						errorDetail.getParameters());
+				return returnStatus;
+			}
+
+			returnStatus = finServiceInstController.processCovenants(financeMain, covenantsList);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
 	/**
 	 * Method for nullify the response object to prepare valid response message.
 	 * 
@@ -2187,6 +2328,16 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Autowired
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
+	}
+
+	@Autowired
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	@Autowired
+	public void setBranchDAO(BranchDAO branchDAO) {
+		this.branchDAO = branchDAO;
 	}
 
 }

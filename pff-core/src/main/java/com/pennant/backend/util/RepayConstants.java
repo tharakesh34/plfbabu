@@ -101,6 +101,7 @@ public class RepayConstants {
 	public static final String RECEIPTMODE_ONLINE = "ONLINE";
 	public static final String RECEIPTMODE_BILLDESK = "BILLDESK";
 	public static final String RECEIPTMODE_MOBILE = "MOBILE";
+	public static final String RECEIPTMODE_DIGITAL = "DIGITAL";
 	// 2. Back-end Process Receipt Modes
 	public static final String RECEIPTMODE_EMIINADV = "EMIINADV";
 	public static final String RECEIPTMODE_ADVINT = "ADVINT";

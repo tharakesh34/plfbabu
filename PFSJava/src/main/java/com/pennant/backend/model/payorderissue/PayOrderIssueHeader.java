@@ -13,6 +13,7 @@ import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -56,6 +57,7 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 
 	private List<FinCovenantType> covenantTypeList = new ArrayList<FinCovenantType>();
 	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>(1);
+	private List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>(1);
 	private List<JointAccountDetail> jointAccountDetails = new ArrayList<JointAccountDetail>(1);
 
 	public boolean isNew() {
@@ -308,6 +310,14 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 
 	public void setDocumentDetailsList(List<DocumentDetails> documentDetailsList) {
 		this.documentDetailsList = documentDetailsList;
+	}
+
+	public List<FinFeeDetail> getFinFeeDetailList() {
+		return finFeeDetailList;
+	}
+
+	public void setFinFeeDetailList(List<FinFeeDetail> finFeeDetailList) {
+		this.finFeeDetailList = finFeeDetailList;
 	}
 
 	public List<VASRecording> getvASRecordings() {

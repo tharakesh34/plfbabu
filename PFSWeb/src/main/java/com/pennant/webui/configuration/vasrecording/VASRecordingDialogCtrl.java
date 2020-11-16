@@ -100,6 +100,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -162,6 +163,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.AgreementDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
+import com.pennant.webui.finance.financemain.FinAdvancePaymentsListCtrl;
 import com.pennant.webui.finance.financemain.FinFeeDetailListCtrl;
 import com.pennant.webui.finance.financemain.FinVasRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -630,6 +632,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						getFinVasRecordingDialogCtrl().doFillVasRecordings(this.vasRecordings);
 
 						removeFeesFromFeeList(aVASRecording.getVasReference());
+						processVasDisbInstructions();
 						// send the data back to customer
 						closeDialog();
 					}
@@ -887,11 +890,13 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						finFeeDetailsList.add(finFeeDetail);
 
 						appendFeesToFeeList(finFeeDetail);
+						processVasDisbInstructions();
 						aVASRecording.setFinFeeDetailsList(finFeeDetailsList);
 
 						//Deleting the Fee if Customer provided the out side the system insurance
 					} else if (!isNewrecord() && (this.termInsuranceLien.isChecked())) {
 						removeFeesFromFeeList(aVASRecording.getVasReference());
+						processVasDisbInstructions();
 					}
 
 					// send the data back to customer
@@ -925,6 +930,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 				// List Detail Refreshment
 				refreshList();
+
+				if (StringUtils.isBlank(aVASRecording.getNextTaskId())) {
+					aVASRecording.setNextRoleCode("");
+				}
 
 				// Confirmation message
 				String msg = PennantApplicationUtil.getSavingStatus(aVASRecording.getRoleCode(),
@@ -1325,6 +1334,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.modeOfPayment.setDisabled(true);
 			this.allowFeeType.setDisabled(true);
+			this.btnInsurance_VasRecording.setVisible(false);
 		}
 		this.paidAmt.setReadonly(true);
 		this.paidAmt.setDisabled(true);
@@ -1667,66 +1677,64 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		List<Object> objectList = new ArrayList<>();
 		setObjectData(objectList);
 
-		if (!enqiryModule) {
-			//Pre-Validation Checking & Setting Defaults
-			Map<String, Object> fieldValuesMap = null;
-			if (getExtendedFieldRender() != null && getExtendedFieldRender().getMapValues() != null) {
-				fieldValuesMap = aVASRecording.getExtendedFieldRender().getMapValues();
+		//Pre-Validation Checking & Setting Defaults
+		Map<String, Object> fieldValuesMap = null;
+		if (getExtendedFieldRender() != null && getExtendedFieldRender().getMapValues() != null) {
+			fieldValuesMap = aVASRecording.getExtendedFieldRender().getMapValues();
+		}
+
+		List<ExtendedFieldDetail> extendedFieldDetails = extendedFieldHeader.getExtendedFieldDetails();
+
+		//setting the pre and post validation scripts
+		setPreValidationScript(vasConfiguration.getPreValidation());
+		setPostValidationScript(vasConfiguration.getPostValidation());
+		setExtendedFieldHeader(extendedFieldHeader);
+		aVASRecording.getRecordType();
+		aVASRecording.getRecordStatus();
+
+		String preValidationScript = vasConfiguration.getPreValidation();
+		if (StringUtils.isNotEmpty(preValidationScript)) {
+			ScriptErrors defaults = getScriptValidationService().setPreValidationDefaults(preValidationScript,
+					fieldValuesMap);
+
+			// Initiation of Field Value Map
+			if (fieldValuesMap == null) {
+				fieldValuesMap = new HashMap<>();
 			}
-
-			List<ExtendedFieldDetail> extendedFieldDetails = extendedFieldHeader.getExtendedFieldDetails();
-
-			//setting the pre and post validation scripts
-			setPreValidationScript(vasConfiguration.getPreValidation());
-			setPostValidationScript(vasConfiguration.getPostValidation());
-			setExtendedFieldHeader(extendedFieldHeader);
-			aVASRecording.getRecordType();
-			aVASRecording.getRecordStatus();
-
-			String preValidationScript = vasConfiguration.getPreValidation();
-			if (StringUtils.isNotEmpty(preValidationScript)) {
-				ScriptErrors defaults = getScriptValidationService().setPreValidationDefaults(preValidationScript,
-						fieldValuesMap);
-
-				// Initiation of Field Value Map
-				if (fieldValuesMap == null) {
-					fieldValuesMap = new HashMap<>();
-				}
-				// Overriding Default values
-				List<ScriptError> defaultList = defaults.getAll();
-				for (int i = 0; i < defaultList.size(); i++) {
-					ScriptError dftKeyValue = defaultList.get(i);
-					//if VAS is a new record we have to set the default values
-					if (StringUtils.trimToNull(this.vASRecording.getVasReference()) == null
-							&& aVASRecording.isNewRecord()) {
-						ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
-						if (!detail.isVisible() || detail.isValFromScript()) {
-							if (detail.isValFromScript()) {
-								detail.setFieldList(dftKeyValue.getValue());
-							}
-							fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
-						}
-					} else { //Is VAS record is saved in DB or memory? then we have to set the saved data to extended fields
-						ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
+			// Overriding Default values
+			List<ScriptError> defaultList = defaults.getAll();
+			for (int i = 0; i < defaultList.size(); i++) {
+				ScriptError dftKeyValue = defaultList.get(i);
+				//if VAS is a new record we have to set the default values
+				if (StringUtils.trimToNull(this.vASRecording.getVasReference()) == null
+						&& aVASRecording.isNewRecord()) {
+					ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
+					if (!detail.isVisible() || detail.isValFromScript()) {
 						if (detail.isValFromScript()) {
 							detail.setFieldList(dftKeyValue.getValue());
 						}
+						fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
+					}
+				} else { //Is VAS record is saved in DB or memory? then we have to set the saved data to extended fields
+					ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
+					if (detail.isValFromScript()) {
+						detail.setFieldList(dftKeyValue.getValue());
 					}
 				}
 			}
-
-			if (fieldValuesMap != null) {
-				generator.setFieldValueMap((HashMap<String, Object>) fieldValuesMap);
-			}
-			try {
-				generator.renderWindow(extendedFieldHeader, newRecord);
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
-			}
-
-			//Enable and disabling the Premium amount Button 
-			setPremiumCalcButton(aVASRecording);
 		}
+
+		if (fieldValuesMap != null) {
+			generator.setFieldValueMap((HashMap<String, Object>) fieldValuesMap);
+		}
+		try {
+			generator.renderWindow(extendedFieldHeader, newRecord);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
+
+		//Enable and disabling the Premium amount Button 
+		setPremiumCalcButton(aVASRecording);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -2537,10 +2545,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.recurringDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.productCode.setProperties("VASConfiguration", "ProductCode", "ProductDesc", true, 8);
 		this.primaryLinkRef.setWidth("180px");
-		this.dsaId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
-		this.dmaId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
+		this.dsaId.setProperties("DSA", "DealerName", "Code", false, LengthConstants.LEN_MASTER_CODE);
+		this.dmaId.setProperties("DMA", "DealerName", "Code", false, LengthConstants.LEN_MASTER_CODE);
 		this.fulfilOfficerId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
-		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
+		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
+				LengthConstants.LEN_REFERRALID);
 		this.productCode.setTextBoxWidth(145);
 		this.dsaId.setTextBoxWidth(145);
 		this.dmaId.setTextBoxWidth(145);
@@ -2844,6 +2853,26 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void processVasDisbInstructions() {
+		logger.debug(Literal.ENTERING);
+		try {
+			// Fetch FinanceMain Base Controller
+			FinanceMainBaseCtrl mainBaseCtrl = (FinanceMainBaseCtrl) finVasRecordingDialogCtrl.getClass()
+					.getMethod("getFinanceMainDialogCtrl").invoke(finVasRecordingDialogCtrl);
+
+			// FinAdvancePaymentsListCtrl List Controller
+			FinAdvancePaymentsListCtrl finAdvancePaymentsListCtrl = (FinAdvancePaymentsListCtrl) mainBaseCtrl.getClass()
+					.getMethod("getFinAdvancePaymentsListCtrl").invoke(mainBaseCtrl);
+			if (finAdvancePaymentsListCtrl != null) {
+				finAdvancePaymentsListCtrl.doFillFinAdvancePaymentsDetails(
+						finAdvancePaymentsListCtrl.getFinAdvancePaymentsList(), this.vasRecordings);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	/**
 	 * Method for action Event of Changing Waived Amount
 	 * 
@@ -2917,7 +2946,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private void setMedicalStatusVisibility(boolean disabled) {
 		Clients.clearWrongValue(medicalStatus);
 		this.medicalStatus.setErrorMessage("");
-		this.medicalStatus.setDisabled(!disabled);
+		if (!enqiryModule) {
+			this.medicalStatus.setDisabled(!disabled);
+		}
 	}
 
 	/*

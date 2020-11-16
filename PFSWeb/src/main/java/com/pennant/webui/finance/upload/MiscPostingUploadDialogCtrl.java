@@ -779,7 +779,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		for (MiscPostingUpload miscPostingUpload : rejectedMiscList) {
 			miscPostingUpload.setUploadStatus(PennantConstants.UPLOAD_STATUS_REJECT);
-			miscPostingUpload.setReason("");
+			miscPostingUpload.setReason("Manually rejected by the approver ");
 			rejectMiscpostingList.add(miscPostingUpload);
 		}
 
@@ -855,7 +855,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		AuditHeader auditHeader;
 		String nextRoleCode = "";
 
-		aUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+		aUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aUploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aUploadHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

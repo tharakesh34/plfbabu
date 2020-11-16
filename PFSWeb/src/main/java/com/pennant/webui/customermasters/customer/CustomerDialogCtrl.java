@@ -146,7 +146,6 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
-import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -213,7 +212,6 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.document.external.ExternalDocumentManager;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
 import com.pennanttech.pff.external.FinnovService;
@@ -621,6 +619,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	private String betaDialog = "";
 
+	public String dmsApplicationNo;
+	public String leadId;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -877,6 +878,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.listBoxCustomerFinExposure.setHeight(borderlayoutHeights - 130 + "px");
 				this.listBoxCustomerExternalLiability.setHeight(borderlayoutHeights - 130 + "px");
 				this.listBoxCustomerCardSalesInformation.setHeight(borderlayoutHeights - 130 + "px");
+			}
+
+			if (arguments.containsKey("applicationNo")) {
+				dmsApplicationNo = (String) arguments.get("applicationNo");
+			}
+
+			if (arguments.containsKey("leadId")) {
+				leadId = (String) arguments.get("leadId");
 			}
 
 			doShowDialog(this.customerDetails);
@@ -1865,6 +1874,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			} else {
 				aCustomer.setCustSalutationCode(getComboboxValue(this.custSalutationCode));
+				aCustomer.setLovDescCustSalutationCodeName(this.custSalutationCode.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4103,8 +4113,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		String curLoginUser = getUserWorkspace().getLoggedInUser().getUserName();
 		BlackListCustomers balckListData = setBlackListCustomerData(customerDetails, customerDetails.getCustCIF());
-		List<BlackListCustomers> blackList = getDedupParmService().fetchBlackListCustomers(financeMain.getRoleCode(),
-				financeMain.getFinType(), balckListData, curLoginUser);
+		List<BlackListCustomers> blackList = getDedupParmService().fetchBlackListCustomers(getRole(), "", balckListData,
+				curLoginUser);
 		int userAction = -1;
 		ShowBlackListDetailBox details = null;
 		if (CollectionUtils.isNotEmpty(blackList)) {
@@ -4422,7 +4432,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					CustomerDetails tCustomerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
 					String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
 					tCustomerDetails = FetchCustomerDedupDetails.getCustomerDedup(getRole(), tCustomerDetails,
-							this.window_CustomerDialog, curLoginUser);
+							this.window_CustomerDialog, curLoginUser, "");
 					if (tCustomerDetails.getCustomer().isDedupFound()
 							&& !tCustomerDetails.getCustomer().isSkipDedup()) {
 						processCompleted = false;
@@ -4483,7 +4493,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			//checking customer dedupe from loan origination
 			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
 			aCustomerDetails = FetchCustomerDedupDetails.getCustomerDedup(getRole(), aCustomerDetails,
-					this.window_CustomerDialog, curLoginUser);
+					this.window_CustomerDialog, curLoginUser, "");
 			if (aCustomerDetails.getCustomer().isDedupFound() && !aCustomerDetails.getCustomer().isSkipDedup()) {
 				return false;
 			}
@@ -4702,9 +4712,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (validateAllDetails && validateChildDetails) {
 				tab.setSelected(true);
 				CustomerDetails tCustomerDetails = aCustomerDetails;
+				String finType = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType();
 				String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
 				tCustomerDetails = FetchCustomerDedupDetails.getCustomerDedup(getRole(), tCustomerDetails,
-						this.window_CustomerDialog, curLoginUser);
+						this.window_CustomerDialog, curLoginUser, finType);
 				//When  user Clicking on Close Button returns same page.
 				if (tCustomerDetails.getCustomer().isDedupFound() && !tCustomerDetails.getCustomer().isSkipDedup()) {
 					return false;
@@ -6260,6 +6271,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		map.put("roleCode", getRole());
 		map.put("isRetailCustomer", isRetailCustomer);
 		map.put("finReference", finReference);
+		map.put("dmsApplicationNo", dmsApplicationNo);
+		map.put("leadId", leadId);
 
 		if (isNewCustCret) {
 			map.put("isNewCustCret", isNewCustCret);
@@ -6311,6 +6324,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				map.put("enqiryModule", this.isEnqProcess);
 				map.put("isRetailCustomer", isRetailCustomer);
 				map.put("finReference", finReference);
+				map.put("dmsApplicationNo", dmsApplicationNo);
+				map.put("leadId", leadId);
 				if (getFinanceMainDialogCtrl() != null) {
 					map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());
 				}
@@ -7178,7 +7193,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						PennantAppUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()), format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(finEnquiry.getFinStatus());
+				lc = new Listcell(finEnquiry.getLoanStsDesc());
 				lc.setParent(item);
 				this.listBoxCustomerFinExposure.appendChild(item);
 
@@ -8466,6 +8481,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			aruments.put("moduleCode", moduleCode);
 			aruments.put("enqiryModule", enqiryModule);
 			aruments.put("custId", getCustomerDetails().getCustID());
+			aruments.put("customerDialogCtrl", this);
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerExtLiabilityUploadDialog.zul",
 					null, aruments);
 		} catch (InterfaceException e) {

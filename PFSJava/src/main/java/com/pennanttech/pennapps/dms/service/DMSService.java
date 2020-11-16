@@ -24,8 +24,6 @@ public interface DMSService {
 	DMSQueue getOfferIdByFin(DMSQueue dmsQueue);
 
 	public byte[] getImageByUri(String docUri);
-	
-	public DMSQueue isExistDocuri(String docUri,String reference);
-	
+
 	public void updateDMSQueue(DMSQueue dmsQueue);
 }

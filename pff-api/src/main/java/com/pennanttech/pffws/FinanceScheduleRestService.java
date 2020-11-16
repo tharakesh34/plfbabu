@@ -8,6 +8,7 @@ import javax.ws.rs.Produces;
 
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.finance.EmiResponse;
 
 @Produces("application/json")
 public interface FinanceScheduleRestService {
@@ -19,5 +20,9 @@ public interface FinanceScheduleRestService {
 	@GET
 	@Path("/loanSchedule/getLoanInquiry/{finReference}")
 	public FinScheduleData getFinanceInquiry(@PathParam("finReference") String finReference) throws ServiceException;
+
+	@POST
+	@Path("/loanSchedule/getEMIAmount")
+	public EmiResponse getEMIAmount(FinScheduleData finScheduleData) throws ServiceException;
 
 }

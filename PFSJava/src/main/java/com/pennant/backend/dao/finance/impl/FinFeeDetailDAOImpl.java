@@ -1084,4 +1084,28 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public void deleteByTransactionId(String transactionId, boolean isWIF, String tableType) {
+		logger.debug(Literal.ENTERING);
+
+		FinFeeDetail finFeeDetail = new FinFeeDetail();
+		finFeeDetail.setTransactionId(transactionId);
+
+		StringBuilder sql = new StringBuilder();
+		if (isWIF) {
+			sql.append("Delete From WIFFinFeeDetail");
+		} else {
+			sql.append("Delete From FinFeeDetail");
+		}
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" Where TransactionId = :TransactionId ");
+		logger.debug(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+
+		logger.debug(Literal.LEAVING);
+	}
+
 }

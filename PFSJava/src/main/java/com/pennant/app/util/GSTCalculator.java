@@ -394,8 +394,8 @@ public class GSTCalculator {
 		if (StringUtils.isBlank(custBranch)) {
 			return gstExecutionMap;
 		}
-
-		if (finBranch == null) {
+		//getting empty string for some cases
+		if (StringUtils.isEmpty(finBranch)) {
 			finBranch = custBranch;
 		}
 

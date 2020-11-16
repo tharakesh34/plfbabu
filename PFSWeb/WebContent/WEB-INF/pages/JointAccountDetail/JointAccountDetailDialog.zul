@@ -55,7 +55,7 @@
 											<space id="space_CustCIF" spacing="2px" sclass="mandatory" />
 											<textbox id="custCIF" width="180px" />
 											<longbox id="custID" width="150px" maxlength="26" visible="false" />
-											<button id="btnSearchCustCIF" visible="false" image="/images/icons/LOVSearch.png" />
+											<button id="btnSearchCustCIF" visible="false" image="/images/icons/LOVSearch.png" autodisable="btnSearchCustCIF" />
 											<space spacing="2px" />
 											<button id="viewCustInfo" image="/images/icons/more.png" tooltiptext="${c:l('tooltip_Custinfo')}" />
 											<space spacing="2px" />

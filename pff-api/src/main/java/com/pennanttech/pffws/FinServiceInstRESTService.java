@@ -116,4 +116,8 @@ public interface FinServiceInstRESTService {
 	public FinAdvPaymentDetail getDisbursmentDetails(@PathParam("finReference") String finReference)
 			throws ServiceException;
 
+	@POST
+	@Path("/loanInstructionService/updateCovenants")
+	public WSReturnStatus updateCovenants(FinanceDetail financeDetail) throws ServiceException;
+
 }

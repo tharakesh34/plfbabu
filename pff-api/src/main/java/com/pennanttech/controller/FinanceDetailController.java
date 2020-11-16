@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
@@ -40,6 +41,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -61,6 +63,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.finance.EmiResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class FinanceDetailController extends SummaryDetailService {
@@ -340,10 +343,10 @@ public class FinanceDetailController extends SummaryDetailService {
 		// fetch finType fees details
 		String finEvent = "";
 		boolean enquiry = true;
-		if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
+		if (CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinFeeDetailList())) {
 			enquiry = false;
 		}
-		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent, null, enquiry);
+		executeFeeCharges(financeDetail, finEvent, enquiry);
 
 		// Step Policy Details
 		if (financeMain.isStepFinance()) {
@@ -398,6 +401,24 @@ public class FinanceDetailController extends SummaryDetailService {
 		finScheduleData.getDisbursementDetails().add(disbursementDetails);
 
 		logger.debug("Leaving");
+	}
+
+	private void executeFeeCharges(FinanceDetail financeDetail, String eventCode, boolean enquiry)
+			throws IllegalAccessException, InvocationTargetException {
+		FinScheduleData schData = financeDetail.getFinScheduleData();
+		if (CollectionUtils.isEmpty(schData.getFinFeeDetailList())) {
+			if (StringUtils.isBlank(eventCode)) {
+				eventCode = PennantApplicationUtil.getEventCode(schData.getFinanceMain().getFinStartDate());
+			}
+			feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, null, enquiry);
+		} else {
+			feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, null, enquiry);
+		}
+		if (financeDetail.isStp()) {
+			for (FinFeeDetail feeDetail : schData.getFinFeeDetailList()) {
+				feeDetail.setWorkflowId(0);
+			}
+		}
 	}
 
 	/**
@@ -579,6 +600,44 @@ public class FinanceDetailController extends SummaryDetailService {
 
 		logger.debug("Leaving");
 		return response;
+	}
+
+	public EmiResponse getEMIAmount(FinanceDetail finDetail) {
+		logger.debug("Enteing");
+		EmiResponse response = new EmiResponse();
+		try {
+			FinanceMain finMain = finDetail.getFinScheduleData().getFinanceMain();
+
+			finMain.setMaturityDate(finMain.getCalMaturity());
+
+			doSetRequiredData(finDetail.getFinScheduleData());
+
+			List<Integer> planEMIHmonths = new ArrayList<Integer>();
+			if (CollectionUtils.isNotEmpty(finDetail.getFinScheduleData().getApiPlanEMIHmonths())
+					&& StringUtils.equals(finDetail.getFinScheduleData().getFinanceMain().getPlanEMIHMethod(),
+							FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+				for (FinPlanEmiHoliday detail : finDetail.getFinScheduleData().getApiPlanEMIHmonths()) {
+					planEMIHmonths.add(detail.getPlanEMIHMonth());
+				}
+			}
+
+			finDetail.getFinScheduleData().setPlanEMIHmonths(planEMIHmonths);
+
+			BigDecimal repayAmount = ScheduleCalculator.getEMIOnFinAssetValue(finDetail);
+
+			if (repayAmount.compareTo(BigDecimal.ZERO) > 0) {
+				response.setRepayAmount(repayAmount);
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			}
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+		logger.debug("Leaving");
+
+		return response;
+
 	}
 
 	public FinanceDetailService getFinanceDetailService() {

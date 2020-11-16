@@ -288,6 +288,7 @@ import com.pennant.backend.model.finance.HoldDisbursement;
 import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.LoanReport;
 import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PMAY;
@@ -565,6 +566,7 @@ public class PennantJavaUtil {
 	private static String FEEREFUND_WF = "FINFEEREFUND_PROCESS";
 	private static String WF_DEPOSITDETAILS = "DEPOSITDETAILS";
 	private static String WF_HOLDDISBURSEMENT = "HOLDDISBURSEMENT";
+	private static String WF_EXPENSEUPLOAD = "EXPENSEUPLOAD";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
@@ -1616,6 +1618,10 @@ public class PennantJavaUtil {
 				new ModuleMapping("FinanceMain", FinanceMain.class, new String[] { "FinanceMain", "FinanceMain_AView" },
 						null, new String[] { "FinReference", "FinType" }, null, 350));
 
+		//Used for selecting parent lan reference in lan linking module
+		ModuleUtil.register("LLFinanceMain",
+				new ModuleMapping("FinanceMain", FinanceMain.class, new String[] { "FinanceMain", "FinanceMain_View" },
+						null, new String[] { "FinReference", "FinType" }, null, 350));
 		ModuleUtil.register("NOCFinanceMain",
 				new ModuleMapping("FinanceMain", FinanceMain.class, new String[] { "FinanceMain", "FinanceMain_AView" },
 						null, new String[] { "FinReference", "FinType" },
@@ -2266,7 +2272,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("DSA",
 				new ModuleMapping("DSA", VehicleDealer.class,
 						new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF,
-						new String[] { "DealerId", "Code", "DealerName" },
+						new String[] { "DealerName", "Code" },
 						new Object[][] { { "DealerType", "0", "DSA" }, { "Active", "0", 1 } }, 350));
 
 		ModuleUtil.register("SourceOfficer", new ModuleMapping("SourceOfficer", VehicleDealer.class,
@@ -2953,7 +2959,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("UploadHeader",
 				new ModuleMapping("UploadHeader", UploadHeader.class,
-						new String[] { "uploadheader", "UPLOADHEADER_AVIEW" }, masterWF,
+						new String[] { "uploadheader", "UPLOADHEADER_AVIEW" }, WF_EXPENSEUPLOAD,
 						new String[] { "UploadId", "FileName" }, null, 600));
 
 		ModuleUtil.register("LoanTypeExpenseUpload",
@@ -3760,7 +3766,9 @@ public class PennantJavaUtil {
 				new ModuleMapping("VasMovementDetail", VasMovementDetail.class,
 						new String[] { "VasMovementDetails", "VasMovementDetails_AView" }, masterWF,
 						new String[] { "vasMovementId", "vasMovementDetailId" }, null, 300));
-
+		ModuleUtil.register("LoanMasterReport",
+				new ModuleMapping("LoanMasterReport", LoanReport.class, new String[] { "LoanMasterReport_MVIEW" },
+						masterWF, new String[] { "FinReference", "FinType" }, null, 500));
 		registerCustomModules();
 	}
 

@@ -212,7 +212,7 @@
 														<textbox id="offerId" width="180px" />
 													</hbox>
 												</row>
-											   <row id="row_AllowLoanTypes" visible="false">
+											   <row id="row_AllowLoanTypes" visible="true">
 													<label
 														id="label_FinanceMainDialog_AllowLoanSplit"
 														value="${c:l('label_FinanceMainDialog_AllowLoanSplit.value')}" />
@@ -228,7 +228,7 @@
 													<hbox>
 														<space
 															spacing="2px" />
-														<textbox
+														<extendedcombobox
 															id="parentLoanReference" />
 													</hbox>
 												</row>
@@ -435,7 +435,7 @@
 													<label id="label_FinanceMainDialog_FinCurrentAssetValue" />
 													<currencyBox id="finCurrentAssetValue" />
 												</row>
-												<row visible="false">
+												<row visible="true">
 													<label id="label_FinanceMainDialog_AppliedLoanAmt" value="${c:l('label_FinanceMainDialog_AppliedLoanAmt.value')}" />
 													<currencyBox id="appliedLoanAmt" />
 												</row>

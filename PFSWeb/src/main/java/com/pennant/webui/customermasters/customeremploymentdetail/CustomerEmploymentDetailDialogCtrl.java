@@ -1023,7 +1023,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		if (getCustomerDialogCtrl() != null) {
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
-		if (isWorkFlowEnabled() || isCustomerWorkflow) {
+		if (isWorkFlowEnabled() || isCustomerWorkflow || isFinanceProcess) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;

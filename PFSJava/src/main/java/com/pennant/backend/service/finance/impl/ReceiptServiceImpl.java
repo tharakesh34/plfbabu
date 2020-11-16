@@ -318,8 +318,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(receiptHeader.getReceiptMode())) {
 				receiptHeader.setManualAdvise(manualAdviseDAO.getManualAdviseByReceiptId(receiptID, "_View"));
 			}
-			receiptHeader.setPaidFeeList(
-					feeReceiptService.getPaidFinFeeDetails(receiptHeader.getReference(), receiptID, "_View"));
+			if (StringUtils.isBlank(receiptHeader.getExtReference())) {
+				receiptHeader.setPaidFeeList(
+						feeReceiptService.getPaidFinFeeDetails(receiptHeader.getReference(), receiptID, "_View"));
+			} else {
+				receiptHeader.setPaidFeeList(
+						feeReceiptService.getPaidFinFeeDetails(receiptHeader.getExtReference(), receiptID, "_View"));
+				FinReceiptHeader frh = finReceiptHeaderDAO.getFinTypeByReceiptID(receiptHeader.getReceiptID());
+				if (frh != null) {
+					receiptHeader.setFinType(frh.getFinType());
+					receiptHeader.setFinTypeDesc(frh.getFinTypeDesc());
+					receiptHeader.setFinCcy(frh.getFinCcy());
+					receiptHeader.setFinCcyDesc(frh.getFinCcyDesc());
+				}
+
+			}
 		}
 
 		logger.debug("Leaving");
@@ -1621,6 +1634,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				receiptRealizationService.doApprove(aAuditHeader);
 				aAuditHeader.getAuditDetail().setModelData(receiptData);
 				return aAuditHeader;
+			}
+		}
+		//schedule pay effect on cheque/dd realization(if N schedule will effect while approve/if Y schedule will effect while realization)
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.CHEQUE_MODE_SCHDPAY_EFFT_ON_REALIZATION)
+				&& SysParamUtil.isAllowed(SMTParameterConstants.CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER)) {
+			if (StringUtils.equals(FinanceConstants.REALIZATION_APPROVER, roleCode)) {
+				if (((StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
+						FinanceConstants.FINSER_EVENT_SCHDRPY)
+						&& StringUtils.isEmpty(receiptData.getReceiptHeader().getPrvReceiptPurpose())))
+						&& (StringUtils.equals(receiptData.getReceiptHeader().getReceiptMode(),
+								RepayConstants.RECEIPTMODE_CHEQUE)
+								|| StringUtils.equals(receiptData.getReceiptHeader().getReceiptMode(),
+										RepayConstants.RECEIPTMODE_DD))) {
+					receiptRealizationService.doApprove(aAuditHeader);
+					aAuditHeader.getAuditDetail().setModelData(receiptData);
+					return aAuditHeader;
+				}
 			}
 		}
 
@@ -5235,9 +5265,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		finReceiptHeader.setValueDate(finReceiptHeader.getReceiptDate());
 
 		List<FinReceiptDetail> receiptDetailList = null;
-		if (finReceiptHeader.getReceiptPurpose().equals(FinanceConstants.FINSER_EVENT_SCHDRPY) && (StringUtils
-				.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)
-				|| StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL))) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER)
+				&& finReceiptHeader.getReceiptPurpose().equals(FinanceConstants.FINSER_EVENT_SCHDRPY)
+				&& (StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)
+						|| StringUtils.equals(finReceiptHeader.getReceiptModeStatus(),
+								RepayConstants.PAYSTATUS_CANCEL))) {
 			receiptDetailList = finReceiptDetailDAO.getReceiptHeaderByID(receiptId, "");
 		} else {
 
@@ -5245,12 +5277,27 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		finReceiptHeader.setReceiptDetails(receiptDetailList);
 		int size = receiptDetailList.size();
-		FinReceiptDetail recDtl = receiptDetailList.get(size - 1);
 		if (size > 0) {
+			FinReceiptDetail recDtl = receiptDetailList.get(size - 1);
 			finReceiptHeader.setValueDate(recDtl.getValueDate());
 			if (finReceiptHeader.getReceiptPurpose().equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
 					&& finReceiptHeader.getRealizationDate() != null) {
 				finReceiptHeader.setValueDate(finReceiptHeader.getRealizationDate());
+			}
+			if (ImplementationConstants.ALLOW_SCDREPAY_REALIZEDATE_AS_VALUEDATE) {
+				if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)
+						&& (StringUtils.equals(finReceiptHeader.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
+								|| StringUtils.equals(finReceiptHeader.getReceiptMode(), RepayConstants.RECEIPTMODE_DD))
+						&& finReceiptHeader.getRealizationDate() != null) {
+					FinanceScheduleDetail finScheduleDetail = financeScheduleDetailDAO
+							.getNextUnpaidSchPayment(finReceiptHeader.getReference(), finReceiptHeader.getValueDate());
+					if (finScheduleDetail != null) {
+						Date schDate = finScheduleDetail.getSchDate();
+						if (!finReceiptHeader.getValueDate().after(schDate)) {
+							finReceiptHeader.setValueDate(schDate);
+						}
+					}
+				}
 			}
 		}
 
@@ -7140,6 +7187,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public String getLoanReferenc(String finreference, String fileName) {
 		String isInitiated = finReceiptHeaderDAO.getLoanReferenc(finreference, fileName);
 		return isInitiated;
+	}
+
+	@Override
+	public int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference) {
+		return finReceiptHeaderDAO.geFeeReceiptCountByExtReference(reference, receiptPurpose, extReference);
 	}
 
 	public TaxHeaderDetailsDAO getTaxHeaderDetailsDAO() {

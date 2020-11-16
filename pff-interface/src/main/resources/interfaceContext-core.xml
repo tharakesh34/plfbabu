@@ -62,4 +62,5 @@
 	</bean>
 	<bean id="abstractCersaiProcess" class="com.pennanttech.pff.external.cersai.AbstractCersaiProcess" abstract="true"
 		parent="abstractInterface" />
+	<bean id="extendedFieldRendererDAO" class="com.pennanttech.pff.extended.dao.ExtendedFieldRendererDAOImpl" parent="basicDao"/>
 </beans>

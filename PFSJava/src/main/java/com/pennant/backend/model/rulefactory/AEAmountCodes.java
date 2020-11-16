@@ -238,6 +238,8 @@ public class AEAmountCodes implements Serializable {
 	//OEM Subvention amount code
 	private BigDecimal oemSbvAmount = BigDecimal.ZERO;
 
+	private BigDecimal vasInstAmt = BigDecimal.ZERO;
+
 	public AEAmountCodes() {
 		super();
 	}
@@ -1722,5 +1724,13 @@ public class AEAmountCodes implements Serializable {
 
 	public void setInstpriPr(BigDecimal instpriPr) {
 		this.instpriPr = instpriPr;
+	}
+
+	public BigDecimal getVasInstAmt() {
+		return vasInstAmt;
+	}
+
+	public void setVasInstAmt(BigDecimal vasInstAmt) {
+		this.vasInstAmt = vasInstAmt;
 	}
 }

@@ -538,7 +538,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private FinanceDetail getFinanceDetails() {
+	private FinanceDetail getFinanceDetails() throws Exception {
 
 		if (!isFinanceProcess) {
 			return null;
@@ -552,7 +552,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 			}
 		} catch (Exception e) {
 			if (e.getCause().getClass().equals(WrongValuesException.class)) {
-				throw new AppException(e.getMessage());
+				throw e;
 			}
 		}
 		return null;

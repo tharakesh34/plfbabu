@@ -168,13 +168,13 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 				"(verificationId, seqno, documentid, documenttype, documentsubid, documentrefid, documenturi, reinitid,");
 		sql.append(" verificationtype, status, pageseyeballed, pagessampled, agentremarks,initRemarks, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, accNumber, bankName)");
 
 		sql.append(
 				"values (:verificationId, :seqNo, :documentId, :documentType, :documentSubId, :documentRefId, :documentUri, :reinitid,");
 		sql.append(" :verificationType , :status, :pagesEyeballed, :pagesSampled, :agentRemarks,:initRemarks,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
-		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :accNumber, :bankName)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -387,6 +387,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		sql = new StringBuilder();
 
 		sql.append(" Select verificationId, SeqNo, documentid, documentsubid, reinitid, documentType,initRemarks,");
+		sql.append(" accNumber, bankName,");
 		if (type.contains("View")) {
 			sql.append(" code, description, docmodule, documentrefid, seqno, docname, doctype, referenceid, ");
 			sql.append(" verificationtype, status, pageseyeballed, pagessampled, agentremarks, ");
@@ -454,7 +455,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		StringBuilder sql = new StringBuilder();
 		sql.append(
 				"select verificationid, seqno, documentid, documentType, documentsubid, documentrefid, documenturi, initRemarks, decision, decisionremarks, reinitId,");
-		sql.append(" documentsubid as docCategory");
+		sql.append(" documentsubid as docCategory, accNumber, bankName");
 		sql.append(" From verification_rcu_details");
 
 		if (tableType == TableType.BOTH_TAB) {

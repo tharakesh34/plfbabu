@@ -2,6 +2,9 @@ package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author rahul.k This class uses for generating report for EarlySettlement(Closing the loan before maturity date)
@@ -48,6 +51,7 @@ public class ForeClosureReport implements Serializable {
 	private BigDecimal otherRefunds = BigDecimal.ZERO;
 	private String otherRefundsInWords = "Zero Only";
 	private BigDecimal totalRefunds = BigDecimal.ZERO;
+	private String totalRefundsInWords = "";
 	private BigDecimal netReceivable = BigDecimal.ZERO;
 	private String netReceivableInWords = "Zero Only";
 
@@ -97,6 +101,8 @@ public class ForeClosureReport implements Serializable {
 	private String custAddrProvinceName;
 	private String custAddrZIP;
 	private String custAddrCountryName;
+	private String validTill;
+	private List<Map<String, Object>> collAddressList = new ArrayList<>();;
 
 	public ForeClosureReport() {
 		super();
@@ -708,6 +714,30 @@ public class ForeClosureReport implements Serializable {
 
 	public void setNetReceivableNoRefundInWords(String netReceivableNoRefundInWords) {
 		this.netReceivableNoRefundInWords = netReceivableNoRefundInWords;
+	}
+
+	public String getValidTill() {
+		return validTill;
+	}
+
+	public void setValidTill(String validTill) {
+		this.validTill = validTill;
+	}
+
+	public String getTotalRefundsInWords() {
+		return totalRefundsInWords;
+	}
+
+	public void setTotalRefundsInWords(String totalRefundsInWords) {
+		this.totalRefundsInWords = totalRefundsInWords;
+	}
+
+	public List<Map<String, Object>> getCollAddressList() {
+		return collAddressList;
+	}
+
+	public void setCollAddressList(List<Map<String, Object>> collAddressList) {
+		this.collAddressList = collAddressList;
 	}
 
 }

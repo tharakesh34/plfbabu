@@ -1935,4 +1935,74 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(schdList.toArray());
 		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 	}
+
+	@Override
+	public List<FinanceScheduleDetail> getFinScheduleDetailsBySchPriPaid(String id, String type, boolean isWIF) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = getScheduleDetailQuery(type, isWIF);
+		sql.append(" Where FinReference = ? and SchdPriPaid > 0 order by SchDate asc");
+		logger.debug(Literal.SQL + sql.toString());
+
+		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(isWIF);
+
+		try {
+			return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					ps.setString(1, id);
+				}
+			}, rowMapper);
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
+	@Override
+	public FinanceScheduleDetail getFinSchDetailOrderBySchDate(String selectQuery, String whereClause,
+			String reference) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder(selectQuery);
+		sql.append(whereClause);
+		logger.debug(Literal.SQL + sql.toString());
+		RowMapper<FinanceScheduleDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceScheduleDetail.class);
+		try {
+			return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { reference },
+					rowMapper);
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public FinanceScheduleDetail getNextUnpaidSchPayment(String finReference, Date valueDate) {
+		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
+		financeScheduleDetail.setFinReference(finReference);
+		financeScheduleDetail.setSchDate(valueDate);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select * from (select ROW_NUMBER() Over(order by Schdate) row_num, ");
+		selectSql.append(" * FROM FinScheduleDetails Where FinReference =:FinReference ");
+		selectSql.append(" AND SchDate>=:SchDate AND (SchPftPaid=0 AND SchPriPaid=0) ");
+		selectSql.append(" AND (RepayOnSchDate = 1 AND PftOnSchDate = 1 ) )T where row_num = 1 ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
+		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceScheduleDetail.class);
+
+		try {
+			financeScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+			financeScheduleDetail = null;
+		}
+		return financeScheduleDetail;
+	}
 }

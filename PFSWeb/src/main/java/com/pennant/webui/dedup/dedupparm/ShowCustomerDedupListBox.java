@@ -248,8 +248,8 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 				DateUtility.formatToLongDate(custDedup.getCustDOB())));
 		if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 			rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_CustomerDedupDialog_CustShrtName.value"),
-					StringUtils.isNotEmpty(custDedup.getCustShrtName()) ? custDedup.getCustFName()
-							: custDedup.getCustShrtName(),
+					StringUtils.isNotEmpty(custDedup.getCustShrtName()) ? custDedup.getCustShrtName()
+							: custDedup.getCustFName(),
 					Labels.getLabel("label_CustomerDedupDialog_EID.value"), custDedup.getCustCRCPR()));
 			rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_CustomerDedupDialog_MobileNum.value"),
 					custDedup.getMobileNumber(), Labels.getLabel("label_CustomerDedupDialog_appScore.value"),

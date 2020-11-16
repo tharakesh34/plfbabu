@@ -45,7 +45,6 @@ package com.pennant.backend.service.finance;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +58,6 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 
 public interface FinFeeDetailService {
@@ -134,5 +132,7 @@ public interface FinFeeDetailService {
 
 	void convertGSTFinFeeConfig(FinFeeDetail finFeeDetail, FinFeeConfig finFeeConfig, FinanceDetail financeDetail,
 			Map<String, BigDecimal> taxPercentages);
+
+	List<FinFeeDetail> getFinFeeDetailsByTran(String reference, boolean isWIF, String type);
 
 }

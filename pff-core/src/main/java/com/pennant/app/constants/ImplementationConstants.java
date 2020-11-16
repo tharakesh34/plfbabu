@@ -195,6 +195,19 @@ public class ImplementationConstants {
 
 		//<<
 
+		VAS_INST_EDITABLE = getValueAsBoolean(extensions, "VAS_INST_EDITABLE", false);
+		ALLOW_DISB_ENQUIRY = getValueAsBoolean(extensions, "ALLOW_DISB_ENQUIRY", false);
+		ALLOW_SCDREPAY_REALIZEDATE_AS_VALUEDATE = getValueAsBoolean(extensions,
+				"ALLOW_SCDREPAY_REALIZEDATE_AS_VALUEDATE", false);
+		CUSTOM_EXT_LIABILITIES = getValueAsBoolean(extensions, "CUSTOM_EXT_LIABILITIES", false);
+		DISB_REVERSAL_REQ_BEFORE_LOAN_CANCEL = getValueAsBoolean(extensions, "DISB_REVERSAL_REQ_IN_LOAN_CANCEL", false);
+		UPDATE_METADATA_IN_DMS = getValueAsBoolean(extensions, "UPDATE_METADATA_IN_DMS", false);
+		CHEQUENO_MANDATORY_DISB_INS = getValueAsBoolean(extensions, "CHEQUENO_MANDATORY_DISB_INS", false);
+		CREATE_PRESENTMENT_RECEIPT_EOD = getValueAsBoolean(extensions, "CREATE_PRESENTMENT_RECEIPT_EOD", true);
+		ALW_QDP_CUSTOMIZATION = getValueAsBoolean(extensions, "ALW_QDP_CUSTOMIZATION", false);
+		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", false);
+		CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER = getValueAsBoolean(extensions, "CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER",
+				true);
 	}
 
 	public static boolean IMPLEMENTATION_CONVENTIONAL;
@@ -381,6 +394,19 @@ public class ImplementationConstants {
 
 	public static String GST_SCHD_CAL_ON = "I";
 	public static String ALLOW_AMOIUNT_INTEGRAL_PART;
+	//flag to allow VAS disbursement instruction editable or not
+	public static boolean VAS_INST_EDITABLE;
+	public static boolean ALLOW_DISB_ENQUIRY;
+	public static boolean ALLOW_SCDREPAY_REALIZEDATE_AS_VALUEDATE;
+	public static boolean CUSTOM_EXT_LIABILITIES;
+	public static boolean DISB_REVERSAL_REQ_BEFORE_LOAN_CANCEL;
+	public static boolean UPDATE_METADATA_IN_DMS;
+	public static boolean CHEQUENO_MANDATORY_DISB_INS;
+	public static boolean ALW_QDP_CUSTOMIZATION;
+	//Create Presentment Receipt in EOD Process
+	public static boolean CREATE_PRESENTMENT_RECEIPT_EOD;
+	//Update the Manual Cheque Receipt status as paid at Deposit approver
+	public static boolean CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;
@@ -456,5 +482,4 @@ public class ImplementationConstants {
 	public static final boolean ALLOW_SIMILARITY = true;
 
 	public static final boolean LEAD_ID_IS_MANDATORY = true;
-
 }

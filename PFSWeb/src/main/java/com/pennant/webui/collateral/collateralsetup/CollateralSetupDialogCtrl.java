@@ -1059,7 +1059,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		//Collateral Ref
 		try {
 			if (StringUtils.trimToNull(this.collateralRef.getValue()) == null) {
-				this.collateralRef.setValue(ReferenceUtil.generateCollateralRef());
+				this.collateralRef.setValue(ReferenceUtil.generateCollateralReference());
 			}
 			aCollateralSetup.setCollateralRef(this.collateralRef.getValue());
 		} catch (WrongValueException we) {

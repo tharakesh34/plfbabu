@@ -148,7 +148,7 @@
 										</listhead>
 									</listbox>
 								</groupbox>
-								<groupbox  id="gb_VASRecording" mold="3d" closable="true">
+								<groupbox  id="gb_VASRecording" mold="3d" closable="true" visible="false">
 									<caption label="${c:l('gp_VASRecordingDetails')}"></caption>
 									<listbox id="listboxVasRecording" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
 										width="100%" multiple="false" sizedByContent="true" span="true">

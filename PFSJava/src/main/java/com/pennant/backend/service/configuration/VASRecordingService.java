@@ -87,4 +87,8 @@ public interface VASRecordingService {
 
 	VASRecording getVASRecordingDetails(VASRecording vasRecording);
 
+	List<VASRecording> getLoanReportVasRecordingByRef(String reference);
+
+	String getVasInsStatus(long paymentInsId);
+
 }

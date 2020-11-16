@@ -186,6 +186,7 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	private String likeCustCompName;
 	private String likeCustCompName2;
 	private String custCompName2;
+	private String sourceCIF;
 
 	private List<NegativeReasoncodes> negativeReasoncodeList = new ArrayList<>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -284,6 +285,7 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 		excludeFields.add("likeCustCompName2");
 		excludeFields.add("custCompName2");
 
+		excludeFields.add("sourceCIF");
 		return excludeFields;
 	}
 
@@ -1524,4 +1526,11 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 		this.custCompName2 = custCompName2;
 	}
 
+	public String getSourceCIF() {
+		return sourceCIF;
+	}
+
+	public void setSourceCIF(String sourceCIF) {
+		this.sourceCIF = sourceCIF;
+	}
 }

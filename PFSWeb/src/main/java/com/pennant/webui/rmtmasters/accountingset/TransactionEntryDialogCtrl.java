@@ -1752,6 +1752,13 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			feeMap.put("_TDS_R", Labels.getLabel("label_TransactionEntryDialog_R_TDS"));
 		}
 
+		//REFUND
+		feeMap.put("_R", Labels.getLabel("label_TransactionEntryDialog_FeeReFunded"));
+		feeMap.put("_CGST_R", Labels.getLabel("label_TransactionEntryDialog_R_CGST"));
+		feeMap.put("_SGST_R", Labels.getLabel("label_TransactionEntryDialog_R_SGST"));
+		feeMap.put("_UGST_R", Labels.getLabel("label_TransactionEntryDialog_R_UGST"));
+		feeMap.put("_IGST_R", Labels.getLabel("label_TransactionEntryDialog_R_IGST"));
+
 		return feeMap;
 	}
 

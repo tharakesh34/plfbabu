@@ -42,10 +42,10 @@
 */
 package com.pennant.backend.dao.configuration.impl;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +63,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -700,4 +701,100 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		}
 	}
 
+	@Override
+	public List<VASRecording> getLoanReportVasRecordingByRef(String finReference) {
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+		List<VASRecording> vasRecordingList = new ArrayList<>();
+		sql = new StringBuilder("Select  vr.fee,vs.modeofPayment,vr.productcode ");
+		sql.append("from vasrecording vr JOIN VasStructure vs ON vr.productcode = vs.productcode ");
+		sql.append("Where PrimaryLinkRef=:PrimaryLinkRef");
+		logger.debug("selectSql: " + sql.toString());
+
+		RowMapper<VASRecording> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASRecording.class);
+
+		source = new MapSqlParameterSource();
+		source.addValue("PrimaryLinkRef", finReference);
+		vasRecordingList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		logger.debug(Literal.LEAVING);
+		return vasRecordingList;
+	}
+
+	public Long getPaymentInsId(String vasReference, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select PaymentInsId");
+		sql.append(" from VasRecording");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where VasReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.LEAVING);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { vasReference },
+					new RowMapper<Long>() {
+
+						@Override
+						public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+							return rs.getLong("PaymentInsId");
+						}
+					});
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e.getCause());
+		}
+		return null;
+	}
+
+	public String getVasInsStatus(long paymentInsId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select status");
+		sql.append(" from InsurancePaymentInstructions ");
+		sql.append(" Where Id = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.LEAVING);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentInsId },
+					new RowMapper<String>() {
+
+						@Override
+						public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+							return rs.getString("Status");
+						}
+					});
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e.getCause());
+		}
+		return null;
+	}
+
+	public void updateVasInsStatus(long id) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update InsurancePaymentInstructions");
+		sql.append(" Set Status = (case when Status = " + "'" + DisbursementConstants.STATUS_APPROVED + "'");
+		sql.append(" then " + "'" + DisbursementConstants.STATUS_CANCEL + "'");
+		sql.append(" when Status = " + "'" + DisbursementConstants.STATUS_PAID + "'");
+		sql.append(" then " + "'" + DisbursementConstants.STATUS_REVERSED + "'" + " else  status end )");
+
+		sql.append(" Where Id = :Id");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Id", id);
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+
+	}
 }

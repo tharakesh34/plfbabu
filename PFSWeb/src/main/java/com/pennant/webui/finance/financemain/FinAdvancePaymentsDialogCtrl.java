@@ -84,20 +84,24 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.pennydrop.PennyDropDAO;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.bmtmasters.BankBranch;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -118,6 +122,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
@@ -261,12 +266,27 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Textbox pennyDropResult;
 	protected Textbox txnDetails;
 	protected Button btnPennyDropResult;
+	protected Button btnReverse;
 
 	BankAccountValidationService bankAccountValidationService;
 	private transient PennyDropService pennyDropService;
 	private PennyDropDAO pennyDropDAO;
 	private BankAccountValidation bankAccountValidations;
 	private String moduleDefiner = null;
+
+	//VAS FrontEnd Functionality
+	protected Row row_DisbDate;
+	protected Row row_vasReference;
+	protected Combobox vasReference;
+	protected Decimalbox vasAmount;
+	Map<String, BigDecimal> vasAmountsMAP = null;
+
+	//Incase of validation based on Fee then these details required.
+	private List<FinFeeDetail> finFeeDetailList = null;
+	private List<VASRecording> vasRecordingList = null;
+
+	protected Row row_disbdetails;
+	protected Row row_expensedetails;
 
 	/**
 	 * default constructor.<br>
@@ -289,7 +309,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 * @param event
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	public void onCreate$window_FinAdvancePaymentsDialog(Event event) throws Exception {
 		logger.debug("Entering");
 		// Set the page level components.
@@ -429,6 +449,22 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				finCcy = (String) arguments.get("finCcy");
 			}
 
+			if (arguments.containsKey("FinFeeDetailList")) {
+				finFeeDetailList = (List<FinFeeDetail>) arguments.get("FinFeeDetailList");
+			} else {
+				finFeeDetailList = new ArrayList<>(1);
+			}
+			if (arguments.containsKey("VasRecordingList")) {
+				vasRecordingList = (List<VASRecording>) arguments.get("VasRecordingList");
+			} else {
+				vasRecordingList = new ArrayList<>(1);
+			}
+			if (StringUtils.isEmpty(moduleDefiner) && !ImplementationConstants.VAS_INST_EDITABLE
+					&& DisbursementConstants.PAYMENT_DETAIL_VAS.equals(this.finAdvancePayments.getPaymentDetail())) {
+				enqModule = true;
+				this.btnPennyDropResult.setVisible(false);
+			}
+
 			doLoadWorkFlow(this.finAdvancePayments.isWorkflow(), this.finAdvancePayments.getWorkflowId(),
 					this.finAdvancePayments.getNextTaskId());
 
@@ -482,6 +518,25 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	public void onClick$btnSave(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		doSave();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "btnReverse" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnReverse(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+
+		final String msg = Labels.getLabel("label_FinAdvancePaymentsDialog_Reverse_Status") + "\n"
+				+ Labels.getLabel("label_FinAdvancePaymentsDialog_PaymentSequence.value") + " : "
+				+ this.finAdvancePayments.getPaymentSeq();
+
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			doSave();
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -590,7 +645,16 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			if (enqModule) {
 				doReadOnly();
 			}
-
+			if (!enqModule && (StringUtils.equals(DisbursementConstants.STATUS_PAID, aFinAdvancePayments.getStatus())
+					|| StringUtils.equals(DisbursementConstants.STATUS_REALIZED, aFinAdvancePayments.getStatus()))) {
+				doReadOnly();
+				this.btnNew.setVisible(false);
+				this.btnEdit.setVisible(false);
+				this.btnDelete.setVisible(false);
+				this.btnSave.setVisible(false);
+				this.btnReverse.setVisible(true);
+				this.btnGetCustBeneficiary.setDisabled(true);
+			}
 			this.gb_statusDetails.setVisible(false);
 			this.window_FinAdvancePaymentsDialog.doModal();
 
@@ -637,6 +701,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.pennyDropResult.setReadonly(isReadOnly("FinAdvancePaymentsDialog_PennyDropResult"));
 		this.txnDetails.setReadonly(isReadOnly("FinAdvancePaymentsDialog_TxnDetails"));
 		this.btnPennyDropResult.setVisible(!isReadOnly("button_FinAdvancePaymentsDialog_btnPennyDropResult"));
+		this.vasReference.setDisabled(isReadOnly("FinAdvancePaymentsDialog_vasReference"));
 
 		//Added Masking for  ReEnter Account Number field in Disbursement at Loan Approval stage
 		if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING)
@@ -693,6 +758,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.partnerBankID.setReadonly(true);
 		this.transactionRef.setReadonly(true);
 		readOnlyComponent(true, holdDisbursement);
+		this.vasReference.setDisabled(true);
 		if (enqModule) {
 			this.btnPennyDropResult.setVisible(false);
 		}
@@ -725,11 +791,13 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinAdvancePaymentsDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinAdvancePaymentsDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinAdvancePaymentsDialog_btnSave"));
+			this.btnReverse.setVisible(getUserWorkspace().isAllowed("button_FinAdvancePaymentsDialog_btnReverse"));
 		} else {
 			this.btnNew.setVisible(false);
 			this.btnEdit.setVisible(false);
 			this.btnDelete.setVisible(false);
 			this.btnSave.setVisible(false);
+			this.btnReverse.setVisible(false);
 		}
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
@@ -896,6 +964,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			list.add(DisbursementConstants.PAYMENT_DETAIL_VENDOR);
 		}
 
+		if (StringUtils.equalsIgnoreCase(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB) && !StringUtils
+				.equalsIgnoreCase(aFinAdvnancePayments.getPaymentDetail(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
+			list.add(DisbursementConstants.PAYMENT_DETAIL_VAS);
+		}
+
 		this.paymentSequence.setValue(aFinAdvnancePayments.getPaymentSeq());
 		this.disbSeq.setValue(aFinAdvnancePayments.getDisbSeq());
 
@@ -965,6 +1038,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				if (StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
 					continue;
 				}
+				// exclude instruction based schedules
+				if (curDisb.getLinkedDisbId() != 0) {
+					continue;
+				}
 
 				disbAmount = disbAmount.add(curDisb.getDisbAmount());
 
@@ -1025,6 +1102,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						|| StringUtils.equals(PennantConstants.RCD_DEL, advPay.getRecordType())) {
 					continue;
 				}
+				if (StringUtils.equalsIgnoreCase(advPay.getPaymentDetail(), DisbursementConstants.PAYMENT_DETAIL_VAS)) {
+					continue;
+				}
 				advancePayAmount = advancePayAmount.add(advPay.getAmtToBeReleased());
 			}
 		}
@@ -1072,6 +1152,17 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.docName.setContent(media);
 			eastDocument.setVisible(true);
 			eastDocument.setTitle(documentDetails.getDocName());
+		}
+
+		ArrayList<ValueLabel> vasReferenceList = null;
+		vasReferenceList = getVasReferences(aFinAdvnancePayments.getVasReference(),
+				aFinAdvnancePayments.getAmtToBeReleased());
+		fillComboBox(this.vasReference, aFinAdvnancePayments.getVasReference(), vasReferenceList, "");
+		doChangePaymentDetails(aFinAdvnancePayments.getPaymentDetail());
+		if (StringUtils.equalsIgnoreCase(aFinAdvnancePayments.getPaymentDetail(),
+				DisbursementConstants.PAYMENT_DETAIL_VAS)) {
+			this.vasAmount.setValue(PennantAppUtil
+					.formateAmount(vasAmountsMAP.get(aFinAdvnancePayments.getVasReference()), ccyFormatter));
 		}
 
 		logger.debug("Leaving");
@@ -1149,6 +1240,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		String paymentType = "";
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+
+		if (this.btnReverse.isVisible()) {
+			aFinAdvancePayments.setStatus(DisbursementConstants.STATUS_REVERSED);
+			aFinAdvancePayments.setReversedDate(SysParamUtil.getAppDate());
+		}
 
 		try {
 			aFinAdvancePayments.setPaymentSeq(this.paymentSequence.getValue());
@@ -1291,26 +1387,26 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						}
 						aFinAdvancePayments.setLLDate(this.llDate.getValue());
 					}
-
-					BigDecimal disAmt = BigDecimal.ZERO;
-					disAmt = DisbursementInstCtrl.getTotalByDisbursment(disbursement, financeMain);
-					BigDecimal insAmt = getAdjustedAmount(disbursement);
-					insAmt = insAmt.add(aFinAdvancePayments.getAmtToBeReleased());
-					if (insAmt.compareTo(disAmt) > 0) {
-						throw new WrongValueException(this.amtToBeReleased,
-								Labels.getLabel("NUMBER_MAXVALUE_EQ",
-										new String[] {
-												Labels.getLabel("label_FinAdvancePaymentsDialog_AmtToBeReleased.value"),
-												Labels.getLabel("label_FinAdvancePaymentsDialog_DisbAmount.value") }));
-					} else {
-
-						if (financeMain.isInstBasedSchd()
-								&& StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)
-								&& insAmt.compareTo(disAmt) != 0) {
+					if (!DisbursementConstants.PAYMENT_DETAIL_VAS.equals(aFinAdvancePayments.getPaymentDetail())) {
+						BigDecimal disAmt = BigDecimal.ZERO;
+						disAmt = DisbursementInstCtrl.getTotalByDisbursment(disbursement, financeMain);
+						BigDecimal insAmt = getAdjustedAmount(disbursement);
+						insAmt = insAmt.add(aFinAdvancePayments.getAmtToBeReleased());
+						if (insAmt.compareTo(disAmt) > 0) {
 							throw new WrongValueException(this.amtToBeReleased,
-									Labels.getLabel("NUMBER_EQ", new String[] {
+									Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] {
 											Labels.getLabel("label_FinAdvancePaymentsDialog_AmtToBeReleased.value"),
 											Labels.getLabel("label_FinAdvancePaymentsDialog_DisbAmount.value") }));
+						} else {
+
+							if (financeMain.isInstBasedSchd()
+									&& StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)
+									&& insAmt.compareTo(disAmt) != 0) {
+								throw new WrongValueException(this.amtToBeReleased,
+										Labels.getLabel("NUMBER_EQ", new String[] {
+												Labels.getLabel("label_FinAdvancePaymentsDialog_AmtToBeReleased.value"),
+												Labels.getLabel("label_FinAdvancePaymentsDialog_DisbAmount.value") }));
+							}
 						}
 					}
 
@@ -1444,6 +1540,60 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		//VAS Front End Functionality
+		if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(aFinAdvancePayments.getPaymentDetail())) {
+			try {
+				aFinAdvancePayments.setVasReference(getComboboxValue(this.vasReference));
+				if (this.row_vasReference.isVisible()) {
+					if (StringUtils.isBlank(aFinAdvancePayments.getVasReference())
+							|| PennantConstants.List_Select.equals(aFinAdvancePayments.getVasReference())) {
+						if (!this.vasReference.isDisabled()) {
+							throw new WrongValueException(this.vasReference,
+									Labels.getLabel("FIELD_IS_MAND", new String[] {
+											Labels.getLabel("label_FinAdvancePaymentsDialog_VasReference.value") }));
+						}
+						if (this.vasReference.isDisabled() && !this.paymentDetail.isDisabled()) {
+							throw new WrongValueException(this.paymentDetail,
+									Labels.getLabel("STATIC_INVALID_DISBPARTY", new String[] {
+											Labels.getLabel("label_FinAdvancePaymentsDialog_PaymentDetail.value") }));
+						}
+					}
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (StringUtils.isNotBlank(aFinAdvancePayments.getVasReference())
+						&& !PennantConstants.List_Select.equals(aFinAdvancePayments.getVasReference())) {
+					if (vasAmountsMAP.get(aFinAdvancePayments.getVasReference())
+							.compareTo(aFinAdvancePayments.getAmtToBeReleased()) != 0) {
+						throw new WrongValueException(this.amtToBeReleased,
+								Labels.getLabel("NUMBER_EQUAL", new String[] {
+										Labels.getLabel("label_FinAdvancePaymentsDialog_AmtToBeReleased.value"), Labels
+												.getLabel(
+														"label_FinAdvancePaymentsDialog_VasReferenceAmount.value") }));
+					}
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			if (aFinAdvancePayments.isNewRecord()
+					&& isDuplicateVasInstruvtions(aFinAdvancePayments.getVasReference())) {
+				try {
+					if (!this.vasReference.isDisabled()) {
+						throw new WrongValueException(this.vasReference,
+								Labels.getLabel("VAS_INSTRUCTION_ALREADY_EXISTE",
+										new String[] { aFinAdvancePayments.getVasReference() }));
+					}
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+			}
+
+		} else {
+			aFinAdvancePayments.setVasReference(PennantConstants.List_Select);
+		}
 
 		aFinAdvancePayments.setLinkedTranId(0);
 		doRemoveValidation();
@@ -1564,6 +1714,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.valueDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_ValueDate.value"), true,
 								SysParamUtil.getAppDate(), todate, true));
+			}
+			if (ImplementationConstants.CHEQUENO_MANDATORY_DISB_INS && this.hbox_llReferenceNo.isVisible()
+					&& !this.llReferenceNo.isReadonly()) {
+				this.llReferenceNo.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_LLReferenceNo.value"),
+								PennantRegularExpressions.NUMERIC_FL6_REGEX, true));
 			}
 		} else {
 			if (!StringUtils.equals(payType, DisbursementConstants.PAYMENT_TYPE_IST)) {
@@ -1689,7 +1845,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 						if (this.moduleType.equals("LOAN")) {
 							getFinAdvancePaymentsListCtrl()
-									.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails);
+									.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails, vasRecordingList);
 						} else {
 							if (!SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
 								getPayOrderIssueDialogCtrl()
@@ -1831,7 +1987,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					if (this.moduleType.equals("LOAN")) {
-						getFinAdvancePaymentsListCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails);
+						getFinAdvancePaymentsListCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
+								vasRecordingList);
 					} else {
 						if (!SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
 							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
@@ -2292,6 +2449,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 
 		for (FinAdvancePayments finAdvPayments : list) {
+			if (StringUtils.equals(finAdvPayments.getPaymentDetail(), DisbursementConstants.PAYMENT_DETAIL_VAS)) {
+				continue;
+			}
 			if (finAdvPayments.getDisbSeq() == disbursement.getDisbSeq()) {
 				if (this.paymentSequence.intValue() == finAdvPayments.getPaymentSeq()) {
 					continue;
@@ -2367,6 +2527,124 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			}
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	//****************** VAS FRONT END FINCTIONALITY *******************//
+	/**
+	 * Method for VAS Reference paymentDetail.
+	 * 
+	 * @param event
+	 */
+	public void onChange$paymentDetail(Event event) {
+		String paymentFor = this.paymentDetail.getSelectedItem().getValue().toString();
+		doChangePaymentDetails(paymentFor);
+	}
+
+	/**
+	 * Method for VAS Reference OnChange.
+	 * 
+	 * @param event
+	 */
+	public void onChange$vasReference(Event event) {
+		logger.debug(Literal.ENTERING);
+		String vasReference = this.vasReference.getSelectedItem().getValue().toString();
+		if (StringUtils.isNotBlank(vasReference) && !PennantConstants.List_Select.equals(vasReference)) {
+			vasAmount.setValue(PennantAppUtil.formateAmount(vasAmountsMAP.get(vasReference), ccyFormatter));
+		} else {
+			vasAmount.setValue(BigDecimal.ZERO);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for on changes event of paymentDetail.
+	 * 
+	 * @param paymentFor
+	 */
+	private void doChangePaymentDetails(String paymentFor) {
+		logger.debug(Literal.ENTERING);
+		if (StringUtils.equals(paymentFor, DisbursementConstants.PAYMENT_DETAIL_VAS)) {
+			this.row_DisbDate.setVisible(false);
+			this.row_vasReference.setVisible(true);
+			this.row_disbdetails.setVisible(false);
+			this.row_expensedetails.setVisible(false);
+			//this.vasReference.setDisabled(true);
+			this.btnDelete.setVisible(false);
+		} else {
+			this.row_DisbDate.setVisible(true);
+			this.row_vasReference.setVisible(false);
+			this.row_disbdetails.setVisible(true);
+			this.row_expensedetails.setVisible(true);
+			this.vasAmount.setValue(BigDecimal.ZERO);
+			ArrayList<ValueLabel> list = getVasReferences(null, BigDecimal.ZERO);
+			fillComboBox(this.vasReference, PennantConstants.List_Select, list, "");
+
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method For Creating VasReference ComoboBox List.
+	 * 
+	 * @param vasReference
+	 * @param vasAmount
+	 * @return
+	 */
+	private ArrayList<ValueLabel> getVasReferences(String vasReference, BigDecimal vasAmount) {
+		logger.debug(Literal.ENTERING);
+		ArrayList<ValueLabel> vasReferences = new ArrayList<>();
+		vasAmountsMAP = new HashMap<>(1);
+		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
+			boolean isDeletedVAS = true;
+			for (VASRecording vasRecording : vasRecordingList) {
+				vasReferences.add(new ValueLabel(vasRecording.getVasReference(), vasRecording.getVasReference()));
+				vasAmountsMAP.put(vasRecording.getVasReference(), vasRecording.getFee());
+				if (StringUtils.equals(vasRecording.getVasReference(), vasReference)) {
+					isDeletedVAS = false;
+				}
+
+			}
+			//if the VAS Instruction is added initial and delete the vas later
+			if (StringUtils.isNotBlank(vasReference) && !PennantConstants.List_Select.equals(vasReference)
+					&& isDeletedVAS) {
+				vasReferences.add(new ValueLabel(vasReference, vasReference));
+				vasAmountsMAP.put(vasReference, vasAmount);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return vasReferences;
+	}
+
+	/**
+	 * Method for checking given VAS Instruction is duplicate or not.
+	 */
+	private boolean isDuplicateVasInstruvtions(String vasReference) {
+		boolean isDuplicate = false;
+
+		List<FinAdvancePayments> finAdvancePaymentsDetails;
+		if ("LOAN".equals(this.moduleType)) {
+			finAdvancePaymentsDetails = getFinAdvancePaymentsListCtrl().getFinAdvancePaymentsList();
+		} else {
+			finAdvancePaymentsDetails = getPayOrderIssueDialogCtrl().getFinAdvancePaymentsList();
+		}
+		if (CollectionUtils.isNotEmpty(finAdvancePaymentsDetails)) {
+			int count = 0;
+			for (FinAdvancePayments finAdvPayments : finAdvancePaymentsDetails) {
+				if (!StringUtils.equals(finAdvPayments.getPaymentDetail(), DisbursementConstants.PAYMENT_DETAIL_VAS)) {
+					continue;
+				}
+				if (DisbursementInstCtrl.isDeleteRecord(finAdvPayments)) {
+					continue;
+				}
+				if (StringUtils.equalsIgnoreCase(vasReference, finAdvPayments.getVasReference())) {
+					count++;
+				}
+			}
+			if (count > 0) {
+				isDuplicate = true;
+			}
+		}
+		return isDuplicate;
 	}
 
 	// ******************************************************//

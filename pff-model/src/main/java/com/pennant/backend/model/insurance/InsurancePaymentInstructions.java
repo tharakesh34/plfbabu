@@ -49,6 +49,7 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity impleme
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private String finReference;
+	private String vasReference;
 
 	@Override
 	public boolean isNew() {
@@ -66,6 +67,7 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity impleme
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("finReference");
+		excludeFields.add("vasReference");
 		return excludeFields;
 	}
 
@@ -307,6 +309,14 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity impleme
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
+	}
+
+	public String getVasReference() {
+		return vasReference;
+	}
+
+	public void setVasReference(String vasReference) {
+		this.vasReference = vasReference;
 	}
 
 }

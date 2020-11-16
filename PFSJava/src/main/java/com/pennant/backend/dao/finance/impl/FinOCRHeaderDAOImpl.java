@@ -28,7 +28,7 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select HeaderID, OcrID, OcrDescription, CustomerPortion, OcrApplicable, SplitApplicable,");
+		sql.append("Select HeaderID, OcrID, OcrDescription, CustomerPortion, OcrType, TotalDemand,");
 		sql.append("FinReference");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
@@ -58,7 +58,7 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select HeaderID, OcrID, OcrDescription, CustomerPortion, OcrApplicable, SplitApplicable,");
+		sql.append("Select HeaderID, OcrID, OcrDescription, CustomerPortion, OcrType, TotalDemand,");
 		sql.append("FinReference");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
@@ -92,7 +92,7 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 		sql.append("Update FinOCRHeader");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set OcrID =:OcrID, OcrDescription =:OcrDescription,");
-		sql.append("OcrApplicable =:OcrApplicable, SplitApplicable =:SplitApplicable,");
+		sql.append("OcrType =:OcrType ,TotalDemand=:TotalDemand,");
 		sql.append("FinReference =:FinReference, CustomerPortion =:CustomerPortion,");
 		sql.append("Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append("RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
@@ -142,13 +142,13 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Insert Into FinOCRHeader");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("(HeaderID, OcrID, OcrDescription, CustomerPortion, OcrApplicable,");
-		sql.append(" SplitApplicable, FinReference,");
+		sql.append("(HeaderID, OcrID, OcrDescription, CustomerPortion, OcrType, TotalDemand,");
+		sql.append(" FinReference,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 
-		sql.append(" Values( :HeaderID, :OcrID, :OcrDescription, :CustomerPortion, :OcrApplicable,");
-		sql.append(" :SplitApplicable, :FinReference,");
+		sql.append(" Values( :HeaderID, :OcrID, :OcrDescription, :CustomerPortion, :OcrType, :TotalDemand,");
+		sql.append(" :FinReference,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.trace(Literal.SQL + sql.toString());

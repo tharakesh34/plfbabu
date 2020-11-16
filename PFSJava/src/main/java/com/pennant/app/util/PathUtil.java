@@ -103,6 +103,7 @@ public class PathUtil {
 
 	public static final String REPORTS_FINANCIALS_SPREADSHEETS = "Financials/SpreadSheets"; //For Credit Review Details
 	public static final String ExtLiability = "ExtLiability";
+	public static final String LoanReport = "LoanReport";
 
 	/**
 	 * Method for Set Environment Variable to Root Path Location

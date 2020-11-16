@@ -247,7 +247,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 					//Preparing the list
 					setCoApplicantDocuments(customerDocumentsList,
-							jointAccountDetail.getCustomerDetails().getCustomer().getCustCIF());
+							jointAccountDetail.getCustomerDetails().getCustomer().getCustCIF(),
+							jointAccountDetail.getCustomerDetails().getCustomer().getCustID());
 				}
 
 			}
@@ -280,10 +281,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		// get old Verifications
 		Map<String, Verification> map;
+		long custId = 0;
 		if (initType) {
-			map = getOldVerifications(DocumentType.CUSTOMER, TableType.STAGE_TAB);
+			map = getOldVerifications(DocumentType.CUSTOMER, custId, TableType.STAGE_TAB);
 		} else {
-			map = getOldVerifications(DocumentType.CUSTOMER, TableType.BOTH_TAB);
+			map = getOldVerifications(DocumentType.CUSTOMER, custId, TableType.BOTH_TAB);
 		}
 
 		//set delete Verifications
@@ -343,7 +345,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	}
 
-	private void setCoApplicantDocuments(List<CustomerDocument> documents, String custCIF) {
+	private void setCoApplicantDocuments(List<CustomerDocument> documents, String custCIF, long custId) {
 		Set<String> deleteSet = new HashSet<>();
 		Map<String, Verification> coApplicantDocuments = new LinkedHashMap<>();
 		// Prepare the Customer Documents
@@ -359,9 +361,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		// get old Verifications
 		Map<String, Verification> map;
 		if (initType) {
-			map = getOldVerifications(DocumentType.COAPPLICANT, TableType.STAGE_TAB);
+			map = getOldVerifications(DocumentType.COAPPLICANT, custId, TableType.STAGE_TAB);
 		} else {
-			map = getOldVerifications(DocumentType.COAPPLICANT, TableType.BOTH_TAB);
+			map = getOldVerifications(DocumentType.COAPPLICANT, custId, TableType.BOTH_TAB);
 		}
 
 		//set delete Verifications
@@ -385,7 +387,16 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Verification previous = map.get(entrySet.getKey());
 			Verification current = entrySet.getValue();
 			if (previous != null) {
-				setOldVerificationFields(current, previous);
+				if (previous.getRequestType() == RequestType.INITIATE.getKey()) {
+					if (previous.getRcuDocument() != null && current.getRcuDocument() != null
+							&& previous.getRcuDocument().getDocumentId() != null
+							&& previous.getRcuDocument().getDocumentId() != null && current.getRcuDocument()
+									.getDocumentId().equals(current.getRcuDocument().getDocumentId())) {
+						setOldVerificationFields(current, previous);
+					}
+				} else {
+					setOldVerificationFields(current, previous);
+				}
 			}
 		}
 
@@ -451,10 +462,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		// get old Verifications
 		Map<String, Verification> map;
+		long custId = 0;
 		if (initType) {
-			map = getOldVerifications(documentType, TableType.STAGE_TAB);
+			map = getOldVerifications(documentType, custId, TableType.STAGE_TAB);
 		} else {
-			map = getOldVerifications(documentType, TableType.BOTH_TAB);
+			map = getOldVerifications(documentType, custId, TableType.BOTH_TAB);
 		}
 
 		//set delete Verifications
@@ -676,7 +688,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return builder.toString();
 	}
 
-	private Map<String, Verification> getOldVerifications(DocumentType documentType, TableType tableType) {
+	private Map<String, Verification> getOldVerifications(DocumentType documentType, long custId, TableType tableType) {
 		Map<String, Verification> verificationMap = new HashMap<>();
 		List<Verification> list = new ArrayList<>();
 		List<Verification> verifications;
@@ -729,7 +741,21 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			}
 
-			verificationMap.put(reference, ver);
+			if (ver.getRequestType() == RequestType.INITIATE.getKey()) {
+				if (custId != 0 && ver.getRcuDocument() != null && ver.getRcuDocument().getDocumentId() != null
+						&& custId == ver.getRcuDocument().getDocumentId().longValue()) {
+					verificationMap.put(reference, ver);
+				}
+				if (custId == 0) {
+					verificationMap.put(reference, ver);
+				}
+			} else if (custId != 0) {
+				if (ver.getCustId() != null && custId == ver.getCustId().longValue()) {
+					verificationMap.put(reference, ver);
+				}
+			} else {
+				verificationMap.put(reference, ver);
+			}
 		}
 
 		return verificationMap;
@@ -951,6 +977,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		Listgroup group;
 		Listcell cell;
 		List<Integer> docTypes = DocumentType.getKeys();
+		List<Long> coApplicantCifs = new ArrayList<>();
 
 		List<Verification> verifications = new ArrayList<>();
 
@@ -982,20 +1009,21 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				continue;
 			}
 
-			if (docTypes.contains(vrf.getDocType())) {
+			if (docTypes.contains(vrf.getDocType()) && vrf.getDocType() != DocumentType.COAPPLICANT.getKey()) {
 				documentType = DocumentType.getType(vrf.getDocType());
 				String moduleName = documentType.getValue();
-				if (DocumentType.CUSTOMER.getValue().equals(moduleName)
-						|| DocumentType.COAPPLICANT.getValue().equals(moduleName)) {
+				if (DocumentType.CUSTOMER.getValue().equals(moduleName)) {
 					moduleName = moduleName + "-" + vrf.getCustomerName();
 				}
-				// Creating list group for DocType.
-				group = new Listgroup();
-				cell = new Listcell(moduleName);
-				cell.setStyle("font-weight:bold;");
-				group.appendChild(cell);
-				group.setAttribute("empty", "empty");
-				listBoxRCUVerification.appendChild(group);
+				createListGroup(moduleName);
+				docTypes.remove((Object) vrf.getDocType());
+			} else if (vrf.getDocType() == DocumentType.COAPPLICANT.getKey() && vrf.getRcuDocument() != null
+					&& !coApplicantCifs.contains(vrf.getRcuDocument().getDocumentId())) {
+				RCUDocument rcuDoc = vrf.getRcuDocument();
+				coApplicantCifs.add(rcuDoc.getDocumentId());
+				documentType = DocumentType.getType(vrf.getDocType());
+				String moduleName = documentType.getValue() + "-" + vrf.getCustomerName();
+				createListGroup(moduleName);
 				docTypes.remove((Object) vrf.getDocType());
 			}
 
@@ -1261,6 +1289,18 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void createListGroup(String moduleName) {
+		Listgroup group;
+		Listcell cell;
+		// Creating list group for DocType.
+		group = new Listgroup();
+		cell = new Listcell(moduleName);
+		cell.setStyle("font-weight:bold;");
+		group.appendChild(cell);
+		group.setAttribute("empty", "empty");
+		listBoxRCUVerification.appendChild(group);
+	}
+
 	private void setInitiated(List<Verification> verifications) {
 		for (Verification item : verifications) {
 			RCUDocument rcuDocument = item.getRcuDocument();
@@ -1466,12 +1506,14 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		case "Remarks":
 			Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
 			verification.setRemarks(remarks.getValue());
-			if (this.userAction != null) {
-				if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
-					if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-							&& StringUtils.isEmpty(verification.getRemarks())) {
-						throw new WrongValueException(remarks,
-								"Remarks are mandatory when Verification is Not Required");
+			if (!remarks.isReadonly()) {
+				if (this.userAction != null) {
+					if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
+						if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+								&& StringUtils.isEmpty(verification.getRemarks())) {
+							throw new WrongValueException(remarks,
+									"Remarks are mandatory when Verification is Not Required");
+						}
 					}
 				}
 			}

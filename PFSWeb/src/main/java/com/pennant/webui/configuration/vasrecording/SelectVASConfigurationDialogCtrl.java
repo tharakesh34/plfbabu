@@ -331,7 +331,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			vasRecording.setEntityDesc(this.entityCode.getDescription());
 		} else if (this.loanRow.isVisible() && this.loanType.getAttribute("financeMain") != null) {
 			FinanceMain financeMain = (FinanceMain) this.loanType.getAttribute("financeMain");
-			vasRecording.setEntityCode(financeMain.getEntityCode());
+			vasRecording.setEntityCode(financeMain.getLovDescEntityCode());
 			vasRecording.setEntityDesc(financeMain.getLovDescEntityCode());
 
 		} else if (isFinanceProcess && getFinanceDetail() != null) {
@@ -385,6 +385,12 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			vasCustomer = getvASRecordingService().getVasCustomerDetails(vasRecording.getPrimaryLinkRef(),
 					vasConfiguration.getRecAgainst());
 			vasRecording.setVasCustomer(vasCustomer);
+			//passing financeDetail object for pre and post script validations
+			if (this.loanRow.isVisible() && getFinanceDetail() == null) {
+				FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailsForPmay(loanType.getValue());
+				setFinanceDetail(financeDetail);
+			}
+
 		}
 
 		vasRecording.setVasConfiguration(vasConfiguration);

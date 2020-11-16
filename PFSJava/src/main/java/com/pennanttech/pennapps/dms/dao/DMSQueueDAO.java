@@ -12,6 +12,5 @@ public interface DMSQueueDAO {
 	public void updateDMSQueue(DMSQueue dMSQueue);
 
 	public byte[] getDocumentByURI(String docURI);
-	
-	public DMSQueue isExistDocuri(String docUri, String reference);
+
 }

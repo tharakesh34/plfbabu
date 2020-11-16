@@ -63,11 +63,10 @@ public class OCRHeaderDAOImpl extends SequenceDao<OCRHeader> implements OCRHeade
 
 		StringBuilder sql = new StringBuilder("Insert Into OCRHEADER");
 		sql.append(tableType.getSuffix());
-		sql.append(" (HeaderID, OcrID, OcrDescription, CustomerPortion, OcrApplicable, SplitApplicable, Active");
+		sql.append(" (HeaderID, OcrID, OcrDescription, CustomerPortion, OcrType, Active");
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(
-				" Values(:HeaderID, :OcrID, :OcrDescription, :CustomerPortion, :OcrApplicable, :SplitApplicable, :Active");
+		sql.append(" Values(:HeaderID, :OcrID, :OcrDescription, :CustomerPortion, :OcrType, :Active");
 		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode");
 		sql.append(", :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -91,7 +90,7 @@ public class OCRHeaderDAOImpl extends SequenceDao<OCRHeader> implements OCRHeade
 		StringBuilder sql = new StringBuilder("Update OCRHEADER");
 		sql.append(tableType.getSuffix());
 		sql.append(" Set OcrDescription = :OcrDescription, CustomerPortion = :CustomerPortion");
-		sql.append(", OcrApplicable = :OcrApplicable, SplitApplicable = :SplitApplicable, Active = :Active");
+		sql.append(", OcrType = :OcrType, Active = :Active");
 		sql.append(", Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
 		sql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode");
 		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
@@ -197,7 +196,7 @@ public class OCRHeaderDAOImpl extends SequenceDao<OCRHeader> implements OCRHeade
 
 	private StringBuilder getOCRHeaderQuery() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select HeaderID, OCRID, OCRDescription, CustomerPortion, OCRApplicable, SplitApplicable, Active");
+		sql.append("Select HeaderID, OCRID, OCRDescription, CustomerPortion, OcrType,Active");
 		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From OCRHEADER");

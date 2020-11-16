@@ -23,6 +23,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -150,6 +151,22 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 	}
 
+	private void validateRemarks() {
+		this.finalValRemarks.setConstraint("");
+		this.finalValRemarks.setErrorMessage("");
+		BigDecimal minValAmount = (BigDecimal) finalValuationAmount.getAttribute("minValue");
+		if (minValAmount.compareTo(BigDecimal.ZERO) > 0) {
+			minValAmount = PennantApplicationUtil.formateAmount(minValAmount, PennantConstants.defaultCCYDecPos);
+		}
+		BigDecimal finValAmount = this.finalValuationAmount.getActualValue();
+		if (!this.finalValRemarks.isReadonly() && !this.finalValuationAmount.isReadonly()
+				&& minValAmount.compareTo(finValAmount) != 0 && StringUtils.isBlank(finalValRemarks.getValue())) {
+			throw new WrongValueException(finalValRemarks, Labels.getLabel("FIELD_NO_EMPTY",
+					new Object[] { Labels.getLabel("label_FieldInvestigationDialog_FinalValRemarks.value") }));
+		}
+
+	}
+
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 		if (!this.finalValuationCollateral.isDisabled()) {
@@ -189,6 +206,10 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 			wve.add(we);
 		}
 		try {
+			//PSD#155631
+			if (ImplementationConstants.TV_FINALVAL_AMOUNT_VALD) {
+				validateRemarks();
+			}
 			verification.setFinalValRemarks(this.finalValRemarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -273,7 +294,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 				this.valuationAsPerCOP.setValue(verification.getValueForCOP());
 				this.valuationAmountAsPerPE.setValue(verification.getFinalValAsPerPE());
-
+				this.finalValRemarks.setValue(StringUtils.trimToEmpty(verification.getFinalValRemarks()));
 				if (!isApproved
 						&& StringUtils.equals(verification.getTvRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
 					isApproved = true;
@@ -283,13 +304,14 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 					fillComboBox(this.decisionOnVal, verification.getFinalValDecision(), decisionOnValList, "");
 
-					this.finalValRemarks.setValue(StringUtils.trimToEmpty(verification.getFinalValRemarks()));
 				}
 			}
 
 			if (CollectionUtils.isNotEmpty(verificationAmountsList)) {
-				this.finalValuationAmount.setValue(PennantApplicationUtil
-						.formateAmount(Collections.min(verificationAmountsList), PennantConstants.defaultCCYDecPos));
+				if (StringUtils.isBlank(this.finalValRemarks.getValue())) {
+					this.finalValuationAmount.setValue(PennantApplicationUtil.formateAmount(
+							Collections.min(verificationAmountsList), PennantConstants.defaultCCYDecPos));
+				}
 			}
 		}
 	}

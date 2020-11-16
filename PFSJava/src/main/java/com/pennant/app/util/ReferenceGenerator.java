@@ -43,15 +43,19 @@
 package com.pennant.app.util;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.ReferenceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ReferenceGenerator implements Serializable {
 	private static final long serialVersionUID = -4965488291173350445L;
@@ -64,7 +68,11 @@ public class ReferenceGenerator implements Serializable {
 	private static final String PRODUCT = "P";
 	private static final String LOANTYPE = "L";
 	private static final String SEQUENCE = "S";
-
+	//First 4 letters of the customer and DOB in DDMMYY format 
+	private static final String DEFAULT_PWD_FORMAT = "LLLL_ddMMyy";
+	private static final String LETTER = "L";
+	private static final String DAY = "d";
+	private static final String YEAR = "y";
 	private static SequenceDao<?> sequenceGenetor;
 
 	/**
@@ -217,6 +225,53 @@ public class ReferenceGenerator implements Serializable {
 		String sequence = StringUtils.leftPad(String.valueOf(referenceSeqNumber), 5, '0');
 		logger.debug("Leaving");
 		return sequence;
+	}
+
+	/**
+	 * This method will return Agreement Password by using customer details
+	 * 
+	 * @param customer
+	 * @return
+	 */
+	public static String generateAgreementPassword(Customer customer) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder password = new StringBuilder("");
+		if (customer != null && customer.getCustShrtName() != null) {
+			String format = SysParamUtil.getValueAsString(SMTParameterConstants.PDF_PASSWORD_FORMAT);
+			if (StringUtils.isBlank(format)) {
+				format = DEFAULT_PWD_FORMAT;
+			}
+			String name = StringUtils.trimToEmpty(customer.getCustShrtName());
+			name = StringUtils.upperCase(name);
+			Date custDOB = customer.getCustDOB();
+			if (StringUtils.isNotBlank(format)) {
+				String[] formetFileds = format.split("_");
+				for (String formatCode : formetFileds) {
+
+					if (formatCode.startsWith(LETTER)) {
+						appendName(password, name, formatCode);
+					}
+					if (formatCode.startsWith(DAY) && formatCode.endsWith(YEAR)) {
+						String dob = DateUtil.format(custDOB, formatCode);
+						password = password.append(dob);
+					}
+				}
+			}
+			return StringUtils.trimToEmpty(password.toString());
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	private static void appendName(StringBuilder password, String name, String formatCode) {
+		String tempRef = "";
+		int length = formatCode.length();
+		if (name.length() < length) {
+			tempRef = name;
+		} else {
+			tempRef = name.substring(0, length);
+		}
+		password = password.append(tempRef);
 	}
 
 	public static void setSequenceGenetor(SequenceDao<?> sequenceGenetor) {

@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.agreement.InterestCertificate;
+import com.pennant.backend.model.customermasters.Customer;
 
 /**
  * DAO methods declaration for the <b>InterestCertificate model</b> class.<br>
@@ -68,7 +69,7 @@ public interface InterestCertificateDAO {
 
 	String getCollateralTypeValue(String table, String columnField, String reference);
 
-	List<String> getCoApplicantNames(String finReference);
+	List<Customer> getCoApplicantNames(String finReference);
 
 	InterestCertificate getSumOfPrinicipalAndProfitAmountPaid(String finReference, String startDate, String endDate)
 			throws ParseException;

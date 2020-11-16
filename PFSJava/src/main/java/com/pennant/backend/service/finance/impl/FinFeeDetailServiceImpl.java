@@ -1985,6 +1985,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		return limitAmt;
 	}
 
+	@Override
+	public List<FinFeeDetail> getFinFeeDetailsByTran(String reference, boolean isWIF, String type) {
+		return finFeeDetailDAO.getFinFeeDetailsByTran(reference, isWIF, type);
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

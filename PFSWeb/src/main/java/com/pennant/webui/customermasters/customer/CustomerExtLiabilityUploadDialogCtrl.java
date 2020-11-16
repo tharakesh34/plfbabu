@@ -733,6 +733,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 				createStatusSheet(workbook);//sheet at index 3
 				createSourceInfoSheet(workbook);//sheet at index 4
 				createTrackCheckFromSheet(workbook);//sheet at index 5
+				createEMIClearanceSheet(workbook);//sheet at index 6
 				file.close();
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				workbook.write(baos);
@@ -890,6 +891,30 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 				createCell(row, 0, financeType.getFinType());
 				//description
 				createCell(row, 1, financeType.getFinTypeDesc());
+			}
+		}
+	}
+
+	/**
+	 * This method will create a Clearance sheet for an workbook
+	 * 
+	 * @param workbook
+	 */
+	private void createEMIClearanceSheet(Workbook workbook) {
+		Sheet emiClearanceSheet = workbook.getSheetAt(6);
+		if (emiClearanceSheet == null) {
+			return;
+		}
+		List<ValueLabel> valueLabels = PennantStaticListUtil.getEmiClearance();
+		int rowcount = 0;
+		Row row = null;
+		if (CollectionUtils.isNotEmpty(valueLabels)) {
+			for (ValueLabel valueLabel : valueLabels) {
+				row = emiClearanceSheet.createRow(++rowcount);
+				//code
+				createCell(row, 0, valueLabel.getValue());
+				//description
+				createCell(row, 1, valueLabel.getLabel());
 			}
 		}
 	}

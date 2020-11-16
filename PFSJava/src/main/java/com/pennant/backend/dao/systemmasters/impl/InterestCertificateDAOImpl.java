@@ -54,11 +54,15 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.InterestCertificateDAO;
 import com.pennant.backend.model.agreement.InterestCertificate;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -77,14 +81,14 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 	public InterestCertificate getInterestCertificateDetails(String finReference) throws ParseException {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder(
-				"SELECT distinct FINREFERENCE, CUSTNAME, CUSTADDRHNBR, CUSTADDRSTREET, COUNTRYDESC, CUSTADDRSTATE, ");
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT distinct FINREFERENCE, CUSTNAME, CUSTADDRHNBR, CUSTADDRSTREET, COUNTRYDESC, CUSTADDRSTATE,");
 		sql.append("CUSTADDRCITY, CUSTADDRZIP, CUSTEMAIL, CUSTPHONENUMBER, FINTYPEDESC, FINASSETVALUE,");
 		sql.append("EFFECTIVERATE, ENTITYCODE, ENTITYDESC, ENTITYPANNUMBER, ENTITYADDRHNBR,");
-		sql.append(
-				"ENTITYFLATNBR, ENTITYADDRSTREET, ENTITYSTATE, ENTITYCITY, FINCCY, FinAmount, fintype, custflatnbr, EntityZip ");
-		sql.append(" from INTERESTCERTIFICATE_VIEW ");
-		sql.append(" Where FinReference =:FinReference");
+		sql.append("ENTITYFLATNBR, ENTITYADDRSTREET, ENTITYSTATE, ENTITYCITY, FINCCY, FinAmount, fintype,");
+		sql.append("custflatnbr, EntityZip ,FINCURRASSETVALUE,CUSTSALUTATION ");
+		sql.append("from INTERESTCERTIFICATE_VIEW ");
+		sql.append("Where FinReference =:FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -220,7 +224,11 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		source.addValue("REFERENCE", reference);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			List<String> list = this.jdbcTemplate.queryForList(sql.toString(), source, String.class);
+			if (list != null && list.size() > 0) {
+				//Bugfix:considering single collateral property Value where it is returning multiple records 
+				return list.get(0);
+			}
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
@@ -229,21 +237,23 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 	}
 
 	@Override
-	public List<String> getCoApplicantNames(String finReference) {
+	public List<Customer> getCoApplicantNames(String finReference) {
 		logger.debug(Literal.ENTERING);
 
+		JointAccountDetail detail = new JointAccountDetail();
+		detail.setFinReference(finReference);
+
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select custshrtname  FROM FINJOINTACCOUNTDETAILS ja");
+		sql.append("Select custshrtname, CustSalutationCode  FROM FINJOINTACCOUNTDETAILS ja");
 		sql.append(" inner join Customers c on c.CustCif = ja.CustCif");
 		sql.append(" Where ja.FinReference = :FinReference");
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
+		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
 
 		logger.debug(Literal.LEAVING);
-		return jdbcTemplate.queryForList(sql.toString(), source, String.class);
-
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override

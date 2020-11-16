@@ -256,7 +256,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 				int finStartDateDay = DateUtility.getDay(finStartDate);
 				int years = DateUtility.getYearsBetween(finStartDate, appDate);
 
-				if (finStartDateMonth < 4) {
+				if (finStartDateMonth < 4 && years > 0) {
 					finStartDateYear = String.valueOf(Integer.valueOf(finStartDateYear) - 1);
 					years = years + 1;
 				}

@@ -298,7 +298,7 @@ public class CollateralController {
 		CollateralSetup collateralDetail = null;
 		// generate collateral reference in case of empty
 		if (StringUtils.isBlank(collateralSetup.getCollateralRef())) {
-			collateralSetup.setCollateralRef(ReferenceUtil.generateCollateralRef());
+			collateralSetup.setCollateralRef(ReferenceUtil.generateCollateralReference());
 		}
 
 		Customer customer = customerDetailsService.getCustomerByCIF(collateralSetup.getDepositorCif());

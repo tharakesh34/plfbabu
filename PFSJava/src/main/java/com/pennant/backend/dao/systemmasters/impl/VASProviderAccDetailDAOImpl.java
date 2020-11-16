@@ -256,9 +256,10 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 		sql.append(" SELECT id, providerId,entityCode, paymentMode, bankBranchID, accountNumber,");
 		sql.append(" receivableAdjustment, reconciliationAmount, active, partnerBankId, ");
 
-		if ("_view".equalsIgnoreCase(type)) {
+		if (type.contains("view")) {
 			sql.append(
 					"entityDesc, providerDesc, branchDesc,bankName,ifscCode,micrCode,bankCode, partnerBankCode, partnerBankName,");
+			sql.append(" branchCity, branchCode, ");
 		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, ");
 		sql.append(" RecordType, WorkflowId From VASProviderAccDetail");
@@ -288,9 +289,10 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 		sql.append(" SELECT id, providerId,entityCode, paymentMode, bankBranchID, accountNumber,");
 		sql.append(" receivableAdjustment, reconciliationAmount, active, partnerBankId, ");
 
-		if ("_view".equalsIgnoreCase(type)) {
+		if (type.contains("view")) {
 			sql.append(
 					"entityDesc, providerDesc, branchDesc,bankName,ifscCode,micrCode,bankCode, partnerBankCode, partnerBankName,");
+			sql.append(" branchCity, branchCode, ");
 		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, ");
 		sql.append(" RecordType, WorkflowId From VASProviderAccDetail");

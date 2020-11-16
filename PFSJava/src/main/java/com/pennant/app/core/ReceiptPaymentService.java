@@ -24,6 +24,7 @@ import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 
 public class ReceiptPaymentService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
@@ -189,7 +190,8 @@ public class ReceiptPaymentService extends ServiceHelper {
 			processAdvanceEMi(presentmentDetail, finEODEvent, customer, businessDate, noReserve);
 		}
 
-		if (presentmentAmt.compareTo(BigDecimal.ZERO) > 0) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.CREATE_PRESENTMENT_RECEIPT_EOD)
+				&& presentmentAmt.compareTo(BigDecimal.ZERO) > 0) {
 			receiptDetail = new FinReceiptDetail();
 			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);

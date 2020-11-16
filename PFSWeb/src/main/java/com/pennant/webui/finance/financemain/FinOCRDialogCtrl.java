@@ -13,6 +13,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -23,7 +24,6 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Groupbox;
@@ -36,8 +36,11 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinOCRCapture;
 import com.pennant.backend.model.finance.FinOCRDetail;
 import com.pennant.backend.model.finance.FinOCRHeader;
@@ -46,16 +49,22 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.ocrmaster.OCRDetail;
 import com.pennant.backend.model.ocrmaster.OCRHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.finance.FinOCRHeaderService;
 import com.pennant.backend.service.systemmasters.OCRHeaderService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 
@@ -68,14 +77,25 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinOCRDialog;
+	//OCR Definition Fields
 	protected Listbox listBoxFinOCRSteps;
 	protected Div ocrStepsDiv;
 	protected Button btnNew_FinOCRStep;
 	protected ExtendedCombobox ocrID;
 	protected Textbox ocrDescription;
 	protected Intbox customerPortion;
-	protected Combobox ocrApplicableOn;
-	protected Checkbox splitApplicable;
+	protected Combobox ocrType;
+	protected CurrencyBox totalDemand;
+	protected CurrencyBox totalReceivable;
+	//OCR capture Fields
+	protected Textbox loanReference;
+	protected CurrencyBox ocrCprTotReceivble;
+	protected CurrencyBox ocrTotalDemand;
+	protected CurrencyBox ocrTotalPaid;
+
+	protected CurrencyBox tdTotalDemand;
+	protected CurrencyBox tdTotalReceivable;
+
 	protected Button btnNew_FinOCRCapture;
 	protected Listbox listBoxOCRCapture;
 	// For Dynamically calling of this Controller
@@ -95,6 +115,9 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	private ArrayList<Object> headerList;
 	private List<ValueLabel> applicableList = PennantStaticListUtil.getOCRApplicableList();
 	private OCRHeaderService ocrHeaderService;
+	private FinOCRHeaderService finOCRHeaderService;
+	@Autowired
+	private SearchProcessor searchProcessor;
 	//Fin OCR Capture list
 	private List<FinOCRCapture> finOCRCaptureList = new ArrayList<FinOCRCapture>();
 	private int ccyFormatter = 0;
@@ -182,13 +205,49 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 
 			if (getFinanceDetail() != null) {
 				financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+				OCRHeader ocrHeader = null;
+
 				if (getFinanceDetail().getFinOCRHeader() != null) {
+					if (financeMain != null && StringUtils.isNotEmpty(financeMain.getParentRef())) {
+						this.totalDemand.setDisabled(true);
+					}
 					setFinOCRHeader(getFinanceDetail().getFinOCRHeader());
-				} else if (financeType != null && !StringUtils.isEmpty(financeType.getDefaultOCR())) {
-					//get default OCR header details from loan type
-					OCRHeader ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(financeType.getDefaultOCR(),
+				}
+
+				if (financeMain != null && StringUtils.isNotEmpty(financeMain.getParentRef())) {
+					FinOCRHeader finOCRHeader = finOCRHeaderService
+							.getApprovedFinOCRHeaderByRef(financeMain.getParentRef(), TableType.VIEW.getSuffix());
+					ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(finOCRHeader.getOcrID(),
 							TableType.AVIEW.getSuffix());
 					setFinOCRHeader(copyOCRHeaderProperties(ocrHeader));
+					if (getFinanceDetail().getFinOCRHeader() != null
+							&& StringUtils.isNotEmpty(getFinanceDetail().getFinOCRHeader().getRecordStatus())) {
+						getFinOCRHeader().setNewRecord(false);
+						getFinOCRHeader().setHeaderID(getFinanceDetail().getFinOCRHeader().getHeaderID());
+						getFinOCRHeader().setTotalDemand(getFinanceDetail().getFinOCRHeader().getTotalDemand());
+						getFinOCRHeader().getFinOCRCapturesList()
+								.addAll(getFinanceDetail().getFinOCRHeader().getFinOCRCapturesList());
+					}
+					if ((finOCRHeader != null) && finOCRHeader.getTotalDemand() != null) {
+						getFinOCRHeader().setTotalDemand(finOCRHeader.getTotalDemand());
+					}
+					this.totalDemand.setDisabled(true);
+				} else if (financeType != null && StringUtils.isNotEmpty(financeType.getDefaultOCR())
+						&& (getFinanceDetail().getFinOCRHeader() != null
+								&& StringUtils.isEmpty(getFinanceDetail().getFinOCRHeader().getOcrID()))) {
+					// get default OCR header details from loan type
+					ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(financeType.getDefaultOCR(),
+							TableType.AVIEW.getSuffix());
+					setFinOCRHeader(copyOCRHeaderProperties(ocrHeader));
+					if (getFinanceDetail().getFinOCRHeader() != null
+							&& StringUtils.isNotEmpty(getFinanceDetail().getFinOCRHeader().getRecordStatus())) {
+						getFinOCRHeader().setNewRecord(false);
+						getFinOCRHeader().setHeaderID(getFinanceDetail().getFinOCRHeader().getHeaderID());
+						getFinOCRHeader().setTotalDemand(getFinanceDetail().getFinOCRHeader().getTotalDemand());
+						getFinOCRHeader().getFinOCRCapturesList()
+								.addAll(getFinanceDetail().getFinOCRHeader().getFinOCRCapturesList());
+					}
 				}
 			}
 			if (getFinOCRHeader() == null) {
@@ -229,9 +288,21 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			this.ocrID.setFilters(new Filter[] { new Filter("OcrID", detailsList, Filter.OP_IN) });
 		}
 		this.ocrDescription.setMaxlength(100);
-		this.customerPortion.setMaxlength(2);
+		this.customerPortion.setMaxlength(ccyFormatter);
+		this.totalDemand.setProperties(true, ccyFormatter);
+		this.totalReceivable.setDisabled(true);
+		this.totalReceivable.setProperties(true, ccyFormatter);
 		this.ocrStepsDiv.setVisible(false);
 		this.listBoxFinOCRSteps.setVisible(false);
+		this.loanReference.setDisabled(true);
+		this.ocrCprTotReceivble.setDisabled(true);
+		this.ocrCprTotReceivble.setProperties(true, ccyFormatter);
+		this.ocrTotalDemand.setDisabled(true);
+		this.ocrTotalDemand.setProperties(true, ccyFormatter);
+		this.ocrTotalPaid.setDisabled(true);
+		this.ocrTotalPaid.setScale(ccyFormatter);
+		this.tdTotalDemand.setDisabled(true);
+		this.tdTotalReceivable.setDisabled(true);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -275,8 +346,8 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			doCheckEnquiry();
 			doCheckDefApproved();
 			doWriteBeanToComponents(finOCRHeader);
-			this.listBoxFinOCRSteps.setHeight(borderLayoutHeight - 226 + "px");
-			this.listBoxOCRCapture.setHeight(borderLayoutHeight - 226 + "px");
+			this.listBoxFinOCRSteps.setHeight(((borderLayoutHeight - 80) / 2) - 100 + "px");
+			this.listBoxOCRCapture.setHeight(borderLayoutHeight - 326 + "px");
 			if (parent != null) {
 				this.window_FinOCRDialog.setHeight(borderLayoutHeight - 75 + "px");
 				parent.appendChild(this.window_FinOCRDialog);
@@ -296,21 +367,29 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	public void doWriteBeanToComponents(FinOCRHeader finOCRHeader) {
 		logger.debug(Literal.ENTERING);
 
-		fillComboBox(this.ocrApplicableOn, finOCRHeader.getOcrApplicable(), applicableList, "");
+		fillComboBox(this.ocrType, finOCRHeader.getOcrType(), applicableList, "");
 		this.ocrID.setValue(finOCRHeader.getOcrID());
 		this.ocrDescription.setValue(finOCRHeader.getOcrDescription());
 		this.customerPortion.setValue(finOCRHeader.getCustomerPortion());
-		this.splitApplicable.setChecked(finOCRHeader.getSplitApplicable());
-		if (finOCRHeader.getSplitApplicable()) {
+		this.loanReference.setValue(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+
+		this.totalDemand.setValue(finOCRHeader.getTotalDemand());
+		this.totalReceivable
+				.setValue(getCurrentTranchAmount(finOCRHeader.getTotalDemand(), finOCRHeader.getCustomerPortion()));
+		if (StringUtils.equals(PennantConstants.SEGMENTED_VALUE, finOCRHeader.getOcrType())) {
 			this.ocrStepsDiv.setVisible(true);
 			this.listBoxFinOCRSteps.setVisible(true);
 		} else {
 			this.ocrStepsDiv.setVisible(false);
 			this.listBoxFinOCRSteps.setVisible(false);
 		}
+
 		//FinOCRStep Details
 		doFillFinOCRStepDetails(finOCRHeader.getOcrDetailList());
-
+		financeDetail.setFinOCRHeader(finOCRHeader);
+		for (FinOCRCapture finOCRCapture : finOCRHeader.getFinOCRCapturesList()) {
+			finOCRCapture.setDocImage(finOCRHeaderService.getDocumentManImage(finOCRCapture.getDocumentRef()));
+		}
 		//FinOCRStep Details
 		doFillFinOCRCaptureDetails(finOCRHeader.getFinOCRCapturesList());
 		logger.debug(Literal.LEAVING);
@@ -322,8 +401,10 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			readOnlyComponent(true, this.ocrID);
 			readOnlyComponent(true, this.ocrDescription);
 			readOnlyComponent(true, this.customerPortion);
-			readOnlyComponent(true, this.ocrApplicableOn);
-			readOnlyComponent(true, this.splitApplicable);
+			readOnlyComponent(true, this.ocrType);
+			readOnlyComponent(true, this.totalDemand);
+			readOnlyComponent(true, this.totalReceivable);
+			//readOnlyComponent(true, this.splitApplicable);
 			this.btnNew_FinOCRCapture.setVisible(false);
 
 		}
@@ -335,8 +416,10 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			readOnlyComponent(true, this.ocrID);
 			readOnlyComponent(true, this.ocrDescription);
 			readOnlyComponent(true, this.customerPortion);
-			readOnlyComponent(true, this.ocrApplicableOn);
-			readOnlyComponent(true, this.splitApplicable);
+			readOnlyComponent(true, this.ocrType);
+			readOnlyComponent(true, this.totalDemand);
+			readOnlyComponent(true, this.totalReceivable);
+			//readOnlyComponent(true, this.splitApplicable);
 		}
 
 	}
@@ -457,6 +540,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 
 		showErrorDetails(wve, this.tabOCRDefinition);
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
 		aFinOCRHeader.setFinReference(financeMain.getFinReference());
 		aFinOCRHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinOCRHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -466,7 +550,8 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		BigDecimal demandAmt = BigDecimal.ZERO;
 		BigDecimal ocrpaid = BigDecimal.ZERO;
 		int custPortion = aFinOCRHeader.getCustomerPortion();
-		BigDecimal finAmount = financeMain.getFinAmount();
+		BigDecimal finAmount = BigDecimal.ZERO;
+		BigDecimal totalDemandRaised = BigDecimal.ZERO;
 
 		List<FinOCRCapture> captureList = aFinOCRHeader.getFinOCRCapturesList();
 		if (captureList != null) {
@@ -474,41 +559,259 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 				demandAmt = demandAmt.add(finOCRCapture.getDemandAmount());
 				ocrpaid = ocrpaid.add(finOCRCapture.getPaidAmount());
 			}
+			demandAmt = PennantApplicationUtil.formateAmount(demandAmt, ccyFormatter);
+			ocrpaid = PennantApplicationUtil.formateAmount(ocrpaid, ccyFormatter);
+		}
+		if (StringUtils.isNotEmpty(financeMain.getParentRef())) {
+			//Parent total demand amount
+			FinOCRHeader finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(financeMain.getParentRef(),
+					TableType.AVIEW.getSuffix());
+			if (finOCRHeader != null) {
+				BigDecimal customerportion = getCurrentTranchAmount(finOCRHeader.getTotalDemand(),
+						finOCRHeader.getCustomerPortion());
+				totalDemandRaised = totalDemandRaised.add(finOCRHeader.getTotalDemand().subtract(customerportion));
+			}
+		} else {
+			BigDecimal customerportion = getCurrentTranchAmount(aFinOCRHeader.getTotalDemand(),
+					finOCRHeader.getCustomerPortion());
+			totalDemandRaised = totalDemandRaised.add(aFinOCRHeader.getTotalDemand().subtract(customerportion));
+		}
+
+		finAmount = getDisbAmount(financeDetail);
+		if (finAmount.compareTo(totalDemandRaised) > 0 && !recSave) {
+			String msg = Labels.getLabel("OCR_DISB_AMOUNT_VALIDATION_MSG");
+			MessageUtil.showMessage(msg);
+			return false;
+		}
+
+		//rule for segmentations
+		if (StringUtils.equals(this.ocrType.getSelectedItem().getValue(), PennantConstants.SEGMENTED_VALUE)) {
+			BigDecimal cumCustSum = getCumCustSum(demandAmt);
+			// Rule 1
+			if (ocrpaid.compareTo(cumCustSum) < 0 && !recSave) {
+				String msg = Labels.getLabel("OCR_NOT_SUFFICIENT_MSG");
+				if (MessageUtil.confirm(msg) == MessageUtil.NO) {
+					return false;
+				} else {
+					financeMain.setOcrDeviation(true);
+					if (tab != null) {
+						tab.setSelected(true);
+					}
+				}
+			}
+			// Rule 2
+			if (finAmount.add(ocrpaid).compareTo(demandAmt) > 0 && !recSave) {
+				String msg = Labels.getLabel("OCR_DISB_AMOUNT_CUM_VALIDATION_MSG");
+				if (MessageUtil.confirm(msg) == MessageUtil.NO) {
+					return false;
+				} else {
+					financeMain.setOcrDeviation(true);
+					if (tab != null) {
+						tab.setSelected(true);
+					}
+				}
+			}
 		}
 
 		//validation 
 		BigDecimal amountTobepaid = getCurrentTranchAmount(demandAmt, custPortion);
-		BigDecimal financieContribution = demandAmt.subtract(amountTobepaid);
-		if (!this.splitApplicable.isChecked()) {
-			if (ocrpaid.compareTo(amountTobepaid) < 0) {
-				String msg = Labels.getLabel("OCR_PAID_AMOUNT_VALIDATION",
-						new String[] { Labels.getLabel("label_FinOCRCaptureDialog_OCRpaid.value"),
-								Labels.getLabel("label_FinOCRCaptureDialog_OCRRecCurTranche.value") });
+
+		if (StringUtils.equals(this.ocrType.getSelectedItem().getValue(), PennantConstants.PRORATA_VALUE)) {
+			//Rule 1
+			if (ocrpaid.compareTo(amountTobepaid) < 0 && !recSave) {
+				String msg = Labels.getLabel("OCR_NOT_SUFFICIENT_MSG");
 				if (MessageUtil.confirm(msg) == MessageUtil.NO) {
 					return false;
 				} else {
+					financeMain.setOcrDeviation(true);
 					if (tab != null) {
 						tab.setSelected(true);
 					}
 				}
 			}
 
-			if (finAmount.compareTo(financieContribution) > 0) {
-				String msg = Labels.getLabel("OCR_DISB_AMOUNT_VALIDATION",
-						new String[] { Labels.getLabel("listheader_FinOCRDialog_FinancerContribution.label") });
+			//rule 2
+			if (finAmount.add(ocrpaid).compareTo(demandAmt) > 0 && !recSave) {
+				String msg = Labels.getLabel("OCR_DISB_AMOUNT_CUM_VALIDATION_MSG");
 				if (MessageUtil.confirm(msg) == MessageUtil.NO) {
 					return false;
 				} else {
+					financeMain.setOcrDeviation(true);
 					if (tab != null) {
 						tab.setSelected(true);
 					}
-
 				}
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
 		return true;
+	}
+
+	private BigDecimal getDisbAmount(FinanceDetail financeDetail) {
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		List<FinAdvancePayments> finAdvancePayments = financeDetail.getAdvancePaymentsList();
+		BigDecimal finAmount = BigDecimal.ZERO;
+		List<FinanceMain> fmlist = null;
+		//Current Loan disbursment amount
+		if (finAdvancePayments != null) {
+			for (FinAdvancePayments disb : finAdvancePayments) {
+				finAmount = finAmount.add(disb.getAmtToBeReleased());
+			}
+		} else {
+			finAmount.add(financeMain.getFinAmount());
+		}
+
+		// Parent Disbursement amounts
+		if (StringUtils.isNotEmpty(financeMain.getParentRef())) {
+			// Parent Disbursement amounts
+			List<FinAdvancePayments> disbursementObject = getFinAdvancePaymentsObject(financeMain.getParentRef());
+			if (disbursementObject != null) {
+				for (FinAdvancePayments disb : disbursementObject) {
+					finAmount = finAmount.add(disb.getAmtToBeReleased());
+				}
+			} else {
+				List<FinanceMain> finmain = getFinanceMain(financeMain.getFinReference());
+				if (CollectionUtils.isNotEmpty(finmain)) {
+					finAmount.add(finmain.get(0).getFinAmount());
+				}
+			}
+
+			// List of childs having parent of given FinReference
+			fmlist = getFinanceMainObject(financeMain.getFinReference());
+			for (FinanceMain financemain : fmlist) {
+				disbursementObject = getFinAdvancePaymentsObject(financemain.getFinReference());
+				if (disbursementObject != null) {
+					for (FinAdvancePayments disb : disbursementObject) {
+						finAmount = finAmount.add(disb.getAmtToBeReleased());
+					}
+				} else {
+					List<FinanceMain> finmain = getFinanceMain(financeMain.getFinReference());
+					if (CollectionUtils.isNotEmpty(finmain)) {
+						finAmount.add(finmain.get(0).getFinAmount());
+					}
+				}
+			}
+
+		}
+		finAmount = PennantApplicationUtil.formateAmount(finAmount, ccyFormatter);
+		return finAmount;
+	}
+
+	private BigDecimal getCumCustSum(BigDecimal demandAmt) {
+		BigDecimal ocrtotalDemand = this.totalDemand.getActualValue();
+		BigDecimal cumcustsum = BigDecimal.ZERO;
+		BigDecimal cumfincsum = BigDecimal.ZERO;
+		BigDecimal total = BigDecimal.ZERO;
+		BigDecimal rem = BigDecimal.ZERO;
+		boolean custr = false;
+		boolean finc = false;
+		for (FinOCRDetail finOCRDetail : getFinOCRDetailList()) {
+
+			if (finOCRDetail.getCustomerContribution() != 0) {
+				BigDecimal cust = getCurrentTranchAmount(ocrtotalDemand, finOCRDetail.getCustomerContribution());
+				cumcustsum = cumcustsum.add(cust);
+				total = total.add(cust);
+
+				if (total.compareTo(demandAmt) > 0) {
+					custr = true;
+					rem = total.subtract(demandAmt);
+					break;
+				}
+			}
+			if (finOCRDetail.getFinancerContribution() != 0) {
+				BigDecimal fin = getCurrentTranchAmount(ocrtotalDemand, finOCRDetail.getFinancerContribution());
+				cumfincsum = cumfincsum.add(fin);
+				total = total.add(fin);
+
+				if (total.compareTo(demandAmt) > 0) {
+					finc = true;
+					rem = total.subtract(demandAmt);
+					break;
+				}
+			}
+		}
+		if (custr) {
+			cumcustsum = cumcustsum.subtract(rem);
+		}
+		if (finc) {
+			cumfincsum = cumfincsum.subtract(rem);
+		}
+		return cumcustsum;
+	}
+
+	private BigDecimal getCumCustSum(FinanceDetail financeDetail, BigDecimal demandAmt) {
+		FinOCRHeader aFinOCRHeader = financeDetail.getFinOCRHeader();
+		BigDecimal ocrtotalDemand = aFinOCRHeader.getTotalDemand();
+		BigDecimal cumcustsum = BigDecimal.ZERO;
+		BigDecimal cumfincsum = BigDecimal.ZERO;
+		BigDecimal total = BigDecimal.ZERO;
+		BigDecimal rem = BigDecimal.ZERO;
+		boolean custr = false;
+		boolean finc = false;
+		//BigDecimal disbAmount = getDisbAmount(financeDetail);
+		for (FinOCRDetail finOCRDetail : aFinOCRHeader.getOcrDetailList()) {
+
+			if (finOCRDetail.getCustomerContribution() != 0) {
+				BigDecimal cust = getCurrentTranchAmount(ocrtotalDemand, finOCRDetail.getCustomerContribution());
+				cumcustsum = cumcustsum.add(cust);
+				total = total.add(cust);
+
+				if (total.compareTo(demandAmt) > 0) {
+					custr = true;
+					rem = total.subtract(demandAmt);
+					break;
+				}
+			}
+			if (finOCRDetail.getFinancerContribution() != 0) {
+				BigDecimal fin = getCurrentTranchAmount(ocrtotalDemand, finOCRDetail.getFinancerContribution());
+				cumfincsum = cumfincsum.add(fin);
+				total = total.add(fin);
+
+				if (total.compareTo(demandAmt) > 0) {
+					finc = true;
+					rem = total.subtract(demandAmt);
+					break;
+				}
+			}
+		}
+		if (custr) {
+			cumcustsum = cumcustsum.subtract(rem);
+
+		}
+		if (finc) {
+			cumfincsum = cumfincsum.subtract(rem);
+		}
+		return cumcustsum;
+	}
+
+	private List<FinAdvancePayments> getFinAdvancePaymentsObject(String parentRef) {
+		Search search = new Search(FinAdvancePayments.class);
+		search.addField("AmtToBeReleased");
+		search.addTabelName("FinAdvancePayments_view");
+		search.addFilter(new Filter("FinReference", parentRef, Filter.OP_EQUAL));
+		List<FinAdvancePayments> list = searchProcessor.getResults(search);
+		return list;
+	}
+
+	private List<FinanceMain> getFinanceMainObject(String parentRef) {
+		logger.debug(Literal.LEAVING);
+		Search search = new Search(FinanceMain.class);
+		search.addField("FinAmount");
+		search.addTabelName("FinanceMain_view");
+		search.addFilter(new Filter("ParentRef", parentRef, Filter.OP_EQUAL));
+		List<FinanceMain> list = searchProcessor.getResults(search);
+		return list;
+	}
+
+	private List<FinanceMain> getFinanceMain(String finReference) {
+		logger.debug(Literal.LEAVING);
+		Search search = new Search(FinanceMain.class);
+		search.addField("FinAmount");
+		search.addTabelName("FinanceMain_view");
+		search.addFilter(new Filter("finReference", finReference, Filter.OP_EQUAL));
+		List<FinanceMain> list = searchProcessor.getResults(search);
+		return list;
 	}
 
 	/**
@@ -540,19 +843,31 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		}
 
 		try {
-			if ("#".equals(getComboboxValue(this.ocrApplicableOn))) {
-				if (!this.ocrApplicableOn.isDisabled()) {
-					throw new WrongValueException(this.ocrApplicableOn, Labels.getLabel("STATIC_INVALID",
+			aFinOCRHeader.setTotalDemand(this.totalDemand.getActualValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinOCRHeader.setTotalReceivable(this.totalReceivable.getActualValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if ("#".equals(getComboboxValue(this.ocrType))) {
+				if (!this.ocrType.isDisabled()) {
+					throw new WrongValueException(this.ocrType, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_FinOCRDialog_OCRApplicableOn.value") }));
 				}
 			} else {
-				aFinOCRHeader.setOcrApplicable(getComboboxValue(this.ocrApplicableOn));
+				aFinOCRHeader.setOcrType(getComboboxValue(this.ocrType));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		aFinOCRHeader.setSplitApplicable(this.splitApplicable.isChecked());
+		//aFinOCRHeader.setSplitApplicable(this.splitApplicable.isChecked());
 		//Fin OCR Step Details
 		aFinOCRHeader.setOcrDetailList(getFinOCRDetailList());
 
@@ -568,6 +883,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
+		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		if (!this.ocrID.isReadonly()) {
 			this.ocrID.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_FinOCRDialog_OCRID.value"), null, true));
@@ -581,6 +897,28 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		if (!this.customerPortion.isReadonly()) {
 			this.customerPortion.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_FinOCRDialog_CustomerPortion.value"), null, true, false));
+		}
+
+		if (!this.totalDemand.isReadonly()) {
+			this.totalDemand
+					.setConstraint(new PTDecimalValidator(Labels.getLabel("label_FinOCRDialog_Totaldemand.value"),
+							finFormatter, true, false, 1, Double.MAX_VALUE));
+		}
+
+		if (!this.totalReceivable.isReadonly()) {
+			this.totalDemand.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinOCRDialog_TotalOCRReceivable.value"), null, true, false));
+		}
+
+		if (!this.totalDemand.isReadonly()) {
+			this.totalDemand
+					.setConstraint(new PTDecimalValidator(Labels.getLabel("label_FinOCRDialog_Totaldemand.value"),
+							finFormatter, true, false, 1, Double.MAX_VALUE));
+		}
+
+		if (!this.totalReceivable.isReadonly()) {
+			this.totalDemand.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinOCRDialog_TotalOCRReceivable.value"), null, true, false));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -615,7 +953,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		this.ocrID.setConstraint("");
 		this.ocrDescription.setConstraint("");
 		this.customerPortion.setConstraint("");
-		this.ocrApplicableOn.setConstraint("");
+		this.ocrType.setConstraint("");
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -625,11 +963,11 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		finOCRHeader.setNewRecord(true);
 		List<FinOCRDetail> finOCRDetailList = new ArrayList<>();
 		if (ocrHeader != null) {
-			finOCRHeader.setOcrApplicable(ocrHeader.getOcrApplicable());
+			finOCRHeader.setOcrType(ocrHeader.getOcrType());
 			finOCRHeader.setOcrID(ocrHeader.getOcrID());
 			finOCRHeader.setOcrDescription(ocrHeader.getOcrDescription());
 			finOCRHeader.setCustomerPortion(ocrHeader.getCustomerPortion());
-			finOCRHeader.setSplitApplicable(ocrHeader.isSplitApplicable());
+			//finOCRHeader.setSplitApplicable(ocrHeader.isSplitApplicable());
 			if (StringUtils.isBlank(finOCRHeader.getRecordType())) {
 				finOCRHeader.setVersion(finOCRHeader.getVersion() + 1);
 				finOCRHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -654,6 +992,36 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		}
 		return finOCRHeader;
 
+	}
+
+	/**
+	 * Called when changing the value of the text box
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 * @throws WrongValueException
+	 */
+	public void onValueChange$totalDemand(Event event) throws Exception {
+		logger.trace(Literal.ENTERING);
+		//this.totalReceivable.setValue((totalDemand.getValue()*customerPortion.getValue())/100);
+		this.totalReceivable
+				.setValue(getCurrentTranchAmount(this.totalDemand.getValidateValue(), this.customerPortion.getValue()));
+		logger.trace(Literal.LEAVING);
+	}
+
+	/**
+	 * Called when changing the value of the text box
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 * @throws WrongValueException
+	 */
+	public void onFulfill$totalDemand(Event event) throws Exception {
+		logger.trace(Literal.ENTERING);
+		//this.totalReceivable.setValue((totalDemand.getValue()*customerPortion.getValue())/100);
+		this.totalReceivable
+				.setValue(getCurrentTranchAmount(this.totalDemand.getActualValue(), this.customerPortion.getValue()));
+		logger.trace(Literal.LEAVING);
 	}
 
 	/**
@@ -783,16 +1151,17 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	}
 
 	/**
-	 * Validations for OCR Steps on SplitApplicable Check Box change event
+	 * Validations for OCR Steps on ocrType change event
 	 */
 	private void doCheckFinOCRStepDetails() {
-		if (this.splitApplicable.isChecked()) {
+		if (StringUtils.equals(this.ocrType.getSelectedItem().getValue(), PennantConstants.SEGMENTED_VALUE)) {
 			this.ocrStepsDiv.setVisible(true);
 			this.listBoxFinOCRSteps.setVisible(true);
 		} else {
 			if (doCheckOCRStepsDeleted()) {
 				MessageUtil.showError(Labels.getLabel("label_FinOCRDialog_error"));
-				this.splitApplicable.setChecked(true);
+				//this condition is for switching segmented to prorata 
+				fillComboBox(this.ocrType, PennantConstants.SEGMENTED_VALUE, applicableList, "");
 				return;
 			}
 			this.ocrStepsDiv.setVisible(false);
@@ -815,9 +1184,9 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	}
 
 	/**
-	 * onCheck Event For SplitApplicable Check Box
+	 * onCheck Event For ocrType Combobox
 	 */
-	public void onCheck$splitApplicable(Event event) {
+	public void onSelect$ocrType(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		doCheckFinOCRStepDetails();
 		logger.debug(Literal.LEAVING + event.toString());
@@ -845,9 +1214,9 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 
 		this.ocrDescription.setReadonly(!getUserWorkspace().isAllowed("FinOCRDialog_ocrDescription"));
 		this.customerPortion.setReadonly(!getUserWorkspace().isAllowed("FinOCRDialog_customerPortion"));
-		this.ocrApplicableOn.setDisabled(!getUserWorkspace().isAllowed("FinOCRDialog_ocrApplicableOn"));
-		this.splitApplicable.setDisabled(!getUserWorkspace().isAllowed("FinOCRDialog_splitApplicable"));
-
+		this.totalDemand.setReadonly(!getUserWorkspace().isAllowed("FinOCRDialog_customerPortion"));
+		this.totalReceivable.setReadonly(!getUserWorkspace().isAllowed("FinOCRDialog_customerPortion"));
+		this.ocrType.setDisabled(!getUserWorkspace().isAllowed("FinOCRDialog_ocrApplicableOn"));
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -888,7 +1257,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 		return null;
 
@@ -945,6 +1314,14 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		this.ocrHeaderService = ocrHeaderService;
 	}
 
+	public FinOCRHeaderService getFinOCRHeaderService() {
+		return finOCRHeaderService;
+	}
+
+	public void setFinOCRHeaderService(FinOCRHeaderService finOCRHeaderService) {
+		this.finOCRHeaderService = finOCRHeaderService;
+	}
+
 	public List<FinOCRDetail> getFinOCRDetailList() {
 		return finOCRDetailList;
 	}
@@ -966,25 +1343,29 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		this.listBoxOCRCapture.getItems().clear();
 		setFinOCRCaptureList(finOCRCaptureList);
 		if (CollectionUtils.isNotEmpty(finOCRCaptureList)) {
-			//Collections.sort(finOCRCaptureList);
+			Collections.sort(finOCRCaptureList);
+			BigDecimal ocrTotReceiveble = BigDecimal.ZERO;
+			BigDecimal ocrTotalDemand = BigDecimal.ZERO;
+			BigDecimal ocrTotalpaid = BigDecimal.ZERO;
+
 			for (FinOCRCapture detail : finOCRCaptureList) {
 				Listitem item = new Listitem();
 				Listcell lc;
 
-				lc = new Listcell(String.valueOf(detail.getDisbSeq()));
+				lc = new Listcell(String.valueOf(detail.getDisbSeq()));//1
 				lc.setParent(item);
 
-				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getDemandAmount(), ccyFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getDemandAmount(), ccyFormatter));//2
 				lc.setParent(item);
-
-				BigDecimal amount = getCurrentTranchAmount(detail.getDemandAmount(), finOCRHeader.getCustomerPortion());
-				BigDecimal finacer = BigDecimal.ZERO;
-				finacer = detail.getDemandAmount().subtract(amount);
-
-				lc = new Listcell(PennantApplicationUtil.amountFormate(finacer, ccyFormatter));
-				lc.setParent(item);
-
+				ocrTotalDemand = ocrTotalDemand.add(detail.getDemandAmount());
 				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getPaidAmount(), ccyFormatter));
+				lc.setParent(item);
+				ocrTotalpaid = ocrTotalpaid.add(detail.getPaidAmount());
+
+				lc = new Listcell(DateUtil.format(detail.getReceiptDate(), DateFormat.SHORT_DATE));
+				lc.setParent(item);
+
+				lc = new Listcell(detail.getRemarks());
 				lc.setParent(item);
 
 				lc = new Listcell(PennantJavaUtil.getLabel(detail.getRecordStatus()));
@@ -996,18 +1377,102 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 				item.setAttribute("data", detail);
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onFinOCRCaptureItemDoubleClicked");
 				this.listBoxOCRCapture.appendChild(item);
+
+				this.ocrTotalDemand.setValue(PennantApplicationUtil.formateAmount(ocrTotalDemand, ccyFormatter));
+				this.ocrTotalPaid.setValue(PennantApplicationUtil.formateAmount(ocrTotalpaid, ccyFormatter));
 			}
+			if (this.totalDemand.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
+				financeDetail.getFinOCRHeader().setTotalDemand(totalDemand.getActualValue());
+			}
+			if (StringUtils.equals(financeDetail.getFinOCRHeader().getOcrType(), PennantConstants.SEGMENTED_VALUE)) {
+				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+				if (financeMain != null && StringUtils.isNotEmpty(financeMain.getParentRef())
+						&& getFinanceDetail().getFinOCRHeader() == null) {
+					//BigDecimal totalDemandRaised =BigDecimal.ZERO;
+					if (StringUtils.isNotEmpty(financeMain.getParentRef())) {
+						//Parent total demand amount
+						FinOCRHeader finOCRHeader = finOCRHeaderService
+								.getApprovedFinOCRHeaderByRef(financeMain.getParentRef(), TableType.VIEW.getSuffix());
+						BigDecimal parentocrpaid = BigDecimal.ZERO;
+						BigDecimal parentdemandAmt = BigDecimal.ZERO;
+						BigDecimal parentfinancierpaid = BigDecimal.ZERO;
+						BigDecimal cumcustsum = BigDecimal.ZERO;
+						BigDecimal cumfincsum = BigDecimal.ZERO;
+						BigDecimal tdOCRPaid = BigDecimal.ZERO;
+
+						for (FinOCRCapture cpr : finOCRHeader.getFinOCRCapturesList()) {
+							parentocrpaid = parentocrpaid.add(cpr.getPaidAmount());
+							parentdemandAmt = parentdemandAmt.add(cpr.getDemandAmount());
+						}
+						parentocrpaid = PennantApplicationUtil.formateAmount(parentocrpaid, ccyFormatter);
+						parentdemandAmt = PennantApplicationUtil.formateAmount(parentdemandAmt, ccyFormatter);
+						parentfinancierpaid = parentdemandAmt.subtract(parentocrpaid);
+						ocrTotalDemand = PennantApplicationUtil.formateAmount(ocrTotalDemand, ccyFormatter);
+						ocrTotalDemand = ocrTotalDemand.add(parentdemandAmt);
+						cumcustsum = getCumCustSum(financeDetail, ocrTotalDemand);
+						cumfincsum = ocrTotalDemand.subtract(cumcustsum);
+						cumcustsum = cumcustsum.subtract(parentocrpaid);
+						tdOCRPaid = parentocrpaid.add(PennantApplicationUtil.formateAmount(ocrTotalpaid, ccyFormatter));
+						parentocrpaid = parentocrpaid.add(cumcustsum);
+						cumfincsum = cumfincsum.subtract(parentfinancierpaid);
+						parentfinancierpaid = parentfinancierpaid.add(cumfincsum);
+						this.ocrCprTotReceivble.setValue(cumcustsum);
+						this.tdTotalDemand.setValue(parentfinancierpaid.add(parentocrpaid));
+						this.tdTotalReceivable.setValue(tdOCRPaid);
+					}
+
+				} else {
+					ocrTotReceiveble = ocrTotReceiveble.add(getCumCustSum(financeDetail,
+							PennantApplicationUtil.formateAmount(ocrTotalDemand, ccyFormatter)));
+					this.ocrCprTotReceivble.setValue(ocrTotReceiveble);
+
+					if (financeMain != null && StringUtils.isNotEmpty(financeMain.getParentRef())) {
+						//Parent total demand amount
+						FinOCRHeader finOCRHeader = finOCRHeaderService
+								.getApprovedFinOCRHeaderByRef(financeMain.getParentRef(), TableType.VIEW.getSuffix());
+						BigDecimal parentocrpaid = BigDecimal.ZERO;
+						BigDecimal parentdemandAmt = BigDecimal.ZERO;
+						BigDecimal parentfinancierpaid = BigDecimal.ZERO;
+						BigDecimal cumcustsum = BigDecimal.ZERO;
+						BigDecimal cumfincsum = BigDecimal.ZERO;
+						BigDecimal tdOCRPaid = BigDecimal.ZERO;
+
+						for (FinOCRCapture cpr : finOCRHeader.getFinOCRCapturesList()) {
+							parentocrpaid = parentocrpaid.add(cpr.getPaidAmount());
+							parentdemandAmt = parentdemandAmt.add(cpr.getDemandAmount());
+						}
+						parentocrpaid = PennantApplicationUtil.formateAmount(parentocrpaid, ccyFormatter);
+						parentdemandAmt = PennantApplicationUtil.formateAmount(parentdemandAmt, ccyFormatter);
+						parentfinancierpaid = parentdemandAmt.subtract(parentocrpaid);
+						ocrTotalDemand = PennantApplicationUtil.formateAmount(ocrTotalDemand, ccyFormatter);
+						ocrTotalDemand = ocrTotalDemand.add(parentdemandAmt);
+						cumcustsum = getCumCustSum(financeDetail, ocrTotalDemand);
+						cumfincsum = ocrTotalDemand.subtract(cumcustsum);
+						cumcustsum = cumcustsum.subtract(parentocrpaid);
+						tdOCRPaid = parentocrpaid.add(PennantApplicationUtil.formateAmount(ocrTotalpaid, ccyFormatter));
+						parentocrpaid = parentocrpaid.add(cumcustsum);
+						cumfincsum = cumfincsum.subtract(parentfinancierpaid);
+						parentfinancierpaid = parentfinancierpaid.add(cumfincsum);
+
+						this.tdTotalDemand.setValue(parentfinancierpaid.add(parentocrpaid));
+						this.tdTotalReceivable.setValue(tdOCRPaid);
+					}
+				}
+			} else {
+				ocrTotReceiveble = ocrTotReceiveble.add(
+						getCurrentTranchAmount(ocrTotalDemand, financeDetail.getFinOCRHeader().getCustomerPortion()));
+				this.ocrCprTotReceivble.setValue(PennantApplicationUtil.formateAmount(ocrTotReceiveble, ccyFormatter));
+			}
+
 		}
 	}
 
 	private BigDecimal getCurrentTranchAmount(BigDecimal demand, int customerPortion) {
-		BigDecimal amout = BigDecimal.ZERO;
+		BigDecimal amount = BigDecimal.ZERO;
 		if (finOCRHeader != null) {
-
-			amout = demand.multiply((new BigDecimal(customerPortion)).divide(new BigDecimal(100), ccyFormatter,
-					RoundingMode.HALF_DOWN));
+			amount = demand.multiply(new BigDecimal(customerPortion)).divide(new BigDecimal(100), ccyFormatter,
+					RoundingMode.HALF_DOWN);
 		}
-		return amout;
+		return amount;
 	}
-
 }

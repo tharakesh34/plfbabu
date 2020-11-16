@@ -85,7 +85,7 @@
 							<listhead sizable="true">
 								<listheader id="listheader_Reference" visible="false" label="${c:l('listheader_Reference.label')}"
 									sort="auto" hflex="min" />
-								<listheader id="listheader_BatchReference" label="${c:l('listheader_BatchReference.label')}" sort="auto"
+								<listheader id="listheader_BatchReference" label="${c:l('label_JVPostingList_BatchReference.value')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_Batch" label="${c:l('listheader_Batch.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_DebitCount" label="${c:l('listheader_DebitCount.label')}" sort="auto"

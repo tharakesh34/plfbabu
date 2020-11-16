@@ -85,6 +85,12 @@
 		</step>
 		<step id="snapShotPreparation">
 			<tasklet ref="snapShotPreparationTaskLet" />
+			<next on="*" to="dmsRetrieveProcess" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="dmsRetrieveProcess">
+			<tasklet ref="dmsRetrieveProcessTaskLet" />
 			<next on="*" to="gstDownload" />
 			<fail on="FAILED" />
 		</step>

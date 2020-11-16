@@ -246,7 +246,9 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 				refreshList();
 			} else {
 				JVPosting jVPosting = null;
-				if (approvedList) {
+
+				if (this.moduleType != null
+						&& StringUtils.equals(PennantConstants.MODULETYPE_ENQ, moduleType.getValue())) {
 					jVPosting = getJVPostingService().getApprovedJVPostingById(aJVPosting.getId());
 				} else {
 					jVPosting = getJVPostingService().getJVPostingById(aJVPosting.getId());

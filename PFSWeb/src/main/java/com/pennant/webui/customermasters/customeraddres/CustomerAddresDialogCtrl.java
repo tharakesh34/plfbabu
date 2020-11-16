@@ -62,10 +62,12 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.PinCode;
@@ -133,6 +135,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 	protected Label CustomerSname; // autoWired	
 	protected Textbox cityName; //autowired
+	protected Space space_custAddrStreet;
 
 	// not autoWired variables
 	private CustomerAddres customerAddres; // overHanded per parameter
@@ -363,6 +366,10 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custCifAlternate.setValueColumn("CustCIF");
 		this.custCifAlternate.setDescColumn("CustShrtName");
 		this.custCifAlternate.setValidateColumns(new String[] { "CustCIF" });
+
+		if (!ImplementationConstants.CUSTOM_EXT_LIABILITIES) {
+			this.space_custAddrStreet.setSclass("mandatory");
+		}
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -833,10 +840,13 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				&& StringUtils.isBlank(this.custAddrLine2.getValue())) {
 			addressConstraint = true;
 		}
-		if (!this.custAddrStreet.isReadonly() && addressConstraint) {
-			this.custAddrStreet.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrStreet.value"),
-							PennantRegularExpressions.REGEX_ADDRESS, true));
+
+		if (!ImplementationConstants.CUSTOM_EXT_LIABILITIES) {
+			if (!this.custAddrStreet.isReadonly() && addressConstraint) {
+				this.custAddrStreet.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrStreet.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, true));
+			}
 		}
 
 		if (!this.custAddrLine1.isReadonly() && addressConstraint) {
@@ -1125,7 +1135,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		if (getCustomerDialogCtrl() != null) {
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
-		if (isWorkFlowEnabled() || isCustomerWorkflow) {
+		if (isWorkFlowEnabled() || isCustomerWorkflow || isFinanceProcess) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;

@@ -177,6 +177,8 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	protected ExtendedCombobox partnerBank;
 	protected Label label_PartnerBank;
+	protected Combobox enquiryCombobox;
+	protected boolean disbEnquiry = false;
 
 	/**
 	 * default constructor.<br>
@@ -239,6 +241,12 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 
 			getUserWorkspace().allocateAuthorities(super.pageRightName);
+
+			if (arguments.containsKey("disbEnquiry")) {
+				disbEnquiry = (boolean) arguments.get("disbEnquiry");
+			}
+
+			enquiryCombobox = (Combobox) arguments.get("enuiryCombobox");
 
 			// set Field Properties
 			doSetFieldProperties();
@@ -347,7 +355,12 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnClose(Event event) throws InterruptedException {
-		doClose(false);
+		if (disbEnquiry && enquiryCombobox != null) {
+			this.enquiryCombobox.setSelectedIndex(0);
+			this.window_FinMandateEnquiryDialog.onClose();
+		} else {
+			doClose(false);
+		}
 	}
 
 	// ****************************************************************+
@@ -386,6 +399,8 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 					this.window_FinMandateEnquiryDialog.setHeight(this.borderLayoutHeight - rowsHeight - 30 + "px");
 					tabPanel_dialogWindow.appendChild(this.window_FinMandateEnquiryDialog);
 				}
+			} else if (disbEnquiry) {
+				setDialog(DialogType.MODAL);
 			} else {
 				setDialog(DialogType.EMBEDDED);
 			}

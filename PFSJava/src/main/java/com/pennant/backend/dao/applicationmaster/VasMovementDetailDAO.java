@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.dao.applicationmaster;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.backend.model.finance.VasMovementDetail;
@@ -57,5 +58,9 @@ public interface VasMovementDetailDAO {
 	void delete(long checkListId, String type);
 
 	long save(VasMovementDetail checkListDetail, String type);
+
+	List<VasMovementDetail> getVasMovementDetailByRef(String finReference, String type);
+
+	BigDecimal getVasMovementDetailByRef(String finReference, String finStartDate, String finEndDate, String type);
 
 }

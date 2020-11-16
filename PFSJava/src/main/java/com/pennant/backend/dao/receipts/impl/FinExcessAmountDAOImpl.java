@@ -220,7 +220,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
 		updateSql.append(" Set UtilisedAmt = UtilisedAmt + :PaidNow, ReservedAmt = ReservedAmt - :PaidNow ");
-		updateSql.append(" Where ExcessID =:ExcessID");
+		updateSql.append(" Where ExcessID =:ExcessID and ReservedAmt >=:PaidNow");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
@@ -320,7 +320,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount ");
 		updateSql.append(" Set ReservedAmt = ReservedAmt + :PaidNow, BalanceAmt = BalanceAmt - :PaidNow ");
-		updateSql.append(" Where ExcessID =:ExcessID");
+		updateSql.append(" Where ExcessID =:ExcessID And (BalanceAmt-ReservedAmt) >=:PaidNow ");
 
 		logger.trace(Literal.SQL + updateSql.toString());
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
@@ -509,9 +509,9 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Update FinExcessAmount Set ReservedAmt = ReservedAmt - :AdvanceAmount,");
-		sql.append(" BalanceAmt = BalanceAmt + :AdvanceAmount");
-		sql.append(" Where ExcessID = :ExcessID");
+		sql.append(" Update FinExcessAmount Set ReservedAmt = ReservedAmt - ?,");
+		sql.append(" BalanceAmt = BalanceAmt + ?");
+		sql.append(" Where ExcessID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -520,10 +520,11 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 				@Override
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
-					int index = 1;
+					int index = 0;
 					PresentmentDetail pd = presentmentDetails.get(i);
-					ps.setBigDecimal(index++, pd.getAdvanceAmt());
-					ps.setLong(index, pd.getExcessID());
+					ps.setBigDecimal(++index, pd.getAdvanceAmt());
+					ps.setBigDecimal(++index, pd.getAdvanceAmt());
+					ps.setLong(++index, pd.getExcessID());
 				}
 
 				@Override

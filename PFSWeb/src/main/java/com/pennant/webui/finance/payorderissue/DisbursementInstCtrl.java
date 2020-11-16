@@ -75,6 +75,7 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -111,6 +112,10 @@ public class DisbursementInstCtrl {
 	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
 	private VASConfigurationDAO vASConfigurationDAO;
 	private DMSService dMSService;
+
+	private List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>(1);
+	private List<VASRecording> vasRecordingList = new ArrayList<VASRecording>(1);
+	private String moduleDefiner;
 
 	public void init(Listbox listbox, String ccy, boolean multiParty, String role) {
 		this.ccyFormat = CurrencyUtil.getFormat(ccy);
@@ -264,7 +269,8 @@ public class DisbursementInstCtrl {
 
 				for (FinAdvancePayments detail : list) {
 
-					if (!DisbursementInstCtrl.isDeleteRecord(detail)) {
+					if (!DisbursementInstCtrl.isDeleteRecord(detail)
+							&& !DisbursementConstants.PAYMENT_DETAIL_VAS.equals(detail.getPaymentDetail())) {
 						grandTotal = grandTotal.add(detail.getAmtToBeReleased());
 						subTotal = subTotal.add(detail.getAmtToBeReleased());
 					}
@@ -339,7 +345,8 @@ public class DisbursementInstCtrl {
 							}
 
 							VASProviderAccDetail vasProviderAccDetail = vASProviderAccDetailDAO
-									.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(), vasDetail.getEntityCode(), "_view");
+									.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(),
+											vasDetail.getEntityCode(), "_view");
 							if (vasProviderAccDetail != null) {
 								Listitem item = new Listitem();
 								lc = new Listcell("");
@@ -538,6 +545,7 @@ public class DisbursementInstCtrl {
 		aFinAdvancePayments.setPaymentSeq(getNextPaymentSequence(list));
 		aFinAdvancePayments.setNewRecord(true);
 		aFinAdvancePayments.setWorkflowId(0);
+		aFinAdvancePayments.setVasReference(PennantConstants.List_Select);
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finAdvancePayments", aFinAdvancePayments);
@@ -628,6 +636,9 @@ public class DisbursementInstCtrl {
 			map.put("finAdvancePaymentsListCtrl", listCtrl);
 			map.put("financeMainDialogCtrl", dialogCtrl);
 		}
+		map.put("FinFeeDetailList", getFinFeeDetailList());
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("VasRecordingList", getVasRecordingList());
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -855,6 +866,11 @@ public class DisbursementInstCtrl {
 		return false;
 	}
 
+	//VAS FrondEnd Functionality
+	public List<ErrorDetail> validateVasInstructions(List<FinAdvancePayments> advPaymentsList, boolean validate) {
+		return finAdvancePaymentsService.validateVasInstructions(vasRecordingList, advPaymentsList, validate);
+	}
+
 	public void setFinanceDisbursement(List<FinanceDisbursement> financeDisbursement) {
 		this.financeDisbursements = financeDisbursement;
 	}
@@ -879,20 +895,32 @@ public class DisbursementInstCtrl {
 		this.documentDetails = documentDetails;
 	}
 
-	public VASProviderAccDetailDAO getvASProviderAccDetailDAO() {
-		return vASProviderAccDetailDAO;
-	}
-
-	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
-		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
-	}
-
-	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
-		this.vASConfigurationDAO = vASConfigurationDAO;
-	}
-
 	public void setdMSService(DMSService dMSService) {
 		this.dMSService = dMSService;
+	}
+
+	public List<FinFeeDetail> getFinFeeDetailList() {
+		return finFeeDetailList;
+	}
+
+	public void setFinFeeDetailList(List<FinFeeDetail> finFeeDetailList) {
+		this.finFeeDetailList = finFeeDetailList;
+	}
+
+	public List<VASRecording> getVasRecordingList() {
+		return vasRecordingList;
+	}
+
+	public void setVasRecordingList(List<VASRecording> vasRecordingList) {
+		this.vasRecordingList = vasRecordingList;
+	}
+
+	public String getModuleDefiner() {
+		return moduleDefiner;
+	}
+
+	public void setModuleDefiner(String moduleDefiner) {
+		this.moduleDefiner = moduleDefiner;
 	}
 
 }

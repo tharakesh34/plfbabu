@@ -1458,6 +1458,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					customerDocument.setFinReference(financeMain.getFinReference());
 					customerDocument.setOfferId(StringUtils.trimToEmpty(financeMain.getOfferId()));
 					customerDocument.setApplicationNo(StringUtils.trimToEmpty(financeMain.getApplicationNo()));
+					customerDocument.setLovDescCustCIF(customerDetails.getCustomer().getCustCIF());
 					saveDocument(DMSModule.CUSTOMER, null, customerDocument);
 
 					customerDocumentDAO.save(customerDocument, tableType);
@@ -1466,6 +1467,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					customerDocument.setFinReference(financeMain.getFinReference());
 					customerDocument.setOfferId(StringUtils.trimToEmpty(financeMain.getOfferId()));
 					customerDocument.setApplicationNo(StringUtils.trimToEmpty(financeMain.getApplicationNo()));
+					customerDocument.setLovDescCustCIF(customerDetails.getCustomer().getCustCIF());
 					saveDocument(DMSModule.CUSTOMER, null, customerDocument);
 					customerDocumentDAO.update(customerDocument, tableType);
 				}
@@ -1688,6 +1690,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						externalDocument.setDocRefId(documentManagerDAO.save(documentManager));
 
 						customerDocumentDAO.save(externalDocument, "");
+					}
+				}
+				//Beneficiary Details save when customer created through loan queue
+				if (StringUtils.equals(custBankInfo.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
+					if (custBankInfo.isAddToBenficiary()) {
+						addToCustomerBeneficiary(custBankInfo, custBankInfo.getCustID());
 					}
 				}
 				fields = PennantJavaUtil.getFieldDetails(custBankInfo, custBankInfo.getExcludeFields());
@@ -2533,7 +2541,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				for (CustomerAddres aAdress : custAddress) {
 					if (aAdress.getCustAddrPriority() == adress.getCustAddrPriority()) {
 						addressPriorityCount++;
-						if (addressPriorityCount > 1) {
+						if (addressPriorityCount > 1 && aAdress.getCustAddrPriority() == Integer
+								.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 							String[] valueParm = new String[2];
 							valueParm[0] = "Priority";
 							valueParm[1] = String.valueOf(adress.getCustAddrPriority());

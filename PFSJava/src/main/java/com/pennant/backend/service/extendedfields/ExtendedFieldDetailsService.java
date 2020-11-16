@@ -431,6 +431,10 @@ public class ExtendedFieldDetailsService {
 					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())) {
+					//If saved record has been updated then it should be updated in the table.
+					updateRecord = true;
+					saveRecord = false;
 				}
 
 			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
@@ -571,6 +575,10 @@ public class ExtendedFieldDetailsService {
 					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())) {
+					//If saved record has been updated then it should be updated in the table.
+					updateRecord = true;
+					saveRecord = false;
 				}
 
 			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
@@ -698,6 +706,10 @@ public class ExtendedFieldDetailsService {
 						extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 					} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 						extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())) {
+						//If saved record has been updated then it should be updated in the table.
+						updateRecord = true;
+						saveRecord = false;
 					}
 
 				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
@@ -1170,6 +1182,7 @@ public class ExtendedFieldDetailsService {
 
 		ExtendedFieldRender render = (ExtendedFieldRender) auditDetail.getModelData();
 		String reference = render.getReference();
+		int seqNo = render.getSeqNo();
 		ExtendedFieldRender tempRender = null;
 
 		if (render.isWorkflow()) {
@@ -1181,8 +1194,8 @@ public class ExtendedFieldDetailsService {
 				tableName, "");
 
 		if (befExtRender != null) {
-			Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(reference, tableName.toString(),
-					"");
+			Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(reference, seqNo,
+					tableName.toString(), "");
 			if (extFieldMap != null) {
 				Map<String, Object> modifiedExtMap = new HashMap<>();
 				for (Entry<String, Object> entrySet : extFieldMap.entrySet()) {
@@ -1244,24 +1257,14 @@ public class ExtendedFieldDetailsService {
 				}
 			} else { // with work flow
 
-				if (render.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
-																						// type
-																						// is
-																						// new
-					if (befExtRender != null || tempRender != null) { // if
-																			// records
-																		// already
-																		// exists
-																		// in
-																		// the
-																		// main
-																		// table
+				if (render.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if  records type is new 
+					if (befExtRender != null || tempRender != null) { // if records already exists in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befExtRender == null && tempRender == null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						//FIXME: commented the below line, showing an alert while modifying the approved records
+						//auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}

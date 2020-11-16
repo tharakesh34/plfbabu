@@ -485,7 +485,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 
 		if (!PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(ocrHeader.getRecordType())
 				&& !PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(ocrHeader.getRecordType())) {
-			if (ocrHeader.isSplitApplicable()) {
+			if (StringUtils.equals(PennantConstants.SEGMENTED_VALUE, ocrHeader.getOcrType())) {
 				custPortionHeader = ocrHeader.getCustomerPortion();
 				finPortionHeader = 100 - custPortionHeader;
 				//checking ocr step details are available or not

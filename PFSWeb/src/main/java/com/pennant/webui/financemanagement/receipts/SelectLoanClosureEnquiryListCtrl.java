@@ -11,6 +11,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -36,6 +37,7 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 	protected Button btnProceed;
 	private LoanClosureEnquiryDialogCtrl loanClosureEnquiryDialogCtrl;
 	private String finRefValue;
+	protected Tabbox tabbox;
 
 	/**
 	 * default constructor.<br>
@@ -65,6 +67,7 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		try {
 			doCheckRights();
 			doSetFieldProperties();
+			tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
 		} catch (Exception e) {
 			closeDialog();
 			logger.debug(Literal.EXCEPTION, e);
@@ -186,6 +189,20 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		logger.debug("Leaving");
+	}
+
+	/**
+	 * The Click event is raised when the Close Button control is clicked.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of a component.
+	 */
+	public void onClick$btnClose(Event event) {
+		if (doClose(false)) {
+			if (tabbox != null) {
+				tabbox.getSelectedTab().close();
+			}
+		}
 	}
 
 	public LoanClosureEnquiryDialogCtrl getLoanClosureEnquiryDialogCtrl() {

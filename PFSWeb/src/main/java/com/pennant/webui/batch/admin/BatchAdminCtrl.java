@@ -113,6 +113,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	protected ProcessExecution microEOD;
 	protected ProcessExecution microEODMonitor;
 	protected ProcessExecution prepareCustomerQueue;
+	protected ProcessExecution dmsRetrieveProcess;
 
 	private JobExecution jobExecution;
 

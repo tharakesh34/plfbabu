@@ -4435,7 +4435,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				}
 			}
 		}
-		if (this.ocrRequired.isChecked() && !this.allowedOCRS.isReadonly()) {
+		if (this.ocrRequired.isChecked() && this.allowedOCRS.isReadonly()) {
 			this.allowedOCRS.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_FinanceTypeDialog_AllowedOCRs.value"), null, true, false));
 		}
@@ -4446,7 +4446,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					Labels.getLabel("label_FinanceTypeDialog_LoanPurpose.value"), loanPurposeList, true));
 		}
 
-		if (!this.specificLoanPurposes.isDisabled()) {
+		if (!this.specificLoanPurposes.isReadonly()) {
 			this.specificLoanPurposes.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_SpecificLoanPurpose.value"), null,
 							StringUtils.equals(loanPurpose, PennantConstants.SPECIFIC)));
@@ -5091,6 +5091,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.defaultOCR.setButtonDisabled(isTrue);
 		this.allowedLoanPurposes.setDisabled(isTrue);
 		this.btnSpcLoanPurposes.setDisabled(isTrue);
+		readOnlyComponent(isTrue, this.thrldtoMaintainGrcPrd);
+		readOnlyComponent(isTrue, this.chequeCaptureReq);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -5878,6 +5880,20 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			setEffectiveRate();
 		}
 		logger.debug("Leaving " + event.toString());
+	}
+
+	public void onFulfill$defaultOCR(Event event) {
+		logger.debug(Literal.ENTERING + event.toString());
+		List<String> detailsList = null;
+		String allowedOCRS = this.allowedOCRS.getValue();
+		String defaultOCR = this.defaultOCR.getValue();
+		detailsList = Arrays.asList(allowedOCRS.split(","));
+		this.defaultOCR.setFilters(new Filter[] { new Filter("OcrID", detailsList, Filter.OP_IN) });
+		if (!allowedOCRS.contains(defaultOCR)) {
+			this.defaultOCR.setValue("");
+			this.defaultOCR.setErrorMessage("Please select any one of the allowed OCR");
+		}
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void setEffectiveRate() throws InterruptedException {

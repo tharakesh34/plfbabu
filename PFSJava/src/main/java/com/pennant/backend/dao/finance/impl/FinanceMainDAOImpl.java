@@ -6033,7 +6033,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", ReqLoanAmt, ReqLoanTenor, FinOcrRequired, OfferProduct, OfferAmount, CustSegmentation");
 			sql.append(", BaseProduct, ProcessType, BureauTimeSeries, CampaignName, ExistingLanRefNo, OfferId");
 			sql.append(", LeadSource, PoSource, Rsa, Verification, SourcingBranch, SourChannelCategory, AsmName");
-			sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate,instBasedSchd, parentRef");
+			sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate,InstBasedSchd, ParentRef");
+			sql.append(", AlwLoanSplit, LoanSplitted");
 		}
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -6340,6 +6341,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setAlwGrcAdj(rs.getBoolean("AlwGrcAdj"));
 				fm.setEndGrcPeriodAftrFullDisb(rs.getBoolean("EndGrcPeriodAftrFullDisb"));
 				fm.setAutoIncGrcEndDate(rs.getBoolean("AutoIncGrcEndDate"));
+				fm.setInstBasedSchd(rs.getBoolean("InstBasedSchd"));
+				fm.setParentRef(rs.getString("ParentRef"));
+				fm.setAlwLoanSplit(rs.getBoolean("AlwLoanSplit"));
+				fm.setLoanSplitted(rs.getBoolean("LoanSplitted"));
 			}
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {

@@ -533,6 +533,12 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.row_FeeType.setVisible(true);
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
 			break;
+		case RuleConstants.MODULE_BRERULE:
+			this.row_DeviationType.setVisible(true);
+			this.label_DeviationType.setVisible(false);
+			this.hbox_DeviationType.setVisible(false);
+			//this.rule.setReturnType(RuleConstants.RETURNTYPE_STRING);
+			break;
 		}
 
 		// Window Title
@@ -668,7 +674,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 		if (StringUtils.equals(module, RuleConstants.MODULE_ELGRULE)) {
 			excludeFields = "," + RuleConstants.RETURNTYPE_STRING + "," + RuleConstants.RETURNTYPE_CALCSTRING + ",";
-		} else if (StringUtils.equals(module, RuleConstants.MODULE_SUBHEAD)) {
+		} else if (StringUtils.equals(module, RuleConstants.MODULE_SUBHEAD)
+				|| StringUtils.equals(module, RuleConstants.MODULE_BRERULE)) {
 			excludeFields = "," + RuleConstants.RETURNTYPE_DECIMAL + "," + RuleConstants.RETURNTYPE_BOOLEAN + ","
 					+ RuleConstants.RETURNTYPE_INTEGER + "," + RuleConstants.RETURNTYPE_OBJECT + ",";
 		}
@@ -687,7 +694,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			if (aRule.getFeeTypeID() != null) {
 				this.feeType.setObject(new FeeType(aRule.getFeeTypeID()));
 			}
-		}else if (StringUtils.equalsIgnoreCase(module, RuleConstants.MODULE_FEEPERC)){
+		} else if (StringUtils.equalsIgnoreCase(module, RuleConstants.MODULE_FEEPERC)) {
 			this.ruleEvent.setValue(event);
 			this.feeType.setValue(aRule.getFeeTypeCode());
 			this.feeType.setDescription(aRule.getFeeTypeDesc());
@@ -1028,7 +1035,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 					this.javaScriptSqlRule.setEvent(this.ruleEvent.getValue());
 				} else if (StringUtils.equalsIgnoreCase(this.rule.getRuleModule(), RuleConstants.MODULE_FEEPERC)) {
 					this.javaScriptSqlRule.setEvent(this.ruleEvent.getValue());
-				}else {
+				} else {
 					this.javaScriptSqlRule.setEvent(this.rule.getRuleEvent());
 				}
 

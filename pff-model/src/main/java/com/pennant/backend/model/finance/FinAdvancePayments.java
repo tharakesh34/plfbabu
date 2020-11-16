@@ -176,6 +176,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private String fileNamePrefix;
 	private String channel;
 	private String entityCode;
+	private String vasReference;
 	private long providerId;
 	private boolean paymentProcReq;
 	private int tempSeq = 0;
@@ -197,6 +198,9 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private boolean holdDisbursement = false;
 
 	private Date postDate;
+	private String dealerShortCode;
+	private String productShortCode;
+	private boolean postingQdp = false;
 
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
@@ -252,6 +256,9 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("onlineProcReq");
 		excludeFields.add("holdDisbursement");
 		excludeFields.add("postDate");
+		excludeFields.add("dealerShortCode");
+		excludeFields.add("productShortCode");
+		excludeFields.add("postingQdp");
 		return excludeFields;
 	}
 
@@ -719,6 +726,14 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		this.entityCode = entityCode;
 	}
 
+	public String getVasReference() {
+		return vasReference;
+	}
+
+	public void setVasReference(String vasReference) {
+		this.vasReference = vasReference;
+	}
+
 	public String getReEnterBeneficiaryAccNo() {
 		return reEnterBeneficiaryAccNo;
 	}
@@ -869,5 +884,29 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	public void setPostDate(Date postDate) {
 		this.postDate = postDate;
+	}
+
+	public String getDealerShortCode() {
+		return dealerShortCode;
+	}
+
+	public void setDealerShortCode(String dealerShortCode) {
+		this.dealerShortCode = dealerShortCode;
+	}
+
+	public String getProductShortCode() {
+		return productShortCode;
+	}
+
+	public void setProductShortCode(String productShortCode) {
+		this.productShortCode = productShortCode;
+	}
+
+	public boolean isPostingQdp() {
+		return postingQdp;
+	}
+
+	public void setPostingQdp(boolean postingQdp) {
+		this.postingQdp = postingQdp;
 	}
 }

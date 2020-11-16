@@ -155,12 +155,12 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 		insertSql.append(" (FinReference , CustCIF , CustFName , CustLName , ");
 		insertSql.append(
 				" CustShrtName , CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , ReasonCode , Source , ");
-		insertSql.append(" Employer , WatchListRule , Override , OverrideUser )");
+		insertSql.append(" Employer , WatchListRule , Override , OverrideUser, SourceCIF )");
 		insertSql.append(" Values( ");
 		insertSql.append(" :FinReference , :CustCIF , :CustFName , :CustLName , ");
 		insertSql.append(" :CustShrtName , :CustDOB , :CustCRCPR ,:CustPassportNo , :MobileNumber ,");
 		insertSql.append(" :CustNationality , :ReasonCode, :Source,");
-		insertSql.append(" :Employer , :WatchListRule , :Override , :OverrideUser)");
+		insertSql.append(" :Employer , :WatchListRule , :Override , :OverrideUser, :SourceCIF)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -171,19 +171,21 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 	}
 
 	@Override
-	public List<FinBlacklistCustomer> fetchOverrideBlackListData(String finReference, String queryCode) {
+	public List<FinBlacklistCustomer> fetchOverrideBlackListData(String finReference, String queryCode,
+			String sourceCIF) {
 		logger.debug(Literal.ENTERING);
 
 		BlackListCustomers blackListCustomer = new BlackListCustomers();
 		blackListCustomer.setFinReference(finReference);
 		blackListCustomer.setWatchListRule(queryCode);
+		blackListCustomer.setSourceCIF(sourceCIF);
 
 		StringBuilder selectSql = new StringBuilder(" Select FinReference , CustCIF , CustFName , CustLName , ");
 		selectSql.append(
 				" CustShrtName , CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , ReasonCode , Source , ");
-		selectSql.append(" Employer , WatchListRule , Override , OverrideUser ");
+		selectSql.append(" Employer , WatchListRule , Override , OverrideUser, SourceCIF ");
 		selectSql.append(" From FinBlackListDetail");
-		selectSql.append(" Where FinReference = :FinReference AND WatchListRule LIKE ('%");
+		selectSql.append(" Where FinReference = :FinReference AND SourceCIF = :SourceCIF AND WatchListRule LIKE ('%");
 		selectSql.append(queryCode);
 		selectSql.append("%')");
 
@@ -266,7 +268,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 				" CustCRCPR= :CustCRCPR, CustPassportNo = :CustPassportNo,MobileNumber = :MobileNumber, CustNationality = :CustNationality, ReasonCode= :ReasonCode, Source= :Source , ");
 		updateSql.append(
 				" Employer = :Employer, WatchListRule = :WatchListRule, Override = :Override, OverrideUser = :OverrideUser");
-		updateSql.append(" Where FinReference =:FinReference  AND CustCIF =:CustCIF");
+		updateSql.append(" Where FinReference =:FinReference  AND CustCIF =:CustCIF AND SourceCIF = :SourceCIF ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 

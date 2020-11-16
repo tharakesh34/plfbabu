@@ -1,24 +1,45 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
+@XmlType(propOrder = { "disbSeq", "demandAmount", "paidAmount", "remarks", "fileName", "docImage" })
+@XmlRootElement(name = "finOCRCapture")
+@XmlAccessorType(XmlAccessType.NONE)
 public class FinOCRCapture extends AbstractWorkflowEntity implements Comparable<FinOCRCapture> {
-
 	private static final long serialVersionUID = 1L;
 	private long id = Long.MIN_VALUE;
+	@XmlElement(name = "receiptSeq")
 	private int disbSeq;
+	@XmlElement
 	private String finReference;
+	@XmlElement
 	private BigDecimal demandAmount = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal paidAmount = BigDecimal.ZERO;
+	@XmlElement
 	private String remarks;
+	@XmlElement
+	private Date receiptDate;
 	private boolean newRecord = false;
 	private FinOCRCapture befImage;
 	private LoggedInUser userDetails;
+	private Long documentRef = Long.MIN_VALUE;
+	@XmlElement
+	private String fileName;
+	@XmlElement
+	private byte[] docImage;
 
 	public FinOCRCapture() {
 		super();
@@ -26,6 +47,8 @@ public class FinOCRCapture extends AbstractWorkflowEntity implements Comparable<
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("docImage");
+		excludeFields.add("documentRef");
 		return excludeFields;
 	}
 
@@ -101,8 +124,40 @@ public class FinOCRCapture extends AbstractWorkflowEntity implements Comparable<
 		return remarks;
 	}
 
+	public Date getReceiptDate() {
+		return receiptDate;
+	}
+
+	public void setReceiptDate(Date receiptDate) {
+		this.receiptDate = receiptDate;
+	}
+
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public Long getDocumentRef() {
+		return documentRef;
+	}
+
+	public void setDocumentRef(Long documentRef) {
+		this.documentRef = documentRef;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public byte[] getDocImage() {
+		return docImage;
+	}
+
+	public void setDocImage(byte[] docImage) {
+		this.docImage = docImage;
 	}
 
 	@Override

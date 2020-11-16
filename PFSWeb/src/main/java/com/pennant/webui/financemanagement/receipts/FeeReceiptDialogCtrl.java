@@ -226,6 +226,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Groupbox groupbox_Customer;
 	protected Groupbox groupbox_Other;
 	protected ExtendedCombobox custID;
+	protected Textbox extReference;
 	protected Textbox reference;
 	protected ExtendedCombobox postBranch;
 	protected ExtendedCombobox cashierBranch;
@@ -1450,6 +1451,10 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				customerID = receiptHeader.getCustID();
 				setTaxPercentages(calcTaxPercentages());
 				setPaidFeeList(receiptHeader.getPaidFeeList());
+			} else if (RepayConstants.RECEIPTTO_CUSTOMER.equals(this.receiptHeader.getRecAgainst())) {
+				customerID = receiptHeader.getCustID();
+				this.finBranch.setValue(header.getPostBranch(), header.getPostBranchDesc());
+				setTaxPercentages(calcTaxPercentages());
 			}
 
 		} else {
@@ -1518,9 +1523,11 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			readOnlyComponent(true, this.finDivision);
 		} else if (this.groupbox_Customer.isVisible()) {
 			this.custID.setAttribute("custID", header.getReference());
+			this.extReference.setValue(StringUtils.trimToEmpty(header.getExtReference()));
 			if (!header.isNewRecord()) {
 				this.custID.setValue(header.getCustomerCIF(), header.getCustomerName());
 			}
+			doFillFeeDetails(header.getPaidFeeList());
 		} else if (this.groupbox_Other.isVisible()) {
 			this.reference.setValue(header.getReference());
 		}
@@ -1851,7 +1858,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 								PennantRegularExpressions.REGEX_NAME, true));
 			}
 
-			if (!this.depositDate.isDisabled()) {
+			if (!this.depositDate.isDisabled() && !this.depositDate.isReadonly()) {
 				this.depositDate
 						.setConstraint(new PTDateValidator(Labels.getLabel("label_FeeReceiptDialog_DepositDate.value"),
 								true, SysParamUtil.getValueAsDate(""), appDate, true));

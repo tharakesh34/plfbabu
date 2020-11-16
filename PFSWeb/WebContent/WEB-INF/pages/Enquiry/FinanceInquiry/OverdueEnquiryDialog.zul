@@ -9,33 +9,77 @@
 			style="padding-top:10px" sizable="false">
 
 			<borderlayout id="borderlayoutOverdueEnquiry">
+				<north id="north_overDue">
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnClose"
+									label="${c:l('btnClose.label')}"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
 				<center border="none" id="divCenter">
-
-					<tabbox width="99%" height="100%" id="tabBoxIndexCenter">
-						<tabs id="tabsIndexCenter">
-							<tab id="OverdueTab" label="Overdue Details" />
-						</tabs>
-						<tabpanels id="tabpanelsBoxIndexCenter">
-							<tabpanel id="tabpanel_OverdueDetails" style="overflow:auto">
-								<listbox id="listBoxOverdue" emptyMessage="${c:l('listbox.emptyMessage')}" width="99%" multiple="false"
-									sizedByContent="true" span="true">
-									<listhead sizable="false" style="padding:0px;position:relative;">
-										<listheader label="${c:l('listheader_FinODDetailsEnquiryDialog_FinODSchdDate.label')}" hflex="min" />
-										<listheader label="${c:l('listheader_FinODDetailsEnquiryDialog_FinODTillDateDate.label')}" hflex="min" />
-										<listheader label="${c:l('listheader_FinODDetailsEnquiryDialog_FinCurODAmt.label')}" hflex="min" />
-										<listheader label="${c:l('listheader_FinODDetailsEnquiryDialog_FinCurODPri.label')}" hflex="min" />
-										<listheader label="${c:l('listheader_FinODDetailsEnquiryDialog_FinCurODPft.label')}" hflex="min" />
-										<listheader label="${c:l('listheader_FinODDetailsEnquiryDialog_FinMaxODAmt.label')}" hflex="min" />
-										<listheader label="${c:l('listheader_FinODDetailsEnquiryDialog_FinMaxODPri.label')}" hflex="min" />
-										<listheader label="${c:l('listheader_FinODDetailsEnquiryDialog_FinMaxODPft.label')}" hflex="min" />
-										<listheader label="${c:l('listheader_FinODDetailsEnquiryDialog_TotPenaltyAmt.label')}" hflex="min" />
-										<listheader label="${c:l('listheader_FinODDetailsEnquiryDialog_TotWaived.label')}" hflex="min" />
-										<listheader label="${c:l('listheader_FinODDetailsEnquiryDialog_TotPenaltyPaid.label')}" hflex="min" />
-									</listhead>
-								</listbox>
-							</tabpanel>
-						</tabpanels>
-					</tabbox>
+					<groupbox>
+						<groupbox style="border:none;"
+							id="finBasicdetails" />
+						<tabbox width="99%" height="100%"
+							id="tabBoxIndexCenter">
+							<tabs id="tabsIndexCenter">
+								<tab id="OverdueTab"
+									label="Overdue Details" />
+							</tabs>
+							<tabpanels id="tabpanelsBoxIndexCenter">
+								<tabpanel id="tabpanel_OverdueDetails"
+									style="overflow:auto">
+									<listbox id="listBoxOverdue"
+										emptyMessage="${c:l('listbox.emptyMessage')}" width="99%"
+										multiple="false" sizedByContent="true" span="true">
+										<listhead sizable="false"
+											style="padding:0px;position:relative;">
+											<listheader
+												label="${c:l('listheader_FinODDetailsEnquiryDialog_FinODSchdDate.label')}"
+												hflex="min" />
+											<listheader
+												label="${c:l('listheader_FinODDetailsEnquiryDialog_FinODTillDateDate.label')}"
+												hflex="min" />
+											<listheader
+												label="${c:l('listheader_FinODDetailsEnquiryDialog_FinCurODAmt.label')}"
+												hflex="min" />
+											<listheader
+												label="${c:l('listheader_FinODDetailsEnquiryDialog_FinCurODPri.label')}"
+												hflex="min" />
+											<listheader
+												label="${c:l('listheader_FinODDetailsEnquiryDialog_FinCurODPft.label')}"
+												hflex="min" />
+											<listheader
+												label="${c:l('listheader_FinODDetailsEnquiryDialog_FinMaxODAmt.label')}"
+												hflex="min" />
+											<listheader
+												label="${c:l('listheader_FinODDetailsEnquiryDialog_FinMaxODPri.label')}"
+												hflex="min" />
+											<listheader
+												label="${c:l('listheader_FinODDetailsEnquiryDialog_FinMaxODPft.label')}"
+												hflex="min" />
+											<listheader
+												label="${c:l('listheader_FinODDetailsEnquiryDialog_TotPenaltyAmt.label')}"
+												hflex="min" />
+											<listheader
+												label="${c:l('listheader_FinODDetailsEnquiryDialog_TotWaived.label')}"
+												hflex="min" />
+											<listheader
+												label="${c:l('listheader_FinODDetailsEnquiryDialog_TotPenaltyPaid.label')}"
+												hflex="min" />
+										</listhead>
+									</listbox>
+								</tabpanel>
+							</tabpanels>
+						</tabbox>
+					</groupbox>
 				</center>
 			</borderlayout>
 		</window>

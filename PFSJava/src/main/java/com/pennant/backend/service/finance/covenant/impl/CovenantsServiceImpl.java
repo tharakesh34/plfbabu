@@ -146,13 +146,14 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 				}
 			} else if (CollectionUtils.isNotEmpty(covenant.getCovenantDocuments())) {//we are preparing document list by using covenants doc
 				for (CovenantDocument covenantDocument : covenant.getCovenantDocuments()) {
-					if (covenantDocument.getDocumentDetail() != null) {
-						covenantDocument.getDocumentDetail().setLastMntBy(covenant.getLastMntBy());
-						covenantDocument.getDocumentDetail().setLastMntOn(covenant.getLastMntOn());
-						covenantDocument.getDocumentDetail().setDocName(covenantDocument.getDocName());
-						covenantDocument.getDocumentDetail().setReferenceId(covenant.getKeyReference());
-						covenantDocument.getDocumentDetail().setFinReference(covenant.getKeyReference());
-						documents.add(covenantDocument.getDocumentDetail());
+					DocumentDetails documentDetail = covenantDocument.getDocumentDetail();
+					if (documentDetail != null) {
+						documentDetail.setLastMntBy(covenant.getLastMntBy());
+						documentDetail.setLastMntOn(covenant.getLastMntOn());
+						documentDetail.setDocName(covenantDocument.getDocName());
+						documentDetail.setReferenceId(covenant.getKeyReference());
+						documentDetail.setFinReference(covenant.getKeyReference());
+						documents.add(documentDetail);
 					}
 				}
 			}
@@ -814,6 +815,10 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 		}
 
 		for (FinAdvancePayments finAdvancePayment : finAdvancePayments) {
+			//skipping the approved instructions in OTC validation
+			if (PennantConstants.RCD_STATUS_APPROVED.equalsIgnoreCase(finAdvancePayment.getRecordStatus())) {
+				continue;
+			}
 			boolean isAllowedMethod = false;
 			boolean isDocumentReceived = false;
 			boolean otcCovenant = false;
@@ -836,11 +841,15 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 
 			if (otcCovenant && !isAllowedMethod) {
 				for (Covenant covenant : covenants) {
-					for (CovenantDocument document : covenant.getCovenantDocuments()) {
-						if (document.getDocumentReceivedDate() != null) {
-							isDocumentReceived = true;
-							break;
+					if (CollectionUtils.isNotEmpty(covenant.getCovenantDocuments())) {
+						for (CovenantDocument document : covenant.getCovenantDocuments()) {
+							if (document.getDocumentReceivedDate() != null) {
+								isDocumentReceived = true;
+								break;
+							}
 						}
+					} else {
+						isDocumentReceived = false;
 					}
 
 					if (!isDocumentReceived) {

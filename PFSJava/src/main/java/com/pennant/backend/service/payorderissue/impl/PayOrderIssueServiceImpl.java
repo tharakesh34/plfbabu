@@ -54,6 +54,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -64,6 +65,7 @@ import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
@@ -76,6 +78,7 @@ import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -131,6 +134,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	@Autowired(required = false)
 	private transient BankAccountValidationService bankAccountValidationService;
 	private JountAccountDetailDAO jountAccountDetailDAO;
+	@Autowired
+	private FinFeeDetailDAO finFeeDetailDAO;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -321,9 +326,14 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 
 		issueHeader.setApprovedFinanceDisbursements(mainList);
+		// Fee details
+		List<FinFeeDetail> finFeeDetailList = finFeeDetailDAO.getFinFeeDetailByFinRef(finMian.getFinReference(), false,
+				"", AccountEventConstants.ACCEVENT_VAS_FEE);
+		issueHeader.setFinFeeDetailList(finFeeDetailList);
+
 		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
-			issueHeader
-					.setvASRecordings(vasRecordingDAO.getVASRecordingsStatusByReference(finMian.getFinReference(), ""));
+			finMian.setLovDescEntityCode(financeMainDAO.getLovDescEntityCode(finMian.getFinReference(), "_View"));
+			issueHeader.setvASRecordings(vasRecordingDAO.getVASRecordingsByLinkRef(finMian.getFinReference(), ""));
 		}
 		//Getting the JoinAccount Details
 		if (getJountAccountDetailDAO() != null) {
@@ -730,8 +740,10 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 					int count = pennyDropDAO.getPennyDropCount(finAdvancePay.getBeneficiaryAccNo(),
 							finAdvancePay.getiFSC());
 					if (count == 0) {
-					/*	auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41020", errParm, valueParm), usrLanguage));*/
+						/*
+						 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
+						 * ErrorDetail(PennantConstants.KEY_FIELD, "41020", errParm, valueParm), usrLanguage));
+						 */
 					}
 				}
 			}
@@ -853,7 +865,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				// other
 				if (rcdType.equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					finAdvpay.setStatus(DisbursementConstants.STATUS_CANCEL);
-				} else {
+				} else if (!DisbursementConstants.STATUS_REVERSED.equals(finAdvpay.getStatus())) {
 					finAdvpay.setStatus(DisbursementConstants.STATUS_APPROVED);
 				}
 				finAdvpay.setpOIssued(true);
@@ -933,7 +945,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, aFinAdvancePayments.getRecordType())
 				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, aFinAdvancePayments.getRecordType())
 				|| StringUtils.equals(DisbursementConstants.STATUS_CANCEL, aFinAdvancePayments.getStatus())
-				|| StringUtils.equals(DisbursementConstants.STATUS_REJECTED, aFinAdvancePayments.getStatus())) {
+				|| StringUtils.equals(DisbursementConstants.STATUS_REJECTED, aFinAdvancePayments.getStatus())
+				|| StringUtils.equals(DisbursementConstants.STATUS_REVERSED, aFinAdvancePayments.getStatus())) {
 			return true;
 		}
 		return false;

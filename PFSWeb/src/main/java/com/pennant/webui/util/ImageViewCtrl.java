@@ -12,6 +12,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinOCRCapture;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.PennantConstants;
@@ -132,6 +133,25 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 				}
 
 				if (mandate != null) {
+					label_RefId.setVisible(true);
+					document.setContent(amedia);
+				}
+			}
+			if (arguments.containsKey("finOCRCapture")) {
+				this.window_ImageView.setWidth("75%");
+				this.window_ImageView.setHeight("80%");
+				this.label_RefId.setVisible(true);
+
+				FinOCRCapture finOCRCapture = (FinOCRCapture) arguments.get("finOCRCapture");
+				String docType = StringUtils.trimToEmpty(finOCRCapture.getFileName()).toLowerCase();
+				if (docType.endsWith(".pdf")) {
+					amedia = new AMedia(finOCRCapture.getFileName(), "pdf", "application/pdf",
+							finOCRCapture.getDocImage());
+				} else if (docType.endsWith(".jpg") || docType.endsWith(".jpeg") || docType.endsWith(".png")) {
+					amedia = new AMedia(finOCRCapture.getFileName(), "jpeg", "image/jpeg", finOCRCapture.getDocImage());
+				}
+
+				if (finOCRCapture != null) {
 					label_RefId.setVisible(true);
 					document.setContent(amedia);
 				}

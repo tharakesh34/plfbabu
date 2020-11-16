@@ -92,6 +92,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -238,6 +239,7 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinInsurances;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -274,6 +276,7 @@ import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.limits.LimitDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
@@ -311,6 +314,7 @@ import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainExtService;
 import com.pennant.backend.service.finance.PricingDetailService;
+import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.impl.CreditReviewSummaryData;
 import com.pennant.backend.service.legal.LegalDetailService;
@@ -393,6 +397,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 import com.pennanttech.pff.external.HunterService;
 import com.pennanttech.pff.external.pan.service.EligibilityService;
@@ -1207,8 +1212,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinanceTypeService financeTypeService;
 	protected Checkbox alwLoanSplit;
 	protected Row row_AllowLoanTypes;
-	protected Textbox parentLoanReference;
+	protected ExtendedCombobox parentLoanReference;
 	protected Label label_FinanceMainDialog_ParentLoanReference;
+	@Autowired
+	private CovenantsService covenantsService;
 
 	/**
 	 * default constructor.<br>
@@ -1299,7 +1306,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finReference.setMaxlength(LengthConstants.LEN_REF);
 		this.finType.setMaxlength(LengthConstants.LEN_MASTER_CODE);
 		this.applicationNo.setMaxlength(LengthConstants.LEN_REF);
-		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 10);
+		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
+				LengthConstants.LEN_REFERRALID);
 		if (this.employeeName != null && this.employeeName.isVisible()) {
 			this.employeeName.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
 					LengthConstants.LEN_MASTER_CODE);
@@ -1767,14 +1775,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!financeMain.isNew() && ImplementationConstants.ALLOW_LOAN_SPLIT) {
 			this.row_AllowLoanTypes.setVisible(true);
 		}
-		if (financeMain.getParentRef() != null && StringUtils.isNotBlank(financeMain.getParentRef())) {
-			this.parentLoanReference.setVisible(true);
-			label_FinanceMainDialog_ParentLoanReference.setVisible(true);
-		} else {
-			this.parentLoanReference.setVisible(false);
-			label_FinanceMainDialog_ParentLoanReference.setVisible(false);
-		}
+		this.parentLoanReference.setButtonDisabled(true);
 
+		this.parentLoanReference.setModuleName("FinanceMain");
+		this.parentLoanReference.setValueColumn("FinReference");
+		this.parentLoanReference.setDescColumn("FinType");
+		this.parentLoanReference.setValidateColumns(new String[] { "FinReference" });
+		this.parentLoanReference
+				.setFilters(new Filter[] { new Filter("CustID", financeMain.getCustID(), Filter.OP_EQUAL) });
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1905,7 +1913,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 		boolean isEnquiryVisible = false;
 		List<ValueLabel> enquiryList = new ArrayList<>();
-		enquiryList.add(new ValueLabel("1", "Verifications"));
 		List<Integer> verificationTypes = verificationService
 				.getVerificationTypes(StringUtils.trimToEmpty((finBasicDetail.get(3).toString())));
 
@@ -1933,6 +1940,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.enquiryCombobox.setVisible(true);
 				fillComboBox(this.enquiryCombobox, "", enquiryList, "");
 				break;
+			}
+		}
+
+		//Enquiry in Add Disbursement
+		if (ImplementationConstants.ALLOW_DISB_ENQUIRY) {
+			if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)) {
+				enquiryList.add(new ValueLabel("FINMANDENQ", Labels.getLabel("label_FINMANDEnquiry")));
+				enquiryList.add(new ValueLabel("ODENQ", Labels.getLabel("label_OverdueEnquiry")));
+				enquiryList.add(new ValueLabel("COVENQ", Labels.getLabel("label_CovenantEnquiry")));
+
+				this.enquiryLabel.setValue(Labels.getLabel("label_FinEnqHeader_Filter"));
+				this.enquiryCombobox.setVisible(true);
+				fillComboBox(this.enquiryCombobox, "", enquiryList, "");
 			}
 		}
 
@@ -3073,8 +3093,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 		if (onLoadProcess) {
 			createTab(AssetConstants.UNIQUE_ID_RECOMMENDATIONS, true);
+			Tabpanel panel = getTabpanel(AssetConstants.UNIQUE_ID_RECOMMENDATIONS);
+			panel.setAttribute("org.zkoss.zul.client.rod", "false");
 		} else {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_RECOMMENDATIONS);
+			Tabpanel panel = getTabpanel(AssetConstants.UNIQUE_ID_RECOMMENDATIONS);
+			panel.setAttribute("org.zkoss.zul.client.rod", "false");
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("isFinanceNotes", true);
 			map.put("isRecommendMand", true);
@@ -3237,6 +3261,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("financemainBaseCtrl", this);
 			map.put("vasRecordingList", getFinanceDetail().getFinScheduleData().getVasRecordingList());
+			if (getFinanceDetail().getPricingDetail() != null
+					&& ObjectUtils.isNotEmpty(getFinanceDetail().getPricingDetail().getTopUpVasDetails())) {
+				map.put("ChildVasRecordingList", getFinanceDetail().getPricingDetail().getTopUpVasDetails());
+			}
 			map.put("finType", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinType());
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinVasRecordingDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_VAS), map);
@@ -3660,6 +3688,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.rsa.isChecked()) {
 			doSetVerificationDetails(aFinanceMain.getVerification());
 		}
+
+		this.parentLoanReference.setValue(aFinanceMain.getParentRef());
 
 		// End Finance MainDetails Tab ---> 1. Offer Details 
 
@@ -8265,6 +8295,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
+		// if Loan Start Date is higher than application Date
+		autoFinStartDateUpdation(getFinanceDetail());
+		if (ImplementationConstants.ALW_QDP_CUSTOMIZATION) {
+			setLlDateInAdvPayments(getFinanceDetail());
+		}
+
 		FinanceDetail aFinanceDetail = new FinanceDetail();
 		Cloner cloner = new Cloner();
 		aFinanceDetail = cloner.deepClone(getFinanceDetail());
@@ -8449,8 +8485,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				return;
 			}
 			CreditReviewData creditReviewData = financeExtCreditReviewSpreadSheetCtrl.getCreditReviewData();
-			creditReviewData.setFinReference(this.finReference.getValue());
-			aFinanceDetail.setCreditReviewData(creditReviewData);
+			if (creditReviewData != null) {
+				creditReviewData.setFinReference(this.finReference.getValue());
+				aFinanceDetail.setCreditReviewData(creditReviewData);
+			}
 		}
 
 		// Finance Flags
@@ -8680,31 +8718,54 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setDocumentDetailsList(null);
 		}
 
-		if (dmsDialogCtrl != null) {
-			aFinanceDetail.setDocumentDetailsList(
-					dmsDialogCtrl.prepareFinanceDocuments(aFinanceDetail.getDocumentDetailsList()));
-
-			long custId = aFinanceDetail.getCustomerDetails().getCustID();
-			List<CustomerDocument> custDocList = new ArrayList<CustomerDocument>();
-			custDocList.addAll(aFinanceDetail.getCustomerDetails().getCustomerDocumentsList());
-			List<CustomerDocument> customerDocuments = dmsDialogCtrl.prepareCustomerDocuments(custDocList, custId);
-			aFinanceDetail.getCustomerDetails().setCustomerDocumentsList(customerDocuments);
-
-			if (CollectionUtils.isNotEmpty(aFinanceDetail.getJountAccountDetailList())) {
-				for (JointAccountDetail coApplicant : aFinanceDetail.getJountAccountDetailList()) {
-					long coApplicantId = coApplicant.getCustID();
-					List<CustomerDocument> coApplicantDocuments = dmsDialogCtrl.prepareCustomerDocuments(
-							coApplicant.getCustomerDetails().getCustomerDocumentsList(), coApplicantId);
-					coApplicant.getCustomerDetails().setCustomerDocumentsList(coApplicantDocuments);
-
-				}
-			}
-		}
-
 		if (financeCheckListReferenceDialogCtrl != null) {
 			financeCheckListReferenceDialogCtrl.doSetLabels(getFinBasicDetails());
 			financeCheckListReferenceDialogCtrl.doWriteBeanToComponents(aFinanceDetail.getCheckList(),
 					aFinanceDetail.getFinanceCheckList(), false);
+		}
+
+		if (this.userAction.getSelectedItem() != null) {
+			if (!("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+					|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")
+					|| this.userAction.getSelectedItem().getLabel().contains("Decline")
+					|| this.userAction.getSelectedItem().getLabel().contains("Hold"))) {
+				if (dmsDialogCtrl != null) {
+					aFinanceDetail.setDocumentDetailsList(
+							dmsDialogCtrl.prepareFinanceDocuments(aFinanceDetail.getDocumentDetailsList()));
+
+					long custId = aFinanceDetail.getCustomerDetails().getCustID();
+					List<CustomerDocument> custDocList = new ArrayList<CustomerDocument>();
+					custDocList.addAll(aFinanceDetail.getCustomerDetails().getCustomerDocumentsList());
+
+					// Start Fetch all the documents for which URI already mapped for both applicant and co-applicants
+					Map<String, CustomerDocument> mappedUris = dmsDialogCtrl.getAlreadyMappedUris(custDocList,
+							new HashMap<String, CustomerDocument>());
+
+					if (CollectionUtils.isNotEmpty(aFinanceDetail.getJountAccountDetailList())) {
+						for (JointAccountDetail coApplicant : aFinanceDetail.getJountAccountDetailList()) {
+							mappedUris = dmsDialogCtrl.getAlreadyMappedUris(
+									coApplicant.getCustomerDetails().getCustomerDocumentsList(), mappedUris);
+						}
+					}
+					// End Fetch all the documents for which URI already mapped for both applicant and co-applicants
+
+					List<CustomerDocument> customerDocuments = dmsDialogCtrl.prepareCustomerDocuments(custDocList,
+							custId, mappedUris);
+
+					aFinanceDetail.getCustomerDetails().getCustomerDocumentsList().addAll(customerDocuments);
+
+					if (CollectionUtils.isNotEmpty(aFinanceDetail.getJountAccountDetailList())) {
+						for (JointAccountDetail coApplicant : aFinanceDetail.getJountAccountDetailList()) {
+							long coApplicantId = coApplicant.getCustID();
+							List<CustomerDocument> coApplicantDocuments = dmsDialogCtrl.prepareCustomerDocuments(
+									coApplicant.getCustomerDetails().getCustomerDocumentsList(), coApplicantId,
+									mappedUris);
+							coApplicant.getCustomerDetails().setCustomerDocumentsList(coApplicantDocuments);
+						}
+					}
+				}
+			}
 		}
 
 		// Finance CheckList Details Tab
@@ -8826,6 +8887,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			//aFinanceDetail.setCollateralAssignmentList(null);
 			aFinanceDetail.setFinAssetTypesList(null);
 			aFinanceDetail.setExtendedFieldRenderList(null);
+		}
+
+		if (this.userAction.getSelectedItem() != null) {
+			if (!("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+					|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")
+					|| this.userAction.getSelectedItem().getLabel().contains("Decline")
+					|| this.userAction.getSelectedItem().getLabel().contains("Hold"))) {
+				if (dmsDialogCtrl != null) {
+					dmsDialogCtrl.prepareCollateralDocuments(aFinanceDetail);
+				}
+			}
 		}
 
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
@@ -9183,8 +9256,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		Tab pricingTab = getTab(AssetConstants.UNIQUE_ID_PRICING_DETAILS);
-		if ((pricingTab != null && pricingTab.isVisible()) && pricingDetailListCtrl != null
-				&& !aFinanceDetail.getFinScheduleData().getFinanceMain().isLoanSplitted()) {
+		if ((pricingTab != null && pricingTab.isVisible()) && pricingDetailListCtrl != null) {
 
 			// if Right exists for user is readonly will be false
 
@@ -10431,7 +10503,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					boolean rcdFound = false;
 					for (int j = 0; j < aFinanceDetail.getDocumentDetailsList().size(); j++) {
 						if (!StringUtils.equals(aFinanceDetail.getDocumentDetailsList().get(j).getDocCategory(),
-								agenDocList.get(i).getDocCategory())) {
+								agenDocList.get(i).getDocCategory())
+								|| StringUtils.equals(PennantConstants.RECORD_TYPE_CAN,
+										aFinanceDetail.getDocumentDetailsList().get(j).getRecordType())) {
 							continue;
 						}
 						rcdFound = true;
@@ -10801,6 +10875,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug(Literal.LEAVING);
 		this.financeTypeDetailsTab.setSelected(true);
+	}
+
+	public void setLlDateInAdvPayments(FinanceDetail aFinanceDetail) throws ParseException {
+		logger.debug(Literal.ENTERING);
+		FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+		if (StringUtils.equals(aFinanceDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)
+				&& StringUtils.equals(financeMain.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)
+				&& financeMain.isQuickDisb()) {
+			for (FinAdvancePayments finAdvancePayments : aFinanceDetail.getAdvancePaymentsList()) {
+				finAdvancePayments.setLLDate(financeMain.getFinStartDate());
+				finAdvancePayments.setPostingQdp(true);
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public Date getfinstartDate() {
@@ -11888,6 +11976,56 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onFulfill$parentLoanReference(Event event) {
+		logger.debug(Literal.ENTERING);
+		this.parentLoanReference.clearErrorMessage();
+		this.parentLoanReference.setConstraint("");
+		//doRemoveValidation();
+		FinanceMain fm = (FinanceMain) this.parentLoanReference.getObject();
+		if (fm != null) {
+			if (StringUtils.isEmpty(fm.getParentRef())) {
+
+				if (!fm.isFinOcrRequired()) {
+					MessageUtil.showMessage("No OCR Definition for selected parent loan");
+					return;
+				}
+				if (StringUtils.equals(this.finReference.getValue(), fm.getFinReference())) {
+					MessageUtil.showMessage("Same LAN cannot be mapped as parent");
+					this.parentLoanReference.setValue("");
+					return;
+				}
+				this.parentLoanReference.setValue(fm.getFinReference());
+				if ((getFinanceDetail() != null) && (getFinanceDetail().getFinScheduleData() != null)
+						&& (getFinanceDetail().getFinScheduleData().getFinanceMain() != null)) {
+					getFinanceDetail().getFinScheduleData().getFinanceMain().setParentRef(fm.getFinReference());
+				}
+				if (this.finOCRRequired.isChecked()) {
+					if (isTabVisible(StageTabConstants.OCR)) {
+						//doCheckOCRDetailsTab();
+						appendOCRDetailsTab(false);
+					}
+				}
+
+			} else {
+				//this.parentLoanReference.setErrorMessage("Child loan cannot be a parent loan");
+				this.parentLoanReference.setValue("");
+				throw new WrongValueException(this.parentLoanReference,
+						"Parent loan should not be child of any other loan");
+			}
+		} else {
+			if (this.finOCRRequired.isChecked()) {
+				if ((getFinanceDetail() != null) && (getFinanceDetail().getFinScheduleData() != null)
+						&& (getFinanceDetail().getFinScheduleData().getFinanceMain() != null)) {
+					getFinanceDetail().getFinScheduleData().getFinanceMain().setParentRef("");
+				}
+				if (isTabVisible(StageTabConstants.OCR)) {
+					appendOCRDetailsTab(false);
+					doCheckOCRDetailsTab();
+				}
+			}
+		}
+	}
+
 	private void setEligibilityMethod(String elgMethod) {
 		logger.debug(Literal.ENTERING);
 
@@ -12916,6 +13054,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void onCheck$finOCRRequired(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
+		if ((getFinanceDetail() != null) && (getFinanceDetail().getFinScheduleData() != null)
+				&& (getFinanceDetail().getFinScheduleData().getFinanceMain() != null)) {
+			getFinanceDetail().getFinScheduleData().getFinanceMain().setParentRef(this.parentLoanReference.getValue());
+		}
+		appendOCRDetailsTab(false);
 		doCheckOCRDetailsTab();
 		logger.debug(Literal.LEAVING + event.toString());
 	}
@@ -12938,10 +13081,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				pricingTabAppend(true);
 			}
+			this.parentLoanReference.setVisible(true);
+			label_FinanceMainDialog_ParentLoanReference.setVisible(true);
 		} else {
 			if (tab != null) {
 				tab.setVisible(false);
 			}
+			this.parentLoanReference.setVisible(false);
+			label_FinanceMainDialog_ParentLoanReference.setVisible(false);
 		}
 
 		logger.debug(Literal.LEAVING + event.toString());
@@ -14062,6 +14209,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		try {
+			aFinanceMain.setParentRef(this.parentLoanReference.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		// Start FinanceMain Detail Tab ---> 1. Sourcing Details
 
 		try {
@@ -16453,7 +16607,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// FinanceMain Details Tab Validation Error Throwing
-		if (!getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_SUKUK)) {
+		if (!getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_CONVENTIONAL)) {
 			showErrorDetails(wve, financeTypeDetailsTab);
 		}
 
@@ -16809,25 +16963,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSN)
 				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP)) {
 
-			if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+			//if any one of the acc required then only process accounting
+			if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)
+					|| !SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+				if (StringUtils.isEmpty(moduleDefiner)) {
+					//setting vas related acc data
+					prepareVasAccountingData(getFinanceDetail().getAdvancePaymentsList(),
+							getFinanceDetail().getFinScheduleData().getVasRecordingList());
+				}
 				accountingSetEntries.addAll(disbursementPostings
 						.getDisbPosting(getFinanceDetail().getAdvancePaymentsList(), finScheduleData.getFinanceMain()));
 			}
-
 			// prepareDisbInstructionPosting(accountingSetEntries, aeEvent);
 		}
 
 		// Vas Recording Accounting Entries
 		if (StringUtils.isEmpty(moduleDefiner)) {
-			if (getFinanceDetail().getFinScheduleData().getVasRecordingList() != null
-					&& !getFinanceDetail().getFinScheduleData().getVasRecordingList().isEmpty()) {
-				accountingSetEntries.addAll(getFinanceDetailService().prepareVasAccounting(aeEvent,
-						getFinanceDetail().getFinScheduleData().getVasRecordingList()));
-				if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
-					accountingSetEntries.addAll(getFinanceDetailService().prepareInsPayAccounting(aeEvent,
-							getFinanceDetail().getFinScheduleData().getVasRecordingList()));
-				}
-			}
 			accountingSetEntries.addAll(installmentDueService.processbackDateInstallmentDues(getFinanceDetail(),
 					profitDetail, appDate, false, ""));
 			/*
@@ -16842,6 +16993,39 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
 		}
 
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for set the Accounting data, which is required on VAS accounting.
+	 * 
+	 * @param advancePaymentsList
+	 * @param vasRecordingList
+	 */
+	private void prepareVasAccountingData(List<FinAdvancePayments> advancePaymentsList,
+			List<VASRecording> vasRecordingList) {
+		logger.debug(Literal.ENTERING);
+		if (CollectionUtils.isEmpty(advancePaymentsList) || CollectionUtils.isEmpty(vasRecordingList)) {
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+		for (VASRecording recording : vasRecordingList) {
+			VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(recording.getProductCode());
+			if (vehicleDealer == null) {
+				continue;
+			}
+			for (FinAdvancePayments finAdvancePayment : advancePaymentsList) {
+				if (StringUtils.equalsIgnoreCase(recording.getVasReference(), finAdvancePayment.getVasReference())) {
+					finAdvancePayment.setProductShortCode(vehicleDealer.getProductShortCode());
+					finAdvancePayment.setDealerShortCode(vehicleDealer.getDealerShortCode());
+					break;
+				}
+			}
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -18098,7 +18282,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Start FinanceMain Details Tab ---> 1. Offer Details
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AlwLoanSplit"), this.alwLoanSplit);
-		this.parentLoanReference.setReadonly(true);
+		this.parentLoanReference.setReadonly(false);
 
 		// FinanceMain Details Tab ---> 1. Basic Details
 		readOnlyComponent(isReadOnly("FinanceMainDialog_finPurpose"), this.finPurpose);
@@ -18122,7 +18306,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_eligibilityMethod"), this.eligibilityMethod);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_reqLoanAmt"), this.reqLoanAmt);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_reqLoanTenor"), this.reqLoanTenor);
-		readOnlyComponent(isReadOnly("FinanceMainDialog_finOCRRequired"), this.finOCRRequired);
+
+		if (!financeType.isOcrRequired()) {
+			this.finOCRRequired.setDisabled(true);
+			this.finOCRRequired.setChecked(false);
+		} else {
+			readOnlyComponent(isReadOnly("FinanceMainDialog_finOCRRequired"), this.finOCRRequired);
+		}
 
 		// Finance Amount
 		if (getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_ISTISNA) || isOverDraft) {
@@ -20177,11 +20367,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.gracePeriodEndDate_two.setValue(main.getGrcPeriodEndDate());
 			this.oldVar_gracePeriodEndDate = this.gracePeriodEndDate_two.getValue();
 
-			this.graceTerms_Two.setValue(main.getGraceTerms());
-			this.oldVar_graceTerms = this.graceTerms_Two.intValue();
-
-			this.numberOfTerms_two.setValue(main.getCalTerms());
-			this.oldVar_numberOfTerms = this.numberOfTerms_two.intValue();
+			//  DE#168 :To align with other servicing events commented the below lines. 
+			/*
+			 * this.graceTerms_Two.setValue(main.getGraceTerms()); this.oldVar_graceTerms =
+			 * this.graceTerms_Two.intValue();
+			 * 
+			 * this.numberOfTerms_two.setValue(main.getCalTerms()); this.oldVar_numberOfTerms =
+			 * this.numberOfTerms_two.intValue();
+			 */
 
 			this.nextGrcPftDate.setText("");
 			this.nextGrcCpzDate.setText("");
@@ -23372,15 +23565,53 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onChange$enquiryCombobox(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		String enquiryType = this.enquiryCombobox.getSelectedItem().getValue();
+		FinanceMain financeMain = null;
+		if (financeDetail.getFinScheduleData() != null) {
+			financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		}
 		Map<String, Object> map = getDefaultArguments();
 		map.put("finHeaderList", getFinBasicDetails());
 		map.put("financeDetail", financeDetail);
-		map.put("financeMainBaseCtrl", this);
-		map.put("enquiryModule", true);
+		map.put("disbEnquiry", true);
 		map.put("enuiryCombobox", enquiryCombobox);
 		if (enquiryType.equals("1")) {
+			map.put("financeMainBaseCtrl", this);
+			map.put("enquiryModule", true);
 			Executions.createComponents("/WEB-INF/pages/Verification/FieldInvestigation/VerificationEnquiryDialog.zul",
 					null, map);
+		} else if (StringUtils.equals("FINMANDENQ", enquiryType)) {
+			long mandateID = financeMain.getMandateID();
+			JdbcSearchObject<Mandate> jdbcSearchObject = new JdbcSearchObject<Mandate>();
+			jdbcSearchObject.addTabelName("Mandates_View");
+			jdbcSearchObject.addFilterEqual("MandateID", mandateID);
+			jdbcSearchObject.setSearchClass(Mandate.class);
+			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+			List<Mandate> list = pagedListService.getBySearchObject(jdbcSearchObject);
+			if (CollectionUtils.isEmpty(list)) {
+				MessageUtil.showMessage(Labels.getLabel("label_Mandate_EmptyList"));
+				this.enquiryCombobox.setSelectedIndex(0);
+				return;
+			}
+			map.put("mandate", list.get(0));
+			Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/MandateEnquiryDialog.zul", null, map);
+		} else if (StringUtils.equals("ODENQ", enquiryType)) {
+			JdbcSearchObject<FinODDetails> jdbcSearchObject = new JdbcSearchObject<FinODDetails>();
+			jdbcSearchObject.addTabelName("FinODDetails");
+			jdbcSearchObject.addFilterEqual("FinReference", this.finReference.getValue());
+			jdbcSearchObject.setSearchClass(FinODDetails.class);
+			jdbcSearchObject.addSortAsc("FinODSchdDate");
+			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+			List<FinODDetails> list = pagedListService.getBySearchObject(jdbcSearchObject);
+			map.put("ccyformat", CurrencyUtil.getFormat(financeMain.getFinCcy()));
+			map.put("list", list);
+			Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/OverdueEnquiryDialog.zul", null, map);
+		} else if (StringUtils.equals("COVENQ", enquiryType)) {
+			List<Covenant> covenants;
+			covenants = covenantsService.getCovenants(this.finReference.getValue(), "Loan", TableType.VIEW);
+			financeDetail.setCovenants(covenants);
+			map.put("financeDetail", financeDetail);
+			map.put("enqiryModule", true);
+			Executions.createComponents("/WEB-INF/pages/Finance/Covenant/CovenantsList.zul", null, map);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -23485,7 +23716,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (exstDetails != null) {
 
 					if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
-						exstDetails.setDocImage(engine.getDocumentInByteArray(SaveFormat.PDF));
+						//setting password to agreements
+						exstDetails.setDocImage(engine.getDocumentInByteArrayWithPwd(reportName,
+								agreementDefinition.isPwdProtected(), financeDetail));
+
 					} else {
 						exstDetails.setDocImage(engine.getDocumentInByteArray(SaveFormat.DOCX));
 					}
@@ -23808,32 +24042,34 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.btnSplitDoc.isOpen()) {
 
 			List<DocumentDetails> detailsList = financeDetail.getDocumentDetailsList();
+			boolean available = isDocAvailable(detailsList);
 
-			boolean available = false;
+			if (!available) {
+				MessageUtil.showMessage("Documents are not available.");
+				return;
+			}
 
-			if (CollectionUtils.isNotEmpty(detailsList) && !available) {
-				for (DocumentDetails details : detailsList) {
-					if (details.getDocRefId() != null && PennantConstants.DOC_TYPE_PDF.equals(details.getDoctype())
-							|| PennantConstants.DOC_TYPE_WORD.equals(details.getDoctype())
-							|| PennantConstants.DOC_TYPE_DOC.equals(details.getDoctype())
-							|| PennantConstants.DOC_TYPE_DOCX.equals(details.getDoctype())
-							|| PennantConstants.DOC_TYPE_IMAGE.equals(details.getDoctype())
-							|| PennantConstants.DOC_TYPE_JPG.equals(details.getDoctype())
-							|| PennantConstants.DOC_TYPE_EXCEL.equals(details.getDoctype())
-							|| PennantConstants.DOC_TYPE_ZIP.equals(details.getDoctype())
-							|| PennantConstants.DOC_TYPE_7Z.equals(details.getDoctype())
-							|| PennantConstants.DOC_TYPE_RAR.equals(details.getDoctype())) {
-						byte[] docImage = details.getDocImage();
-						if (docImage == null) {
-							docImage = dMSService.getById(details.getDocRefId());
+			List<DocumentDetails> coAppDocList = new ArrayList<DocumentDetails>();
+
+			if (CollectionUtils.isNotEmpty(financeDetail.getJountAccountDetailList())) {
+				for (JointAccountDetail coApp : financeDetail.getJountAccountDetailList()) {
+					if (CollectionUtils.isNotEmpty(coApp.getCustomerDetails().getCustomerDocumentsList())) {
+						for (CustomerDocument coAppDoc : coApp.getCustomerDetails().getCustomerDocumentsList()) {
+							DocumentDetails doc = new DocumentDetails();
+							doc.setDocRefId(coAppDoc.getDocRefId());
+							doc.setDocImage(coAppDoc.getCustDocImage());
+							doc.setDoctype(coAppDoc.getCustDocType());
+							doc.setDocCategory(coAppDoc.getCustDocCategory());
+							doc.setLovDescDocCategoryName(coAppDoc.getLovDescCustDocCategory());
+							doc.setLastMntOn(coAppDoc.getLastMntOn());
+							doc.setDocName(coAppDoc.getCustDocName());
+							coAppDocList.add(doc);
 						}
-						if (docImage != null) {
-							available = true;
-							continue;
-						}
-
 					}
 				}
+			}
+			if (CollectionUtils.isNotEmpty(coAppDocList)) {
+				available = isDocAvailable(coAppDocList);
 			}
 
 			if (!available) {
@@ -23841,6 +24077,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				return;
 			}
 			renderSplitDocuments(detailsList);
+			renderSplitDocuments(coAppDocList);
 
 		} else {
 			this.gb_split_Document.setVisible(false);
@@ -23851,19 +24088,53 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private boolean isDocAvailable(List<DocumentDetails> detailsList) {
+		logger.debug(Literal.ENTERING);
+		boolean available = false;
+		if (CollectionUtils.isNotEmpty(detailsList) && !available) {
+			for (DocumentDetails details : detailsList) {
+				if (details.getDocRefId() != null
+						&& PennantConstants.DOC_TYPE_PDF.equalsIgnoreCase(details.getDoctype())
+						|| PennantConstants.DOC_TYPE_WORD.equalsIgnoreCase(details.getDoctype())
+						|| PennantConstants.DOC_TYPE_DOC.equalsIgnoreCase(details.getDoctype())
+						|| PennantConstants.DOC_TYPE_DOCX.equalsIgnoreCase(details.getDoctype())
+						|| PennantConstants.DOC_TYPE_IMAGE.equalsIgnoreCase(details.getDoctype())
+						|| PennantConstants.DOC_TYPE_JPG.equalsIgnoreCase(details.getDoctype())
+						|| PennantConstants.DOC_TYPE_EXCEL.equalsIgnoreCase(details.getDoctype())
+						|| PennantConstants.DOC_TYPE_ZIP.equalsIgnoreCase(details.getDoctype())
+						|| PennantConstants.DOC_TYPE_7Z.equalsIgnoreCase(details.getDoctype())
+						|| PennantConstants.DOC_TYPE_RAR.equalsIgnoreCase(details.getDoctype())
+						|| PennantConstants.DOC_TYPE_PNG.equalsIgnoreCase(details.getDoctype())) {
+					byte[] docImage = details.getDocImage();
+					if (docImage == null) {
+						docImage = dMSService.getById(details.getDocRefId());
+					}
+					if (docImage != null) {
+						available = true;
+						continue;
+					}
+
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return available;
+	}
+
 	// Documents Rendering Rendering For The Split Screen Purpose.
 	private void renderSplitDocuments(List<DocumentDetails> detailsList) {
 		for (DocumentDetails details : detailsList) {
-			if (details.getDocRefId() != null && PennantConstants.DOC_TYPE_PDF.equals(details.getDoctype())
-					|| PennantConstants.DOC_TYPE_WORD.equals(details.getDoctype())
-					|| PennantConstants.DOC_TYPE_DOC.equals(details.getDoctype())
-					|| PennantConstants.DOC_TYPE_DOCX.equals(details.getDoctype())
-					|| PennantConstants.DOC_TYPE_IMAGE.equals(details.getDoctype())
-					|| PennantConstants.DOC_TYPE_JPG.equals(details.getDoctype())
-					|| PennantConstants.DOC_TYPE_EXCEL.equals(details.getDoctype())
-					|| PennantConstants.DOC_TYPE_ZIP.equals(details.getDoctype())
-					|| PennantConstants.DOC_TYPE_7Z.equals(details.getDoctype())
-					|| PennantConstants.DOC_TYPE_RAR.equals(details.getDoctype())) {
+			if (details.getDocRefId() != null && PennantConstants.DOC_TYPE_PDF.equalsIgnoreCase(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_WORD.equalsIgnoreCase(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_DOC.equalsIgnoreCase(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_DOCX.equalsIgnoreCase(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_IMAGE.equalsIgnoreCase(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_JPG.equalsIgnoreCase(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_EXCEL.equalsIgnoreCase(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_ZIP.equalsIgnoreCase(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_7Z.equalsIgnoreCase(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_RAR.equalsIgnoreCase(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_PNG.equalsIgnoreCase(details.getDoctype())) {
 
 				byte[] docImage = details.getDocImage();
 				if (docImage == null) {
@@ -23956,8 +24227,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.btnSplitDocClose.setVisible(true);
 			this.gb_splitScreen_Iframe.setVisible(true);
 			this.splitScreen_Iframe.setVisible(true);
-			this.splitScreen_Iframe.setContent(
-					new AMedia(details.getDocName(), null, null, new ByteArrayInputStream(details.getDocImage())));
+			//If the document come from DMS then extension not available in DocName then format is null.
+			AMedia amedia = new AMedia(details.getDocName(), null, null,
+					new ByteArrayInputStream(details.getDocImage()));
+			if (amedia != null && amedia.getFormat() == null) {
+				amedia = new AMedia(details.getDocName(), details.getDoctype(), null,
+						new ByteArrayInputStream(details.getDocImage()));
+			}
+			this.splitScreen_Iframe.setContent(amedia);
 		}
 
 	}
@@ -24345,9 +24622,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendOCRDetailsTab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
+		if (getTab(AssetConstants.UNIQUE_ID_OCRDETAILS) == null) {
+			onLoad = true;
+		}
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_OCRDETAILS, finOCRRequired.isChecked());
 		} else {
+			getTab(AssetConstants.UNIQUE_ID_OCRDETAILS).setVisible(finOCRRequired.isChecked());
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_OCRDETAILS);
+
 			HashMap<String, Object> defaultArguments = getDefaultArguments();
 			if (StringUtils.isNotEmpty(moduleDefiner)) {
 				defaultArguments.put("definitionApproved", true);
@@ -24375,18 +24658,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				createTab(AssetConstants.UNIQUE_ID_DMSINTERFACE, true);
 			} else {
 				HashMap<String, Object> map = getDefaultArguments();
-				List<ValueLabel> custCifs = new ArrayList<ValueLabel>();
-				custCifs.add(new ValueLabel(String.valueOf(getFinanceDetail().getCustomerDetails().getCustID()),
-						getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF() + " - "
-								+ getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName()));
-				if (CollectionUtils.isNotEmpty(getFinanceDetail().getJountAccountDetailList())) {
-					for (JointAccountDetail coApp : getFinanceDetail().getJountAccountDetailList()) {
-						custCifs.add(new ValueLabel(String.valueOf(coApp.getCustID()),
-								coApp.getCustomerDetails().getCustomer().getCustCIF() + " - "
-										+ coApp.getCustomerDetails().getCustomer().getCustShrtName()));
-					}
-				}
-				map.put("custCifs", custCifs);
 				map.put("tab", getTab(AssetConstants.UNIQUE_ID_DMSINTERFACE));
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DMSDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_DMSINTERFACE), map);
@@ -24396,6 +24667,45 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			MessageUtil.showError(e);
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	public List<ValueLabel> getCustomerCifs() {
+		List<ValueLabel> custCifs = new ArrayList<ValueLabel>();
+		custCifs.add(new ValueLabel(String.valueOf(getFinanceDetail().getCustomerDetails().getCustID()),
+				getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF() + " - " + StringUtils
+						.trimToEmpty(getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName())));
+
+		if (jointAccountDetailDialogCtrl != null && jointAccountDetailDialogCtrl.getJountAccountDetailList() != null
+				&& jointAccountDetailDialogCtrl.getJountAccountDetailList().size() > 0) {
+			if (CollectionUtils.isNotEmpty(jointAccountDetailDialogCtrl.getJountAccountDetailList())) {
+				for (JointAccountDetail coApp : jointAccountDetailDialogCtrl.getJountAccountDetailList()) {
+					custCifs.add(new ValueLabel(String.valueOf(coApp.getCustID()),
+							coApp.getCustomerDetails().getCustomer().getCustCIF() + " - "
+									+ coApp.getCustomerDetails().getCustomer().getCustShrtName()));
+				}
+			}
+		} else {
+			if (CollectionUtils.isNotEmpty(getFinanceDetail().getJountAccountDetailList())) {
+				for (JointAccountDetail coApp : getFinanceDetail().getJountAccountDetailList()) {
+					custCifs.add(new ValueLabel(String.valueOf(coApp.getCustID()),
+							coApp.getCustomerDetails().getCustomer().getCustCIF() + " - "
+									+ coApp.getCustomerDetails().getCustomer().getCustShrtName()));
+				}
+			}
+		}
+		return custCifs;
+	}
+
+	public List<ValueLabel> getAssignedCollateralRefs() {
+		List<ValueLabel> collRefs = new ArrayList<ValueLabel>();
+
+		for (CollateralAssignment collAssign : getFinanceDetail().getCollateralAssignmentList()) {
+
+			collRefs.add(new ValueLabel(String.valueOf(collAssign.getCollateralRef()),
+					collAssign.getCollateralRef() + " - " + StringUtils
+							.trimToEmpty(getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName())));
+		}
+		return collRefs;
 	}
 
 	/*
@@ -24654,7 +24964,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public String getApplicationNo() {
-		return this.applicationNo.getValue();
+		return StringUtils.trimToEmpty(this.applicationNo.getValue());
+	}
+
+	public String getLeadId() {
+		return StringUtils.trimToEmpty(this.offerId.getValue());
 	}
 
 	public FinanceSpreadSheetCtrl getFinanceSpreadSheetCtrl() {

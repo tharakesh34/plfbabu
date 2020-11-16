@@ -672,8 +672,8 @@ public class FeeDetailService {
 
 		int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		if (finMain != null && StringUtils.isNotBlank(finMain.getFinReference())
-				&& StringUtils.isNotBlank(finMain.getRcdMaintainSts())) {
+		//FIXME:removed the && StringUtils.isNotBlank(finMain.getRcdMaintainSts()) condition for calculate Fees's through API
+		if (finMain != null && StringUtils.isNotBlank(finMain.getFinReference())) {
 			FinanceProfitDetail finProfitDetail = financeDetailService
 					.getFinProfitDetailsById(finMain.getFinReference());
 			if (finProfitDetail != null) {

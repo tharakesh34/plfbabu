@@ -6,11 +6,35 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
-		<window id="window_SelectLoanClosureEnquiryList" title="${c:l('window_SelectLoanClosureEnquiryList.title')}"
-			style="align:start;" border="normal" apply="${selectLoanClosureEnquiryListCtrl}" width="650px" height="260px"
-			sizable="false" closable="true">
+		<window id="window_SelectLoanClosureEnquiryList" 	
+		 style="align:start;" border="normal" apply="${selectLoanClosureEnquiryListCtrl}" width="650px" height="260px"
+		 sizable="false" >
 
 			<borderlayout id="borderlayoutSelectFintypeDialog">
+				<north>
+					<div sclass="z-toolbar">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+							<toolbar align="start"
+								sclass="toolbar-start">
+
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label id="label_title"
+									value="${c:l('window_SelectLoanClosureEnquiryList.title')}"
+									sclass="label-heading" />
+							</toolbar>
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnClose" label="Close"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
 				<center border="none" autoscroll="true">
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>

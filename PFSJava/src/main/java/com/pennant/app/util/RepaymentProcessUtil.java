@@ -208,7 +208,7 @@ public class RepaymentProcessUtil {
 		 * finReceiptData.getReceiptHeader().getXcessPayables().clear();
 		 * finReceiptData.getReceiptHeader().getXcessPayables().addAll(xcsPaybles);
 		 */
-
+		rch.setValueDate(valuedate);
 		List<Object> returnList = doProcessReceipts(financeMain, schdDtls, profitDetail, rch, finFeeDetailList,
 				scheduleData, valuedate, postDate, financeDetail);
 		scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(0);
@@ -239,15 +239,20 @@ public class RepaymentProcessUtil {
 
 		FinanceScheduleDetail curSchd = null;
 
+		Date presentmentSchDate = rch.getPresentmentSchDate() != null ? rch.getPresentmentSchDate() : valuedate;
 		for (FinanceScheduleDetail financeScheduleDetail : scheduleDetails) {
 			Date schdDate = financeScheduleDetail.getSchDate();
 			// Skip if Repayment date after Current Business date
 			if (!ImplementationConstants.ALLOW_OLDEST_DUE) {
-				if (schdDate.compareTo(valuedate) != 0) {
+				if (schdDate.compareTo(presentmentSchDate) != 0) {
 					continue;
 				}
 				curSchd = financeScheduleDetail;
 				financeScheduleDetailDAO.updateForRpy(curSchd);
+				break;
+			}
+
+			if (schdDate.compareTo(presentmentSchDate) > 0) {
 				break;
 			}
 			curSchd = financeScheduleDetail;

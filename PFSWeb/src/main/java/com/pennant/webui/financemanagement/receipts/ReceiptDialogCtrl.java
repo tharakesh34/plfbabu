@@ -2429,9 +2429,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			return receiptSeqId;
 		}
 		for (FinReceiptDetail dtl : recDtls) {
-			if (recDtl.getPaymentType().equals(dtl.getPaymentType())
-					&& recDtl.getPayAgainstID() == dtl.getPayAgainstID()) {
-				receiptSeqId = dtl.getReceiptSeqID();
+			if (recDtl.getPaymentType() != null) {
+				if (recDtl.getPaymentType().equals(dtl.getPaymentType())
+						&& recDtl.getPayAgainstID() == dtl.getPayAgainstID()) {
+					receiptSeqId = dtl.getReceiptSeqID();
+				}
 			}
 		}
 		return receiptSeqId;

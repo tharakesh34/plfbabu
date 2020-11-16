@@ -121,6 +121,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -991,6 +992,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			logger.error(e);
 			MessageUtil.showError(e);
 		} catch (final InterfaceException e) {
+			logger.error(e);
+			MessageUtil.showError(e);
+		} catch (final ConcurrencyException e) {//Code added for duplicate payment instruction issue fix
 			logger.error(e);
 			MessageUtil.showError(e);
 		}

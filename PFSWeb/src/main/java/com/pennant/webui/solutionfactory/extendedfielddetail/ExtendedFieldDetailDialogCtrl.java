@@ -2039,7 +2039,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.rowMandatory.setVisible(true);
 			this.rowUnique.setVisible(false);
 			this.rowValFromScript.setVisible(false);
-			this.fieldLength.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldLength"));
+			if (getExtendedFieldDetail().isNew() || (StringUtils.equals(getExtendedFieldDetail().getRecordType(),
+					PennantConstants.RECORD_TYPE_NEW))) {
+				this.fieldLength.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldLength"));
+			} else {
+				this.fieldLength.setReadonly(true);
+			}
 			this.fieldPrec.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldPrec"));
 			this.rowConstraint.setVisible(false);
 			this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(false);

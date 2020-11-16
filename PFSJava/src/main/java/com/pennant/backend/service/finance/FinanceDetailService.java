@@ -54,7 +54,6 @@ import org.jaxen.JaxenException;
 
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -82,7 +81,6 @@ import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -278,8 +276,6 @@ public interface FinanceDetailService {
 	// EOD Process Checking
 	int getProgressCountByCust(long custID);
 
-	List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings);
-
 	FinanceMain getFinanceMainForBatch(String finReference);
 
 	BigDecimal getOutStandingBalFromFees(String finReference);
@@ -340,8 +336,6 @@ public interface FinanceDetailService {
 	Map<String, Object> getUpLevelUsers(long usrId, String branch);
 
 	FinanceDetail getFinanceDetailsForPmay(String finReference);
-
-	List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings);
 
 	FinCustomerDetails getDetailsByOfferID(String offerID);
 

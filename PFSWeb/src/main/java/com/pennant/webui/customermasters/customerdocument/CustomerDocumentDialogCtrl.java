@@ -116,6 +116,7 @@ import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
+import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -221,6 +222,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private DeviationExecutionCtrl deviationExecutionCtrl;
 	private List<DocumentDetails> verificationDocuments;
 	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
+	public String dmsApplicationNo;
+	public String leadId;
 
 	/**
 	 * default constructor.<br>
@@ -394,6 +397,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				setCustomerDocumentListCtrl((CustomerDocumentListCtrl) arguments.get("customerDocumentListCtrl"));
 			} else {
 				setCustomerDocumentListCtrl(null);
+			}
+
+			if (arguments.containsKey("dmsApplicationNo")) {
+				this.dmsApplicationNo = (String) arguments.get("dmsApplicationNo");
+			}
+
+			if (arguments.containsKey("leadId")) {
+				this.leadId = (String) arguments.get("leadId");
 			}
 
 			// set Field Properties
@@ -693,6 +704,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 								this.documnetName.getValue(), aCustomerDocument.getCustDocImage()));
 			} else {
 				amedia = new AMedia(aCustomerDocument.getCustDocName(), null, null,
+						aCustomerDocument.getCustDocImage());
+			}
+
+			//If the document come from DMS then extension not available in DocName then format is null.
+			if (amedia != null && amedia.getFormat() == null) {
+				amedia = new AMedia(aCustomerDocument.getCustDocName(), aCustomerDocument.getCustDocType(), null,
 						aCustomerDocument.getCustDocImage());
 			}
 			finDocumentPdfView.setContent(amedia);
@@ -1265,7 +1282,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		if (getCustomerDialogCtrl() != null) {
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
-		if (isWorkFlowEnabled() || isCustomerWorkflow) {
+		if (isWorkFlowEnabled() || isCustomerWorkflow || isFinanceProcess) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -1434,6 +1451,13 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		// fill the CustomerDocument object with the components data
 		doWriteComponentsToBean(aCustomerDocument);
 		checkDocumentExpired(aCustomerDocument);
+		if (financeMainDialogCtrl != null) {
+			aCustomerDocument.setApplicationNo(((FinanceMainBaseCtrl) financeMainDialogCtrl).getApplicationNo());
+			aCustomerDocument.setOfferId(((FinanceMainBaseCtrl) financeMainDialogCtrl).getLeadId());
+		} else {
+			aCustomerDocument.setApplicationNo(StringUtils.trimToEmpty(this.dmsApplicationNo));
+			aCustomerDocument.setOfferId(StringUtils.trimToEmpty(this.leadId));
+		}
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox

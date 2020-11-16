@@ -757,11 +757,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				appendAccountingDetailTab(manualAdvise, true);
 			}
 		}
-
-		if (FinanceConstants.MANUAL_ADVISE_PAYABLE == aManualAdvise.getAdviseType()) {
-			appendDocumentDetailTab();
-		}
-
+		appendDocumentDetailTab();
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1741,5 +1737,22 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	public void setAccountingExecuted(boolean isAccountingExecuted) {
 		this.isAccountingExecuted = isAccountingExecuted;
+	}
+
+	public DocumentDetailDialogCtrl getDocumentDetailDialogCtrl() {
+		return documentDetailDialogCtrl;
+	}
+
+	public void setDocumentDetailDialogCtrl(DocumentDetailDialogCtrl documentDetailDialogCtrl) {
+		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
+	}
+
+	public FinanceCheckListReferenceDialogCtrl getFinanceCheckListReferenceDialogCtrl() {
+		return financeCheckListReferenceDialogCtrl;
+	}
+
+	public void setFinanceCheckListReferenceDialogCtrl(
+			FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl) {
+		this.financeCheckListReferenceDialogCtrl = financeCheckListReferenceDialogCtrl;
 	}
 }

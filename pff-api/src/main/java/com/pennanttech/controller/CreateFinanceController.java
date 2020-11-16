@@ -52,6 +52,7 @@ import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -89,6 +90,9 @@ import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
+import com.pennant.backend.model.finance.FinOCRCapture;
+import com.pennant.backend.model.finance.FinOCRDetail;
+import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -106,6 +110,9 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.Taxes;
+import com.pennant.backend.model.finance.covenant.Covenant;
+import com.pennant.backend.model.finance.covenant.CovenantDocument;
+import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
@@ -228,6 +235,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private FeeTypeDAO feeTypeDAO;
 	private VehicleDealerDAO vehicleDealerDao;
 	private VehicleDealer vehicleDealer;
+	private CovenantTypeDAO covenantTypeDAO;
 
 	/**
 	 * Method for process create finance request
@@ -753,7 +761,9 @@ public class CreateFinanceController extends SummaryDetailService {
 
 				if (exstDetails != null) {
 					if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
-						exstDetails.setDocImage(engine.getDocumentInByteArray(SaveFormat.PDF));
+						//setting password to agreements
+						exstDetails.setDocImage(engine.getDocumentInByteArrayWithPwd(reportName,
+								agreementDefinition.isPwdProtected(), financeDetail));
 					} else {
 						exstDetails.setDocImage(engine.getDocumentInByteArray(SaveFormat.DOCX));
 					}
@@ -772,7 +782,9 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 				details.setReferenceId(finReference);
 				if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
-					details.setDocImage(engine.getDocumentInByteArray(SaveFormat.PDF));
+					//setting password to agreements
+					details.setDocImage(engine.getDocumentInByteArrayWithPwd(reportName,
+							agreementDefinition.isPwdProtected(), financeDetail));
 				} else {
 					details.setDocImage(engine.getDocumentInByteArray(SaveFormat.DOCX));
 				}
@@ -1603,7 +1615,149 @@ public class CreateFinanceController extends SummaryDetailService {
 		if (MandateConstants.TYPE_PDC.equals(financeMain.getFinRepayMethod()) || finType.isChequeCaptureReq()) {
 			doSetDefaultChequeHeader(financeDetail, moveLoanStage);
 		}
+		doProcessOCRDetails(financeDetail, userDetails);
+
+		//Covenants
+		if (CollectionUtils.isNotEmpty(financeDetail.getCovenants())) {
+			Date appDate = SysParamUtil.getAppDate();
+			for (Covenant detail : financeDetail.getCovenants()) {
+				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				if (!moveLoanStage) {
+					detail.setNewRecord(true);
+				}
+				detail.setWorkflowId(financeMain.getWorkflowId());
+				detail.setRoleCode(financeMain.getRoleCode());
+				detail.setNextRoleCode(financeMain.getNextRoleCode());
+				detail.setTaskId(financeMain.getTaskId());
+				detail.setNextTaskId(financeMain.getNextTaskId());
+				detail.setLastMntBy(userDetails.getUserId());
+				detail.setRecordStatus(moveLoanStage ? financeMain.getRecordStatus()
+						: getRecordStatus(financeMain.isQuickDisb(), stp));
+				detail.setUserDetails(financeMain.getUserDetails());
+				detail.setVersion(1);
+				detail.setModule(APIConstants.COVENANT_MODULE_NAME);
+				//setting the CovenantTypeId based on the category and the Code
+				CovenantType covenantType = covenantTypeDAO.getCovenantType(detail.getCovenantTypeId(), "");
+				{
+					detail.setCovenantTypeId(covenantType.getId());
+				}
+
+				if (CollectionUtils.isNotEmpty(detail.getCovenantDocuments())) {
+					detail.setDocumentReceivedDate(appDate);
+					for (CovenantDocument covenantDocument : detail.getCovenantDocuments()) {
+						DocumentDetails documentDetails = new DocumentDetails(FinanceConstants.MODULE_NAME, "",
+								covenantDocument.getDoctype(), covenantDocument.getDocName(),
+								covenantDocument.getDocImage());
+
+						documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+						covenantDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+
+						if (!moveLoanStage) {
+							covenantDocument.setNewRecord(true);
+							documentDetails.setNewRecord(true);
+						}
+						//DocumentType docType = documentTypeService.getDocumentTypeById(covenantDocument.getDoctype());
+						covenantDocument.setLastMntBy(userDetails.getUserId());
+						covenantDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						covenantDocument.setRecordStatus(moveLoanStage ? financeMain.getRecordStatus()
+								: getRecordStatus(financeMain.isQuickDisb(), stp));
+						covenantDocument.setUserDetails(financeMain.getUserDetails());
+						covenantDocument.setVersion(1);
+						covenantDocument.setTaskId(financeMain.getTaskId());
+						covenantDocument.setNextTaskId(financeMain.getNextTaskId());
+						covenantDocument.setRoleCode(financeMain.getRoleCode());
+						covenantDocument.setNextRoleCode(financeMain.getNextRoleCode());
+						covenantDocument.setWorkflowId(financeMain.getWorkflowId());
+						covenantDocument.setDocName(covenantDocument.getDocName());
+						covenantDocument.setCustId(financeMain.getCustID());
+						covenantDocument.setDocumentReceivedDate(appDate);
+						documentDetails.setDocReceivedDate(appDate);
+						documentDetails.setLastMntBy(userDetails.getUserId());
+						documentDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						documentDetails.setRecordStatus(moveLoanStage ? financeMain.getRecordStatus()
+								: getRecordStatus(financeMain.isQuickDisb(), stp));
+						documentDetails.setUserDetails(financeMain.getUserDetails());
+						documentDetails.setVersion(1);
+						documentDetails.setTaskId(financeMain.getTaskId());
+						documentDetails.setNextTaskId(financeMain.getNextTaskId());
+						documentDetails.setRoleCode(financeMain.getRoleCode());
+						documentDetails.setNextRoleCode(financeMain.getNextRoleCode());
+						documentDetails.setWorkflowId(financeMain.getWorkflowId());
+						documentDetails.setDocModule(FinanceConstants.MODULE_NAME);
+						documentDetails.setDocName(covenantDocument.getDocName());
+						documentDetails.setReferenceId(financeMain.getFinReference());
+						documentDetails.setDocReceived(true);
+						documentDetails.setFinReference(financeMain.getFinReference());
+						documentDetails.setCustId(financeMain.getCustID());
+						covenantDocument.setCovenantType(detail.getCovenantType());
+						covenantDocument.setDocumentDetail(documentDetails);
+						detail.getDocumentDetails().add(documentDetails);
+					}
+				}
+			}
+		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Processing OCR workflow details
+	 * 
+	 * @param financeDetail
+	 */
+	private void doProcessOCRDetails(FinanceDetail financeDetail, LoggedInUser userDetails) {
+		if (financeDetail != null) {
+			FinOCRHeader finOCRHeader = financeDetail.getFinOCRHeader();
+			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+			if (finOCRHeader != null && financeMain != null) {
+				//do set workflow details
+				finOCRHeader.setFinReference(financeMain.getFinReference());
+				finOCRHeader.setLastMntBy(userDetails.getUserId());
+				finOCRHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				finOCRHeader.setUserDetails(userDetails);
+				finOCRHeader.setWorkflowId(financeMain.getWorkflowId());
+				finOCRHeader.setRoleCode(financeMain.getRoleCode());
+				finOCRHeader.setNextRoleCode(financeMain.getNextRoleCode());
+				finOCRHeader.setTaskId(financeMain.getTaskId());
+				finOCRHeader.setNextTaskId(financeMain.getNextTaskId());
+				finOCRHeader.setNewRecord(true);
+				finOCRHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				finOCRHeader.setVersion(finOCRHeader.getVersion() + 1);
+				financeDetail.setFinOCRHeader(finOCRHeader);
+				//OCR Definition
+				if (CollectionUtils.isNotEmpty(finOCRHeader.getOcrDetailList())) {
+					for (FinOCRDetail finOCRDetail : finOCRHeader.getOcrDetailList()) {
+						finOCRDetail.setNewRecord(true);
+						finOCRDetail.setRecordType(PennantConstants.RCD_ADD);
+						finOCRDetail.setLastMntBy(userDetails.getUserId());
+						finOCRDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						finOCRDetail.setUserDetails(userDetails);
+						finOCRDetail.setWorkflowId(financeMain.getWorkflowId());
+						finOCRDetail.setRoleCode(financeMain.getRoleCode());
+						finOCRDetail.setNextRoleCode(financeMain.getNextRoleCode());
+						finOCRDetail.setTaskId(financeMain.getTaskId());
+						finOCRDetail.setNextTaskId(financeMain.getNextTaskId());
+						finOCRDetail.setVersion(finOCRDetail.getVersion() + 1);
+					}
+				}
+				//OCR Capture Details
+				if (CollectionUtils.isNotEmpty(finOCRHeader.getFinOCRCapturesList())) {
+					for (FinOCRCapture finOCRCapture : finOCRHeader.getFinOCRCapturesList()) {
+						finOCRCapture.setNewRecord(true);
+						finOCRCapture.setRecordType(PennantConstants.RCD_ADD);
+						finOCRCapture.setFinReference(financeMain.getFinReference());
+						finOCRCapture.setLastMntBy(userDetails.getUserId());
+						finOCRCapture.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						finOCRCapture.setUserDetails(userDetails);
+						finOCRCapture.setWorkflowId(financeMain.getWorkflowId());
+						finOCRCapture.setRoleCode(financeMain.getRoleCode());
+						finOCRCapture.setNextRoleCode(financeMain.getNextRoleCode());
+						finOCRCapture.setTaskId(financeMain.getTaskId());
+						finOCRCapture.setNextTaskId(financeMain.getNextTaskId());
+						finOCRCapture.setVersion(finOCRCapture.getVersion() + 1);
+					}
+				}
+			}
+		}
 	}
 
 	private void processCollateralsetupDetails(LoggedInUser userDetails, boolean stp, FinanceMain financeMain,
@@ -1616,7 +1770,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				moveLoanStage ? financeMain.getRecordStatus() : getRecordStatus(financeMain.isQuickDisb(), stp));
 		colSetup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		colSetup.setLastMntBy(userDetails.getUserId());
-		colSetup.setCollateralRef(ReferenceUtil.generateCollateralRef());
+		colSetup.setCollateralRef(ReferenceUtil.generateCollateralReference());
 		colSetup.setDepositorId(financeMain.getCustID());
 		colSetup.setDepositorCif(financeMain.getCustCIF());
 		if (!moveLoanStage) {
@@ -4307,4 +4461,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		this.vehicleDealerDao = vehicleDealerDao;
 	}
 
+	public void setCovenantTypeDAO(CovenantTypeDAO covenantTypeDAO) {
+		this.covenantTypeDAO = covenantTypeDAO;
+	}
 }

@@ -165,4 +165,6 @@ public interface ReceiptService {
 
 	FinReceiptData recalculateReceipt(FinReceiptData receiptData);
 
+	int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference);
+
 }

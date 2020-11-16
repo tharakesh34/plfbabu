@@ -160,7 +160,7 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 		selectSql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",lovDescScoreGroupCode");
+			selectSql.append(",lovDescScoreGroupCode, lovDescMinScore");
 		}
 		selectSql.append(" From RMTScoringSlab");
 		selectSql.append(StringUtils.trimToEmpty(type));

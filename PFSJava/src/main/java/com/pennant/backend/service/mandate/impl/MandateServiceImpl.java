@@ -927,4 +927,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
 	}
 
+	@Override
+	public int getMandateByMandateRef(String mandateRef) {
+		return mandateDAO.getMandateByMandateRef(mandateRef);
+	}
 }

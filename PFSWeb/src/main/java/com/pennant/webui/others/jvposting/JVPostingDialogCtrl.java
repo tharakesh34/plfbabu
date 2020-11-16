@@ -306,8 +306,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				getJVPosting().setCurrency(aCurrency.getCcyCode());
 			}
 			doSetFieldProperties();
-			this.listBoxJVPostingEntry.setHeight(this.borderLayoutHeight - 350 + "px");
-			this.listBoxJVPostingAccounting.setHeight(this.borderLayoutHeight - 350 + "px");
+			this.listBoxJVPostingEntry.setHeight(this.borderLayoutHeight - 280 + "px");
+			this.listBoxJVPostingAccounting.setHeight(this.borderLayoutHeight - 280 + "px");
 			doShowDialog(getJVPosting());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -1236,9 +1236,13 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					new PTStringValidator(Labels.getLabel("label_JVPostingDialog_BatchCcy.value"), null, true, true));
 		}
 		// Cmt Ccy
-		if (this.postingBranch.isButtonVisible()) {
+		if (this.postingBranch.isButtonVisible() && !this.postingBranch.isReadonly()
+				&& this.postingBranch.isMandatory()) {
 			this.postingBranch.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_JVPostingDialog_PostingBranch.value"), null, true, true));
+		} else {
+			this.postingBranch.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_JVPostingDialog_PostingBranch.value"), null, false, true));
 		}
 	}
 
@@ -1928,6 +1932,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	}
 
 	private void setFilters(String postValue) {
+
+		this.postingBranch.setMandatoryStyle(true);
+
 		if (StringUtils.equals(postValue, PennantConstants.List_Select)) {
 			addFilters("", "", "");
 		}
@@ -1942,6 +1949,10 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_LIMIT)) {
 			addFilters("LimitHeader", "HeaderId", "ResponsibleBranch");
+		}
+		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_ENTITY)) {
+			addFilters("Entity", "EntityCode", "EntityDesc");
+			this.postingBranch.setMandatoryStyle(false);
 		}
 	}
 

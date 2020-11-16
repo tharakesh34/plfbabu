@@ -99,4 +99,6 @@ public interface MandateService {
 	Mandate getMandateStatusById(String finReference, long mandateID);
 
 	int updateMandateStatus(Mandate mandate);
+
+	int getMandateByMandateRef(String mandateRef);
 }

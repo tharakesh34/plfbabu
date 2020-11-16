@@ -17,6 +17,7 @@ public enum DMSModule {
 	TV,
 	PD,
 	RCU,
+	OCR,
 	RECEIPT;
 
 	public static DMSModule getModule(String module) {

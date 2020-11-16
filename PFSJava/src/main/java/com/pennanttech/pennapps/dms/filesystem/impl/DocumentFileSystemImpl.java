@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -44,25 +45,29 @@ public class DocumentFileSystemImpl implements DocumentFileSystem {
 		logger.debug("Writing Document to FS...");
 
 		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
-			storeDocIntoFileSystem(dmsQueue);
-		} else if (DMSStorage.EXTERNAL == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
-			dmsQueue.setErrorCode("");
-			dmsQueue.setErrorDesc("");
-			try {
-				dmsQueue.setDocUri(externalDocumentManagementService.store(dmsQueue));
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-				dmsQueue.setErrorCode("DMS99");
-				dmsQueue.setErrorDesc(e.getMessage());
-				if (dmsQueue.getAttemptNum() >= 3) {
-					dmsQueue.setProcessingFlag(-1);
-				} else {
-					dmsQueue.setProcessingFlag(0);
+			if (externalDocumentManagementService != null) {
+				try {
+					dmsQueue.setDocUri(externalDocumentManagementService.store(dmsQueue));
+					return dmsQueue.getDocUri();
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+					dmsQueue.setErrorCode("DMS99");
+					dmsQueue.setErrorDesc(e.getMessage());
+					if (dmsQueue.getAttemptNum() >= 3) {
+						dmsQueue.setProcessingFlag(-1);
+					} else {
+						dmsQueue.setProcessingFlag(0);
+					}
+				} finally {
+					dmsQueue.setProcessingFlag(1);
 				}
-			} finally {
-				dmsQueue.setProcessingFlag(1);
+			} else {
+				if (ImplementationConstants.UPDATE_METADATA_IN_DMS) {
+					return null;
+				}
+				storeDocIntoFileSystems(dmsQueue);
+				return dmsQueue.getDocUri();
 			}
-
 		}
 		logger.debug(Literal.LEAVING);
 		return dmsQueue.getDocUri();
@@ -81,7 +86,7 @@ public class DocumentFileSystemImpl implements DocumentFileSystem {
 		}
 	}
 
-	private void storeDocIntoFileSystem(DMSQueue dmsQueue) {
+	private void storeDocIntoFileSystems(DMSQueue dmsQueue) {
 		logger.debug(Literal.ENTERING);
 		String filePrefix = createFolderStructure(dmsQueue);
 		String fileName = createFileName(dmsQueue);

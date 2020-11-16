@@ -1,7 +1,11 @@
 package com.pennant.backend.model.agreement;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import com.pennant.backend.model.finance.AgreementDetail.CoApplicant;
 
 public class InterestCertificate {
 
@@ -18,6 +22,7 @@ public class InterestCertificate {
 	private String finTypeDesc = "";
 	private String coApplicant = "";
 	private BigDecimal finAssetvalue = BigDecimal.ZERO;
+	private BigDecimal finCurrAssetvalue = BigDecimal.ZERO;
 	private BigDecimal effectiveRate = BigDecimal.ZERO;
 	private String entityCode = "";
 	private String entityDesc = "";
@@ -45,6 +50,14 @@ public class InterestCertificate {
 	private String addressType3;
 	private String addressType4;
 	private String addressType5;
+	private String addressType6;
+	private String addressType7;
+	private String addressType8;
+	private String addressType9;
+	private String addressType10;
+	private String addressType11;
+	private String addressType12;
+	private String addressType13;
 	private String custFlatNbr = "";
 	private String courseName;
 	private String collegeName;
@@ -70,6 +83,13 @@ public class InterestCertificate {
 
 	private String grcPft = "0.00";
 	private String grcPftPaid = "0.00";
+
+	private BigDecimal priPaid = BigDecimal.ZERO;
+	private BigDecimal vasPriPaid = BigDecimal.ZERO;
+	private BigDecimal pftPaid = BigDecimal.ZERO;
+	private BigDecimal vasPftPaid = BigDecimal.ZERO;
+	private List<CoApplicant> coApplicantList = new ArrayList<CoApplicant>();
+	private String custSalutation = "";
 
 	// Getter and Setter
 	public String getCustName() {
@@ -560,4 +580,123 @@ public class InterestCertificate {
 		this.grcPftPaid = grcPftPaid;
 	}
 
+	public BigDecimal getFinCurrAssetvalue() {
+		return finCurrAssetvalue;
+	}
+
+	public void setFinCurrAssetvalue(BigDecimal finCurrAssetvalue) {
+		this.finCurrAssetvalue = finCurrAssetvalue;
+	}
+
+	public BigDecimal getPriPaid() {
+		return priPaid;
+	}
+
+	public void setPriPaid(BigDecimal priPaid) {
+		this.priPaid = priPaid;
+	}
+
+	public BigDecimal getVasPriPaid() {
+		return vasPriPaid;
+	}
+
+	public void setVasPriPaid(BigDecimal vasPriPaid) {
+		this.vasPriPaid = vasPriPaid;
+	}
+
+	public BigDecimal getPftPaid() {
+		return pftPaid;
+	}
+
+	public void setPftPaid(BigDecimal pftPaid) {
+		this.pftPaid = pftPaid;
+	}
+
+	public BigDecimal getVasPftPaid() {
+		return vasPftPaid;
+	}
+
+	public void setVasPftPaid(BigDecimal vasPftPaid) {
+		this.vasPftPaid = vasPftPaid;
+	}
+
+	public String getAddressType6() {
+		return addressType6;
+	}
+
+	public void setAddressType6(String addressType6) {
+		this.addressType6 = addressType6;
+	}
+
+	public String getAddressType7() {
+		return addressType7;
+	}
+
+	public void setAddressType7(String addressType7) {
+		this.addressType7 = addressType7;
+	}
+
+	public String getAddressType8() {
+		return addressType8;
+	}
+
+	public void setAddressType8(String addressType8) {
+		this.addressType8 = addressType8;
+	}
+
+	public String getAddressType9() {
+		return addressType9;
+	}
+
+	public void setAddressType9(String addressType9) {
+		this.addressType9 = addressType9;
+	}
+
+	public String getAddressType10() {
+		return addressType10;
+	}
+
+	public void setAddressType10(String addressType10) {
+		this.addressType10 = addressType10;
+	}
+
+	public String getAddressType11() {
+		return addressType11;
+	}
+
+	public void setAddressType11(String addressType11) {
+		this.addressType11 = addressType11;
+	}
+
+	public String getAddressType12() {
+		return addressType12;
+	}
+
+	public void setAddressType12(String addressType12) {
+		this.addressType12 = addressType12;
+	}
+
+	public String getAddressType13() {
+		return addressType13;
+	}
+
+	public void setAddressType13(String addressType13) {
+		this.addressType13 = addressType13;
+	}
+
+	public List<CoApplicant> getCoApplicantList() {
+		return coApplicantList;
+	}
+
+	public void setCoApplicantList(List<CoApplicant> coApplicantList) {
+		this.coApplicantList = coApplicantList;
+	}
+
+	public String getCustSalutation() {
+		return custSalutation;
+	}
+
+	public void setCustSalutation(String custSalutation) {
+		this.custSalutation = custSalutation;
+	}
 }

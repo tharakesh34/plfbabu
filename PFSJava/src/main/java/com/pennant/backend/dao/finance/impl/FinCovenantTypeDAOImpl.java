@@ -567,4 +567,29 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 	}
 
+	@Override
+	public SecurityRole isMandRoleExists(String mandRole) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select  RoleCd, RoleDesc  from  SecRoles");
+		sql.append(" Where RoleCd = :mandRole");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("mandRole", mandRole);
+
+		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
 }

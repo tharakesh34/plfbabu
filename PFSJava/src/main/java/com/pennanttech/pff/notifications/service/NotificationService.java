@@ -865,7 +865,7 @@ public class NotificationService extends GenericService<Notification> {
 			data.setCustAddrLine2(customerAddress.getCustAddrLine2());
 			data.setCustAddrHNo(customerAddress.getCustAddrHNbr());
 			data.setCustAddrFlatNo(customerAddress.getCustFlatNbr());
-			data.setCustAddrStreet(customerAddress.getCustAddrStreet());
+			data.setCustAddrStreet(StringUtils.trimToEmpty(customerAddress.getCustAddrStreet()));
 			data.setCustAddrCountry(customerAddress.getCustAddrCountry());
 			data.setCustAddrProvince(customerAddress.getCustAddrProvince());
 			data.setCustAddrDistrict(customerAddress.getCustDistrict());

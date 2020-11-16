@@ -1,7 +1,6 @@
 CKEDITOR.editorConfig = function(config) {
 
-     config.resize_enabled = false;
-    config.scayt_autoStartup = true;
+    config.resize_enabled = false;
     config.readOnly = true;
     config.toolbar = 'Simple';
     config.toolbar.hidden=true;

@@ -85,6 +85,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -448,6 +449,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			} else if (getDocumentDetails().getDoctype().equalsIgnoreCase(PennantConstants.DOC_TYPE_IMAGE)
 					|| getDocumentDetails().getDoctype().equalsIgnoreCase(PennantConstants.DOC_TYPE_JPG)) {
 				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
+			} else if (getDocumentDetails().getDoctype().equalsIgnoreCase(PennantConstants.DOC_TYPE_PNG)) {
+				amedia = new AMedia(docName, "jpeg", "image/png", data);
 			} else if (getDocumentDetails().getDoctype().equalsIgnoreCase(PennantConstants.DOC_TYPE_WORD)
 					|| getDocumentDetails().getDoctype().equalsIgnoreCase(PennantConstants.DOC_TYPE_MSG)) {
 				amedia = new AMedia(docName, "docx",
@@ -583,7 +586,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		aDocumentDetails.setDocModule(FinanceConstants.MODULE_NAME);
+		if (StringUtils.equals(moduleName, CollateralConstants.MODULE_NAME)) {
+			aDocumentDetails.setDocModule(CollateralConstants.MODULE_NAME);
+		} else {
+			aDocumentDetails.setDocModule(FinanceConstants.MODULE_NAME);
+		}
 		try {
 			if (this.docCategory.getValue() == null
 					|| this.docCategory.getValue().equals(PennantConstants.List_Select)) {

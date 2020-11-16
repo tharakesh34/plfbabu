@@ -225,10 +225,11 @@ public class NumberToEnglishWords {
 					result = formatInLakhs(df.format(Long.valueOf(numString[j])), result);
 				}
 			} else {
-				if (Integer.parseInt(df.format(Long.valueOf(numString[j])).substring(0, 2)) == 0) {
-					result = " crore " + formatInLakhs(df.format(Long.valueOf(numString[j])), result);
+				if (Integer.parseInt(df.format(Long.valueOf(numString[j])).substring(0, 2)) == 0
+						|| Integer.parseInt(numString[j + 1]) == 1) {
+					result = " Crore " + formatInLakhs(df.format(Long.valueOf(numString[j])), result);
 				} else {
-					result = " crores " + formatInLakhs(df.format(Long.valueOf(numString[j])), result);
+					result = " Crores " + formatInLakhs(df.format(Long.valueOf(numString[j])), result);
 				}
 			}
 		}

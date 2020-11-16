@@ -3332,6 +3332,9 @@
 				<prop key="doPreApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="executeWorkflowServiceTasks">PROPAGATION_REQUIRED</prop>
 				<prop key="updateNextUserId*">PROPAGATION_REQUIRED</prop>
+				<prop key="getAutoRejDetails">PROPAGATION_REQUIRED</prop>
+				<prop key="getFinanceDetailById">PROPAGATION_REQUIRED</prop>
+				<prop key="getOriginationFinance">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -3538,6 +3541,9 @@
 		<property name="pSLDetailDAO" ref="pSLDetailDAO" />
 		<property name="genderDAO" ref="genderDAO" />
 		<property name="customerEMailService" ref="customerEMailService" />
+		<property name="ocrHeaderService" ref="ocrHeaderService" />
+		<property name="covenantTypeDAO" ref="covenantTypeDAO" />
+		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
@@ -3565,6 +3571,8 @@
 		<property name="customerIncomeDAO" ref="customerIncomeDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="dMSService" ref="dMSService" />
+		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 	</bean>
 
 	<!-- Guarantar Details -->
@@ -4458,6 +4466,8 @@
 		<property name="paymentsProcessService" ref="paymentsProcessService" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="pennyDropService" ref="pennyDropService" />
+		<property name="vASProviderAccDetailDAO" ref="vASProviderAccDetailDAO" />
+		<property name="vASConfigurationDAO" ref="vASConfigurationDAO" />
 	</bean>
 
 	<!--============ Fin Fee Details ============== -->
@@ -5074,7 +5084,8 @@
 		<property name="installmentDueService" ref="installmentDueService" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
-
+		<property name="covenantsService" ref="covenantsService"/>
+		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -5143,7 +5154,7 @@
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="chequeHeaderDAO" ref="chequeHeaderDAO" />
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
-
+		<property name="covenantsService" ref="covenantsService"/>
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<!-- Stage Accounting -->
@@ -5689,6 +5700,7 @@
 		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
 		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
 		<property name="sequenceGenetor" ref="sequenceGenetor" />
+		<property name="sequenceDAO" ref="sequenceDAO" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -5820,6 +5832,8 @@
 		<property name="customerIncomeDAO" ref="customerIncomeDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="dMSService" ref="dMSService" />
+		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 	</bean>
 
 	<!-- Contractor Details -->
@@ -8432,7 +8446,9 @@
 				<prop key="getSeqNumber">PROPAGATION_REQUIRED</prop>
 				<prop key="presentmentCancellation">PROPAGATION_REQUIRED</prop>
 				<prop key="update*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
+				<prop key="process*">PROPAGATION_REQUIRED</prop>
+				<prop key="executeReceipts">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
 	</bean>
@@ -8454,7 +8470,6 @@
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 	</bean>
 
 	<!-- AccountMapping -->
@@ -9726,6 +9741,7 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="getDocumentImage">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -9801,6 +9817,7 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="getDocumentById">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -9919,6 +9936,7 @@
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
 				<prop key="queryModuleUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="getdocImage">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -11586,6 +11604,7 @@
 		<property name="jVPostingDAO" ref="jVPostingDAO" />
 		<property name="jVPostingService" ref="jVPostingService" />
 		<property name="divisionDetailDAO" ref="divisionDetailDAO" />
+		<property name="entityDAO" ref="entityDAO"/>
 	</bean>
 
 	<!-- PAN Number Validation -->
@@ -12115,6 +12134,7 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="getDocumentManImage*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -12123,6 +12143,7 @@
 	<bean name="loanTypeKnockOffTarget" class="com.pennant.backend.service.applicationmaster.impl.LoanTypeKnockOffServiceImpl">
 		<property name="loanTypeKnockOffDAO" ref="loanTypeKnockOffDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="dMSService" ref="dMSService" />
 	</bean>
 
 	<!--============ Fee Refund Process Details ============== -->
@@ -12520,6 +12541,43 @@
 		<property name="assetClassificationHeaderDAO" ref="assetClassificationHeaderDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
+  
+	<bean id="dmsGetLeadsDAO" class="com.pennant.backend.dao.ext.dms.impl.DMSGetLeadsDAOImpl" parent="basicDao" />
+<!--============ Loan Master Report ============== -->
+	<bean id="loanMasterReportDAO" class="com.pennant.backend.dao.reports.impl.LoanMasterReportDAOImpl" parent="basicDao" />
 
+	<bean id="loanMasterReportService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="loanMasterReportServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="loanMasterReportServiceTarget" class="com.pennant.backend.service.reports.impl.LoanMasterReportServiceImpl">
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
+		<property name="vasMovementDetailDAO" ref="vasMovementDetailDAO" />
+		<property name="loanMasterReportDAO" ref="loanMasterReportDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="vASRecordingService" ref="vASRecordingService" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
+	</bean>
+	
+	<bean id="sequenceDAO" class="com.pennant.backend.dao.SequenceDao" parent="basicDao" />
 </beans>
 

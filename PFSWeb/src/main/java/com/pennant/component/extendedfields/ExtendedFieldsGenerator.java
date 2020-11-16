@@ -377,8 +377,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			label.setVisible(detail.isVisible());
 
 			// story #413 Allow scriptlet for extended fields.
-			if (StringUtils.isNotEmpty(detail.getScriptlet())) {
-				String[] scriptlets = detail.getScriptlet().split(SCRIPTLET_DELIMITER);
+			String scriptlt = detail.getScriptlet();
+			if (StringUtils.isNotEmpty(scriptlt)) {
+				String[] scriptlets = StringUtils.split(scriptlt, SCRIPTLET_DELIMITER);
 
 				for (String scriptlet : scriptlets) {
 					String[] props = scriptlet.split(SCRIPT_DELIMITER);
@@ -1848,7 +1849,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				String[] valueLable = StringUtils.split(valueLables, DELIMITER_PIPELINE);
 				value = valueLable[0];
 				lable = valueLable[1];
-			} else {
+			} else if (StringUtils.isNotBlank(valueLables)) {
 				value = valueLables;
 				lable = valueLables;
 			}

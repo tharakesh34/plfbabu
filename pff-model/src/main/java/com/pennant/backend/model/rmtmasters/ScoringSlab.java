@@ -61,6 +61,7 @@ public class ScoringSlab extends AbstractWorkflowEntity implements Entity {
 	private String lovValue;
 	private ScoringSlab befImage;
 	private LoggedInUser userDetails;
+	private int lovDescMinScore = 0;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -147,5 +148,13 @@ public class ScoringSlab extends AbstractWorkflowEntity implements Entity {
 
 	public String getLovDescScoreGroupCode() {
 		return lovDescScoreGroupCode;
+	}
+
+	public int getLovDescMinScore() {
+		return lovDescMinScore;
+	}
+
+	public void setLovDescMinScore(int lovDescMinScore) {
+		this.lovDescMinScore = lovDescMinScore;
 	}
 }

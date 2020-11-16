@@ -50,6 +50,7 @@ import java.util.Map;
 
 import javax.ws.rs.ProcessingException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.postgresql.util.PGobject;
@@ -959,6 +960,18 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		financeRefDetail.setFinType(finType);
 		List<FinanceReferenceDetail> queryCodeList = getDedupParmDAO().getQueryCodeList(financeRefDetail, "_ABDView");
 
+		if (CollectionUtils.isEmpty(queryCodeList) && StringUtils.equals(finType, "")) {
+			queryCodeList = new ArrayList<>();
+			List<DedupParm> dedupList = getDedupParmDAO().getDedupParmByModule(FinanceConstants.DEDUP_BLACKLIST,
+					blCustData.getCustCtgCode(), "");
+			for (DedupParm dedupParm : dedupList) {
+				FinanceReferenceDetail detail = new FinanceReferenceDetail();
+				detail.setLovDescNamelov(dedupParm.getQueryCode());
+				detail.setOverRide(true);
+				queryCodeList.add(detail);
+			}
+		}
+
 		if (queryCodeList != null) {
 
 			List<DedupParm> dedupParmList = new ArrayList<DedupParm>();
@@ -968,8 +981,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			for (FinanceReferenceDetail queryCode : queryCodeList) {
 
 				// get override Blacklist Customers
-				List<FinBlacklistCustomer> exeBlackList = getBlacklistCustomerDAO()
-						.fetchOverrideBlackListData(blCustData.getFinReference(), queryCode.getLovDescNamelov());
+				List<FinBlacklistCustomer> exeBlackList = getBlacklistCustomerDAO().fetchOverrideBlackListData(
+						blCustData.getFinReference(), queryCode.getLovDescNamelov(), blCustData.getCustCIF());
 				dedupParm = getApprovedDedupParmById(queryCode.getLovDescNamelov(), FinanceConstants.DEDUP_BLACKLIST,
 						blCustData.getCustCtgCode());
 				if (dedupParm != null) {
@@ -1141,6 +1154,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 					blkList.setWatchListRule(dedupParm.getQueryCode());
 					blkList.setFinReference(blCustData.getFinReference());
 					blkList.setQueryField(getQueryFields(dedupParm.getSQLQuery(), fieldNameList));
+					blkList.setSourceCIF(blCustData.getCustCIF());
 					blackListCustomerList.add(blkList);
 				}
 			}

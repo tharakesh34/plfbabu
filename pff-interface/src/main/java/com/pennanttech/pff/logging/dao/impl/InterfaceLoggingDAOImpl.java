@@ -39,17 +39,21 @@ public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> imp
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceLogDetail);
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
-		TransactionStatus txStatus = transactionManager.getTransaction(transDef);
+		TransactionStatus txStatus = null;
 		try {
 			// begin transaction
+			txStatus = transactionManager.getTransaction(transDef);
 			this.jdbcTemplate.update(sql.toString(), beanParameters, keyHolder, new String[] { "seqid" });
 			interfaceLogDetail.setSeqId(keyHolder.getKey().longValue());
 			transactionManager.commit(txStatus);
-			txStatus.flush();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			transactionManager.rollback(txStatus);
 			throw e;
+		} finally {
+			if (txStatus != null) {
+				txStatus.flush();
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -65,16 +69,20 @@ public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> imp
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceLogDetail);
-		TransactionStatus txStatus = transactionManager.getTransaction(transDef);
+		TransactionStatus txStatus = null;
 		try {
 			// begin transaction
+			txStatus = transactionManager.getTransaction(transDef);
 			this.jdbcTemplate.update(sql.toString(), beanParameters);
 			transactionManager.commit(txStatus);
-			txStatus.flush();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			transactionManager.rollback(txStatus);
 			throw e;
+		} finally {
+			if (txStatus != null) {
+				txStatus.flush();
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}

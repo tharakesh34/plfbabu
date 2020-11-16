@@ -111,6 +111,8 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String bpiOrHoliday;
 	private String bpiTreatment;
 
+	//Added to check presentment type in Presentment Receipt process
+	private String presentmentType;
 
 	public String getMandateStatus() {
 		return mandateStatus;
@@ -134,6 +136,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("partnerBankId");
 		excludeFields.add("bpiOrHoliday");
 		excludeFields.add("bpiTreatment");
+		excludeFields.add("presentmentType");
 		return excludeFields;
 	}
 
@@ -560,6 +563,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setBpiTreatment(String bpiTreatment) {
 		this.bpiTreatment = bpiTreatment;
+	}
+
+	public String getPresentmentType() {
+		return presentmentType;
+	}
+
+	public void setPresentmentType(String presentmentType) {
+		this.presentmentType = presentmentType;
 	}
 
 }

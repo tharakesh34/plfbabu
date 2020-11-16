@@ -299,6 +299,10 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	@XmlElement
 	private boolean normalLoanClosure = false;
 
+	private long custID;
+	@XmlElement(name = "cif")
+	private String custCIF;
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1295,6 +1299,22 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 
 	public void setBckdtdWthOldDues(boolean bckdtdWthOldDues) {
 		this.bckdtdWthOldDues = bckdtdWthOldDues;
+	}
+
+	public long getCustID() {
+		return custID;
+	}
+
+	public void setCustID(long custID) {
+		this.custID = custID;
+	}
+
+	public String getCustCIF() {
+		return custCIF;
+	}
+
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
 	}
 
 }

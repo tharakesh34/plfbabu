@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -29,9 +30,9 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		StringBuilder sql = new StringBuilder("Insert into DMS_QUEUE");
 		sql.append(" (DocManagerId, CustId, CustCIF, FinReference, Module, SubModule, Reference");
 		sql.append(", DocName, DocCategory, DocType, DocExt, CreatedOn, CreatedBy");
-		sql.append(", OfferId, ApplicationNo, AuxiloryFields1)");
+		sql.append(", OfferId, ApplicationNo, AuxiloryFields1, DocUri )");
 		sql.append(" values(?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 		try {
@@ -55,6 +56,7 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 					ps.setString(14, dMSQueue.getOfferId());
 					ps.setString(15, dMSQueue.getApplicationNo());
 					ps.setString(16, dMSQueue.getAuxiloryFields1());
+					ps.setString(17, dMSQueue.getDocUri());
 				}
 			});
 
@@ -72,7 +74,8 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select dq.ID, DocmanagerId, dq.CustId, CustCIF, FinReference, Module, Submodule, Reference");
-		sql.append(", DocName, DocCategory, DocType, DocExt, DocImage, OfferId, ApplicationNo,dq.docuri,auxiloryFields1");
+		sql.append(
+				", DocName, DocCategory, DocType, DocExt, DocImage, OfferId, ApplicationNo,dq.docuri,auxiloryFields1");
 		sql.append(" from DMS_QUEUE dq");
 		sql.append(" inner join Documentmanager dm on dm.Id = dq.Docmanagerid");
 		sql.append(" where ProcessFlag = 0 and AttemptNum <=5");
@@ -103,7 +106,8 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 					dmsQueue.setDocUri(rs.getString(16));
 					dmsQueue.setAuxiloryFields1(rs.getString(17));
 
-					if (dmsQueue.getDocImage() != null && dmsQueue.getDocImage().length > 0) {
+					if (ImplementationConstants.UPDATE_METADATA_IN_DMS
+							|| (dmsQueue.getDocImage() != null && dmsQueue.getDocImage().length > 0)) {
 						dmsService.storeDocInFileSystem(dmsQueue);
 					}
 
@@ -172,48 +176,6 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		}, docURI);
 
 		return dmsQueue.getDocImage();
-	}
-	
-	@Override
-	public DMSQueue isExistDocuri(String docUri, String reference) {
-		logger.debug(Literal.ENTERING);
-		
-		DMSQueue queue = new DMSQueue();
-		StringBuilder sql = new StringBuilder("select dq.id,docmanagerid,dq.custId,custCif,finReference,attemptNum,dq.docUri,errorCode,errorDesc ");
-		sql.append(" from dms_queue dq inner join documentmanager dm on dq.docmanagerid = dm.id where dq.docuri = ? and finReference = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setString(1, docUri);
-					ps.setString(2, reference);
-				}
-			}, new ResultSetExtractor<DMSQueue>() {
-				@Override
-				public DMSQueue extractData(ResultSet rs) throws SQLException, DataAccessException {
-					
-					if (rs.next()) {
-						queue.setId(rs.getLong(1));
-						queue.setDocManagerID(rs.getLong(2));
-						queue.setCustId(rs.getLong(3));
-						queue.setCustCif(rs.getString(4));
-						queue.setFinReference(rs.getString(5));
-						queue.setAttemptNum(rs.getInt(6));
-						queue.setDocUri(rs.getString(7));
-						queue.setErrorCode(rs.getString(8));
-						queue.setErrorDesc(rs.getString(9));
-						queue.setProcessingFlag(0);
-					}
-					return queue;
-				}
-			});
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		return queue;
 	}
 
 }

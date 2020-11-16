@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.dao.finance.covenant.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -269,6 +270,40 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 	}
 
 	@Override
+	public List<CovenantType> getCvntTypesByCatgy(String CategoryName, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Id, Code, Description, CovenantType, Category, DocType");
+		sql.append(", AllowPostPonement, MaxAllowedDays, AllowedPaymentModes");
+		sql.append(", AlertsRequired, Frequency, GraceDays, AlertDays, AlertType");
+		sql.append(", AlertToRoles, UserTemplate, CustomerTemplate");
+
+		if (type.contains("View")) {
+			sql.append(", DocTypeName, UserTemplateName, CustomerTemplateName, userTemplateCode, customerTemplateCode");
+		}
+
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From COVENANT_TYPES");
+		sql.append(type);
+		sql.append(" Where Category = :Category");
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("Category", CategoryName);
+
+		RowMapper<CovenantType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CovenantType.class);
+		List<CovenantType> covenantType = new ArrayList<>();
+		try {
+			covenantType = jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return covenantType;
+	}
+
+	@Override
 	public List<String> getRules() {
 		logger.debug("Entering");
 
@@ -282,4 +317,5 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 
 		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 	}
+
 }

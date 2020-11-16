@@ -575,19 +575,21 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		if (docDetails != null && docDetails.getDocImage() != null) {
 			final InputStream data = new ByteArrayInputStream(docDetails.getDocImage());
 			String docName = details.getDocName();
-			if (details.getDocType().equals(PennantConstants.DOC_TYPE_PDF)) {
+			if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_PDF)) {
 				amedia = new AMedia(docName, "pdf", "application/pdf", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_IMAGE)) {
+			} else if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_IMAGE)) {
 				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_WORD)
-					|| details.getDocType().equals(PennantConstants.DOC_TYPE_MSG)) {
+			} else if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_WORD)
+					|| details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_MSG)) {
 				amedia = new AMedia(docName, "docx", "application/pdf", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_ZIP)) {
+			} else if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_ZIP)) {
 				amedia = new AMedia(docName, "x-zip-compressed", "application/x-zip-compressed", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_7Z)) {
+			} else if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_7Z)) {
 				amedia = new AMedia(docName, "octet-stream", "application/octet-stream", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_RAR)) {
+			} else if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_RAR)) {
 				amedia = new AMedia(docName, "x-rar-compressed", "application/x-rar-compressed", data);
+			} else if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_JPG)) {
+				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
 			}
 			Filedownload.save(amedia);
 

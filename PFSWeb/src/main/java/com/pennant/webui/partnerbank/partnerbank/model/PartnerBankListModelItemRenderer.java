@@ -69,6 +69,8 @@ public class PartnerBankListModelItemRenderer implements ListitemRenderer<Partne
 	public void render(Listitem item, PartnerBank partnerBank, int count) throws Exception {
 
 		Listcell lc;
+		lc = new Listcell(String.valueOf(partnerBank.getPartnerBankId()));
+		lc.setParent(item);
 		lc = new Listcell(partnerBank.getPartnerBankCode());
 		lc.setParent(item);
 		lc = new Listcell(partnerBank.getPartnerBankName());

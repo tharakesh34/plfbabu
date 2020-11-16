@@ -142,6 +142,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected ExtendedCombobox postBranch;
 	protected ExtendedCombobox cashierBranch;
 	protected ExtendedCombobox finDivision;
+	protected Textbox extReference;
 
 	protected Groupbox gb_FeeDetail;
 	//TODO: labels are same
@@ -169,6 +170,8 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Textbox posting_CustCIF;
 	protected Textbox posting_finBranch;
 	protected Listbox listBoxPosting;
+	protected Label labelCustomerFinType;
+	protected Textbox customerFinType;
 
 	/**
 	 * default constructor.<br>
@@ -311,6 +314,8 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.fundingAccount.setDisplayStyle(2);
 			this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
 			this.groupbox_Finance.setVisible(true);
+			this.labelCustomerFinType.setVisible(false);
+			this.customerFinType.setVisible(false);
 		} else {
 			this.fundingAccount.setModuleName("PartnerBank");
 			this.fundingAccount.setValueColumn("PartnerBankId");
@@ -321,6 +326,8 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			if (RepayConstants.RECEIPTTO_CUSTOMER.equals(this.receiptHeader.getRecAgainst())) {
 				this.groupbox_Customer.setVisible(true);
+				this.labelCustomerFinType.setVisible(true);
+				this.customerFinType.setVisible(true);
 			} else if (RepayConstants.RECEIPTTO_OTHER.equals(this.receiptHeader.getRecAgainst())) {
 				this.groupbox_Other.setVisible(true);
 				this.reference.setMaxlength(20);
@@ -491,7 +498,10 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
 
-		this.finType.setValue(header.getFinType() + "-" + header.getFinTypeDesc());
+		String fintype = StringUtils.trimToEmpty(header.getFinType()) + "-"
+				+ StringUtils.trimToEmpty(header.getFinTypeDesc());
+		this.finType.setValue(fintype);
+		this.customerFinType.setValue(fintype);
 		this.finReference.setValue(header.getReference());
 		this.finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
 		this.finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
@@ -501,7 +511,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.remarks.setValue(header.getRemarks());
 
 		// Allocation Basic Details
-		this.allocation_finType.setValue(header.getFinType() + "-" + header.getFinTypeDesc());
+		this.allocation_finType.setValue(fintype);
 		this.allocation_finReference.setValue(header.getReference());
 		this.allocation_finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
 		this.allocation_finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
@@ -595,6 +605,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} else if (this.groupbox_Customer.isVisible()) {
 			this.custID.setAttribute("custID", header.getReference());
 			this.custID.setValue(header.getCustomerCIF(), header.getCustomerName());
+			this.extReference.setValue(StringUtils.trimToEmpty(header.getExtReference()));
 		} else if (this.groupbox_Other.isVisible()) {
 			this.reference.setValue(header.getReference());
 		}
@@ -1004,6 +1015,13 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.posting_finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
 		this.posting_finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
 		this.posting_CustCIF.setValue(header.getCustCIF() + "-" + header.getCustShrtName());
+		if (RepayConstants.RECEIPTTO_CUSTOMER.equals(receiptHeader.getRecAgainst())
+				&& StringUtils.isNotBlank(receiptHeader.getExtReference())) {
+			this.posting_finBranch.setValue(header.getPostBranch() + "-" + header.getPostBranchDesc());
+			this.posting_CustCIF.setValue(header.getCustomerCIF() + "-" + header.getCustomerName());
+			//setting Reference as ExtReference
+			this.posting_finReference.setValue(StringUtils.trimToEmpty(header.getExtReference()));
+		}
 
 		// Identifying Transaction List
 		List<Long> tranIdList = new ArrayList<>();

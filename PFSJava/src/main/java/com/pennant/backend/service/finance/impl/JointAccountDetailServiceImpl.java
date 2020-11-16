@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -59,10 +60,12 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -75,6 +78,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
@@ -106,6 +110,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	private SamplingService samplingService;
 	@Autowired
 	private CustomerDetailsService customerDetailsService;
+	private CustomerDocumentDAO customerDocumentDAO;
 
 	public JointAccountDetailServiceImpl() {
 		super();
@@ -535,23 +540,34 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		Sampling sampling = null;
 		for (int i = 0; i < auditDetails.size(); i++) {
 
-			JointAccountDetail JointAccountDetail = (JointAccountDetail) auditDetails.get(i).getModelData();
+			JointAccountDetail jointAccountDetail = (JointAccountDetail) auditDetails.get(i).getModelData();
 
-			if (!JointAccountDetail.isIncludeIncome() && !JointAccountDetail.isNewRecord()) {
+			if (!jointAccountDetail.isIncludeIncome() && !jointAccountDetail.isNewRecord()) {
 				if (sampling == null) {
-					sampling = samplingService.getSampling(JointAccountDetail.getFinReference(), "_aview");
+					sampling = samplingService.getSampling(jointAccountDetail.getFinReference(), "_aview");
 				}
 				if (sampling != null) {
-					long linkId = samplingDAO.getIncomeLinkIdByCustId(JointAccountDetail.getCustID(), sampling.getId());
+					long linkId = samplingDAO.getIncomeLinkIdByCustId(jointAccountDetail.getCustID(), sampling.getId());
 					if (linkId != 0) {
 						incomeDetailDAO.deletebyLinkId(linkId, "");
 					}
 				}
 			}
 
-			if (JointAccountDetail.getCustomerDetails() != null
-					&& JointAccountDetail.getCustomerDetails().getExtendedFieldRender() != null) {
-				processingJointAccExtendedFields(JointAccountDetail, tableType, auditTranType);
+			if (jointAccountDetail.getCustomerDetails() != null
+					&& jointAccountDetail.getCustomerDetails().getExtendedFieldRender() != null) {
+				processingJointAccExtendedFields(jointAccountDetail, tableType, auditTranType);
+			}
+
+			// Process documents to DMS
+			if (jointAccountDetail.getCustomerDetails() != null) {
+				if (CollectionUtils.isNotEmpty(jointAccountDetail.getCustomerDetails().getCustomerDocumentsList())) {
+					for (CustomerDocument document : jointAccountDetail.getCustomerDetails()
+							.getCustomerDocumentsList()) {
+						document.setLovDescCustCIF(jointAccountDetail.getCustCIF());
+						processDocument(document, "", jointAccountDetail.getCustID());
+					}
+				}
 			}
 
 			saveRecord = false;
@@ -562,67 +578,67 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 			String recordStatus = "";
 			if (tableType.equals("")) {
 				approveRec = true;
-				JointAccountDetail.setRoleCode("");
-				JointAccountDetail.setNextRoleCode("");
-				JointAccountDetail.setTaskId("");
-				JointAccountDetail.setNextTaskId("");
+				jointAccountDetail.setRoleCode("");
+				jointAccountDetail.setNextRoleCode("");
+				jointAccountDetail.setTaskId("");
+				jointAccountDetail.setNextTaskId("");
 			}
 			//guarantorDetail.setWorkflowId(0);
 
-			if (JointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
-			} else if (JointAccountDetail.isNewRecord()) {
+			} else if (jointAccountDetail.isNewRecord()) {
 				saveRecord = true;
-				if (JointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					JointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (JointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					JointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (JointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					JointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					jointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					jointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					jointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
-			} else if (JointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
-			} else if (JointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+			} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 				updateRecord = true;
-			} else if (JointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (JointAccountDetail.isNew()) {
+				} else if (jointAccountDetail.isNew()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
 			}
 			if (approveRec) {
-				rcdType = JointAccountDetail.getRecordType();
-				recordStatus = JointAccountDetail.getRecordStatus();
-				JointAccountDetail.setWorkflowId(0);
-				JointAccountDetail.setRecordType("");
-				JointAccountDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				rcdType = jointAccountDetail.getRecordType();
+				recordStatus = jointAccountDetail.getRecordStatus();
+				jointAccountDetail.setWorkflowId(0);
+				jointAccountDetail.setRecordType("");
+				jointAccountDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 
 			if (saveRecord) {
-				getJountAccountDetailDAO().save(JointAccountDetail, tableType);
+				getJountAccountDetailDAO().save(jointAccountDetail, tableType);
 			}
 
 			if (updateRecord) {
-				getJountAccountDetailDAO().update(JointAccountDetail, tableType);
+				getJountAccountDetailDAO().update(jointAccountDetail, tableType);
 			}
 
 			if (deleteRecord) {
-				getJountAccountDetailDAO().delete(JointAccountDetail, tableType);
+				getJountAccountDetailDAO().delete(jointAccountDetail, tableType);
 			}
 
 			if (approveRec) {
-				JointAccountDetail.setRecordType(rcdType);
-				JointAccountDetail.setRecordStatus(recordStatus);
+				jointAccountDetail.setRecordType(rcdType);
+				jointAccountDetail.setRecordStatus(recordStatus);
 			}
-			auditDetails.get(i).setModelData(JointAccountDetail);
+			auditDetails.get(i).setModelData(jointAccountDetail);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1323,12 +1339,81 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		return auditDetails;
 	}
 
+	/***
+	 * Method to process documents that were retrived from DMS and mapped to co-applicants
+	 * 
+	 * @param document
+	 * @param type
+	 * @param custId
+	 */
+	public void processDocument(CustomerDocument document, String type, long custId) {
+		logger.debug(Literal.ENTERING);
+		CustomerDocument customerDocument = document;
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+		String rcdType = "";
+		String recordStatus = "";
+		if (StringUtils.isEmpty(type)) {
+			approveRec = true;
+			customerDocument.setRoleCode("");
+			customerDocument.setNextRoleCode("");
+			customerDocument.setTaskId("");
+			customerDocument.setNextTaskId("");
+		}
+
+		customerDocument.setWorkflowId(0);
+		customerDocument.setCustID(custId);
+
+		if (StringUtils.trimToEmpty(customerDocument.getRecordType()).equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+			customerDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			saveRecord = true;
+		} else if (StringUtils.trimToEmpty(customerDocument.getRecordType())
+				.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+			updateRecord = true;
+		}
+		if (approveRec) {
+			rcdType = StringUtils.trimToEmpty(customerDocument.getRecordType());
+			recordStatus = customerDocument.getRecordStatus();
+			customerDocument.setRecordType("");
+			customerDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		}
+		if (saveRecord) {
+			saveDocument(DMSModule.CUSTOMER, null, customerDocument);
+			customerDocumentDAO.save(customerDocument, type);
+		}
+
+		if (updateRecord) {
+			saveDocument(DMSModule.CUSTOMER, null, customerDocument);
+			customerDocumentDAO.update(customerDocument, type);
+		}
+
+		if (deleteRecord) {
+			customerDocumentDAO.delete(customerDocument, type);
+		}
+
+		if (approveRec) {
+			customerDocument.setRecordType(rcdType);
+			customerDocument.setRecordStatus(recordStatus);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	public CustomerDetailsService getCustomerDetailsService() {
 		return customerDetailsService;
 	}
 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
+	}
+
+	public CustomerDocumentDAO getCustomerDocumentDAO() {
+		return customerDocumentDAO;
+	}
+
+	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
+		this.customerDocumentDAO = customerDocumentDAO;
 	}
 
 }

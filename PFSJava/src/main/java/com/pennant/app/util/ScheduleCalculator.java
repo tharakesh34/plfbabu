@@ -9645,20 +9645,20 @@ public class ScheduleCalculator {
 			FinanceMain main = new FinanceMain();
 			main = cloner.deepClone(data.getFinanceMain());
 
-			// Set total loan amount as current asset value
-			main.setSanBsdSchdle(true);
-			main.setAlwBPI(false);
-
 			data.setRepayInstructions(new ArrayList<RepayInstruction>());
 			data.setFinanceScheduleDetails(new ArrayList<FinanceScheduleDetail>());
 			data.setDisbursementDetails(new ArrayList<FinanceDisbursement>());
 
 			// Set Disbursement Details with total loan amount
 			FinanceDisbursement disbursementDetails = new FinanceDisbursement();
-			disbursementDetails.setDisbDate(main.getFinStartDate());
+			if (main.isAllowGrcPeriod()) {
+				disbursementDetails.setDisbDate(main.getGrcPeriodEndDate());
+			} else {
+				disbursementDetails.setDisbDate(main.getFinStartDate());
+			}
 			disbursementDetails.setDisbSeq(1);
 			disbursementDetails.setDisbAmount(main.getFinAssetValue());
-			disbursementDetails.setDisbReqDate(SysParamUtil.getAppDate());
+			disbursementDetails.setDisbReqDate(disbursementDetails.getDisbDate());
 			disbursementDetails.setFeeChargeAmt(main.getFeeChargeAmt());
 			disbursementDetails.setQuickDisb(main.isQuickDisb());
 			disbursementDetails.setInsuranceAmt(main.getInsuranceAmt());

@@ -62,4 +62,6 @@ public class APIConstants {
 	public static final String SRM_LOAN_TYPE = "Loan";
 	public static final String COB_SOURCE = "COB";
 
+	public static final String COVENANT_MODULE_NAME = "Loan";
+
 }

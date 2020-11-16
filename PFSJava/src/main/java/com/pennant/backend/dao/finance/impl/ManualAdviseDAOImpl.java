@@ -906,7 +906,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder updateSql = new StringBuilder("Update ManualAdvise ");
 		updateSql.append(" Set ReservedAmt = ReservedAmt + :PaidNow, BalanceAmt = BalanceAmt - :PaidNow ");
-		updateSql.append(" Where AdviseID =:AdviseID");
+		updateSql.append(" Where AdviseID =:AdviseID and BalanceAmt >= :PaidNow");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
@@ -931,7 +931,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder updateSql = new StringBuilder("Update ManualAdvise");
 		updateSql.append(" Set PaidAmount = PaidAmount + :PaidNow, ReservedAmt = ReservedAmt - :PaidNow ");
-		updateSql.append(" Where AdviseID =:AdviseID");
+		updateSql.append(" Where AdviseID =:AdviseID and ReservedAmt >=:PaidNow");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);

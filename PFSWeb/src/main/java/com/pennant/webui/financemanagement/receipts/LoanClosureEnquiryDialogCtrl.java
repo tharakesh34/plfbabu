@@ -29,6 +29,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zhtml.Filedownload;
@@ -78,10 +79,13 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
+import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
+import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -122,6 +126,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -293,6 +298,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	private List<FinanceScheduleDetail> orgScheduleList = new ArrayList<>();
 	private boolean isForeClosure = true;
 	private boolean isEarlySettle = true;
+	@Autowired
+	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
+	@Autowired
+	protected CollateralAssignmentDAO collateralAssignmentDAO;
 
 	/**
 	 * default constructor.<br>
@@ -3564,7 +3573,55 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			closureReport
 					.setFinAssetValue(PennantApplicationUtil.formateAmount(financeMain.getFinAssetValue(), formatter));
 			closureReport.setDisbursalDate(disDate);
-			closureReport.setChrgTillDate(DateUtility.formatToLongDate(chrgTillDate));
+			closureReport.setChrgTillDate(DateFormatUtils.format(chrgTillDate, "MMM  dd,yyyy"));
+
+			// Fetch Collateral Details
+			// Collateral setup details and assignment details
+			List<CollateralAssignment> collateralAssignmentList = collateralAssignmentDAO
+					.getCollateralAssignmentByFinRef(financeMain.getFinReference(), FinanceConstants.MODULE_NAME,
+							"_AView");
+			String collateralAddress = "";
+			if (CollectionUtils.isNotEmpty(collateralAssignmentList)) {
+				CollateralAssignment collateralAssignment = collateralAssignmentList.get(0);
+				String tableName = CollateralConstants.MODULE_NAME;
+				tableName = tableName + "_" + collateralAssignment.getCollateralType() + "_ed";
+				List<Map<String, Object>> extMap = extendedFieldRenderDAO
+						.getExtendedFieldMap(collateralAssignment.getCollateralRef(), tableName, "_View");
+
+				if (CollectionUtils.isNotEmpty(extMap)) {
+
+					Map<String, Object> mapValues = extMap.get(0);
+
+					if (mapValues != null && !mapValues.isEmpty()) {
+
+						collateralAddress = StringUtils.isNotEmpty(String.valueOf(mapValues.get("PROPERTYADDRESS1")))
+								? collateralAddress
+										+ StringUtils.trimToEmpty(String.valueOf(mapValues.get("PROPERTYADDRESS1")))
+								: collateralAddress;
+
+						collateralAddress = StringUtils.isNotEmpty(String.valueOf(mapValues.get("PROPERTYADDRESS2")))
+								? collateralAddress + ","
+										+ StringUtils.trimToEmpty(String.valueOf(mapValues.get("PROPERTYADDRESS2")))
+								: collateralAddress;
+
+						collateralAddress = StringUtils.isNotEmpty(String.valueOf(mapValues.get("PROPERTYADDRESS3")))
+								? collateralAddress + ","
+										+ StringUtils.trimToEmpty(String.valueOf(mapValues.get("PROPERTYADDRESS3")))
+								: collateralAddress;
+
+						collateralAddress = StringUtils.isNotEmpty(String.valueOf(mapValues.get("PINCODE")))
+								? collateralAddress + ","
+										+ StringUtils.trimToEmpty(String.valueOf(mapValues.get("PINCODE")))
+								: collateralAddress;
+
+						collateralAddress = StringUtils.isNotEmpty(String.valueOf(mapValues.get("CITY")))
+								? collateralAddress + ","
+										+ StringUtils.trimToEmpty(String.valueOf(mapValues.get("CITY")))
+								: collateralAddress;
+					}
+				}
+			}
+			closureReport.setCollateralAddress(collateralAddress);
 
 			if (getFinanceDetail().getCustomerDetails() != null
 					&& getFinanceDetail().getCustomerDetails().getCustomer() != null) {

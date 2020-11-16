@@ -128,7 +128,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", CashierBranch, InitiateDate, DepositProcess, DepositBranch, LppAmount, GstLpiAmount");
 		sql.append(", GstLppAmount, ExtReference, Module, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber");
 		sql.append(", CollectionAgentId, ActFinReceipt, FinDivision, PostBranch, ReasonCode, CancelRemarks");
-		sql.append(", KnockOffType, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", KnockOffType, FinType, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(", RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate, PartnerBankId");
 		sql.append(", PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate )");
@@ -141,8 +141,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", :DepositBranch, :LppAmount, :GstLpiAmount, :GstLppAmount, :ExtReference, :Module");
 		sql.append(", :subReceiptMode, :receiptChannel, :receivedFrom, :panNumber, :collectionAgentId");
 		sql.append(", :ActFinReceipt, :FinDivision, :PostBranch, :ReasonCode, :CancelRemarks");
-		sql.append(", :KnockOffType, :Version, :LastMntOn, :LastMntBy, :RecordStatus, :RoleCode, :NextRoleCode");
-		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId");
+		sql.append(", :KnockOffType, :FinType, :Version, :LastMntOn, :LastMntBy, :RecordStatus, :RoleCode");
+		sql.append(", :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
 		sql.append(", :RefWaiverAmt, :Source, :ValueDate, :TransactionRef, :DepositDate, :PartnerBankId");
 		sql.append(", :PrvReceiptPurpose, :ReceiptSource, :RecAppDate, :ReceivedDate)");
 
@@ -1249,6 +1249,59 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.LEAVING);
 		return false;
+	}
+
+	@Override
+	public FinReceiptHeader getFinTypeByReceiptID(long receiptID) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" RH.Fintype, FT.FinTypeDesc, FT.FinCcy, CU.CcyDesc From  FinReceiptHeader RH ");
+		sql.append(" INNER JOIN RMTFinanceTypes FT ON FT.FinType=RH.FinType ");
+		sql.append(" INNER JOIN RMTCurrencies CU on CU.CcyCode=FT.FinCcy ");
+		sql.append(" Where RH.ReceiptID = ? ");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID },
+					new RowMapper<FinReceiptHeader>() {
+						@Override
+						public FinReceiptHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
+							FinReceiptHeader frh = new FinReceiptHeader();
+							frh.setFinType(rs.getString("Fintype"));
+							frh.setFinTypeDesc(rs.getString("FinTypeDesc"));
+							frh.setFinCcy(rs.getString("FinCcy"));
+							frh.setFinCcyDesc(rs.getString("CcyDesc"));
+							return frh;
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference) {
+		int count = 0;
+		StringBuilder sql = new StringBuilder("Select count(*)  from ");
+		sql.append(" FinReceiptHeader where ReceiptPurpose = :ReceiptPurpose And ");
+		sql.append(" EXTREFERENCE = :EXTREFERENCE and Reference !=  :Reference ");
+
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptPurpose", receiptPurpose);
+		source.addValue("Reference", reference);
+		source.addValue("EXTREFERENCE", extReference);
+		try {
+			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION);
+		}
+		return count;
 	}
 
 }

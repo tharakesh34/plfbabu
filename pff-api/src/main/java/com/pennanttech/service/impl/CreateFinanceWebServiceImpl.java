@@ -162,7 +162,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 			// validate Finance schedule details Validations
 			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN,
-					financeDetail.getFinScheduleData(), true, financeDetail);
+					financeDetail.getFinScheduleData(), true, financeDetail, false);
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());
 			}

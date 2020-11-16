@@ -16,8 +16,7 @@ public class OCRHeader extends AbstractWorkflowEntity {
 	private String ocrID;
 	private String ocrDescription;
 	private int customerPortion;
-	private String ocrApplicable;
-	private boolean splitApplicable;
+	private String ocrType;
 	private boolean active;
 	private List<OCRDetail> ocrDetailList = new ArrayList<>();
 	private boolean newRecord = false;
@@ -71,20 +70,12 @@ public class OCRHeader extends AbstractWorkflowEntity {
 		this.customerPortion = customerPortion;
 	}
 
-	public String getOcrApplicable() {
-		return ocrApplicable;
+	public String getOcrType() {
+		return ocrType;
 	}
 
-	public void setOcrApplicable(String ocrApplicable) {
-		this.ocrApplicable = ocrApplicable;
-	}
-
-	public boolean isSplitApplicable() {
-		return splitApplicable;
-	}
-
-	public void setSplitApplicable(boolean splitApplicable) {
-		this.splitApplicable = splitApplicable;
+	public void setOcrType(String ocrType) {
+		this.ocrType = ocrType;
 	}
 
 	public boolean isActive() {

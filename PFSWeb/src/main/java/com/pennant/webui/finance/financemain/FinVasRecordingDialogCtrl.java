@@ -15,7 +15,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ScheduleDetailDialogCtrl.java                                                   * 	  
+ * FileName    		:  ScheduleDetailDialogCtrl.java                                        * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -104,6 +104,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private VASConfigurationService vasConfigurationService;
 	private FinanceDetail financeDetail;
 	private List<JointAccountDetail> jointAccountDetails;
+	List<VASRecording> cumulativeVasRecordsList = new ArrayList<>();
 
 	/**
 	 * default constructor.<br>
@@ -141,7 +142,16 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("vasRecordingList")) {
-				setVasRecordings((List<VASRecording>) arguments.get("vasRecordingList"));
+
+				for (VASRecording vasRecording : (List<VASRecording>) arguments.get("vasRecordingList")) {
+					cumulativeVasRecordsList.add(vasRecording);
+				}
+			}
+
+			if (arguments.containsKey("ChildVasRecordingList")) {
+				for (VASRecording vasRecording : (List<VASRecording>) arguments.get("ChildVasRecordingList")) {
+					cumulativeVasRecordsList.add(vasRecording);
+				}
 			}
 
 			if (arguments.containsKey("financeMainDialogCtrl")) {
@@ -185,7 +195,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			appendFinBasicDetails();
 
 			// fill the components with the data
-			doFillVasRecordings(getVasRecordings());
+			doFillVasRecordings(cumulativeVasRecordsList);
 
 			// Setting Controller to the Parent Controller
 			try {

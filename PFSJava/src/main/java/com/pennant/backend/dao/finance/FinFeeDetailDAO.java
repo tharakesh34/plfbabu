@@ -104,4 +104,6 @@ public interface FinFeeDetailDAO {
 	 * @param type
 	 */
 	void updateFeesFromUpfront(FinFeeDetail finFeeDetail, String type);
+
+	void deleteByTransactionId(String transactionId, boolean isWIF, String tableType);
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
+import com.pennant.backend.dao.ext.dms.DMSGetLeadsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -35,6 +36,7 @@ import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.MiscellaneousServiceController;
+import com.pennanttech.model.dms.DMSLeadDetails;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -62,6 +64,7 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	private FinanceMainDAO financeMainDAO;
 	private CovenantTypeDAO covenantTypeDAO;
 	private ScoringDetailService scoringDetailService;
+	private DMSGetLeadsDAO dmsGetLeadsDAO;
 
 	public MiscellaneousWebServiceImpl() {
 		super();
@@ -514,6 +517,18 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 		return response;
 	}
 
+	@Override
+	public WSReturnStatus pushLeadsForDMS(DMSLeadDetails dmsLeadDetails) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		String response = dmsGetLeadsDAO.processLeadsForDMSRetrieval(dmsLeadDetails);
+		returnStatus.setReturnText(response);
+
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
 	@Autowired
 	public void setMiscellaneousController(MiscellaneousServiceController miscellaneousController) {
 		this.miscellaneousController = miscellaneousController;
@@ -547,6 +562,16 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	@Autowired
 	public void setCovenantTypeDAO(CovenantTypeDAO covenantTypeDAO) {
 		this.covenantTypeDAO = covenantTypeDAO;
+	}
+
+	@Autowired
+	public void setScoringDetailService(ScoringDetailService scoringDetailService) {
+		this.scoringDetailService = scoringDetailService;
+	}
+
+	@Autowired
+	public void setDMSGetLeadsDAO(DMSGetLeadsDAO dmsGetLeadsDAO) {
+		this.dmsGetLeadsDAO = dmsGetLeadsDAO;
 	}
 
 }

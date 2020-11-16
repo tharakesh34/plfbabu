@@ -13,6 +13,7 @@ import com.pennant.backend.model.bre.BREResponse;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.systemmasters.BRERequestDetail;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.model.dms.DMSLeadDetails;
 import com.pennanttech.ws.model.dashboard.DashBoardRequest;
 import com.pennanttech.ws.model.dashboard.DashBoardResponse;
 import com.pennanttech.ws.model.eligibility.EligibilityDetail;
@@ -68,5 +69,9 @@ public interface MiscellaneousRestService {
 	@POST
 	@Path("/miscellaneous/calculateEligibility")
 	BREResponse calculateEligibility(BRERequestDetail checkEligibilty) throws ServiceException;
+
+	@POST
+	@Path("/miscellaneous/pushLeadsForDMS")
+	WSReturnStatus pushLeadsForDMS(DMSLeadDetails dmsLeadDetails) throws ServiceException;
 
 }

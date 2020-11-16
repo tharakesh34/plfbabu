@@ -117,4 +117,6 @@ public interface ExtendedFieldDetailDAO {
 	Map<String, Object> getValueByFieldName(String reference, String moduleName, String subModuleName, String event,
 			String field, String type);
 
+	List<ExtendedFieldDetail> getCollateralExtDetails(String moduleName, String subModuleName);
+
 }

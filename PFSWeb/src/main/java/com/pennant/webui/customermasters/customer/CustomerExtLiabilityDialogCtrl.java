@@ -81,6 +81,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -389,7 +390,11 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.installmentAmount.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.installmentAmount.setScale(finFormatter);
 
-		this.outStandingBal.setMandatory(true);
+		if (ImplementationConstants.CUSTOM_EXT_LIABILITIES) {
+			this.outStandingBal.setMandatory(false);
+		} else {
+			this.outStandingBal.setMandatory(true);
+		}
 		this.outStandingBal.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.outStandingBal.setScale(finFormatter);
 
@@ -673,8 +678,13 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.endUseOfFunds.setDescription(liability.getLoanPurpose());
 		this.repayFrom.setValue(liability.getRepayBank());
 		this.repayFrom.setDescription(liability.getRepayBankName());
-		fillComboBox(this.source, String.valueOf(liability.getSource()), sourceInfoList, "");
-		fillComboBox(this.checkedBy, String.valueOf(liability.getCheckedBy()), trackCheckList, "");
+		if (ImplementationConstants.CUSTOM_EXT_LIABILITIES) {
+			fillComboBox(this.source, String.valueOf(liability.getSource()), sourceInfoList, ",3,");
+			fillComboBox(this.checkedBy, String.valueOf(liability.getCheckedBy()), trackCheckList, ",3,");
+		} else {
+			fillComboBox(this.source, String.valueOf(liability.getSource()), sourceInfoList, "");
+			fillComboBox(this.checkedBy, String.valueOf(liability.getCheckedBy()), trackCheckList, "");
+		}
 		this.imputedEmi.setValue(PennantApplicationUtil.formateAmount(liability.getImputedEmi(), finFormatter));
 		this.currentOverDue.setValue(PennantApplicationUtil.formateAmount(liability.getCurrentOverDue(), finFormatter));
 		this.ownerShip.setValue(liability.getOwnerShip());
@@ -1122,7 +1132,10 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 					new PTDecimalValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_InstallmentAmount.value"),
 							0, this.installmentAmount.isMandatory(), false));
 		}
-		if (!this.outStandingBal.isReadonly()) {
+		if (!this.outStandingBal.isReadonly() && ImplementationConstants.CUSTOM_EXT_LIABILITIES) {
+			this.outStandingBal.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CustomerExtLiabilityDialog_OutStandingBal.value"), 0, false, false));
+		} else if (!this.outStandingBal.isReadonly()) {
 			this.outStandingBal.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_CustomerExtLiabilityDialog_OutStandingBal.value"), 0, true, false));
 		}
@@ -1139,11 +1152,17 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			this.overdue.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_CustomerExtLiabilityDialog_Overdue.value"), 0, false, false));
 		}
-		if (!this.totalTenure.isReadonly()) {
+		if (!this.totalTenure.isReadonly() && ImplementationConstants.CUSTOM_EXT_LIABILITIES) {
+			this.totalTenure.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_CustomerExtLiabilityDialog_TotalTenure.value"), false, false));
+		} else if (!this.totalTenure.isReadonly()) {
 			this.totalTenure.setConstraint(new PTNumberValidator(
 					Labels.getLabel("label_CustomerExtLiabilityDialog_TotalTenure.value"), true, false));
 		}
-		if (!this.balanceTenure.isReadonly()) {
+		if (!this.balanceTenure.isReadonly() && ImplementationConstants.CUSTOM_EXT_LIABILITIES) {
+			this.balanceTenure.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_CustomerExtLiabilityDialog_BalanceTenure.value"), false, false));
+		} else if (!this.balanceTenure.isReadonly()) {
 			this.balanceTenure.setConstraint(new PTNumberValidator(
 					Labels.getLabel("label_CustomerExtLiabilityDialog_BalanceTenure.value"), true, false));
 		}
@@ -1455,7 +1474,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		} else if (getSamplingDialogCtrl() != null) {
 			isCustomerWorkflow = getSamplingDialogCtrl().getSampling().isWorkflow();
 		}
-		if (isWorkFlowEnabled() || isCustomerWorkflow) {
+		if (isWorkFlowEnabled() || isCustomerWorkflow || isFinanceProcess) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -1945,8 +1964,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		}
 		int totalInstallments = paymentDetails.size();
 		//Following Scenario is when, the number of installments for RTR is greater than the given loan tenure.
-		if (fromRTR && noOfInstallmentMonths.getValue() <= totalInstallments) {
-			totalInstallments = noOfInstallmentMonths.getValue();
+		if (fromRTR && noOfInstallmentMonths.intValue() <= totalInstallments) {
+			totalInstallments = noOfInstallmentMonths.intValue();
 		}
 		for (int i = 0; i < totalInstallments; i++) {
 			ExtLiabilityPaymentdetails installmentDetails = paymentDetails.get(i);

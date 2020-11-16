@@ -123,7 +123,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append("select ClosingStatus, FinStartDate, FeeChargeAmt, FinCurrAssetValue, FInApprovedDate");
 		sql.append(
 				", FinType, FinCategory, FixedRateTenor, FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate");
-		sql.append(", FinCcy, RepaySpecialRate, RepayMargin, advemiterms, advanceemi, MaturityDate, CustId");
+		sql.append(", FinCcy, RepaySpecialRate, RepayMargin, advemiterms, advanceemi, MaturityDate, CustId, CalTerms");
 		sql.append(", AdvType, GrcAdvType, DownPayment, Promotioncode, PromotionSeqId");
 		sql.append(", FinAssetValue, RepayRateBasis, GraceTerms, ClosedDate, FinIsActive");
 		sql.append(" FROM FinanceMain Where FinReference = :FinReference");
@@ -160,10 +160,10 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 				" Select FinReference, SchDate, SchSeq, DisbOnSchDate, RepayAmount");
 		selectSql.append(
 				" ,DisbAmount ,FeeChargeAmt,BpiOrHoliday,PartialPaidAmt,InstNumber, ClosingBalance, Balanceforpftcal, ProfitSchd, CalculatedRate");
-		selectSql.append(" ,PrincipalSchd ,FeeSchd,SchdPriPaid,SchdPftPaid,SchdFeePaid, RepayOnSchDate, Cpzamount");
+		selectSql.append(
+				" ,PrincipalSchd ,FeeSchd,SchdPriPaid,SchdPftPaid,SchdFeePaid, RepayOnSchDate, Cpzamount, cpzOnSchDate,pftOnSchDate, baseRate");
 		selectSql.append(" FROM FINSCHEDULEDETAILS");
 		selectSql.append(" Where FinReference = :FinReference");
-		selectSql.append(" order by schdate asc");
 
 		logger.trace(Literal.SQL + selectSql.toString());
 

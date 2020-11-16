@@ -268,6 +268,7 @@ public class PennantConstants {
 	public static final String DOC_TYPE_7Z = "7Z";
 	public static final String DOC_TYPE_RAR = "RAR";
 	public static final String DOC_TYPE_TXT = "TXT";
+	public static final String DOC_TYPE_PNG = "PNG";
 
 	public static final String DOC_TYPE_CODE_PHOTO = "CUSTPHOTO";
 
@@ -358,6 +359,7 @@ public class PennantConstants {
 	public static final String AGG_SMPMODL = "SMPMODL";
 	public static final String AGG_LNAPPCB = "LNAPPCB";
 	public static final String AGG_KYCDT = "KYCDT";
+	public static final String AGG_CHQDT = "CHQDT";
 
 	// Workflow definition Constants
 
@@ -989,6 +991,10 @@ public class PennantConstants {
 	// OCR Static List Constants
 	public static final String AGGREMENT_VALUE = "AGG";
 	public static final String DOCUMENT_VALUE = "DOC";
+
+	public static final String PRORATA_VALUE = "PRORATA";
+	public static final String SEGMENTED_VALUE = "SEGMENTED";
+
 	public static final String CUSTOMER_CONTRIBUTION = "Customer";
 	public static final String FINANCER_CONTRIBUTION = "Financer";
 

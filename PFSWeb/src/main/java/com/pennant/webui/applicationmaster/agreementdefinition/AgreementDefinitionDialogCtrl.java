@@ -62,6 +62,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -82,6 +83,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -120,6 +122,8 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	protected Checkbox autoGeneration;
 	protected Checkbox autoDownload;
 	protected ExtendedCombobox doctype_Check;
+	protected Checkbox pwdProtected;
+	protected Label label_PwdProtected;
 
 	// protected Button brwAgreementDoc; // autoWired
 	// protected Div signCopyPdf; // autoWired
@@ -247,6 +251,8 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
+		this.label_PwdProtected.setVisible(false);
+		this.pwdProtected.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -486,7 +492,14 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		 * 
 		 * } }catch (Exception e) { logger.warn("Exception: ", e); } agreementDocView.setContent(amedia); }
 		 */
-
+		this.pwdProtected.setChecked(aAgreementDefinition.isPwdProtected());
+		if (PennantConstants.DOC_TYPE_PDF.equals(aAgreementDefinition.getAggtype())) {
+			this.pwdProtected.setVisible(true);
+			this.label_PwdProtected.setVisible(true);
+		} else {
+			this.pwdProtected.setVisible(false);
+			this.label_PwdProtected.setVisible(false);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -588,6 +601,12 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		}
 
 		try {
+			aAgreementDefinition.setPwdProtected(this.pwdProtected.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
 			doSaveAggDetailsList(aAgreementDefinition);
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -619,6 +638,27 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		String modulename = this.moduleName.getSelectedItem().getValue().toString();
 		doModuleSelection(modulename);
 		logger.debug("Leaving " + event.toString());
+
+	}
+
+	/**
+	 * When user change aggType
+	 * 
+	 * @param event
+	 */
+	public void onChange$aggType(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug(Literal.ENTERING + event.toString());
+		String type = getComboboxValue(this.aggType);
+		if (PennantConstants.DOC_TYPE_PDF.equals(type)) {
+			this.pwdProtected.setVisible(true);
+			this.label_PwdProtected.setVisible(true);
+		} else {
+			this.pwdProtected.setVisible(false);
+			this.label_PwdProtected.setVisible(false);
+			//if the type is not PDF then it will be unchecked
+			this.pwdProtected.setChecked(false);
+		}
+		logger.debug(Literal.LEAVING + event.toString());
 
 	}
 
@@ -946,7 +986,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		this.autoGeneration.setDisabled(isReadOnly("AgreementDefinitionDialog_autoGenerate"));
 		this.autoDownload.setDisabled(isReadOnly("AgreementDefinitionDialog_autoDownload"));
 		this.docType.setReadonly(isReadOnly("AgreementDefinitionDialog_docType"));
-
+		this.pwdProtected.setDisabled(isReadOnly("AgreementDefinitionDialog_pwdProtected"));
 		doDisable(isReadOnly("AgreementDefinitionDialog_aggDesc"));
 		if (this.allowMultiple.isChecked()) {
 			this.moduleType.setDisabled(isReadOnly("AgreementDefinitionDialog_aggType"));
@@ -989,6 +1029,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		this.moduleName.setDisabled(true);
 		this.docType.setReadonly(true);
 		this.aggIsActive.setDisabled(true);
+		this.pwdProtected.setDisabled(true);
 		doDisable(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

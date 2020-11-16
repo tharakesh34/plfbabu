@@ -13,8 +13,17 @@ import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Window;
 
 import com.aspose.words.Document;
+import com.aspose.words.PdfEncryptionAlgorithm;
+import com.aspose.words.PdfEncryptionDetails;
+import com.aspose.words.PdfPermissions;
+import com.aspose.words.PdfSaveOptions;
 import com.aspose.words.SaveFormat;
 import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.ReferenceGenerator;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.document.generator.TemplateEngine;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -139,5 +148,54 @@ public class AgreementEngine {
 
 	public Document getMasterDocument() {
 		return templateEngine.getMasterDocument();
+	}
+
+	/**
+	 * Return the binary data with password protected
+	 * 
+	 * @param reportName
+	 * @param isPwdProtected
+	 * @param financeDetail
+	 * @return
+	 */
+	public byte[] getDocumentInByteArrayWithPwd(String reportName, boolean isPwdProtected,
+			FinanceDetail financeDetail) {
+		return getPasswordProtectedDocument(financeDetail, isPwdProtected);
+	}
+
+	/**
+	 * Return the binary data with password protected
+	 * 
+	 * @param financeDetail
+	 * @param isPwdProtected
+	 * @return
+	 */
+	private byte[] getPasswordProtectedDocument(FinanceDetail financeDetail, boolean isPwdProtected) {
+		try {
+			if (isPwdProtected) {
+				Customer customer = financeDetail.getCustomerDetails().getCustomer();
+				if (customer != null) {
+					String password = ReferenceGenerator.generateAgreementPassword(customer);
+					String ownerPassword = SysParamUtil.getValueAsString(SMTParameterConstants.PDF_OWNER_PASSWORD);
+					//Preparing the PDF options
+					PdfSaveOptions pdfOptions = new PdfSaveOptions();
+					PdfEncryptionDetails encryption = new PdfEncryptionDetails(password, ownerPassword,
+							PdfEncryptionAlgorithm.RC_4_128);
+					encryption.setPermissions(PdfPermissions.DISALLOW_ALL);
+					encryption.setPermissions(PdfPermissions.PRINTING);
+					pdfOptions.setEncryptionDetails(encryption);
+					pdfOptions.setSaveFormat(SaveFormat.PDF);
+					ByteArrayOutputStream stream = new ByteArrayOutputStream();
+					templateEngine.getDocument().save(stream, pdfOptions);
+					stream.close();
+					return stream.toByteArray();
+				}
+			}
+			//return byte array with out password
+			return getDocumentInByteArray(SaveFormat.PDF);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION + " while doing document encryption");
+		}
+		return null;
 	}
 }

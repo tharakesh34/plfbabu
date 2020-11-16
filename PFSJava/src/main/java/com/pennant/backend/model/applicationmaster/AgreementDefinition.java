@@ -77,6 +77,7 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	private String moduleName;
 	private boolean allowMultiple;
 	private String moduleType;
+	private boolean pwdProtected;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -282,5 +283,13 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 
 	public void setAutoDownload(boolean autoDownload) {
 		this.autoDownload = autoDownload;
+	}
+
+	public boolean isPwdProtected() {
+		return pwdProtected;
+	}
+
+	public void setPwdProtected(boolean pwdProtected) {
+		this.pwdProtected = pwdProtected;
 	}
 }

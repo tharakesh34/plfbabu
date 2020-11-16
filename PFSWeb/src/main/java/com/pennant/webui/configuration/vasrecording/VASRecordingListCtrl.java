@@ -68,11 +68,11 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -198,7 +198,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 			StringBuilder sql = new StringBuilder();
 			sql.append(
-					"(((RecordType IS NULL OR RecordType='')  AND VasStatus != 'C') OR (VasStatus = 'C' AND RecordType IS NOT NULL)) AND ( ProductCtg != '");
+					"(((RecordType IS NULL OR RecordType='')  AND VasStatus != 'C') OR (VasStatus = 'C' AND RecordType IS NOT NULL AND RecordType !='')) AND ( ProductCtg != '");
 			sql.append(VASConsatnts.VAS_CATEGORY_VASI).append("')");
 			this.searchObject.addWhereClause(sql.toString());
 		} else if (VASConsatnts.STATUS_NORMAL.equals(module)) {
@@ -243,7 +243,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		registerField("feePaymentMode", listheader_FeePaymentMode, SortOrder.NONE, feePaymentMode,
 				sortOperator_FeePaymentMode, Operators.SIMPLE_NUMARIC);
 		registerField("nextRoleCode");
-		registerField("VasStatus");
+		registerField("VasStatus", listheader_VasStatus, SortOrder.NONE);
 		// Render the page and display the data.
 		doRenderPage();
 
@@ -346,6 +346,16 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 			return;
 		}
 
+		//Checking instruction status to cancel the VAS
+		if (VASConsatnts.STATUS_CANCEL.equals(module)) {
+			String vasInsstatus = getVASRecordingService().getVasInsStatus(aVASRecording.getPaymentInsId());
+			if (StringUtils.equals(vasInsstatus, DisbursementConstants.STATUS_AWAITCON)
+					|| StringUtils.equals(vasInsstatus, DisbursementConstants.STATUS_REVERSED)) {
+				MessageUtil.showMessage(
+						Labels.getLabel("common_NoMaintainance") + ". Instruction Status is " + vasInsstatus);
+				return;
+			}
+		}
 		// Role Code State Checking
 		String nextroleCode = aVASRecording.getNextRoleCode();
 		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
@@ -433,6 +443,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		 * financeDetail = getFinanceDetailService() .getFinanceDetailsForPmay(vASRecording.getPrimaryLinkRef());
 		 * arg.put("financeDetail", financeDetail); }
 		 */
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/VASRecording/VASRecordingDialog.zul", null, arg);
 		} catch (Exception e) {

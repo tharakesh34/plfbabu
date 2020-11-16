@@ -44,6 +44,7 @@ public class DisbursementConstants {
 	public static final String PAYMENT_DETAIL_CUSTOMER = "CS";
 	public static final String PAYMENT_DETAIL_THIRDPARTY = "TP";
 	public static final String PAYMENT_DETAIL_BUILDER = "BD";
+	public static final String PAYMENT_DETAIL_VAS = "VAS";
 
 	// Disbursement Payment Types
 	public static final String PAYMENT_TYPE_RTGS = "RTGS";
@@ -80,6 +81,7 @@ public class DisbursementConstants {
 	public static final String CHANNEL_FLEXIDISBURSEMENT = "F";
 	public static final String CHANNEL_DISBURSEMENT = "D";
 	public static final String CHANNEL_INSURANCE = "I";
+	public static final String CHANNEL_VAS = "V";
 
 	// Auto Disbursement Status
 	public static final String AUTODISB_STATUS_PENDING = "P";

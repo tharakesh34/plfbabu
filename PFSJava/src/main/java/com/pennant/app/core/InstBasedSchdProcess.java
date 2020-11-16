@@ -24,6 +24,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.batchProcessStatus.BatchProcessStatusDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -33,6 +34,8 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.InstBasedSchdDetails;
 import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.model.finance.covenant.Covenant;
+import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -344,7 +347,8 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		afinanceMain.setUserDetails(userDetails);
 		financeDetail.setUserDetails(userDetails);
 		financeDetail.getCustomerDetails().setUserDetails(userDetails);
-
+		//remove covenant documents from  DocumentdetailsList the same documents are available in covenant doc list(Bugfix: PrimaryKey issue)
+		removeCovenantDocuments(financeDetail);
 		auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
 		auditHeader = financeDetailService.doApprove(auditHeader, false);
 
@@ -424,6 +428,38 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, afinanceDetail.getBefImage(), afinanceDetail);
 		return new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
 				afinanceDetail.getUserDetails(), getOverideMap());
+	}
+
+	private void removeCovenantDocuments(FinanceDetail financeDetail) {
+		List<Long> documents = new ArrayList<>();
+		List<Covenant> covenants = financeDetail.getCovenants();
+		if (CollectionUtils.isNotEmpty(covenants)) {
+			for (Covenant covenant : covenants) {//if covenants tab is not available in loan queue below list is getting empty
+				if (CollectionUtils.isNotEmpty(covenant.getDocumentDetails())) {
+					for (DocumentDetails document : covenant.getDocumentDetails()) {
+						documents.add(document.getDocId());
+					}
+				} else if (CollectionUtils.isNotEmpty(covenant.getCovenantDocuments())) {//we are preparing document list by using covenants doc
+					for (CovenantDocument covenantDocument : covenant.getCovenantDocuments()) {
+						if (covenantDocument.getDocumentDetail() != null) {
+							documents.add(covenantDocument.getDocumentDetail().getDocId());
+						}
+					}
+				}
+			}
+
+		}
+		List<DocumentDetails> documentDetails = financeDetail.getDocumentDetailsList();
+		if (!CollectionUtils.isEmpty(documentDetails)) {
+			//remove covenant documents in loan document list
+			for (int i = 0; i < documentDetails.size(); i++) {
+				DocumentDetails documentDetail = documentDetails.get(i);
+				if (documents.contains(documentDetail.getDocId())) {
+					documentDetails.remove(i);
+				}
+			}
+		}
+		financeDetail.setDocumentDetailsList(documentDetails);
 	}
 
 	public WorkflowEngine getWorkFlow() {

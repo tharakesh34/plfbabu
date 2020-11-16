@@ -109,7 +109,7 @@ import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetai
 		"customerDetails", "advancePaymentsList", "mandate", "jountAccountDetailList", "gurantorsDetailList",
 		"documentDetailsList", "covenantTypeList", "collateralAssignmentList", "finFlagsDetails", "finFeeDetails",
 		"returnDataSetList", "collateralSetup", "financeTaxDetails", "extendedDetails", "receiptAllocations",
-		"returnStatus" })
+		"finOCRHeader", "returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDetail implements java.io.Serializable {
@@ -189,6 +189,7 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElement(name = "covenant")
 	private List<FinCovenantType> covenantTypeList;
 	private Covenant covenant;
+	@XmlElement(name = "covenantDetails")
 	private List<Covenant> covenants;
 	private RolledoverFinanceHeader rolledoverFinanceHeader;
 	@XmlElement(name = "customer")
@@ -314,6 +315,7 @@ public class FinanceDetail implements java.io.Serializable {
 	// used for Interfaces
 	private Long usrID;
 	private String usrLogin;
+	@XmlElement
 	private FinOCRHeader finOCRHeader;
 	private boolean vettingApprovalTab = false;
 	private boolean vettingInitTab = false;

@@ -52,7 +52,7 @@
 							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:0px;">
 								<toolbar align="center" sclass="toolbar-center">
 									<button id="retrieveDMS" label="Retrieve-DMS" />
-									<button id="sendDMS" label="Send-DMS" />
+									<button id="sendDMS" label="Send-DMS" visible="false"/>
 								</toolbar>
 							</hbox>
 						</div>

@@ -4666,6 +4666,11 @@ public class ReceiptCalculator implements Serializable {
 		FinScheduleData finScheduleData = receiptData.getFinanceDetail().getFinScheduleData();
 		List<FinanceScheduleDetail> schdDetails = finScheduleData.getFinanceScheduleDetails();
 		Date valueDate = receiptData.getValueDate();
+
+		if (receiptData.getReceiptHeader().getPresentmentSchDate() != null) {
+			valueDate = receiptData.getReceiptHeader().getPresentmentSchDate();
+		}
+
 		receiptData.getReceiptHeader().setValueDate(valueDate);
 		BigDecimal tdsDue = BigDecimal.ZERO;
 		BigDecimal nPftDue = BigDecimal.ZERO;

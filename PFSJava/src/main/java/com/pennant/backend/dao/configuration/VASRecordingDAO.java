@@ -82,4 +82,12 @@ public interface VASRecordingDAO {
 	Long getCustomerId(String finReference);
 
 	void updatePaidAmt(String vasReference, String primaryLinkRef, BigDecimal paidAmt, String type);
+
+	List<VASRecording> getLoanReportVasRecordingByRef(String finReference);
+
+	Long getPaymentInsId(String vasReference, String type);
+
+	String getVasInsStatus(long paymentInsId);
+
+	void updateVasInsStatus(long id);
 }

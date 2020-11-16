@@ -138,6 +138,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private BigDecimal cbAmount;
 	private BigDecimal totalCpz = BigDecimal.ZERO;
 	private boolean finOcrRequired;
+	private String loanStsDesc;
 
 	public FinanceEnquiry() {
 
@@ -178,6 +179,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 		excludeFields.add("excessAmount");
 		excludeFields.add("excessAmtPaid");
 		excludeFields.add("totalCpz");
+		excludeFields.add("loanStsDesc");
 		return excludeFields;
 	}
 
@@ -815,6 +817,14 @@ public class FinanceEnquiry implements java.io.Serializable {
 
 	public void setFinOcrRequired(boolean finOcrRequired) {
 		this.finOcrRequired = finOcrRequired;
+	}
+
+	public String getLoanStsDesc() {
+		return loanStsDesc;
+	}
+
+	public void setLoanStsDesc(String loanStsDesc) {
+		this.loanStsDesc = loanStsDesc;
 	}
 
 }

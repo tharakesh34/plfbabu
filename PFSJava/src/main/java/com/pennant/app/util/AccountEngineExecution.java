@@ -797,6 +797,11 @@ public class AccountEngineExecution implements Serializable {
 			addZeroifNotContains(dataMap, feeCode + "_IGST_R");
 			addZeroifNotContains(dataMap, feeCode + "_CGST_R");
 
+			addZeroifNotContains(dataMap, feeCode + "_UGST_R");
+			addZeroifNotContains(dataMap, feeCode + "_SGST_R");
+			addZeroifNotContains(dataMap, feeCode + "_IGST_R");
+			addZeroifNotContains(dataMap, feeCode + "_CGST_R");
+
 			addZeroifNotContains(dataMap, feeCode + "_UGST_SCH");
 			addZeroifNotContains(dataMap, feeCode + "_SGST_SCH");
 			addZeroifNotContains(dataMap, feeCode + "_IGST_SCH");

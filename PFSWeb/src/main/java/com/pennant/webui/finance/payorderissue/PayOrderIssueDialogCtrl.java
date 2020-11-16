@@ -98,9 +98,11 @@ import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.gstn.validation.impl.TestCustomerPaymentService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -180,6 +182,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	private TestCustomerPaymentService testCustomerPaymentService;
 	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
 	private VASConfigurationDAO vASConfigurationDAO;
+	private FinAdvancePaymentsService finAdvancePaymentsService;
 
 	/**
 	 * default constructor.<br>
@@ -434,8 +437,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 		this.payOrderIssue_FinAssetValue.setValue(formateAmount(financeMain.getFinAssetValue()));
 		this.payOrderIssue_FinCurrAssetValue.setValue(formateAmount(financeMain.getFinCurrAssetValue()));
-		doFillFinAdvancePaymentsDetails(payIHeader.getFinAdvancePaymentsList(), null);
-		doFillVASRecordingDetails(payIHeader.getvASRecordings());
+		doFillFinAdvancePaymentsDetails(payIHeader.getFinAdvancePaymentsList(), payIHeader.getvASRecordings());
 		this.recordStatus.setValue(payIHeader.getRecordStatus());
 
 		if (!enqiryModule) {
@@ -484,6 +486,15 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 		doRemoveValidation();
 
+		showErrorMessage(wve);
+
+		aPayOrderIssueHeader.setRecordStatus(this.recordStatus.getValue());
+		aPayOrderIssueHeader.setFinAdvancePaymentsList(getFinAdvancePaymentsList());
+		setPayOrderIssueHeader(aPayOrderIssueHeader);
+		logger.debug("Leaving");
+	}
+
+	private void showErrorMessage(ArrayList<WrongValueException> wve) {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -491,11 +502,6 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-
-		aPayOrderIssueHeader.setRecordStatus(this.recordStatus.getValue());
-		aPayOrderIssueHeader.setFinAdvancePaymentsList(getFinAdvancePaymentsList());
-		setPayOrderIssueHeader(aPayOrderIssueHeader);
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -718,6 +724,38 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		// fill the PayOrderIssueHeader object with the components data
 		doWriteComponentsToBean(aPayOrderIssueHeader);
 
+		boolean paymentRevese = false;
+		String recordStatus = userAction.getSelectedItem().getValue().toString();
+		if (CollectionUtils.isNotEmpty(aPayOrderIssueHeader.getFinAdvancePaymentsList())) {
+			if (!PennantConstants.RCD_STATUS_RESUBMITTED.equals(recordStatus)
+					&& !PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)
+					&& !PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus)) {
+
+				List<ErrorDetail> valid = disbursementInstCtrl.validateFinAdvancePayment(getFinAdvancePaymentsList(),
+						aPayOrderIssueHeader.isLoanApproved());
+				valid = ErrorUtil.getErrorDetails(valid, getUserWorkspace().getUserLanguage());
+				if (valid != null && !valid.isEmpty()) {
+					ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+					for (ErrorDetail errorDetails : valid) {
+						wve.add(new WrongValueException(this.label_AdvancePayments_Title, errorDetails.getError()));
+					}
+					showErrorMessage(wve);
+				}
+
+				for (FinAdvancePayments payment : aPayOrderIssueHeader.getFinAdvancePaymentsList()) {
+					if (DisbursementConstants.STATUS_REVERSED.equals(payment.getStatus())) {
+						paymentRevese = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if (paymentRevese && MessageUtil.confirm("Disbursement status is " + DisbursementConstants.STATUS_REVERSED
+				+ ". Do you want to proceed?") == MessageUtil.NO) {
+			return;
+		}
+
 		isNew = aPayOrderIssueHeader.isNew();
 		String tranType = "";
 
@@ -925,6 +963,13 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails,
 			List<VASRecording> vasRecordings) {
 		logger.debug("Entering");
+		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+			String entityCode = "";
+			if (financeMain != null) {
+				entityCode = financeMain.getLovDescEntityCode();
+			}
+			finAdvancePaymentsService.processVasInstructions(vasRecordings, finAdvancePayDetails, entityCode);
+		}
 		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(finAdvancePayDetails, false, vasRecordings);
 		setFinAdvancePaymentsList(finAdvancePayDetails);
 		logger.debug("Leaving");
@@ -1084,6 +1129,13 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void onClick$button_PayOrderIssueDialog_NewDisbursement(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
+		if (CollectionUtils.isNotEmpty(this.payOrderIssueHeader.getFinFeeDetailList())) {
+			disbursementInstCtrl.setFinFeeDetailList(this.payOrderIssueHeader.getFinFeeDetailList());
+		}
+		if (CollectionUtils.isNotEmpty(this.payOrderIssueHeader.getvASRecordings())) {
+			disbursementInstCtrl.setVasRecordingList(this.payOrderIssueHeader.getvASRecordings());
+		}
+
 		disbursementInstCtrl.onClickNew(this.payOrderIssueListCtrl, this, ModuleType_POISSUE,
 				getFinAdvancePaymentsList(), payOrderIssueHeader, null);
 
@@ -1092,6 +1144,12 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void onFinAdvancePaymentsItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
+		if (CollectionUtils.isNotEmpty(this.payOrderIssueHeader.getFinFeeDetailList())) {
+			disbursementInstCtrl.setFinFeeDetailList(this.payOrderIssueHeader.getFinFeeDetailList());
+		}
+		if (CollectionUtils.isNotEmpty(this.payOrderIssueHeader.getvASRecordings())) {
+			disbursementInstCtrl.setVasRecordingList(this.payOrderIssueHeader.getvASRecordings());
+		}
 		disbursementInstCtrl.onDoubleClick(this.payOrderIssueListCtrl, this, ModuleType_POISSUE, enqiryModule,
 				payOrderIssueHeader);
 		logger.debug("Leaving" + event.toString());
@@ -1292,14 +1350,18 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 				} else {
 					datasetList = getPayOrderIssueService().getDisbursementPostings(financeMain.getFinReference(),
 							AccountEventConstants.ACCEVENT_DISBINS);
-				}
-				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
-					List<ReturnDataSet> insList = getPayOrderIssueService()
-							.getInsurancePostings(financeMain.getFinReference());
+					List<ReturnDataSet> insList = getPayOrderIssueService().getDisbursementPostings(
+							financeMain.getFinReference(), AccountEventConstants.ACCEVENT_INSPAY);
 					if (CollectionUtils.isNotEmpty(insList)) {
 						datasetList.addAll(insList);
 					}
 				}
+				//TODO:Ganesh Need to remove
+				/*
+				 * if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) { List<ReturnDataSet> insList =
+				 * getPayOrderIssueService() .getInsurancePostings(financeMain.getFinReference()); if
+				 * (CollectionUtils.isNotEmpty(insList)) { datasetList.addAll(insList); } }
+				 */
 				doFillAccounting(datasetList);
 			}
 
@@ -1411,6 +1473,10 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
 		this.vASConfigurationDAO = vASConfigurationDAO;
+	}
+
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 }

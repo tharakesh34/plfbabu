@@ -2160,17 +2160,19 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 
 			//If the disbursements are REALIZED or PAID, we are not allow to cancel the loan until unless those disbursements are REVERSED.
-			List<FinAdvancePayments> advancePayments = getFinanceCancellationService()
-					.getFinAdvancePaymentsByFinRef(financeDetail.getFinScheduleData().getFinReference());
+			if (ImplementationConstants.DISB_REVERSAL_REQ_BEFORE_LOAN_CANCEL) {
+				List<FinAdvancePayments> advancePayments = getFinanceCancellationService()
+						.getFinAdvancePaymentsByFinRef(financeDetail.getFinScheduleData().getFinReference());
 
-			if (CollectionUtils.isNotEmpty(advancePayments)) {
-				for (FinAdvancePayments payments : advancePayments) {
-					if (!(DisbursementConstants.STATUS_REVERSED.equals(payments.getStatus())
-							|| DisbursementConstants.STATUS_REJECTED.equals(payments.getStatus())
-							|| DisbursementConstants.STATUS_APPROVED.equals(payments.getStatus())
-							|| DisbursementConstants.STATUS_CANCEL.equals(payments.getStatus()))) {
-						MessageUtil.showError(Labels.getLabel("label_Finance_Cancel_Disbursement_Status_Reversed"));
-						return;
+				if (CollectionUtils.isNotEmpty(advancePayments)) {
+					for (FinAdvancePayments payments : advancePayments) {
+						if (!(DisbursementConstants.STATUS_REVERSED.equals(payments.getStatus())
+								|| DisbursementConstants.STATUS_REJECTED.equals(payments.getStatus())
+								|| DisbursementConstants.STATUS_APPROVED.equals(payments.getStatus())
+								|| DisbursementConstants.STATUS_CANCEL.equals(payments.getStatus()))) {
+							MessageUtil.showError(Labels.getLabel("label_Finance_Cancel_Disbursement_Status_Reversed"));
+							return;
+						}
 					}
 				}
 			}

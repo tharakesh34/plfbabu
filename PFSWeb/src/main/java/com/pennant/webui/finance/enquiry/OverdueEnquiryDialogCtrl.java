@@ -42,11 +42,17 @@
  */
 package com.pennant.webui.finance.enquiry;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -57,6 +63,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -81,6 +88,11 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 	private int ccyformat = 0;
 
 	private FinanceDetailService financeDetailService;
+	protected boolean disbEnquiry = false;
+	protected Combobox enquiryCombobox;
+	protected Groupbox finBasicdetails;
+	private ArrayList<Object> headerList;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 
 	/**
 	 * default constructor.<br>
@@ -129,6 +141,16 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 					.get("financeEnquiryHeaderDialogCtrl");
 		}
 
+		if (arguments.containsKey("disbEnquiry")) {
+			disbEnquiry = (boolean) arguments.get("disbEnquiry");
+		}
+
+		if (arguments.containsKey("finHeaderList")) {
+			headerList = (ArrayList<Object>) arguments.get("finHeaderList");
+		}
+
+		enquiryCombobox = (Combobox) arguments.get("enuiryCombobox");
+
 		doShowDialog();
 
 		logger.debug("Leaving " + event.toString());
@@ -150,13 +172,16 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 			doFillOverdueDetails(this.finODDetailList);
 
 			if (tabPanel_dialogWindow != null) {
-
+				this.btnClose.setVisible(false);
 				getBorderLayoutHeight();
 				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount() * 20;
 				this.listBoxOverdue.setHeight(this.borderLayoutHeight - rowsHeight - 200 + "px");
 				this.window_OverdueEnquiryDialog.setHeight(this.borderLayoutHeight - rowsHeight - 30 + "px");
 				tabPanel_dialogWindow.appendChild(this.window_OverdueEnquiryDialog);
 
+			} else if (disbEnquiry) {
+				appendFinBasicDetails();
+				setDialog(DialogType.MODAL);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -202,6 +227,37 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 		}
 	}
 
+	/**
+	 * This method is for append finance basic details to respective parent tabs
+	 */
+	private void appendFinBasicDetails() {
+		try {
+			final HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("parentCtrl", this);
+			map.put("finHeaderList", headerList);
+			map.put("moduleName", moduleCode);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
+					map);
+		} catch (Exception e) {
+			logger.debug(e);
+		}
+	}
+
+	/**
+	 * when the "close" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnClose(Event event) throws InterruptedException {
+		if (disbEnquiry && enquiryCombobox != null) {
+			this.enquiryCombobox.setSelectedIndex(0);
+			this.window_OverdueEnquiryDialog.onClose();
+		} else {
+			doClose(false);
+		}
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -214,4 +270,11 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 		return financeDetailService;
 	}
 
+	public void doSetLabels(ArrayList<Object> finHeaderList) {
+		finBasicDetailsCtrl.doWriteBeanToComponents(finHeaderList);
+	}
+
+	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
+		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
+	}
 }

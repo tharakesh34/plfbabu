@@ -151,6 +151,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	protected Textbox vanCode;
 	protected Combobox downloadType;
 	protected Combobox dataEngineConfigName;
+	protected Label label_PartnerBankDialog_PartnerBankId;
+	protected Intbox partnerBankId;
 
 	protected Row row_DownloadType;
 	protected Row row_ReqFileDownload;
@@ -500,6 +502,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		if (SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)) {
 			this.vanCode.setValue(aPartnerBank.getVanCode());
 		}
+		this.partnerBankId.setValue((int) aPartnerBank.getPartnerBankId());
 		this.recordStatus.setValue(aPartnerBank.getRecordStatus());
 		this.sponsorBankCode.setValue(aPartnerBank.getSponsorBankCode());
 		this.clientCode.setValue(aPartnerBank.getClientCode());
@@ -1171,10 +1174,14 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.partnerBankCode.setReadonly(false);
 			this.partnerBankName.setReadonly(false);
 			this.btnCancel.setVisible(false);
+			this.partnerBankId.setVisible(false);
+			this.label_PartnerBankDialog_PartnerBankId.setVisible(false);
 		} else {
 			this.partnerBankCode.setReadonly(true);
 			this.partnerBankName.setReadonly(true);
 			this.btnCancel.setVisible(true);
+			this.partnerBankId.setVisible(true);
+			this.label_PartnerBankDialog_PartnerBankId.setVisible(true);
 		}
 
 		this.bankCode.setReadonly(isReadOnly("PartnerBankDialog_BankCode"));
@@ -1208,6 +1215,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.vanCode.setDisabled(isReadOnly("PartnerBankDialog_VanCode"));
 		this.sponsorBankCode.setReadonly(isReadOnly("PartnerBankDialog_SponsorBankCode"));
 		this.clientCode.setReadonly(isReadOnly("PartnerBankDialog_ClientCode"));
+		this.partnerBankId.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

@@ -558,6 +558,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.adjTerms, Labels.getLabel("MUST_BE_ENTERED",
 							new String[] { Labels.getLabel("label_PostponementDialog_Terms.value") }));
 				}
+				getFinScheduleData().getFinanceMain().setAdjTerms(this.adjTerms.intValue());
 				finServiceInstruction.setTerms(this.adjTerms.intValue());
 
 			} catch (WrongValueException we) {

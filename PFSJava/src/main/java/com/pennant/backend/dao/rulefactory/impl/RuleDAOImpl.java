@@ -239,6 +239,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Rule not exist for the specified Rule Id {}, Module {} and Event {}", ruleId);
+			rule = null;
 		}
 		return rule;
 	}

@@ -124,6 +124,7 @@ import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -140,6 +141,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.AppException;
@@ -427,6 +429,14 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		FinReceiptData receiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
+		FinReceiptHeader finReceiptHeader = finReceiptHeaderDAO.getReceiptHeaderByID(receiptHeader.getReceiptID(),
+				TableType.MAIN_TAB.getSuffix());
+
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER)
+				&& finReceiptHeader == null) {
+			processSuccessPostings(receiptHeader, "",
+					receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain());
+		}
 
 		// Finance Repayment Cancellation Posting Process Execution
 		// =====================================
@@ -508,7 +518,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			receiptHeader.setNextTaskId("");
 			receiptHeader.setWorkflowId(0);
 			receiptHeader.setRcdMaintainSts(null);
-			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptHeader.getReceiptPurpose())) {
+			//FIXME:Checking the record is available in main table or not to fix PK issue
+			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptHeader.getReceiptPurpose())
+					&& finReceiptHeader != null) {
 				finReceiptHeaderDAO.update(receiptHeader, TableType.MAIN_TAB);
 			} else {
 				finReceiptHeaderDAO.save(receiptHeader, TableType.MAIN_TAB);
@@ -598,6 +610,74 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	private boolean processSuccessPostings(FinReceiptHeader receiptHeader, String postBranch, FinanceMain financeMain) {
+		logger.debug(Literal.ENTERING);
+
+		AEEvent aeEvent = new AEEvent();
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		amountCodes = new AEAmountCodes();
+		String paymentType = "";
+		String partnerBankActype = "";
+		String partnerbank = "";
+		for (FinReceiptDetail recDtl : receiptHeader.getReceiptDetails()) {
+			if (recDtl.getPayAgainstID() > 0) {
+				continue;
+			}
+			partnerbank = recDtl.getPartnerBankAc();
+			paymentType = recDtl.getPaymentType();
+			partnerBankActype = recDtl.getPartnerBankAcType();
+		}
+		long postingId = getPostingsDAO().getPostingId();
+		aeEvent.setCustID(financeMain.getCustID());
+		aeEvent.setFinReference(financeMain.getFinReference());
+		aeEvent.setFinType(financeMain.getFinType());
+		aeEvent.setPromotion(financeMain.getPromotionCode());
+		aeEvent.setBranch(financeMain.getFinBranch());
+		aeEvent.setCcy(financeMain.getFinCcy());
+		aeEvent.setPostingUserBranch(receiptHeader.getCashierBranch());
+		aeEvent.setLinkedTranId(0);
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+		aeEvent.setValueDate(receiptHeader.getValueDate());
+		aeEvent.setPostRefId(receiptHeader.getReceiptID());
+		aeEvent.setPostingId(postingId);
+		aeEvent.setEntityCode(financeMain.getEntityCode());
+
+		amountCodes.setUserBranch(receiptHeader.getCashierBranch());
+		amountCodes.setFinType(financeMain.getFinType());
+		amountCodes.setPartnerBankAc(partnerbank);
+		amountCodes.setPartnerBankAcType(partnerBankActype);
+		amountCodes.setToExcessAmt(BigDecimal.ZERO);
+		amountCodes.setToEmiAdvance(BigDecimal.ZERO);
+		amountCodes.setPaymentType(paymentType);
+
+		String eventCode = "";
+
+		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			eventCode = AccountEventConstants.ACCEVENT_REPAY;
+
+		} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+
+		} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+
+		}
+
+		aeEvent.getAcSetIDList().clear();
+
+		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(), eventCode,
+				FinanceConstants.MODULEID_FINTYPE));
+		amountCodes.setFinType(financeMain.getFinType());
+
+		HashMap<String, Object> extDataMap = (HashMap<String, Object>) amountCodes.getDeclaredFieldValues();
+		extDataMap.put("PB_ReceiptAmount", receiptHeader.getReceiptAmount());
+		aeEvent.setDataMap(extDataMap);
+		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+
+		logger.debug(Literal.LEAVING);
+		return aeEvent.isPostingSucess();
 	}
 
 	/**
@@ -1283,7 +1363,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 						advise.setBalanceAmt((movement.getPaidAmount().add(movement.getWaivedAmount())));
 
-						//manualAdviseDAO.updateAdvPayment(advise, TableType.MAIN_TAB);
+						manualAdviseDAO.updateAdvPayment(advise, TableType.MAIN_TAB);
 					}
 
 					// Update Movement Status
@@ -1804,8 +1884,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				}
 			}
 		}
-
-		if (!isRcdFound) {
+		//FIXME:Added the below condition to skip the validation if we mark the CHEQUE/DD as Bounce since it is not realized based on below sys param
+		if (!isRcdFound && !SysParamUtil.isAllowed(SMTParameterConstants.CHEQUE_MODE_SCHDPAY_EFFT_ON_REALIZATION)) {
 			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60208", "", null),
 					PennantConstants.default_Language);
 			return errorDetail.getMessage();

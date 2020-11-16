@@ -365,6 +365,9 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> txFinTypeList;
 	private static List<ValueLabel> percType;
 	private static List<ValueLabel> betaConfiguration;
+	private static ArrayList<ValueLabel> purgEnvList = getPurgEnvironment();
+	private static ArrayList<ValueLabel> purgTypeList = getPurgType();
+	private static ArrayList<ValueLabel> purgActionList = getPurgAction();
 
 	/**
 	 * Gets the list of applications.
@@ -1535,6 +1538,7 @@ public class PennantStaticListUtil {
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_SMPMODL, Labels.getLabel("label_AggSmplDetails")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_LNAPPCB, Labels.getLabel("label_LoanAppCoreBankID")));
 			aggDetails.add(new ValueLabel(PennantConstants.AGG_KYCDT, Labels.getLabel("label_KYCDetails")));
+			aggDetails.add(new ValueLabel(PennantConstants.AGG_CHQDT, Labels.getLabel("label_ChequeDetails")));
 		}
 		return aggDetails;
 	}
@@ -2487,6 +2491,10 @@ public class PennantStaticListUtil {
 				paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_BUILDER,
 						Labels.getLabel("label_PaymentDetail_Builder")));
 			}
+			if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+				paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_VAS,
+						Labels.getLabel("label_PaymentDetail_Vas")));
+			}
 		}
 		return paymentDetails;
 	}
@@ -3000,7 +3008,7 @@ public class PennantStaticListUtil {
 
 	public static List<ValueLabel> getPresentmentExclusionList() {
 		if (presentmentExclusionList == null) {
-			presentmentExclusionList = new ArrayList<ValueLabel>(10);
+			presentmentExclusionList = new ArrayList<ValueLabel>(11);
 			presentmentExclusionList.add(new ValueLabel("1", Labels.getLabel("label_Represent_Emiinadvance")));
 			presentmentExclusionList.add(new ValueLabel("2", Labels.getLabel("label_Represent_Emihold")));
 			presentmentExclusionList.add(new ValueLabel("3", Labels.getLabel("label_Represent_Mandate_Hold")));
@@ -3012,6 +3020,7 @@ public class PennantStaticListUtil {
 			presentmentExclusionList.add(new ValueLabel("9", Labels.getLabel("label_Represent_Cheque_Bounce")));
 			presentmentExclusionList.add(new ValueLabel("10", Labels.getLabel("label_Represent_Cheque_Release")));
 			presentmentExclusionList.add(new ValueLabel("11", Labels.getLabel("label_Represent_Cheque_Realized")));
+			presentmentExclusionList.add(new ValueLabel("12", Labels.getLabel("label_Represent_AdvanceInterestOrEMI")));
 		}
 		return presentmentExclusionList;
 	}
@@ -3781,6 +3790,8 @@ public class PennantStaticListUtil {
 					new ValueLabel(FinanceConstants.POSTING_AGAINST_COLLATERAL, Labels.getLabel("label_Collateral")));
 			postingPurposeList
 					.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_LIMIT, Labels.getLabel("label_Limit")));
+			postingPurposeList
+					.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_ENTITY, Labels.getLabel("label_Entity")));
 		}
 		return postingPurposeList;
 	}
@@ -3842,6 +3853,10 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_Disbursement_Disbursement.label")));
 			channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_INSURANCE,
 					Labels.getLabel("label_Disbursement_Insurance.label")));
+			if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+				channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_VAS,
+						Labels.getLabel("label_Disbursement_VAS.label")));
+			}
 		}
 		return channelTypes;
 	}
@@ -4177,6 +4192,9 @@ public class PennantStaticListUtil {
 			sourceInfoList.add(new ValueLabel("3", Labels.getLabel("label_SourceInfo_Delphi")));
 			sourceInfoList.add(new ValueLabel("4", Labels.getLabel("label_SourceInfo_RepaymentSchedule")));
 			sourceInfoList.add(new ValueLabel("5", Labels.getLabel("label_SourceInfo_SOA")));
+			if (ImplementationConstants.CUSTOM_EXT_LIABILITIES) {
+				sourceInfoList.add(new ValueLabel("6", Labels.getLabel("label_SourceInfo_NotApplicable")));
+			}
 		}
 		return sourceInfoList;
 	}
@@ -4191,6 +4209,9 @@ public class PennantStaticListUtil {
 			trackCheckList.add(new ValueLabel("4", Labels.getLabel("label_TrackCheck_RTR")));
 			trackCheckList.add(new ValueLabel("5", Labels.getLabel("label_TrackCheck_RepaymentSchedule")));
 			trackCheckList.add(new ValueLabel("6", Labels.getLabel("label_TrackCheck_BSheet")));
+			if (ImplementationConstants.CUSTOM_EXT_LIABILITIES) {
+				trackCheckList.add(new ValueLabel("7", Labels.getLabel("label_TrackCheck_NotApplicable")));
+			}
 		}
 		return trackCheckList;
 	}
@@ -5582,10 +5603,10 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getOCRApplicableList() {
 		if (ocrApplicableList == null) {
 			ocrApplicableList = new ArrayList<ValueLabel>(2);
-			ocrApplicableList.add(
-					new ValueLabel(PennantConstants.AGGREMENT_VALUE, Labels.getLabel("label_AgreementValue.value")));
 			ocrApplicableList
-					.add(new ValueLabel(PennantConstants.DOCUMENT_VALUE, Labels.getLabel("label_DocumentValue.value")));
+					.add(new ValueLabel(PennantConstants.PRORATA_VALUE, Labels.getLabel("label_ProrataValue.value")));
+			ocrApplicableList.add(
+					new ValueLabel(PennantConstants.SEGMENTED_VALUE, Labels.getLabel("label_SegmentedValue.value")));
 		}
 		return ocrApplicableList;
 	}
@@ -5766,4 +5787,36 @@ public class PennantStaticListUtil {
 		}
 		return npaPaymentTypesList;
 	}
+
+	public static ArrayList<ValueLabel> getPurgEnvironment() {
+		if (purgEnvList == null) {
+			purgEnvList = new ArrayList<ValueLabel>();
+			purgEnvList.add(new ValueLabel("1", Labels.getLabel("label_SecurityDB")));
+			purgEnvList.add(new ValueLabel("2", Labels.getLabel("label_ProductDB")));
+			purgEnvList.add(new ValueLabel("3", Labels.getLabel("label_AuditDB")));
+			purgEnvList.add(new ValueLabel("4", Labels.getLabel("label_StagingDB")));
+		}
+		return purgEnvList;
+	}
+
+	public static ArrayList<ValueLabel> getPurgType() {
+		if (purgTypeList == null) {
+			purgTypeList = new ArrayList<ValueLabel>();
+			purgTypeList.add(new ValueLabel("T", Labels.getLabel("label_Table")));
+			purgTypeList.add(new ValueLabel("C", Labels.getLabel("label_Class")));
+		}
+		return purgTypeList;
+
+	}
+
+	public static ArrayList<ValueLabel> getPurgAction() {
+		if (purgActionList == null) {
+			purgActionList = new ArrayList<ValueLabel>();
+			purgActionList.add(new ValueLabel("0", Labels.getLabel("label_NoAction")));
+			purgActionList.add(new ValueLabel("1", Labels.getLabel("label_SaveNDelete")));
+			purgActionList.add(new ValueLabel("2", Labels.getLabel("label_DeleteData")));
+		}
+		return purgActionList;
+	}
+
 }

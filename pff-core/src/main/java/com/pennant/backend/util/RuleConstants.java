@@ -29,6 +29,7 @@ public class RuleConstants {
 	public static final String MODULE_AMORTIZATIONMETHOD = "AMZMTH";
 	public static final String MODULE_STGACRULE = "STGRULE"; // Stage Accounting
 																// Rule
+	public static final String MODULE_BRERULE = "BRERULE";
 
 	// Rule Event Codes
 	public static final String EVENT_ADDDBS = "ADDDBS";

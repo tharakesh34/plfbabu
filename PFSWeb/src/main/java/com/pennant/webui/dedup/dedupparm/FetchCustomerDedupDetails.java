@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zul.Window;
@@ -19,6 +20,7 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.dedup.DedupParm;
+import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -42,7 +44,7 @@ public class FetchCustomerDedupDetails {
 
 	@SuppressWarnings("unchecked")
 	public static CustomerDetails getCustomerDedup(String userRole, CustomerDetails customerDetails,
-			Window parentWindow, String curLoginUser) throws InterfaceException {
+			Window parentWindow, String curLoginUser, String finType) throws InterfaceException {
 		List<CustomerDedup> customerDedupList = null;
 
 		if (customerDetails != null && customerDetails.getCustomer() != null) {
@@ -51,7 +53,8 @@ public class FetchCustomerDedupDetails {
 
 			Customer customer = customerDetails.getCustomer();
 
-			List<CustomerDedup> custDedupData = fetchCustomerDedupDetails(userRole, customerDedup, curLoginUser);
+			List<CustomerDedup> custDedupData = fetchCustomerDedupDetails(userRole, customerDedup, curLoginUser,
+					finType);
 
 			if (custDedupData != null && !custDedupData.isEmpty()) {
 				customer.setDedupFound(true);
@@ -91,23 +94,60 @@ public class FetchCustomerDedupDetails {
 	}
 
 	public static List<CustomerDedup> fetchCustomerDedupDetails(String userRole, CustomerDedup customerDedup,
-			String curLoginUser) throws InterfaceException {
+			String curLoginUser, String finType) throws InterfaceException {
 
 		List<CustomerDedup> overridedCustDedupList = new ArrayList<CustomerDedup>();
 		List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
+		FinanceReferenceDetail referenceDetail = new FinanceReferenceDetail();
+		List<FinanceReferenceDetail> queryCodeList = new ArrayList<>();
+		if (StringUtils.isNotEmpty(finType)) {
+			referenceDetail.setMandInputInStage(userRole + ",");
+			referenceDetail.setFinType(finType);
+			queryCodeList = getDedupParmService().getQueryCodeList(referenceDetail, "_ACDView");
+		}
+		if (StringUtils.isNotEmpty(finType) && CollectionUtils.isEmpty(queryCodeList)) {
+			return new ArrayList<>();
+		}
+
 		List<DedupParm> list = getDedupParmService().getDedupParmByModule(FinanceConstants.DEDUP_CUSTOMER,
 				customerDedup.getCustCtgCode(), "");
-		for (DedupParm dedupParm : list) {
-			// to get previously overridden data
-			List<CustomerDedup> custDedupList = getCustomerDedupDAO().fetchOverrideCustDedupData(
-					customerDedup.getCustCIF(), dedupParm.getQueryCode(), FinanceConstants.DEDUP_CUSTOMER);
-			for (CustomerDedup custDedup : custDedupList) {
-				custDedup.setOverridenby(custDedup.getOverrideUser());
-				overridedCustDedupList.add(custDedup);
+
+		List<DedupParm> finDedupParmList = new ArrayList<>();
+
+		if (StringUtils.isNotEmpty(finType) && CollectionUtils.isNotEmpty(queryCodeList)
+				&& CollectionUtils.isNotEmpty(list)) {
+			for (FinanceReferenceDetail queryCode : queryCodeList) {
+
+				// to get previously overridden data
+				List<CustomerDedup> custDedupList = getCustomerDedupDAO().fetchOverrideCustDedupData(
+						customerDedup.getCustCIF(), queryCode.getLovDescNamelov(), FinanceConstants.DEDUP_CUSTOMER);
+				for (CustomerDedup custDedup : custDedupList) {
+					custDedup.setOverridenby(custDedup.getOverrideUser());
+					overridedCustDedupList.add(custDedup);
+				}
+				for (DedupParm parm : list) {
+					if (StringUtils.equals(parm.getQueryCode(), queryCode.getLovDescNamelov())) {
+						finDedupParmList.add(parm);
+					}
+				}
+
 			}
 			//to get the de dup details based on the de dup parameters i.e query's list from both application and core banking
-			customerDedupList.addAll(getDedupParmService().getCustomerDedup(customerDedup, list));
-
+			customerDedupList.addAll(getDedupParmService().getCustomerDedup(customerDedup, finDedupParmList));
+		} else {
+			if (CollectionUtils.isNotEmpty(list)) {
+				for (DedupParm dedupParm : list) {
+					// to get previously overridden data
+					List<CustomerDedup> custDedupList = getCustomerDedupDAO().fetchOverrideCustDedupData(
+							customerDedup.getCustCIF(), dedupParm.getQueryCode(), FinanceConstants.DEDUP_CUSTOMER);
+					for (CustomerDedup custDedup : custDedupList) {
+						custDedup.setOverridenby(custDedup.getOverrideUser());
+						overridedCustDedupList.add(custDedup);
+					}
+				}
+				//to get the de dup details based on the de dup parameters i.e query's list from both application and core banking
+				customerDedupList.addAll(getDedupParmService().getCustomerDedup(customerDedup, list));
+			}
 		}
 		customerDedupList = doSetCustomerDeDupGrouping(customerDedupList);
 
@@ -296,7 +336,8 @@ public class FetchCustomerDedupDetails {
 			for (CustomerAddres address : customerDetails.getAddressList()) {
 				if (String.valueOf(address.getCustAddrPriority()).equals(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 					custAddress.append(address.getCustAddrHNbr()).append(", ");
-					custAddress.append(address.getCustAddrStreet()).append(", ");
+					custAddress.append(StringUtils.isNotBlank(address.getCustAddrStreet())
+							? address.getCustAddrStreet().concat(", ") : "");
 					custAddress.append(address.getCustAddrCity()).append(", ");
 					custAddress.append(address.getCustAddrProvince()).append(", ");
 					custAddress.append(address.getCustAddrZIP()).append(", ");

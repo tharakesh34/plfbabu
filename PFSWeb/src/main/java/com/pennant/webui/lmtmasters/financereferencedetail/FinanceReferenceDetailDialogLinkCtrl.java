@@ -2254,6 +2254,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				if (financeReferenceDetail.getRecordType().equals(PennantConstants.RCD_DEL)) {
 					financeReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				} else if (StringUtils.isEmpty(financeReferenceDetail.getRecordType())) {
+					//setting record type as Update while changing approved record,since record type is empty ""
 					financeReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 			}

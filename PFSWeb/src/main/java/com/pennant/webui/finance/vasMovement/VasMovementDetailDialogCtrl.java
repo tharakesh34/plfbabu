@@ -75,9 +75,11 @@ import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -117,7 +119,6 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 	private List<VasMovementDetail> vasMovementDetailList;
 	private VASRecordingService vASRecordingService;
 
-	
 	/**
 	 * default constructor.<br>
 	 */
@@ -177,9 +178,9 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 			doLoadWorkFlow(this.vasMovementDetail.isWorkflow(), this.vasMovementDetail.getWorkflowId(),
 					this.vasMovementDetail.getNextTaskId());
 
-			/*if (isWorkFlowEnabled()) {
-				this.userAction = setListRecordStatus(this.userAction);
-			}*/
+			/*
+			 * if (isWorkFlowEnabled()) { this.userAction = setListRecordStatus(this.userAction); }
+			 */
 			if (arguments.containsKey("isEditable")) {
 				isEditable = (boolean) arguments.get("isEditable");
 			}
@@ -221,22 +222,22 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		this.vasReference.setMandatoryStyle(true);
 		this.vasReference.setModuleName("VASRebooking");
-		this.vasReference.setWhereClause(" primarylinkref='"+vasMovement.getFinReference()+"'");
+		this.vasReference.setWhereClause(" primarylinkref='" + vasMovement.getFinReference() + "'");
 		this.vasReference.setValidateColumns(new String[] { "VasReference" });
 		this.vasReference.setValueColumn("VasReference");
 		this.vasReference.setDescColumn("ProductCode");
-		
+
 		this.modiftAmt.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.modiftAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.modiftAmt.setScale(PennantConstants.defaultCCYDecPos);
 		this.modiftAmt.setMandatory(true);
-		
+
 		this.modifyDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.modifyDate.setValue(DateUtility.getAppDate());
-		
+
 		//Empty sent any required attributes
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -365,12 +366,12 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 			this.modifyDate.setValue(aVasMovementDetail.getMovementDate());
 		}
 		this.recordStatus.setValue(aVasMovementDetail.getRecordStatus());
-		
-		this.vasReference.setAttribute("ProductCode",aVasMovementDetail.getVasProduct());
-		this.vasReference.setAttribute("Manufacture",aVasMovementDetail.getVasProvider());
-		this.vasReference.setAttribute("VasAmount",aVasMovementDetail.getVasAmount());
+
+		this.vasReference.setAttribute("ProductCode", aVasMovementDetail.getVasProduct());
+		this.vasReference.setAttribute("Manufacture", aVasMovementDetail.getVasProvider());
+		this.vasReference.setAttribute("VasAmount", aVasMovementDetail.getVasAmount());
 		this.vasMovementId.setValue(aVasMovementDetail.getVasMovementDetailId());
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -390,14 +391,15 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 			aVasMovementDetail.setFinReference(vasMovement.getFinReference());
 			aVasMovementDetail.setVasProduct(String.valueOf(this.vasReference.getAttribute("ProductCode")));
 			aVasMovementDetail.setVasProvider(String.valueOf(this.vasReference.getAttribute("Manufacture")));
-			aVasMovementDetail.setVasAmount(new BigDecimal(String.valueOf(this.vasReference.getAttribute("VasAmount"))));
+			aVasMovementDetail
+					.setVasAmount(new BigDecimal(String.valueOf(this.vasReference.getAttribute("VasAmount"))));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			if (this.modiftAmt.getActualValue() != null) {
-				aVasMovementDetail.setMovementAmt(PennantApplicationUtil.unFormateAmount(this.modiftAmt.getActualValue(),
-						PennantConstants.defaultCCYDecPos));
+				aVasMovementDetail.setMovementAmt(PennantApplicationUtil
+						.unFormateAmount(this.modiftAmt.getActualValue(), PennantConstants.defaultCCYDecPos));
 			}
 
 		} catch (WrongValueException we) {
@@ -405,7 +407,7 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		}
 		try {
 			aVasMovementDetail.setMovementDate(this.modifyDate.getValue());
-			
+
 			if (this.modifyDate.getValue() != null
 					&& this.modifyDate.getValue().compareTo(vasMovement.getFinStartdate()) < 0) {
 				throw new WrongValueException(this.modifyDate,
@@ -464,8 +466,8 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aVasMovementDetail);
-			
-			if(!isAccessRights){
+
+			if (!isAccessRights) {
 				doReadOnly();
 				this.modifyDate.setDisabled(true);
 				this.btnEdit.setVisible(false);
@@ -491,16 +493,22 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		setValidationOn(true);
 
 		if (!this.modiftAmt.isReadonly()) {
-			this.modiftAmt.setConstraint(
-					new PTDecimalValidator(Labels.getLabel("label_VasMovementDetailDialog_VasAmt.value"),
+			this.modiftAmt
+					.setConstraint(new PTDecimalValidator(Labels.getLabel("label_VasMovementDetailDialog_VasAmt.value"),
 							PennantConstants.defaultCCYDecPos, true, true, 0));
 		}
-		
+
 		if (!this.modifyDate.isDisabled()) {
-			this.modifyDate.setConstraint(new PTDateValidator(
-					Labels.getLabel("label_VasMovementDetailDialog_modifyDate.value"), true, null, DateUtility.getAppDate(), true));
+			this.modifyDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_VasMovementDetailDialog_modifyDate.value"), true, null,
+							DateUtility.getAppDate(), true));
 		}
 
+		if (!this.vasReference.isReadonly()) {
+			this.vasReference
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_VasMovementDetailDialog_vasRef.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -605,11 +613,11 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		} else {
 			this.btnCancel.setVisible(true);
 			this.vasReference.setReadonly(true);
-		}		
+		}
 
 		this.modiftAmt.setReadonly(isReadOnly("VasMovementDetailDialog_ModifyAmt"));
 		this.modifyDate.setReadonly(isReadOnly("VasMovementDetailDialog_ModifyDate"));
-	
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -742,7 +750,8 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 	/**
 	 * This method added the CheckListdetail object into chkListDetailList by setting RecordType according to tranType
 	 * <p>
-	 * eg: if(tranType==PennantConstants.TRAN_DEL){ aVasMovementDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL); }
+	 * eg: if(tranType==PennantConstants.TRAN_DEL){ aVasMovementDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+	 * }
 	 * </p>
 	 * 
 	 * @param aVasMovementDetail
@@ -785,7 +794,8 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 				&& !getVasMovementDialogCtrl().getVasMovementDetailList().isEmpty()) {
 			for (int i = 0; i < getVasMovementDialogCtrl().getVasMovementDetailList().size(); i++) {
 				VasMovementDetail vasMovementDetail = getVasMovementDialogCtrl().getVasMovementDetailList().get(i);
-				if (aVasMovementDetail.getVasMovementDetailId() == (vasMovementDetail.getVasMovementDetailId()) && aVasMovementDetail.getVasReference() == (vasMovementDetail.getVasReference())) {
+				if (aVasMovementDetail.getVasMovementDetailId() == (vasMovementDetail.getVasMovementDetailId())
+						&& aVasMovementDetail.getVasReference() == (vasMovementDetail.getVasReference())) {
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
 						if (aVasMovementDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 							aVasMovementDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -800,7 +810,8 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 						} else if (aVasMovementDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
 							recordAdded = true;
 							for (int j = 0; j < getVasMovementDialogCtrl().getVasMovementDetailList().size(); j++) {
-								VasMovementDetail vasdetail = getVasMovementDialogCtrl().getVasMovementDetailList().get(j);
+								VasMovementDetail vasdetail = getVasMovementDialogCtrl().getVasMovementDetailList()
+										.get(j);
 								if (aVasMovementDetail.getVasReference().trim()
 										.equalsIgnoreCase(vasMovementDetail.getVasReference().trim())) {
 									vasMovementDetailList.add(vasdetail);
@@ -826,7 +837,7 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		}
 		return auditHeader;
 	}
-	
+
 	public void onClick$btnSearchVasRec(Event event) throws Exception {
 		logger.debug("Entering");
 
@@ -835,8 +846,8 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		}
 
 		// Set Workflow Details
-		VASRecording aVASRecording = getVASRecordingService().getVASRecordingByRef(this.vasReference.getValue(),
-				"", enqiryModule);
+		VASRecording aVASRecording = getVASRecordingService().getVASRecordingByRef(this.vasReference.getValue(), "",
+				enqiryModule);
 		if (aVASRecording == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
@@ -847,10 +858,10 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 				+ aVASRecording.getVersion() + " ";
 
 		doShowDialogPage(aVASRecording);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	private void doShowDialogPage(VASRecording vASRecording) {
 		logger.debug("Entering");
 
@@ -862,7 +873,6 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		arg.put("enqiryModule", true);
 		arg.put("vasMovement", true);
 
-
 		try {
 			Executions.createComponents("/WEB-INF/pages/VASRecording/VASRecordingDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -871,7 +881,6 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 
 		logger.debug("Leaving");
 	}
-
 
 	// WorkFlow Components
 
@@ -910,7 +919,7 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 			logger.error("Exception: ", exp);
 		}
 	}
-	
+
 	public void onFulfill$vasReference(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = vasReference.getObject();
@@ -1004,7 +1013,7 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 	public void setVasMovementDialogCtrl(VasMovementDialogCtrl vasMovementDialogCtrl) {
 		this.vasMovementDialogCtrl = vasMovementDialogCtrl;
 	}
-	
+
 	public void setVASRecordingService(VASRecordingService vASRecordingService) {
 		this.vASRecordingService = vASRecordingService;
 	}

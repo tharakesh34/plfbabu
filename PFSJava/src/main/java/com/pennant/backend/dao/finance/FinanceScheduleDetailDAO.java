@@ -160,6 +160,12 @@ public interface FinanceScheduleDetailDAO {
 
 	List<FinanceScheduleDetail> getDueSchedulesByFacilityRef(String finReference, Date valueDate);
 
+	List<FinanceScheduleDetail> getFinScheduleDetailsBySchPriPaid(String id, String type, boolean isWIF);
+
+	FinanceScheduleDetail getFinSchDetailOrderBySchDate(String selectQuery, String whereClause, String reference);
+
+	FinanceScheduleDetail getNextUnpaidSchPayment(String finReference, Date valueDate);
+
 	void saveSchDueTaxDetail(ScheduleDueTaxDetail dueTaxDetail);
 
 	Long getSchdDueInvoiceID(String finReference, Date schdate);

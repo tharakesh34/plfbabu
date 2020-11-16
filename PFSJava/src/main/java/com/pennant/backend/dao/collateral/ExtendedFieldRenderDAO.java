@@ -42,4 +42,6 @@ public interface ExtendedFieldRenderDAO {
 	Map<String, String> getAllExtendedFieldMap(String tableName, String type);
 
 	Map<String, String> getAllExtendedFieldMapForUpdateCpid(String tableName, String type);
+
+	Map<String, Object> getExtendedField(String reference, int seqNo, String tableName, String type);
 }

@@ -929,4 +929,20 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		return 0;
 	}
 
+	@Override
+	public int getMandateByMandateRef(String mandateRef) {
+		logger.info(Literal.ENTERING);
+		MapSqlParameterSource paramMap = null;
+		StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM MANDATES");
+		sql.append(" Where  MandateRef = :MandateRef");
+		logger.trace(Literal.SQL + sql.toString());
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("MandateRef", mandateRef);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			return 0;
+		}
+	}
 }

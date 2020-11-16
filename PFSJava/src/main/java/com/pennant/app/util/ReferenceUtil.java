@@ -76,6 +76,7 @@ public class ReferenceUtil implements Serializable {
 	private static CollateralSetupDAO collateralSetupDAO;
 	private static VASRecordingDAO vASRecordingDAO;
 	private static SequenceDao<?> sequenceGenetor;
+	private static com.pennant.backend.dao.SequenceDao<?> sequenceDAO;
 
 	/**
 	 * Method for Generating Sequence Reference Number based on Division code
@@ -226,6 +227,58 @@ public class ReferenceUtil implements Serializable {
 			refUpdated = getCollateralSetupDAO().updateCollReferene(befSeqNumber, generatedSeqNo);
 		}
 		logger.debug(String.format("Fin Reference %s", referenceNumber));
+		logger.debug(Literal.LEAVING);
+		return referenceNumber;
+
+	}
+
+	/**
+	 * Method for Preparing Sequence Reference Number for the Collateral Detail module
+	 */
+	public static String generateCollateralReference() {
+		logger.debug(Literal.ENTERING);
+		long generatedSeqNo = 0;
+		String referenceNumber = "";
+		//retrieve next seq no from sequence 
+		long befSeqNumber = sequenceGenetor.getNextValue("SeqCollateralSetup");
+
+		String seqNumString = String.valueOf(befSeqNumber).trim();
+
+		long dateYYJDay = 0;
+		long seqNumber = 1;
+		//Here we will get seqno in the  inform ofYYDAYOFYEAR 
+		if (seqNumString.length() <= 5) {
+			try {
+				//get first 5 numbers to get the year and day 
+				dateYYJDay = Long.parseLong(seqNumString);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+				seqNumber = 1;
+			}
+		} else if (seqNumString.length() > 5) {
+			try {
+				//get first 5 numbers to get the year and day 
+				dateYYJDay = Long.parseLong(seqNumString.substring(0, 5));
+				seqNumber = Long.parseLong(seqNumString.substring(5, seqNumString.length()));
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+		//below condition will restart the collateral seq with 1 on daily basis(YYDAYOFYEAR+SEQNo
+		if (dateYYJDay != DateUtility.getDateYYJDay()) {
+			dateYYJDay = DateUtility.getDateYYJDay();
+			//preparing new seqno
+			String updatedSeq = "00001";
+			String seqString = String.valueOf(dateYYJDay).concat(updatedSeq);
+			long seqNo = Long.valueOf(seqString);
+			//call sequence update query
+			sequenceDAO.updateSequence("SeqCollateralSetup", seqNo);
+		}
+		generatedSeqNo = Long
+				.parseLong(String.valueOf(dateYYJDay).concat(StringUtils.leftPad(String.valueOf(seqNumber), 5, '0')));
+		String moduleCode = CollateralConstants.COLL_DIVISION;
+		referenceNumber = moduleCode + generatedSeqNo;
+		logger.debug(String.format("Collateral Reference %s", referenceNumber));
 		logger.debug(Literal.LEAVING);
 		return referenceNumber;
 
@@ -502,4 +555,9 @@ public class ReferenceUtil implements Serializable {
 	public static void setSequenceGenetor(SequenceDao<?> sequenceGenetor) {
 		ReferenceUtil.sequenceGenetor = sequenceGenetor;
 	}
+
+	public static void setSequenceDAO(com.pennant.backend.dao.SequenceDao<?> sequenceDAO) {
+		ReferenceUtil.sequenceDAO = sequenceDAO;
+	}
+
 }

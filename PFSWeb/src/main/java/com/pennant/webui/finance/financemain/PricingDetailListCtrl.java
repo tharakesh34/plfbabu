@@ -357,11 +357,16 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				}
 				detail.setFinanceMains(tempList);
 				detail.setTopUpFinFeeDetails(tempFeeList);
+				detail.setTopUpVasDetails(tempVASList);
 				getFinanceDetail().setPricingDetail(detail);
 			}
-
-			setFinAssetValue(
-					finAssetValue.add(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue()));
+			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+			//Bugfix: After loan split we have to display only parent loan amount as FinAssetValue
+			if (financeMain.isLoanSplitted()) {
+				setFinAssetValue(financeMain.getFinAssetValue());
+			} else {
+				setFinAssetValue(finAssetValue.add(financeMain.getFinAssetValue()));
+			}
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(getFinanceDetail());
@@ -537,10 +542,16 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 			CurrencyBox toupLoanAmt1Box = (CurrencyBox) listBoxPricingDetail.getFellowIfAny("LoanAmount_TopUp_2");
 			topUpLoan1Amt = getBigDecimalValue(toupLoanAmt1Box);
 		}
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		BigDecimal totalAmt = BigDecimal.ZERO;
+		//Bugfix: After loan split we have to display only parent loan amount as FinAssetValue
+		if (financeMain.isLoanSplitted()) {
+			totalAmt = parentLoanAmt;
+		} else {
+			totalAmt = parentLoanAmt.add(topUpLoan0Amt).add(topUpLoan1Amt);
+		}
 
-		BigDecimal totalAmt = parentLoanAmt.add(topUpLoan0Amt).add(topUpLoan1Amt);
-
-		if (totalAmt.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue()) != 0) {
+		if (totalAmt.compareTo(financeMain.getFinAssetValue()) != 0) {
 			return false;
 		}
 
@@ -1507,7 +1518,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
-
+		this.split.setChecked(financeMain.isLoanSplitted());
 		doFillBasicDetailList(financeMain, finType);
 
 		List<FinFeeDetail> finFeeDetail = new ArrayList<FinFeeDetail>();

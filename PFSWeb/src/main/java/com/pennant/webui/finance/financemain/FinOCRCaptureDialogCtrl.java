@@ -3,6 +3,8 @@ package com.pennant.webui.finance.financemain;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -10,19 +12,27 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
+import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.event.UploadEvent;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinOCRCapture;
@@ -30,12 +40,15 @@ import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.service.finance.FinOCRHeaderService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
@@ -48,11 +61,16 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	 */
 	protected Window windowFinOCRCaptureDialog;
 	protected Textbox loanReference;
-	protected Combobox disbursementSequence;
-	protected Textbox ocrRecCurTranche;
+	protected Intbox disbursementSequence;
+	//protected Textbox ocrRecCurTranche;
 	protected CurrencyBox builderDemand;
 	protected CurrencyBox ocrPaid;
+	protected Datebox ocrReceiptDate;
 	protected Textbox remarks;
+	protected Label fileUpload; // autoWired
+	protected Button btnUpload; // autoWired
+	protected Button btnUploadView;
+	protected Textbox uploadedfileName;
 	private FinOCRCapture finOCRCapture;
 	private FinOCRDialogCtrl finOCRDialogCtrl;
 	private transient boolean fromParent;
@@ -61,9 +79,13 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	private FinanceDetail financeDetail;
 	List<FinanceDisbursement> financeDisbursement = new ArrayList<>();
 	private List<FinanceDisbursement> approvedDisbursments;
+	private FinOCRHeaderService finOCRHeaderService;
 	private int ccyFormatter = 0;
 	private FinOCRHeader finOCRHeader;
 	protected Decimalbox disbDateAmount;
+	private Media media;
+	private byte[] docbyte;
+	Date appDate = SysParamUtil.getAppDate();
 
 	/**
 	 * default constructor.<br>
@@ -85,6 +107,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	public void onCreate$windowFinOCRCaptureDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -168,6 +191,8 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		this.ocrPaid.setTextBoxWidth(150);
 		this.ocrPaid.setMandatory(true);
 		this.remarks.setMaxlength(500);
+		this.disbursementSequence.setDisabled(true);
+		this.ocrReceiptDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -291,6 +316,50 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	}
 
 	/**
+	 * when the "Upload" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onUpload$btnUpload(UploadEvent event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		media = event.getMedia();
+
+		if (!MediaUtil.isPdf(media) && !MediaUtil.isExcel(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "pdf or excel" }));
+			return;
+		}
+
+		if (media.getName().length() > 100) {
+			throw new WrongValueException(this.uploadedfileName, Labels.getLabel("label_Filename_length_File"));
+		} else {
+			this.uploadedfileName.setValue(media.getName());
+			this.docbyte = media.getByteData();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClick$btnUploadView(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		byte[] docImage = this.finOCRCapture.getDocImage();
+		Long documentRef = this.finOCRCapture.getDocumentRef();
+		if (docImage == null && documentRef != null && documentRef > 0) {
+			this.finOCRCapture.setDocImage(finOCRHeaderService.getDocumentManImage(documentRef));
+		}
+
+		if (this.finOCRCapture.getDocImage() != null) {
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("finOCRCapture", this.finOCRCapture);
+			Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
+		}
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	/**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param afinOCRCapture
@@ -299,12 +368,12 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	public void doWriteBeanToComponents(FinOCRCapture afinOCRCapture) {
 		logger.debug(Literal.ENTERING);
 		if (financeDetail != null) {
-			int seq = afinOCRCapture.getDisbSeq();
+			int seq = getDisbursementSequence(afinOCRCapture);
 			if (financeDisbursement.size() == 1 && afinOCRCapture.isNewRecord()) {
-				seq = financeDisbursement.get(0).getDisbSeq();
-
+				//seq = financeDisbursement.get(0).getDisbSeq();
 			}
-			fillComboBox(this.disbursementSequence, seq, financeDisbursement, afinOCRCapture.isNewRecord());
+
+			this.disbursementSequence.setValue(seq);
 			setDisbursmentAmount();
 			if (afinOCRCapture.isNewRecord()) {
 				this.loanReference.setValue(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
@@ -316,7 +385,12 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 				.setValue(PennantApplicationUtil.formateAmount(afinOCRCapture.getDemandAmount(), ccyFormatter));
 		this.ocrPaid.setValue(PennantApplicationUtil.formateAmount(afinOCRCapture.getPaidAmount(), ccyFormatter));
 		this.remarks.setValue(afinOCRCapture.getRemarks());
-
+		if (afinOCRCapture.getReceiptDate() == null) {
+			afinOCRCapture.setReceiptDate(appDate);
+		}
+		this.ocrReceiptDate.setValue(afinOCRCapture.getReceiptDate());
+		this.uploadedfileName.setValue(afinOCRCapture.getFileName());
+		setDocbyte(afinOCRCapture.getDocImage());
 		if (finOCRHeader != null) {
 			int percentage = finOCRHeader.getCustomerPortion();
 			getCurrentTranchAmount(afinOCRCapture.getDemandAmount(), percentage);
@@ -334,14 +408,14 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		}
 	}
 
-	private void getCurrentTranchAmount(BigDecimal demand, int customerPortion) {
+	private BigDecimal getCurrentTranchAmount(BigDecimal demand, int customerPortion) {
 		BigDecimal amout = BigDecimal.ZERO;
 		if (finOCRHeader != null) {
 
 			amout = demand.multiply((new BigDecimal(customerPortion)).divide(new BigDecimal(100), ccyFormatter,
 					RoundingMode.HALF_DOWN));
 		}
-		ocrRecCurTranche.setValue(PennantApplicationUtil.amountFormate(amout, ccyFormatter));
+		return amout;
 	}
 
 	/**
@@ -413,40 +487,88 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		}
 		//Disbursement Seq
 		try {
-			if ("#".equals(getComboboxValue(this.disbursementSequence))) {
-				if (!this.disbursementSequence.isDisabled()) {
-					throw new WrongValueException(this.disbursementSequence, Labels.getLabel("STATIC_INVALID",
-							new String[] { Labels.getLabel("label_FinOCRCaptureDialog_DisbursementSequence.value") }));
-				}
-			} else {
-				Comboitem select = this.disbursementSequence.getSelectedItem();
-				FinanceDisbursement disbursement = (FinanceDisbursement) select.getAttribute("data");
-				afinOCRCapture.setDisbSeq(disbursement.getDisbSeq());
-			}
+
+			afinOCRCapture.setDisbSeq(this.disbursementSequence.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		//Builder Demand
 		try {
-			BigDecimal demand = this.builderDemand.getValidateValue();
+			BigDecimal demand = this.builderDemand.getActualValue();
+			if (demand.compareTo(BigDecimal.ZERO) < 0) {
+				throw new WrongValueException(this.builderDemand, Labels.getLabel("NUMBER_MINVALUE_EQ",
+						new String[] { Labels.getLabel("label_FinOCRCaptureDialog_BuilderDemand.value"), "zero" }));
+			}
 			afinOCRCapture.setDemandAmount(PennantApplicationUtil.unFormateAmount(demand, ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Builder Demand
+		//OCR Paid
 		try {
-			BigDecimal validateValue = this.ocrPaid.getValidateValue();
-			afinOCRCapture.setPaidAmount(PennantApplicationUtil.unFormateAmount(validateValue, ccyFormatter));
+			BigDecimal ocrPaid = this.ocrPaid.getActualValue();
+			if (ocrPaid.compareTo(BigDecimal.ZERO) < 0) {
+				throw new WrongValueException(this.builderDemand, Labels.getLabel("NUMBER_MINVALUE_EQ",
+						new String[] { Labels.getLabel("label_FinOCRCaptureDialog_OCRpaid.value"), "zero" }));
+			}
+			afinOCRCapture.setPaidAmount(PennantApplicationUtil.unFormateAmount(ocrPaid, ccyFormatter));
+
+			if ((this.builderDemand.getActualValue().compareTo(BigDecimal.ZERO) == 0)
+					&& (this.ocrPaid.getActualValue().compareTo(BigDecimal.ZERO) == 0)) {
+				throw new WrongValueException(this.builderDemand, "Builder Demand and Paid Amount both cannot be Zero");
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		//This condition for either Builder demand or OCR Paid amount is mandatory
+		try {
+			BigDecimal ocrPaid = this.ocrPaid.getActualValue();
+			BigDecimal demand = this.builderDemand.getActualValue();
+			if (ocrPaid.compareTo(BigDecimal.ZERO) == 0 && demand.compareTo(BigDecimal.ZERO) == 0) {
+				String msg = "Either ".concat(Labels.getLabel("label_FinOCRCaptureDialog_BuilderDemand.value"));
+				msg = msg.concat(" or ").concat(Labels.getLabel("label_FinOCRCaptureDialog_OCRpaid.value"));
+				throw new WrongValueException(this.builderDemand,
+						Labels.getLabel("FIELD_NO_NEGATIVE", new String[] { msg }));
+			}
+			afinOCRCapture.setPaidAmount(PennantApplicationUtil.unFormateAmount(ocrPaid, ccyFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		//Remarks
 		try {
 			afinOCRCapture.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		//Receipt Date
+		try {
+			if (DateUtility.compare(this.ocrReceiptDate.getValue(), appDate) > 0) {
+				throw new WrongValueException(this.ocrReceiptDate,
+						Labels.getLabel("DATE_NOT_AFTER",
+								new String[] { Labels.getLabel("label_FinOCRCaptureDialog_OCRdate.value"),
+										DateUtility.format(appDate, "dd/MM/yyyy") }));
+			}
+			afinOCRCapture.setReceiptDate(this.ocrReceiptDate.getValue());
+
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			afinOCRCapture.setFileName(this.uploadedfileName.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Document Image
+		try {
+			afinOCRCapture.setDocImage(this.docbyte);
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 
 		if (!wve.isEmpty()) {
@@ -471,9 +593,18 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 
 		this.btnNew.setVisible(false);
 		this.btnEdit.setVisible(false);
+		if (StringUtils.equals(afinOCRCapture.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)) {
+			this.btnUploadView.setVisible(true);
+			this.btnUpload.setVisible(false);
+		} else {
+			this.btnUploadView.setVisible(false);
+			this.btnUpload.setVisible(true);
+		}
+
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (afinOCRCapture.isNew()) {
 			this.btnCtrl.setInitNew();
+			afinOCRCapture.setReceiptDate(appDate);
 			doEdit();
 		} else {
 			if (isFromParent()) {
@@ -507,16 +638,6 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	 */
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
-		//		if (!this.customerContribution.isReadonly() && this.spaceCustomerContribution.isVisible()) {
-		//			this.customerContribution.setConstraint(
-		//					new PTNumberValidator(Labels.getLabel("label_FinOCRCaptureDialog_CustomerContribution.value"), true,
-		//							false, 1, 99));
-		//		}
-		//
-		//		if (!this.financerContribution.isReadonly() && this.spaceFinancerContribution.isVisible()) {
-		//			this.financerContribution.setConstraint(new PTNumberValidator(
-		//					Labels.getLabel("label_FinOCRCaptureDialog_FinancerContribution.value"), true, false, 1, 99));
-		//		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -597,6 +718,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_disbSeq"), this.disbursementSequence);
 		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_builderDemand"), this.builderDemand);
 		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_ocrPaid"), this.ocrPaid);
+		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_ocrPaid"), this.ocrReceiptDate);
 		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_remarks"), this.remarks);
 		logger.debug(Literal.LEAVING);
 	}
@@ -610,6 +732,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		readOnlyComponent(true, this.disbursementSequence);
 		readOnlyComponent(true, this.builderDemand);
 		readOnlyComponent(true, this.ocrPaid);
+		readOnlyComponent(true, this.ocrReceiptDate);
 		readOnlyComponent(true, this.remarks);
 
 		if (isWorkFlowEnabled()) {
@@ -629,7 +752,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	 */
 	public void doClear() {
 		logger.debug(Literal.ENTERING);
-		this.disbursementSequence.setValue("");
+		//this.disbursementSequence.setValue("");
 		this.builderDemand.setValue("");
 		this.ocrPaid.setValue("");
 		this.remarks.setValue("");
@@ -701,7 +824,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		boolean recordAdded = false;
 
 		AuditHeader auditHeader = getAuditHeader(afinOCRCapture, tranType);
-		finOCRCaptureList = new ArrayList<FinOCRCapture>();
+		//finOCRCaptureList = new ArrayList<FinOCRCapture>();
 
 		if (CollectionUtils.isNotEmpty(getFinOCRDialogCtrl().getFinOCRCaptureList())) {
 			if (!PennantConstants.TRAN_DEL.equals(tranType)) {
@@ -800,17 +923,15 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	}
 
 	private void setDisbursmentAmount() {
-		Comboitem item = this.disbursementSequence.getSelectedItem();
-		if (item != null && item.getValue() != null) {
-			FinanceDisbursement disbursement = (FinanceDisbursement) item.getAttribute("data");
-			if (disbursement != null) {
-				BigDecimal disAmt = getTotalByDisbursment(disbursement,
-						financeDetail.getFinScheduleData().getFinanceMain());
-				this.disbDateAmount.setValue(PennantApplicationUtil.formateAmount(disAmt, ccyFormatter));
-			}
-		} else {
-			this.disbDateAmount.setValue(BigDecimal.ZERO);
-		}
+		//TODO
+		/*
+		 * Intbox item = this.disbursementSequence.getSelectedItem(); if (item != null && item.getValue() != null) {
+		 * FinanceDisbursement disbursement = (FinanceDisbursement) item.getAttribute("data"); if (disbursement != null)
+		 * { BigDecimal disAmt = getTotalByDisbursment(disbursement,
+		 * financeDetail.getFinScheduleData().getFinanceMain());
+		 * this.disbDateAmount.setValue(PennantApplicationUtil.formateAmount(disAmt, ccyFormatter)); } } else {
+		 * this.disbDateAmount.setValue(BigDecimal.ZERO); }
+		 */
 	}
 
 	public static BigDecimal getTotalByDisbursment(FinanceDisbursement financeDisbursement, FinanceMain main) {
@@ -834,6 +955,29 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());
 		return totdisbAmt;
 
+	}
+
+	/**
+	 * Generating Step Sequence
+	 * 
+	 * @param OCRDetail
+	 * @return
+	 */
+	private int getDisbursementSequence(FinOCRCapture ocrCapture) {
+		int sequence = 0;
+		if (ocrCapture.getDisbSeq() > 0) {
+			return ocrCapture.getDisbSeq();
+		}
+		List<FinOCRCapture> list = finOCRDialogCtrl.getFinOCRCaptureList();
+		if (!CollectionUtils.isEmpty(list)) {
+			for (FinOCRCapture ocrDetail2 : list) {
+				if (ocrDetail2.getDisbSeq() > 0) {
+					sequence = ocrDetail2.getDisbSeq();
+				}
+			}
+		}
+
+		return sequence + 1;
 	}
 
 	// ******************************************************//
@@ -870,6 +1014,22 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
+	}
+
+	public FinOCRHeaderService getFinOCRHeaderService() {
+		return finOCRHeaderService;
+	}
+
+	public void setFinOCRHeaderService(FinOCRHeaderService finOCRHeaderService) {
+		this.finOCRHeaderService = finOCRHeaderService;
+	}
+
+	public byte[] getDocbyte() {
+		return docbyte;
+	}
+
+	public void setDocbyte(byte[] docbyte) {
+		this.docbyte = docbyte;
 	}
 
 }

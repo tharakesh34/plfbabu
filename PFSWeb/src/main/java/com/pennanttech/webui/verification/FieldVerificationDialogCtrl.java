@@ -1082,7 +1082,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
 					verification.setRemarks(remarks.getValue());
 					if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-							&& StringUtils.isEmpty(verification.getRemarks())) {
+							&& StringUtils.isEmpty(verification.getRemarks()) && !remarks.isReadonly()) {
 						throw new WrongValueException(remarks,
 								"Remarks are mandatory when Verification is Not Required");
 					}

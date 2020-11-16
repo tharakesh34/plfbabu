@@ -15,6 +15,11 @@ import javax.sql.DataSource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -60,11 +65,6 @@ import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.notifications.service.NotificationService;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private static final Logger logger = Logger.getLogger(PresentmentDetailExtract.class);
@@ -611,15 +611,21 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							continue;
 						}
 
-						boolean processReceipt = processInactiveLoan(presentmentRef);
+						boolean processReceipt = false;
+						if (SysParamUtil.isAllowed(SMTParameterConstants.CREATE_PRESENTMENT_RECEIPT_EOD)) {
+							processReceipt = processInactiveLoan(presentmentRef);
+						} else {
+							processReceipt = processPresentmentReceipt(presentmentRef);
+						}
+
 						if (RepayConstants.PEXC_SUCCESS.equals(status)) {
 							successCount++;
 							updatePresentmentDetails(presentmentRef, status);
 							updatePresentmentHeader(presentmentRef, status, status);
 							presentmentDetailService.updateFinanceDetails(presentmentRef);
-							PresentmentDetail presntmntDetail = isPresentmentResponseIsExist(presentmentRef);
+							PresentmentDetail pd = isPresentmentResponseIsExist(presentmentRef);
 							if (!processReceipt) {
-								presentmentDetailService.processSuccessPresentments(presntmntDetail.getReceiptID());
+								presentmentDetailService.processSuccessPresentments(pd.getReceiptID());
 							}
 							updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_REALISED);
 							saveBatchLog(batchId, status, presentmentRef, null);
@@ -714,13 +720,23 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		if (!isLoanActive) {
 			PresentmentDetail presentmentDetail = isPresentmentResponseIsExist(presentmentRef);
 			if (presentmentDetail != null && presentmentDetail.getReceiptID() == 0) {
-				presentmentDetailService.executeReceipts(presentmentDetail, false);
+				presentmentDetailService.executeReceipts(presentmentDetail, false, true);
 				processReceipt = true;
 			}
 		}
 
 		return processReceipt;
+	}
 
+	public boolean processPresentmentReceipt(String presentmentRef) throws Exception {
+		boolean processReceipt = false;
+		PresentmentDetail presentmentDetail = isPresentmentResponseIsExist(presentmentRef);
+		if (presentmentDetail != null && presentmentDetail.getReceiptID() == 0
+				&& presentmentDetail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
+			presentmentDetail.setAdvanceAmt(BigDecimal.ZERO);
+			presentmentDetailService.executeReceipts(presentmentDetail, false, false);
+		}
+		return processReceipt;
 	}
 
 	// Truncating the data from staging tables
@@ -1552,7 +1568,6 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	 * Updating the cheque status if the mode is PDC
 	 */
 	private void updateChequeStatus(String presentmentRef, String status) {
-
 		String paymentMode = presentmentDetailService.getPaymenyMode(presentmentRef);
 		PresentmentDetail detail = presentmentDetailService.getPresentmentDetailsByMode(presentmentRef, paymentMode);
 		// Updating the cheque status as releases if the payment mode is PDC
@@ -1593,6 +1608,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 		sql.append(
 				" SELECT PD.ID, PD.PRESENTMENTID, PD.FINREFERENCE, PD.SCHDATE, PD.MANDATEID,PD.ADVANCEAMT, PD.EXCESSID,PD.RECEIPTID, PD.PRESENTMENTAMT, PD.EXCLUDEREASON, PD.BOUNCEID , PB.ACCOUNTNO, PB.ACTYPE");
+		sql.append(" ,PH.PRESENTMENTTYPE");
 		sql.append(" FROM PRESENTMENTDETAILS PD INNER JOIN PRESENTMENTHEADER PH ON PH.ID = PD.PRESENTMENTID ");
 		sql.append(
 				" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID WHERE  PD.PRESENTMENTREF = :PRESENTMENTREF");

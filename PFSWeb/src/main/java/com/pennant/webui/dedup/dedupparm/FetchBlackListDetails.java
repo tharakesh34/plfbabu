@@ -1,7 +1,9 @@
 package com.pennant.webui.dedup.dedupparm;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zul.Window;
@@ -18,6 +20,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -45,7 +48,36 @@ public class FetchBlackListDetails {
 
 	public static FinanceDetail getBlackListCustomers(String userRole, FinanceDetail tFinanceDetail, Window parent,
 			String curLoginUser) {
-		return new FetchBlackListDetails(userRole, tFinanceDetail, parent, curLoginUser).getFinanceDetail();
+		List<FinBlacklistCustomer> finBlacklistCustomer = new ArrayList<FinBlacklistCustomer>();
+		FinanceDetail detail = new FetchBlackListDetails(userRole, tFinanceDetail, parent, curLoginUser,
+				tFinanceDetail.getCustomerDetails()).getFinanceDetail();
+
+		if (detail.getFinBlacklistCustomer() != null) {
+			finBlacklistCustomer.addAll(detail.getFinBlacklistCustomer());
+		}
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.COAPP_BLACKLIST_DEDUP_REQ)) {
+			if (detail.getFinScheduleData().getFinanceMain().isBlacklisted()
+					&& detail.getFinScheduleData().getFinanceMain().isBlacklistOverride()
+					|| !detail.getFinScheduleData().getFinanceMain().isBlacklisted()) {
+				if (CollectionUtils.isNotEmpty(detail.getJountAccountDetailList())) {
+					for (JointAccountDetail coapplicant : detail.getJountAccountDetailList()) {
+						CustomerDetails customerDetails = coapplicant.getCustomerDetails();
+						detail = new FetchBlackListDetails(userRole, tFinanceDetail, parent, curLoginUser,
+								customerDetails).getFinanceDetail();
+						if (detail.getFinScheduleData().getFinanceMain().isBlacklisted()
+								&& !detail.getFinScheduleData().getFinanceMain().isBlacklistOverride()) {
+							return detail;
+						}
+						if (detail.getFinBlacklistCustomer() != null) {
+							finBlacklistCustomer.addAll(detail.getFinBlacklistCustomer());
+						}
+					}
+				}
+			}
+		}
+		detail.setFinBlacklistCustomer(finBlacklistCustomer);
+		return detail;
 	}
 
 	/**
@@ -55,7 +87,8 @@ public class FetchBlackListDetails {
 	 * @param parent
 	 */
 	@SuppressWarnings("unchecked")
-	private FetchBlackListDetails(String userRole, FinanceDetail aFinanceDetail, Window parent, String curLoginUser) {
+	private FetchBlackListDetails(String userRole, FinanceDetail aFinanceDetail, Window parent, String curLoginUser,
+			CustomerDetails customerDetails) {
 		super();
 		logger.debug("Entering");
 
@@ -63,10 +96,10 @@ public class FetchBlackListDetails {
 		String mobileNumber = "";
 		StringBuilder custAddress = new StringBuilder("");
 
-		if (aFinanceDetail.getCustomerDetails().getCustomer() != null) {
-			customer = aFinanceDetail.getCustomerDetails().getCustomer();
-			if (aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null) {
-				for (CustomerPhoneNumber custPhone : aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList()) {
+		if (customerDetails.getCustomer() != null) {
+			customer = customerDetails.getCustomer();
+			if (customerDetails.getCustomerPhoneNumList() != null) {
+				for (CustomerPhoneNumber custPhone : customerDetails.getCustomerPhoneNumList()) {
 					if (custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)) {
 						mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
 								custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
@@ -76,13 +109,14 @@ public class FetchBlackListDetails {
 			}
 		}
 
-		if (aFinanceDetail.getCustomerDetails().getCustomer() != null) {
-			customer = aFinanceDetail.getCustomerDetails().getCustomer();
-			if (aFinanceDetail.getCustomerDetails().getAddressList() != null) {
-				for (CustomerAddres address : aFinanceDetail.getCustomerDetails().getAddressList()) {
+		if (customerDetails.getCustomer() != null) {
+			customer = customerDetails.getCustomer();
+			if (customerDetails.getAddressList() != null) {
+				for (CustomerAddres address : customerDetails.getAddressList()) {
 					if (address.getCustAddrPriority() == Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 						custAddress.append(address.getCustAddrHNbr()).append(", ");
-						custAddress.append(address.getCustAddrStreet()).append(", ");
+						custAddress.append(StringUtils.isNotBlank(address.getCustAddrStreet())
+								? address.getCustAddrStreet().concat(", ") : "");
 						if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOM_BLACKLIST_PARAMS)) {
 							custAddress.append(StringUtils.isNotEmpty(address.getCustAddrLine2())
 									? address.getCustAddrLine2().concat(", ") : "");
@@ -111,7 +145,7 @@ public class FetchBlackListDetails {
 			blackListCustData.setAddress(custAddress.toString());
 		}
 		// setting the customer documents data
-		doSetCustomerDocumentsData(aFinanceDetail, blackListCustData);
+		doSetCustomerDocumentsData(aFinanceDetail, blackListCustData, customerDetails);
 
 		setBlackListCustomers(
 				getDedupParmService().fetchBlackListCustomers(userRole, finType, blackListCustData, curLoginUser));
@@ -210,7 +244,8 @@ public class FetchBlackListDetails {
 	 * @param aFinanceDetail
 	 * @param blackListCustData
 	 */
-	private void doSetCustomerDocumentsData(FinanceDetail aFinanceDetail, BlackListCustomers blackListCustData) {
+	private void doSetCustomerDocumentsData(FinanceDetail aFinanceDetail, BlackListCustomers blackListCustData,
+			CustomerDetails acustomerDetails) {
 		logger.debug(Literal.ENTERING);
 		String aadharCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, DocType.AADHAAR.name());
 		String passPortCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, DocType.PASSPORT.name());
@@ -218,7 +253,7 @@ public class FetchBlackListDetails {
 		String drivingLicenseCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE,
 				DocType.DRIVING_LICENCE.name());
 		String panCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, DocType.PAN.name());
-		CustomerDetails customerDetails = aFinanceDetail.getCustomerDetails();
+		CustomerDetails customerDetails = acustomerDetails;
 		if (customerDetails != null && customerDetails.getCustomerDocumentsList() != null) {
 			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
 				if (StringUtils.equals(aadharCode, document.getCustDocCategory())) { // Aadhar

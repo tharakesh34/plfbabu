@@ -72,35 +72,36 @@ public class FinanceDataDefaulting {
 		finMain.setUserDetails(userDetails);
 
 		//customer Defaulting
-		if (StringUtils.isNotBlank(finMain.getCoreBankId())) {
-			customer = customerDAO.getCustomerByCoreBankId(finMain.getCoreBankId(), "");
-			if (customer != null) {
-				finMain.setLovDescCustCIF(customer.getCustCIF());
-				finMain.setLovDescCustCIF(customer.getCustCIF());
-			} else {
-				String[] valueParm = new String[2];
-				valueParm[0] = "CoreBankId";
-				valueParm[1] = finMain.getCoreBankId();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
-				finScheduleData.setErrorDetails(errorDetails);
-				return finDetail;
+		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup)) {
+			if (StringUtils.isNotBlank(finMain.getCoreBankId())) {
+				customer = customerDAO.getCustomerByCoreBankId(finMain.getCoreBankId(), "");
+				if (customer != null) {
+					finMain.setLovDescCustCIF(customer.getCustCIF());
+					finMain.setLovDescCustCIF(customer.getCustCIF());
+				} else {
+					String[] valueParm = new String[2];
+					valueParm[0] = "CoreBankId";
+					valueParm[1] = finMain.getCoreBankId();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+					finScheduleData.setErrorDetails(errorDetails);
+					return finDetail;
+				}
 			}
-		}
 
-		//Get Customer information
-		if (customer == null) {
-			customer = customerDAO.getCustomerByCIF(finMain.getCustCIF(), "");
+			//Get Customer information
 			if (customer == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getLovDescCustCIF();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90101", valueParm)));
-				finScheduleData.setErrorDetails(errorDetails);
-				return finDetail;
+				customer = customerDAO.getCustomerByCIF(finMain.getCustCIF(), "");
+				if (customer == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finMain.getLovDescCustCIF();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90101", valueParm)));
+					finScheduleData.setErrorDetails(errorDetails);
+					return finDetail;
+				}
 			}
+			finMain.setCustID(customer.getCustID());
+			finDetail.getCustomerDetails().setCustomer(customer);
 		}
-
-		finMain.setCustID(customer.getCustID());
-		finDetail.getCustomerDetails().setCustomer(customer);
 
 		// Date formats
 		setDefaultDateFormats(finMain);
@@ -289,9 +290,11 @@ public class FinanceDataDefaulting {
 		}
 
 		// If Finance Branch is NULL get it from customer (Without customer it
-		// would not have reached this point)		
-		if (StringUtils.isBlank(finMain.getFinBranch())) {
-			finMain.setFinBranch(finDeail.getCustomerDetails().getCustomer().getCustDftBranch());
+		// would not have reached this point)	
+		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup)) {
+			if (StringUtils.isBlank(finMain.getFinBranch())) {
+				finMain.setFinBranch(finDeail.getCustomerDetails().getCustomer().getCustDftBranch());
+			}
 		}
 
 		// validate finance branch
@@ -1016,6 +1019,18 @@ public class FinanceDataDefaulting {
 
 		finMain.setFixedRateTenor(financeType.getFixedRateTenor());
 		finMain.setEqualRepay(financeType.isEqualRepayment());
+		//UnPlanned EMI Holiday defaulting
+		if (financeType.isAlwUnPlanEmiHoliday()) {
+			if (finMain.getMaxUnplannedEmi() <= 0) {
+				finMain.setMaxUnplannedEmi(financeType.getMaxUnplannedEmi());
+			}
+			if (finMain.getUnPlanEMIHLockPeriod() <= 0) {
+				finMain.setUnPlanEMIHLockPeriod(financeType.getUnPlanEMIHLockPeriod());
+			}
+			if (!finMain.isUnPlanEMICpz()) {
+				finMain.setUnPlanEMICpz(financeType.isUnPlanEMICpz());
+			}
+		}
 
 		//UnPlanned EMI Holiday defaulting
 		if (financeType.isAlwUnPlanEmiHoliday()) {

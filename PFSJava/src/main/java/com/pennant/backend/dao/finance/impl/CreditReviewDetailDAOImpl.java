@@ -77,8 +77,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 		selectSql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CreditReviewData");
-		selectSql.append(
-				" Where FinReference = :FinReference AND TemplateName = :TemplateName AND TemplateVersion = :TemplateVersion");
+		selectSql.append(" Where FinReference = :FinReference AND TemplateName = :TemplateName ");
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		RowMapper<CreditReviewData> typeRowMapper = ParameterizedBeanPropertyRowMapper
@@ -87,7 +86,6 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 		try {
 			creditReviewData = jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
 			creditReviewData = null;
 		}
 
@@ -182,12 +180,14 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 			whereCondition.append(" Product = :Product");
 		}
 
-		if (StringUtils.isNotEmpty(creditReviewDetail.getEmploymentType())
-				&& StringUtils.isNotEmpty(creditReviewDetail.getEligibilityMethod())) {
+		if (StringUtils.isNotEmpty(creditReviewDetail.getEmploymentType())) {
 			if (StringUtils.isNotEmpty(whereCondition.toString())) {
 				whereCondition.append(" and ");
 			}
 			whereCondition.append(" EmploymentType = :EmploymentType ");
+		}
+
+		if (StringUtils.isNotEmpty(creditReviewDetail.getEligibilityMethod())) {
 			if (StringUtils.isNotEmpty(whereCondition.toString())) {
 				whereCondition.append(" and ");
 			}
@@ -212,6 +212,9 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 			creditReviewDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			creditReviewDetail = null;
+		} catch (Exception e) {
+			creditReviewDetail = null;
+			logger.debug(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -223,13 +226,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 
 		logger.debug(Literal.ENTERING);
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("select TemplateName, SalFields, SepFields, ConsolidatedBankingFields,");
-		selectSql.append(
-				" ConsolidatedObligationsFields, FinalEligIncomeDetailsFields, finalEligIncomeUserEntryFields,");
-		selectSql.append(" FinalEligLowLtvUserEntryFields, FinalEligLRDUSerEntryFields, FinalEligibilityFields,");
-		selectSql.append(" FinalEligUserEntryFields, FinalEligSuperLowerFields, FinalEligSuperLowerEntryFields,");
-		selectSql.append(" FinalEligSuperHigherFields, FinalEligSuperHigherEntryField, FinalEligAdvantageFields");
-		selectSql.append(" from BREExtCreditReviewConfig where CreditReviewType =:CreditReviewType");
+		selectSql.append("select * from BREExtCreditReviewConfig where CreditReviewType =:CreditReviewType");
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extCreditReviewConfig);

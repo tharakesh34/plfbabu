@@ -197,6 +197,8 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			this.ruleModuleName = "VerificationRule";
 		} else if (RuleConstants.MODULE_FEEPERC.equals(ruleModule.getValue())) {
 			this.ruleModuleName = "FeePerc";
+		} else if (RuleConstants.MODULE_BRERULE.equals(ruleModuleValue)) {
+			this.ruleModuleName = "BreRule";
 		}
 
 		// Set the page level components.

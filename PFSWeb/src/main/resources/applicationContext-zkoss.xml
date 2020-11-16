@@ -2418,6 +2418,7 @@
 		<property name="disbursementInstCtrl" ref="disbursementInstCtrl" />
 		<property name="vASProviderAccDetailDAO" ref="vASProviderAccDetailDAO" />
 		<property name="vASConfigurationDAO" ref="vASConfigurationDAO" />
+		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -4272,8 +4273,6 @@
 
 	<bean id="disbursementInstCtrl" class="com.pennant.webui.finance.payorderissue.DisbursementInstCtrl" scope="prototype">
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
-		<property name="vASProviderAccDetailDAO" ref="vASProviderAccDetailDAO" />
-		<property name="vASConfigurationDAO" ref="vASConfigurationDAO" />
 		<property name="dMSService" ref="dMSService" />
 	</bean>
 
@@ -5789,6 +5788,7 @@
 	<bean id="finOCRDialogCtrl" class="com.pennant.webui.finance.financemain.FinOCRDialogCtrl" parent="basisCtrl"
 		scope="prototype">
 		<property name="ocrHeaderService" ref="ocrHeaderService" />
+		<property name="finOCRHeaderService" ref="finOCRHeaderService" />
 	</bean>
 
 	<bean id="finOCRStepDialogCtrl" class="com.pennant.webui.finance.financemain.FinOCRStepDialogCtrl" parent="basisCtrl"
@@ -5797,6 +5797,7 @@
 
 	<bean id="finOCRCaptureDialogCtrl" class="com.pennant.webui.finance.financemain.FinOCRCaptureDialogCtrl" parent="basisCtrl"
 		scope="prototype">
+		<property name="finOCRHeaderService" ref="finOCRHeaderService" />
 	</bean>
 
 	<bean id="projectUnitsDialogCtrl" class="com.pennant.webui.systemmasters.builderprojcet.ProjectUnitsDialogCtrl"
@@ -5923,5 +5924,13 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="provisionService" ref="provisionService" />
 	</bean>
-
+	
+	<!--============ DMS Retreival Process ============== -->
+	
+	<bean id="DMSRetrievalProcessCtrl" class="com.pennant.webui.finance.dms.DMSRetrievalProcessCtrl" parent="basisListCtrl" scope="prototype"/>
+	<!--============ LOAN MASTER REPORT  ============== -->
+	<bean id="loanMasterReportCtrl" class="com.pennant.webui.finance.financemain.LoanMasterReportCtrl" parent="basisListCtrl" scope="prototype">
+	<property name="loanMasterReportService" ref="loanMasterReportService" />
+	</bean>
+	
 </beans>

@@ -3,19 +3,32 @@ package com.pennant.backend.model.finance;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
+@XmlType(propOrder = { "stepSequence", "customerContribution", "financerContribution", "contributor" })
+@XmlRootElement(name = "finOCRDetail")
+@XmlAccessorType(XmlAccessType.NONE)
 public class FinOCRDetail extends AbstractWorkflowEntity implements Comparable<FinOCRDetail> {
 
 	private static final long serialVersionUID = 1L;
 	private long detailID = Long.MIN_VALUE;
+	@XmlElement
 	private int stepSequence;
+	@XmlElement
 	private int customerContribution;
+	@XmlElement
 	private int financerContribution;
 	private boolean newRecord = false;
 	private FinOCRDetail befImage;
 	private LoggedInUser userDetails;
+	@XmlElement
 	private String contributor;
 	private long headerID;
 

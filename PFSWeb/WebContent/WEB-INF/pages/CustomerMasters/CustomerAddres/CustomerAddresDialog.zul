@@ -97,7 +97,7 @@
 								</hbox>
 								<label id="label_CustomerAddresDialog_CustAddrStreet" value="${c:l('label_CustomerAddresDialog_CustAddrStreet.value')}" />
 								<hbox>
-									<space spacing="2px" sclass="mandatory" />
+									<space spacing="2px" id="space_custAddrStreet" />
 									<textbox id="custAddrStreet" width="250px" />
 								</hbox>
 							</row>

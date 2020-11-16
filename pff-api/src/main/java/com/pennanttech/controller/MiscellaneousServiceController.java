@@ -1118,7 +1118,7 @@ public class MiscellaneousServiceController {
 		if (CollectionUtils.isEmpty(eligibilityErrors)) {
 			boolean splRule = false;
 
-			Rule rule = ruleDAO.getRuleById(bRERequestDetail.getRuleCode(), "SUBHEAD", "");
+			Rule rule = ruleDAO.getRuleById(bRERequestDetail.getRuleCode(), RuleConstants.MODULE_BRERULE, "");
 
 			FinanceEligibilityDetail financeEligibilityDetail = new FinanceEligibilityDetail();
 			financeEligibilityDetail.setLovDescElgRuleCode(rule.getRuleCode());
@@ -1340,7 +1340,7 @@ public class MiscellaneousServiceController {
 		if (CollectionUtils.isEmpty(eligibilityErrors)) {
 			boolean splRule = false;
 
-			Rule rule = ruleDAO.getRuleById(bRERequestDetail.getRuleCode(), "SUBHEAD", "");
+			Rule rule = ruleDAO.getRuleById(bRERequestDetail.getRuleCode(), RuleConstants.MODULE_BRERULE, "");
 
 			FinanceEligibilityDetail financeEligibilityDetail = new FinanceEligibilityDetail();
 			financeEligibilityDetail.setLovDescElgRuleCode(rule.getRuleCode());
@@ -1397,7 +1397,7 @@ public class MiscellaneousServiceController {
 		if (CollectionUtils.isEmpty(eligibilityErrors)) {
 			boolean splRule = false;
 
-			Rule rule = ruleDAO.getRuleById(bRERequestDetail.getRuleCode(), "SUBHEAD", "");
+			Rule rule = ruleDAO.getRuleById(bRERequestDetail.getRuleCode(), RuleConstants.MODULE_BRERULE, "");
 
 			FinanceEligibilityDetail financeEligibilityDetail = new FinanceEligibilityDetail();
 			financeEligibilityDetail.setLovDescElgRuleCode(rule.getRuleCode());

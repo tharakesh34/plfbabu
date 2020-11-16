@@ -19,4 +19,6 @@ public interface DocumentManagementService {
 
 	void updateExternalDocuments(ExternalDocument extDoc, Long custId);
 
+	boolean dmsRetrieveProcess();
+
 }

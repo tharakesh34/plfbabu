@@ -47,6 +47,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -511,12 +512,8 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	 */
 
 	@Override
-	public List<ReturnDataSet> getPostingsByVasref(String finReference, String finEvent) {
-		logger.debug("Entering");
-
-		ReturnDataSet dataSet = new ReturnDataSet();
-		dataSet.setFinReference(finReference);
-		dataSet.setFinEvent(finEvent);
+	public List<ReturnDataSet> getPostingsByVasref(String finReference, String[] finEvent) {
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
@@ -524,13 +521,16 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy, TranOrderId,");
 		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
 		selectSql.append(" FROM Postings");
-		selectSql.append(" Where FinReference =:FinReference And finEvent=:finEvent ");
+		selectSql.append(" Where FinReference =:FinReference And finEvent in(:finEvent) ");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("finEvent", Arrays.asList(finEvent));
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
 		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	/*

@@ -443,6 +443,12 @@ public final class DateUtility extends DateUtil {
 		return gc;
 	}
 
+	/**
+	 * This method will return a value with the below format Ex:01-01-2020 so it will convert to 20001 (YY+DAYOFYEAR
+	 * with left pad 000)
+	 * 
+	 * @return
+	 */
 	public static long getDateYYJDay() {
 		Calendar curCalendar = Calendar.getInstance();
 		curCalendar.setTime(getAppDate());

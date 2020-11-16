@@ -506,12 +506,12 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.description.setReadonly(true);
 		this.otc.setDisabled(true);
 		this.pdd.setDisabled(true);
-		this.receivableDate.setReadonly(true);
+		this.receivableDate.setDisabled(true);
 		this.alwWaiver.setDisabled(true);
 		this.documentRecieved.setDisabled(true);
 		this.allowPostponment.setDisabled(true);
-		this.extendedDate.setReadonly(true);
-		this.covenantFrequency.setReadonly(true);
+		this.extendedDate.setDisabled(true);
+		this.covenantFrequency.setDisabled(true);
 		this.alertsRequired.setDisabled(true);
 		this.alertType.setDisabled(true);
 		this.covenantGraceDays.setReadonly(true);
@@ -521,6 +521,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.remarks.setReadonly(true);
 		this.standardValue.setReadonly(true);
 		this.actualValue.setReadonly(true);
+		this.btnCovenantReceived.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1690,8 +1691,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 	public void oncheckPDD() {
 		if (this.pdd.isChecked()) {
-			this.receivableDate.setDisabled(false);
-			this.allowPostponment.setDisabled(false);
+			this.receivableDate.setDisabled(enqiryModule);
+			this.allowPostponment.setDisabled(enqiryModule);
 			this.documentRecieved.setChecked(false);
 			this.documentRecieved.setDisabled(true);
 		} else {
@@ -1704,7 +1705,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	}
 
 	public void onCheckALwWaiver() {
-		if (this.alwWaiver.isChecked() || enqiryModule) {
+		if (this.alwWaiver.isChecked()) {
 			this.pdd.setDisabled(true);
 			this.pdd.setChecked(false);
 			this.otc.setChecked(false);
@@ -2229,7 +2230,10 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> getSelectedValues(ExtendedCombobox extendedCombobox) {
 		Object object = extendedCombobox.getAttribute("data");
-		return (Map<String, Object>) object;
+		if (object instanceof Map<?, ?>) {
+			return (Map<String, Object>) object;
+		}
+		return null;
 	}
 
 	public void disablePDDDetailsGroup() {

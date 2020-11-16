@@ -91,9 +91,9 @@ public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition>
 
 		StringBuilder selectSql = new StringBuilder("Select AggId, AggCode, AggName, ");
 		selectSql.append(" AggDesc, AggReportName, AggReportPath, AggIsActive , Aggtype, AggImage, AgrRule, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
-		selectSql.append(
-				" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleType, AllowMultiple, ModuleName, DocType, AutoGeneration, AutoDownload");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, PwdProtected,");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleType, AllowMultiple,");
+		selectSql.append(" ModuleName, DocType, AutoGeneration, AutoDownload");
 		if (type.contains("View")) {
 			selectSql.append(" , lovDescAgrRuleDesc");
 		}
@@ -135,9 +135,9 @@ public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition>
 
 		StringBuilder selectSql = new StringBuilder("Select AggId, AggCode, AggName, AggDesc, ");
 		selectSql.append(" AggReportName, AggReportPath, AggIsActive, Aggtype, AggImage, AgrRule, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
-		selectSql.append(
-				" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleType, AllowMultiple, ModuleName,DocType, AutoGeneration, AutoDownload");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, PwdProtected, ");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleType, AllowMultiple,");
+		selectSql.append(" ModuleName,DocType, AutoGeneration, AutoDownload");
 		if (type.contains("View")) {
 			selectSql.append(" , lovDescAgrRuleDesc");
 		}
@@ -224,13 +224,14 @@ public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition>
 		insertSql.append(" (AggId, AggCode, AggName, AggDesc, AggReportName, AggReportPath, ");
 		insertSql.append(" AggIsActive , Aggtype, AggImage, AgrRule, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
-		insertSql.append(
-				" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleType, AllowMultiple, ModuleName, DocType, AutoGeneration, AutoDownload)");
+		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleType, AllowMultiple,");
+		insertSql.append(" ModuleName, DocType, AutoGeneration, AutoDownload, PwdProtected)");
 		insertSql.append(" Values(:AggId, :AggCode, :AggName, :AggDesc, :AggReportName, ");
 		insertSql.append(" :AggReportPath, :AggIsActive, :Aggtype, :AggImage, :AgrRule, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		insertSql.append(
-				" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ModuleType, :AllowMultiple, :ModuleName, :DocType, :AutoGeneration, :AutoDownload)");
+				" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ModuleType, :AllowMultiple, :ModuleName,");
+		insertSql.append(" :DocType, :AutoGeneration, :AutoDownload, :PwdProtected)");
 
 		logger.trace(Literal.SQL + insertSql.toString());
 
@@ -267,11 +268,11 @@ public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition>
 		updateSql.append(" AggReportName = :AggReportName, AggReportPath = :AggReportPath, ");
 		updateSql.append(" AggIsActive = :AggIsActive , Aggtype = :Aggtype, AggImage = :AggImage, AgrRule=:AgrRule, ");
 		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, ");
-		updateSql.append(
-				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,Doctype = :DocType, AutoGeneration = :AutoGeneration,AutoDownload = :AutoDownload,");
-		updateSql.append(
-				" RecordType = :RecordType, WorkflowId = :WorkflowId, ModuleType = :ModuleType, AllowMultiple= :AllowMultiple, ModuleName = :ModuleName");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId,Doctype = :DocType, ");
+		updateSql.append(" AutoGeneration = :AutoGeneration, AutoDownload = :AutoDownload, RecordType = :RecordType, ");
+		updateSql.append(" WorkflowId = :WorkflowId, ModuleType = :ModuleType, AllowMultiple= :AllowMultiple,");
+		updateSql.append(" ModuleName = :ModuleName, PwdProtected = :PwdProtected");
 		updateSql.append(" Where AggId =:AggId");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 

@@ -123,7 +123,7 @@ public class AgreementDetail {
 	/** Provides Customer NRI or not (Y/N). */
 	private String custIsNRI = "";
 
-	private String entityType = "";
+	private String entityTypeVal = "";
 
 	/** Provides current CustomerProfession. */
 	private String custEmpProf = ""; // Profession
@@ -270,6 +270,11 @@ public class AgreementDetail {
 
 	private String custContribution;
 	private String custConInWords;
+
+	//Customer subcategory
+	private String custSubCategory = "";
+
+	private String ltvPerc = "";
 
 	/**
 	 * Provides current/ co-applicant Customer Name.
@@ -3077,6 +3082,7 @@ public class AgreementDetail {
 		private String advPayment = ""; // Advance Payment
 		private String openingPrincipal = ""; // Advance Payment
 		private String rateOfInterst = ""; // Advance Payment
+		private String profitCalc = "";
 
 		public String getCurSchPriAmount() {
 			return curSchPriAmount;
@@ -3181,6 +3187,15 @@ public class AgreementDetail {
 		public void setRateOfInterst(String rateOfInterst) {
 			this.rateOfInterst = rateOfInterst;
 		}
+
+		public String getProfitCalc() {
+			return profitCalc;
+		}
+
+		public void setProfitCalc(String profitCalc) {
+			this.profitCalc = profitCalc;
+		}
+
 	}
 
 	public class GoodLoanDetails {
@@ -5552,6 +5567,22 @@ public class AgreementDetail {
 		this.custQuallification = custQuallification;
 	}
 
+	public String getCustSubCategory() {
+		return custSubCategory;
+	}
+
+	public void setCustSubCategory(String custSubCategory) {
+		this.custSubCategory = custSubCategory;
+	}
+
+	public String getLtvPerc() {
+		return ltvPerc;
+	}
+
+	public void setLtvPerc(String ltvPerc) {
+		this.ltvPerc = ltvPerc;
+	}
+
 	public class CoApplicant {
 		private String custCIF = "";
 		private String custName = "";
@@ -5583,7 +5614,7 @@ public class AgreementDetail {
 		private String borrowerType = "";
 		private String riskCategory = "";
 		private long custId = 0;
-		private String entityType = "";
+		private String entityTypeVal = "";
 		private String custYearsExp = "";
 		private String custDOB = "";
 		private String custSegment = "";
@@ -5591,6 +5622,9 @@ public class AgreementDetail {
 		private String custEmpType = "";
 		private String custEmpName = "";
 		private String custType = "";
+		private String custSubCategory = "";
+
+		private Map<String, String> extMap = new HashMap<>();
 
 		public CoApplicant() {
 
@@ -5836,12 +5870,12 @@ public class AgreementDetail {
 			this.custId = custId;
 		}
 
-		public String getEntityType() {
-			return entityType;
+		public String getEntityTypeVal() {
+			return entityTypeVal;
 		}
 
-		public void setEntityType(String entityType) {
-			this.entityType = entityType;
+		public void setEntityTypeVal(String entityTypeVal) {
+			this.entityTypeVal = entityTypeVal;
 		}
 
 		public String getCustYearsExp() {
@@ -5898,6 +5932,22 @@ public class AgreementDetail {
 
 		public void setCustType(String custType) {
 			this.custType = custType;
+		}
+
+		public String getCustSubCategory() {
+			return custSubCategory;
+		}
+
+		public void setCustSubCategory(String custSubCategory) {
+			this.custSubCategory = custSubCategory;
+		}
+
+		public Map<String, String> getExtMap() {
+			return extMap;
+		}
+
+		public void setExtMap(Map<String, String> extMap) {
+			this.extMap = extMap;
 		}
 
 	}
@@ -10976,12 +11026,12 @@ public class AgreementDetail {
 		this.custIsNRI = custIsNRI;
 	}
 
-	public String getEntityType() {
-		return entityType;
+	public String getEntityTypeVal() {
+		return entityTypeVal;
 	}
 
-	public void setEntityType(String entityType) {
-		this.entityType = entityType;
+	public void setEntityTypeVal(String entityTypeVal) {
+		this.entityTypeVal = entityTypeVal;
 	}
 
 	public List<List<ExtendedDetail>> getCustExtendedDetails() {
@@ -11203,6 +11253,155 @@ public class AgreementDetail {
 		}
 	}
 
+	public class ChequeDetail {
+
+		private String seqNo = "";
+		private String accountNo = "";
+		private String chequeSerialNo = "";
+		private String chequeType = "";
+		private String chequeTypeDesc = "";
+		private String chequeDate = "";
+		private String eMIRefNo = "";
+		private String amount = "0.00";
+		private String chequeStatus = "";
+		private String accHolderName = "";
+		private String status = "";
+		private String branchDesc = "";
+		private String micr = "";
+		private String ifsc = "";
+		private String city = "";
+		private String chqBankName = "";
+
+		public String getSeqNo() {
+			return seqNo;
+		}
+
+		public void setSeqNo(String seqNo) {
+			this.seqNo = seqNo;
+		}
+
+		public String getAccountNo() {
+			return accountNo;
+		}
+
+		public void setAccountNo(String accountNo) {
+			this.accountNo = accountNo;
+		}
+
+		public String getChequeSerialNo() {
+			return chequeSerialNo;
+		}
+
+		public void setChequeSerialNo(String chequeSerialNo) {
+			this.chequeSerialNo = chequeSerialNo;
+		}
+
+		public String getChequeType() {
+			return chequeType;
+		}
+
+		public void setChequeType(String chequeType) {
+			this.chequeType = chequeType;
+		}
+
+		public String getChequeTypeDesc() {
+			return chequeTypeDesc;
+		}
+
+		public void setChequeTypeDesc(String chequeTypeDesc) {
+			this.chequeTypeDesc = chequeTypeDesc;
+		}
+
+		public String getChequeDate() {
+			return chequeDate;
+		}
+
+		public void setChequeDate(String chequeDate) {
+			this.chequeDate = chequeDate;
+		}
+
+		public String geteMIRefNo() {
+			return eMIRefNo;
+		}
+
+		public void seteMIRefNo(String eMIRefNo) {
+			this.eMIRefNo = eMIRefNo;
+		}
+
+		public String getAmount() {
+			return amount;
+		}
+
+		public void setAmount(String amount) {
+			this.amount = amount;
+		}
+
+		public String getChequeStatus() {
+			return chequeStatus;
+		}
+
+		public void setChequeStatus(String chequeStatus) {
+			this.chequeStatus = chequeStatus;
+		}
+
+		public String getAccHolderName() {
+			return accHolderName;
+		}
+
+		public void setAccHolderName(String accHolderName) {
+			this.accHolderName = accHolderName;
+		}
+
+		public String getStatus() {
+			return status;
+		}
+
+		public void setStatus(String status) {
+			this.status = status;
+		}
+
+		public String getBranchDesc() {
+			return branchDesc;
+		}
+
+		public void setBranchDesc(String branchDesc) {
+			this.branchDesc = branchDesc;
+		}
+
+		public String getMicr() {
+			return micr;
+		}
+
+		public void setMicr(String micr) {
+			this.micr = micr;
+		}
+
+		public String getIfsc() {
+			return ifsc;
+		}
+
+		public void setIfsc(String ifsc) {
+			this.ifsc = ifsc;
+		}
+
+		public String getCity() {
+			return city;
+		}
+
+		public void setCity(String city) {
+			this.city = city;
+		}
+
+		public String getChqBankName() {
+			return chqBankName;
+		}
+
+		public void setChqBankName(String chqBankName) {
+			this.chqBankName = chqBankName;
+		}
+
+	}
+
 	private List<CustomerAddress> custAddresses = new ArrayList<>();
 
 	public List<CustomerAddress> getCustAddresses() {
@@ -11215,12 +11414,22 @@ public class AgreementDetail {
 
 	private List<CustomerAddress> coAppAddresses = new ArrayList<>();
 
+	private List<ChequeDetail> chequeDetails = new ArrayList<>();
+
 	public List<CustomerAddress> getCoAppAddresses() {
 		return coAppAddresses;
 	}
 
 	public void setCoAppAddresses(List<CustomerAddress> coAppAddresses) {
 		this.coAppAddresses = coAppAddresses;
+	}
+
+	public List<ChequeDetail> getChequeDetails() {
+		return chequeDetails;
+	}
+
+	public void setChequeDetails(List<ChequeDetail> chequeDetails) {
+		this.chequeDetails = chequeDetails;
 	}
 
 	public String getRepayOnLoanAmt() {

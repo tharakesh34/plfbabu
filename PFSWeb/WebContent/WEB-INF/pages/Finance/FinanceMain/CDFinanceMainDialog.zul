@@ -510,6 +510,27 @@
 														<uppercasebox id="applicationNo" width="170px" visible="true" />
 													</hbox>
 												</row>
+												
+												<row id="row_AllowLoanTypes" visible="false">
+													<label
+														id="label_FinanceMainDialog_AllowLoanSplit"
+														value="${c:l('label_FinanceMainDialog_AllowLoanSplit.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="alwLoanSplit" checked="false" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_ParentLoanReference"
+														value="${c:l('label_FinanceMainDialog_ParentLoanReference.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<extendedcombobox
+															id="parentLoanReference" />
+													</hbox>
+												</row>
 												<row id="row_EligibilityMethod" visible="false">
 													<label id="label_FinanceMainDialog_EligibilityMethod" value="${c:l('label_FinanceMainDialog_EligibilityMethod.value')}" />
 													<extendedcombobox id="eligibilityMethod" width="200px" />

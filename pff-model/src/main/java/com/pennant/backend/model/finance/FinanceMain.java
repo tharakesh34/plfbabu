@@ -844,6 +844,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	private boolean pmay = false;
 	//OCR changes
+	@XmlElement
 	private boolean finOcrRequired = false;
 	//Check the Deviations are  Avilable or not in Workflow
 	private boolean deviationAvail;
@@ -859,6 +860,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String custEmpType = "";
 	//Disb based schedule
 	private boolean instBasedSchd;
+	private boolean ocrDeviation = false;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1090,6 +1092,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("planEMIHAlwInGrace");
 		excludeFields.add("simulateAccounting");
 		excludeFields.add("returnDataSet");
+		excludeFields.add("ocrDeviation");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -5104,4 +5107,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.returnDataSet = returnDataSet;
 	}
 
+	public boolean isOcrDeviation() {
+		return ocrDeviation;
+	}
+
+	public void setOcrDeviation(boolean ocrDeviation) {
+		this.ocrDeviation = ocrDeviation;
+	}
 }

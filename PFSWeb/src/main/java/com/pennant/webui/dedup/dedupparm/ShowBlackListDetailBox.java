@@ -246,8 +246,9 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 				blCustomers.getCustCIF(), Labels.getLabel("label_BlackListCheckDialog_DOB.value"),
 				DateUtility.formatToLongDate(blCustomers.getCustDOB())));
 		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_BlackListCheckDialog_CustFName.value"),
-				blCustomers.getCustFName(), Labels.getLabel("label_BlackListCheckDialog_CustLName.value"),
-				blCustomers.getCustLName()));
+				StringUtils.isNotEmpty(blCustomers.getCustFName()) ? blCustomers.getCustFName()
+						: blCustomers.getCustShrtName(),
+				Labels.getLabel("label_BlackListCheckDialog_CustLName.value"), blCustomers.getCustLName()));
 		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_BlackListCheckDialog_EID.value"),
 				PennantApplicationUtil.formatEIDNumber(blCustomers.getCustCRCPR()),
 				Labels.getLabel("label_BlackListCheckDialog_Passport.value"), blCustomers.getCustPassportNo()));
@@ -403,6 +404,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 			overrideCustomer.setOverrideUser(customer.getOverrideUser());
 			overrideCustomer.setMobileNumber(customer.getMobileNumber());
 			overrideCustomer.setNewBlacklistRecord(customer.isNewBlacklistRecord());
+			overrideCustomer.setSourceCIF(customer.getSourceCIF());
 
 			logger.debug("Leaving");
 			return overrideCustomer;

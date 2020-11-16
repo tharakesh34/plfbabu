@@ -47,6 +47,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -105,4 +106,10 @@ public interface FinAdvancePaymentsService {
 	void updatePaymentStatus(FinAdvancePayments finAdvancePayment, String type);
 
 	int getCountByPaymentId(String finReference, long paymentId);
+
+	List<FinAdvancePayments> processVasInstructions(List<VASRecording> vasRecordingList,
+			List<FinAdvancePayments> curAdvPaymentsList, String entityCode);
+
+	public List<ErrorDetail> validateVasInstructions(List<VASRecording> vasRecordingList,
+			List<FinAdvancePayments> advPaymentsList, boolean validate);
 }

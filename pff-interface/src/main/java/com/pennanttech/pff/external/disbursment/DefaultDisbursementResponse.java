@@ -502,6 +502,8 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		StringBuilder sql = null;
 		List<String> channelList = new ArrayList<>();
 		channelList.add(DisbursementConstants.CHANNEL_DISBURSEMENT);
+		//for VAS
+		channelList.add(DisbursementConstants.CHANNEL_VAS);
 
 		// Disbursements
 		//Below fields in select query not to be removed.
@@ -516,9 +518,14 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			sql.append(", DR.REALIZATION_DATE REALIZATIONDATE, DR.DOWNLOADED_ON DOWNLOADEDON");
 			sql.append(", DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF, FA.PAYMENTSEQ");
 			sql.append(", PB.ACTYPE AS PARTNERBANKACTYPE, PB.ACCOUNTNO AS PARTNERBANKAC, FA.DISBCCY, FA.LLDATE");
+			sql.append(", FA.VasReference , AV.SHORTCODE AS DealerShortCode, VS.SHORTCODE AS ProductShortCode ");
+			sql.append(", FA.PaymentDetail ");
 			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
 			sql.append(" INNER JOIN FINADVANCEPAYMENTS FA ON FA.PAYMENTID = DR.DISBURSEMENT_ID");
 			sql.append(" LEFT JOIN partnerbanks PB ON PB.partnerbankid = FA.partnerbankid");
+			sql.append(" LEFT JOIN VASRecording VR ON VR.VasReference = FA.VasReference ");
+			sql.append(" LEFT JOIN VASSTRUCTURE VS ON VS.PRODUCTCODE = VR.ProductCode ");
+			sql.append(" LEFT JOIN AMTVEHICLEDEALER AV ON  AV.DEALERID = VS.MANUFACTURERID ");
 			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID AND CHANNEL IN(:CHANNEL) ");
 			paramMap = new MapSqlParameterSource();
 			paramMap.addValue("RESP_BATCH_ID", params[0]);
@@ -642,6 +649,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		}
 
 		// Insurance payments..
+		//TODO:Ganesh Need to remove once backup done for existing cases
 		List<InsurancePaymentInstructions> insPaymentInstructions = null;
 		RowMapper<InsurancePaymentInstructions> insPaymentInstructionRowMapper = null;
 		try {

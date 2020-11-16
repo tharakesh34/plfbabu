@@ -31,9 +31,9 @@ public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements 
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select ID, FinReference, DisbSeq, DemandAmount, PaidAmount, Remarks");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append("Select ID, FinReference, DisbSeq, DemandAmount, PaidAmount, Remarks, ReceiptDate");
+		sql.append(", FileName, DocumentRef, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FinOCRCapture");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinReference= :FinReference");
@@ -60,9 +60,9 @@ public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements 
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select ID, FinReference, DisbSeq, DemandAmount, PaidAmount, Remarks");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append("Select ID, FinReference, DisbSeq, DemandAmount, PaidAmount, Remarks, ReceiptDate");
+		sql.append(",FileName, DocumentRef, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FinOCRCapture");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where Id= :Id");
@@ -93,8 +93,8 @@ public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements 
 		sql.append("Update FinOCRCapture");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set FinReference =:FinReference, DisbSeq =:DisbSeq, DemandAmount =:DemandAmount,");
-		sql.append(" PaidAmount =:PaidAmount, Remarks =:Remarks,");
-		sql.append("Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		sql.append(" PaidAmount =:PaidAmount, Remarks =:Remarks, ReceiptDate =:ReceiptDate, FileName =:FileName");
+		sql.append(", DocumentRef =:DocumentRef, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append("RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append("TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" Where Id = :Id ");
@@ -142,13 +142,13 @@ public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Insert Into FinOCRCapture");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("(Id, FinReference, DisbSeq, DemandAmount, PaidAmount, Remarks,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append("(Id, FinReference, DisbSeq, DemandAmount, PaidAmount, Remarks, ReceiptDate");
+		sql.append(", FileName, DocumentRef, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 
-		sql.append(" Values( :Id, :FinReference, :DisbSeq, :DemandAmount, :PaidAmount, :Remarks,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" Values( :Id, :FinReference, :DisbSeq, :DemandAmount, :PaidAmount, :Remarks, :ReceiptDate");
+		sql.append(", :FileName, :DocumentRef, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode");
+		sql.append(", :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOCRDetail);

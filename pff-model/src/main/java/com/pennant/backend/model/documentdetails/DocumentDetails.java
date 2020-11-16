@@ -92,6 +92,9 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private int retryCount;
 	private String errorDesc;
 	private Long custId;
+	// Fields used in Godrej DMS
+	private String applicationNo;
+	private String leadId;
 
 	public DocumentDetails() {
 		super();
@@ -139,6 +142,9 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("retryCount");
 		excludeFields.add("errorDesc");
 		excludeFields.add("custId");
+
+		excludeFields.add("applicationNo");
+		excludeFields.add("leadId");
 
 		return excludeFields;
 	}
@@ -562,6 +568,22 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
+
+	public String getLeadId() {
+		return leadId;
+	}
+
+	public void setLeadId(String leadId) {
+		this.leadId = leadId;
 	}
 
 }

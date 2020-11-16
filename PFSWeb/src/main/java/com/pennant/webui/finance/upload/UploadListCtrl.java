@@ -158,8 +158,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 			super.moduleCode = "ManualUploadHeader";
 		}
 
-		if (UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.module)
-				|| JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
+		if (UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.module)) {
 			this.listBoxUpload.setCheckmark(true);
 		}
 		this.transactionDate.setFormat(PennantConstants.dateFormat);

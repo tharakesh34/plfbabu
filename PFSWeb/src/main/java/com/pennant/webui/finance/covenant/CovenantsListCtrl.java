@@ -66,6 +66,7 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -145,6 +146,8 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private transient FinCovenantMaintanceService finCovenantMaintanceService;
 	private String module;
+	protected boolean disbEnquiry = false;
+	protected Combobox enquiryCombobox;
 
 	//File Upload functionality in Covenants
 	protected Textbox fileName;
@@ -269,6 +272,12 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if (arguments.containsKey("module")) {
 				module = (String) arguments.get("module");
 			}
+			if (arguments.containsKey("disbEnquiry")) {
+				disbEnquiry = (boolean) arguments.get("disbEnquiry");
+			}
+
+			enquiryCombobox = (Combobox) arguments.get("enuiryCombobox");
+
 			doEdit();
 
 			doCheckRights();
@@ -382,6 +391,11 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 				if (parent != null) {
 					this.covenantListWindow.setHeight(borderLayoutHeight - 75 + "px");
 					parent.appendChild(this.covenantListWindow);
+				} else if (disbEnquiry) {
+					north.setVisible(true);
+					this.btnSave.setVisible(false);
+					appendFinBasicDetails();
+					setDialog(DialogType.MODAL);
 				} else {
 					setDialog(DialogType.EMBEDDED);
 				}
@@ -1011,7 +1025,12 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		doClose(this.btnSave.isVisible());
+		if (disbEnquiry && enquiryCombobox != null) {
+			this.enquiryCombobox.setSelectedIndex(0);
+			this.covenantListWindow.onClose();
+		} else {
+			doClose(this.btnSave.isVisible());
+		}
 	}
 
 	public void onClick$btnImport(Event event) throws InterruptedException {

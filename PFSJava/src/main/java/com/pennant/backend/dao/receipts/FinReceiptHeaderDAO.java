@@ -96,4 +96,8 @@ public interface FinReceiptHeaderDAO {
 	String getLoanReferenc(String finReference, String receiptFileName);
 
 	boolean isReceiptsInProcess(String reference, String receiptPurpose, long receiptId, String type);
+
+	FinReceiptHeader getFinTypeByReceiptID(long receiptID);
+
+	int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference);
 }

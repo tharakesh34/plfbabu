@@ -102,4 +102,6 @@ public interface MandateDAO {
 	int validateEmandateSource(String eMandateSource);
 
 	int updateMandateStatus(Mandate mandate);
+
+	int getMandateByMandateRef(String mandateRef);
 }

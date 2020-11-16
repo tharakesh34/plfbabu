@@ -354,14 +354,18 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
 							ft.setAllowedLoanPurposes(rs.getString("AllowedLoanPurposes"));
 							ft.setSpecificLoanPurposes(rs.getString("SpecificLoanPurposes"));
+							ft.setAlwLoanSplit(rs.getBoolean("AlwLoanSplit"));
+							ft.setSplitLoanType(rs.getString("SplitLoanType"));
+							ft.setInstBasedSchd(rs.getBoolean("InstBasedSchd"));
+							ft.setOcrRequired(rs.getBoolean("OcrRequired"));
+							ft.setAllowedOCRS(rs.getString("AllowedOCRS"));
+							ft.setDefaultOCR(rs.getString("DefaultOCR"));
 							ft.setGrcAdjReq(rs.getBoolean("GrcAdjReq"));
 							ft.setGrcPeriodAftrFullDisb(rs.getBoolean("GrcPeriodAftrFullDisb"));
 							ft.setAutoIncrGrcEndDate(rs.getBoolean("AutoIncrGrcEndDate"));
 							ft.setGrcAutoIncrMonths(rs.getInt("GrcAutoIncrMonths"));
-							ft.setThrldtoMaintainGrcPrd(rs.getInt("Thrldtomaintaingrcprd"));
 							ft.setMaxAutoIncrAllowed(rs.getInt("MaxAutoIncrAllowed"));
-							ft.setAlwLoanSplit(rs.getBoolean("AlwLoanSplit"));
-							ft.setSplitLoanType(rs.getString("SplitLoanType"));
+							ft.setThrldtoMaintainGrcPrd(rs.getInt("ThrldtoMaintainGrcPrd"));
 
 							if (StringUtils.trimToEmpty(type).contains("View")) {
 								ft.setFinCategoryDesc(rs.getString("FinCategoryDesc"));
@@ -451,8 +455,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", VanAllocationMethod, AllowDrawingPower, AllowRevolving, AlwSanctionAmt");
 		sql.append(", AlwSanctionAmtOverride, SanBsdSchdle");
 		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes"); //HL- merging
-		sql.append(", GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths");
-		sql.append(", MaxAutoIncrAllowed, AlwLoanSplit, SplitLoanType,InstBasedSchd");
+		sql.append(", GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths, MaxAutoIncrAllowed");
+		sql.append(", AlwLoanSplit, SplitLoanType, InstBasedSchd");
 		if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 			sql.append(", DownPayRuleCode, DownPayRuleDesc, LovDescFinDivisionName, LovDescPromoFinTypeDesc");
 			sql.append(", LovDescDftStepPolicyName, GrcPricingMethodDesc, RpyPricingMethodDesc, DftStepPolicyType");
@@ -650,6 +654,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setAlwSanctionAmtOverride(rs.getBoolean("AlwSanctionAmtOverride"));
 							ft.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
 							ft.setDefaultOCR(rs.getString("DefaultOCR"));
+							//HL Merging
 							ft.setOcrRequired(rs.getBoolean("OcrRequired"));
 							ft.setAllowedLoanPurposes(rs.getString("AllowedLoanPurposes"));
 							ft.setAllowedOCRS(rs.getString("AllowedOCRS"));

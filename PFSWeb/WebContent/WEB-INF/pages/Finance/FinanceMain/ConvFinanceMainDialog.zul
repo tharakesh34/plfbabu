@@ -241,7 +241,7 @@
 													<label id="label_FinanceMainDialog_FinCurrentAssetValue" />
 													<currencyBox id="finCurrentAssetValue" />
 												</row>
-												<row>
+												<row id="row_appliedLoanAmt" visible="true">
 													<label id="label_FinanceMainDialog_AppliedLoanAmt" value="${c:l('label_FinanceMainDialog_AppliedLoanAmt.value')}" />
 													<currencyBox id="appliedLoanAmt" />
 												</row>
@@ -490,7 +490,7 @@
 													</hbox>
 												</row>
 												<!-- Facility Details End -->
-												<row id="row_ManualSchedule" visible="false">
+												<row id="row_ManualSchedule" visible="true">
 													<label id="label_FinanceMainDialog_ManualSchedule" value="${c:l('label_FinanceMainDialog_ManualSchedule.value')}" />
 													<hbox>
 														<space id="space_ManualSchedule" spacing="2px" />
@@ -514,6 +514,26 @@
 													<hbox>
 														<space spacing="2px" id="space_applicationNo" />
 														<uppercasebox id="applicationNo" width="170px" visible="true" />
+													</hbox>
+												</row>
+												 <row id="row_AllowLoanTypes" visible="true">
+													<label
+														id="label_FinanceMainDialog_AllowLoanSplit"
+														value="${c:l('label_FinanceMainDialog_AllowLoanSplit.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="alwLoanSplit" checked="false" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_ParentLoanReference"
+														value="${c:l('label_FinanceMainDialog_ParentLoanReference.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<extendedcombobox
+															id="parentLoanReference" />
 													</hbox>
 												</row>
 												<row id="row_EligibilityMethod" visible="false">

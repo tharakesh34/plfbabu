@@ -1223,4 +1223,26 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		}
 		return values;
 	}
+
+	@Override
+	public List<ExtendedFieldDetail> getCollateralExtDetails(String moduleName, String subModuleName) {
+
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" fieldtype,agrfield,fieldName,fieldList FROM extendedFieldDetail ed");
+		sql.append(" inner join  extendedfieldheader eh on eh.moduleid = ed.moduleid");
+		sql.append(" where eh.modulename= :moduleName and eh.submodulename = :subModuleName and  agrfield is not null");
+
+		logger.debug(Literal.SQL + sql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("moduleName", moduleName);
+		source.addValue("subModuleName", subModuleName);
+
+		RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ExtendedFieldDetail.class);
+
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+	}
+
 }

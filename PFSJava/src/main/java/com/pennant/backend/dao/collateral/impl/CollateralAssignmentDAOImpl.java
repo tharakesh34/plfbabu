@@ -634,6 +634,8 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 				//ca.setUtilizedAmount(rs.getBigDecimal("UtilizedAmount")); (Not availble in Bean)
 				ca.setBankLTV(rs.getBigDecimal("BankLTV"));
 				ca.setSpecialLTV(rs.getBigDecimal("SpecialLTV"));
+				ca.setDepositorCIF(rs.getString("DepositorCIF"));
+				ca.setCollateralType(rs.getString("CollateralType"));
 			}
 
 			return ca;

@@ -224,7 +224,7 @@ public class SMTParameterConstants {
 	public static final String CUST_PAN_VALIDATION = "CUST_PAN_VALIDATION";
 	public static final String CUSTOM_DEVIATION_FILE_PATH = "CUSTOM_DEVIATION_FILE_PATH";
 	public static final String ALLOW_CIBIL_REQUEST = "ALLOW_CIBIL_REQUEST";
-	public static final String VERIFICATIONS_CUSTOMERVIEW = "CLIX_VERIFICATIONS_CUSTOMERVIEW";
+	public static final String VERIFICATIONS_CUSTOMERVIEW = "VERIFICATIONS_CUSTOMERVIEW";
 
 	public static final String BPI_MONTHWISE_REQ = "BPI_MONTHWISE_REQ";
 
@@ -313,7 +313,7 @@ public class SMTParameterConstants {
 	public static final String PMAY_PRODUCT = "PMAY_PRODUCT";
 	public static final String PMAY_URL_INTIAL_REQUEST = "PMAY_URL_INTIAL_REQUEST";
 	public static final String PMAY_URL_RESPONSE = "PMAY_URL_RESPONSE";
-	
+
 	public static final String FINTYPEFEE_PERCENTAGE_TYPE_REQUIRED = "FINTYPEFEE_PERCENTAGE_TYPE_REQUIRED";
 	public static final String ALLOW_DEFAULT_MANDATE_REQ = "ALLOW_DEFAULT_MANDATE_REQ";
 	public static final String LIST_RENDER_ON_LOAD = "LIST_RENDER_ON_LOAD";
@@ -406,6 +406,9 @@ public class SMTParameterConstants {
 	public static final String IS_DATA_SYNC_REQ_BY_APP_DATE = "IS_DATA_SYNC_REQ_BY_APP_DATE";
 	//Co-Applicant Black list Dedup
 	public static final String COAPP_BLACKLIST_DEDUP_REQ = "COAPP_BLACKLIST_DEDUP_REQ";
+
+	//Allow Instruction Based Schedule
+	public static final String IS_INST_BASED_SCHD_REQ = "IS_INST_BASED_SCHD_REQ";
 	public static final String ALW_VERIFICATION_SYNC = "ALW_VERIFICATION_SYNC";
 	//Allow to calculate derived EMI
 	public static final String DERIVED_EMI_REQ = "DERIVED_EMI_REQ";
@@ -413,10 +416,28 @@ public class SMTParameterConstants {
 	//External BRE credit review details 
 	public static final String EXTCREDITREVIEW_TAB = "EXTCREDITREVIEW_TAB";
 	public static final String EXT_BRE_REQ = "EXT_BRE_REQUIRED";
+	public static final String PDF_OWNER_PASSWORD = "PDF_OWNER_PASSWORD";
+	public static final String PDF_PASSWORD_FORMAT = "PDF_PASSWORD_FORMAT";
 
 	public static final String NPA_TAGGING = "NPA_TAGGING";
 	public static final String RPYHCY_ON_NPA = "RPYHCY_ON_NPA";
 	public static final String PROVISION_BOOKS = "PROVISION_BOOKS";
 	public static final String PROVISION_EFF_POSTDATE = "PROVISION_EFF_POSTDATE";
 
+	//TODO:GANESH need to Remove once provide the data in Finadvpayments
+	public static final String INSURANCE_INST_ON_INSPAYINST = "INSURANCE_INST_ON_INSPAYINST";
+	public static final String ALW_ALGOFUSION_DATA_EXTRACTION = "ALW_ALGOFUSION_DATA_EXTRACTION";
+	public static final String CHEQUE_MODE_SCHDPAY_EFFT_ON_REALIZATION = "CHEQUE_MODE_SCHDPAY_EFFT_ON_REALIZATION";
+
+	public static final String PURG_CONFIG_JOB_REQUIRED = "PURG_CONFIG_JOB_REQUIRED";
+	public static final String PURG_CONFIG_CRON_EXPRESSION = "PURG_CONFIG_CRON_EXPRESSION";
+
+	//	FORECLOSURE_VALIDITY_DAYS
+	//	To define number of calendar days that foreclosure letter will be valid from the date of generation.
+	public static final String FORECLOSURE_VALIDITY_DAYS = "FORECLOSURE_VALIDITY_DAYS";
+	//Create Presentment Report at EOD process
+	public static final String CREATE_PRESENTMENT_RECEIPT_EOD = "CREATE_PRESENTMENT_RECEIPT_EOD";
+	public static final String ALLOW_OLDEST_DUE = "ALLOW_OLDEST_DUE";
+	//Update the Manual Cheque Receipt status as paid at Deposit approver
+	public static final String CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER = "CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER";
 }
