@@ -617,8 +617,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					: false;
 	protected CustomerExtLiabilityUploadDialogCtrl customerExtLiabilityUploadDialogCtrl;
 
-	private String betaDialog = "";
-
 	public String dmsApplicationNo;
 	public String leadId;
 
@@ -733,7 +731,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (enqiryModule) {
 				this.moduleType = PennantConstants.MODULETYPE_ENQ;
 			}
-			betaDialog = (String) arguments.get("BetaData");
 			Customer customer = getCustomerDetails().getCustomer();
 			ccyFormatter = CurrencyUtil.getFormat(customer.getCustBaseCcy());
 			old_ccyFormatter = ccyFormatter;
@@ -1202,29 +1199,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.otherCaste.setReadonly(true);
 		this.otherReligion.setReadonly(true);
 		//Customer Income and expense Inline Edit
-		if (StringUtils.isEmpty(betaDialog)) {
-			this.listBoxCustomerIncome.setVisible(true);
-			this.listBoxCustomerIncomeInLineEdit.setVisible(false);
-		} else {
-			this.listBoxCustomerIncome.setVisible(false);
-			this.listBoxCustomerIncomeInLineEdit.setVisible(true);
-		}
+		this.listBoxCustomerIncome.setVisible(false);
+		this.listBoxCustomerIncomeInLineEdit.setVisible(true);
+
 		//PhoneNumbers Inline Edit
-		if (StringUtils.isEmpty(betaDialog)) {
-			this.listBoxCustomerPhoneNumbers.setVisible(true);
-			this.listBoxCustomerPhoneNumbersInlineEdit.setVisible(false);
-		} else {
-			this.listBoxCustomerPhoneNumbers.setVisible(false);
-			this.listBoxCustomerPhoneNumbersInlineEdit.setVisible(true);
-		}
+		this.listBoxCustomerPhoneNumbers.setVisible(false);
+		this.listBoxCustomerPhoneNumbersInlineEdit.setVisible(true);
+
 		//Email Inline Edit
-		if (StringUtils.isEmpty(betaDialog)) {
-			this.listBoxCustomerEmails.setVisible(true);
-			this.listBoxCustomerEmailsInlineEdit.setVisible(false);
-		} else {
-			this.listBoxCustomerEmails.setVisible(false);
-			this.listBoxCustomerEmailsInlineEdit.setVisible(true);
-		}
+		this.listBoxCustomerEmails.setVisible(false);
+		this.listBoxCustomerEmailsInlineEdit.setVisible(true);
 		//Employment type field setting mandatory based on system parameter 
 		if (PennantConstants.NO
 				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.ISEMPLOYMENTTYPE_MANDATORY_REQUIRED))) {
@@ -1698,12 +1682,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	private void updateIncomeValue() {
-		if (StringUtils.isNotEmpty(betaDialog)) {
-			Map<String, Object> map = incomeAndExpenseCtrl.calculateTotal(this.listBoxCustomerIncomeInLineEdit,
-					ccyFormatter);
+		Map<String, Object> map = incomeAndExpenseCtrl.calculateTotal(this.listBoxCustomerIncomeInLineEdit,
+				ccyFormatter);
 
-			extendedFieldCtrl.setValues(map);
-		}
+		extendedFieldCtrl.setValues(map);
 	}
 
 	/**
@@ -2300,59 +2282,53 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			aCustomerDetails.setExtendedFieldRender(extendedFieldCtrl.save(true, aCustomerDetails));
 		}
 		//In line Edit functionality for Customer PhoneNumbers
-		if (StringUtils.isNotEmpty(betaDialog)) {
-			//HL change for PhoneNumbers
-			@SuppressWarnings("rawtypes")
-			Map<String, List> customerPhoneNumbers = customerPhoneNumberInLineEditCtrl
-					.prepareCustomerPhoneNumberData(aCustomerDetails, this.listBoxCustomerPhoneNumbersInlineEdit);
-			if (customerPhoneNumbers.get("errorList") != null) {
-				@SuppressWarnings("unchecked")
-				ArrayList<WrongValueException> errorlist = (ArrayList<WrongValueException>) customerPhoneNumbers
-						.get("errorList");
-				showErrorDetails(errorlist, custTab, tabkYCDetails);
-			}
-			if (customerPhoneNumbers.get("customerPhoneNumbers") != null) {
-				@SuppressWarnings("unchecked")
-				List<CustomerPhoneNumber> customerPhoneNumberList = customerPhoneNumbers.get("customerPhoneNumbers");
-				setCustomerPhoneNumberDetailList(customerPhoneNumberList);
-			}
+		//HL change for PhoneNumbers
+		@SuppressWarnings("rawtypes")
+		Map<String, List> customerPhoneNumbers = customerPhoneNumberInLineEditCtrl
+				.prepareCustomerPhoneNumberData(aCustomerDetails, this.listBoxCustomerPhoneNumbersInlineEdit);
+		if (customerPhoneNumbers.get("errorList") != null) {
+			@SuppressWarnings("unchecked")
+			ArrayList<WrongValueException> errorlist = (ArrayList<WrongValueException>) customerPhoneNumbers
+					.get("errorList");
+			showErrorDetails(errorlist, custTab, tabkYCDetails);
 		}
+		if (customerPhoneNumbers.get("customerPhoneNumbers") != null) {
+			@SuppressWarnings("unchecked")
+			List<CustomerPhoneNumber> customerPhoneNumberList = customerPhoneNumbers.get("customerPhoneNumbers");
+			setCustomerPhoneNumberDetailList(customerPhoneNumberList);
+		}
+
 		//In line Edit functionality for Customer Emails
-		if (StringUtils.isNotEmpty(betaDialog)) {
-			//HL change for Emails
-			@SuppressWarnings("rawtypes")
-			Map<String, List> customerEmails = customerEmailInlineEditCtrl.prepareCustomerEmailData(aCustomerDetails,
-					this.listBoxCustomerEmailsInlineEdit);
-			if (customerEmails.get("errorList") != null) {
-				@SuppressWarnings("unchecked")
-				ArrayList<WrongValueException> errorlist = (ArrayList<WrongValueException>) customerEmails
-						.get("errorList");
-				showErrorDetails(errorlist, custTab, tabkYCDetails);
-			}
-			if (customerEmails.get("customerEMails") != null) {
-				@SuppressWarnings("unchecked")
-				List<CustomerEMail> customerEMailList = customerEmails.get("customerEMails");
-				setCustomerEmailDetailList(customerEMailList);
-			}
+		//HL change for Emails
+		@SuppressWarnings("rawtypes")
+		Map<String, List> customerEmails = customerEmailInlineEditCtrl.prepareCustomerEmailData(aCustomerDetails,
+				this.listBoxCustomerEmailsInlineEdit);
+		if (customerEmails.get("errorList") != null) {
+			@SuppressWarnings("unchecked")
+			ArrayList<WrongValueException> errorlist = (ArrayList<WrongValueException>) customerEmails.get("errorList");
+			showErrorDetails(errorlist, custTab, tabkYCDetails);
+		}
+		if (customerEmails.get("customerEMails") != null) {
+			@SuppressWarnings("unchecked")
+			List<CustomerEMail> customerEMailList = customerEmails.get("customerEMails");
+			setCustomerEmailDetailList(customerEMailList);
 		}
 
 		//In line Edit functionality for Customer Income Expense
-		if (StringUtils.isNotEmpty(betaDialog)) {
-			//HL change for financial
-			@SuppressWarnings("rawtypes")
-			Map<String, List> customerIncomes = incomeAndExpenseCtrl.prepareCustomerIncomeExpenseData(aCustomerDetails,
-					this.listBoxCustomerIncomeInLineEdit, ccyFormatter);
-			if (customerIncomes.get("errorList") != null) {
-				@SuppressWarnings("unchecked")
-				ArrayList<WrongValueException> errorlist = (ArrayList<WrongValueException>) customerIncomes
-						.get("errorList");
-				showErrorDetails(errorlist, custTab, tabfinancial);
-			}
-			if (customerIncomes.get("customerIncomes") != null) {
-				@SuppressWarnings("unchecked")
-				List<CustomerIncome> customerIncomeList = customerIncomes.get("customerIncomes");
-				setIncomeList(customerIncomeList);
-			}
+		//HL change for financial
+		@SuppressWarnings("rawtypes")
+		Map<String, List> customerIncomes = incomeAndExpenseCtrl.prepareCustomerIncomeExpenseData(aCustomerDetails,
+				this.listBoxCustomerIncomeInLineEdit, ccyFormatter);
+		if (customerIncomes.get("errorList") != null) {
+			@SuppressWarnings("unchecked")
+			ArrayList<WrongValueException> errorlist = (ArrayList<WrongValueException>) customerIncomes
+					.get("errorList");
+			showErrorDetails(errorlist, custTab, tabfinancial);
+		}
+		if (customerIncomes.get("customerIncomes") != null) {
+			@SuppressWarnings("unchecked")
+			List<CustomerIncome> customerIncomeList = customerIncomes.get("customerIncomes");
+			setIncomeList(customerIncomeList);
 		}
 
 		// Set KYC details
@@ -6155,36 +6131,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void onClick$btnNew_CustomerIncome(Event event) throws Exception {
 		logger.debug("Entering");
 
-		if (StringUtils.isEmpty(betaDialog)) {
-
-			CustomerIncome customerIncome = new CustomerIncome();
-			customerIncome.setNewRecord(true);
-			customerIncome.setWorkflowId(0);
-			customerIncome.setCustId(getCustomerDetails().getCustID());
-			customerIncome.setCustCif(getCustomerDetails().getCustomer().getCustCIF());
-			customerIncome.setCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
-			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("customerIncome", customerIncome);
-			map.put("customerDialogCtrl", this);
-			map.put("newRecord", "true");
-			map.put("isFinanceProcess", isFinanceProcess);
-			map.put("ccyFormatter", ccyFormatter);
-			map.put("roleCode", getRole());
-			try {
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerIncome/CustomerIncomeDialog.zul",
-						null, map);
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		} else {
-			reallocateRights("CustomerDialog_custIncomeType");
-			CustomerIncome customerIncome = new CustomerIncome();
-			customerIncome.setNewRecord(true);
-			customerIncome.setWorkflowId(0);
-			customerIncome.setRecordType(PennantConstants.RCD_ADD);
-			incomeAndExpenseCtrl.doFillIncomeAndExpense(customerIncome, this.listBoxCustomerIncomeInLineEdit,
-					ccyFormatter, true);
-		}
+		reallocateRights("CustomerDialog_custIncomeType");
+		CustomerIncome customerIncome = new CustomerIncome();
+		customerIncome.setNewRecord(true);
+		customerIncome.setWorkflowId(0);
+		customerIncome.setRecordType(PennantConstants.RCD_ADD);
+		incomeAndExpenseCtrl.doFillIncomeAndExpense(customerIncome, this.listBoxCustomerIncomeInLineEdit, ccyFormatter,
+				true);
 		logger.debug("Leaving");
 	}
 
@@ -6527,7 +6480,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ** New Button & Double Click Events for CustomerPhoneNumbers List **//
 	// ********************************************************************//
 	public void onClick$btnNew_CustomerPhoneNumber(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setNewRecord(true);
 		customerPhoneNumber.setWorkflowId(0);
@@ -6539,26 +6493,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			customerPhoneNumber.setPhoneTypePriority(Integer.parseInt(priority));
 		}
 
-		if (StringUtils.isEmpty(betaDialog)) {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("customerPhoneNumber", customerPhoneNumber);
-			map.put("customerDialogCtrl", this);
-			map.put("newRecord", "true");
-			map.put("isFinanceProcess", isFinanceProcess);
-			map.put("roleCode", getRole());
-			try {
-				Executions.createComponents(
-						"/WEB-INF/pages/CustomerMasters/CustomerPhoneNumber/CustomerPhoneNumberDialog.zul", null, map);
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		} else {
-			reallocateRights("CustomerDialog_custPhoneNumber");
-			customerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
-			customerPhoneNumberInLineEditCtrl.doFillPhoneNumbers(customerPhoneNumber,
-					this.listBoxCustomerPhoneNumbersInlineEdit, isFinanceProcess);
-		}
-		logger.debug(Literal.LEAVING + event.toString());
+		reallocateRights("CustomerDialog_custPhoneNumber");
+		customerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
+		customerPhoneNumberInLineEditCtrl.doFillPhoneNumbers(customerPhoneNumber,
+				this.listBoxCustomerPhoneNumbersInlineEdit, isFinanceProcess);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCustomerPhoneNumberItemDoubleClicked(Event event) throws Exception {
@@ -6595,29 +6535,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void doFillCustomerPhoneNumberDetails(List<CustomerPhoneNumber> customerPhoneNumDetails) {
 		logger.debug("Entering");
 		this.listBoxCustomerPhoneNumbers.getItems().clear();
-		if (StringUtils.isEmpty(betaDialog)) {
-			if (customerPhoneNumDetails != null) {
-				for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumDetails) {
-					Listitem item = new Listitem();
-					Listcell lc;
-					lc = new Listcell(StringUtils.trimToEmpty(customerPhoneNumber.getPhoneTypeCode()));
-					lc.setParent(item);
-					lc = new Listcell(customerPhoneNumber.getPhoneNumber());
-					lc.setParent(item);
-					lc = new Listcell(customerPhoneNumber.getRecordStatus());
-					lc.setParent(item);
-					lc = new Listcell(PennantJavaUtil.getLabel(customerPhoneNumber.getRecordType()));
-					lc.setParent(item);
-					item.setAttribute("data", customerPhoneNumber);
-					ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerPhoneNumberItemDoubleClicked");
-					this.listBoxCustomerPhoneNumbers.appendChild(item);
-				}
-				setCustomerPhoneNumberDetailList(customerPhoneNumDetails);
-			}
-		} else {
-			customerPhoneNumberInLineEditCtrl.doRenderPhoneNumberList(customerPhoneNumDetails,
-					listBoxCustomerPhoneNumbersInlineEdit, this.custCIF.getValue(), isFinanceProcess);
-		}
+		customerPhoneNumberInLineEditCtrl.doRenderPhoneNumberList(customerPhoneNumDetails,
+				listBoxCustomerPhoneNumbersInlineEdit, this.custCIF.getValue(), isFinanceProcess);
 		logger.debug("Leaving");
 	}
 
@@ -6636,25 +6555,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (StringUtils.isNotBlank(priority)) {
 			customerEMail.setCustEMailPriority(Integer.parseInt(priority));
 		}
-		if (StringUtils.isEmpty(betaDialog)) {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("customerEMail", customerEMail);
-			map.put("customerDialogCtrl", this);
-			map.put("newRecord", "true");
-			map.put("isFinanceProcess", isFinanceProcess);
-			map.put("roleCode", getRole());
-			try {
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerEMail/CustomerEMailDialog.zul",
-						null, map);
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		} else {
-			reallocateRights("CustomerDialog_custEmail");
-			customerEMail.setRecordType(PennantConstants.RCD_ADD);
-			customerEmailInlineEditCtrl.doFillEmails(customerEMail, this.listBoxCustomerEmailsInlineEdit,
-					isFinanceProcess);
-		}
+
+		reallocateRights("CustomerDialog_custEmail");
+		customerEMail.setRecordType(PennantConstants.RCD_ADD);
+		customerEmailInlineEditCtrl.doFillEmails(customerEMail, this.listBoxCustomerEmailsInlineEdit, isFinanceProcess);
+
 		logger.debug("Leaving");
 	}
 
@@ -6691,33 +6596,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void doFillCustomerEmailDetails(List<CustomerEMail> customerEmailDetails) {
 		logger.debug("Entering");
 		this.listBoxCustomerEmails.getItems().clear();
-		if (StringUtils.isEmpty(betaDialog)) {
-			if (customerEmailDetails != null) {
-				for (CustomerEMail customerEMail : customerEmailDetails) {
-					Listitem item = new Listitem();
-					Listcell lc;
-					lc = new Listcell(customerEMail.getLovDescCustCIF());
-					lc.setParent(item);
-					lc = new Listcell(customerEMail.getLovDescCustEMailTypeCode());
-					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.formateInt(customerEMail.getCustEMailPriority()));
-					lc.setParent(item);
-					lc = new Listcell(customerEMail.getCustEMail());
-					lc.setParent(item);
-					lc = new Listcell(customerEMail.getRecordStatus());
-					lc.setParent(item);
-					lc = new Listcell(PennantJavaUtil.getLabel(customerEMail.getRecordType()));
-					lc.setParent(item);
-					item.setAttribute("data", customerEMail);
-					ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerEmailAddressItemDoubleClicked");
-					this.listBoxCustomerEmails.appendChild(item);
-				}
-			}
-			setCustomerEmailDetailList(customerEmailDetails);
-		} else {
-			customerEmailInlineEditCtrl.doRenderEmailsList(customerEmailDetails, listBoxCustomerEmailsInlineEdit,
-					this.custCIF.getValue(), isFinanceProcess);
-		}
+
+		customerEmailInlineEditCtrl.doRenderEmailsList(customerEmailDetails, listBoxCustomerEmailsInlineEdit,
+				this.custCIF.getValue(), isFinanceProcess);
+
 		logger.debug("Leaving");
 	}
 
@@ -7254,234 +7136,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void doFillCustomerIncome(List<CustomerIncome> incomes) {
 		logger.debug("Entering");
 		setIncomeList(incomes);
-		if (StringUtils.isEmpty(betaDialog)) {
-			createIncomeGroupList(incomes);
-		} else {
-			incomeAndExpenseCtrl.doRenderIncomeList(incomes, this.listBoxCustomerIncomeInLineEdit, ccyFormatter);
-		}
+		incomeAndExpenseCtrl.doRenderIncomeList(incomes, this.listBoxCustomerIncomeInLineEdit, ccyFormatter);
+
 		logger.debug("Leaving");
 	}
-
-	private void createIncomeGroupList(List<CustomerIncome> incomes) {
-		if (incomes != null && !incomes.isEmpty()) {
-			BigDecimal totIncome = BigDecimal.ZERO;
-			BigDecimal totExpense = BigDecimal.ZERO;
-			Map<String, List<CustomerIncome>> incomeMap = new HashMap<String, List<CustomerIncome>>();
-			Map<String, List<CustomerIncome>> expenseMap = new HashMap<String, List<CustomerIncome>>();
-			marginDeviation = false;
-			for (CustomerIncome customerIncome : incomes) {
-				String category = StringUtils.trimToEmpty(customerIncome.getCategory());
-
-				if (customerIncome.isMarginDeviation()) {
-					marginDeviation = customerIncome.isMarginDeviation();
-				}
-				if (customerIncome.getIncomeExpense().equals(PennantConstants.INCOME)) {
-					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerIncome.getRecordType())) {
-						totIncome = totIncome.add(customerIncome.getCalculatedAmount());
-					}
-					if (incomeMap.containsKey(category)) {
-						incomeMap.get(category).add(customerIncome);
-					} else {
-						ArrayList<CustomerIncome> list = new ArrayList<CustomerIncome>();
-						list.add(customerIncome);
-						incomeMap.put(category, list);
-					}
-				} else {
-					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerIncome.getRecordType())) {
-						totExpense = totExpense.add(customerIncome.getCalculatedAmount());
-					}
-					if (expenseMap.containsKey(category)) {
-						expenseMap.get(category).add(customerIncome);
-					} else {
-						ArrayList<CustomerIncome> list = new ArrayList<CustomerIncome>();
-						list.add(customerIncome);
-						expenseMap.put(category, list);
-					}
-				}
-			}
-			renderIncomeExpense(incomeMap, totIncome, expenseMap, totExpense, ccyFormatter);
-		}
-	}
-
-	private void renderIncomeExpense(Map<String, List<CustomerIncome>> incomeMap, BigDecimal totIncome,
-			Map<String, List<CustomerIncome>> expenseMap, BigDecimal totExpense, int ccyFormatter) {
-		this.listBoxCustomerIncome.getItems().clear();
-		Listitem item;
-		Listcell cell;
-		Listgroup group;
-		Checkbox cb;
-		if (incomeMap != null) {
-			for (String category : incomeMap.keySet()) {
-				List<CustomerIncome> list = incomeMap.get(category);
-				if (list != null && list.size() > 0) {
-					group = new Listgroup();
-					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getCategoryDesc());
-					cell.setParent(group);
-					this.listBoxCustomerIncome.appendChild(group);
-					BigDecimal total = BigDecimal.ZERO;
-					for (CustomerIncome customerIncome : list) {
-						item = new Listitem();
-						cell = new Listcell("");
-						cell.setParent(item);
-						cell = new Listcell(customerIncome.getIncomeTypeDesc());
-						cell.setParent(item);
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getMargin(), ccyFormatter));
-						cell.setStyle("text-align:right;");
-						cell.setParent(item);
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), ccyFormatter));
-						cell.setStyle("text-align:right;");
-						cell.setParent(item);
-						BigDecimal calculatedAmount = customerIncome.getCalculatedAmount();
-						cell = new Listcell(PennantAppUtil.amountFormate(calculatedAmount, ccyFormatter));
-						cell.setStyle("text-align:right;");
-						cell.setParent(item);
-						total = total.add(calculatedAmount);
-						/*
-						 * cell = new Listcell(); cb = new Checkbox(); cb.setDisabled(true); cb.setParent(cell);
-						 * cell.setParent(item);
-						 */
-						cell = new Listcell(customerIncome.getRecordType());
-						cell.setParent(item);
-						/*
-						 * cell = new Listcell(PennantJavaUtil.getLabel(customerIncome. getRecordType()));
-						 * cell.setParent(item);
-						 */
-						item.setAttribute("data", customerIncome);
-						ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerIncomeItemDoubleClicked");
-						this.listBoxCustomerIncome.appendChild(item);
-					}
-					item = new Listitem();
-					cell = new Listcell("Total");
-					cell.setStyle("font-weight:bold;cursor:default");
-					cell.setParent(item);
-					cell = new Listcell(PennantAppUtil.amountFormate(total, ccyFormatter));
-					cell.setSpan(4);
-					cell.setStyle("font-weight:bold; text-align:right;cursor:default");
-					cell.setParent(item);
-					cell = new Listcell();
-					cell.setSpan(4);
-					cell.setStyle("cursor:default");
-					cell.setParent(item);
-					cell = new Listcell();
-					cell.setSpan(4);
-					cell.setStyle("cursor:default");
-					cell.setParent(item);
-					this.listBoxCustomerIncome.appendChild(item);
-				}
-			}
-			item = new Listitem();
-			cell = new Listcell("Gross Income");
-			cell.setStyle("font-weight:bold;cursor:default");
-			cell.setParent(item);
-			cell = new Listcell(PennantAppUtil.amountFormate(totIncome, ccyFormatter));
-			cell.setSpan(4);
-			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
-			cell.setParent(item);
-			cell = new Listcell();
-			cell.setSpan(4);
-			cell.setStyle("cursor:default");
-			cell.setParent(item);
-			cell = new Listcell();
-			cell.setSpan(4);
-			cell.setStyle("cursor:default");
-			cell.setParent(item);
-			this.listBoxCustomerIncome.appendChild(item);
-		}
-		if (expenseMap != null) {
-			for (String category : expenseMap.keySet()) {
-				List<CustomerIncome> list = expenseMap.get(category);
-				if (list != null) {
-					group = new Listgroup();
-					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getCategoryDesc());
-					cell.setParent(group);
-					this.listBoxCustomerIncome.appendChild(group);
-					BigDecimal total = BigDecimal.ZERO;
-					for (CustomerIncome customerIncome : list) {
-						item = new Listitem();
-						cell = new Listcell("");
-						cell.setParent(item);
-						cell = new Listcell(customerIncome.getIncomeTypeDesc());
-						cell.setParent(item);
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getMargin(), ccyFormatter));
-						cell.setStyle("text-align:right;");
-						cell.setParent(item);
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), ccyFormatter));
-						cell.setStyle("text-align:right;");
-						cell.setParent(item);
-						BigDecimal calculatedAmount = customerIncome.getCalculatedAmount();
-						cell = new Listcell(PennantAppUtil.amountFormate(calculatedAmount, ccyFormatter));
-						total = total.add(calculatedAmount);
-						cell.setStyle("text-align:right;");
-						cell.setParent(item);
-
-						/*
-						 * cell = new Listcell(); cb = new Checkbox(); cb.setDisabled(true);
-						 * cb.setChecked(customerIncome.isJointCust()); cb.setParent(cell); cell.setParent(item);
-						 */
-						cell = new Listcell(customerIncome.getRecordStatus());
-						cell.setParent(item);
-						/*
-						 * cell = new Listcell(PennantJavaUtil.getLabel(customerIncome. getRecordType()));
-						 * cell.setParent(item);
-						 */
-						item.setAttribute("data", customerIncome);
-						ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerIncomeItemDoubleClicked");
-						this.listBoxCustomerIncome.appendChild(item);
-					}
-					item = new Listitem();
-					cell = new Listcell("Total");
-					cell.setStyle("font-weight:bold;cursor:default");
-					cell.setParent(item);
-					cell = new Listcell(PennantAppUtil.amountFormate(total, ccyFormatter));
-					cell.setSpan(4);
-					cell.setStyle("font-weight:bold; text-align:right;cursor:default");
-					cell.setParent(item);
-					cell = new Listcell();
-					cell.setSpan(4);
-					cell.setParent(item);
-					cell = new Listcell();
-					cell.setSpan(4);
-					cell.setStyle("cursor:default");
-					cell.setParent(item);
-					cell = new Listcell();
-					cell.setStyle("cursor:default");
-					cell.setParent(item);
-					this.listBoxCustomerIncome.appendChild(item);
-				}
-			}
-			item = new Listitem();
-			cell = new Listcell("Gross Expense");
-			cell.setStyle("font-weight:bold;cursor:default");
-			cell.setParent(item);
-			cell = new Listcell(PennantAppUtil.amountFormate(totExpense, ccyFormatter));
-			cell.setSpan(4);
-			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
-			cell.setParent(item);
-			cell = new Listcell();
-			cell.setSpan(4);
-			cell.setStyle("cursor:default");
-			cell.setParent(item);
-			cell = new Listcell();
-			cell.setSpan(4);
-			cell.setStyle("cursor:default");
-			cell.setParent(item);
-			this.listBoxCustomerIncome.appendChild(item);
-		}
-		item = new Listitem();
-		cell = new Listcell("Net Income");
-		cell.setStyle("font-weight:bold;");
-		cell.setParent(item);
-		cell = new Listcell(PennantAppUtil.amountFormate(totIncome.subtract(totExpense), ccyFormatter));
-		cell.setSpan(4);
-		cell.setStyle("font-weight:bold; text-align:right;");
-		cell.setParent(item);
-		cell = new Listcell();
-		cell.setSpan(4);
-		cell.setStyle("cursor:default");
-		cell.setParent(item);
-		this.listBoxCustomerIncome.appendChild(item);
-	}
-
 	// WorkFlow Components
 
 	/**

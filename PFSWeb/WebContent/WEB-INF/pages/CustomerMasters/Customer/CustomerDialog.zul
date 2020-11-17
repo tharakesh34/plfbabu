@@ -90,15 +90,33 @@
 												<row>
 													<label value="${c:l('label_CustomerDialog_CustCtgCode.value')}" />
 													<extendedcombobox id="custCtgCode" />
-													<label value="${c:l('label_CustomerDialog_CustDftBranch.value')}" />
-													<extendedcombobox id="custDftBranch" />
-
+													<label id="label_CustomerDialog_CustTypeCode"
+														value="${c:l('label_CustomerDialog_CustTypeCode.value')}" />
+													<extendedcombobox id="custTypeCode" />
 												</row>
 												<row>
-													<label value="${c:l('label_CustomerDialog_CustBaseCcy.value')}" />
-													<extendedcombobox id="custBaseCcy" />
-													<label value="${c:l('label_CustomerDialog_CustTypeCode.value')}" />
-													<extendedcombobox id="custTypeCode" />
+													<label id="label_CustomerDialog_EIDNumber"
+														value="${c:l('label_CustomerDialog_EIDNumber.value')}" />
+													<hbox>
+														<space id="space_EidNumber" spacing="2px" />
+														<uppercasebox id="eidNumber" width="156px" />
+														<label id="label_CustomerDialog_EIDName"
+															style="margin-left:10px; display:inline-block; padding-top:5px; white-space:nowrap;" />
+													</hbox>
+												</row>
+
+												<row id="row_GenderSalutation">
+													<label value="${c:l('label_CustomerDialog_CustGenderCode.value')}" />
+													<hbox>
+														<space id="space_Gender" spacing="2px" sclass="mandatory" />
+														<combobox id="custGenderCode" width="155px" />
+													</hbox>
+													<label
+														value="${c:l('label_CustomerDialog_CustSalutationCode.value')}" />
+													<hbox>
+														<space id="space_Salutation" spacing="2px" sclass="mandatory" />
+														<combobox id="custSalutationCode" width="155px" />
+													</hbox>
 												</row>
 												<row id="row_FirstMiddleName">
 													<label value="${c:l('label_CustomerDialog_CustFirstName.value')}" />
@@ -122,24 +140,14 @@
 														<textbox id="custLastName" maxlength="50" width="250px"
 															style="overflow: hidden;" />
 													</hbox>
-													<label id="label_CustomerDialog_motherMaidenName"
-														value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}" />
-													<hbox id="hbox_motherMaidenName">
-														<space spacing="2px" sclass="mandatory" />
-														<textbox id="motherMaidenName" maxlength="50" width="250px"
-															style="overflow: hidden;" />
-													</hbox>
-												</row>
-												<row>
 													<label id="label_CustomerDialog_CustShrtName"
 														value="${c:l('label_CustomerDialog_CustShrtName.value')}" />
 													<hbox>
 														<space id="space_CustShrtName" spacing="2px" />
-														<textbox id="custShrtName" maxlength="100" width="250px"
+														<textbox id="custShrtName" maxlength="50" width="250px"
 															style="overflow: hidden;" />
 													</hbox>
-													<label value="${c:l('label_CustomerDialog_CustLng.value')}" />
-													<extendedcombobox id="custLng" />
+
 												</row>
 												<row>
 													<label id="label_CustomerDialog_CustDOB"
@@ -151,41 +159,10 @@
 															<label id="age" />
 														</cell>
 													</hbox>
-													<label id="label_ArabicName"
-														value="${c:l('label_CustomerDialog_CustArabicName.value')}" />
-													<hbox>
-														<space id="space_CustArabicName" spacing="2px" />
-														<textbox id="custArabicName" maxlength="50" width="250px" />
-													</hbox>
-												</row>
-												<row>
-													<label id="label_ResidentialStatus"
-														value="${c:l('label_CustomerDialog_ResidentialStstus.value')}" />
-													<hbox>
-														<space id="space_ResidentialStatus" spacing="2px" />
-														<combobox id="residentialStatus" width="155px" />
-													</hbox>
-												</row>
-												<row>
-													<label id="label_CustomerDialog_CustNationality"
-														value="${c:l('label_CustomerDialog_CustNationality.value')}" />
-													<extendedcombobox id="custNationality" />
-													<label id="label_CustomerDialog_CustRO1"
-														value="${c:l('label_CustomerDialog_CustRO1.value')}" />
-													<extendedcombobox id="custRO1" />
-												</row>
-												<row id="row_GenderSalutation">
-													<label value="${c:l('label_CustomerDialog_CustGenderCode.value')}" />
-													<hbox>
-														<space id="space_Gender" spacing="2px" sclass="mandatory" />
-														<combobox id="custGenderCode" width="155px" />
-													</hbox>
-													<label
-														value="${c:l('label_CustomerDialog_CustSalutationCode.value')}" />
-													<hbox>
-														<space id="space_Salutation" spacing="2px" sclass="mandatory" />
-														<combobox id="custSalutationCode" width="155px" />
-													</hbox>
+													<label id="label_CustomerDialog_CustCOB"
+														value="${c:l('label_CustomerDialog_CustCOB.value')}" />
+													<extendedcombobox id="custCOB" />
+
 												</row>
 												<row id="row_MartialDependents">
 													<label value="${c:l('label_CustomerDialog_noOfDependents.value')}" />
@@ -201,9 +178,28 @@
 													</hbox>
 												</row>
 												<row>
-													<label id="label_CustomerDialog_Target"
-														value="${c:l('label_CustomerDialog_Target.value')}" />
-													<extendedcombobox id="target" />
+													<label id="label_ArabicName"
+														value="${c:l('label_CustomerDialog_FatherOrSpouse.value')}" />
+													<hbox>
+														<space id="space_CustArabicName" spacing="2px"
+															sclass="mandatory" />
+														<textbox id="custArabicName" maxlength="50" width="250px" />
+													</hbox>
+													<label id="label_CustomerDialog_motherMaidenName"
+														value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}" />
+													<hbox id="hbox_motherMaidenName">
+														<space spacing="2px" sclass="mandatory" />
+														<textbox id="motherMaidenName" maxlength="50" width="250px"
+															style="overflow: hidden;" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_CustomerDialog_subCategory"
+														value="${c:l('label_CustomerDialog_SubCategory.value')}" />
+													<hbox id="hbox_SubCategory">
+														<space id="spaceSubCategory" spacing="2px" sclass="mandatory" />
+														<combobox id="subCategory" readonly="true" width="155px" />
+													</hbox>
 													<label id="label_CustomerDialog_SalaryTransfered"
 														value="${c:l('label_CustomerDialog_SalaryTransfered.value')}" />
 													<hbox id="hbox_SalariedCustomer">
@@ -217,19 +213,25 @@
 													<extendedcombobox id="custQualification" />
 												</row>
 												<row>
-													<label id="label_CustomerDialog_EIDNumber"
-														value="${c:l('label_CustomerDialog_EIDNumber.value')}" />
-													<hbox>
-														<space id="space_EidNumber" spacing="2px" />
-														<uppercasebox id="eidNumber" width="156px" />
-														<label id="label_CustomerDialog_EIDName"
-															style="margin-left:10px; display:inline-block; padding-top:5px; white-space:nowrap;" />
-													</hbox>
-													<label id="label_CustomerDialog_CustCOB"
-														value="${c:l('label_CustomerDialog_CustCOB.value')}" />
-													<extendedcombobox id="custCOB" />
+													<label id="label_CustomerDialog_CustNationality"
+														value="${c:l('label_CustomerDialog_CustNationality.value')}" />
+													<extendedcombobox id="custNationality" />
+													<label value="${c:l('label_CustomerDialog_CustLng.value')}" />
+													<extendedcombobox id="custLng" />
 												</row>
+												<!-- <row> <label id ="label_CustomerDialog_ResidentialStatus" value="${c:l('label_CustomerDialog_ResidentialStstus.value')}" 
+													/> <hbox> <space id="space_Residential" spacing="2px" sclass="mandatory" /> <combobox id="custResidentialStstus" width="155px" 
+													/> </hbox> <row id="row_natueOfBusiness"> <label id="label_natureOfBusiness" value="${c:l('label_CustomerDialog_NatureOfBusiness.value')}" 
+													/> <hbox id="hbox_natureOfBusiness"> <space spacing="2px" id="space_natureOfBusiness" /> <combobox id="natureOfBusiness" 
+													width="155px" /> </hbox> </row> -->
+
 												<row id="row_residentialsts">
+													<label id="label_ResidentialStatus"
+														value="${c:l('label_CustomerDialog_ResidentialStstus.value')}" />
+													<hbox>
+														<space id="space_ResidentialStatus" spacing="2px" />
+														<combobox id="residentialStatus" width="155px" />
+													</hbox>
 													<!-- <row id="row_natueOfBusiness"> -->
 													<label
 														value="${c:l('label_CustomerDialog_NatureOfBusiness.value')}" />
@@ -239,23 +241,28 @@
 													</hbox>
 												</row>
 												<row>
+													<label id="label_CustomerDialog_CustIndustry"
+														value="${c:l('label_CustomerDialog_CustIndustry.value')}" />
+													<extendedcombobox id="custIndustry" />
+													<label id="label_CustomerDialog_Target"
+														value="${c:l('label_CustomerDialog_Target.value')}" />
+													<extendedcombobox id="target" />
+
+												</row>
+												<row id="row_custSegment">
+													<label id='label_CustSegment'
+														value="${c:l('label_CustomerDialog_CustSegment.value')}" />
+													<extendedcombobox id="custSegment" />
+													<label id='label_CustSubSegment'
+														value="${c:l('label_CustomerDialog_CustSubSegment.value')}" />
+													<extendedcombobox id="custSubSegment" />
+												</row>
+												<row id="row_custSub">
 													<label value="${c:l('label_CustomerDialog_CustSector.value')}" />
 													<extendedcombobox id="custSector" />
-													<label id="label_CustomerDialog_CustIndustry" value="${c:l('label_CustomerDialog_CustIndustry.value')}" />
-													<extendedcombobox id="custIndustry" />
-												</row>
-												<row id="row_custStatus">
-													<label value="${c:l('label_CustomerDialog_CustSts.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<textbox id="custSts" width="150px" />
-													</hbox>
-													<label id="label_CustomerDialog_CKYCOrReferenceNo"
-														value="${c:l('label_CustomerDialog_CKYCOrReferenceNo.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<textbox id="ckycOrRefNo" width="155px" />
-													</hbox>
+													<label id='label_CustSubSector'
+														value="${c:l('label_CustomerDialog_CustSubSector.value')}" />
+													<extendedcombobox id="custSubSector" />
 												</row>
 												<row>
 													<label id="label_CustRelatedParty"
@@ -264,26 +271,6 @@
 														<space spacing="2px" />
 														<textbox id="custRelatedParty" width="250px" />
 													</hbox>
-													<label id='label_CustSegment'
-														value="${c:l('label_CustomerDialog_CustSegment.value')}" />
-													<extendedcombobox id="custSegment" />
-												</row>
-												<row>
-													<label id="label_entityType" value="${c:l('label_CustomerDialog_EntityType.value')}" />
-													<hbox id="hbox_entityType">
-														<space spacing="2px" id="space_entitytype" sclass="mandatory" />
-														<combobox id="entityType" width="155px" />
-													</hbox>
-												</row>
-												<row id="row_custTradeLicenceNum" visible="false">
-													<label
-														value="${c:l('label_CustomerDialog_CustTradeLicenceNum.value')}" />
-													<hbox>
-														<space spacing="2px" sclass="mandatory" />
-														<textbox id="custTradeLicenceNum" width="250px" />
-													</hbox>
-												</row>
-												<row>
 													<label id='label_CustGroupId'
 														value="${c:l('label_CustomerDialog_CustGroupID.value')}" />
 													<extendedcombobox id="custGroupId" />
@@ -300,7 +287,22 @@
 														<space spacing="2px" />
 														<textbox id="custStaffID" width="100px" />
 													</hbox>
-
+												</row>
+												<row id="row_custCountry">
+													<label id='label_CustRiskCountryCode'
+														value="${c:l('label_CustomerDialog_CustRiskCountry.value')}" />
+													<extendedcombobox id="custRiskCountry" />
+													<label id='label_CustParentCountry'
+														value="${c:l('label_CustomerDialog_CustParentCountry.value')}" />
+													<extendedcombobox id="custParentCountry" />
+												</row>
+												<row>
+													<label id="label_CustomerDialog_CustDftBranch"
+														value="${c:l('label_CustomerDialog_CustDftBranch.value')}" />
+													<extendedcombobox id="custDftBranch" />
+													<label id="label_CustomerDialog_CustRO1"
+														value="${c:l('label_CustomerDialog_CustRO1.value')}" />
+													<extendedcombobox id="custRO1" />
 												</row>
 												<row id="row_custDSA">
 													<label id='label_CustDSACode'
@@ -313,69 +315,12 @@
 														value="${c:l('label_CustomerDialog_CustDSADeptCode.value')}" />
 													<extendedcombobox id="custDSADept" />
 												</row>
-												<row id="row_custCountry">
-													<label id='label_CustRiskCountryCode'
-														value="${c:l('label_CustomerDialog_CustRiskCountry.value')}" />
-													<extendedcombobox id="custRiskCountry" />
-													<label id='label_CustParentCountry'
-														value="${c:l('label_CustomerDialog_CustParentCountry.value')}" />
-													<extendedcombobox id="custParentCountry" />
-												</row>
-												<row id="row_custSub">
-													<label id='label_CustSubSector'
-														value="${c:l('label_CustomerDialog_CustSubSector.value')}" />
-													<extendedcombobox id="custSubSector" />
-													<label id='label_CustSubSegment'
-														value="${c:l('label_CustomerDialog_CustSubSegment.value')}" />
-													<extendedcombobox id="custSubSegment" />
-												</row>
 												<row>
-													<label id="label_CustomerDialog_ApplicationNo"
-														value="${c:l('label_CustomerDialog_ApplicationNo.value')}" />
-													<hbox>
-														<space spacing="2px" id="space_applicationNo" />
-														<uppercasebox id="applicationNo" width="170px" visible="true" />
-													</hbox>
-												</row>
-												<row>
-													<label id="label_CustomerDialog_DND"
-														value="${c:l('label_CustomerDialog_DND.value')}" />
-													<hbox id="hbox_DND">
-														<space spacing="2px" />
-														<checkbox id="dnd" />
-													</hbox>
-													<label id="label_CustomerDialog_VIP"
-														value="${c:l('label_CustomerDialog_VIP.value')}" />
-													<hbox id="hbox_VIP">
-														<space spacing="2px" />
-														<checkbox id="vip" />
-													</hbox>
-												</row>
-											</rows>
-										</grid>
-										<grid id="grid_ExtendedDetails" sclass="GridLayoutNoBorder" fixedLayout="true"
-											style="border:0px; padding:0px;">
-											<columns>
-												<column width="220px" />
-												<column width="360px" />
-												<column width="220px" />
-												<column width="360px" />
-											</columns>
-											<rows>
-												<row>
-													<label id="label_CustomerDialog_subCategory"
-														value="${c:l('label_CustomerDialog_SubCategory.value')}" />
-													<hbox id="hbox_SubCategory">
-														<space id="spaceSubCategory" spacing="2px" sclass="mandatory" />
-														<combobox id="subCategory" readonly="true" width="155px" />
-													</hbox>
 													<label id="label_CustomerDialog_CustReligion"
 														value="${c:l('label_CustomerDialog_Religion.value')}" />
 													<hbox id="hbox_CustReligion">
 														<extendedcombobox id="religion" />
 													</hbox>
-												</row>
-												<row>
 													<label id="label_OtherReligion"
 														value="${c:l('label_CustomerDialog_OtherReligion.value')}" />
 													<hbox id="hbox_CustOtherReligion">
@@ -396,6 +341,81 @@
 														<textbox id="otherCaste" width="200px " />
 													</hbox>
 												</row>
+
+												<row id="row_custStatus">
+
+													<label id="label_custSts"
+														value="${c:l('label_CustomerDialog_CustSts.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="custSts" width="150px" />
+													</hbox>
+													<label id="label_CustomerDialog_CKYCOrReferenceNo"
+														value="${c:l('label_CustomerDialog_CKYCOrReferenceNo.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="ckycOrRefNo" width="155px" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_CustomerDialog_DND"
+														value="${c:l('label_CustomerDialog_DND.value')}" />
+													<hbox id="hbox_DND">
+														<space spacing="2px" />
+														<checkbox id="dnd" />
+													</hbox>
+													<label id="label_CustomerDialog_VIP"
+														value="${c:l('label_CustomerDialog_VIP.value')}" />
+													<hbox id="hbox_VIP">
+														<space spacing="2px" />
+														<checkbox id="vip" />
+													</hbox>
+												</row>
+
+												<row>
+													<label value="${c:l('label_CustomerDialog_CustBaseCcy.value')}" />
+													<extendedcombobox id="custBaseCcy" />
+													<label id="label_CustomerDialog_ApplicationNo"
+														value="${c:l('label_CustomerDialog_ApplicationNo.value')}" />
+													<hbox>
+														<space spacing="2px" id="space_applicationNo" />
+														<uppercasebox id="applicationNo" width="170px" visible="true" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_entityType"
+														value="${c:l('label_CustomerDialog_EntityType.value')}" />
+													<hbox id="hbox_entityType">
+														<space spacing="2px" id="space_entitytype" sclass="mandatory" />
+														<combobox id="entityType" width="155px" />
+													</hbox>
+												</row>
+
+												<row id="row_custTradeLicenceNum" visible="false">
+													<label
+														value="${c:l('label_CustomerDialog_CustTradeLicenceNum.value')}" />
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
+														<textbox id="custTradeLicenceNum" width="250px" />
+													</hbox>
+													<label id="label_CustomerDialog_Profession"
+														value="${c:l('label_CustomerDialog_Profession.value')}" />
+													<extendedcombobox id="profession" />
+												</row>
+
+											</rows>
+										</grid>
+										<grid id="grid_ExtendedDetails" sclass="GridLayoutNoBorder" fixedLayout="true"
+											style="border:0px; padding:0px;">
+											<columns>
+												<column width="220px" />
+												<column width="360px" />
+												<column width="220px" />
+												<column width="360px" />
+											</columns>
+											<rows>
+
+
 											</rows>
 										</grid>
 									</groupbox>
@@ -450,12 +470,9 @@
 												<hlayout spacing="0px">
 													<label id="label_CustomerDialog_EmpSector"
 														value="${c:l('label_CustomerDialog_EmpSector.value')}" />
-													<label id="label_CustomerDialog_Profession" visible="false"
-														value="${c:l('label_CustomerDialog_Profession.value')}" />
 												</hlayout>
 												<hlayout spacing="0px">
 													<extendedcombobox id="empSector" />
-													<extendedcombobox id="profession" visible="false" />
 												</hlayout>
 											</row>
 											<row id="row_EmpName">
@@ -588,7 +605,7 @@
 												</listbox>
 											</groupbox>
 										</row>
-										<row style="vertical-align: top;">
+										<row spans="3">
 											<groupbox id="gb_customerAddressDetails" sclass="gb_dialog">
 												<div sclass="z-toolbar" style="padding:0">
 													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
@@ -621,6 +638,8 @@
 													</listhead>
 												</listbox>
 											</groupbox>
+										</row>
+										<row spans="3">
 											<groupbox id="gb_customerPhoneDetails" sclass="gb_dialog">
 												<div sclass="z-toolbar" style="padding:0">
 													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
@@ -669,6 +688,8 @@
 													</listhead>
 												</listbox>
 											</groupbox>
+										</row>
+										<row spans="3">
 											<groupbox id="gb_customerEmailDetails" sclass="gb_dialog">
 												<div sclass="z-toolbar" style="padding:0">
 													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
@@ -810,7 +831,8 @@
 										<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
 											height="100%" width="100%">
 											<toolbar align="start" style="border:none;">
-												<label value="${c:l('DirectorDetails')}" sclass="listboxHeading"></label>
+												<label value="${c:l('DirectorDetails')}" sclass="listboxHeading">
+												</label>
 											</toolbar>
 											<toolbar align="end" style="float:right; border-style: none; padding:0px;"
 												height="100%">
@@ -924,7 +946,7 @@
 											<groupbox closable="true">
 												<caption label="${c:l('gp_CustFinExposureDetails')}"></caption>
 												<listbox id="listBoxCustomerFinExposure" span="true"
-													sizedByContent="true" width="100%" height="100%" multiple="false"
+													sizedByContent="true" fixedLayout="true" width="100%" multiple="false"
 													emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
 														<listheader id="listheader_CustFinExposure_FinDate"
@@ -966,8 +988,8 @@
 													</hbox>
 												</div>
 												<listbox id="listBoxCustomerExternalLiability" span="true"
-													sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="500px"
-													multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+													sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
+													emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
 														<listheader id="listheader_ExternalLiability_FinDate"
 															label="${c:l('listheader_ExternalLiability_FinDate.label')}" sort="false" hflex="min" />

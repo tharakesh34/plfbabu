@@ -23,7 +23,6 @@
 						<button id="print" label="${c:l('label_Print')}"
 							autodisable="button_CustomerList_CustomerSearchDialog,print,button_CustomerList_NewCustomer,btnRefresh,help"
 							tooltiptext="${c:l('print.tooltiptext')}" sclass="z-toolbarbutton" />
-						<combobox id="betaReq" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->

@@ -65,7 +65,6 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.model.CustomerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -117,9 +116,6 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 	private transient CustomerDetailsService customerDetailsService;
 	private final List<ValueLabel> custCtgCodeList = PennantAppUtil.getcustCtgCodeList();
 	private String module = null;
-	private Combobox betaReq;
-	private List<ValueLabel> betaConfig = PennantStaticListUtil.getBetaConfiguration();
-	private String betaDialog = "_Beta";
 
 	/**
 	 * default constructor.<br>
@@ -183,7 +179,6 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 				sortOperator_custTypeCode, Operators.STRING);
 		registerField("LovDescRequestStage", listheader_RequestStage);
 
-		fillComboBox(this.betaReq, "Beta", betaConfig, "");
 		// Render the page and display no data when the page loaded for the first time.
 		doRenderPage();
 	}
@@ -280,11 +275,9 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		arg.put("newRecord", customerDetails.getCustomer().isNew());
 		arg.put("module", module);
 		arg.put("isFromCustomer", true);
-		arg.put("BetaData", betaDialog);
 
 		try {
 			StringBuilder pageName = new StringBuilder("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog");
-			pageName.append(StringUtils.trimToEmpty(betaDialog));
 			pageName.append(".zul");
 
 			if (enqiryModule) {
@@ -371,12 +364,4 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		this.customerDetailsService = customerDetailsService;
 	}
 
-	public void onSelect$betaReq(Event event) {
-		String betaReq = getComboboxValue(this.betaReq);
-		if (betaReq.equals("Old")) {
-			betaDialog = "";
-		} else {
-			betaDialog = "_Beta";
-		}
-	}
 }

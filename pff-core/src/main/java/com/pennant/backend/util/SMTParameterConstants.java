@@ -254,7 +254,6 @@ public class SMTParameterConstants {
 	public static final String CET_LAEP = "CET_LAEP";
 	public static final String ALLOW_CIBIL_VALIDATION_RULE = "ALLOW_CIBIL_VALIDATION_RULE";
 	public static final String INSURANCE_CAL_REQUEST_URL = "INSURANCE_CAL_REQUEST_URL";
-	public static final String CUST_DIALOG_EXT = "CUST_DIALOG_EXT";
 	public static final String CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ = "CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ";
 	public static final String MANDATE_DOWNLOAD_STOP_CIF_VALIDATION = "MANDATE_DOWNLOAD_STOP_CIF_VALIDATION";
 	//For Verification tabs in Loan Queue

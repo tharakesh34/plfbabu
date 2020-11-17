@@ -109,7 +109,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.PennantAppUtil;
@@ -409,8 +408,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Listheader listheader_GSTInvoice;
 	protected Listheader listheader_CreditNote;
 	protected Listheader listheader_Cibil;
-	//Get SystemParameter 
-	String pageExt = SysParamUtil.getValueAsString("CUST_DIALOG_EXT");
 
 	/** New Labels For HL MLOD **/
 	protected Label entityType;
@@ -842,74 +839,73 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				retailDND.setSrc("images/icons/customerenquiry/inactivecheck.png");
 			}
 			employmentType.setValue(aCustomer.getSubCategory());
-			if (pageExt != null) {
-				List<ValueLabel> residentialStsList = PennantStaticListUtil.getResidentialStsList();
-				for (ValueLabel valueLabel : residentialStsList) {
-					if ((valueLabel.getValue().equals(aCustomer.getCustResidentialSts()))) {
-						residentialStatus.setValue(valueLabel.getLabel());
-						break;
-					}
+
+			List<ValueLabel> residentialStsList = PennantStaticListUtil.getResidentialStsList();
+			for (ValueLabel valueLabel : residentialStsList) {
+				if ((valueLabel.getValue().equals(aCustomer.getCustResidentialSts()))) {
+					residentialStatus.setValue(valueLabel.getLabel());
+					break;
 				}
-				if (StringUtils.isEmpty(residentialStatus.getValue())) {
-					residentialStatus.setStyle("color:orange; font:12px");
-					residentialStatus.setValue("- - - - - - - - -");
-				}
-				if (!StringUtils.isEmpty(aCustomer.getOtherReligion())) {
-					otherReligion.setValue(aCustomer.getOtherReligion());
-				} else {
-					otherReligion.setStyle("color:orange; font:12px");
-					otherReligion.setValue("- - - - - - - - -");
-				}
-				if (!StringUtils.isEmpty(aCustomer.getOtherCaste())) {
-					otherCaste.setValue(aCustomer.getOtherCaste());
-				} else {
-					otherCaste.setStyle("color:orange; font:12px");
-					otherCaste.setValue("- - - - - - - - -");
-				}
-				List<ValueLabel> natureofBusinessList = PennantStaticListUtil.getNatureofBusinessList();
-				for (ValueLabel valueLabel : natureofBusinessList) {
-					if ((valueLabel.getValue().equals(aCustomer.getNatureOfBusiness()))) {
-						natureOfBusiness.setValue(valueLabel.getLabel());
-						break;
-					}
-				}
-				if (StringUtils.isEmpty(natureOfBusiness.getValue())) {
-					natureOfBusiness.setStyle("color:orange; font:12px");
-					natureOfBusiness.setValue("- - - - - - - - -");
-				}
-				if (!StringUtils.isEmpty(aCustomer.getQualification())) {
-					qualifiaction.setValue(aCustomer.getQualification());
-				} else {
-					qualifiaction.setStyle("color:orange; font:12px");
-					qualifiaction.setValue("- - - - - - - - -");
-				}
-				if (!StringUtils.isEmpty(aCustomer.getLovDescCustProfessionName())) {
-					profession.setValue(aCustomer.getLovDescCustProfessionName());
-				} else {
-					profession.setStyle("color:orange; font:12px");
-					profession.setValue("- - - - - - - - -");
-				}
-				if (!StringUtils.isEmpty(aCustomer.getCkycOrRefNo())) {
-					cKYCRef.setValue(aCustomer.getCkycOrRefNo());
-				} else {
-					cKYCRef.setStyle("color:orange; font:12px");
-					cKYCRef.setValue("- - - - - - - - -");
-				}
-				labelNatureOfBusiness.setVisible(true);
-				labelOtherCaste.setVisible(true);
-				labelProfession.setVisible(true);
-				labelQualifiaction.setVisible(true);
-				labelOtherReligion.setVisible(true);
-				labelResidentialStatus.setVisible(true);
-				residentialStatus.setVisible(true);
-				otherReligion.setVisible(true);
-				otherCaste.setVisible(true);
-				natureOfBusiness.setVisible(true);
-				qualifiaction.setVisible(true);
-				profession.setVisible(true);
-				cKYCRef.setVisible(true);
-				labelCKYCRef.setVisible(true);
 			}
+			if (StringUtils.isEmpty(residentialStatus.getValue())) {
+				residentialStatus.setStyle("color:orange; font:12px");
+				residentialStatus.setValue("- - - - - - - - -");
+			}
+			if (!StringUtils.isEmpty(aCustomer.getOtherReligion())) {
+				otherReligion.setValue(aCustomer.getOtherReligion());
+			} else {
+				otherReligion.setStyle("color:orange; font:12px");
+				otherReligion.setValue("- - - - - - - - -");
+			}
+			if (!StringUtils.isEmpty(aCustomer.getOtherCaste())) {
+				otherCaste.setValue(aCustomer.getOtherCaste());
+			} else {
+				otherCaste.setStyle("color:orange; font:12px");
+				otherCaste.setValue("- - - - - - - - -");
+			}
+			List<ValueLabel> natureofBusinessList = PennantStaticListUtil.getNatureofBusinessList();
+			for (ValueLabel valueLabel : natureofBusinessList) {
+				if ((valueLabel.getValue().equals(aCustomer.getNatureOfBusiness()))) {
+					natureOfBusiness.setValue(valueLabel.getLabel());
+					break;
+				}
+			}
+			if (StringUtils.isEmpty(natureOfBusiness.getValue())) {
+				natureOfBusiness.setStyle("color:orange; font:12px");
+				natureOfBusiness.setValue("- - - - - - - - -");
+			}
+			if (!StringUtils.isEmpty(aCustomer.getQualification())) {
+				qualifiaction.setValue(aCustomer.getQualification());
+			} else {
+				qualifiaction.setStyle("color:orange; font:12px");
+				qualifiaction.setValue("- - - - - - - - -");
+			}
+			if (!StringUtils.isEmpty(aCustomer.getLovDescCustProfessionName())) {
+				profession.setValue(aCustomer.getLovDescCustProfessionName());
+			} else {
+				profession.setStyle("color:orange; font:12px");
+				profession.setValue("- - - - - - - - -");
+			}
+			if (!StringUtils.isEmpty(aCustomer.getCkycOrRefNo())) {
+				cKYCRef.setValue(aCustomer.getCkycOrRefNo());
+			} else {
+				cKYCRef.setStyle("color:orange; font:12px");
+				cKYCRef.setValue("- - - - - - - - -");
+			}
+			labelNatureOfBusiness.setVisible(true);
+			labelOtherCaste.setVisible(true);
+			labelProfession.setVisible(true);
+			labelQualifiaction.setVisible(true);
+			labelOtherReligion.setVisible(true);
+			labelResidentialStatus.setVisible(true);
+			residentialStatus.setVisible(true);
+			otherReligion.setVisible(true);
+			otherCaste.setVisible(true);
+			natureOfBusiness.setVisible(true);
+			qualifiaction.setVisible(true);
+			profession.setVisible(true);
+			cKYCRef.setVisible(true);
+			labelCKYCRef.setVisible(true);
 
 			getAddressDetails(aCustomerDetails.getAddressList());
 			doFillCustomerPhoneNumberDetails(aCustomerDetails.getCustomerPhoneNumList());
@@ -1112,13 +1108,12 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				corpDND.setSrc("images/icons/customerenquiry/inactivecheck.png");
 			}
-			if (pageExt != null) {
-				entityType.setValue(aCustomer.getEntityType());
-				entityType.setVisible(true);
-				if (StringUtils.isEmpty(aCustomer.getEntityType())) {
-					entityType.setStyle("color:orange; font:12px");
-					entityType.setValue("- - - - - - - - -");
-				}
+
+			entityType.setValue(aCustomer.getEntityType());
+			entityType.setVisible(true);
+			if (StringUtils.isEmpty(aCustomer.getEntityType())) {
+				entityType.setStyle("color:orange; font:12px");
+				entityType.setValue("- - - - - - - - -");
 			}
 			getAddressDetails(aCustomerDetails.getAddressList());
 			doFillCustomerPhoneNumberDetails(aCustomerDetails.getCustomerPhoneNumList());

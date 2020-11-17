@@ -2412,12 +2412,9 @@ public class PennantAppUtil {
 	 * @return String
 	 */
 	public static String getCustomerPageName() {
-		String pageExt = SysParamUtil.getValueAsString("CUST_DIALOG_EXT");
 		StringBuilder builder = new StringBuilder("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog");
-		builder.append(StringUtils.trimToEmpty(pageExt));
 		builder.append(".zul");
 		return builder.toString();
-
 	}
 
 	/**
