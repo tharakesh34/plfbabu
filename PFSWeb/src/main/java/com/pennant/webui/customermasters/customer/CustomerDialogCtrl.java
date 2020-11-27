@@ -1026,7 +1026,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.caste.setValidateColumns(new String[] { "CasteCode" });
 
 		this.religion.setMaxlength(8);
-		this.religion.setMandatoryStyle(true);
+		this.religion.setMandatoryStyle(false);
 		this.religion.setModuleName("Religion");
 		this.religion.setValueColumn("ReligionCode");
 		this.religion.setDescColumn("ReligionDesc");
@@ -1058,7 +1058,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.profession.setValidateColumns(new String[] { "ProfessionCode" });
 
 		this.custQualification.setMaxlength(8);
-		this.custQualification.setMandatoryStyle(true);
+		this.custQualification.setMandatoryStyle(false);
 		this.custQualification.setModuleName("Qualification");
 		this.custQualification.setValueColumn("Code");
 		this.custQualification.setDescColumn("Description");
@@ -1153,7 +1153,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custSubSegment.setValidateColumns(new String[] { "SubSegmentCode" });
 
 		this.custSegment.setMaxlength(8);
-		this.custSegment.setMandatoryStyle(true);
+		this.custSegment.setMandatoryStyle(false);
 		this.custSegment.setModuleName("Segment");
 		this.custSegment.setValueColumn("SegmentCode");
 		this.custSegment.setDescColumn("SegmentDesc");
@@ -1209,11 +1209,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		//Email Inline Edit
 		this.listBoxCustomerEmails.setVisible(false);
 		this.listBoxCustomerEmailsInlineEdit.setVisible(true);
-		//Employment type field setting mandatory based on system parameter 
-		if (PennantConstants.NO
-				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.ISEMPLOYMENTTYPE_MANDATORY_REQUIRED))) {
-			spaceSubCategory.setVisible(false);
-		}
+
+		spaceSubCategory.setVisible(false);
+		
 		//setting visible false for new customer
 		this.btnUploadExternalLiability.setVisible(false);
 		this.btnDownloadExternalLiability.setVisible(false);
@@ -2853,7 +2851,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (StringUtils.isEmpty(this.custQualification.getValue())) {
 				this.custQualification.setReadonly(isReadOnly("CustomerDialog_qualification"));
 				if (!this.custQualification.isReadonly()) {
-					this.custQualification.setMandatoryStyle(true);
+					this.custQualification.setMandatoryStyle(false);
 				}
 			}
 			if (StringUtils.isEmpty(this.custLng.getValue())) {
@@ -2880,7 +2878,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (StringUtils.isEmpty(this.custSegment.getValue())) {
 				this.custSegment.setReadonly(true);
 				if (!this.custSegment.isReadonly()) {
-					this.custSegment.setMandatoryStyle(true);
+					this.custSegment.setMandatoryStyle(false);
 				}
 			}
 			if (StringUtils.isEmpty(this.custCOB.getValue())) {
@@ -2999,7 +2997,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!this.religion.isReadonly()) {
 				this.religion
 						.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_Religion.value"),
-								PennantRegularExpressions.REGEX_ALPHA_SPACE, isMandValidate));
+								PennantRegularExpressions.REGEX_ALPHA_SPACE, false));
 			}
 
 		} else {
@@ -3109,7 +3107,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		if (!this.custQualification.isReadonly()) {
 			this.custQualification.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CustomerDialog_CustQualification.value"), null, true, true));
+					Labels.getLabel("label_CustomerDialog_CustQualification.value"), null, false, true));
 		}
 		if (!this.custSector.isReadonly() && nonWorking) {
 			this.custSector.setConstraint(
@@ -3144,7 +3142,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		if (!this.custSegment.isReadonly() && this.custSegment.isVisible() && nonWorking) {
 			this.custSegment.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSegment.value"), null, true, true));
+					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSegment.value"), null, false, true));
 		}
 
 		if (isRetailCustomer) {
@@ -3229,7 +3227,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			//Employment type Mandatory base on system parameter setting validation
 			if (!this.subCategory.isDisabled() && spaceSubCategory.isVisible()) {
 				this.subCategory.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_CustomerDialog_SubCategory.value"), null, isMandValidate));
+						Labels.getLabel("label_CustomerDialog_SubCategory.value"), null, false));
 			}
 
 		}
@@ -7940,7 +7938,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.custIndustry.setMandatoryStyle(true);
 			this.custSegment.setValue(customerDetails.getCustomer().getCustSegment());
 			this.custSegment.setDescription(customerDetails.getCustomer().getLovDescCustSegmentName());
-			this.custSegment.setMandatoryStyle(true);
+			this.custSegment.setMandatoryStyle(false);
 			this.custSubSegment.setValue(customerDetails.getCustomer().getCustSubSegment());
 			this.custSector.setValue(customerDetails.getCustomer().getCustSector());
 			this.custSector

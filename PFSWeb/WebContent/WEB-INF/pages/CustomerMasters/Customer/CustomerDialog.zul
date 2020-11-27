@@ -197,7 +197,7 @@
 													<label id="label_CustomerDialog_subCategory"
 														value="${c:l('label_CustomerDialog_SubCategory.value')}" />
 													<hbox id="hbox_SubCategory">
-														<space id="spaceSubCategory" spacing="2px" sclass="mandatory" />
+														<space id="spaceSubCategory" spacing="2px"  />
 														<combobox id="subCategory" readonly="true" width="155px" />
 													</hbox>
 													<label id="label_CustomerDialog_SalaryTransfered"
@@ -386,7 +386,7 @@
 													<label id="label_entityType"
 														value="${c:l('label_CustomerDialog_EntityType.value')}" />
 													<hbox id="hbox_entityType">
-														<space spacing="2px" id="space_entitytype" sclass="mandatory" />
+														<space spacing="2px" id="space_entitytype"  />
 														<combobox id="entityType" width="155px" />
 													</hbox>
 												</row>
