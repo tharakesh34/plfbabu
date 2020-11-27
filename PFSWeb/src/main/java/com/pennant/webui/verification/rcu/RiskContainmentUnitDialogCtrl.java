@@ -48,6 +48,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -251,7 +252,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			this.space_AgentCode.setVisible(false);
 			this.space_AgentName.setVisible(false);
 		}
-		docFieldsDisabled = SysParamUtil.isAllowed(SMTParameterConstants.IS_FCU_DOC_FIELDS_DISABLED_REQUIRED);
+		docFieldsDisabled = ImplementationConstants.FCU_DOC_FIELDS_DISABLED;
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);

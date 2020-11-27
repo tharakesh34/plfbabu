@@ -160,11 +160,41 @@ public class ImplementationConstants {
 		TV_FINALVAL_AMOUNT_VALD = getValueAsBoolean(extensions, "TV_FINALVAL_AMOUNT_VALD", false);
 		FEE_CAL_ON_RULE = getValueAsBoolean(extensions, "FEE_CAL_ON_RULE", false);
 		OLD_ADDRESSCOPY_REQUIRED = getValueAsBoolean(extensions, "OLD_ADDRESSCOPY_REQUIRED", false);
-		CUST_EMP_DETAILS_REQ = getValueAsBoolean(extensions, "CUST_EMP_DETAILS_REQ", true);
-		CUST_SHARE_HOLDER_TAB_REQ = getValueAsBoolean(extensions, "CUST_SHARE_HOLDER_TAB_REQ", true);
+		SHOW_CUST_EMP_DETAILS = getValueAsBoolean(extensions, "SHOW_CUST_EMP_DETAILS", true);
+		SHOW_CUST_SHARE_HOLDER_DETAILS = getValueAsBoolean(extensions, "SHOW_CUST_SHARE_HOLDER_DETAILS", true);
 
 		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true); // Default value should be "true"
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
+		CUST_EMP_TYPE_MANDATORY = getValueAsBoolean(extensions, "CUST_EMP_TYPE_MANDATORY", false);
+		DEDUP_BLACKLIST_COAPP = getValueAsBoolean(extensions, "DEDUP_BLACKLIST_COAPP", false);
+		POPULATE_DFT_INCOME_DETAILS = getValueAsBoolean(extensions, "POPULATE_DFT_INCOME_DETAILS", false);
+		CUST_MOB_MANDATORY = getValueAsBoolean(extensions, "CUST_MOB_MANDATORY", true);
+		VER_RCU_DFT_REQ_TYPE_REQUEST = getValueAsBoolean(extensions, "VER_RCU_DFT_REQ_TYPE_REQUEST", false);
+		VFN_REASONCODES_BASED_ON_REASONTYPE = getValueAsBoolean(extensions, "VFN_REASONCODES_BASED_ON_REASONTYPE",
+				false);
+		NOC_LINKED_LOANS_VALIDATION = getValueAsBoolean(extensions, "NOC_LINKED_LOANS_VALIDATION", false);
+		ACCOUNTING_VALIDATION = getValueAsBoolean(extensions, "ACCOUNTING_VALIDATION", false);
+		EXCLUDE_RECALTYPE_VAL_IN_ADDDISB = getValueAsBoolean(extensions, "EXCLUDE_RECALTYPE_VAL_IN_ADDDISB", false);
+		EXCLUDE_RECALTYPE_VAL_IN_ADDRATECHNG = getValueAsBoolean(extensions, "EXCLUDE_RECALTYPE_VAL_IN_ADDRATECHNG",
+				false);
+		EXCLUDE_RECALTYPE_VAL_IN_RECAL = getValueAsBoolean(extensions, "EXCLUDE_RECALTYPE_VAL_IN_RECAL", false);
+		FCU_DOC_FIELDS_DISABLED = getValueAsBoolean(extensions, "FCU_DOC_FIELDS_DISABLED", false);
+		COLLATERAL_DEDUP_WARNING = getValueAsBoolean(extensions, "COLLATERAL_DEDUP_WARNING", false);
+		NOC_GENERATION_MULTIPLE = getValueAsBoolean(extensions, "NOC_GENERATION_MULTIPLE", false);
+		CUSTOMIZED_TEMPLATES = getValueAsBoolean(extensions, "CUSTOMIZED_TEMPLATES", false);
+		SHOW_ADDITIONAL_DISB_PARTIES = getValueAsBoolean(extensions, "SHOW_ADDITIONAL_DISB_PARTIES", false);
+		DERIVED_EMI_REQ = getValueAsBoolean(extensions, "DERIVED_EMI_REQ", false);
+		IS_DATA_SYNC_REQ_BY_APP_DATE = getValueAsBoolean(extensions, "IS_DATA_SYNC_REQ_BY_APP_DATE", false);
+		CUSTOM_PHONE_REGEX = getValueAsBoolean(extensions, "CUSTOM_PHONE_REGEX", false);
+		CUSTOM_BLACKLIST_PARAMS = getValueAsBoolean(extensions, "CUSTOM_BLACKLIST_PARAMS", false);
+		COAPP_ALWD_FOR_MANDATE = getValueAsBoolean(extensions, "COAPP_ALWD_FOR_MANDATE", false);
+		COAPP_ALWD_FOR_DISBURSEMENT = getValueAsBoolean(extensions, "COAPP_ALWD_FOR_DISBURSEMENT", false);
+		COAPP_ALWD_FOR_CHEQUE = getValueAsBoolean(extensions, "COAPP_ALWD_FOR_CHEQUE", false);
+		PERC_REQ_FOR_FINTYPE_FEE = getValueAsBoolean(extensions, "PERC_REQ_FOR_FINTYPE_FEE", false);
+		ALW_CUSTOMER_DATA_EXTRACTION = getValueAsBoolean(extensions, "ALW_CUSTOMER_DATA_EXTRACTION", false);
+		ALW_MASTER_DATA_EXTRACTION = getValueAsBoolean(extensions, "ALW_MASTER_DATA_EXTRACTION", false);
+		ALW_VERIFICATION_SYNC = getValueAsBoolean(extensions, "ALW_VERIFICATION_SYNC", false);
+		ALW_FILTER_BY_CITY = getValueAsBoolean(extensions, "ALW_FILTER_BY_CITY", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -339,8 +369,8 @@ public class ImplementationConstants {
 	public static boolean ALLOW_INST_BASED_SCHD;
 
 	public static boolean FEE_CAL_ON_RULE;
-	public static boolean CUST_EMP_DETAILS_REQ;
-	public static boolean CUST_SHARE_HOLDER_TAB_REQ;
+	public static boolean SHOW_CUST_EMP_DETAILS;
+	public static boolean SHOW_CUST_SHARE_HOLDER_DETAILS;
 
 	//FIXME>>HL >>
 
@@ -348,6 +378,35 @@ public class ImplementationConstants {
 	public static boolean ALLOW_UNACCURED_PENALITY_SOA;
 	public static boolean SOA_SHOW_UNACCURED_PENALITY;
 	public static boolean GROUP_BATCH_BY_PARTNERBANK; // this field is true for Veritas
+	public static boolean CUST_EMP_TYPE_MANDATORY;
+	public static boolean DEDUP_BLACKLIST_COAPP;
+	public static boolean POPULATE_DFT_INCOME_DETAILS;
+	public static boolean CUST_MOB_MANDATORY;
+	public static boolean VER_RCU_DFT_REQ_TYPE_REQUEST;
+	public static boolean VFN_REASONCODES_BASED_ON_REASONTYPE;
+	public static boolean NOC_LINKED_LOANS_VALIDATION; // validate the linked loans for NOC generation
+	public static boolean ACCOUNTING_VALIDATION;
+	public static boolean EXCLUDE_RECALTYPE_VAL_IN_ADDDISB;
+	public static boolean EXCLUDE_RECALTYPE_VAL_IN_ADDRATECHNG;
+	public static boolean EXCLUDE_RECALTYPE_VAL_IN_RECAL;
+	public static boolean FCU_DOC_FIELDS_DISABLED;
+	public static boolean COLLATERAL_DEDUP_WARNING;
+	public static boolean NOC_GENERATION_MULTIPLE;
+	public static boolean CUSTOMIZED_TEMPLATES;
+	public static boolean SHOW_ADDITIONAL_DISB_PARTIES;
+	public static boolean DERIVED_EMI_REQ;
+	public static boolean IS_DATA_SYNC_REQ_BY_APP_DATE;
+	public static boolean CUSTOM_PHONE_REGEX;
+	public static boolean CUSTOM_BLACKLIST_PARAMS;
+	public static boolean COAPP_ALWD_FOR_MANDATE;
+	public static boolean COAPP_ALWD_FOR_DISBURSEMENT;
+	public static boolean COAPP_ALWD_FOR_CHEQUE;
+	public static boolean PERC_REQ_FOR_FINTYPE_FEE;
+	public static boolean ALW_CUSTOMER_DATA_EXTRACTION;
+	public static boolean ALW_MASTER_DATA_EXTRACTION;
+	public static boolean ALW_VERIFICATION_SYNC;
+	public static boolean ALW_FILTER_BY_CITY;
+
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static
 	 * boolean ALLOW_LV_INITIATION_LOS; public static boolean ALLOW_RCU_INITIATION_LOS;

@@ -133,7 +133,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.pennapps.core.App;
@@ -2445,7 +2444,7 @@ public class PennantAppUtil {
 	 */
 	public static void setReasonCodeFilters(ExtendedCombobox reason, String filterCode) {
 		Filter[] reasonFilter = new Filter[1];
-		if (SysParamUtil.isAllowed(SMTParameterConstants.VFN_REASONCODES_BASED_ON_REASONTYPE_REQ)) {
+		if (ImplementationConstants.VFN_REASONCODES_BASED_ON_REASONTYPE) {
 			reasonFilter[0] = new Filter("ReasonTypecode", filterCode, Filter.OP_EQUAL);
 			reason.setFilters(reasonFilter);
 		}

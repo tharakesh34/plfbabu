@@ -82,6 +82,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.fasterxml.jackson.databind.cfg.ContextAttributes.Impl;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
@@ -2320,7 +2321,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	public void onClick$btnGetCustBeneficiary(Event event) {
 		logger.debug("Entering");
 		Filter filter[] = new Filter[1];
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.IS_COAPPLICANTS_ALLOWED_FOR_DISBURSEMENT)) {
+		if (!ImplementationConstants.COAPP_ALWD_FOR_DISBURSEMENT) {
 			filter[0] = new Filter("CustId", custID, Filter.OP_EQUAL);
 			Object dataObject = ExtendedSearchListBox.show(this.window_FinAdvancePaymentsDialog, "BeneficiaryEnquiry",
 					filter, "");

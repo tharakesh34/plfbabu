@@ -30,6 +30,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ScriptError;
@@ -404,7 +405,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 		Map<String, Object> fielValueMap = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
 		aExetendedFieldRender.setMapValues(fielValueMap);
 
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.COLLATERAL_DEDUP_WARNING) && this.queryId > 0) {
+		if (!ImplementationConstants.COLLATERAL_DEDUP_WARNING && this.queryId > 0) {
 			DedupParm dedupParm = this.dedupParmService.getApprovedDedupParmById(this.queryCode,
 					FinanceConstants.DEDUP_COLLATERAL, this.querySubCode);
 

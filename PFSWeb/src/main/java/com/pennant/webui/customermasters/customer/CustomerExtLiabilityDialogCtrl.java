@@ -100,7 +100,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -2171,7 +2170,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 	private void deriveEmi() {
 		try {
-			if (SysParamUtil.isAllowed(SMTParameterConstants.DERIVED_EMI_REQ)) {
+			if (ImplementationConstants.DERIVED_EMI_REQ) {
 				BigDecimal rate = this.roi.getValidateValue() == null ? BigDecimal.ZERO : this.roi.getValidateValue();
 				BigDecimal originalAmount = this.originalAmount.getValidateValue();
 				double totTenure = this.totalTenure.intValue();

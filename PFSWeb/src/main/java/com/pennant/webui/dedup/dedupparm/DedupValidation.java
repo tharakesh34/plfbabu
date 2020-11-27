@@ -52,6 +52,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Window;
 
 import com.pennant.Interface.service.NorkamCheckService;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -96,7 +97,7 @@ public class DedupValidation implements Serializable {
 			if (!processCompleted) {
 				return false;
 			}
-			if (SysParamUtil.isAllowed(SMTParameterConstants.COAPP_BLACKLIST_DEDUP_REQ)) {
+			if (ImplementationConstants.DEDUP_BLACKLIST_COAPP) {
 				List<JointAccountDetail> details = aFinanceDetail.getJountAccountDetailList();
 				String finType = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType();
 				if (CollectionUtils.isNotEmpty(details)) {

@@ -64,6 +64,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.app.util.SysParamUtil;
@@ -111,7 +112,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	private transient RecalculateService recalService;
 	private boolean appDateValidationReq = false;
-	private boolean excludeReq = SysParamUtil.isAllowed(SMTParameterConstants.EXCLUDE_RECALTYPE_VAL_IN_RECAL);
+	private boolean excludeReq = ImplementationConstants.EXCLUDE_RECALTYPE_VAL_IN_RECAL;
 
 	/**
 	 * default constructor.<br>

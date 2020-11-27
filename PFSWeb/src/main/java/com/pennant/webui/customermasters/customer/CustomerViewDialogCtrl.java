@@ -1187,8 +1187,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 		}
 		//Piramal change to hide the employment details section based on system param
-		hbox_empDetails.setVisible(ImplementationConstants.CUST_EMP_DETAILS_REQ);
-		listBoxCustomerEmploymentDetail.setVisible(ImplementationConstants.CUST_EMP_DETAILS_REQ);
+		hbox_empDetails.setVisible(ImplementationConstants.SHOW_CUST_EMP_DETAILS);
+		listBoxCustomerEmploymentDetail.setVisible(ImplementationConstants.SHOW_CUST_EMP_DETAILS);
 		doFillDownload(prepareList());
 		logger.debug("Leaving");
 	}

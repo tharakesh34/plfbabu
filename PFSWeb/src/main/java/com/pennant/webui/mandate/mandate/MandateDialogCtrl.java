@@ -270,7 +270,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private transient PennyDropService pennyDropService;
 	private transient PennyDropDAO pennyDropDAO;
 	private transient BankAccountValidation bankAccountValidations;
-	private boolean coAppsAllowed = SysParamUtil.isAllowed(SMTParameterConstants.IS_COAPPLICANTS_ALLOWED_FOR_MANDATE);
+	private boolean coAppsAllowed = ImplementationConstants.COAPP_ALWD_FOR_MANDATE;
 
 	protected Row row_MandateSource;
 	protected Textbox eMandateReferenceNo;

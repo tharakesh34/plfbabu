@@ -31,6 +31,7 @@ import com.pennant.backend.service.incomeamortization.IncomeAmortizationService;
 import com.pennant.backend.service.incomeamortization.impl.AmortizationProcess;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -183,7 +184,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 		logger.debug(Literal.ENTERING);
 
 		// Application Deployment Date and AMZ Month End
-		Date startDate = SysParamUtil.getValueAsDate("APP_DEPLOYMENT_DATE");
+		Date startDate = SysParamUtil.getValueAsDate(SMTParameterConstants.APP_BUSINESS_START_DATE);
 		Date monthEndDate = DateUtility.getDate(amzMonthEnd, PennantConstants.DBDateFormat);
 
 		if (startDate != null && monthEndDate != null) {
@@ -379,8 +380,8 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 	private void prepareMonthEndList() {
 
 		// Application Deployment Date
-		Date startDate = SysParamUtil.getValueAsDate("APP_DEPLOYMENT_DATE");
-		Date appDate = DateUtility.getAppDate();
+		Date startDate = SysParamUtil.getValueAsDate(SMTParameterConstants.APP_BUSINESS_START_DATE);
+		Date appDate = SysParamUtil.getAppDate();
 
 		// Allow previous up to one year
 		Date prvYrDate = DateUtility.addYears(appDate, -1);

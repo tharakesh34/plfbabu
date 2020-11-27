@@ -32,6 +32,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -616,8 +617,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			// check if accounting rules executed or not
 			if (accountingDetailDialogCtrl == null || (!accountingDetailDialogCtrl.isAccountingsExecuted())) {
-				String validationReq = SysParamUtil.getValueAsString(SMTParameterConstants.ACCOUNTING_VALIDATION_REQ);
-				if (validationReq != null && "true".equalsIgnoreCase(validationReq.trim())) {
+				if (ImplementationConstants.ACCOUNTING_VALIDATION) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 					return;
 				}

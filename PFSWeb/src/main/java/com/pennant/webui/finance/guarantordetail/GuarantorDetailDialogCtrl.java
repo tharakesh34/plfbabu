@@ -79,6 +79,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
@@ -100,7 +101,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -254,9 +254,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private boolean isEnqProcess = false;
 	private boolean finsumryGurnatorEnq = false;
-	private boolean isCustomPhoneRegexReq = StringUtils
-			.equals(SysParamUtil.getValueAsString(SMTParameterConstants.USE_CUSTOM_PHONE_REGEX), PennantConstants.YES)
-					? true : false;
+	private boolean isCustomPhoneRegexReq = ImplementationConstants.CUSTOM_PHONE_REGEX;
 
 	/**
 	 * default constructor.<br>

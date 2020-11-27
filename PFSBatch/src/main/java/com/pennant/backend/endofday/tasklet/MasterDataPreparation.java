@@ -9,9 +9,9 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.ExtractDataExecution;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -23,7 +23,7 @@ public class MasterDataPreparation implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		//Return if extraction is not required
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALW_MASTER_DATA_EXTRACTION)) {
+		if (!ImplementationConstants.ALW_MASTER_DATA_EXTRACTION) {
 			return RepeatStatus.FINISHED;
 		}
 		//current date starting from midnight
@@ -34,7 +34,7 @@ public class MasterDataPreparation implements Tasklet {
 		cal.set(Calendar.MILLISECOND, 0);
 		cal.set(Calendar.AM_PM, Calendar.AM);
 		Timestamp currentTime = new Timestamp(cal.getTimeInMillis());
-		if (SysParamUtil.isAllowed(SMTParameterConstants.IS_DATA_SYNC_REQ_BY_APP_DATE)) {
+		if (ImplementationConstants.IS_DATA_SYNC_REQ_BY_APP_DATE) {
 			//getting last business date, since app date is updated to next business day(ex: EOD on 1-1-2020 then Appdate is updated as 2-1-2020)
 			currentTime = DateUtility.getTimestamp(SysParamUtil.getLastBusinessdate());
 		}

@@ -101,6 +101,7 @@ import org.zkoss.zul.impl.InputElement;
 import org.zkoss.zul.impl.LabelImageElement;
 import org.zkoss.zul.impl.NumberInputElement;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -2527,15 +2528,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					userDate, null, null);
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_NoObjectionCertificate")) {
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
-			if (SysParamUtil.isAllowed(SMTParameterConstants.NOC_LINKED_LOANS_CHECK_REQ)) {
-				if (whereCondition != null) {
-					String finReference = whereCondition.substring(24, whereCondition.length() - 1);
-					//checking weather the selected reference assigned collateral has been linked with other active loans or not 
-					if (collateralAssignmentDAO.getAssignedCollateralCountByRef(finReference) > 0) {
-						String msg = Labels.getLabel("label_collateralAssignment_Error");
-						if (MessageUtil.confirm(msg) == MessageUtil.NO) {
-							return;
-						}
+
+			if (ImplementationConstants.NOC_LINKED_LOANS_VALIDATION && whereCondition != null) {
+				String finReference = whereCondition.substring(24, whereCondition.length() - 1);
+				if (collateralAssignmentDAO.getAssignedCollateralCountByRef(finReference) > 0) {
+					String msg = Labels.getLabel("label_collateralAssignment_Error");
+					if (MessageUtil.confirm(msg) == MessageUtil.NO) {
+						return;
 					}
 				}
 			}

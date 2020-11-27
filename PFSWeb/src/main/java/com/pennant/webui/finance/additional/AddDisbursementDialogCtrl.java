@@ -79,6 +79,7 @@ import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
@@ -159,7 +160,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	protected Checkbox qDP;
 	protected Row row_Qdp;
-	private boolean excludeReq = SysParamUtil.isAllowed(SMTParameterConstants.EXCLUDE_RECALTYPE_VAL_IN_ADDDISB);
+	private boolean excludeReq = ImplementationConstants.EXCLUDE_RECALTYPE_VAL_IN_ADDDISB;
 
 	/**
 	 * default constructor.<br>

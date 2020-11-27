@@ -69,7 +69,7 @@ import org.zkoss.zul.Space;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -77,7 +77,6 @@ import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -129,7 +128,7 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		Map<String, List<CustomerIncome>> mapData = new TreeMap<String, List<CustomerIncome>>();
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.DEFAULT_INCOMETYPES_REQUIRED)) {
+		if (ImplementationConstants.POPULATE_DFT_INCOME_DETAILS) {
 			mapData = new HashMap<String, List<CustomerIncome>>();
 		}
 		if (incomes != null && !incomes.isEmpty()) {

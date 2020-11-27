@@ -136,9 +136,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private boolean fromVerification;
 	private FIInitiationListCtrl fiInitiationListCtrl;
-	private boolean agencyFilterReq = SysParamUtil
-			.isAllowed(SMTParameterConstants.VERIFICATIONS_AGENCY_FILTER_REQ_BY_CITY);
-	private boolean verificationSync = SysParamUtil.isAllowed(SMTParameterConstants.ALW_VERIFICATION_SYNC);
 
 	/**
 	 * default constructor.<br>
@@ -705,7 +702,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		agency.setValidateColumns(new String[] { "DealerName" });
 		Filter[] agencyFilter = new Filter[1];
 		agencyFilter[0] = new Filter("DealerType", Agencies.FIAGENCY.getKey(), Filter.OP_EQUAL);
-		if (agencyFilterReq && StringUtils.isNotBlank(city)) {
+		if (ImplementationConstants.ALW_FILTER_BY_CITY && StringUtils.isNotBlank(city)) {
 			agencyFilter = Arrays.copyOf(agencyFilter, agencyFilter.length + 1);
 			//Applying city filter based on customer Address city code
 			agencyFilter[1] = new Filter("DealerCity", city, Filter.OP_EQUAL);
@@ -1323,7 +1320,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			}
 
-			if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave && verificationSync) {
+			if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave && ImplementationConstants.ALW_VERIFICATION_SYNC) {
 				FieldInvestigation fieldInvestigation = fieldInvestigationService
 						.getFieldInvestigation(verification.getId(), "_View");
 				verification.setFieldInvestigation(fieldInvestigation);

@@ -84,6 +84,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -341,7 +342,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			this.pennyDropResult.setVisible(!isReadOnly("button_MandateDialog_btnPennyDropResult"));
 		}
 
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.IS_COAPPLICANTS_ALLOWED_FOR_CHEQUE)) {
+		if (!ImplementationConstants.COAPP_ALWD_FOR_CHEQUE) {
 			customer.setVisible(false);
 			label_ChequeDetailDialog_Customer.setVisible(false);
 		} else {

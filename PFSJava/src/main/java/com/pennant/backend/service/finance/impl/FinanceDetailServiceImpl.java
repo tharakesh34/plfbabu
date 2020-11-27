@@ -5533,7 +5533,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.FINTYPEFEE_PERCENTAGE_TYPE_REQUIRED)
+		if (ImplementationConstants.PERC_REQ_FOR_FINTYPE_FEE
 				&& StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
 
 			List<FinFeeConfig> calculateFees = feeCalculator.convertToFinanceFees(financeDetail);
@@ -5876,10 +5876,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			break;
 		case PennantConstants.METHOD_LOAN_DATA_SYNC:
-			if (null != loanDataSyncService) {
-				if (SysParamUtil.isAllowed(SMTParameterConstants.LOAN_DATA_SYNC_REQ)) {
+			if (loanDataSyncService != null) {
 					loanDataSyncService.executeDataSync(auditHeader);
-				}
 			}
 			break;
 

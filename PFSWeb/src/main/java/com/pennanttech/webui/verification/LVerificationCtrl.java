@@ -39,6 +39,7 @@ import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.model.ValueLabel;
@@ -133,7 +134,6 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 
 	private boolean fromVerification;
 	private LVInitiationListCtrl lvInitiationListCtrl;
-	private boolean verificationSync = SysParamUtil.isAllowed(SMTParameterConstants.ALW_VERIFICATION_SYNC);
 
 	/**
 	 * default constructor.<br>
@@ -1304,7 +1304,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				return false;
 			}
 
-			if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave && verificationSync) {
+			if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave && ImplementationConstants.ALW_VERIFICATION_SYNC) {
 				LegalVerification legalVerification = new LegalVerification();
 				legalVerification.setVerificationId(verification.getId());
 				legalVerification = legalVerificationService.getLegalVerification(legalVerification, "_View");

@@ -56,7 +56,7 @@ public class FetchBlackListDetails {
 			finBlacklistCustomer.addAll(detail.getFinBlacklistCustomer());
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.COAPP_BLACKLIST_DEDUP_REQ)) {
+		if (ImplementationConstants.DEDUP_BLACKLIST_COAPP) {
 			if (detail.getFinScheduleData().getFinanceMain().isBlacklisted()
 					&& detail.getFinScheduleData().getFinanceMain().isBlacklistOverride()
 					|| !detail.getFinScheduleData().getFinanceMain().isBlacklisted()) {
@@ -117,7 +117,7 @@ public class FetchBlackListDetails {
 						custAddress.append(address.getCustAddrHNbr()).append(", ");
 						custAddress.append(StringUtils.isNotBlank(address.getCustAddrStreet())
 								? address.getCustAddrStreet().concat(", ") : "");
-						if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOM_BLACKLIST_PARAMS)) {
+						if (ImplementationConstants.CUSTOM_BLACKLIST_PARAMS) {
 							custAddress.append(StringUtils.isNotEmpty(address.getCustAddrLine2())
 									? address.getCustAddrLine2().concat(", ") : "");
 							custAddress.append(StringUtils.isNotEmpty(address.getCustAddrLine1())

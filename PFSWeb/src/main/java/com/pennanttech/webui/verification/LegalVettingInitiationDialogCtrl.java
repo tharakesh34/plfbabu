@@ -75,6 +75,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -170,10 +171,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	private transient CollateralSetupFetchingService collateralSetupFetchingService;
 	@Autowired
 	private transient CollateralSetupService collateralSetupService;
-	private String collateralCityDBName = SysParamUtil
-			.getValueAsString(SMTParameterConstants.COLLATERAL_ADDRESSCITY_FOR_VERIFICATIONS);
-	private boolean agencyFilterReq = SysParamUtil
-			.isAllowed(SMTParameterConstants.VERIFICATIONS_AGENCY_FILTER_REQ_BY_CITY);
+	private String collateralAddrCol = ImplementationConstants.VER_TV_COLL_ED_ADDR_COLUMN;
 
 	/**
 	 * default constructor.<br>
@@ -1340,14 +1338,14 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	 */
 	private void setAgencyFiltersByCollateralCity(String collateralRef) {
 
-		if (StringUtils.isNotBlank(collateralRef) && agencyFilterReq) {
+		if (StringUtils.isNotBlank(collateralRef) && ImplementationConstants.ALW_FILTER_BY_CITY) {
 			List<String> collateralCities = new ArrayList<String>(1);
 			CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(collateralRef, "", true);
 			if (CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())) {
 				for (ExtendedFieldRender fieldRender : collateralSetup.getExtendedFieldRenderList()) {
 					Map<String, Object> mapValues = fieldRender.getMapValues();
-					if (mapValues != null && mapValues.containsKey(collateralCityDBName)) {
-						collateralCities.add((String) mapValues.get(collateralCityDBName));
+					if (mapValues != null && mapValues.containsKey(collateralAddrCol)) {
+						collateralCities.add((String) mapValues.get(collateralAddrCol));
 					}
 				}
 				Filter[] filter = new Filter[2];

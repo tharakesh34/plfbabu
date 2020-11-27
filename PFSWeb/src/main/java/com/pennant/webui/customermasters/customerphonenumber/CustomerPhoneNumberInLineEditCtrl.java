@@ -65,7 +65,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -74,9 +74,7 @@ import com.pennant.backend.model.systemmasters.PhoneType;
 import com.pennant.backend.service.systemmasters.PhoneTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -90,9 +88,6 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 	private final List<ValueLabel> customerPriorityList = PennantStaticListUtil.getCustomerEmailPriority();
 	private PhoneTypeService phoneTypeService;
 	private boolean isFinanceProcess;
-	private boolean isCustomPhoneRegexReq = StringUtils
-			.equals(SysParamUtil.getValueAsString(SMTParameterConstants.USE_CUSTOM_PHONE_REGEX), PennantConstants.YES)
-					? true : false;
 
 	public CustomerPhoneNumberInLineEditCtrl() {
 		super();
@@ -393,8 +388,8 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 				throw new WrongValueException(phoneNumber, Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("listheader_PhoneNumber.label") }));
 			}
-			if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.USE_CUSTOM_PHONE_REGEX),
-					PennantConstants.YES) && !StringUtils.contains(phoneTypeCode, PennantConstants.PHONETYPE_MOBILE)
+			if (ImplementationConstants.CUSTOM_PHONE_REGEX
+					&& !StringUtils.contains(phoneTypeCode, PennantConstants.PHONETYPE_MOBILE)
 					&& !StringUtils.equals(phoneTypeCode, "AUTHM1") && !StringUtils.equals(phoneTypeCode, "AUTHM2")) {
 				if (phoneNumber.getValue().length() < 8) {
 					throw new WrongValueException(phoneNumber, Labels.getLabel("CUSTOM_PHONE_REGEX",

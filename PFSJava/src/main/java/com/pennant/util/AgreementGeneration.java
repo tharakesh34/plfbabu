@@ -343,6 +343,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	private BigDecimal totalDeduction = BigDecimal.ZERO;
 	private BigDecimal BPIAmount = BigDecimal.ZERO;
 	private List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
+	private boolean customizedTemplates = ImplementationConstants.CUSTOMIZED_TEMPLATES;
 
 	public AgreementGeneration() {
 		super();
@@ -716,7 +717,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 					// Customer address
 					List<CustomerAddres> addressList = detail.getCustomerDetails().getAddressList();
-					if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMIZED_TEMPLATES)) {
+					if (customizedTemplates) {
 						setCustomerAddress(agreement, addressList, true);
 					}
 					setCustomerAddress(agreement, addressList);
@@ -2374,7 +2375,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			for (ChequeDetail chequeDetail : chequeDetailList) {
 				com.pennant.backend.model.finance.AgreementDetail.ChequeDetail chDetail = agreement.new ChequeDetail();
 				chDetail.setSeqNo(String.valueOf(seqNo++));
-				if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMIZED_TEMPLATES)) {
+				if (customizedTemplates) {
 					String value = StringUtils.trimToEmpty(chequeDetail.getAccountNo());
 					value = maskString(value, 0,
 							value.length() > 4 ? value.substring(0, value.length() - 4).length() : value.length(), 'X');
@@ -3642,7 +3643,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				disbursement.setBankName(StringUtils.trimToEmpty(advancePayment.getBranchBankName()));
 				// FIX ME: Temporary fix to populate Disbursement Date
 				agreement.setLlDate(DateUtility.formatToLongDate(advancePayment.getLlDate()));
-				if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMIZED_TEMPLATES)) {
+				if (customizedTemplates) {
 					String value = StringUtils.trimToEmpty(advancePayment.getBeneficiaryAccNo());
 					value = maskString(value, 0,
 							value.length() > 4 ? value.substring(0, value.length() - 4).length() : value.length(), 'X');
@@ -3825,7 +3826,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		agreement.setRepayBankName(StringUtils.trimToEmpty(mandate.getBankName()));
 		agreement.setRepayAcctIfscCode(StringUtils.trimToEmpty(mandate.getIFSC()));
 		agreement.setBranchName(StringUtils.trimToEmpty(mandate.getBranchDesc()));
-		if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMIZED_TEMPLATES)) {
+		if (customizedTemplates) {
 			String value = StringUtils.trimToEmpty(mandate.getAccNumber());
 			value = maskString(value, 0,
 					value.length() > 4 ? value.substring(0, value.length() - 4).length() : value.length(), 'X');
@@ -4172,7 +4173,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 				List<CustomerAddres> addlist = custdetails.getAddressList();
 				if (CollectionUtils.isNotEmpty(addlist)) {
-					if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMIZED_TEMPLATES)) {
+					if (customizedTemplates) {
 						setCoapplicantAddress(coapplicant, addlist, agreement, true);
 					}
 					setCoapplicantAddress(coapplicant, addlist);
@@ -4363,7 +4364,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		}
 		agreement.setScheduleData(new ArrayList<AgreementDetail.FinanceScheduleDetail>());
 		for (FinanceScheduleDetail finSchDetail : finschdetails) {
-			if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMIZED_TEMPLATES)) {
+			if (customizedTemplates) {
 				if (finSchDetail.isDisbOnSchDate()) {
 					seqNo = seqNo + 1;
 					continue;
@@ -4393,7 +4394,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			scheduleData.setClosingBalance(
 					PennantApplicationUtil.amountFormate(finSchDetail.getClosingBalance(), formatter));
 			scheduleData.setSuplRent(PennantApplicationUtil.amountFormate(finSchDetail.getSuplRent(), formatter));
-			if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMIZED_TEMPLATES)) {
+			if (customizedTemplates) {
 				if (finSchDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0
 						&& !StringUtils.equals(finSchDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
 						&& !StringUtils.equals(finSchDetail.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
@@ -4758,7 +4759,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			agreement.setNextInstDate(DateUtility.formatToLongDate(main.getNextRepayDate()));
 
 			BigDecimal emi = BigDecimal.ZERO;
-			if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMIZED_TEMPLATES)) {
+			if (customizedTemplates) {
 				emi = ScheduleCalculator.getEMIOnFinAssetValue(detail);
 			}
 			agreement.setRepayOnLoanAmt(PennantApplicationUtil.amountFormate(emi, formatter));

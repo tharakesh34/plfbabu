@@ -1314,7 +1314,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			this.row_CalculationOn.setVisible(true);
 			this.space_percentage.setVisible(true);
 		}
-		if (SysParamUtil.isAllowed(SMTParameterConstants.FINTYPEFEE_PERCENTAGE_TYPE_REQUIRED)) {
+		if (ImplementationConstants.PERC_REQ_FOR_FINTYPE_FEE) {
 			if (!finTypeFees.isOriginationFee()) {
 				if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE,
 						this.calculationType.getSelectedItem().getValue().toString())) {

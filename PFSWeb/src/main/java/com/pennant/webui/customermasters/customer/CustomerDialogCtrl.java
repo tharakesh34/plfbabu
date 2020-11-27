@@ -612,9 +612,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Button btnUploadExternalLiability;
 	protected Button btnDownloadExternalLiability;
 	private MasterDefDAO masterDefDAO;
-	boolean isCoappBlackListCheck = StringUtils.equals(
-			SysParamUtil.getValueAsString(SMTParameterConstants.COAPP_BLACKLIST_DEDUP_REQ), PennantConstants.YES) ? true
-					: false;
 	protected CustomerExtLiabilityUploadDialogCtrl customerExtLiabilityUploadDialogCtrl;
 
 	public String dmsApplicationNo;
@@ -1211,7 +1208,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.listBoxCustomerEmailsInlineEdit.setVisible(true);
 
 		spaceSubCategory.setVisible(false);
-		
+
 		//setting visible false for new customer
 		this.btnUploadExternalLiability.setVisible(false);
 		this.btnDownloadExternalLiability.setVisible(false);
@@ -2664,7 +2661,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			//this.label_CustomerDialog_ResidentialStatus.setVisible(true);
 			//this.space_Residential.setVisible(true);
 			//this.custResidentialStstus.setVisible(true);
-			row_EmploymentDetails.setVisible(ImplementationConstants.CUST_EMP_DETAILS_REQ);
+			row_EmploymentDetails.setVisible(ImplementationConstants.SHOW_CUST_EMP_DETAILS);
 			this.space_applicationNo.setVisible(true);
 			this.label_CustomerDialog_ApplicationNo.setVisible(true);
 			this.applicationNo.setVisible(true);
@@ -2703,8 +2700,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.space_CustArabicName.setVisible(false);
 			this.space_CustArabicName.setSclass("");
 			this.custArabicName.setVisible(false);
-			//change to Disable the ShareHolder TAB section based on system @param
-			directorDetails.setVisible(ImplementationConstants.CUST_SHARE_HOLDER_TAB_REQ);
+			directorDetails.setVisible(ImplementationConstants.SHOW_CUST_SHARE_HOLDER_DETAILS);
 			this.label_CustRelatedParty.setVisible(false);
 			this.hbox_CustRelatedParty.setVisible(false);
 			this.label_CustSegment.setVisible(false);
@@ -3141,8 +3137,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSts.value"), null, false, true));
 		}
 		if (!this.custSegment.isReadonly() && this.custSegment.isVisible() && nonWorking) {
-			this.custSegment.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSegment.value"), null, false, true));
+			this.custSegment.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerDialog_CustSegment.value"), null, false, true));
 		}
 
 		if (isRetailCustomer) {
@@ -3226,8 +3222,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			//Employment type Mandatory base on system parameter setting validation
 			if (!this.subCategory.isDisabled() && spaceSubCategory.isVisible()) {
-				this.subCategory.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_CustomerDialog_SubCategory.value"), null, false));
+				this.subCategory.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerDialog_SubCategory.value"), null, false));
 			}
 
 		}
@@ -3978,7 +3974,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			return;
 		}
 		//Black list
-		if (isCoappBlackListCheck && financeMain != null) {
+		if (ImplementationConstants.DEDUP_BLACKLIST_COAPP && financeMain != null) {
 			doCheckBlackList(aCustomerDetails);
 			if (aCustomerDetails.isBlackListReq()) {
 				return;
@@ -4149,7 +4145,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						custAddress.append(address.getCustAddrHNbr()).append(", ");
 						custAddress.append(address.getCustAddrStreet()).append(", ");
 
-						if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOM_BLACKLIST_PARAMS)) {
+						if (ImplementationConstants.CUSTOM_BLACKLIST_PARAMS) {
 							custAddress.append(StringUtils.isNotEmpty(address.getCustAddrLine2())
 									? address.getCustAddrLine2().concat(", ") : "");
 							custAddress.append(StringUtils.isNotEmpty(address.getCustAddrLine1())

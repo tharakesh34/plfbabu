@@ -100,6 +100,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -253,9 +254,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	private DMSService dmsService;
 
 	protected Listbox listBoxDocuments;
-	private boolean isCustomPhoneRegexReq = StringUtils
-			.equals(SysParamUtil.getValueAsString(SMTParameterConstants.USE_CUSTOM_PHONE_REGEX), PennantConstants.YES)
-					? true : false;
+	private boolean isCustomPhoneRegexReq = ImplementationConstants.CUSTOM_PHONE_REGEX;
 
 	/**
 	 * default constructor.<br>

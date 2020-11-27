@@ -76,6 +76,7 @@ import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -162,7 +163,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private transient BaseRateCodeService baseRateCodeService;
 	private boolean appDateValidationReq = false;
 	private String moduleDefiner = "";
-	private boolean excludeReq = SysParamUtil.isAllowed(SMTParameterConstants.EXCLUDE_RECALTYPE_VAL_IN_ADDRATECHNG);
+	private boolean excludeReq = ImplementationConstants.EXCLUDE_RECALTYPE_VAL_IN_ADDRATECHNG;
 
 	/**
 	 * default constructor.<br>

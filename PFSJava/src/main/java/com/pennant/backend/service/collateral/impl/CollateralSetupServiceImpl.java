@@ -58,6 +58,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
@@ -114,7 +115,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -972,7 +972,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						usrLanguage);
 				auditDetails.addAll(details);
 				//Collateral Dedup Validation
-				if (SysParamUtil.isAllowed(SMTParameterConstants.COLLATERAL_DEDUP_WARNING)) {
+				if (ImplementationConstants.COLLATERAL_DEDUP_WARNING) {
 					long queryId = collateralSetup.getCollateralStructure().getQueryId();
 					String querySubCode = collateralSetup.getCollateralStructure().getQuerySubCode();
 					String queryCode = collateralSetup.getCollateralStructure().getQueryCode();

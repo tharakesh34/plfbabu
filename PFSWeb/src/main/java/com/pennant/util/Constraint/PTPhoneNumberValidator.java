@@ -9,10 +9,8 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zul.Constraint;
 
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.util.PennantConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.SMTParameterConstants;
 
 public class PTPhoneNumberValidator implements Constraint {
 	private String fieldParm;
@@ -29,9 +27,7 @@ public class PTPhoneNumberValidator implements Constraint {
 
 	private int validateCode = 0;
 
-	private boolean isCustomPhoneRegexReq = StringUtils
-			.equals(SysParamUtil.getValueAsString(SMTParameterConstants.USE_CUSTOM_PHONE_REGEX), PennantConstants.YES)
-					? true : false;
+	private boolean isCustomPhoneRegexReq = ImplementationConstants.CUSTOM_PHONE_REGEX;
 	private String NEW_PHONE_REGEX = PennantRegularExpressions.TELEPHONE_REGEX;
 
 	public PTPhoneNumberValidator(String fieldParm, boolean mandatory) {

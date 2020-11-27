@@ -45,7 +45,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -133,7 +132,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private transient VerificationService verificationService;
 	@Autowired
 	private transient CollateralSetupFetchingService collateralSetupFetchingService;
-	private boolean verificationSync = SysParamUtil.isAllowed(SMTParameterConstants.ALW_VERIFICATION_SYNC);
 
 	/**
 	 * default constructor.<br>
@@ -1776,7 +1774,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			}
 
-			if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave && verificationSync) {
+			if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave
+					&& ImplementationConstants.ALW_VERIFICATION_SYNC) {
 				RiskContainmentUnit containmentUnit = riskContainmentUnitService
 						.getRiskContainmentUnit(verification.getId());
 				verification.setRcuVerification(containmentUnit);
@@ -1956,7 +1955,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private void setDefaultInitiationStatus(Verification item) {
-		if (SysParamUtil.isAllowed(SMTParameterConstants.DEFAULT_RCU_INITIATE_STATUS)) {
+		if (ImplementationConstants.VER_RCU_DFT_REQ_TYPE_REQUEST) {
 			item.setRequestType(RequestType.REQUEST.getKey());
 		}
 	}

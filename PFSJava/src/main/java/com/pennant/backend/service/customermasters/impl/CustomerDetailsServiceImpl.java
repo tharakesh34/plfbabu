@@ -695,8 +695,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	@Override
 	public void prepareDefaultIncomeExpenseList(CustomerDetails customerDetails) {
 		List<CustomerIncome> customerIncomes = new ArrayList<CustomerIncome>();
-		if (SysParamUtil.isAllowed(SMTParameterConstants.DEFAULT_INCOMETYPES_REQUIRED)
-				&& customerDetails.isNewRecord()) {
+		if (ImplementationConstants.POPULATE_DFT_INCOME_DETAILS && customerDetails.isNewRecord()) {
 			List<IncomeType> incomeTypes = incomeTypeDAO.getDefaultIncomeTypeList();
 			if (CollectionUtils.isNotEmpty(incomeTypes)) {
 				for (IncomeType incomeType : incomeTypes) {

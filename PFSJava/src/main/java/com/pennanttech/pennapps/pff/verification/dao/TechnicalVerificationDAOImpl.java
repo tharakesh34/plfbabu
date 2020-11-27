@@ -34,11 +34,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -384,8 +382,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 
 	@Override
 	public Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName, String column) {
-		
-			
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select T1.").append(column).append(" from (select T1.");
 		sql.append(column).append(", T1.reference from collateral_");
@@ -400,30 +397,30 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		sql.append(subModuleName);
 		sql.append("_ed");
 		sql.append(" where reference = T1.reference))t where t.reference = :reference");
-		
+
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reference", collRef);
-		
+
 		try {
 			return jdbcTemplate.queryForMap(sql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
 		}
-		
+
 		return new HashMap<>();
 	}
 
 	@Override
 	public String getPropertyCity(String collRef, String subModuleName) {
-				
+
 		String column = "CITY";
 		//Agency filter issue based on Collateral City
-		String value = SysParamUtil.getValueAsString(SMTParameterConstants.COLLATERAL_ADDRESSCITY_FOR_VERIFICATIONS);
+		String value = ImplementationConstants.VER_TV_COLL_ED_ADDR_COLUMN;
 		if (StringUtils.isNotBlank(value)) {
 			column = value;
 		}
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select t.").append(column).append(" from (select T1.").append(column);
 		sql.append(", T1.reference from collateral_");
@@ -438,13 +435,12 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		sql.append(subModuleName);
 		sql.append("_ed");
 		sql.append(" where reference = T1.reference))t where t.reference = :reference");
-		
+
 		logger.trace(Literal.SQL + sql.toString());
-		
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reference", collRef);
-		
+
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {

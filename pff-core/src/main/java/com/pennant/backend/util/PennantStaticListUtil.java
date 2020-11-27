@@ -3,7 +3,6 @@ package com.pennant.backend.util;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -2002,15 +2001,6 @@ public class PennantStaticListUtil {
 			customerEmailPriority
 					.add(new ValueLabel(PennantConstants.KYC_PRIORITY_LOW, Labels.getLabel("label_EmailPriority_Low")));
 		}
-		String string = SysParamUtil.getValueAsString(SMTParameterConstants.KYC_ADD_PRIORITY_REQ_ONLY);
-		if (string != null && CollectionUtils.isNotEmpty(customerEmailPriority)) {
-			List<String> priorityCodes = Arrays.asList(string.split(","));
-			for (ValueLabel valueLabel : customerEmailPriority) {
-				if (!priorityCodes.contains(valueLabel.getValue())) {
-					customerEmailPriority.remove(valueLabel);
-				}
-			}
-		}
 		return customerEmailPriority;
 	}
 
@@ -2487,7 +2477,7 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PaymentDetail_Vendor")));
 			paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_THIRDPARTY,
 					Labels.getLabel("label_PaymentDetail_ThirdParty")));
-			if (SysParamUtil.isAllowed(SMTParameterConstants.SHOW_ADDITIONAL_DISB_PARTIES)) {
+			if (ImplementationConstants.SHOW_ADDITIONAL_DISB_PARTIES) {
 				paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_BUILDER,
 						Labels.getLabel("label_PaymentDetail_Builder")));
 			}
