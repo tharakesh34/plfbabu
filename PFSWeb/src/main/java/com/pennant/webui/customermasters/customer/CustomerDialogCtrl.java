@@ -2131,7 +2131,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		//corporate customer
 		try {
 			if (!isRetailCustomer && "#".equals(getComboboxValue(this.entityType))) {
-				if (validateAllDetails && this.entityType.isVisible() && !this.entityType.isDisabled()) {
+				if (validateAllDetails && this.entityType.isVisible() && !this.entityType.isDisabled()&& spaceSubCategory.isVisible()) {
 					throw new WrongValueException(this.entityType, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_CustomerDialog_EntityType.value") }));
 				}
