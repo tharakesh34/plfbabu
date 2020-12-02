@@ -70,7 +70,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.YearMonth;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -79,9 +78,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -205,11 +202,8 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
-import com.pennant.backend.model.customermasters.CustCardSales;
-import com.pennant.backend.model.customermasters.CustCardSalesDetails;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -217,11 +211,6 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
-import com.pennant.backend.model.customermasters.CustomerGST;
-import com.pennant.backend.model.customermasters.CustomerGSTDetails;
-import com.pennant.backend.model.customermasters.CustomerIncome;
-import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
-import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -271,7 +260,6 @@ import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
-import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.limits.LimitDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -1087,7 +1075,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected boolean isFeeReExecute;
 	private boolean recommendEntered;
 
-	Date appDate = DateUtility.getAppDate();
+	Date appDate = SysParamUtil.getAppDate();
 	Date minReqFinStartDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE") + 1);
 	Date maxReqFinStartDate = DateUtility.addDays(appDate, +SysParamUtil.getValueAsInt("FUTUREDAYS_STARTDATE") + 1);
 	Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
@@ -1184,7 +1172,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinFeeDetailService finFeeDetailService;
 	private DMSService dMSService;
 
-	Map<String, Object> dataMap = new HashMap<>();
+	Map<String, Object> dataMap1 = new HashMap<>();
 
 	private transient DMSDialogCtrl dmsDialogCtrl;
 	private transient FinanceSpreadSheetCtrl financeSpreadSheetCtrl;
@@ -3174,10 +3162,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		/* Stop append GST Details tab for retail customers */
 		CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
-		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customerDetails.getCustomer().getCustCtgCode())
-				&& !SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)) {
-			return;
-		}
+		/*
+		 * if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customerDetails.getCustomer().getCustCtgCode()) &&
+		 * !SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)) { return; }
+		 */
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_TAX, false);
 		} else {
@@ -3258,14 +3246,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_VAS, true);
 		} else {
-			final HashMap<String, Object> map = getDefaultArguments();
+			FinScheduleData finScheduleData = getFinanceDetail().getFinScheduleData();
+			PricingDetail pricingDetail = getFinanceDetail().getPricingDetail();
+
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("financemainBaseCtrl", this);
-			map.put("vasRecordingList", getFinanceDetail().getFinScheduleData().getVasRecordingList());
-			if (getFinanceDetail().getPricingDetail() != null
-					&& ObjectUtils.isNotEmpty(getFinanceDetail().getPricingDetail().getTopUpVasDetails())) {
-				map.put("ChildVasRecordingList", getFinanceDetail().getPricingDetail().getTopUpVasDetails());
+			map.put("vasRecordingList", finScheduleData.getVasRecordingList());
+
+			if (pricingDetail != null && ObjectUtils.isNotEmpty(pricingDetail.getTopUpVasDetails())) {
+				map.put("ChildVasRecordingList", pricingDetail.getTopUpVasDetails());
 			}
-			map.put("finType", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinType());
+			map.put("finType", finScheduleData.getFinanceMain().getFinType());
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinVasRecordingDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_VAS), map);
 		}
@@ -5224,89 +5215,44 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Method for Credit Review Details Data in finance
 	 */
-	public void appendCreditReviewDetailSummaryTab(boolean onLoadProcess) {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	private void appendCreditReviewDetailSummaryTab(boolean onLoadProcess) {
+		Map<String, Object> map = new HashMap<>();
 		boolean createTab = false;
+
 		if (getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY) == null) {
 			createTab = true;
 		}
+
 		if (createTab) {
 			createTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY, true);
 		} else {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY);
 		}
 
-		CreditReviewDetails crd = new CreditReviewDetails();
-		//This requirment for Godrej, For Core once check with murthy/Manoj
-		String parameters = SysParamUtil.getValueAsString(SMTParameterConstants.CREDIT_ELG_PARAMS);
+		final Map<String, Object> screenData = new HashMap<>();
 
-		if (parameters == null) {
-			return;
+		screenData.put("FinReference", this.finReference.getValue());
+		screenData.put("FinType", this.finType.getValue());
+		screenData.put("EligibilityMethod", this.eligibilityMethod.getValue());
+
+		if (customerDialogCtrl != null) {
+			screenData.put("EmpType", customerDialogCtrl.getEmpType());
+			screenData.put("IncomeDetails", getCustomerDialogCtrl().getCustomerDetails().getCustomerIncomeList());
 		}
-
-		String[] elgParameters = parameters.split(",");
-
-		for (String elgParm : elgParameters) {
-			if ("FINTYPE".equals(elgParm.trim().toUpperCase())) {
-				crd.setProduct(this.finType.getValue());
-			}
-
-			if ("ELIGIBILITYMETHOD".equals(elgParm.trim().toUpperCase())) {
-				crd.setEligibilityMethod(this.eligibilityMethod.getValue());
-			}
-			if ("EMPLOYMENTTYPE".equals(elgParm.trim().toUpperCase())) {
-				if (customerDialogCtrl != null) {
-					crd.setEmploymentType(customerDialogCtrl.getEmpType());
-				}
-			}
+		if (jointAccountDetailDialogCtrl != null) {
+			screenData.put("JountAccountDetails", jointAccountDetailDialogCtrl.getJountAccountDetailList());
 		}
+		screenData.put("UserRole", getRole());
+		screenData.put("Right_EligibilitySal", isReadOnly("FinanceMainDialog_EligibilitySal"));
 
-		crd = this.creditApplicationReviewService.getCreditReviewDetailsByLoanType(crd);
-		//This requirment for Godrej, For Core once check with murthy/Manoj
+		map = spreadSheetService.setSpreadSheetData(screenData, financeDetail);
+		@SuppressWarnings("unchecked")
+		Map<String, Object> dataMap = (Map<String, Object>) map.getOrDefault("dataMap", new HashMap<>());
 
-		if (crd == null) {
-			financeSpreadSheetCtrl = null;
-			return;
-		}
-
-		CreditReviewData creditReviewData = null;
-		creditReviewData = this.creditApplicationReviewService.getCreditReviewDataByRef(this.finReference.getValue(),
-				crd.getTemplateName(), crd.getTemplateVersion());
-
-		financeDetail.setCreditReviewData(creditReviewData);
-
-		Map<String, Object> dataMap = new HashMap<>();
-
-		if (!onLoadProcess) {
-			return;
-		}
-
-		FinanceDetail fd = new FinanceDetail();
-		BeanUtils.copyProperties(this.financeDetail, fd);
-		//This requirment for Godrej, For Core once check with murthy/Manoj
-
-		//dataMap = spreadSheetService.prepareDataMap(fd);
-		setData();
 		if (dataMap.containsKey("spreadsheet")) {
 			SpreadSheet spreadSheet = (SpreadSheet) dataMap.get("spreadsheet");
 			Sessions.getCurrent().setAttribute("ss", spreadSheet);
 		}
-		//This requirment for Godrej, For Core once check with murthy/Manoj
-		if (jointAccountDetailDialogCtrl != null) {
-			crd.setExtLiabilitiesjointAccDetails(jointAccountDetailDialogCtrl.getJountAccountDetailList());
-		}
-
-		map.put("financeDetail", fd);
-		map.put("userRole", getRole());
-		map.put("creditReviewDetails", crd);
-		map.put("isEditable", isReadOnly("FinanceMainDialog_EligibilitySal"));
-		if (customerDialogCtrl != null) {
-			map.put("incomeDetailsList", getCustomerDialogCtrl().getCustomerDetails().getCustomerIncomeList());
-		}
-
-		map.put("creditReviewData", creditReviewData);
-		map.put("financeMainDialogCtrl", this);
-		map.put("dataMap", dataMap);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceSpreadSheet.zul",
@@ -5316,743 +5262,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private void setData() {
-		SpreadSheet spreadSheet = new SpreadSheet();
-		try {
-			FinanceDetail fd = new FinanceDetail();
-			BeanUtils.copyProperties(this.financeDetail, fd);
-
-			if (fd != null && !fd.isSpreadSheetloaded()) {
-				FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
-				fm.setFinAmount(this.finAmount.getActualValue());
-				spreadSheet.setFm(fm);
-				spreadSheet.setCu(fd.getCustomerDetails().getCustomer());
-				dataMap.put("finStartDate", fm.getFinStartDate());
-				setCustomerAge(fd);
-				setCustomerName(spreadSheet, spreadSheet.getCu());
-				setCustomerPhoneNumber(spreadSheet, fd);
-				setCustomerAddresses(spreadSheet, fd.getCustomerDetails());
-				setExtendedData(spreadSheet.getCu(), fd);
-				setCoApplicantExtendedData(fd, spreadSheet);
-				setKeyFigures(fm);
-				if (fd.getCustomerDetails().getExtendedFieldRender() != null) {
-					spreadSheet.setEf(fd.getCustomerDetails().getExtendedFieldRender().getMapValues());
-				}
-				if (fd.getExtendedFieldRender() != null) {
-					spreadSheet.setLoanEf(fd.getExtendedFieldRender().getMapValues());
-				}
-				setCoApplicantData(spreadSheet, fd);
-				setCorporateFinancialData(fd);
-				setCustomerGstDetails(fd);
-				setExternalLiabilites(fd);
-				setBankingDetails(fd);
-				setCardSalesDetails(fd);
-				setAppCoAppIncomeDetails(fd);
-				dataMap.put("finStartDate", fm.getFinStartDate());
-				fd.setSpreadSheetloaded(true);
-
-				if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0) {
-					fm.setRepayProfitRate(PennantApplicationUtil.formateAmount((getFinanceDetail().getFinScheduleData()
-							.getFinanceScheduleDetails().get(0).getCalculatedRate()),
-							PennantConstants.defaultCCYDecPos));
-					spreadSheet.setEmiAmount(PennantApplicationUtil.formateAmount(
-							getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(2).getRepayAmount(),
-							PennantConstants.defaultCCYDecPos)); // setting emi amount in spreadsheet
-
-				} else {
-					fm.setRepayProfitRate(BigDecimal.ZERO);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		Sessions.getCurrent().setAttribute("ss", spreadSheet);
-	}
-
-	private void setAppCoAppIncomeDetails(FinanceDetail fd) {
-
-		Map<String, List<CustomerIncome>> incomeMap = new LinkedHashMap<>();
-		int i = 1;
-		List<CustomerIncome> applicantIncomes = fd.getCustomerDetails().getCustomerIncomeList();
-
-		incomeMap.put("appincomes", applicantIncomes);
-
-		if (CollectionUtils.isNotEmpty(fd.getJountAccountDetailList())) {
-			for (JointAccountDetail jointAccountDetails : fd.getJountAccountDetailList()) {
-				if (CollectionUtils.isNotEmpty(jointAccountDetails.getCustomerIncomeList())) {
-					incomeMap.put("coAppincomes".concat(String.valueOf(i)),
-							jointAccountDetails.getCustomerIncomeList());
-				}
-				i++;
-			}
-		}
-
-		i = 0;
-		String key = "";
-		for (List<CustomerIncome> customerIncomes : incomeMap.values()) {
-			if (CollectionUtils.isNotEmpty(customerIncomes)) {
-
-				if (i != 0) {
-					key = "CoApp".concat(String.valueOf(i));
-				}
-
-				for (CustomerIncome customerIncome : customerIncomes) {
-
-					if (StringUtils.equals(customerIncome.getCategory(), PennantConstants.INC_CATEGORY_SALARY)) {
-						switch (customerIncome.getIncomeType()) {
-						case "BS":
-							dataMap.put(key.concat("Basic"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							break;
-						case "GP":
-							dataMap.put(key.concat("GP"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							break;
-						case "DA":
-							dataMap.put(key.concat("DA"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							break;
-						case "HOU21":
-							dataMap.put(key.concat("HRA"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							break;
-						case "CLA":
-							dataMap.put(key.concat("CLA"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							break;
-						case "MED44":
-							dataMap.put(key.concat("MEDA"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							break;
-						case "SA":
-							dataMap.put(key.concat("SA"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							break;
-						case "OA":
-							dataMap.put(key.concat("OA"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							break;
-						case "CV":
-							dataMap.put(key.concat("CV"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							break;
-						case "VP":
-							dataMap.put(key.concat("VP"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							break;
-
-						default:
-							break;
-						}
-					} else if (StringUtils.equals(customerIncome.getCategory(), PennantConstants.INC_CATEGORY_OTHER)) {
-						switch (customerIncome.getIncomeType()) {
-						case "RENINC":
-							dataMap.put(key.concat("RENINC"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							dataMap.put(key.concat("Net_RENINC"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							break;
-						case "INTINC":
-							dataMap.put(key.concat("INTINC"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							dataMap.put(key.concat("Net_INTINC"), PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));
-							break;
-
-						default:
-							break;
-						}
-
-					}
-				}
-				++i;
-			}
-		}
-	}
-
-	private void setCustomerAge(FinanceDetail fd) {
-		dataMap.put("CustDOB", fd.getCustomerDetails().getCustomer().getCustDOB());
-		dataMap.put("CustAge", DateUtility.getYearsBetween(DateUtility.getAppDate(),
-				fd.getCustomerDetails().getCustomer().getCustDOB()));
-		dataMap.put("CustMatAge",
-				DateUtility.getYearsBetween(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-						fd.getCustomerDetails().getCustomer().getCustDOB()));
-
-	}
-
-	private void setCustomerName(SpreadSheet spreadSheet, Customer customer) {
-		if (customer.getCustCtgCode().equals("SME") || customer.getCustCtgCode().equals("CORP")) {
-			customer.setCustomerFullName(customer.getCustShrtName());
-		} else {
-			customer.setCustomerFullName(
-					customer.getCustFName().concat(customer.getCustMName().concat(customer.getCustLName())));
-		}
-	}
-
-	private void setCustomerPhoneNumber(SpreadSheet spreadSheet, FinanceDetail fd) {
-		List<CustomerPhoneNumber> customerPhoneNumList = fd.getCustomerDetails().getCustomerPhoneNumList();
-		if (CollectionUtils.isNotEmpty(customerPhoneNumList)) {
-			for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumList) {
-				if (StringUtils.equals(PennantConstants.KYC_PRIORITY_VERY_HIGH,
-						String.valueOf(customerPhoneNumber.getPhoneTypePriority()))) {
-					spreadSheet.setCustomerPhoneNum(customerPhoneNumber.getPhoneNumber());
-				}
-			}
-		}
-	}
-
-	private void setCustomerAddresses(SpreadSheet spreadSheet, CustomerDetails customerDetails) {
-		List<CustomerAddres> addressList = customerDetails.getAddressList();
-		if (CollectionUtils.isNotEmpty(addressList)) {
-			for (CustomerAddres addr : addressList) {
-				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
-					spreadSheet.setCustOffAddr(addr.getCustAddrHNbr().concat(",")
-							.concat(addr.getCustAddrStreet().concat(",")
-									.concat(addr.getLovDescCustAddrCityName().concat(",")
-											.concat(addr.getLovDescCustAddrProvinceName()).concat(",")
-											.concat(addr.getCustAddrZIP()))));
-
-				} else if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(),
-						App.getProperty("Customer_Resi_Address"))) {
-					spreadSheet.setCustResiAddr(addr.getCustAddrHNbr().concat(",")
-							.concat(addr.getCustAddrStreet().concat(",")
-									.concat(addr.getLovDescCustAddrCityName().concat(",")
-											.concat(addr.getLovDescCustAddrProvinceName()).concat(",")
-											.concat(addr.getCustAddrZIP()))));
-				} else if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(),
-						App.getProperty("Customer_Per_Address"))) {
-					spreadSheet.setCustPerAddr(addr.getCustAddrHNbr().concat(",")
-							.concat(addr.getCustAddrStreet().concat(",")
-									.concat(addr.getLovDescCustAddrCityName().concat(",")
-											.concat(addr.getLovDescCustAddrProvinceName()).concat(",")
-											.concat(addr.getCustAddrZIP()))));
-				}
-
-			}
-		}
-
-	}
-
-	private void setExtendedData(Customer customer, FinanceDetail fd) {
-		try {
-			if (fd.getCustomerDetails().getExtendedFieldRender() != null) {
-				Map<String, Object> mapValues = fd.getCustomerDetails().getExtendedFieldRender().getMapValues();
-				if (mapValues.containsKey("natureofbusiness")) {
-					customer.setCustAddlVar8(
-							getExtFieldDesc("clix_natureofbusiness", mapValues.get("natureofbusiness").toString()));
-				}
-				if (mapValues.containsKey("industry")) {
-					customer.setCustAddlVar9(getExtFieldDesc("clix_industry", mapValues.get("industry").toString()));
-				}
-				if (mapValues.containsKey("segment")) {
-					customer.setCustAddlVar10(getExtFieldDesc("clix_segment", mapValues.get("segment").toString()));
-				}
-				if (mapValues.containsKey("product")) {
-					customer.setCustAddlVar11(getExtFieldDesc("clix_product", mapValues.get("product").toString()));
-				}
-				//industry margin
-				customer.setCustAddlVar89(getExtFieldIndustryMargin("clix_industrymargin", customer.getCustAddlVar8(),
-						customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
-
-				setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustomer().getCustCIF());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	private void setCoApplicantExtendedData(FinanceDetail fd, SpreadSheet spreadSheet) {
-		if (fd != null) {
-
-			for (int i = 0; i < fd.getJountAccountDetailList().size(); i++) {
-				// FIXME: Table Name should come from Module and SubModule
-				List<Map<String, Object>> extendedMapValues = extendedFieldDetailsService.getExtendedFieldMap(
-						String.valueOf(fd.getJountAccountDetailList().get(i).getCustCIF()), "Customer_Sme_Ed", "_view");
-				CustomerDetails cu = fd.getJountAccountDetailList().get(i).getCustomerDetails();
-				if (CollectionUtils.isNotEmpty(extendedMapValues) && i == 0) {
-					spreadSheet.setAddlVar1(getExtFieldDesc("clix_natureofbusiness",
-							extendedMapValues.get(0).get("natureofbusiness").toString()));
-					spreadSheet.setAddlVar2(
-							getExtFieldDesc("clix_industry", extendedMapValues.get(0).get("industry").toString()));
-					spreadSheet.setAddlVar3(
-							getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
-					spreadSheet.setAddlVar4(
-							getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
-					//industry margin
-					spreadSheet.setAddlVar5(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
-							spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
-					setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustCIF(), i);
-				}
-				if (CollectionUtils.isNotEmpty(extendedMapValues) && i == 1) {
-					spreadSheet.setAddlVar6(getExtFieldDesc("clix_natureofbusiness",
-							extendedMapValues.get(0).get("natureofbusiness").toString()));
-					spreadSheet.setAddlVar7(
-							getExtFieldDesc("clix_industry", extendedMapValues.get(0).get("industry").toString()));
-					spreadSheet.setAddlVar8(
-							getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
-					spreadSheet.setAddlVar9(
-							getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
-					//industry margin
-					spreadSheet.setAddlVar10(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
-							spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
-					setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustCIF(), i);
-				}
-
-			}
-		}
-	}
-
-	// method for setting up eligibility method in key figures sheet
-	private void setKeyFigures(FinanceMain fm) {
-		if (StringUtils.equals(fm.getLovEligibilityMethod(), "0107")
-				|| StringUtils.equals(fm.getLovEligibilityMethod(), "0108")) {
-			dataMap.put("IncomeProgramme1", "Bureau+Banking");
-		} else if (StringUtils.equals(fm.getLovEligibilityMethod(), "0109")) {
-			dataMap.put("IncomeProgramme2", "Bureau+Banking+GST+Financial");
-		} else if (StringUtils.equals(fm.getLovEligibilityMethod(), "0110")) {
-			dataMap.put("IncomeProgramme3", "Bureau+Banking+GST");
-		}
-	}
-
-	// method for Main Applicant FI status
-	private void setMainApplicantFiStatus(FinanceDetail fd, String custCif) {
-		List<CustomerAddres> addressList = fd.getCustomerDetails().getAddressList();
-		if (CollectionUtils.isNotEmpty(addressList)) {
-			for (CustomerAddres addr : addressList) {
-				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Resi_Address"))) {
-					setFiStatus(fd, addr, "MainAppResiFIStatus", custCif);
-				}
-				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
-					setFiStatus(fd, addr, "MainAppOfficeFIStatus", custCif);
-				}
-			}
-		}
-	}
-
-	// method for Co Applicant FI status
-	private void setCoApplicantFiStatus(FinanceDetail fd, CustomerDetails cu, String custCif, int value) {
-		List<CustomerAddres> addressList = cu.getAddressList();
-		if (CollectionUtils.isNotEmpty(addressList)) {
-			for (CustomerAddres addr : addressList) {
-				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Resi_Address"))) {
-					setFiStatus(fd, addr, "CoApp" + value + "ResiFIStatus", custCif);
-				}
-				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
-					setFiStatus(fd, addr, "CoApp" + value + "OfficeFIStatus", custCif);
-				}
-			}
-		}
-	}
-
-	// method for FI status for both office and residence addresses
-	private void setFiStatus(FinanceDetail fd, CustomerAddres addr, String name, String custCif) {
-		Verification verificationForStatus = verificationService.getVerificationStatus(
-				fd.getFinScheduleData().getFinanceMain().getFinReference(), VerificationType.FI.getKey(),
-				addr.getCustAddrType(), custCif);
-		if (verificationForStatus != null) {
-			if (verificationForStatus.getStatus() == 1) {
-				dataMap.put(name, "Positive");
-			} else if (verificationForStatus.getStatus() == 2) {
-				dataMap.put(name, "Negative");
-			} else if (verificationForStatus.getStatus() == 3) {
-				dataMap.put(name, "Refer to Credit");
-			}
-		}
-	}
-
-	private void setCoApplicantData(SpreadSheet spreadSheet, FinanceDetail financeDetail) {
-		if (CollectionUtils.isNotEmpty(financeDetail.getJountAccountDetailList())) {
-			if (financeDetail.getJountAccountDetailList().get(0) != null) {
-				spreadSheet.setCu1(getCustomerService().getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(0).getCustCIF(), "_View"));
-				setCustomerName(spreadSheet, spreadSheet.getCu1());
-				dataMap.put("CoApp1DOB", spreadSheet.getCu1().getCustDOB());
-				dataMap.put("CoApp1Age",
-						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu1().getCustDOB()));
-				dataMap.put("CoApp1MatAge",
-						DateUtility.getYearsBetween(
-								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu1().getCustDOB()));
-
-			}
-
-			if (financeDetail.getJountAccountDetailList().size() > 1
-					&& financeDetail.getJountAccountDetailList().get(1) != null) {
-				spreadSheet.setCu2(getCustomerService().getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(1).getCustCIF(), "_View"));
-				setCustomerName(spreadSheet, spreadSheet.getCu2());
-				dataMap.put("CoApp2DOB", spreadSheet.getCu2().getCustDOB());
-				dataMap.put("CoApp2Age",
-						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu2().getCustDOB()));
-				dataMap.put("CoApp2MatAge",
-						DateUtility.getYearsBetween(
-								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu2().getCustDOB()));
-
-			}
-
-			if (financeDetail.getJountAccountDetailList().size() > 2
-					&& financeDetail.getJountAccountDetailList().get(2) != null) {
-				spreadSheet.setCu3(getCustomerService().getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(2).getCustCIF(), "_View"));
-				setCustomerName(spreadSheet, spreadSheet.getCu3());
-				dataMap.put("CoApp3DOB", spreadSheet.getCu3().getCustDOB());
-				dataMap.put("CoApp3Age",
-						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu3().getCustDOB()));
-				dataMap.put("CoApp3MatAge",
-						DateUtility.getYearsBetween(
-								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu3().getCustDOB()));
-
-			}
-
-			if (financeDetail.getJountAccountDetailList().size() > 3
-					&& financeDetail.getJountAccountDetailList().get(3) != null) {
-				spreadSheet.setCu4(getCustomerService().getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(3).getCustCIF(), "_View"));
-				setCustomerName(spreadSheet, spreadSheet.getCu4());
-				dataMap.put("CoApp4DOB", spreadSheet.getCu4().getCustDOB());
-				dataMap.put("CoApp4Age",
-						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu4().getCustDOB()));
-				dataMap.put("CoApp4MatAge",
-						DateUtility.getYearsBetween(
-								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu4().getCustDOB()));
-
-			}
-
-			if (financeDetail.getJountAccountDetailList().size() > 4
-					&& financeDetail.getJountAccountDetailList().get(4) != null) {
-				spreadSheet.setCu5(getCustomerService().getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(4).getCustCIF(), "_View"));
-				setCustomerName(spreadSheet, spreadSheet.getCu5());
-				dataMap.put("CoApp5DOB", spreadSheet.getCu5().getCustDOB());
-				dataMap.put("CoApp5Age",
-						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu5().getCustDOB()));
-				dataMap.put("CoApp5MatAge",
-						DateUtility.getYearsBetween(
-								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu5().getCustDOB()));
-			}
-		}
-	}
-
-	private void setCorporateFinancialData(FinanceDetail fd) {
-		long custId = fd.getCustomerDetails().getCustomer().getCustID();
-		List<FinCreditReviewDetails> idList = creditApplicationReviewService.getFinCreditRevDetailIds(custId);
-
-		String maxAuditYear = getCreditApplicationReviewService().getMaxAuditYearByCustomerId(custId, "_VIEW");
-
-		int year2 = Integer.parseInt(maxAuditYear) - 1;
-		int year3 = Integer.parseInt(maxAuditYear) - 2;
-
-		dataMap.put("F1.MAXYEAR", "31-Mar-" + maxAuditYear);
-		dataMap.put("F1.MAXYEAR.1", "31-Mar-" + year2);
-		dataMap.put("F1.MAXYEAR.2", "31-Mar-" + year3);
-		if (CollectionUtils.isNotEmpty(idList)) {
-			for (FinCreditReviewDetails id : idList) {
-				Map<String, Object> tempMap1 = new HashMap<>();
-				tempMap1 = creditApplicationReviewService.getFinCreditRevSummaryDetails(id.getId(), id.getAuditYear());
-
-				for (String str : tempMap1.keySet()) {
-					String strTemp = str;
-					if (id.getAuditYear().equals(maxAuditYear)) {
-						str = "F1." + (str) + "." + ("3");
-					} else if (id.getAuditYear().equals(String.valueOf(year2))) {
-						str = "F1." + (str) + "." + ("2");
-					} else if (id.getAuditYear().equals(String.valueOf(year3))) {
-						str = "F1." + (str) + "." + ("1");
-
-					}
-					dataMap.put(str, tempMap1.get(strTemp));
-					dataMap.put(str,
-							PennantApplicationUtil.formateAmount(new BigDecimal(tempMap1.get(strTemp).toString()), 2));
-				}
-			}
-			if (fd.getJountAccountDetailList() != null && !fd.getJountAccountDetailList().isEmpty()) {
-				for (JointAccountDetail accountDetail : fd.getJountAccountDetailList()) {
-					List<FinCreditReviewDetails> coAppidList = creditApplicationReviewService
-							.getFinCreditRevDetailIds(accountDetail.getCustID());
-					String coApp1MaxAuditYear = getCreditApplicationReviewService()
-							.getMaxAuditYearByCustomerId(accountDetail.getCustID(), "_VIEW");
-
-					int coApp1year2 = Integer.parseInt(coApp1MaxAuditYear) - 1;
-					int coApp1year3 = Integer.parseInt(coApp1MaxAuditYear) - 2;
-
-					dataMap.put("F2.MAXYEAR", "31-Mar-" + coApp1MaxAuditYear);
-					dataMap.put("F2.MAXYEAR.1", "31-Mar-" + coApp1year2);
-					dataMap.put("F2.MAXYEAR.2", "31-Mar-" + coApp1year3);
-					if (CollectionUtils.isNotEmpty(coAppidList)) {
-						for (FinCreditReviewDetails id : coAppidList) {
-							Map<String, Object> tempMap2 = new HashMap<>();
-							tempMap2 = creditApplicationReviewService.getFinCreditRevSummaryDetails(id.getId(),
-									id.getAuditYear());
-
-							for (String str : tempMap2.keySet()) {
-								String strTemp = str;
-								if (id.getAuditYear().equals(coApp1MaxAuditYear)) {
-									str = "F2." + (str) + "." + ("3");
-								} else if (id.getAuditYear().equals(String.valueOf(coApp1year2))) {
-									str = "F2." + (str) + "." + ("2");
-								} else if (id.getAuditYear().equals(String.valueOf(coApp1year3))) {
-									str = "F2." + (str) + "." + ("1");
-								}
-
-								dataMap.put(str, tempMap2.get(strTemp));
-								dataMap.put(str, PennantApplicationUtil
-										.formateAmount(new BigDecimal(tempMap2.get(strTemp).toString()), 2));
-							}
-						}
-					}
-				}
-			}
-		}
-
-	}
-
-	private void setCustomerGstDetails(FinanceDetail fd) {
-		CustomerDetails customerDetails = fd.getCustomerDetails();
-		List<CustomerGST> customerGsts = customerDetails.getCustomerGstList();
-		if (CollectionUtils.isNotEmpty(customerGsts)) {
-			for (int i = 0; i < customerGsts.size(); i++) {
-				List<CustomerGSTDetails> customerGSTDetails = customerGsts.get(i).getCustomerGSTDetailslist();
-				if (CollectionUtils.isNotEmpty(customerGSTDetails)) {
-					Map<String, BigDecimal> gstDetailsMap = new HashMap<String, BigDecimal>();
-					for (CustomerGSTDetails detail : customerGSTDetails) {
-						gstDetailsMap.put(detail.getFrequancy() + "-" + (detail.getFinancialYear()),
-								PennantApplicationUtil.formateAmount(detail.getSalAmount(), 2));
-					}
-					if (!customerGsts.get(i).getFrequencytype().equals("Quarterly")) {
-						int l = 1;
-						for (int k = 12; k > 0; k--) {
-							YearMonth date = YearMonth.now().minusMonths(k);
-							String monthName = date.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
-							String month = (monthName + "-" + date.getYear());
-							if (gstDetailsMap.containsKey(month)) {
-								dataMap.put("Gst" + l + "Freq", customerGsts.get(i).getFrequencytype());
-								dataMap.put("Gst" + i + "Month" + l, gstDetailsMap.get(month));
-								l = l + 1;
-							}
-						}
-					} else {
-						int q = 1;
-						for (int k = 4; k > 0; k--) {
-							YearMonth date = YearMonth.now().minusMonths(k);
-							String month = ("Q" + k + "-" + date.getYear());
-							dataMap.put("Gst" + q + "Freq", customerGsts.get(i).getFrequencytype());
-							dataMap.put("Gst" + i + "Month" + q, gstDetailsMap.get(month));
-							q = q + 1;
-						}
-					}
-				}
-			}
-		}
-
-	}
-
-	private void setExternalLiabilites(FinanceDetail fd) {
-		List<CustomerExtLiability> extList = fd.getCustomerDetails().getCustomerExtLiabilityList();
-		int format = CurrencyUtil.getFormat(fd.getFinScheduleData().getFinanceMain().getFinCcy());
-		if (CollectionUtils.isNotEmpty(extList)) {
-			for (int i = 0; i < extList.size(); i++) {
-				dataMap.put("Ext_LoanBankName" + i, extList.get(i).getLoanBankName());
-				dataMap.put("Ext_LoanType" + i, extList.get(i).getFinTypeDesc());
-				dataMap.put("Ext_LoanCategory" + i, extList.get(i).getSecurityDetails());
-				if (extList.get(i).getFinStatus().equals("M0")) {
-					dataMap.put("Ext_LoanStatus" + i, "Live");
-				}
-				dataMap.put("Ext_LoanAmount" + i,
-						PennantApplicationUtil.amountFormate(extList.get(i).getOriginalAmount(), format));
-
-				dataMap.put("Ext_LoanEMI" + i,
-						PennantApplicationUtil.amountFormate(extList.get(i).getInstalmentAmount(), format));
-				dataMap.put("Ext_LoanROI" + i, PennantApplicationUtil.formateAmount(extList.get(i).getRateOfInterest(),
-						PennantConstants.defaultCCYDecPos));
-				dataMap.put("Ext_LoanTenure" + i, extList.get(i).getTenure());
-				dataMap.put("Ext_LoanStartDate" + i, extList.get(i).getFinDate());
-
-				// trackCheckFrom - based on the int value
-				if (extList.get(i).getCheckedBy() == 0) {
-					dataMap.put("Ext_LoanTrackCheckFrom" + i, "SOA");
-				} else if (extList.get(i).getCheckedBy() == 1) {
-					dataMap.put("Ext_LoanTrackCheckFrom" + i, "Banking");
-				} else if (extList.get(i).getCheckedBy() == 2) {
-					dataMap.put("Ext_LoanTrackCheckFrom" + i, "Cibil");
-				}
-
-				List<ExtLiabilityPaymentdetails> paymentDetails = extList.get(i).getExtLiabilitiesPayments();
-				if (CollectionUtils.isNotEmpty(paymentDetails)) {
-					Map<String, String> paymentDetailsMap = new HashMap<String, String>();
-					for (ExtLiabilityPaymentdetails details : paymentDetails) {
-						paymentDetailsMap.put(details.getEmiType(), details.getEmiClearance());
-					}
-
-					int l = 6;
-					for (int k = 6; k > 0; k--) {
-						YearMonth date = YearMonth.now().minusMonths(k);
-						String monthName = date.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
-						String month = (monthName + "-" + date.getYear());
-						dataMap.put("Month" + l, month);
-						if (paymentDetailsMap.containsKey(month)) {
-							if (paymentDetailsMap.get(month).equals(Boolean.TRUE)) {
-								dataMap.put("Ext" + i + "Mon" + l, "Cleared");
-							} else {
-								dataMap.put("Ext" + i + "Mon" + l, "Not Cleared");
-							}
-							l = l - 1;
-						}
-					}
-				}
-
-			}
-		}
-	}
-
-	private void setBankingDetails(FinanceDetail fd) {
-		List<CustomerBankInfo> bankingDetails = fd.getCustomerDetails().getCustomerBankInfoList();
-		int format = CurrencyUtil.getFormat(fd.getFinScheduleData().getFinanceMain().getFinCcy());
-		if (CollectionUtils.isNotEmpty(bankingDetails)) {
-			for (int i = 0; i < bankingDetails.size(); i++) {
-				dataMap.put("B" + i + ".BankName", bankingDetails.get(i).getLovDescBankName());
-				dataMap.put("B" + i + ".AccountNum", bankingDetails.get(i).getAccountNumber());
-				dataMap.put("B" + i + ".TypeofAcc", bankingDetails.get(i).getLovDescAccountType());
-				dataMap.put("B" + i + ".SanctionedLimit", bankingDetails.get(i).getCcLimit());
-
-				List<BankInfoDetail> bankInfoDetails = bankingDetails.get(i).getBankInfoDetails();
-				if (CollectionUtils.isNotEmpty(bankInfoDetails)) {
-					Map<String, BankInfoDetail> bankInfoDetailsMap = new HashMap<String, BankInfoDetail>();
-
-					for (BankInfoDetail detail : bankInfoDetails) {
-						Date date = detail.getMonthYear();
-						SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
-						String strDate = dateFormat.format(date);
-						bankInfoDetailsMap.put(strDate, detail);
-					}
-
-					int l = 0;
-					for (int k = 6; k > 0; k--) {
-						YearMonth date = YearMonth.now().minusMonths(k);
-						String monthValue = String.valueOf(date.getMonth().getValue());
-						if (monthValue.length() == 1) {
-							monthValue = "0" + monthValue;
-						}
-						String month = date.getYear() + "-" + monthValue;
-
-						if (bankInfoDetailsMap.containsKey(month)) {
-							dataMap.put("Bank" + i + "Mon" + l, month);
-							dataMap.put("Bank" + i + "Mon" + l + "Cr", PennantApplicationUtil
-									.formateAmount(bankInfoDetailsMap.get(month).getCreditAmt(), format));
-							dataMap.put("Bank" + i + "Mon" + l + "DebitAmt", PennantApplicationUtil
-									.formateAmount(bankInfoDetailsMap.get(month).getDebitAmt(), format));
-							dataMap.put("Bank" + i + "Mon" + l + "SanctionedLimit", PennantApplicationUtil
-									.formateAmount(bankInfoDetailsMap.get(month).getSanctionLimit(), format));
-							dataMap.put("Bank" + i + "Mon" + l + "NoOfCr", bankInfoDetailsMap.get(month).getCreditNo());
-							dataMap.put("Bank" + i + "Mon" + l + "NoOfDebit",
-									bankInfoDetailsMap.get(month).getDebitNo());
-							dataMap.put("Bank" + i + "Mon" + l + "InwBounce", PennantApplicationUtil.formateAmount(
-									bankInfoDetailsMap.get(month).getBounceIn(), PennantConstants.defaultCCYDecPos));
-							dataMap.put("Bank" + i + "Mon" + l + "OutBounce", PennantApplicationUtil.formateAmount(
-									bankInfoDetailsMap.get(month).getBounceOut(), PennantConstants.defaultCCYDecPos));
-							if (CollectionUtils.isNotEmpty(bankInfoDetailsMap.get(month).getBankInfoSubDetails())) {
-								dataMap.put("Bank" + i + "Mon" + l + "AvgBal", PennantApplicationUtil.formateAmount(
-										bankInfoDetailsMap.get(month).getBankInfoSubDetails().get(0).getBalance(),
-										format));
-							}
-							/*
-							 * dataMap.put("Bank" + i + "Mon" + l + "PeakUtilLev",
-							 * bankInfoDetailsMap.get(month).getPeakUtilizationLevel());
-							 */
-							dataMap.put("Bank" + i + "Mon" + l + "AvgutilizationPerc",
-									bankInfoDetailsMap.get(month).getAvgUtilization());
-
-							l = l + 1;
-
-						}
-
-					}
-
-				}
-
-			}
-		}
-	}
-
-	private void setCardSalesDetails(FinanceDetail fd) {
-		List<CustCardSales> custCardSales = fd.getCustomerDetails().getCustCardSales();
-		if (CollectionUtils.isNotEmpty(custCardSales)) {
-			for (int i = 0; i < custCardSales.size(); i++) {
-				List<CustCardSalesDetails> custCardMonthSales = custCardSales.get(i).getCustCardMonthSales();
-				if (CollectionUtils.isNotEmpty(custCardMonthSales)) {
-					Map<String, CustCardSalesDetails> cardDetailsMap = new HashMap<String, CustCardSalesDetails>();
-					for (CustCardSalesDetails custCardSalesDetails : custCardMonthSales) {
-						Date date = custCardSalesDetails.getMonth();
-						SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
-						String strDate = dateFormat.format(date);
-						cardDetailsMap.put(strDate, custCardSalesDetails);
-					}
-					int l = 0;
-					for (int k = 12; k > 0; k--) {
-						YearMonth date = YearMonth.now().minusMonths(k);
-						String monthValue = String.valueOf(date.getMonth().getValue());
-						if (monthValue.length() == 1) {
-							monthValue = "0" + monthValue;
-						}
-						String month = date.getYear() + "-" + monthValue;
-						if (cardDetailsMap.containsKey(month)) {
-							dataMap.put("SalesMon" + l, month);
-							dataMap.put("mon" + l + "Sales", PennantApplicationUtil.formateAmount(
-									cardDetailsMap.get(month).getSalesAmount(), PennantConstants.defaultCCYDecPos));
-							dataMap.put("mon" + l + "Settlements", cardDetailsMap.get(month).getNoOfSettlements());
-							dataMap.put("mon" + l + "TotalCredit",
-									PennantApplicationUtil.formateAmount(
-											cardDetailsMap.get(month).getTotalCreditValue(),
-											PennantConstants.defaultCCYDecPos));
-							dataMap.put("mon" + l + "TotalDebit", PennantApplicationUtil.formateAmount(
-									cardDetailsMap.get(month).getTotalDebitValue(), PennantConstants.defaultCCYDecPos));
-							dataMap.put("mon" + l + "NoofDebits", cardDetailsMap.get(month).getTotalNoOfDebits());
-							dataMap.put("mon" + l + "InwardBounce", cardDetailsMap.get(month).getInwardBounce());
-							dataMap.put("mon" + l + "OutwardBounce", cardDetailsMap.get(month).getOutwardBounce());
-							dataMap.put("mon" + l + "NoofCredits", cardDetailsMap.get(month).getTotalNoOfCredits());
-							l = l + 1;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private String getExtFieldDesc(String tableName, String value) {
-		logger.debug(Literal.ENTERING);
-		try {
-			if (StringUtils.trimToNull(tableName) == null) {
-				return null;
-			}
-			return extendedFieldDetailsService.getExtFieldDesc(tableName, value);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
-	}
-
-	private String getExtFieldIndustryMargin(String tableName, String type, String industry, String segment,
-			String product) {
-		logger.debug(Literal.ENTERING);
-		try {
-			if (StringUtils.trimToNull(tableName) == null) {
-				return null;
-			}
-			return extendedFieldDetailsService.getExtFieldIndustryMargin(tableName, type, industry, segment, product);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	/**

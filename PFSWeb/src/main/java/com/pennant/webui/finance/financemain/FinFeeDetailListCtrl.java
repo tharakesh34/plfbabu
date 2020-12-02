@@ -2427,7 +2427,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			}
 		}
 
-		calculateFees(finFeeDetailList, financeDetail.getFinScheduleData(), financeDetail.getValueDate());
+		//calculateFees(finFeeDetailList, financeDetail.getFinScheduleData(), financeDetail.getValueDate());
 
 		logger.debug("Leaving");
 	}

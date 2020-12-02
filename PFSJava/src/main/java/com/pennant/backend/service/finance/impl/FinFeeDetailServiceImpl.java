@@ -1776,7 +1776,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					finFeeDetail.getTaxComponent())) {
 
 				//Net Amount
-				BigDecimal totalNetFee = finFeeDetail.getCalculatedAmount().subtract(waivedAmount);
+				BigDecimal totalNetFee = finFeeDetail.getNetAmount().subtract(waivedAmount);
 
 				if (!finFeeDetail.getPrvTaxComponent().equals(finFeeDetail.getTaxComponent())) {
 					totalNetFee = totalNetFee.add(finFeeDetail.getNetAmountGST());
