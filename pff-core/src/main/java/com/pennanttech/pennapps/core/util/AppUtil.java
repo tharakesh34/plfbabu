@@ -1,6 +1,7 @@
 package com.pennanttech.pennapps.core.util;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 
 import org.apache.commons.lang.StringUtils;
@@ -103,5 +104,21 @@ public class AppUtil {
 	private static boolean getAlwIntegralPartZero() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public static BigDecimal unFormateAmount(BigDecimal amount, int dec) {
+		if (amount == null) {
+			return BigDecimal.ZERO;
+		}
+
+		BigInteger bigInteger = amount.multiply(BigDecimal.valueOf(Math.pow(10, dec))).toBigInteger();
+		return new BigDecimal(bigInteger);
+	}
+
+	public static BigDecimal unFormateAmount(String amount, int dec) {
+		if (StringUtils.isEmpty(amount) || StringUtils.isBlank(amount)) {
+			return BigDecimal.ZERO;
+		}
+		return new BigDecimal(amount.replace(",", "")).multiply(BigDecimal.valueOf(Math.pow(10, dec)));
 	}
 }

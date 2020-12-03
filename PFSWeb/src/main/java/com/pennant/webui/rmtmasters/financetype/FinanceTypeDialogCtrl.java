@@ -107,7 +107,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -156,6 +155,7 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.AppUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -757,7 +757,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
-	@SuppressWarnings("unused")
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
@@ -1240,8 +1239,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		fillComboBox(this.cbfinDaysCalType, aFinanceType.getFinDaysCalType(),
 				PennantStaticListUtil.getProfitDaysBasis(), "");
 		this.finDivision.setValue(aFinanceType.getFinDivision());
-		this.finMinAmount.setValue(PennantAppUtil.formateAmount(aFinanceType.getFinMinAmount(), format));
-		this.finMaxAmount.setValue(PennantAppUtil.formateAmount(aFinanceType.getFinMaxAmount(), format));
+		this.finMinAmount.setValue(AppUtil.formatAmount(aFinanceType.getFinMinAmount(), format));
+		this.finMaxAmount.setValue(AppUtil.formatAmount(aFinanceType.getFinMaxAmount(), format));
 
 		Filter[] filters = null;
 		if (ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
@@ -1667,12 +1666,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 			onChangeODChargeType(true);
-			this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(aFinanceType.getODChargeAmtOrPerc(), format));
+			this.oDChargeAmtOrPerc.setValue(AppUtil.formatAmount(aFinanceType.getODChargeAmtOrPerc(), format));
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))
 						&& !FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
-			this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(aFinanceType.getODChargeAmtOrPerc(), 2));
+			this.oDChargeAmtOrPerc.setValue(AppUtil.formatAmount(aFinanceType.getODChargeAmtOrPerc(), 2));
 		} else if (FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
 			if (isOverdraft) {
 				this.label_FinanceTypeDialog_ODChargeAmtOrPerc.setVisible(false);
@@ -1763,9 +1762,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		doSetDownpayProperties(aFinanceType.getProductCategory(), false);
 
-		// Collaterl LTV Checking In Main Table//FIXME
 		if (!this.isCompReadonly) {
-
 			this.fintypeLTVCheck = getFinanceTypeService().getFinLtvCheckByFinType(aFinanceType.getFinType());
 		}
 		doSetCollateralProp(fintypeLTVCheck);
@@ -2185,12 +2182,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		try {
-			aFinanceType.setFinMaxAmount(PennantAppUtil.unFormateAmount(this.finMaxAmount.getValidateValue(), format));
+			aFinanceType.setFinMaxAmount(AppUtil.unFormateAmount(this.finMaxAmount.getValidateValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aFinanceType.setFinMinAmount(PennantAppUtil.unFormateAmount(this.finMinAmount.getValidateValue(), format));
+			aFinanceType.setFinMinAmount(AppUtil.unFormateAmount(this.finMinAmount.getValidateValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3744,12 +3741,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			if (getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT)
 					|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-				aFinanceType.setODChargeAmtOrPerc(
-						PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), format));
+				aFinanceType.setODChargeAmtOrPerc(AppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), format));
 			} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-				aFinanceType.setODChargeAmtOrPerc(PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), 2));
+				aFinanceType.setODChargeAmtOrPerc(AppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), 2));
 			}
 
 		} catch (WrongValueException we) {
@@ -4141,7 +4137,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		int format = CurrencyUtil.getFormat(this.finCcy.getValue());
 
 		// ************ Basic Details tab *******************//
-		Date appStartDate = DateUtility.getAppDate();
+		Date appStartDate = SysParamUtil.getAppDate();
 		Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 		if (isPromotion) {
 			if (!this.startDate.isDisabled()) {
@@ -6242,7 +6238,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	public void onCheck$developerFinance(Event event) {// FIXME
+	public void onCheck$developerFinance(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		setDeveloperFinanceFlagDetail();
 		if (!this.developerFinance.isChecked()) {
@@ -8245,13 +8241,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				String[] splitValues = selectedValue.split(",");
 				for (String splitVal : splitValues) {
 					if (StringUtils.isEmpty(description)) {
-						description = PennantAppUtil.getlabelDesc(splitVal, ealrypayMethods);
+						description = PennantApplicationUtil.getLabelDesc(splitVal, ealrypayMethods);
 					} else {
-						description = description + " , " + PennantAppUtil.getlabelDesc(splitVal, ealrypayMethods);
+						description = description + " , "
+								+ PennantApplicationUtil.getLabelDesc(splitVal, ealrypayMethods);
 					}
 				}
 			} else {
-				description = PennantAppUtil.getlabelDesc(selectedValue, ealrypayMethods);
+				description = PennantApplicationUtil.getLabelDesc(selectedValue, ealrypayMethods);
 			}
 			return description;
 		}
@@ -8878,7 +8875,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (cofRateDetail.getErrorDetails() == null) {
 			this.costOfFunds.setDescription(
-					PennantAppUtil.amountFormate(cofRateDetail.getNetRefRateLoan(), PennantConstants.defaultCCYDecPos));
+					AppUtil.formatAmount(cofRateDetail.getNetRefRateLoan(), PennantConstants.defaultCCYDecPos));
 		} else {
 			MessageUtil.showError(ErrorUtil
 					.getErrorDetail(cofRateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
