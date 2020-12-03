@@ -467,7 +467,8 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 			Map<String, BigDecimal> gstDetailsMap = new HashMap<String, BigDecimal>();
 			for (CustomerGSTDetails detail : customerGSTDetails) {
 				String salAmt = AppUtil.formatAmount(detail.getSalAmount(), 2);
-				gstDetailsMap.put(detail.getFrequancy() + "-" + (detail.getFinancialYear()), AppUtil.getBigDecimal(salAmt));
+				gstDetailsMap.put(detail.getFrequancy() + "-" + (detail.getFinancialYear()),
+						AppUtil.getBigDecimal(salAmt));
 			}
 			if (!customerGsts.get(i).getFrequencytype().equals("Quarterly")) {
 				int l = 1;
@@ -498,7 +499,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		long custId = fd.getCustomerDetails().getCustomer().getCustID();
 		List<FinCreditReviewDetails> idList = dataAccess.getFinCreditRevDetailIds(custId);
 
-		String maxAuditYear = getCreditApplicationReviewService().getMaxAuditYearByCustomerId(custId, "_VIEW");
+		String maxAuditYear = dataAccess.getMaxAuditYearByCustomerId(custId, "_VIEW");
 
 		int year2 = Integer.parseInt(maxAuditYear) - 1;
 		int year3 = Integer.parseInt(maxAuditYear) - 2;
@@ -513,7 +514,8 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 		for (FinCreditReviewDetails id : idList) {
 			Map<String, Object> tempMap1 = new HashMap<>();
-			tempMap1 = creditApplicationReviewService.getFinCreditRevSummaryDetails(id.getId(), id.getAuditYear());
+			//tempMap1 = dataAccess.getFinCreditRevSummaryDetails(id.getId(), id.getAuditYear());
+			tempMap1 = dataAccess.getFinCreditRevSummaryDetails(id.getId());
 
 			for (String str : tempMap1.keySet()) {
 				String strTemp = str;
@@ -532,10 +534,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 		if (fd.getJountAccountDetailList() != null && !fd.getJountAccountDetailList().isEmpty()) {
 			for (JointAccountDetail accountDetail : fd.getJountAccountDetailList()) {
-				List<FinCreditReviewDetails> coAppidList = creditApplicationReviewService
+				List<FinCreditReviewDetails> coAppidList = dataAccess
 						.getFinCreditRevDetailIds(accountDetail.getCustID());
-				String coApp1MaxAuditYear = getCreditApplicationReviewService()
-						.getMaxAuditYearByCustomerId(accountDetail.getCustID(), "_VIEW");
+				String coApp1MaxAuditYear = dataAccess.getMaxAuditYearByCustomerId(accountDetail.getCustID(), "_VIEW");
 
 				int coApp1year2 = Integer.parseInt(coApp1MaxAuditYear) - 1;
 				int coApp1year3 = Integer.parseInt(coApp1MaxAuditYear) - 2;
@@ -546,8 +547,8 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				if (CollectionUtils.isNotEmpty(coAppidList)) {
 					for (FinCreditReviewDetails id : coAppidList) {
 						Map<String, Object> tempMap2 = new HashMap<>();
-						tempMap2 = creditApplicationReviewService.getFinCreditRevSummaryDetails(id.getId(),
-								id.getAuditYear());
+						//	tempMap2 = dataAccess.getFinCreditRevSummaryDetails(id.getId(),id.getAuditYear());
+						tempMap2 = dataAccess.getFinCreditRevSummaryDetails(id.getId());
 
 						for (String str : tempMap2.keySet()) {
 							String strTemp = str;
@@ -577,7 +578,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
 		if (financeDetail.getJountAccountDetailList().get(0) != null) {
 			String custCIF = financeDetail.getJountAccountDetailList().get(0).getCustCIF();
-			spreadSheet.setCu1(getCustomerService().getCustomerDetailForFinancials(custCIF, "_View"));
+			spreadSheet.setCu1(dataAccess.getCustomerDetailForFinancials(custCIF, "_View"));
 			Customer customer = spreadSheet.getCu1();
 			setCustomerName(customer);
 			dataMap.put("CoApp1DOB", customer.getCustDOB());
@@ -589,7 +590,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		if (financeDetail.getJountAccountDetailList().size() > 1
 				&& financeDetail.getJountAccountDetailList().get(1) != null) {
 			String custCIF = financeDetail.getJountAccountDetailList().get(1).getCustCIF();
-			spreadSheet.setCu2(getCustomerService().getCustomerDetailForFinancials(custCIF, "_View"));
+			spreadSheet.setCu2(dataAccess.getCustomerDetailForFinancials(custCIF, "_View"));
 			Customer customer = spreadSheet.getCu2();
 			setCustomerName(customer);
 			dataMap.put("CoApp2DOB", customer.getCustDOB());
@@ -601,7 +602,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		if (financeDetail.getJountAccountDetailList().size() > 2
 				&& financeDetail.getJountAccountDetailList().get(2) != null) {
 			String custCIF = financeDetail.getJountAccountDetailList().get(2).getCustCIF();
-			spreadSheet.setCu3(getCustomerService().getCustomerDetailForFinancials(custCIF, "_View"));
+			spreadSheet.setCu3(dataAccess.getCustomerDetailForFinancials(custCIF, "_View"));
 			Customer customer = spreadSheet.getCu3();
 			setCustomerName(customer);
 			dataMap.put("CoApp3DOB", customer.getCustDOB());
@@ -614,7 +615,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				&& financeDetail.getJountAccountDetailList().get(3) != null) {
 			String custCIF = financeDetail.getJountAccountDetailList().get(3).getCustCIF();
 
-			spreadSheet.setCu4(getCustomerService().getCustomerDetailForFinancials(custCIF, "_View"));
+			spreadSheet.setCu4(dataAccess.getCustomerDetailForFinancials(custCIF, "_View"));
 			Customer customer = spreadSheet.getCu4();
 			setCustomerName(customer);
 			dataMap.put("CoApp4DOB", customer.getCustDOB());
@@ -627,7 +628,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				&& financeDetail.getJountAccountDetailList().get(4) != null) {
 			String custCIF = financeDetail.getJountAccountDetailList().get(4).getCustCIF();
 
-			spreadSheet.setCu5(getCustomerService().getCustomerDetailForFinancials(custCIF, "_View"));
+			spreadSheet.setCu5(dataAccess.getCustomerDetailForFinancials(custCIF, "_View"));
 			Customer customer = spreadSheet.getCu5();
 			setCustomerName(customer);
 			dataMap.put("CoApp5DOB", customer.getCustDOB());
@@ -650,7 +651,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 	private void setCoApplicantExtendedData(SpreadSheet spreadSheet, FinanceDetail fd, Map<String, Object> dataMap) {
 		for (int i = 0; i < fd.getJountAccountDetailList().size(); i++) {
 			// FIXME: Table Name should come from Module and SubModule
-			List<Map<String, Object>> extendedMapValues = extendedFieldDetailsService.getExtendedFieldMap(
+			List<Map<String, Object>> extendedMapValues = dataAccess.getExtendedFieldMap(
 					String.valueOf(fd.getJountAccountDetailList().get(i).getCustCIF()), "Customer_Sme_Ed", "_view");
 			CustomerDetails cu = fd.getJountAccountDetailList().get(i).getCustomerDetails();
 			if (CollectionUtils.isNotEmpty(extendedMapValues) && i == 0) {
@@ -763,7 +764,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 			if (StringUtils.trimToNull(tableName) == null) {
 				return null;
 			}
-			return extendedFieldDetailsService.getExtFieldDesc(tableName, value);
+			return dataAccess.getExtFieldDesc(tableName, value);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -779,7 +780,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 			if (StringUtils.trimToNull(tableName) == null) {
 				return null;
 			}
-			return extendedFieldDetailsService.getExtFieldIndustryMargin(tableName, type, industry, segment, product);
+			return dataAccess.getExtFieldIndustryMargin(tableName, type, industry, segment, product);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -853,7 +854,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 	// method for FI status for both office and residence addresses
 	private void setFiStatus(FinanceDetail fd, CustomerAddres addr, String name, String custCif,
 			Map<String, Object> dataMap) {
-		Verification verificationForStatus = verificationService.getVerificationStatus(
+		Verification verificationForStatus = dataAccess.getVerificationStatus(
 				fd.getFinScheduleData().getFinanceMain().getFinReference(), 1, addr.getCustAddrType(), custCif);
 		if (verificationForStatus != null) {
 			if (verificationForStatus.getStatus() == 1) {
