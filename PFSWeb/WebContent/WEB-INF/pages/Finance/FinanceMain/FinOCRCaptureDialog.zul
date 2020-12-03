@@ -83,19 +83,19 @@
 										<button id="btnUpload" label="Browse" upload="true" autodisable="Save" />
 										<button id="btnUploadView" label="View" autodisable="Save" visible="false" />
 								</hbox>			
-								<label id="label_FinOCRCaptureDialog_ReceiptDate" value="${c:l('label_FinOCRCaptureDialog_OCRdate.value')}" />
+								<!-- <label id="label_FinOCRCaptureDialog_ReceiptDate" value="${c:l('label_FinOCRCaptureDialog_OCRdate.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<datebox id="ocrReceiptDate" width="100px" />
-									</hbox>
-							</row>
+										<datebox id="ocrReceiptDate1" width="100px" />
+									</hbox>-->
+							</row> 
 							<row>
 								
 								<label id="label_FinOCRCaptureDialog_FileUpload" value="${c:l('label_FinOCRCaptureDialog_FileUpload.value')}" />
 								<hbox>
-										<textbox id="uploadedfileName" width="150px" readonly="true" />
-										<button id="btnUpload" label="Browse" upload="true" autodisable="Save" />
-										<button id="btnUploadView" label="View" autodisable="Save" visible="false" />
+										<textbox id="uploadedfileName1" width="150px" readonly="true" />
+										<button id="btnUpload1" label="Browse" upload="true" autodisable="Save" />
+										<button id="btnUploadView1" label="View" autodisable="Save" visible="false" />
 								</hbox>	
 								<label id="labelRemarks" value="${c:l('label_FinOCRCaptureDialog_Remarks.value')}" />
 									<hbox>
@@ -104,9 +104,9 @@
 									</hbox>			
 							</row>
 							<row visible="false">
-							<label id="labelLoanReference" value="${c:l('label_FinOCRCaptureDialog_LoanReference.value')}"  visible="false"/>
+							<label id="labelLoanReference1" value="${c:l('label_FinOCRCaptureDialog_LoanReference.value')}"  visible="false"/>
 								<hbox>
-									<textbox id="loanReference" readonly="true" visible="false" />
+									<textbox id="loanReference1" readonly="true" visible="false" />
 								</hbox>
 							</row>
 						</rows>
