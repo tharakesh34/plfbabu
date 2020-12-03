@@ -28,11 +28,86 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 
 public class SpreadSheetDataAccess extends BasicDao<FinCreditReviewDetails> {
 	public CreditReviewDetails getCreditReviewDetailsByLoanType(CreditReviewDetails crd) {
+
+		logger.debug(Literal.ENTERING);
+		StringBuilder selectSql = new StringBuilder();
+		StringBuilder whereCondition = new StringBuilder();
+
+		if (StringUtils.isNotEmpty(crd.getProduct())) {
+			whereCondition.append(" Product = :Product");
+		}
+
+		if (StringUtils.isNotEmpty(crd.getEmploymentType())) {
+			if (StringUtils.isNotEmpty(whereCondition.toString())) {
+				whereCondition.append(" and ");
+			}
+			whereCondition.append(" EmploymentType = :EmploymentType ");
+		}
+
+		if (StringUtils.isNotEmpty(crd.getEligibilityMethod())) {
+			if (StringUtils.isNotEmpty(whereCondition.toString())) {
+				whereCondition.append(" and ");
+			}
+			whereCondition.append(" EligibilityMethod = :EligibilityMethod ");
+		}
+
+		selectSql.append(
+				" Select ID,FINCATEGORY,EMPLOYMENTTYPE,ELIGIBILITYMETHOD,SECTION,TEMPLATENAME,TEMPLATEVERSION, FIELDS, PROTECTEDCELLS, FieldKeys");
+		selectSql.append(" FROM  CREDITREVIEWCONFIG ");
+		if (StringUtils.isNotBlank(whereCondition.toString())) {
+			selectSql.append(" Where ").append(whereCondition);
+		} else {
+			return crd = null;
+		}
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(crd);
+		RowMapper<CreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CreditReviewDetails.class);
+
+		try {
+			crd = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			crd = null;
+		} catch (Exception e) {
+			crd = null;
+			logger.debug(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
 		return crd;
 	}
 
 	public CreditReviewData getCreditReviewDataByRef(String finReference, CreditReviewDetails crd) {
-		return null;
+
+		//public CreditReviewData getCreditReviewData(String finReference, String templateName, int templateVersion) {
+		logger.debug(Literal.ENTERING);
+		CreditReviewData crdata = null;
+		StringBuilder selectSql = new StringBuilder();
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("TemplateName", crd.getTemplateName());
+
+		selectSql.append(" Select FinReference, TemplateData, TemplateName, TemplateVersion,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" FROM  CreditReviewData");
+		selectSql.append(" Where FinReference = :FinReference AND TemplateName = :TemplateName ");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		RowMapper<CreditReviewData> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CreditReviewData.class);
+
+		try {
+			crdata = jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			crdata = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return crdata;
+
 	}
 
 	public List<FinCreditReviewDetails> getFinCreditRevDetailIds(long customerId) {
