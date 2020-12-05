@@ -335,17 +335,19 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> entityTypeList;
 	private static List<ValueLabel> ldapDomains;
 
-	//CD Schemes
+	// CD Schemes
 	private static List<ValueLabel> cashBackPayoutOptionsList;
 	private static List<ValueLabel> DBDPercentageList;
 	private static List<ValueLabel> emiClearance;
 
-	//EOD Automation
+	// EOD Automation
 	private static List<ValueLabel> encryptionTypeList;
 	private static List<ValueLabel> hourList;
 	private static List<ValueLabel> minList;
 
 	private static List<ValueLabel> npaPaymentTypesList;
+
+	private static List<ValueLabel> receiptModeWithOnline;
 
 	private static List<ValueLabel> ocrApplicableList;
 	private static List<ValueLabel> ocrContributorList;
@@ -1200,15 +1202,17 @@ public class PennantStaticListUtil {
 
 	public static List<ValueLabel> getODCCalculatedOn() {
 		if (overDueCalOnList == null) {
-			overDueCalOnList = new ArrayList<>(4);
+			overDueCalOnList = new ArrayList<>(5);
 			overDueCalOnList
 					.add(new ValueLabel(FinanceConstants.ODCALON_STOT, Labels.getLabel("label_ScheduleTotalBalance")));
 			overDueCalOnList.add(
 					new ValueLabel(FinanceConstants.ODCALON_SPRI, Labels.getLabel("label_SchedulePrincipalBalance")));
 			overDueCalOnList
 					.add(new ValueLabel(FinanceConstants.ODCALON_SPFT, Labels.getLabel("label_SchduleProfitBalance")));
-			overDueCalOnList.add(new ValueLabel(FinanceConstants.ODCALON_PIPD,
+			overDueCalOnList.add(new ValueLabel(FinanceConstants.ODCALON_PIPD_FRQ,
 					Labels.getLabel("label_SchdulePrincipalInterestPastDue")));
+			overDueCalOnList.add(
+					new ValueLabel(FinanceConstants.ODCALON_PIPD_EOM, Labels.getLabel("label_SchdulePriIntPD_atEOM")));
 		}
 		return overDueCalOnList;
 	}
@@ -3611,6 +3615,37 @@ public class PennantStaticListUtil {
 		return receiptModes;
 	}
 
+	public static List<ValueLabel> getReceiptModesByFeePayment() {
+		if (receiptModeWithOnline == null) {
+
+			receiptModeWithOnline = new ArrayList<ValueLabel>(7);
+			receiptModeWithOnline
+					.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASH, Labels.getLabel("label_ReceiptMode_Cash")));
+			receiptModeWithOnline.add(
+					new ValueLabel(RepayConstants.RECEIPTMODE_CHEQUE, Labels.getLabel("label_ReceiptMode_Cheque")));
+			receiptModeWithOnline
+					.add(new ValueLabel(RepayConstants.RECEIPTMODE_DD, Labels.getLabel("label_ReceiptMode_DD")));
+			receiptModeWithOnline
+					.add(new ValueLabel(RepayConstants.RECEIPTMODE_NEFT, Labels.getLabel("label_ReceiptMode_NEFT")));
+			receiptModeWithOnline
+					.add(new ValueLabel(RepayConstants.RECEIPTMODE_RTGS, Labels.getLabel("label_ReceiptMode_RTGS")));
+			receiptModeWithOnline
+					.add(new ValueLabel(RepayConstants.RECEIPTMODE_IMPS, Labels.getLabel("label_ReceiptMode_IMPS")));
+			receiptModeWithOnline.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXCESS,
+					Labels.getLabel("label_ReceiptMode_ExcessAmountOnly")));
+			receiptModeWithOnline.add(
+					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_ReceiptMode_ESCROW")));
+			receiptModeWithOnline.add(
+					new ValueLabel(RepayConstants.RECEIPTMODE_MOBILE, Labels.getLabel("label_ReceiptMode_MOBILE")));
+
+			receiptModeWithOnline.add(new ValueLabel(RepayConstants.RECEIPTMODE_ONLINE,
+					Labels.getLabel("label_ReceiptPaymentMode_ONLINE")));
+
+		}
+
+		return receiptModeWithOnline;
+	}
+
 	public static List<ValueLabel> getReceiptModeStatus() {
 		if (receiptModeStatus == null) {
 			receiptModeStatus = new ArrayList<ValueLabel>(3);
@@ -4404,6 +4439,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PaymentType_ESCROW")));
 			allPaymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_MOBILE,
 					Labels.getLabel("label_PaymentType_MOBILE")));
+			allPaymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_ONLINE,
+					Labels.getLabel("label_PaymentType_ONLINE")));
 
 		}
 

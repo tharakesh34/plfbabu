@@ -1345,7 +1345,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHANGETDS)) {
 
 			openFinChangeTDSMaintanceDialog(item);
-
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING)) {
+			openLoanDownsizingDialog(item);
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING)) {
 			openLoanDownsizingDialog(item);
 		} else {
@@ -3896,10 +3897,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	public void setChangeTDSService(ChangeTDSService changeTDSService) {
 		this.changeTDSService = changeTDSService;
-	}
-
-	public LoanDownSizingService getLoanDownSizingService() {
-		return loanDownSizingService;
 	}
 
 	public void setLoanDownSizingService(LoanDownSizingService loanDownSizingService) {

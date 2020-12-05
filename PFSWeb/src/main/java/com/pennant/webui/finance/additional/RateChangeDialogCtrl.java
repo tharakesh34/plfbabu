@@ -1043,7 +1043,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 		try {
-			if (this.reviewDateToDateRow.isVisible()) {
+			if (this.reviewDateToDateRow.isVisible() && !this.profitDaysBasis.isDisabled()) {
 				if (isValidComboValue(this.cbRateChangeToDate, Labels.getLabel("label_RateChangeDialog_ToDate.value"))
 						&& this.cbRateChangeFromDate.getSelectedIndex() != 0) {
 					if (((Date) this.cbRateChangeToDate.getSelectedItem().getValue())

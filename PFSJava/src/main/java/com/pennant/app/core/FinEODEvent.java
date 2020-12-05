@@ -79,11 +79,12 @@ public class FinEODEvent implements Serializable {
 	private List<ProjectedAccrual> projectedAccrualList = new ArrayList<>(1);
 	private List<ProjectedAmortization> incomeAMZList = new ArrayList<>(1);
 	private Date appDate;
+
 	// Auto Increment Grace End
 	private boolean updFinSchdForChangeGrcEnd = false;
-	private List<RepayInstruction> orgRepayInsts = new ArrayList<RepayInstruction>(1);
-	private List<FinanceScheduleDetail> orgFinSchdDetails = new ArrayList<FinanceScheduleDetail>(1);
-	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<FinServiceInstruction>();
+	private List<RepayInstruction> orgRepayInsts = new ArrayList<>(1);
+	private List<FinanceScheduleDetail> orgFinSchdDetails = new ArrayList<>(1);
+	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<>();
 
 	public FinanceMain getFinanceMain() {
 		return financeMain;

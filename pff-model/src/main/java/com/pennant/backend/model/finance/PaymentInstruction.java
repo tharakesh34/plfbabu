@@ -121,6 +121,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 
 	private boolean apiRequest = false; //for Refund Upload
 	private boolean paymentProcReq = false;
+	private String branchBankCode;
 
 	public long getPartnerBankId() {
 		return partnerBankId;
@@ -171,6 +172,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 		excludeFields.add("apiRequest");
 		excludeFields.add("realizationDate");
 		excludeFields.add("paymentProcReq");
+		excludeFields.add("branchBankCode");
 		return excludeFields;
 	}
 
@@ -512,6 +514,14 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 
 	public void setPaymentProcReq(boolean paymentProcReq) {
 		this.paymentProcReq = paymentProcReq;
+	}
+
+	public String getBranchBankCode() {
+		return branchBankCode;
+	}
+
+	public void setBranchBankCode(String branchBankCode) {
+		this.branchBankCode = branchBankCode;
 	}
 
 }

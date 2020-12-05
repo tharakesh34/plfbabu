@@ -1,5 +1,8 @@
 package com.pennanttech.service.impl;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.beneficiary.BeneficiaryService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
@@ -241,6 +245,24 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService, Benefi
 		 * "AccountNumber"; valueParm[1] = String.valueOf(accNoLength)+" characters"; return getErrorDetails("30570",
 		 * valueParm); } }
 		 */
+
+		if (StringUtils.isBlank(beneficiary.getAccHolderName())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = beneficiary.getAccHolderName();
+			return getErrorDetails("90502", valueParm);
+		}
+
+		Pattern pattern = Pattern
+				.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME));
+
+		Matcher matcher = pattern.matcher(beneficiary.getAccHolderName());
+
+		if (!matcher.matches()) {
+			String[] valueParm = new String[1];
+			valueParm[0] = beneficiary.getAccHolderName();
+			return getErrorDetails("90237", valueParm);
+		}
+
 		logger.debug("Leaving");
 		return returnStatus;
 	}

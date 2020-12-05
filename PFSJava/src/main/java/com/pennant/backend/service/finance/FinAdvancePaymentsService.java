@@ -68,7 +68,7 @@ public interface FinAdvancePaymentsService {
 	List<AuditDetail> delete(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType, String auditTranType);
 
 	List<AuditDetail> validate(List<FinAdvancePayments> finAdvancePaymentDetails, long workflowId, String method,
-			String auditTranType, String usrLanguage, FinanceDetail financeDetail);
+			String auditTranType, String usrLanguage, FinanceDetail financeDetail, boolean isApi);
 
 	void processDisbursments(FinanceDetail financeDetail);
 

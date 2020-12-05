@@ -193,6 +193,13 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		if (documentDetails.getDocId() == Long.MIN_VALUE || documentDetails.getDocId() <= 0) {
 			documentDetails.setDocId(getNextValue("SeqDocumentDetails"));
 		}
+		/*
+		 * final loan approval stage record type is not changed to blank To address the both we are making here record
+		 * type as empty(AS per our framework main table record type should be empty)
+		 */
+		if (StringUtils.isEmpty(type)) {
+			documentDetails.setRecordType("");
+		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into DocumentDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));

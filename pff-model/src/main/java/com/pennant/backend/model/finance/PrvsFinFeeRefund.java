@@ -38,7 +38,7 @@ public class PrvsFinFeeRefund {
 	}
 
 	public BigDecimal getTotRefundAmtTDS() {
-		return totRefundAmtTDS;
+		return totRefundAmtTDS == null ? BigDecimal.ZERO : totRefundAmtTDS;
 	}
 
 	public void setTotRefundAmtTDS(BigDecimal totRefundAmtTDS) {

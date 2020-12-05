@@ -160,6 +160,9 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 		if (UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.module)) {
 			this.listBoxUpload.setCheckmark(true);
+			this.btnDownload.setVisible(true);
+			this.btnApprove.setVisible(true);
+			this.btnReject.setVisible(true);
 		}
 		this.transactionDate.setFormat(PennantConstants.dateFormat);
 	}
@@ -206,7 +209,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	public void onCreate$window_UploadList(Event event) {
 		// Set the page level components.
 		setPageComponents(window_UploadList, borderLayout_UploadList, listBoxUpload, pagingUploadList);
-		setItemRender(new UploadListModelItemRenderer());
+		setItemRender(new UploadListModelItemRenderer(this.module));
 
 		String newButtonRight = "";
 		registerButton(button_UploadList_New, "", false);

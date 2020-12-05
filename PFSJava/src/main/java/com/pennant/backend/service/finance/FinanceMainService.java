@@ -89,4 +89,6 @@ public interface FinanceMainService {
 
 	Date getClosedDateByFinRef(String finReference);
 
+	Date getFinClosedDate(String finReference);
+
 }

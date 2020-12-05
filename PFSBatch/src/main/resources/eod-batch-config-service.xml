@@ -141,6 +141,7 @@
 	<bean id="installmentDueService" class="com.pennant.app.core.InstallmentDueService" parent="serviceHelper">
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="advancePaymentService" ref="advancePaymentService" />
 	</bean>
 
 	<bean id="advancePaymentService" class="com.pennanttech.pff.advancepayment.service.AdvancePaymentService" parent="serviceHelper" />

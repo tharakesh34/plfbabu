@@ -700,7 +700,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(
 				" ManualSchedule , TakeOverFinance, GrcAdvBaseRate ,GrcAdvMargin ,GrcAdvPftRate ,RpyAdvBaseRate ,RpyAdvMargin ,RpyAdvPftRate ,");
 		sql.append(
-				" SupplementRent, IncreasedCost , feeAccountId, MinDownPayPerc,TDSApplicable,InsuranceAmt, AlwBPI , BpiTreatment , PlanEMIHAlw,");
+				" SupplementRent, IncreasedCost , feeAccountId, MinDownPayPerc,TDSApplicable,InsuranceAmt, AlwBPI , BpiTreatment , PlanEMIHAlw ,");
 		sql.append(
 				" PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , PlanEMIHLockPeriod , PlanEMICpz , CalRoundingMode ,RoundingTarget, AlwMultiDisb,FinRepayMethod, ");
 		sql.append(
@@ -760,7 +760,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(
 				" :ManualSchedule , :TakeOverFinance, :GrcAdvBaseRate ,:GrcAdvMargin ,:GrcAdvPftRate ,:RpyAdvBaseRate ,:RpyAdvMargin ,:RpyAdvPftRate ,");
 		sql.append(
-				" :SupplementRent, :IncreasedCost , :feeAccountId, :MinDownPayPerc,:TDSApplicable,:InsuranceAmt, :AlwBPI , :BpiTreatment , :PlanEMIHAlw,");
+				" :SupplementRent, :IncreasedCost , :feeAccountId, :MinDownPayPerc,:TDSApplicable,:InsuranceAmt, :AlwBPI , :BpiTreatment , :PlanEMIHAlw ,");
 		sql.append(
 				" :PlanEMIHMethod , :PlanEMIHMaxPerYear , :PlanEMIHMax , :PlanEMIHLockPeriod , :PlanEMICpz , :CalRoundingMode ,:RoundingTarget, :AlwMultiDisb,:FinRepayMethod, ");
 		sql.append(
@@ -875,7 +875,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(
 				" FeeAccountId=:FeeAccountId , MinDownPayPerc=:MinDownPayPerc, TDSApplicable=:TDSApplicable,InsuranceAmt=:InsuranceAmt, AlwBPI=:AlwBPI , ");
 		sql.append(
-				" BpiTreatment=:BpiTreatment , PlanEMIHAlw=:PlanEMIHAlw, PlanEMIHMethod=:PlanEMIHMethod , PlanEMIHMaxPerYear=:PlanEMIHMaxPerYear , ");
+				" BpiTreatment=:BpiTreatment , PlanEMIHAlw=:PlanEMIHAlw , PlanEMIHMethod=:PlanEMIHMethod , PlanEMIHMaxPerYear=:PlanEMIHMaxPerYear , ");
 		sql.append(
 				" PlanEMIHMax=:PlanEMIHMax , PlanEMIHLockPeriod=:PlanEMIHLockPeriod , PlanEMICpz=:PlanEMICpz , CalRoundingMode=:CalRoundingMode ,RoundingTarget=:RoundingTarget, AlwMultiDisb=:AlwMultiDisb, FeeChargeAmt=:FeeChargeAmt, BpiAmount=:BpiAmount, DeductFeeDisb=:DeductFeeDisb, ");
 		sql.append(
@@ -2420,7 +2420,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public void updateMaturity(String finReference, String closingStatus, boolean finIsActive) {
+	public void updateMaturity(String finReference, String closingStatus, boolean finIsActive, Date closedDate) {
 		logger.debug("Entering");
 		FinanceMain financeMain = new FinanceMain();
 		financeMain.setFinReference(finReference);
@@ -2432,7 +2432,11 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		// For InActive Loans, Update Loan Closed Date
 		if (!financeMain.isFinIsActive()) {
-			financeMain.setClosedDate(SysParamUtil.getAppDate());
+			if (closedDate == null) {
+				financeMain.setClosedDate(SysParamUtil.getAppDate());
+			} else {
+				financeMain.setClosedDate(closedDate);
+			}
 			updateSql.append(", ClosedDate = :ClosedDate ");
 		}
 		updateSql.append(" Where FinReference = :FinReference ");
@@ -5809,6 +5813,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinAssetValue, FinCurrAssetValue");
 		sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
 		sql.append(", Version, LastMntOn, ReferralId, GraceTerms");
+		sql.append(", FinAssetValue, FinCurrAssetValue");
+		sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
+		sql.append(", Version, LastMntOn, ReferralId, GraceTerms");
 		sql.append(" from FinanceMain");
 		return sql;
 	}
@@ -6853,4 +6860,48 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return null;
 	}
 
+	@Override
+	public Date getClosedDate(String finReference) {
+		logger.debug("Entering");
+
+		Date closedDate = null;
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder sql = new StringBuilder("Select ClosedDate From FinanceMain");
+
+		sql.append(" Where FinReference = :FinReference");
+
+		logger.debug("selectSql: " + sql.toString());
+
+		try {
+			closedDate = this.jdbcTemplate.queryForObject(sql.toString(), source, Date.class);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			closedDate = null;
+		}
+
+		logger.debug("Leaving");
+		return closedDate;
+	}
+
+	@Override
+	public void updateTdsApplicable(FinanceMain financeMain) {
+		int recordCount = 0;
+		logger.debug(Literal.ENTERING);
+		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
+		updateSql.append(" Set tDSApplicable = :tDSApplicable");
+		updateSql.append(" where finReference = :finReference");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
+	}
 }

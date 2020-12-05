@@ -1964,7 +1964,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 					|| StringUtils.equals("E", disbRequest.getStatus()))) {
 				String[] valueParam = new String[2];
 				valueParam[0] = "Status";
-				valueParam[1] = "P," + "R";
+				valueParam[1] = "E," + "R";
 				return APIErrorHandlerService.getFailedStatus("90337", valueParam);
 			}
 		}

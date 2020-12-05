@@ -3731,11 +3731,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_FEE)) {
-						closureReport.setForeClosFees(closureReport.getForeClosFees()
-								.add(PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(),
-										formatter))
-								.add(PennantApplicationUtil.formateAmount(receiptAllocationDetail.getDueGST(),
-										formatter)));
+						closureReport.setForeClosFees(closureReport.getForeClosFees().add(
+								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter)));
 					}
 
 				}

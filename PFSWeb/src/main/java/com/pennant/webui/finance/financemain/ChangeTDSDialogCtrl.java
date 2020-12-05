@@ -92,6 +92,7 @@ import com.pennant.backend.service.finance.ChangeTDSService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -164,6 +165,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	protected transient Date previousLTDEndDate;
 
 	private List<LowerTaxDeduction> oldLowerTaxDeductionDetail = new ArrayList<LowerTaxDeduction>();
+	String allowTaxDeduction = SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
 
 	/**
 	 * default constructor.<br>
@@ -288,23 +290,25 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		this.tdsEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.tdsLimit.setProperties(false, getCcyFormat());
 
-		if (isTDSChecked && istdsAllowToModify) {
-			this.row_TDS2.setVisible(true);
-			this.label_TdsPercentage.setVisible(true);
-			this.tdsPercentage.setVisible(true);
-			this.row_TDS3.setVisible(true);
+		if (PennantConstants.YES.equals(allowTaxDeduction)) {
+			if (isTDSChecked && istdsAllowToModify) {
+				this.row_TDS2.setVisible(true);
+				this.label_TdsPercentage.setVisible(true);
+				this.tdsPercentage.setVisible(true);
+				this.row_TDS3.setVisible(true);
 
-		} else {
-			this.row_TDS2.setVisible(false);
-			this.label_TdsPercentage.setVisible(false);
-			this.tdsPercentage.setVisible(false);
+			} else {
+				this.row_TDS2.setVisible(false);
+				this.label_TdsPercentage.setVisible(false);
+				this.tdsPercentage.setVisible(false);
 
-		}
-		if (isTDSChecked && istdsAllowToModify && finMaintainInstruction.getTdsStartDate() != null
-				&& finMaintainInstruction.getTdsEndDate() != null) {
-			this.row_TDS3.setVisible(true);
-		} else {
-			this.row_TDS3.setVisible(false);
+			}
+			if (isTDSChecked && istdsAllowToModify && finMaintainInstruction.getTdsStartDate() != null
+					&& finMaintainInstruction.getTdsEndDate() != null) {
+				this.row_TDS3.setVisible(true);
+			} else {
+				this.row_TDS3.setVisible(false);
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -448,7 +452,8 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 				wve.add(we);
 			}
 
-			if (DateUtility.compare(this.tdsStartDate.getValue(), previousLTDEndDate) <= 0) {
+			if (this.tdsStartDate.getValue() != null && previousLTDEndDate != null
+					&& DateUtility.compare(this.tdsStartDate.getValue(), previousLTDEndDate) <= 0) {
 				throw new WrongValueException(this.tdsStartDate, Labels.getLabel("FRQ_DATE_MISMATCH", new String[] {
 						"Previous LTD End Date", Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value") }));
 			}
@@ -1053,21 +1058,22 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	 */
 	public void onCheck$tDSApplicable(Event event) throws InterruptedException {
 		logger.debug(Literal.LEAVING);
-
-		if (this.tDSApplicable.isChecked() && istdsAllowToModify) {
-			this.row_TDS2.setVisible(true);
-			this.label_TdsPercentage.setVisible(true);
-			this.tdsPercentage.setVisible(true);
-			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-			this.tdsPercentage.setValue(tdsPerc);
-			this.row_TDS3.setVisible(true);
-		} else {
-			this.row_TDS2.setVisible(false);
-			this.label_TdsPercentage.setVisible(false);
-			this.tdsPercentage.setVisible(false);
-			this.row_TDS3.setVisible(false);
+		if (PennantConstants.YES.equals(allowTaxDeduction)) {
+			if (this.tDSApplicable.isChecked() && istdsAllowToModify) {
+				this.row_TDS2.setVisible(true);
+				this.label_TdsPercentage.setVisible(true);
+				this.tdsPercentage.setVisible(true);
+				BigDecimal tdsPerc = new BigDecimal(
+						SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+				this.tdsPercentage.setValue(tdsPerc);
+				this.row_TDS3.setVisible(true);
+			} else {
+				this.row_TDS2.setVisible(false);
+				this.label_TdsPercentage.setVisible(false);
+				this.tdsPercentage.setVisible(false);
+				this.row_TDS3.setVisible(false);
+			}
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 

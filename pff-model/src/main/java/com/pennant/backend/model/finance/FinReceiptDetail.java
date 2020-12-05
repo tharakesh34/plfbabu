@@ -32,9 +32,9 @@ public class FinReceiptDetail implements Serializable {
 	@XmlElement
 	private String bankCode;
 	private String bankCodeDesc;
-	//Bankbranch ID for IMD
+	// Bankbranch ID for IMD
 	private long bankBranchID;
-	//IFSC for IMD API
+	// IFSC for IMD API
 	@XmlElement(name = "ifsc")
 	private String iFSC;
 	private String branchDesc;
@@ -56,7 +56,7 @@ public class FinReceiptDetail implements Serializable {
 	@XmlElement
 	private Date receivedDate;
 	private String status;
-	//API Specific
+	// API Specific
 	@XmlElement
 	private String remarks;
 	private long logKey = 0;
@@ -67,6 +67,7 @@ public class FinReceiptDetail implements Serializable {
 	private String feeTypeCode;
 	private String feeTypeDesc;
 	private boolean noReserve;
+	private boolean noManualReserve;
 	private String receiptPurpose;
 	private ManualAdviseMovements payAdvMovement;
 	private List<FinRepayHeader> repayHeaders = new ArrayList<FinRepayHeader>(1);
@@ -84,7 +85,8 @@ public class FinReceiptDetail implements Serializable {
 	public void getDeclaredFieldValues(Map<String, Object> receiptDetailMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				// "rd_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				// "rd_" Should be in small case only, if we want to change the
+				// case we need to update the configuration fields as well.
 				receiptDetailMap.put("rd_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
@@ -121,6 +123,7 @@ public class FinReceiptDetail implements Serializable {
 		excludeFields.add("payAdvMovement");
 		excludeFields.add("iFSC");
 		excludeFields.add("branchDesc");
+		excludeFields.add("noManualReserve");
 		return excludeFields;
 	}
 
@@ -474,5 +477,13 @@ public class FinReceiptDetail implements Serializable {
 
 	public void setBranchDesc(String branchDesc) {
 		this.branchDesc = branchDesc;
+	}
+
+	public boolean isNoManualReserve() {
+		return noManualReserve;
+	}
+
+	public void setNoManualReserve(boolean noManualReserve) {
+		this.noManualReserve = noManualReserve;
 	}
 }

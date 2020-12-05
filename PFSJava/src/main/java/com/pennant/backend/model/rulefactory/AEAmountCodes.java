@@ -145,7 +145,7 @@ public class AEAmountCodes implements Serializable {
 	// For Disbursement Instructions used in SUBHEAD
 	private String partnerBankAcType;
 	private String partnerBankAc;
-	//For GL code
+	// For GL code
 	private String productCode;
 	private String dealerCode;
 
@@ -199,7 +199,7 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal disbSvnAmount = BigDecimal.ZERO;
 	private BigDecimal subVentionAmount = BigDecimal.ZERO;
 
-	//Assignments
+	// Assignments
 	private BigDecimal assignmentPerc = BigDecimal.ZERO;
 	private BigDecimal assignPriAmount = BigDecimal.ZERO;
 	private BigDecimal assignPftAmount = BigDecimal.ZERO;
@@ -211,7 +211,7 @@ public class AEAmountCodes implements Serializable {
 
 	private BigDecimal ppAmount = BigDecimal.ZERO;
 
-	//Additional Fields Added in AmountCodes
+	// Additional Fields Added in AmountCodes
 	private String businessvertical = "";
 	private boolean alwflexi = false;
 	private String finbranch = "";
@@ -235,8 +235,9 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal instPriChg = BigDecimal.ZERO;
 	private BigDecimal pastCpzChg = BigDecimal.ZERO;
 
-	//OEM Subvention amount code
+	// OEM Subvention amount code
 	private BigDecimal oemSbvAmount = BigDecimal.ZERO;
+	private BigDecimal advInst = BigDecimal.ZERO;
 
 	private BigDecimal vasInstAmt = BigDecimal.ZERO;
 
@@ -255,7 +256,8 @@ public class AEAmountCodes implements Serializable {
 
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				//"ae_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				// "ae_" Should be in small case only, if we want to change the
+				// case we need to update the configuration fields as well.
 				map.put("ae_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
@@ -1732,5 +1734,13 @@ public class AEAmountCodes implements Serializable {
 
 	public void setVasInstAmt(BigDecimal vasInstAmt) {
 		this.vasInstAmt = vasInstAmt;
+	}
+
+	public BigDecimal getAdvInst() {
+		return advInst;
+	}
+
+	public void setAdvInst(BigDecimal advInst) {
+		this.advInst = advInst;
 	}
 }

@@ -589,7 +589,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						PennantApplicationUtil.formateAmount(statementOfAccount.getSvamount(), ccyEditField));
 				statementOfAccount.setAdvInstAmt(
 						String.valueOf(PennantApplicationUtil.amountFormate(finMain.getDownPayment(), ccyEditField)));
-				if (!finMain.getPromotionCode().isEmpty()) {
+				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 					Promotion promotions = promotionDAO.getPromotionByReferenceId(finMain.getPromotionSeqId(),
 							"_AView");
 					statementOfAccount.setTenure(promotions.getTenor());
@@ -1632,7 +1632,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			//paymentInstructionsList 
 			for (PaymentInstruction payInstruction : paymentInstructionsList) {
 				soaTranReport = new SOATransactionReport();
-				payInsEvent = "Amount Paid Vide ";
+				if (StringUtils.equals(payInstruction.getStatus(), "REJECTED")) {
+					payInsEvent = "Amount Paid Vide-Rejected ";
+				} else {
+					payInsEvent = "Amount Paid Vide ";
+				}
 				if (StringUtils.isNotBlank(payInstruction.getPaymentType())) {
 					payInsEvent = payInsEvent.concat(payInstruction.getPaymentType() + ":");
 				}

@@ -147,6 +147,9 @@ public class ImplementationConstants {
 		ALLOW_NPA_PROVISION = getValueAsBoolean(extensions, "ALLOW_NPA_PROVISION", false);
 		ALLOW_NPA_PROVISION = getValueAsBoolean(extensions, "ALLOW_NPA_PROVISION", false);
 		ALLOW_UNACCURED_PENALITY_SOA = getValueAsBoolean(extensions, "ALLOW_UNACCURED_PENALITY_SOA", true);
+		ALLOW_AUTO_GRACE_EXT = getValueAsBoolean(extensions, "ALLOW_AUTO_GRACE_EXT", false);
+		ALLOW_LOAN_DOWNSIZING = getValueAsBoolean(extensions, "ALLOW_LOAN_DOWNSIZING", false);
+		LOAN_DOWNSIZING_ACCOUNTING_REQ = getValueAsBoolean(extensions, "LOAN_DOWNSIZING_ACCOUNTING_REQ", false);
 
 		// FROM HL
 		ALLOW_LOAN_SPLIT = getValueAsBoolean(extensions, "ALLOW_LOAN_SPLIT", false);
@@ -195,6 +198,9 @@ public class ImplementationConstants {
 		ALW_MASTER_DATA_EXTRACTION = getValueAsBoolean(extensions, "ALW_MASTER_DATA_EXTRACTION", false);
 		ALW_VERIFICATION_SYNC = getValueAsBoolean(extensions, "ALW_VERIFICATION_SYNC", false);
 		ALW_FILTER_BY_CITY = getValueAsBoolean(extensions, "ALW_FILTER_BY_CITY", false);
+		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true); // Default value should be "true"
+		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
+		ALLOW_EOD_INTERVAL_VALIDATION = getValueAsBoolean(extensions, "ALLOW_EOD_INTERVAL_VALIDATION", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -407,10 +413,14 @@ public class ImplementationConstants {
 	public static boolean ALW_VERIFICATION_SYNC;
 	public static boolean ALW_FILTER_BY_CITY;
 
+	public static boolean ALLOW_AUTO_GRACE_EXT;
+	public static boolean ALLOW_LOAN_DOWNSIZING;
+	public static boolean LOAN_DOWNSIZING_ACCOUNTING_REQ;
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static
 	 * boolean ALLOW_LV_INITIATION_LOS; public static boolean ALLOW_RCU_INITIATION_LOS;
 	 */
+	public static boolean ALLOW_EOD_INTERVAL_VALIDATION;
 
 	public static String REPAY_HIERARCHY_METHOD;
 	public static String REPAY_INTEREST_HIERARCHY;

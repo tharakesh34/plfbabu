@@ -624,7 +624,8 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 		dd.setDocName(mandate.getDocumentName());
 		dd.setCustId(mandate.getCustID());
 
-		if (mandate.getDocumentRef() != null && mandate.getDocumentRef() > 0 && !mandate.isNewRecord()) {
+		if (mandate.getDocumentRef() != null && mandate.getDocumentRef() != Long.MIN_VALUE
+				&& mandate.getDocumentRef() != 0 && !mandate.isNewRecord()) {
 			byte[] olddocumentManager = getDocumentImage(mandate.getDocumentRef());
 			if (olddocumentManager != null) {
 				byte[] arr1 = olddocumentManager;
@@ -637,9 +638,11 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 				}
 			}
 		} else {
-			dd.setDocImage(mandate.getDocImage());
-			saveDocument(DMSModule.FINANCE, DMSModule.MANDATE, dd);
-			mandate.setDocumentRef(dd.getDocRefId());
+			if (mandate.getDocImage() != null) {
+				dd.setDocImage(mandate.getDocImage());
+				saveDocument(DMSModule.FINANCE, DMSModule.MANDATE, dd);
+				mandate.setDocumentRef(dd.getDocRefId());
+			}
 		}
 	}
 

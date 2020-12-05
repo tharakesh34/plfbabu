@@ -127,6 +127,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private BigDecimal totalAlwRpyAmt = BigDecimal.ZERO;
 	private transient AddRepaymentService addRepaymentService;
 	private boolean appDateValidationReq = false;
+	private String moduleDefiner;
 
 	/**
 	 * default constructor.<br>
@@ -171,6 +172,10 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			if (arguments.containsKey("appDateValidationReq")) {
 				this.appDateValidationReq = (boolean) arguments.get("appDateValidationReq");
+			}
+
+			if (arguments.containsKey("moduleDefiner")) {
+				this.moduleDefiner = (String) arguments.get("moduleDefiner");
 			}
 
 			// READ OVERHANDED params !
@@ -469,6 +474,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
+				if (curSchd.isRvwOnSchDate() && !curSchd.isRepayOnSchDate() && !curSchd.isCpzOnSchDate()
+						&& !curSchd.isPftOnSchDate()) {
+					continue;
+				}
+
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
@@ -527,6 +537,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				// If maturity Terms, not include in list
 				if (!isSnctBsdSchd && curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
+				}
+
+				if (curSchd.isRvwOnSchDate() && !curSchd.isRepayOnSchDate() && !curSchd.isCpzOnSchDate()
+						&& !curSchd.isPftOnSchDate()) {
 					continue;
 				}
 
@@ -807,7 +822,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// Schedule Calculator method calling
 		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
-		setFinScheduleData(addRepaymentService.getAddRepaymentDetails(getFinScheduleData(), finServiceInstruction));
+		setFinScheduleData(addRepaymentService.getAddRepaymentDetails(getFinScheduleData(), finServiceInstruction,
+				this.moduleDefiner));
 
 		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();

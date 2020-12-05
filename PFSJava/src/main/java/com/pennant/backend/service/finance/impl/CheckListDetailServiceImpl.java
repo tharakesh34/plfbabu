@@ -551,6 +551,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 			} else if (finChecklistRef.getRecordType().equals(PennantConstants.RCD_DEL)) {
 				getFinanceCheckListReferenceDAO().delete(finChecklistRef, tableType);
 			} else if (finChecklistRef.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				finChecklistRef.setRecordType("");
 				getFinanceCheckListReferenceDAO().update(finChecklistRef, tableType);
 			}
 

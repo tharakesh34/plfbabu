@@ -5894,7 +5894,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.tDSPercentage.getValue() != null) {
 			this.oldVal_tdsPercentage = this.tDSPercentage.getValue();
 		}
+		
 		// Under Construction
+		this.oldVar_UnderConstruction = this.underConstruction.isChecked();
+		this.oldVar_AutoIncrGrcEndDate = this.autoIncrGrcEndDate.isChecked();
+		this.oldVar_GrcPeriodAftrFullDisb = this.grcPeriodAftrFullDisb.isChecked();
+
+		/* Under Construction */
 		this.oldVar_UnderConstruction = this.underConstruction.isChecked();
 		this.oldVar_AutoIncrGrcEndDate = this.autoIncrGrcEndDate.isChecked();
 		this.oldVar_GrcPeriodAftrFullDisb = this.grcPeriodAftrFullDisb.isChecked();
@@ -6276,6 +6282,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			return true;
 		}
 		// Under Construction
+		if (this.oldVar_UnderConstruction != this.underConstruction.isChecked()) {
+			return true;
+		}
+
+		/* Under Construction */
 		if (this.oldVar_UnderConstruction != this.underConstruction.isChecked()) {
 			return true;
 		}
@@ -7356,10 +7367,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			setGrcPolicyRate(false, getFinanceDetail().isNewRecord());
 			this.graceTerms.setValue(0);
 			this.graceTerms_Two.setValue(0);
-			//default values are setted as per fintype 
-			//this.underConstruction.setChecked(false);
-			//this.grcPeriodAftrFullDisb.setChecked(false);
-			//this.autoIncrGrcEndDate.setChecked(false);
+
 		}
 		if (!this.grcRateBasis.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
 
@@ -7531,7 +7539,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					|| this.userAction.getSelectedItem().getLabel().contains("Reject")
 					|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")
 					|| this.userAction.getSelectedItem().getLabel().contains("Decline")
-					|| this.userAction.getSelectedItem().getLabel().contains("Hold")) {
+					|| this.userAction.getSelectedItem().getLabel().contains("Hold")
+					|| this.userAction.getSelectedItem().getLabel().contains("Revert")) {
 				recSave = true;
 				aFinanceDetail.setActionSave(true);
 			}
@@ -7909,6 +7918,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
+		// Finance Eligibility Details Tab
+		setFinanceDetail(aFinanceDetail);
+		if (eligibilityDetailDialogCtrl != null) {
+			aFinanceDetail = eligibilityDetailDialogCtrl.doSave_EligibilityList(aFinanceDetail);
+		}
+
 		// Finance Fee Details
 		if (finFeeDetailListCtrl != null) {
 			finFeeDetailListCtrl.processFeeDetails(aFinanceDetail.getFinScheduleData());
@@ -8258,7 +8273,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (chequeDetailDialogCtrl != null && pdcTab.isVisible()
 				&& (!"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 						&& !this.userAction.getSelectedItem().getLabel().contains("Reject")
-						&& !this.userAction.getSelectedItem().getLabel().contains("Resubmit"))) {
+						&& !this.userAction.getSelectedItem().getLabel().contains("Resubmit")
+						&& !this.userAction.getSelectedItem().getLabel().contains("Revert"))) {
 			chequeDetailDialogCtrl.doSave_PDC(aFinanceDetail, getFinanceMain().getFinReference());
 		}
 
@@ -16483,11 +16499,27 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		amountCodes.setFeeWaived(feeWaived);
 		amountCodes.setPaidFee(paidFee);
 
-		// VAS
-		amountCodes.setDeductVasDisb(deductVasDisb);
-		amountCodes.setAddVasToFinance(addVasToFinance);
-		amountCodes.setVasFeeWaived(vasFeeWaived);
-		amountCodes.setPaidVasFee(paidVasFee);
+		dataMap.put("VAS_DD", deductVasDisb);
+		dataMap.put("VAS_AF", addVasToFinance);
+		dataMap.put("VAS_W", vasFeeWaived);
+		dataMap.put("VAS_P", paidVasFee);
+
+		for (FinFeeDetail fee : finFeeDetailList) {
+			String vasProductCode = fee.getVasProductCode();
+			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())) {
+				if (fee.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
+					dataMap.put("VAS_" + vasProductCode + "_DD", fee.getRemainingFee());
+					dataMap.put("VAS_" + vasProductCode + "_AF", BigDecimal.ZERO);
+
+				} else {
+					dataMap.put("VAS_" + vasProductCode + "_DD", BigDecimal.ZERO);
+					dataMap.put("VAS_" + vasProductCode + "_AF", fee.getRemainingFee());
+				}
+
+				dataMap.put("VAS_" + vasProductCode + "_W", fee.getWaivedAmount());
+				dataMap.put("VAS_" + vasProductCode + "_P", fee.getPaidAmount());
+			}
+		}
 
 		/*
 		 * Setting the balance up-front fee amount to excess amount for accounting purpose
@@ -19597,6 +19629,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			for (int i = 0; i < list.size(); i++) {
 				FinanceScheduleDetail detail = list.get(i);
 
+				Date schdDate = detail.getSchDate();
+				if (schdDate.compareTo(appDate) <= 0) {
+					continue;
+				}
+
 				if (main.isAllowGrcPeriod()) {
 					if (detail.getSchDate().compareTo(main.getGrcPeriodEndDate()) <= 0) {
 
@@ -19649,12 +19686,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						rvwchecked = true;
 					}
 
-					if (pftchecked && repaychecked && rvwchecked) {
+					if (pftchecked) {
 						this.oldVar_nextRepayPftDate = this.nextRepayPftDate_two.getValue();
+					}
+
+					if (repaychecked) {
 						this.oldVar_nextRepayDate = this.nextRepayDate_two.getValue();
+					}
+
+					if (rvwchecked) {
 						this.oldVar_nextRepayRvwDate = this.nextRepayRvwDate_two.getValue();
+					}
+
+					if (cpzchecked) {
 						this.oldVar_nextRepayCpzDate = this.nextRepayCpzDate_two.getValue();
-						break;
 					}
 				}
 			}
@@ -20975,6 +21020,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					finScheduleData.setRepayInstructions(new ArrayList<RepayInstruction>());
 					finScheduleData.setPlanEMIHmonths(new ArrayList<Integer>());
 					finScheduleData.setPlanEMIHDates(new ArrayList<Date>());
+					if (StringUtils.equals(FinanceConstants.PRODUCT_CD, financeMain.getProductCategory())) {
+						doSetDueDate(financeMain);
+					}
 					finScheduleData = ScheduleGenerator.getNewSchd(validFinScheduleData);
 					financeDetail.setFinScheduleData(finScheduleData);
 				}
@@ -21019,7 +21067,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 
 					} else {
-						if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+						if (StringUtils.equals(FinanceConstants.PRODUCT_CD, financeMain.getProductCategory())) {
 							finScheduleData = CDScheduleCalculator.getCalSchd(finScheduleData);
 						} else {
 							finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, null);
@@ -21096,6 +21144,70 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	@SuppressWarnings("deprecation")
+	private void doSetDueDate(FinanceMain financeMain) {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, Object> declaredMap = financeMain.getDeclaredFieldValues();
+		declaredMap.put("fm_finStartDate", new SimpleDateFormat("dd-MM-yyyy").format(financeMain.getFinStartDate()));
+		declaredMap.put("fm_finType ", financeMain.getFinType());
+
+		int result = 0;
+		try {
+			Rule rule = ruleService.getRuleById(RuleConstants.MODULE_DUEDATERULE, RuleConstants.MODULE_DUEDATERULE,
+					RuleConstants.EVENT_DUEDATERULE, TableType.AVIEW.getSuffix());
+			if (rule != null) {
+				result = (Integer) ruleExecutionUtil.executeRule(rule.getSQLRule(), declaredMap,
+						financeMain.getFinCcy(), RuleReturnType.INTEGER);
+
+				Date nextRepayDate = financeMain.getFinStartDate();
+				nextRepayDate = DateUtility.addMonths(nextRepayDate, 1);
+
+				Date maturityDate = financeMain.getMaturityDate();
+
+				if (result != 0) {
+					nextRepayDate.setDate(result);
+					financeMain.setNextRepayDate(nextRepayDate);
+					financeMain.setNextRepayPftDate(nextRepayDate);
+					maturityDate.setDate(result);
+					financeMain.setMaturityDate(maturityDate);
+					String frq = String.valueOf(result);
+					if (frq.length() > 1) {
+						frq = "M00" + frq;
+					} else {
+						frq = "M000" + frq;
+					}
+					financeMain.setRepayPftFrq(frq);
+					financeMain.setRepayFrq(frq);
+					this.nextRepayDate_two.setValue(financeMain.getNextRepayDate());
+					this.oldVar_nextRepayDate = this.nextRepayDate_two.getValue();
+					this.nextRepayPftDate_two.setValue(financeMain.getNextRepayPftDate());
+					this.oldVar_nextRepayPftDate = this.nextRepayPftDate_two.getValue();
+					this.maturityDate_two.setValue(financeMain.getMaturityDate());
+					this.oldVar_maturityDate = this.maturityDate_two.getValue();
+					this.repayFrq.setValue(frq);
+					this.oldVar_repayFrq = this.repayFrq.getValue();
+					this.repayPftFrq.setValue(frq);
+					this.oldVar_repayPftFrq = this.repayPftFrq.getValue();
+				}
+
+				/*
+				 * if (result == 2) { nextRepayDate.setDate(result); financeMain.setNextRepayDate(nextRepayDate);
+				 * financeMain.setNextRepayPftDate(nextRepayDate); financeMain.setRepayPftFrq("M0002");
+				 * financeMain.setRepayFrq("M0002"); } else if (result == 15) { nextRepayDate.setDate(result);
+				 * financeMain.setNextRepayDate(nextRepayDate); financeMain.setNextRepayPftDate(nextRepayDate);
+				 * financeMain.setRepayPftFrq("M0015"); financeMain.setRepayFrq("M0015"); }
+				 */
+			}
+		} catch (Exception e) {
+			//APIErrorHandlerService.logUnhandledException(e);
+			logger.error(Literal.EXCEPTION, e);
+			result = 0;
+		}
+		logger.debug(Literal.LEAVING);
+
 	}
 
 	/**

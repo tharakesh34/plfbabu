@@ -1103,7 +1103,6 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 					setErrorToUAD(uad, "RU0040", "Allocation Sheet: Minor Currency (Decimals) in [PAIDAMOUNT] ");
 					uad.setPaidAmount(actualAmount);
 				} else {
-					precisionAmount = precisionAmount.multiply(BigDecimal.valueOf(100));
 					uad.setPaidAmount(precisionAmount);
 				}
 

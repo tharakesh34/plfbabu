@@ -64,11 +64,12 @@ public interface BankDetailService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	int getAccNoLengthByCode(String bankCode);
+	BankDetail getAccNoLengthByCode(String bankCode);
 
 	String getBankCodeByName(String bankName);
 
 	BankDetail getBankDetailsByIfsc(String ifsc);
 
 	boolean isBankCodeExits(String bankCode, String string, boolean active);
+
 }

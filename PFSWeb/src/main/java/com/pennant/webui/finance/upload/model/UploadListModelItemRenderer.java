@@ -54,6 +54,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
@@ -63,6 +64,12 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 public class UploadListModelItemRenderer implements ListitemRenderer<UploadHeader>, Serializable {
 
 	private static final long serialVersionUID = 6352065299727172054L;
+
+	String moduleName = "";
+
+	public UploadListModelItemRenderer(String moduleName) {
+		this.moduleName = moduleName;
+	}
 
 	public UploadListModelItemRenderer() {
 
@@ -104,6 +111,8 @@ public class UploadListModelItemRenderer implements ListitemRenderer<UploadHeade
 		item.setAttribute("data", uploadHeader);
 		item.setAttribute("id", uploadHeader.getId());
 
-		ComponentsCtrl.applyForward(item, "onDoubleClick=onUploadItemDoubleClicked");
+		if (!(UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.moduleName))) {
+			ComponentsCtrl.applyForward(item, "onDoubleClick=onUploadItemDoubleClicked");
+		}
 	}
 }

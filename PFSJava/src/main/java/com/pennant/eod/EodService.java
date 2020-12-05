@@ -193,6 +193,8 @@ public class EodService {
 		// Auto Increment Grace End
 		changeGraceEndService.processChangeGraceEnd(custEODEvent);
 
+		/* Auto Increment Grace End */
+		changeGraceEndService.processChangeGraceEnd(custEODEvent);
 	}
 
 	@Autowired

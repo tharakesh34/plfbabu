@@ -9,8 +9,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ReceiptCalculator;
+import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -33,6 +36,9 @@ public class ReceiptPaymentService extends ServiceHelper {
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private RepaymentProcessUtil repaymentProcessUtil;
 	private ReceiptCalculator receiptCalculator;
+	private RepaymentPostingsUtil repaymentPostingsUtil;
+	private FinanceMainDAO financeMainDAO;
+	private FinanceProfitDetailDAO profitDetailDAO;
 
 	/**
 	 * @param custId
@@ -282,6 +288,15 @@ public class ReceiptPaymentService extends ServiceHelper {
 		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail, header,
 				repayHeirarchy, businessDate, businessDate);
 
+		boolean isFinFullyPaid = repaymentPostingsUtil.isSchdFullyPaid(financeMain.getFinReference(), scheduleDetails);
+
+		if (isFinFullyPaid) {
+			String finReference = financeMain.getFinReference();
+			financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false,
+					SysParamUtil.getAppDate());
+			profitDetailDAO.updateFinPftMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
+
+		}
 	}
 
 	private PresentmentDetail getPresentmentDetail(List<PresentmentDetail> presentmentDetails, String finref,
@@ -311,4 +326,18 @@ public class ReceiptPaymentService extends ServiceHelper {
 		this.receiptCalculator = receiptCalculator;
 	}
 
+	@Autowired
+	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
+		this.repaymentPostingsUtil = repaymentPostingsUtil;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setProfitDetailDAO(FinanceProfitDetailDAO profitDetailDAO) {
+		this.profitDetailDAO = profitDetailDAO;
+	}
 }

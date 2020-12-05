@@ -994,7 +994,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		} catch (final InterfaceException e) {
 			logger.error(e);
 			MessageUtil.showError(e);
-		} catch (final ConcurrencyException e) {//Code added for duplicate payment instruction issue fix
+		} catch (final ConcurrencyException e) {
 			logger.error(e);
 			MessageUtil.showError(e);
 		}

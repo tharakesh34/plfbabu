@@ -424,10 +424,12 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			}
 		}
 
-		Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
-		if (recalLockTill == null) {
-			recalLockTill = finScheduleData.getFinanceMain().getMaturityDate();
-		}
+		/*
+		 * Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate(); if (recalLockTill == null) {
+		 * recalLockTill = finScheduleData.getFinanceMain().getMaturityDate(); }
+		 */
+
+		Date recalLockTill = finServiceInstruction.getFromDate();
 
 		// Rate Modification for All Modified Schedules
 		for (int i = 0; i < scheduleData.getFinanceScheduleDetails().size(); i++) {

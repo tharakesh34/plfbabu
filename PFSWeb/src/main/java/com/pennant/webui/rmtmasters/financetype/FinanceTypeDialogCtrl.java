@@ -652,6 +652,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Space space_splitLoanType;
 	protected Button btnSearchSplitLoanType;
 	protected Checkbox alwLoanSplit;
+	protected Groupbox gb_autoGraceInc_Details;
 
 	private List<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
 	private List<ValueLabel> vanAllocationMethodsList = PennantStaticListUtil.getVanAllocationMethods();
@@ -741,6 +742,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 			this.isCompReadonly = !isMaintainable();
 
+			gb_autoGraceInc_Details.setVisible(ImplementationConstants.ALLOW_AUTO_GRACE_EXT);
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -7061,12 +7063,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onchangeODCharges(String val) {
-		if (getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)) {
-			fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(), "");
-		} else {
-			fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(),
-					"," + FinanceConstants.ODCALON_PIPD + ",");
-		}
+		fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(), "");
 	}
 
 	private void onChangeODChargeType(boolean changeAction) {

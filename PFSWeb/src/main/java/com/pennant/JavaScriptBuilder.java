@@ -1623,6 +1623,9 @@ public class JavaScriptBuilder extends Groupbox {
 						}
 					}
 				}
+				if (StringUtils.equals(RuleConstants.MODULE_DUEDATERULE, module)) {
+					excludeFields = RuleConstants.DBVALUE;
+				}
 			} else if (StringUtils.equals(selectedOperator, Labels.getLabel("IN_LABEL"))
 					|| StringUtils.equals(selectedOperator, Labels.getLabel("NOTIN_LABEL"))) {
 				excludeFields = " , " + RuleConstants.FIELDLIST + " , ";

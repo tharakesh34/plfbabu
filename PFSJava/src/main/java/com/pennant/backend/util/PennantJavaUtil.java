@@ -2275,6 +2275,11 @@ public class PennantJavaUtil {
 						new String[] { "DealerName", "Code" },
 						new Object[][] { { "DealerType", "0", "DSA" }, { "Active", "0", 1 } }, 350));
 
+		ModuleUtil.register("VASManufacturer", new ModuleMapping("VASManufacturer", VehicleDealer.class,
+				new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF,
+				new String[] { "DealerName", "DealerCity" },
+				new Object[][] { { "DealerType", "0", VASConsatnts.VASAGAINST_VASM }, { "Active", "0", 1 } }, 500));
+
 		ModuleUtil.register("SourceOfficer", new ModuleMapping("SourceOfficer", VehicleDealer.class,
 				new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF,
 				new String[] { "DealerName", "DealerCity" },
@@ -2915,7 +2920,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("ChequeHeader",
 				new ModuleMapping("ChequeHeader", ChequeHeader.class,
-						new String[] { "CHEQUEHEADER", "CHEQUEHEADER_AView" }, CHEQUE_WF,
+						new String[] { "CHEQUEHEADER", "CHEQUEHEADER_AView" }, masterWF,
 						new String[] { "FinReference", "ChequeType", "NoOfCheques", "TotalAmount" }, null, 600));
 
 		ModuleUtil.register("ChequeDetail",

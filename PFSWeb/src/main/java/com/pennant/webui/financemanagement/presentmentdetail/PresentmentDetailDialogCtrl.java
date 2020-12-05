@@ -418,6 +418,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		} else {
 			this.parameterSearchObject.addTabelName("PresentmentDetails_AView");
 		}
+		parameterSearchObject.addSort("FINREFERENCE", false);
+
 		StringBuilder whereClause = new StringBuilder();
 		whereClause.append(" PresentmentId = " + aPresentmentHeader.getId() + " AND ");
 		if (RepayConstants.PRESENTMENT_INCLUDE.equals(listType)) {

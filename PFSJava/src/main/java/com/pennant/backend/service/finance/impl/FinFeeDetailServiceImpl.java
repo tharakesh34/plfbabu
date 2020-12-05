@@ -265,6 +265,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		logger.debug(Literal.ENTERING);
 
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
+			if (finFeeDetail.getTaxHeaderId() == null) {
+				finFeeDetail.setTaxHeaderId(0L);
+			}
 			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
 			if (taxHeader != null && (finFeeDetail.isNewRecord() || (!finFeeDetail.isNewRecord()
 					&& (finFeeDetail.getTaxHeaderId() != null && finFeeDetail.getTaxHeaderId() > 0)))) {

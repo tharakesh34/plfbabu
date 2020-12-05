@@ -330,7 +330,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(
 				" RecordType = :RecordType, WorkflowId = :WorkflowId, DueCreation =:DueCreation, LinkedTranId =:LinkedTranId");
 		sql.append(" where adviseID = :adviseID ");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));  
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -404,7 +404,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc");
 			sql.append(", taxApplicable, taxComponent, dueCreation, linkedTranId, tdsReq ");
-			sql.append(", WorkflowId ");
+			sql.append(", WorkflowId");
 		}
 		sql.append(" from ManualAdvise");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -921,7 +921,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	 * Method for Update utilization amount after amounts Approval
 	 */
 	@Override
-	public void updateUtilise(long adviseID, BigDecimal amount) {
+	public void updateUtilise(long adviseID, BigDecimal amount, boolean noManualReserve) {
 		logger.debug("Entering");
 
 		int recordCount = 0;
@@ -930,8 +930,12 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		source.addValue("PaidNow", amount);
 
 		StringBuilder updateSql = new StringBuilder("Update ManualAdvise");
-		updateSql.append(" Set PaidAmount = PaidAmount + :PaidNow, ReservedAmt = ReservedAmt - :PaidNow ");
-		updateSql.append(" Where AdviseID =:AdviseID and ReservedAmt >=:PaidNow");
+		updateSql.append(" Set PaidAmount = PaidAmount + :PaidNow");
+
+		if (!noManualReserve) {
+			updateSql.append(", ReservedAmt = ReservedAmt - :PaidNow ");
+		}
+		updateSql.append(" Where AdviseID =:AdviseID And ReservedAmt >=:PaidNow");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
@@ -956,8 +960,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		source.addValue("HoldDue", false);
 
 		StringBuilder updateSql = new StringBuilder("Update ManualAdvise");
-		updateSql.append(
-				" Set PaidAmount = PaidAmount - :PaidNow, BalanceAmt = BalanceAmt + :PaidNow, HoldDue = :HoldDue ");
+		updateSql.append(" Set PaidAmount = PaidAmount - :PaidNow, BalanceAmt = :PaidNow, HoldDue = :HoldDue ");
 		updateSql.append(" Where AdviseID =:AdviseID");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -1150,7 +1153,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		return taxComponent;
 	}
 
-	//MIGRATION PURPOSE
+	// MIGRATION PURPOSE
 	@Override
 	public List<ManualAdvise> getManualAdvisesByFinRef(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
@@ -1303,7 +1306,10 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(
 				" MA.Version, MA.LastMntOn, MA.LastMntBy,MA.RecordStatus, MA.RoleCode, MA.NextRoleCode, MA.TaskId, MA.NextTaskId, MA.RecordType, MA.WorkflowId,");
 		sql.append(" FT.feetypecode, FT.FeeTypeDesc, coalesce(FT.TaxApplicable, 0) TaxApplicable, FT.TaxComponent,");
-		sql.append(" MA.WaivedCGST, MA.WaivedSGST, MA.WaivedUGST, MA.WaivedIGST, MA.WaivedCESS, MA.DUECREATION");
+		sql.append(" MA.WaivedCGST, MA.WaivedSGST, MA.WaivedUGST, MA.WaivedIGST, MA.DUECREATION");
+		sql.append(", MA.PaidCGST, MA.PaidSGST, MA.PaidIGST, MA.PaidUGST");
+		sql.append(", MA.Remarks, MA.PaidCGST, MA.PaidSGST, MA.PaidUGST, MA.PaidIGST,");
+		sql.append(" MA.PaidCESS, MA.FinSource,  MA.WaivedCESS, MA.LinkedTranId");
 		sql.append(" From MANUALADVISE_Aview  MA");
 		sql.append(" Left join FEETYPES FT on MA.FEETYPEID = FT.FEETYPEID");
 		sql.append(" Where FinReference = :FinReference");

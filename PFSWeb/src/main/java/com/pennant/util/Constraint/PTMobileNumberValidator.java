@@ -57,7 +57,7 @@ public class PTMobileNumberValidator implements Constraint {
 			}
 		} else {
 			if (StringUtils.isBlank(regex)) {
-				regex = PennantRegularExpressions.MOBILE_REGEX;
+				regex = PennantRegularExpressions.TELEPHONE_FAX_REGEX;
 			}
 			Pattern pattern = Pattern.compile(regex);
 			Matcher matcher = pattern.matcher(compValue);

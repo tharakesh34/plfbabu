@@ -1842,6 +1842,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			map.put("reviewrate", true);
 			map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 			map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+			map.put("moduleDefiner", moduleDefiner);
 
 			// call the zul-file with the parameters packed in a map
 			try {
@@ -2011,6 +2012,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		map.put("appDateValidationReq", isAppDateValidationReq());
+		map.put("moduleDefiner", moduleDefiner);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddRepaymentDialog.zul",

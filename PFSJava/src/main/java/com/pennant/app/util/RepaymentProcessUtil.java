@@ -397,7 +397,7 @@ public class RepaymentProcessUtil {
 
 			switch (payableType) {
 			case RepayConstants.EXAMOUNTTYPE_EXCESS:
-				extDataMap.put("EX_ReceiptAmount", totPaidNow);
+				extDataMap.put("EX_ReceiptAmount", xcessPayable.getTotPaidNow());
 				break;
 			case RepayConstants.EXAMOUNTTYPE_EMIINADV:
 				extDataMap.put("EA_ReceiptAmount", totPaidNow);
@@ -603,6 +603,8 @@ public class RepaymentProcessUtil {
 			returnList.add(uLpp);
 			returnList.add(uGstLpp);
 			returnList.add(cpzChg);
+
+			financeMain.setReturnDataSet(aeEvent.getReturnDataSet());
 
 			return returnList;
 		}
@@ -1686,7 +1688,7 @@ public class RepaymentProcessUtil {
 						if (rcd.isNoReserve()) {
 							getManualAdviseDAO().updateUtiliseOnly(payAgainstID, payableAmt);
 						} else {
-							getManualAdviseDAO().updateUtilise(payAgainstID, payableAmt);
+							getManualAdviseDAO().updateUtilise(payAgainstID, payableAmt, rcd.isNoManualReserve());
 						}
 
 						// Delete Reserved Log against Advise and Receipt Seq ID
@@ -2508,6 +2510,13 @@ public class RepaymentProcessUtil {
 		Date appDate = SysParamUtil.getAppDate();
 
 		finReceiptHeaderDAO.generatedReceiptID(rch);
+
+		if (rch.getReceiptDetails() != null && !rch.getReceiptDetails().isEmpty()) {
+			for (int i = 0; i < rch.getReceiptDetails().size(); i++) {
+				FinReceiptDetail receiptDetail = rch.getReceiptDetails().get(i);
+				receiptDetail.getRepayHeader().setRepayID(financeRepaymentsDAO.getNewRepayID());
+			}
+		}
 
 		List<Object> returnList = doProcessReceipts(fm, schdDtls, profitDetail, rch, null, scheduleData,
 				rch.getValueDate(), appDate, financeDetail);

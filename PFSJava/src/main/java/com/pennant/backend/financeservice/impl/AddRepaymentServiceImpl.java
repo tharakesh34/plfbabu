@@ -44,7 +44,7 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 	 * @return FinScheduleData
 	 */
 	public FinScheduleData getAddRepaymentDetails(FinScheduleData finScheduleData,
-			FinServiceInstruction finServiceInstruction) {
+			FinServiceInstruction finServiceInstruction, String moduleDefiner) {
 		logger.debug("Entering");
 
 		FinScheduleData finSchdData = null;
@@ -79,8 +79,16 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 			}
 		}
 
+		if (StringUtils.isEmpty(moduleDefiner)) {
+			finScheduleData.getFinanceMain().setResetOrgBal(false);
+		}
+
 		finSchdData = ScheduleCalculator.changeRepay(finScheduleData, finServiceInstruction.getAmount(),
 				finServiceInstruction.getSchdMethod());
+
+		if (StringUtils.isEmpty(moduleDefiner)) {
+			finScheduleData.getFinanceMain().setResetOrgBal(true);
+		}
 
 		BigDecimal newTotalPft = finSchdData.getFinanceMain().getTotalGrossPft();
 		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);

@@ -82,7 +82,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -179,7 +178,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	private int finFormatter;
 	private boolean isFinanceProcess = false;
 	private boolean workflow = false;
-	Date appDate = DateUtility.getAppDate();
+	Date appDate = SysParamUtil.getAppDate();
 	Date appStartDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE);
 	private String inputSource = "customer";
 	private Set<String> coApplicants;
@@ -203,6 +202,9 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 	private boolean isCustomer360 = false;
 	private transient BankDetailService bankDetailService;
+	protected BankDetail bankDetails;
+	protected int maxAccNoLength;
+	protected int minAccNoLength;
 
 	/**
 	 * default constructor.<br>
@@ -711,10 +713,14 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		} else {
 			onChangeInstallmentList();
 		}
-		//setting the bankaccount no length as per the bank master
-		if (!StringUtils.isEmpty(liability.getRepayBank())) {
-			this.repayFromAccNo.setMaxlength(getBankDetailService().getAccNoLengthByCode(liability.getRepayBank()));
+
+		if (StringUtils.isNotBlank(liability.getRepayBank())) {
+			bankDetails = getBankDetailService().getAccNoLengthByCode(liability.getRepayBank());
+			minAccNoLength = bankDetails.getMinAccNoLength();
+			maxAccNoLength = bankDetails.getAccNoLength();
 		}
+		this.repayFromAccNo.setMaxlength(maxAccNoLength);
+
 		//to calculate derived emi
 		if (!liability.isNewRecord()) {
 			deriveEmi();
@@ -1762,14 +1768,15 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 				this.otherFinInstitute.setValue("");
 				this.otherFinInstitute.setReadonly(true);
 			}
+
 			if (StringUtils.isNotBlank(details.getBankCode())) {
-				accNoLength = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
+				bankDetails = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
+				minAccNoLength = bankDetails.getMinAccNoLength();
+				maxAccNoLength = bankDetails.getAccNoLength();
 			}
-			if (accNoLength != 0) {
-				this.repayFromAccNo.setMaxlength(accNoLength);
-			} else {
-				this.repayFromAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
-			}
+
+			this.repayFromAccNo.setMaxlength(maxAccNoLength);
+
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -2152,18 +2159,19 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	public void onFulfill$repayFrom(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = repayFrom.getObject();
-		int accNoLength = 0;
 		if (dataObject == null || dataObject instanceof String) {
 			this.repayFrom.setValue("");
 			this.repayFrom.setDescription("");
 		} else {
 			BankDetail details = (BankDetail) dataObject;
 			if (StringUtils.isNotBlank(details.getBankCode())) {
-				accNoLength = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
+				bankDetails = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
+				minAccNoLength = bankDetails.getMinAccNoLength();
+				maxAccNoLength = bankDetails.getAccNoLength();
 			}
-			if (accNoLength != 0) {
-				this.repayFromAccNo.setMaxlength(accNoLength);
-			}
+
+			this.repayFromAccNo.setMaxlength(maxAccNoLength);
+
 		}
 		logger.debug(Literal.LEAVING);
 	}

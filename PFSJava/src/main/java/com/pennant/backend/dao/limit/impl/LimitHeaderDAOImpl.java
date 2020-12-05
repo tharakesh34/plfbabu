@@ -77,7 +77,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" HeaderId, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate");
-		sql.append(", LimitStructureCode, LimitSetupRemarks, Active, Rebuild, ValidateMaturityDate");
+		sql.append(", LimitStructureCode, LimitSetupRemarks, Active, Rebuild, ValidateMaturityDate, BLOCKLIMIT");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {

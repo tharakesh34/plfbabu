@@ -218,7 +218,7 @@
 			</constraint>
 		</field>
 
-		<field name="beneficiaryName">
+		<!-- <field name="beneficiaryName">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>acHolderName should have maximum 50 characters</message>
 				<groups>
@@ -241,7 +241,7 @@
 				</groups>
 				<element name="regexp">^$|^[A-Za-z0-9]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint>
-		</field>
+		</field> -->
 		<!-- <field name="phoneCountryCode"> <constraint annotation="org.hibernate.validator.constraints.Length"> <message>phoneCountryCode 
 			should have maximum 5 characters</message> <groups> <value>com.pennant.validation.CreateFinanceGroup</value> <value>com.pennant.validation.CreateFinancewithWIFGroup</value> 
 			<value>com.pennant.validation.AddDisbursementGroup</value> </groups> <element name="max">5</element> </constraint> </field> 

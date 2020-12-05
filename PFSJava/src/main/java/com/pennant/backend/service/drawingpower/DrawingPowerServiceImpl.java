@@ -166,6 +166,15 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 		FinanceProfitDetail profitDetail = financeDetail.getFinScheduleData().getFinPftDeatil();
 
+		// Setting drawing power amount to extended fields
+		if (financeDetail.getExtendedFieldRender() != null
+				&& financeDetail.getExtendedFieldRender().getMapValues() != null) {
+			if (financeDetail.getExtendedFieldRender().getMapValues().containsKey("DRAWINGPOWAMT")) {
+				BigDecimal drawingPowerAmt = drawingPower.getDrawingPower(financeMain.getFinReference());
+				financeDetail.getExtendedFieldRender().getMapValues().put("DRAWINGPOWAMT", drawingPowerAmt);
+			}
+		}
+
 		if (!StringUtils.isEmpty(moduleDefiner)
 				&& (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG))) {
 			if (profitDetail == null) {
@@ -174,8 +183,6 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 			if (profitDetail != null) {
 				totOutStanding = totOutStanding.add(profitDetail.getTotalPriBal());// Principal
 																					// outstanding
-				totOutStanding = totOutStanding.add(profitDetail.getTdSchdPftBal());// Interest
-																					// receivable
 				totOutStanding = totOutStanding.add(profitDetail.getPenaltyDue().subtract(profitDetail.getPenaltyPaid())
 						.subtract(profitDetail.getPenaltyWaived()));// Penal
 				// receivable

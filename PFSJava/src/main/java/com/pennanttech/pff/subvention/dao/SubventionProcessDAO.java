@@ -7,4 +7,5 @@ public interface SubventionProcessDAO {
 
 	boolean isDuplicateHostReference(String hostReferance);
 
+	long getLinkedTranIdByHostReference(String hostReference);
 }

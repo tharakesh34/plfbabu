@@ -740,7 +740,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		source.addValue("Reference", finReference);
 		source.addValue("ReceiptPurpose", receiptPurpose);
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select MAX(RECEIPTDATE)  From FINRECEIPTHEADER");
+		selectSql.append(" Select MAX(VALUEDATE)  From FINRECEIPTHEADER");
 		selectSql.append(tableType.getSuffix());
 		selectSql.append(" where Reference = :Reference AND ReceiptPurpose = :ReceiptPurpose ");
 

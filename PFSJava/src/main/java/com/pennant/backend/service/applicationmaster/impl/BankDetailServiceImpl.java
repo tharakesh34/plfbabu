@@ -219,7 +219,7 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 	 * @return AccNoLength
 	 */
 	@Override
-	public int getAccNoLengthByCode(String bankCode) {
+	public BankDetail getAccNoLengthByCode(String bankCode) {
 		return getBankDetailDAO().getAccNoLengthByCode(bankCode, "_View");
 	}
 

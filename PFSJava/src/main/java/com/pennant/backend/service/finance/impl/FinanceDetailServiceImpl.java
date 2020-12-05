@@ -1881,8 +1881,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			tableType = "_Temp";
 		}
 
-		scheduleData.setFinServiceInstructions(getFinServiceInstructionDAO().getFinServiceInstructions(finReference,
-				tableType, FinanceConstants.FINSER_EVENT_ORG));
+		scheduleData.setFinServiceInstructions(
+				finServiceInstructionDAO.getOrgFinServiceInstructions(finReference, tableType));
 
 		// Finance Overdue Penalty Rate Details
 		scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
@@ -4186,12 +4186,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
+		Date curBDay = SysParamUtil.getAppDate();
 		// Review dates reset for backdated loans.
 		if (!isWIF && StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)) {
-			resetNextFrqDates(financeDetail, DateUtility.getAppDate());
+			resetNextFrqDates(financeDetail, curBDay);
 		}
 
-		Date curBDay = SysParamUtil.getAppDate();
 		// gCDCustomerService.processGcdCustomer(financeDetail, "insert"); //
 		// inserting gcdcustomer.
 		// Execute Accounting Details Process
@@ -6737,9 +6737,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			finScheduleData.setFinServiceInstruction(finServInst);
 		}
 
-		for (FinServiceInstruction finSerList : serviceInstructions) {
-			if (finSerList.getInstructionUID() == Long.MIN_VALUE) {
-				finSerList.setInstructionUID(Long.valueOf(ReferenceGenerator.generateNewServiceUID()));
+		for (FinServiceInstruction serviceInstruction : serviceInstructions) {
+			if (serviceInstruction.getInstructionUID() == Long.MIN_VALUE) {
+				serviceInstruction.setInstructionUID(Long.valueOf(ReferenceGenerator.generateNewServiceUID()));
+			}
+
+			if (StringUtils.isEmpty(financeDetail.getModuleDefiner())
+					|| StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
+
+				if (!StringUtils.equals(serviceInstruction.getFinEvent(), FinanceConstants.FINSER_EVENT_ORG)
+						&& !StringUtils.contains(serviceInstruction.getFinEvent(), "_O")) {
+					serviceInstruction.setFinEvent(serviceInstruction.getFinEvent().concat("_O"));
+				}
 			}
 		}
 
@@ -7630,8 +7639,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Advance Payment details
 			// =======================================
 			if (financeDetail.getAdvancePaymentsList() != null) {
+				boolean isApi = false;
+
+				if (auditHeader.getApiHeader() != null) {
+					isApi = true;
+				}
+
 				auditDetails.addAll(getFinAdvancePaymentsService().validate(financeDetail.getAdvancePaymentsList(),
-						financeMain.getWorkflowId(), method, auditTranType, usrLanguage, financeDetail));
+						financeMain.getWorkflowId(), method, auditTranType, usrLanguage, financeDetail, isApi));
 			}
 
 			// Covenant Type details
@@ -10065,7 +10080,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private void updateTaskLog(FinanceMain financeMain, boolean isSaveorUpdate) {
 		logger.debug(Literal.ENTERING);
 
-		if (PennantConstants.ALLOW_LOAN_APP_LOCK) {
+		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK"))) {
 			if (!PennantConstants.RCD_STATUS_SAVED.equals(financeMain.getRecordStatus())) {
 				Map<String, String> roleUsers = new HashMap<>();
 				roleUsers.put(financeMain.getRoleCode(), String.valueOf(financeMain.getLastMntBy()));

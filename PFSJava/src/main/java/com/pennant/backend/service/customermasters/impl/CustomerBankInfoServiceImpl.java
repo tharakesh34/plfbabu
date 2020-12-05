@@ -1,6 +1,5 @@
 package com.pennant.backend.service.customermasters.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +16,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
@@ -234,13 +234,17 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		} else {
-			int accNoLength = bankDetailDAO.getAccNoLengthByCode(customerBankInfo.getBankName(), "_View");
-			if (accNoLength != 0) {
-				if (customerBankInfo.getAccountNumber().length() != accNoLength) {
-					String[] valueParm = new String[2];
+			BankDetail bankDetail = bankDetailDAO.getAccNoLengthByCode(customerBankInfo.getBankName(), "");
+			if (bankDetail != null) {
+				int maxAccNoLength = bankDetail.getAccNoLength();
+				int minAccNoLength = bankDetail.getMinAccNoLength();
+				if (customerBankInfo.getAccountNumber().length() < minAccNoLength
+						|| customerBankInfo.getAccountNumber().length() > maxAccNoLength) {
+					String[] valueParm = new String[3];
 					valueParm[0] = "AccountNumber";
-					valueParm[1] = String.valueOf(accNoLength) + " characters";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30570", "", valueParm));
+					valueParm[1] = String.valueOf(minAccNoLength) + " characters";
+					valueParm[2] = String.valueOf(maxAccNoLength) + " characters";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("BNK001", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}

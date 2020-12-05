@@ -61,11 +61,12 @@ public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements C
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(
-				" Select FM.PromotionSeqID , CB.FinReference , CB.Type,FM.FinStartDate, FM.MandateID,CB.AdviseID, FT.FeeTypeCode, CB.Amount");
+				" Select FM.PromotionSeqID , CB.FinReference , CB.Type,FM.FinStartDate, FM.MandateID,CB.AdviseID, FT.FeeTypeCode, CB.Amount, FE.HOSTREFERENCE");
 		sql.append(" From CASHBACKDETAILS CB ");
 		sql.append(" INNER JOIN FinanceMain FM ON CB.FinReference=FM.FinReference ");
 		sql.append(" INNER JOIN ManualAdvise MA ON MA.AdviseID= CB.AdviseID ");
 		sql.append(" INNER JOIN FeeTypes FT ON FT.FeeTypeID= MA.FeeTypeID ");
+		sql.append(" INNER JOIN FINANCEMAIN_EXTENSION FE ON FM.FinReference = FE.FinReference ");
 		sql.append(" where Refunded=:Refunded ");
 
 		logger.debug("selectSql: " + sql.toString());

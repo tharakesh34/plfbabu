@@ -232,13 +232,15 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	private String moduleType = "";
 	private String userRole = "";
 	private boolean isFinanceProcess = false;
-	private int accNoLength;
+	private int maxAccNoLength;
+	private int minAccNoLength;
 	private transient BankDetailService bankDetailService;
 	private List<BankInfoDetail> bankInfoDetails = new ArrayList<>();
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
 	private String monthlyIncome = SysParamUtil.getValueAsString(SMTParameterConstants.MONTHLY_INCOME_REQ);
 	private String configDay = SysParamUtil.getValueAsString(SMTParameterConstants.BANKINFO_DAYS);
 	private boolean isCustomer360 = false;
+	private BankDetail bankDetail;
 
 	private boolean fromLoan = false;
 	private String empType = null;
@@ -444,18 +446,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		}
 
 		if (StringUtils.isNotBlank(this.customerBankInfo.getBankCode())) {
-			accNoLength = bankDetailService.getAccNoLengthByCode(this.customerBankInfo.getBankCode());
+			bankDetail = bankDetailService.getAccNoLengthByCode(this.customerBankInfo.getBankCode());
+			maxAccNoLength = bankDetail.getAccNoLength();
+			minAccNoLength = bankDetail.getMinAccNoLength();
 		}
-
 		if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
 			lRistheader_BankBalance.setWidth("450px");
 		}
-
-		if (accNoLength != 0) {
-			this.accountNumber.setMaxlength(accNoLength);
-		} else {
-			this.accountNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
-		}
+		this.accountNumber.setMaxlength(maxAccNoLength);
 
 		//###_0.2
 		this.creditTranAmt.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
@@ -3115,10 +3113,9 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			if (details != null) {
 				this.bankName.setValue(details.getBankCode(), details.getBankName());
 				if (StringUtils.isNotBlank(details.getBankCode())) {
-					accNoLength = details.getAccNoLength();
-				}
-				if (accNoLength != 0) {
-					this.accountNumber.setMaxlength(accNoLength);
+					maxAccNoLength = details.getAccNoLength();
+					minAccNoLength = details.getMinAccNoLength();
+					this.accountNumber.setMaxlength(maxAccNoLength);
 				} else {
 					this.accountNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 				}
@@ -3243,8 +3240,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		setValidationOn(true);
 		if (!this.accountNumber.isReadonly()) {
 			this.accountNumber.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_CustomerBankInfoDialog_AccountNumber.value"),
-							PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
+					new PTStringValidator(Labels.getLabel("label_CustomerBankInfoDialog_AccountNumber.value"), null,
+							true, minAccNoLength, maxAccNoLength));
 		}
 
 		if (!this.creditTranNo.isDisabled()) {
@@ -3978,13 +3975,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				this.bankBranchID.setValue(details.getIFSC());
 				this.bankName.setButtonDisabled(false);
 				if (StringUtils.isNotBlank(details.getBankCode())) {
-					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+					bankDetail = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+					maxAccNoLength = bankDetail.getAccNoLength();
+					minAccNoLength = bankDetail.getMinAccNoLength();
 				}
-				if (accNoLength != 0) {
-					this.accountNumber.setMaxlength(accNoLength);
-				} else {
-					this.accountNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
-				}
+				this.accountNumber.setMaxlength(maxAccNoLength);
 
 			} else {
 				this.bankName.setValue("");

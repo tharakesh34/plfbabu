@@ -81,6 +81,7 @@ import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.applicationmaster.InstrumentwiseLimitDAO;
 import com.pennant.backend.dao.applicationmaster.ReasonCodeDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.dao.finance.FeeWaiverHeaderDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
@@ -124,6 +125,7 @@ import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -239,6 +241,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private ReasonCodeDAO reasonCodeDAO;
 	private AdvancePaymentService advancePaymentService;
 	private FeeTypeDAO feeTypeDAO;
+	private FeeWaiverHeaderDAO feeWaiverHeaderDAO;
 	private FeeReceiptService feeReceiptService;
 	private FinFeeConfigService finFeeConfigService;
 
@@ -1918,6 +1921,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Finance Main Updation
 		// =======================================
+		if ((FinanceConstants.CLOSE_STATUS_MATURED.equals(financeMain.getClosingStatus())
+				|| FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(financeMain.getClosingStatus()))
+				&& !(RepayConstants.RECEIPTMODE_PRESENTMENT.equals(receiptHeader.getReceiptMode()))) {
+			financeMain.setClosedDate(valueDate);
+		}
+
 		financeMainDAO.updateFromReceipt(financeMain, TableType.MAIN_TAB);
 
 		// ScheduleDetails delete and save
@@ -3299,6 +3308,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			// validate resioncode;
+
+			List<FinReceiptHeader> frh = finReceiptHeaderDAO.getReceiptHeadersByRef(finReference, "");
+			if (CollectionUtils.isNotEmpty(frh)) {
+				FinReceiptHeader finHeadr = frh.get(0);
+				Date derivedAppDate = finHeadr.getReceiptDate();
+				if (fsi.getValueDate().compareTo(derivedAppDate) > 0) {
+					finScheduleData = setErrorToFSD(finScheduleData, "RU0098",
+							"WavierDate must be less than valueDate");
+				}
+			}
 			if (fsi.getEarlySettlementReason() != null && fsi.getEarlySettlementReason() > 0) {
 				ReasonCode reasonCode = reasonCodeDAO.getReasonCode(fsi.getEarlySettlementReason(), "_AView");
 				if (reasonCode == null) {
@@ -4238,6 +4257,31 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					finScheduleData = setErrorToFSD(finScheduleData, "RU0010", parm0, parm1);
 					return receiptData;
 				}
+
+				// Not allowing to do PP/ES before last Installment Date
+				List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
+				if (CollectionUtils.isNotEmpty(schdList)) {
+					Date curSchDate = schdList.get(0).getSchDate();
+					for (int i = 1; i <= schdList.size() - 1; i++) {
+
+						if (!schdList.get(i).isRepayOnSchDate() && !schdList.get(i).isPftOnSchDate()) {
+							continue;
+						}
+
+						if (schdList.get(i).getSchDate().compareTo(appDate) > 0) {
+							break;
+						}
+						curSchDate = schdList.get(i).getSchDate();
+					}
+
+					if (curSchDate != null && fsi.getValueDate().compareTo(curSchDate) < 0) {
+						parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
+						parm1 = DateUtility.formatToLongDate(curSchDate);
+						// parm2 = String.valueOf(paramDays);
+						finScheduleData = setErrorToFSD(finScheduleData, "RU0010", parm0, parm1);
+						return receiptData;
+					}
+				}
 			}
 		}
 
@@ -4593,6 +4637,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (StringUtils.equals(FinanceConstants.PRODUCT_CD, financeMain.getProductCategory())
 				&& fsi.getPaymentMode().equals(RepayConstants.RECEIPTMODE_PAYABLE)) {
 			ManualAdvise payable = manualAdviseDAO.getManualAdviseById(fsi.getAdviseId(), "_AView");
+			manualAdviseDAO.update(payable, TableType.MAIN_TAB);
+			payable.setReservedAmt(payable.getBalanceAmt());
+			rch.setPayAgainstId(payable.getAdviseID());
+			rch.getReceiptDetails().get(0).setPayAgainstID(payable.getAdviseID());
+			rch.getReceiptDetails().get(0).setNoManualReserve(true);
 			List<XcessPayables> xcessPayableList = new ArrayList<>();
 			XcessPayables xcessPayable = new XcessPayables();
 			String feeDesc = payable.getFeeTypeDesc();
@@ -4610,13 +4659,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			TaxAmountSplit taxSplit = new TaxAmountSplit();
 			taxSplit.setAmount(xcessPayable.getAmount());
 			taxSplit.setTaxType(xcessPayable.getTaxType());
-			xcessPayable.setAvailableAmt(taxSplit.getNetAmount());
+			xcessPayable.setAvailableAmt(payable.getAdviseAmount());
 			xcessPayable.setTaxApplicable(payable.isTaxApplicable());
 			xcessPayable.setPayableDesc(feeDesc);
 			xcessPayable.setGstAmount(taxSplit.gettGST());
 			xcessPayable.setTotPaidNow(fsi.getAmount());
 			xcessPayable.setReserved(BigDecimal.ZERO);
-			xcessPayable.setBalanceAmt(xcessPayable.getAvailableAmt().subtract(xcessPayable.getTotPaidNow()));
+			xcessPayable.setBalanceAmt(payable.getAdviseAmount().subtract(xcessPayable.getTotPaidNow()));
 			xcessPayableList.add(xcessPayable);
 			rch.setXcessPayables(xcessPayableList);
 		}
@@ -5076,6 +5125,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (finServInst.getInstrumentDate() != null) {
 			finServInst.setInstrumentDate(DateUtility
 					.getDBDate(DateUtility.format(finServInst.getInstrumentDate(), PennantConstants.DBDateFormat)));
+		}
+		if (finServInst.getReceiptDetail() != null && finServInst.getReceiptDetail().getReceivedDate() != null) {
+			finServInst.getReceiptDetail().setReceivedDate(DateUtility.getDBDate(DateUtility
+					.format(finServInst.getReceiptDetail().getReceivedDate(), PennantConstants.DBDateFormat)));
 		}
 	}
 
@@ -5580,6 +5633,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			recData = getFinReceiptDataByReceiptId(rch.getReceiptID(), eventCode, FinanceConstants.FINSER_EVENT_RECEIPT,
 					"");
 		}
+
+		FinanceMain finmain = recData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		Date maturityDate = finmain.getMaturityDate();
 
 		rch = recData.getReceiptHeader();
 		recData.setValueDate(rch.getValueDate());
@@ -6572,6 +6628,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					}
 				}
 			}
+		} else {
+			for (UploadAlloctionDetail ulAlc : ulAllocations) {
+				totalWaivedAmt = totalWaivedAmt.add(ulAlc.getWaivedAmount());
+			}
 		}
 
 		rch.setBalAmount(fsi.getAmount().add(totalWaivedAmt));
@@ -6604,7 +6664,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					alcType = "I";
 					if (StringUtils.equals(alcType, ulAlcType) && allocate.getTotalDue()
 							.compareTo(ulAlc.getPaidAmount().add(ulAlc.getWaivedAmount())) != 0) {
-						parm0 = "Paid/Waived amount shoule be equal to Total due " + allocate.getTotalDue()
+						parm0 = "Paid/Waived amount should be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
 						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
@@ -6613,7 +6673,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					alcType = "P";
 					if (StringUtils.equals(alcType, ulAlcType)
 							&& allocate.getTotalDue().compareTo(ulAlc.getPaidAmount()) != 0) {
-						parm0 = "Paid amount shoule be equal to Total due " + allocate.getTotalDue()
+						parm0 = "Paid amount should be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
 						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
@@ -6622,7 +6682,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					alcType = "L";
 					if (StringUtils.equals(alcType, ulAlcType) && allocate.getTotalDue()
 							.compareTo(ulAlc.getPaidAmount().add(ulAlc.getWaivedAmount())) != 0) {
-						parm0 = "Paid/Waived amount shoule be equal to Total due " + allocate.getTotalDue()
+						parm0 = "Paid/Waived amount should be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
 						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
@@ -6631,7 +6691,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					alcType = "F";
 					if (StringUtils.equals(alcType, ulAlcType) && allocate.getTotalDue()
 							.compareTo(ulAlc.getPaidAmount().add(ulAlc.getWaivedAmount())) != 0) {
-						parm0 = "Paid/Waived amount shoule be equal to Total due " + allocate.getTotalDue()
+						parm0 = "Paid/Waived amount should be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
 						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
@@ -6640,7 +6700,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					alcType = "O";
 					if (StringUtils.equals(alcType, ulAlcType) && allocate.getTotalDue()
 							.compareTo(ulAlc.getPaidAmount().add(ulAlc.getWaivedAmount())) != 0) {
-						parm0 = "Paid/Waived amount shoule be equal to Total due " + allocate.getTotalDue()
+						parm0 = "Paid/Waived amount should be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
 						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
@@ -6649,7 +6709,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					alcType = "FI";
 					if (StringUtils.equals(alcType, ulAlcType) && allocate.getTotalDue()
 							.compareTo(ulAlc.getPaidAmount().add(ulAlc.getWaivedAmount())) != 0) {
-						parm0 = "Paid amount shoule be equal to Total due " + allocate.getTotalDue()
+						parm0 = "Paid amount should be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
 						setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
@@ -6660,7 +6720,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					alcType = "FP";
 					if (StringUtils.equals(alcType, ulAlcType)
 							&& allocate.getTotalDue().compareTo(ulAlc.getPaidAmount()) != 0) {
-						parm0 = "Paid amount shoule be equal to Total due " + allocate.getTotalDue()
+						parm0 = "Paid amount should be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
 						setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
@@ -6669,7 +6729,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					alcType = "EM";
 					if (StringUtils.equals(alcType, ulAlcType)
 							&& allocate.getTotalDue().compareTo(ulAlc.getPaidAmount()) != 0) {
-						parm0 = "Paid amount shoule be equal to Total due " + allocate.getTotalDue()
+						parm0 = "Paid amount should be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
 						setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
@@ -6684,7 +6744,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					alcType = "B";
 					if (StringUtils.equals(alcType, ulAlcType) && allocate.getTotalDue()
 							.compareTo(ulAlc.getPaidAmount().add(ulAlc.getWaivedAmount())) != 0) {
-						parm0 = "Paid/Waived amount shoule be equal to Total due " + allocate.getTotalDue()
+						parm0 = "Paid/Waived amount should be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
 						setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
@@ -7194,6 +7254,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		return finReceiptHeaderDAO.geFeeReceiptCountByExtReference(reference, receiptPurpose, extReference);
 	}
 
+	@Override
+	public List<FeeWaiverHeader> getFeeWaiverHeaderEnqByFinRef(String finReference, String type) {
+		return feeWaiverHeaderDAO.getFeeWaiverHeaderEnqByFinRef(finReference, type);
+	}
+
 	public TaxHeaderDetailsDAO getTaxHeaderDetailsDAO() {
 		return taxHeaderDetailsDAO;
 	}
@@ -7236,6 +7301,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public List<FinExcessAmount> xcessList(String finreference) {
 		return finExcessAmountDAO.getExcessAmountsByRef(finreference);
+	}
+
+	public void setFeeWaiverHeaderDAO(FeeWaiverHeaderDAO feeWaiverHeaderDAO) {
+		this.feeWaiverHeaderDAO = feeWaiverHeaderDAO;
 	}
 
 }

@@ -381,7 +381,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 			// Saving Tax Income Details
 			FinTaxIncomeDetail taxIncome = new FinTaxIncomeDetail();
-			taxIncome.setRepayID(rpyQueueHeader.getReceiptId());
+			taxIncome.setRepayID(rpyQueueHeader.getRepayID());
 			taxIncome.setTaxFor("LPP");
 			taxIncome.setReceivedAmount(movement.getPaidAmount());
 			taxIncome.setCGST(cgstPaid);

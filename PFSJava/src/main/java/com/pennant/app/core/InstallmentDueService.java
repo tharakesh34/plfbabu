@@ -34,6 +34,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 
 public class InstallmentDueService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
@@ -41,6 +42,7 @@ public class InstallmentDueService extends ServiceHelper {
 
 	private AccountEngineExecution engineExecution;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
+	private AdvancePaymentService advancePaymentService;
 
 	/**
 	 * @param custId
@@ -106,6 +108,10 @@ public class InstallmentDueService extends ServiceHelper {
 		amountCodes.setInstpri(curSchd.getPrincipalSchd());
 		amountCodes.setInstcpz(curSchd.getCpzAmount());
 		amountCodes.setInsttot(amountCodes.getInstpft().add(amountCodes.getInstpri()));
+
+		if (StringUtils.equals("B", curSchd.getBpiOrHoliday())) {
+			advancePaymentService.setIntAdvFlag(fm, amountCodes, true);
+		}
 
 		amountCodes.setPftS(profiDetails.getTdSchdPft());
 		amountCodes.setPftSP(profiDetails.getTdSchdPftPaid());
@@ -439,6 +445,10 @@ public class InstallmentDueService extends ServiceHelper {
 
 	public void setEngineExecution(AccountEngineExecution engineExecution) {
 		this.engineExecution = engineExecution;
+	}
+
+	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
+		this.advancePaymentService = advancePaymentService;
 	}
 
 }

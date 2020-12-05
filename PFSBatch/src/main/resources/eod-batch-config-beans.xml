@@ -438,7 +438,7 @@
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
-		<property name="provisionDAO" ref="provisionDAO"/>
+		<property name="provisionDAO" ref="provisionDAO" />
 	</bean>
 
 	<bean id="assignmentDAO" class="com.pennant.backend.dao.applicationmaster.impl.AssignmentDAOImpl" parent="sequenceDao" />

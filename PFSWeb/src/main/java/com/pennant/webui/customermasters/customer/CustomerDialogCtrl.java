@@ -2977,7 +2977,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!this.motherMaidenName.isReadonly()) {
 				this.motherMaidenName.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustMotherMaiden.value"),
-								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
+								PennantRegularExpressions.REGEX_RETAIL_CUST_NAME, isMandValidate));
 			}
 
 			if (!this.custArabicName.isReadonly()) {
@@ -2998,9 +2998,19 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		} else {
 			if (!this.custShrtName.isReadonly()) {
-				this.custShrtName
-						.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustomerName.value"),
-								PennantRegularExpressions.REGEX_CUST_NAME, true));
+				if (StringUtils.equals(this.customerDetails.getCustomer().getCustCtgCode(),
+						PennantConstants.PFF_CUSTCTG_CORP)
+						|| StringUtils.equals(this.customerDetails.getCustomer().getCustCtgCode(),
+								PennantConstants.PFF_CUSTCTG_SME)) {
+					this.custShrtName.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustomerName.value"),
+									PennantRegularExpressions.REGEX_CORP_CUST_NAME, true));
+				} else {
+					this.custShrtName.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustomerName.value"),
+									PennantRegularExpressions.REGEX_RETAIL_CUST_NAME, true));
+				}
+
 			}
 		}
 

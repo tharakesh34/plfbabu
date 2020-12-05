@@ -272,6 +272,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			mandate.setTaskId("");
 			mandate.setNextTaskId("");
 			mandate.setWorkflowId(0);
+
 			boolean isApproved = false;
 			if (StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_APPROVED)) {
 				isApproved = true;
@@ -281,6 +282,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				mandate.setStatus(MandateConstants.STATUS_APPROVED);
 			} else if (!StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
 				mandate.setStatus(MandateConstants.STATUS_NEW);
+			}
+
+			if (isApproved) {
+				mandate.setStatus(MandateConstants.STATUS_APPROVED);
 			}
 
 			if (isApproved) {
@@ -427,9 +432,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	public List<ErrorDetail> doValidations(Mandate mandate) {
-		List<ErrorDetail> details = null;
+		List<ErrorDetail> details = new ArrayList<>();
 		if (StringUtils.isNotBlank(mandate.getBarCodeNumber())) {
-			details = new ArrayList<>();
 			Pattern pattern = Pattern
 					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_BARCODE_NUMBER));
 			Matcher matcher = pattern.matcher(mandate.getBarCodeNumber());
@@ -438,6 +442,34 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				String[] valueParm = new String[1];
 				valueParm[0] = mandate.getBarCodeNumber();
 				details.add(ErrorUtil.getErrorDetail(new ErrorDetail("barCodeNumber", "90404", valueParm, valueParm)));
+			}
+		}
+		if (StringUtils.isBlank(mandate.getAccHolderName())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "AccHolderName";
+			details.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+		} else {
+			Pattern pattern = Pattern.compile(
+					PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME));
+
+			Matcher matcher = pattern.matcher(mandate.getAccHolderName());
+
+			if (!matcher.matches()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "AccHolderName";
+				details.add(ErrorUtil.getErrorDetail(new ErrorDetail("90237", "", valueParm), "EN"));
+			}
+		}
+		if (!StringUtils.isBlank(mandate.getJointAccHolderName())) {
+			Pattern pattern = Pattern.compile(
+					PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME));
+
+			Matcher matcher = pattern.matcher(mandate.getJointAccHolderName());
+
+			if (!matcher.matches()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "JointAccHolderName";
+				details.add(ErrorUtil.getErrorDetail(new ErrorDetail("90237", "", valueParm), "EN"));
 			}
 		}
 		return details;

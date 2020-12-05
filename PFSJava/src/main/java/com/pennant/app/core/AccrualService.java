@@ -451,7 +451,7 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	private static void calCumulativeTotals(FinanceProfitDetail pftDetail, FinanceScheduleDetail curSchd,
-			FinanceMain financeMain) {
+			FinanceMain fm) {
 		// profit
 		pftDetail.setTotalPftSchd(pftDetail.getTotalPftSchd().add(curSchd.getProfitSchd()));
 		pftDetail.setTotalPftCpz(pftDetail.getTotalPftCpz().add(curSchd.getCpzAmount()));
@@ -574,7 +574,8 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	private static void calNextDateTotals(FinanceProfitDetail pftDetail, FinanceScheduleDetail curSchd,
-			FinanceMain financeMain) {
+			FinanceMain fm) {
+
 		// advance Profit and Principal
 		pftDetail.setTotalPftPaidInAdv(pftDetail.getTotalPftPaidInAdv().add(curSchd.getSchdPftPaid()));
 		pftDetail.setTotalPriPaidInAdv(pftDetail.getTotalPriPaidInAdv().add(curSchd.getSchdPriPaid()));
@@ -591,8 +592,7 @@ public class AccrualService extends ServiceHelper {
 					pftDetail.setNSchdPftDue(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 				}
 
-				if (!(financeMain.isAlwGrcAdj()
-						&& DateUtil.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) <= 0)) {
+				if (!(fm.isAlwGrcAdj() && DateUtil.compare(curSchd.getSchDate(), fm.getGrcPeriodEndDate()) <= 0)) {
 					pftDetail.setFutureInst(pftDetail.getFutureInst() + 1);
 				}
 

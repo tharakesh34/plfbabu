@@ -6,8 +6,8 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 
 public interface AddRepaymentService {
 
-	FinScheduleData getAddRepaymentDetails(FinScheduleData finscheduleData,
-			FinServiceInstruction finServiceInstruction);
+	FinScheduleData getAddRepaymentDetails(FinScheduleData finscheduleData, FinServiceInstruction finServiceInstruction,
+			String moduleDefiner);
 
 	AuditDetail doValidations(FinServiceInstruction finServiceInstruction);
 

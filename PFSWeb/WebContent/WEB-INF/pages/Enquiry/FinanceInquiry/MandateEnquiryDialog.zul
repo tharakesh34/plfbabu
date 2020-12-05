@@ -100,7 +100,7 @@
 									<label id="label_AccHolderName" value="${c:l('label_MandateDialog_AccHolderName.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="accHolderName" maxlength="50" width="200px" />
+										<textbox id="accHolderName" maxlength="100" width="200px" />
 									</hbox>
 								</row>
 								<row visible="true">

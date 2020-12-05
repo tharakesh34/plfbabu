@@ -3,9 +3,12 @@ package com.pennant.webui.financemanagement.paymentMode;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -617,6 +621,27 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				&& DateUtility.compare(valueDate.getValue(), finMain.getMaturityDate()) > 0) {
 			MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("RM0001", null)));
 			return;
+		}
+
+		if (StringUtils.equals(this.receiptPurpose.getSelectedItem().getValue(),
+				FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			List<FeeWaiverHeader> frh = receiptService.getFeeWaiverHeaderEnqByFinRef(finMain.getFinReference(), "");
+
+			if (CollectionUtils.isNotEmpty(frh)) {
+
+				FeeWaiverHeader fwh = frh.stream().max(Comparator.comparing(v -> v.getValueDate())).get();
+
+				if (valueDate.getValue().compareTo(fwh.getValueDate()) < 0) {
+
+					String[] valueParm = new String[2];
+					valueParm[0] = DateUtility.formatToLongDate(valueDate.getValue());
+					valueParm[1] = DateUtility.formatToLongDate(fwh.getValueDate());
+					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("RU0099", valueParm)));
+					return;
+
+				}
+
+			}
 		}
 
 		if (receiptData.getFinanceDetail().getFinScheduleData().getErrorDetails() != null

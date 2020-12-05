@@ -96,7 +96,7 @@ public class GstTaxDownload implements Tasklet {
 			try {
 				TaxDownloadProcess process = null;
 
-				if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("EOM_ON_EOD"))) {
+				if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("GST_TAX_DOWNLOAD_DAILY"))) {
 					process = new TaxDownlaodExtract(dataSource, userId, valueDate, appDate, appDate, appDate);
 				} else {
 					process = new TaxDownlaodExtract(dataSource, userId, valueDate, appDate,

@@ -539,6 +539,9 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.hbox_DeviationType.setVisible(false);
 			//this.rule.setReturnType(RuleConstants.RETURNTYPE_STRING);
 			break;
+		case RuleConstants.MODULE_DUEDATERULE:
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_INTEGER);
+			break;
 		}
 
 		// Window Title

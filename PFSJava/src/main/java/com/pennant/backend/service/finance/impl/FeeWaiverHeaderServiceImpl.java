@@ -210,11 +210,11 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 					if (manualAdvise.getBounceID() != 0) {
 						receivableAmt = receivableAmt.add(recAmount);
-						receivedAmt = receivedAmt.add(manualAdvise.getPaidAmount());
-						adviseAmt = adviseAmt.add(manualAdvise.getAdviseAmount());
-						gstAmt = manualAdvise.getPaidCGST().add(manualAdvise.getPaidIGST().add(manualAdvise
-								.getPaidSGST().add(manualAdvise.getPaidUGST().add(manualAdvise.getPaidCESS()))));
-
+						receivedAmt = receivedAmt.add(manualAdvise.getPaidAmount().add(manualAdvise.getPaidCGST())
+								.add(manualAdvise.getPaidSGST().add(manualAdvise.getPaidIGST())
+										.add(manualAdvise.getPaidUGST())));
+						gstAmt = gstAmt.add(manualAdvise.getPaidCGST().add(manualAdvise.getPaidIGST()
+								.add(manualAdvise.getPaidSGST().add(manualAdvise.getPaidUGST()))));
 						gstAmt = gstAmt.add(manualAdvise.getPaidCGST().add(manualAdvise.getPaidIGST()
 								.add(manualAdvise.getPaidSGST().add(manualAdvise.getPaidUGST()))));
 						waivedAmt = waivedAmt.add(manualAdvise.getWaivedAmount());
@@ -233,6 +233,14 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						feeWaiverDetail.setAdviseId(manualAdvise.getAdviseID());
 						feeWaiverDetail.setFeeTypeCode(manualAdvise.getFeeTypeCode());
 						feeWaiverDetail.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
+
+						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())) {
+							feeWaiverDetail.setReceivedAmount(manualAdvise.getPaidAmount()
+									.add(manualAdvise.getPaidCGST()).add(manualAdvise.getPaidSGST()
+											.add(manualAdvise.getPaidIGST()).add(manualAdvise.getPaidUGST())));
+						} else {
+							feeWaiverDetail.setReceivedAmount(manualAdvise.getPaidAmount());
+						}
 						feeWaiverDetail.setWaivedAmount(manualAdvise.getWaivedAmount());
 						feeWaiverDetail.setTaxApplicable(manualAdvise.isTaxApplicable());
 						feeWaiverDetail.setTaxComponent(manualAdvise.getTaxComponent());
@@ -865,18 +873,19 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		financeDetail.setFinanceTaxDetail(null);
 
 		// Profit Details
+		Date appDate = SysParamUtil.getAppDate();
 		if (financeDetail != null) {
 			FinanceProfitDetail pftDetail = profitDetailsDAO.getFinProfitDetailsById(finReference);
 
 			// Overdue Details
 			List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(finReference);
 
-			financeMain = repayPostingUtil.updateStatus(financeMain, DateUtility.getAppDate(),
+			financeMain = repayPostingUtil.updateStatus(financeMain, appDate,
 					financeDetail.getFinScheduleData().getFinanceScheduleDetails(), pftDetail, overdueList, null,
 					false);
 
 			if (!financeMain.isFinIsActive()) {
-				financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
+				financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
 			}
 		}
 
@@ -956,7 +965,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					false);
 
 			if (!financeMain.isFinIsActive()) {
-				financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
+				financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
 				financeDetail = allocateWaiverToSchduleDetails(feeWaiverHeader, financeDetail, aeEvent, true);
 				isSchdUpdated = true;
 			}
@@ -976,7 +985,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					false);
 
 			if (!financeMain.isFinIsActive()) {
-				financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
+				financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
 			}
 		}
 		logger.debug("Leaving");

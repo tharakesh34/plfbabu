@@ -116,6 +116,11 @@ public class FinanceSummary implements Serializable {
 	@XmlElement(name = "outstandingTotal")
 	private BigDecimal totalOutStanding = BigDecimal.ZERO;
 
+	private BigDecimal principal = BigDecimal.ZERO;
+	private BigDecimal futurePrincipal = BigDecimal.ZERO;
+	private BigDecimal interest = BigDecimal.ZERO;
+	private BigDecimal futureInterest = BigDecimal.ZERO;
+
 	private BigDecimal totalOriginal = BigDecimal.ZERO;
 	private BigDecimal totalPaid = BigDecimal.ZERO;
 
@@ -928,6 +933,38 @@ public class FinanceSummary implements Serializable {
 
 	public void setOverDueCharges(BigDecimal overDueCharges) {
 		this.overDueCharges = overDueCharges;
+	}
+
+	public BigDecimal getPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(BigDecimal principal) {
+		this.principal = principal;
+	}
+
+	public BigDecimal getFuturePrincipal() {
+		return futurePrincipal;
+	}
+
+	public void setFuturePrincipal(BigDecimal futurePrincipal) {
+		this.futurePrincipal = futurePrincipal;
+	}
+
+	public BigDecimal getInterest() {
+		return interest;
+	}
+
+	public void setInterest(BigDecimal interest) {
+		this.interest = interest;
+	}
+
+	public BigDecimal getFutureInterest() {
+		return futureInterest;
+	}
+
+	public void setFutureInterest(BigDecimal futureInterest) {
+		this.futureInterest = futureInterest;
 	}
 
 	public BigDecimal getDueCharges() {

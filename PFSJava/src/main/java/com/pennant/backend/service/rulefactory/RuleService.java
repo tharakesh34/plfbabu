@@ -98,4 +98,6 @@ public interface RuleService {
 	List<Rule> getGSTRuleDetails(String ruleModule, String type);
 
 	List<Rule> getEligibilityRules(List<String> ruleCodes);
+
+	Rule getRuleById(String code, String module, String event, String type);
 }

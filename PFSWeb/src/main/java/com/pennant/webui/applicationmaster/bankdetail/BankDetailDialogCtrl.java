@@ -58,7 +58,6 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -66,6 +65,7 @@ import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -88,6 +88,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	protected Textbox bankName; // autoWired
 	protected Checkbox active; // autoWired
 	protected Intbox accNoLength;
+	protected Intbox minAccNoLength;
 	protected Textbox bankShortCode;
 	// not autoWired variables
 	private BankDetail bankDetail; // overHanded per parameter
@@ -182,6 +183,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankCode.setMaxlength(8);
 		this.bankName.setMaxlength(50);
 		this.accNoLength.setMaxlength(2);
+		this.minAccNoLength.setMaxlength(2);
 		this.bankShortCode.setMaxlength(20);
 
 		if (isWorkFlowEnabled()) {
@@ -305,6 +307,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankName.setValue(aBankDetail.getBankName());
 		this.active.setChecked(aBankDetail.isActive());
 		this.accNoLength.setValue(aBankDetail.getAccNoLength());
+		this.minAccNoLength.setValue(aBankDetail.getMinAccNoLength());
 		this.bankShortCode.setValue(aBankDetail.getBankShortCode());
 		this.recordStatus.setValue(aBankDetail.getRecordStatus());
 
@@ -344,28 +347,27 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 			wve.add(we);
 		}
 		try {
+			aBankDetail.setMinAccNoLength(this.minAccNoLength.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
 			this.accNoLength.setConstraint("");
 			this.accNoLength.setErrorMessage("");
 
 			if (this.accNoLength.getValue() == null) {
+				throw new WrongValueException(this.accNoLength, Labels.getLabel("NUMBER_MINVALUE_EQ", new String[] {
+						Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "minAccNoLength" }));
+			}
+			aBankDetail.setAccNoLength(this.accNoLength.getValue());
+
+			if (aBankDetail.getMinAccNoLength() != 0
+					&& aBankDetail.getAccNoLength() < aBankDetail.getMinAccNoLength()) {
 				throw new WrongValueException(this.accNoLength,
-						Labels.getLabel("NUMBER_RANGE_EQ",
-								new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "0",
-										String.valueOf(LengthConstants.LEN_ACCOUNT) }));
+						Labels.getLabel("FIELD_IS_EQUAL_OR_GREATER",
+								new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"),
+										Labels.getLabel("label_BankDetailDialog_MinimumAccNoLength.value") }));
 			}
-
-			int accNoLegthValue = this.accNoLength.getValue();
-
-			if (!this.accNoLength.isReadonly()) {
-				if (accNoLegthValue < 0 || accNoLegthValue > LengthConstants.LEN_ACCOUNT) {
-					throw new WrongValueException(this.accNoLength,
-							Labels.getLabel("NUMBER_RANGE_EQ",
-									new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "0",
-											String.valueOf(LengthConstants.LEN_ACCOUNT) }));
-				}
-			}
-
-			aBankDetail.setAccNoLength(accNoLegthValue);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -459,6 +461,11 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
+		if (!this.minAccNoLength.isReadonly()) {
+			this.minAccNoLength.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_BankDetailDialog_MinimumAccNoLength.value"), true, false, 0));
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -471,6 +478,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankCode.setConstraint("");
 		this.bankName.setConstraint("");
 		this.accNoLength.setConstraint("");
+		this.minAccNoLength.setConstraint("");
 		this.bankShortCode.setConstraint("");
 		logger.debug("Leaving");
 	}
@@ -497,6 +505,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankCode.setErrorMessage("");
 		this.bankName.setErrorMessage("");
 		this.accNoLength.setErrorMessage("");
+		this.minAccNoLength.setErrorMessage("");
 		this.bankShortCode.setErrorMessage("");
 
 		logger.debug("Leaving");
@@ -561,6 +570,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankName.setReadonly(isReadOnly("BankDetailDialog_bankName"));
 		this.active.setDisabled(isReadOnly("BankDetailDialog_active"));
 		this.accNoLength.setReadonly(isReadOnly("BankDetailDialog_accNoLength"));
+		this.minAccNoLength.setReadonly(isReadOnly("BankDetailDialog_accNoLength"));
 		this.bankShortCode.setReadonly(isReadOnly("BankDetailDialog_bankShortCode"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -590,6 +600,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankName.setReadonly(true);
 		this.active.setDisabled(true);
 		this.accNoLength.setReadonly(true);
+		this.minAccNoLength.setReadonly(true);
 		this.bankShortCode.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
@@ -614,6 +625,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankName.setValue("");
 		this.active.setChecked(false);
 		this.accNoLength.setValue(0);
+		this.minAccNoLength.setValue(0);
 		this.bankShortCode.setValue("");
 		logger.debug("Leaving");
 	}

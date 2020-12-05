@@ -1465,6 +1465,26 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	}
 
 	@Override
+	public String getRepayHierarchy(String finType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" RpyHierarchy");
+		sql.append(" From RMTFinanceTypes");
+		sql.append(" Where FinType = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finType }, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
 	public FinanceType getFinanceType(final String finType) {
 		logger.debug("Entering");
 		FinanceType financeType = new FinanceType();
@@ -1487,25 +1507,5 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		}
 		logger.debug("Leaving");
 		return financeType;
-	}
-
-	@Override
-	public String getRepayHierarchy(String finType) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" RpyHierarchy");
-		sql.append(" From RMTFinanceTypes");
-		sql.append(" Where FinType = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finType }, String.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 }

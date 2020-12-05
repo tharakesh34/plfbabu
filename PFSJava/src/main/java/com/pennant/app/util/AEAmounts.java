@@ -193,7 +193,7 @@ public class AEAmounts implements Serializable {
 		amountCodes.setSvAmount(pftDetail.getSvAmount());
 		amountCodes.setCbAmount(pftDetail.getCbAmount());
 
-		advancePaymentService.setIntAdvFlag(fm, amountCodes);
+		advancePaymentService.setIntAdvFlag(fm, amountCodes, false);
 
 		// NPA and Provision
 		amountCodes.setAmzS(pftDetail.getPftAmzSusp());

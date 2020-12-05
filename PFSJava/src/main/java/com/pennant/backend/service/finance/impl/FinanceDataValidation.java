@@ -2737,14 +2737,18 @@ public class FinanceDataValidation {
 					return errorDetails;
 				}
 				// validate AccNumber length
-				if (StringUtils.isNotBlank(mandate.getBankCode())) {
-					int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
-					if (accNoLength != 0) {
-						if (mandate.getAccNumber().length() != accNoLength) {
-							String[] valueParm = new String[2];
+				if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getAccNumber())) {
+					BankDetail bankDetail = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
+					if (bankDetail != null) {
+						int maxAccNoLength = bankDetail.getAccNoLength();
+						int minAccNoLength = bankDetail.getMinAccNoLength();
+						if (mandate.getAccNumber().length() < minAccNoLength
+								|| mandate.getAccNumber().length() > maxAccNoLength) {
+							String[] valueParm = new String[3];
 							valueParm[0] = "AccountNumber(Mandate)";
-							valueParm[1] = String.valueOf(accNoLength) + " characters";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+							valueParm[1] = String.valueOf(minAccNoLength) + " characters";
+							valueParm[2] = String.valueOf(maxAccNoLength) + " characters";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("BNK001", valueParm)));
 							return errorDetails;
 						}
 					}
@@ -3186,6 +3190,17 @@ public class FinanceDataValidation {
 						valueParm[0] = "acHolderName";
 						valueParm[1] = advPayment.getBeneficiaryName();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90217", valueParm)));
+					} else {
+						Pattern pattern = Pattern.compile(PennantRegularExpressions
+								.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME));
+
+						Matcher matcher = pattern.matcher(advPayment.getBeneficiaryName());
+
+						if (!matcher.matches()) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "AccHolderName";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90237", "", valueParm), "EN"));
+						}
 					}
 
 					// phone number

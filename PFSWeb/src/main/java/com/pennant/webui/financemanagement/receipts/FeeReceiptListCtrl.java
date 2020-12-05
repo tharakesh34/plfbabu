@@ -145,7 +145,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				",SchdlRepayment,EarlyPayment,EarlySettlement,");
 		registerField("receiptPurpose", listheader_FeeReceiptPurpose, SortOrder.NONE, purpose,
 				sortOperator_FeeReceiptPurpose, Operators.STRING);
-		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
+		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModesByFeePayment(), "");
 		registerField("receiptMode", listheader_FeeReceiptMode, SortOrder.NONE, receiptMode,
 				sortOperator_FeeReceiptReceiptMode, Operators.STRING);
 		registerField("receiptAmount", listheader_FeeReceiptAmount);

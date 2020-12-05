@@ -140,8 +140,11 @@ public class PennantRegularExpressions {
 	public static final String REGEX_NM_AMOUNT = "REGEX_NM_AMOUNT";
 	public static final String REGEX_COMPANY_NAME = "REGEX_COMPANY_NAME";
 	public static final String REGEX_NAME = "REGEX_NAME";
+	public static final String REGEX_CHEQUE_NAME = "REGEX_CHEQUE_NAME";
 	public static final String REGEX_UPPERCASENAME = "REGEX_UPPERCASENAME";
 	public static final String REGEX_CUST_NAME = "REGEX_CUST_NAME";
+	public static final String REGEX_RETAIL_CUST_NAME = "REGEX_RETAIL_CUST_NAME";
+	public static final String REGEX_CORP_CUST_NAME = "REGEX_CORP_CUST_NAME";
 	public static final String REGEX_ADDRESS = "REGEX_ADDRESS";
 	public static final String REGEX_STATICLIST = "REGEX_STATICLIST";
 	public static final String REGEX_NUMERIC = "REGEX_NUMERIC";
@@ -180,6 +183,7 @@ public class PennantRegularExpressions {
 	public static final String REGEX_PANNUMBER = "REGEX_PAN_NUMBER";
 	public static final String REGEX_GSTIN = "REGEX_GSTIN";
 	public static final String REGEX_ACC_HOLDER_NAME = "REGEX_ACC_HOLDER_NAME";
+	public static final String REGEX_ACCOUNT_HOLDER_NAME = "REGEX_ACCOUNT_HOLDER_NAME";
 	public static final String REGEX_FAVOURING_NAME = "REGEX_FAVOURING_NAME";
 
 	public static final String REGEX_BARCODE_NUMBER = "REGEX_BARCODE_NUMBER";
@@ -220,7 +224,6 @@ public class PennantRegularExpressions {
 			put(REGEX_UPPERCASENAME, "^[A-Za-z]+[A-Za-z.\\s]*");
 			put(REGEX_UPPER_ALPHANUM_SPACE, "^[A-Za-z0-9]+[A-Za-z0-9.\\s\\/\\-]*");
 			put(REGEX_ALPHANUM_FSLASH_SPACE, "^[A-Za-z0-9\\/]+[A-Za-z0-9.\\s\\/\\-]*");
-			put(REGEX_CUST_NAME, "^[A-Za-z0-9]+[A-Za-z0-9.\\&\\(\\)\\-\\_\\s]*");
 			put(REGEX_DESCRIPTION, "^[A-Za-z0-9]+[A-Za-z0-9\\.\\-\\s\\(\\)]*");
 			put(REGEX_ADDRESS, "[a-zA-Z0-9.\\>\\<\\,\\-\\/\\!\\@\\#\\$\\%\\&\\(\\)\\[\\]\\{\\}\\s]*");
 			put(REGEX_NM_AMOUNT, "[0-9.\\-]*");

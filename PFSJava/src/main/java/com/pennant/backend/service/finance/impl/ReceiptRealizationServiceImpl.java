@@ -234,7 +234,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 					.getFinScheduleDetails(receiptHeader.getReference(), "", false);
 			if (isSchdFullyPaid(receiptHeader.getReference(), schdList)) {
 				getFinanceMainDAO().updateMaturity(receiptHeader.getReference(), FinanceConstants.CLOSE_STATUS_MATURED,
-						false);
+						false, null);
 			}
 		}
 

@@ -2,6 +2,7 @@ package com.pennant.webui.rulefactory.rule;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -160,6 +161,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 					break;
 
 				case "smalldatetime":
+				case "datetime":
 					datebox = new Datebox();
 					datebox.setId(details.getRbFldName());
 					row.appendChild(datebox);
@@ -312,7 +314,8 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 						map.put(decimalbox.getId().trim(), decimalbox.getValue());
 					} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Datebox) {
 						datebox = (Datebox) rows_Fields.getFellowIfAny(variables.get(i));
-						map.put(datebox.getId().trim(), datebox.getValue());
+						String value = new SimpleDateFormat("dd-MM-yyyy").format(datebox.getValue());
+						map.put(datebox.getId().trim(), value);
 					} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Checkbox) {
 						checkbox = (Checkbox) rows_Fields.getFellowIfAny(variables.get(i));
 						map.put(checkbox.getId().trim(), checkbox.isChecked());

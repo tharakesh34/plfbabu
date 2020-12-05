@@ -1692,11 +1692,27 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		amountCodes.setPaidFee(paidFee);
 		amountCodes.setImdAmount(unIncomized);
 
-		// VAS
-		amountCodes.setDeductVasDisb(deductVasDisb);
-		amountCodes.setAddVasToFinance(addVasToFinance);
-		amountCodes.setVasFeeWaived(vasFeeWaived);
-		amountCodes.setPaidVasFee(paidVasFee);
+		dataMap.put("VAS_DD", deductVasDisb);
+		dataMap.put("VAS_AF", addVasToFinance);
+		dataMap.put("VAS_W", vasFeeWaived);
+		dataMap.put("VAS_P", paidVasFee);
+
+		for (FinFeeDetail fee : finFeeDetailList) {
+			String vasProductCode = fee.getVasProductCode();
+			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())) {
+				if (fee.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
+					dataMap.put("VAS_" + vasProductCode + "_DD", fee.getRemainingFee());
+					dataMap.put("VAS_" + vasProductCode + "_AF", BigDecimal.ZERO);
+
+				} else {
+					dataMap.put("VAS_" + vasProductCode + "_DD", BigDecimal.ZERO);
+					dataMap.put("VAS_" + vasProductCode + "_AF", fee.getRemainingFee());
+				}
+
+				dataMap.put("VAS_" + vasProductCode + "_W", fee.getWaivedAmount());
+				dataMap.put("VAS_" + vasProductCode + "_P", fee.getPaidAmount());
+			}
+		}
 
 		/* Setting the balance up-front fee amount to excess amount for accounting purpose */
 		Map<Long, List<FinFeeReceipt>> upfromtReceiptMap = finFeeDetailService

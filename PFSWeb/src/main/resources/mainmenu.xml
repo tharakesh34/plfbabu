@@ -335,6 +335,8 @@
 			rightName="menuItem_RulesFactory_StageAccountingRule" />
 		<menuItem id="menu_Item_FeePercRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/FeePercRuleList.zul"
 			rightName="menuItem_RulesFactory_FeePercRule" />
+		<menuItem id="menu_Item_DueDateLogicRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/DueDateRuleList.zul"
+			rightName="menuItem_RulesFactory_DueDateLogicRule" />
 	</menu>
 
 	<!-- Solution Factory -->
@@ -634,7 +636,7 @@
 			<menuItem id="menu_Item_closureApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTCLOSURE_APPROVER"
 				rightName="menuItem_Receipts_ClosureApprover" />
 			<menuItem id="menu_Item_ReceiptEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?enqiryModule=Y"
-				rightName="menuItem_Receipts_InitMaker" />
+				rightName="menuItem_Receipts_enquiry" />
 			<menuItem id="menu_Item_FeeReceipts" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeReceiptList.zul"
 				rightName="menuItem_FinanceManagement_FeeReceipts" />
 			<menuItem id="menu_Item_FeeReceiptCancellation" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=F"

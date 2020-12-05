@@ -813,7 +813,7 @@ public class ScheduleCalculator {
 		}
 
 		// START BPI
-		if (finMain.isAllowGrcPeriod()
+		if (!finMain.isAllowGrcPeriod()
 				&& StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
 			finMain.setBpiResetReq(false);
 		}
@@ -1249,6 +1249,7 @@ public class ScheduleCalculator {
 			break;
 		}
 
+		// Setting EventFromDate and EventToDate
 		finMain.setEventToDate(finMain.getMaturityDate());
 		finScheduleData = setRecalAttributes(finScheduleData, PROC_CHANGEGRACEEND, BigDecimal.ZERO, BigDecimal.ZERO);
 
@@ -3621,7 +3622,8 @@ public class ScheduleCalculator {
 				// ### 01-08-2018 - PSD Ticket ID : 125445, 125588, Freezing
 				// period - End
 				if (DateUtil.compare(curSchd.getSchDate(), toDate) > 0
-						&& (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())) {
+						&& (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())
+						&& DateUtil.compare(curSchd.getSchDate(), finMain.getMaturityDate()) != 0) {
 					nextInstructDate = curSchd.getSchDate();
 					nextInstructSchdMethod = curSchd.getSchdMethod();
 					break;
@@ -3937,17 +3939,16 @@ public class ScheduleCalculator {
 		LowerTaxDeduction ltd = null;
 		BigDecimal ltdLimitByRcd = BigDecimal.ZERO;
 
-		int recalIdx = finMain.getRecalIdx();
-		if (recalIdx < 0) {
-			finScheduleData = setRecalIndex(finScheduleData);
-			recalIdx = finMain.getRecalIdx();
-		}
+		/*
+		 * int recalIdx = finMain.getRecalIdx(); if (recalIdx < 0) { finScheduleData = setRecalIndex(finScheduleData);
+		 * recalIdx = finMain.getRecalIdx(); }
+		 */
 
 		for (int i = 0; i < sdSize; i++) {
 			curSchd = finScheduleDetails.get(i);
 			schdDate = curSchd.getSchDate();
 
-			if (curSchd.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0 && i >= recalIdx) {
+			if (finMain.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
 
 				boolean taxOnSysPerc = true;
 				if (ltdApplicable) {
@@ -3974,12 +3975,10 @@ public class ScheduleCalculator {
 				}
 
 				if (taxOnSysPerc) {
-					if (i >= recalIdx && curSchd.isTDSApplicable()) {
-						BigDecimal tdsAmount = (curSchd.getProfitSchd().multiply(tdsPerc)).divide(new BigDecimal(100),
-								0, RoundingMode.HALF_DOWN);
-						tdsAmount = CalculationUtil.roundAmount(tdsAmount, tdsRoundMode, tdsRoundingTarget);
-						curSchd.setTDSAmount(tdsAmount);
-					}
+					BigDecimal tdsAmount = (curSchd.getProfitSchd().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
+							RoundingMode.HALF_DOWN);
+					tdsAmount = CalculationUtil.roundAmount(tdsAmount, tdsRoundMode, tdsRoundingTarget);
+					curSchd.setTDSAmount(tdsAmount);
 				}
 			}
 
@@ -5035,7 +5034,12 @@ public class ScheduleCalculator {
 							}
 							curSchd.setProfitCalc(calInt);
 							BigDecimal newProfit = prvSchd.getProfitBalance().add(curSchd.getProfitCalc());
-							newProfit = newProfit.subtract(prvSchd.getCpzAmount()).add(prvSchd.getCpzBalance());
+							newProfit = newProfit.subtract(prvSchd.getCpzAmount());
+
+							if (prvSchd.isCpzOnSchDate()) {
+								newProfit = newProfit.add(prvSchd.getCpzBalance());
+							}
+
 							curSchd.setProfitSchd(newProfit);
 
 							curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
@@ -8878,7 +8882,6 @@ public class ScheduleCalculator {
 	 * @return
 	 */
 	private FinScheduleData procChangeTDS(FinScheduleData finScheduleData) {
-
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		BigDecimal ltdLimitByRcd = BigDecimal.ZERO;
 		FinanceScheduleDetail curSchd = null;
@@ -8890,22 +8893,22 @@ public class ScheduleCalculator {
 		LowerTaxDeduction ltd = null;
 
 		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
-		int recalIdx = finMain.getRecalIdx();
-		if (recalIdx < 0) {
-			finScheduleData = setRecalIndex(finScheduleData);
-			recalIdx = finMain.getRecalIdx();
-		}
+
+		/*
+		 * int recalIdx = finMain.getRecalIdx(); if (recalIdx < 0) { finScheduleData = setRecalIndex(finScheduleData);
+		 * recalIdx = finMain.getRecalIdx(); }
+		 */
 
 		for (int i = 0; i < sdSize; i++) {
 
 			curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 			schdDate = curSchd.getSchDate();
 
-			if (curSchd.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
+			if (finMain.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
 
-				if (i < recalIdx) {
-					continue;
-				}
+				/*
+				 * if (i < recalIdx) { continue; }
+				 */
 
 				boolean taxOnSysPerc = true;
 				if (ltdApplicable) {
@@ -8933,13 +8936,11 @@ public class ScheduleCalculator {
 				}
 
 				if (taxOnSysPerc) {
-					if (i >= recalIdx && curSchd.isTDSApplicable()) {
-						BigDecimal tdsAmount = (curSchd.getProfitSchd().multiply(tdsPerc)).divide(new BigDecimal(100),
-								0, RoundingMode.HALF_DOWN);
-						tdsAmount = CalculationUtil.roundAmount(tdsAmount, finMain.getCalRoundingMode(),
-								finMain.getRoundingTarget());
-						curSchd.setTDSAmount(tdsAmount);
-					}
+					BigDecimal tdsAmount = (curSchd.getProfitSchd().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
+							RoundingMode.HALF_DOWN);
+					tdsAmount = CalculationUtil.roundAmount(tdsAmount, finMain.getCalRoundingMode(),
+							finMain.getRoundingTarget());
+					curSchd.setTDSAmount(tdsAmount);
 				}
 			}
 		}

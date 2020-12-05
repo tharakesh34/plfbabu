@@ -128,8 +128,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", CashierBranch, InitiateDate, DepositProcess, DepositBranch, LppAmount, GstLpiAmount");
 		sql.append(", GstLppAmount, ExtReference, Module, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber");
 		sql.append(", CollectionAgentId, ActFinReceipt, FinDivision, PostBranch, ReasonCode, CancelRemarks");
-		sql.append(", KnockOffType, FinType, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", KnockOffType, FinType, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(", RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate, PartnerBankId");
 		sql.append(", PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate )");
 		sql.append(" Values");
@@ -227,7 +227,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Records not available for the Receipt ID {}", receiptID);
 		}
 		logger.debug(Literal.LEAVING);
 		return null;
@@ -1015,7 +1015,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		StringBuilder sql = new StringBuilder(" Select count(*) from finreceiptdetail");
 		sql.append(type);
 		sql.append(" where REFERENCE= :REFERENCE and PAYMENTTYPE= :RECEIPTMODE and FAVOURNUMBER= :FAVOURNUMBER");
-		sql.append(" and BANKCODE = :BANKCODE and STATUS NOT IN ('B','C')  ");
+		sql.append(" and BANKCODE = :BANKCODE AND STATUS NOT IN ('B','C')  ");
 		logger.debug(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
@@ -1027,8 +1027,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		try {
 			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
-			logger.error(e);
-			count = 0;
+			//
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1230,25 +1229,26 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	@Override
 	public boolean isReceiptsInProcess(String reference, String receiptPurpose, long receiptId, String type) {
 		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource source = null;
+		int count = 0;
 
-		StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM FINRECEIPTHEADER" + type);
-		sql.append(" WHERE REFERENCE = :REFERENCE AND RECEIPTPURPOSE = :RECEIPTPURPOSE ");
-		sql.append(" AND ReceiptID <> :ReceiptID  ");
-		logger.debug(Literal.SQL + sql.toString());
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) FROM FINRECEIPTHEADER" + type);
+		selectSql.append(" WHERE REFERENCE = :REFERENCE AND RECEIPTPURPOSE = :RECEIPTPURPOSE ");
+		selectSql.append(" AND ReceiptID <> :ReceiptID  ");
+		logger.debug(Literal.SQL + selectSql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
+		source = new MapSqlParameterSource();
 		source.addValue("REFERENCE", reference);
 		source.addValue("RECEIPTPURPOSE", receiptPurpose);
 		source.addValue("ReceiptID", receiptId);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0 ? true : false;
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
-			//
+			count = 0;
 		}
-
 		logger.debug(Literal.LEAVING);
-		return false;
+		return count > 0 ? true : false;
 	}
 
 	@Override

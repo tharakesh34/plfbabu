@@ -551,8 +551,8 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		}
 		// validate accountHolder name
 		if (StringUtils.isNotBlank(mandate.getAccHolderName())) {
-			Pattern pattern = Pattern
-					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACC_HOLDER_NAME));
+			Pattern pattern = Pattern.compile(
+					PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME));
 			Matcher matcher = pattern.matcher(mandate.getAccHolderName());
 
 			if (matcher.matches() == false) {

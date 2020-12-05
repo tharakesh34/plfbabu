@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerCategoryDAO;
 import com.pennant.backend.dao.approvalstatusenquiry.ApprovalStatusEnquiryDAO;
@@ -54,6 +55,8 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
+import com.pennant.backend.model.limit.LimitDetails;
+import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.customermasters.CustomerCardSalesInfoService;
@@ -70,9 +73,11 @@ import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
+import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.validation.DeleteValidationGroup;
@@ -148,6 +153,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
 	private JountAccountDetailDAO jountAccountDetailDAO;
+	private LimitDetailService limitDetailService;
 
 	/**
 	 * Method for create customer in PLF system.
@@ -3643,9 +3649,23 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			if (cust != null) {
 				response.setCustomerPhoneNumber(
 						customerPhoneNumberService.getApprovedCustomerPhoneNumberById(cust.getCustID()));
+				response.setCustomerName(cust.getCustShrtName());
 			}
 			response.setCif(cust.getCustCIF());
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			LimitHeader headerDetail = limitDetailService.getLimitHeaderByCustomer(cust.getCustID());
+			if (headerDetail != null) {
+				for (LimitDetails detail : headerDetail.getCustomerLimitDetailsList()) {
+					if (LimitConstants.LIMIT_ITEM_TOTAL.equals(detail.getGroupCode())) {
+						response.setActualLimit(PennantApplicationUtil.formateAmount(
+								detail.getLimitSanctioned().subtract(detail.getUtilisedLimit()),
+								CurrencyUtil.getFormat(headerDetail.getLimitCcy())));
+						response.setExpiryDate(detail.getExpiryDate());
+					}
+					response.setBlocklimit(headerDetail.isBlocklimit());
+
+				}
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			}
 			logger.debug(Literal.LEAVING);
 			return response;
 		} else {
@@ -4167,5 +4187,10 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Autowired
 	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
 		this.jountAccountDetailDAO = jountAccountDetailDAO;
+	}
+
+	@Autowired
+	public void setLimitDetailService(LimitDetailService limitDetailService) {
+		this.limitDetailService = limitDetailService;
 	}
 }

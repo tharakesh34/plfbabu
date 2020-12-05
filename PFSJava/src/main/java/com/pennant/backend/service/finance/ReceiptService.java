@@ -11,6 +11,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
@@ -164,6 +165,8 @@ public interface ReceiptService {
 	List<FinExcessAmount> xcessList(String finreference);
 
 	FinReceiptData recalculateReceipt(FinReceiptData receiptData);
+
+	List<FeeWaiverHeader> getFeeWaiverHeaderEnqByFinRef(String finReference, String type);
 
 	int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference);
 

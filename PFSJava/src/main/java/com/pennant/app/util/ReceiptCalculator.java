@@ -905,6 +905,7 @@ public class ReceiptCalculator implements Serializable {
 			allocation.setTotRecv(taxSplit.getNetAmount());
 		} else if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
 			allocation.setTypeDesc(desc + DESC_INC_TAX);
+			allocation.setTotalDue(curDue.add(taxSplit.gettGST()));
 			allocation.setTotRecv(taxSplit.getNetAmount());
 		} else {
 			allocation.setTypeDesc(desc);
@@ -3230,6 +3231,7 @@ public class ReceiptCalculator implements Serializable {
 			taxSplit.setAmount(penaltyBal);
 			taxSplit.setTaxType(taxType);
 			taxSplit = getGST(receiptData.getFinanceDetail(), taxSplit);
+			allocate.setWaivedGST(taxSplit.gettGST());
 			penaltyBal = penaltyBal.add(taxSplit.gettGST());
 		}
 		if (allocate.isTdsReq()) {
@@ -3353,8 +3355,12 @@ public class ReceiptCalculator implements Serializable {
 			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocation.getTaxType())) {
 				rps.setPenaltyPayNow(
 						allocation.getPaidNow().add(allocation.getTdsPaidNow()).subtract(allocation.getPaidGST()));
+				if (allocation.getWaivedNow().compareTo(BigDecimal.ZERO) > 0) {
+					rps.setWaivedAmt(allocation.getWaivedNow().subtract(allocation.getWaivedGST()));
+				}
 			} else {
 				rps.setPenaltyPayNow(allocation.getPaidNow().add(allocation.getTdsPaidNow()));
+				rps.setWaivedAmt(allocation.getWaivedNow());
 			}
 			rps.setWaivedAmt(allocation.getWaivedNow().add(allocation.getTdsWaivedNow()));
 

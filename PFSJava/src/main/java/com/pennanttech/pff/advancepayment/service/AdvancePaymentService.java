@@ -839,17 +839,17 @@ public class AdvancePaymentService extends ServiceHelper {
 		financeDetail.setAdvancePaymentDetail(curAdvpay);
 	}
 
-	public void setIntAdvFlag(FinanceMain main, AEAmountCodes aeAmountCodes) {
+	public void setIntAdvFlag(FinanceMain main, AEAmountCodes aeAmountCodes, boolean bpi) {
 		// Set whether the advance interest available or not
-		BigDecimal advIntBalance = getAdvIntBalance(main);
+		BigDecimal advIntBalance = getAdvIntBalance(main, bpi);
 		if (advIntBalance.compareTo(BigDecimal.ZERO) > 0) {
 			aeAmountCodes.setIntAdv(true);
 		}
 	}
 
-	private BigDecimal getAdvIntBalance(FinanceMain fm) {
+	private BigDecimal getAdvIntBalance(FinanceMain fm, boolean bpi) {
 		BigDecimal advIntBalance = BigDecimal.ZERO;
-		if (AdvanceType.hasAdvInterest(fm)) {
+		if (AdvanceType.hasAdvInterest(fm) || bpi) {
 			FinExcessAmount excessAmount = finExcessAmountDAO.getFinExcessAmount(fm.getFinReference(),
 					RepayConstants.EXAMOUNTTYPE_ADVINT);
 

@@ -412,12 +412,12 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	@Override
 	public List<AuditDetail> validate(List<FinAdvancePayments> finAdvancePayments, long workflowId, String method,
-			String auditTranType, String usrLanguage, FinanceDetail financeDetail) {
-		return doValidation(finAdvancePayments, workflowId, method, auditTranType, usrLanguage, financeDetail);
+			String auditTranType, String usrLanguage, FinanceDetail financeDetail, boolean isApi) {
+		return doValidation(finAdvancePayments, workflowId, method, auditTranType, usrLanguage, financeDetail, isApi);
 	}
 
 	private List<AuditDetail> doValidation(List<FinAdvancePayments> finAdvancePayments, long workflowId, String method,
-			String auditTranType, String usrLanguage, FinanceDetail financeDetail) {
+			String auditTranType, String usrLanguage, FinanceDetail financeDetail, boolean isApi) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
@@ -425,7 +425,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			List<AuditDetail> advancePayAuditDetails = getAdvancePaymentAuditDetail(finAdvancePayments, auditTranType,
 					method, workflowId);
 			for (AuditDetail auditDetail : advancePayAuditDetails) {
-				validateAdvancePayment(auditDetail, method, usrLanguage, financeDetail);
+				validateAdvancePayment(auditDetail, method, usrLanguage, financeDetail, isApi);
 			}
 			auditDetails.addAll(advancePayAuditDetails);
 		}
@@ -531,7 +531,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	}
 
 	private AuditDetail validateAdvancePayment(AuditDetail auditDetail, String usrLanguage, String method,
-			FinanceDetail financeDetail) {
+			FinanceDetail financeDetail, boolean isApi) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinAdvancePayments finAdvancePay = (FinAdvancePayments) auditDetail.getModelData();
@@ -640,7 +640,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "65033", errParm, valueParm), usrLanguage));
 				}
-			} else if (!StringUtils.equals(finAdvancePay.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IFT)) {
+			} else if (!StringUtils.equals(finAdvancePay.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IFT)
+					&& !isApi) {
 				String[] errParam = new String[1];
 				errParam[0] = finAdvancePay.getPaymentType();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(

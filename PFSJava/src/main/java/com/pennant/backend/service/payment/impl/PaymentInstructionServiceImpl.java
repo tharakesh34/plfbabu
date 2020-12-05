@@ -197,13 +197,16 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 		advancePayments.setPrintingLoc(paymentInstruction.getPrintingLoc());
 		advancePayments.setBankName(paymentInstruction.getBankName());
 		advancePayments.setBranchDesc(paymentInstruction.getBranchDesc());
+		advancePayments.setPartnerBankAc(paymentInstruction.getPartnerBankAc());
 		advancePayments.setBeneficiaryAccNo(paymentInstruction.getAccountNo());
+		advancePayments.setBeneficiaryName(paymentInstruction.getAcctHolderName());
 		advancePayments.setPhoneCountryCode(paymentInstruction.getPhoneCountryCode());
 		advancePayments.setPhoneNumber(paymentInstruction.getPhoneNumber());
 		advancePayments.setStatus(paymentInstruction.getStatus());
 		advancePayments.setRemarks(paymentInstruction.getRemarks());
 		advancePayments.setPaymentType(paymentInstruction.getPaymentType());
 		advancePayments.setInputDate(paymentInstruction.getPostDate());
+		advancePayments.setiFSC(paymentInstruction.getBankBranchIFSC());
 		advancePaymentList.add(advancePayments);
 
 		financeDetail.setAdvancePaymentsList(advancePaymentList);

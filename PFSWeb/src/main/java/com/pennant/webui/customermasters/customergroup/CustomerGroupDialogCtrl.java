@@ -756,7 +756,11 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 
 				for (int i = 0; i < list.length; i++) {
 					auditHeader = getAuditHeader(aCustomerGroup, PennantConstants.TRAN_WF);
-					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if ("doDdeDedup".equals(list[i])) {
+						processCompleted = doSaveProcess(auditHeader, null);
+					} else {
+						processCompleted = doSaveProcess(auditHeader, list[i]);
+					}
 					if (!processCompleted) {
 						break;
 					}

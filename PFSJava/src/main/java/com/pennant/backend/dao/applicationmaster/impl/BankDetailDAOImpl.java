@@ -114,7 +114,8 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		BankDetail bankDetail = new BankDetail();
 		bankDetail.setId(id);
 
-		StringBuilder selectSql = new StringBuilder(" SELECT BankCode, BankName, BankShortCode, Active,  AccNoLength,");
+		StringBuilder selectSql = new StringBuilder(
+				"Select BankCode, BankName, BankShortCode, Active,  AccNoLength, MinAccNoLength,");
 		selectSql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTBankDetail");
@@ -179,10 +180,10 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into BMTBankDetail");
 		sql.append(tableType.getSuffix());
-		sql.append(" (BankCode, BankName, BankShortCode, Active,  AccNoLength,");
+		sql.append(" (BankCode, BankName, BankShortCode, Active,  AccNoLength, MinAccNoLength,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(:BankCode, :BankName, :BankShortCode, :Active, :AccNoLength,");
+		sql.append(" values(:BankCode, :BankName, :BankShortCode, :Active, :AccNoLength, :MinAccNoLength,");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -208,7 +209,7 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		StringBuilder sql = new StringBuilder("update BMTBankDetail");
 		sql.append(tableType.getSuffix());
 		sql.append(
-				" set BankName = :BankName, BankShortCode = :BankShortCode, Active = :Active, AccNoLength = :AccNoLength,");
+				" set BankName = :BankName, BankShortCode = :BankShortCode, Active = :Active, AccNoLength = :AccNoLength, MinAccNoLength = :MinAccNoLength,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		sql.append(
 				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
@@ -259,13 +260,13 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 	}
 
 	@Override
-	public int getAccNoLengthByCode(String bankCode, String type) {
+	public BankDetail getAccNoLengthByCode(String bankCode, String type) {
 		logger.debug("Entering");
 
 		BankDetail bankDetail = new BankDetail();
 		bankDetail.setBankCode(bankCode);
 
-		StringBuilder selectSql = new StringBuilder("Select AccNoLength");
+		StringBuilder selectSql = new StringBuilder("Select AccNoLength, MinAccNoLength");
 
 		selectSql.append(" From BMTBankDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -273,12 +274,14 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
+		RowMapper<BankDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankDetail.class);
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			bankDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return bankDetail;
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug(dae);
-			return 0;
+			return bankDetail;
 		}
 	}
 

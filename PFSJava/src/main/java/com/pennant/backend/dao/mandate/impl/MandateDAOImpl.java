@@ -703,6 +703,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		StringBuilder selectSql = new StringBuilder("SELECT MAX(REPAYAMOUNT)  FROM  FINSCHEDULEDETAILS");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WHERE FINREFERENCE = :FINREFERENCE");
+		selectSql.append(" AND INSTNUMBER <> 0 AND PARTIALPAIDAMT = 0");
 		source.addValue("FINREFERENCE", finReference);
 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);

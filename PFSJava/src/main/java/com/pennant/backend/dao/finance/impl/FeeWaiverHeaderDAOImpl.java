@@ -177,6 +177,7 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,WorkflowId");
 		selectSql.append(" From FeeWaiverHeader");
 		selectSql.append(" Where FinReference = :FinReference");
+		selectSql.append(" order by WaiverId desc");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeWaiverHeader);

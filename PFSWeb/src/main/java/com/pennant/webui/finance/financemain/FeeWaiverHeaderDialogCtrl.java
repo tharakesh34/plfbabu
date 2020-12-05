@@ -928,8 +928,14 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				lc.setParent(item);
 
 				// Received amount//6
-				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getReceivedAmount(), ccyFormatter));
-				totReceivedAmt = totReceivedAmt.add(detail.getReceivedAmount());
+				if (detail.getBalanceAmount().subtract(detail.getReceivedAmount()).compareTo(BigDecimal.ZERO) < 0) {
+					lc = new Listcell(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, ccyFormatter));
+					totReceivedAmt = totReceivedAmt.add(BigDecimal.ZERO);
+				} else {
+					totReceivedAmt = detail.getReceivedAmount();
+					lc = new Listcell(PennantApplicationUtil.amountFormate(totReceivedAmt, ccyFormatter));
+					totReceivedAmt = totReceivedAmt.add(totReceivedAmt);
+				}
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 

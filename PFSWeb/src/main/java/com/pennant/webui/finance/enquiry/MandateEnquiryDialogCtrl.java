@@ -265,7 +265,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		this.accNumber.setMaxlength(50);
-		this.accHolderName.setMaxlength(50);
+		this.accHolderName.setMaxlength(100);
 		this.jointAccHolderName.setMaxlength(50);
 		this.startDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.expiryDate.setFormat(DateFormat.SHORT_DATE.getPattern());

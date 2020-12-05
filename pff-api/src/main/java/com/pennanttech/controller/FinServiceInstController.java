@@ -376,7 +376,8 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 				// Call Schedule calculator for Rate change
-				finScheduleData = addRepaymentService.getAddRepaymentDetails(finScheduleData, finServiceInst);
+				finScheduleData = addRepaymentService.getAddRepaymentDetails(finScheduleData, finServiceInst,
+						FinanceConstants.FINSER_EVENT_CHGRPY);
 
 				if (finScheduleData.getErrorDetails() != null) {
 					for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
@@ -1617,7 +1618,92 @@ public class FinServiceInstController extends SummaryDetailService {
 					receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(
 							tempReceiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
 
-					auditHeader = receiptService.doApprove(auditHeader);
+					if (finServiceInst.isNonStp()) {
+						auditHeader = receiptService.doApprove(auditHeader);
+					} else {
+
+						WorkFlowDetails workFlowDetails = null;
+						String roleCode = finServiceInst.getProcessStage();
+						String nextRolecode = finServiceInst.getProcessStage();
+
+						String taskid = null;
+						String nextTaskId = null;
+						long workFlowId = 0;
+						String finEvent = FinanceConstants.FINSER_EVENT_RECEIPT;
+
+						FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
+								financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
+
+						if (financeWorkFlow == null) {
+							FinanceDetail response = new FinanceDetail();
+							doEmptyResponseObject(response);
+							response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90339"));
+							return response;
+						}
+
+						workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
+						String[] workFlowRoles = workFlowDetails.getWorkFlowRoles().split(";");
+
+						if (StringUtils.isBlank(finServiceInst.getProcessStage())) {
+							roleCode = workFlowDetails.getFirstTaskOwner();
+							nextRolecode = roleCode;
+						}
+						boolean roleNotFound = false;
+						for (String workFlowRole : workFlowRoles) {
+							if (StringUtils.equals(workFlowRole, roleCode)) {
+								roleNotFound = true;
+								break;
+							}
+						}
+
+						if (!roleNotFound) {
+							FinanceDetail response = new FinanceDetail();
+							doEmptyResponseObject(response);
+							String[] valueParm = new String[1];
+							valueParm[0] = roleCode;
+							response.setReturnStatus(APIErrorHandlerService.getFailedStatus("API004", valueParm));
+							return response;
+						}
+
+						if (finServiceInst.getPaymentMode().equals("CASH")) {
+							if (!roleCode.equals("RECEIPT_MAKER") && !roleCode.equals("REALIZATION_APPROVER")) {
+								FinanceDetail response = new FinanceDetail();
+								doEmptyResponseObject(response);
+								String[] valueParm = new String[1];
+								valueParm[0] = "CASH PAYMENT MODE";
+								response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30556", valueParm));
+								return response;
+							}
+						}
+
+						if (workFlowDetails != null) {
+							workFlow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
+							taskid = workFlow.getUserTaskId(roleCode);
+							workFlowId = workFlowDetails.getWorkFlowId();
+							nextTaskId = workFlow.getUserTaskId(nextRolecode);
+						}
+
+						financeMain.setWorkflowId(workFlowId);
+						financeMain.setTaskId(taskid);
+						financeMain.setRoleCode(roleCode);
+						financeMain.setNextRoleCode(nextRolecode);
+						financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+						financeMain.setNextTaskId(nextTaskId + ";");
+						financeMain.setNewRecord(true);
+						financeMain.setVersion(1);
+						financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECEIPT);
+						financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						financeMain.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
+						receiptData.getReceiptHeader().setTaskId(taskid);
+						receiptData.getReceiptHeader().setNextTaskId(nextTaskId + ";");
+						receiptData.getReceiptHeader().setRoleCode(roleCode);
+						receiptData.getReceiptHeader().setNextRoleCode(nextRolecode);
+						receiptData.getReceiptHeader().setWorkflowId(workFlowId);
+						receiptData.getReceiptHeader().setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
+						receiptData.getReceiptHeader().setFinType(financeMain.getFinType());
+
+						auditHeader = receiptService.saveOrUpdate(auditHeader);
+					}
 				}
 
 				if (auditHeader.getErrorMessage() != null) {
@@ -2700,7 +2786,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		FinanceDetail response = null;
 
-		//Validate given Request Receipt Data is valid or not.
+		// Validate given Request Receipt Data is valid or not.
 		WSReturnStatus returnStatus = validateReceiptData(finServiceInst);
 		if (returnStatus != null) {
 			response = new FinanceDetail();
@@ -2929,7 +3015,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		boolean isOrigination = false;
 		int vasFeeCount = 0;
 		BigDecimal feePaidAmount = BigDecimal.ZERO;
-		//finType validation
+		// finType validation
 		if (StringUtils.isNotBlank(finServInst.getFinReference())) {
 			String loanType = financeTypeDAO.getFinTypeByReference(finServInst.getFinReference());
 			if (!StringUtils.equals(finServInst.getFinType(), loanType)) {
@@ -2940,7 +3026,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 		}
 
-		//Payment mode validation
+		// Payment mode validation
 		if (!StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_CASH)
 				&& !StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_CHEQUE)
 				&& !StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_DD)
@@ -3062,7 +3148,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				if (finTypeFeeDetail != null) {
 					finServInst.setFinTypeFeeList(finTypeFeeDetail);
 
-					//FIXME MURTHY NEED to VALIDATE
+					// FIXME MURTHY NEED to VALIDATE
 					Map<String, BigDecimal> taxPercentages = GSTCalculator
 							.getTaxPercentages(finServInst.getFinReference());
 
@@ -3183,7 +3269,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		String finReference = fsi.getFinReference();
 		String[] valueParm = null;
 
-		//validate FinReference
+		// validate FinReference
 		if (StringUtils.isNotBlank(finReference)) {
 			boolean isValidRef = financeMainDAO.isFinReferenceExists(finReference, TableType.TEMP_TAB.getSuffix(),
 					false);
@@ -3194,7 +3280,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 		}
 
-		//better to check any unpaid fess us there or not
+		// better to check any unpaid fess us there or not
 
 		// Valid Receipt Mode
 		String receiptMode = fsi.getPaymentMode();
@@ -3204,14 +3290,15 @@ public class FinServiceInstController extends SummaryDetailService {
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_NEFT)
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_RTGS)
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_IMPS)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ESCROW)) {
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ESCROW)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
 
 			valueParm = new String[2];
 			valueParm[0] = "Receipt mode";
 			valueParm[1] = RepayConstants.RECEIPTMODE_CASH + "," + RepayConstants.RECEIPTMODE_CHEQUE + ","
 					+ RepayConstants.RECEIPTMODE_DD + "," + RepayConstants.RECEIPTMODE_NEFT + ","
 					+ RepayConstants.RECEIPTMODE_RTGS + "," + RepayConstants.RECEIPTMODE_IMPS + ","
-					+ RepayConstants.RECEIPTMODE_ESCROW;
+					+ RepayConstants.RECEIPTMODE_ESCROW + RepayConstants.RECEIPTMODE_ONLINE;
 			return APIErrorHandlerService.getFailedStatus("90281", valueParm);
 		}
 		FinReceiptDetail finReceiptDetail = fsi.getReceiptDetail();
@@ -3266,7 +3353,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
 
-			//CHEQUE / DD number
+			// CHEQUE / DD number
 			if (StringUtils.isBlank(finReceiptDetail.getFavourNumber())) {
 				valueParm = new String[1];
 				valueParm[0] = "favourNumber";
@@ -3283,14 +3370,14 @@ public class FinServiceInstController extends SummaryDetailService {
 				valueParm[1] = "six";
 				return APIErrorHandlerService.getFailedStatus("90277", valueParm);
 			}
-			//Cheque Acc No {0} is lessthan or equals to {1} .
+			// Cheque Acc No {0} is lessthan or equals to {1} .
 			if (StringUtils.length(finReceiptDetail.getChequeAcNo()) > 50) {
 				valueParm = new String[2];
 				valueParm[0] = "chequeAcNo";
 				valueParm[1] = "50";
 				return APIErrorHandlerService.getFailedStatus("90220", valueParm);
 			}
-			//value Date
+			// value Date
 			Date appDate = DateUtility.getAppDate();
 			if (finReceiptDetail.getValueDate() == null) {
 				valueParm = new String[1];
@@ -3356,13 +3443,13 @@ public class FinServiceInstController extends SummaryDetailService {
 				finReceiptDetail.setBankBranchID(bankBranch.getBankBranchID());
 			}
 		} else {
-			//need to empty the data wich is not req
+			// need to empty the data wich is not req
 			fsi.setRealizationDate(null);
 			finReceiptDetail.setFavourName("");
 			finReceiptDetail.setFavourNumber("");
 			finReceiptDetail.setChequeAcNo("");
 		}
-		//In Case of online mode transactionRef is mandatory
+		// In Case of online mode transactionRef is mandatory
 		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_NEFT)
 				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_RTGS)
 				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_IMPS)
@@ -3388,7 +3475,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 
-		//check any UpFront is in process
+		// check any UpFront is in process
 		String reference = finReference;
 		if (StringUtils.isNotBlank(fsi.getExternalReference())) {
 			reference = Objects.toString(fsi.getCustID(), "");
@@ -3901,6 +3988,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
+	@Autowired
 	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
 		this.changeScheduleMethodService = changeScheduleMethodService;
 	}

@@ -195,7 +195,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		boolean isFinactive = repaymentPostingsUtil.isSchdFullyPaid(detail.getFinReference(), list);
 
 		if (isFinactive) {
-			financeMainDAO.updateMaturity(detail.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED, false);
+			financeMainDAO.updateMaturity(detail.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED, false,
+					detail.getSchDate());
 			profitDetailsDAO.updateFinPftMaturity(detail.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED,
 					false);
 		}

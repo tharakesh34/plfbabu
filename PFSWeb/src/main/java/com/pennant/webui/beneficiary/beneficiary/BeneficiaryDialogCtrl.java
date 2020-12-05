@@ -61,9 +61,9 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.pennydrop.PennyDropDAO;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
@@ -105,7 +105,8 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	protected Textbox bank;
 	protected Textbox city;
 	protected Textbox branch;
-	protected int accNoLength;
+	protected int maxAccNoLength;
+	protected int minAccNoLength;
 	private Beneficiary beneficiary;
 	private Checkbox beneficiaryActive;
 	private Checkbox defaultBeneficiary;
@@ -120,6 +121,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	private transient PennyDropService pennyDropService;
 	private transient PennyDropDAO pennyDropDAO;
 	private transient BankAccountValidation bankAccountValidations;
+	protected BankDetail bankDetails;
 
 	/**
 	 * default constructor.<br>
@@ -211,13 +213,11 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.email.setMaxlength(50);
 
 		if (StringUtils.isNotBlank(this.beneficiary.getBankCode())) {
-			accNoLength = getBankDetailService().getAccNoLengthByCode(this.beneficiary.getBankCode());
+			bankDetails = getBankDetailService().getAccNoLengthByCode(this.beneficiary.getBankCode());
+			minAccNoLength = bankDetails.getMinAccNoLength();
+			maxAccNoLength = bankDetails.getAccNoLength();
 		}
-		if (accNoLength != 0) {
-			this.accNumber.setMaxlength(accNoLength);
-		} else {
-			this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
-		}
+		this.accNumber.setMaxlength(maxAccNoLength);
 
 		String benificiaryActLen = SysParamUtil.getValueAsString(SMTParameterConstants.BEN_ACTNAME_LENGTH);
 		if (benificiaryActLen != null) {
@@ -357,13 +357,11 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 				this.branch.setValue(details.getBranchDesc());
 				this.bankBranchID.setValue(details.getIFSC());
 				if (StringUtils.isNotBlank(details.getBankCode())) {
-					accNoLength = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
+					bankDetails = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
+					maxAccNoLength = bankDetails.getAccNoLength();
+					minAccNoLength = bankDetails.getMinAccNoLength();
 				}
-				if (accNoLength != 0) {
-					this.accNumber.setMaxlength(accNoLength);
-				} else {
-					this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
-				}
+				this.accNumber.setMaxlength(maxAccNoLength);
 
 				String benificiaryActLen = SysParamUtil.getValueAsString(SMTParameterConstants.BEN_ACTNAME_LENGTH);
 				if (benificiaryActLen != null) {
@@ -586,13 +584,13 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		if (!this.accNumber.isReadonly()) {
 			this.accNumber
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_BeneficiaryDialog_AccNumber.value"),
-							PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
+							null, true, minAccNoLength, maxAccNoLength));
 		}
 		// Acc Holder Name
 		if (!this.accHolderName.isReadonly()) {
 			this.accHolderName
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_BeneficiaryDialog_AccHolderName.value"),
-							PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
+							PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME, true));
 		}
 
 		// Phone Number

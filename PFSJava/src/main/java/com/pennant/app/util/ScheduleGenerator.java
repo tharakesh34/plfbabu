@@ -66,7 +66,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class ScheduleGenerator {
@@ -115,7 +114,7 @@ public class ScheduleGenerator {
 		}
 
 		// Advised Profit Rate Calculation Process & Profit Days Basis , Reference Rates Setting
-		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
+		for (int i = 1; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 
 			curSchd.setTDSApplicable(financeMain.isTDSApplicable());
@@ -211,7 +210,7 @@ public class ScheduleGenerator {
 			financeMain.setEventFromDate(newSchdAfter);
 		}
 
-		newSchdAfter = newGraceEnd;
+		// newSchdAfter = newGraceEnd;
 
 		FinanceScheduleDetail prvSchdGrcEnd = null;
 		boolean repayRateReset = false;
@@ -239,7 +238,7 @@ public class ScheduleGenerator {
 				}
 			}
 
-			if (DateUtility.compare(curSchd.getSchDate(), newSchdAfter) < 0) {
+			if (DateUtility.compare(curSchd.getSchDate(), newSchdAfter) <= 0) {
 				finScheduleData.setScheduleMap(curSchd);
 				iUntouch = i;
 				continue;
@@ -337,6 +336,11 @@ public class ScheduleGenerator {
 					curSchd.setSchdMethod(newGrcSchdMethod);
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
 
+					// FIXME : SATYA - Not Always True
+					if (financeMain.isAllowGrcPftRvw()) {
+						curSchd.setRvwOnSchDate(true);
+					}
+
 					if (financeMain.isFinIsRateRvwAtGrcEnd()) {
 						curSchd.setRvwOnSchDate(true);
 					}
@@ -389,9 +393,33 @@ public class ScheduleGenerator {
 			} else {
 				curSchd.setCalculatedRate(prvSchd.getActRate());
 			}
+			finScheduleData.setScheduleMap(curSchd);
+		}
+
+		// SATYA : Disbursement Details from Grace End onwards
+		for (FinanceDisbursement disbursementDetail : finScheduleData.getDisbursementDetails()) {
+			Date disbDate = formatDate(disbursementDetail.getDisbDate());
+
+			if (disbDate.compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
+				continue;
+			}
+
+			BigDecimal prvTermDisbAmount = BigDecimal.ZERO;
+			FinanceScheduleDetail schedule = new FinanceScheduleDetail();
+
+			if (finScheduleData.getScheduleMap() != null && finScheduleData.getScheduleMap().containsKey(disbDate)) {
+
+				schedule = finScheduleData.getScheduleMap().get(disbDate);
+				prvTermDisbAmount = schedule.getDisbAmount();
+			}
+
+			schedule.setDisbOnSchDate(true);
+			schedule.setFeeChargeAmt(disbursementDetail.getFeeChargeAmt());
+			schedule.setInsuranceAmt(disbursementDetail.getInsuranceAmt());
+			schedule.setDisbAmount(disbursementDetail.getDisbAmount().add(prvTermDisbAmount));
 
 		}
-		
+
 		// SATYA : Disbursement Details from Grace End onwards
 		for (FinanceDisbursement disbursementDetail : finScheduleData.getDisbursementDetails()) {
 
@@ -809,7 +837,7 @@ public class ScheduleGenerator {
 
 		finScheduleData.getFinanceScheduleDetails().clear();
 		if (financeMain.isAllowGrcPeriod() && grcStartDate != null
-				&& grcStartDate.compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
+				&& grcStartDate.compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
 
 			// Load Grace period profit dates
 			finScheduleData = getSchedule(finScheduleData, serviceInst.getGrcPftFrq(), grcStartDate,
@@ -1033,14 +1061,10 @@ public class ScheduleGenerator {
 								|| financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PFTCAP)
 								|| financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PFTCPZ)) {
 
-							schedule.setPftOnSchDate(true);
-
-							//FIXME: PV why both if and else have some code
-							/*
-							 * if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0 &&
-							 * FrequencyUtil .isFrqDate(financeMain.getGrcPftFrq(), financeMain.getGrcPeriodEndDate()))
-							 * { schedule.setPftOnSchDate(true); } else { schedule.setPftOnSchDate(true); }
-							 */
+							// TODO : SATYA - Re Verification Required
+							if (FrequencyUtil.isFrqDate(financeMain.getGrcPftFrq(), schedule.getSchDate())) {
+								schedule.setPftOnSchDate(true);
+							}
 						}
 
 						schedule.setRepayOnSchDate(false);
@@ -1414,12 +1438,7 @@ public class ScheduleGenerator {
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
 	}
-	
-	/**
-	 * 
-	 * @param date
-	 * @return
-	 */
+
 	private static Date formatDate(Date date) {
 		return DateUtility.getDate(DateUtility.format(date, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);

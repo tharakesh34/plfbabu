@@ -15,6 +15,7 @@ import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -329,14 +330,18 @@ public class CustomizeFinanceDataValidation {
 					return errorDetails;
 				}
 				//validate AccNumber length
-				if (StringUtils.isNotBlank(mandate.getBankCode())) {
-					int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
-					if (accNoLength != 0) {
-						if (mandate.getAccNumber().length() != accNoLength) {
-							String[] valueParm = new String[2];
+				if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getAccNumber())) {
+					BankDetail bankDetail = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
+					if (bankDetail != null) {
+						int maxAccNoLength = bankDetail.getAccNoLength();
+						int minAccNoLength = bankDetail.getMinAccNoLength();
+						if (mandate.getAccNumber().length() < minAccNoLength
+								|| mandate.getAccNumber().length() > maxAccNoLength) {
+							String[] valueParm = new String[3];
 							valueParm[0] = "AccountNumber(Mandate)";
-							valueParm[1] = String.valueOf(accNoLength) + " characters";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+							valueParm[1] = String.valueOf(minAccNoLength) + " characters";
+							valueParm[2] = String.valueOf(maxAccNoLength) + " characters";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("BNK001", valueParm)));
 							return errorDetails;
 						}
 					}

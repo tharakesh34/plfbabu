@@ -768,6 +768,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		BigDecimal excessAmount = BigDecimal.ZERO;
 		BigDecimal emiInAdavance = BigDecimal.ZERO;
+		BigDecimal advInst = BigDecimal.ZERO;
 		BigDecimal cashCtrl = BigDecimal.ZERO;
 		BigDecimal dsf = BigDecimal.ZERO;
 
@@ -858,6 +859,9 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			case RepayConstants.EXAMOUNTTYPE_EMIINADV:
 				emiInAdavance = emiInAdavance.add(paymentDetail.getAmount());
 				break;
+			case RepayConstants.EXAMOUNTTYPE_ADVINT:
+				advInst = emiInAdavance.add(paymentDetail.getAmount());
+				break;
 			case RepayConstants.EXAMOUNTTYPE_CASHCLT:
 				cashCtrl = cashCtrl.add(paymentDetail.getAmount());
 				break;
@@ -871,6 +875,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			eventMapping.put("pi_excessAmount", excessAmount);
 			eventMapping.put("pi_emiInAdvance", emiInAdavance);
 			eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
+			eventMapping.put("pi_advInst", advInst);
 			eventMapping.put("CASHCLT_P", cashCtrl);
 			eventMapping.put("DSF_P", dsf);
 

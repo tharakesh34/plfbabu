@@ -925,12 +925,12 @@ public class CDScheduleCalculator {
 			presentValue = CalculationUtil.calLoanPV(promotion.getActualInterestRate(), remainingTerms, emi,
 					fm.getRepayFrq(), fm.getCalRoundingMode(), fm.getRoundingTarget());
 
-			if (advanceEMI.compareTo(BigDecimal.ZERO) == 0) {
+			if (advanceEMI.compareTo(BigDecimal.ZERO) == 0
+					&& promotion.getSubventionRate().compareTo(BigDecimal.ZERO) == 0) {
 				presentValue = totPayment;
-			} else if (totPayment.compareTo(BigDecimal.ZERO) > 0
+			} else if (advanceEMI.compareTo(BigDecimal.ZERO) > 0 && totPayment.compareTo(BigDecimal.ZERO) > 0
 					&& (promotion.getActualInterestRate().compareTo(promotion.getSubventionRate()) != 0)) {
 				presentValue = totDuePayment;
-
 			}
 
 			subvention = totDuePayment.subtract(presentValue);

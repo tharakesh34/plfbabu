@@ -96,6 +96,7 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
@@ -190,10 +191,12 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 	protected Listbox amountCodeListbox;
 	protected Listbox feeCodeListbox;
+	protected Listbox vasCodeListbox;
 	protected Listbox expenseCodeListbox;
 	protected Listbox operator;
 	protected Button btnCopyTo;
 	protected Tab tab_Fee;
+	protected Tab tab_Vas;
 	protected Tab tab_expense;
 
 	protected Grid grid_Basicdetails;
@@ -287,6 +290,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		int listboxHeight = borderLayoutHeight - dialogHeight;
 		this.amountCodeListbox.setHeight((listboxHeight + 15) + "px");
 		this.feeCodeListbox.setHeight((listboxHeight + 15) + "px");
+		this.vasCodeListbox.setHeight((listboxHeight + 15) + "px");
 		this.expenseCodeListbox.setHeight((listboxHeight + 15) + "px");
 		this.amountRule.setHeight((listboxHeight + 40) + "px");
 		this.operator.setHeight((listboxHeight + 15) + "px");
@@ -938,6 +942,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.column_CustomerData.setWidth("0%");
 			this.amountCodeListbox.setVisible(false);
 			this.feeCodeListbox.setVisible(false);
+			this.vasCodeListbox.setVisible(false);
 			this.expenseCodeListbox.setVisible(false);
 			this.column_RULE.setWidth("100%");
 			this.column_Operators.setWidth("0%");
@@ -947,6 +952,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.column_CustomerData.setWidth("30%");
 			this.amountCodeListbox.setVisible(true);
 			this.feeCodeListbox.setVisible(true);
+			this.vasCodeListbox.setVisible(true);
 			this.expenseCodeListbox.setVisible(true);
 			this.column_RULE.setWidth("50%");
 			this.column_Operators.setWidth("20%");
@@ -1681,6 +1687,79 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void getVasCodes(String allowedevent) {
+		logger.debug("Entering");
+
+		this.vasCodeListbox.getItems().clear();
+		List<VASConfiguration> vasRulesList = new ArrayList<>();
+		JdbcSearchObject<VASConfiguration> searchObj = new JdbcSearchObject<>(VASConfiguration.class);
+		searchObj.addTabelName("VasStructure");
+		searchObj.addFilter(new Filter("Active", 1, Filter.OP_EQUAL));
+
+		vasRulesList = this.pagedListService.getBySearchObject(searchObj);
+		Listitem item = null;
+		Listgroup group = null;
+		Listcell lc = null;
+
+		Map<String, String> vasMap = fillVasDetails();
+		List<String> vasMapKeys = new ArrayList<>(vasMap.keySet());
+
+		if (vasRulesList.isEmpty()) {
+			this.tab_Vas.setVisible(false);
+		} else {
+			String ruleCode = "";
+			String ruleCodeDesc = "";
+			for (String vasMapKey : vasMapKeys) {
+				ruleCode = "VAS" + vasMapKey;
+				ruleCodeDesc = "Total " + vasMap.get(vasMapKey);
+
+				item = new Listitem();
+				lc = new Listcell(ruleCode);
+
+				if (!amountcodes.contains(ruleCode)) {
+					amountcodes.add(ruleCode);
+				}
+
+				lc.setParent(item);
+				lc = new Listcell(ruleCodeDesc);
+				lc.setParent(item);
+				this.vasCodeListbox.appendChild(item);
+			}
+		}
+
+		for (VASConfiguration vasRule : vasRulesList) {
+			String vasTypeCode = vasRule.getProductCode();
+			String vasTypeDesc = vasRule.getProductDesc();
+
+			group = new Listgroup(vasTypeCode);
+			this.vasCodeListbox.appendChild(group);
+			group.setOpen(false);
+
+			String ruleCode = "";
+			String ruleCodeDesc = "";
+
+			for (String vasMapKey : vasMapKeys) {
+
+				ruleCode = "VAS_" + vasTypeCode + vasMapKey;
+				ruleCodeDesc = vasMap.get(vasMapKey) + "(" + vasTypeDesc + ")";
+
+				item = new Listitem();
+				lc = new Listcell(ruleCode);
+
+				if (!amountcodes.contains(ruleCode)) {
+					amountcodes.add(ruleCode);
+				}
+
+				lc.setParent(item);
+				lc = new Listcell(ruleCodeDesc);
+				lc.setParent(item);
+				this.vasCodeListbox.appendChild(item);
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+
 	/**
 	 * Adding the Fee Extensions and labels
 	 * 
@@ -1760,6 +1839,19 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		feeMap.put("_IGST_R", Labels.getLabel("label_TransactionEntryDialog_R_IGST"));
 
 		return feeMap;
+	}
+
+	private Map<String, String> fillVasDetails() {
+
+		Map<String, String> vasMap = new HashMap<>();
+
+		vasMap.put("_DD", Labels.getLabel("label_TransactionEntryDialog_VAS_DD"));
+		vasMap.put("_AF", Labels.getLabel("label_TransactionEntryDialog_VAS_AF"));
+		vasMap.put("_P", Labels.getLabel("label_TransactionEntryDialog_VAS_P"));
+		vasMap.put("_W", Labels.getLabel("label_TransactionEntryDialog_VAS_W"));
+
+		return vasMap;
+
 	}
 
 	/**
@@ -2117,6 +2209,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.amountcodes.clear();
 		getAmountCodes(getTransactionEntry().getLovDescEventCodeName());
 		getFeeCodes();
+		getVasCodes(getTransactionEntry().getLovDescEventCodeName());
 		if (tab_expense.isVisible()) {
 			getExpenseCodes();
 		}

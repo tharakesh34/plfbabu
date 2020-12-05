@@ -253,6 +253,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		case "menu_Item_ManualProvisioningEnquiry":
 		case "menu_Item_NPAProvisionReport":
 			return ImplementationConstants.ALLOW_NPA_PROVISION;
+		case "menu_Item_LoanDownSizing":
+			return ImplementationConstants.ALLOW_LOAN_DOWNSIZING;
 
 		default:
 			break;

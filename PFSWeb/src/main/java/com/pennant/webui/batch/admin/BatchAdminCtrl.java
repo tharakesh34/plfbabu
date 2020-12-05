@@ -7,9 +7,11 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.job.flow.FlowExecutionStatus;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +85,7 @@ import com.pennanttech.pff.process.collection.CollectionDataDownloadProcess;
  */
 public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = 4309463490869641570L;
-	private static final Logger logger = Logger.getLogger(BatchAdminCtrl.class);
+	private static Logger logger = LogManager.getLogger(BatchAdminCtrl.class);
 
 	protected Window window_BatchAdmin;
 	protected Textbox lable_LastBusiness_Date;
@@ -418,6 +420,35 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		if (StringUtils.equals("I", status)) {
 			MessageUtil.showError("Auto Approval of Disbursements is InProcess..");
 			return;
+		}
+
+		if (ImplementationConstants.ALLOW_EOD_INTERVAL_VALIDATION) {
+
+			if (this.jobExecution != null && StringUtils.equals(this.jobExecution.getExitStatus().getExitCode(),
+					FlowExecutionStatus.COMPLETED.toString())) {
+				int eODTimeInterval = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_INTERVAL_TIME);
+				Date sysDate = DateUtil.getSysDate();
+				Date lastJobExecutionTime = jobExecution.getEndTime();
+				if (eODTimeInterval != 0) {
+					int days = DateUtil.getDaysBetween(sysDate, lastJobExecutionTime);
+					int hours = 0;
+
+					if (days == 0) {
+						hours = hours + Integer
+								.valueOf(DateUtility.timeBetween(DateUtil.getSysDate(), lastJobExecutionTime, "HH"));
+					} else {
+						hours = days * 24;
+						lastJobExecutionTime = DateUtility.addDays(lastJobExecutionTime, days);
+						hours = hours + Integer
+								.valueOf(DateUtility.timeBetween(DateUtil.getSysDate(), lastJobExecutionTime, "HH"));
+					}
+
+					if (hours < eODTimeInterval) {
+						MessageUtil.showError(Labels.getLabel("label_EOD_BEFORE_TIME") + eODTimeInterval + " hours");
+						return;
+					}
+				}
+			}
 		}
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {

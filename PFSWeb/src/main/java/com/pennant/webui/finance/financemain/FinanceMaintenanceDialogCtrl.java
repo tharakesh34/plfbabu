@@ -76,7 +76,6 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -740,6 +739,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		} else {
 			this.row_ManualSchedule.setVisible(false);
 		}
+		this.underConstruction.setChecked(aFinanceMain.isAlwGrcAdj());
 		this.underConstruction.setChecked(aFinanceMain.isAlwGrcAdj());
 		this.finAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), format));
 		this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(), format));
@@ -2078,17 +2078,15 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		boolean isNew = false;
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		Radio selectedUserAction = this.userAction.getSelectedItem();
-		if (selectedUserAction != null) {
-			if ("Save".equalsIgnoreCase(selectedUserAction.getLabel())
-					|| "Cancel".equalsIgnoreCase(selectedUserAction.getLabel())
-					|| selectedUserAction.getLabel().contains("Reject")
-					|| selectedUserAction.getLabel().contains("Resubmit")
-					|| selectedUserAction.getLabel().contains("Decline")) {
+		String actionLabel = this.userAction.getSelectedItem().getLabel();
+		if (actionLabel != null) {
+			if ("Save".equalsIgnoreCase(actionLabel) || "Cancel".equalsIgnoreCase(actionLabel)
+					|| actionLabel.contains("Reject") || actionLabel.contains("Resubmit")
+					|| actionLabel.contains("Decline")) {
 				recSave = true;
 				aFinanceDetail.setActionSave(true);
 			}
-			aFinanceDetail.setUserAction(selectedUserAction.getLabel());
+			aFinanceDetail.setUserAction(actionLabel);
 		}
 
 		aFinanceDetail.setAccountingEventCode(eventCode);
@@ -2104,19 +2102,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// fill the financeMain object with the components data
 		doWriteComponentsToBean(aFinanceDetail);
 
-		if (selectedUserAction != null) {
-			if (!("Cancel".equalsIgnoreCase(selectedUserAction.getLabel())
-					|| selectedUserAction.getLabel().contains("Reject")
-					|| selectedUserAction.getLabel().contains("Resubmit")
-					|| selectedUserAction.getLabel().contains("Decline"))) {
-
-				if (!(StringUtils.equals(PennantConstants.TRAN_WF, aFinanceMain.getClosingStatus()))) {
-					boolean isActive = getFinanceMaintenanceService().isFinActive(aFinanceMain.getFinReference());
-					if (!isActive) {
-						MessageUtil.showError(
-								"Loan is in inactive state. Please check and cancel the basic details action.");
-						return;
-					}
+		if (actionLabel != null && !("Cancel".equalsIgnoreCase(actionLabel) || actionLabel.contains("Reject")
+				|| actionLabel.contains("Resubmit") || actionLabel.contains("Decline"))) {
+			if (!(PennantConstants.TRAN_WF.equals(aFinanceMain.getClosingStatus()))) {
+				if (!financeMaintenanceService.isFinActive(aFinanceMain.getFinReference())) {
+					MessageUtil.showError(Labels.getLabel("label_Inactive_Loans"));
+					return;
 				}
 			}
 		}
@@ -2367,7 +2358,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				Clients.showNotification(msg, "info", null, null, -1);
 
 				// Mail Alert Notification for Customer/Dealer/Provider...etc
-				if (!"Save".equalsIgnoreCase(selectedUserAction.getLabel())) {
+				if (!"Save".equalsIgnoreCase(actionLabel)) {
 
 					FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 					Notification notification = new Notification();

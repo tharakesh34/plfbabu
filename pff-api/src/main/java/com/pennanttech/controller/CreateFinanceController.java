@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,7 +20,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.aspose.words.SaveFormat;
@@ -56,6 +58,8 @@ import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.dao.rmtmasters.PromotionDAO;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
@@ -126,6 +130,7 @@ import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.Notifications;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.service.applicationmaster.AgreementDefinitionService;
@@ -157,6 +162,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
@@ -184,7 +190,7 @@ import com.pennanttech.ws.model.financetype.FinanceInquiry;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CreateFinanceController extends SummaryDetailService {
-	private static final Logger logger = Logger.getLogger(CreateFinanceController.class);
+	private static final Logger logger = LogManager.getLogger(CreateFinanceController.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private CustomerDetailsService customerDetailsService;
@@ -236,6 +242,8 @@ public class CreateFinanceController extends SummaryDetailService {
 	private VehicleDealerDAO vehicleDealerDao;
 	private VehicleDealer vehicleDealer;
 	private CovenantTypeDAO covenantTypeDAO;
+	private PromotionDAO promotionDAO;
+	private RuleDAO ruleDAO;
 
 	/**
 	 * Method for process create finance request
@@ -366,7 +374,8 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			doSetRequiredDetails(financeDetail, loanWithWIF, financeMain.getUserDetails(), stp, false, false);
 			// PSD #146217 Disbursal Instruction is not getting created.
-			// Disbursement Instruction is calculation fails if alwBpiTreatment is true so calling this after schedule calculation.
+			// Disbursement Instruction is calculation fails if alwBpiTreatment
+			// is true so calling this after schedule calculation.
 			if (!financeMain.isAlwBPI()) {
 				if (stp) {
 					finScheduleData.getDisbursementDetails().clear();
@@ -410,6 +419,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					financeMain.setLovDescIsSchdGenerated(true);
 
 				} else if (StringUtils.equals(FinanceConstants.PRODUCT_CD, financeMain.getProductCategory())) {
+					doSetDueDate(financeMain);
 					finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
 					if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
 						finScheduleData = CDScheduleCalculator.getCalSchd(finScheduleData);
@@ -489,7 +499,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				schdDetail.setNextRoleCode(roleCode);
 				schdDetail.setTaskId(taskid);
 				schdDetail.setNextTaskId(financeMain.getNextTaskId());
-				//set the finreference to the financescheduledetails
+				// set the finreference to the financescheduledetails
 				schdDetail.setFinReference(financeMain.getFinReference());
 				if (StringUtils.isBlank(schdDetail.getBaseRate())) {
 					schdDetail.setBaseRate(null);
@@ -1533,7 +1543,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 
-		//pslDetails defaults
+		// pslDetails defaults
 		PSLDetail pslDetail = financeDetail.getPslDetail();
 		if (pslDetail != null) {
 			if (!moveLoanStage) {
@@ -2466,13 +2476,12 @@ public class CreateFinanceController extends SummaryDetailService {
 					FinanceConstants.FINSER_EVENT_ORG, "");
 
 			if (financeDetail != null) {
-				FinScheduleData scheduleData = financeDetail.getFinScheduleData();
-				FinanceMain financeMain = scheduleData.getFinanceMain();
-
-				if (!financeMain.isFinIsActive()) {
-					financeMain.setClosedDate(financeMainService.getClosedDateByFinRef(finReference));
+				FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
+				if (financeDetail.getFinScheduleData() != null && fm != null) {
+					if (!fm.isFinIsActive()) {
+						fm.setClosedDate(financeMainService.getFinClosedDate(finReference));
+					}
 				}
-
 				Mandate mandate = financeDetail.getMandate();
 				if (mandate != null) {
 					long mandateId = mandate.getMandateID();
@@ -2493,7 +2502,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						}
 					}
 					mandate.setTotEMIAmount(totEMIAmount);
-					if (financeDetail.getFinScheduleData().getFinanceMain().isPlanEMIHAlw()) {
+					if (fm.isPlanEMIHAlw()) {
 						processPlanEmiDays(finReference, financeDetail);
 					}
 				}
@@ -3022,7 +3031,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 				if (advisedFees.getWorkflowId() == 0) {
 					totalAmount = feeDetail.getActualAmount().subtract(feeDetail.getPaidAmount())
-							.subtract(feeDetail.getWaivedAmount());
+							.subtract(advisedFees.getWaivedAmount());
 
 					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(advisedFees.getTaxComponent())) {
 						taxSplit = GSTCalculator.getExclusiveGST(totalAmount, taxPercentages);
@@ -3032,7 +3041,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					}
 					BigDecimal tdsAmount = BigDecimal.ZERO;
 
-					//if tds applicable
+					// if tds applicable
 					if (advisedFees.isTdsReq()
 							&& financeDetail.getFinScheduleData().getFinanceMain().isTDSApplicable()) {
 						BigDecimal taxableAmount = BigDecimal.ZERO;
@@ -3809,7 +3818,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			}
 
-			//setting the values for the co_applicant
+			// setting the values for the co_applicant
 			List<JointAccountDetail> jountAccountDetailList = finDetail.getJountAccountDetailList();
 
 			for (JointAccountDetail detail : jountAccountDetailList) {
@@ -3862,6 +3871,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				finDetail.setExtendedFieldRender(exdFieldRender);
 			}
 
+			finDetail.setPromotion(promotionDAO.getPromotionByReferenceId(financeMain.getPromotionSeqId(), "_AView"));
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, finDetail);
 			AuditHeader auditHeader = new AuditHeader(finDetail.getFinReference(), null, null, null, auditDetail,
 					finDetail.getFinScheduleData().getFinanceMain().getUserDetails(),
@@ -4010,6 +4020,59 @@ public class CreateFinanceController extends SummaryDetailService {
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		return APIErrorHandlerService.getSuccessStatus();
+
+	}
+
+	@SuppressWarnings("deprecation")
+	private void doSetDueDate(FinanceMain financeMain) {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, Object> declaredMap = financeMain.getDeclaredFieldValues();
+		declaredMap.put("fm_finStartDate", new SimpleDateFormat("dd-MM-yyyy").format(financeMain.getFinStartDate()));
+		declaredMap.put("fm_finType ", financeMain.getFinType());
+
+		int result = 0;
+		try {
+			Rule rule = ruleDAO.getRuleByID(RuleConstants.MODULE_DUEDATERULE, RuleConstants.MODULE_DUEDATERULE,
+					RuleConstants.EVENT_DUEDATERULE, "");
+			if (rule != null) {
+				result = (Integer) ruleExecutionUtil.executeRule(rule.getSQLRule(), declaredMap,
+						financeMain.getFinCcy(), RuleReturnType.INTEGER);
+
+				Date nextRepayDate = financeMain.getFinStartDate();
+				nextRepayDate = DateUtility.addMonths(nextRepayDate, 1);
+				Date maturityDate = financeMain.getMaturityDate();
+
+				if (result != 0) {
+					nextRepayDate.setDate(result);
+					financeMain.setNextRepayDate(nextRepayDate);
+					financeMain.setNextRepayPftDate(nextRepayDate);
+					maturityDate.setDate(result);
+					financeMain.setMaturityDate(maturityDate);
+					String frq = String.valueOf(result);
+					if (frq.length() > 1) {
+						frq = "M00" + frq;
+					} else {
+						frq = "M000" + frq;
+					}
+					financeMain.setRepayPftFrq(frq);
+					financeMain.setRepayFrq(frq);
+				}
+
+				/*
+				 * if (result == 2) { nextRepayDate.setDate(result); financeMain.setNextRepayDate(nextRepayDate);
+				 * financeMain.setNextRepayPftDate(nextRepayDate); financeMain.setRepayPftFrq("M0002");
+				 * financeMain.setRepayFrq("M0002"); } else if (result == 15) { nextRepayDate.setDate(result);
+				 * financeMain.setNextRepayDate(nextRepayDate); financeMain.setNextRepayPftDate(nextRepayDate);
+				 * financeMain.setRepayPftFrq("M0015"); financeMain.setRepayFrq("M0015"); }
+				 */
+			}
+		} catch (Exception e) {
+			APIErrorHandlerService.logUnhandledException(e);
+			logger.error(Literal.EXCEPTION, e);
+			result = 0;
+		}
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -4459,6 +4522,10 @@ public class CreateFinanceController extends SummaryDetailService {
 	@Autowired
 	public void setVehicleDealerDao(VehicleDealerDAO vehicleDealerDao) {
 		this.vehicleDealerDao = vehicleDealerDao;
+	}
+
+	public void setPromotionDAO(PromotionDAO promotionDAO) {
+		this.promotionDAO = promotionDAO;
 	}
 
 	public void setCovenantTypeDAO(CovenantTypeDAO covenantTypeDAO) {

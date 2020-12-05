@@ -225,8 +225,8 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 								} else if ("AMOUNT".equals(attr.getType())) {
 									if (rs.getBigDecimal(columnName) != null) {
 										BigDecimal amount = rs.getBigDecimal(columnName);
-										BigDecimal formattedamount = PennantApplicationUtil.formateAmount(amount, 2);
-										map.put(columnName, formattedamount.toString());
+										String formattedamount = PennantApplicationUtil.amountFormate(amount, 2);
+										map.put(columnName, formattedamount);
 									}
 								} else {
 									map.put(columnName, rs.getString(columnName));

@@ -67,6 +67,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		BigDecimal oldTotalPft = financeMain.getTotalGrossPft();
+		BigDecimal disbAmount = BigDecimal.ZERO;
 
 		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
 		if (financeScheduleDetails.size() > 0) {
@@ -118,30 +119,29 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		//financeMain.setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 		finSchData = ScheduleCalculator.addDisbursement(finScheduleData, amount, addFeeFinance, alwAssetUtilize);
 		
-		// Under Construction : End Grace Period After Full Disbursement
-		BigDecimal disbAmount = BigDecimal.ZERO;
-
 		for (FinanceDisbursement curDisb : finScheduleData.getDisbursementDetails()) {
 
-			if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
-				continue;
-			}
-
+			/*
+			 * if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus()) ||
+			 * StringUtils.equals(DisbursementConstants.DISBTYPE_FLEXI, curDisb.getDisbType())) { continue; }
+			 */
 			disbAmount = disbAmount.add(curDisb.getDisbAmount());
 		}
-		
-		if (financeMain.isAllowGrcPeriod() && financeMain.isEndGrcPeriodAftrFullDisb()) {
-			if (financeMain.getFinAssetValue().compareTo(disbAmount.add(amount)) == 0
-					&& financeMain.getGrcPeriodEndDate().compareTo(financeMain.getEventFromDate()) > 0) {
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		if (finMain.isAllowGrcPeriod() && finMain.isEndGrcPeriodAftrFullDisb()) {
+			if (finMain.getFinAssetValue().compareTo(disbAmount.add(amount)) == 0
+					&& finMain.getGrcPeriodEndDate().compareTo(finMain.getEventFromDate()) > 0) {
 
 				// reset grace n repay fields and end grace period
-				finSchData = getChangeGraceEndService().changeGraceEnd(finSchData, true);
+				finSchData = changeGraceEndService.changeGraceEnd(finSchData, true);
 			}
 		} else {
+
+			// Plan EMI Holidays Resetting after Add Disbursement
 			if (finSchData.getFinanceMain().isPlanEMIHAlw()) {
-				finSchData.getFinanceMain().setEventFromDate(financeMain.getRecalFromDate());
+				finSchData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getRecalFromDate());
 				finSchData.getFinanceMain().setEventToDate(finSchData.getFinanceMain().getMaturityDate());
-				finSchData.getFinanceMain().setRecalFromDate(financeMain.getRecalFromDate());
+				finSchData.getFinanceMain().setRecalFromDate(finScheduleData.getFinanceMain().getRecalFromDate());
 				finSchData.getFinanceMain().setRecalToDate(finSchData.getFinanceMain().getMaturityDate());
 				finSchData.getFinanceMain().setRecalSchdMethod(finSchData.getFinanceMain().getScheduleMethod());
 
@@ -153,8 +153,6 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				}
 			}
 		}
-
-		// Plan EMI Holidays Resetting after Add Disbursement
 		
 
 		BigDecimal newTotalPft = finSchData.getFinanceMain().getTotalGrossPft();
@@ -199,10 +197,11 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			return auditDetail;
 		}
 		// It shouldn't be past date when compare to appdate
-		if (fromDate.compareTo(DateUtility.getAppDate()) != 0) {// || fromDate.compareTo(financeMain.getMaturityDate()) >= 0
+		Date appDate = SysParamUtil.getAppDate();
+		if (fromDate.compareTo(appDate) != 0) {// || fromDate.compareTo(financeMain.getMaturityDate()) >= 0
 			String[] valueParm = new String[2];
 			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
-			valueParm[1] = "application Date:" + DateUtility.formatToShortDate(DateUtility.getAppDate());
+			valueParm[1] = "application Date:" + DateUtility.formatToShortDate(appDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
 		}
 
@@ -247,7 +246,6 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			// Schedule Outstanding amount calculation
 			List<FinanceScheduleDetail> schList = finScheduleData.getFinanceScheduleDetails();
 			BigDecimal closingbal = BigDecimal.ZERO;
-			BigDecimal remainingBal = BigDecimal.ZERO;
 			for (int i = 0; i < schList.size(); i++) {
 				if (DateUtility.compare(schList.get(i).getSchDate(), fromDate) > 0) {
 					break;
@@ -582,10 +580,6 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
-	}
-
-	public ChangeGraceEndService getChangeGraceEndService() {
-		return changeGraceEndService;
 	}
 
 	public void setChangeGraceEndService(ChangeGraceEndService changeGraceEndService) {

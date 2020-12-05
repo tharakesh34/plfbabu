@@ -28,7 +28,7 @@ public class RuleConstants {
 	public static final String MODULE_LPPRULE = "LPPRULE"; // LPP Rules
 	public static final String MODULE_AMORTIZATIONMETHOD = "AMZMTH";
 	public static final String MODULE_STGACRULE = "STGRULE"; // Stage Accounting
-																// Rule
+	public static final String MODULE_DUEDATERULE = "DDLRULE";
 	public static final String MODULE_BRERULE = "BRERULE";
 
 	// Rule Event Codes
@@ -60,6 +60,7 @@ public class RuleConstants {
 	public static final String EVENT_AMORTIZATIONMETHOD = "AMZMTH";
 	public static final String EVENT_STAGEACCOUNTING = "STGRULE"; // Stage
 																	// Accounting
+	public static final String EVENT_DUEDATERULE = "DDLRULE";
 
 	public static final String RETURNTYPE_DECIMAL = "D";
 	public static final String RETURNTYPE_STRING = "S";

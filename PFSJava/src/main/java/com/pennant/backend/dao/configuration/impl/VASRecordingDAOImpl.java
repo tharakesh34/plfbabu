@@ -626,7 +626,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 				vas.setManufacturerDesc(rs.getString("ManufacturerDesc"));
 				vas.setFinType(rs.getString("finType"));
 				vas.setFlpDays(rs.getInt("FlpDays"));
-				vas.setFlpDays(rs.getInt("FeeAccounting"));
+				vas.setFeeAccounting(rs.getInt("FeeAccounting"));
 			}
 
 			return vas;

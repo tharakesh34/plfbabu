@@ -371,8 +371,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private int thrldtoMaintainGrcPrd;
 	private boolean alwLoanSplit;
 	private String splitLoanType;
-
-	//Inst based schd
 	private boolean instBasedSchd;
 
 	public boolean isNew() {

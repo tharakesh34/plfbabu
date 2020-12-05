@@ -64,7 +64,7 @@
 									<label id="label_RateChangeDialog_ProfitDaysBasis" value="${c:l('label_RateChangeDialog_ProfitDaysBasis.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<combobox id="profitDaysBasis" width="120px" readonly="true" tabindex="-1" />
+										<combobox id="profitDaysBasis" width="120px" readonly="true" disabled="true" tabindex="-1" />
 									</hbox>
 								</row>
 								<row id="rateAmountRow" visible="false">

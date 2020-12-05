@@ -343,7 +343,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	public Promotion getPromotionByReferenceId(long referenceId, int moduleId) {
 		logger.debug(Literal.ENTERING);
 
-		Promotion promotion = getPromotionDAO().getPromotionById(referenceId, "_View");
+		Promotion promotion = getPromotionDAO().getPromotionByReferenceId(referenceId, "_View");
 		if (promotion != null) {
 			promotion.setFinTypeFeesList(
 					getFinTypeFeesService().getFinTypeFeesByRef(promotion.getReferenceID(), moduleId));

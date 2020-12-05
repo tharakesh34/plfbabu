@@ -100,14 +100,14 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" PaymentInstructionId, PaymentId, PaymentType, PaymentAmount, Remarks, PartnerBankId");
 		sql.append(", IssuingBank, FavourName, FavourNumber, PayableLoc, PrintingLoc, ValueDate, PostDate");
-		sql.append(", Status, TransactionRef, BankBranchId, AcctHolderName, AccountNo, PhoneCountryCode");
+		sql.append(", Status, RejectReason, TransactionRef, BankBranchId, AcctHolderName, AccountNo, PhoneCountryCode");
 		sql.append(", PhoneNumber, ClearingDate, Active, PaymentCCy, RejectReason");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", PartnerBankCode, PartnerBankName, BankBranchIFSC, BankBranchCode");
-			sql.append(", IssuingBankName, PCCityName, BranchDesc, BankName");
+			sql.append(", IssuingBankName, PCCityName, BranchDesc, BankName, BranchBankCode");
 			sql.append(", PartnerBankAc, PartnerBankAcType");
 		}
 
@@ -397,6 +397,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 				fpd.setBankName(rs.getString("BankName"));
 				fpd.setPartnerBankAc(rs.getString("PartnerBankAc"));
 				fpd.setPartnerBankAcType(rs.getString("PartnerBankAcType"));
+				fpd.setBranchBankCode(rs.getString("BranchBankCode"));
 			}
 
 			return fpd;

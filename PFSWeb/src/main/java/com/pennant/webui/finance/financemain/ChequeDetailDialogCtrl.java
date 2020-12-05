@@ -90,6 +90,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -179,7 +180,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private FinanceDetail financeDetail;
 	private List<ChequeDetail> chequeDetailList;
 	private Tab parenttab = null;
-	private int accNoLength;
+	private int maxAccNoLength;
+	private int minAccNoLength;
 	private int ccyEditField = PennantConstants.defaultCCYDecPos;
 	private String ccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 	private BankDetailService bankDetailService;
@@ -195,6 +197,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private transient PennyDropService pennyDropService;
 	private transient BankAccountValidationService bankAccountValidationService;
 	protected Button btnFetchAccountDetails;
+	private BankDetail bankDetail;
 
 	/**
 	 * default constructor.<br>
@@ -745,13 +748,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				this.city.setValue(details.getCity());
 				this.cityName.setValue(details.getPCCityName());
 				if (StringUtils.isNotBlank(details.getBankName())) {
-					this.accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+					this.bankDetail = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+					this.maxAccNoLength = this.bankDetail.getAccNoLength();
+					this.minAccNoLength = this.bankDetail.getMinAccNoLength();
 				}
-				if (accNoLength != 0) {
-					this.accNumber.setMaxlength(accNoLength);
-				} else {
-					this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
-				}
+				this.accNumber.setMaxlength(maxAccNoLength);
 			}
 		}
 		logger.debug(Literal.LEAVING + event.toString());
@@ -783,6 +784,21 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				details.setIFSC(chequeDetail.getIfsc());
 				details.setCity(chequeDetail.getCity());
 			}
+		}
+
+		if (chequeDetails != null && !chequeDetails.isEmpty()) {
+			ChequeDetail detail = chequeDetails.get(0);
+			this.accNumber.setValue(detail.getAccountNo());
+			this.amount.setValue(PennantApplicationUtil.formateAmount(detail.getAmount(), ccyEditField));
+			this.accHolderName.setValue(detail.getAccHolderName());
+			this.chequeSerialNo.setValue(detail.getChequeSerialNo());
+			this.bankBranchID.setValue(String.valueOf(detail.getBankBranchID()));
+			this.noOfCheques.setValue(aChequeHeader.getNoOfCheques());
+			this.accountType.setValue(detail.getAccountType());
+			this.micr.setValue(detail.getMicr());
+			this.ifsc.setValue(detail.getIfsc());
+			this.city.setValue(detail.getCity());
+			this.chequeType.setValue(detail.getChequeType());
 		}
 
 		doFillChequeDetails(listBoxChequeDetail, aChequeHeader.getChequeDetailList());
@@ -1073,6 +1089,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			this.totAmount.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_ChequeDetailDialog_Amount.value"), ccyEditField, true, false));
 		}
+
+		if (!this.accNumber.isReadonly()) {
+			this.accNumber
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ChequeDetailDialog_AccNumber.value"),
+							null, true, minAccNoLength, maxAccNoLength));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1106,7 +1129,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		if (!this.accHolderName.isReadonly()) {
 			this.accHolderName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_ChequeDetailDialog_AccHolderName.value"),
-							PennantRegularExpressions.REGEX_NAME, true));
+							PennantRegularExpressions.REGEX_CHEQUE_NAME, true));
 		}
 
 		// Bank Branch ID
@@ -1122,9 +1145,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		}
 		// Account Number
 		if (!this.accNumber.isReadonly()) {
-			this.accNumber
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_ChequeDetailDialog_AccNumber.value"),
-							PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true, this.accNoLength));
+			this.accNumber.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ChequeDetailDialog_AccNumber.value"),
+					PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true, this.minAccNoLength, this.maxAccNoLength));
 		}
 		// Cheque Serial number
 		if (!this.chequeSerialNo.isReadonly()) {
@@ -1684,8 +1707,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		for (Listitem listitem : listBoxChequeDetail.getItems()) {
 			list = listitem.getChildren();
 			chequeType = list.get(0);
-			Listcell status = list.get(8);
-			Textbox chequeStatus = (Textbox) status.getFirstChild();
+			//Listcell status = list.get(8);
+			//Textbox chequeStatus = (Textbox) status.getFirstChild();
 
 			if (!validate) {
 				for (ChequeDetail chequeDetail : chequeDetails) {
@@ -1761,33 +1784,37 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 										wve.add(e);
 									}
 								}
-								boolean isTDS = false;
-								BigDecimal repayAmount = detail.getRepayAmount();
-								BigDecimal emiAmounte = BigDecimal.ZERO;
-								if (detail.getTDSAmount() != null
-										&& detail.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
-									repayAmount = repayAmount.subtract(detail.getTDSAmount());
-									isTDS = true;
-								}
-								emiAmounte = PennantApplicationUtil.unFormateAmount(emiAmount.getActualValue(),
-										CurrencyUtil.getFormat(detail.getFinCcy()));
-								if (repayAmount.compareTo(emiAmounte) != 0) {
-									if (fromLoan) {
-										parenttab.setSelected(true);
+								Listcell statusLc = list.get(8);
+								Combobox status = (Combobox) statusLc.getFirstChild();
+								status.clearErrorMessage();
+								if (StringUtils.equals(getComboboxValue(status), PennantConstants.CHEQUESTATUS_NEW)) {
+									boolean isTDS = false;
+									BigDecimal repayAmount = detail.getRepayAmount();
+									BigDecimal emiAmounte = BigDecimal.ZERO;
+									if (detail.getTDSAmount() != null
+											&& detail.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
+										repayAmount = repayAmount.subtract(detail.getTDSAmount());
+										isTDS = true;
 									}
-									try {
-										if (isTDS) {
-											throw new WrongValueException(emiAmount,
-													Labels.getLabel("ChequeDetailDialog_EMI_TDS_Amount"));
-										} else if (!StringUtils.equalsIgnoreCase(chequeStatus.getValue(),
-												PennantConstants.RCD_STATUS_CANCELLED)) {
-											throw new WrongValueException(emiAmount,
-													Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
+									emiAmounte = PennantApplicationUtil.unFormateAmount(emiAmount.getActualValue(),
+											CurrencyUtil.getFormat(detail.getFinCcy()));
+									if (repayAmount.compareTo(emiAmounte) != 0) {
+										if (fromLoan) {
+											parenttab.setSelected(true);
 										}
+										try {
+											if (isTDS) {
+												throw new WrongValueException(emiAmount,
+														Labels.getLabel("ChequeDetailDialog_EMI_TDS_Amount"));
+											} else {
+												throw new WrongValueException(emiAmount,
+														Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
+											}
 
-									} catch (WrongValueException e) {
-										wve.add(e);
-										break;
+										} catch (WrongValueException e) {
+											wve.add(e);
+											break;
+										}
 									}
 								}
 							}
@@ -2474,14 +2501,14 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				}
 				this.city.setValue(details.getCity());
 				this.micr.setValue(details.getMicr());
+
 				if (StringUtils.isNotBlank(details.getBankName())) {
-					this.accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+					this.bankDetail = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+					this.maxAccNoLength = this.bankDetail.getAccNoLength();
+					this.minAccNoLength = this.bankDetail.getMinAccNoLength();
 				}
-				if (accNoLength != 0) {
-					this.accNumber.setMaxlength(accNoLength);
-				} else {
-					this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
-				}
+				this.accNumber.setMaxlength(maxAccNoLength);
+
 				BankBranch branch = new BankBranch();
 				if (details.getiFSC() != null) {
 					branch.setBankBranchID(details.getBankBranchID());

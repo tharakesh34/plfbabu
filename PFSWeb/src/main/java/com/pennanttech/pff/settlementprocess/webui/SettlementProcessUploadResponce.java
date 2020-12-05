@@ -2,9 +2,7 @@ package com.pennanttech.pff.settlementprocess.webui;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,13 +28,11 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
-import com.pennant.backend.model.finance.CashBackDetail;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CashBackProcessService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
@@ -223,43 +219,33 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
 
 			// DBD Amount Accounting Process
-			Promotion promotion = promotionDAO.getPromotionByReferenceId(finMain.getPromotionSeqId(), "");
-
-			if (promotion.isDbd() && !promotion.isDbdRtnd()) {
-
-				Date appDate = SysParamUtil.getAppDate();
-				Date cbDate = DateUtility.addMonths(finMain.getFinStartDate(), promotion.getDlrCbToCust());
-
-				if (DateUtility.compare(appDate, cbDate) >= 0) {
-
-					FeeType feeType = setFeeTypeData(promotion.getDbdFeeTypId());
-					CashBackDetail cashBackDetail = cashBackDetailDAO
-							.getManualAdviseIdByFinReference(finMain.getFinReference(), "DBD");
-					finMain.setLastMntBy(1000);
-					finMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					finMain.setFinCcy(SysParamUtil.getAppCurrency());
-
-					if (cashBackDetail != null) {
-						BigDecimal balAmount = cashBackDetail.getAmount();
-						// Cash Back amount adjustments
-						if (promotion.isKnckOffDueAmt()) {
-							try {
-								balAmount = cashBackProcessService.createReceiptOnCashBack(cashBackDetail);
-							} catch (Exception e) {
-								logger.error("Exception", e);
-							}
-						}
-						if (balAmount.compareTo(BigDecimal.ZERO) > 0) {
-							cashBackProcessService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
-									cashBackDetail.getAdviseId(), balAmount);
-						} else {
-							cashBackDetailDAO.updateCashBackDetail(cashBackDetail.getAdviseId());
-						}
-					}
-
-				}
-
-			}
+			/*
+			 * Promotion promotion = promotionDAO.getPromotionByReferenceId(finMain.getPromotionSeqId(), "");
+			 * 
+			 * if (promotion.isDbd() && !promotion.isDbdRtnd()) {
+			 * 
+			 * Date appDate = SysParamUtil.getAppDate(); Date cbDate = DateUtility.addMonths(finMain.getFinStartDate(),
+			 * promotion.getDlrCbToCust());
+			 * 
+			 * if (DateUtility.compare(appDate, cbDate) >= 0) {
+			 * 
+			 * FeeType feeType = setFeeTypeData(promotion.getDbdFeeTypId()); CashBackDetail cashBackDetail =
+			 * cashBackDetailDAO .getManualAdviseIdByFinReference(finMain.getFinReference(), "DBD");
+			 * finMain.setLastMntBy(1000); finMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			 * finMain.setFinCcy(SysParamUtil.getAppCurrency());
+			 * 
+			 * if (cashBackDetail != null) { BigDecimal balAmount = cashBackDetail.getAmount(); // Cash Back amount
+			 * adjustments if (promotion.isKnckOffDueAmt()) { try { balAmount =
+			 * cashBackProcessService.createReceiptOnCashBack(cashBackDetail); } catch (Exception e) {
+			 * logger.error("Exception", e); } } if (balAmount.compareTo(BigDecimal.ZERO) > 0) {
+			 * cashBackProcessService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
+			 * cashBackDetail.getAdviseId(), balAmount); } else {
+			 * cashBackDetailDAO.updateCashBackDetail(cashBackDetail.getAdviseId()); } }
+			 * 
+			 * }
+			 * 
+			 * }
+			 */
 
 			List<FinAdvancePayments> advPayments = finAdvancePaymentsDAO
 					.getFinAdvancePaymentsByFinRef(finMain.getFinReference(), "_AView");

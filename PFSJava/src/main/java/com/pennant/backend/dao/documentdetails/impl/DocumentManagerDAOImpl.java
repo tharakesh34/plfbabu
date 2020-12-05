@@ -106,7 +106,7 @@ public class DocumentManagerDAOImpl extends SequenceDao<DocumentManager> impleme
 		StringBuilder sql = new StringBuilder("update DocumentManager set DocImage = ? where Id = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		jdbcOperations.update(sql.toString(), new Object[] { docRefID, docImage });
+		jdbcOperations.update(sql.toString(), new Object[] { docImage, docRefID });
 		logger.debug(Literal.LEAVING);
 	}
 }

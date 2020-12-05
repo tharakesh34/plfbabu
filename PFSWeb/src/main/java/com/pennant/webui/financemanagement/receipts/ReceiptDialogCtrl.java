@@ -1343,7 +1343,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							|| StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)
 							|| StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_REALIZED)
 							|| StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
-						allocate.setTypeDesc(allocate.getTypeDesc());
+						if (StringUtils.isNotBlank(allocate.getTypeDesc())) {
+							allocate.setTypeDesc(allocate.getTypeDesc());
+						} else {
+							allocate.setTypeDesc(Labels
+									.getLabel("label_RecceiptDialog_AllocationType_" + allocate.getAllocationType()));
+						}
 
 					}
 					if (!PennantStaticListUtil.getExcludeDues().contains(allocate.getAllocationType())) {
@@ -2576,7 +2581,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				rch.setTotFeeAmount(feeAmount);
 				rch.setReceiptAmount(totReceiptAmt);
 				rch.setRemarks(this.remarks.getValue());
-				rch.setTransactionRef(this.favourNo.getValue());
+
+				if (StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rch.getPaymentType())
+						|| StringUtils.equals(RepayConstants.RECEIPTMODE_DD, rch.getPaymentType())) {
+					receiptData.getReceiptHeader().setTransactionRef(this.favourNo.getValue());
+				} else {
+					receiptData.getReceiptHeader().setTransactionRef(this.transactionRef.getValue());
+				}
+
 				rch.setBankCode(this.bankCode.getValue());
 
 				for (FinReceiptDetail receiptDetail : receiptDetails) {

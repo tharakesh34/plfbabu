@@ -69,4 +69,28 @@ public class SubventionProcessDAOImpl extends SequenceDao<SubventionProcess> imp
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+
+	@Override
+	public long getLinkedTranIdByHostReference(String hostReference) {
+
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" Select LinkedTranId from SUBVENTION_REQUEST");
+		sql.append("  WHERE HOSTREFERENCE = :HOSTREFERENCE");
+		logger.debug("Sql: " + sql.toString());
+
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("HOSTREFERENCE", hostReference);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			return 0;
+		}
+	}
 }

@@ -40,4 +40,6 @@ public interface FinServiceInstrutionDAO {
 
 	List<String> getFinEventByFinRef(String finReference, String type);
 
+	List<FinServiceInstruction> getOrgFinServiceInstructions(String finReference, String type);
+
 }

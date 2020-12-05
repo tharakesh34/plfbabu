@@ -179,11 +179,11 @@ public class LimitServiceController {
 
 		LimitHeader response = null;
 		try {
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			// call create limit setup method
@@ -229,10 +229,10 @@ public class LimitServiceController {
 
 		WSReturnStatus returnStatus = null;
 		try {
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			// call create limit setup method
 			AuditHeader header = limitDetailService.doApprove(auditHeader, false);
@@ -400,6 +400,7 @@ public class LimitServiceController {
 				detail.setUserDetails(userDetails);
 				detail.setLimitSanctioned(PennantApplicationUtil.unFormateAmount(detail.getLimitSanctioned(),
 						CurrencyUtil.getFormat(limitHeader.getLimitCcy())));
+				detail.setRevolving(true);
 			}
 		}
 
@@ -441,14 +442,14 @@ public class LimitServiceController {
 
 							/*
 							 * // expiry date if (curDetail.getExpiryDate() != null) {
-							 * prvDetail.setExpiryDate(curDetail.getExpiryDate()); } // limit check
-							 * prvDetail.setLimitCheck(curDetail.isLimitCheck());
+							 * prvDetail.setExpiryDate(curDetail.getExpiryDate() ); } // limit check
+							 * prvDetail.setLimitCheck(curDetail.isLimitCheck()) ;
 							 * 
-							 * // limit check method if (StringUtils.isNotBlank(curDetail.getLimitChkMethod())) {
-							 * prvDetail.setLimitChkMethod(curDetail.getLimitChkMethod()); }
+							 * // limit check method if (StringUtils.isNotBlank(curDetail. getLimitChkMethod())) {
+							 * prvDetail.setLimitChkMethod(curDetail. getLimitChkMethod()); }
 							 * 
-							 * if (!curDetail.getLimitSanctioned().equals(BigDecimal.ZERO)) {
-							 * prvDetail.setLimitSanctioned(curDetail.getLimitSanctioned()); }
+							 * if (!curDetail.getLimitSanctioned().equals( BigDecimal.ZERO)) {
+							 * prvDetail.setLimitSanctioned(curDetail. getLimitSanctioned()); }
 							 */
 							curDetail.setDetailId(prvDetail.getDetailId());
 							curDetail.setNewRecord(false);

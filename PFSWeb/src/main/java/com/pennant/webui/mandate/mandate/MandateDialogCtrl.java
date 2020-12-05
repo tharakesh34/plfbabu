@@ -97,6 +97,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.pennydrop.PennyDropDAO;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -105,7 +106,6 @@ import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
-import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -259,7 +259,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private FinanceMain financemain;
 	Tab parenttab = null;
 	// long mandateID = 0;
-	protected int accNoLength;
+	protected int maxAccNoLength;
+	protected int minAccNoLength;
 	private transient BankDetailService bankDetailService;
 	private ExternalDocumentManager externalDocumentManager = null;
 
@@ -498,7 +499,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.btnFetchAccountDetails.setDisabled(true);
 
 		if (StringUtils.isNotBlank(this.mandate.getBankCode())) {
-			accNoLength = getBankDetailService().getAccNoLengthByCode(this.mandate.getBankCode());
+			BankDetail bankDetail = getBankDetailService().getAccNoLengthByCode(this.mandate.getBankCode());
+			maxAccNoLength = bankDetail.getAccNoLength();
+			minAccNoLength = bankDetail.getMinAccNoLength();
 		}
 
 		/*
@@ -858,8 +861,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.ifsc.setValue(details.getiFSC());
 				this.city.setValue(details.getCity());
 
-				if (accNoLength != 0) {
-					this.accNumber.setMaxlength(accNoLength);
+				if (maxAccNoLength != 0) {
+					this.accNumber.setMaxlength(maxAccNoLength);
 				} else {
 					this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 				}
@@ -1839,7 +1842,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		try {
-			if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
+			if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible() && !this.partnerBank.isReadonly()) {
 				FinTypePartnerBank partBank = (FinTypePartnerBank) this.partnerBank.getObject();
 				if (partBank != null && partBank.getPartnerBankID() != 0) {
 					aMandate.setPartnerBankId(partBank.getPartnerBankID());
@@ -1944,19 +1947,19 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// Account Number
 		if (!this.accNumber.isReadonly()) {
 			this.accNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_AccNumber.value"),
-					PennantRegularExpressions.REGEX_ACCOUNTNUMBER, validate, accNoLength));
+					null, validate, minAccNoLength, maxAccNoLength));
 		}
 		// Account Holder Name
 		if (!this.accHolderName.isReadonly()) {
 			this.accHolderName
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_AccHolderName.value"),
-							PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, validate));
+							PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME, validate));
 		}
 		// Joint Account Holder Name
 		if (!this.jointAccHolderName.isReadonly()) {
 			this.jointAccHolderName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_MandateDialog_JointAccHolderName.value"),
-							PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, false));
+							PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME, false));
 		}
 		// Account Type
 		if (!this.accType.isDisabled() && validate) {
@@ -2145,13 +2148,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.city.setValue(details.getCity());
 				this.cityName.setValue(details.getPCCityName());
 				if (StringUtils.isNotBlank(details.getBankCode())) {
-					accNoLength = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
+					BankDetail bankDetail = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
+					maxAccNoLength = bankDetail.getAccNoLength();
+					minAccNoLength = bankDetail.getMinAccNoLength();
 				}
-				if (accNoLength != 0) {
-					this.accNumber.setMaxlength(accNoLength);
-				} else {
-					this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
-				}
+				this.accNumber.setMaxlength(maxAccNoLength);
 
 			}
 		}

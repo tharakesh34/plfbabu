@@ -321,7 +321,8 @@ public class LatePayMarkingService extends ServiceHelper {
 			return false;
 		}
 
-		if (!StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_PIPD)) {
+		if (!FinanceConstants.ODCALON_PIPD_FRQ.equals(fod.getODChargeCalOn())
+				&& !FinanceConstants.ODCALON_PIPD_EOM.equals(fod.getODChargeCalOn())) {
 			return false;
 		}
 
@@ -406,7 +407,8 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 
 		if (fod.getFinCurODAmt().compareTo(BigDecimal.ZERO) == 0) {
-			if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_PIPD)) {
+			if (FinanceConstants.ODCALON_PIPD_FRQ.equals(fod.getODChargeCalOn())
+					|| FinanceConstants.ODCALON_PIPD_EOM.equals(fod.getODChargeCalOn())) {
 				if (fod.getTotPenaltyBal().compareTo(BigDecimal.ZERO) == 0) {
 					penaltyCalDate = maxValuDate;
 				}

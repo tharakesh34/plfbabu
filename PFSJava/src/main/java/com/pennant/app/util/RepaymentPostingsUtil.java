@@ -362,7 +362,12 @@ public class RepaymentPostingsUtil implements Serializable {
 				detail.setFinODFor(repayQueue.getFinRpyFor());
 				detail.setTotPenaltyAmt(BigDecimal.ZERO);
 				detail.setTotPenaltyPaid(repayQueue.getPenaltyPayNow());
-				detail.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())).negate());
+
+				if (repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount()).compareTo(BigDecimal.ZERO) < 0) {
+					detail.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())).negate());
+				} else {
+					detail.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())));
+				}
 				detail.setTotWaived(repayQueue.getWaivedAmount());
 
 				if (!aeEvent.isSimulateAccounting()) {

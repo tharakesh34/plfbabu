@@ -1735,7 +1735,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			if (!this.guarantorCIFName.isReadonly()) {
 				this.guarantorCIFName
 						.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_Name.value"),
-								PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
+								PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME, true));
 			}
 			// Mobile No
 			/*

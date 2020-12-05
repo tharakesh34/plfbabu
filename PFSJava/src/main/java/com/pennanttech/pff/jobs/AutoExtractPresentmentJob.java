@@ -54,8 +54,8 @@ public class AutoExtractPresentmentJob implements Job, Serializable {
 		int nachDateFreq = SysParamUtil.getValueAsInt(SMTParameterConstants.PRESENTMENT_NACH_DATE_FREQUENCY);
 		int pdcDateFreq = SysParamUtil.getValueAsInt(SMTParameterConstants.PRESENTMENT_PDC_DATE_FREQUENCY);
 
-		if (!SysParamUtil.isAllowed(JOB_ENABLED) || (nachDateFreq > 0 && pdcDateFreq > 0)) {
-			logger.warn("{} Presentment Auto Extract Job is Disabled", JOB_ENABLED);
+		if (!SysParamUtil.isAllowed(JOB_ENABLED) || (nachDateFreq < 0 && pdcDateFreq < 0)) {
+			logger.warn("{} Presentment Auto Download Job is Disabled", JOB_ENABLED);
 			return;
 		}
 

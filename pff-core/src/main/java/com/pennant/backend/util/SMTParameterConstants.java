@@ -255,7 +255,7 @@ public class SMTParameterConstants {
 	public static final String INSURANCE_CAL_REQUEST_URL = "INSURANCE_CAL_REQUEST_URL";
 	public static final String CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ = "CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ";
 	public static final String MANDATE_DOWNLOAD_STOP_CIF_VALIDATION = "MANDATE_DOWNLOAD_STOP_CIF_VALIDATION";
-	//For Verification tabs in Loan Queue
+	// For Verification tabs in Loan Queue
 	public static final String VERIFICATION_INTIATION_FROM_OUTSIDE = "VERIFICATION_INTIATION_FROM_OUTSIDE";
 	public static final String EXTERNAL_DOCUMENT_VERIFICATION_REQUIRED = "EXT_DOC_VER_REQ";
 	public static final String FINANCE_DEVIATION_CHECK = "FINANCE_DEVIATION_CHECK";
@@ -270,10 +270,11 @@ public class SMTParameterConstants {
 	public static final String CUST_LASTNAME_MANDATORY = "CUST_LASTNAME_MANDATORY";
 	public static final String VERIFICATION_CATEGORY_REQUIRED = "VERIFICATION_CATEGORY_REQUIRED";
 	public static final String DISB_DOWNLOAD_JOB_TIME = "DISB_DOWNLOAD_JOB_TIME";
-	// If TRUE Capitalize amount will not be capitalized to POS amount. It will  be used only for interest calculation
+	// If TRUE Capitalize amount will not be capitalized to POS amount. It will
+	// be used only for interest calculation
 	public static final String CPZ_POS_INTACT = "CPZ_POS_INTACT";
 	public static final String BEN_ACTNAME_LENGTH = "BEN_ACTNAME_LENGTH";
-	//TDS reversal entried required or not in SOA.
+	// TDS reversal entried required or not in SOA.
 	public static final String DISPLAY_TDS_REV_SOA = "DISPLAY_TDS_REV_SOA";
 	public static final String ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ = "ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ";
 	public static final String RPYHCY_ON_DPD_BUCKET = "RPYHCY_ON_DPD_BUCKET";
@@ -386,4 +387,5 @@ public class SMTParameterConstants {
 	public static final String CREATE_PRESENTMENT_RECEIPT_EOD = "CREATE_PRESENTMENT_RECEIPT_EOD";
 	//Update the Manual Cheque Receipt status as paid at Deposit approver
 	public static final String CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER = "CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER";
+	public static final String EOD_INTERVAL_TIME = "EOD_INTERVAL_TIME";
 }

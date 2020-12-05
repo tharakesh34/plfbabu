@@ -84,6 +84,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -1787,14 +1788,13 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 				this.space_AccountNo.setSclass("mandatory");
 
 			}
+
+			int maxAccNoLength = 0;
 			if (StringUtils.isNotBlank(details.getBankCode())) {
-				accNoLength = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
+				BankDetail bankDetail = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+				maxAccNoLength = bankDetail.getAccNoLength();
 			}
-			if (accNoLength != 0) {
-				this.accountNo.setMaxlength(accNoLength);
-			} else {
-				this.accountNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
-			}
+			this.accountNo.setMaxlength(maxAccNoLength);
 
 		}
 

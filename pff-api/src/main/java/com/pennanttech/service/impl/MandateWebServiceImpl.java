@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -19,6 +18,7 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
@@ -631,21 +631,19 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			return getErrorDetails("90333", valueParm);
 		}
 		//validate AccNumber length
-		if (StringUtils.isNotBlank(mandate.getBankCode())) {
-			int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
+		if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getAccNumber())) {
+			BankDetail bankDetails = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
 			int length = mandate.getAccNumber().length();
-			if (accNoLength != 0) {
-				if (length != accNoLength) {
-					String[] valueParm = new String[2];
+			if (bankDetails != null) {
+				int maxAccNoLength = bankDetails.getAccNoLength();
+				int minAccNolength = bankDetails.getMinAccNoLength();
+				if (length < minAccNolength || length > maxAccNoLength) {
+					String[] valueParm = new String[3];
 					valueParm[0] = "AccountNumber";
-					valueParm[1] = String.valueOf(accNoLength) + " characters";
-					return getErrorDetails("30570", valueParm);
+					valueParm[1] = String.valueOf(minAccNolength) + " characters";
+					valueParm[2] = String.valueOf(maxAccNoLength) + " characters";
+					return getErrorDetails("BNK001", valueParm);
 				}
-			} else if (length > LengthConstants.LEN_ACCOUNT) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "AccountNumber";
-				valueParm[1] = String.valueOf(accNoLength) + " characters";
-				return getErrorDetails("30570", valueParm);
 			}
 		}
 
@@ -825,7 +823,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				}
 
 				String finType = financeMainService.getFinanceTypeFinReference(mandate.getOrgReference(), tableType);
-				String allowedRepayModes = financeTypeService.getAllowedRepayMethods(finType);
+				String allowedRepayModes = StringUtils.trimToEmpty(financeTypeService.getAllowedRepayMethods(finType));
 				if (StringUtils.isNotBlank(allowedRepayModes)) {
 					boolean isTypeFound = false;
 					String[] types = allowedRepayModes.split(PennantConstants.DELIMITER_COMMA);

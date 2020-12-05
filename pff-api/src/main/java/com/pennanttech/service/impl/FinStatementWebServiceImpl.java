@@ -705,11 +705,20 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				}
 			}
 
-			FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, "E");
+			List<FinExcessAmount> excessAmounts = finExcessAmountDAO.getAllExcessAmountsByRef(finReference, "");
 
 			ForeClosureLetter letter = new ForeClosureLetter();
-			if (excessAmount != null) {
-				letter.setExcessAmount(excessAmount.getBalanceAmt());
+			if (excessAmounts != null) {
+				for (FinExcessAmount excessAmount : excessAmounts) {
+					BigDecimal emiInAdvance = BigDecimal.ZERO;
+					if (StringUtils.contains(RepayConstants.EXAMOUNTTYPE_EXCESS, excessAmount.getAmountType())) {
+						letter.setExcessAmount(excessAmount.getBalanceAmt());
+					} else if (StringUtils.contains(RepayConstants.EXAMOUNTTYPE_EMIINADV,
+							excessAmount.getAmountType())) {
+						letter.setEmiInAdvance(emiInAdvance.add(excessAmount.getBalanceAmt()));
+					}
+				}
+
 			}
 
 			FinanceSummary summary = finScheduleData.getFinanceSummary();

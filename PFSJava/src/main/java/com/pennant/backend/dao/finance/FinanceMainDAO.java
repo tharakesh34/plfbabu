@@ -213,7 +213,7 @@ public interface FinanceMainDAO {
 
 	String getCurrencyByAccountNo(String accountNo);
 
-	void updateMaturity(String finReference, String closingStatus, boolean finIsActive);
+	void updateMaturity(String finReference, String closingStatus, boolean finIsActive, Date date);
 
 	List<String> getScheduleEffectModuleList(boolean schdChangeReq);
 
@@ -315,9 +315,15 @@ public interface FinanceMainDAO {
 	List<FinanceMain> getUnApprovedFinances();
 
 	long getPartnerBankIdByReference(String finReference, String paymentMode, String depositAc, String type,
-			String purpose, boolean wif);//### 18-07-2018 Ticket ID : 124998,receipt upload
+			String purpose, boolean wif);// ### 18-07-2018 Ticket ID :
+																																			// 124998,receipt upload
 
-	boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity);// ### 12-07-2018 Ticket ID : 12499
+	boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity);// ###
+																							// 12-07-2018
+																							// Ticket
+																							// ID
+																							// :
+																							// 12499
 
 	// ### 10-09-2018,Ticket id:124998
 	FinanceMain getEntityNEntityDesc(String finRefence, String type, boolean wif);
@@ -351,7 +357,12 @@ public interface FinanceMainDAO {
 
 	FinanceMain isFlexiLoan(String finReference);
 
-	boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif);// ### 17-07-2018 Ticket ID : 127950
+	boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif);// ###
+																							// 17-07-2018
+																							// Ticket
+																							// ID
+																							// :
+																							// 127950
 
 	List<FinanceMain> getFinanceMainForLinkedLoans(long custId);
 
@@ -456,4 +467,7 @@ public interface FinanceMainDAO {
 
 	List<String> getParentRefifAny(String finReference, String type, boolean isFromAgr);
 
+	Date getClosedDate(String finReference);
+
+	void updateTdsApplicable(FinanceMain financeMain);
 }

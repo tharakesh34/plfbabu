@@ -121,6 +121,7 @@ import com.pennant.backend.dao.systemmasters.SubSectorDAO;
 import com.pennant.backend.model.PrimaryAccount;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
@@ -2819,14 +2820,19 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 				}
 				// validate AccNumber length
-				if (StringUtils.isNotBlank(custBankInfo.getBankName())) {
-					int accNoLength = bankDetailDAO.getAccNoLengthByCode(custBankInfo.getBankName(), "_View");
-					if (accNoLength != 0) {
-						if (custBankInfo.getAccountNumber().length() != accNoLength) {
-							String[] valueParm = new String[2];
+				if (StringUtils.isNotBlank(custBankInfo.getBankName())
+						&& StringUtils.isNotBlank(custBankInfo.getAccountNumber())) {
+					BankDetail bankDetail = bankDetailDAO.getAccNoLengthByCode(custBankInfo.getBankName(), "");
+					if (bankDetail != null) {
+						int maxAccNoLength = bankDetail.getAccNoLength();
+						int minAccNoLength = bankDetail.getMinAccNoLength();
+						if (custBankInfo.getAccountNumber().length() < minAccNoLength
+								|| custBankInfo.getAccountNumber().length() > maxAccNoLength) {
+							String[] valueParm = new String[3];
 							valueParm[0] = "AccountNumber";
-							valueParm[1] = String.valueOf(accNoLength) + " characters";
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30570", "", valueParm));
+							valueParm[1] = String.valueOf(minAccNoLength) + " characters";
+							valueParm[2] = String.valueOf(maxAccNoLength) + " characters";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("BNK001", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -2872,9 +2878,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				 * valueParm)); auditDetail.setErrorDetail(errorDetail); }
 				 */ // validate AccNumber length
 				if (StringUtils.isNotBlank(customerGST.getGstNumber())) {
-					int gstNoLength = bankDetailDAO.getAccNoLengthByCode(customerGST.getGstNumber(), "_View");
-					if (gstNoLength != 0) {
-						if (customerGST.getGstNumber().length() != gstNoLength) {
+					BankDetail bankDetail = bankDetailDAO.getAccNoLengthByCode(customerGST.getGstNumber(), "");
+					int gstNoLength = bankDetail.getAccNoLength();
+					int minAccNoLength = bankDetail.getMinAccNoLength();
+					if (bankDetail != null) {
+						if (customerGST.getGstNumber().length() < minAccNoLength
+								|| customerGST.getGstNumber().length() > gstNoLength) {
 							String[] valueParm = new String[2];
 							valueParm[0] = "GSTNumber";
 							valueParm[1] = String.valueOf(gstNoLength) + " characters";
@@ -3393,7 +3402,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		logger.debug(Literal.ENTERING);
 
 		// validate conditional mandatory fields
-		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+		String custCtgCode = customer.getCustCtgCode();
+		if (StringUtils.equals(custCtgCode, PennantConstants.PFF_CUSTCTG_INDIV)) {
 			if (StringUtils.isBlank(customer.getCustFName())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "firstName";
@@ -3439,6 +3449,22 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				String[] valueParm = new String[2];
 				valueParm[0] = "shortName";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+			} else {
+				Pattern pattern = null;
+				if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP)
+						|| StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_SME)) {
+					pattern = Pattern.compile(
+							PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_CORP_CUST_NAME));
+				} else {
+					pattern = Pattern.compile(
+							PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_RETAIL_CUST_NAME));
+				}
+				Matcher matcher = pattern.matcher(customer.getCustShrtName());
+				if (!matcher.matches()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "shortName";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90237", "", valueParm), "EN"));
+				}
 			}
 			if (StringUtils.isNotBlank(customer.getCustFName())) {
 				String[] valueParm = new String[2];

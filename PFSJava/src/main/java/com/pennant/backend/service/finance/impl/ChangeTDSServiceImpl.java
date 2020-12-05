@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.ChangeTDSDAO;
 import com.pennant.backend.dao.finance.FinMaintainInstructionDAO;
@@ -146,6 +147,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		lowerTaxDeduction.setStartDate(finMaintainInstruction.getTdsStartDate());
 		lowerTaxDeduction.setEndDate(finMaintainInstruction.getTdsEndDate());
 		lowerTaxDeduction.setPercentage(finMaintainInstruction.getTdsPercentage());
+		lowerTaxDeduction.setLimitAmt(finMaintainInstruction.getTdsLimit());
 		ltdList.add(lowerTaxDeduction);
 
 		finScheduleData.setLowerTaxDeductionDetails(ltdList);
@@ -293,23 +295,23 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		FinServiceInstruction finServiceInstruction = null;
 		List<FinServiceInstruction> finServInstList = getFinServiceInstructionDAO().getFinServiceInstructions(
 				finScheduleData.getFinanceMain().getFinReference(), "_Temp", FinanceConstants.FINSER_EVENT_CHANGETDS);
+		Date appDate = SysParamUtil.getAppDate();
 		if (finServInstList.size() > 0) {
-			;
 			finServiceInstruction = finServInstList.get(0);
 			finServiceInstruction.setChecker(auditHeader.getAuditUsrId());
-			finServiceInstruction.setCheckerAppDate(DateUtility.getAppDate());
+			finServiceInstruction.setCheckerAppDate(appDate);
 			finServiceInstruction.setCheckerSysDate(DateUtility.getSysDate());
 
 		} else {
 			finServiceInstruction = new FinServiceInstruction();
 			finServiceInstruction.setFinReference(finMaintainInstruction.getFinReference());
-			finServiceInstruction.setFromDate(DateUtility.getAppDate());
+			finServiceInstruction.setFromDate(appDate);
 			finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_CHANGETDS);
 			finServiceInstruction.setChecker(auditHeader.getAuditUsrId());
-			finServiceInstruction.setCheckerAppDate(DateUtility.getAppDate());
+			finServiceInstruction.setCheckerAppDate(appDate);
 			finServiceInstruction.setCheckerSysDate(DateUtility.getSysDate());
 			finServiceInstruction.setMaker(auditHeader.getAuditUsrId());
-			finServiceInstruction.setMakerAppDate(DateUtility.getAppDate());
+			finServiceInstruction.setMakerAppDate(appDate);
 			finServiceInstruction.setMakerSysDate(DateUtility.getSysDate());
 			finServiceInstruction.setLinkedTranId(0);
 		}
@@ -320,6 +322,10 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		FinanceMain financeMain = new FinanceMain();
 		financeMain.setFinReference(finMaintainInstruction.getFinReference());
 		getFinanceMainDAO().deleteFinreference(financeMain, TableType.TEMP_TAB, false, true);
+
+		financeMain.setTDSApplicable(finMaintainInstruction.istDSApplicable());
+		// update tdsApplicable in FinanceMain table
+		getFinanceMainDAO().updateTdsApplicable(financeMain);
 
 		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
 
@@ -491,6 +497,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		lowerTaxDeduction.setEndDate(finMaintainInstruction.getTdsEndDate());
 		lowerTaxDeduction.setPercentage(finMaintainInstruction.getTdsPercentage());
 		lowerTaxDeduction.setFinMaintainId(finMaintainInstruction.getFinMaintainId());
+		lowerTaxDeduction.setLimitAmt(finMaintainInstruction.getTdsLimit());
 		ltdList.add(lowerTaxDeduction);
 
 		finScheduleData.getLowerTaxDeductionDetails().addAll(ltdList);

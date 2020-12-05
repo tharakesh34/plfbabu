@@ -156,6 +156,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private Long taxHeaderId;
 	private TaxHeader taxHeader;
 	private boolean isPaidFromUpfront = false;
+	private String vasProductCode;
 	private boolean isPaidFromLoanApproval = false;
 	private boolean paidCalcReq = false;
 	private String prvTaxComponent = "I";
@@ -194,6 +195,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("taxHeader");
 		excludeFields.add("moduleDefiner");
 		excludeFields.add("actualOldAmount");
+		excludeFields.add("vasProductCode");
 		excludeFields.add("tdsReq");
 		excludeFields.add("isPaidFromUpfront");
 		excludeFields.add("isPaidFromLoanApproval");
@@ -766,6 +768,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 
 	public void setActualOldAmount(BigDecimal actualOldAmount) {
 		this.actualOldAmount = actualOldAmount;
+	}
+
+	public String getVasProductCode() {
+		return vasProductCode;
+	}
+
+	public void setVasProductCode(String vasProductCode) {
+		this.vasProductCode = vasProductCode;
 	}
 
 	public boolean isTdsReq() {

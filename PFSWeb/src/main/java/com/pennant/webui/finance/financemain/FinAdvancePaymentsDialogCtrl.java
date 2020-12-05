@@ -255,7 +255,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private List<FinanceDisbursement> financeDisbursement = null;
 	private List<FinanceDisbursement> approvedDisbursments;
 
-	protected int accNoLength;
+	protected int maxAccNoLength;
+	protected int minAccNoLength;
 	private transient BankDetailService bankDetailService;
 
 	private transient PartnerBankService partnerBankService;
@@ -288,6 +289,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	protected Row row_disbdetails;
 	protected Row row_expensedetails;
+	private BankDetail bankdetail;
 
 	/**
 	 * default constructor.<br>
@@ -897,14 +899,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.phoneNumber.setWidth("180px");
 
 		if (StringUtils.isNotBlank(this.finAdvancePayments.getBranchBankCode())) {
-			accNoLength = bankDetailService.getAccNoLengthByCode(this.finAdvancePayments.getBranchBankCode());
+			bankdetail = bankDetailService.getAccNoLengthByCode(this.finAdvancePayments.getBranchBankCode());
+			this.maxAccNoLength = this.bankdetail.getAccNoLength();
+			this.minAccNoLength = this.bankdetail.getMinAccNoLength();
 		}
-
-		if (accNoLength != 0) {
-			this.beneficiaryAccNo.setMaxlength(accNoLength);
-		} else {
-			this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
-		}
+		this.beneficiaryAccNo.setMaxlength(maxAccNoLength);
 		//Added Masking for  ReEnter Account Number field in Disbursement at Loan Approval stage
 		if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING)
 				&& !isReadOnly("FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo")) {
@@ -1731,12 +1730,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				if (!this.beneficiaryName.isReadonly()) {
 					this.beneficiaryName.setConstraint(new PTStringValidator(
 							Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryName.value"),
-							PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
+							PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME, true));
 				}
 				if (!this.beneficiaryAccNo.isReadonly()) {
 					this.beneficiaryAccNo.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"),
-							PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
+							Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"), null, true,
+							minAccNoLength, maxAccNoLength));
 				}
 			}
 		}
@@ -2151,13 +2150,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.branch.setValue(details.getBranchDesc());
 				this.bankBranchID.setValue(details.getIFSC());
 				if (StringUtils.isNotBlank(details.getBankCode())) {
-					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+					bankdetail = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+					this.maxAccNoLength = this.bankdetail.getAccNoLength();
+					this.minAccNoLength = this.bankdetail.getMinAccNoLength();
 				}
-				if (accNoLength != 0) {
-					this.beneficiaryAccNo.setMaxlength(accNoLength);
-				} else {
-					this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
-				}
+				this.beneficiaryAccNo.setMaxlength(maxAccNoLength);
 
 				String benificiaryActLen = SysParamUtil.getValueAsString(SMTParameterConstants.BEN_ACTNAME_LENGTH);
 				if (benificiaryActLen != null) {
@@ -2378,13 +2375,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					this.city.setValue(details.getCity());
 					this.phoneNumber.setValue(details.getPhoneNumber());
 					if (StringUtils.isNotBlank(details.getBankCode())) {
-						accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+						bankdetail = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+						this.maxAccNoLength = this.bankdetail.getAccNoLength();
+						this.minAccNoLength = this.bankdetail.getMinAccNoLength();
 					}
-					if (accNoLength != 0) {
-						this.beneficiaryAccNo.setMaxlength(accNoLength);
-					} else {
-						this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
-					}
+					this.beneficiaryAccNo.setMaxlength(maxAccNoLength);
 
 					if (this.pennyDropResult.isVisible()) {
 						BankAccountValidation bankAccountValidations = null;

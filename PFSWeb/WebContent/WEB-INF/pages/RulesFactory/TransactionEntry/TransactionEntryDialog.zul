@@ -295,6 +295,7 @@
 												<tab label="Amount Codes" />
 												<tab id="tab_Fee" label="Fee Codes" />
 												<tab id="tab_expense" label="Expense Type Codes" visible="false"/>
+												<tab id="tab_Vas" label="Vas Codes" />
 											</tabs>
 											<tabpanels>
 												<tabpanel style="padding:0px;">
@@ -320,6 +321,15 @@
 													<listbox id="expenseCodeListbox" style="text-align:left;border:none;" mold="default" width="100%"
 														sizedByContent="true" span="true" w:onDoubleClick="addStringContent(this.getSelectedItem().getLabel())">
 														<listhead>
+															<listheader label="Code" hflex="min" />
+															<listheader label="Description" hflex="min" />
+														</listhead>
+													</listbox>
+												</tabpanel>
+												<tabpanel style="padding:0px;">
+													<listbox id="vasCodeListbox" style="text-align:left;border:none;" mold="default" width="100%"
+														sizedByContent="true" span="true" w:onDoubleClick="addStringContent(this.getSelectedItem().getLabel())">
+														<listhead sizable="true">
 															<listheader label="Code" hflex="min" />
 															<listheader label="Description" hflex="min" />
 														</listhead>

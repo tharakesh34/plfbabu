@@ -18,6 +18,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -231,9 +232,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 		// Check If LPP Method on capitalization basis and Due Index not exists
 		if (finEODEvent.getIdxPD() <= 0) {
-			boolean pipdMthdCount = getFinODDetailsDAO()
-					.isLppMethodOnMinPenalBalSchdExsts(finEODEvent.getFinanceMain().getFinReference());
-			if (pipdMthdCount) {
+			if (isLPPCpzReq(finEODEvent)) {
 				finEODEvent.setIdxPD(1);
 				custEODEvent.setPastDueExist(true);
 			}
@@ -380,10 +379,8 @@ public class LoadFinanceData extends ServiceHelper {
 
 			// Save Schedule, Repay Instruction Details when Change Grace End
 			if (changeGraceEnd) {
-
-				// TODO : List the Actual update columns list instead of all
 				finMain.setVersion(finMain.getVersion() + 1);
-				getFinanceMainDAO().update(finMain, TableType.MAIN_TAB, false);
+				financeMainDAO.update(finMain, TableType.MAIN_TAB, false);
 
 				// Existing Schedule back up
 				long logKey = saveFinLogEntryDetail(finMain);
@@ -400,9 +397,7 @@ public class LoadFinanceData extends ServiceHelper {
 			if (odDetails != null && !odDetails.isEmpty()) {
 
 				if (finEODEvent.getIdxPD() > 1) {
-					boolean pipdMthdCount = getFinODDetailsDAO()
-							.isLppMethodOnMinPenalBalSchdExsts(finEODEvent.getFinanceMain().getFinReference());
-					if (pipdMthdCount) {
+					if (isLPPCpzReq(finEODEvent)) {
 						finEODEvent.setIdxPD(1);
 					}
 				}
@@ -490,6 +485,24 @@ public class LoadFinanceData extends ServiceHelper {
 			}
 		}
 
+		return false;
+	}
+
+	private boolean isLPPCpzReq(FinEODEvent finEODEvent) {
+		List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
+
+		if (CollectionUtils.isEmpty(odDetails)) {
+			return false;
+		}
+
+		for (FinODDetails finODDetail : odDetails) {
+			if ((finODDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) == 0)
+					&& (finODDetail.getTotPenaltyBal().compareTo(BigDecimal.ZERO) > 0)
+					&& (StringUtils.equals(finODDetail.getODChargeCalOn(), FinanceConstants.ODCALON_PIPD_FRQ)
+							|| StringUtils.equals(finODDetail.getODChargeCalOn(), FinanceConstants.ODCALON_PIPD_EOM))) {
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -602,20 +615,16 @@ public class LoadFinanceData extends ServiceHelper {
 		logger.debug(" Leaving ");
 	}
 
-	/**
-	 * Log the Entry Detail
-	 */
-	public long saveFinLogEntryDetail(FinanceMain financeMain) {
-
+	private long saveFinLogEntryDetail(FinanceMain financeMain) {
 		FinLogEntryDetail entryDetail = new FinLogEntryDetail();
 
 		entryDetail.setReversalCompleted(false);
-		entryDetail.setPostDate(DateUtility.getAppDate());
+		entryDetail.setPostDate(SysParamUtil.getAppDate());
 		entryDetail.setFinReference(financeMain.getFinReference());
 		entryDetail.setSchdlRecal(financeMain.isScheduleChange());
 		entryDetail.setEventAction(AccountEventConstants.ACCEVENT_GRACEEND);
 
-		return getFinLogEntryDetailDAO().save(entryDetail);
+		return finLogEntryDetailDAO.save(entryDetail);
 	}
 
 	//
@@ -694,92 +703,72 @@ public class LoadFinanceData extends ServiceHelper {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method to save Schedule dependent tables
-	 * 
-	 * @param finEODEvent
-	 * @param tableType
-	 * @param logKey
-	 */
-	public void listSave(FinEODEvent finEODEvent, String tableType, long logKey) {
-
+	private void listSave(FinEODEvent finEODEvent, String tableType, long logKey) {
 		FinanceMain financeMain = finEODEvent.getFinanceMain();
 		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
 		// Finance Schedule Details
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
-		if (!finEODEvent.getFinanceScheduleDetails().isEmpty()) {
-
+		if (CollectionUtils.isNotEmpty(finSchdDetails)) {
 			if (logKey != 0) {
 				finSchdDetails = finEODEvent.getOrgFinSchdDetails();
 			}
-			for (int i = 0; i < finSchdDetails.size(); i++) {
 
-				finSchdDetails.get(i).setLastMntBy(financeMain.getLastMntBy());
-				finSchdDetails.get(i).setFinReference(financeMain.getFinReference());
+			for (FinanceScheduleDetail schd : finSchdDetails) {
+				schd.setLastMntBy(financeMain.getLastMntBy());
+				schd.setFinReference(financeMain.getFinReference());
 				int seqNo = 0;
 
-				if (mapDateSeq.containsKey(finSchdDetails.get(i).getSchDate())) {
-					seqNo = mapDateSeq.get(finSchdDetails.get(i).getSchDate());
-					mapDateSeq.remove(finSchdDetails.get(i).getSchDate());
+				if (mapDateSeq.containsKey(schd.getSchDate())) {
+					seqNo = mapDateSeq.get(schd.getSchDate());
+					mapDateSeq.remove(schd.getSchDate());
 				}
 
 				seqNo = seqNo + 1;
-				mapDateSeq.put(finSchdDetails.get(i).getSchDate(), seqNo);
-				finSchdDetails.get(i).setSchSeq(seqNo);
-				finSchdDetails.get(i).setLogKey(logKey);
+				mapDateSeq.put(schd.getSchDate(), seqNo);
+				schd.setSchSeq(seqNo);
+				schd.setLogKey(logKey);
 			}
 
-			getFinanceScheduleDetailDAO().saveList(finSchdDetails, tableType, false);
+			financeScheduleDetailDAO.saveList(finSchdDetails, tableType, false);
 		}
 
 		// Finance Repay Instruction Details
 		List<RepayInstruction> repayInstructions = finEODEvent.getRepayInstructions();
-		if (!finEODEvent.getRepayInstructions().isEmpty() && finEODEvent.isUpdRepayInstruct()) {
-
+		if (CollectionUtils.isNotEmpty(repayInstructions) && finEODEvent.isUpdRepayInstruct()) {
 			if (logKey != 0) {
 				repayInstructions = finEODEvent.getOrgRepayInsts();
 			}
-			for (int i = 0; i < repayInstructions.size(); i++) {
 
-				repayInstructions.get(i).setFinReference(financeMain.getFinReference());
-				repayInstructions.get(i).setLogKey(logKey);
+			for (RepayInstruction rpayIns : repayInstructions) {
+				rpayIns.setFinReference(financeMain.getFinReference());
+				rpayIns.setLogKey(logKey);
 			}
 
-			getRepayInstructionDAO().saveList(repayInstructions, tableType, false);
+			repayInstructionDAO.saveList(repayInstructions, tableType, false);
 		}
 
 		// Finance Service Instructions
-		if (!finEODEvent.getFinServiceInstructions().isEmpty() && logKey == 0) {
-			getFinServiceInstructionDAO().saveList(finEODEvent.getFinServiceInstructions(), tableType);
+		List<FinServiceInstruction> finServiceInstructions = finEODEvent.getFinServiceInstructions();
+		if (CollectionUtils.isNotEmpty(finServiceInstructions) && logKey == 0) {
+			finServiceInstructionDAO.saveList(finServiceInstructions, tableType);
 		}
 
-		// TODO : Finance Disbursement AND SubVention Details
 	}
 
-	/**
-	 * Method to delete Schedule Dependent tables
-	 * 
-	 * @param scheduleData
-	 * @param finEvent
-	 * @param tableType
-	 */
-	public void listDeletion(FinEODEvent finEODEvent, String finEvent, String tableType) {
-
+	private void listDeletion(FinEODEvent finEODEvent, String finEvent, String tableType) {
 		FinanceMain financeMain = finEODEvent.getFinanceMain();
 		String finReference = financeMain.getFinReference();
 
-		// Finance Schedule Details
-		if (!finEODEvent.getFinanceScheduleDetails().isEmpty()) {
-			getFinanceScheduleDetailDAO().deleteByFinReference(finReference, tableType, false, 0);
+		List<FinanceScheduleDetail> financeScheduleDetails = finEODEvent.getFinanceScheduleDetails();
+		if (CollectionUtils.isNotEmpty(financeScheduleDetails)) {
+			financeScheduleDetailDAO.deleteByFinReference(finReference, tableType, false, 0);
 		}
 
-		// Finance Repay Instruction Details
-		if (!finEODEvent.getRepayInstructions().isEmpty() && finEODEvent.isUpdRepayInstruct()) {
-			getRepayInstructionDAO().deleteByFinReference(finReference, tableType, false, 0);
+		List<RepayInstruction> repayInstructions = finEODEvent.getRepayInstructions();
+		if (CollectionUtils.isNotEmpty(repayInstructions) && finEODEvent.isUpdRepayInstruct()) {
+			repayInstructionDAO.deleteByFinReference(finReference, tableType, false, 0);
 		}
 
-		// TODO : Finance Disbursement AND SubVention Details
 	}
-
 }

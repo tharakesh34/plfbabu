@@ -1260,11 +1260,13 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		source.addValue("ODChargeCalOn", FinanceConstants.ODCALON_PIPD);
+		source.addValue("ODChargeCalOnFRQ", FinanceConstants.ODCALON_PIPD_FRQ);
+		source.addValue("ODChargeCalOnEOM", FinanceConstants.ODCALON_PIPD_EOM);
 
 		StringBuilder sql = new StringBuilder(" SELECT count(FinReference) ");
 		sql.append(" FROM FInODDetails WHERE FinReference = :FinReference AND FinCurODAmt = 0 ");
-		sql.append(" AND TotPenaltyBal > 0 AND ODChargeCalOn =:ODChargeCalOn ");
+		sql.append(" AND TotPenaltyBal > 0 AND ");
+		sql.append(" (ODChargeCalOn = :ODChargeCalOnFRQ OR ODChargeCalOn = :ODChargeCalOnEOM)");
 
 		logger.debug("selectSql: " + sql.toString());
 		int pipdMthdCount = 0;
