@@ -946,7 +946,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					&& (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent()))) {
 				if (!isRcdType || PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(finFeeDetail.getRecordType())) {
 					finFeeDetail.setNewRecord(false);
-					finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					finFeeDetail.setRecordType("");
 				} else if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(finFeeDetail.getRecordType())) {
 					finFeeDetail.setNewRecord(true);
 				}

@@ -792,13 +792,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			this.amount.setValue(PennantApplicationUtil.formateAmount(detail.getAmount(), ccyEditField));
 			this.accHolderName.setValue(detail.getAccHolderName());
 			this.chequeSerialNo.setValue(detail.getChequeSerialNo());
-			this.bankBranchID.setValue(String.valueOf(detail.getBankBranchID()));
+			this.bankBranchID.setValue(String.valueOf(detail.getBranchCode()));
 			this.noOfCheques.setValue(aChequeHeader.getNoOfCheques());
-			this.accountType.setValue(detail.getAccountType());
+			fillComboBox(this.accountType, detail.getAccountType(), accTypeList, "");
 			this.micr.setValue(detail.getMicr());
 			this.ifsc.setValue(detail.getIfsc());
 			this.city.setValue(detail.getCity());
-			this.chequeType.setValue(detail.getChequeType());
+			fillComboBox(this.chequeType, detail.getChequeType(), chequeTypeList, "");
 		}
 
 		doFillChequeDetails(listBoxChequeDetail, aChequeHeader.getChequeDetailList());

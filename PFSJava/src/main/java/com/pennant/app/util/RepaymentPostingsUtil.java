@@ -210,6 +210,7 @@ public class RepaymentPostingsUtil implements Serializable {
 					rpyQueueHeader);
 
 			aeEvent = (AEEvent) returnList.get(0);
+
 			if (aeEvent != null) {
 				if (!aeEvent.isPostingSucess()) {
 					actReturnList = new ArrayList<Object>(2);
@@ -586,7 +587,11 @@ public class RepaymentPostingsUtil implements Serializable {
 		actReturnList.add(aeEvent.getTransOrder());
 
 		if (financeMain.isSimulateAccounting()) {
-			financeMain.setReturnDataSet(aeEvent.getReturnDataSet());
+			if (CollectionUtils.isNotEmpty(financeMain.getReturnDataSet())) {
+				financeMain.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+			} else {
+				financeMain.setReturnDataSet(aeEvent.getReturnDataSet());
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1480,7 +1485,9 @@ public class RepaymentPostingsUtil implements Serializable {
 		FinanceRepayments repayment = prepareRepayDetailData(finRepayQueue, dateValueDate, postDate, linkedTranId,
 				totalRpyAmt);
 		repayment.setReceiptId(receiptId);
-		getFinanceRepaymentsDAO().save(repayment, "");
+		if (!financeMain.isSimulateAccounting()) {
+			getFinanceRepaymentsDAO().save(repayment, "");
+		}
 
 		logger.debug("Leaving");
 		return scheduleDetail;

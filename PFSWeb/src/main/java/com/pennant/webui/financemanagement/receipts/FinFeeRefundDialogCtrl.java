@@ -956,42 +956,43 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		BigDecimal allocatedAmtTDS = BigDecimal.ZERO;
 		BigDecimal allocatedAmt = BigDecimal.ZERO;
 		BigDecimal allocatedAmtTOT = PennantAppUtil.unFormateAmount(totAllocAmtTotBox.getValue(), formatter);
+		BigDecimal fraction = BigDecimal.ONE;
+		BigDecimal totPerc = BigDecimal.ZERO;
+
+		BigDecimal netAmountOriginal = fee.getNetAmount();
+		BigDecimal netTDS = fee.getNetTDS();
+		totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
+
+		if (fee.isTdsReq()) {
+			allocatedAmtTDS = (netTDS.multiply(allocatedAmtTOT)).divide(netAmountOriginal, 2, RoundingMode.HALF_DOWN);
+			allocatedAmtTDS = CalculationUtil.roundAmount(allocatedAmtTDS, tdsRoundMode, tdsRoundingTarget);
+			totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST).subtract(tdsPerc);
+		}
 
 		if (finFeeRefund.isTaxApplicable()) {
-			BigDecimal netAmountOriginal = fee.getNetAmount();
-			BigDecimal netTDS = fee.getNetTDS();
-
-			if (fee.isTdsReq()) {
-				allocatedAmtTDS = (netTDS.multiply(allocatedAmtTOT)).divide(netAmountOriginal, 2,
-						RoundingMode.HALF_DOWN);
-				allocatedAmtTDS = CalculationUtil.roundAmount(allocatedAmtTDS, tdsRoundMode, tdsRoundingTarget);
-			}
-
-			BigDecimal fraction = BigDecimal.ONE;
-			BigDecimal totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST).subtract(tdsPerc);
 			fraction = fraction.add(totPerc.divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN));
 
 			BigDecimal orgAmt = allocatedAmtTOT.divide(fraction, 0, RoundingMode.HALF_DOWN);
 			orgAmt = CalculationUtil.roundAmount(orgAmt, taxRoundMode, taxRoundingTarget);
 			allocatedAmtGST = GSTCalculator.getExclusiveGST(orgAmt, taxPercentages).gettGST();
-
-			allocatedAmt = allocatedAmtTOT.subtract(allocatedAmtGST).add(allocatedAmtTDS);
-
-			BigDecimal diffAmt = BigDecimal.ZERO;
-			BigDecimal diffGST = BigDecimal.ZERO;
-			BigDecimal diffTDS = BigDecimal.ZERO;
-			BigDecimal remAmt = fee.getPaidAmount().subtract(prvFinFeeRefund.getTotRefundAmount());
-			if (allocatedAmtTOT.compareTo(remAmt) == 0) {
-				diffAmt = fee.getPaidAmountOriginal()
-						.subtract(prvFinFeeRefund.getTotRefundAmtOriginal().add(allocatedAmt));
-				diffGST = fee.getPaidAmountGST().subtract(prvFinFeeRefund.getTotRefundAmtGST().add(allocatedAmtGST));
-				diffTDS = fee.getPaidTDS().subtract(prvFinFeeRefund.getTotRefundAmtTDS().add(allocatedAmtTDS));
-			}
-
-			allocatedAmt = allocatedAmt.add(diffAmt);
-			allocatedAmtGST = allocatedAmtGST.add(diffGST);
-			allocatedAmtTDS = allocatedAmtTDS.add(diffTDS);
 		}
+
+		allocatedAmt = allocatedAmtTOT.subtract(allocatedAmtGST).add(allocatedAmtTDS);
+
+		BigDecimal diffAmt = BigDecimal.ZERO;
+		BigDecimal diffGST = BigDecimal.ZERO;
+		BigDecimal diffTDS = BigDecimal.ZERO;
+		BigDecimal remAmt = fee.getPaidAmount().subtract(prvFinFeeRefund.getTotRefundAmount());
+
+		if (allocatedAmtTOT.compareTo(remAmt) == 0) {
+			diffAmt = fee.getPaidAmountOriginal().subtract(prvFinFeeRefund.getTotRefundAmtOriginal().add(allocatedAmt));
+			diffGST = fee.getPaidAmountGST().subtract(prvFinFeeRefund.getTotRefundAmtGST().add(allocatedAmtGST));
+			diffTDS = fee.getPaidTDS().subtract(prvFinFeeRefund.getTotRefundAmtTDS().add(allocatedAmtTDS));
+		}
+
+		allocatedAmt = allocatedAmt.add(diffAmt);
+		allocatedAmtGST = allocatedAmtGST.add(diffGST);
+		allocatedAmtTDS = allocatedAmtTDS.add(diffTDS);
 
 		finFeeRefund.setRefundAmount(allocatedAmtTOT);
 		finFeeRefund.setRefundAmtGST(allocatedAmtGST);

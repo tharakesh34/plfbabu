@@ -2035,6 +2035,45 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	}
 
 	/**
+	 * Method for Preparing List of Entries based on recordings for Insurance Payment
+	 * 
+	 * @param aeEvent
+	 * @param vasRecordingList
+	 * @return
+	 */
+	protected List<ReturnDataSet> processInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList,
+			boolean doPostings) throws InterfaceException {
+
+		List<ReturnDataSet> datasetList = new ArrayList<>();
+		if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
+			long accountsetId = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_INSPAY,
+					AccountEventConstants.ACCEVENT_INSPAY);
+			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
+			for (VASRecording recording : vasRecordingList) {
+				recording.getDeclaredFieldValues(aeEvent.getDataMap());
+				aeEvent.setFinReference(recording.getVasReference());
+
+				//For GL Code
+				VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(recording.getProductCode());
+				aeEvent.getDataMap().put("ae_productCode", vehicleDealer.getProductShortCode());
+				aeEvent.getDataMap().put("ae_dealerCode", vehicleDealer.getDealerShortCode());
+				aeEvent.getDataMap().put("id_totPayAmount", recording.getFee());
+
+				aeEvent.setLinkedTranId(0);
+				aeEvent.getAcSetIDList().clear();
+				aeEvent.getAcSetIDList().add(accountsetId);
+				if (doPostings) {
+					aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+				} else {
+					aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
+				}
+				datasetList.addAll(aeEvent.getReturnDataSet());
+			}
+		}
+		return datasetList;
+	}
+
+	/**
 	 * Method for Processing each stage Accounting Entry details for particular Finance
 	 * 
 	 * @param auditHeader
@@ -3818,12 +3857,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.finAssetTypesValidation = finAssetTypesValidation;
 	}
 
-	public AccountingSetDAO getAccountingSetDAO() {
-		return accountingSetDAO;
-	}
-
 	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
 		this.accountingSetDAO = accountingSetDAO;
 	}
-
 }

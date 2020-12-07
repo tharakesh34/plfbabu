@@ -5815,7 +5815,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", Version, LastMntOn, ReferralId, GraceTerms");
 		sql.append(", FinAssetValue, FinCurrAssetValue");
 		sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
-		sql.append(", Version, LastMntOn, ReferralId, GraceTerms");
+		sql.append(", Version, LastMntOn, ReferralId, GraceTerms, NumberOfTerms");
 		sql.append(" from FinanceMain");
 		return sql;
 	}
@@ -5930,6 +5930,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setLastMntOn(rs.getTimestamp("LastMntOn"));
 			fm.setReferralId(rs.getString("ReferralId"));
 			fm.setGraceTerms(rs.getInt("GraceTerms"));
+			fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
 
 			return fm;
 

@@ -126,7 +126,6 @@ import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
-import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeExpenseDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeInsuranceDAO;
@@ -246,6 +245,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -362,7 +362,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinContributorDetailDAO finContributorDetailDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private RuleDAO ruleDAO;
-	private AccountingSetDAO accountingSetDAO;
 	private RuleExecutionUtil ruleExecutionUtil;
 	private AccountTypeDAO accountTypeDAO;
 	private CustomerLimitIntefaceService custLimitIntefaceService;
@@ -2245,7 +2244,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
 			if (financeType.isFinCommitmentReq() && StringUtils.isNotBlank(financeMain.getFinCommitmentRef())) {
 
-				long accountingSetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_CMTDISB,
+				long accountingSetId = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_CMTDISB,
 						AccountEventConstants.ACCEVENT_CMTDISB);// TODO :
 
 				if (accountingSetId != 0) {
@@ -9345,7 +9344,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
 			String postingGroupBy, String type) {
-		return getPostingsDAO().getPostingsByFinRefAndEvent(finReference, finEvent, showZeroBal, postingGroupBy, type);
+		List<ReturnDataSet> postings = getPostingsDAO().getPostingsByFinRefAndEvent(finReference, finEvent, showZeroBal,
+				postingGroupBy, type);
+		List<VASRecording> vasReferences = vasRecordingDAO.getVASRecordingsByLinkRef(finReference, "");
+		if (CollectionUtils.isNotEmpty(vasReferences)) {
+			for (VASRecording vas : vasReferences) {
+				if (postings != null) {
+					postings.addAll(getPostingsDAO().getPostingsByFinRefAndEvent(vas.getVasReference(), "'INSPAY'",
+							showZeroBal, postingGroupBy, ""));
+				}
+			}
+		}
+		return postings;
 	}
 
 	@Override
@@ -9935,7 +9945,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getFinScheduleData().getFinanceType().isFinCommitmentReq() && StringUtils
 					.isNotBlank(financeDetail.getFinScheduleData().getFinanceMain().getFinCommitmentRef())) {
 
-				long accountingSetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_CMTDISB,
+				long accountingSetId = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_CMTDISB,
 						AccountEventConstants.ACCEVENT_CMTDISB);
 				if (accountingSetId != 0) {
 					financeDetail.setCmtFinanceEntries(
@@ -11233,14 +11243,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
 		return financeReferenceDetailDAO;
-	}
-
-	public AccountingSetDAO getAccountingSetDAO() {
-		return accountingSetDAO;
-	}
-
-	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
-		this.accountingSetDAO = accountingSetDAO;
 	}
 
 	public RuleDAO getRuleDAO() {

@@ -1276,12 +1276,13 @@ public class ScheduleCalculator {
 
 		int risize = repayInstructions.size();
 
-		// BigDecimal totalDesiredProfit = finMain.getTotalGrossPft();
+		//DE#1550(24-10-2020) - While doing the ReScheduling, RPS is not plotting properly in case of Grace.
+		/*
+		 * Date evtFromDate = finMain.getRecalFromDate(); finMain.setEventFromDate(evtFromDate);
+		 * finMain.setEventToDate(evtFromDate);
+		 */
 
 		Date evtFromDate = finMain.getRecalFromDate();
-		finMain.setEventFromDate(evtFromDate);
-		finMain.setEventToDate(evtFromDate);
-
 		sortRepayInstructions(repayInstructions);
 		if (StringUtils.equals(schdMethod, PennantConstants.List_Select) || StringUtils.equals(schdMethod, "")) {
 			for (int i = 0; i < risize; i++) {

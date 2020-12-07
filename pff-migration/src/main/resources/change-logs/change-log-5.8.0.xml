@@ -2330,7 +2330,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="100.10" author="murthy.y" dbms="mssql">
+	<changeSet id="100.10.1" author="murthy.y" dbms="mssql">
 		 <sql splitStatements="false">
 				<![CDATA[
                    MERGE INTO tax_details_stg1 cd
@@ -2413,7 +2413,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="100.12" author="murthy.y" dbms="mssql">
+	<changeSet id="100.12.1" author="murthy.y" dbms="mssql">
 		 <sql splitStatements="false">
 				<![CDATA[
 					MERGE INTO tax_details_stg1 cd
@@ -2438,7 +2438,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="100.13" author="murthy.y" dbms="mssql">
+	<changeSet id="100.13.1" author="murthy.y" dbms="mssql">
 		<sql splitStatements="false">
 			<![CDATA[
 				DECLARE @Seq1 VARCHAR(10)

@@ -56,17 +56,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.core.ChangeGraceEndService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinAssetAmtMovementDAO;
-import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
-import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
-import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
-import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
-import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.dao.finance.RepayInstructionDAO;
-import com.pennant.backend.dao.finance.SubventionDetailDAO;
-import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -78,7 +68,6 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.LoanDownSizingService;
 import com.pennant.backend.util.FinanceConstants;
@@ -89,24 +78,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class LoanDownSizingServiceImpl extends GenericFinanceDetailService implements LoanDownSizingService {
-
 	private static final Logger logger = Logger.getLogger(LoanDownSizingServiceImpl.class);
 
-	private CustomerDetailsService customerDetailsService;
 	private ChangeGraceEndService changeGraceEndService;
-
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private FinServiceInstrutionDAO finServiceInstructionDAO;
-	private FinanceTypeDAO financeTypeDAO;
-	private AuditHeaderDAO auditHeaderDAO;
-
-	// Process Schedule Details
-	private FinanceProfitDetailDAO profitDetailsDAO;
-	private FinanceDisbursementDAO financeDisbursementDAO;
-	private RepayInstructionDAO repayInstructionDAO;
-	private FinLogEntryDetailDAO finLogEntryDetailDAO;
-	private FinODPenaltyRateDAO finODPenaltyRateDAO;
-	private SubventionDetailDAO subventionDetailDAO;
 	private FinAssetAmtMovementDAO finAssetAmtMovementDAO;
 
 	/**
@@ -158,43 +132,18 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		return customerDetails;
 	}
 
-	/**
-	 * Method to fetch finance details by id from given table type
-	 * 
-	 * @param finRef
-	 *            (String)
-	 * @param isWIF
-	 *            (boolean)
-	 **/
 	public FinScheduleData getFinSchDataByFinRef(String finRef, String type, long logKey) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinScheduleData finSchData = new FinScheduleData();
 		finSchData.setFinReference(finRef);
 
 		if (logKey == 0) {
-
-			// FinanceMain
-			FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finRef, "_View", false);
+			FinanceMain financeMain = financeMainDAO.getFinanceMainById(finRef, "_View", false);
 			finSchData.setFinanceMain(financeMain);
 
-			// FinanceType
 			String finType = financeMain.getFinType();
 			finSchData.setFinanceType(financeTypeDAO.getFinanceTypeByID(finType, "_AView"));
-			//FIXME  Depeneds with underconstruction changes
-			// ACCRUAL Amount
-			/*
-			 * BigDecimal PftAccrued = profitDetailsDAO.getAccrueAmount(finRef, financeMain.getProductCategory());
-			 * finSchData.setAccrueValue(PftAccrued);
-			 */
-
-			// Repay, Fees and Penalty Details
-			/*
-			 * finSchData.setRepayDetails(getFinanceRepaymentsDAO().getFinRepayListByFinRef(finRef, false, ""));
-			 * finSchData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finRef, false, ""));
-			 * finSchData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finRef, "", false, ""));
-			 * finSchData.setPenaltyDetails(getRecoveryDAO().getFinancePenaltysByFinRef(finRef, ""));
-			 */
 		}
 
 		// Schedule, Disbursement Details and Repay Instructions
@@ -202,7 +151,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		finSchData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finRef, type, false));
 		finSchData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finRef, type, false));
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return finSchData;
 	}
 
@@ -215,50 +164,31 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 	 * @return
 	 */
 	public FinScheduleData changeGraceEndAfterFullDisb(FinScheduleData finScheduleData) {
-
 		// New Grace End Date
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		financeMain.setEventFromDate(SysParamUtil.getAppDate());
 
-		finScheduleData = getChangeGraceEndService().changeGraceEnd(finScheduleData, true);
+		finScheduleData = changeGraceEndService.changeGraceEnd(finScheduleData, true);
 
 		return finScheduleData;
 	}
 
-	/**
-	 * get Accounting Entries
-	 * 
-	 * @param finScheduleData
-	 * @return
-	 */
 	public AEEvent getChangeGrcEndPostings(FinScheduleData finScheduleData) throws Exception {
-		return getChangeGraceEndService().getChangeGrcEndPostings(finScheduleData);
+		return changeGraceEndService.getChangeGrcEndPostings(finScheduleData);
 
 	}
 
-	/**
-	 * 
-	 * @param finRef
-	 * @param movementType
-	 * @return
-	 */
 	public List<FinAssetAmtMovement> getFinAssetAmtMovements(String finRef, String movementType) {
-		return getFinAssetAmtMovementDAO().getFinAssetAmtMovements(finRef, movementType);
+		return finAssetAmtMovementDAO.getFinAssetAmtMovements(finRef, movementType);
 	}
 
-	/**
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, PennantConstants.method_saveOrUpdate);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -279,14 +209,14 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 
 		if (financeMain.isNew()) {
 
-			getFinanceMainDAO().save(financeMain, tableType, false);
+			financeMainDAO.save(financeMain, tableType, false);
 			finServiceInstructionDAO.save(finServInst, tableType.getSuffix());
 
 			auditHeader.setAuditReference(financeMain.getFinReference());
 			auditHeader.getAuditDetail().setModelData(financeMain);
 
 		} else {
-			getFinanceMainDAO().update(financeMain, tableType, false);
+			financeMainDAO.update(financeMain, tableType, false);
 
 			finServiceInstructionDAO.deleteList(financeMain.getFinReference(), rcdMaintainSts, tableType.getSuffix());
 			finServiceInstructionDAO.save(finServInst, tableType.getSuffix());
@@ -297,26 +227,20 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				financeMain.getBefImage(), financeMain));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException, JaxenException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, PennantConstants.method_doApprove);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -361,12 +285,12 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 
 				// 2. Data Saving ----> Schedule Tables
 				processScheduleDetails(financeDetail, finServInst);
-				getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
+				financeMainDAO.update(financeMain, TableType.MAIN_TAB, false);
 			} else {
 
 				// Update Revised Sanctioned Amount and Save FinServiceInstructions
 				finServiceInstructionDAO.save(finServInst, "");
-				getFinanceMainDAO().updateFinAssetValue(financeMain);
+				financeMainDAO.updateFinAssetValue(financeMain);
 			}
 		}
 
@@ -374,7 +298,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		finAssetAmtMovementDAO.saveFinAssetAmtMovement(assetAmtMovt);
 
 		// Delete from Staging Tables
-		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
+		financeMainDAO.delete(financeMain, TableType.TEMP_TAB, false, true);
 		finServiceInstructionDAO.deleteList(financeMain.getFinReference(), FinanceConstants.FINSER_EVENT_LOANDOWNSIZING,
 				"_Temp");
 
@@ -383,15 +307,15 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 				financeMain.getBefImage(), financeMain));
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(financeMain);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -402,7 +326,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 	 * @param finServInst
 	 */
 	private void processScheduleDetails(FinanceDetail financeDetail, FinServiceInstruction finServInst) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
@@ -437,17 +361,10 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		// save latest schedule details
 		listSave(finScheduleData, "", false, 0, finServInst.getServiceSeqId());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * 
-	 * @param financeMain
-	 * @param finServInst
-	 * @return
-	 */
 	private FinAssetAmtMovement prepareSanAmtMovement(FinanceMain financeMain, FinServiceInstruction finServInst) {
-
 		FinAssetAmtMovement assetAmtMovt = new FinAssetAmtMovement();
 
 		assetAmtMovt.setFinServiceInstID(finServInst.getServiceSeqId());
@@ -475,18 +392,12 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		return assetAmtMovt;
 	}
 
-	/**
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, PennantConstants.method_doReject);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -494,7 +405,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
-		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
+		financeMainDAO.delete(financeMain, TableType.TEMP_TAB, false, true);
 		finServiceInstructionDAO.deleteList(financeMain.getFinReference(), FinanceConstants.FINSER_EVENT_LOANDOWNSIZING,
 				"_Temp");
 
@@ -503,41 +414,26 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 				financeMain.getBefImage(), financeMain));
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * Method for Validate Finance Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @param method
-	 * @param isWIF
-	 * @return
-	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -552,112 +448,15 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 
 		if (StringUtils.equals(PennantConstants.method_doApprove, method)
 				&& !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
-			auditDetail.setBefImage(getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "", false));
+			auditDetail.setBefImage(financeMainDAO.getFinanceMainById(financeMain.getFinReference(), "", false));
 		}
 
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
-	}
-
-	// setters / getters
-
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
-	}
-
-	public FinanceTypeDAO getFinanceTypeDAO() {
-		return financeTypeDAO;
-	}
-
-	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
-		return financeScheduleDetailDAO;
-	}
-
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
-		return finServiceInstructionDAO;
-	}
-
-	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
-		this.finServiceInstructionDAO = finServiceInstructionDAO;
-	}
-
-	public ChangeGraceEndService getChangeGraceEndService() {
-		return changeGraceEndService;
 	}
 
 	public void setChangeGraceEndService(ChangeGraceEndService changeGraceEndService) {
 		this.changeGraceEndService = changeGraceEndService;
-	}
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public FinLogEntryDetailDAO getFinLogEntryDetailDAO() {
-		return finLogEntryDetailDAO;
-	}
-
-	public void setFinLogEntryDetailDAO(FinLogEntryDetailDAO finLogEntryDetailDAO) {
-		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
-	}
-
-	public FinanceProfitDetailDAO getProfitDetailsDAO() {
-		return profitDetailsDAO;
-	}
-
-	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
-		this.profitDetailsDAO = profitDetailsDAO;
-	}
-
-	public RepayInstructionDAO getRepayInstructionDAO() {
-		return repayInstructionDAO;
-	}
-
-	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
-		this.repayInstructionDAO = repayInstructionDAO;
-	}
-
-	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
-		return financeDisbursementDAO;
-	}
-
-	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
-		this.financeDisbursementDAO = financeDisbursementDAO;
-	}
-
-	public FinODPenaltyRateDAO getFinODPenaltyRateDAO() {
-		return finODPenaltyRateDAO;
-	}
-
-	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
-		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
-	}
-
-	public SubventionDetailDAO getSubventionDetailDAO() {
-		return subventionDetailDAO;
-	}
-
-	public void setSubventionDetailDAO(SubventionDetailDAO subventionDetailDAO) {
-		this.subventionDetailDAO = subventionDetailDAO;
-	}
-
-	public FinAssetAmtMovementDAO getFinAssetAmtMovementDAO() {
-		return finAssetAmtMovementDAO;
 	}
 
 	public void setFinAssetAmtMovementDAO(FinAssetAmtMovementDAO finAssetAmtMovementDAO) {

@@ -400,7 +400,9 @@ public class LatePayMarkingService extends ServiceHelper {
 					fod.setFinMaxODPft(fod.getFinMaxODPft().subtract(rpd.getFinSchdPftPaid()));
 				}
 
-				if (rpd.getFinSchdPriPaid().add(rpd.getFinSchdPftPaid()).compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal odAmt = fod.getLPIAmt().add(fod.getTotPenaltyAmt());
+				if (rpd.getFinSchdPriPaid().add(rpd.getFinSchdPftPaid()).compareTo(BigDecimal.ZERO) > 0
+						&& odAmt.compareTo(BigDecimal.ZERO) == 0) {
 					maxValuDate = rpd.getFinValueDate();
 				}
 			}

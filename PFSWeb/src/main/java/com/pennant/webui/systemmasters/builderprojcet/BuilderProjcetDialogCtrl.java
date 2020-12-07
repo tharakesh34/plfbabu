@@ -596,14 +596,17 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 		}
 		//Company
 		try {
-			this.builderId.getValidatedValue();//for mandatory Validation
-			Object object = this.builderId.getAttribute("builderId");
+			String validatedValue = this.builderId.getValidatedValue();
 
-			if (object != null) {
-				aBuilderProjcet.setBuilderId(Long.parseLong(object.toString()));
+			if (validatedValue != null) {
+				Object object = this.builderId.getAttribute("builderId");
 
-			} else {
-				aBuilderProjcet.setBuilderId(0);
+				if (object != null) {
+					aBuilderProjcet.setBuilderId(Long.parseLong(object.toString()));
+
+				} else {
+					aBuilderProjcet.setBuilderId(0);
+				}
 			}
 
 		} catch (WrongValueException we) {

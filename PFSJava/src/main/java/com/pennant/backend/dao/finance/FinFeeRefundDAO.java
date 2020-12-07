@@ -75,4 +75,6 @@ public interface FinFeeRefundDAO {
 
 	PrvsFinFeeRefund getPrvsRefundsByFeeId(long feeID);
 
+	FinFeeRefundDetails getPrvRefundDetails(long headerId, long feeID);
+
 }

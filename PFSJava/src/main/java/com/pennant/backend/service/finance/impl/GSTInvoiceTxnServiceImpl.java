@@ -205,18 +205,41 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 					}
 				} else {
 
-					gstAmount = cgstTax.getPaidTax().add(sgstTax.getPaidTax()).add(igstTax.getPaidTax())
-							.add(ugstTax.getPaidTax()).add(cessTax.getPaidTax());
-					if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
-						continue;
-					}
+					FinFeeDetail befImage = feeDetail.getBefImage();
+					if (befImage.getRemainingFee().compareTo(feeDetail.getPaidAmount()) == 0
+							&& feeDetail.getTaxHeaderId() != null
+							&& (befImage.getRemainingFeeGST().compareTo(feeDetail.getPaidAmountGST()) != 0)) {
 
-					gstInvTxn.setFeeAmount(feeDetail.getPaidAmountOriginal());
-					gstInvTxn.setCGST_AMT(cgstTax.getPaidTax());
-					gstInvTxn.setSGST_AMT(sgstTax.getPaidTax());
-					gstInvTxn.setIGST_AMT(igstTax.getPaidTax());
-					gstInvTxn.setUGST_AMT(ugstTax.getPaidTax());
-					gstInvTxn.setCESS_AMT(cessTax.getPaidTax());
+						gstAmount = cgstTax.getRemFeeTax().add(sgstTax.getRemFeeTax()).add(igstTax.getRemFeeTax())
+								.add(ugstTax.getRemFeeTax()).add(cessTax.getRemFeeTax());
+
+						if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
+							continue;
+						}
+
+						gstInvTxn.setCGST_AMT(cgstTax.getRemFeeTax());
+						gstInvTxn.setSGST_AMT(sgstTax.getRemFeeTax());
+						gstInvTxn.setIGST_AMT(igstTax.getRemFeeTax());
+						gstInvTxn.setUGST_AMT(ugstTax.getRemFeeTax());
+						gstInvTxn.setCESS_AMT(cessTax.getRemFeeTax());
+						gstInvTxn.setFeeAmount(
+								feeDetail.getPaidAmount().add(feeDetail.getPaidTDS()).subtract(gstAmount));
+
+					} else {
+						gstAmount = cgstTax.getPaidTax().add(sgstTax.getPaidTax()).add(igstTax.getPaidTax())
+								.add(ugstTax.getPaidTax()).add(cessTax.getPaidTax());
+
+						if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
+							continue;
+						}
+
+						gstInvTxn.setFeeAmount(feeDetail.getPaidAmountOriginal());
+						gstInvTxn.setCGST_AMT(cgstTax.getPaidTax());
+						gstInvTxn.setSGST_AMT(sgstTax.getPaidTax());
+						gstInvTxn.setIGST_AMT(igstTax.getPaidTax());
+						gstInvTxn.setUGST_AMT(ugstTax.getPaidTax());
+						gstInvTxn.setCESS_AMT(cessTax.getPaidTax());
+					}
 				}
 				invoiceAmout = invoiceAmout.add(gstAmount);
 			}

@@ -50,6 +50,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -523,6 +524,17 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (aMandate.getDocumentName() == null || aMandate.getDocumentName().equals("")) {
 			this.btnViewMandateDoc.setVisible(false);
 		}
+
+		long documentRef = aMandate.getDocumentRef();
+		if (aMandate.getDocImage() == null && documentRef > 0) {
+			mandate.setDocImage(mandateService.getDocumentManImage(documentRef));
+		}
+
+		if (mandate.getDocImage() == null) {
+			this.btnViewMandateDoc.setDisabled(true);
+			this.btnViewMandateDoc.setTooltiptext(Labels.getLabel("label_Mandate_Document"));
+		}
+
 		this.barCodeNumber.setValue(aMandate.getBarCodeNumber());
 		this.finReference.setValue(aMandate.getOrgReference());
 		this.swapIsActive.setChecked(aMandate.isSwapIsActive());

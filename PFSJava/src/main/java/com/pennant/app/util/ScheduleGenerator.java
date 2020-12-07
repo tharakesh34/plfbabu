@@ -67,6 +67,7 @@ import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class ScheduleGenerator {
 
@@ -114,7 +115,7 @@ public class ScheduleGenerator {
 		}
 
 		// Advised Profit Rate Calculation Process & Profit Days Basis , Reference Rates Setting
-		for (int i = 1; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
+		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 
 			curSchd.setTDSApplicable(financeMain.isTDSApplicable());
@@ -272,10 +273,15 @@ public class ScheduleGenerator {
 		BigDecimal minRate = BigDecimal.ZERO;
 		BigDecimal maxRate = BigDecimal.ZERO;
 
-		for (int i = 1; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
+		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 			if (i != 0) {
 				prvSchd = finScheduleData.getFinanceScheduleDetails().get(i - 1);
+			}
+
+			if (DateUtil.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) == 0
+					&& financeMain.getRepayBaseRate() == null) {
+				prvSchd.setActRate(financeMain.getRepayProfitRate());
 			}
 
 			//Interest Days basis kept as same for both grace and repayment periods.
@@ -391,7 +397,9 @@ public class ScheduleGenerator {
 					curSchd.setCalculatedRate(calrate);
 				}
 			} else {
-				curSchd.setCalculatedRate(prvSchd.getActRate());
+				if (prvSchd != null) {
+					curSchd.setCalculatedRate(prvSchd.getActRate());
+				}
 			}
 			finScheduleData.setScheduleMap(curSchd);
 		}

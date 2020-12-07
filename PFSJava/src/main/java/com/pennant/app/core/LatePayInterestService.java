@@ -116,8 +116,11 @@ public class LatePayInterestService extends ServiceHelper {
 			odcr.setFinCurODAmt(odPri.add(odPft));
 			schdODCRecoveries.add(odcr);
 		}
+		BigDecimal odAmt = fod.getLPIAmt().add(fod.getTotPenaltyAmt());
 
-		fod.setLPIAmt(BigDecimal.ZERO);
+		if (odAmt.compareTo(BigDecimal.ZERO) <= 0) {
+			fod.setLPIAmt(BigDecimal.ZERO);
+		}
 
 		//Add record with today date
 		boolean isAddTodayRcd = true;

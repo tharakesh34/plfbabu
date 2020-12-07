@@ -329,6 +329,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.finBranch.setValue(aFinanceMain.getFinBranch());
 		this.currency.setValue(aFinanceMain.getFinCcy());
 		this.finType.setValue(aFinanceMain.getFinType());
+		this.recordStatus.setValue(aFinanceMain.getRecordStatus());
 		this.startDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getFinStartDate()));
 		this.maturityDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getMaturityDate()));
 

@@ -108,6 +108,7 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal penaltyWaived = BigDecimal.ZERO;
 	private BigDecimal accrueTsfd = BigDecimal.ZERO;
 	private BigDecimal prvAccrueTsfd = BigDecimal.ZERO;
+	private BigDecimal penaltyAccr = BigDecimal.ZERO;
 
 	private BigDecimal totalWriteoff = BigDecimal.ZERO;
 	private BigDecimal excessBal = BigDecimal.ZERO;
@@ -894,6 +895,14 @@ public class AEAmountCodes implements Serializable {
 
 	public void setPrvAccrueTsfd(BigDecimal prvAccrueTsfd) {
 		this.prvAccrueTsfd = prvAccrueTsfd;
+	}
+
+	public BigDecimal getPenaltyAccr() {
+		return penaltyAccr;
+	}
+
+	public void setPenaltyAccr(BigDecimal penaltyAccr) {
+		this.penaltyAccr = penaltyAccr;
 	}
 
 	public BigDecimal getTotalWriteoff() {

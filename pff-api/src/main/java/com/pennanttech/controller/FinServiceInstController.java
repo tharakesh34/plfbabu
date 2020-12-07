@@ -239,6 +239,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 
 			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_RATECHG);
+			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_RATECHG);
 			try {
 				// execute fee charges
 				executeFeeCharges(financeDetail, finServiceInst, eventCode);
@@ -363,6 +364,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_CHGRPY);
+			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_CHGRPY);
 			try {
 				// execute fee charges
 				executeFeeCharges(financeDetail, finServiceInst, eventCode);
@@ -531,6 +533,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_ADDTERM);
 
 			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_ADDTERM);
+			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ADDTERM);
 
 			try {
 				// execute fee charges
@@ -606,6 +609,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECALCULATE);
 			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_RECALCULATE);
+			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_RECALCULATE);
 
 			switch (finServiceInst.getRecalType()) {
 			case CalculationConstants.RPYCHG_TILLMDT:
@@ -702,6 +706,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CHGPFT);
 			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_CHGPFT);
+			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_CHGPFT);
 			// profit amount
 			BigDecimal amount = finServiceInst.getAmount();
 			try {
@@ -1011,6 +1016,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			finScheduleData.getFinanceMain().setFinSourceID(APIConstants.FINSOURCE_ID_API);
 			finScheduleData.getFinanceMain().setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CHGFRQ);
 			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_CHGFRQ);
+			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_CHGFRQ);
 			try {
 				// execute fee charges
 				executeFeeCharges(financeDetail, finServiceInst, eventCode);
@@ -1076,6 +1082,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RMVTERM);
 			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_RMVTERM);
+			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_RMVTERM);
 
 			if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
 				financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());

@@ -12480,17 +12480,10 @@
 		</property>
 	</bean>
 
-	<bean name="loanDownSizingServiceTarget" class="com.pennant.backend.service.finance.impl.LoanDownSizingServiceImpl">
+	<bean name="loanDownSizingServiceTarget" class="com.pennant.backend.service.finance.impl.LoanDownSizingServiceImpl"
+		parent="genericFinanceDetailService">
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="changeGraceEndService" ref="changeGraceEndService" />
-		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
-		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
-		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="finAssetAmtMovementDAO" ref="finAssetAmtMovementDAO" />

@@ -318,8 +318,9 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		sql.append(type);
 		sql.append(" Set Id = :Id, HeaderId = :HeaderId, FeeId = :FeeId, RefundAmount = :RefundAmount, ");
 		sql.append(" RefundAmtGST = :RefundAmtGST, RefundAmtOriginal = :RefundAmtOriginal,");
-		sql.append(" Version = :Version,LastMntBy = :LastMntBy,LastMntOn = :LastMntOn,RecordStatus = :RecordStatus,");
-		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(" RefundAmtTDS = :RefundAmtTDS, Version = :Version, LastMntBy = :LastMntBy, ");
+		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode, ");
+		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where Id = :Id");
 
@@ -410,4 +411,34 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		return prvsFinFeeRefund;
 	}
 
+	@Override
+	public FinFeeRefundDetails getPrvRefundDetails(long headerId, long feeID) {
+		logger.debug(Literal.ENTERING);
+
+		FinFeeRefundDetails finFeeRefundDetails = new FinFeeRefundDetails();
+		finFeeRefundDetails.setFeeId(feeID);
+		finFeeRefundDetails.setHeaderId(headerId);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Sum(RefundAmount) RefundAmount, Sum(RefundAmtGST) RefundAmtGST");
+		sql.append(", Sum(RefundAmtOriginal) RefundAmtOriginal, Sum(RefundAmtTDS) RefundAmtTDS");
+		sql.append(" From FinFeeRefundDetails");
+		sql.append(" Where HeaderId <> :HeaderId and FeeId = :FeeId");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeRefundDetails);
+		RowMapper<FinFeeRefundDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinFeeRefundDetails.class);
+
+		try {
+			finFeeRefundDetails = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			finFeeRefundDetails = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return finFeeRefundDetails;
+	}
 }

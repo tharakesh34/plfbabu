@@ -1176,6 +1176,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			for (FinReceiptDetail receiptDetail : receiptDetails) {
 				//long id = receiptService.getRepayID();
 				FinRepayHeader repayHeader = new FinRepayHeader();
+				repayHeader.setRepayScheduleDetails(receiptDetail.getRepayHeader().getRepayScheduleDetails());
 				receiptDetail.setRepayHeader(repayHeader);
 				//receiptDetail.getRepayHeader().setRepayID(id);
 			}

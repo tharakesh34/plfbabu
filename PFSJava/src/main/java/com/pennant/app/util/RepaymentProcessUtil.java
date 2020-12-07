@@ -604,7 +604,13 @@ public class RepaymentProcessUtil {
 			returnList.add(uGstLpp);
 			returnList.add(cpzChg);
 
-			financeMain.setReturnDataSet(aeEvent.getReturnDataSet());
+			if (financeMain.isSimulateAccounting()) {
+				if (CollectionUtils.isNotEmpty(financeMain.getReturnDataSet())) {
+					financeMain.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+				} else {
+					financeMain.setReturnDataSet(aeEvent.getReturnDataSet());
+				}
+			}
 
 			return returnList;
 		}
@@ -2060,7 +2066,7 @@ public class RepaymentProcessUtil {
 		logger.debug("Entering");
 
 		List<Object> returnList = new ArrayList<Object>();
-		List<FinRepayQueue> finRepayQueues = new ArrayList<FinRepayQueue>();
+		List<FinRepayQueue> finRepayQueues = new ArrayList<>();
 		FinRepayQueue finRepayQueue = null;
 		FinRepayQueueHeader rpyQueueHeader = new FinRepayQueueHeader();
 
@@ -2069,38 +2075,39 @@ public class RepaymentProcessUtil {
 		List<FinReceiptDetail> rcdList = rch.getReceiptDetails();
 		rcdList = sortReceiptDetails(rcdList);
 		FinReceiptDetail rcd = rcdList.get(rcdList.size() - 1);
-		List<RepayScheduleDetail> rsdList = new ArrayList<RepayScheduleDetail>(1);
+		List<RepayScheduleDetail> rsdList = new ArrayList<>(1);
 
-		for (int i = 0; i < rcdList.size(); i++) {
-			FinReceiptDetail rcdTemp = rcdList.get(i);
-			if (rcdTemp.getRepayHeader() != null && rcdTemp.getRepayHeader().getRepayScheduleDetails() != null
-					&& !rcdTemp.getRepayHeader().getRepayScheduleDetails().isEmpty()) {
-				rsdList.addAll(rcdTemp.getRepayHeader().getRepayScheduleDetails());
+		for (FinReceiptDetail rcdTemp : rcdList) {
+			FinRepayHeader repayHeader = rcdTemp.getRepayHeader();
+			if (repayHeader == null) {
+				continue;
+			}
+
+			List<RepayScheduleDetail> repayScheduleDetails = repayHeader.getRepayScheduleDetails();
+			if (CollectionUtils.isNotEmpty(repayScheduleDetails)) {
+				rsdList.addAll(repayScheduleDetails);
 			}
 		}
 
 		try {
-			if (rsdList != null && !rsdList.isEmpty()) {
-				for (int i = 0; i < rsdList.size(); i++) {
-					finRepayQueue = new FinRepayQueue();
+			for (int i = 0; i < rsdList.size(); i++) {
+				finRepayQueue = new FinRepayQueue();
 
-					finRepayQueue.setFinReference(financeMain.getFinReference());
-					finRepayQueue.setRpyDate(rsdList.get(i).getSchDate());
-					finRepayQueue.setFinRpyFor(rsdList.get(i).getSchdFor());
-					finRepayQueue.setRcdNotExist(true);
-					finRepayQueue = doWriteDataToBean(finRepayQueue, financeMain, rsdList.get(i));
+				finRepayQueue.setFinReference(financeMain.getFinReference());
+				finRepayQueue.setRpyDate(rsdList.get(i).getSchDate());
+				finRepayQueue.setFinRpyFor(rsdList.get(i).getSchdFor());
+				finRepayQueue.setRcdNotExist(true);
+				finRepayQueue = doWriteDataToBean(finRepayQueue, financeMain, rsdList.get(i));
 
-					finRepayQueue.setRefundAmount(rsdList.get(i).getRefundReq());
-					finRepayQueue.setPenaltyPayNow(rsdList.get(i).getPenaltyPayNow());
-					finRepayQueue.setWaivedAmount(rsdList.get(i).getWaivedAmt());
-					finRepayQueue
-							.setPenaltyBal(rsdList.get(i).getPenaltyAmt().subtract(rsdList.get(i).getPenaltyPayNow()));
-					finRepayQueue.setChargeType(rsdList.get(i).getChargeType());
+				finRepayQueue.setRefundAmount(rsdList.get(i).getRefundReq());
+				finRepayQueue.setPenaltyPayNow(rsdList.get(i).getPenaltyPayNow());
+				finRepayQueue.setWaivedAmount(rsdList.get(i).getWaivedAmt());
+				finRepayQueue.setPenaltyBal(rsdList.get(i).getPenaltyAmt().subtract(rsdList.get(i).getPenaltyPayNow()));
+				finRepayQueue.setChargeType(rsdList.get(i).getChargeType());
 
-					// Tax Header Setting
-					finRepayQueue.setTaxHeader(rsdList.get(i).getTaxHeader());
-					finRepayQueues.add(finRepayQueue);
-				}
+				// Tax Header Setting
+				finRepayQueue.setTaxHeader(rsdList.get(i).getTaxHeader());
+				finRepayQueues.add(finRepayQueue);
 			}
 			BigDecimal totRecvAmount = BigDecimal.ZERO;
 			List<ReceiptAllocationDetail> radList = rch.getAllocations();

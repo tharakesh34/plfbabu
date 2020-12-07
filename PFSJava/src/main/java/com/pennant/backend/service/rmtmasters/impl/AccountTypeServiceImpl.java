@@ -52,7 +52,6 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
-import com.pennant.backend.dao.rmtmasters.impl.AccountTypeDAOImpl;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -69,7 +68,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class AccountTypeServiceImpl extends GenericService<AccountType> implements AccountTypeService {
-	private static Logger logger = Logger.getLogger(AccountTypeDAOImpl.class);
+	private static Logger logger = Logger.getLogger(AccountTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AccountTypeDAO accountTypeDAO;

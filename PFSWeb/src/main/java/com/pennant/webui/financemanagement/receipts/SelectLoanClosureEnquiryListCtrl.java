@@ -7,9 +7,11 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Window;
@@ -117,6 +119,21 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Leaving ");
 	}
 
+	public void onClick$btnClose(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		//Close the current window
+		this.window_SelectLoanClosureEnquiryList.onClose();
+
+		//Close the current menu item
+		final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
+		final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
+				.getFellow("tabBoxIndexCenter");
+		tabbox.getSelectedTab().close();
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -189,20 +206,6 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * The Click event is raised when the Close Button control is clicked.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
-	 */
-	public void onClick$btnClose(Event event) {
-		if (doClose(false)) {
-			if (tabbox != null) {
-				tabbox.getSelectedTab().close();
-			}
-		}
 	}
 
 	public LoanClosureEnquiryDialogCtrl getLoanClosureEnquiryDialogCtrl() {

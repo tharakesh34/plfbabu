@@ -133,8 +133,21 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(
 				" SELECT ValueDate,PostDate, AppDate, AppValueDate, TranCode,RevTranCode, TranDesc, RevTranCode, DrOrCr, Account, PostAmount, ");
-		selectSql.append(" FinEvent, LovDescEventCodeName, AcCcy, PostBranch, UserBranch ");
-		selectSql.append(" FROM Postings" + type);
+		selectSql.append(" FinEvent, AcCcy, PostBranch, UserBranch ");
+
+		if (StringUtils.isNotBlank(type)) {
+			selectSql.append(", LovDescEventCodeName");
+		} else {
+			selectSql.append(", T2.AEEventCodeDesc LovDescEventCodeName");
+		}
+
+		selectSql.append(" FROM Postings");
+		if (StringUtils.isBlank(type)) {
+			selectSql.append(" T1 INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode");
+		}
+		if (StringUtils.isNotBlank(type)) {
+			selectSql.append(type);
+		}
 		selectSql.append(" Where FinReference =:FinReference AND FinEvent IN (" + finEvent + ")");
 		if (!showZeroBal) {
 			selectSql.append(" AND PostAmount != 0");

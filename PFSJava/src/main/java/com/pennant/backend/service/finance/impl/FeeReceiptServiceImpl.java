@@ -56,6 +56,7 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.InvoiceDetail;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -854,11 +855,31 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			dataMap.put(feeTypeCode + "_CESS_C", cessTax.getActualTax());
 
 			// Paid Amount
-			dataMap.put(feeTypeCode + "_CGST_P", cgstTax.getPaidTax());
-			dataMap.put(feeTypeCode + "_SGST_P", sgstTax.getPaidTax());
-			dataMap.put(feeTypeCode + "_IGST_P", igstTax.getPaidTax());
-			dataMap.put(feeTypeCode + "_UGST_P", ugstTax.getPaidTax());
-			dataMap.put(feeTypeCode + "_CESS_P", cessTax.getPaidTax());
+			FinFeeDetail befImage = finFeeDetail.getBefImage();
+
+			if ((befImage.getRemainingFee().compareTo(finFeeDetail.getPaidAmount()) == 0)
+					&& finFeeDetail.getTaxHeaderId() != null
+					&& (befImage.getRemainingFeeGST().compareTo(finFeeDetail.getPaidAmountGST()) != 0)) {
+
+				BigDecimal totalNetFee = finFeeDetail.getCalculatedAmount().subtract(finFeeDetail.getWaivedAmount());
+				TaxAmountSplit netTaxSplit = GSTCalculator.getInclusiveGST(totalNetFee, taxPercentages);
+				BigDecimal TotalPaid = befImage.getPaidAmount().add(befImage.getPaidTDS());
+				TaxAmountSplit paidTaxSplit = GSTCalculator.getInclusiveGST(TotalPaid, taxPercentages);
+				BigDecimal paidAmt = finFeeDetail.getNetAmountOriginal().subtract(befImage.getPaidAmountOriginal());
+
+				dataMap.put(feeTypeCode + "_CGST_P", netTaxSplit.getcGST().subtract(paidTaxSplit.getcGST()));
+				dataMap.put(feeTypeCode + "_SGST_P", netTaxSplit.getsGST().subtract(paidTaxSplit.getsGST()));
+				dataMap.put(feeTypeCode + "_IGST_P", netTaxSplit.getiGST().subtract(paidTaxSplit.getiGST()));
+				dataMap.put(feeTypeCode + "_UGST_P", netTaxSplit.getuGST().subtract(paidTaxSplit.getuGST()));
+				dataMap.put(feeTypeCode + "_CESS_P", netTaxSplit.getCess().subtract(paidTaxSplit.getCess()));
+				dataMap.put(feeTypeCode + "_P", paidAmt);
+			} else {
+				dataMap.put(feeTypeCode + "_CGST_P", cgstTax.getPaidTax());
+				dataMap.put(feeTypeCode + "_SGST_P", sgstTax.getPaidTax());
+				dataMap.put(feeTypeCode + "_IGST_P", igstTax.getPaidTax());
+				dataMap.put(feeTypeCode + "_UGST_P", ugstTax.getPaidTax());
+				dataMap.put(feeTypeCode + "_CESS_P", cessTax.getPaidTax());
+			}
 
 			// Net Amount
 			dataMap.put(feeTypeCode + "_CGST_N", cgstTax.getNetTax());
@@ -1342,6 +1363,11 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			FinFeeReceipt finFeeReceipt = finFeeDetail.getFinFeeReceipts().get(0);
 			BigDecimal paidAmt = finFeeReceipt.getPaidAmount();
 			BigDecimal paidTds = finFeeReceipt.getPaidTds();
+			FinFeeDetail tempfinFee = new FinFeeDetail();
+			BeanUtils.copyProperties(finFeeDetail, tempfinFee);
+			if (finFeeDetail.getBefImage() == null) {
+				finFeeDetail.setBefImage(tempfinFee);
+			}
 			finFeeDetail.setPaidCalcReq(true);
 
 			//In case of approve need to calculate complete paid amount GST because it is updating on fees
@@ -1380,6 +1406,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		invoiceDetail.setLinkedTranId(linkedTranId);
 		invoiceDetail.setFinanceDetail(financeDetail);
 		invoiceDetail.setFinFeeDetailsList(finFeeDetailsList);
+		setRemTaxes(finFeeDetailsList, taxPercentages);
 		invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
 		invoiceDetail.setOrigination(false);
 		invoiceDetail.setWaiver(false);
@@ -1502,6 +1529,57 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			}
 		}
 		return null;
+	}
+
+	private void setRemTaxes(List<FinFeeDetail> finFeeDetailsList, Map<String, BigDecimal> taxPercentages) {
+		for (FinFeeDetail finFeeDetail : finFeeDetailsList) {
+			if (finFeeDetail.getBefImage().getRemainingFee().compareTo(finFeeDetail.getPaidAmount()) == 0
+					&& finFeeDetail.getTaxHeaderId() != null && (finFeeDetail.getBefImage().getRemainingFeeGST()
+							.compareTo(finFeeDetail.getPaidAmountGST()) != 0)) {
+				BigDecimal totalNetFee = finFeeDetail.getCalculatedAmount().subtract(finFeeDetail.getWaivedAmount());
+				TaxAmountSplit netTaxSplit = GSTCalculator.getInclusiveGST(totalNetFee, taxPercentages);
+				BigDecimal TotalPaid = finFeeDetail.getBefImage().getPaidAmount()
+						.add(finFeeDetail.getBefImage().getPaidTDS());
+				TaxAmountSplit paidTaxSplit = GSTCalculator.getInclusiveGST(TotalPaid, taxPercentages);
+				List<Taxes> taxDetails = finFeeDetail.getTaxHeader().getTaxDetails();
+				Taxes cgstTax = null;
+				Taxes sgstTax = null;
+				Taxes igstTax = null;
+				Taxes ugstTax = null;
+				Taxes cessTax = null;
+
+				if (CollectionUtils.isNotEmpty(taxDetails)) {
+					for (Taxes taxes : taxDetails) {
+						String taxType = taxes.getTaxType();
+						switch (taxType) {
+						case RuleConstants.CODE_CGST:
+							cgstTax = taxes;
+							cgstTax.setRemFeeTax(netTaxSplit.getcGST().subtract(paidTaxSplit.getcGST()));
+							break;
+						case RuleConstants.CODE_SGST:
+							sgstTax = taxes;
+							sgstTax.setRemFeeTax(netTaxSplit.getsGST().subtract(paidTaxSplit.getsGST()));
+							break;
+						case RuleConstants.CODE_IGST:
+							igstTax = taxes;
+							igstTax.setRemFeeTax(netTaxSplit.getiGST().subtract(paidTaxSplit.getiGST()));
+							break;
+						case RuleConstants.CODE_UGST:
+							ugstTax = taxes;
+							ugstTax.setRemFeeTax(netTaxSplit.getuGST().subtract(paidTaxSplit.getuGST()));
+							break;
+						case RuleConstants.CODE_CESS:
+							cessTax = taxes;
+							cessTax.setRemFeeTax(netTaxSplit.getCess().subtract(paidTaxSplit.getCess()));
+							break;
+						default:
+							break;
+						}
+
+					}
+				}
+			}
+		}
 	}
 
 	/**

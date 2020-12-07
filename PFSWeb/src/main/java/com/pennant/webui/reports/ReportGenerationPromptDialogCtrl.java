@@ -1787,7 +1787,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				FinScheduleData scheduleData = financeDetailService.getFinSchDataByFinRef(finReference, "", 0);
 				renderer = new FinScheduleListItemRenderer();
 				List<FinanceScheduleReportData> schdList = renderer.getPrintScheduleData(scheduleData, null, null,
-						false, true);
+						false, true, true);
 
 				List<Object> subList = new ArrayList<Object>();
 				subList.add(schdList);

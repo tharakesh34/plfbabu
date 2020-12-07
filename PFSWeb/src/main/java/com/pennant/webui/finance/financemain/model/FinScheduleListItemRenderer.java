@@ -2037,7 +2037,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	public List<FinanceScheduleReportData> getPrintScheduleData(FinScheduleData aFinScheduleData,
 			Map<Date, ArrayList<FinanceRepayments>> paymentDetailsMap,
 			Map<Date, ArrayList<OverdueChargeRecovery>> penaltyDetailsMap, boolean includeSummary,
-			boolean reportGeneration) {
+			boolean reportGeneration, boolean isReport) {
 
 		logger.debug("Entering");
 
@@ -2401,11 +2401,15 @@ public class FinScheduleListItemRenderer implements Serializable {
 						if (!reportGeneration) {
 							data.setTotalAmount(formatAmt(curDisb.getDisbAmount(), false, false));
 						}
-						data.setEndBal(formatAmt(
-								curSchd.getClosingBalance().subtract(curSchd.getFeeChargeAmt())
-										.subtract(curSchd.getInsuranceAmt()).subtract(curSchd.getDisbAmount())
-										.add(curTotDisbAmt).add(curSchd.getDownPaymentAmount()).add(advEMi),
-								false, false));
+						if (isReport) {
+							data.setEndBal(formatAmt(curSchd.getClosingBalance(), false, false));
+						} else {
+							data.setEndBal(formatAmt(
+									curSchd.getClosingBalance().subtract(curSchd.getFeeChargeAmt())
+											.subtract(curSchd.getInsuranceAmt()).subtract(curSchd.getDisbAmount())
+											.add(curTotDisbAmt).add(curSchd.getDownPaymentAmount()).add(advEMi),
+									false, false));
+						}
 						data.setLimitDrop(formatAmt(limitIncreaseAmt, false, false));
 						data.setTotalLimit(formatAmt(odAvailAmt, false, false));
 						BigDecimal availLimit = odAvailAmt.subtract(
@@ -2472,7 +2476,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				}
 
 				// Fee Charge Details
-				if (getFinScheduleData().getFinFeeDetailList() != null && curSchd.getFeeChargeAmt() != null
+				if (!isReport && getFinScheduleData().getFinFeeDetailList() != null && curSchd.getFeeChargeAmt() != null
 						&& curSchd.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0) {
 
 					BigDecimal feeChargeAmt = curSchd.getFeeChargeAmt();
@@ -2535,7 +2539,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 					}
 				}
 
-				if (!curSchd.isPftOnSchDate() && !curSchd.isRepayOnSchDate() && !curSchd.isRvwOnSchDate()
+				if (!isReport && !curSchd.isPftOnSchDate() && !curSchd.isRepayOnSchDate() && !curSchd.isRvwOnSchDate()
 						&& curSchd.isDisbOnSchDate()) {
 
 					data = new FinanceScheduleReportData();
@@ -2568,7 +2572,6 @@ public class FinScheduleListItemRenderer implements Serializable {
 					reportList.add(data);
 					count = 2;
 				}
-
 			}
 
 			if (curSchd.isRepayOnSchDate()

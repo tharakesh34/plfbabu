@@ -1557,7 +1557,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(getFinScheduleData());
 			list.add(subList1);
 			List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(getFinScheduleData(), null, null,
-					true, false);
+					true, false, false);
 			list.add(subList);
 
 			boolean isSchdFee = false;

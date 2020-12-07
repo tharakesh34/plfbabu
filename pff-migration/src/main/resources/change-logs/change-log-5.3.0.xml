@@ -3774,4 +3774,22 @@
 		<modifyDataType tableName="MANDATE_REQUESTS" columnName="ACCT_HOLDER_NAME" newDataType="VARCHAR(100)" />
 	</changeSet>
 	
+	<changeSet id="ST#147.1" author="Saikrishna.K">
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE Code = 'RU0099';
+				INSERT INTO ERRORDETAILS VALUES ('RU0099', 'EN', 'E', ' EarlySettlement Date: {0} can not be before latest waiver date: {1}', null, 'Approved', null, null, null, null, null, 0, null, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#147" author="DurgaPrasad G">
+		<sql>
+			<![CDATA[
+				DELETE FROM ErrorDetails WHERE CODE='RU0098';
+				INSERT INTO ErrorDetails VALUES('RU0098', 'EN', 'E', 'Early Settlement date cannot be before latest waiver date.', '', 'Approved', '', '', '', '', '', 0, current_timestamp, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

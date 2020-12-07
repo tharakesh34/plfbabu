@@ -336,7 +336,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		fod.setLpCpzAmount(BigDecimal.ZERO);
 
 		// Calculate the Penalty
-		for (int iOdcr = 1; iOdcr < odcrList.size() - 1; iOdcr++) {
+		for (int iOdcr = 1; iOdcr < odcrList.size(); iOdcr++) {
 			odcrCur = odcrList.get(iOdcr);
 			odcrPrv = odcrList.get(iOdcr - 1);
 

@@ -243,7 +243,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select sum(currwaivergst)");
-		sql.append(" from plf.feewaiverheader fh");
+		sql.append(" from feewaiverheader fh");
 		sql.append(" LEFT JOIN feewaiverdetails fwd on fwd.waiverid = fh.waiverid");
 		sql.append(" where adviseId = :adviseId and FinReference = :FinReference and currwaiveramount > 0 ");
 

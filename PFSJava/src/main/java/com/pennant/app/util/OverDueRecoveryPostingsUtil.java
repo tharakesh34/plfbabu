@@ -178,8 +178,10 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			if (taxRcv.getReceivableAmount()
 					.compareTo(amountCodes.getPenaltyPaid().add(amountCodes.getPenaltyWaived())) < 0) {
 				amountCodes.setPenaltyRcv(taxRcv.getReceivableAmount());
+				amountCodes.setPenaltyAccr(rpyQueueHeader.getPenalty().subtract(taxRcv.getReceivableAmount()));
 			} else {
 				amountCodes.setPenaltyRcv(amountCodes.getPenaltyPaid().add(amountCodes.getPenaltyWaived()));
+				amountCodes.setPenaltyAccr(BigDecimal.ZERO);
 			}
 		}
 
@@ -330,6 +332,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		}
 
 		// Posting details calling
+		aeEvent.setSimulateAccounting(financeMain.isSimulateAccounting());
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 		aeEvent.getAeAmountCodes().setPenaltyPaid(BigDecimal.ZERO);
 		aeEvent.getAeAmountCodes().setPenaltyWaived(BigDecimal.ZERO);
@@ -352,8 +355,9 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				taxRcv.setUGST(taxRcv.getUGST().subtract(new BigDecimal(dataMap.get("LPP_UGST_R").toString())));
 				taxRcv.setIGST(taxRcv.getIGST().subtract(new BigDecimal(dataMap.get("LPP_IGST_R").toString())));
 				taxRcv.setCESS(taxRcv.getCESS().subtract(new BigDecimal(dataMap.get("LPP_CESS_R").toString())));
-
-				getFinODAmzTaxDetailDAO().updateTaxReceivable(taxRcv);
+				if (!aeEvent.isSimulateAccounting()) {
+					getFinODAmzTaxDetailDAO().updateTaxReceivable(taxRcv);
+				}
 			}
 		}
 
@@ -395,6 +399,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		} else {
 			returnList.add(null);
+		}
+
+		if (financeMain.isSimulateAccounting()) {
+			if (CollectionUtils.isNotEmpty(financeMain.getReturnDataSet())) {
+				financeMain.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+			} else {
+				financeMain.setReturnDataSet(aeEvent.getReturnDataSet());
+			}
 		}
 
 		// Method for Creating Invoice Details for the Waived amount against Created Due invoices

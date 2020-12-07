@@ -424,6 +424,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			}
 		}
 
+		//DE#1550(24-10-2020) - While doing the ReScheduling, RPS is not plotting properly in case of Grace.
 		/*
 		 * Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate(); if (recalLockTill == null) {
 		 * recalLockTill = finScheduleData.getFinanceMain().getMaturityDate(); }

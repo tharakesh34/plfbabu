@@ -741,14 +741,20 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			BigDecimal allocatedAmtGST = BigDecimal.ZERO;
 			BigDecimal totalAlcAmt = feeReceipt.getPaidAmount();
 			BigDecimal allocatedTds = BigDecimal.ZERO;
-			if (fee.isTaxApplicable() && allocatedAmt.compareTo(BigDecimal.ZERO) != 0) {
-				TaxAmountSplit taxSplit = null;
-				taxSplit = GSTCalculator.getInclusiveGST(totalAlcAmt.add(feeReceipt.getPaidTds()), taxPercentages);
-
-				allocatedAmtGST = taxSplit.gettGST();
+			if (fee.isTdsReq()) {
 				allocatedTds = feeReceipt.getPaidTds();
-				allocatedAmt = totalAlcAmt.subtract(allocatedAmtGST).add(allocatedTds);
 			}
+			if (fee.isTaxApplicable() && allocatedAmt.compareTo(BigDecimal.ZERO) != 0) {
+				if (fee.getRemainingFee().compareTo(totalAlcAmt) == 0) {
+					allocatedAmtGST = fee.getNetAmountGST().subtract(fee.getPaidAmountGST());
+					allocatedTds = fee.getNetTDS().subtract(fee.getPaidTDS());
+				} else {
+					TaxAmountSplit taxSplit = null;
+					taxSplit = GSTCalculator.getInclusiveGST(totalAlcAmt.add(feeReceipt.getPaidTds()), taxPercentages);
+					allocatedAmtGST = taxSplit.gettGST();
+				}
+			}
+			allocatedAmt = totalAlcAmt.subtract(allocatedAmtGST).add(allocatedTds);
 
 			//Allocated Amount
 			Decimalbox allocAmtBox = getDecimalbox(finFormatter, true);
@@ -837,40 +843,43 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal allocatedAmtTDS = BigDecimal.ZERO;
 		BigDecimal allocatedAmt = BigDecimal.ZERO;
 		BigDecimal totAlocAmt = PennantApplicationUtil.unFormateAmount(totAllocAmtTotBox.getValue(), formatter);
+		BigDecimal fraction = BigDecimal.ONE;
+		BigDecimal totPerc = BigDecimal.ZERO;
+
+		BigDecimal netAmountOriginal = fee.getNetAmount();
+		BigDecimal netTDS = fee.getNetTDS();
+		totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
+
+		if (fee.isTdsReq()) {
+			allocatedAmtTDS = (netTDS.multiply(totAlocAmt)).divide(netAmountOriginal, 2, RoundingMode.HALF_DOWN);
+			allocatedAmtTDS = CalculationUtil.roundAmount(allocatedAmtTDS, tdsRoundMode, tdsRoundingTarget);
+			totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST).subtract(tdsPerc);
+		}
 
 		if (fee.isTaxApplicable()) {
-			BigDecimal netAmountOriginal = fee.getNetAmount();
-			BigDecimal netTDS = fee.getNetTDS();
-
-			if (fee.isTdsReq()) {
-				allocatedAmtTDS = (netTDS.multiply(totAlocAmt)).divide(netAmountOriginal, 2, RoundingMode.HALF_DOWN);
-				allocatedAmtTDS = CalculationUtil.roundAmount(allocatedAmtTDS, tdsRoundMode, tdsRoundingTarget);
-			}
-
-			BigDecimal fraction = BigDecimal.ONE;
-			BigDecimal totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST).subtract(tdsPerc);
 			fraction = fraction.add(totPerc.divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN));
 
 			BigDecimal orgAmt = totAlocAmt.divide(fraction, 0, RoundingMode.HALF_DOWN);
 			orgAmt = CalculationUtil.roundAmount(orgAmt, taxRoundMode, taxRoundingTarget);
 			allocatedAmtGST = GSTCalculator.getExclusiveGST(orgAmt, taxPercentages).gettGST();
 
-			allocatedAmt = totAlocAmt.subtract(allocatedAmtGST).add(allocatedAmtTDS);
-
-			BigDecimal diffAmt = BigDecimal.ZERO;
-			BigDecimal diffGST = BigDecimal.ZERO;
-			BigDecimal diffTDS = BigDecimal.ZERO;
-
-			if (totAlocAmt.compareTo(fee.getRemainingFee()) == 0) {
-				diffAmt = fee.getRemainingFeeOriginal().subtract(allocatedAmt);
-				diffGST = fee.getRemainingFeeGST().subtract(allocatedAmtGST);
-				diffTDS = fee.getRemTDS().subtract(allocatedAmtTDS);
-			}
-
-			allocatedAmt = allocatedAmt.add(diffAmt);
-			allocatedAmtGST = allocatedAmtGST.add(diffGST);
-			allocatedAmtTDS = allocatedAmtTDS.add(diffTDS);
 		}
+
+		allocatedAmt = totAlocAmt.subtract(allocatedAmtGST).add(allocatedAmtTDS);
+
+		BigDecimal diffAmt = BigDecimal.ZERO;
+		BigDecimal diffGST = BigDecimal.ZERO;
+		BigDecimal diffTDS = BigDecimal.ZERO;
+
+		if (totAlocAmt.compareTo(fee.getRemainingFee()) == 0) {
+			diffAmt = fee.getRemainingFeeOriginal().subtract(allocatedAmt);
+			diffGST = fee.getRemainingFeeGST().subtract(allocatedAmtGST);
+			diffTDS = fee.getRemTDS().subtract(allocatedAmtTDS);
+		}
+
+		allocatedAmt = allocatedAmt.add(diffAmt);
+		allocatedAmtGST = allocatedAmtGST.add(diffGST);
+		allocatedAmtTDS = allocatedAmtTDS.add(diffTDS);
 
 		allocAmtGstBox.setValue(PennantApplicationUtil.formateAmount(allocatedAmtGST, formatter));
 		allocAmtTdsBox.setValue(PennantApplicationUtil.formateAmount(allocatedAmtTDS, formatter));
@@ -2375,7 +2384,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		for (Listitem listitem : listBoxFeeDetail.getItems()) {
 			List<Listcell> list = listitem.getChildren();
 			if (LISTITEM_SUMMARY.equalsIgnoreCase(listitem.getId())) {
-				Listcell totalPaidLC = list.get(4);
+				Listcell totalPaidLC = list.get(5);
 				Decimalbox totalPaidAmt = (Decimalbox) totalPaidLC.getFirstChild();
 				try {
 					totalPaid = totalPaidAmt.getValue();
@@ -2397,7 +2406,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			Decimalbox totRemainingAmtBox = (Decimalbox) totRemainningLC.getFirstChild();
 			double remainingFee = totRemainingAmtBox.getValue().doubleValue();
 
-			Listcell totAllocAmtLC = list.get(13);
+			Listcell totAllocAmtLC = list.get(16);
 			Decimalbox totAllocAmt = (Decimalbox) totAllocAmtLC.getFirstChild();
 			totAllocAmt.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("listheader_FeeDetailList_AllocatedAmount.label"),

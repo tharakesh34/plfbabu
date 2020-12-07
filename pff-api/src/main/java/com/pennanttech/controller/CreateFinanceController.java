@@ -2964,10 +2964,10 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		if (financeDetail.getFinScheduleData().getFinanceMain().getAccountsOfficer() > 0) {
-			vehicleDealer = vehicleDealerDao.getVehicleDealerById(vehicleDealer.getCode(),
-					vehicleDealer.getDealerType(), "");
+			vehicleDealer = vehicleDealerDao
+					.getVehicleDealerById(financeDetail.getFinScheduleData().getFinanceMain().getAccountsOfficer(), "");
 			financeDetail.getFinScheduleData().getFinanceMain()
-					.setAccountsOfficerReference(Long.valueOf(vehicleDealer.getCode()));
+					.setAccountsOfficerReference(Long.valueOf(vehicleDealer.getDealerId()));
 		}
 
 		if (StringUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinanceMain().getDsaCode())) {

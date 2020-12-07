@@ -174,7 +174,8 @@ public class ComponentIdGenerator implements IdGenerator {
 
 		if (parent != null) {
 			if ("Radiogroup".equals(parent.getClass().getSimpleName()) && "userAction".equals(parent.getId())) {
-				return parent.getUuid() + "_" + StringUtils.replace(((Radio) comp).getLabel(), " ", "");
+				return parent.getUuid() + "_"
+						+ StringUtils.replace(StringUtils.replace(((Radio) comp).getLabel(), " ", ""), "-", "");
 			}
 		}
 
