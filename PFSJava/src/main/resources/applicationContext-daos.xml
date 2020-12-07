@@ -5089,7 +5089,6 @@
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="covenantsService" ref="covenantsService" />
 		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
-		<property name="installmentDueService" ref="installmentDueService" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -8476,7 +8475,6 @@
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 	</bean>
 
 	<!-- AccountMapping -->
@@ -11383,7 +11381,6 @@
 	</bean>
 
 	<bean id="projectedRUDAO" class="com.pennant.backend.dao.receiptUpload.ProjectedRUDAOImpl" parent="basicDao" />
-	<bean id="loadFinanceData" class="com.pennant.app.core.LoadFinanceData" parent="serviceHelper" />
 
 	<!-- Lower Tax deduction -->
 	<bean id="lowerTaxDeductionDAO" class="com.pennant.backend.dao.finance.impl.LowerTaxDeductionDAOImpl" parent="basicDao" />
@@ -12587,40 +12584,5 @@
 	</bean>
 	
 	<bean id="sequenceDAO" class="com.pennant.backend.dao.SequenceDao" parent="basicDao" />
-
-	<!-- Loan DownSizing -->
-	<bean id="loanDownSizingService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="loanDownSizingServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="loanDownSizingServiceTarget" class="com.pennant.backend.service.finance.impl.LoanDownSizingServiceImpl">
-		<property name="changeGraceEndService" ref="changeGraceEndService" />
-		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
-		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
-		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="finAssetAmtMovementDAO" ref="finAssetAmtMovementDAO" />
-	</bean>
-
-	<!-- Loan DownSizing Movements -->
-	<bean id="finAssetAmtMovementDAO" class="com.pennant.backend.dao.finance.impl.FinAssetAmtMovementDAOImpl" parent="sequenceDao" />
 </beans>
 
