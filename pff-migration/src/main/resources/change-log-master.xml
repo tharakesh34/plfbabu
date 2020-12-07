@@ -14,6 +14,7 @@
 	<include file="change-logs/change-log-5.7.0.xml" />
 	<include file="change-logs/change-log-5.8.0.xml" />
 	<include file="change-logs/change-log-5.9.0.xml" />
+	<include file="change-logs/change-log-5.10.0.xml" />
 	<include file="change-logs/change-log-HL_enhancements.xml" />
 	<include file="change-logs/change-log-hl-missing-indexes.xml" />
 	<include file="change-logs/change-log-meta-data.xml" />

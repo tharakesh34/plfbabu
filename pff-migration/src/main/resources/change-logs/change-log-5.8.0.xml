@@ -2334,7 +2334,7 @@
 		 <sql splitStatements="false">
 				<![CDATA[
                    MERGE INTO tax_details_stg1 cd
-                   USING (Select distinct top 100 percent  referenceid +(select max(headerid) from (select headerid from tax_header 
+                   USING (Select distinct top 100 percent  referenceid +(select COALESCE(max(headerid), 0) from (select headerid from tax_header 
 																			union select headerid from tax_header_Temp)T) +1000 new_referenceid,   
 																			referenceid old_referenceid
 																			from tax_details_stg1 order by referenceid)T2 
@@ -2417,7 +2417,7 @@
 		 <sql splitStatements="false">
 				<![CDATA[
 					MERGE INTO tax_details_stg1 cd
-					using(  Select distinct Top  100 percent id +(select max(id) from (select id from tax_details 
+					using(  Select distinct Top  100 percent id +(select COALESCE(max(id), 0) from (select id from tax_details 
 																	union select id from tax_details_Temp)T) +1000 new_tax_detailid,   
 																	id old_tax_detailid
 																	from tax_details_stg1 order by id)T2 
@@ -2446,7 +2446,7 @@
 				
 				DECLARE @SQL1 VARCHAR(4000) ;
 				SET @SQL1 = '
-				ALTER Seq1UENCE Seq1Tax_Details
+				ALTER SEQUENCE SeqTax_Details
 				RESTART WITH ' + @Seq1 +  '
 				INCREMENT BY 1
 				MINVALUE -9223372036854775808
@@ -3014,5 +3014,12 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="31" author="sivasai.p">
+		<dropNotNullConstraint tableName="WIFFinFeeDetail_Temp" columnName="TaxHeaderId" columnDataType="bigint" />
+	</changeSet>
 
+	<changeSet id="31.1" author="sivasai.p">
+		<dropNotNullConstraint tableName="WIFFinFeeDetail" columnName="TaxHeaderId" columnDataType="bigint" />
+	</changeSet>
 </databaseChangeLog>
