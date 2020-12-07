@@ -11944,13 +11944,6 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-	<bean id="spreadSheetService" class="com.pennanttech.pennapps.pff.service.spreadsheet.impl.SpreadSheetServiceImpl">
-		<property name="verificationService" ref="verificationService"></property>
-		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService"></property>
-		<property name="customerService" ref="customerService"></property>
-		<property name="creditApplicationReviewService" ref="creditApplicationReviewService"></property>
-	</bean>
-
 	<bean id="dMSService" class="com.pennanttech.pennapps.dms.service.impl.DMSServiceImpl">
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
@@ -12487,8 +12480,6 @@
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="finAssetAmtMovementDAO" ref="finAssetAmtMovementDAO" />
-		<property name="subventionDetailDAO" ref="subventionDetailDAO" />
-
 		<property name="accrualService" ref="accrualService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
