@@ -74,6 +74,7 @@ import com.pennant.backend.model.systemmasters.PhoneType;
 import com.pennant.backend.service.systemmasters.PhoneTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -315,116 +316,118 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 		Customer customer = aCustomerDetails.getCustomer();
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 		Map<String, List> phoneNumberData = new HashMap<>();
-		if (!CollectionUtils.isEmpty(listItems)) {
-			for (Listitem listItem : listItems) {
-				CustomerPhoneNumber aCustomerPhoneNumber = (CustomerPhoneNumber) listItem.getAttribute("data");
-				String regEx = "";
-				if (aCustomerPhoneNumber != null) {
-					aCustomerPhoneNumber.setLovDescCustShrtName(customer.getCustShrtName());
-					aCustomerPhoneNumber.setPhoneCustID(customer.getCustID());
-					aCustomerPhoneNumber.setLovDescCustCIF(customer.getCustCIF());
 
-					List<Component> listCells = listItem.getChildren();
-					try {
-						// Getting Phone Type
-						ExtendedCombobox extPhoneType = (ExtendedCombobox) listCells.get(1).getChildren().get(0);
-						regEx = (String) extPhoneType.getAttribute("regex");
-						if (aCustomerPhoneNumber.isNewRecord()
-								&& StringUtils.isEmpty(extPhoneType.getValidatedValue())) {
-							throw new WrongValueException(extPhoneType.getTextbox(), Labels.getLabel("FIELD_IS_MAND",
-									new String[] { Labels.getLabel("listheader_PhoneTypeCode.label") }));
-						}
-						doSetPhoneTypeDetails(aCustomerPhoneNumber, extPhoneType);
-					} catch (WrongValueException we) {
-						wve.add(we);
-					}
-
-					try {
-						// Getting Phone Number
-						Textbox phoneNumber = (Textbox) listCells.get(2).getChildren().get(0).getLastChild();
-						if (phoneNumber != null) {
-							validatePhoneNumber(phoneNumber, regEx, aCustomerPhoneNumber.getPhoneTypeCode());
-							aCustomerPhoneNumber.setPhoneNumber(phoneNumber.getValue());
-						}
-					} catch (WrongValueException we) {
-						wve.add(we);
-					}
-
-					try {
-						// Getting Priority
-						Combobox priority = (Combobox) listCells.get(3).getChildren().get(0).getLastChild();
-						if ("#".equals(getComboboxValue(priority))) {
-							throw new WrongValueException(priority, Labels.getLabel("STATIC_INVALID", new String[] {
-									Labels.getLabel("label_CustomerPhoneNumberDialog_CustPhonePriority.value") }));
-						} else {
-							aCustomerPhoneNumber.setPhoneTypePriority(Integer.parseInt(getComboboxValue(priority)));
-						}
-					} catch (WrongValueException we) {
-						wve.add(we);
-					}
-					CustomerPhoneNumber oldData = isINexsistingList(aCustomerPhoneNumber,
-							aCustomerDetails.getCustomerPhoneNumList());
-					if (oldData == null) {
-						aCustomerPhoneNumber.setVersion(aCustomerPhoneNumber.getVersion() + 1);
-						aCustomerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
-					} else {
-						isRecordUpdated(aCustomerPhoneNumber, aCustomerDetails.getCustomerPhoneNumList());
-					}
-					customerPhoneNumbers.add(aCustomerPhoneNumber);
-				}
-			}
-			phoneNumberData.put("errorList", wve);
-			phoneNumberData.put("customerPhoneNumbers", customerPhoneNumbers);
+		if (CollectionUtils.isEmpty(listItems)) {
+			return phoneNumberData;
 		}
+
+		for (Listitem listItem : listItems) {
+			CustomerPhoneNumber aCustomerPhoneNumber = (CustomerPhoneNumber) listItem.getAttribute("data");
+
+			if (aCustomerPhoneNumber == null) {
+				continue;
+			}
+
+			String regEx = "";
+			aCustomerPhoneNumber.setLovDescCustShrtName(customer.getCustShrtName());
+			aCustomerPhoneNumber.setPhoneCustID(customer.getCustID());
+			aCustomerPhoneNumber.setLovDescCustCIF(customer.getCustCIF());
+
+			List<Component> listCells = listItem.getChildren();
+			try {
+				// Getting Phone Type
+				ExtendedCombobox extPhoneType = (ExtendedCombobox) listCells.get(1).getChildren().get(0);
+				regEx = (String) extPhoneType.getAttribute("regex");
+				if (aCustomerPhoneNumber.isNewRecord() && StringUtils.isEmpty(extPhoneType.getValidatedValue())) {
+					throw new WrongValueException(extPhoneType.getTextbox(), Labels.getLabel("FIELD_IS_MAND",
+							new String[] { Labels.getLabel("listheader_PhoneTypeCode.label") }));
+				}
+				doSetPhoneTypeDetails(aCustomerPhoneNumber, extPhoneType);
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				// Getting Phone Number
+				Textbox phoneNumber = (Textbox) listCells.get(2).getChildren().get(0).getLastChild();
+				if (phoneNumber != null) {
+					validatePhoneNumber(phoneNumber, regEx, aCustomerPhoneNumber.getPhoneTypeCode());
+					aCustomerPhoneNumber.setPhoneNumber(phoneNumber.getValue());
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				// Getting Priority
+				Combobox priority = (Combobox) listCells.get(3).getChildren().get(0).getLastChild();
+				if ("#".equals(getComboboxValue(priority))) {
+					throw new WrongValueException(priority, Labels.getLabel("STATIC_INVALID", new String[] {
+							Labels.getLabel("label_CustomerPhoneNumberDialog_CustPhonePriority.value") }));
+				} else {
+					aCustomerPhoneNumber.setPhoneTypePriority(Integer.parseInt(getComboboxValue(priority)));
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			CustomerPhoneNumber oldData = isINexsistingList(aCustomerPhoneNumber,
+					aCustomerDetails.getCustomerPhoneNumList());
+			if (oldData == null) {
+				aCustomerPhoneNumber.setVersion(aCustomerPhoneNumber.getVersion() + 1);
+				aCustomerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
+			} else {
+				isRecordUpdated(aCustomerPhoneNumber, aCustomerDetails.getCustomerPhoneNumList());
+			}
+			customerPhoneNumbers.add(aCustomerPhoneNumber);
+		}
+
+		phoneNumberData.put("errorList", wve);
+		phoneNumberData.put("customerPhoneNumbers", customerPhoneNumbers);
+
 		logger.debug(Literal.LEAVING);
 		return phoneNumberData;
 	}
 
 	private void validatePhoneNumber(Textbox phoneNumber, String regex, String phoneTypeCode) {
-		//setting the length
 		phoneNumber.setMaxlength(dosetFieldLength(regex));
-		if (!phoneNumber.isReadonly()) {
-			if (phoneNumber.getValue().isEmpty()) {
-				throw new WrongValueException(phoneNumber, Labels.getLabel("FIELD_IS_MAND",
+
+		if (phoneNumber.isReadonly()) {
+			return;
+		}
+
+		if (phoneNumber.getValue().isEmpty()) {
+			throw new WrongValueException(phoneNumber,
+					Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("listheader_PhoneNumber.label") }));
+		}
+
+		if (ImplementationConstants.CUSTOM_PHONE_REGEX
+				&& !StringUtils.contains(phoneTypeCode, PennantConstants.PHONETYPE_MOBILE)
+				&& !StringUtils.equals(phoneTypeCode, "AUTHM1") && !StringUtils.equals(phoneTypeCode, "AUTHM2")) {
+			if (phoneNumber.getValue().length() < 8) {
+				throw new WrongValueException(phoneNumber, Labels.getLabel("CUSTOM_PHONE_REGEX",
 						new String[] { Labels.getLabel("listheader_PhoneNumber.label") }));
-			}
-			if (ImplementationConstants.CUSTOM_PHONE_REGEX
-					&& !StringUtils.contains(phoneTypeCode, PennantConstants.PHONETYPE_MOBILE)
-					&& !StringUtils.equals(phoneTypeCode, "AUTHM1") && !StringUtils.equals(phoneTypeCode, "AUTHM2")) {
-				if (phoneNumber.getValue().length() < 8) {
-					throw new WrongValueException(phoneNumber, Labels.getLabel("CUSTOM_PHONE_REGEX",
-							new String[] { Labels.getLabel("listheader_PhoneNumber.label") }));
-				} else {
-					Pattern pattern = Pattern.compile(regex);
-					Matcher matcher = pattern.matcher(phoneNumber.getValue());
-					if (!matcher.matches()) {
-						throw new WrongValueException(phoneNumber, Labels.getLabel("CUSTOM_PHONE_REGEX",
-								new String[] { Labels.getLabel("listheader_PhoneNumber.label") }));
-					}
-				}
-			} else if (phoneNumber.getValue().length() != phoneNumber.getMaxlength()) {
-				throw new WrongValueException(phoneNumber, Labels.getLabel("FIELD_NO_NUMBER",
-						new String[] { Labels.getLabel("listheader_PhoneNumber.label") }));
-			} else if (regex != null) {
+			} else {
 				Pattern pattern = Pattern.compile(regex);
 				Matcher matcher = pattern.matcher(phoneNumber.getValue());
 				if (!matcher.matches()) {
-					throw new WrongValueException(phoneNumber, Labels.getLabel("FIELD_MOBILE",
-							new String[] { Labels.getLabel("listheader_PhoneNumber.label"), String.valueOf(pattern) }));
+					throw new WrongValueException(phoneNumber, Labels.getLabel("CUSTOM_PHONE_REGEX",
+							new String[] { Labels.getLabel("listheader_PhoneNumber.label") }));
 				}
+			}
+		} else if (phoneNumber.getValue().length() != phoneNumber.getMaxlength()) {
+			throw new WrongValueException(phoneNumber, Labels.getLabel("FIELD_NO_NUMBER",
+					new String[] { Labels.getLabel("listheader_PhoneNumber.label") }));
+		} else if (regex != null) {
+			Pattern pattern = Pattern.compile(regex);
+			Matcher matcher = pattern.matcher(phoneNumber.getValue());
+			if (!matcher.matches()) {
+				throw new WrongValueException(phoneNumber, Labels.getLabel("FIELD_MOBILE",
+						new String[] { Labels.getLabel("listheader_PhoneNumber.label"), String.valueOf(pattern) }));
 			}
 		}
 	}
 
-	/**
-	 * Method will set the Phone type default values to CustomerPhoneNumber bean
-	 * 
-	 * @param customerPhoneNumber
-	 * @param extPhoneType
-	 */
 	private void doSetPhoneTypeDetails(CustomerPhoneNumber customerPhoneNumber, ExtendedCombobox extPhoneType) {
-
-		// Getting Phone Type
 		if (extPhoneType != null) {
 			if (extPhoneType.getObject() != null && customerPhoneNumber.isNewRecord()) {
 				PhoneType phoneType = (PhoneType) extPhoneType.getObject();
@@ -434,50 +437,36 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 		}
 	}
 
-	/**
-	 * Method will check if the newly added record is already available in the list
-	 * 
-	 * @param aCustomerPhoneNumber
-	 * @param list
-	 * @return
-	 */
-	private void isRecordUpdated(CustomerPhoneNumber aCustomerPhoneNumber, List<CustomerPhoneNumber> list) {
-		if (CollectionUtils.isNotEmpty(list)) {
-			for (CustomerPhoneNumber customerPhoneNumber : list) {
-				if (PennantConstants.RECORD_TYPE_DEL.equals(customerPhoneNumber.getRecordType())
-						|| PennantConstants.RECORD_TYPE_CAN.equals(customerPhoneNumber.getRecordType())
-						|| aCustomerPhoneNumber.isNewRecord()) {
-					continue;
-				}
-				if (StringUtils.equals(aCustomerPhoneNumber.getPhoneTypeCode(),
-						customerPhoneNumber.getPhoneTypeCode())) {
+	private void isRecordUpdated(CustomerPhoneNumber acp, List<CustomerPhoneNumber> list) {
+		if (CollectionUtils.isEmpty(list)) {
+			return;
+		}
 
-					//checking data is updated or not
-					if (!aCustomerPhoneNumber.getPhoneNumber().equals(customerPhoneNumber.getPhoneNumber())
-							|| !aCustomerPhoneNumber.getPhoneTypeCode().equals(customerPhoneNumber.getPhoneTypeCode())
-							|| aCustomerPhoneNumber.getPhoneTypePriority() != customerPhoneNumber
-									.getPhoneTypePriority()) {
-						if (StringUtils.isBlank(aCustomerPhoneNumber.getRecordType())) {
-							aCustomerPhoneNumber.setNewRecord(true);
-							if (isFinanceProcess) {
-								aCustomerPhoneNumber.setNewRecord(false);
-							}
-							aCustomerPhoneNumber.setVersion(aCustomerPhoneNumber.getVersion() + 1);
-							aCustomerPhoneNumber.setRecordType(PennantConstants.RCD_UPD);
+		for (CustomerPhoneNumber cp : list) {
+			if (PennantConstants.RECORD_TYPE_DEL.equals(cp.getRecordType())
+					|| PennantConstants.RECORD_TYPE_CAN.equals(cp.getRecordType()) || acp.isNewRecord()) {
+				continue;
+			}
+			String aPhoneTypeCode = acp.getPhoneTypeCode();
+			String phoneTypeCode = cp.getPhoneTypeCode();
+			if (StringUtils.equals(aPhoneTypeCode, phoneTypeCode)) {
+				int aPhoneTypePriority = acp.getPhoneTypePriority();
+				int phoneTypePriority = cp.getPhoneTypePriority();
+				if (!acp.getPhoneNumber().equals(cp.getPhoneNumber()) || !aPhoneTypeCode.equals(phoneTypeCode)
+						|| aPhoneTypePriority != phoneTypePriority) {
+					if (StringUtils.isBlank(acp.getRecordType())) {
+						acp.setNewRecord(true);
+						if (isFinanceProcess) {
+							acp.setNewRecord(false);
 						}
+						acp.setVersion(acp.getVersion() + 1);
+						acp.setRecordType(PennantConstants.RCD_UPD);
 					}
 				}
 			}
 		}
 	}
 
-	/**
-	 * Method will check if the newly added record is already available in the list
-	 * 
-	 * @param aCustPhone
-	 * @param custPhoneList
-	 * @return
-	 */
 	private CustomerPhoneNumber isINexsistingList(CustomerPhoneNumber aCustPhone,
 			List<CustomerPhoneNumber> custPhoneList) {
 		if (CollectionUtils.isNotEmpty(custPhoneList)) {
@@ -490,13 +479,13 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 		return null;
 	}
 
-	// setting length for PhoneNumber
 	public int dosetFieldLength(String regex) {
-		if (StringUtils.isNotBlank(regex)) {
-			String length = regex.substring(regex.lastIndexOf("}") - 2, regex.lastIndexOf("}"));
-			return Integer.parseInt(length);
+		if (StringUtils.isBlank(regex)) {
+			regex = PennantRegularExpressions.TELEPHONE_FAX_REGEX;
 		}
-		return 13;
+
+		String length = regex.substring(regex.lastIndexOf("}") - 2, regex.lastIndexOf("}"));
+		return Integer.parseInt(length);
 	}
 
 	public void setPhoneTypeService(PhoneTypeService phoneTypeService) {
