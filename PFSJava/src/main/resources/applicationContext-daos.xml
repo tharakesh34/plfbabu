@@ -12566,6 +12566,27 @@
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
 	</bean>
+	<bean name="dataAccess" class="com.pennanttech.pff.extension.spreadsheet.SpreadSheetDataAccess" parent="basicDao"></bean>
+	<bean name="spreadSheetServiceTarget" class="com.pennanttech.pff.extension.spreadsheet.SpreadSheetServiceImpl">
+	<property name="dataAccess" ref="dataAccess" />
+	</bean>
+	<bean id="spreadSheetService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="spreadSheetServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
 	
 	<bean id="sequenceDAO" class="com.pennant.backend.dao.SequenceDao" parent="basicDao" />
 </beans>

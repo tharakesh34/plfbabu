@@ -36,6 +36,11 @@
 			<artifactId>pff-extension</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>${pff.groupId}</groupId>
+			<artifactId>pff-extension-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!-- Aspose -->
 		<dependency>
 			<groupId>com.pennant.aspose</groupId>

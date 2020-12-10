@@ -867,4 +867,12 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		}
 	}
 
+	public SpreadSheetDataAccess getDataAccess() {
+		return dataAccess;
+	}
+
+	public void setDataAccess(SpreadSheetDataAccess dataAccess) {
+		this.dataAccess = dataAccess;
+	}
+
 }
