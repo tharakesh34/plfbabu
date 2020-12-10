@@ -53,19 +53,13 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	private static final long serialVersionUID = -210929672381582779L;
 	private static final Logger logger = Logger.getLogger(OCRHeaderDialogCtrl.class);
-
-	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
 	protected Window window_OCRDialog;
 
 	protected Uppercasebox ocrID;
 	protected Textbox ocrDescription;
 	protected Intbox customerPortion;
 	protected Combobox ocrType;
-	//protected Checkbox splitApplicable;
-	protected Checkbox active; // autoWired
+	protected Checkbox active; 
 	protected Label label_OCRDialog_OCRType;
 	protected Groupbox ocrSteps;
 	protected Button btnNew_OCRSteps;
@@ -74,11 +68,11 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	// ServiceDAOs / Domain Classes
 	private OCRHeader ocrHeader;
 	private transient OCRHeaderService ocrHeaderService;
-	private transient OCRHeaderListCtrl ocrHeaderListCtrl; // overHanded per parameter
+	private transient OCRHeaderListCtrl ocrHeaderListCtrl; 
 	private transient boolean validationOn;
 
 	private final List<ValueLabel> ocrApplicableList = PennantStaticListUtil.getOCRApplicableList();
-	private List<OCRDetail> ocrDetailList = new ArrayList<OCRDetail>();
+	private List<OCRDetail> ocrDetailList = new ArrayList<>();
 	private String moduleType = "";
 
 	/**
@@ -532,9 +526,8 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		this.ocrDescription.setReadonly(isReadOnly("OCRHeaderDialog_OCRDescription"));
 		this.customerPortion.setReadonly(isReadOnly("OCRHeaderDialog_CustomerPortion"));
 		this.ocrType.setDisabled(isReadOnly("OCRHeaderDialog_OCRApplicableOn"));
-		//this.splitApplicable.setDisabled(isReadOnly("OCRHeaderDialog_SplitApplicable"));
 		this.active.setDisabled(isReadOnly("OCRHeaderDialog_Active"));
-		this.btnNew_OCRSteps.setVisible(!isReadOnly("button_OCRHeaderDialog_btnNew_OCRSteps")); //fix me
+		this.btnNew_OCRSteps.setVisible(!isReadOnly("button_OCRHeaderDialog_btnNew_OCRSteps")); 
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -562,7 +555,6 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		this.ocrDescription.setReadonly(true);
 		this.customerPortion.setReadonly(true);
 		this.ocrType.setDisabled(true);
-		//this.splitApplicable.setDisabled(true);
 		this.active.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {

@@ -1241,8 +1241,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		fillComboBox(this.cbfinDaysCalType, aFinanceType.getFinDaysCalType(),
 				PennantStaticListUtil.getProfitDaysBasis(), "");
 		this.finDivision.setValue(aFinanceType.getFinDivision());
-		this.finMinAmount.setValue(AppUtil.formatAmount(aFinanceType.getFinMinAmount(), format));
-		this.finMaxAmount.setValue(AppUtil.formatAmount(aFinanceType.getFinMaxAmount(), format));
+		this.finMinAmount.setValue(PennantAppUtil.formateAmount(aFinanceType.getFinMinAmount(), format));
+		this.finMaxAmount.setValue(PennantAppUtil.formateAmount(aFinanceType.getFinMaxAmount(), format));
 
 		Filter[] filters = null;
 		if (ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
@@ -1668,12 +1668,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 			onChangeODChargeType(true);
-			this.oDChargeAmtOrPerc.setValue(AppUtil.formatAmount(aFinanceType.getODChargeAmtOrPerc(), format));
+			this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(aFinanceType.getODChargeAmtOrPerc(), format));
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))
 						&& !FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
-			this.oDChargeAmtOrPerc.setValue(AppUtil.formatAmount(aFinanceType.getODChargeAmtOrPerc(), 2));
+			this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(aFinanceType.getODChargeAmtOrPerc(), 2));
 		} else if (FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
 			if (isOverdraft) {
 				this.label_FinanceTypeDialog_ODChargeAmtOrPerc.setVisible(false);
@@ -2184,12 +2184,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		try {
-			aFinanceType.setFinMaxAmount(AppUtil.unFormateAmount(this.finMaxAmount.getValidateValue(), format));
+			aFinanceType.setFinMaxAmount(PennantAppUtil.unFormateAmount(this.finMaxAmount.getValidateValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aFinanceType.setFinMinAmount(AppUtil.unFormateAmount(this.finMinAmount.getValidateValue(), format));
+			aFinanceType.setFinMinAmount(PennantAppUtil.unFormateAmount(this.finMinAmount.getValidateValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3743,11 +3743,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			if (getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT)
 					|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-				aFinanceType.setODChargeAmtOrPerc(AppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), format));
+				aFinanceType.setODChargeAmtOrPerc(PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), format));
 			} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-				aFinanceType.setODChargeAmtOrPerc(AppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), 2));
+				aFinanceType.setODChargeAmtOrPerc(PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), 2));
 			}
 
 		} catch (WrongValueException we) {
@@ -8872,7 +8872,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (cofRateDetail.getErrorDetails() == null) {
 			this.costOfFunds.setDescription(
-					AppUtil.formatAmount(cofRateDetail.getNetRefRateLoan(), PennantConstants.defaultCCYDecPos));
+					PennantAppUtil.amountFormate(cofRateDetail.getNetRefRateLoan(), PennantConstants.defaultCCYDecPos));
 		} else {
 			MessageUtil.showError(ErrorUtil
 					.getErrorDetail(cofRateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());

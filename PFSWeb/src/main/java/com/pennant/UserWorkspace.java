@@ -244,7 +244,9 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 			secRight.setPage(page);
 			secRight.setMenuRight(menuRightName);
 			Collection<SecurityRight> rights = userService.getPageRights(secRight);
-			rightsMap.put(rightKey.toString(), rights);
+			if (!rights.isEmpty()) {
+				rightsMap.put(rightKey.toString(), rights);
+			}
 			return rights;
 		}
 
