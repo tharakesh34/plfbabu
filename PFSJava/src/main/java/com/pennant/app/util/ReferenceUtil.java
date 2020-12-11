@@ -166,80 +166,9 @@ public class ReferenceUtil implements Serializable {
 	public static String generateCollateralRef() {
 		logger.debug(Literal.ENTERING);
 		long generatedSeqNo = 0;
-		boolean refUpdated = false;
-		String referenceNumber = "";
-		while (!refUpdated) {
-			long befSeqNumber = sequenceGenetor.getSeqNumber("SeqCollateralSetup");
-
-			String seqNumString = String.valueOf(befSeqNumber).trim();
-
-			long dateYYJDay = 0;
-			long seqNumber = 1;
-
-			if (seqNumString.length() <= 5) {
-				try {
-					dateYYJDay = Long.parseLong(seqNumString);
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-					seqNumber = 1;
-				}
-			} else if (seqNumString.length() > 5) {
-
-				try {
-					dateYYJDay = Long.parseLong(seqNumString.substring(0, 5));
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
-
-				try {
-					seqNumber = Long.parseLong(StringUtils.trim(seqNumString.substring(5)));
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-					seqNumber = 1;
-				}
-			}
-
-			if (dateYYJDay != DateUtility.getDateYYJDay()) {
-				dateYYJDay = DateUtility.getDateYYJDay();
-				seqNumber = 1;
-			} else {
-				//seqNumber = seqNumber + 1;
-			}
-			boolean status = true;
-
-			referenceNumber = "";
-
-			while (status) {
-				generatedSeqNo = Long.parseLong(
-						String.valueOf(dateYYJDay).concat(StringUtils.leftPad(String.valueOf(seqNumber), 5, '0')));
-				boolean isExist = getCollateralSetupDAO().isCollReferenceExists(String.valueOf(generatedSeqNo),
-						"_View");
-				if (isExist) {
-					seqNumber = seqNumber + 1;
-				} else {
-					status = false;
-				}
-			}
-			String moduleCode = CollateralConstants.COLL_DIVISION;
-			referenceNumber = moduleCode + generatedSeqNo;
-
-			refUpdated = getCollateralSetupDAO().updateCollReferene(befSeqNumber, generatedSeqNo);
-		}
-		logger.debug(String.format("Fin Reference %s", referenceNumber));
-		logger.debug(Literal.LEAVING);
-		return referenceNumber;
-
-	}
-
-	/**
-	 * Method for Preparing Sequence Reference Number for the Collateral Detail module
-	 */
-	public static String generateCollateralReference() {
-		logger.debug(Literal.ENTERING);
-		long generatedSeqNo = 0;
 		String referenceNumber = "";
 		//retrieve next seq no from sequence 
-		long befSeqNumber = sequenceGenetor.getNextValue("SeqCollateralSetup");
+		long befSeqNumber = sequenceGenetor.getNextId("SeqCollateralSetup"); //FIXME MURTHY
 
 		String seqNumString = String.valueOf(befSeqNumber).trim();
 

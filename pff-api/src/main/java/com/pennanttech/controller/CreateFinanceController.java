@@ -1780,7 +1780,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				moveLoanStage ? financeMain.getRecordStatus() : getRecordStatus(financeMain.isQuickDisb(), stp));
 		colSetup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		colSetup.setLastMntBy(userDetails.getUserId());
-		colSetup.setCollateralRef(ReferenceUtil.generateCollateralReference());
+		colSetup.setCollateralRef(ReferenceUtil.generateCollateralRef());
 		colSetup.setDepositorId(financeMain.getCustID());
 		colSetup.setDepositorCif(financeMain.getCustCIF());
 		if (!moveLoanStage) {

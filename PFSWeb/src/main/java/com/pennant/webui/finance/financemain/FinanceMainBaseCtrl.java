@@ -356,7 +356,6 @@ import com.pennant.webui.finance.financialsummary.FinancialSummaryDialogCtrl;
 import com.pennant.webui.finance.finoption.FinOptionDialogCtrl;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.finance.psldetails.PSLDetailDialogCtrl;
-import com.pennant.webui.legal.legaldetail.LegalDetailLoanListCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
 import com.pennant.webui.pdfupload.PdfParserCaller;
@@ -970,7 +969,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient ChequeDetailDialogCtrl chequeDetailDialogCtrl;
 	private transient DeviationDetailDialogCtrl deviationDetailDialogCtrl;
 	private transient MandateDialogCtrl mandateDialogCtrl;
-	private transient LegalDetailLoanListCtrl legalDetailLoanListCtrl;
 	private transient FinanceTaxDetailDialogCtrl financeTaxDetailDialogCtrl;
 	private transient EtihadCreditBureauDetailDialogCtrl etihadCreditBureauDetailDialogCtrl;
 	private transient BundledProductsDetailDialogCtrl bundledProductsDetailDialogCtrl;
@@ -1139,13 +1137,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Map<String, Object> collateralRuleMap = new HashMap<>();
 	// adding new document fields
 	private Object financeMainDialogCtrl = null;
-	private List<FinanceReferenceDetail> agreementList = null;
 	protected Listbox listBox_Agreements; // autoWired
 	private List<DocumentDetails> documentDetailsList;
 
 	protected Window window_documentDetailDialog;
 	private transient AgreementDefinitionService agreementDefinitionService;
-	private Map<String, List> autoDownloadMap = null;
+	private Map<String, List<DocumentDetails>> autoDownloadMap = null;
 	private Map<String, String> extValuesMap = new HashMap<String, String>();
 	private CustomerBankInfoService customerBankInfoService;
 	private CustomerExtLiabilityService customerExtLiabilityService;
@@ -2025,16 +2022,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method to invoke data filling method for eligibility tab, Scoring tab, fee charges tab, accounting tab,
-	 * agreements tab and additional field details tab.
-	 * 
-	 * @param aFinanceDetail
-	 * @throws ParseException
-	 * @throws InterruptedException
-	 * 
-	 */
-	@SuppressWarnings("unused")
 	protected void doFillTabs(FinanceDetail aFinanceDetail, boolean onLoad, boolean isReqToLoad)
 			throws ParseException, InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -2085,7 +2072,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
-
 			// Step Policy Details
 			appendStepDetailTab(onLoad, true);
 
@@ -2159,6 +2145,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			// Scoring Detail Tab Addition
 			appendFinScoringDetailTab(onLoad);
 		}
+		
 		//PMAY Functionality in Loan Origination
 		if (isTabVisible(StageTabConstants.PMAY) && StringUtils.isEmpty(moduleDefiner)) {
 			appendPMAYTab(onLoad);
@@ -2215,7 +2202,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			//DMS Interface Tab
-			if (isTabVisible(StageTabConstants.DMSInterface)) {
+			if (ImplementationConstants.LOAN_ORG_DMS_TAB_REQ && isTabVisible(StageTabConstants.DMSInterface)) {
 				appendDMSInterfaceTab(onLoad);
 			}
 
@@ -8465,7 +8452,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Sampling initiation Details
-		if (samplingRequired.isChecked() && !samplingRequired.isDisabled()) {
+		if (ImplementationConstants.ALLOW_SAMPLING && samplingRequired.isChecked() && !samplingRequired.isDisabled()) {
 			/*
 			 * if (extendedFieldDetailsService.getLoanOrgExtendedValue(
 			 * financeDetail.getFinScheduleData().getFinReference() , "CUSTREQLOANAMOUNT") == null) { MessageUtil.
@@ -9776,27 +9763,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
-
-	private DocumentDetails isInAggremnetGenerated(DocumentDetails type, List<DocumentDetails> agenDocList) {
-		if (agenDocList != null) {
-			for (DocumentDetails documentDetails : agenDocList) {
-				if (StringUtils.equalsIgnoreCase(documentDetails.getDocCategory(), type.getDocCategory())) {
-					return documentDetails;
-				}
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Method for Saving Details Record
-	 * 
-	 * @param auditHeaderex
-	 * @param method
-	 * @return
-	 * @throws InterruptedException
-	 */
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method)
 			throws InterfaceException, InterruptedException {
@@ -18205,24 +18171,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * _________________________________________________________________________________________________________________
 	 */
 	protected void doEditClient(FinScheduleData finScheduleData) {
-
 		this.finLimitRef.setReadonly(true);
 		this.mMAReference.setReadonly(true);
-		// this.finPurpose.setReadonly(true);
-
-		// AHB: External Limits and Commitments
-		if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_AHB)
-				&& finScheduleData.getFinanceType().isLimitRequired()) {
-			readOnlyComponent(isReadOnly("FinanceMainDialog_commitmentRef"), this.finLimitRef);
-			readOnlyComponent(isReadOnly("FinanceMainDialog_mMAReference"), this.mMAReference);
-		}
-
-		// AIB: Finance Purpose from Subsector
-		if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_AIB)) {
-			// FIXME: PV_Revisit (Code Related to Asset)
-			this.finPurpose.setReadonly(true);
-		}
-
 	}
 
 	/**
@@ -18237,16 +18187,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				.equals(finScheduleData.getFinanceMain().getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			isAllowGrace = finScheduleData.getFinanceType().isFInIsAlwGrace();
 		}
-		// FIXME (KS) TO be fixed for record type empty.logic needs to be
-		// relooked in case of orgination and servicing are different
-		// if
-		// (!StringUtils.equals(finScheduleData.getFinanceMain().getRecordType(),
-		// PennantConstants.RECORD_TYPE_NEW)
-		// || (finScheduleData.getFinanceMain().isNewRecord() &&
-		// StringUtils.equals(finScheduleData
-		// .getFinanceMain().getRecordType(),
-		// PennantConstants.RECORD_TYPE_NEW))) {
-		// isAllowGrace = finScheduleData.getFinanceMain().isAllowGrcPeriod(); }
 
 		if (isAllowGrace) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_allowGrace"), this.allowGrace);
@@ -21141,11 +21081,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			chequeDetailDialogCtrl.setUpdatedFinanceSchedules(finScheduleData.getFinanceScheduleDetails());
 		}
 
-		// FIXME MUR>> CAN BE REMOVED
-		if (finFeeDetailListCtrl != null) {
-			// finFeeDetailListCtrl.doExecuteFeeCharges(true, finScheduleData);
-		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -22569,7 +22504,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_FIINITIATION);
 		}
 		if (getFinanceDetail().isFiInitTab() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			if (financeDetail.getFiVerification() == null) {
 				financeDetail.setFiVerification(new Verification());
 			}
@@ -23573,7 +23508,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		CreditReviewDetails crRevDetails = new CreditReviewDetails();
 		StringBuilder fields = new StringBuilder();
 		Map<String, Object> dataMap = new HashMap<>();
-		List<CustomerExtLiability> extLiabilities = new ArrayList<>();
 
 		String rateBasis = getComboboxValue(this.repayRateBasis);
 		if (CalculationConstants.RATE_BASIS_R.equals(rateBasis)
@@ -23975,18 +23909,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
-	protected void appendDMSInterfaceTab(boolean onLoad) throws InterruptedException {
+	private void appendDMSInterfaceTab(boolean onLoad) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_DMSINTERFACE, true);
-			} else {
-				HashMap<String, Object> map = getDefaultArguments();
-				map.put("tab", getTab(AssetConstants.UNIQUE_ID_DMSINTERFACE));
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DMSDialog.zul",
-						getTabpanel(AssetConstants.UNIQUE_ID_DMSINTERFACE), map);
-
+				return;
 			}
+
+			Map<String, Object> map = getDefaultArguments();
+			map.put("tab", getTab(AssetConstants.UNIQUE_ID_DMSINTERFACE));
+			String uri = "/WEB-INF/pages/Finance/FinanceMain/DMSDialog.zul";
+			Executions.createComponents(uri, getTabpanel(AssetConstants.UNIQUE_ID_DMSINTERFACE), map);
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -24210,10 +24145,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.collateralSetupFetchingService = collateralSetupFetchingService;
 	}
 
-	public void setLegalDetailLoanListCtrl(LegalDetailLoanListCtrl legalDetailLoanListCtrl) {
-		this.legalDetailLoanListCtrl = legalDetailLoanListCtrl;
-	}
-
 	public FinOptionDialogCtrl getFinOptionDialogCtrl() {
 		return FinOptionDialogCtrl;
 	}
@@ -24295,10 +24226,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return StringUtils.trimToEmpty(this.offerId.getValue());
 	}
 
-	public FinanceSpreadSheetCtrl getFinanceSpreadSheetCtrl() {
-		return financeSpreadSheetCtrl;
-	}
-
 	public void setFinanceSpreadSheetCtrl(FinanceSpreadSheetCtrl financeSpreadSheetCtrl) {
 		this.financeSpreadSheetCtrl = financeSpreadSheetCtrl;
 	}
@@ -24315,16 +24242,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.dMSService = dMSService;
 	}
 
-	public LegalVettingInitiationCtrl getLegalVettingInitiationCtrl() {
-		return legalVettingInitiationCtrl;
-	}
-
 	public void setLegalVettingInitiationCtrl(LegalVettingInitiationCtrl legalVettingInitiationCtrl) {
 		this.legalVettingInitiationCtrl = legalVettingInitiationCtrl;
-	}
-
-	public PMAYDialogCtrl getPmayDialogCtrl() {
-		return pmayDialogCtrl;
 	}
 
 	public void setPmayDialogCtrl(PMAYDialogCtrl pmayDialogCtrl) {
@@ -24335,9 +24254,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.pricingDetailService = pricingDetailService;
 	}
 
-	public PricingDetailListCtrl getPricingDetailListCtrl() {
-		return pricingDetailListCtrl;
-	}
 
 	public void setPricingDetailListCtrl(PricingDetailListCtrl pricingDetailListCtrl) {
 		this.pricingDetailListCtrl = pricingDetailListCtrl;
@@ -24345,10 +24261,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
 		this.financeTypeService = financeTypeService;
-	}
-
-	public FinanceExtCreditReviewSpreadSheetCtrl getFinanceExtCreditReviewSpreadSheetCtrl() {
-		return financeExtCreditReviewSpreadSheetCtrl;
 	}
 
 	public void setFinanceExtCreditReviewSpreadSheetCtrl(

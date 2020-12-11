@@ -44,6 +44,8 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("ALLOW_AUTO_KNOCK_OFF", true);
 
 		customConstants.put("ALLOW_NPA_PROVISION", true);
+		
+		customConstants.put("ALLOW_PMAY", true);
 
 	}
 

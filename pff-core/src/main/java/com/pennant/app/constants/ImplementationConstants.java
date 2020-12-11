@@ -244,6 +244,8 @@ public class ImplementationConstants {
 		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", false);
 		CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER = getValueAsBoolean(extensions, "CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER",
 				true);
+		
+		ALLOW_PMAY = getValueAsBoolean(extensions, "ALLOW_PMAY", false);
 	}
 
 	public static boolean IMPLEMENTATION_CONVENTIONAL;
@@ -551,4 +553,10 @@ public class ImplementationConstants {
 	public static final boolean ALLOW_SIMILARITY = true;
 
 	public static final boolean LEAD_ID_IS_MANDATORY = true;
+	
+	
+	public static boolean LOAN_ORG_DMS_TAB_REQ = false;
+	public static boolean ALLOW_PMAY = false;
+	
+	
 }
