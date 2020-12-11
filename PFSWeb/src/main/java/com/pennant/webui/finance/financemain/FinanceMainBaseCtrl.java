@@ -1168,6 +1168,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired(required = false)
 	private EligibilityService eligibilityService;
 	private transient FinancialSummaryDialogCtrl financialSummaryDialogCtrl;
+	@Autowired(required = false)
 	private SpreadSheetService spreadSheetService;
 	private FinFeeDetailService finFeeDetailService;
 	private DMSService dMSService;
@@ -5244,8 +5245,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		screenData.put("UserRole", getRole());
 		screenData.put("Right_EligibilitySal", isReadOnly("FinanceMainDialog_EligibilitySal"));
-
-		map = spreadSheetService.setSpreadSheetData(screenData, financeDetail);
+		
+		if(spreadSheetService != null) {
+			map = spreadSheetService.setSpreadSheetData(screenData, financeDetail);
+		}
 		@SuppressWarnings("unchecked")
 		Map<String, Object> dataMap = (Map<String, Object>) map.getOrDefault("dataMap", new HashMap<>());
 
@@ -24298,10 +24301,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceSpreadSheetCtrl(FinanceSpreadSheetCtrl financeSpreadSheetCtrl) {
 		this.financeSpreadSheetCtrl = financeSpreadSheetCtrl;
-	}
-
-	public SpreadSheetService getSpreadSheetService() {
-		return spreadSheetService;
 	}
 
 	public void setSpreadSheetService(SpreadSheetService spreadSheetService) {

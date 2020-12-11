@@ -1659,7 +1659,6 @@
 		<property name="customerExtLiabilityService" ref="customerExtLiabilityService" />
 		<property name="collateralSetupFetchingService" ref="collateralSetupFetchingService" />
 		<property name="partnerBankService" ref="partnerBankService" />
-		<property name="spreadSheetService" ref="spreadSheetService"></property>
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="dMSService" ref="dMSService" />
 		<property name="pricingDetailService" ref="pricingDetailService" />

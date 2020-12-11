@@ -76,7 +76,6 @@ public class ReferenceUtil implements Serializable {
 	private static CollateralSetupDAO collateralSetupDAO;
 	private static VASRecordingDAO vASRecordingDAO;
 	private static SequenceDao<?> sequenceGenetor;
-	private static com.pennant.backend.dao.SequenceDao<?> sequenceDAO;
 
 	/**
 	 * Method for Generating Sequence Reference Number based on Division code
@@ -272,7 +271,7 @@ public class ReferenceUtil implements Serializable {
 			String seqString = String.valueOf(dateYYJDay).concat(updatedSeq);
 			long seqNo = Long.valueOf(seqString);
 			//call sequence update query
-			sequenceDAO.updateSequence("SeqCollateralSetup", seqNo);
+			sequenceGenetor.resetSequence("SeqCollateralSetup", seqNo);
 		}
 		generatedSeqNo = Long
 				.parseLong(String.valueOf(dateYYJDay).concat(StringUtils.leftPad(String.valueOf(seqNumber), 5, '0')));
@@ -555,9 +554,4 @@ public class ReferenceUtil implements Serializable {
 	public static void setSequenceGenetor(SequenceDao<?> sequenceGenetor) {
 		ReferenceUtil.sequenceGenetor = sequenceGenetor;
 	}
-
-	public static void setSequenceDAO(com.pennant.backend.dao.SequenceDao<?> sequenceDAO) {
-		ReferenceUtil.sequenceDAO = sequenceDAO;
-	}
-
 }
