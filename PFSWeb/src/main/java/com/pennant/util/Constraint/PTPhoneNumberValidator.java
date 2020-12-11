@@ -28,7 +28,7 @@ public class PTPhoneNumberValidator implements Constraint {
 	private int validateCode = 0;
 
 	private boolean isCustomPhoneRegexReq = ImplementationConstants.CUSTOM_PHONE_REGEX;
-	private String NEW_PHONE_REGEX = PennantRegularExpressions.TELEPHONE_REGEX;
+	private String NEW_PHONE_REGEX = PennantRegularExpressions.REGEX_TELEPHONE;
 
 	public PTPhoneNumberValidator(String fieldParm, boolean mandatory) {
 		setFieldParm(fieldParm);

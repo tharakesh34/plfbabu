@@ -111,7 +111,7 @@ public class PennantRegularExpressions {
 	public static final String ID_CODES = "([A-Za-z\\/]*|[0-9\\/]*|[a-zA-Z0-9\\/]*)+\\s*";
 	//public static final String	ID_CODES							= "([A-Za-z\\s]*|[0-9\\s]*|[a-zA-Z0-9\\s]*)";
 
-	public static final String TELEPHONE_REGEX = "^\\+?[0-9\\s]{8,}$";
+	public static final String REGEX_TELEPHONE = "^\\+?[0-9\\s]{8,}$";
 	public static final String TELEPHONE_FAX_REGEX = "[0-9]{10}";
 	public static final String MOBILE_REGEX = "[0-9]{10}";
 	public static final String EMAIL_REGEX = "^[a-zA-Z]+[0-9]*((\\.?[a-zA-Z0-9]+)*|(\\_?[a-zA-Z0-9]+)*)?\\@{1}[a-zA-z]+[0-9]*(\\.?[a-zA-Z]{2,4})?\\.{1}[a-zA-Z]{2,3}";

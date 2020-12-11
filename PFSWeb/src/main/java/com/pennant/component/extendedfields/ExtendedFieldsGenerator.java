@@ -1042,7 +1042,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 									textbox.setConstraint(new PTPhoneNumberValidator(detail.getFieldLabel(),
 											detail.isFieldMandatory()));
 									break;
-								case "TELEPHONE_REGEX":
+								case "REGEX_TELEPHONE":
 									textbox.setConstraint(new PTPhoneNumberValidator(detail.getFieldLabel(),
 											detail.isFieldMandatory()));
 									break;

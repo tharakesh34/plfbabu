@@ -240,7 +240,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> disbStatusList;
 	private static List<ValueLabel> chequeTypesList;
 
-	private static List<ValueLabel> feeTaxTypes; // GST FeeTaxTypes
+	private static List<ValueLabel> feeTaxTypes;
 	private static List<ValueLabel> mandateMapping;
 	private static List<ValueLabel> presentmentMapping;
 	private static List<ValueLabel> responseStatus;
@@ -271,8 +271,8 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> finLVTCheckList;
 	private static List<ValueLabel> depositTypesList;
 	private static List<String> denominations;
-	private static List<ValueLabel> invoiceTypes; // GST Invoice Types
-													// (Cr/Dr/Exempted)
+	private static List<ValueLabel> invoiceTypes;
+
 	private static List<ValueLabel> filtersList;
 
 	private static List<ValueLabel> advEmiSchMthdList;
@@ -366,9 +366,9 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> txFinTypeList;
 	private static List<ValueLabel> percType;
 	private static List<ValueLabel> betaConfiguration;
-	private static ArrayList<ValueLabel> purgEnvList = getPurgEnvironment();
-	private static ArrayList<ValueLabel> purgTypeList = getPurgType();
-	private static ArrayList<ValueLabel> purgActionList = getPurgAction();
+	private static List<ValueLabel> purgEnvList = getPurgEnvironment();
+	private static List<ValueLabel> purgTypeList = getPurgType();
+	private static List<ValueLabel> purgActionList = getPurgAction();
 
 	/**
 	 * Gets the list of applications.
@@ -512,25 +512,28 @@ public class PennantStaticListUtil {
 		return fieldType;
 	}
 
+	private static ValueLabel getValueLabel(String code, String labelKey) {
+		return new ValueLabel(code, Labels.getLabel(labelKey));
+	}
+
 	public static List<ValueLabel> getRegexType() {
 
 		if (regexType == null) {
 			regexType = new ArrayList<ValueLabel>(16);
-			regexType.add(new ValueLabel("REGEX_ALPHA", Labels.getLabel("label_REGEX_ALPHA")));
-			regexType.add(new ValueLabel("REGEX_NUMERIC", Labels.getLabel("label_REGEX_NUMERIC")));
-			regexType.add(new ValueLabel("REGEX_ALPHANUM", Labels.getLabel("label_REGEX_ALPHANUM")));
-			regexType.add(new ValueLabel("REGEX_ALPHA_SPACE_SPL", Labels.getLabel("label_ALPHANUM_SPACE_SPL")));
-			regexType.add(new ValueLabel("REGEX_ALPHANUM_SPACE_SPL", Labels.getLabel("label_REGEX_ALPHANUM_SPL")));
-			regexType.add(new ValueLabel("REGEX_NUMERIC_SPL", Labels.getLabel("label_REGEX_NUMERIC_SPL")));
-			regexType.add(new ValueLabel("REGEX_NAME", Labels.getLabel("label_REGEX_NAME")));
-			regexType.add(new ValueLabel("REGEX_DESCRIPTION", Labels.getLabel("label_REGEX_DESCRIPTION")));
-			regexType.add(
-					new ValueLabel("REGEX_ALPHANUM_UNDERSCORE", Labels.getLabel("label_REGEX_ALPHANUM_UNDERSCORE")));
-			regexType.add(new ValueLabel("REGEX_ALPHA_UNDERSCORE", Labels.getLabel("label_REGEX_ALPHA_UNDERSCORE")));
-			regexType.add(new ValueLabel("REGEX_EMAIL", Labels.getLabel("label_REGEX_EMAIL")));
-			regexType.add(new ValueLabel("REGEX_WEB", Labels.getLabel("label_REGEX_WEB")));
-			regexType.add(new ValueLabel("REGEX_SPECIAL_REGX", Labels.getLabel("label_REGEX_SPECIAL_REGX")));
-			regexType.add(new ValueLabel("TELEPHONE_REGEX", Labels.getLabel("label_TELEPHONE_REGEX")));
+			regexType.add(getValueLabel("REGEX_ALPHA", "label_REGEX_ALPHA"));
+			regexType.add(getValueLabel("REGEX_NUMERIC", "label_REGEX_NUMERIC"));
+			regexType.add(getValueLabel("REGEX_ALPHANUM", "label_REGEX_ALPHANUM"));
+			regexType.add(getValueLabel("REGEX_ALPHA_SPACE_SPL", "label_ALPHANUM_SPACE_SPL"));
+			regexType.add(getValueLabel("REGEX_ALPHANUM_SPACE_SPL", "label_REGEX_ALPHANUM_SPL"));
+			regexType.add(getValueLabel("REGEX_NUMERIC_SPL", "label_REGEX_NUMERIC_SPL"));
+			regexType.add(getValueLabel("REGEX_NAME", "label_REGEX_NAME"));
+			regexType.add(getValueLabel("REGEX_DESCRIPTION", "label_REGEX_DESCRIPTION"));
+			regexType.add(getValueLabel("REGEX_ALPHANUM_UNDERSCORE", "label_REGEX_ALPHANUM_UNDERSCORE"));
+			regexType.add(getValueLabel("REGEX_ALPHA_UNDERSCORE", "label_REGEX_ALPHA_UNDERSCORE"));
+			regexType.add(getValueLabel("REGEX_EMAIL", "label_REGEX_EMAIL"));
+			regexType.add(getValueLabel("REGEX_WEB", "label_REGEX_WEB"));
+			regexType.add(getValueLabel("REGEX_SPECIAL_REGX", "label_REGEX_SPECIAL_REGX"));
+			regexType.add(getValueLabel("REGEX_TELEPHONE", "label_REGEX_TELEPHONE"));
 		}
 		return regexType;
 
@@ -5815,7 +5818,7 @@ public class PennantStaticListUtil {
 		return npaPaymentTypesList;
 	}
 
-	public static ArrayList<ValueLabel> getPurgEnvironment() {
+	public static List<ValueLabel> getPurgEnvironment() {
 		if (purgEnvList == null) {
 			purgEnvList = new ArrayList<ValueLabel>();
 			purgEnvList.add(new ValueLabel("1", Labels.getLabel("label_SecurityDB")));
@@ -5826,7 +5829,7 @@ public class PennantStaticListUtil {
 		return purgEnvList;
 	}
 
-	public static ArrayList<ValueLabel> getPurgType() {
+	public static List<ValueLabel> getPurgType() {
 		if (purgTypeList == null) {
 			purgTypeList = new ArrayList<ValueLabel>();
 			purgTypeList.add(new ValueLabel("T", Labels.getLabel("label_Table")));
@@ -5836,7 +5839,7 @@ public class PennantStaticListUtil {
 
 	}
 
-	public static ArrayList<ValueLabel> getPurgAction() {
+	public static List<ValueLabel> getPurgAction() {
 		if (purgActionList == null) {
 			purgActionList = new ArrayList<ValueLabel>();
 			purgActionList.add(new ValueLabel("0", Labels.getLabel("label_NoAction")));
