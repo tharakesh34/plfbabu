@@ -126,6 +126,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.BankAccountValidationService;
@@ -318,11 +319,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		this.bankBranchID.setModuleName("BankBranch");
-		this.bankBranchID.setValueColumn("BranchCode");
+		this.bankBranchID.setModuleName("CheckBankBranch");
+		this.bankBranchID.setValueColumn("BankBranchID");
 		this.bankBranchID.setDescColumn("BankName");
 		this.bankBranchID.setDisplayStyle(2);
-		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
+		this.bankBranchID.setValueType(DataType.LONG);
+		this.bankBranchID.setValidateColumns(new String[] { "BankBranchID" });
 		this.bankBranchID.setTextBoxWidth(100);
 
 		this.chequeSerialNo.setMaxlength(6);
