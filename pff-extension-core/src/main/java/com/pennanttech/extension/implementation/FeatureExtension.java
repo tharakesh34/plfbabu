@@ -46,6 +46,8 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("ALLOW_NPA_PROVISION", true);
 		
 		customConstants.put("ALLOW_PMAY", true);
+		
+		customConstants.put("ALLOW_OCR", true);
 
 	}
 

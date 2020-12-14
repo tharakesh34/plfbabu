@@ -2145,9 +2145,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			// Scoring Detail Tab Addition
 			appendFinScoringDetailTab(onLoad);
 		}
-		
+
 		//PMAY Functionality in Loan Origination
-		if (isTabVisible(StageTabConstants.PMAY) && StringUtils.isEmpty(moduleDefiner)) {
+		if (ImplementationConstants.ALLOW_PMAY && isTabVisible(StageTabConstants.PMAY)
+				&& StringUtils.isEmpty(moduleDefiner)) {
 			appendPMAYTab(onLoad);
 		}
 		// Agreements Detail Tab Addition
@@ -5232,8 +5233,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		screenData.put("UserRole", getRole());
 		screenData.put("Right_EligibilitySal", isReadOnly("FinanceMainDialog_EligibilitySal"));
-		
-		if(spreadSheetService != null) {
+
+		if (spreadSheetService != null) {
 			map = spreadSheetService.setSpreadSheetData(screenData, financeDetail);
 		}
 		@SuppressWarnings("unchecked")
@@ -5884,7 +5885,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.tDSPercentage.getValue() != null) {
 			this.oldVal_tdsPercentage = this.tDSPercentage.getValue();
 		}
-		
+
 		// Under Construction
 		this.oldVar_UnderConstruction = this.underConstruction.isChecked();
 		this.oldVar_AutoIncrGrcEndDate = this.autoIncrGrcEndDate.isChecked();
@@ -23984,23 +23985,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		try {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_PMAY, true);
-			} else {
-				PMAY pmay = getFinanceDetail().getPmay();
-				if (pmay == null) {
-					pmay = new PMAY();
-					pmay.setNewRecord(true);
-				}
-				HashMap<String, Object> map = getDefaultArguments();
-				map.put("tab", getTab(AssetConstants.UNIQUE_ID_PMAY));
-				map.put("fromLoan", true);
-				map.put("roleCode", getRole());
-				map.put("financeDetail", getFinanceDetail());
-				map.put("financeMain", new FinanceMain());
-				map.put("pmay", pmay);
-				map.put("financeMainBaseCtrl", this);
-				Executions.createComponents("/WEB-INF/pages/SystemMaster/PMAY/PMAYDialog.zul",
-						getTabpanel(AssetConstants.UNIQUE_ID_PMAY), map);
+				return;
 			}
+			
+			PMAY pmay = getFinanceDetail().getPmay();
+			if (pmay == null) {
+				pmay = new PMAY();
+				pmay.setNewRecord(true);
+			}
+
+			Map<String, Object> map = getDefaultArguments();
+			map.put("tab", getTab(AssetConstants.UNIQUE_ID_PMAY));
+			map.put("fromLoan", true);
+			map.put("roleCode", getRole());
+			map.put("financeDetail", getFinanceDetail());
+			map.put("financeMain", new FinanceMain());
+			map.put("pmay", pmay);
+			map.put("financeMainBaseCtrl", this);
+			Executions.createComponents("/WEB-INF/pages/SystemMaster/PMAY/PMAYDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_PMAY), map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -24262,7 +24265,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setPricingDetailService(PricingDetailService pricingDetailService) {
 		this.pricingDetailService = pricingDetailService;
 	}
-
 
 	public void setPricingDetailListCtrl(PricingDetailListCtrl pricingDetailListCtrl) {
 		this.pricingDetailListCtrl = pricingDetailListCtrl;

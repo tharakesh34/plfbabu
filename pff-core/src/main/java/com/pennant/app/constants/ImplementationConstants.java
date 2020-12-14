@@ -246,6 +246,7 @@ public class ImplementationConstants {
 				true);
 		
 		ALLOW_PMAY = getValueAsBoolean(extensions, "ALLOW_PMAY", false);
+		ALLOW_OCR = getValueAsBoolean(extensions, "ALLOW_OCR", false);
 	}
 
 	public static boolean IMPLEMENTATION_CONVENTIONAL;
@@ -557,6 +558,7 @@ public class ImplementationConstants {
 	
 	public static boolean LOAN_ORG_DMS_TAB_REQ = false;
 	public static boolean ALLOW_PMAY = false;
+	public static boolean ALLOW_OCR = false;
 	
 	
 }

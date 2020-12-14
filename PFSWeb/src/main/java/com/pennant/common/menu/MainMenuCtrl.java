@@ -255,7 +255,12 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			return ImplementationConstants.ALLOW_NPA_PROVISION;
 		case "menu_Item_LoanDownSizing":
 			return ImplementationConstants.ALLOW_LOAN_DOWNSIZING;
-
+		case "menu_Item_PMAY":
+		case "menu_Item_PmayEnquiry":
+		case "menu_Item_PMAYDetails":
+			return ImplementationConstants.ALLOW_PMAY;
+		case "menu_Item_OCR":
+			return ImplementationConstants.ALLOW_OCR;
 		default:
 			break;
 		}
