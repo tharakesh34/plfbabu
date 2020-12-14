@@ -1279,7 +1279,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// End Finance Basic Details Tab ---> 1. Offer Details
 
 		// Start Finance Basic Details Tab ---> 1. Sourcing Details 
-		this.sourcingBranch.setProperties("Branch", "BranchCode", "BranchDesc", true, LengthConstants.LEN_BRANCH);
+		this.sourcingBranch.setProperties("Branch", "BranchCode", "BranchDesc", false, LengthConstants.LEN_BRANCH);
 
 		this.asmName.setProperties("SecurityUser", "UsrID", "UsrFName", false, LengthConstants.LEN_BRANCH);
 		this.asmName.setFilters(new Filter[] { Filter.in("UsrDesg", "ASM", "SM") });
@@ -1357,7 +1357,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.commitmentRef.setFilters(new Filter[] { new Filter("CustID", financeMain.getCustID(), Filter.OP_EQUAL) });
 
 		this.reqLoanTenor.setMaxlength(4);
-		this.reqLoanAmt.setProperties(true, finFormatter);
+		this.reqLoanAmt.setProperties(false, finFormatter);
 
 		this.lPPRule.setVisible(false);
 		if (isOverdraft) {
@@ -6389,15 +6389,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (!this.sourcingBranch.isReadonly()) {
 			this.sourcingBranch.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_FinanceMainDialog_SourcingBranch.value"), null, true, true));
+					Labels.getLabel("label_FinanceMainDialog_SourcingBranch.value"), null, false, true));
 		}
 
 		if (this.gb_sourcingDetails.isVisible()) {
 
 			if (!this.sourChannelCategory.isDisabled()) {
-				this.sourChannelCategory
+				/*this.sourChannelCategory
 						.setConstraint(new StaticListValidator(PennantStaticListUtil.getSourcingChannelCategory(),
-								Labels.getLabel("label_FinanceMainDialog_SourcingChannelCategory.value")));
+								Labels.getLabel("label_FinanceMainDialog_SourcingChannelCategory.value")));*/
 			}
 
 			String sourceChannel = "";
@@ -6930,11 +6930,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (!this.reqLoanTenor.isReadonly()) {
 			this.reqLoanTenor.setConstraint(
-					new PTNumberValidator(Labels.getLabel("label_FinanceMainDialog_ReqloanTenor.value"), true, false));
+					new PTNumberValidator(Labels.getLabel("label_FinanceMainDialog_ReqloanTenor.value"), false, false));
 		}
 		if (!this.reqLoanAmt.isReadonly()) {
 			this.reqLoanAmt.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_FinanceMainDialog_RequestedLoanAmt.value"), finFormatter, true, false));
+					Labels.getLabel("label_FinanceMainDialog_RequestedLoanAmt.value"), finFormatter, false, false));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -17481,7 +17481,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Start FinanceMain Details Tab ---> 1. Offer Details
 
-		//		readOnlyComponent(isReadOnly("FinanceMainDialog_offerId"), this.offerId);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_offerId"), this.offerId);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_offerProduct"), this.offerProduct);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_offerAmount"), this.offerAmount);

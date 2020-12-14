@@ -718,7 +718,7 @@
 												<row id="row_SourcingChannelCategory">
 													<label id="label_FinanceMainDialog_SourcingChannelCategory" value="${c:l('label_FinanceMainDialog_SourcingChannelCategory.value')}" />
 													<hbox>
-														<space spacing="2px" id="space_sourChannelCategory" sclass="mandatory" />
+														<space spacing="2px" id="space_sourChannelCategory"  />
 														<combobox id="sourChannelCategory" />
 													</hbox>
 												</row>
