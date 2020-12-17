@@ -28,6 +28,7 @@ public class ImplementationConstants {
 
 		Map<String, Object> extensions = getFeatureExtensions();
 
+		ALLOW_MULTI_CCY = getValueAsBoolean(extensions, "ALLOW_MULTI_CCY", false);
 		IMPLEMENTATION_CONVENTIONAL = getValueAsBoolean(extensions, "IMPLEMENTATION_CONVENTIONAL", true);
 		IMPLEMENTATION_ISLAMIC = getValueAsBoolean(extensions, "IMPLEMENTATION_ISLAMIC", false);
 		ALLOW_FINACTYPES = getValueAsBoolean(extensions, "ALLOW_FINACTYPES", false);
@@ -249,6 +250,8 @@ public class ImplementationConstants {
 		ALLOW_OCR = getValueAsBoolean(extensions, "ALLOW_OCR", false);
 	}
 
+	public static boolean ALLOW_MULTI_CCY=false;
+	public static String BASE_CCY = "INR";
 	public static boolean IMPLEMENTATION_CONVENTIONAL;
 	public static boolean IMPLEMENTATION_ISLAMIC;
 	public static boolean ALLOW_FINACTYPES;

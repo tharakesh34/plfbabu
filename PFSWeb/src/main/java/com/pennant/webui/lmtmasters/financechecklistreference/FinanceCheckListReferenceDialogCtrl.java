@@ -928,8 +928,6 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 	 * @return
 	 */
 	public boolean isRemarksMandatory(String refere) {
-		logger.debug(" Entering ");
-
 		Set<Listitem> items = this.listBox_CheckList.getSelectedItems();
 		for (Listitem listitem : items) {
 			Object data = listitem.getAttribute("data");
@@ -937,14 +935,11 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 				CheckListDetail checkListDetail = (CheckListDetail) data;
 				String key = checkListDetail.getCheckListId() + ";" + checkListDetail.getAnsSeqNo();
 				if (StringUtils.equals(refere, key)) {
-
-					logger.debug(" Leaving ");
 					return checkListDetail.isRemarksMand();
 				}
 			}
 		}
 
-		logger.debug(" Leaving ");
 		return false;
 	}
 

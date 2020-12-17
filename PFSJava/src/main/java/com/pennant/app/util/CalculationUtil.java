@@ -54,6 +54,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
@@ -593,9 +594,16 @@ public class CalculationUtil implements Serializable {
 
 		String fromCcyCode = fromCcy;
 		String toCcyCode = toCcy;
+		
+		String localCcy = "";
+		if (ImplementationConstants.ALLOW_MULTI_CCY) {
+			localCcy = SysParamUtil.getAppCurrency();
+		} else {
+			localCcy = ImplementationConstants.BASE_CCY;
+		}
 
 		// Base Currency
-		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		
 		if (fromCcyCode == null) {
 			fromCcyCode = localCcy;
 		}
@@ -609,7 +617,7 @@ public class CalculationUtil implements Serializable {
 
 		Currency fromCurrency = null;
 		Currency toCurrency = null;
-		List<Currency> currencyList = getCurrencyDAO().getCurrencyList(Arrays.asList(fromCcyCode, toCcyCode));
+		List<Currency> currencyList = currencyDAO.getCurrencyList(Arrays.asList(fromCcyCode, toCcyCode));
 		for (Currency currency : currencyList) {
 			if (currency.getCcyCode().equals(fromCcyCode)) {
 				fromCurrency = currency;
@@ -643,7 +651,7 @@ public class CalculationUtil implements Serializable {
 
 		Currency fromCurrency = new Currency();
 		Currency toCurrency = new Currency();
-		List<Currency> currencyList = getCurrencyDAO().getCurrencyList(Arrays.asList(fromCcy, toCcy));
+		List<Currency> currencyList = currencyDAO.getCurrencyList(Arrays.asList(fromCcy, toCcy));
 		for (Currency currency : currencyList) {
 			if (currency.getCcyCode().equals(fromCcy)) {
 				fromCurrency = currency;
@@ -686,7 +694,7 @@ public class CalculationUtil implements Serializable {
 
 		Currency fromCurrency = null;
 		Currency toCurrency = null;
-		List<Currency> currencyList = getCurrencyDAO().getCurrencyList(Arrays.asList(fromCcy, toCcy));
+		List<Currency> currencyList = currencyDAO.getCurrencyList(Arrays.asList(fromCcy, toCcy));
 		for (Currency currency : currencyList) {
 			if (currency.getCcyCode().equals(fromCcy)) {
 				fromCurrency = currency;
@@ -761,7 +769,7 @@ public class CalculationUtil implements Serializable {
 
 		Currency toCurrency = null;
 		Currency fromCurrency = null;
-		List<Currency> currencyList = getCurrencyDAO().getCurrencyList(Arrays.asList(fromCcy, toCcy));
+		List<Currency> currencyList = currencyDAO.getCurrencyList(Arrays.asList(fromCcy, toCcy));
 		for (Currency currency : currencyList) {
 			if (currency.getCcyCode().equals(fromCcy)) {
 				fromCurrency = currency;
@@ -854,17 +862,12 @@ public class CalculationUtil implements Serializable {
 		}
 		return frqequency;
 	}
-
-	public static CurrencyDAO getCurrencyDAO() {
-		return currencyDAO;
-	}
-
+	
 	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
 		CalculationUtil.currencyDAO = currencyDAO;
 	}
 
 	public static BigDecimal roundAmount(BigDecimal amount, String roundingMode, int roundingTarget) {
-
 		if (StringUtils.isBlank(roundingMode)) {
 			roundingMode = RoundingMode.HALF_DOWN.name();
 		}
