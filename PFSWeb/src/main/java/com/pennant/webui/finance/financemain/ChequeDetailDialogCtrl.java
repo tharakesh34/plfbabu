@@ -184,7 +184,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private int maxAccNoLength;
 	private int minAccNoLength;
 	private int ccyEditField = PennantConstants.defaultCCYDecPos;
-	private String ccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+	private String ccy = SysParamUtil.getAppCurrency();
 	private BankDetailService bankDetailService;
 	private List<FinanceScheduleDetail> financeSchedules = new ArrayList<>();
 	private List<ChequeDetail> chequeDocuments = new ArrayList<>();

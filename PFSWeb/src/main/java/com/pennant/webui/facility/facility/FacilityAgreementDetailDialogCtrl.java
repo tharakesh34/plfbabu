@@ -559,9 +559,9 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 					FacilityCollateral coll = agreement.new FacilityCollateral();
 					coll.setSecurityType(collateral.getDescription());
 					BigDecimal marketValue = CalculationUtil.getConvertedAmount(collateral.getCurrency(),
-							SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY), collateral.getValue());
+							SysParamUtil.getAppCurrency(), collateral.getValue());
 					BigDecimal bankValue = CalculationUtil.getConvertedAmount(collateral.getCurrency(),
-							SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY), collateral.getBankvaluation());
+							SysParamUtil.getAppCurrency(), collateral.getBankvaluation());
 					coll.setMarketValue(PennantApplicationUtil.amountFormate(marketValue,
 							SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 					coll.setBankValue(PennantApplicationUtil.amountFormate(bankValue,
@@ -603,7 +603,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 				proposedFacility = setFacilityDetailsData(proposedFacility, facilityDetail, detail);
 
 				amountBD = amountBD.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(),
-						SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY), facilityDetail.getNewLimit()));
+						SysParamUtil.getAppCurrency(), facilityDetail.getNewLimit()));
 				amountUSD = amountUSD.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(),
 						AccountConstants.CURRENCY_USD, facilityDetail.getNewLimit()));
 				totExposure = totExposure.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(),

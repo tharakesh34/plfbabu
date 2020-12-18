@@ -2409,7 +2409,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		String url = "/WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeList.zul";
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+		if (ImplementationConstants.COVENANT_MODULE_NEW) {
 			url = "/WEB-INF/pages/Finance/Covenant/CovenantsList.zul";
 		}
 

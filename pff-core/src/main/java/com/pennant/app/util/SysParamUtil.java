@@ -49,6 +49,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -134,6 +135,11 @@ public class SysParamUtil {
 	 * Returns a {@link java.util.String} object that represents the application Currency.
 	 */
 	public static String getAppCurrency() {
+
+		if (!ImplementationConstants.ALLOW_MULTI_CCY) {
+			return ImplementationConstants.BASE_CCY;
+		}
+
 		return SysParamUtil.getValueAsString(Param.APP_DFT_CURR.getCode());
 	}
 

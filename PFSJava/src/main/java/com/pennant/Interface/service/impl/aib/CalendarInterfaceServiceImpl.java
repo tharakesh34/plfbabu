@@ -53,8 +53,7 @@ public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 				for (int i = 0; i < yearList.size(); i++) {
 
 					if (weekendMaster == null) {
-						weekendMaster = getWeekendMasterDAO()
-								.getWeekendMasterByCode(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
+						weekendMaster = weekendMasterDAO.getWeekendMasterByCode(SysParamUtil.getAppCurrency());
 						if (weekendMaster == null) {
 							weekendMaster = new WeekendMaster();
 							weekendMaster.setWeekend("6,7");
@@ -95,9 +94,8 @@ public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 					}
 
 					// Weekend Holiday details updation
-					HolidayMaster holidayMaster = getHolidayMasterDAO().getHolidayMasterByID(
-							SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY), new BigDecimal(yearList.get(i)),
-							"");
+					HolidayMaster holidayMaster = holidayMasterDAO.getHolidayMasterByID(SysParamUtil.getAppCurrency(),
+							new BigDecimal(yearList.get(i)), "");
 					if (holidayMaster != null) {
 						holidayMaster.setHolidays(normalHolidays);
 						getHolidayMasterDAO().update(holidayMaster, "");
@@ -116,9 +114,8 @@ public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 					}
 
 					// Permanent Holiday details updation
-					holidayMaster = getHolidayMasterDAO().getHolidayMasterByID(
-							SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY), new BigDecimal(yearList.get(i)),
-							"");
+					holidayMaster = holidayMasterDAO.getHolidayMasterByID(SysParamUtil.getAppCurrency(),
+							new BigDecimal(yearList.get(i)), "");
 					if (holidayMaster != null) {
 						holidayMaster.setHolidays(perminentHoliDays);
 						getHolidayMasterDAO().update(holidayMaster, "");

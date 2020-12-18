@@ -144,8 +144,6 @@ public class SMTParameterConstants {
 	// If True, Makes Frequency Dates to empty for change gestation period
 	public static final String CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES = "CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES";
 
-	public static final String NEW_COVENANT_MODULE = "NEW_COVENANT_MODULE";
-
 	// Upfront Fee reversal required on loan cancellation
 	public static final String UPFRONT_FEE_REVERSAL_REQ = "UPFRONT_FEE_REVERSAL_REQ";
 
@@ -211,8 +209,6 @@ public class SMTParameterConstants {
 	public static final String HOLD_INS_INST_POST = "HOLD_INS_INST_POST";// LMS
 
 	// Constants for advance Payment
-	public static final String ADVANCE_PAYMENT_INT = "ADVANCE_PAYMENT_INT";
-	public static final String ADVANCE_PAYMENT_EMI = "ADVANCE_PAYMENT_EMI";
 	public static final String ADVANCE_PAYMENT_EMI_STAGE_FRONT_END = "ADVANCE_PAYMENT_EMI_STAGE_FRONT_END";
 	public static final String ADVANCE_PAYMENT_EMI_STAGE_REARE_END = "ADVANCE_PAYMENT_EMI_STAGE_REARE_END";
 	public static final String ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS = "ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS";
@@ -256,7 +252,6 @@ public class SMTParameterConstants {
 	public static final String CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ = "CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ";
 	public static final String MANDATE_DOWNLOAD_STOP_CIF_VALIDATION = "MANDATE_DOWNLOAD_STOP_CIF_VALIDATION";
 	// For Verification tabs in Loan Queue
-	public static final String VERIFICATION_INTIATION_FROM_OUTSIDE = "VERIFICATION_INTIATION_FROM_OUTSIDE";
 	public static final String EXTERNAL_DOCUMENT_VERIFICATION_REQUIRED = "EXT_DOC_VER_REQ";
 	public static final String FINANCE_DEVIATION_CHECK = "FINANCE_DEVIATION_CHECK";
 	public static final String QUERY_NOTIFICATION_REQ = "QUERY_NOTIFICATION_REQ";
@@ -298,7 +293,6 @@ public class SMTParameterConstants {
 	public static final String PMAY_PRODUCT = "PMAY_PRODUCT";
 
 	public static final String ALLOW_DEFAULT_MANDATE_REQ = "ALLOW_DEFAULT_MANDATE_REQ";
-	public static final String LIST_RENDER_ON_LOAD = "LIST_RENDER_ON_LOAD";
 	public static final String USER_NOTIFICATION_PUBLISH = "USER_NOTIFICATION_PUBLISH";
 	public static final String ALLOW_GST_RETAIL_CUSTOMER = "ALLOW_GST_RETAIL_CUSTOMER";
 	public static final String MANDATE_EMANDATE_REQUIRED = "MANDATE_EMANDATE_REQUIRED";

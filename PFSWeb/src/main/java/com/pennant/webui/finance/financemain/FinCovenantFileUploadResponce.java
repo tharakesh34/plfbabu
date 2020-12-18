@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.zkoss.util.media.Media;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
@@ -193,7 +194,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table)
 			throws Exception {
 		try {
-			if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+			if (ImplementationConstants.COVENANT_MODULE_NEW) {
 
 				Date maturityDate = financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate();
 				Date loanStartDt = financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate();

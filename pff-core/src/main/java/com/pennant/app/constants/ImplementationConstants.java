@@ -31,6 +31,7 @@ public class ImplementationConstants {
 		ALLOW_MULTI_CCY = getValueAsBoolean(extensions, "ALLOW_MULTI_CCY", false);
 		IMPLEMENTATION_CONVENTIONAL = getValueAsBoolean(extensions, "IMPLEMENTATION_CONVENTIONAL", true);
 		IMPLEMENTATION_ISLAMIC = getValueAsBoolean(extensions, "IMPLEMENTATION_ISLAMIC", false);
+		LIST_RENDER_ON_LOAD = getValueAsBoolean(extensions, "LIST_RENDER_ON_LOAD", true);
 		ALLOW_FINACTYPES = getValueAsBoolean(extensions, "ALLOW_FINACTYPES", false);
 		ALLOW_CAPITALIZE = getValueAsBoolean(extensions, "ALLOW_CAPITALIZE", true);
 		LIMIT_INTERNAL = getValueAsBoolean(extensions, "LIMIT_INTERNAL", true);
@@ -143,7 +144,8 @@ public class ImplementationConstants {
 		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
 		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", true);
 		ALLOW_DSF_CASHCLT = getValueAsBoolean(extensions, "ALLOW_DSF_CASHCLT", false);
-		ALLOW_ADV_INT_EMI = getValueAsBoolean(extensions, "ALLOW_ADV_INT_EMI", false);
+		ALLOW_ADV_INT = getValueAsBoolean(extensions, "ALLOW_ADV_INT", false);
+		ALLOW_ADV_EMI = getValueAsBoolean(extensions, "ALLOW_ADV_EMI", false);
 		ALLOW_TDS_ON_FEE = getValueAsBoolean(extensions, "ALLOW_TDS_ON_FEE", false);
 		ALLOW_NPA_PROVISION = getValueAsBoolean(extensions, "ALLOW_NPA_PROVISION", false);
 		ALLOW_NPA_PROVISION = getValueAsBoolean(extensions, "ALLOW_NPA_PROVISION", false);
@@ -245,13 +247,22 @@ public class ImplementationConstants {
 		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", false);
 		CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER = getValueAsBoolean(extensions, "CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER",
 				true);
-		
+
 		ALLOW_PMAY = getValueAsBoolean(extensions, "ALLOW_PMAY", false);
 		ALLOW_OCR = getValueAsBoolean(extensions, "ALLOW_OCR", false);
+		
+		VERIFICATION_INTIATION_FROM_OUTSIDE = getValueAsBoolean(extensions, "VERIFICATION_INTIATION_FROM_OUTSIDE", false);
+		ADVANCE_PAYMENT_INT = getValueAsBoolean(extensions, "ADVANCE_PAYMENT_INT", false);
+		ADVANCE_PAYMENT_EMI = getValueAsBoolean(extensions, "ADVANCE_PAYMENT_EMI", false);
+		COVENANT_MODULE_NEW = getValueAsBoolean(extensions, "COVENANT_MODULE_NEW", true);
+		
+		
+		
 	}
 
-	public static boolean ALLOW_MULTI_CCY=false;
+	public static boolean ALLOW_MULTI_CCY = false;
 	public static String BASE_CCY = "INR";
+	public static int BASE_CCY_EDT_FIELD = 2;
 	public static boolean IMPLEMENTATION_CONVENTIONAL;
 	public static boolean IMPLEMENTATION_ISLAMIC;
 	public static boolean ALLOW_FINACTYPES;
@@ -363,7 +374,8 @@ public class ImplementationConstants {
 	public static boolean ALLOW_AUTO_KNOCK_OFF;
 	public static boolean ALLOW_OLDEST_DUE;
 	public static boolean ALLOW_DSF_CASHCLT;
-	public static boolean ALLOW_ADV_INT_EMI;
+	public static boolean ALLOW_ADV_INT;
+	public static boolean ALLOW_ADV_EMI;
 	public static boolean ALLOW_TDS_ON_FEE;
 	public static boolean ALLOW_CD_LOANS;
 	public static boolean ALLOW_OD_LOANS;
@@ -482,6 +494,7 @@ public class ImplementationConstants {
 	public static boolean CREATE_PRESENTMENT_RECEIPT_EOD;
 	//Update the Manual Cheque Receipt status as paid at Deposit approver
 	public static boolean CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER;
+	public static boolean VERIFICATION_INTIATION_FROM_OUTSIDE;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;
@@ -557,11 +570,16 @@ public class ImplementationConstants {
 	public static final boolean ALLOW_SIMILARITY = true;
 
 	public static final boolean LEAD_ID_IS_MANDATORY = true;
-	
-	
+	public static final boolean LIST_RENDER_ON_LOAD;
+
 	public static boolean LOAN_ORG_DMS_TAB_REQ = false;
 	public static boolean ALLOW_PMAY = false;
 	public static boolean ALLOW_OCR = false;
 	
+	public static boolean ADVANCE_PAYMENT_INT = false;
+	public static boolean ADVANCE_PAYMENT_EMI = false;
+	public static boolean COVENANT_MODULE_NEW = false;
 	
+	
+
 }

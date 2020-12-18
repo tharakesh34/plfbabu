@@ -46,6 +46,7 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
 
@@ -73,6 +74,14 @@ public class CurrencyUtil {
 	 * @return
 	 */
 	public static int getFormat(String ccy) {
+
+		if (!ImplementationConstants.ALLOW_MULTI_CCY) {
+			return ImplementationConstants.BASE_CCY_EDT_FIELD;
+		}
+
+		if (StringUtils.equals(ImplementationConstants.BASE_CCY, ccy)) {
+			return ImplementationConstants.BASE_CCY_EDT_FIELD;
+		}
 
 		if (StringUtils.isEmpty(ccy)) {
 			ccy = SysParamUtil.getAppCurrency();
@@ -125,6 +134,15 @@ public class CurrencyUtil {
 	 * @return
 	 */
 	public static BigDecimal getExChangeRate(String ccy) {
+
+		if (!ImplementationConstants.ALLOW_MULTI_CCY) {
+			return BigDecimal.ONE;
+		}
+
+		if (StringUtils.equals(ImplementationConstants.BASE_CCY, ccy)) {
+			return BigDecimal.ONE;
+		}
+
 		Currency currecny = getCurrency(ccy);
 		if (currecny != null) {
 			return currecny.getCcySpotRate();

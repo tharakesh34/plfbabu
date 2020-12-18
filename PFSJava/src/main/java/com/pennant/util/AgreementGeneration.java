@@ -1493,8 +1493,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			List<com.pennant.backend.model.finance.covenant.Covenant> covenants = detail.getCovenants();
 
 			if (aggModuleDetails.contains(PennantConstants.AGG_COVENAN)) {
-				if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)
-						&& CollectionUtils.isNotEmpty(covenants)) {
+				if (ImplementationConstants.COVENANT_MODULE_NEW && CollectionUtils.isNotEmpty(covenants)) {
 					setCovenants(agreement, covenants);
 
 				} else if (CollectionUtils.isNotEmpty(covenantTypeList)) {

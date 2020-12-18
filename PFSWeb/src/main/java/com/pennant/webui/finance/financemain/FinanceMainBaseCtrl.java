@@ -2884,7 +2884,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				String url = "/WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeList.zul";
 
-				if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+				if (ImplementationConstants.COVENANT_MODULE_NEW) {
 					url = "/WEB-INF/pages/Finance/Covenant/CovenantsList.zul";
 				}
 
@@ -3349,7 +3349,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			chequeDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 			break;
 		case AssetConstants.UNIQUE_ID_COVENANTTYPE:
-			if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+			if (ImplementationConstants.COVENANT_MODULE_NEW) {
 				covenantsListCtrl.doSetLabels(getFinBasicDetails());
 			} else {
 				finCovenantTypeListCtrl.doSetLabels(getFinBasicDetails());
@@ -22496,7 +22496,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendFIInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
 			return;
 		}
 		boolean createTab = false;
@@ -22561,7 +22561,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendTVInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
 			return;
 		}
 		boolean createTab = false;
@@ -22631,7 +22631,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendLVInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
 			return;
 		}
 
@@ -22699,7 +22699,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendVettingInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
 			return;
 		}
 
@@ -22767,7 +22767,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendRCUInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
 			return;
 		}
 

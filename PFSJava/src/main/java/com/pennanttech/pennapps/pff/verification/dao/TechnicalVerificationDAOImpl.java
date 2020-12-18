@@ -443,7 +443,8 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, String.class);
-		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 		return null;
 	}

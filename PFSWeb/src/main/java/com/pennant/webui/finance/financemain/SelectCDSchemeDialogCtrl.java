@@ -1041,7 +1041,7 @@ public class SelectCDSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 
 		if (customerDetails.getCustomer().getCustBaseCcy() == null) {
-			customer.setCustBaseCcy(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
+			customer.setCustBaseCcy(SysParamUtil.getAppCurrency());
 		}
 
 		PFSParameter parameter = SysParamUtil.getSystemParameterObject("APP_LNG");

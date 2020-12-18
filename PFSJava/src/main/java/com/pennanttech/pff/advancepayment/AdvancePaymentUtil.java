@@ -64,7 +64,7 @@ public class AdvancePaymentUtil {
 				}
 
 				if ((AdvanceType.UF == type || AdvanceType.UT == type || AdvanceType.AF == type)
-						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_INT)) {
+						&& !ImplementationConstants.ALLOW_ADV_INT) {
 					continue;
 				}
 
@@ -76,12 +76,12 @@ public class AdvancePaymentUtil {
 		public static List<Property> getRepayList() {
 			List<Property> list = new ArrayList<>();
 			for (AdvanceType type : values()) {
-				if (AdvanceType.AE == type && !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_EMI)) {
+				if (AdvanceType.AE == type && !ImplementationConstants.ALLOW_ADV_EMI) {
 					continue;
 				}
 
 				if ((AdvanceType.UF == type || AdvanceType.UT == type || AdvanceType.AF == type)
-						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_INT)) {
+						&& !ImplementationConstants.ALLOW_ADV_INT) {
 					continue;
 				}
 				list.add(new Property(type.code, type.value));

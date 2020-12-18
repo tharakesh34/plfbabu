@@ -397,7 +397,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				BigDecimal fixedAmt = BigDecimal.ZERO;
 				if (StringUtils.isNotEmpty(sqlRule)) {
 					fixedAmt = (BigDecimal) getRuleExecutionUtil().executeRule(sqlRule, datamap,
-							SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY), RuleReturnType.DECIMAL);
+							SysParamUtil.getAppCurrency(), RuleReturnType.DECIMAL);
 				}
 				if (fixedAmt.compareTo(BigDecimal.ZERO) > 0) {
 					penalty = fixedAmt.multiply(new BigDecimal(dueDays));

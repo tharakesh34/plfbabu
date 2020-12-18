@@ -213,7 +213,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 
 		doSetProperties();
 
-		renderListOnLoad = SysParamUtil.isAllowed(SMTParameterConstants.LIST_RENDER_ON_LOAD);
+		renderListOnLoad = ImplementationConstants.LIST_RENDER_ON_LOAD;
 
 	}
 

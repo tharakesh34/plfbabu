@@ -432,7 +432,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		this.totPrinAmttwo.setValue(PennantAppUtil.formateAmount(aFinHeader.getTotPrincipalAmt(), ccyFormat));
 
 		if (aFinHeader.isNewRecord()) {
-			String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+			String localCcy = SysParamUtil.getAppCurrency();
 			Currency currency = PennantAppUtil.getCurrencyBycode(localCcy);
 			this.finCcy.setValue(currency.getCcyCode());
 			this.finCcy.setDescription(currency.getCcyDesc());

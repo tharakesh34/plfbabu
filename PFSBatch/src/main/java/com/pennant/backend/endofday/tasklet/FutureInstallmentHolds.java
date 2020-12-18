@@ -88,8 +88,8 @@ public class FutureInstallmentHolds implements Tasklet {
 
 			// If NBD is holiday then loop continues, else end process.
 			if (dateValueDate.compareTo(dateNextBusinessDate) == 0) {
-				Date futureDate = DateUtility.addDays(BusinessCalendar.getWorkingBussinessDate(
-						SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY), "N", dateNextBusinessDate).getTime(),
+				Date futureDate = DateUtility.addDays(BusinessCalendar
+						.getWorkingBussinessDate(SysParamUtil.getAppCurrency(), "N", dateNextBusinessDate).getTime(),
 						-1);
 
 				//Adding Holdings To Accounts After Repayments Process

@@ -767,7 +767,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (ImplementationConstants.ALLOW_COVENANT_TYPES) {
 			financeDetail.setCovenantTypeList(
 					getFinCovenantTypeService().getFinCovenantTypeById(finReference, "_View", false));
-			if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+			if (ImplementationConstants.COVENANT_MODULE_NEW) {
 				financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.VIEW));
 			}
 		}
@@ -1302,7 +1302,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeDetail.setCovenantTypeList(
 				getFinCovenantTypeService().getFinCovenantTypeById(financeMain.getFinReference(), "_View", false));
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+		if (ImplementationConstants.COVENANT_MODULE_NEW) {
 			financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.VIEW));
 		}
 		// Finance OCR Details
@@ -1377,8 +1377,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				} else {
 					WIFCustomer wifcustomer = new WIFCustomer();
 					wifcustomer.setNewRecord(true);
-					PFSParameter parameter = SysParamUtil.getSystemParameterObject(PennantConstants.LOCAL_CCY);
-					wifcustomer.setCustBaseCcy(parameter.getSysParmValue().trim());
+					wifcustomer.setCustBaseCcy(SysParamUtil.getAppCurrency());
 
 					Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
 
@@ -1489,8 +1488,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				} else {
 					WIFCustomer wifcustomer = new WIFCustomer();
 					wifcustomer.setNewRecord(true);
-					PFSParameter parameter = SysParamUtil.getSystemParameterObject(PennantConstants.LOCAL_CCY);
-					wifcustomer.setCustBaseCcy(parameter.getSysParmValue().trim());
+					wifcustomer.setCustBaseCcy(SysParamUtil.getAppCurrency());
 
 					Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
 					wifcustomer.setCustNationality(defaultCountry.getCountryCode());
@@ -1646,7 +1644,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							getFinCovenantTypeService().getFinCovenantTypeById(finReference, "_View", false));
 				}
 
-				if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+				if (ImplementationConstants.COVENANT_MODULE_NEW) {
 					financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.VIEW));
 				}
 
@@ -3386,32 +3384,32 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private void saveOrUpdateVerifications(List<AuditDetail> auditDetails, FinanceDetail financeDetail,
 			FinanceMain financeMain, String auditTranType) {
 		// FI Verification details
-		if ((!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)
-				&& financeDetail.isFiInitTab()) || financeDetail.isFiApprovalTab()) {
+		if ((!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE && financeDetail.isFiInitTab())
+				|| financeDetail.isFiApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getFiVerification(), financeMain);
 		}
 
 		// Technical Verification details
-		if ((!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)
-				&& financeDetail.isTvInitTab()) || financeDetail.isTvApprovalTab()) {
+		if ((!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE && financeDetail.isTvInitTab())
+				|| financeDetail.isTvApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getTvVerification(), financeMain);
 		}
 
 		// Legal Verification details
-		if ((!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)
-				&& financeDetail.isLvInitTab()) || financeDetail.isLvApprovalTab()) {
+		if ((!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE && financeDetail.isLvInitTab())
+				|| financeDetail.isLvApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getLvVerification(), financeMain);
 		}
 
 		// Legal Vetting details
-		if ((!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)
-				&& financeDetail.isVettingInitTab()) || financeDetail.isVettingApprovalTab()) {
+		if ((!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE && financeDetail.isVettingInitTab())
+				|| financeDetail.isVettingApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getLegalVetting(), financeMain);
 		}
 
 		// RCU Verification details
-		if ((!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)
-				&& financeDetail.isRcuInitTab()) || financeDetail.isRcuApprovalTab()) {
+		if ((!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE && financeDetail.isRcuInitTab())
+				|| financeDetail.isRcuApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getRcuVerification(), financeMain);
 		}
 		// PD Verification details
@@ -3423,7 +3421,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save FI Initiation details
 		// =======================================
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
 			if (financeDetail.isFiInitTab() && financeDetail.getFiVerification() != null) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.FI, auditTranType, true));
@@ -3441,7 +3439,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// TO-DO
 		// FIXME - To be uncommented while merging
 		// =======================================
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
 			if (financeDetail.isTvInitTab() && financeDetail.getTvVerification() != null) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType, true));
@@ -3457,7 +3455,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save LV Initiation details
 		// =======================================
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
 			if (financeDetail.isLvInitTab() && financeDetail.getLvVerification() != null) {
 				Verification verification = financeDetail.getLvVerification();
 				verification.setVerificationType(VerificationType.LV.getKey());
@@ -3477,7 +3475,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save Legal Vetting Initiation details
 		// =======================================
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
 			if (financeDetail.isVettingInitTab() && financeDetail.getLegalVetting() != null) {
 				Verification verification = financeDetail.getLegalVetting();
 				verification.setVerificationType(VerificationType.VETTING.getKey());
@@ -3497,7 +3495,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save RCU Initiation details
 		// =======================================
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
 			if (financeDetail.isRcuInitTab() && financeDetail.getRcuVerification() != null) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, auditTranType, true));
@@ -5876,7 +5874,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			break;
 		case PennantConstants.METHOD_LOAN_DATA_SYNC:
 			if (loanDataSyncService != null) {
-					loanDataSyncService.executeDataSync(auditHeader);
+				loanDataSyncService.executeDataSync(auditHeader);
 			}
 			break;
 
@@ -6429,8 +6427,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				List<Covenant> covenants = financeDetail.getCovenants();
-				if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)
-						&& CollectionUtils.isNotEmpty(covenants)) {
+				if (ImplementationConstants.COVENANT_MODULE_NEW && CollectionUtils.isNotEmpty(covenants)) {
 					int docSize = 0;
 					if (CollectionUtils.isNotEmpty(financeDetail.getDocumentDetailsList())) {
 						docSize = financeDetail.getDocumentDetailsList().size();
@@ -6520,8 +6517,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				List<Covenant> covenants = financeDetail.getCovenants();
-				if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)
-						&& CollectionUtils.isNotEmpty(covenants)) {
+				if (ImplementationConstants.COVENANT_MODULE_NEW && CollectionUtils.isNotEmpty(covenants)) {
 					// auditDetails.addAll(covenantsService.delete(covenants,
 					// TableType.TEMP_TAB, auditTranType));
 					covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType);
@@ -7325,7 +7321,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeDetail
 				.setCovenantTypeList(finCovenantTypeService.getFinCovenantDocTypeByFinRef(finReference, type, false));
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+		if (ImplementationConstants.COVENANT_MODULE_NEW) {
 			financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.TEMP_TAB));
 		}
 
@@ -7658,8 +7654,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			List<Covenant> covenats = financeDetail.getCovenants();
-			if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)
-					&& CollectionUtils.isNotEmpty(covenats)) {
+			if (ImplementationConstants.COVENANT_MODULE_NEW && CollectionUtils.isNotEmpty(covenats)) {
 				auditDetails.addAll(covenantsService.validate(covenats, financeMain.getWorkflowId(), method,
 						auditTranType, usrLanguage));
 				//commenting the below line since we are calling  covenantsService.validateOTC(financeDetail) method for new covenant module
@@ -7671,7 +7666,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner()))
 					&& !financeDetail.isActionSave()) {//skipping the validations while resubmit/cancel/back word cases
 
-				if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+				if (ImplementationConstants.COVENANT_MODULE_NEW) {
 					//Adding the audit details to display error's
 					auditDetails.addAll(covenantsService.validateOTC(financeDetail));
 				} else {
@@ -8640,7 +8635,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (customer != null) {
 
 			// Eligibility object
-			String dftCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+			String dftCcy = SysParamUtil.getAppCurrency();
 			BeanUtils.copyProperties(customer, eligibilityCheck);
 
 			if (customer.getCustDOB() != null) {
@@ -9523,7 +9518,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public FinanceMain fetchConvertedAmounts(FinanceMain financeMain, boolean calAllAmounts) {
 		logger.debug(Literal.ENTERING);
-		String dftCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		String dftCcy = SysParamUtil.getAppCurrency();
 
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		if (calAllAmounts) {
@@ -9709,7 +9704,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		aFinanceMain.setException(false);
 
 		// *** Case 1 : Amount Case Check Exception for 100K BHD ***
-		String dftCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		String dftCcy = SysParamUtil.getAppCurrency();
 		final BigDecimal finAmount = PennantApplicationUtil.formateAmount(aFinanceMain.getFinAmount(),
 				CurrencyUtil.getFormat(aFinanceMain.getFinCcy()));
 		if (dftCcy.equals(aFinanceMain.getFinCcy())) {
@@ -9738,7 +9733,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @return
 	 */
 	private BigDecimal calculateExchangeRate(BigDecimal amount, Currency aCurrency) {
-		String dftCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		String dftCcy = SysParamUtil.getAppCurrency();
 
 		if (StringUtils.equals(dftCcy, aCurrency.getCcyCode())) {
 			return amount;
@@ -11125,7 +11120,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		scheduleData.setFinReference(financeMain.getFinReference());
 		scheduleData.setFinanceMain(financeMain);
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+		if (ImplementationConstants.COVENANT_MODULE_NEW) {
 			financeDetail
 					.setCovenants(covenantsService.getCovenants(financeMain.getFinReference(), "Loan", TableType.VIEW));
 		} else {

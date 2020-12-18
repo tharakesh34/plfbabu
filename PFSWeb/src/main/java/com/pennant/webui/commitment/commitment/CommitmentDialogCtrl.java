@@ -867,7 +867,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			this.cmtCcy.setValue(dataObject.toString());
 			this.cmtCcy.setDescription("");
 			this.cmtChargesAccount.setAccountDetails(PennantConstants.COMMITMENT_FIN_TYPE,
-					PennantConstants.COMMITMENT_FIN_EVENT, SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
+					PennantConstants.COMMITMENT_FIN_EVENT, SysParamUtil.getAppCurrency());
 			this.cmtChargesAccount.setFormatter(SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
 		} else {
 			Currency details = (Currency) dataObject;

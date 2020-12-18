@@ -3024,7 +3024,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			String url = "/WEB-INF/pages/Finance/FinanceMain/FinCovenantMaintanceDialog.zul";
-			if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+			if (ImplementationConstants.COVENANT_MODULE_NEW) {
 				map.put("finHeaderList", getFinBasicDetails(financeDetail));
 				url = "/WEB-INF/pages/Finance/Covenant/CovenantsList.zul";
 

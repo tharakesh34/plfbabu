@@ -155,7 +155,6 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.AppUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -1141,8 +1140,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinanceTypeDialog_btnSave"));
 
 		if (!isOverdraft && !consumerDurable) {
-			this.grcAdvIntAndEMIReq.setVisible(ImplementationConstants.ALLOW_ADV_INT_EMI);
-			this.advIntAndEMIReq.setVisible(ImplementationConstants.ALLOW_ADV_INT_EMI);
+			this.grcAdvIntAndEMIReq.setVisible(ImplementationConstants.ALLOW_ADV_INT);
+			this.advIntAndEMIReq.setVisible(ImplementationConstants.ALLOW_ADV_INT);
 			this.dsfAndCashCtlReq.setVisible(ImplementationConstants.ALLOW_DSF_CASHCLT);
 		}
 

@@ -27,7 +27,9 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_IND_AS", true);
 
-		customConstants.put("ALLOW_ADV_INT_EMI", true);
+		customConstants.put("ALLOW_ADV_INT", true);
+
+		customConstants.put("ALLOW_ADV_EMI", true);
 
 		customConstants.put("ALLOW_DSF_CASHCLT", true);
 
@@ -44,9 +46,9 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("ALLOW_AUTO_KNOCK_OFF", true);
 
 		customConstants.put("ALLOW_NPA_PROVISION", true);
-		
+
 		customConstants.put("ALLOW_PMAY", true);
-		
+
 		customConstants.put("ALLOW_OCR", true);
 
 	}

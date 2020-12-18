@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
 import com.pennant.backend.dao.ext.dms.DMSGetLeadsDAO;
@@ -211,7 +212,7 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 				return response;
 			}
 		}
-		if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.NEW_COVENANT_MODULE), "Y")) {
+		if (ImplementationConstants.COVENANT_MODULE_NEW) {
 			covenantList = covenantsService.getCovenants(finReference, "Loan", TableType.VIEW);
 			List<CovenantType> covenantTypeList = new ArrayList<>();
 			for (Covenant covenant : covenantList) {

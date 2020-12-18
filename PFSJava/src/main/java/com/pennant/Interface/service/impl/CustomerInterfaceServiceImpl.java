@@ -456,7 +456,7 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 				customer.setLovDescCustCOBName(getCodeDescription("Country", customer.getCustCOB()));
 				customer.setLovDescCustRO1Name(getCodeDescription("PRelationCode", customer.getCustRO1()));
 				if (StringUtils.isBlank(customer.getCustBaseCcy())) {
-					String defaultCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+					String defaultCcy = SysParamUtil.getAppCurrency();
 					customer.setCustBaseCcy(defaultCcy);
 				}
 				customer.setNewRecord(true);

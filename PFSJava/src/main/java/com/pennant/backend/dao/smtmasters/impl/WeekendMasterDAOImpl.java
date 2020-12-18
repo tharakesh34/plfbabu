@@ -137,8 +137,7 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 
 			for (int i = 0; i < list.size(); i++) {
 
-				if (list.get(i).getWeekendCode()
-						.equalsIgnoreCase(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY))) {
+				if (list.get(i).getWeekendCode().equalsIgnoreCase(SysParamUtil.getAppCurrency())) {
 					master = list.get(i);
 				}
 

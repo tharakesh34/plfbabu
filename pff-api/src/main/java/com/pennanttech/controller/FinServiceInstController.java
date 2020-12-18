@@ -3802,8 +3802,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			covenant.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)
-				&& !CollectionUtils.isEmpty(covenantsList)) {
+		if (ImplementationConstants.COVENANT_MODULE_NEW && !CollectionUtils.isEmpty(covenantsList)) {
 			covenantsService.doApprove(covenantsList, TableType.MAIN_TAB, PennantConstants.TRAN_WF, 0);
 		}
 

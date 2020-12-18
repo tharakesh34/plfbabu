@@ -43,8 +43,12 @@
 
 package com.pennant.backend.service.smtmasters.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -421,6 +425,20 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 
 	@Override
 	protected PFSParameter getEntity(String code) {
+		if("APP_DFT_CURR".equals(code)) {
+			System.out.println(code);
+		}
+		try {
+			File file = new File("D:/SMT_Parameters.txt");
+			if(!file.exists()) {
+				file.createNewFile();
+			}
+			
+			FileUtils.write(file, code, Charset.defaultCharset(), true);
+			FileUtils.write(file, "\n", Charset.defaultCharset(), true);
+		} catch (IOException e) {
+			//
+		}
 		return pFSParameterDAO.getPFSParameterById(code, "_AView");
 	}
 

@@ -22,7 +22,7 @@ public class DateService extends ServiceHelper {
 	 */
 	public void doUpdatebeforeEod(boolean updatePhase) {
 		logger.debug(" Entering ");
-		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		String localCcy = SysParamUtil.getAppCurrency();
 		//Reset Next Business Date after updating Calendar with Core System
 		Calendar calendar = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
 				SysParamUtil.getAppDate());
@@ -50,7 +50,7 @@ public class DateService extends ServiceHelper {
 		//current next business date
 		Date nextBusinessDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
 
-		String localccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		String localccy = SysParamUtil.getAppCurrency();
 		Date tempnextBussDate = BusinessCalendar
 				.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_NEXT, nextBusinessDate).getTime();
 		String nextBussDate = DateUtility.format(tempnextBussDate, PennantConstants.DBDateFormat);

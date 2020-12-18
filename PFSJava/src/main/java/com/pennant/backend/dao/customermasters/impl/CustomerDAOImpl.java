@@ -1022,7 +1022,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 			}
 			custRepayBank = PennantApplicationUtil.formateAmount(custRepayBank,
-					CurrencyUtil.getFormat(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY)));
+					CurrencyUtil.getFormat(SysParamUtil.getAppCurrency()));
 		}
 
 		detail = null;
@@ -1075,7 +1075,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		}
 
 		totalRepayAmt = PennantApplicationUtil.formateAmount(totalRepayAmt,
-				CurrencyUtil.getFormat(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY)));
+				CurrencyUtil.getFormat(SysParamUtil.getAppCurrency()));
 
 		logger.debug(Literal.LEAVING);
 		return totalRepayAmt;

@@ -771,7 +771,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			this.limiDialogRule.setDescription(aLimitHeader.getQueryDesc());
 
 		} else {
-			aLimitHeader.setLimitCcy(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
+			aLimitHeader.setLimitCcy(SysParamUtil.getAppCurrency());
 			this.active.setChecked(true);
 		}
 

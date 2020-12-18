@@ -575,7 +575,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		aFinanceMain.setException(false);
 
 		//*** Case 1 : Amount Case Check Exception for 100K BHD ***
-		String dftCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		String dftCcy = SysParamUtil.getAppCurrency();
 		final BigDecimal finAmount = PennantApplicationUtil.formateAmount(aFinanceMain.getFinAmount(),
 				CurrencyUtil.getFormat(aFinanceMain.getFinCcy()));
 		if (dftCcy.equals(aFinanceMain.getFinCcy())) {

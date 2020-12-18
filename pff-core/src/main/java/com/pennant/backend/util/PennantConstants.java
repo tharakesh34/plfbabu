@@ -230,7 +230,7 @@ public class PennantConstants {
 	public static final String ERR_UNDEF = "000000";
 
 	// SMT Parameter Values
-	public static final String LOCAL_CCY = "APP_DFT_CURR";
+	//public static final String LOCAL_CCY = "APP_DFT_CURR";
 	public static final String LOCAL_CCY_FORMAT = "APP_DFT_CURR_EDIT_FIELD";
 	public static final String APP_PHASE = "PHASE";
 	public static final String APP_PHASE_EOD = "EOD";

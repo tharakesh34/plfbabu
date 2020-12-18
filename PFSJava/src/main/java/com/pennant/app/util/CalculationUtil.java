@@ -60,7 +60,6 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantConstants;
 
 public class CalculationUtil implements Serializable {
 	private static final long serialVersionUID = -7140560124513312794L;
@@ -641,7 +640,7 @@ public class CalculationUtil implements Serializable {
 		String toCcy = toCcyCode;
 
 		// Base Currency
-		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		String localCcy = SysParamUtil.getAppCurrency();
 		if (fromCcy == null) {
 			fromCcy = localCcy;
 		}
@@ -680,7 +679,7 @@ public class CalculationUtil implements Serializable {
 		String toCcy = toCcyCode;
 
 		// Base Currency
-		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		String localCcy = SysParamUtil.getAppCurrency();
 		if (fromCcy == null) {
 			fromCcy = localCcy;
 		}
@@ -755,7 +754,7 @@ public class CalculationUtil implements Serializable {
 		String toCcy = toCcyCode;
 
 		// Base Currency
-		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		String localCcy = SysParamUtil.getAppCurrency();
 		if (fromCcy == null) {
 			fromCcy = localCcy;
 		}
