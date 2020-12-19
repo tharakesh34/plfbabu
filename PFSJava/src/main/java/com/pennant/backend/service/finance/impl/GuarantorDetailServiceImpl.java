@@ -788,7 +788,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		if (primaryList != null && !primaryList.isEmpty()) {
 			for (FinanceExposure exposer : primaryList) {
 				if (exposer != null) {
-					String toCcy = SysParamUtil.getValueAsString("APP_DFT_CURR");
+					String toCcy = SysParamUtil.getAppCurrency();
 					String fromCcy = exposer.getFinCCY();
 					currentExpoSure = currentExpoSure
 							.add(CalculationUtil.getConvertedAmount(fromCcy, toCcy, exposer.getCurrentExpoSure()));

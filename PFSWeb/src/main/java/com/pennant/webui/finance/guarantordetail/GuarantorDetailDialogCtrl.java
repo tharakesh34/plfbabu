@@ -1033,7 +1033,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		logger.debug("Leaving");
 	}
 
-	String toCcy = SysParamUtil.getValueAsString("APP_DFT_CURR");
+	String toCcy = SysParamUtil.getAppCurrency();
 	int DFT_CURR_EDIT_FIELD = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
 
 	// ================Primary Exposure Details

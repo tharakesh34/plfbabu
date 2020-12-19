@@ -497,7 +497,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		customer.setLovDescCustCtgCodeName(PennantConstants.PFF_CUSTCTG_INDIV);
 		customer.setCustCIF(getCustomerDetailsService().getNewProspectCustomerCIF());
 		customer.setCustCRCPR("");
-		customer.setCustBaseCcy(SysParamUtil.getValueAsString("APP_DFT_CURR"));
+		customer.setCustBaseCcy(SysParamUtil.getAppCurrency());
 		customer.setCustLng(SysParamUtil.getValueAsString("APP_LNG"));
 
 		Country defaultCountry = PennantApplicationUtil.getDefaultCounty();

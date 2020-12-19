@@ -287,7 +287,7 @@ public class ReportGenerationUtil implements Serializable {
 			reportArgumentsMap.put("reportHeading", reportName);
 			reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
 			reportArgumentsMap.put("appDate", DateUtility.getAppDate());
-			reportArgumentsMap.put("appCcy", SysParamUtil.getValueAsString("APP_DFT_CURR"));
+			reportArgumentsMap.put("appCcy", SysParamUtil.getAppCurrency());
 			reportArgumentsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
 			reportArgumentsMap.put("unitParam", "Pff");
 			reportArgumentsMap.put("whereCondition", whereCond);

@@ -431,7 +431,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 			}
 		}
 
-		String defaultCCy = SysParamUtil.getValueAsString("APP_DFT_CURR");
+		String defaultCCy = SysParamUtil.getAppCurrency();
 		if (StringUtils.equals(aWeekendMaster.getWeekendCode(), defaultCCy)) {
 			btnDelete.setVisible(false);
 		}

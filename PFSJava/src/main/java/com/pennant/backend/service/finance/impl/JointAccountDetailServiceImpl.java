@@ -1245,7 +1245,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		if (primaryList != null && !primaryList.isEmpty()) {
 			for (FinanceExposure exposer : primaryList) {
 				if (exposer != null) {
-					String toCcy = SysParamUtil.getValueAsString("APP_DFT_CURR");
+					String toCcy = SysParamUtil.getAppCurrency();
 					String fromCcy = exposer.getFinCCY();
 					currentExpoSure = currentExpoSure
 							.add(CalculationUtil.getConvertedAmount(fromCcy, toCcy, exposer.getCurrentExpoSure()));
@@ -1266,7 +1266,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		BigDecimal overDueAmount;
 		BigDecimal exposerAmout;
 
-		String toCcy = SysParamUtil.getValueAsString("APP_DFT_CURR");
+		String toCcy = SysParamUtil.getAppCurrency();
 		String fromCcy = finExposer.getFinCCY();
 
 		if (finExposer.getFinanceAmt() != null) {

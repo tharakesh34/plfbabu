@@ -1707,7 +1707,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		argsMap.put("reportHeading", reportConfiguration.getReportHeading());
 		argsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
 		argsMap.put("appDate", SysParamUtil.getAppDate());
-		argsMap.put("appCcy", SysParamUtil.getValueAsString("APP_DFT_CURR"));
+		argsMap.put("appCcy", SysParamUtil.getAppCurrency());
 		argsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
 		argsMap.put("unitParam", unitName);
 
