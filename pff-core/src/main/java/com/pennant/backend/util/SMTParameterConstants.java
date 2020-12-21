@@ -208,10 +208,6 @@ public class SMTParameterConstants {
 	public static final String RECEIPT_CASH_PAN_MANDATORY = "RECEIPT_CASH_PAN_MANDATORY";
 	public static final String HOLD_INS_INST_POST = "HOLD_INS_INST_POST";// LMS
 
-	// Constants for advance Payment
-	public static final String ADVANCE_PAYMENT_EMI_STAGE_FRONT_END = "ADVANCE_PAYMENT_EMI_STAGE_FRONT_END";
-	public static final String ADVANCE_PAYMENT_EMI_STAGE_REARE_END = "ADVANCE_PAYMENT_EMI_STAGE_REARE_END";
-	public static final String ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS = "ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS";
 	public static final String RECEIPTUPLOAD_DEDUPCHECK = "RECEIPTUPLOAD_DEDUPCHECK";
 
 	public static final String CUST_CARD_SALES_REQ = "CUST_CARD_SALES_REQ";

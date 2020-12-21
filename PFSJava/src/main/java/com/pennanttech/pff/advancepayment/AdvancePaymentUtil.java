@@ -142,14 +142,11 @@ public class AdvancePaymentUtil {
 		public static List<Property> getList() {
 			List<Property> list = new ArrayList<>();
 			for (AdvanceStage type : values()) {
-				if (AdvanceStage.FE == type
-						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_EMI_STAGE_FRONT_END)) {
+				if (AdvanceStage.FE == type && !ImplementationConstants.ADV_EMI_STAGE_FRONT_END) {
 					continue;
-				} else if (AdvanceStage.RE == type
-						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_EMI_STAGE_REARE_END)) {
+				} else if (AdvanceStage.RE == type && !ImplementationConstants.ADV_EMI_STAGE_REAR_END) {
 					continue;
-				} else if (AdvanceStage.RT == type
-						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS)) {
+				} else if (AdvanceStage.RT == type && !ImplementationConstants.ADV_EMI_STAGE_REPAY_TERMS) {
 					continue;
 				}
 

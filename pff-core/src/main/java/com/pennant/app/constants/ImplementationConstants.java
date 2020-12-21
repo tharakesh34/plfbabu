@@ -256,7 +256,10 @@ public class ImplementationConstants {
 		ADVANCE_PAYMENT_EMI = getValueAsBoolean(extensions, "ADVANCE_PAYMENT_EMI", false);
 		COVENANT_MODULE_NEW = getValueAsBoolean(extensions, "COVENANT_MODULE_NEW", true);
 		
-		
+		/* ADVANCE INT / EMI Constants */
+		ADV_EMI_STAGE_FRONT_END = getValueAsBoolean(extensions, "ADV_EMI_STAGE_FRONT_END", true);
+		ADV_EMI_STAGE_REAR_END = getValueAsBoolean(extensions, "ADV_EMI_STAGE_REAR_END", false);
+		ADV_EMI_STAGE_REPAY_TERMS = getValueAsBoolean(extensions, "ADV_EMI_STAGE_REPAY_TERMS", false);
 		
 	}
 
@@ -581,5 +584,9 @@ public class ImplementationConstants {
 	public static boolean COVENANT_MODULE_NEW = false;
 	
 	
-
+	/*ADVANCE INT / EMI Constants */
+	public static boolean ADV_EMI_STAGE_FRONT_END;
+	public static boolean ADV_EMI_STAGE_REAR_END;
+	public static boolean ADV_EMI_STAGE_REPAY_TERMS;
+	
 }

@@ -46,6 +46,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
 
@@ -133,28 +134,36 @@ public class FrequencyUtil implements Serializable {
 				Labels.getLabel("label_Select_W7") };
 	}
 
+	private static List<ValueLabel> frequencyCodes = null;
+
+	private static ValueLabel getValueLabel(String value, String labelKey) {
+		return new ValueLabel(value, Labels.getLabel(labelKey));
+	}
+
 	public static List<ValueLabel> getFrequency() {
-		List<ValueLabel> frequencyCode = new ArrayList<ValueLabel>();
 
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_YEARLY, Labels.getLabel("label_Select_Yearly")));
-
-		String brInrtRvwFrqDayValReq = SysParamUtil
-				.getValueAsString(SMTParameterConstants.ALLOW_BR_INRST_RVW_FRQ_FRQCODEVAL_REQ);
-		if (StringUtils.equals(brInrtRvwFrqDayValReq, PennantConstants.YES)) {
-			frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_2YEARLY, Labels.getLabel("label_Select_2Yearly")));
-			frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_3YEARLY, Labels.getLabel("label_Select_3Yearly")));
+		if (CollectionUtils.isNotEmpty(frequencyCodes)) {
+			return frequencyCodes;
 		}
-		frequencyCode
-				.add(new ValueLabel(FrequencyCodeTypes.FRQ_HALF_YEARLY, Labels.getLabel("label_Select_HalfYearly")));
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_QUARTERLY, Labels.getLabel("label_Select_Quarterly")));
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_BIMONTHLY, Labels.getLabel("label_Select_BiMonthly")));
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_MONTHLY, Labels.getLabel("label_Select_Monthly")));
-		frequencyCode
-				.add(new ValueLabel(FrequencyCodeTypes.FRQ_FORTNIGHTLY, Labels.getLabel("label_Select_Fortnightly")));
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_BIWEEKLY, Labels.getLabel("label_Select_BiWeekly")));
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_WEEKLY, Labels.getLabel("label_Select_Weekly")));
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_DAILY, Labels.getLabel("label_Select_Daily")));
-		return frequencyCode;
+
+		frequencyCodes = new ArrayList<>();
+
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_YEARLY, "label_Select_Yearly"));
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BR_INRST_RVW_FRQ_FRQCODEVAL_REQ)) {
+			frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_2YEARLY, "label_Select_2Yearly"));
+			frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_3YEARLY, "label_Select_3Yearly"));
+		}
+
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_HALF_YEARLY, "label_Select_HalfYearly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_QUARTERLY, "label_Select_Quarterly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_BIMONTHLY, "label_Select_BiMonthly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_MONTHLY, "label_Select_Monthly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_FORTNIGHTLY, "label_Select_Fortnightly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_BIWEEKLY, "label_Select_BiWeekly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_WEEKLY, "label_Select_Weekly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_DAILY, "label_Select_Daily"));
+		return frequencyCodes;
 	}
 
 	public static String getRepayFrequencyLabel(String frequency) {
