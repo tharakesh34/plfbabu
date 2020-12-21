@@ -113,7 +113,8 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select sum(FINSCHDPFTPAID) FINSCHDPFTPAID, sum(FINSCHDPRIPAID) FINSCHDPRIPAID");
+		sql.append(" select sum(coalesce(FINSCHDPFTPAID, 0)) FINSCHDPFTPAID");
+		sql.append(", sum(coalesce(FINSCHDPRIPAID, 0)) FINSCHDPRIPAID");
 		sql.append(" from FinRepayDetails ");
 		sql.append(" Where FinReference =:FinReference");
 		sql.append(" and FINPOSTDATE >=:FinstartDate and FINPOSTDATE <=:FinEndDate");
