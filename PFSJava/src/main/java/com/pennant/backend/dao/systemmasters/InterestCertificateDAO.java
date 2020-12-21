@@ -44,6 +44,7 @@
 package com.pennant.backend.dao.systemmasters;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public interface InterestCertificateDAO {
 
 	InterestCertificate getInterestCertificateDetails(String finReference) throws ParseException;
 
-	InterestCertificate getSumOfPrinicipalAndProfitAmount(String finReference, String startDate, String endDate)
+	InterestCertificate getSumOfPrinicipalAndProfitAmount(String finReference, Date startDate, Date endDate)
 			throws ParseException;
 
 	String getCollateralRef(String finReference);
@@ -71,11 +72,11 @@ public interface InterestCertificateDAO {
 
 	List<Customer> getCoApplicantNames(String finReference);
 
-	InterestCertificate getSumOfPrinicipalAndProfitAmountPaid(String finReference, String startDate, String endDate)
+	InterestCertificate getSumOfPrinicipalAndProfitAmountPaid(String finReference, Date startDate, Date endDate)
 			throws ParseException;
 
-	Map<String, Object> getSumOfPriPftEmiAmount(String finReference, String finStartDate, String finEndDate);
+	Map<String, Object> getSumOfPriPftEmiAmount(String finReference, Date finStartDate, Date finEndDate);
 
-	Map<String, Object> getTotalGrcRepayProfit(String finReference, String finStartDate, String finEndDate);
+	Map<String, Object> getTotalGrcRepayProfit(String finReference, Date finStartDate, Date finEndDate);
 
 }

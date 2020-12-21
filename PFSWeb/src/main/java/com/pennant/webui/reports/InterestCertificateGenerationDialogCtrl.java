@@ -41,6 +41,7 @@ import com.pennant.document.generator.TemplateEngine;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -366,8 +367,11 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			throw new WrongValuesException(wvea);
 		}
 
-		String startDate = "1/4/" + getComboboxValue(this.financeYear);
-		String endDate = "31/3/" + String.valueOf(Integer.valueOf(getComboboxValue(this.financeYear)) + 1);
+		int year  = Integer.parseInt(getComboboxValue(this.financeYear));
+		
+		Date startDate = DateUtil.getDate(year, 3, 1);
+		Date endDate = DateUtil.getDate(year+1, 2, 31);
+		
 		boolean isProvCert = false;
 		if ("provisional".equalsIgnoreCase(getArgument("module"))) {
 			isProvCert = true;

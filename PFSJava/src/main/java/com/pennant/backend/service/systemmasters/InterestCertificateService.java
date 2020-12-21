@@ -44,6 +44,7 @@
 package com.pennant.backend.service.systemmasters;
 
 import java.text.ParseException;
+import java.util.Date;
 
 import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -54,8 +55,8 @@ import com.pennant.backend.model.finance.FinanceMain;
  */
 public interface InterestCertificateService {
 
-	InterestCertificate getInterestCertificateDetails(String value, String startDate, String endDate,
-			boolean isProvCert) throws ParseException;
+	InterestCertificate getInterestCertificateDetails(String value, Date startDate, Date endDate, boolean isProvCert)
+			throws ParseException;
 
 	FinanceMain getFinanceMain(String finReference, String[] columns, String type);
 

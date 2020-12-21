@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,7 +62,6 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>VasMovementDetail model</b> class.<br>
@@ -275,13 +275,12 @@ public class VasMovementDetailDAOImpl extends BasicDao<VasMovementDetail> implem
 	}
 
 	@Override
-	public BigDecimal getVasMovementDetailByRef(String finReference, String finStartDate, String finEndDate,
-			String type) {
+	public BigDecimal getVasMovementDetailByRef(String finReference, Date finStartDate, Date finEndDate, String type) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		source.addValue("FinstartDate", DateUtil.parse(finStartDate, "dd/MM/yyyy"));
-		source.addValue("FinEndDate", DateUtil.parse(finEndDate, "dd/MM/yyyy"));
+		source.addValue("FinstartDate", finStartDate);
+		source.addValue("FinEndDate", finEndDate);
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT SUM(MovementAmt) ");

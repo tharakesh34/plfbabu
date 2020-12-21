@@ -919,6 +919,24 @@ public class FinStatementController extends SummaryDetailService {
 			return stmtResponse;
 		}
 	}
+	
+	private String getAddress(String seperator, String... values) {
+		StringBuilder builder = new StringBuilder();
+
+		for (String value : values) {
+			if (StringUtils.isEmpty(value)) {
+				continue;
+			}
+
+			if (builder.length() > 0) {
+				builder.append(seperator);
+			}
+
+			builder.append(builder);
+		}
+
+		return builder.toString();
+	}
 
 	/**
 	 * This method generates a {@link ByteArrayOutputStream}, compatible for re-use
@@ -931,37 +949,37 @@ public class FinStatementController extends SummaryDetailService {
 
 		ByteArrayOutputStream stream = null;
 		Date fromdate = statementRequest.getFromDate();
-		String startDate = null;
-		String endDate = null;
+		Date startDate = null;
+		Date endDate = null;
 
+		int year = 0;
+		Date appDate = SysParamUtil.getAppDate();
 		if (fromdate != null) {
-			int year = DateUtility.getYear(fromdate);
-			startDate = "1/4/" + year;
-			endDate = "31/3/" + (year + 1);
+			year = DateUtility.getYear(fromdate);
 		} else {
-			startDate = "1/4/" + DateUtility.getYear(DateUtility.getAppDate());
-			endDate = "31/3/" + (DateUtility.getYear(DateUtility.getAppDate()) + 1);
+			year = DateUtil.getYear(appDate);
 		}
 
-		InterestCertificate interestCertificate = null;
+		startDate = DateUtil.getDate(year, 3, 1);
+		endDate = DateUtil.getDate(year + 1, 2, 31);
+
+		InterestCertificate intCert = null;
 		try {
-			interestCertificate = interestCertificateService
-					.getInterestCertificateDetails(statementRequest.getFinReference(), startDate, endDate, false);
+			intCert = interestCertificateService.getInterestCertificateDetails(statementRequest.getFinReference(),
+					startDate, endDate, false);
 		} catch (ParseException e) {
 			logger.error("Unable to retrieve model from service");
 		}
-		if (interestCertificate == null) {
+		if (intCert == null) {
 			logger.error("Empty Model");
 		}
 
-		Date appldate = DateUtility.getAppDate();
-		String appDate = DateUtility.formatToLongDate(appldate);
-		interestCertificate.setAppDate(appDate);
-		interestCertificate.setFinStartDate(startDate);
-		interestCertificate.setFinEndDate(endDate);
-		interestCertificate.setFinPostDate(DateUtility.getAppDate());
+		intCert.setAppDate(DateUtil.formatToLongDate(appDate));
+		intCert.setFinStartDate(DateUtil.formatToShortDate(startDate));
+		intCert.setFinEndDate(DateUtil.formatToShortDate(endDate));
+		intCert.setFinPostDate(appDate);
 
-		Method[] methods = interestCertificate.getClass().getDeclaredMethods();
+		Method[] methods = intCert.getClass().getDeclaredMethods();
 
 		for (Method property : methods) {
 			if (property.getName().startsWith("get")) {
@@ -969,7 +987,7 @@ public class FinStatementController extends SummaryDetailService {
 				Object value;
 
 				try {
-					value = property.invoke(interestCertificate);
+					value = property.invoke(intCert);
 				} catch (Exception e) {
 					continue;
 				}
@@ -977,44 +995,36 @@ public class FinStatementController extends SummaryDetailService {
 				if (value == null) {
 					try {
 						String stringParameter = "";
-						interestCertificate.getClass().getMethod("set" + field, new Class[] { String.class })
-								.invoke(interestCertificate, stringParameter);
+						intCert.getClass().getMethod("set" + field, new Class[] { String.class }).invoke(intCert,
+								stringParameter);
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
 					}
 				}
 			}
 		}
-		String combinedString = null;
-		String custflatnbr = null;
-		if (interestCertificate.getCustFlatNbr().equals("")) {
-			custflatnbr = " ";
-		} else {
-			custflatnbr = " " + interestCertificate.getCustFlatNbr() + "\n";
-		}
-		if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT)) {
-			combinedString = interestCertificate.getCustAddrHnbr() + custflatnbr
-					+ interestCertificate.getCustAddrStreet() + "\n" + interestCertificate.getCustAddrCity() + "\n"
-					+ interestCertificate.getCustAddrState() + " " + interestCertificate.getCustAddrZIP() + "\n"
-					+ interestCertificate.getCountryDesc() + "\n" + interestCertificate.getCustEmail() + "\n"
-					+ interestCertificate.getCustPhoneNumber();
-			interestCertificate.setCustAddrHnbr(combinedString);
+		
+		
+		String address = getAddress("\n", intCert.getCustAddrHnbr(), intCert.getCustFlatNbr(),
+				intCert.getCustAddrStreet(), intCert.getCustAddrCity(), intCert.getCustAddrState(),
+				intCert.getCustAddrZIP(), intCert.getCountryDesc());
+		
+		String certType = statementRequest.getType();
+		if (APIConstants.STMT_PROV_INST_CERT_REPORT.equals(certType)) {
+			address = getAddress("\n", address, intCert.getCustEmail(), intCert.getCustPhoneNumber());
+			intCert.setCustAddress(address);
 		}
 
-		if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)) {
-			combinedString = interestCertificate.getCustAddrHnbr() + custflatnbr
-					+ interestCertificate.getCustAddrStreet() + "\n" + interestCertificate.getCustAddrCity() + "\n"
-					+ interestCertificate.getCustAddrState() + " " + interestCertificate.getCustAddrZIP() + "\n"
-					+ interestCertificate.getCountryDesc();
-			interestCertificate.setCustAddrHnbr(combinedString);
+		if (APIConstants.STMT_INST_CERT_REPORT.equals(certType)) {
+			intCert.setCustAddress(address);
 		}
 
 		String agreement = null;
-		if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT)) {
+		if (APIConstants.STMT_PROV_INST_CERT_REPORT.equals(certType)) {
 			agreement = "ProvisionalCertificate.docx";
 		}
 
-		if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)) {
+		if (APIConstants.STMT_INST_CERT_REPORT.equals(certType)) {
 			agreement = "InterestCertificate.docx";
 		}
 
@@ -1024,7 +1034,7 @@ public class FinStatementController extends SummaryDetailService {
 			engine = new TemplateEngine(templatePath, templatePath);
 			engine.setTemplate(agreement);
 			engine.loadTemplate();
-			engine.mergeFields(interestCertificate);
+			engine.mergeFields(intCert);
 
 			stream = new ByteArrayOutputStream();
 			engine.getDocument().save(stream, SaveFormat.PDF);

@@ -43,7 +43,6 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +64,6 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>AddressType model</b> class.<br>
@@ -86,7 +84,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		sql.append("CUSTADDRCITY, CUSTADDRZIP, CUSTEMAIL, CUSTPHONENUMBER, FINTYPEDESC, FINASSETVALUE,");
 		sql.append("EFFECTIVERATE, ENTITYCODE, ENTITYDESC, ENTITYPANNUMBER, ENTITYADDRHNBR,");
 		sql.append("ENTITYFLATNBR, ENTITYADDRSTREET, ENTITYSTATE, ENTITYCITY, FINCCY, FinAmount, fintype,");
-		sql.append("custflatnbr, EntityZip ,FINCURRASSETVALUE,CUSTSALUTATION ");
+		sql.append("custflatnbr, EntityZip, FINCURRASSETVALUE, CUSTSALUTATION ");
 		sql.append("from INTERESTCERTIFICATE_VIEW ");
 		sql.append("Where FinReference =:FinReference");
 
@@ -108,8 +106,8 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 	}
 
 	@Override
-	public InterestCertificate getSumOfPrinicipalAndProfitAmount(String finReference, String finStartDate,
-			String finEndDate) throws ParseException {
+	public InterestCertificate getSumOfPrinicipalAndProfitAmount(String finReference, Date finStartDate,
+			Date finEndDate) throws ParseException {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
@@ -122,8 +120,8 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		source.addValue("FinstartDate", DateUtil.parse(finStartDate, "dd/MM/yyyy"));
-		source.addValue("FinEndDate", DateUtil.parse(finEndDate, "dd/MM/yyyy"));
+		source.addValue("FinstartDate", finStartDate);
+		source.addValue("FinEndDate", finEndDate);
 
 		RowMapper<InterestCertificate> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(InterestCertificate.class);
@@ -258,14 +256,12 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 	}
 
 	@Override
-	public InterestCertificate getSumOfPrinicipalAndProfitAmountPaid(String finReference, String finStartDate,
-			String finEndDate) throws ParseException {
+	public InterestCertificate getSumOfPrinicipalAndProfitAmountPaid(String finReference, Date startDate,
+			Date finEndDate) throws ParseException {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse(finStartDate);
-		Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(finEndDate);
 		StringBuilder selectSql = new StringBuilder(
 				"select sum(FINSCHDPFTPAID) as FINSCHDPFTPAID ,sum(FINSCHDPRIPAID) as FINSCHDPRIPAID");
 		selectSql.append(" from INTERESTCERTIFICATE_VIEW ");
@@ -276,7 +272,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 
 		source.addValue("FinReference", finReference);
 		source.addValue("FinstartDate", startDate);
-		source.addValue("FinEndDate", endDate);
+		source.addValue("FinEndDate", finEndDate);
 
 		RowMapper<InterestCertificate> typeRowMapper = BeanPropertyRowMapper.newInstance(InterestCertificate.class);
 		try {
@@ -288,7 +284,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		return null;
 	}
 
-	public Map<String, Object> getSumOfPriPftEmiAmount(String finReference, String finStartDate, String finEndDate) {
+	public Map<String, Object> getSumOfPriPftEmiAmount(String finReference, Date finStartDate, Date finEndDate) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> amounts = new HashMap<>();
@@ -303,8 +299,8 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		source.addValue("FinstartDate", DateUtil.parse(finStartDate, "dd/MM/yyyy"));
-		source.addValue("FinEndDate", DateUtil.parse(finEndDate, "dd/MM/yyyy"));
+		source.addValue("FinstartDate", finStartDate);
+		source.addValue("FinEndDate", finEndDate);
 
 		try {
 			amounts = this.jdbcTemplate.queryForMap(sql.toString(), source);
@@ -318,7 +314,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 	}
 
 	@Override
-	public Map<String, Object> getTotalGrcRepayProfit(String finReference, String finStartDate, String finEndDate) {
+	public Map<String, Object> getTotalGrcRepayProfit(String finReference, Date finStartDate, Date finEndDate) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> amounts = new HashMap<>();
@@ -332,8 +328,8 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		source.addValue("FinstartDate", DateUtil.parse(finStartDate, "dd/MM/yyyy"));
-		source.addValue("FinEndDate", DateUtil.parse(finEndDate, "dd/MM/yyyy"));
+		source.addValue("FinstartDate", finStartDate);
+		source.addValue("FinEndDate", finEndDate);
 
 		try {
 			amounts = this.jdbcTemplate.queryForMap(sql.toString(), source);

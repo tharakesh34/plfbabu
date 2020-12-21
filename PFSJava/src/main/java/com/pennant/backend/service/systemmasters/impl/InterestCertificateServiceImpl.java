@@ -46,6 +46,7 @@ package com.pennant.backend.service.systemmasters.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -92,7 +93,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 	}
 
 	@Override
-	public InterestCertificate getInterestCertificateDetails(String finReference, String startDate, String endDate,
+	public InterestCertificate getInterestCertificateDetails(String finReference, Date startDate, Date endDate,
 			boolean isProvCert) throws ParseException {
 		logger.debug(Literal.ENTERING);
 
@@ -260,7 +261,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 		return loanRatio;
 	}
 
-	private BigDecimal getTotalVasAmount(String finReference, String startDate, String endDate) {
+	private BigDecimal getTotalVasAmount(String finReference, Date startDate, Date endDate) {
 		logger.debug(Literal.ENTERING);
 		BigDecimal totalvasAmt = BigDecimal.ZERO;
 
