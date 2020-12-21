@@ -50,13 +50,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.VasMovementDetailDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
@@ -72,6 +70,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.InterestCertificateService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.AppUtil;
 import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
 /**
@@ -87,11 +86,6 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 	private FinanceMainDAO financeMainDAO;
 	private VASRecordingDAO vASRecordingDAO;
 	private VasMovementDetailDAO vasMovementDetailDAO;
-	private BigDecimal totalvasAmt = BigDecimal.ZERO;
-	private BigDecimal totalLoanAmt = BigDecimal.ZERO;
-	private BigDecimal totalDisbAmt = BigDecimal.ZERO;
-	private BigDecimal loanRatio = BigDecimal.ZERO;
-	private BigDecimal vasRatio = BigDecimal.ZERO;
 
 	public InterestCertificateServiceImpl() {
 		super();
@@ -108,14 +102,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 			return null;
 		}
 
-		InterestCertificate certificate = null;
-		if (isProvCert) {
-			certificate = interestCertificateDAO.getSumOfPrinicipalAndProfitAmount(finReference, startDate, endDate);
-		} else {
-			certificate = interestCertificateDAO.getSumOfPrinicipalAndProfitAmountPaid(finReference, startDate,
-					endDate);
-		}
-		// Get Co-Applicants
+		/* Get Co-Applicants */
 
 		List<Customer> coApplicantList = interestCertificateDAO.getCoApplicantNames(finReference);
 		StringBuilder coapplicant = new StringBuilder();
@@ -150,71 +137,47 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 				endDate);
 		Map<String, Object> amounts = interestCertificateDAO.getSumOfPriPftEmiAmount(finReference, startDate, endDate);
 
-		if (summary != null && summary.getFinSchdPftPaid() != null && summary.getFinSchdPriPaid() != null) {
-			String finSchdPftPaid = PennantApplicationUtil.amountFormate(summary.getFinSchdPftPaid(), format);
-			finSchdPftPaid = finSchdPftPaid.replace(",", "");
-			String finSchdPriPaid = PennantApplicationUtil.amountFormate(summary.getFinSchdPriPaid(), format);
-			finSchdPriPaid = finSchdPriPaid.replace(",", "");
-			intCert.setFinSchdPftPaid(new BigDecimal(finSchdPftPaid));
-			intCert.setFinSchdPriPaid(new BigDecimal(finSchdPriPaid));
-			intCert.setSchdPftPaid(PennantApplicationUtil.amountFormate(summary.getFinSchdPftPaid(), format));
-			intCert.setSchdPriPaid(PennantApplicationUtil.amountFormate(summary.getFinSchdPriPaid(), format));
-			intCert.setTotalPaid(PennantApplicationUtil
-					.amountFormate(summary.getFinSchdPriPaid().add(summary.getFinSchdPftPaid()), format));
-			try {
-				intCert.setSchdPftPaidInWords(
-						summary.getFinSchdPftPaid() == BigDecimal.ZERO ? ""
-								: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
-										PennantApplicationUtil.formateAmount(summary.getFinSchdPftPaid(), format),
-										"")));
-				intCert.setSchdPriPaidInWords(
-						summary.getFinSchdPriPaid() == BigDecimal.ZERO ? ""
-								: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
-										PennantApplicationUtil.formateAmount(summary.getFinSchdPriPaid(), format),
-										"")));
-				intCert.setTotalPaidInWords(
-						summary.getFinSchdPftPaid().add(summary.getFinSchdPriPaid()) == BigDecimal.ZERO ? ""
-								: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
-										PennantApplicationUtil.formateAmount(
-												summary.getFinSchdPriPaid().add(summary.getFinSchdPftPaid()), format),
-										"")));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		} else {
-			intCert.setFinSchdPftPaid(new BigDecimal(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format)));
-			intCert.setFinSchdPriPaid(new BigDecimal(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format)));
-			intCert.setSchdPftPaid(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format));
-			intCert.setSchdPriPaid(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format));
-			intCert.setTotalPaid(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format));
+		if (summary == null) {
+			intCert.setFinSchdPftPaid(new BigDecimal(AppUtil.formatAmount(BigDecimal.ZERO, format)));
+			intCert.setFinSchdPriPaid(new BigDecimal(AppUtil.formatAmount(BigDecimal.ZERO, format)));
+			intCert.setSchdPftPaid(AppUtil.formatAmount(BigDecimal.ZERO, format));
+			intCert.setSchdPriPaid(AppUtil.formatAmount(BigDecimal.ZERO, format));
+			intCert.setTotalPaid(AppUtil.formatAmount(BigDecimal.ZERO, format));
+			summary = new InterestCertificate();
 		}
 
-		intCert.setFinAmount(PennantApplicationUtil.amountFormate(new BigDecimal(intCert.getFinAmount()), format));
+		BigDecimal schdPftPaid = summary.getFinSchdPftPaid();
+		BigDecimal schdPriPaid = summary.getFinSchdPriPaid();
+		BigDecimal totalPaid = schdPriPaid.add(schdPftPaid);
+
+		String finSchdPftPaid = AppUtil.formatAmount(schdPftPaid, format);
+		finSchdPftPaid = finSchdPftPaid.replace(",", "");
+		String finSchdPriPaid = PennantApplicationUtil.amountFormate(schdPriPaid, format);
+		finSchdPriPaid = finSchdPriPaid.replace(",", "");
+
+		intCert.setFinSchdPftPaid(new BigDecimal(finSchdPftPaid));
+		intCert.setFinSchdPriPaid(new BigDecimal(finSchdPriPaid));
+		intCert.setSchdPftPaid(AppUtil.formatAmount(schdPftPaid, format));
+		intCert.setSchdPriPaid(AppUtil.formatAmount(schdPriPaid, format));
+
+		intCert.setTotalPaid(AppUtil.formatAmount(totalPaid, format));
+		intCert.setSchdPftPaidInWords(AppUtil.getAmountInText(schdPftPaid, format));
+		intCert.setSchdPriPaidInWords(AppUtil.getAmountInText(schdPriPaid, format));
+		intCert.setTotalPaidInWords(AppUtil.getAmountInText(totalPaid, format));
+
+		intCert.setFinAmount(AppUtil.formatAmount(new BigDecimal(intCert.getFinAmount()), format));
 
 		if (amounts != null && !amounts.isEmpty()) {
-
 			BigDecimal pftSchd = (BigDecimal) amounts.get("profitschd");
 			BigDecimal priSchd = (BigDecimal) amounts.get("principalschd");
 			BigDecimal emiAmount = (BigDecimal) amounts.get("repayamount");
-			intCert.setPftSchd(PennantApplicationUtil.amountFormate(pftSchd, format));
-			intCert.setPriSchd(PennantApplicationUtil.amountFormate(priSchd, format));
-			intCert.setEmiAmt(PennantApplicationUtil.amountFormate(emiAmount, format));
+			intCert.setPftSchd(AppUtil.formatAmount(pftSchd, format));
+			intCert.setPriSchd(AppUtil.formatAmount(priSchd, format));
+			intCert.setEmiAmt(AppUtil.formatAmount(emiAmount, format));
 
-			try {
-				intCert.setPftSchdInWords(pftSchd == BigDecimal.ZERO ? ""
-						: WordUtils.capitalize(NumberToEnglishWords
-								.getAmountInText(PennantApplicationUtil.formateAmount(pftSchd, format), "")));
-				intCert.setPriSchdInWords(priSchd == BigDecimal.ZERO ? ""
-						: WordUtils.capitalize(NumberToEnglishWords
-								.getAmountInText(PennantApplicationUtil.formateAmount(priSchd, format), "")));
-				intCert.setEmiAmtInWords(emiAmount == BigDecimal.ZERO ? ""
-						: WordUtils.capitalize(NumberToEnglishWords
-								.getAmountInText(PennantApplicationUtil.formateAmount(emiAmount, format), "")));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			intCert.setPftSchdInWords(AppUtil.getAmountInText(pftSchd, format));
+			intCert.setPriSchdInWords(AppUtil.getAmountInText(priSchd, format));
+			intCert.setEmiAmtInWords(AppUtil.getAmountInText(emiAmount, format));
 
 		}
 
@@ -254,45 +217,53 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 			}
 		}
 
-		//Ratio based division for Loan repay amount and Insurance amount.
-		getAmountsByRef(finReference, intCert.getFinCurrAssetvalue(), startDate, endDate);
+		/* Ratio based division for Loan repay amount and Insurance amount. */
+
+		BigDecimal totalDisbAmt = PennantApplicationUtil.formateAmount(intCert.getFinCurrAssetvalue(), 2);
+		BigDecimal totalvasAmt = getTotalVasAmount(finReference, startDate, endDate);
+
+		BigDecimal loanRatio = getLoanRatio(totalDisbAmt, totalvasAmt);
+		BigDecimal vasRatio = getVasRatio(totalDisbAmt, totalvasAmt);
+
 		intCert.setPriPaid(intCert.getFinSchdPriPaid().multiply(loanRatio));
 		intCert.setVasPriPaid(intCert.getFinSchdPriPaid().multiply(vasRatio));
 		intCert.setPftPaid(intCert.getFinSchdPftPaid().multiply(loanRatio));
 		intCert.setVasPftPaid(intCert.getFinSchdPftPaid().multiply(vasRatio));
-		resetAmounts();
 
 		logger.debug(Literal.LEAVING);
 		return intCert;
 
 	}
 
-	public void getAmountsByRef(String finReference, BigDecimal finCurrAssetValue, String startDate, String endDate) {
-		logger.debug(Literal.ENTERING);
-		//total disbursement amount
-		totalDisbAmt = PennantApplicationUtil.formateAmount(finCurrAssetValue, 2);
-		processVasRecordingDetails(finReference, startDate, endDate);
-		calculateRatio();
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void calculateRatio() {
-		//Considering the total loan amount as totalDisbAmt + totalvasAmt for calculation
-		totalLoanAmt = totalDisbAmt.add(totalvasAmt);
-		//calculating the total loan ratio from total loan amount including VAS amount
+	private BigDecimal getVasRatio(BigDecimal totalDisbAmt, BigDecimal totalvasAmt) {
+		BigDecimal vasRatio = BigDecimal.ZERO;
+		/* Considering the total loan amount as totalDisbAmt + totalvasAmt for calculation */
+		BigDecimal totalLoanAmt = totalDisbAmt.add(totalvasAmt);
+		/* Calculating the total loan ratio from total loan amount including VAS amount */
 		if (totalvasAmt.compareTo(BigDecimal.ZERO) > 0 && totalLoanAmt.compareTo(BigDecimal.ZERO) > 0) {
-			//vas ratio
 			vasRatio = totalvasAmt.divide(totalLoanAmt, 2, RoundingMode.HALF_UP);
 		}
-		//calculating the total loan ratio from total loan amount including VAS
-		if (totalDisbAmt.compareTo(BigDecimal.ZERO) > 0 && totalLoanAmt.compareTo(BigDecimal.ZERO) > 0) {
-			//loan ratio
-			loanRatio = totalDisbAmt.divide(totalLoanAmt, 2, RoundingMode.HALF_UP);
-		}
+
+		return vasRatio;
 	}
 
-	private void processVasRecordingDetails(String finReference, String startDate, String endDate) {
+	private BigDecimal getLoanRatio(BigDecimal totalDisbAmt, BigDecimal totalvasAmt) {
+		BigDecimal loanRatio = BigDecimal.ZERO;
+		/* Considering the total loan amount as totalDisbAmt + totalvasAmt for calculation */
+		BigDecimal totalLoanAmt = totalDisbAmt.add(totalvasAmt);
+
+		/* Calculating the total loan ratio from total loan amount including VAS */
+		if (totalDisbAmt.compareTo(BigDecimal.ZERO) > 0 && totalLoanAmt.compareTo(BigDecimal.ZERO) > 0) {
+			loanRatio = totalDisbAmt.divide(totalLoanAmt, 2, RoundingMode.HALF_UP);
+		}
+
+		return loanRatio;
+	}
+
+	private BigDecimal getTotalVasAmount(String finReference, String startDate, String endDate) {
 		logger.debug(Literal.ENTERING);
+		BigDecimal totalvasAmt = BigDecimal.ZERO;
+
 		List<VASRecording> recordings = vASRecordingDAO.getVASRecordingsByLinkRef(finReference, "");
 		//calculate totalVasAmt
 		if (CollectionUtils.isNotEmpty(recordings)) {
@@ -308,15 +279,9 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 			//Reduce the movement amount from total VAS outstanding amount.
 			totalvasAmt = totalvasAmt.subtract(movementAmount);
 		}
-		logger.debug(Literal.LEAVING);
-	}
 
-	private void resetAmounts() {
-		totalvasAmt = BigDecimal.ZERO;
-		totalLoanAmt = BigDecimal.ZERO;
-		totalDisbAmt = BigDecimal.ZERO;
-		loanRatio = BigDecimal.ZERO;
-		vasRatio = BigDecimal.ZERO;
+		logger.debug(Literal.LEAVING);
+		return totalvasAmt;
 	}
 
 	@Override

@@ -5,6 +5,9 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
+
+import com.pennant.app.util.NumberToEnglishWords;
 
 public class AppUtil {
 	private static final String AMOUNT_FORMAT = "###,###,###,###";
@@ -50,6 +53,15 @@ public class AppUtil {
 
 	public static String formatAmount(String value, int decPos) {
 		return formatAmount(getBigDecimal(value), decPos);
+	}
+	
+	public static BigDecimal formateAmount(BigDecimal amount, int dec) {
+		BigDecimal bigDecimal = BigDecimal.ZERO;
+
+		if (amount != null) {
+			bigDecimal = amount.divide(new BigDecimal(Math.pow(10, dec)));
+		}
+		return bigDecimal;
 	}
 
 	public static String formatAmount(BigDecimal value, int decPos) {
@@ -121,4 +133,35 @@ public class AppUtil {
 		}
 		return new BigDecimal(amount.replace(",", "")).multiply(BigDecimal.valueOf(Math.pow(10, dec)));
 	}
+	
+	public static String getAmountInText(BigDecimal amount) {
+		if (amount == null || amount == BigDecimal.ZERO) {
+			return "";
+		}
+
+		try {
+			return WordUtils.capitalize(NumberToEnglishWords.getAmountInText(amount, ""));
+		} catch (Exception e) {
+			//
+		}
+		return "";
+
+	}
+	
+	public static String getAmountInText(BigDecimal amount, int format) {
+		if (amount == null || amount == BigDecimal.ZERO) {
+			return "";
+		}
+		
+		amount = formateAmount(amount, format);
+
+		try {
+			return WordUtils.capitalize(NumberToEnglishWords.getAmountInText(amount, ""));
+		} catch (Exception e) {
+			//
+		}
+		return "";
+
+	}
+	
 }
