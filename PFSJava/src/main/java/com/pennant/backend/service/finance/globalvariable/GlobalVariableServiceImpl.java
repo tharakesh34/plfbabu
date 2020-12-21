@@ -39,7 +39,6 @@ public class GlobalVariableServiceImpl extends GenericService<List<GlobalVariabl
 	 */
 	@Override
 	public List<GlobalVariable> getGlobalVariables() {
-		logger.debug("Entering");
 		return getCachedEntity("GlobalVariables");
 	}
 
