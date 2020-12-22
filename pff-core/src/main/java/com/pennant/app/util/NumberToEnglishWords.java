@@ -57,13 +57,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
 
 public class NumberToEnglishWords {
-	private static Logger logger = Logger.getLogger(NumberToEnglishWords.class);
-	private static CurrencyDAO currencyDAO;
-
 	static String[] wrdOnes = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
 			"Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
 
@@ -84,7 +80,6 @@ public class NumberToEnglishWords {
 	 * @throws Exception
 	 */
 	public static String getNumberToWords(BigInteger number) throws Exception {
-		logger.debug("Entering ");
 		String sign = "";
 		if (number.compareTo(BigInteger.ZERO) < 0) {
 			sign = "-";
@@ -92,7 +87,6 @@ public class NumberToEnglishWords {
 		if (ImplementationConstants.INDIAN_IMPLEMENTATION) {
 			return StringUtils.trimToEmpty(sign + " " + convertWordToCrores(number));
 		}
-		logger.debug("Leaving ");
 		return StringUtils.trimToEmpty(sign + " " + convertWordToBillions(number));
 
 	}
@@ -107,7 +101,6 @@ public class NumberToEnglishWords {
 	 */
 
 	public static String getAmountInText(BigDecimal amount, String ccyCode) throws Exception {
-		logger.debug("Entering ");
 		boolean minus = false;
 		String strAmount = "";
 		String minorCcyDesc = "";
@@ -154,7 +147,6 @@ public class NumberToEnglishWords {
 			strAmount = "Dr " + strAmount;
 		}
 		strAmount = "(" + strAmount + " Only)";
-		logger.debug("Leaving ");
 		return strAmount;
 	}
 
@@ -167,7 +159,6 @@ public class NumberToEnglishWords {
 	 */
 
 	private static String convertWordToBillions(BigInteger number) throws Exception {
-		logger.debug("Entering ");
 		String word = "";
 		if (number.compareTo(BigInteger.ZERO) == 0) {
 			return wrdOnes[0];
@@ -182,7 +173,6 @@ public class NumberToEnglishWords {
 			String converted = convertThousands(Long.parseLong(values[(values.length - 1) - i])) + " " + wrdmillion[i];
 			word = converted.concat(" " + word);
 		}
-		logger.debug("Leaving ");
 		return word;
 	}
 
@@ -194,7 +184,6 @@ public class NumberToEnglishWords {
 	 * @throws Exception
 	 */
 	private static String convertWordToCrores(BigInteger number) throws Exception {
-		logger.debug("Entering ");
 		String result = "";
 		int count = 0;
 		if (number.compareTo(BigInteger.ZERO) == 0) {
@@ -233,7 +222,6 @@ public class NumberToEnglishWords {
 				}
 			}
 		}
-		logger.debug("Leaving ");
 		return result;
 	}
 
@@ -245,7 +233,6 @@ public class NumberToEnglishWords {
 	 * @throws Exception
 	 */
 	private static String formatInLakhs(String snumber, String oldresult) throws Exception {
-		logger.debug("Entering ");
 		String result = "";
 		//XXnnnnn
 		int lakhs = Integer.parseInt(snumber.substring(0, 2));
@@ -290,7 +277,6 @@ public class NumberToEnglishWords {
 			tradhundreds = convertThousands(hundreds);
 		}
 		result = result + tradhundreds;
-		logger.debug("Leaving ");
 		/*
 		 * append old result after new result e.g result="two hundred" old result="crores ,twenty lakhs twenty thousand"
 		 * than return "two hundred crores ,twenty lakhs twenty thousand
@@ -306,7 +292,6 @@ public class NumberToEnglishWords {
 	 * @throws Exception
 	 */
 	private static String convertThousands(long number) throws Exception {
-		logger.debug("Entering ");
 		String word = "";
 		long rem = number / 100;
 		long mod = number % 100;
@@ -319,7 +304,6 @@ public class NumberToEnglishWords {
 		if (mod > 0) {
 			word = word + convertOnes(Long.valueOf(mod).intValue());
 		}
-		logger.debug("Leaving ");
 		return word;
 	}
 
@@ -331,7 +315,6 @@ public class NumberToEnglishWords {
 	 * @throws Exception
 	 */
 	private static String convertOnes(int number) throws Exception {
-		logger.debug("Entering ");
 
 		if (number < 20) {
 			return wrdOnes[number];
@@ -340,7 +323,6 @@ public class NumberToEnglishWords {
 		if (mod == 0) {
 			return (wrdtens[number / 10]).trim();
 		}
-		logger.debug("Leaving ");
 		return (wrdtens[number / 10] + " " + wrdOnes[number % 10]).trim();
 
 	}
@@ -401,18 +383,10 @@ public class NumberToEnglishWords {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Exception: Grouping the data ", e);
+			// FIXME
 		}
 
 		return groupRecordsMap;
 	}
 
-	//GETTERS AND SETTERS
-	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
-		NumberToEnglishWords.currencyDAO = currencyDAO;
-	}
-
-	public static CurrencyDAO getCurrencyDAO() {
-		return currencyDAO;
-	}
 }
