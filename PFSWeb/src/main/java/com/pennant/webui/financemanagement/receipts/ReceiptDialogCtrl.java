@@ -1840,7 +1840,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
 			this.cancelReason.setValue(rch.getCancelReason(), rch.getCancelReasonDesc());
 			this.cancelRemarks.setValue(rch.getCancelRemarks());
-		} else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
+		} else if (RepayConstants.PAYSTATUS_REALIZED.equals(rch.getReceiptModeStatus())
+				&& !RepayConstants.RECEIPTMODE_ONLINE.equals(rch.getReceiptMode())
+				&& !RepayConstants.RECEIPTMODE_CASH.equals(rch.getReceiptMode())) {
 			this.realizationDate.setValue(rch.getRealizationDate());
 			if (StringUtils.isEmpty(rch.getNextRoleCode())) {
 				exclude = ",R,";
