@@ -3700,8 +3700,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					//Issue Fixed 141089
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_MANADV)) {
-						receivableAmt = receivableAmt
-								.add(receiptAllocationDetail.getTotRecv().add(receiptAllocationDetail.getDueGST()));
+						receivableAmt = receivableAmt.add(receiptAllocationDetail.getTotRecv());
 					}
 
 					// Interest for the month
