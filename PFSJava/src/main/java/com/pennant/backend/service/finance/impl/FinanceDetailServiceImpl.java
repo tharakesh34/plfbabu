@@ -245,11 +245,9 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.service.UpdateAttributeServiceTask;
@@ -592,10 +590,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Finance Details
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMain(finReference, nextRoleCode, "_TView");
+		//Setting PMAY to financeMain
 		if (financeMain == null) {
 			return null;
 		}
 
+		financeMain.setPmay(financeMainDAO.ispmayApplicable(finReference, "_TView"));
 		setDasAndDmaData(financeMain);
 
 		FinanceDetail financeDetail = getFinanceOrgDetails(financeMain, "_TView");

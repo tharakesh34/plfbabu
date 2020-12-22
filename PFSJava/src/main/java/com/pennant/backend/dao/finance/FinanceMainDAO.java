@@ -470,4 +470,6 @@ public interface FinanceMainDAO {
 	Date getClosedDate(String finReference);
 
 	void updateTdsApplicable(FinanceMain financeMain);
+
+	boolean ispmayApplicable(String finReference, String type);
 }

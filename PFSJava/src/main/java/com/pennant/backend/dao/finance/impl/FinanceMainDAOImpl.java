@@ -6043,7 +6043,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", BaseProduct, ProcessType, BureauTimeSeries, CampaignName, ExistingLanRefNo, OfferId");
 			sql.append(", LeadSource, PoSource, Rsa, Verification, SourcingBranch, SourChannelCategory, AsmName");
 			sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate,InstBasedSchd, ParentRef");
-			sql.append(", AlwLoanSplit, LoanSplitted");
+			sql.append(", AlwLoanSplit, LoanSplitted, Pmay");
 		}
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -6354,6 +6354,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setParentRef(rs.getString("ParentRef"));
 				fm.setAlwLoanSplit(rs.getBoolean("AlwLoanSplit"));
 				fm.setLoanSplitted(rs.getBoolean("LoanSplitted"));
+				fm.setPmay(rs.getBoolean("Pmay"));
 			}
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -6906,4 +6907,30 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public boolean ispmayApplicable(String finReference, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Pmay");
+		sql.append(" From FinanceMain");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		boolean isPmay = false;
+
+		try {
+			isPmay = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, Boolean.class);
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return isPmay;
+	}
+
 }

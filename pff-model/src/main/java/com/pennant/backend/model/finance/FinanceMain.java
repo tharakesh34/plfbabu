@@ -842,7 +842,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean simulateAccounting;
 	private List<ReturnDataSet> returnDataSet;
 
-	private boolean pmay = false;
+	private boolean pmay;
 	//OCR changes
 	@XmlElement
 	private boolean finOcrRequired = false;
