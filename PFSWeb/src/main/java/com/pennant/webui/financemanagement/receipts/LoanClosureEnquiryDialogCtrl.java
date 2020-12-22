@@ -3695,7 +3695,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_BOUNCE)) {
-						bncCharge = receiptAllocationDetail.getTotRecv().add(receiptAllocationDetail.getDueGST());
+						bncCharge = receiptAllocationDetail.getTotRecv();
 					}
 					//Issue Fixed 141089
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
