@@ -6395,9 +6395,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.gb_sourcingDetails.isVisible()) {
 
 			if (!this.sourChannelCategory.isDisabled()) {
-				/*this.sourChannelCategory
-						.setConstraint(new StaticListValidator(PennantStaticListUtil.getSourcingChannelCategory(),
-								Labels.getLabel("label_FinanceMainDialog_SourcingChannelCategory.value")));*/
+				/*
+				 * this.sourChannelCategory .setConstraint(new
+				 * StaticListValidator(PennantStaticListUtil.getSourcingChannelCategory(),
+				 * Labels.getLabel("label_FinanceMainDialog_SourcingChannelCategory.value")));
+				 */
 			}
 
 			String sourceChannel = "";
@@ -15877,7 +15879,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceMain.setBusinessVertical(null);
 		}
 		aFinanceMain.setTotalFinAmount(aFinanceMain.getFinAssetValue().add(aFinanceMain.getFeeChargeAmt()));
-		
+
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -15885,7 +15887,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		return wve;
 	}
 
@@ -19822,6 +19824,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		custElibCheck.setReqFinAmount(financeMain.getFinAmount());
 		custElibCheck.setDisbursedAmount(financeMain.getFinAmount().subtract(financeMain.getDownPayment()));
 		custElibCheck.setReqFinType(financeMain.getFinType());
+
+		List<FinFlagsDetail> finFlagsDetails = detail.getFinFlagsDetails();
+		if (CollectionUtils.isNotEmpty(finFlagsDetails)) {
+			custElibCheck.setLoanFlag(finFlagsDetails.get(0).getFlagCode());
+		}
 
 		// detail.getCustomerEligibilityCheck().setFinProfitRate(financeMain.getEffectiveRateOfReturn());
 		if (financeMain.getFixedRateTenor() > 0 && financeMain.getGrcPeriodEndDate() != null) {
@@ -23986,7 +23993,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				createTab(AssetConstants.UNIQUE_ID_PMAY, true);
 				return;
 			}
-			
+
 			PMAY pmay = getFinanceDetail().getPmay();
 			if (pmay == null) {
 				pmay = new PMAY();

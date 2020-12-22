@@ -144,6 +144,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	 */
 	private BigDecimal netLoanAmount;
 	Map<String, Object> extendedFields = new HashMap<>();
+	private String loanFlag;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -950,6 +951,14 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public void setDataMap(Map<String, Object> dataMap) {
 		this.dataMap = dataMap;
+	}
+
+	public String getLoanFlag() {
+		return loanFlag;
+	}
+
+	public void setLoanFlag(String loanFlag) {
+		this.loanFlag = loanFlag;
 	}
 
 }
