@@ -204,6 +204,7 @@ public class ImplementationConstants {
 		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true); // Default value should be "true"
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
 		ALLOW_EOD_INTERVAL_VALIDATION = getValueAsBoolean(extensions, "ALLOW_EOD_INTERVAL_VALIDATION", false);
+		DEFAULT_VAS_MODE_OF_PAYMENT = getValueAsBoolean(extensions, "DEFAULT_VAS_MODE_OF_PAYMENT", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -250,17 +251,18 @@ public class ImplementationConstants {
 
 		ALLOW_PMAY = getValueAsBoolean(extensions, "ALLOW_PMAY", false);
 		ALLOW_OCR = getValueAsBoolean(extensions, "ALLOW_OCR", false);
-		
-		VERIFICATION_INTIATION_FROM_OUTSIDE = getValueAsBoolean(extensions, "VERIFICATION_INTIATION_FROM_OUTSIDE", false);
+
+		VERIFICATION_INTIATION_FROM_OUTSIDE = getValueAsBoolean(extensions, "VERIFICATION_INTIATION_FROM_OUTSIDE",
+				false);
 		ADVANCE_PAYMENT_INT = getValueAsBoolean(extensions, "ADVANCE_PAYMENT_INT", false);
 		ADVANCE_PAYMENT_EMI = getValueAsBoolean(extensions, "ADVANCE_PAYMENT_EMI", false);
 		COVENANT_MODULE_NEW = getValueAsBoolean(extensions, "COVENANT_MODULE_NEW", true);
-		
+
 		/* ADVANCE INT / EMI Constants */
 		ADV_EMI_STAGE_FRONT_END = getValueAsBoolean(extensions, "ADV_EMI_STAGE_FRONT_END", true);
 		ADV_EMI_STAGE_REAR_END = getValueAsBoolean(extensions, "ADV_EMI_STAGE_REAR_END", false);
 		ADV_EMI_STAGE_REPAY_TERMS = getValueAsBoolean(extensions, "ADV_EMI_STAGE_REPAY_TERMS", false);
-		
+
 	}
 
 	public static boolean ALLOW_MULTI_CCY = false;
@@ -437,6 +439,7 @@ public class ImplementationConstants {
 	public static boolean ALLOW_AUTO_GRACE_EXT;
 	public static boolean ALLOW_LOAN_DOWNSIZING;
 	public static boolean LOAN_DOWNSIZING_ACCOUNTING_REQ;
+	public static boolean DEFAULT_VAS_MODE_OF_PAYMENT;
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static
 	 * boolean ALLOW_LV_INITIATION_LOS; public static boolean ALLOW_RCU_INITIATION_LOS;
@@ -578,15 +581,14 @@ public class ImplementationConstants {
 	public static boolean LOAN_ORG_DMS_TAB_REQ = false;
 	public static boolean ALLOW_PMAY = false;
 	public static boolean ALLOW_OCR = false;
-	
+
 	public static boolean ADVANCE_PAYMENT_INT = false;
 	public static boolean ADVANCE_PAYMENT_EMI = false;
 	public static boolean COVENANT_MODULE_NEW = false;
-	
-	
-	/*ADVANCE INT / EMI Constants */
+
+	/* ADVANCE INT / EMI Constants */
 	public static boolean ADV_EMI_STAGE_FRONT_END;
 	public static boolean ADV_EMI_STAGE_REAR_END;
 	public static boolean ADV_EMI_STAGE_REPAY_TERMS;
-	
+
 }

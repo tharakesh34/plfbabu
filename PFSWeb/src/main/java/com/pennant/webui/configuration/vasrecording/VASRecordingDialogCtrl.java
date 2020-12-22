@@ -100,6 +100,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
@@ -880,6 +881,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						} else if (StringUtils.equals(VASConsatnts.VAS_PAYMENT_DEDUCTION,
 								aVASRecording.getVasConfiguration().getModeOfPayment())) {
 							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
+							if (ImplementationConstants.DEFAULT_VAS_MODE_OF_PAYMENT) {
+								finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
+							}
 						}
 
 						finFeeDetail.setNetAmountOriginal(aVASRecording.getFee());
