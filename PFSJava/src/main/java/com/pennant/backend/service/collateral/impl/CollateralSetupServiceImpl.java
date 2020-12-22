@@ -1801,7 +1801,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 			DocumentDetails documentDetails = (DocumentDetails) auditDetails.get(i).getModelData();
 
-			documentDetails.setCustId(collateralSetup.getCustomerDetails().getCustID());
+			documentDetails.setCustId(collateralSetup.getDepositorId());
 			documentDetails.setFinReference(collateralSetup.getFinReference());
 
 			if (StringUtils.isBlank(documentDetails.getRecordType())) {
