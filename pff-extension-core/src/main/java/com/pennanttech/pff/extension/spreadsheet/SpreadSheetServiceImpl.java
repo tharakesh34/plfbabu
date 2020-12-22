@@ -43,7 +43,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.AppUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.service.spreadsheet.SpreadSheetService;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -153,11 +152,8 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 		if (schedules.size() > 0) {
 			int format = PennantConstants.defaultCCYDecPos;
-			String calculatedRate = AppUtil.formatAmount((schedules.get(0).getCalculatedRate()), format);
-			String repayAmt = AppUtil.formatAmount(schedules.get(2).getRepayAmount(), format);
-
-			fm.setRepayProfitRate(AppUtil.getBigDecimal(calculatedRate));
-			spreadSheet.setEmiAmount(AppUtil.getBigDecimal(repayAmt));
+			fm.setRepayProfitRate(CurrencyUtil.parse(schedules.get(0).getCalculatedRate(), format));
+			spreadSheet.setEmiAmount(CurrencyUtil.parse(schedules.get(2).getRepayAmount(), format));
 
 		} else {
 			fm.setRepayProfitRate(BigDecimal.ZERO);
@@ -210,37 +206,38 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 			int format = PennantConstants.defaultCCYDecPos;
 			for (CustomerIncome customerIncome : customerIncomes) {
 				BigDecimal income = customerIncome.getIncome();
+				String formatedIncome = CurrencyUtil.format(income, format);
 				if (PennantConstants.INC_CATEGORY_SALARY.equals(customerIncome.getCategory())) {
 					switch (customerIncome.getIncomeType()) {
 					case "BS":
-						dataMap.put(key.concat("Basic"), AppUtil.formatAmount(income, format));
+						dataMap.put(key.concat("Basic"), formatedIncome);
 						break;
 					case "GP":
-						dataMap.put(key.concat("GP"), AppUtil.formatAmount(income, format));
+						dataMap.put(key.concat("GP"), formatedIncome);
 						break;
 					case "DA":
-						dataMap.put(key.concat("DA"), AppUtil.formatAmount(income, format));
+						dataMap.put(key.concat("DA"), formatedIncome);
 						break;
 					case "HOU21":
-						dataMap.put(key.concat("HRA"), AppUtil.formatAmount(income, format));
+						dataMap.put(key.concat("HRA"), formatedIncome);
 						break;
 					case "CLA":
-						dataMap.put(key.concat("CLA"), AppUtil.formatAmount(income, format));
+						dataMap.put(key.concat("CLA"), formatedIncome);
 						break;
 					case "MED44":
-						dataMap.put(key.concat("MEDA"), AppUtil.formatAmount(income, format));
+						dataMap.put(key.concat("MEDA"), formatedIncome);
 						break;
 					case "SA":
-						dataMap.put(key.concat("SA"), AppUtil.formatAmount(income, format));
+						dataMap.put(key.concat("SA"), formatedIncome);
 						break;
 					case "OA":
-						dataMap.put(key.concat("OA"), AppUtil.formatAmount(income, format));
+						dataMap.put(key.concat("OA"), formatedIncome);
 						break;
 					case "CV":
-						dataMap.put(key.concat("CV"), AppUtil.formatAmount(income, format));
+						dataMap.put(key.concat("CV"), formatedIncome);
 						break;
 					case "VP":
-						dataMap.put(key.concat("VP"), AppUtil.formatAmount(income, format));
+						dataMap.put(key.concat("VP"), formatedIncome);
 						break;
 
 					default:
@@ -249,12 +246,12 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				} else if (StringUtils.equals(customerIncome.getCategory(), PennantConstants.INC_CATEGORY_OTHER)) {
 					switch (customerIncome.getIncomeType()) {
 					case "RENINC":
-						dataMap.put(key.concat("RENINC"), AppUtil.formatAmount(income, format));
-						dataMap.put(key.concat("Net_RENINC"), AppUtil.formatAmount(income, format));
+						dataMap.put(key.concat("RENINC"), formatedIncome);
+						dataMap.put(key.concat("Net_RENINC"), formatedIncome);
 						break;
 					case "INTINC":
-						dataMap.put(key.concat("INTINC"), AppUtil.formatAmount(income, format));
-						dataMap.put(key.concat("Net_INTINC"), AppUtil.formatAmount(income, format));
+						dataMap.put(key.concat("INTINC"), formatedIncome);
+						dataMap.put(key.concat("Net_INTINC"), formatedIncome);
 						break;
 
 					default:
@@ -305,10 +302,10 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				dataMap.put("SalesMon" + l, month);
 				CustCardSalesDetails csd = cardDetailsMap.get(month);
 				int format = PennantConstants.defaultCCYDecPos;
-				dataMap.put("mon" + l + "Sales", AppUtil.formatAmount(csd.getSalesAmount(), format));
+				dataMap.put("mon" + l + "Sales", CurrencyUtil.format(csd.getSalesAmount(), format));
 				dataMap.put("mon" + l + "Settlements", csd.getNoOfSettlements());
-				dataMap.put("mon" + l + "TotalCredit", AppUtil.formatAmount(csd.getTotalCreditValue(), format));
-				dataMap.put("mon" + l + "TotalDebit", AppUtil.formatAmount(csd.getTotalDebitValue(), format));
+				dataMap.put("mon" + l + "TotalCredit", CurrencyUtil.format(csd.getTotalCreditValue(), format));
+				dataMap.put("mon" + l + "TotalDebit", CurrencyUtil.format(csd.getTotalDebitValue(), format));
 				dataMap.put("mon" + l + "NoofDebits", csd.getTotalNoOfDebits());
 				dataMap.put("mon" + l + "InwardBounce", csd.getInwardBounce());
 				dataMap.put("mon" + l + "OutwardBounce", csd.getOutwardBounce());
@@ -362,17 +359,17 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 					BankInfoDetail bd = bankInfoDetailsMap.get(month);
 					String key = "Bank" + i + "Mon" + l;
 					dataMap.put(key, month);
-					dataMap.put(key + "Cr", AppUtil.formatAmount(bd.getCreditAmt(), format));
-					dataMap.put(key + "DebitAmt", AppUtil.formatAmount(bd.getDebitAmt(), format));
-					dataMap.put(key + "SanctionedLimit", AppUtil.formatAmount(bd.getSanctionLimit(), format));
+					dataMap.put(key + "Cr", CurrencyUtil.format(bd.getCreditAmt(), format));
+					dataMap.put(key + "DebitAmt", CurrencyUtil.format(bd.getDebitAmt(), format));
+					dataMap.put(key + "SanctionedLimit", CurrencyUtil.format(bd.getSanctionLimit(), format));
 					dataMap.put(key + "NoOfCr", bd.getCreditNo());
 					dataMap.put(key + "NoOfDebit", bd.getDebitNo());
-					dataMap.put(key + "InwBounce", AppUtil.formatAmount(bd.getBounceIn(), format));
-					dataMap.put(key + "OutBounce", AppUtil.formatAmount(bd.getBounceOut(), format));
+					dataMap.put(key + "InwBounce", CurrencyUtil.format(bd.getBounceIn(), format));
+					dataMap.put(key + "OutBounce", CurrencyUtil.format(bd.getBounceOut(), format));
 
 					if (CollectionUtils.isNotEmpty(bd.getBankInfoSubDetails())) {
 						dataMap.put(key + "AvgBal",
-								AppUtil.formatAmount(bd.getBankInfoSubDetails().get(0).getBalance(), format));
+								CurrencyUtil.format(bd.getBankInfoSubDetails().get(0).getBalance(), format));
 					}
 					/*
 					 * dataMap.put("Bank" + i + "Mon" + l + "PeakUtilLev",
@@ -407,9 +404,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				dataMap.put("Ext_LoanStatus" + i, "Live");
 			}
 
-			dataMap.put("Ext_LoanAmount" + i, AppUtil.formatAmount(el.getOriginalAmount(), format));
-			dataMap.put("Ext_LoanEMI" + i, AppUtil.formatAmount(el.getInstalmentAmount(), format));
-			dataMap.put("Ext_LoanROI" + i, AppUtil.formatAmount(el.getRateOfInterest(), format));
+			dataMap.put("Ext_LoanAmount" + i, CurrencyUtil.format(el.getOriginalAmount(), format));
+			dataMap.put("Ext_LoanEMI" + i, CurrencyUtil.format(el.getInstalmentAmount(), format));
+			dataMap.put("Ext_LoanROI" + i, CurrencyUtil.format(el.getRateOfInterest(), format));
 			dataMap.put("Ext_LoanTenure" + i, el.getTenure());
 			dataMap.put("Ext_LoanStartDate" + i, el.getFinDate());
 
@@ -466,9 +463,8 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 			Map<String, BigDecimal> gstDetailsMap = new HashMap<String, BigDecimal>();
 			for (CustomerGSTDetails detail : customerGSTDetails) {
-				String salAmt = AppUtil.formatAmount(detail.getSalAmount(), 2);
 				gstDetailsMap.put(detail.getFrequancy() + "-" + (detail.getFinancialYear()),
-						AppUtil.getBigDecimal(salAmt));
+						CurrencyUtil.parse(detail.getSalAmount(), 2));
 			}
 			if (!customerGsts.get(i).getFrequencytype().equals("Quarterly")) {
 				int l = 1;
@@ -528,7 +524,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 				}
 				dataMap.put(str, tempMap1.get(strTemp));
-				dataMap.put(str, AppUtil.formatAmount(new BigDecimal(tempMap1.get(strTemp).toString()), 2));
+				dataMap.put(str, CurrencyUtil.format(tempMap1.get(strTemp).toString(), 2));
 			}
 		}
 
@@ -561,7 +557,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 							}
 
 							dataMap.put(str, tempMap2.get(strTemp));
-							dataMap.put(str, AppUtil.formatAmount(new BigDecimal(tempMap2.get(strTemp).toString()), 2));
+							dataMap.put(str, CurrencyUtil.format(tempMap2.get(strTemp).toString(), 2));
 						}
 					}
 				}

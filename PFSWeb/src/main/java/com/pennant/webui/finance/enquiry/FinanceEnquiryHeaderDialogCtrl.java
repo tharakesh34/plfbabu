@@ -437,8 +437,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("financeDetail", financeDetail);
 				map.put("contributorHeader", contributorHeader);
 				map.put("fromApproved", fromApproved);
-				String pageName = PennantAppUtil.getFinancePageName(true);
-				path = "/WEB-INF/pages/Enquiry/FinanceInquiry/" + pageName;
+				path = "/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceDetailEnquiryDialog.zul";
 			}
 		} else if ("SCHENQ".equals(this.enquiryType)) {
 

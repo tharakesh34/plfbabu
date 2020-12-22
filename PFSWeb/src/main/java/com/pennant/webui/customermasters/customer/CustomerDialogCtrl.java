@@ -561,7 +561,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private JointAccountDetailDialogCtrl jointAccountDetailDialogCtrl;
 	private boolean dedupCheckReq = false;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
-
 	private PrimaryAccountService primaryAccountService;
 	private DMSService dMSService;
 
@@ -795,29 +794,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						this.tp_CardSales.setHeight(borderLayoutHeight - 195 + "px");
 					}
 					this.tp_gstDetails.setHeight(borderLayoutHeight - 195 + "px");
-					// this.divKeyDetails.setHeight(borderLayoutHeight - 130 +
-					// "px");
-					// this.grid_KYCDetails.setHeight(borderLayoutHeight +
-					// "px");
-
-					/*
-					 * this.listBoxCustomerEmploymentDetail.setHeight(semiBorderlayoutHeights - 140 + "px");
-					 * this.listBoxCustomerDocuments.setHeight(semiBorderlayoutHeights - 60 + "px");
-					 * this.listBoxCustomerAddress.setHeight(semiBorderlayoutHeights - 90 + "px");
-					 * this.listBoxCustomerPhoneNumbers.setHeight(semiBorderlayoutHeights - 90 + "px");
-					 * this.listBoxCustomerEmails.setHeight(semiBorderlayoutHeights - 90 + "px");
-					 */
 					this.listBoxCustomerGst.setHeight(semiBorderlayoutHeights - 90 + "px");
 				} else {
 					this.divKeyDetails.setHeight(borderLayoutHeight - 240 + "px");
 					this.listBoxCustomerRating.setHeight(semiBorderlayoutHeights - 130 + "px");
 					this.grid_KYCDetails.setHeight(borderLayoutHeight - 220 + "px");
-					/*
-					 * this.listBoxCustomerDocuments.setHeight(semiBorderlayoutHeights - 125 + "px");
-					 * this.listBoxCustomerAddress.setHeight(semiBorderlayoutHeights - 125 + "px");
-					 * this.listBoxCustomerPhoneNumbers.setHeight(semiBorderlayoutHeights - 125 + "px");
-					 * this.listBoxCustomerEmails.setHeight(semiBorderlayoutHeights - 125 + "px");
-					 */
 					this.listBoxCustomerGst.setHeight(semiBorderlayoutHeights - 125 + "px");
 				}
 				this.listBoxCustomerGst.setHeight(borderLayoutHeight - 240 + "px");
@@ -851,19 +832,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					this.tp_CardSales.setHeight(borderLayoutHeight - 90 + "px");
 				}
 
-				/*
-				 * this.listBoxCustomerEmploymentDetail .setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 10) +
-				 * "px"); this.listBoxCustomerDocuments.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 10) +
-				 * "px"); this.listBoxCustomerAddress.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 90) +
-				 * "px");
-				 */
 				this.listBoxCustomerGst.setHeight(borderLayoutHeight - (isRetailCustomer ? 132 : 90) + "px");
-				/*
-				 * this.listBoxCustomerPhoneNumbers.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 90) +
-				 * "px"); this.listBoxCustomerEmails.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 90) +
-				 * "px");
-				 */
-
+		
 				this.listBoxCustomerIncome.setHeight(borderLayoutHeight - 132 + "px");
 				this.gb_directorDetails.setHeight(borderLayoutHeight - 40 + "px");
 				this.listBoxCustomerDirectory.setHeight(borderLayoutHeight - 40 + "px");
@@ -1156,12 +1126,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custSegment.setDescColumn("SegmentDesc");
 		this.custSegment.setValidateColumns(new String[] { "SegmentCode" });
 
-		/*
-		 * this.custFlags.setMaxlength(8); this.custFlags.setMandatoryStyle(false);
-		 * this.custFlags.setModuleName("Flag"); this.custFlags.setValueColumn("FlagCode");
-		 * this.custFlags.setDescColumn("FlagDesc"); this.custFlags.setValidateColumns(new String[] { "FlagCode" });
-		 */
-
 		this.custRO1.setTextBoxWidth(121);
 		if (!isReadOnly("CustomerDialog_custRO1")) {
 			this.custRO1.setMandatoryStyle(true);
@@ -1370,13 +1334,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void doWriteBeanToComponents(CustomerDetails aCustomerDetails) {
 		logger.debug("Entering");
 		Customer aCustomer = aCustomerDetails.getCustomer();
-		/*
-		 * setComboBoxValue(this.custGenderCode, aCustomer.getCustGenderCode(),
-		 * aCustomer.getLovDescCustGenderCodeName()); setComboBoxValue(this.custSalutationCode,
-		 * aCustomer.getCustSalutationCode(), aCustomer.getLovDescCustSalutationCodeName());
-		 * setComboBoxValue(this.custMaritalSts, aCustomer.getCustMaritalSts(),
-		 * aCustomer.getLovDescCustMaritalStsName());
-		 */
+
 		//Data filling for Gender, Salutation, Marital Status Combobox
 		fillComboBox(this.custGenderCode, aCustomer.getCustGenderCode(), PennantAppUtil.getGenderCodes(), "");
 		fillComboBox(this.custSalutationCode, aCustomer.getCustSalutationCode(),
@@ -1403,10 +1361,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// Sub categories
 			fillComboBox(this.subCategory, aCustomer.getSubCategory(), PennantStaticListUtil.getSubCategoriesList(),
 					subCategoryExcludeFields.toString());
-			/*
-			 * fillComboBox(this.custResidentialStstus, aCustomer.getCustResidentialSts(),
-			 * PennantStaticListUtil.getResidentialStsList(), "");
-			 */
+			
 			fillComboBox(this.natureOfBusiness, aCustomer.getNatureOfBusiness(),
 					PennantStaticListUtil.getNatureofBusinessList(), "");
 			fillComboBox(this.entityType, aCustomer.getEntityType(), PennantStaticListUtil.getEntityTypeList(), "");
@@ -2276,14 +2231,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (aCustomerDetails.getExtendedFieldHeader() != null) {
 			aCustomerDetails.setExtendedFieldRender(extendedFieldCtrl.save(true, aCustomerDetails));
 		}
-		//In line Edit functionality for Customer PhoneNumbers
-		//HL change for PhoneNumbers
+		
 		@SuppressWarnings("rawtypes")
 		Map<String, List> customerPhoneNumbers = customerPhoneNumberInLineEditCtrl
 				.prepareCustomerPhoneNumberData(aCustomerDetails, this.listBoxCustomerPhoneNumbersInlineEdit);
 		if (customerPhoneNumbers.get("errorList") != null) {
 			@SuppressWarnings("unchecked")
-			ArrayList<WrongValueException> errorlist = (ArrayList<WrongValueException>) customerPhoneNumbers
+			List<WrongValueException> errorlist = (List<WrongValueException>) customerPhoneNumbers
 					.get("errorList");
 			showErrorDetails(errorlist, custTab, tabkYCDetails);
 		}
@@ -2420,24 +2374,24 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * Writes the showErrorDetails method for .<br>
 	 * displaying exceptions if occured
 	 */
-	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab parentTab, Tab childTab) {
-		logger.debug("Entering");
+	private void showErrorDetails(List<WrongValueException> wve, Tab parentTab, Tab childTab) {
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		if (wve.size() > 0) {
-			logger.debug("Throwing occured Errors By using WrongValueException");
-			if (parentTab != null) {
-				parentTab.setSelected(true);
-			}
-			childTab.setSelected(true);
-			WrongValueException[] wvea = new WrongValueException[wve.size()];
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = wve.get(i);
-				Clients.scrollIntoView(wvea[i].getComponent());
-			}
-			throw new WrongValuesException(wvea);
+
+		if (CollectionUtils.isEmpty(wve)) {
+			return;
 		}
-		logger.debug("Leaving");
+
+		logger.debug("Throwing occured Errors By using WrongValueException");
+		if (parentTab != null) {
+			parentTab.setSelected(true);
+		}
+		childTab.setSelected(true);
+		WrongValueException[] wvea = new WrongValueException[wve.size()];
+		for (WrongValueException we : wve) {
+			Clients.scrollIntoView(we.getComponent());
+		}
+		throw new WrongValuesException(wvea);
 	}
 
 	/**

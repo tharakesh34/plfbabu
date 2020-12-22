@@ -214,7 +214,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(", CustSuspTrigger, ApplicationNo, Dnd, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CasteId");
 		sql.append(", ReligionId, SubCategory, MarginDeviation, ResidentialStatus");
-		sql.append(", OtherCaste, OtherReligion, NatureOfBusiness, EntityType, CustResidentialSts, Qualification, Vip"); //From HL
+		sql.append(", OtherCaste, OtherReligion, NatureOfBusiness, EntityType, CustResidentialSts, Qualification, Vip"); 
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescCustTypeCodeName, LovDescCustMaritalStsName, LovDescCustEmpStsName");

@@ -283,7 +283,7 @@ public class PennantAppUtil {
 
 	/**
 	 * 
-	 * @deprecated use {@link PennantApplicationUtil#amountFormate} instead.
+	 * @deprecated use {@link CurrencyUtil#amountFormate} instead.
 	 */
 	public static String amountFormate(BigDecimal amount, int dec) {
 		return PennantApplicationUtil.amountFormate(amount, dec);
@@ -2422,15 +2422,12 @@ public class PennantAppUtil {
 	 * @return String
 	 */
 	public static String getFinancePageName(boolean enquiry) {
-		String pageExt = SysParamUtil.getValueAsString("FINANCE_DIALOG_EXT");
 		StringBuilder builder = new StringBuilder();
 		if (enquiry) {
-			builder = builder.append("FinanceDetailEnquiryDialog");
+			builder = builder.append("FinanceDetailEnquiryDialog.zul");
 		} else {
-			builder = builder.append("ConvFinanceMainDialog");
+			builder = builder.append("ConvFinanceMainDialog.zul");
 		}
-		builder.append(StringUtils.trimToEmpty(pageExt));
-		builder.append(".zul");
 		return builder.toString();
 
 	}

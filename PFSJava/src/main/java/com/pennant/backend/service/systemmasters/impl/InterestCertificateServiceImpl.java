@@ -71,7 +71,6 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.InterestCertificateService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.AppUtil;
 import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
 /**
@@ -139,11 +138,11 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 		Map<String, Object> amounts = interestCertificateDAO.getSumOfPriPftEmiAmount(finReference, startDate, endDate);
 
 		if (summary == null) {
-			intCert.setFinSchdPftPaid(new BigDecimal(AppUtil.formatAmount(BigDecimal.ZERO, format)));
-			intCert.setFinSchdPriPaid(new BigDecimal(AppUtil.formatAmount(BigDecimal.ZERO, format)));
-			intCert.setSchdPftPaid(AppUtil.formatAmount(BigDecimal.ZERO, format));
-			intCert.setSchdPriPaid(AppUtil.formatAmount(BigDecimal.ZERO, format));
-			intCert.setTotalPaid(AppUtil.formatAmount(BigDecimal.ZERO, format));
+			intCert.setFinSchdPftPaid(CurrencyUtil.parse(BigDecimal.ZERO, format));
+			intCert.setFinSchdPriPaid(CurrencyUtil.parse(BigDecimal.ZERO, format));
+			intCert.setSchdPftPaid(CurrencyUtil.format(BigDecimal.ZERO, format));
+			intCert.setSchdPriPaid(CurrencyUtil.format(BigDecimal.ZERO, format));
+			intCert.setTotalPaid(CurrencyUtil.format(BigDecimal.ZERO, format));
 			summary = new InterestCertificate();
 		}
 
@@ -151,34 +150,34 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 		BigDecimal schdPriPaid = summary.getFinSchdPriPaid();
 		BigDecimal totalPaid = schdPriPaid.add(schdPftPaid);
 
-		String finSchdPftPaid = AppUtil.formatAmount(schdPftPaid, format);
+		String finSchdPftPaid = CurrencyUtil.format(schdPftPaid, format);
 		finSchdPftPaid = finSchdPftPaid.replace(",", "");
 		String finSchdPriPaid = PennantApplicationUtil.amountFormate(schdPriPaid, format);
 		finSchdPriPaid = finSchdPriPaid.replace(",", "");
 
 		intCert.setFinSchdPftPaid(new BigDecimal(finSchdPftPaid));
 		intCert.setFinSchdPriPaid(new BigDecimal(finSchdPriPaid));
-		intCert.setSchdPftPaid(AppUtil.formatAmount(schdPftPaid, format));
-		intCert.setSchdPriPaid(AppUtil.formatAmount(schdPriPaid, format));
+		intCert.setSchdPftPaid(CurrencyUtil.format(schdPftPaid, format));
+		intCert.setSchdPriPaid(CurrencyUtil.format(schdPriPaid, format));
 
-		intCert.setTotalPaid(AppUtil.formatAmount(totalPaid, format));
-		intCert.setSchdPftPaidInWords(AppUtil.getAmountInText(schdPftPaid, format));
-		intCert.setSchdPriPaidInWords(AppUtil.getAmountInText(schdPriPaid, format));
-		intCert.setTotalPaidInWords(AppUtil.getAmountInText(totalPaid, format));
+		intCert.setTotalPaid(CurrencyUtil.format(totalPaid, format));
+		intCert.setSchdPftPaidInWords(CurrencyUtil.convertInWords(schdPftPaid, format));
+		intCert.setSchdPriPaidInWords(CurrencyUtil.convertInWords(schdPriPaid, format));
+		intCert.setTotalPaidInWords(CurrencyUtil.convertInWords(totalPaid, format));
 
-		intCert.setFinAmount(AppUtil.formatAmount(new BigDecimal(intCert.getFinAmount()), format));
+		intCert.setFinAmount(CurrencyUtil.format(new BigDecimal(intCert.getFinAmount()), format));
 
 		if (amounts != null && !amounts.isEmpty()) {
 			BigDecimal pftSchd = (BigDecimal) amounts.get("profitschd");
 			BigDecimal priSchd = (BigDecimal) amounts.get("principalschd");
 			BigDecimal emiAmount = (BigDecimal) amounts.get("repayamount");
-			intCert.setPftSchd(AppUtil.formatAmount(pftSchd, format));
-			intCert.setPriSchd(AppUtil.formatAmount(priSchd, format));
-			intCert.setEmiAmt(AppUtil.formatAmount(emiAmount, format));
+			intCert.setPftSchd(CurrencyUtil.format(pftSchd, format));
+			intCert.setPriSchd(CurrencyUtil.format(priSchd, format));
+			intCert.setEmiAmt(CurrencyUtil.format(emiAmount, format));
 
-			intCert.setPftSchdInWords(AppUtil.getAmountInText(pftSchd, format));
-			intCert.setPriSchdInWords(AppUtil.getAmountInText(priSchd, format));
-			intCert.setEmiAmtInWords(AppUtil.getAmountInText(emiAmount, format));
+			intCert.setPftSchdInWords(CurrencyUtil.convertInWords(pftSchd, format));
+			intCert.setPriSchdInWords(CurrencyUtil.convertInWords(priSchd, format));
+			intCert.setEmiAmtInWords(CurrencyUtil.convertInWords(emiAmount, format));
 
 		}
 
