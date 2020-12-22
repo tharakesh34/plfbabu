@@ -148,4 +148,10 @@ public interface SOAReportGenerationDAO {
 
 	List<FinFeeRefundDetails> getFinFeeRefundDetails(String finReference);
 
+	String getFinGSTINDetails(String stateCode, String entityCode);
+
+	StatementOfAccount getFinEntity(String finType);
+
+	StatementOfAccount getCustGSTINDetails(String finReference);
+
 }

@@ -1353,4 +1353,106 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		return list;
 	}
+
+	@Override
+	public String getFinGSTINDetails(String stateCode, String entityCode) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" TaxCode ProviderGSTIN");
+		sql.append(" From TaxDetail");
+		sql.append(" Where StateCode = ? and EntityCode = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		String providerGSTIN = null;
+
+		try {
+			providerGSTIN = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { stateCode, entityCode },
+					new RowMapper<String>() {
+						@Override
+						public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+							return rs.getString("ProviderGSTIN");
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return providerGSTIN;
+	}
+
+	@Override
+	public StatementOfAccount getFinEntity(String finType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" dd.EntityCode, e.EntityDesc, e.StateCode");
+		sql.append(" From RMTFinanceTypes ft");
+		sql.append(" Inner Join SMTDivisionDetail dd on ft.FinDivision = dd.DivisionCode");
+		sql.append(" Inner Join Entity e on dd.EntityCode = e.EntityCode");
+		sql.append(" where FinType = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		StatementOfAccount soa = new StatementOfAccount();
+
+		try {
+			soa = jdbcOperations.queryForObject(sql.toString(), new Object[] { finType },
+					new RowMapper<StatementOfAccount>() {
+						@Override
+						public StatementOfAccount mapRow(ResultSet rs, int rowNum) throws SQLException {
+							StatementOfAccount soa = new StatementOfAccount();
+
+							soa.setEntityCode(rs.getString("EntityCode"));
+							soa.setEntityDesc(rs.getString("EntityDesc"));
+							soa.setStateCode(rs.getString("StateCode"));
+
+							return soa;
+						}
+
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return soa;
+	}
+
+	@Override
+	public StatementOfAccount getCustGSTINDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ftd.taxnumber CustGSTIN, cp.cpprovincename PlaceOfSupply");
+		sql.append(" From FinTaxDetail ftd");
+		sql.append(" Inner Join RmtCountryVsProvince cp on cp.cpprovince = ftd.province");
+		sql.append(" where FinReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		StatementOfAccount soa = new StatementOfAccount();
+
+		try {
+			soa = jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+					new RowMapper<StatementOfAccount>() {
+						@Override
+						public StatementOfAccount mapRow(ResultSet rs, int rowNum) throws SQLException {
+							StatementOfAccount soa = new StatementOfAccount();
+
+							soa.setCustGSTIN(rs.getString("CustGSTIN"));
+							soa.setPlaceOfSupply(rs.getString("PlaceOfSupply"));
+
+							return soa;
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return soa;
+	}
 }

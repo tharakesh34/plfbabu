@@ -143,6 +143,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 	private static final String inclusive = "*";
 	private static final String exclusive = "^";
+	private static final String URD = "URD";
 
 	private SOAReportGenerationDAO soaReportGenerationDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
@@ -645,6 +646,27 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				BigDecimal value = financeProfitDetail.getTdSchdPri().subtract(financeProfitDetail.getTotalPriPaid());
 				statementOfAccount.setEmiAmtOverdue(PennantApplicationUtil.formateAmount(value, ccyEditField));
 			}
+
+			// to get fin entity code and description
+			StatementOfAccount finEntity = getFinEntity(financeProfitDetail.getFinType());
+			if (finEntity != null) {
+				statementOfAccount.setEntityCode(finEntity.getEntityCode());
+				statementOfAccount.setEntityDesc(finEntity.getEntityDesc());
+				statementOfAccount.setStateCode(finEntity.getStateCode());
+			}
+
+			// to get Fin GSTIN value using entity code and fin branch
+			String finGSTIN = getFinGSTINDetails(finEntity.getStateCode(), statementOfAccount.getEntityCode());
+			statementOfAccount.setProviderGSTIN(finGSTIN);
+
+			//to get Customer GSTIN number and province
+			StatementOfAccount custGSTINDetails = getCustGSTINDetails(finReference);
+			if (custGSTINDetails != null && StringUtils.isNotEmpty(custGSTINDetails.getCustGSTIN())) {
+				statementOfAccount.setCustGSTIN(custGSTINDetails.getCustGSTIN());
+				statementOfAccount.setPlaceOfSupply(custGSTINDetails.getPlaceOfSupply());
+			} else {
+				statementOfAccount.setCustGSTIN(URD);
+			}
 		}
 
 		BigDecimal ccyMinorCcyUnits = statementOfAccount.getCcyMinorCcyUnits();
@@ -899,6 +921,18 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		logger.debug("Leaving");
 		return statementOfAccount;
+	}
+
+	private StatementOfAccount getCustGSTINDetails(String finReference) {
+		return soaReportGenerationDAO.getCustGSTINDetails(finReference);
+	}
+
+	private StatementOfAccount getFinEntity(String finType) {
+		return soaReportGenerationDAO.getFinEntity(finType);
+	}
+
+	private String getFinGSTINDetails(String stateCode, String entityCode) {
+		return soaReportGenerationDAO.getFinGSTINDetails(stateCode, entityCode);
 	}
 
 	/**
@@ -1311,7 +1345,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			}
 
 			due = balanceAmt;
-			receipt = balanceAmt;
 			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
 				unAdjustedAmt = balanceAmt;
 				due = balanceAmt;
@@ -1324,7 +1357,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			soaSummaryReport.setDue(due);
 			soaSummaryReport.setReceipt(receipt);
 			soaSummaryReport.setOverDue(overDue.negate());
-			netDue = netDue.subtract(overDue);
+			netDue = netDue.subtract(due);
 			soaSummaryReportsList.add(soaSummaryReport);
 		} else {
 
@@ -1336,17 +1369,25 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			soaSummaryReportsList.add(soaSummaryReport);
 		}
-		/*
-		 * soaSummaryReport = new SOASummaryReport(); soaSummaryReport.setComponent("Net Receivable"); if
-		 * (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) { if
-		 * (!finMain.isFinIsActive() && StringUtils.equals(finMain.getClosingStatus(),
-		 * FinanceConstants.CLOSE_STATUS_CANCELLED)) { soaSummaryReport.setDue(BigDecimal.ZERO); } else {
-		 * soaSummaryReport.setDue(totalCharges.subtract(unAdjustedAmt)); } } else {
-		 * soaSummaryReport.setDue(BigDecimal.ZERO); } soaSummaryReport.setDue(BigDecimal.ZERO);
-		 * soaSummaryReport.setReceipt(BigDecimal.ZERO); soaSummaryReport.setOverDue(netDue); netDue = overDue;
-		 * 
-		 * soaSummaryReportsList.add(soaSummaryReport);
-		 */
+
+		soaSummaryReport = new SOASummaryReport();
+		soaSummaryReport.setComponent("Net Receivable");
+		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+			if (!finMain.isFinIsActive()
+					&& StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
+				soaSummaryReport.setDue(BigDecimal.ZERO);
+			} else {
+				soaSummaryReport.setDue(totalCharges.subtract(unAdjustedAmt));
+			}
+		} else {
+			soaSummaryReport.setDue(BigDecimal.ZERO);
+		}
+		soaSummaryReport.setDue(BigDecimal.ZERO);
+		soaSummaryReport.setReceipt(BigDecimal.ZERO);
+		soaSummaryReport.setOverDue(netDue);
+		netDue = overDue;
+
+		soaSummaryReportsList.add(soaSummaryReport);
 
 		for (SOASummaryReport report : soaSummaryReportsList) {
 			report.setTotalCharges(totalCharges.divide(new BigDecimal(100)));

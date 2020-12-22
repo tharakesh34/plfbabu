@@ -188,6 +188,13 @@ public class StatementOfAccount {
 
 	private String loanPurpose;
 
+	private String entityCode;
+	private String entityDesc;
+	private String stateCode;
+	private String providerGSTIN;
+	private String custGSTIN;
+	private String placeOfSupply;
+
 	@SuppressWarnings("unused")
 	private BigDecimal emiReceived = BigDecimal.ZERO;
 
@@ -1355,6 +1362,54 @@ public class StatementOfAccount {
 
 	public void setCustSalutation(String custSalutation) {
 		this.custSalutation = custSalutation;
+	}
+
+	public String getEntityDesc() {
+		return entityDesc;
+	}
+
+	public void setEntityDesc(String entityDesc) {
+		this.entityDesc = entityDesc;
+	}
+
+	public String getProviderGSTIN() {
+		return providerGSTIN;
+	}
+
+	public void setProviderGSTIN(String providerGSTIN) {
+		this.providerGSTIN = providerGSTIN;
+	}
+
+	public String getCustGSTIN() {
+		return custGSTIN;
+	}
+
+	public void setCustGSTIN(String custGSTIN) {
+		this.custGSTIN = custGSTIN;
+	}
+
+	public String getPlaceOfSupply() {
+		return placeOfSupply;
+	}
+
+	public void setPlaceOfSupply(String placeOfSupply) {
+		this.placeOfSupply = placeOfSupply;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+
+	public String getStateCode() {
+		return stateCode;
+	}
+
+	public void setStateCode(String stateCode) {
+		this.stateCode = stateCode;
 	}
 
 }
