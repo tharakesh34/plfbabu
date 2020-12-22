@@ -164,13 +164,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			parameterMap.put("AccountNo", bankAccNo);
 
 			String entityCode = presentment.getEntCode();
-			if (entityCode.equals("CC")) {
-				parameterMap.put("FILE_NAME_PREFIX", "CC_Pennant_Lot_");
-			} else if (entityCode.equals("CF")) {
-				parameterMap.put("FILE_NAME_PREFIX", "CF_Pennant_Lot_");
-			} else if (entityCode.equals("CH")) {
-				parameterMap.put("FILE_NAME_PREFIX", "CH_Pennant_Lot_");
-			}
+			parameterMap.put("FILE_NAME_PREFIX", entityCode + "_Pennant_Lot_");
 
 			// for new Presentment only total count needs
 			if (smtPaymentModeConfig != null && smtPaymentModeConfig.equals("PRESENTMENT_REQUEST_PDC")) {
