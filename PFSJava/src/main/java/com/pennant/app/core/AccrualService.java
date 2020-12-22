@@ -470,9 +470,9 @@ public class AccrualService extends ServiceHelper {
 			if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))
 					|| DateUtil.compare(curSchd.getSchDate(), pftDetail.getMaturityDate()) == 0) {
 				if (!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
-					/*
-					 * //Installments, Paid and OD pftDetail.setNOInst(pftDetail.getNOInst() + 1);
-					 */
+
+					//Installments, Paid and OD 
+					pftDetail.setNOInst(pftDetail.getNOInst() + 1);
 
 					if (curSchd.isSchPftPaid() && curSchd.isSchPriPaid()) {
 						pftDetail.setNOPaidInst(pftDetail.getNOPaidInst() + 1);
@@ -592,9 +592,10 @@ public class AccrualService extends ServiceHelper {
 					pftDetail.setNSchdPftDue(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 				}
 
-				if (!(fm.isAlwGrcAdj() && DateUtil.compare(curSchd.getSchDate(), fm.getGrcPeriodEndDate()) <= 0)) {
-					pftDetail.setFutureInst(pftDetail.getFutureInst() + 1);
-				}
+				/*
+				 * if (!(fm.isAlwGrcAdj() && DateUtil.compare(curSchd.getSchDate(), fm.getGrcPeriodEndDate()) <= 0)) {
+				 * pftDetail.setFutureInst(pftDetail.getFutureInst() + 1); }
+				 */
 
 				if (!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 					pftDetail.setFutureInst(pftDetail.getFutureInst() + 1);

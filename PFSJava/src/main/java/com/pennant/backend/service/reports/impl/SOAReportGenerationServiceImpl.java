@@ -518,7 +518,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			}
 
 			//Including advance EMI terms
-			int tenure = finMain.getCalTerms();
+			int tenure = statementOfAccount.getTenure();
 
 			// Based on Repay Frequency codes it will set
 			String frequency = FrequencyUtil.getFrequencyCode(finMain.getRepayFrq());
@@ -1267,9 +1267,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		soaSummaryReportsList.add(soaSummaryReport);
 
-		if (StringUtils.equalsIgnoreCase("N", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-			soaSummaryReportsList.add(soaSummaryReport);
-		}
+		//Other Receivables duplicate row removed
+		/*
+		 * if (StringUtils.equalsIgnoreCase("N", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+		 * soaSummaryReportsList.add(soaSummaryReport); }
+		 */
 
 		receipt = BigDecimal.ZERO;
 		overDue = BigDecimal.ZERO;
@@ -1309,6 +1311,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			}
 
 			due = balanceAmt;
+			receipt = balanceAmt;
 			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
 				unAdjustedAmt = balanceAmt;
 				due = balanceAmt;
@@ -1333,24 +1336,17 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			soaSummaryReportsList.add(soaSummaryReport);
 		}
-		soaSummaryReport = new SOASummaryReport();
-		soaSummaryReport.setComponent("Net Receivable");
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-			if (!finMain.isFinIsActive()
-					&& StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
-				soaSummaryReport.setDue(BigDecimal.ZERO);
-			} else {
-				soaSummaryReport.setDue(totalCharges.subtract(unAdjustedAmt));
-			}
-		} else {
-			soaSummaryReport.setDue(BigDecimal.ZERO);
-		}
-		soaSummaryReport.setDue(BigDecimal.ZERO);
-		soaSummaryReport.setReceipt(BigDecimal.ZERO);
-		soaSummaryReport.setOverDue(netDue);
-		netDue = overDue;
-
-		soaSummaryReportsList.add(soaSummaryReport);
+		/*
+		 * soaSummaryReport = new SOASummaryReport(); soaSummaryReport.setComponent("Net Receivable"); if
+		 * (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) { if
+		 * (!finMain.isFinIsActive() && StringUtils.equals(finMain.getClosingStatus(),
+		 * FinanceConstants.CLOSE_STATUS_CANCELLED)) { soaSummaryReport.setDue(BigDecimal.ZERO); } else {
+		 * soaSummaryReport.setDue(totalCharges.subtract(unAdjustedAmt)); } } else {
+		 * soaSummaryReport.setDue(BigDecimal.ZERO); } soaSummaryReport.setDue(BigDecimal.ZERO);
+		 * soaSummaryReport.setReceipt(BigDecimal.ZERO); soaSummaryReport.setOverDue(netDue); netDue = overDue;
+		 * 
+		 * soaSummaryReportsList.add(soaSummaryReport);
+		 */
 
 		for (SOASummaryReport report : soaSummaryReportsList) {
 			report.setTotalCharges(totalCharges.divide(new BigDecimal(100)));
