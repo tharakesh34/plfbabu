@@ -46,8 +46,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -72,8 +70,8 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.systemmasters.EMailType;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -322,14 +320,9 @@ public class CustomerEmailInlineEditCtrl extends GFCBaseCtrl<CustomerDetails> {
 								throw new WrongValueException(emailId, Labels.getLabel("FIELD_IS_MAND",
 										new String[] { Labels.getLabel("listheader_CustomerEmail.label") }));
 							} else if (!emailId.isReadonly()) {
-								Pattern pattern = Pattern.compile(PennantRegularExpressions.EMAIL_REGEX);
-								Matcher matcher = pattern.matcher(emailId.getValue());
-								if (!matcher.matches()) {
-									throw new WrongValueException(emailId,
-											Labels.getLabel("FIELD_MAIL",
-													new String[] { Labels.getLabel("listheader_CustomerEmail.label"),
-															String.valueOf(pattern) }));
-								}
+								emailId.setConstraint(new PTEmailValidator(
+										Labels.getLabel("label_CustomerEMailDialog_CustEMail.value"), true));
+								aCustomerEMail.setCustEMail(emailId.getValue());
 							}
 							aCustomerEMail.setCustEMail(emailId.getValue());
 						}
