@@ -90,4 +90,6 @@ public interface VASRecordingDAO {
 	String getVasInsStatus(long paymentInsId);
 
 	void updateVasInsStatus(long id);
+
+	String getProductCodeByReference(String primaryLinkRef);
 }

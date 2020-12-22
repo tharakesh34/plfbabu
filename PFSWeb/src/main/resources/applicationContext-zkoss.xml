@@ -2944,6 +2944,7 @@
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="finOptionService" ref="finOptionService" />
 		<property name="dpdEnquiryService" ref="dpdEnquiryService" />
+		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
 	</bean>
 
 	<bean id="financeEnquiryDialogCtrl" class="com.pennant.webui.finance.enquiry.FinanceEnquiryDialogCtrl" parent="basisListCtrl"

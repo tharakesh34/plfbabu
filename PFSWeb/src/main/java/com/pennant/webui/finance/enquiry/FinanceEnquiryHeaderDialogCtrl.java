@@ -75,6 +75,7 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
@@ -82,6 +83,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportCreationUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -147,7 +149,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
@@ -233,6 +234,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinanceSummary financeSummary;
 	private DPDEnquiryService dpdEnquiryService;
 	protected boolean customer360;
+	private VASRecordingDAO vASRecordingDAO;
 
 	int listRows;
 	private String assetCode = "";
@@ -1135,6 +1137,15 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				finRender = new FinScheduleListItemRenderer();
 				List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(finScheduleData);
 				list.add(subList1);
+
+				List<FinFeeDetail> ffdl = finScheduleData.getFinFeeDetailList();
+				for (FinFeeDetail finFeeDetail : ffdl) {
+					if (finFeeDetail.getFinEvent().equals(AccountEventConstants.ACCEVENT_VAS_FEE)) {
+						String productCode = vASRecordingDAO.getProductCodeByReference(finFeeDetail.getFinReference());
+						finFeeDetail.setFeeTypeDesc(productCode);
+					}
+				}
+
 				List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(finScheduleData, rpyDetailsMap,
 						penaltyDetailsMap, true, false, false);
 				list.add(subList);
@@ -1356,5 +1367,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
+		this.vASRecordingDAO = vASRecordingDAO;
 	}
 }
