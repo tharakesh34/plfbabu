@@ -799,21 +799,20 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	}
 
 	@Override
-	public String getProductCodeByReference(String primaryLinkRef) {
+	public String getProductCodeByReference(String primaryLinkRef, String vasReference) {
 		logger.debug(Literal.ENTERING);
 
 		String productDesc = null;
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ProductDesc");
-		sql.append(" From VASSTRUCTURE vs");
-		sql.append(" INNER JOIN VASRECORDING vr on vr.ProductCode = vs.ProductCode");
-		sql.append(" Where vr.PrimaryLinkRef = ?");
+		sql.append(" From VASRECORDING_VIEW ");
+		sql.append(" Where PrimaryLinkRef = ? and vasReference = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			productDesc = jdbcOperations.queryForObject(sql.toString(), new Object[] { primaryLinkRef },
+			productDesc = jdbcOperations.queryForObject(sql.toString(), new Object[] { primaryLinkRef, vasReference },
 					new RowMapper<String>() {
 						@Override
 						public String mapRow(ResultSet rs, int arg1) throws SQLException {

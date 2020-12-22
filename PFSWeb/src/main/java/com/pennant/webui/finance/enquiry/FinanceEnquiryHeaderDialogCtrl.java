@@ -1141,7 +1141,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				List<FinFeeDetail> ffdl = finScheduleData.getFinFeeDetailList();
 				for (FinFeeDetail finFeeDetail : ffdl) {
 					if (finFeeDetail.getFinEvent().equals(AccountEventConstants.ACCEVENT_VAS_FEE)) {
-						String productCode = vASRecordingDAO.getProductCodeByReference(finFeeDetail.getFinReference());
+						String productCode = vASRecordingDAO.getProductCodeByReference(finFeeDetail.getFinReference(),
+								finFeeDetail.getVasReference());
 						finFeeDetail.setFeeTypeDesc(productCode);
 					}
 				}
