@@ -4402,8 +4402,21 @@ public class ScheduleCalculator {
 
 		Date dateAllowedChange = finMain.getLastRepayRvwDate();
 		int fixedRateTenor = finMain.getFixedRateTenor();
-		Date fixedTenorEndDate = DateUtility.addMonths(finMain.getGrcPeriodEndDate(),
-				fixedRateTenor > 0 ? fixedRateTenor : 0);
+		/*
+		 * Date fixedTenorEndDate = DateUtility.addMonths(finMain.getGrcPeriodEndDate(), fixedRateTenor > 0 ?
+		 * fixedRateTenor : 0);
+		 */
+		Date fixedTenorEndDate = finMain.getFinStartDate();
+
+		if (fixedRateTenor > 0) {
+			fixedTenorEndDate = finMain.getNextRepayDate();
+			for (int i = 0; i < (fixedRateTenor - 1); i++) {
+				fixedTenorEndDate = DateUtility.getDate(DateUtility.format(
+						FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, fixedTenorEndDate,
+								HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
+						PennantConstants.dateFormat));
+			}
+		}
 
 		// PROFIT LAST REVIEW IS ON OR AFTER MATURITY THEN NOT ALLOWED THEN DO
 		// NOT SET
@@ -4439,7 +4452,7 @@ public class ScheduleCalculator {
 			 * if (curSchd.getSchDate().compareTo(finMain.getEventToDate()) > 0) { break; }
 			 */
 			// Fetch current rates from DB
-			if (curSchd.getSchDate().compareTo(fixedTenorEndDate) < 0
+			if (DateUtility.compare(curSchd.getSchDate(), (fixedTenorEndDate)) < 0
 					&& DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) >= 0) {
 				curSchd.setCalculatedRate(finMain.getFixedTenorRate());
 				fixedRateTenor = fixedRateTenor > 0 ? fixedRateTenor - 1 : fixedRateTenor;
@@ -4453,7 +4466,7 @@ public class ScheduleCalculator {
 									&& DateUtility.compare(curSchd.getSchDate(), dateAllowedChange) == 0)) {
 						curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
 					} else {
-						if (fixedRateTenor == 0 && curSchd.isRvwOnSchDate()) {
+						if (fixedRateTenor == 0) {
 							curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
 						} else if (curSchd.getSchDate().compareTo(fixedTenorEndDate) == 0) {
 							curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
