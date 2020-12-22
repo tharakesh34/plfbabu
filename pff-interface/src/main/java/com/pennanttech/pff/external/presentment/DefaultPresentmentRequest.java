@@ -168,6 +168,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 				parameterMap.put("FILE_NAME_PREFIX", "CC_Pennant_Lot_");
 			} else if (entityCode.equals("CF")) {
 				parameterMap.put("FILE_NAME_PREFIX", "CF_Pennant_Lot_");
+			} else if (entityCode.equals("CH")) {
+				parameterMap.put("FILE_NAME_PREFIX", "CH_Pennant_Lot_");
 			}
 
 			// for new Presentment only total count needs
