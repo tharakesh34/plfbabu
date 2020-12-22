@@ -1239,7 +1239,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				if (StringUtils.equals(feeDetail.getVasReference(), vasReference)) {
 					vasFee.setFeeSeq(feeDetail.getFeeSeq());
 					vasFee.setFeeID(feeDetail.getFeeID());
-					vasFee.setRecordType(PennantConstants.RCD_UPD);
+					if (PennantConstants.RCD_ADD.equals(feeDetail.getRecordType())) {
+						vasFee.setRecordType(PennantConstants.RCD_ADD);
+					} else {
+						vasFee.setRecordType(PennantConstants.RCD_UPD);
+					}
 					feelist.remove(i); // Removing Finance Fee Detail
 					break;
 				}
@@ -1670,12 +1674,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 						|| (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())
 								&& PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType()))) {
 					continue;
-				}
-
-				if (!finFeeDetail.isNewRecord()) {
-					FinFeeDetail befImage = new FinFeeDetail();
-					BeanUtils.copyProperties(finFeeDetail, befImage);
-					finFeeDetail.setBefImage(befImage);
 				}
 
 				// setting paid amount and remaining amount
