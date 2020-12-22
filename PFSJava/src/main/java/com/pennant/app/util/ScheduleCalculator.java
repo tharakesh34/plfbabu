@@ -4455,6 +4455,8 @@ public class ScheduleCalculator {
 					} else {
 						if (fixedRateTenor == 0 && curSchd.isRvwOnSchDate()) {
 							curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
+						} else if (curSchd.getSchDate().compareTo(fixedTenorEndDate) == 0) {
+							curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
 						} else {
 							curSchd.setCalculatedRate(finSchdDetails.get(i - 1).getCalculatedRate());
 						}
