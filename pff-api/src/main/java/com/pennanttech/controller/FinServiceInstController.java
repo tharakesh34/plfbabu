@@ -52,11 +52,14 @@ import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.dao.pdc.ChequeDetailDAO;
+import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -81,6 +84,8 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.ChequeDetail;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -135,6 +140,7 @@ import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
+import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -204,6 +210,10 @@ public class FinServiceInstController extends SummaryDetailService {
 	private CovenantsService covenantsService;
 	private CovenantsDAO covenantsDAO;
 	private DocumentDetailsDAO documentDetailsDAO;
+	private ChequeHeaderService chequeHeaderService;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private ChequeHeaderDAO chequeHeaderDAO;
+	private ChequeDetailDAO chequeDetailDAO;
 
 	/**
 	 * Method for process AddRateChange request and re-calculate schedule details
@@ -3830,6 +3840,369 @@ public class FinServiceInstController extends SummaryDetailService {
 		documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		documentDetails.setNewRecord(true);
 		documentDetails.setDoctype(covenantDocument.getDoctype());
+	}
+
+	public WSReturnStatus processChequeDetail(FinanceDetail financeDetail, String tableType) {
+		logger.debug(Literal.ENTERING);
+		WSReturnStatus response = null;
+		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		try {
+
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
+			//defaulting record values to cheque Header
+
+			chequeHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			if (StringUtils.isNotBlank(tableType)) {
+				chequeHeader.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
+				chequeHeader.setNewRecord(true);
+				chequeHeader.setVersion(1);
+			} else {
+				chequeHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				chequeHeader.setNewRecord(false);
+				chequeHeader.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+
+			}
+			chequeHeader.setLastMntBy(userDetails.getUserId());
+			chequeHeader.setRecordStatus(financeMain.getRecordStatus());
+			chequeHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			chequeHeader.setTaskId(financeMain.getTaskId());
+			chequeHeader.setNextTaskId(financeMain.getNextTaskId());
+			chequeHeader.setRoleCode(financeMain.getRoleCode());
+			chequeHeader.setNextRoleCode(financeMain.getNextRoleCode());
+			chequeHeader.setWorkflowId(financeMain.getWorkflowId());
+			chequeHeader.setActive(true);
+			chequeHeader.setSourceId(PennantConstants.FINSOURCE_ID_API);
+
+			List<ChequeDetail> chequeDetails = chequeHeader.getChequeDetailList();
+			int chequeSerialNum = chequeHeader.getChequeSerialNo();
+			chequeHeader.setTotalAmount(BigDecimal.ZERO);
+			for (ChequeDetail chequeDetail : chequeDetails) {
+				//defaulting record values to cheque detail
+				chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				chequeDetail.setNewRecord(true);
+				chequeDetail.setLastMntBy(userDetails.getUserId());
+				chequeDetail.setRecordStatus(financeMain.getRecordStatus());
+				chequeDetail.setVersion(2);
+				chequeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				chequeDetail.setTaskId(financeMain.getTaskId());
+				chequeDetail.setNextTaskId(financeMain.getNextTaskId());
+				chequeDetail.setRoleCode(financeMain.getRoleCode());
+				chequeDetail.setNextRoleCode(financeMain.getNextRoleCode());
+				chequeDetail.setWorkflowId(financeMain.getWorkflowId());
+
+				chequeDetail.setChequeSerialNo(chequeSerialNum);
+				chequeSerialNum++;
+
+				//setting the values to the cheque Detail by excluding at the cheque header
+				chequeDetail.setBankBranchID(chequeHeader.getBankBranchID());
+				chequeDetail.setAccHolderName(chequeHeader.getAccHolderName());
+				chequeDetail.setAccountNo(chequeHeader.getAccountNo());
+
+				//setting the reference
+				chequeHeader.setFinReference(financeMain.getFinReference());
+				chequeHeader.setTotalAmount(chequeDetail.getAmount().add(chequeHeader.getTotalAmount()));
+				//setting the default values
+				chequeDetail.setStatus(PennantConstants.CHEQUESTATUS_NEW);
+				chequeDetail.setChequeStatus(PennantConstants.CHEQUESTATUS_NEW);
+				chequeDetail.setChequeCcy(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
+				chequeDetail.setActive(true);
+
+			}
+			response = new WSReturnStatus();
+
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(chequeHeader, PennantConstants.TRAN_WF);
+			auditHeader.setApiHeader(reqHeaderDetails);
+
+			if (StringUtils.isNotBlank(tableType)) {
+				auditHeader = chequeHeaderService.saveOrUpdate(auditHeader);
+			} else {
+				auditHeader = chequeHeaderService.doApprove(auditHeader);
+			}
+
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				response = APIErrorHandlerService.getSuccessStatus();
+			}
+
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response = new WSReturnStatus();
+			return APIErrorHandlerService.getFailedStatus();
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	public WSReturnStatus updateCheque(FinanceDetail financeDetail, String tableType) {
+
+		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		List<ErrorDetail> errorDetails = null;
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		WSReturnStatus response = null;
+		try {
+			int count = 1;
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
+			if (StringUtils.isNotBlank(tableType)) {
+				chequeHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			} else {
+				chequeHeader.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			}
+			//defaulting record values to cheque Header
+			chequeHeader.setNewRecord(false);
+			chequeHeader.setLastMntBy(userDetails.getUserId());
+			//chequeHeader.setVersion(1);
+			chequeHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			chequeHeader.setTaskId(financeMain.getTaskId());
+			chequeHeader.setNextTaskId(financeMain.getNextTaskId());
+			chequeHeader.setRoleCode(financeMain.getRoleCode());
+			chequeHeader.setNextRoleCode(financeMain.getNextRoleCode());
+			chequeHeader.setWorkflowId(financeMain.getWorkflowId());
+			chequeHeader.setActive(true);
+			chequeHeader.setSourceId(PennantConstants.FINSOURCE_ID_API);
+
+			List<ChequeDetail> chequeDetails = chequeHeader.getChequeDetailList();
+			int chequeSerialNum = chequeHeader.getChequeSerialNo();
+			chequeHeader.setTotalAmount(BigDecimal.ZERO);
+			for (ChequeDetail chequeDetail : chequeDetails) {
+				//defaulting record values to cheque detail
+
+				if (chequeDetail.isDelete()) {
+					//subtracting the count to reduce the No.Of cheques in cheque Header
+
+					int result = chequeHeader.getNoOfCheques() - count;
+					chequeHeader.setFinReference(financeMain.getFinReference());
+
+					//setting the default values if record type is delete
+					chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					chequeDetail.setActive(false);
+					chequeDetail.setNewRecord(false);
+					chequeDetail.setRecordStatus(PennantConstants.RCD_STATUS_CANCELLED);
+					chequeDetail.setChequeCcy(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
+					chequeDetail.setStatus(PennantConstants.CHEQUESTATUS_NEW);
+					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+							.get(APIHeader.API_HEADER_KEY);
+					AuditHeader auditHeader = getAuditHeader(chequeHeader, PennantConstants.TRAN_WF);
+					auditHeader.setApiHeader(reqHeaderDetails);
+					//deleting the record from the cheque details 
+					chequeHeader.setNoOfCheques(result);
+					chequeHeaderService.doApprove(auditHeader);
+
+					//updating the record in the cheque Header
+
+				} else {
+
+					if (StringUtils.isNotBlank(tableType)) {
+						chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+						chequeDetail.setNewRecord(true);
+					} else {
+						chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+						chequeDetail.setNewRecord(false);
+					}
+					chequeDetail.setLastMntBy(userDetails.getUserId());
+					chequeDetail.setRecordStatus(financeMain.getRecordStatus());
+					chequeDetail.setVersion(financeMain.getVersion());
+					chequeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					chequeDetail.setTaskId(financeMain.getTaskId());
+					chequeDetail.setNextTaskId(financeMain.getNextTaskId());
+					chequeDetail.setRoleCode(financeMain.getRoleCode());
+					chequeDetail.setNextRoleCode(financeMain.getNextRoleCode());
+					chequeDetail.setWorkflowId(financeMain.getWorkflowId());
+
+					chequeDetail.setChequeSerialNo(chequeSerialNum);
+					chequeSerialNum++;
+
+					//setting the values to the cheque Detail by excluding at the cheque header
+					chequeDetail.setBankBranchID(chequeHeader.getBankBranchID());
+					chequeDetail.setAccHolderName(chequeHeader.getAccHolderName());
+					chequeDetail.setAccountNo(chequeHeader.getAccountNo());
+
+					//setting the reference
+					chequeHeader.setFinReference(financeMain.getFinReference());
+					chequeHeader.setTotalAmount(chequeDetail.getAmount().add(chequeHeader.getTotalAmount()));
+					//setting the default values
+					chequeDetail.setStatus(PennantConstants.CHEQUESTATUS_NEW);
+					chequeDetail.setChequeStatus(PennantConstants.CHEQUESTATUS_NEW);
+					chequeDetail.setChequeCcy(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
+					chequeDetail.setActive(true);
+				}
+			}
+
+			response = new WSReturnStatus();
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(chequeHeader, PennantConstants.TRAN_WF);
+			auditHeader.setApiHeader(reqHeaderDetails);
+
+			if (StringUtils.isNotBlank(tableType)) {
+				auditHeader = chequeHeaderService.saveOrUpdate((auditHeader));
+			} else {
+				auditHeader = chequeHeaderService.doApprove(auditHeader);
+			}
+
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return response;
+				}
+			}
+
+			response = APIErrorHandlerService.getSuccessStatus();
+
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
+
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	public WSReturnStatus updateChequeDetailsinMaintainence(FinanceDetail financeDetail, String tableType) {
+
+		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		List<ErrorDetail> errorDetails = null;
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		WSReturnStatus response = null;
+		try {
+			int count = 1;
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
+			//defaulting record values to cheque Header
+			chequeHeader.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			chequeHeader.setNewRecord(false);
+			chequeHeader.setLastMntBy(userDetails.getUserId());
+			//chequeHeader.setVersion(1);
+			chequeHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			chequeHeader.setTaskId(financeMain.getTaskId());
+			chequeHeader.setNextTaskId(financeMain.getNextTaskId());
+			chequeHeader.setRoleCode(financeMain.getRoleCode());
+			chequeHeader.setNextRoleCode(financeMain.getNextRoleCode());
+			chequeHeader.setWorkflowId(financeMain.getWorkflowId());
+			chequeHeader.setActive(true);
+			chequeHeader.setSourceId(PennantConstants.FINSOURCE_ID_API);
+
+			List<ChequeDetail> chequeDetails = chequeHeader.getChequeDetailList();
+			int chequeSerialNum = chequeHeader.getChequeSerialNo();
+			chequeHeader.setTotalAmount(BigDecimal.ZERO);
+
+			List<ChequeDetail> dbChqueDetailList = chequeDetailDAO.getChequeDetailList(chequeHeader.getHeaderID(),
+					tableType);
+
+			for (ChequeDetail chequeDetail : chequeDetails) {
+				//defaulting record values to cheque detail
+
+				if (chequeDetail.isDelete()) {
+					//subtracting the count to reduce the No.Of cheques in cheque Header
+
+					int result = chequeHeader.getNoOfCheques() - count;
+					chequeHeader.setFinReference(financeMain.getFinReference());
+
+					//setting the default values if record type is delete
+					chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					chequeDetail.setActive(false);
+					chequeDetail.setNewRecord(false);
+					chequeDetail.setRecordStatus(PennantConstants.RCD_STATUS_CANCELLED);
+					chequeDetail.setChequeCcy(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
+					chequeDetail.setStatus(PennantConstants.CHEQUESTATUS_NEW);
+					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+							.get(APIHeader.API_HEADER_KEY);
+					AuditHeader auditHeader = getAuditHeader(chequeHeader, PennantConstants.TRAN_WF);
+					auditHeader.setApiHeader(reqHeaderDetails);
+					//deleting the record from the cheque details 
+					chequeHeader.setNoOfCheques(result);
+					chequeHeaderService.doApprove(auditHeader);
+					//updating the record in the cheque Header
+				} else {
+
+					if (StringUtils.isNotBlank(tableType)) {
+						chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+						chequeDetail.setNewRecord(true);
+					} else {
+						chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+						chequeDetail.setNewRecord(false);
+					}
+					chequeDetail.setLastMntBy(userDetails.getUserId());
+					chequeDetail.setRecordStatus(financeMain.getRecordStatus());
+					chequeDetail.setVersion(financeMain.getVersion());
+					chequeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					chequeDetail.setTaskId(financeMain.getTaskId());
+					chequeDetail.setNextTaskId(financeMain.getNextTaskId());
+					chequeDetail.setRoleCode(financeMain.getRoleCode());
+					chequeDetail.setNextRoleCode(financeMain.getNextRoleCode());
+					chequeDetail.setWorkflowId(financeMain.getWorkflowId());
+
+					//setting the values to the cheque Detail by excluding at the cheque header
+					chequeDetail.setBankBranchID(chequeHeader.getBankBranchID());
+					chequeDetail.setAccHolderName(chequeHeader.getAccHolderName());
+					chequeDetail.setAccountNo(chequeHeader.getAccountNo());
+
+					//setting the reference
+					chequeHeader.setFinReference(financeMain.getFinReference());
+					chequeHeader.setTotalAmount(chequeDetail.getAmount().add(chequeHeader.getTotalAmount()));
+					//setting the default values
+					chequeDetail.setStatus(PennantConstants.CHEQUESTATUS_NEW);
+					chequeDetail.setChequeStatus(PennantConstants.CHEQUESTATUS_NEW);
+					chequeDetail.setChequeCcy(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
+					chequeDetail.setActive(true);
+
+					for (ChequeDetail chqDetail : dbChqueDetailList) {
+						if (chqDetail.getChequeDetailsID() == chequeDetail.getChequeDetailsID()) {
+							chequeDetail.setChequeSerialNo((chqDetail.getChequeSerialNo()));
+
+						}
+
+					}
+
+				}
+			}
+
+			response = new WSReturnStatus();
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(chequeHeader, PennantConstants.TRAN_WF);
+			auditHeader.setApiHeader(reqHeaderDetails);
+
+			if (StringUtils.isNotBlank(tableType)) {
+				auditHeader = chequeHeaderService.saveOrUpdate((auditHeader));
+			} else {
+				auditHeader = chequeHeaderService.doApprove(auditHeader);
+			}
+
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return response;
+				}
+			}
+
+			response = APIErrorHandlerService.getSuccessStatus();
+
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
+
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	protected AuditHeader getAuditHeader(ChequeHeader chequeHeader, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, chequeHeader);
+		return new AuditHeader(chequeHeader.getFinReference(), null, null, null, auditDetail,
+				chequeHeader.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {

@@ -57,6 +57,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -400,8 +401,8 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		details.getDeclaredFieldValues(aeEvent.getDataMap());
 
-		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_INSPAY,
-				AccountEventConstants.ACCEVENT_INSPAY);
+		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
+				AccountEventConstants.ACCEVENT_INSPAY, FinanceConstants.MODULEID_FINTYPE);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 		logger.debug(Literal.LEAVING);

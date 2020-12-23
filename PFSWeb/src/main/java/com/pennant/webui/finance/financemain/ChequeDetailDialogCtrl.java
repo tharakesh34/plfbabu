@@ -1808,7 +1808,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 											if (isTDS) {
 												throw new WrongValueException(emiAmount,
 														Labels.getLabel("ChequeDetailDialog_EMI_TDS_Amount"));
-											} else {
+											} else if (!PennantConstants.RCD_STATUS_CANCELLED
+													.equalsIgnoreCase(chequeStatus.getValue())) {
 												throw new WrongValueException(emiAmount,
 														Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
 											}
@@ -2176,6 +2177,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			Listcell statusLC = listCells.get(8);
 			Combobox chequeStatus = (Combobox) statusLC.getFirstChild();
 			fillComboBox(chequeStatus, PennantConstants.CHEQUESTATUS_CANCELLED, chequeStatusList, "");
+			chequeDetail.setStatus(PennantConstants.CHEQUESTATUS_CANCELLED);
 
 			if (chequeDetail != null && !chequeDetail.isNew()) {
 				chequeDetail.setActive(false);
@@ -2211,6 +2213,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				readOnlyComponent(true, uploadButton);
 			}
 			dosetCalculatedTotals(listBoxChequeDetail);
+			onFulfill$EmiAmount(event);
 		}
 	}
 

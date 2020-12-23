@@ -214,6 +214,8 @@ public class LoadFinanceData extends ServiceHelper {
 				}
 			}
 
+			isAmountDue = isOldestDueOverDue(curSchd);
+
 			// Paid Principal OR Paid Interest Less than scheduled amounts
 			if (curSchd.getSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) < 0
 					|| curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) < 0) {

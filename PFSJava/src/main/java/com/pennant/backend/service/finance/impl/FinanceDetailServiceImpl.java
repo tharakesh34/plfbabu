@@ -245,6 +245,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -2580,7 +2581,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Save Cheque Header Details
 		// =======================================
 		if (financeDetail.getChequeHeader() != null) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
+			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader(),
+					financeDetail.getChequeHeader().getExcludeFields());
 			finChequeHeaderService.saveOrUpdate(auditHeader, tableType);
 			auditDetails.addAll(auditHeader.getAuditDetails());
 			auditDetails.add(new AuditDetail(auditTranType, 1, fields[0], fields[1],
@@ -6971,7 +6973,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Cheque Details
 		if (financeDetail.getChequeHeader() != null) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());
+			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader(),
+					financeDetail.getChequeHeader().getExcludeFields());
 			finChequeHeaderService.doReject(auditHeader);
 			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 					financeDetail.getChequeHeader().getBefImage(), financeDetail.getChequeHeader()));
@@ -12795,6 +12798,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				.multiply(childLoanAmt.divide(totalLoanAmt, MathContext.DECIMAL64));
 		return collateralAssignmentPerc;
 
+	}
+
+	@Override
+	public List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings,
+			FinanceDetail financeDetail) {
+		return processInsPayAccounting(aeEvent, vasRecordings, false, financeDetail);
 	}
 
 	public ReasonDetailDAO getReasonDetailDAO() {

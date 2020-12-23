@@ -123,7 +123,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			if (curSchd != null) {
 				if (!calcwithoutDue) {
 					//check due and proceeed
-					boolean isAmountDue = false;
+					boolean isAmountDue = isOldestDueOverDue(curSchd);
 					//Paid Principal OR Paid Interest Less than scheduled amounts 
 					if (curSchd.getSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) < 0
 							|| curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) < 0) {

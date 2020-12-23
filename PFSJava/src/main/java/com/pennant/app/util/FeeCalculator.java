@@ -465,6 +465,7 @@ public class FeeCalculator implements Serializable {
 						executionMap.put("totOSIncludeFees", finProfitDetail.getTotalPftBal()
 								.add(finProfitDetail.getTotalPriBal()).add(outStandingFeeBal));
 						executionMap.put("unearnedAmount", finProfitDetail.getUnearned());
+						executionMap.put("eligibilityMethod", financeMain.getEligibilityMethod());
 					}
 
 					if (receiptData.isForeClosureEnq()) {

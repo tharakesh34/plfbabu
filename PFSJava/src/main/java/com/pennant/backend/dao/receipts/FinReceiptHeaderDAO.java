@@ -100,4 +100,6 @@ public interface FinReceiptHeaderDAO {
 	FinReceiptHeader getFinTypeByReceiptID(long receiptID);
 
 	int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference);
+
+	boolean isReceiptExists(String reference, String type);
 }

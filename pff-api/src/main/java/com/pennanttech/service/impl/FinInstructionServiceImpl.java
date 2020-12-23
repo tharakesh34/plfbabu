@@ -1,25 +1,30 @@
 package com.pennanttech.service.impl;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.pdc.ChequeDetailDAO;
+import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.financeservice.AddRepaymentService;
@@ -40,6 +45,8 @@ import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.applicationmaster.LoanPendingDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.ChequeDetail;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -49,6 +56,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
@@ -58,6 +66,7 @@ import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
+import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -89,6 +98,7 @@ import com.pennanttech.controller.FinServiceInstController;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.FinServiceInstRESTService;
 import com.pennanttech.pffws.FinServiceInstSOAPService;
@@ -131,6 +141,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private CustomerDetailsService customerDetailsService;
 	private BranchDAO branchDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private ChequeHeaderService chequeHeaderService;
+	private ChequeHeaderDAO chequeHeaderDAO;
+	private ChequeDetailDAO chequeDetailDAO;
 
 	/**
 	 * Method for perform addRateChange operation
@@ -1229,6 +1243,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
 			return response;
+		} catch (ServiceException e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new ServiceException(e.getFaultDetails());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -2116,6 +2133,279 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		return returnStatus;
 	}
 
+	@Override
+	public WSReturnStatus saveChequeDetails(FinanceDetail financeDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		List<ErrorDetail> errorDetails;
+		try {
+			FinanceMain financeMain = null;
+			String finReference = financeDetail.getFinReference();
+			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+
+			if (finReference == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FinReference";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			} else {
+				financeMain = financeMainDAO.getFinanceMainById(finReference, "", false);
+				if (financeMain == null || !financeMain.isFinIsActive()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finReference;
+					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+				} else {
+					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+				}
+			}
+
+			if (chequeHeader == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Cheque Details ";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
+			// for logging purpose
+			APIErrorHandlerService.logReference(finReference);
+			errorDetails = chequeHeaderService.chequeValidationForUpdate(financeDetail, PennantConstants.method_save,
+					"");
+			for (ErrorDetail errorDetail : errorDetails) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+						errorDetail.getParameters());
+				return returnStatus;
+			}
+
+			List<FinanceScheduleDetail> finScheduleDetails = financeScheduleDetailDAO
+					.getFinScheduleDetails(financeMain.getFinReference(), "", false);
+			financeDetail.getFinScheduleData().setFinanceScheduleDetails(finScheduleDetails);
+			FinScheduleData finSchdData = validateChequeDetails(financeDetail);
+			if (CollectionUtils.isNotEmpty(finSchdData.getErrorDetails())) {
+				for (ErrorDetail errorDetail : finSchdData.getErrorDetails()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+			returnStatus = finServiceInstController.processChequeDetail(financeDetail, "");
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
+	//cheque Validations for schedule
+	private FinScheduleData validateChequeDetails(FinanceDetail financeDetail) {
+		boolean date = true;
+		boolean amount = true;
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+		List<ChequeDetail> chequeDetailsList = chequeHeader.getChequeDetailList();
+		for (ChequeDetail chequeDetail : chequeDetailsList) {
+			//schedules validation
+			if (StringUtils.equals(FinanceConstants.REPAYMTH_PDC, chequeDetail.getChequeType())) {
+				List<FinanceScheduleDetail> schedules = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
+				for (FinanceScheduleDetail fsd : schedules) {
+					if (DateUtil.compare(fsd.getSchDate(), chequeDetail.getChequeDate()) == 0) {
+						date = true;
+						chequeDetail.seteMIRefNo(fsd.getInstNumber());
+						if (fsd.getRepayAmount().compareTo(chequeDetail.getAmount()) != 0) {
+							amount = false;
+							//{0} Should be equal To {1}
+							String[] valueParm = new String[2];
+							valueParm[0] = new SimpleDateFormat("yyyy-MM-dd").format(fsd.getSchDate());
+							valueParm[1] = String.valueOf(fsd.getRepayAmount() + "INR");
+							finScheduleData
+									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+							return finScheduleData;
+
+						} else {
+							break;
+						}
+
+					} else {
+						date = false;
+					}
+				}
+				if (date == false) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Cheque Date";
+					valueParm[1] = "ScheduleDates";
+					finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+					return finScheduleData;
+
+				}
+			}
+
+		}
+
+		return finScheduleData;
+	}
+
+	@Override
+	public WSReturnStatus createChequeDetails(FinanceDetail financeDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		List<ErrorDetail> errorDetails;
+		String tableType = "_Temp";
+		try {
+			FinanceMain financeMain = null;
+			String finReference = financeDetail.getFinReference();
+			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+
+			if (finReference == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FinReference";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			} else {
+				financeMain = financeMainDAO.getFinanceMainById(finReference, tableType, false);
+				if (financeMain == null || !financeMain.isFinIsActive()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finReference;
+					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+				} else {
+					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+				}
+			}
+
+			if (chequeHeader == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Cheque Details ";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
+			// for logging purpose
+			APIErrorHandlerService.logReference(finReference);
+			errorDetails = chequeHeaderService.chequeValidation(financeDetail, PennantConstants.method_save, tableType);
+			for (ErrorDetail errorDetail : errorDetails) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+						errorDetail.getParameters());
+				return returnStatus;
+			}
+
+			List<FinanceScheduleDetail> finScheduleDetails = financeScheduleDetailDAO
+					.getFinScheduleDetails(financeMain.getFinReference(), tableType, false);
+			financeDetail.getFinScheduleData().setFinanceScheduleDetails(finScheduleDetails);
+			FinScheduleData finSchdData = validateChequeDetails(financeDetail);
+			if (CollectionUtils.isNotEmpty(finSchdData.getErrorDetails())) {
+				for (ErrorDetail errorDetail : finSchdData.getErrorDetails()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+			returnStatus = finServiceInstController.processChequeDetail(financeDetail, tableType);
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
+	@Override
+	public WSReturnStatus updateChequeDetailsInMaintainence(FinanceDetail financeDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		List<ErrorDetail> errorDetails;
+		try {
+			FinanceMain financeMain = null;
+			String finReference = financeDetail.getFinReference();
+			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+
+			// for logging purpose
+			APIErrorHandlerService.logReference(finReference);
+			errorDetails = chequeHeaderService.chequeValidationInMaintainence(financeDetail,
+					PennantConstants.method_Update, "");
+			for (ErrorDetail errorDetail : errorDetails) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+						errorDetail.getParameters());
+				return returnStatus;
+			}
+
+			if (chequeHeader.getChequeDetailList() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Cheque Details ";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+			List<ChequeDetail> chequeDetails = chequeHeader.getChequeDetailList();
+			for (ChequeDetail chequeDetail : chequeDetails) {
+				if (chequeDetail.getChequeDetailsID() == 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "ChequeDetails Id ";
+					return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				}
+
+			}
+
+			List<FinanceScheduleDetail> finScheduleDetails = financeScheduleDetailDAO
+					.getFinScheduleDetails(finReference, "", false);
+			financeDetail.getFinScheduleData().setFinanceScheduleDetails(finScheduleDetails);
+			financeDetail.getFinScheduleData()
+					.setFinanceMain(financeMainDAO.getFinanceMainById(finReference, "", false));
+
+			FinScheduleData finSchdData = validateChequeDetails(financeDetail);
+			if (CollectionUtils.isNotEmpty(finSchdData.getErrorDetails())) {
+				for (ErrorDetail errorDetail : finSchdData.getErrorDetails()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+			returnStatus = finServiceInstController.updateChequeDetailsinMaintainence(financeDetail, "");
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+
+		return returnStatus;
+	}
+
+	@Override
+	public WSReturnStatus updateChequeDetails(FinanceDetail financeDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		List<ErrorDetail> errorDetails;
+		String tableType = "_Temp";
+		try {
+			FinanceMain financeMain = null;
+			String finReference = financeDetail.getFinReference();
+			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+
+			// for logging purpose
+			APIErrorHandlerService.logReference(finReference);
+			errorDetails = chequeHeaderService.chequeValidationForUpdate(financeDetail, PennantConstants.method_Update,
+					tableType);
+			for (ErrorDetail errorDetail : errorDetails) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+						errorDetail.getParameters());
+				return returnStatus;
+			}
+
+			if (chequeHeader.getChequeDetailList() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Cheque Details ";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
+			List<FinanceScheduleDetail> finScheduleDetails = financeScheduleDetailDAO
+					.getFinScheduleDetails(finReference, tableType, false);
+			financeDetail.getFinScheduleData().setFinanceScheduleDetails(finScheduleDetails);
+			financeDetail.getFinScheduleData()
+					.setFinanceMain(financeMainDAO.getFinanceMainById(finReference, tableType, false));
+			FinScheduleData finSchdData = validateChequeDetails(financeDetail);
+			if (CollectionUtils.isNotEmpty(finSchdData.getErrorDetails())) {
+				for (ErrorDetail errorDetail : finSchdData.getErrorDetails()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+			returnStatus = finServiceInstController.updateCheque(financeDetail, tableType);
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+
+		return returnStatus;
+	}
+
 	/**
 	 * Method for nullify the response object to prepare valid response message.
 	 * 
@@ -2304,6 +2594,56 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 	}
 
+	@Override
+	public ChequeHeader getChequeDetails(String finReference) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		ChequeHeader response = new ChequeHeader();
+		// Mandatory validation
+		if (StringUtils.isBlank(finReference)) {
+			validationUtility.fieldLevelException();
+		}
+
+		// for logging purpose
+		APIErrorHandlerService.logReference(finReference);
+
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		} else {
+			int count = financeMainDAO.getFinanceCountById(finReference, "_View", false);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return response;
+			}
+		}
+		try {
+			response = chequeHeaderDAO.getChequeHeaderByRef(finReference, "_View");
+			if (response == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "No Cheque Details";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return response;
+			}
+
+			if (response != null) {
+				List<ChequeDetail> chequeDetailList = chequeDetailDAO.getChequeDetailList(response.getHeaderID(),
+						"_View");
+				response.setChequeDetailList(chequeDetailList);
+			}
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+		return response;
+	}
+
 	private void buildFinFeeForUpload(FinServiceInstruction finSrvcInst) {
 		for (FinFeeDetail feeDtl : finSrvcInst.getFinFeeDetails()) {
 			feeDtl.setFeeScheduleMethod("");
@@ -2338,6 +2678,26 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Autowired
 	public void setBranchDAO(BranchDAO branchDAO) {
 		this.branchDAO = branchDAO;
+	}
+
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
+		this.chequeHeaderService = chequeHeaderService;
+	}
+
+	@Autowired
+	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
+		this.chequeHeaderDAO = chequeHeaderDAO;
+	}
+
+	@Autowired
+	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
+		this.chequeDetailDAO = chequeDetailDAO;
 	}
 
 }

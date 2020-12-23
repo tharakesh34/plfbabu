@@ -126,4 +126,5 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	List<Long> getExcludeList(long id);
 
+	boolean isPresentmentInProcess(String finReference);
 }

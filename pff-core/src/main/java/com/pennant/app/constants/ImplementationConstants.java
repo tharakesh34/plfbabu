@@ -141,6 +141,7 @@ public class ImplementationConstants {
 		ALW_ADV_INTEMI_ADVICE_CREATION = getValueAsBoolean(extensions, "ALW_ADV_INTEMI_ADVICE_CREATION", false);
 		TAX_DFT_CR_INV_REQ = getValueAsBoolean(extensions, "TAX_DFT_CR_INV_REQ", false);
 		ALLOW_IND_AS = getValueAsBoolean(extensions, "ALLOW_IND_AS", false);
+		IND_AS_ACCOUNTING_REQ = getValueAsBoolean(extensions, "IND_AS_ACCOUNTING_REQ", false);
 		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
 		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", true);
 		ALLOW_DSF_CASHCLT = getValueAsBoolean(extensions, "ALLOW_DSF_CASHCLT", false);
@@ -205,6 +206,11 @@ public class ImplementationConstants {
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
 		ALLOW_EOD_INTERVAL_VALIDATION = getValueAsBoolean(extensions, "ALLOW_EOD_INTERVAL_VALIDATION", false);
 		DEFAULT_VAS_MODE_OF_PAYMENT = getValueAsBoolean(extensions, "DEFAULT_VAS_MODE_OF_PAYMENT", false);
+		PRESENTMENT_EXTRACT_DEALER_MAN = getValueAsBoolean(extensions, "PRESENTMENT_EXTRACT_DEALER_MAN", true);
+		ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE = getValueAsBoolean(extensions,
+				"ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE", false);
+		DEFAULT_VAS_MODE_OF_PAYMENT = getValueAsBoolean(extensions, "DEFAULT_VAS_MODE_OF_PAYMENT", false);
+
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -225,6 +231,9 @@ public class ImplementationConstants {
 		LPP_GST_DUE_ON = getValueAsString(extensions, "LPP_GST_DUE_ON", "A");
 		GST_SCHD_CAL_ON = getValueAsString(extensions, "GST_SCHD_CAL_ON", "I");
 		ALLOW_AMOIUNT_INTEGRAL_PART = getValueAsString(extensions, "ALLOW_AMOIUNT_INTEGRAL_PART", "Y");
+
+		PRESENTMENT_EXPORT_STATUS_MIN_LENGTH = getValueAsInt(extensions, "PRESENTMENT_EXPORT_STATUS_MIN_LENGTH", 1);
+		PRESENTMENT_EXPORT_STATUS_MAX_LENGTH = getValueAsInt(extensions, "PRESENTMENT_EXPORT_STATUS_MAX_LENGTH", 1);
 
 		// FIXME HL >>
 		VER_TV_COLL_ED_ADDR_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_ADDR_COLUMN", "PROPERTYCITY"); // HL>>FIXME "CITY" for HL
@@ -376,6 +385,7 @@ public class ImplementationConstants {
 	public static boolean ALW_ADV_INTEMI_ADVICE_CREATION;
 	public static boolean TAX_DFT_CR_INV_REQ = false;
 	public static boolean ALLOW_IND_AS;
+	public static boolean IND_AS_ACCOUNTING_REQ;
 	public static boolean ALLOW_AUTO_KNOCK_OFF;
 	public static boolean ALLOW_OLDEST_DUE;
 	public static boolean ALLOW_DSF_CASHCLT;
@@ -440,6 +450,8 @@ public class ImplementationConstants {
 	public static boolean ALLOW_LOAN_DOWNSIZING;
 	public static boolean LOAN_DOWNSIZING_ACCOUNTING_REQ;
 	public static boolean DEFAULT_VAS_MODE_OF_PAYMENT;
+	public static boolean PRESENTMENT_EXTRACT_DEALER_MAN;
+	public static boolean ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE;
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static
 	 * boolean ALLOW_LV_INITIATION_LOS; public static boolean ALLOW_RCU_INITIATION_LOS;
@@ -457,6 +469,8 @@ public class ImplementationConstants {
 	public static String CLIENTTYPE;
 	public static String COLLATERAL_ADJ;
 
+	public static int PRESENTMENT_EXPORT_STATUS_MIN_LENGTH;
+	public static int PRESENTMENT_EXPORT_STATUS_MAX_LENGTH;
 	// FIXME>>HL >>
 	/**
 	 * Technical verification collateral ED Address column Name
@@ -558,6 +572,14 @@ public class ImplementationConstants {
 	private static String getValueAsString(Map<String, Object> extendedConstants, String key, String defaultValue) {
 		try {
 			return (String) extendedConstants.computeIfAbsent(key, ft -> defaultValue);
+		} catch (Exception ex) {
+			return defaultValue;
+		}
+	}
+
+	private static int getValueAsInt(Map<String, Object> extendedConstants, String key, int defaultValue) {
+		try {
+			return (int) extendedConstants.computeIfAbsent(key, ft -> defaultValue);
 		} catch (Exception ex) {
 			return defaultValue;
 		}

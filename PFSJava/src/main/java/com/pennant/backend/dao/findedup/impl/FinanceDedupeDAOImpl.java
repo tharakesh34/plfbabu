@@ -58,6 +58,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinanceDedup model</b> class.<br>
@@ -176,6 +177,32 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 			logger.debug(e);
 		}
 		logger.debug(" Leaving ");
+	}
+
+	@Override
+	public List<FinanceDedup> fetchFinanceDedup(FinanceDedup financeDedup, String queryCode) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustCIF, FinanceType, FinReference");
+		sql.append(" From FinanceDedup_View");
+		sql.append(queryCode.trim());
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDedup);
+		RowMapper<FinanceDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceDedup.class);
+		List<FinanceDedup> list = null;
+
+		try {
+			list = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		} catch (DataAccessException e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return list;
+
 	}
 
 }

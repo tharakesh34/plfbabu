@@ -161,6 +161,7 @@ public class FeePostingController {
 				}
 			}
 		} else {
+			manualAdvise.setFinSource(PennantConstants.FINSOURCE_ID_API);
 			manualAdvise.setFinSourceId(PennantConstants.FINSOURCE_ID_API);
 			manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
@@ -253,7 +254,7 @@ public class FeePostingController {
 		}
 
 		//validate Advise Amount
-		if (manualAdvise.getAdviseAmount().compareTo(BigDecimal.ZERO) <= 0) {
+		if (manualAdvise.getAdviseAmount() == null || manualAdvise.getAdviseAmount().compareTo(BigDecimal.ZERO) <= 0) {
 			String[] errorParam = new String[1];
 			errorParam[0] = "AdviseAmount ";
 			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", errorParam));

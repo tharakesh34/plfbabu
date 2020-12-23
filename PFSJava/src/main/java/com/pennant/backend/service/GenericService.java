@@ -148,14 +148,14 @@ public abstract class GenericService<T> {
 			return;
 		}
 
-		String finReference = dd.getFinReference();
-
 		if (dd.getCustId() == null || dd.getCustId() <= 0) {
 			if (dm == DMSModule.FINANCE && dsm == DMSModule.COLLATERAL) {
-				if ((finReference != null)) {
-					dd.setCustId(dMSService.getCustomerIdByCollateral(finReference));
+				String collateralRef = dd.getReferenceId();
+				if ((collateralRef != null)) {
+					dd.setCustId(dMSService.getCustomerIdByCollateral(collateralRef));
 				}
 			} else if (dm == DMSModule.FINANCE) {
+				String finReference = dd.getFinReference();
 				if ((finReference != null)) {
 					dd.setCustId(dMSService.getCustomerIdByFin(finReference));
 				}

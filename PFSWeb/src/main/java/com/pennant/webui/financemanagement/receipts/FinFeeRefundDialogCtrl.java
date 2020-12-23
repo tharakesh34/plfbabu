@@ -187,6 +187,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	private static int tdsRoundingTarget = 0;
 	private String taxRoundMode = null;
 	private int taxRoundingTarget = 0;
+	private boolean isFinTDSApplicable = false;
 
 	protected Listheader listheader_FinFeeRefundList_PaidTDS;
 	protected Listheader listheader_FinFeeRefundList_TotPrvsRefundTDS;
@@ -724,6 +725,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 			this.finType.setValue(feeRefund.getFinType(), feeRefund.getFintypedesc());
 			this.finCcy.setValue(feeRefund.getFinCcy(), CurrencyUtil.getCcyDesc(feeRefund.getFinCcy()));
 			this.finBranch.setValue(feeRefund.getFinBranch(), feeRefund.getBranchdesc());
+			this.isFinTDSApplicable = feeRefund.isFinTDSApplicable();
 
 			FinScheduleData scheduleData = getFinanceDetail().getFinScheduleData();
 			FinanceMain financeMain = scheduleData.getFinanceMain();
@@ -963,7 +965,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		BigDecimal netTDS = fee.getNetTDS();
 		totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
 
-		if (fee.isTdsReq()) {
+		if (fee.isTdsReq() && this.isFinTDSApplicable) {
 			allocatedAmtTDS = (netTDS.multiply(allocatedAmtTOT)).divide(netAmountOriginal, 2, RoundingMode.HALF_DOWN);
 			allocatedAmtTDS = CalculationUtil.roundAmount(allocatedAmtTDS, tdsRoundMode, tdsRoundingTarget);
 			totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST).subtract(tdsPerc);
@@ -1079,6 +1081,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 				this.finType.setValue(main.getFinType(), main.getLovDescFinTypeName());
 				this.finCcy.setValue(main.getFinCcy(), CurrencyUtil.getCcyDesc(main.getFinCcy()));
 				this.finBranch.setValue(main.getFinBranch(), main.getLovDescFinBranchName());
+				this.isFinTDSApplicable = main.isTDSApplicable();
 
 				setFinanceDetail(finFeeRefundService.getFinanceDetailById(main.getFinReference()));
 				FinScheduleData scheduleData = getFinanceDetail().getFinScheduleData();

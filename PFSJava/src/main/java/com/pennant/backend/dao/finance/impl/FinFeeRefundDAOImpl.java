@@ -186,6 +186,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		if (type.contains("View")) {
 			sql.append(
 					" ,Fintype, FinBranch, FinCcy, lovDescCustCIF, LovDescCustShrtName, fintypedesc, branchdesc, custId ");
+			sql.append(" , FinTDSApplicable ");
 		}
 		sql.append(" FROM  FinFeeRefundHeader");
 		sql.append(StringUtils.trimToEmpty(type));

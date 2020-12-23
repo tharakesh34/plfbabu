@@ -302,30 +302,20 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		//Get Document Value from collateral extended fields.
 
-		/*for (Verification veri : verifications) {
-			
-			
-			String collRef = veri.getReferenceFor();
-			if (!collateralCOP.containsKey(collRef.concat(DOCVALUE))) {
-				Map<String, Object> valAmounts = technicalVerificationService.getCostOfPropertyValue(collRef,
-						veri.getCollateralType());
-				if (!valAmounts.isEmpty()) {
-					if (valAmounts.get(DOCVALUE) != null) {
-						collateralCOP.put(collRef.concat(DOCVALUE),
-								(PennantApplicationUtil.formateAmount(
-										new BigDecimal(valAmounts.get(DOCVALUE).toString()),
-										PennantConstants.defaultCCYDecPos)));
-					}
-					
-					if (valAmounts.get(TOTALVALUATIONASPE) != null) {
-						collateralCOP.put(collRef.concat(TOTALVALUATIONASPE),
-								new BigDecimal(valAmounts.get(TOTALVALUATIONASPE).toString()));
-					}
-				}
-			}
-		}*/
-		
-		
+		/*
+		 * for (Verification veri : verifications) {
+		 * 
+		 * 
+		 * String collRef = veri.getReferenceFor(); if (!collateralCOP.containsKey(collRef.concat(DOCVALUE))) {
+		 * Map<String, Object> valAmounts = technicalVerificationService.getCostOfPropertyValue(collRef,
+		 * veri.getCollateralType()); if (!valAmounts.isEmpty()) { if (valAmounts.get(DOCVALUE) != null) {
+		 * collateralCOP.put(collRef.concat(DOCVALUE), (PennantApplicationUtil.formateAmount( new
+		 * BigDecimal(valAmounts.get(DOCVALUE).toString()), PennantConstants.defaultCCYDecPos))); }
+		 * 
+		 * if (valAmounts.get(TOTALVALUATIONASPE) != null) { collateralCOP.put(collRef.concat(TOTALVALUATIONASPE), new
+		 * BigDecimal(valAmounts.get(TOTALVALUATIONASPE).toString())); } } } }
+		 */
+
 		for (Verification verf : verifications) {
 			for (CollateralSetup setup : financeDetail.getCollaterals()) {
 				if (verf.getCollateralType().equals(setup.getCollateralType())) {
@@ -1972,6 +1962,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		arg.put("verifications", verifications);
 		arg.put("tVerificationDialogCtrl", this);
 		arg.put("enqiryModule", enqiryModule);
+		arg.put("financeDetail", financeDetail);
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FinalValuationDialog.zul",
 					null, arg);

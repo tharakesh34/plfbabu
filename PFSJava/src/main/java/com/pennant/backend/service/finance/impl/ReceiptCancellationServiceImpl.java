@@ -1873,14 +1873,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				}
 
 				if (totalPriAmount.compareTo(BigDecimal.ZERO) > 0) {
-
 					// Finance Main Details Update
 					financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().subtract(totalPriAmount));
-					financeMainDAO.updateRepaymentAmount(finReference,
-							financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt())
-									.add(financeMain.getInsuranceAmt()),
-							financeMain.getFinRepaymentAmount(), financeMain.getFinStatus(),
-							FinanceConstants.FINSTSRSN_MANUAL, true, false);
+					financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
+					financeMain.setFinIsActive(true);
+					financeMain.setClosingStatus(null);
+
+					financeMainDAO.updateRepaymentAmount(financeMain);
 				}
 			}
 		}
@@ -1914,6 +1913,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 				}
 
+				manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				String adviseId = manualAdviseDAO.save(manualAdvise, TableType.MAIN_TAB);
 				manualAdvise.setAdviseID(Long.parseLong(adviseId));
 			}

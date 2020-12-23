@@ -206,7 +206,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 				} else {
 
 					FinFeeDetail befImage = feeDetail.getBefImage();
-					if (befImage.getRemainingFee().compareTo(feeDetail.getPaidAmount()) == 0
+					if (befImage != null && befImage.getRemainingFee().compareTo(feeDetail.getPaidAmount()) == 0
 							&& feeDetail.getTaxHeaderId() != null
 							&& (befImage.getRemainingFeeGST().compareTo(feeDetail.getPaidAmountGST()) != 0)) {
 

@@ -796,14 +796,19 @@
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
 											tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false">
 											<listhead sizable="true" style="background-color: #f39a36; color: white;">
-												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_IncomeExpense"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;text-align:left;" id="listheader_IncomeExpense"
 													label="${c:l('listheader_IncomeExpense.label')} ${c:l('listheader_IncomeTypeCategory.label')}" sort="auto"
 													hflex="min" />
-												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustInc_CustIncomeType"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;text-align:left;" id="listheader_CustInc_CustIncomeType"
 													label="${c:l('listheader_CustIncomeType.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustInc_CustIncome"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;text-align:left;" id="listheader_CustInc_Margin"
+													label="${c:l('listheader_Margin.label')}" sort="false" hflex="min" />
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;text-align:left;" id="listheader_CustInc_CustIncome"
 													label="${c:l('listheader_CustIncome.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_JointCust"
+												<listheader sclass="listheader-content"
+													style="color: #B3B3B3; font-size: 15px;text-align:left;" id="listheader_CustInc_CalculatedAmount"
+													label="${c:l('listheader_CalculatedAmount.label')}" sort="false" hflex="min" />
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;text-align:left;" id="listheader_JointCust"
 													label="${c:l('listheader_JointCust.label')}" sort="false" hflex="min" visible="false" width="0px" />
 											</listhead>
 										</listbox>

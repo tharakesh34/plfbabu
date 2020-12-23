@@ -55,6 +55,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 import org.apache.commons.beanutils.converters.DateConverter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -242,25 +243,21 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 			extendedFieldHeader.setNumberOfColumns(sourceCol.getExtendedFieldHeader().getNumberOfColumns());
 			extendedFieldHeader.setExtendedFieldDetails(new ArrayList<ExtendedFieldDetail>());
 			List<ExtendedFieldDetail> fieldDetails = sourceCol.getExtendedFieldHeader().getExtendedFieldDetails();
-			if (fieldDetails != null && !fieldDetails.isEmpty()) {
-				aCollateralStructure.setExtendedFieldHeader(extendedFieldHeader);
+			extendedFieldHeader.setTechnicalValuationDetailList(new ArrayList<ExtendedFieldDetail>());
+			List<ExtendedFieldDetail> techDetails = sourceCol.getExtendedFieldHeader()
+					.getTechnicalValuationDetailList();
+			aCollateralStructure.setExtendedFieldHeader(extendedFieldHeader);
+
+			if (CollectionUtils.isNotEmpty(techDetails)) {
+				for (ExtendedFieldDetail oldDetail : techDetails) {
+					ExtendedFieldDetail newDetail = getExtendedFieldDetails(oldDetail);
+					extendedFieldHeader.getTechnicalValuationDetailList().add(newDetail);
+				}
+			}
+
+			if (CollectionUtils.isNotEmpty(fieldDetails)) {
 				for (ExtendedFieldDetail oldDetail : fieldDetails) {
-					ExtendedFieldDetail newDetail = new ExtendedFieldDetail();
-					newDetail.setFieldName(oldDetail.getFieldName());
-					newDetail.setFieldLabel(oldDetail.getFieldLabel());
-					newDetail.setFieldSeqOrder(oldDetail.getFieldSeqOrder());
-					newDetail.setFieldType(oldDetail.getFieldType());
-					newDetail.setFieldConstraint(oldDetail.getFieldConstraint());
-					newDetail.setFieldPrec(oldDetail.getFieldPrec());
-					newDetail.setFieldList(oldDetail.getFieldList());
-					newDetail.setFieldDefaultValue(oldDetail.getFieldDefaultValue());
-					newDetail.setFieldMinValue(oldDetail.getFieldMinValue());
-					newDetail.setFieldMaxValue(oldDetail.getFieldMaxValue());
-					newDetail.setFieldLength(oldDetail.getFieldLength());
-					newDetail.setFieldMandatory(oldDetail.isFieldMandatory());
-					newDetail.setFieldUnique(oldDetail.isFieldUnique());
-					newDetail.setVersion(1);
-					newDetail.setRecordType(PennantConstants.RCD_ADD);
+					ExtendedFieldDetail newDetail = getExtendedFieldDetails(oldDetail);
 					extendedFieldHeader.getExtendedFieldDetails().add(newDetail);
 				}
 			}
@@ -270,6 +267,28 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 		doShowDialogPage(aCollateralStructure, isCopyProcess);
 
 		logger.debug("Leaving");
+	}
+
+	private ExtendedFieldDetail getExtendedFieldDetails(ExtendedFieldDetail oldDetail) {
+		ExtendedFieldDetail newDetail = new ExtendedFieldDetail();
+
+		newDetail.setFieldName(oldDetail.getFieldName());
+		newDetail.setFieldLabel(oldDetail.getFieldLabel());
+		newDetail.setFieldSeqOrder(oldDetail.getFieldSeqOrder());
+		newDetail.setFieldType(oldDetail.getFieldType());
+		newDetail.setFieldConstraint(oldDetail.getFieldConstraint());
+		newDetail.setFieldPrec(oldDetail.getFieldPrec());
+		newDetail.setFieldList(oldDetail.getFieldList());
+		newDetail.setFieldDefaultValue(oldDetail.getFieldDefaultValue());
+		newDetail.setFieldMinValue(oldDetail.getFieldMinValue());
+		newDetail.setFieldMaxValue(oldDetail.getFieldMaxValue());
+		newDetail.setFieldLength(oldDetail.getFieldLength());
+		newDetail.setFieldMandatory(oldDetail.isFieldMandatory());
+		newDetail.setFieldUnique(oldDetail.isFieldUnique());
+		newDetail.setVersion(1);
+		newDetail.setRecordType(PennantConstants.RCD_ADD);
+
+		return newDetail;
 	}
 
 	/**

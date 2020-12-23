@@ -921,9 +921,9 @@
 													<label id="label_FinanceMainDialog_NumberOfTerms" value="${c:l('label_FinanceMainDialog_NumberOfTerms.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
-														<intbox id="numberOfTerms" width="50px" maxlength="3" />
+														<intbox id="numberOfTerms" width="50px" maxlength="4" />
 														<space spacing="2px" />
-														<intbox id="numberOfTerms_two" readonly="true" width="50px" maxlength="3" tabindex="-1" />
+														<intbox id="numberOfTerms_two" readonly="true" width="50px" maxlength="4" tabindex="-1" />
 													</hbox>
 													<label id="label_FinanceMainDialog_FinRepaymentAmount" value="${c:l('label_FinanceMainDialog_FinRepaymentAmount.value')}" />
 													<currencyBox id="finRepaymentAmount" />

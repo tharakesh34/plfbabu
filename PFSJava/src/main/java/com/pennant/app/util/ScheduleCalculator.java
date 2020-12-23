@@ -5666,7 +5666,7 @@ public class ScheduleCalculator {
 		profitBalance = prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(curSchd.getProfitSchd())
 				.subtract(prvSchd.getCpzAmount());
 
-		if (prvSchd.isCpzOnSchDate()) {
+		if (cpzPOSIntact) {
 			profitBalance = profitBalance.add(prvSchd.getCpzBalance());
 		}
 
@@ -9449,7 +9449,11 @@ public class ScheduleCalculator {
 					curSchd.setCpzAmount(curSchd.getProfitBalance());
 				}
 				if (cpzPOSIntact) {
-					curSchd.setCpzBalance(curSchd.getCpzAmount());
+					if (!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_MORTEMIHOLIDAY)) {
+						curSchd.setCpzBalance(curSchd.getProfitBalance());
+					} else {
+						curSchd.setCpzBalance(BigDecimal.ZERO);
+					}
 				}
 			}
 

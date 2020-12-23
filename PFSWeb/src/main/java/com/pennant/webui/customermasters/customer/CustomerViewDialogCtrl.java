@@ -1599,7 +1599,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			for (CustomerIncome customerIncome : incomes) {
 				String category = StringUtils.trimToEmpty(customerIncome.getCategory());
 				if (customerIncome.getIncomeExpense().equals(PennantConstants.INCOME)) {
-					totIncome = totIncome.add(customerIncome.getIncome());
+					totIncome = totIncome.add(customerIncome.getCalculatedAmount());
 					if (incomeMap.containsKey(category)) {
 						incomeMap.get(category).add(customerIncome);
 					} else {
@@ -1608,7 +1608,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						incomeMap.put(category, list);
 					}
 				} else {
-					totExpense = totExpense.add(customerIncome.getIncome());
+					totExpense = totExpense.add(customerIncome.getCalculatedAmount());
 					if (expenseMap.containsKey(category)) {
 						expenseMap.get(category).add(customerIncome);
 					} else {
@@ -1644,19 +1644,21 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						cell = new Listcell("");
 						cell.setParent(item);
 						cell = new Listcell(customerIncome.getIncomeTypeDesc());
-						cell.setStyle("font-size:14px;font-weight: normal;");
+						cell.setStyle("font-size:14px;font-weight: normal; text-align:left;");
 						cell.setParent(item);
-						total = total.add(customerIncome.getIncome());
+						cell = new Listcell(
+								PennantApplicationUtil.amountFormate(customerIncome.getMargin(), ccyFormatter));
+						cell.setStyle("font-size: 14px;font-weight: normal; text-align:left;");
+						cell.setParent(item);
 						cell = new Listcell(
 								PennantApplicationUtil.amountFormate(customerIncome.getIncome(), ccyFormatter));
-						cell.setStyle("text-align:right; font-size: 14px;");
+						cell.setStyle("font-size: 14px;font-weight: normal; text-align:left;");
 						cell.setParent(item);
-						cell = new Listcell();
-						cb = new Checkbox();
-						cb.setDisabled(true);
-						cb.setChecked(customerIncome.isJointCust());
-						cb.setParent(cell);
+						BigDecimal calculatedAmount = customerIncome.getCalculatedAmount();
+						cell = new Listcell(PennantApplicationUtil.amountFormate(calculatedAmount, ccyFormatter));
+						cell.setStyle("font-size: 14px;font-weight: normal; text-align:right;");
 						cell.setParent(item);
+						total = total.add(calculatedAmount);
 
 						item.setAttribute("data", customerIncome);
 						ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerIncomeItemDoubleClicked");
@@ -1664,30 +1666,38 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 					item = new Listitem();
 					cell = new Listcell("Total");
-					cell.setStyle("cursor:default;font-size:14px;font-weight: normal;;");
+					cell.setStyle("cursor:default;font-size:14px;font-weight: normal;text-align:left;");
 					cell.setParent(item);
 					cell = new Listcell(PennantApplicationUtil.amountFormate(total, ccyFormatter));
-					cell.setSpan(2);
-					cell.setStyle("font-size:14px;font-weight: normal;; text-align:right;cursor:default");
+					cell.setSpan(4);
+					cell.setStyle("font-size:14px;font-weight: normal;cursor:default; text-align:right;");
 					cell.setParent(item);
 					cell = new Listcell();
-					cell.setSpan(3);
-					cell.setStyle("cursor:default: font-size:14px;font-weight: normal;;");
+					cell.setSpan(4);
+					cell.setStyle("cursor:default");
+					cell.setParent(item);
+					cell = new Listcell();
+					cell.setSpan(4);
+					cell.setStyle("cursor:default; font-size:14px;font-weight: normal;");
 					cell.setParent(item);
 					this.listBoxCustomerIncome.appendChild(item);
 				}
 			}
 			item = new Listitem();
 			cell = new Listcell("Gross Income");
-			cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;");
+			cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;text-align:left;");
 			cell.setParent(item);
 			cell = new Listcell(PennantApplicationUtil.amountFormate(totIncome, ccyFormatter));
-			cell.setSpan(2);
+			cell.setSpan(4);
 			cell.setStyle("font-size:14px;font-weight: normal;; text-align:right;cursor:default");
 			cell.setParent(item);
 			cell = new Listcell();
-			cell.setSpan(3);
-			cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;");
+			cell.setSpan(4);
+			cell.setStyle("cursor:default");
+			cell.setParent(item);
+			cell = new Listcell();
+			cell.setSpan(4);
+			cell.setStyle("cursor:default; font-size:14px;font-weight: normal;");
 			cell.setParent(item);
 			this.listBoxCustomerIncome.appendChild(item);
 		}
@@ -1726,14 +1736,18 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 					item = new Listitem();
 					cell = new Listcell("Total");
-					cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;");
+					cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;text-align:left;");
 					cell.setParent(item);
 					cell = new Listcell(PennantApplicationUtil.amountFormate(total, ccyFormatter));
-					cell.setSpan(2);
+					cell.setSpan(4);
 					cell.setStyle("font-size:14px;font-weight: normal;;text-align:right;cursor:default");
 					cell.setParent(item);
 					cell = new Listcell();
-					cell.setSpan(2);
+					cell.setSpan(4);
+					cell.setParent(item);
+					cell = new Listcell();
+					cell.setSpan(4);
+					cell.setStyle("cursor:default");
 					cell.setParent(item);
 					cell = new Listcell();
 					cell.setStyle("cursor:default");
@@ -1743,28 +1757,36 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			item = new Listitem();
 			cell = new Listcell("Gross Expense");
-			cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;");
+			cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;text-align:left;");
 			cell.setParent(item);
 			cell = new Listcell(PennantApplicationUtil.amountFormate(totExpense, ccyFormatter));
-			cell.setSpan(2);
+			cell.setSpan(4);
 			cell.setStyle("text-align:right;cursor:default;  font-size:14px;font-weight: normal;;");
 			cell.setParent(item);
 			cell = new Listcell();
-			cell.setSpan(3);
+			cell.setSpan(4);
+			cell.setStyle("cursor:default");
+			cell.setParent(item);
+			cell = new Listcell();
+			cell.setSpan(4);
 			cell.setStyle("cursor:default");
 			cell.setParent(item);
 			this.listBoxCustomerIncome.appendChild(item);
 		}
 		item = new Listitem();
 		cell = new Listcell("Net Income");
-		cell.setStyle("font-size:14px;font-weight: normal;;");
+		cell.setStyle("font-size:14px;font-weight: normal;;text-align:left;");
 		cell.setParent(item);
 		cell = new Listcell(PennantApplicationUtil.amountFormate(totIncome.subtract(totExpense), ccyFormatter));
-		cell.setSpan(2);
+		cell.setSpan(4);
 		cell.setStyle("text-align:right; font-size:14px;font-weight: normal;;");
 		cell.setParent(item);
 		cell = new Listcell();
-		cell.setSpan(3);
+		cell.setSpan(4);
+		cell.setStyle("cursor:default");
+		cell.setParent(item);
+		cell = new Listcell();
+		cell.setSpan(4);
 		cell.setStyle("cursor:default");
 		cell.setParent(item);
 		this.listBoxCustomerIncome.appendChild(item);

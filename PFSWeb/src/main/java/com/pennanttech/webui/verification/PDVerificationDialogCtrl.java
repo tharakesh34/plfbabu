@@ -51,6 +51,7 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -113,6 +114,8 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private transient CustomerDetailsService customerDetailsService;
 	@Autowired
 	private transient CustomerAddresService customerAddresService;
+	@Autowired
+	private JointAccountDetailService jointAccountDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -857,8 +860,24 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						vrf.setPersonalDiscussion(item);
 					}
 				}
+				if (vrf.getReferenceType().equals("Primary")) {
+					result.add(vrf);
+				} else if (vrf.getReferenceType().equals("Co-applicant")) {
+					// getting co-applicants based on each verification
+					JointAccountDetail coApplicant = jointAccountDetailService.getJountAccountDetailByRef(keyReference,
+							vrf.getReference(), "_Temp");
+					// retrieving verifications from verification_pd table
+					PersonalDiscussion pd = personalDiscussionService.getPersonalDiscussion(vrf.getId(), "_view");
+					if (coApplicant != null) {
+						result.add(vrf);
+					} else {
+						if (pd != null) {
+							result.add(vrf);
+						}
+					}
+				}
 			}
-			return verifications;
+			return result;
 		}
 		for (Verification item : verifications) {
 			if (item.getReference().equals(custCif)) {

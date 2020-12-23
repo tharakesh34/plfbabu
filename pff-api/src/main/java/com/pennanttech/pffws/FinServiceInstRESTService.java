@@ -8,6 +8,7 @@ import javax.ws.rs.Produces;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.LoanPendingDetails;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
@@ -119,5 +120,25 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/updateCovenants")
 	public WSReturnStatus updateCovenants(FinanceDetail financeDetail) throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/chequeDetailsMaintainence")
+	public WSReturnStatus saveChequeDetails(FinanceDetail financeDetail) throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/createChequeDetails")
+	public WSReturnStatus createChequeDetails(FinanceDetail financeDetail) throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/updateChequeDetailsInMaintainence")
+	public WSReturnStatus updateChequeDetailsInMaintainence(FinanceDetail financeDetail) throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/updateChequeDetails")
+	public WSReturnStatus updateChequeDetails(FinanceDetail financeDetail) throws ServiceException;
+
+	@GET
+	@Path("/loanInstructionService/getChequeDetails/{finReference}")
+	public ChequeHeader getChequeDetails(@PathParam("finReference") String finReference) throws ServiceException;
 
 }

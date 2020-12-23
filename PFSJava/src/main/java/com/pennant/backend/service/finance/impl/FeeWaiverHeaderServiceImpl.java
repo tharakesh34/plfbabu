@@ -82,6 +82,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
+import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -92,7 +93,6 @@ import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 import com.pennant.backend.model.finance.FinODDetails;
-import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -154,6 +154,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private ReceiptCalculator receiptCalculator;
 	private RepaymentPostingsUtil repayPostingUtil;
 	private FinanceProfitDetailDAO profitDetailsDAO;
+	private PresentmentDetailDAO presentmentDetailDAO;
 
 	public FeeWaiverHeaderServiceImpl() {
 		super();
@@ -179,11 +180,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 			List<FeeWaiverDetail> detailList = new ArrayList<FeeWaiverDetail>();
 
-			List<FinReceiptHeader> list = finReceiptHeaderDAO.getReceiptHeaderByRef(finReference,
-					RepayConstants.RECEIPTTYPE_RECIPT, "_Temp");
+			boolean receiptExists = finReceiptHeaderDAO.isReceiptExists(finReference, "_Temp");
 
-			if (CollectionUtils.isNotEmpty(list) && list.size() > 0) {
-
+			if (receiptExists) {
 				feeWaiverHeader.setAlwtoProceed(false);
 				return feeWaiverHeader;
 			}
@@ -210,6 +209,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 					if (manualAdvise.getBounceID() != 0) {
 						receivableAmt = receivableAmt.add(recAmount);
+						adviseAmt = receivableAmt;
 						receivedAmt = receivedAmt.add(manualAdvise.getPaidAmount().add(manualAdvise.getPaidCGST())
 								.add(manualAdvise.getPaidSGST().add(manualAdvise.getPaidIGST())
 										.add(manualAdvise.getPaidUGST())));
@@ -357,6 +357,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				feeWaiverDetail.setWaivedAmount(waivedAmt);
 				feeWaiverDetail.setBalanceAmount(
 						feeWaiverDetail.getReceivableAmount().subtract(feeWaiverDetail.getCurrWaiverAmount()));
+				feeWaiverDetail.setReceivedAmount(receivedAmt);
 				detailList.add(feeWaiverDetail);
 			}
 
@@ -455,11 +456,11 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				taxSplit = GSTCalculator.getExclusiveGST(receivableAmt, gstPercentages);
 
 				if (feeWaiverDetail.getAdviseAmount() != null) {
-					actualRevAmount = feeWaiverDetail.getAdviseAmount().subtract(feeWaiverDetail.getWaivedAmount());
+					actualRevAmount = feeWaiverDetail.getAdviseAmount().subtract(feeWaiverDetail.getCurrActualWaiver());
 				}
 				feeWaiverDetail.setActualReceivable(actualRevAmount);
 				feeWaiverDetail
-						.setReceivableGST(feeWaiverDetail.getAdviseGST().subtract(feeWaiverDetail.getWaiverGST()));
+						.setReceivableGST(feeWaiverDetail.getAdviseGST().subtract(feeWaiverDetail.getCurrWaiverGST()));
 				feeWaiverDetail.setReceivableAmount(actualRevAmount.add(feeWaiverDetail.getReceivableGST()));
 			} else {
 				taxSplit = GSTCalculator.getInclusiveGST(receivableAmt, gstPercentages);
@@ -876,13 +877,14 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		Date appDate = SysParamUtil.getAppDate();
 		if (financeDetail != null) {
 			FinanceProfitDetail pftDetail = profitDetailsDAO.getFinProfitDetailsById(finReference);
+			boolean isPresentmentInProcess = presentmentDetailDAO.isPresentmentInProcess(finReference);
 
 			// Overdue Details
 			List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(finReference);
 
 			financeMain = repayPostingUtil.updateStatus(financeMain, appDate,
 					financeDetail.getFinScheduleData().getFinanceScheduleDetails(), pftDetail, overdueList, null,
-					false);
+					isPresentmentInProcess);
 
 			if (!financeMain.isFinIsActive()) {
 				financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
@@ -2487,4 +2489,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		this.repayPostingUtil = repayPostingUtil;
 	}
 
+	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
+		this.presentmentDetailDAO = presentmentDetailDAO;
+	}
 }

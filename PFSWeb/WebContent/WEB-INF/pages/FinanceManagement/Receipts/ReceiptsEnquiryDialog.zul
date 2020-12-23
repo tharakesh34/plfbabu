@@ -242,7 +242,7 @@
 													<extendedcombobox id="cancelReason" />
 
 													<label id="label_ReceiptDialog_CancelRemark" value="${c:l('label_ReceiptDialog_CancelRemark.value')}" />
-													<extendedcombobox id="cancelRemarks" />
+													<textbox id="cancelRemarks" />
 												</row>
 												<row id="row_CancelDate" visible="false">
 													<label id="label_ReceiptDialog_CancelDate" value="${c:l('label_ReceiptDialog_CancelDate.value')}" />

@@ -472,4 +472,6 @@ public interface FinanceMainDAO {
 	void updateTdsApplicable(FinanceMain financeMain);
 
 	boolean ispmayApplicable(String finReference, String type);
+
+	void updateRepaymentAmount(FinanceMain financeMain);
 }

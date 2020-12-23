@@ -1820,11 +1820,27 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		List<ErrorDetail> errors = mandateService.doValidations(aMandate);
 		if (errors != null && errors.size() > 0) {
 			for (ErrorDetail error : errors) {
-				WrongValueException wa = new WrongValueException(
-						Path.getComponent("/outerIndexWindow/window_MandateDialog/" + error.getField()),
-						MessageFormats.format(error.getMessage(),
-								new String[] { Labels.getLabel("label_MandateDialog_BarCodeNumber.value") }));
-				wve.add(wa);
+				if (error.getCode().equalsIgnoreCase("90404")) {
+					WrongValueException wa = new WrongValueException(
+							Path.getComponent("/outerIndexWindow/window_MandateDialog/" + error.getField()),
+							MessageFormats.format(error.getMessage(),
+									new String[] { Labels.getLabel("label_MandateDialog_BarCodeNumber.value") }));
+					wve.add(wa);
+				}
+				if (error.getCode().equalsIgnoreCase("90502")) {
+					WrongValueException wa = new WrongValueException(
+							Path.getComponent("/outerIndexWindow/window_MandateDialog/" + error.getField()),
+							MessageFormats.format(error.getMessage(),
+									new String[] { Labels.getLabel("label_MandateDialog_AccHolderName.value") }));
+					wve.add(wa);
+				}
+				if (error.getCode().equalsIgnoreCase("90237")) {
+					WrongValueException wa = new WrongValueException(
+							Path.getComponent("/outerIndexWindow/window_MandateDialog/" + error.getField()),
+							MessageFormats.format(error.getMessage(),
+									new String[] { Labels.getLabel("label_MandateDialog_JointAccHolderName.value") }));
+					wve.add(wa);
+				}
 			}
 		}
 

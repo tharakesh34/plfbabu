@@ -876,6 +876,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		BigDecimal totGSTAmt = BigDecimal.ZERO;
 		BigDecimal totTotalAmt = BigDecimal.ZERO;
 
+		BigDecimal receivedAmt = BigDecimal.ZERO;
 		BigDecimal totReceivedAmt = BigDecimal.ZERO;
 		BigDecimal totWaivedAmt = BigDecimal.ZERO;
 		BigDecimal totBalanceAmt = BigDecimal.ZERO;
@@ -932,9 +933,9 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 					lc = new Listcell(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, ccyFormatter));
 					totReceivedAmt = totReceivedAmt.add(BigDecimal.ZERO);
 				} else {
-					totReceivedAmt = detail.getReceivedAmount();
+					receivedAmt = detail.getReceivedAmount();
 					lc = new Listcell(PennantApplicationUtil.amountFormate(totReceivedAmt, ccyFormatter));
-					totReceivedAmt = totReceivedAmt.add(totReceivedAmt);
+					totReceivedAmt = receivedAmt.add(totReceivedAmt);
 				}
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -1248,7 +1249,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 			if (feeWaiverDetail.getAdviseId() == detail.getAdviseId()) {
 				//PSD#:145831
-				BigDecimal balanceAmount = detail.getBalanceAmount();
+				BigDecimal balanceAmount = detail.getReceivableAmount();
 				if (balanceAmount.compareTo(amount) == -1) {
 
 					throw new WrongValueException(currWaivedAmt,

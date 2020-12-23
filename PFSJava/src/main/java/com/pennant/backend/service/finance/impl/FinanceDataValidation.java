@@ -140,6 +140,7 @@ import com.pennant.backend.service.customermasters.CustomerEMailService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.mandate.MandateService;
+import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
@@ -220,6 +221,7 @@ public class FinanceDataValidation {
 	private OCRHeaderService ocrHeaderService;
 	private CovenantTypeDAO covenantTypeDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
+	private ChequeHeaderService chequeHeaderService;
 
 	public void setQueryCategoryDAO(QueryCategoryDAO queryCategoryDAO) {
 		this.queryCategoryDAO = queryCategoryDAO;
@@ -1687,6 +1689,13 @@ public class FinanceDataValidation {
 			}
 
 			errorDetails = documentValidation(financeDetail);
+			if (!errorDetails.isEmpty()) {
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
+			}
+
+			if (financeDetail.getChequeHeader() != null)
+				errorDetails = chequeHeaderService.chequeValidation(financeDetail, PennantConstants.VLD_CRT_LOAN, "");
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;

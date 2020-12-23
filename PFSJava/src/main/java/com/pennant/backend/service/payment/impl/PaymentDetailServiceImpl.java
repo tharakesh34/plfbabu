@@ -781,7 +781,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 				advise.setReservedAmt(amount.negate());
 			}
 
-			advise.setBalanceAmt(amount.negate());
+			// TODO: FIX ME : srikanth.m to check for CD loans
+			//advise.setBalanceAmt(amount.negate());
 			getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
 
 			// Delete Reserved Log against Advise and Receipt Seq ID

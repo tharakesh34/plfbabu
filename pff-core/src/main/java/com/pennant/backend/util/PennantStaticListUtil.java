@@ -347,7 +347,7 @@ public class PennantStaticListUtil {
 
 	private static List<ValueLabel> npaPaymentTypesList;
 
-	private static List<ValueLabel> receiptModeWithOnline;
+	private static List<ValueLabel> receiptModeWithOnline = new ArrayList<>();
 
 	private static List<ValueLabel> ocrApplicableList;
 	private static List<ValueLabel> ocrContributorList;
@@ -3619,31 +3619,10 @@ public class PennantStaticListUtil {
 	}
 
 	public static List<ValueLabel> getReceiptModesByFeePayment() {
-		if (receiptModeWithOnline == null) {
-
-			receiptModeWithOnline = new ArrayList<ValueLabel>(7);
-			receiptModeWithOnline
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASH, Labels.getLabel("label_ReceiptMode_Cash")));
-			receiptModeWithOnline.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_CHEQUE, Labels.getLabel("label_ReceiptMode_Cheque")));
-			receiptModeWithOnline
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_DD, Labels.getLabel("label_ReceiptMode_DD")));
-			receiptModeWithOnline
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_NEFT, Labels.getLabel("label_ReceiptMode_NEFT")));
-			receiptModeWithOnline
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_RTGS, Labels.getLabel("label_ReceiptMode_RTGS")));
-			receiptModeWithOnline
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_IMPS, Labels.getLabel("label_ReceiptMode_IMPS")));
-			receiptModeWithOnline.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXCESS,
-					Labels.getLabel("label_ReceiptMode_ExcessAmountOnly")));
-			receiptModeWithOnline.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_ReceiptMode_ESCROW")));
-			receiptModeWithOnline.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_MOBILE, Labels.getLabel("label_ReceiptMode_MOBILE")));
-
+		if (receiptModeWithOnline.isEmpty()) {
+			receiptModeWithOnline.addAll(getReceiptModes());
 			receiptModeWithOnline.add(new ValueLabel(RepayConstants.RECEIPTMODE_ONLINE,
 					Labels.getLabel("label_ReceiptPaymentMode_ONLINE")));
-
 		}
 
 		return receiptModeWithOnline;
@@ -4408,6 +4387,11 @@ public class PennantStaticListUtil {
 				.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DD, Labels.getLabel("label_PaymentType_DD")));
 		paymentTypes
 				.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IFT, Labels.getLabel("label_PaymentType_IFT")));
+
+		if (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE) {
+			paymentTypes.add(
+					new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CASH, Labels.getLabel("label_PaymentType_CASH")));
+		}
 
 		dmsDocumentStatus.add(new ValueLabel(DmsDocumentConstants.DMS_DOCUMENT_STATUS_SUCCESS,
 				Labels.getLabel("label_DmsDocumentStatus_Success")));

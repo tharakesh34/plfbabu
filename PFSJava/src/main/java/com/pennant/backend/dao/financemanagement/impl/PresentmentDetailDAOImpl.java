@@ -1857,4 +1857,30 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
+
+	@Override
+	public boolean isPresentmentInProcess(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" count(*)");
+		sql.append(" From PresentmentDetails");
+		sql.append(" Where FinReference = :FinReference and status = 'A'");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		;
+		source.addValue("FinReference", finReference);
+
+		logger.debug(Literal.LEAVING);
+
+		try {
+			return (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) ? true : false;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return false;
+	}
 }

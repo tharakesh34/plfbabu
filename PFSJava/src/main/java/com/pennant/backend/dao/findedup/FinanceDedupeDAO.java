@@ -63,4 +63,6 @@ public interface FinanceDedupeDAO {
 
 	void moveData(String finReference, String type);
 
+	List<FinanceDedup> fetchFinanceDedup(FinanceDedup financeDedup, String queryCode);
+
 }

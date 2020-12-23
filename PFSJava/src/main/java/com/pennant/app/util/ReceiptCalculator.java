@@ -3231,7 +3231,7 @@ public class ReceiptCalculator implements Serializable {
 			taxSplit.setAmount(penaltyBal);
 			taxSplit.setTaxType(taxType);
 			taxSplit = getGST(receiptData.getFinanceDetail(), taxSplit);
-			allocate.setWaivedGST(taxSplit.gettGST());
+			//allocate.setWaivedGST(taxSplit.gettGST());
 			penaltyBal = penaltyBal.add(taxSplit.gettGST());
 		}
 		if (allocate.isTdsReq()) {

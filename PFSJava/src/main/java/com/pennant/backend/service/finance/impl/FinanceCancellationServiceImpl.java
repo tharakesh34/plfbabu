@@ -442,6 +442,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		//Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
+		reasonDetailDAO.deleteCancelReasonDetails(financeMain.getFinReference());
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}

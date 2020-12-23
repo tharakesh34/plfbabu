@@ -667,6 +667,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			} else {
 				statementOfAccount.setCustGSTIN(URD);
 			}
+
 		}
 
 		BigDecimal ccyMinorCcyUnits = statementOfAccount.getCcyMinorCcyUnits();
@@ -2096,7 +2097,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 												rHPaymentBouncedFor = rHPaymentBouncedFor.concat(finRef);
 											}
 											soaTranReport.setEvent(rHPaymentBouncedFor);
-											soaTranReport.setTransactionDate(receiptDate);
+											soaTranReport.setTransactionDate(manualAdvise.getPostDate());
 											soaTranReport.setValueDate(finReceiptHeader.getBounceDate());
 											soaTranReport.setCreditAmount(BigDecimal.ZERO);
 											soaTranReport.setDebitAmount(finReceiptDetail.getAmount());

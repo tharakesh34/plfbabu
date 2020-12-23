@@ -955,9 +955,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finGrcMaxRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.finGrcMaxRate.setScale(9);
 
-		this.finMinTerm.setMaxlength(3);
-		this.finMaxTerm.setMaxlength(3);
-		this.finDftTerms.setMaxlength(3);
+		this.finMinTerm.setMaxlength(PennantConstants.NUMBER_OF_TERMS_LENGTH);
+		this.finMaxTerm.setMaxlength(PennantConstants.NUMBER_OF_TERMS_LENGTH);
+		this.finDftTerms.setMaxlength(PennantConstants.NUMBER_OF_TERMS_LENGTH);
 
 		this.finODRpyTries.setMaxlength(3);
 
@@ -3742,7 +3742,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			if (getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT)
 					|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-				aFinanceType.setODChargeAmtOrPerc(PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), format));
+				aFinanceType.setODChargeAmtOrPerc(
+						PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), format));
 			} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {

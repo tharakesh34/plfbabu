@@ -348,6 +348,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 				presement.setChequeDate(rs.getTimestamp("CHEQUEDATE"));
 			}
 			presement.setUtilityCode(rs.getString("UTILITYCODE"));
+			presement.setSetilmentDate(SysParamUtil.getAppValueDate());
 
 			return presement;
 		}
@@ -362,7 +363,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" UMRN_NO , BANK_NAME, MICR_CODE, AccountNo, DEST_ACC_HOLDER, ACC_TYPE, BANK_ADDRESS, RESUB_FLAG,");
 		sql.append(
 				" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID, CycleDate,PARTNER_BANK,IFSC,");
-		sql.append(" ChequeSerialNo, ChequeDate, UtilityCode) ");
+		sql.append(" ChequeSerialNo, ChequeDate, UtilityCode");
+		sql.append(", SETILMENT_DATE, CUST_CIF, PDC_BY_NAME )");
 		sql.append(" values( :TxnReference,");
 
 		if (presentment.getEntityCode() == 0) {
@@ -376,7 +378,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" :UmrnNo , :BankName, :MicrCode, :AccountNo, :DestAccHolder, :AccType, :BankAddress, :ResubFlag,");
 		sql.append(
 				" :OrginSystem, :DataGenDate , :UserID, :BatchId, :JobId , :PickupBatchId, :CycleDate, :partnerBankName, :IFSC,");
-		sql.append(" :ChequeSerialNo, :ChequeDate, :UtilityCode)");
+		sql.append(" :ChequeSerialNo, :ChequeDate, :UtilityCode");
+		sql.append(", :setilmentDate, :customerId, :destAccHolder ) ");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentment);
 		try {

@@ -123,7 +123,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	}
 
 	@Override
-	public void sendReqest(MandateData mandateData) {
+	public DataEngineStatus sendReqest(MandateData mandateData) {
 
 		long processId = mandateData.getProcess_Id();
 		Date fromDate = mandateData.getFromDate();
@@ -154,7 +154,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
 				SysParamUtil.getAppValueDate());
 
-		genetare(dataEngine, userName, filterMap, parameterMap);
+		return genetare(dataEngine, userName, filterMap, parameterMap);
 	}
 
 	/**
@@ -630,7 +630,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				remarks.append("Customer Code");
 			}
 
-			if (!StringUtils.equals(mandate.getMICR(), respMandate.getMICR())) {
+			if (respMandate.getMICR() != null && !mandate.getMICR().equals(respMandate.getMICR())) {
 				if (remarks.length() > 0) {
 					remarks.append(", ");
 				}

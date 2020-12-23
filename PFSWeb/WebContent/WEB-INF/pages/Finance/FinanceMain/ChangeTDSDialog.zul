@@ -73,7 +73,7 @@
 										<label id="label_ChangeTDS_CustCIF" value="${c:l('label_ChangeTDS_CustCIF.label')}" />
 										<textbox id="custCIF" width="200px" maxlength="19" readonly="true" />
 										<label id="label_ChangeTDS_CustShrtName" value="${c:l('label_ChangeTDS_CustShrtName.label')}" />
-										<textbox id="custShrtName" width="200px" maxlength="50" readonly="true" />
+										<textbox id="custShrtName" width="200px" maxlength="100" readonly="true" />
 									</row>
 									<row>
 										<label id="label_ChangeTDS_CustDocType" value="${c:l('label_ChangeTDS_FinType.label')}" />

@@ -25,6 +25,7 @@ public class FinFeeRefundHeader extends AbstractWorkflowEntity implements Entity
 	private String branchdesc;
 	private String finCcy;
 	private long custId;
+	private boolean finTDSApplicable;
 	private List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>(1);
 	private List<FinFeeRefundDetails> finFeeRefundDetails = new ArrayList<FinFeeRefundDetails>(1);
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>(1);
@@ -43,6 +44,7 @@ public class FinFeeRefundHeader extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("finFeeDetailList");
 		excludeFields.add("finFeeRefundDetails");
 		excludeFields.add("auditDetailMap");
+		excludeFields.add("finTDSApplicable");
 		return excludeFields;
 	}
 
@@ -207,6 +209,14 @@ public class FinFeeRefundHeader extends AbstractWorkflowEntity implements Entity
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public boolean isFinTDSApplicable() {
+		return finTDSApplicable;
+	}
+
+	public void setFinTDSApplicable(boolean finTDSApplicable) {
+		this.finTDSApplicable = finTDSApplicable;
 	}
 
 }

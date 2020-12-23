@@ -74,8 +74,8 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -194,7 +194,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		this.adjTerms.setMaxlength(2);
+		this.adjTerms.setMaxlength(PennantConstants.NUMBER_OF_TERMS_LENGTH);
 		this.serviceReqNo.setMaxlength(20);
 		this.remarks.setMaxlength(200);
 		logger.debug("Leaving");

@@ -3324,6 +3324,12 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 					if (feild.getName().equalsIgnoreCase("CustPassportNo")) {
 						dedup.setCustPassportNo(String.valueOf(feild.getValue()));
 					}
+					if (feild.getName().equalsIgnoreCase("VoterID")) {
+						dedup.setVoterID(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("DrivingLicence")) {
+						dedup.setDrivingLicenceNo(String.valueOf(feild.getValue()));
+					}
 				}
 			}
 			if (!fieldFound) {

@@ -89,6 +89,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.AgreementDetail;
+import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -177,6 +178,8 @@ import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -478,6 +481,20 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 			}
 
+			if (financeDetail.getChequeHeader() != null) {
+				FinScheduleData finSchdData = validateChequeDetails(financeDetail);
+				List<ErrorDetail> errorDetails = finSchdData.getErrorDetails();
+				if (CollectionUtils.isNotEmpty(errorDetails)) {
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					for (ErrorDetail errorDetail : errorDetails) {
+						response.setReturnStatus(
+								APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+						return response;
+					}
+				}
+			}
+
 			// FIXME: PV 28AUG19. Why setting is required like set a = a?
 			/*
 			 * // Reset Data finScheduleData.getFinanceMain().setEqualRepay(financeMain. isEqualRepay());
@@ -624,6 +641,52 @@ public class CreateFinanceController extends SummaryDetailService {
 			return response;
 		}
 		return null;
+	}
+
+	//cheque Validations for schedule
+	private FinScheduleData validateChequeDetails(FinanceDetail financeDetail) {
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+		List<ChequeDetail> chequeDetailsList = chequeHeader.getChequeDetailList();
+		String[] valueParm = new String[2];
+		boolean date = true;
+
+		for (ChequeDetail chequeDetail : chequeDetailsList) {
+			if (FinanceConstants.REPAYMTH_PDC.equals(chequeDetail.getChequeType())) {
+				List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
+				for (FinanceScheduleDetail fsd : schedules) {
+					if (DateUtil.compare(fsd.getSchDate(), chequeDetail.getChequeDate()) == 0) {
+						date = true;
+						chequeDetail.seteMIRefNo(fsd.getInstNumber());
+						if (fsd.getRepayAmount().compareTo(chequeDetail.getAmount()) == 0) {
+							break;
+						}
+
+						String schDate = DateUtil.format(fsd.getSchDate(), DateFormat.FULL_DATE);
+
+						valueParm[0] = "Cheque Date " + schDate;
+						valueParm[1] = String.valueOf("Amount :" + fsd.getRepayAmount() + "INR");
+
+						finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+
+						return finScheduleData;
+					} else {
+						date = false;
+					}
+				}
+				if (date) {
+					return finScheduleData;
+				}
+
+				valueParm[0] = "Cheque Date";
+				valueParm[1] = "ScheduleDates";
+				finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+
+				return finScheduleData;
+			}
+		}
+
+		return finScheduleData;
 	}
 
 	private WSReturnStatus prepareAgrrementDetails(AuditHeader auditHeader) {

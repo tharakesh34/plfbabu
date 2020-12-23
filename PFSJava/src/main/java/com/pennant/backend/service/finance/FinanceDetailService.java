@@ -353,4 +353,7 @@ public interface FinanceDetailService {
 
 	List<RepayInstruction> getRepayInstructions(String finReference, String string, boolean b);
 
+	List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList,
+			FinanceDetail financeDetail);
+
 }

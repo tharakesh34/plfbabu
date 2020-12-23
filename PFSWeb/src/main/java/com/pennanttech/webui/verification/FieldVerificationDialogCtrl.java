@@ -58,6 +58,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -133,6 +134,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private RuleExecutionUtil ruleExecutionUtil;
 	@Autowired
 	private RuleService ruleService;
+	@Autowired
+	private JointAccountDetailService jointAccountDetailService;
 
 	private boolean fromVerification;
 	private FIInitiationListCtrl fiInitiationListCtrl;
@@ -924,8 +927,25 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						vrf.setFieldInvestigation(item);
 					}
 				}
+				if (vrf.getReferenceType().equals("Primary")) {
+					result.add(vrf);
+				} else if (vrf.getReferenceType().equals("Co-applicant")) {
+					// getting co-applicants based on each verification
+					JointAccountDetail coApplicant = jointAccountDetailService.getJountAccountDetailByRef(keyReference,
+							vrf.getReference(), "_Temp");
+					// retrieving verifications from verification_fi table
+					FieldInvestigation fi = fieldInvestigationService.getFieldInvestigation(vrf.getId(), "_view");
+
+					if (coApplicant != null) {
+						result.add(vrf);
+					} else {
+						if (fi != null) {
+							result.add(vrf);
+						}
+					}
+				}
 			}
-			return verifications;
+			return result;
 		}
 		for (Verification item : verifications) {
 			if (item.getReference().equals(custCif)) {
@@ -1320,7 +1340,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			}
 
-			if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave && ImplementationConstants.ALW_VERIFICATION_SYNC) {
+			if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave
+					&& ImplementationConstants.ALW_VERIFICATION_SYNC) {
 				FieldInvestigation fieldInvestigation = fieldInvestigationService
 						.getFieldInvestigation(verification.getId(), "_View");
 				verification.setFieldInvestigation(fieldInvestigation);

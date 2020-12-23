@@ -59,6 +59,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -92,6 +93,7 @@ import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -324,6 +326,18 @@ abstract public class ServiceHelper implements Serializable {
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
+	}
+
+	protected boolean isOldestDueOverDue(FinanceScheduleDetail curSchd) {
+		if (ImplementationConstants.ALLOW_OLDEST_DUE) {
+			FinODDetails od = finODDetailsDAO.getFinODByFinRef(curSchd.getFinReference(), curSchd.getSchDate());
+			if (od != null && (od.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0
+					&& (od.getFinCurODPft().compareTo(BigDecimal.ZERO) > 0
+							|| od.getFinCurODPri().compareTo(BigDecimal.ZERO) > 0))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public FinContributorDetailDAO getFinContributorDetailDAO() {

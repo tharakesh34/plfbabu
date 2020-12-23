@@ -562,7 +562,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 		inputStream.close();
 		inputStream = null;
-		Filedownload.save(stream.toByteArray(), "text/plain", fileName);
+		Filedownload.save(stream.toByteArray(), "text/csv", fileName);
 		stream.close();
 	}
 
@@ -570,7 +570,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		String key = prefix.concat("/").concat(fileName);
 
 		byte[] fileData = bucket.getObject(key);
-		Filedownload.save(fileData, "text/plain", fileName);
+		Filedownload.save(fileData, "text/csv", fileName);
 	}
 
 	private void refresh() {

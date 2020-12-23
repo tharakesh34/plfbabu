@@ -1110,7 +1110,7 @@
 			<menuItem id="menu_Item_LimitDetails" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_LimitDetails" />
 			<menuItem id="menu_Item_InstitutionLimits" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menu_Item_LimitDetails" />
+				rightName="menu_Item_InstitutionLimits" />
 			<menuItem id="menu_Item_MandateDetails" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_MandateDetails" />
 			<!-- <menuItem id="menu_Item_CollateralDetails" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 

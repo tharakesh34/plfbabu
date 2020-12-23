@@ -1052,7 +1052,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aReceiptUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+		aReceiptUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReceiptUploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReceiptUploadHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

@@ -610,15 +610,15 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 
 		try {
+			List<ExtendedFieldDetail> detailList = null;
 
-			int seqNo = this.fieldSeqOrder.intValue();
-			if (seqNo == 0) {
-				seqNo = maxSeqNo + 10;
-				if (seqNo > 1000) {
-					seqNo = 1000;
-				}
+			if (extendedFieldDialogCtrl != null) {
+				detailList = extendedFieldDialogCtrl.getExtendedFieldDetailsList();
+			} else {
+				detailList = technicalValuationDialogCtrl.getTechValuationFieldDetailsList();
 			}
-			aExtendedFieldDetail.setFieldSeqOrder(seqNo);
+
+			setSequence(aExtendedFieldDetail, wve, detailList);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1150,6 +1150,25 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 		aExtendedFieldDetail.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
+	}
+
+	private void setSequence(ExtendedFieldDetail aExtendedFieldDetail, ArrayList<WrongValueException> wve,
+			List<ExtendedFieldDetail> detailList) {
+		int seqNo = this.fieldSeqOrder.intValue();
+
+		for (ExtendedFieldDetail extendedFieldDetail : detailList) {
+			if (extendedFieldDetail.getFieldSeqOrder() == seqNo) {
+				MessageUtil.showError("Sequence number already exists");
+				wve.add(new WrongValueException(seqNo));
+				break;
+			} else if (seqNo == 0) {
+				seqNo = maxSeqNo + 10;
+				if (seqNo > 1000) {
+					seqNo = 1000;
+				}
+			}
+			aExtendedFieldDetail.setFieldSeqOrder(seqNo);
+		}
 	}
 
 	/**

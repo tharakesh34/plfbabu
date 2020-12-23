@@ -137,6 +137,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -154,6 +155,7 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
@@ -284,7 +286,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Button btnSearchReceiptInProcess;
 
 	// Receipt Details
-	protected Groupbox groupbox_Finance;
 	protected Groupbox gb_ReceiptDetails;
 	protected Textbox receiptId;
 	protected Combobox receiptPurpose;
@@ -420,6 +421,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Button btnCalcReceipts;
 	//Auto Knock Off Details
 	protected Textbox knockOffType;
+	protected Space space_transactionRef;
 
 	private RuleService ruleService;
 	private CustomerDetailsService customerDetailsService;
@@ -497,6 +499,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	ReasonCode reasonCodeData;
 
 	private FeeCalculator feeCalculator;
+	private FeeTypeDAO feeTypeDAO;
 
 	private RepaymentProcessUtil repayProcessUtil;
 	private boolean isAccountingExecuted = false;
@@ -993,10 +996,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.receiptModeStatus.setVisible(true);
 		}
 
-		if (isApprover()) {
-			this.groupbox_Finance.setVisible(true);
-		}
-
 		if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_MAKER)
 				|| StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_APPROVER)) {
 			this.row_ReceiptModeStatus.setVisible(true);
@@ -1337,7 +1336,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				for (ReceiptAllocationDetail allocate : receiptData.getAllocList()) {
 					allocate.setTotalPaid(allocate.getPaidAmount().add(allocate.getTdsPaid()));
 					allocate.setTotRecv(allocate.getTotalDue().add(allocate.getTdsDue()));
-					if (allocate.getAllocationTo() == 0) {
+					if (allocate.getAllocationTo() == 0
+							|| RepayConstants.ALLOCATION_BOUNCE.equalsIgnoreCase(allocate.getAllocationType())) {
 						allocate.setTypeDesc(
 								Labels.getLabel("label_RecceiptDialog_AllocationType_" + allocate.getAllocationType()));
 					} else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)
@@ -1590,6 +1590,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				BigDecimal bounceAmt = BigDecimal.ZERO;
 				if (rule != null) {
 					executeMap.put("br_finType", receiptHeader.getFinType());
+					executeMap.put("eligibilityMethod",
+							financeDetail.getFinScheduleData().getFinanceMain().getEligibilityMethod());
 					bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executeMap,
 							receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
 					// unFormating BounceAmt
@@ -1737,11 +1739,15 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.row_BankCode.setVisible(false);
 				this.bankCode.setMandatoryStyle(false);
 				this.row_DepositDate.setVisible(false);
-				this.row_ChequeAcNo.setVisible(false);
-				this.row_PaymentRef.setVisible(false);
-				this.row_DepositBank.setVisible(false);
-				// this.row_fundingAcNo.setVisible(false);
-				readOnlyComponent(true, this.fundingAccount);
+				if (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE) {
+					this.row_PaymentRef.setVisible(true);
+					this.row_DepositBank.setVisible(true);
+					this.space_transactionRef.setSclass("");
+				} else {
+					this.row_PaymentRef.setVisible(false);
+					this.row_DepositBank.setVisible(false);
+					readOnlyComponent(true, this.fundingAccount);
+				}
 
 				if (isUserAction) {
 					// this.receivedDate.setValue(DateUtility.getAppDate());
@@ -1767,6 +1773,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				&& ((!StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
 						&& !StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)
 						&& !StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)))) {
+			this.fundingAccount.setMandatoryStyle(true);
+		} else if (StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER)
+				&& ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE
+				&& StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)) {
 			this.fundingAccount.setMandatoryStyle(true);
 		}
 		if (isForeClosure || isKnockOff) {
@@ -1846,6 +1856,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.realizationDate.setValue(rch.getRealizationDate());
 			if (StringUtils.isEmpty(rch.getNextRoleCode())) {
 				exclude = ",R,";
+			}
+		}
+		if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_MAKER)
+				|| (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_APPROVER))) {
+			if (!rch.getReceiptMode().equals(RepayConstants.RECEIPTMODE_CHEQUE)
+					&& !rch.getReceiptMode().equals(RepayConstants.RECEIPTMODE_DD)) {
+				exclude = ",R,B,";
 			}
 		}
 
@@ -2609,7 +2626,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						// receiptDetail.setReceivedDate(this.receivedDate.getValue());
 
 						boolean partnerBankReq = false;
-						if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, receiptDetail.getPaymentType())) {
+						if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, receiptDetail.getPaymentType())
+								|| (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE)) {
 							partnerBankReq = true;
 						}
 						// FIXME
@@ -3063,7 +3081,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					// this.receivedDate.setValue(rcd.getReceivedDate());
 
 					boolean partnerBankReq = false;
-					if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, rcd.getPaymentType())) {
+					if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, rcd.getPaymentType())
+							|| (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE)) {
 						partnerBankReq = true;
 					}
 
@@ -3403,6 +3422,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		allocationWaived.setReadonly(true);
 		if (allocate.getAllocationTo() < 0 && PennantConstants.YES.equals(allocate.getWaiverAccepted())) {
 			allocationWaived.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_WaivedAmount"));
+		}
+
+		if (StringUtils.equals(allocate.getTaxType(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+			String[] arg = new String[1];
+			arg[0] = PennantApplicationUtil.amountFormate(allocate.getDueAmount(), formatter);
+			allocationWaived.setTooltiptext(Labels.getLabel("label_WaivedAllocation_More_than_receipt", arg));
 		}
 
 		if (isForeClosure) {
@@ -4080,6 +4105,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					this.fundingAccount.setConstraint(new PTStringValidator(
 							Labels.getLabel("label_ReceiptDialog_FundingAccount.value"), null, true));
 				}
+			} else if (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE
+					&& StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_CASH)) {
+				if (!this.fundingAccount.isReadonly()) {
+					this.fundingAccount.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_ReceiptDialog_FundingAccount.value"), null, true));
+				}
 			}
 
 			/*
@@ -4392,9 +4423,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				bounce.setNewRecord(true);
 			}
 
+			FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
 			bounce.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
 			bounce.setFinReference(header.getReference());
-			bounce.setFeeTypeID(0);
+			bounce.setFeeTypeID(feeType.getFeeTypeID());
 			bounce.setSequence(0);
 
 			try {
@@ -7527,6 +7559,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void setRepayProcessUtil(RepaymentProcessUtil repayProcessUtil) {
 		this.repayProcessUtil = repayProcessUtil;
+	}
+
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
 	}
 
 }

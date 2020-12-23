@@ -105,6 +105,7 @@ public class Presentment {
 	private String entityDesc;
 	private String entCode;
 	private String utilityCode;
+	private Date setilmentDate;
 
 	//getter and setter
 
@@ -562,6 +563,14 @@ public class Presentment {
 
 	public void setUtilityCode(String utilityCode) {
 		this.utilityCode = utilityCode;
+	}
+
+	public Date getSetilmentDate() {
+		return setilmentDate;
+	}
+
+	public void setSetilmentDate(Date setilmentDate) {
+		this.setilmentDate = setilmentDate;
 	}
 
 }

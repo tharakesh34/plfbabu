@@ -101,7 +101,6 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.PresentmentRequest;
 
 /**
@@ -184,39 +183,33 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 	@Override
 	public void updateFinanceDetails(String presentmentRef) {
-		logger.debug(Literal.ENTERING);
-
+		PresentmentDetail detail = this.presentmentDetailDAO.getPresentmentDetail(presentmentRef, "");
+		String finReference = detail.getFinReference();
+		FinanceMain financeMain = financeMainDAO.getFinanceDetailsByFinRefence(finReference, "");
+		List<FinODDetails> overDueList = finODDetailsDAO.getFinODBalByFinRef(finReference);
+		List<FinanceScheduleDetail> fsd = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false);
+		FinanceProfitDetail pftDetail = profitDetailsDAO.getFinProfitDetailsById(finReference);
 		Date appDate = SysParamUtil.getAppDate();
 
-		PresentmentDetail detail = this.presentmentDetailDAO.getPresentmentDetail(presentmentRef,
-				TableType.MAIN_TAB.getSuffix());
-		List<FinanceScheduleDetail> list = financeScheduleDetailDAO.getFinScheduleDetails(detail.getFinReference(),
-				TableType.MAIN_TAB.getSuffix(), false);
-		boolean isFinactive = repaymentPostingsUtil.isSchdFullyPaid(detail.getFinReference(), list);
-
-		if (isFinactive) {
-			financeMainDAO.updateMaturity(detail.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED, false,
-					detail.getSchDate());
-			profitDetailsDAO.updateFinPftMaturity(detail.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED,
+		try {
+			financeMain = repaymentPostingsUtil.updateStatus(financeMain, appDate, fsd, pftDetail, overDueList, null,
 					false);
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
-		List<FinODDetails> overDueList = finODDetailsDAO.getFinODBalByFinRef(detail.getFinReference());
+		if (!financeMain.isFinIsActive()) {
+			financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false,
+					detail.getSchDate());
+			profitDetailsDAO.updateFinPftMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
+		}
+
 		if (CollectionUtils.isNotEmpty(overDueList)) {
 			FinScheduleData scheduleData = new FinScheduleData();
-			scheduleData.setFinanceMain(financeMainDAO.getFinanceDetailsByFinRefence(detail.getFinReference(), ""));
-			scheduleData.setFinanceScheduleDetails(
-					financeScheduleDetailDAO.getFinScheduleDetails(detail.getFinReference(), "", false));
+			scheduleData.setFinanceMain(financeMain);
+			scheduleData.setFinanceScheduleDetails(fsd);
 			overDueList = receiptCalculator.calPenalty(scheduleData, null, appDate, overDueList);
 			finODDetailsDAO.updateList(overDueList);
-			FinanceProfitDetail profitDetail = profitDetailsDAO.getFinProfitDetailsById(detail.getFinReference());
-			try {
-				repaymentProcessUtil.updateStatus(scheduleData.getFinanceMain(), appDate,
-						scheduleData.getFinanceScheduleDetails(), profitDetail, overDueList,
-						FinanceConstants.FINSER_EVENT_SCHDRPY, true);
-			} catch (Exception e) {
-				logger.error(e);
-			}
 		}
 
 		logger.debug(Literal.LEAVING);

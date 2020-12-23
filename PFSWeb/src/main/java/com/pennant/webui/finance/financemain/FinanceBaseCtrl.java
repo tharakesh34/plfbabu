@@ -784,7 +784,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.dsaCode.setValueColumn("DealerName");
 		this.dsaCode.setDescColumn("Code");
 		this.dsaCode.setValidateColumns(new String[] { "DealerName" });
-		this.dsaCode.getTextbox().setMaxlength(50);
+		this.dsaCode.getTextbox().setMaxlength(100);
 
 		this.applicationNo.setMaxlength(LengthConstants.LEN_REF);
 		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,

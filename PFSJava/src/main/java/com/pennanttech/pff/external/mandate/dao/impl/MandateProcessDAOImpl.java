@@ -22,6 +22,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.util.MandateConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -339,4 +340,80 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
+
+	@Override
+	public void deleteMandateRequests(List<Long> mandateIds) {
+		List<Long> mandateSet = new ArrayList<>();
+		Long[] result = new Long[mandateSet.size()];
+		for (Long mandateId : mandateIds) {
+			mandateSet.add(mandateId);
+			result = mandateSet.toArray(result);
+			if (result.length > 499) {
+				delete(result);
+				mandateSet.clear();
+			}
+		}
+
+		if (!(result == null)) {
+			delete(result);
+			mandateSet.clear();
+		}
+	}
+
+	private void delete(Long[] result) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM MANDATE_REQUESTS ");
+		sql.append("WHERE MANDATEID IN (:MANDATEID)");
+
+		logger.debug("Query--->" + sql.toString());
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("MANDATEID", Arrays.asList(result));
+
+		this.jdbcTemplate.update(sql.toString(), paramMap);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void deleteMandateStatus(List<Long> mandateIds) {
+
+		List<Long> mandateSet = new ArrayList<>();
+		Long[] result = new Long[mandateSet.size()];
+		for (Long mandateId : mandateIds) {
+			mandateSet.add(mandateId);
+			result = mandateSet.toArray(result);
+			if (result.length > 499) {
+				deleteStatus(result);
+				mandateSet.clear();
+			}
+		}
+
+		if (!(result == null)) {
+			deleteStatus(result);
+			mandateSet.clear();
+		}
+	}
+
+	private void deleteStatus(Long[] result) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM MANDATESSTATUS ");
+		sql.append("WHERE MANDATEID IN (:MANDATEID) ");
+		sql.append("AND STATUS = :AC");
+
+		logger.debug("Query--->" + sql.toString());
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("MANDATEID", Arrays.asList(result));
+		paramMap.addValue("AC", MandateConstants.STATUS_AWAITCON);
+
+		this.jdbcTemplate.update(sql.toString(), paramMap);
+
+		logger.debug(Literal.LEAVING);
+	}
+
 }

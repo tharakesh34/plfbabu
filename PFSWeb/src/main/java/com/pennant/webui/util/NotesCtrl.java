@@ -336,8 +336,6 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		doClearMessage();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		aNotes.setRemarks(remarks.getValue());
-
 		if (!isFinanceNotes) {
 
 			if (this.remarksText.getValue() == null || this.remarksText.getValue().trim().length() <= 0) {
@@ -346,6 +344,10 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				aNotes.setRemarks(this.remarksText.getValue().trim());
 			}
 
+		} else if (this.remarks.getValue() != null) {
+			String remarkVal = remarks.getValue().split("\t")[1].split("<")[0];
+			remarks.setValue(remarkVal);
+			aNotes.setRemarks(remarks.getValue());
 		}
 
 		if (wve.size() > 0) {

@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.MandateProcesses;
 import com.pennanttech.pff.external.mandate.dao.MandateProcessDAO;
@@ -29,7 +30,11 @@ public class ExternalInterfaceServiceImpl implements ExternalInterfaceService {
 
 		if (process_Id != null) {
 			mandateData.setProcess_Id(process_Id);
-			getMandateProcess().sendReqest(mandateData);
+			DataEngineStatus status = getMandateProcess().sendReqest(mandateData);
+			if (status.getStatus().equals("F")) {
+				mandateProcessdao.deleteMandateRequests(selectedMandateIds);
+				mandateProcessdao.deleteMandateStatus(selectedMandateIds);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);

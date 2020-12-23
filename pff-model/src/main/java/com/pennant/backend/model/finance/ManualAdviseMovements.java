@@ -3,6 +3,8 @@ package com.pennant.backend.model.finance;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ManualAdviseMovements implements Serializable {
 	private static final long serialVersionUID = 6112694689541699540L;
@@ -46,6 +48,14 @@ public class ManualAdviseMovements implements Serializable {
 	private Date schDate;
 	private boolean lppAmzReqonME;
 	private BigDecimal currWaiverGst = BigDecimal.ZERO;
+	private boolean tdsReq;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("tdsReq");
+
+		return excludeFields;
+	}
 
 	public long getMovementID() {
 		return movementID;
@@ -301,6 +311,14 @@ public class ManualAdviseMovements implements Serializable {
 
 	public void setCurrWaiverGst(BigDecimal currWaiverGst) {
 		this.currWaiverGst = currWaiverGst;
+	}
+
+	public boolean isTdsReq() {
+		return tdsReq;
+	}
+
+	public void setTdsReq(boolean tdsReq) {
+		this.tdsReq = tdsReq;
 	}
 
 }

@@ -108,6 +108,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -2232,6 +2233,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		finFeeDetail.setNetAmount(PennantApplicationUtil.unFormateAmount(netFeeBox.getValue(), formatter));
 		finFeeDetail.setPaidAmount(PennantApplicationUtil.unFormateAmount(paidBox.getValue(), formatter));
+
+		if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
+			TaxAmountSplit taxSplit = GSTCalculator.getInclusiveGST(finFeeDetail.getNetAmount(), taxPercentages);
+			BigDecimal netAmountOrginal = finFeeDetail.getNetAmount().subtract(taxSplit.gettGST());
+			finFeeDetail.setNetAmountGST(taxSplit.gettGST());
+			finFeeDetail.setNetAmountOriginal(netAmountOrginal);
+		}
 
 		if (netFeeBoxOriginal.isDisabled() || paidBoxOriginal.isDisabled()) {
 			resetTDSonFee(finFeeDetail, financeMain);

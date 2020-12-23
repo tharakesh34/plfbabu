@@ -367,7 +367,8 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		sql.append(" CHANNEL,");
 		sql.append(" PARTNERBANK_ID,");
 		sql.append(" PARTNERBANK_CODE,");
-		sql.append(" PARTNERBANK_ACCOUNT");
+		sql.append(" PARTNERBANK_ACCOUNT,");
+		sql.append(" TRANSACTION_TYPE_CODE");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
 		sql.append(" WHERE PAYMENTID IN (:PAYMENTID)");
 

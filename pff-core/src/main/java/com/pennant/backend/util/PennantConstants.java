@@ -230,7 +230,7 @@ public class PennantConstants {
 	public static final String ERR_UNDEF = "000000";
 
 	// SMT Parameter Values
-	//public static final String LOCAL_CCY = "APP_DFT_CURR";
+	public static final String LOCAL_CCY = "APP_DFT_CURR";
 	public static final String LOCAL_CCY_FORMAT = "APP_DFT_CURR_EDIT_FIELD";
 	public static final String APP_PHASE = "PHASE";
 	public static final String APP_PHASE_EOD = "EOD";
@@ -1063,4 +1063,7 @@ public class PennantConstants {
 	public static final String SUPER_LOAN_HIGHER_LOAN = "SUPER LOAN-HIGHER LOAN";
 	public static final String ADVANTAGE = "ADVANTAGE";
 
+	public static final String method_save = "SAVE";
+	public static final String method_Update = "UPDATE";
+	public static final int NUMBER_OF_TERMS_LENGTH = 4;
 }

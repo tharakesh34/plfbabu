@@ -51,6 +51,8 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_OCR", true);
 
+		customConstants.put("IND_AS_ACCOUNTING_REQ", true);
+
 	}
 
 	@Override

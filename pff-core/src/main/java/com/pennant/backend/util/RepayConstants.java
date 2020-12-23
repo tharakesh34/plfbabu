@@ -201,6 +201,8 @@ public class RepayConstants {
 	public static final String PEXC_FAILURE = "F";
 	public static final String PEXC_APPROV = "A";
 	public static final String PEXC_BOUNCE = "B";
+	public static final String PEXC_PAID = "PAID";
+	public static final String PEXC_FAILED = "FAILED";
 
 	// Receipt Payment Statuses
 	public static final String PAYSTATUS_APPROVED = "A";
@@ -222,6 +224,8 @@ public class RepayConstants {
 	public static final String PAYMENT_DOWNLOAD = "D";
 	public static final String PAYMENT_SUCCESS = "S";
 	public static final String PAYMENT_FAILURE = "F";
+	public static final String PAYMENT_PAID = "PAID";
+	public static final String PAYMENT_FAILED = "FAILED";
 
 	// presentmentResponse statuscodes
 	public static final String PRES_SUCCESS = "PR000";

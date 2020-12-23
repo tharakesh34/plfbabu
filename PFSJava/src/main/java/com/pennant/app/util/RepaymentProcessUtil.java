@@ -92,6 +92,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -332,7 +333,9 @@ public class RepaymentProcessUtil {
 			isSchdLogReq = true;
 		}
 
+		BigDecimal receiptAmount = BigDecimal.ZERO;
 		for (FinReceiptDetail rcd : rcdList) {
+			receiptAmount = receiptAmount.add(rcd.getAmount());
 			String paymentType = rcd.getPaymentType();
 			movements.addAll(rcd.getAdvMovements());
 			if (!RepayConstants.RECEIPTMODE_EMIINADV.equals(paymentType)
@@ -542,7 +545,7 @@ public class RepaymentProcessUtil {
 		adjustedToReceipt = adjustedToReceipt.add(rch.getTotalBounces().getTotalPaid());
 		adjustedToReceipt = adjustedToReceipt.add(rch.getTotalFees().getTotalPaid());
 
-		BigDecimal toExcess = rch.getReceiptAmount().subtract(adjustedToReceipt);
+		BigDecimal toExcess = receiptAmount.subtract(adjustedToReceipt);
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, receiptPurpose)) {
 			adjustedToReceipt = adjustedToReceipt.add(toExcess);
 			toExcess = BigDecimal.ZERO;
@@ -1457,6 +1460,7 @@ public class RepaymentProcessUtil {
 
 							ManualAdvise advise = new ManualAdvise();
 							advise.setAdviseID(allocation.getAllocationTo());
+							advise.setWaivedAmount(allocation.getWaivedAmount());
 
 							for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
 								for (ManualAdviseMovements movement : rcd.getAdvMovements()) {
@@ -1527,6 +1531,7 @@ public class RepaymentProcessUtil {
 
 							ManualAdvise advise = new ManualAdvise();
 							advise.setAdviseID(allocation.getAllocationTo());
+							advise.setWaivedAmount(allocation.getWaivedAmount());
 
 							List<FinReceiptDetail> rcdList = sortReceiptDetails(rch.getReceiptDetails());
 							for (FinReceiptDetail rcd : rcdList) {
@@ -2090,6 +2095,47 @@ public class RepaymentProcessUtil {
 		}
 
 		try {
+			Cloner cloner = new Cloner();
+			List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rsdList);
+			Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
+
+			for (RepayScheduleDetail rpySchd : tempRpySchdList) {
+				RepayScheduleDetail curRpySchd = null;
+
+				if (rpySchdMap.containsKey(rpySchd.getSchDate())) {
+					curRpySchd = rpySchdMap.get(rpySchd.getSchDate());
+
+					if (curRpySchd.getPrincipalSchdBal().compareTo(rpySchd.getPrincipalSchdBal()) < 0) {
+						curRpySchd.setPrincipalSchdBal(rpySchd.getPrincipalSchdBal());
+					}
+
+					if (curRpySchd.getProfitSchdBal().compareTo(rpySchd.getProfitSchdBal()) < 0) {
+						curRpySchd.setProfitSchdBal(rpySchd.getProfitSchdBal());
+					}
+
+					curRpySchd.setPrincipalSchdPayNow(
+							curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
+					curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
+					curRpySchd.setTdsSchdPayNow(curRpySchd.getTdsSchdPayNow().add(rpySchd.getTdsSchdPayNow()));
+					curRpySchd.setLatePftSchdPayNow(
+							curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
+
+					curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
+					curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
+					curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
+
+					rpySchdMap.remove(rpySchd.getSchDate());
+				} else {
+					curRpySchd = rpySchd;
+				}
+
+				// Adding New Repay Schedule Object to Map after Summing
+				// data
+				rpySchdMap.put(rpySchd.getSchDate(), curRpySchd);
+			}
+
+			rsdList = sortRpySchdDetails(new ArrayList<>(rpySchdMap.values()));
+
 			for (int i = 0; i < rsdList.size(); i++) {
 				finRepayQueue = new FinRepayQueue();
 
@@ -2217,6 +2263,21 @@ public class RepaymentProcessUtil {
 
 		logger.debug("Leaving");
 		return returnList;
+	}
+
+	public List<RepayScheduleDetail> sortRpySchdDetails(List<RepayScheduleDetail> repayScheduleDetails) {
+		if (CollectionUtils.isEmpty(repayScheduleDetails)) {
+			return repayScheduleDetails;
+		}
+
+		Collections.sort(repayScheduleDetails, new Comparator<RepayScheduleDetail>() {
+			@Override
+			public int compare(RepayScheduleDetail rsd1, RepayScheduleDetail rsd2) {
+				return DateUtil.compare(rsd1.getSchDate(), rsd2.getSchDate());
+			}
+		});
+
+		return repayScheduleDetails;
 	}
 
 	/**

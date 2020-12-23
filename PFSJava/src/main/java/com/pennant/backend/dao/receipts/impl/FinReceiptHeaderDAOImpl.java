@@ -255,7 +255,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 			if (StringUtils.trimToEmpty(type).contains("FView")) {
 				sql.append(", ScheduleMethod, PftDaysBasis, CustID, CustomerCIF");
-				sql.append(", CustomerName, CustBaseCcy");
+				sql.append(", CustomerName, CustBaseCcy, FinTDSApplicable");
 			}
 
 			if (StringUtils.trimToEmpty(type).contains("FEView") || StringUtils.trimToEmpty(type).contains("FCView")) {
@@ -1211,6 +1211,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 					rh.setCustomerCIF(rs.getString("CustomerCIF"));
 					rh.setCustomerName(rs.getString("CustomerName"));
 					rh.setCustBaseCcy(rs.getString("CustBaseCcy"));
+					rh.setFinTDSApplicable(rs.getBoolean("FinTDSApplicable"));
 				}
 
 				if (StringUtils.trimToEmpty(type).contains("FEView")
@@ -1302,6 +1303,29 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			logger.warn(Literal.EXCEPTION);
 		}
 		return count;
+	}
+
+	@Override
+	public boolean isReceiptExists(String reference, String type) {
+
+		logger.debug(Literal.ENTERING);
+		boolean isExists = false;
+		int count = 0;
+		StringBuilder sql = new StringBuilder(" Select COUNT(*)  From FinReceiptHeader");
+		sql.append(StringUtils.trim(type));
+		sql.append(" Where Reference = :Reference");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+
+		logger.debug(Literal.LEAVING);
+		count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		if (count > 0) {
+			isExists = true;
+		}
+		return isExists;
 	}
 
 }

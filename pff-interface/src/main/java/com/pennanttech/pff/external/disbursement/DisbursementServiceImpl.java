@@ -101,14 +101,7 @@ public class DisbursementServiceImpl implements DisbursementService {
 					} else if (Event.MOVE_TO_S3_BUCKET.name().equals(postEvent)) {
 						event = Event.MOVE_TO_S3_BUCKET;
 						protocol = "Amazon s3";
-					} else if (Event.COPY_TO_FTP.name().equals(postEvent)) {
-						event = Event.COPY_TO_FTP;
-						protocol = "FTP";
-					} else if (Event.COPY_TO_SFTP.name().equals(postEvent)) {
-						event = Event.COPY_TO_SFTP;
-						protocol = "SFTP";
 					}
-
 				}
 			}
 

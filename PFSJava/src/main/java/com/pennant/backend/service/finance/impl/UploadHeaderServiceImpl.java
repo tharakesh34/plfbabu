@@ -55,6 +55,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -208,35 +209,37 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 
 		amountCodes.setFinType(fm.getFinType());
 
-		Map<String, Object> dataMap = aeEvent.getDataMap();
-		dataMap.putAll(amountCodes.getDeclaredFieldValues());
+		if (ImplementationConstants.IND_AS_ACCOUNTING_REQ) {
 
-		for (ExpenseType feeType : expenseTypeService.getExpenseTypes()) {
-			dataMap.put(feeType.getExpenseTypeCode() + "_AMZ_N", BigDecimal.ZERO);
-		}
+			Map<String, Object> dataMap = aeEvent.getDataMap();
+			dataMap.putAll(amountCodes.getDeclaredFieldValues());
 
-		dataMap.put(expense.getExpenseTypeCode() + "_AMZ_N", expense.getTransactionAmount());
-
-		postingsPreparationUtil.postAccounting(aeEvent);
-
-		if (CollectionUtils.isEmpty(aeEvent.getReturnDataSet())) {
-			throw new AppException(
-					"Accounting configuration is invalid for the event :" + AccountEventConstants.ACCEVENT_EXPENSE);
-		}
-
-		long linkedTranId = aeEvent.getLinkedTranId();
-		expense.setLinkedTranId(linkedTranId);
-
-		if ("O".equals(expense.getTransactionType())) {
-			List<FinExpenseMovements> list = finExpenseMovementsDAO.getFinExpenseMovements(fm.getFinReference(),
-					expense.getExpenseTypeID());
-
-			for (FinExpenseMovements item : list) {
-				long revLinkedTranId = postingsPreparationUtil.reversalByLinkedTranID(item.getLinkedTranId());
-
-				finExpenseMovementsDAO.updateRevLinkedTranID(item.getFinExpenseMovemntId(), revLinkedTranId);
+			for (ExpenseType feeType : expenseTypeService.getExpenseTypes()) {
+				dataMap.put(feeType.getExpenseTypeCode() + "_AMZ_N", BigDecimal.ZERO);
 			}
 
+			dataMap.put(expense.getExpenseTypeCode() + "_AMZ_N", expense.getTransactionAmount());
+
+			postingsPreparationUtil.postAccounting(aeEvent);
+
+			if (CollectionUtils.isEmpty(aeEvent.getReturnDataSet())) {
+				throw new AppException(
+						"Accounting configuration is invalid for the event :" + AccountEventConstants.ACCEVENT_EXPENSE);
+			}
+
+			long linkedTranId = aeEvent.getLinkedTranId();
+			expense.setLinkedTranId(linkedTranId);
+
+			if ("O".equals(expense.getTransactionType())) {
+				List<FinExpenseMovements> list = finExpenseMovementsDAO.getFinExpenseMovements(fm.getFinReference(),
+						expense.getExpenseTypeID());
+
+				for (FinExpenseMovements item : list) {
+					long revLinkedTranId = postingsPreparationUtil.reversalByLinkedTranID(item.getLinkedTranId());
+
+					finExpenseMovementsDAO.updateRevLinkedTranID(item.getFinExpenseMovemntId(), revLinkedTranId);
+				}
+			}
 		}
 
 		long expensId = finExpenseMovementsDAO.saveFinExpenseMovements(expense);

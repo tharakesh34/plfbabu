@@ -134,6 +134,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 		setStatusDetails();
 
 		this.txtchannel.setMaxlength(20);
+		this.modelId.setMaxlength(20);
 
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 		this.minAmount.setProperties(true, formatter);
@@ -425,7 +426,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 
 		if (!this.modelId.isReadonly()) {
 			this.modelId.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelId.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, 1, 8));
+					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, 1, 20));
 		}
 
 		if (!this.modelDescription.isReadonly()) {

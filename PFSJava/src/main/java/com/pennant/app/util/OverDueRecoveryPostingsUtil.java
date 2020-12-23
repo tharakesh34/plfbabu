@@ -56,6 +56,7 @@ import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.applicationmaster.AssignmentDAO;
 import com.pennant.backend.dao.applicationmaster.AssignmentDealDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
@@ -108,6 +109,11 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	private FinanceTypeDAO financeTypeDAO;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
+
+	private final BigDecimal HUNDRED = new BigDecimal(100);
+	private String TDS_ROUND_MODE = null;
+	private int TDS_ROUND_TRAGET = 0;
+	private BigDecimal TDS_PERCENTAGE = BigDecimal.ZERO;
 
 	/**
 	 * Default constructor
@@ -302,6 +308,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			addZeroifNotContains(dataMap, "LPP_CESS_R");
 		}
 
+		if (financeMain.isTDSApplicable() && movement.isTdsReq()) {
+			BigDecimal totalGST = cgstPaid.add(sgstPaid).add(igstPaid).add(ugstPaid).add(cessPaid);
+			BigDecimal paidAmount = movement.getPaidAmount();
+			movement.setTdsPaid(calcTDSOnFee(paidAmount, totalGST, movement.getTaxComponent()));
+		}
+
+		dataMap.put("LPP_TDS_P", movement.getTdsPaid());
+
 		if (rpyQueueHeader.getProfit().compareTo(BigDecimal.ZERO) == 0
 				&& rpyQueueHeader.getPrincipal().compareTo(BigDecimal.ZERO) == 0
 				&& rpyQueueHeader.getTds().compareTo(BigDecimal.ZERO) == 0
@@ -393,7 +407,9 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			taxIncome.setUGST(ugstPaid);
 			taxIncome.setIGST(igstPaid);
 			taxIncome.setCESS(cessPaid);
-			finODAmzTaxDetailDAO.saveTaxIncome(taxIncome);
+			if (!aeEvent.isSimulateAccounting()) {
+				finODAmzTaxDetailDAO.saveTaxIncome(taxIncome);
+			}
 
 			returnList.add(taxIncome);
 
@@ -414,6 +430,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		logger.debug("Leaving");
 		return returnList;
+	}
+
+	private BigDecimal calcTDSOnFee(BigDecimal paidAmount, BigDecimal totalGst, String taxComponent) {
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equalsIgnoreCase(taxComponent)) {
+			paidAmount = paidAmount.subtract(totalGst);
+		}
+
+		return getTDSAmount(paidAmount);
 	}
 
 	/**
@@ -1236,6 +1260,19 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		logger.debug("Leaving");
 		return recovery;
+	}
+
+	public BigDecimal getTDSAmount(BigDecimal amount) {
+		if (StringUtils.isEmpty(TDS_ROUND_MODE) || TDS_PERCENTAGE.compareTo(BigDecimal.ZERO) == 0) {
+			TDS_ROUND_MODE = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			TDS_ROUND_TRAGET = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+			TDS_PERCENTAGE = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+		}
+
+		BigDecimal netAmount = amount.multiply(TDS_PERCENTAGE.divide(HUNDRED));
+		netAmount = CalculationUtil.roundAmount(netAmount, TDS_ROUND_MODE, TDS_ROUND_TRAGET);
+
+		return netAmount;
 	}
 
 	// ******************************************************//

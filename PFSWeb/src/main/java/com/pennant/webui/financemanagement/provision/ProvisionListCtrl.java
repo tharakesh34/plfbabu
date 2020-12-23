@@ -57,7 +57,6 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -131,7 +130,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 
 	protected Textbox finReference; // autowired
 	protected Listbox sortOperator_finReference; // autowired
-	protected Intbox custID; // autowired
+	protected Decimalbox custID; // autowired
 	protected Listbox sortOperator_custID; // autowired
 	protected Datebox provisionCalDate; // autowired
 	protected Listbox sortOperator_provisionCalDate; // autowired

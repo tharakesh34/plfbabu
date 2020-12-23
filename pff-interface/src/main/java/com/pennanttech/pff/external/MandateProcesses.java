@@ -12,7 +12,7 @@ public interface MandateProcesses {
 	public static DataEngineStatus MANDATES_IMPORT = new DataEngineStatus("MANDATES_IMPORT");
 	public static DataEngineStatus MANDATES_ACK = new DataEngineStatus("MANDATES_ACK");
 
-	public void sendReqest(MandateData mandateData);
+	public DataEngineStatus sendReqest(MandateData mandateData);
 
 	public boolean registerMandate(Mandate mandate) throws Exception;
 

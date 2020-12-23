@@ -23,6 +23,8 @@ import com.pennanttech.ws.model.activity.ActivityLogDetails;
 import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.deviation.DeviationList;
 import com.pennanttech.ws.model.eligibility.AgreementDetails;
+import com.pennanttech.ws.model.finance.FinanceDedupDetails;
+import com.pennanttech.ws.model.finance.FinanceDedupResponse;
 import com.pennanttech.ws.model.finance.LoanStatus;
 import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
@@ -112,7 +114,7 @@ public interface CreateFinanceRestService {
 
 	@Path("/finance/UpdateLoanDeviation")
 	WSReturnStatus updateLoanDeviation(FinanceDeviations financeDeviations) throws ServiceException;
-	
+
 	@POST
 	@Path("/finance/updatePerfiosStatus")
 	WSReturnStatus updatePerfiosStatus(PerfiosTransaction perfiosTransaction) throws ServiceException;
@@ -120,4 +122,9 @@ public interface CreateFinanceRestService {
 	@POST
 	@Path("/finance/getDetailsByOfferID")
 	FinCustomerDetails getDetailsByOfferID(@RequestBody String offerID) throws ServiceException;
+
+	@POST
+	@Path("/finance/financeDedup")
+	FinanceDedupResponse loanDedup(FinanceDedupDetails financeDedupDetails) throws ServiceException;
+
 }

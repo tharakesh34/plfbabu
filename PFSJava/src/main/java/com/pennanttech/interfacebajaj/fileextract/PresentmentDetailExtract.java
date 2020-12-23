@@ -31,6 +31,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -64,6 +65,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.external.PresentmentImportProcess;
+import com.pennanttech.pff.external.presentment.PresentmentCustomeExtractor;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class PresentmentDetailExtract extends FileImport implements Runnable {
@@ -174,26 +176,12 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						break;
 					}
 
-					map = new MapSqlParameterSource();
-					map.addValue("BranchCode", getCellValue(row, pos_BranchCode));
-					map.addValue("AgreementNo", getCellValue(row, pos_AgreementNo));
-					map.addValue("InstalmentNo", "0");
-					map.addValue("BFLReferenceNo", getCellValue(row, pos_BFLReferenceNo));
-					map.addValue("Batchid", getCellValue(row, pos_Batchid));
-					map.addValue("AmountCleared", getCellValue(row, pos_AmountCleared));
-					map.addValue("ClearingDate", getDateValue(row, pos_ClearingDate), Types.DATE);
-					map.addValue("Status", getCellValue(row, pos_Status));
+					PresentmentCustomeExtractor presentmentCustomeExtractor = getCustomExtract();
 
-					map.addValue("Name", getCellValue(row, pos_Name));
-					map.addValue("UMRNNo", getCellValue(row, pos_UMRNNo));
-					map.addValue("AccountType", getCellValue(row, pos_AccountType));
-					map.addValue("PaymentDue", getDateValue(row, pos_PaymentDue), Types.DATE);
-					map.addValue("ReasonCode", getStringCellValue(row, pos_ReasonCode));
-
-					//TODO:check set the value
-					if (row.getPhysicalNumberOfCells() > pos_FailureReasons) {
-						map.addValue("Failure reason",
-								StringUtils.trimToNull(row.getCell(pos_FailureReasons).getStringCellValue()));
+					if (presentmentCustomeExtractor != null) {
+						map = presentmentCustomeExtractor.readData(row);
+					} else {
+						map = defaultReadData(row);
 					}
 				} catch (Exception e) {
 					logger.error("Exception {}", e);
@@ -261,6 +249,44 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private PresentmentCustomeExtractor getCustomExtract() {
+		PresentmentCustomeExtractor presentmentCustomeExtractor = null;
+		try {
+			presentmentCustomeExtractor = (PresentmentCustomeExtractor) SpringBeanUtil
+					.getBean("presentmentCustomeExtractor");
+
+		} catch (Exception e) {
+			presentmentCustomeExtractor = null;
+		}
+		return presentmentCustomeExtractor;
+	}
+
+	private MapSqlParameterSource defaultReadData(Row row) {
+		MapSqlParameterSource map;
+		map = new MapSqlParameterSource();
+		map.addValue("BranchCode", getCellValue(row, pos_BranchCode));
+		map.addValue("AgreementNo", getCellValue(row, pos_AgreementNo));
+		map.addValue("InstalmentNo", "0");
+		map.addValue("BFLReferenceNo", getCellValue(row, pos_BFLReferenceNo));
+		map.addValue("Batchid", getCellValue(row, pos_Batchid));
+		map.addValue("AmountCleared", getCellValue(row, pos_AmountCleared));
+		map.addValue("ClearingDate", getDateValue(row, pos_ClearingDate), Types.DATE);
+		map.addValue("Status", getCellValue(row, pos_Status));
+
+		map.addValue("Name", getCellValue(row, pos_Name));
+		map.addValue("UMRNNo", getCellValue(row, pos_UMRNNo));
+		map.addValue("AccountType", getCellValue(row, pos_AccountType));
+		map.addValue("PaymentDue", getDateValue(row, pos_PaymentDue), Types.DATE);
+		map.addValue("ReasonCode", getStringCellValue(row, pos_ReasonCode));
+
+		//TODO:check set the value
+		if (row.getPhysicalNumberOfCells() > pos_FailureReasons) {
+			map.addValue("Failure reason",
+					StringUtils.trimToNull(row.getCell(pos_FailureReasons).getStringCellValue()));
+		}
+		return map;
+	}
+
 	// After file import, processing the data from staging table
 	private void processingPrsentments() {
 		logger.debug(Literal.ENTERING);
@@ -295,6 +321,9 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						String reasonCode = rs.getString("REASONCODE");
 						reasonCode = StringUtils.trimToEmpty(reasonCode);
 						boolean processReceipt = processInactiveLoan(presentmentRef);
+						if (RepayConstants.PEXC_PAID.equals(status)) {
+							status = "S";
+						}
 						if (RepayConstants.PEXC_SUCCESS.equals(status)) {
 							successCount++;
 							updatePresentmentDetails(presentmentRef, status);
@@ -424,17 +453,24 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		}
 
 		// bflreferenceno
-		Object bflreferenceno = map.getValue("BFLReferenceNo");
-		if (bflreferenceno != null && bflreferenceno.toString().length() > 3) {
-			throw new Exception("Dealer Code  length should be less than 4.");
+		if (ImplementationConstants.PRESENTMENT_EXTRACT_DEALER_MAN) {
+			Object bflreferenceno = map.getValue("BFLReferenceNo");
+			if (bflreferenceno != null && bflreferenceno.toString().length() > 3) {
+				throw new Exception("Dealer Code  length should be less than 4.");
+			}
 		}
 
 		// batchReference
 		Object batchid = map.getValue("Batchid");
 		if (batchid == null) {
 			throw new Exception("Debit Ref should be mandatory.");
-		} else if (batchid.toString().length() != 29) {
-			throw new Exception("Debit Ref length should be 29.");
+		} else {
+			int statusLength = status.toString().length();
+			int minLength = ImplementationConstants.PRESENTMENT_EXPORT_STATUS_MIN_LENGTH;
+			int maxLength = ImplementationConstants.PRESENTMENT_EXPORT_STATUS_MAX_LENGTH;
+			if (statusLength != minLength && statusLength != maxLength) {
+				throw new Exception("Status length should be minimum" + minLength + "and maximum" + maxLength);
+			}
 		}
 
 		// status
@@ -447,7 +483,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 		// ReasonCode
 		Object reasonCode = map.getValue("ReasonCode");
-		if (status != null && !StringUtils.equals(RepayConstants.PAYMENT_SUCCESS, status.toString())) {
+		if (status != null && !(StringUtils.equals(RepayConstants.PAYMENT_PAID, status.toString())
+				|| StringUtils.equals(RepayConstants.PAYMENT_SUCCESS, status.toString()))) {
 			if (reasonCode == null) {
 				throw new Exception("Failure Code should be mandatory.");
 			} else if (StringUtils.isBlank(reasonCode.toString())) {

@@ -210,6 +210,7 @@ public class RepaymentPostingsUtil implements Serializable {
 					rpyQueueHeader);
 
 			aeEvent = (AEEvent) returnList.get(0);
+			aeEvent.setSimulateAccounting(financeMain.isSimulateAccounting());
 
 			if (aeEvent != null) {
 				if (!aeEvent.isPostingSucess()) {
@@ -511,6 +512,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				movement.setTaxApplicable(feeType.isTaxApplicable());
 				movement.setTaxComponent(feeType.getTaxComponent());
 				movement.setLppAmzReqonME(feeType.isAmortzReq());
+				movement.setTdsReq(feeType.isTdsReq());
 			} else {
 				logger.warn("{} Fee code not configured in fee type master", PennantConstants.FEETYPE_ODC);
 			}
@@ -1464,7 +1466,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		scheduleDetail = updateScheduleDetailsData(scheduleDetail, finRepayQueue);
 
 		// Late Profit Updation
-		if (finRepayQueue.getLatePayPftPayNow().compareTo(BigDecimal.ZERO) > 0
+		if (!financeMain.isSimulateAccounting() && finRepayQueue.getLatePayPftPayNow().compareTo(BigDecimal.ZERO) > 0
 				|| finRepayQueue.getLatePayPftWaivedNow().compareTo(BigDecimal.ZERO) > 0) {
 			getFinODDetailsDAO().updateLatePftTotals(finRepayQueue.getFinReference(), finRepayQueue.getRpyDate(),
 					finRepayQueue.getLatePayPftPayNow(), finRepayQueue.getLatePayPftWaivedNow());

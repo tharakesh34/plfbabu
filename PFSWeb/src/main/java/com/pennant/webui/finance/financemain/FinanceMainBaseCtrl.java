@@ -1494,7 +1494,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.accountsOfficer.setProperties("SourceOfficer", "DealerName", "DealerCity", false, 8);
 		this.accountsOfficer.getTextbox().setMaxlength(50);
 		this.dsaCode.setProperties("DSA", "DealerName", "Code", false, 8);
-		this.dsaCode.getTextbox().setMaxlength(50);
+		this.dsaCode.getTextbox().setMaxlength(100);
 
 		// Finance Basic Details Tab ---> 2. Grace Period Details
 
@@ -1542,7 +1542,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Finance Basic Details Tab ---> 3. Repayment Period Details
 
-		this.numberOfTerms.setMaxlength(4);
+		this.numberOfTerms.setMaxlength(PennantConstants.NUMBER_OF_TERMS_LENGTH);
 		this.numberOfTerms.setStyle("text-align:right;");
 		this.numberOfTerms_two.setStyle("text-align:right;");
 

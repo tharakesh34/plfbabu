@@ -62,16 +62,9 @@ public class PresentmentJobService extends AbstractInterface {
 	private PresentmentDetailService presentmentDetailService;
 	private PresentmentImportProcess presentmentImportProcess;
 	private NotificationService notificationService;
-	private DataEngineStatus status = new DataEngineStatus();
 	private DataEngineConfig dataEngineConfig;
 	private static List<Configuration> PRESENTMENT_CONFIG = new ArrayList<>();
 	private static Map<Long, Map<String, EventProperties>> eventProperties = new HashMap<>();
-
-	String localLocation = "";
-	String instrumentType = "";
-	Channel channel = null;
-	ChannelSftp channelSftp = null;
-	Session session = null;
 
 	// method for presentment extraction,creation and approval
 	public void extractPresentment(PresentmentHeader header) {
@@ -79,12 +72,12 @@ public class PresentmentJobService extends AbstractInterface {
 		LoggedInUser loggedInUser = new LoggedInUser();
 
 		try {
-			logger.info("Presentment Extraction Process Started...... ");
+			logger.debug("Presentment Extraction Process Started...... ");
 
 			presentmentDetailService.savePresentmentDetails(header); // extraction
 			List<PresentmentHeader> headerList = presentmentDetailService.getPresenmentHeaderList(header.getFromDate(),
 					header.getToDate(), RepayConstants.PEXC_EXTRACT);
-			logger.info("No of Records Extracted : {}", headerList.size());
+			logger.debug("No of Records Extracted : {}", headerList.size());
 
 			for (PresentmentHeader presentmentHeader : headerList) {
 				long id = presentmentHeader.getId();
@@ -92,23 +85,23 @@ public class PresentmentJobService extends AbstractInterface {
 				List<Long> includeList = presentmentDetailService.getIncludeList(id);
 				presentmentHeader.setIncludeList(includeList);
 
-				logger.info("No of Records in Include List  : {}", includeList.size());
+				logger.debug("No of Records in Include List  : {}", includeList.size());
 
 				boolean searchIncludeList = presentmentDetailService.searchIncludeList(id, 0);
 
 				if (!searchIncludeList) {
-					logger.info("No Records are there to Create Presentment Batch : {}", includeList.size());
+					logger.debug("No Records are there to Create Presentment Batch : {}", includeList.size());
 					return;
 				}
 
 				List<Long> excludeList = presentmentDetailService.getExcludeList(id);
 				presentmentHeader.setExcludeList(excludeList);
 
-				logger.info("No of Records in Exclude List  : {}", excludeList.size());
+				logger.debug("No of Records in Exclude List  : {}", excludeList.size());
 
 				Presentment partnerBank = getPartnerBankId(presentmentHeader.getLoanType());
 
-				logger.info("Presentment Batch Creation Process Started...... ");
+				logger.debug("Presentment Batch Creation Process Started...... ");
 
 				presentmentHeader.setPartnerAcctNumber(partnerBank.getAccountNo());
 				presentmentHeader.setPartnerBankId(partnerBank.getPartnerBankId());
@@ -117,14 +110,13 @@ public class PresentmentJobService extends AbstractInterface {
 				presentmentHeader.setUserAction(STATUS_SUBMIT);
 				presentmentDetailService.updatePresentmentDetails(presentmentHeader);
 
-				logger.info("No of Presentment Records Created  : {}", includeList.size());
+				logger.debug("No of Presentment Records Created  : {}", includeList.size());
 
-				logger.info("Presentment Batch Approval Process...... ");
+				logger.debug("Presentment Batch Approval Process...... ");
 
 				presentmentHeader.setUserAction(STATUS_APPROVE);
 				presentmentDetailService.updatePresentmentDetails(presentmentHeader);
-				logger.info("No of Presentment Records Approved  : {}", includeList.size());
-
+				logger.debug("No of Presentment Records Approved  : {}", includeList.size());
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -138,47 +130,50 @@ public class PresentmentJobService extends AbstractInterface {
 		try {
 			loadConfig();
 			for (Configuration configuration : PRESENTMENT_CONFIG) {
-				if (jobName.equals(configuration.getName())) {
-					status.setName(configuration.getName());
-					localLocation = setLocalRepoLocation(configuration.getUploadPath());
 
-					Map<String, EventProperties> properties = eventProperties.computeIfAbsent(configuration.getId(),
-							abc -> dataEngineConfig.getEventPropertyMap(configuration.getId()));
+				if (!jobName.equals(configuration.getName())) {
+					continue;
+				}
+				DataEngineStatus status = new DataEngineStatus();
+				status.setName(configuration.getName());
+				String localLocation = setLocalRepoLocation(configuration.getUploadPath());
 
-					String[] postEvents = StringUtils.trimToEmpty(configuration.getPostEvent()).split(",");
-					EventProperties property = null;
+				Map<String, EventProperties> properties = eventProperties.computeIfAbsent(configuration.getId(),
+						abc -> dataEngineConfig.getEventPropertyMap(configuration.getId()));
 
-					EventProperties s3Property = null;
-					EventProperties sharedFTPProperty = null;
-					EventProperties sharedSFTPProperty = null;
-					EventProperties sharedNetworkFolderProperty = null;
+				String[] postEvents = StringUtils.trimToEmpty(configuration.getPostEvent()).split(",");
+				EventProperties property = null;
 
-					for (String postEvent : postEvents) {
-						postEvent = StringUtils.trimToEmpty(postEvent);
-						property = properties.get(postEvent);
-						if (property != null) {
-							if (property.getStorageType().equals("S3")) {
-								s3Property = property;
-							} else if (property.getStorageType().equals("SHARE_TO_FTP")) {
-								sharedFTPProperty = property;
-							} else if (property.getStorageType().equals("SHARE_TO_SFTP")) {
-								sharedSFTPProperty = property;
-							} else if (property.getStorageType().equals("SHARED_NETWORK_FOLDER")) {
-								sharedNetworkFolderProperty = property;
-							}
+				EventProperties s3Property = null;
+				EventProperties sharedFTPProperty = null;
+				EventProperties sharedSFTPProperty = null;
+				EventProperties sharedNetworkFolderProperty = null;
+
+				for (String postEvent : postEvents) {
+					postEvent = StringUtils.trimToEmpty(postEvent);
+					property = properties.get(postEvent);
+					if (property != null) {
+						if (property.getStorageType().equals("S3")) {
+							s3Property = property;
+						} else if (property.getStorageType().equals("SHARE_TO_FTP")) {
+							sharedFTPProperty = property;
+						} else if (property.getStorageType().equals("SHARE_TO_SFTP")) {
+							sharedSFTPProperty = property;
+						} else if (property.getStorageType().equals("SHARED_NETWORK_FOLDER")) {
+							sharedNetworkFolderProperty = property;
 						}
-
 					}
 
-					if (s3Property != null) {
-						// FIXME
-					} else if (sharedSFTPProperty != null) {
-						getListOfFilesFromFTP(sharedSFTPProperty, "SFTP", configuration);
-					} else if (sharedFTPProperty != null) {
-						getListOfFilesFromFTP(sharedFTPProperty, "FTP", configuration);
-					} else if (sharedNetworkFolderProperty != null) {
-						// FIXME
-					}
+				}
+
+				if (s3Property != null) {
+					// FIXME
+				} else if (sharedSFTPProperty != null) {
+					getListOfFilesFromFTP(sharedSFTPProperty, "SFTP", configuration, localLocation, status);
+				} else if (sharedFTPProperty != null) {
+					getListOfFilesFromFTP(sharedFTPProperty, "FTP", configuration, localLocation, status);
+				} else if (sharedNetworkFolderProperty != null) {
+					// FIXME
 				}
 			}
 		} catch (Exception e) {
@@ -197,7 +192,8 @@ public class PresentmentJobService extends AbstractInterface {
 		return fileLocation.toString();
 	}
 
-	private List<File> getListOfFilesFromFTP(EventProperties eventProperty, String protocol, Configuration config) {
+	private List<File> getListOfFilesFromFTP(EventProperties eventProperty, String protocol, Configuration config,
+			String localLocation, DataEngineStatus status) {
 		logger.debug(Literal.ENTERING);
 		List<String> fileNames = null;
 		try {
@@ -224,10 +220,10 @@ public class PresentmentJobService extends AbstractInterface {
 				File file = new File(localLocation.concat(File.separator).concat(fileName));
 				if (file.exists()) {
 					byte[] data = FileUtils.readFileToByteArray(file);
-					instrumentType = getInstrumentType(file.getName());
+					String instrumentType = getInstrumentType(file.getName());
 					Media aMedia = new AMedia(file.getName(), "xlsx", null, data);
 					if (config.getName().endsWith(instrumentType)) {
-						upload(aMedia, instrumentType);
+						upload(aMedia, instrumentType, status);
 
 						Map<String, EventProperties> properties = eventProperties.computeIfAbsent(config.getId(),
 								abc -> dataEngineConfig.getEventPropertyMap(config.getId()));
@@ -248,9 +244,9 @@ public class PresentmentJobService extends AbstractInterface {
 					}
 					new SftpClient(hostName, Integer.parseInt(port), accessKey, secretKey)
 							.deleteFile(bucketName.concat("/").concat(fileName));
-					logger.info("{} file processed successfully.." + fileName);
+					logger.info("{} file processed successfully..", fileName);
 				} else {
-					logger.info(fileName + " does not exists");
+					logger.info("{} file name does not exists", fileName);
 				}
 			}
 		} catch (Exception e) {
@@ -260,6 +256,7 @@ public class PresentmentJobService extends AbstractInterface {
 	}
 
 	private String getInstrumentType(String name) {
+		String instrumentType = null;
 		if (StringUtils.contains(name, MandateConstants.TYPE_NACH)) {
 			instrumentType = MandateConstants.TYPE_NACH;
 		} else if (StringUtils.contains(name, MandateConstants.TYPE_PDC)) {
@@ -276,6 +273,9 @@ public class PresentmentJobService extends AbstractInterface {
 	public List<String> getFileNameList(String pathname, String hostName, int port, String accessKey,
 			String secretKey) {
 		JSch jsch = new JSch();
+		Session session = null;
+		Channel channel = null;
+		ChannelSftp channelSftp = null;
 		try {
 			session = jsch.getSession(accessKey, hostName, port);
 			session.setPassword(secretKey);
@@ -343,7 +343,7 @@ public class PresentmentJobService extends AbstractInterface {
 		}
 	}
 
-	private void upload(Media aMedia, String instrumentType) {
+	private void upload(Media aMedia, String instrumentType, DataEngineStatus status) {
 		logger.debug(Literal.ENTERING);
 
 		PresentmentDetailExtract detailExtract = new PresentmentDetailExtract(dataSource, presentmentDetailService,

@@ -71,6 +71,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -221,7 +222,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
-		this.terms.setMaxlength(3);
+		this.terms.setMaxlength(PennantConstants.NUMBER_OF_TERMS_LENGTH);
 		this.serviceReqNo.setMaxlength(20);
 		this.remarks.setMaxlength(200);
 		logger.debug("Leaving");

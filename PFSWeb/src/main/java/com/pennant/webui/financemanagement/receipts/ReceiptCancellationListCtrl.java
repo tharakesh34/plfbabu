@@ -174,7 +174,11 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		fillComboBox(this.purpose, "", PennantStaticListUtil.getReceiptPurpose(), "");
 		registerField("receiptPurpose", listheader_ReceiptCancellationPurpose, SortOrder.NONE, purpose,
 				sortOperator_ReceiptCancellationPurpose, Operators.STRING);
-		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
+			fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModesByFeePayment(), "");
+		} else {
+			fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
+		}
 		registerField("receiptMode", listheader_ReceiptCancellationMode, SortOrder.NONE, receiptMode,
 				sortOperator_ReceiptCancellationReceiptMode, Operators.STRING);
 		registerField("receiptAmount", listheader_ReceiptCancellationAmount);

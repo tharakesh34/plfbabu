@@ -1544,7 +1544,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
 			totalGST = GSTCalculator.getInclusiveGST(taxableAmount, waivedAmount, taxPercentages).gettGST();
 
-			finFeeDetail.setNetAmount(taxableAmount);
+			if (finFeeDetail.getNetTDS().compareTo(BigDecimal.ZERO) == 0) {
+				finFeeDetail.setNetAmount(taxableAmount);
+			}
 			finFeeDetail.setNetAmountGST(totalGST);
 			finFeeDetail.setNetAmountOriginal(taxableAmount.subtract(totalGST));
 			finFeeDetail
@@ -1779,11 +1781,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					finFeeDetail.getTaxComponent())) {
 
 				//Net Amount
-				BigDecimal totalNetFee = finFeeDetail.getNetAmount().subtract(waivedAmount);
-
-				if (!finFeeDetail.getPrvTaxComponent().equals(finFeeDetail.getTaxComponent())) {
-					totalNetFee = totalNetFee.add(finFeeDetail.getNetAmountGST());
-				}
+				BigDecimal totalNetFee = finFeeDetail.getNetAmount().subtract(waivedAmount)
+						.add(finFeeDetail.getNetTDS());
 
 				taxSplit = GSTCalculator.getInclusiveGST(totalNetFee, taxPercentages);
 

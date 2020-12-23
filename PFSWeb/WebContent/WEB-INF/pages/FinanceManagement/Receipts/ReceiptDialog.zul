@@ -64,7 +64,7 @@
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto" ca:data-scrollable="true">
 								<div>
-										<groupbox id="groupbox_Finance" visible="false" style="border:0px;">
+										<groupbox style="border:0px;">
 										<caption label="${c:l('label_ReceiptDialog_LoanSummary')}" />
 										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" width="100%">
 											<columns>
@@ -477,7 +477,7 @@
 												<row id="row_PaymentRef" visible="false">
 													<label id="label_ReceiptDialog_tranReference" value="${c:l('label_ReceiptDialog_tranReference.value')}" />
 													<hbox id="hbox_ReceiptDialog_tranReference">
-														<space spacing="2px" sclass="mandatory" />
+														<space id="space_transactionRef" spacing="2px" sclass="mandatory" />
 														<uppercasebox id="transactionRef" width="180px" />
 													</hbox>
 												</row>

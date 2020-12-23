@@ -478,7 +478,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", Version, ProfitDaysBasis, FinStatus, FinStsReason, PastduePftCalMthd, PastduePftMargin");
 		sql.append(", InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, MaturityDate");
 		sql.append(", feeAccountId, MinDownPayPerc, PromotionCode, FinIsActive, SanBsdSchdle, PromotionSeqId");
-		sql.append(", SvAmount, CbAmount");
+		sql.append(", SvAmount, CbAmount, EmployeeName");
 		sql.append(" from Financemain");
 		sql.append("  Where FinReference = ?");
 
@@ -551,6 +551,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 							fm.setPromotionSeqId(rs.getLong("PromotionSeqId"));
 							fm.setSvAmount(rs.getBigDecimal("SvAmount"));
 							fm.setCbAmount(rs.getBigDecimal("CbAmount"));
+							fm.setEmployeeName(rs.getString("EmployeeName"));
 
 							return fm;
 						}
@@ -5809,7 +5810,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinStatus, DueBucket, FinStsReason, BankName, Iban, AccountType, DdaReferenceNo");
 		sql.append(", PromotionCode, FinCategory, ProductCategory, ReAgeBucket, TDSApplicable, BpiTreatment");
 		sql.append(", FinRepaymentAmount, GrcAdvType, AdvType, SanBsdSchdle");
-		sql.append(", PromotionSeqId, SvAmount, CbAmount");
+		sql.append(", PromotionSeqId, SvAmount, CbAmount, EmployeeName");
 		sql.append(", FinAssetValue, FinCurrAssetValue");
 		sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
 		sql.append(", Version, LastMntOn, ReferralId, GraceTerms");
@@ -5921,6 +5922,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setPromotionSeqId(rs.getLong("PromotionSeqId"));
 			fm.setSvAmount(rs.getBigDecimal("SvAmount"));
 			fm.setCbAmount(rs.getBigDecimal("CbAmount"));
+			fm.setEmployeeName(rs.getString("EmployeeName"));
 			fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
 			fm.setAlwGrcAdj(rs.getBoolean("AlwGrcAdj"));
 			fm.setEndGrcPeriodAftrFullDisb(rs.getBoolean("EndGrcPeriodAftrFullDisb"));
@@ -6055,7 +6057,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				sql.append(", LovDescAccountsOfficer, DsaCodeDesc, ReferralIdDesc, EmployeeNameDesc, DmaCodeDesc");
 				sql.append(", SalesDepartmentDesc, LovDescEntityCode, LovEligibilityMethod");
 				sql.append(", LovDescEligibilityMethod, LovDescFinPurposeName, ConnectorCode");
-				sql.append(", ConnectorDesc, BusinessVerticalCode, BusinessVerticalDesc, LovDescSourcingBranch");
+				sql.append(
+						", ConnectorDesc, BusinessVerticalCode, BusinessVerticalDesc, LovDescSourcingBranch, EmployeeName");
 			}
 		}
 
@@ -6387,6 +6390,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					fm.setBusinessVerticalDesc(rs.getString("BusinessVerticalDesc"));
 					// HL
 					fm.setLovDescSourcingBranch(rs.getString("LovDescSourcingBranch"));
+					fm.setEmployeeName(rs.getString("EmployeeName"));
 				}
 			}
 
@@ -6931,6 +6935,27 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.LEAVING);
 		return isPmay;
+	}
+
+	@Override
+	public void updateRepaymentAmount(FinanceMain financeMain) {
+		logger.debug("Entering");
+
+		int recordCount = 0;
+
+		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
+		updateSql.append(" Set FinRepaymentAmount =:FinRepaymentAmount ");
+		updateSql.append(" , FinIsActive = :FinIsActive, ClosingStatus =:ClosingStatus ");
+		updateSql.append(" , FinStatus = :FinStatus , FinStsReason = :FinStsReason ");
+		updateSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
 	}
 
 }

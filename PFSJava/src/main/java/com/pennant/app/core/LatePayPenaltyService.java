@@ -61,7 +61,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -252,6 +251,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 				continue;
 			}
 
+			//PSD#163479
+			totPenaltyPaid = totPenaltyPaid.add(rpd.getPenaltyPaid());
+			totWaived = totWaived.add(rpd.getPenaltyWaived());
+
 			// MAx OD amounts is same as repayments balance amounts
 			if (rpd.getFinSchdDate().compareTo(rpd.getFinValueDate()) == 0
 					|| DateUtility.compare(grcDate, rpd.getFinValueDate()) >= 0) {
@@ -302,9 +305,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (odcr.getMovementDate().compareTo(valueDate) == 0) {
 				isAddTodayRcd = false;
 			}
-
-			totPenaltyPaid = totPenaltyPaid.add(rpd.getPenaltyPaid());
-			totWaived = totWaived.add(rpd.getPenaltyWaived());
 
 		}
 

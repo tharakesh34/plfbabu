@@ -243,6 +243,7 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElementWrapper(name = "extendedDetails")
 	@XmlElement(name = "extendedDetail")
 	private List<ExtendedField> extendedDetails;
+	@XmlElement
 	private ChequeHeader chequeHeader;
 	@XmlElement
 	private ReasonHeader reasonHeader;

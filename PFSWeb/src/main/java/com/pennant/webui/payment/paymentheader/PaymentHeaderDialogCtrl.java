@@ -1981,18 +1981,21 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 					//GST Calculations
 					TaxHeader taxHeader = advise.getTaxHeader();
-					List<Taxes> taxDetails = taxHeader.getTaxDetails();
-					if (taxHeader != null && CollectionUtils.isNotEmpty(taxDetails)) {
-						for (Taxes taxes : taxDetails) {
-							calGST = calGST.add(taxes.getActualTax());
-						}
+					if (taxHeader != null) {
+						List<Taxes> taxDetails = taxHeader.getTaxDetails();
+						if (CollectionUtils.isNotEmpty(taxDetails)) {
+							for (Taxes taxes : taxDetails) {
+								calGST = calGST.add(taxes.getActualTax());
+							}
 
-						if (StringUtils.equals(advise.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
-							availAmount = availAmount.subtract(calGST);
-							desc = desc.concat(" (Inclusive)");
-						} else if (StringUtils.equals(advise.getTaxComponent(),
-								FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-							desc = desc.concat(" (Exclusive)");
+							if (StringUtils.equals(advise.getTaxComponent(),
+									FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
+								availAmount = availAmount.subtract(calGST);
+								desc = desc.concat(" (Inclusive)");
+							} else if (StringUtils.equals(advise.getTaxComponent(),
+									FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+								desc = desc.concat(" (Exclusive)");
+							}
 						}
 					}
 
@@ -2089,12 +2092,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 				//GST Calculations
 				TaxHeader taxHeader = detail.getTaxHeader();
-				List<Taxes> taxDetails = taxHeader.getTaxDetails();
-				if (taxHeader != null
-						&& StringUtils.equals(detail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)
-						&& CollectionUtils.isNotEmpty(taxDetails)) {
-					for (Taxes taxes : taxDetails) {
-						avaAmount = avaAmount.add(taxes.getActualTax());
+				if (taxHeader != null) {
+					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+					if (taxHeader != null
+							&& StringUtils.equals(detail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)
+							&& CollectionUtils.isNotEmpty(taxDetails)) {
+						for (Taxes taxes : taxDetails) {
+							avaAmount = avaAmount.add(taxes.getActualTax());
+						}
 					}
 				}
 

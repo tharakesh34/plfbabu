@@ -2574,6 +2574,7 @@
 		<property name="notificationService" ref="notificationService" />
 		<property name="feeCalculator" ref="feeCalculator" />
 		<property name="repayProcessUtil" ref="repayProcessUtil" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->

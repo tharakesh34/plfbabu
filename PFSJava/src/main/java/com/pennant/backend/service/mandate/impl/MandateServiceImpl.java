@@ -444,11 +444,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				details.add(ErrorUtil.getErrorDetail(new ErrorDetail("barCodeNumber", "90404", valueParm, valueParm)));
 			}
 		}
-		if (StringUtils.isBlank(mandate.getAccHolderName())) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "AccHolderName";
-			details.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
-		} else {
+		if (StringUtils.isNotBlank(mandate.getAccHolderName())) {
 			Pattern pattern = Pattern.compile(
 					PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME));
 
@@ -457,7 +453,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			if (!matcher.matches()) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "AccHolderName";
-				details.add(ErrorUtil.getErrorDetail(new ErrorDetail("90237", "", valueParm), "EN"));
+				details.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
 		}
 		if (!StringUtils.isBlank(mandate.getJointAccHolderName())) {

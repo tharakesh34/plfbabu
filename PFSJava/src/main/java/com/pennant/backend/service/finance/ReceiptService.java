@@ -170,4 +170,6 @@ public interface ReceiptService {
 
 	int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference);
 
+	void getWaiverValidation(ReceiptUploadDetail rud);
+
 }

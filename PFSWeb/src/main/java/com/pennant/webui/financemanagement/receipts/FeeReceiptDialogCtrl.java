@@ -254,6 +254,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private int tdsRoundingTarget = 0;
 	private String taxRoundMode = null;
 	private int taxRoundingTarget = 0;
+	private boolean isFinTDSApplicable = false;
 
 	protected Listheader listheader_FeeDetailList_NetAmountOriginalTDS;
 	protected Listheader listheader_FeeDetailList_PaidTDS;
@@ -594,6 +595,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.custName.setValue(main.getLovDescCustShrtName());
 				this.finDivision.setValue(main.getLovDescFinDivision());
 				this.postBranch.setValue(main.getFinBranch(), main.getLovDescFinBranchName());
+				this.isFinTDSApplicable = main.isTDSApplicable();
 
 				//setting data
 				customerID = main.getCustID();
@@ -850,7 +852,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal netTDS = fee.getNetTDS();
 		totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
 
-		if (fee.isTdsReq()) {
+		if (fee.isTdsReq() && this.isFinTDSApplicable) {
 			allocatedAmtTDS = (netTDS.multiply(totAlocAmt)).divide(netAmountOriginal, 2, RoundingMode.HALF_DOWN);
 			allocatedAmtTDS = CalculationUtil.roundAmount(allocatedAmtTDS, tdsRoundMode, tdsRoundingTarget);
 			totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST).subtract(tdsPerc);
@@ -1445,6 +1447,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (!header.isNewRecord()) {
 			this.finReference.setValue(header.getReference(), "");
+			this.isFinTDSApplicable = header.isFinTDSApplicable();
 			this.finType.setValue(header.getFinType(), header.getFinTypeDesc());
 			this.finCcy.setValue(header.getFinCcy(), CurrencyUtil.getCcyDesc(header.getFinCcy()));
 			this.finBranch.setValue(header.getFinBranch(), header.getFinBranchDesc());

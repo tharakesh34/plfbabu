@@ -102,6 +102,7 @@ import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
@@ -112,6 +113,7 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -245,7 +247,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Row row_CancelReason;
 	protected Row row_CancelDate;
 	protected ExtendedCombobox cancelReason;
-	protected ExtendedCombobox cancelRemarks;
+	protected Textbox cancelRemarks;
 	protected Row row_ReceiptModeStatus;
 	protected Hbox hbox_ReceiptDialog_DepositDate;
 
@@ -630,7 +632,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.bounceCode.setReadonly(true);
 		this.cancelReason.setReadonly(true);
 		this.cancelRemarks.setReadonly(true);
-		this.cancelRemarks.setMandatoryStyle(false);
 		this.collectionAgentId.setReadonly(true);
 		this.fundingAccount.setReadonly(true);
 
@@ -838,8 +839,13 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.row_BankCode.setVisible(false);
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
-				this.row_PaymentRef.setVisible(false);
-				this.row_DepositBank.setVisible(false);
+				if (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE) {
+					this.row_PaymentRef.setVisible(true);
+					this.row_DepositBank.setVisible(true);
+				} else {
+					this.row_PaymentRef.setVisible(false);
+					this.row_DepositBank.setVisible(false);
+				}
 				readOnlyComponent(true, this.fundingAccount);
 
 			} else {
@@ -900,8 +906,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.cancelReason.setValue(rch.getCancelReason(), rch.getCancelReasonDesc());
 			this.cancelDate.setVisible(true);
 			this.cancelDate.setValue(rch.getBounceDate());
+			this.cancelRemarks.setValue(rch.getCancelRemarks());
 			if (rch.getBounceDate() == null) {
-				this.bounceDate.setValue(DateUtility.getAppDate());
+				this.bounceDate.setValue(SysParamUtil.getAppDate());
 			}
 		} else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
 			this.realizationDate.setValue(rch.getRealizationDate());
@@ -1231,7 +1238,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					this.paymentRef.setValue(rcd.getPaymentRef());
 					this.externalRefrenceNumber.setValue(rch.getExtReference());
 					boolean partnerBankReq = false;
-					if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, rcd.getPaymentType())) {
+					if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, rcd.getPaymentType())
+							|| (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE)) {
 						partnerBankReq = true;
 					}
 

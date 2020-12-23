@@ -238,7 +238,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.rate.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
 		this.rate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
 		this.rate.setEffectiveRateVisible(true);
-		this.numberOfTerms.setMaxlength(3);
+		this.numberOfTerms.setMaxlength(PennantConstants.NUMBER_OF_TERMS_LENGTH);
 		this.repayPftRate.setMaxlength(13);
 		this.repayPftRate.setFormat(PennantConstants.rateFormate9);
 		this.repayPftRate.setRoundingMode(BigDecimal.ROUND_DOWN);

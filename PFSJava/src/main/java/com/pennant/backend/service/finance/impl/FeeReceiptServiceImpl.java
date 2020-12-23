@@ -861,7 +861,10 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 					&& finFeeDetail.getTaxHeaderId() != null
 					&& (befImage.getRemainingFeeGST().compareTo(finFeeDetail.getPaidAmountGST()) != 0)) {
 
-				BigDecimal totalNetFee = finFeeDetail.getCalculatedAmount().subtract(finFeeDetail.getWaivedAmount());
+				BigDecimal totalNetFee = finFeeDetail.getActualAmountOriginal()
+						.subtract(finFeeDetail.getWaivedAmount());
+				totalNetFee = totalNetFee.add(finFeeDetail.getNetAmountGST());
+
 				TaxAmountSplit netTaxSplit = GSTCalculator.getInclusiveGST(totalNetFee, taxPercentages);
 				BigDecimal TotalPaid = befImage.getPaidAmount().add(befImage.getPaidTDS());
 				TaxAmountSplit paidTaxSplit = GSTCalculator.getInclusiveGST(TotalPaid, taxPercentages);
@@ -1536,7 +1539,9 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			if (finFeeDetail.getBefImage().getRemainingFee().compareTo(finFeeDetail.getPaidAmount()) == 0
 					&& finFeeDetail.getTaxHeaderId() != null && (finFeeDetail.getBefImage().getRemainingFeeGST()
 							.compareTo(finFeeDetail.getPaidAmountGST()) != 0)) {
-				BigDecimal totalNetFee = finFeeDetail.getCalculatedAmount().subtract(finFeeDetail.getWaivedAmount());
+				BigDecimal totalNetFee = finFeeDetail.getActualAmountOriginal()
+						.subtract(finFeeDetail.getWaivedAmount());
+				totalNetFee = totalNetFee.add(finFeeDetail.getNetAmountGST());
 				TaxAmountSplit netTaxSplit = GSTCalculator.getInclusiveGST(totalNetFee, taxPercentages);
 				BigDecimal TotalPaid = finFeeDetail.getBefImage().getPaidAmount()
 						.add(finFeeDetail.getBefImage().getPaidTDS());

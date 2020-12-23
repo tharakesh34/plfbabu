@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -18,20 +19,26 @@ import org.springframework.stereotype.Service;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.UserDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
+import com.pennant.backend.dao.dedup.DedupFieldsDAO;
+import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.impl.FinanceDeviationsDAOImpl;
+import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.perfios.PerfiosTransactionDAO;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
+import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -69,6 +76,9 @@ import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.deviation.DeviationList;
 import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.model.eligibility.AgreementDetails;
+import com.pennanttech.ws.model.finance.FinanceDedupDetails;
+import com.pennanttech.ws.model.finance.FinanceDedupRequest;
+import com.pennanttech.ws.model.finance.FinanceDedupResponse;
 import com.pennanttech.ws.model.finance.LoanStatus;
 import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
@@ -95,6 +105,9 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	private DeviationHelper deviationHelper;
 	private SecurityUserDAO securityUserDAO;
 	private PerfiosTransactionDAO perfiosTransactionDAO;
+	private DedupFieldsDAO dedupFieldsDAO;
+	private DedupParmDAO dedupParmDAO;
+	private FinanceDedupeDAO financeDedupeDAO;
 
 	/**
 	 * validate and create finance by receiving request object from interface
@@ -1415,6 +1428,117 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	}
 
 	@Override
+	public FinanceDedupResponse loanDedup(FinanceDedupDetails financeDedupDetails) throws ServiceException {
+
+		FinanceDedupResponse response = new FinanceDedupResponse();
+		FinanceDedup dedup = new FinanceDedup();
+
+		List<FinanceDedupRequest> dedupList = financeDedupDetails.getDedupList();
+
+		if (CollectionUtils.isEmpty(dedupList)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Request";
+			valueParm[1] = " two fields";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30507", valueParm));
+			return response;
+		} else {
+			if (dedupList.size() < 2) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Request";
+				valueParm[1] = " two fields";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30507", valueParm));
+				return response;
+			}
+		}
+
+		List<BuilderTable> fieldList = dedupFieldsDAO.getFieldList(FinanceConstants.MODULE_NAME);
+		List<String> fieldNamesList = fieldList.stream().map(d -> d.getFieldName()).collect(Collectors.toList());
+
+		for (FinanceDedupRequest feild : dedupList) {
+			// mandatory validation
+			if (StringUtils.isBlank(feild.getName())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "name";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return response;
+			}
+			if (StringUtils.isBlank(String.valueOf(feild.getValue()))) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "value";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return response;
+			}
+
+			boolean fieldFound = false;
+			for (String dbField : fieldNamesList) {
+				if (StringUtils.equalsIgnoreCase(dbField, feild.getName())) {
+					fieldFound = true;
+					if (feild.getName().equalsIgnoreCase("CustCIF")) {
+						dedup.setCustCIF(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("FinanceType")) {
+						dedup.setFinanceType(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustCRCPR")) {
+						dedup.setCustCRCPR(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("TradeLicenceNo")) {
+						dedup.setTradeLicenceNo(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("ChassisNumber")) {
+						dedup.setChassisNumber(String.valueOf(feild.getValue()));
+					}
+				}
+			}
+			if (!fieldFound) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "field name";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
+				return response;
+			}
+
+		}
+
+		List<FinanceDedup> resDedupList = new ArrayList<FinanceDedup>();
+		List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_FINANCE, "L", "");
+
+		// TO Check duplicate customer in Local database
+		for (DedupParm dedupParm : dedupParmList) {
+			List<FinanceDedup> list = financeDedupeDAO.fetchFinanceDedup(dedup, dedupParm.getSQLQuery());
+			if (list != null && !list.isEmpty()) {
+				resDedupList.addAll(list);
+			}
+		}
+
+		if (CollectionUtils.isNotEmpty(resDedupList)) {
+			response.setFinanceDedup(resDedupList);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+		} else {
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	public WSReturnStatus getErrorDetails(String errorCode, String[] valueParm) {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus response = new WSReturnStatus();
+		response = APIErrorHandlerService.getFailedStatus(errorCode, valueParm);
+
+		// set default error code and description in case of Error code does not
+		// exists.
+		if (StringUtils.isBlank(response.getReturnCode())) {
+			response = APIErrorHandlerService.getFailedStatus(APIConstants.RES_FAILED_CODE,
+					APIConstants.RES_FAILED_DESC);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	@Override
 	public DeviationList getLoanDeviations(FinanceDeviations financeDeviations) throws ServiceException {
 
 		logger.debug(Literal.ENTERING);
@@ -1685,6 +1809,29 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	@Autowired
 	public void setPerfiosTransactionDAO(PerfiosTransactionDAO perfiosTransactionDAO) {
 		this.perfiosTransactionDAO = perfiosTransactionDAO;
+	}
+
+	@Autowired
+	public void setDedupFieldsDAO(DedupFieldsDAO dedupFieldsDAO) {
+		this.dedupFieldsDAO = dedupFieldsDAO;
+	}
+
+	public DedupParmDAO getDedupParmDAO() {
+		return dedupParmDAO;
+	}
+
+	@Autowired
+	public void setDedupParmDAO(DedupParmDAO dedupParmDAO) {
+		this.dedupParmDAO = dedupParmDAO;
+	}
+
+	public FinanceDedupeDAO getFinanceDedupeDAO() {
+		return financeDedupeDAO;
+	}
+
+	@Autowired
+	public void setFinanceDedupeDAO(FinanceDedupeDAO financeDedupeDAO) {
+		this.financeDedupeDAO = financeDedupeDAO;
 	}
 
 }

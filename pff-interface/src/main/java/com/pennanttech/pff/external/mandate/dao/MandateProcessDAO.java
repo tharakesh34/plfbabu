@@ -9,4 +9,8 @@ public interface MandateProcessDAO {
 
 	public List<String> getEntityCodes();
 
+	public void deleteMandateRequests(List<Long> selectedMandateIds);
+
+	public void deleteMandateStatus(List<Long> selectedMandateIds);
+
 }

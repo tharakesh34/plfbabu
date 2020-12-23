@@ -264,6 +264,14 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		Long capturereaonse = null;
 		String taskId = getTaskId(getRole());
 		financeMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+		if (isNotesMandatory(taskId, financeMain)) {
+			if (!notesEntered) {
+				MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+				return;
+			}
+		}
+
 		capturereaonse = getWorkFlow().getReasonTypeToCapture(taskId, financeMain);
 		if (capturereaonse != null && capturereaonse.intValue() != 0) {
 			doFillReasons(capturereaonse.intValue());

@@ -134,4 +134,6 @@ public interface FinODDetailsDAO {
 
 	boolean isLppMethodOnMinPenalBalSchdExsts(String finReference);
 
+	FinODDetails getFinODByFinRef(String finReference, Date schDate);
+
 }

@@ -2,8 +2,11 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ca="client/attribute"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd"
+	xmlns:w="http://www.zkoss.org/2005/zk/client">
+	<script type="text/javascript" src="aes.js" />
+	<script type="text/javascript" src="encrypt.js" />
 
 	<window id="window_SecurityUserDialog" border="normal" apply="${securityUserDialogCtrl}" width="100%" height="100%"
 		sizable="false">
@@ -31,7 +34,7 @@
 							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
 						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode"
-								sclass="z-toolbarbutton" />
+								sclass="z-toolbarbutton" w:onClick="encryptSecUserPassword()" />
 							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
 							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
@@ -109,6 +112,11 @@
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
 														<combobox id="authType" width="200px" readonly="true" />
+													</hbox>
+													<label id="ldapDomain" value="${c:l('label_SecurityUserDialog_ldapDomainName.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="ldapDomainName" width="140px" readonly="true" visible="false" />
 													</hbox>
 												</row>
 												<row id="rowSecurityUserDialogUsrPwd" visible="true">
@@ -359,5 +367,6 @@
 				</groupbox>
 			</south>
 		</borderlayout>
+		<textbox id="txtbox_randomKey" visible="false" />
 	</window>
 </zk>

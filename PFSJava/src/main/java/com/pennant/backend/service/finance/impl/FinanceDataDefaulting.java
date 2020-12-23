@@ -897,8 +897,10 @@ public class FinanceDataDefaulting {
 		//Set Default Next Repayment Date
 		if (isValidRpyFrq && finMain.getNextRepayDate() == null) {
 			//	Date nextDate = getNextDftDate(finMain.getRepayFrq(), finMain.getCalGrcEndDate(),financeType.getFddLockPeriod());
-			Date nextDate = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, finMain.getCalGrcEndDate(),
-					HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
+			Date nextDate = FrequencyUtil
+					.getNextDate(finMain.getRepayFrq(), 1, finMain.getCalGrcEndDate(), HolidayHandlerTypes.MOVE_NONE,
+							false, finMain.isAllowGrcPeriod() ? 0 : financeType.getFddLockPeriod())
+					.getNextFrequencyDate();
 			nextDate = DateUtility.getDBDate(DateUtility.format(nextDate, PennantConstants.DBDateFormat));
 			finMain.setNextRepayDate(nextDate);
 		}
@@ -920,8 +922,10 @@ public class FinanceDataDefaulting {
 
 		//Next Profit Date
 		if (isValidOtherFrq && finMain.getNextRepayPftDate() == null) {
-			Date nextRpyPftDate = FrequencyUtil.getNextDate(finMain.getRepayPftFrq(), 1, finMain.getCalGrcEndDate(),
-					HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
+			Date nextRpyPftDate = FrequencyUtil
+					.getNextDate(finMain.getRepayPftFrq(), 1, finMain.getCalGrcEndDate(), HolidayHandlerTypes.MOVE_NONE,
+							false, finMain.isAllowGrcPeriod() ? 0 : financeType.getFddLockPeriod())
+					.getNextFrequencyDate();
 			nextRpyPftDate = DateUtility.getDBDate(DateUtility.format(nextRpyPftDate, PennantConstants.DBDateFormat));
 
 			if (finMain.getCalMaturity() != null && nextRpyPftDate != null) {

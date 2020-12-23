@@ -148,7 +148,11 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		fillComboBox(this.purpose, "", PennantStaticListUtil.getReceiptPurpose(), "");
 		registerField("receiptPurpose", listheader_ReceiptPurpose, SortOrder.NONE, purpose, sortOperator_ReceiptPurpose,
 				Operators.STRING);
-		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
+			fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModesByFeePayment(), "");
+		} else {
+			fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
+		}
 		registerField("receiptMode", listheader_ReceiptMode, SortOrder.NONE, receiptMode,
 				sortOperator_ReceiptReceiptMode, Operators.STRING);
 		registerField("receiptAmount", listheader_ReceiptAmount);

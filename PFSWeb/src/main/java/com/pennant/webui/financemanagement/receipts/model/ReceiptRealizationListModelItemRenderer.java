@@ -86,8 +86,8 @@ public class ReceiptRealizationListModelItemRenderer implements ListitemRenderer
 		lc = new Listcell(
 				PennantAppUtil.getlabelDesc(header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose()));
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(header.getReceiptMode(), PennantStaticListUtil.getReceiptModes()));
+		lc = new Listcell(PennantAppUtil.getlabelDesc(header.getReceiptMode(),
+				PennantStaticListUtil.getReceiptModesByFeePayment()));
 		lc.setParent(item);
 		lc = new Listcell(header.getTransactionRef());
 		lc.setParent(item);

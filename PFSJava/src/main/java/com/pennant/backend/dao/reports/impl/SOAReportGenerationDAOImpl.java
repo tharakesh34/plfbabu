@@ -1455,4 +1455,5 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.debug(Literal.LEAVING);
 		return soa;
 	}
+
 }

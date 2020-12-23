@@ -51,9 +51,12 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -64,15 +67,17 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlType(propOrder = { "chequeDetailsID", "headerID", "bankBranchID", "accountNo", "chequeSerialNo", "chequeDate",
 		"eMIRefNo", "amount", "chequeCcy", "status", "active" })
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 public class ChequeHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	@XmlElement
 	private long headerID = 0;
 	private String finReference;
-	private int noOfCheques;
 	private BigDecimal totalAmount;
 	private boolean active = false;
+	@XmlElementWrapper(name = "chequeDetails")
+	@XmlElement
 	private List<ChequeDetail> chequeDetailList = new ArrayList<ChequeDetail>();
 	@XmlTransient
 	private boolean newRecord = false;
@@ -83,6 +88,21 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+
+	@XmlElement
+	private int noOfCheques;
+	@XmlElement
+	private long bankBranchID;
+	@XmlElement
+	private String accHolderName;
+	@XmlElement
+	private String accountNo;
+	@XmlElement
+	private int chequeSerialNo;
+	private String sourceId;
+
+	@XmlElement
+	public WSReturnStatus returnStatus = null;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -100,6 +120,12 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("bankBranchIDName");
+		excludeFields.add("accHolderName");
+		excludeFields.add("accountNo");
+		excludeFields.add("bankBranchID");
+		excludeFields.add("chequeSerialNo");
+		excludeFields.add("sourceId");
+		excludeFields.add("returnStatus");
 		return excludeFields;
 	}
 
@@ -197,5 +223,53 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
+	}
+
+	public String getAccHolderName() {
+		return accHolderName;
+	}
+
+	public void setAccHolderName(String accHolderName) {
+		this.accHolderName = accHolderName;
+	}
+
+	public String getAccountNo() {
+		return accountNo;
+	}
+
+	public void setAccountNo(String accountNo) {
+		this.accountNo = accountNo;
+	}
+
+	public int getChequeSerialNo() {
+		return chequeSerialNo;
+	}
+
+	public void setChequeSerialNo(int chequeSerialNo) {
+		this.chequeSerialNo = chequeSerialNo;
+	}
+
+	public long getBankBranchID() {
+		return bankBranchID;
+	}
+
+	public void setBankBranchID(long bankBranchID) {
+		this.bankBranchID = bankBranchID;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
 	}
 }

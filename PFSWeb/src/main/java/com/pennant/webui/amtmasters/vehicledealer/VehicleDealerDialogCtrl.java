@@ -1137,7 +1137,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		try {
 			if (this.branch.isVisible() && this.branch.isButtonDisabled()) {
 				// writing multiple selected values into branch field.
-				this.branch.getValue();
+				this.branch.getValidatedValue();
 			}
 			Map<String, Object> branchValues = getSelectedValues(branch);
 			if (branchValues != null) {
