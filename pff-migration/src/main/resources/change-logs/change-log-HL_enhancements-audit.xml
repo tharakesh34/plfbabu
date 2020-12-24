@@ -1835,7 +1835,7 @@
 			constraintName="pk_adtverification_vt_dtls" />
 	</changeSet>
 
-	<changeSet id="190" author="tejaswi.b">
+	<!-- <changeSet id="190" author="tejaswi.b">
 		<addColumn tableName="ADTFINANCEMAIN">
 			<column name="AlwGrcAdj" type="boolean" />
 		</addColumn>
@@ -1879,7 +1879,7 @@
 		<addColumn tableName="ADTRMTFINANCETYPES">
 			<column name="MaxAutoIncrAllowed" type="bigint" />
 		</addColumn>
-	</changeSet>
+	</changeSet> -->
 	
 	<!-- <changeSet id="198" author="Ganesh.P">
 		<createTable tableName="AdtFinFeeRefundHeader">
@@ -2103,7 +2103,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="216" author="rajesh.n">
+	<!-- <changeSet id="216" author="rajesh.n">
 		<addColumn tableName="adtrmtfinancetypes">
 			<column name="thrldtomaintaingrcprd" type="int" />
 		</addColumn>
@@ -2128,7 +2128,7 @@
 	<changeSet id="219" author="rajesh.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="thrldtomaintaingrcprd" tableName="adtrmtfinancetypes" defaultValue="0" />
 	</changeSet>
-
+ -->
 	<changeSet id="220" author="venkatesh.ch">
 		<comment>ST#363 TK#773</comment>
 		<addColumn tableName="ADTrmtfinancetypes">
