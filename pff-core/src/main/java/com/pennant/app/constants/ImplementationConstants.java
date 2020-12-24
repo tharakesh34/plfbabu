@@ -261,17 +261,25 @@ public class ImplementationConstants {
 		ALLOW_PMAY = getValueAsBoolean(extensions, "ALLOW_PMAY", false);
 		ALLOW_OCR = getValueAsBoolean(extensions, "ALLOW_OCR", false);
 
-		VERIFICATION_INTIATION_FROM_OUTSIDE = getValueAsBoolean(extensions, "VERIFICATION_INTIATION_FROM_OUTSIDE",
-				false);
+		setVerificationConstants(extensions);
+
 		ADVANCE_PAYMENT_INT = getValueAsBoolean(extensions, "ADVANCE_PAYMENT_INT", false);
 		ADVANCE_PAYMENT_EMI = getValueAsBoolean(extensions, "ADVANCE_PAYMENT_EMI", false);
 		COVENANT_MODULE_NEW = getValueAsBoolean(extensions, "COVENANT_MODULE_NEW", true);
-
-		/* ADVANCE INT / EMI Constants */
 		ADV_EMI_STAGE_FRONT_END = getValueAsBoolean(extensions, "ADV_EMI_STAGE_FRONT_END", true);
 		ADV_EMI_STAGE_REAR_END = getValueAsBoolean(extensions, "ADV_EMI_STAGE_REAR_END", false);
 		ADV_EMI_STAGE_REPAY_TERMS = getValueAsBoolean(extensions, "ADV_EMI_STAGE_REPAY_TERMS", false);
 
+	}
+
+	public static boolean VERIFICATION_INTIATION_FROM_OUTSIDE;
+	public static boolean VERIFICATION_INTIATION_AGENT_MANDATORY;
+
+	private static void setVerificationConstants(Map<String, Object> extensions) {
+		VERIFICATION_INTIATION_FROM_OUTSIDE = getValueAsBoolean(extensions, "VERIFICATION_INTIATION_FROM_OUTSIDE",
+				false);
+		VERIFICATION_INTIATION_AGENT_MANDATORY = getValueAsBoolean(extensions, "VERIFICATION_INTIATION_AGENT_MANDATORY",
+				false);
 	}
 
 	public static boolean ALLOW_MULTI_CCY = false;
@@ -514,7 +522,6 @@ public class ImplementationConstants {
 	public static boolean CREATE_PRESENTMENT_RECEIPT_EOD;
 	//Update the Manual Cheque Receipt status as paid at Deposit approver
 	public static boolean CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER;
-	public static boolean VERIFICATION_INTIATION_FROM_OUTSIDE;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;

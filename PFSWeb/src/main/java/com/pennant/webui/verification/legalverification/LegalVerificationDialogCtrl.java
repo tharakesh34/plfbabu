@@ -51,6 +51,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -151,7 +152,6 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	private transient CollateralSetupService collateralSetupService;
 
 	protected Button btnSearchCustomerDetails;
-	private boolean isCodeNameMandatory;
 
 	/**
 	 * default constructor.<br>
@@ -258,11 +258,8 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		} else {
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
-		isCodeNameMandatory = SysParamUtil.isAllowed(SMTParameterConstants.IS_AGENT_CODE_NAME_MANDATORY);
-		if (!isCodeNameMandatory) {
-			this.space_AgentCode.setVisible(false);
-			this.space_AgentName.setVisible(false);
-		}
+		this.space_AgentCode.setVisible(!ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY);
+		this.space_AgentName.setVisible(!ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -1011,12 +1008,14 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_AgentCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, isCodeNameMandatory));
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,
+							ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY));
 		}
 		if (!this.agentName.isReadonly()) {
 			this.agentName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_AgentName.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME, isCodeNameMandatory));
+							PennantRegularExpressions.REGEX_CUST_NAME,
+							ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY));
 		}
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(new PTListValidator(

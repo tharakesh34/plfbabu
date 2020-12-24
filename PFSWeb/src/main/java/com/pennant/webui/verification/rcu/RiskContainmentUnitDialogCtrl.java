@@ -141,8 +141,6 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	private boolean fromLoanOrg;
 
 	protected Button btnSearchCustomerDetails;
-	private boolean isCodeNameMandatory;
-	private boolean docFieldsDisabled;
 
 	/**
 	 * default constructor.<br>
@@ -247,12 +245,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
 
-		isCodeNameMandatory = SysParamUtil.isAllowed(SMTParameterConstants.IS_AGENT_CODE_NAME_MANDATORY);
-		if (!isCodeNameMandatory) {
-			this.space_AgentCode.setVisible(false);
-			this.space_AgentName.setVisible(false);
-		}
-		docFieldsDisabled = ImplementationConstants.FCU_DOC_FIELDS_DISABLED;
+		this.space_AgentCode.setVisible(!ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY);
+		this.space_AgentName.setVisible(!ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -525,7 +519,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				lc.appendChild(remarks);
 				lc.setParent(item);
 				int type = document.getVerificationType();
-				if (docFieldsDisabled) {
+				if (ImplementationConstants.FCU_DOC_FIELDS_DISABLED) {
 					type = 1;//Defaulting to Sampled and disabling
 					verificationType.setDisabled(true);
 					rcuDocStatus.setDisabled(true);
@@ -1082,12 +1076,14 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_RiskContainmentUnitDialog_AgentCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, isCodeNameMandatory));
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,
+							ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY));
 		}
 		if (!this.agentName.isReadonly()) {
 			this.agentName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_RiskContainmentUnitDialog_AgentName.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME, isCodeNameMandatory));
+							PennantRegularExpressions.REGEX_CUST_NAME,
+							ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY));
 		}
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(

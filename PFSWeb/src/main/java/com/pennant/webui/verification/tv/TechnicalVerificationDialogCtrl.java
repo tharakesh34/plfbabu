@@ -63,6 +63,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ScriptErrors;
@@ -190,7 +191,6 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	protected Div docDiv;
 	protected Iframe onePagerDocumentView;
 	private byte[] imagebyte;
-	private boolean isCodeNameMandatory;
 	private static ScriptValidationService scriptValidationService;
 
 	String prprtyAddr1 = "";
@@ -299,11 +299,9 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		} else {
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
-		isCodeNameMandatory = SysParamUtil.isAllowed(SMTParameterConstants.IS_AGENT_CODE_NAME_MANDATORY);
-		if (!isCodeNameMandatory) {
-			this.space_AgentCode.setVisible(false);
-			this.space_AgentName.setVisible(false);
-		}
+		this.space_AgentCode.setVisible(!ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY);
+		this.space_AgentName.setVisible(!ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY);
+
 		loanType.setReadonly(true);
 		custBranch.setReadonly(true);
 		setStatusDetails();
@@ -1211,12 +1209,14 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_TechnicalVerificationDialog_AgentCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, isCodeNameMandatory));
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,
+							ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY));
 		}
 		if (!this.agentName.isReadonly()) {
 			this.agentName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_TechnicalVerificationDialog_AgentName.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME, isCodeNameMandatory));
+							PennantRegularExpressions.REGEX_CUST_NAME,
+							ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY));
 		}
 
 		if (!this.reason.isReadonly()) {

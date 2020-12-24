@@ -275,7 +275,6 @@ public class SMTParameterConstants {
 
 	// FIXME HL SMT Parameters
 	public static final String CREDIT_ELG_PARAMS = "CREDIT_ELG_PARAMS";
-	public static final String IS_AGENT_CODE_NAME_MANDATORY = "IS_AGENT_CODE_NAME_MANDATORY";
 	public static final String CHANGE_PAYMENT_AMT_DFLT_TO_MTRTY_DATE = "CHANGE_PAYMENT_AMT_DFLT_TO_MTRTY_DATE";
 	//Accounting validation Required
 	public static final String ACCOUNTING_VALIDATION_REQ = "ACCOUNTING_VALIDATION_REQ";
