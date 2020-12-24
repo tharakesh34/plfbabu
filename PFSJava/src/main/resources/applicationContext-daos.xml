@@ -5678,11 +5678,6 @@
 		<property name="holidayMasterDAO" ref="holidayMasterDAO" />
 	</bean>
 
-	<!--============ Number To English Words Util ============== -->
-	<bean name="numberToEnglishWords" class="com.pennant.app.util.NumberToEnglishWords">
-		<property name="currencyDAO" ref="currencyDAO" />
-	</bean>
-
 	<!--============ Account Number Generation Util ============== -->
 	<bean name="accountNumberGeneration" class="com.pennant.app.util.AccountNumberGeneration">
 		<property name="currencyDAO" ref="currencyDAO" />
