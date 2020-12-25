@@ -4311,7 +4311,7 @@ public class PennantStaticListUtil {
 	}
 
 	// Change to customize the drop down list
-	private static Map<String, ValueLabel> scheduleCalculationCodes = new HashMap<>();
+	private static Map<String, ValueLabel> schdCalcCodes = new HashMap<>();
 	private static Map<String, ValueLabel> bpimethods = new HashMap<>();
 	private static List<ValueLabel> paymentTypes = new ArrayList<>();
 	private static List<ValueLabel> allPaymentTypes = new ArrayList<>();
@@ -4324,7 +4324,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> dmsDocumentStatus = new ArrayList<>();
 
 	public static List<ValueLabel> getSchCalCodes() {
-		return new ArrayList<>(scheduleCalculationCodes.values());
+		return new ArrayList<>(schdCalcCodes.values());
 	}
 
 	public static List<ValueLabel> getDisbCalCodes() {
@@ -4337,29 +4337,29 @@ public class PennantStaticListUtil {
 
 	static {
 		// Schedule Calculation codes
-		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_CURPRD,
+		schdCalcCodes.put(CalculationConstants.RPYCHG_CURPRD,
 				new ValueLabel(CalculationConstants.RPYCHG_CURPRD, Labels.getLabel("label_Current_Period")));
-		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_TILLMDT,
+		schdCalcCodes.put(CalculationConstants.RPYCHG_TILLMDT,
 				new ValueLabel(CalculationConstants.RPYCHG_TILLMDT, Labels.getLabel("label_Till_Maturity")));
-		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_ADJMDT,
+		schdCalcCodes.put(CalculationConstants.RPYCHG_ADJMDT,
 				new ValueLabel(CalculationConstants.RPYCHG_ADJMDT, Labels.getLabel("label_Adj_To_Maturity")));
-		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_TILLDATE,
+		schdCalcCodes.put(CalculationConstants.RPYCHG_TILLDATE,
 				new ValueLabel(CalculationConstants.RPYCHG_TILLDATE, Labels.getLabel("label_Till_Date")));
 		// schedulCalculationCodes.put(CalculationConstants.RPYCHG_ADDTERM, new
 		// ValueLabel(CalculationConstants.RPYCHG_ADDTERM,
 		// Labels.getLabel("label_Add_Terms")));
-		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_ADDRECAL,
+		schdCalcCodes.put(CalculationConstants.RPYCHG_ADDRECAL,
 				new ValueLabel(CalculationConstants.RPYCHG_ADDRECAL, Labels.getLabel("label_Add_Recal")));
-		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_STEPPOS,
+		schdCalcCodes.put(CalculationConstants.RPYCHG_STEPPOS,
 				new ValueLabel(CalculationConstants.RPYCHG_STEPPOS, Labels.getLabel("label_POSStep")));
 		/*
 		 * schedulCalculationCodes.put(CalculationConstants.RPYCHG_ADDLAST, new
 		 * ValueLabel(CalculationConstants.RPYCHG_ADDLAST, Labels.getLabel("label_Add_Last")));
 		 */
-		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_ADJTERMS,
+		schdCalcCodes.put(CalculationConstants.RPYCHG_ADJTERMS,
 				new ValueLabel(CalculationConstants.RPYCHG_ADJTERMS, Labels.getLabel("label_Adj_Terms")));
 
-		disbCalculationCodes.putAll(scheduleCalculationCodes);
+		disbCalculationCodes.putAll(schdCalcCodes);
 
 		// BPI Treatment
 		bpimethods.put(FinanceConstants.BPI_NO,
@@ -4467,7 +4467,7 @@ public class PennantStaticListUtil {
 			return;
 		}
 
-		scheduleCalculationCodes.remove(scheduleCalculationCode);
+		schdCalcCodes.remove(scheduleCalculationCode);
 	}
 
 	public void removeBpiMethods(String scheduleCalculationCode) {

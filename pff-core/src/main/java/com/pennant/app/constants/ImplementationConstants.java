@@ -181,9 +181,6 @@ public class ImplementationConstants {
 				false);
 		NOC_LINKED_LOANS_VALIDATION = getValueAsBoolean(extensions, "NOC_LINKED_LOANS_VALIDATION", false);
 		ACCOUNTING_VALIDATION = getValueAsBoolean(extensions, "ACCOUNTING_VALIDATION", false);
-		EXCLUDE_RECALTYPE_VAL_IN_ADDDISB = getValueAsBoolean(extensions, "EXCLUDE_RECALTYPE_VAL_IN_ADDDISB", false);
-		EXCLUDE_RECALTYPE_VAL_IN_ADDRATECHNG = getValueAsBoolean(extensions, "EXCLUDE_RECALTYPE_VAL_IN_ADDRATECHNG",
-				false);
 		EXCLUDE_RECALTYPE_VAL_IN_RECAL = getValueAsBoolean(extensions, "EXCLUDE_RECALTYPE_VAL_IN_RECAL", false);
 		FCU_DOC_FIELDS_DISABLED = getValueAsBoolean(extensions, "FCU_DOC_FIELDS_DISABLED", false);
 		COLLATERAL_DEDUP_WARNING = getValueAsBoolean(extensions, "COLLATERAL_DEDUP_WARNING", false);
@@ -201,7 +198,6 @@ public class ImplementationConstants {
 		ALW_CUSTOMER_DATA_EXTRACTION = getValueAsBoolean(extensions, "ALW_CUSTOMER_DATA_EXTRACTION", false);
 		ALW_MASTER_DATA_EXTRACTION = getValueAsBoolean(extensions, "ALW_MASTER_DATA_EXTRACTION", false);
 		ALW_VERIFICATION_SYNC = getValueAsBoolean(extensions, "ALW_VERIFICATION_SYNC", false);
-		ALW_FILTER_BY_CITY = getValueAsBoolean(extensions, "ALW_FILTER_BY_CITY", false);
 		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true); // Default value should be "true"
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
 		ALLOW_EOD_INTERVAL_VALIDATION = getValueAsBoolean(extensions, "ALLOW_EOD_INTERVAL_VALIDATION", false);
@@ -272,14 +268,14 @@ public class ImplementationConstants {
 
 	}
 
-	public static boolean VERIFICATION_INTIATION_FROM_OUTSIDE;
-	public static boolean VERIFICATION_INTIATION_AGENT_MANDATORY;
+	public static boolean VER_INIT_FROM_OUTSIDE;
+	public static boolean VER_INIT_AGENT_MANDATORY;
+	public static boolean VER_AGENCY_FILTER_BY_CITY;
 
 	private static void setVerificationConstants(Map<String, Object> extensions) {
-		VERIFICATION_INTIATION_FROM_OUTSIDE = getValueAsBoolean(extensions, "VERIFICATION_INTIATION_FROM_OUTSIDE",
-				false);
-		VERIFICATION_INTIATION_AGENT_MANDATORY = getValueAsBoolean(extensions, "VERIFICATION_INTIATION_AGENT_MANDATORY",
-				false);
+		VER_INIT_FROM_OUTSIDE = getValueAsBoolean(extensions, "VER_INIT_FROM_OUTSIDE", false);
+		VER_INIT_AGENT_MANDATORY = getValueAsBoolean(extensions, "VER_INIT_AGENT_MANDATORY", false);
+		VER_AGENCY_FILTER_BY_CITY = getValueAsBoolean(extensions, "VER_AGENCY_FILTER_BY_CITY", false);
 	}
 
 	public static boolean ALLOW_MULTI_CCY = false;
@@ -433,8 +429,6 @@ public class ImplementationConstants {
 	public static boolean VFN_REASONCODES_BASED_ON_REASONTYPE;
 	public static boolean NOC_LINKED_LOANS_VALIDATION; // validate the linked loans for NOC generation
 	public static boolean ACCOUNTING_VALIDATION;
-	public static boolean EXCLUDE_RECALTYPE_VAL_IN_ADDDISB;
-	public static boolean EXCLUDE_RECALTYPE_VAL_IN_ADDRATECHNG;
 	public static boolean EXCLUDE_RECALTYPE_VAL_IN_RECAL;
 	public static boolean FCU_DOC_FIELDS_DISABLED;
 	public static boolean COLLATERAL_DEDUP_WARNING;
@@ -452,8 +446,6 @@ public class ImplementationConstants {
 	public static boolean ALW_CUSTOMER_DATA_EXTRACTION;
 	public static boolean ALW_MASTER_DATA_EXTRACTION;
 	public static boolean ALW_VERIFICATION_SYNC;
-	public static boolean ALW_FILTER_BY_CITY;
-
 	public static boolean ALLOW_AUTO_GRACE_EXT;
 	public static boolean ALLOW_LOAN_DOWNSIZING;
 	public static boolean LOAN_DOWNSIZING_ACCOUNTING_REQ;

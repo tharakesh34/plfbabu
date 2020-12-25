@@ -299,8 +299,8 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		} else {
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
-		this.space_AgentCode.setVisible(!ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY);
-		this.space_AgentName.setVisible(!ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY);
+		this.space_AgentCode.setVisible(!ImplementationConstants.VER_INIT_FROM_OUTSIDE);
+		this.space_AgentName.setVisible(!ImplementationConstants.VER_INIT_FROM_OUTSIDE);
 
 		loanType.setReadonly(true);
 		custBranch.setReadonly(true);
@@ -1207,16 +1207,14 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		}
 
 		if (!this.agentCode.isReadonly()) {
-			this.agentCode.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_TechnicalVerificationDialog_AgentCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,
-							ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY));
+			this.agentCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_TechnicalVerificationDialog_AgentCode.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, ImplementationConstants.VER_INIT_FROM_OUTSIDE));
 		}
 		if (!this.agentName.isReadonly()) {
 			this.agentName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_TechnicalVerificationDialog_AgentName.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME,
-							ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY));
+							PennantRegularExpressions.REGEX_CUST_NAME, ImplementationConstants.VER_INIT_FROM_OUTSIDE));
 		}
 
 		if (!this.reason.isReadonly()) {

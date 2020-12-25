@@ -22503,7 +22503,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendFIInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
+		if (ImplementationConstants.VER_INIT_FROM_OUTSIDE) {
 			return;
 		}
 		boolean createTab = false;
@@ -22568,7 +22568,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendTVInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
+		if (ImplementationConstants.VER_INIT_FROM_OUTSIDE) {
 			return;
 		}
 		boolean createTab = false;
@@ -22638,7 +22638,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendLVInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
+		if (ImplementationConstants.VER_INIT_FROM_OUTSIDE) {
 			return;
 		}
 
@@ -22706,7 +22706,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendVettingInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
+		if (ImplementationConstants.VER_INIT_FROM_OUTSIDE) {
 			return;
 		}
 
@@ -22774,7 +22774,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendRCUInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
+		if (ImplementationConstants.VER_INIT_FROM_OUTSIDE) {
 			return;
 		}
 

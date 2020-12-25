@@ -160,7 +160,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	protected Checkbox qDP;
 	protected Row row_Qdp;
-	private boolean excludeReq = ImplementationConstants.EXCLUDE_RECALTYPE_VAL_IN_ADDDISB;
 
 	/**
 	 * default constructor.<br>
@@ -371,10 +370,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (aFinSchData.getFinanceMain().isSanBsdSchdle()) {
 				exclRecalTypes = exclRecalTypes.concat("ADDRECAL,");
 			}
-			//Exclude list based on system param
-			if (excludeReq) {
-				exclRecalTypes = ",CURPRD,TILLDATE,ADJMDT,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,STEPPOS,";
-			}
+
 			if (isStepPOS) {
 				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_STEPPOS,
 						PennantStaticListUtil.getDisbCalCodes(), exclRecalTypes);
@@ -1361,10 +1357,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (getFinScheduleData().getFinanceMain().isSanBsdSchdle()) {
 				exclRecalTypes = exclRecalTypes.concat("ADDRECAL,");
 			}
-			//Exclude list based on system param
-			if (excludeReq) {
-				exclRecalTypes = ",CURPRD,TILLDATE,ADJMDT,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,STEPPOS,";
-			}
+
 			if (isStepPOS) {
 				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_STEPPOS,
 						PennantStaticListUtil.getDisbCalCodes(), exclRecalTypes);
@@ -1390,10 +1383,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			if (getFinScheduleData().getFinanceMain().isSanBsdSchdle()) {
 				exclRecalTypes = exclRecalTypes.concat("ADDRECAL,");
-			}
-			//Exclude list based on system param
-			if (excludeReq) {
-				exclRecalTypes = ",CURPRD,TILLDATE,ADJMDT,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,STEPPOS,";
 			}
 			fillComboBox(this.cbReCalType, value, PennantStaticListUtil.getDisbCalCodes(), exclRecalTypes);
 		}

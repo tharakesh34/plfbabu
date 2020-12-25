@@ -258,8 +258,8 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		} else {
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
-		this.space_AgentCode.setVisible(!ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY);
-		this.space_AgentName.setVisible(!ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY);
+		this.space_AgentCode.setVisible(!ImplementationConstants.VER_INIT_AGENT_MANDATORY);
+		this.space_AgentName.setVisible(!ImplementationConstants.VER_INIT_AGENT_MANDATORY);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -1009,13 +1009,12 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			this.agentCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_AgentCode.value"),
 							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,
-							ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY));
+							ImplementationConstants.VER_INIT_AGENT_MANDATORY));
 		}
 		if (!this.agentName.isReadonly()) {
-			this.agentName.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_AgentName.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME,
-							ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY));
+			this.agentName.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_LegalVerificationDialog_AgentName.value"),
+					PennantRegularExpressions.REGEX_CUST_NAME, ImplementationConstants.VER_INIT_AGENT_MANDATORY));
 		}
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(new PTListValidator(

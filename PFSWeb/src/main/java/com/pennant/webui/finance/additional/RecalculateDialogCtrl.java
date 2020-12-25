@@ -112,7 +112,6 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	private transient RecalculateService recalService;
 	private boolean appDateValidationReq = false;
-	private boolean excludeReq = ImplementationConstants.EXCLUDE_RECALTYPE_VAL_IN_RECAL;
 
 	/**
 	 * default constructor.<br>
@@ -268,16 +267,6 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
 							PennantStaticListUtil.getSchCalCodes(), excldValues);
 				}
-			}
-			if (excludeReq) {
-				excldValues = ",CURPRD,TILLDATE,ADJMDT,ADDTERM,ADDLAST,ADJTERMS,STEPPOS,";
-				//PSD#158720 We are getting 900 Error while click on Recalculate button in Add term option
-				String recalType = aFinSchData.getFinanceMain().getRecalType();
-				if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDTERM)
-						&& !aFinSchData.getFinanceMain().isApplySanctionCheck()) {
-					recalType = CalculationConstants.RPYCHG_ADDRECAL;
-				}
-				fillComboBox(this.cbReCalType, recalType, PennantStaticListUtil.getSchCalCodes(), excldValues);
 			}
 			if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
 				fillSchFromDates(this.cbEventFromDate, aFinSchData.getFinanceScheduleDetails(), true);

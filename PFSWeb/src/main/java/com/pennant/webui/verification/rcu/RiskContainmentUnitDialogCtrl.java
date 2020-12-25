@@ -245,8 +245,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
 
-		this.space_AgentCode.setVisible(!ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY);
-		this.space_AgentName.setVisible(!ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY);
+		this.space_AgentCode.setVisible(!ImplementationConstants.VER_INIT_FROM_OUTSIDE);
+		this.space_AgentName.setVisible(!ImplementationConstants.VER_INIT_FROM_OUTSIDE);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -1074,16 +1074,14 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 							DateUtil.getDatePart(SysParamUtil.getAppDate()), true));
 		}
 		if (!this.agentCode.isReadonly()) {
-			this.agentCode.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_RiskContainmentUnitDialog_AgentCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,
-							ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY));
+			this.agentCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_RiskContainmentUnitDialog_AgentCode.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, ImplementationConstants.VER_INIT_FROM_OUTSIDE));
 		}
 		if (!this.agentName.isReadonly()) {
 			this.agentName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_RiskContainmentUnitDialog_AgentName.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME,
-							ImplementationConstants.VERIFICATION_INTIATION_AGENT_MANDATORY));
+							PennantRegularExpressions.REGEX_CUST_NAME, ImplementationConstants.VER_INIT_FROM_OUTSIDE));
 		}
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(

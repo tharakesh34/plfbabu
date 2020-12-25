@@ -88,7 +88,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -1338,7 +1337,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	 */
 	private void setAgencyFiltersByCollateralCity(String collateralRef) {
 
-		if (StringUtils.isNotBlank(collateralRef) && ImplementationConstants.ALW_FILTER_BY_CITY) {
+		if (StringUtils.isNotBlank(collateralRef) && ImplementationConstants.VER_AGENCY_FILTER_BY_CITY) {
 			List<String> collateralCities = new ArrayList<String>(1);
 			CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(collateralRef, "", true);
 			if (CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())) {

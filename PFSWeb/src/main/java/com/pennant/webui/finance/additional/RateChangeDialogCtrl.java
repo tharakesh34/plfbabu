@@ -76,7 +76,6 @@ import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -163,7 +162,6 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private transient BaseRateCodeService baseRateCodeService;
 	private boolean appDateValidationReq = false;
 	private String moduleDefiner = "";
-	private boolean excludeReq = ImplementationConstants.EXCLUDE_RECALTYPE_VAL_IN_ADDRATECHNG;
 
 	/**
 	 * default constructor.<br>
@@ -320,7 +318,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.reviewDateFromDateRow.setVisible(false);
 			this.reviewDateToDateRow.setVisible(false);
 			this.anyDateRateChangeFromDate.setVisible(true);
-			this.anyDateRateChangeFromDate.setValue(DateUtility.getAppDate());
+			this.anyDateRateChangeFromDate.setValue(SysParamUtil.getAppDate());
 			this.anyDateRateChangeToDate.setVisible(true);
 			this.anyDateRateChangeToDate.setValue(aFinanceMain.getMaturityDate());
 			excludeFileds.append("CURPRD,");
@@ -451,15 +449,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 		}
 
-		if (excludeReq) {
-			excludeFileds = new StringBuilder(",CURPRD,TILLDATE,ADJMDT,ADDTERM,ADDLAST,ADDRECAL,STEPPOS,");
-			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
-					PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
-		}
-
 		String valueAsString = SysParamUtil.getValueAsString("STEP_LOAN_SERVICING_REQ");
 		if (StringUtils.equalsIgnoreCase(valueAsString, PennantConstants.YES) && aFinType.isRateChgAnyDay()) {
-			processStepLoans(aFinanceMain, DateUtility.getAppDate());
+			processStepLoans(aFinanceMain, SysParamUtil.getAppDate());
 		}
 
 		logger.debug("Leaving");
@@ -468,7 +460,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void onChange$anyDateRateChangeFromDate(Event event) {
 		logger.debug("Entering");
 
-		Date alwdBackDate = DateUtility.addDays(DateUtility.getAppDate(),
+		Date alwdBackDate = DateUtility.addDays(SysParamUtil.getAppDate(),
 				-SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
 
 		if (this.anyDateRateChangeFromDate != null
@@ -551,7 +543,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		boolean allowBackDatedRateChange = SysParamUtil
 				.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE);
-		Date curBussDate = DateUtility.getAppDate();
+		Date curBussDate = SysParamUtil.getAppDate();
 		Date allowBackDate = null;
 
 		if (allowBackDatedRateChange) {
@@ -711,7 +703,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		boolean allowBackDatedRateChange = SysParamUtil
 				.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE);
-		Date curBussDate = DateUtility.getAppDate();
+		Date curBussDate = SysParamUtil.getAppDate();
 		Date allowBackDate = null;
 
 		Date lastSchdDate = null;
@@ -741,7 +733,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
 				//in Overdraft the Review from Date should be Greater than the appdate 
-				if (isOverdraft && DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate()) < 0
+				if (isOverdraft && DateUtility.compare(curSchd.getSchDate(), SysParamUtil.getAppDate()) < 0
 						&& !allowBackDatedRateChange) {
 					continue;
 				}
@@ -912,7 +904,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		//Last date
 		Date lastPaidDate = getFinScheduleData().getFinanceMain().getFinStartDate();
-		Date currBussDate = DateUtility.getAppDate();
+		Date currBussDate = SysParamUtil.getAppDate();
 		for (int i = 1; i < getFinScheduleData().getFinanceScheduleDetails().size(); i++) {
 
 			FinanceScheduleDetail curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
@@ -1610,10 +1602,6 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		SanctionBasedSchedule.getSanctionRecalExcludeFlds(getFinScheduleData(), excludeFileds);
 
-		if (excludeReq) {
-			excludeFileds = new StringBuilder(",CURPRD,TILLDATE,ADJMDT,ADDTERM,ADDLAST,ADDRECAL,STEPPOS,");
-		}
-
 		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 		changeRecalType();
 
@@ -1653,9 +1641,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 								CalculationConstants.SCHMTHD_PRI_PFT))) {
 			excludeFileds.append("STEPPOS,");
 		}
-		if (excludeReq) {
-			excludeFileds = new StringBuilder(",CURPRD,TILLDATE,ADJMDT,ADDTERM,ADDLAST,ADDRECAL,STEPPOS,");
-		}
+
 		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 		changeRecalType();
 
@@ -1793,10 +1779,6 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						PennantStaticListUtil.getProfitDaysBasis(), "");
 			}
 
-			if (excludeReq) {
-				excludeFileds = new StringBuilder(",CURPRD,TILLDATE,ADJMDT,ADDTERM,ADDLAST,ADDRECAL,STEPPOS,");
-				fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
-			}
 			changeRecalType();
 		}
 

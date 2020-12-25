@@ -3386,31 +3386,31 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private void saveOrUpdateVerifications(List<AuditDetail> auditDetails, FinanceDetail financeDetail,
 			FinanceMain financeMain, String auditTranType) {
 		// FI Verification details
-		if ((!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE && financeDetail.isFiInitTab())
+		if ((!ImplementationConstants.VER_INIT_FROM_OUTSIDE && financeDetail.isFiInitTab())
 				|| financeDetail.isFiApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getFiVerification(), financeMain);
 		}
 
 		// Technical Verification details
-		if ((!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE && financeDetail.isTvInitTab())
+		if ((!ImplementationConstants.VER_INIT_FROM_OUTSIDE && financeDetail.isTvInitTab())
 				|| financeDetail.isTvApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getTvVerification(), financeMain);
 		}
 
 		// Legal Verification details
-		if ((!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE && financeDetail.isLvInitTab())
+		if ((!ImplementationConstants.VER_INIT_FROM_OUTSIDE && financeDetail.isLvInitTab())
 				|| financeDetail.isLvApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getLvVerification(), financeMain);
 		}
 
 		// Legal Vetting details
-		if ((!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE && financeDetail.isVettingInitTab())
+		if ((!ImplementationConstants.VER_INIT_FROM_OUTSIDE && financeDetail.isVettingInitTab())
 				|| financeDetail.isVettingApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getLegalVetting(), financeMain);
 		}
 
 		// RCU Verification details
-		if ((!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE && financeDetail.isRcuInitTab())
+		if ((!ImplementationConstants.VER_INIT_FROM_OUTSIDE && financeDetail.isRcuInitTab())
 				|| financeDetail.isRcuApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getRcuVerification(), financeMain);
 		}
@@ -3423,7 +3423,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save FI Initiation details
 		// =======================================
-		if (!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
+		if (!ImplementationConstants.VER_INIT_FROM_OUTSIDE) {
 			if (financeDetail.isFiInitTab() && financeDetail.getFiVerification() != null) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.FI, auditTranType, true));
@@ -3441,7 +3441,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// TO-DO
 		// FIXME - To be uncommented while merging
 		// =======================================
-		if (!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
+		if (!ImplementationConstants.VER_INIT_FROM_OUTSIDE) {
 			if (financeDetail.isTvInitTab() && financeDetail.getTvVerification() != null) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType, true));
@@ -3457,7 +3457,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save LV Initiation details
 		// =======================================
-		if (!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
+		if (!ImplementationConstants.VER_INIT_FROM_OUTSIDE) {
 			if (financeDetail.isLvInitTab() && financeDetail.getLvVerification() != null) {
 				Verification verification = financeDetail.getLvVerification();
 				verification.setVerificationType(VerificationType.LV.getKey());
@@ -3477,7 +3477,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save Legal Vetting Initiation details
 		// =======================================
-		if (!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
+		if (!ImplementationConstants.VER_INIT_FROM_OUTSIDE) {
 			if (financeDetail.isVettingInitTab() && financeDetail.getLegalVetting() != null) {
 				Verification verification = financeDetail.getLegalVetting();
 				verification.setVerificationType(VerificationType.VETTING.getKey());
@@ -3497,7 +3497,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save RCU Initiation details
 		// =======================================
-		if (!ImplementationConstants.VERIFICATION_INTIATION_FROM_OUTSIDE) {
+		if (!ImplementationConstants.VER_INIT_FROM_OUTSIDE) {
 			if (financeDetail.isRcuInitTab() && financeDetail.getRcuVerification() != null) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, auditTranType, true));
