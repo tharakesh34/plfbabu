@@ -2086,7 +2086,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		//corporate customer
 		try {
 			if (!isRetailCustomer && "#".equals(getComboboxValue(this.entityType))) {
-				if (validateAllDetails && this.entityType.isVisible() && !this.entityType.isDisabled()&& spaceSubCategory.isVisible()) {
+				if (validateAllDetails && this.entityType.isVisible() && !this.entityType.isDisabled()
+						&& spaceSubCategory.isVisible()) {
 					throw new WrongValueException(this.entityType, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_CustomerDialog_EntityType.value") }));
 				}
@@ -3463,7 +3464,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				readOnlyComponent(isReadOnly("CustomerDialog_subCategory"), this.subCategory);
 				this.natureOfBusiness.setDisabled(isReadOnly("CustomerDialog_natureOfBusiness"));
 				this.entityType.setDisabled(isReadOnly("CustomerDialog_entityType"));
-				this.ckycOrRefNo.setReadonly(true);// isReadOnly("CustomerDialog_custSts")
 				//this.custResidentialStstus.setDisabled(isReadOnly("CustomerDialog_custResidentialSts"));
 				this.custSegment.setReadonly(isReadOnly("CustomerDialog_custGroupID"));
 				//this.custFlags.setReadonly(isReadOnly("CustomerDialog_custFlags"));

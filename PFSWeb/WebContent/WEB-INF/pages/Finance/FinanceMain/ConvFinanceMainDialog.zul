@@ -196,7 +196,7 @@
 													<extendedcombobox id="finBranch" />
 												</row>
 												<row>
-												<label id="label_FinanceMainDialog_Product" value="${c:l('label_FinanceMainDialog_Product.value')}" />
+													<label id="label_FinanceMainDialog_Product" value="${c:l('label_FinanceMainDialog_Product.value')}" />
 													<hbox>
 														<space spacing="2px" id="space_Product" />
 														<combobox id="product" width="180px" readonly="true" />
@@ -516,26 +516,6 @@
 														<uppercasebox id="applicationNo" width="170px" visible="true" />
 													</hbox>
 												</row>
-												 <row id="row_AllowLoanTypes" visible="true">
-													<label
-														id="label_FinanceMainDialog_AllowLoanSplit"
-														value="${c:l('label_FinanceMainDialog_AllowLoanSplit.value')}" />
-													<hbox>
-														<space
-															spacing="2px" />
-														<checkbox
-															id="alwLoanSplit" checked="false" />
-													</hbox>
-													<label
-														id="label_FinanceMainDialog_ParentLoanReference"
-														value="${c:l('label_FinanceMainDialog_ParentLoanReference.value')}" />
-													<hbox>
-														<space
-															spacing="2px" />
-														<extendedcombobox
-															id="parentLoanReference" />
-													</hbox>
-												</row>
 												<row id="row_EligibilityMethod" visible="false">
 													<label id="label_FinanceMainDialog_EligibilityMethod" value="${c:l('label_FinanceMainDialog_EligibilityMethod.value')}" />
 													<extendedcombobox id="eligibilityMethod" width="200px" />
@@ -591,24 +571,16 @@
 														<textbox id="offerId" width="180px" />
 													</hbox>
 												</row>
-											   <row id="row_AllowLoanTypes" visible="false">
-													<label
-														id="label_FinanceMainDialog_AllowLoanSplit"
-														value="${c:l('label_FinanceMainDialog_AllowLoanSplit.value')}" />
+												<row id="row_AllowLoanTypes" visible="true">
+													<label id="label_FinanceMainDialog_AllowLoanSplit" value="${c:l('label_FinanceMainDialog_AllowLoanSplit.value')}" />
 													<hbox>
-														<space
-															spacing="2px" />
-														<checkbox
-															id="alwLoanSplit" checked="false" />
+														<space spacing="2px" />
+														<checkbox id="alwLoanSplit" checked="false" />
 													</hbox>
-													<label
-														id="label_FinanceMainDialog_ParentLoanReference"
-														value="${c:l('label_FinanceMainDialog_ParentLoanReference.value')}" />
+													<label id="label_FinanceMainDialog_ParentLoanReference" value="${c:l('label_FinanceMainDialog_ParentLoanReference.value')}" />
 													<hbox>
-														<space
-															spacing="2px" />
-														<textbox
-															id="parentLoanReference" />
+														<space spacing="2px" />
+														<extendedcombobox id="parentLoanReference" />
 													</hbox>
 												</row>
 											</rows>
@@ -718,7 +690,7 @@
 												<row id="row_SourcingChannelCategory">
 													<label id="label_FinanceMainDialog_SourcingChannelCategory" value="${c:l('label_FinanceMainDialog_SourcingChannelCategory.value')}" />
 													<hbox>
-														<space spacing="2px" id="space_sourChannelCategory"  />
+														<space spacing="2px" id="space_sourChannelCategory" />
 														<combobox id="sourChannelCategory" />
 													</hbox>
 												</row>
@@ -1076,9 +1048,8 @@
 													</hbox>
 												</row>
 												<row id="row_PlanEMIMthd" visible="false">
-													<label id="label_FinanceMainDialog_PlanEmiHolidayMethod" 
-														value="${c:l('label_FinanceMainDialog_PlanEmiHolidayMethod.value')}" />
-													<hbox id="hbox_planEmiMethod" >
+													<label id="label_FinanceMainDialog_PlanEmiHolidayMethod" value="${c:l('label_FinanceMainDialog_PlanEmiHolidayMethod.value')}" />
+													<hbox id="hbox_planEmiMethod">
 														<space sclass="mandatory" spacing="2px" />
 														<combobox id="planEmiMethod" width="250px" readonly="true" />
 													</hbox>
