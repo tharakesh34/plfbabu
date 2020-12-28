@@ -166,7 +166,7 @@ public class ImplementationConstants {
 		ALLOW_ALL_SERV_RCDS = getValueAsBoolean(extensions, "ALLOW_ALL_SERV_RCDS", false);
 		TV_FINALVAL_AMOUNT_VALD = getValueAsBoolean(extensions, "TV_FINALVAL_AMOUNT_VALD", false);
 		FEE_CAL_ON_RULE = getValueAsBoolean(extensions, "FEE_CAL_ON_RULE", false);
-		OLD_ADDRESSCOPY_REQUIRED = getValueAsBoolean(extensions, "OLD_ADDRESSCOPY_REQUIRED", false);
+		CUST_ADDR_AUTO_FILL = getValueAsBoolean(extensions, "CUST_ADDR_AUTO_FILL", true);
 		SHOW_CUST_EMP_DETAILS = getValueAsBoolean(extensions, "SHOW_CUST_EMP_DETAILS", true);
 		SHOW_CUST_SHARE_HOLDER_DETAILS = getValueAsBoolean(extensions, "SHOW_CUST_SHARE_HOLDER_DETAILS", true);
 
@@ -590,8 +590,8 @@ public class ImplementationConstants {
 	public static final boolean OLD_PHONENUMBERS_REQUIRED = false;
 	// Old Emails required listbox 
 	public static final boolean OLD_EMAILS_REQUIRED = false;
-	//Old GST Details AddressCopy required
-	public static final boolean OLD_ADDRESSCOPY_REQUIRED;
+
+	public static final boolean CUST_ADDR_AUTO_FILL;
 
 	// Flag to allow similarity to check the % patch match of given string values
 	public static final boolean ALLOW_SIMILARITY = true;

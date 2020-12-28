@@ -74,7 +74,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.PinCode;
@@ -96,7 +95,6 @@ import com.pennant.backend.service.gstn.validation.GSTNValidationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -404,13 +402,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			this.space_taxNumber.setSclass(PennantConstants.mandateSclass);
 		}
 
-		//Enabling Button Address copy using implementation constants
-		if (ImplementationConstants.OLD_ADDRESSCOPY_REQUIRED) {
-			btnAddressCopy.setVisible(false);
-		} else {
-			btnAddressCopy.setVisible(true);
-		}
-
+		btnAddressCopy.setVisible(true);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -618,7 +610,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 	public void onChange$applicableFor(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (ImplementationConstants.OLD_ADDRESSCOPY_REQUIRED) {
+		if (ImplementationConstants.CUST_ADDR_AUTO_FILL) {
 			setCustCIFFilter(true);
 		} else {
 			String applicable = this.applicableFor.getSelectedItem().getValue();
@@ -1216,7 +1208,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		if (this.applicableFor.getSelectedIndex() == 0) {
 			this.applicableFor.setSelectedIndex(1);
 		}
-		if (ImplementationConstants.OLD_ADDRESSCOPY_REQUIRED) {
+		if (ImplementationConstants.CUST_ADDR_AUTO_FILL) {
 			setCustCIFFilter(true);
 
 			if (fromLoan) {
