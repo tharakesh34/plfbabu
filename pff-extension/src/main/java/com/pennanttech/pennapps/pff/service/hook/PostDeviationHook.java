@@ -19,6 +19,5 @@ public interface PostDeviationHook {
 	 * @param elgMethodVisible
 	 * @return The custom auto deviations.
 	 */
-	List<FinanceDeviations> raiseDeviations(FinanceDetail financeDetail, String deviationFilePath,
-			Map<String, Object> extendedDetails);
+	List<FinanceDeviations> raiseDeviations(FinanceDetail financeDetail, String deviationFilePath);
 }

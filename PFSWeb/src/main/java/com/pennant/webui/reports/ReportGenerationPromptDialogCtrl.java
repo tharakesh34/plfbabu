@@ -2529,7 +2529,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_NoObjectionCertificate")) {
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 
-			if (ImplementationConstants.NOC_LINKED_LOANS_VALIDATION && whereCondition != null) {
+			if (ImplementationConstants.NOC_LINKED_LOANS_CHECK_REQ && whereCondition != null) {
 				String finReference = whereCondition.substring(24, whereCondition.length() - 1);
 				if (collateralAssignmentDAO.getAssignedCollateralCountByRef(finReference) > 0) {
 					String msg = Labels.getLabel("label_collateralAssignment_Error");

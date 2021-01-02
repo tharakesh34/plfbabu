@@ -1,6 +1,7 @@
 package com.pennanttech.webui.verification;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -45,6 +46,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -59,7 +61,6 @@ import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -625,7 +626,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			item.setRequestType(RequestType.NOT_REQUIRED.getKey());
 		}
 
-		setDefaultInitiationStatus(item);
+		if (ImplementationConstants.VER_RCU_DFT_REQ_TYPE_REQUEST) {
+			item.setRequestType(RequestType.REQUEST.getKey());
+		}
 		rcuDocument.setDocCategory(document.getCustDocCategory());
 		rcuDocument.setDocumentId(document.getCustID());
 		rcuDocument.setDocumentSubId(document.getCustDocCategory());
@@ -659,7 +662,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		} else {
 			item.setRequestType(RequestType.NOT_REQUIRED.getKey());
 		}
-		setDefaultInitiationStatus(item);
+
+		if (ImplementationConstants.VER_RCU_DFT_REQ_TYPE_REQUEST) {
+			item.setRequestType(RequestType.REQUEST.getKey());
+		}
+
 		rcuDocument.setDocCategory(document.getDocCategory());
 		rcuDocument.setDocumentId(document.getDocId());
 		rcuDocument.setDocumentSubId(document.getDocCategory());
@@ -1752,6 +1759,9 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private boolean validateReinitiation(List<Verification> verifications) {
+		int days = SysParamUtil.getValueAsInt(SMTParameterConstants.VER_RCU_VALIDITY_DAYS);
+		Date appDate = SysParamUtil.getAppDate();
+
 		for (Verification verification : verifications) {
 			if (verification.getDecision() == Decision.RE_INITIATE.getKey()
 					&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)
@@ -1759,27 +1769,29 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				MessageUtil.showError("RCU Verification Re-Initiation is allowed only when user action is save");
 				return false;
 			}
-			//RCU Verification validity check
-			if (verification.getDecision() == Decision.APPROVE.getKey()
-					&& PennantAppUtil.verificationValidityCheck(verification.getVerificationDate(),
-							SMTParameterConstants.RCU_VERIFICATION_VALIDITY_DAYS)
-					&& !recSave) {
-				StringBuilder error = new StringBuilder("Group: ").append(verification.getReferenceType()).append(", ");
-				error.append(Labels.getLabel("listheader_RCUVerification_DocumentType_Name.label")).append(": ")
-						.append(verification.getDocName()).append(", ");
-				error.append(Labels.getLabel("label_RCU_Verification_Exp"));
 
-				if (MessageUtil.confirm(error.toString()) == MessageUtil.NO) {
-					return false;
+			if (days > 0) {
+				int diff = DateUtil.getDaysBetween(appDate, verification.getVerificationDate());
+				if (verification.getDecision() == Decision.APPROVE.getKey() && diff > days && !recSave) {
+					StringBuilder error = new StringBuilder("Group: ").append(verification.getReferenceType())
+							.append(", ");
+					error.append(Labels.getLabel("listheader_RCUVerification_DocumentType_Name.label")).append(": ")
+							.append(verification.getDocName()).append(", ");
+					error.append(Labels.getLabel("label_RCU_Verification_Exp"));
+
+					if (MessageUtil.confirm(error.toString()) == MessageUtil.NO) {
+						return false;
+					}
+				}
+
+				if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave
+						&& ImplementationConstants.ALW_VERIFICATION_SYNC) {
+					RiskContainmentUnit containmentUnit = riskContainmentUnitService
+							.getRiskContainmentUnit(verification.getId());
+					verification.setRcuVerification(containmentUnit);
 				}
 			}
 
-			if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave
-					&& ImplementationConstants.ALW_VERIFICATION_SYNC) {
-				RiskContainmentUnit containmentUnit = riskContainmentUnitService
-						.getRiskContainmentUnit(verification.getId());
-				verification.setRcuVerification(containmentUnit);
-			}
 		}
 		return true;
 	}
@@ -1952,12 +1964,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public void setCollateralSetupFetchingService(CollateralSetupFetchingService collateralSetupFetchingService) {
 		this.collateralSetupFetchingService = collateralSetupFetchingService;
-	}
-
-	private void setDefaultInitiationStatus(Verification item) {
-		if (ImplementationConstants.VER_RCU_DFT_REQ_TYPE_REQUEST) {
-			item.setRequestType(RequestType.REQUEST.getKey());
-		}
 	}
 
 }

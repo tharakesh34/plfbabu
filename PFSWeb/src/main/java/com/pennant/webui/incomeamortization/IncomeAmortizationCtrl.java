@@ -184,7 +184,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 		logger.debug(Literal.ENTERING);
 
 		// Application Deployment Date and AMZ Month End
-		Date startDate = SysParamUtil.getValueAsDate(SMTParameterConstants.APP_BUSINESS_START_DATE);
+		Date startDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE);
 		Date monthEndDate = DateUtility.getDate(amzMonthEnd, PennantConstants.DBDateFormat);
 
 		if (startDate != null && monthEndDate != null) {
@@ -380,7 +380,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 	private void prepareMonthEndList() {
 
 		// Application Deployment Date
-		Date startDate = SysParamUtil.getValueAsDate(SMTParameterConstants.APP_BUSINESS_START_DATE);
+		Date startDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE);
 		Date appDate = SysParamUtil.getAppDate();
 
 		// Allow previous up to one year

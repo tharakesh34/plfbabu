@@ -347,7 +347,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			this.pennyDropResult.setVisible(!isReadOnly("button_MandateDialog_btnPennyDropResult"));
 		}
 
-		if (!ImplementationConstants.COAPP_ALWD_FOR_CHEQUE) {
+		if (!ImplementationConstants.CHEQUE_ALLOW_CO_APP) {
 			customer.setVisible(false);
 			label_ChequeDetailDialog_Customer.setVisible(false);
 		} else {

@@ -3,6 +3,7 @@ package com.pennanttech.webui.verification;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1313,6 +1314,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private boolean validateReinitiation(List<Verification> verifications) {
+		int days = SysParamUtil.getValueAsInt(SMTParameterConstants.VER_FI_VALIDITY_DAYS);
+		Date appDate = SysParamUtil.getAppDate();
+		
 		for (Verification verification : verifications) {
 			if (verification.getDecision() == Decision.RE_INITIATE.getKey()
 					&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)
@@ -1320,33 +1324,34 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				MessageUtil.showError("Field Investigation Re-Initiation is allowed only when user action is save");
 				return false;
 			}
-			//FI Verification validity check
-			if (verification.getDecision() == Decision.APPROVE.getKey()
-					&& PennantAppUtil.verificationValidityCheck(verification.getVerificationDate(),
-							SMTParameterConstants.FI_VERIFICATION_VALIDITY_DAYS)
-					&& !recSave) {
-				StringBuilder error = new StringBuilder("For ");
-				error.append(Labels.getLabel("listheader_FIVerification_ApplicantType.label")).append(": ")
-						.append(verification.getReferenceType()).append(", ");
-				error.append(Labels.getLabel("listheader_FIVerification_CIF.label")).append(": ")
-						.append(verification.getCif()).append(", ");
-				error.append(Labels.getLabel("listheader_FIVerification_Name.label")).append(": ")
-						.append(verification.getCustomerName()).append(", ");
-				error.append(Labels.getLabel("listheader_FIVerification_AddressType.label")).append(": ")
-						.append(verification.getReferenceFor()).append(", ");
-				error.append(Labels.getLabel("label_FI_Verification_Exp"));
-				if (MessageUtil.confirm(error.toString()) == MessageUtil.NO) {
-					return false;
+
+			if (days > 0) {
+				int diff = DateUtil.getDaysBetween(appDate, verification.getVerificationDate());
+				//FI Verification validity check
+				if (verification.getDecision() == Decision.APPROVE.getKey() && diff > days && !recSave) {
+					StringBuilder error = new StringBuilder("For ");
+					error.append(Labels.getLabel("listheader_FIVerification_ApplicantType.label")).append(": ")
+							.append(verification.getReferenceType()).append(", ");
+					error.append(Labels.getLabel("listheader_FIVerification_CIF.label")).append(": ")
+							.append(verification.getCif()).append(", ");
+					error.append(Labels.getLabel("listheader_FIVerification_Name.label")).append(": ")
+							.append(verification.getCustomerName()).append(", ");
+					error.append(Labels.getLabel("listheader_FIVerification_AddressType.label")).append(": ")
+							.append(verification.getReferenceFor()).append(", ");
+					error.append(Labels.getLabel("label_FI_Verification_Exp"));
+					if (MessageUtil.confirm(error.toString()) == MessageUtil.NO) {
+						return false;
+					}
 				}
-			}
 
-			if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave
-					&& ImplementationConstants.ALW_VERIFICATION_SYNC) {
-				FieldInvestigation fieldInvestigation = fieldInvestigationService
-						.getFieldInvestigation(verification.getId(), "_View");
-				verification.setFieldInvestigation(fieldInvestigation);
-			}
+				if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave
+						&& ImplementationConstants.ALW_VERIFICATION_SYNC) {
+					FieldInvestigation fieldInvestigation = fieldInvestigationService
+							.getFieldInvestigation(verification.getId(), "_View");
+					verification.setFieldInvestigation(fieldInvestigation);
+				}
 
+			}
 		}
 		return true;
 	}

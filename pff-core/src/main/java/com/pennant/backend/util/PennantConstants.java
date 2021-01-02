@@ -60,7 +60,7 @@ public class PennantConstants {
 	public static final String timeFormat = "hh:mm:ss";
 	public static final String dateTimeFormat = "dd/MM/yyyy HH:mm:ss";
 	public static final String dateTimeAMPMFormat = "dd/MM/yyyy  hh:mm:ss a";
-	public static final String DBDateFormat = "yyyy-MM-dd";
+	public static final String DBDateFormat = DateFormat.FULL_DATE.getPattern();
 	public static final String DBDateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 	public static final String AS400DateFormat = "yyMMdd";
 	public static final String dateAndTimeFormat = "dd-MMM-yyyy HH:mm";

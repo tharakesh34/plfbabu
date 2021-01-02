@@ -2484,7 +2484,7 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PaymentDetail_Vendor")));
 			paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_THIRDPARTY,
 					Labels.getLabel("label_PaymentDetail_ThirdParty")));
-			if (ImplementationConstants.SHOW_ADDITIONAL_DISB_PARTIES) {
+			if (ImplementationConstants.BUILDER_INST_ON_DISB) {
 				paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_BUILDER,
 						Labels.getLabel("label_PaymentDetail_Builder")));
 			}

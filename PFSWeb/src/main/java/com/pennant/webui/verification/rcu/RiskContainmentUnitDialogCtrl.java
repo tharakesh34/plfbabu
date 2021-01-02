@@ -519,7 +519,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				lc.appendChild(remarks);
 				lc.setParent(item);
 				int type = document.getVerificationType();
-				if (ImplementationConstants.FCU_DOC_FIELDS_DISABLED) {
+				if (ImplementationConstants.RCU_DOC_FIELDS_DISABLED) {
 					type = 1;//Defaulting to Sampled and disabling
 					verificationType.setDisabled(true);
 					rcuDocStatus.setDisabled(true);

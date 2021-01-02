@@ -2318,7 +2318,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	public void onClick$btnGetCustBeneficiary(Event event) {
 		logger.debug("Entering");
 		Filter filter[] = new Filter[1];
-		if (!ImplementationConstants.COAPP_ALWD_FOR_DISBURSEMENT) {
+		if (!ImplementationConstants.DISBURSEMENT_ALLOW_CO_APP) {
 			filter[0] = new Filter("CustId", custID, Filter.OP_EQUAL);
 			Object dataObject = ExtendedSearchListBox.show(this.window_FinAdvancePaymentsDialog, "BeneficiaryEnquiry",
 					filter, "");

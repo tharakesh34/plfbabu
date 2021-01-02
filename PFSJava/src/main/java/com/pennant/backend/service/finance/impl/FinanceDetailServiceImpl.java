@@ -5842,11 +5842,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			break;
 		case "executeBRE":
-			if (null != extBreService) {
-				boolean breReq = SysParamUtil.isAllowed(SMTParameterConstants.EXT_BRE_REQ);
-				if (breReq) {
-					extBreService.executeBRE(auditHeader);
-				}
+			if (extBreService != null) {
+				extBreService.executeBRE(auditHeader);
 			}
 			break;
 		case PennantConstants.METHOD_INTIATEHUNTERSERVICE:

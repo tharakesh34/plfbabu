@@ -179,24 +179,24 @@ public class ImplementationConstants {
 		VER_RCU_DFT_REQ_TYPE_REQUEST = getValueAsBoolean(extensions, "VER_RCU_DFT_REQ_TYPE_REQUEST", false);
 		VFN_REASONCODES_BASED_ON_REASONTYPE = getValueAsBoolean(extensions, "VFN_REASONCODES_BASED_ON_REASONTYPE",
 				false);
-		NOC_LINKED_LOANS_VALIDATION = getValueAsBoolean(extensions, "NOC_LINKED_LOANS_VALIDATION", false);
-		ACCOUNTING_VALIDATION = getValueAsBoolean(extensions, "ACCOUNTING_VALIDATION", false);
-		EXCLUDE_RECALTYPE_VAL_IN_RECAL = getValueAsBoolean(extensions, "EXCLUDE_RECALTYPE_VAL_IN_RECAL", false);
-		FCU_DOC_FIELDS_DISABLED = getValueAsBoolean(extensions, "FCU_DOC_FIELDS_DISABLED", false);
-		COLLATERAL_DEDUP_WARNING = getValueAsBoolean(extensions, "COLLATERAL_DEDUP_WARNING", false);
+		
 		NOC_GENERATION_MULTIPLE = getValueAsBoolean(extensions, "NOC_GENERATION_MULTIPLE", false);
+		NOC_LINKED_LOANS_CHECK_REQ = getValueAsBoolean(extensions, "NOC_LINKED_LOANS_CHECK_REQ", false);
+		
+		ACCOUNTING_VALIDATION = getValueAsBoolean(extensions, "ACCOUNTING_VALIDATION", false);
+		RCU_DOC_FIELDS_DISABLED = getValueAsBoolean(extensions, "RCU_DOC_FIELDS_DISABLED", false);
+		COLLATERAL_DEDUP_WARNING = getValueAsBoolean(extensions, "COLLATERAL_DEDUP_WARNING", false);
+		
 		CUSTOMIZED_TEMPLATES = getValueAsBoolean(extensions, "CUSTOMIZED_TEMPLATES", false);
-		SHOW_ADDITIONAL_DISB_PARTIES = getValueAsBoolean(extensions, "SHOW_ADDITIONAL_DISB_PARTIES", false);
+		BUILDER_INST_ON_DISB = getValueAsBoolean(extensions, "BUILDER_INST_ON_DISB", false);
 		DERIVED_EMI_REQ = getValueAsBoolean(extensions, "DERIVED_EMI_REQ", false);
 		IS_DATA_SYNC_REQ_BY_APP_DATE = getValueAsBoolean(extensions, "IS_DATA_SYNC_REQ_BY_APP_DATE", false);
 		CUSTOM_PHONE_REGEX = getValueAsBoolean(extensions, "CUSTOM_PHONE_REGEX", false);
 		CUSTOM_BLACKLIST_PARAMS = getValueAsBoolean(extensions, "CUSTOM_BLACKLIST_PARAMS", false);
-		COAPP_ALWD_FOR_MANDATE = getValueAsBoolean(extensions, "COAPP_ALWD_FOR_MANDATE", false);
-		COAPP_ALWD_FOR_DISBURSEMENT = getValueAsBoolean(extensions, "COAPP_ALWD_FOR_DISBURSEMENT", false);
-		COAPP_ALWD_FOR_CHEQUE = getValueAsBoolean(extensions, "COAPP_ALWD_FOR_CHEQUE", false);
+		MANDATE_ALLOW_CO_APP = getValueAsBoolean(extensions, "MANDATE_ALLOW_CO_APP", false);
+		DISBURSEMENT_ALLOW_CO_APP = getValueAsBoolean(extensions, "DISBURSEMENT_ALLOW_CO_APP", false);
+		CHEQUE_ALLOW_CO_APP = getValueAsBoolean(extensions, "CHEQUE_ALLOW_CO_APP", false);
 		PERC_REQ_FOR_FINTYPE_FEE = getValueAsBoolean(extensions, "PERC_REQ_FOR_FINTYPE_FEE", false);
-		ALW_CUSTOMER_DATA_EXTRACTION = getValueAsBoolean(extensions, "ALW_CUSTOMER_DATA_EXTRACTION", false);
-		ALW_MASTER_DATA_EXTRACTION = getValueAsBoolean(extensions, "ALW_MASTER_DATA_EXTRACTION", false);
 		ALW_VERIFICATION_SYNC = getValueAsBoolean(extensions, "ALW_VERIFICATION_SYNC", false);
 		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true); // Default value should be "true"
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
@@ -427,24 +427,21 @@ public class ImplementationConstants {
 	public static boolean CUST_MOB_MANDATORY;
 	public static boolean VER_RCU_DFT_REQ_TYPE_REQUEST;
 	public static boolean VFN_REASONCODES_BASED_ON_REASONTYPE;
-	public static boolean NOC_LINKED_LOANS_VALIDATION; // validate the linked loans for NOC generation
+	public static boolean NOC_LINKED_LOANS_CHECK_REQ;
 	public static boolean ACCOUNTING_VALIDATION;
-	public static boolean EXCLUDE_RECALTYPE_VAL_IN_RECAL;
-	public static boolean FCU_DOC_FIELDS_DISABLED;
+	public static boolean RCU_DOC_FIELDS_DISABLED;
 	public static boolean COLLATERAL_DEDUP_WARNING;
 	public static boolean NOC_GENERATION_MULTIPLE;
 	public static boolean CUSTOMIZED_TEMPLATES;
-	public static boolean SHOW_ADDITIONAL_DISB_PARTIES;
+	public static boolean BUILDER_INST_ON_DISB;
 	public static boolean DERIVED_EMI_REQ;
 	public static boolean IS_DATA_SYNC_REQ_BY_APP_DATE;
 	public static boolean CUSTOM_PHONE_REGEX;
 	public static boolean CUSTOM_BLACKLIST_PARAMS;
-	public static boolean COAPP_ALWD_FOR_MANDATE;
-	public static boolean COAPP_ALWD_FOR_DISBURSEMENT;
-	public static boolean COAPP_ALWD_FOR_CHEQUE;
+	public static boolean MANDATE_ALLOW_CO_APP;
+	public static boolean DISBURSEMENT_ALLOW_CO_APP;
+	public static boolean CHEQUE_ALLOW_CO_APP;
 	public static boolean PERC_REQ_FOR_FINTYPE_FEE;
-	public static boolean ALW_CUSTOMER_DATA_EXTRACTION;
-	public static boolean ALW_MASTER_DATA_EXTRACTION;
 	public static boolean ALW_VERIFICATION_SYNC;
 	public static boolean ALLOW_AUTO_GRACE_EXT;
 	public static boolean ALLOW_LOAN_DOWNSIZING;

@@ -547,7 +547,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			collateralSetup.setExtendedFieldRenderList(renderList);
 
 			// Document Details
-			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef,
+			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(collateralRef,
 					CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
 			if (CollectionUtils.isNotEmpty(collateralSetup.getDocuments())) {
 				collateralSetup.getDocuments().addAll(documentList);
@@ -966,16 +966,17 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		// Extended field details Validation
 		if (CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())) {
 			List<AuditDetail> details = collateralSetup.getAuditDetailMap().get("ExtendedFieldDetails");
-			ExtendedFieldHeader extendedFieldHeader = collateralSetup.getCollateralStructure().getExtendedFieldHeader();
+			CollateralStructure collateralStructure = collateralSetup.getCollateralStructure();
+			ExtendedFieldHeader extendedFieldHeader = collateralStructure.getExtendedFieldHeader();
 			if (CollectionUtils.isNotEmpty(details)) {
 				details = extendedFieldDetailsService.validateExtendedDdetails(extendedFieldHeader, details, method,
 						usrLanguage);
 				auditDetails.addAll(details);
 				//Collateral Dedup Validation
 				if (ImplementationConstants.COLLATERAL_DEDUP_WARNING) {
-					long queryId = collateralSetup.getCollateralStructure().getQueryId();
-					String querySubCode = collateralSetup.getCollateralStructure().getQuerySubCode();
-					String queryCode = collateralSetup.getCollateralStructure().getQueryCode();
+					long queryId = collateralStructure.getQueryId();
+					String querySubCode = collateralStructure.getQuerySubCode();
+					String queryCode = collateralStructure.getQueryCode();
 					List<ExtendedFieldRender> extFieldRenderList = collateralSetup.getExtendedFieldRenderList();
 					if (queryId > 0) {
 						for (ExtendedFieldRender extendedFieldRender : extFieldRenderList) {

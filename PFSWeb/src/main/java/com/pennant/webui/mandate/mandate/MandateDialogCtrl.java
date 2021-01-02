@@ -271,7 +271,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private transient PennyDropService pennyDropService;
 	private transient PennyDropDAO pennyDropDAO;
 	private transient BankAccountValidation bankAccountValidations;
-	private boolean coAppsAllowed = ImplementationConstants.COAPP_ALWD_FOR_MANDATE;
 
 	protected Row row_MandateSource;
 	protected Textbox eMandateReferenceNo;
@@ -1196,7 +1195,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (fromLoan) {
 			this.north_mandate.setVisible(false);
-			readOnlyComponent(!coAppsAllowed, this.custID);
+			readOnlyComponent(!ImplementationConstants.MANDATE_ALLOW_CO_APP, this.custID);
 			readOnlyComponent(true, this.mandateType);
 
 			this.label_Status.setVisible(false);
@@ -2819,7 +2818,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * This method will set the customer filters
 	 */
 	public void doSetCustomerFilters() {
-		if (coAppsAllowed) {
 			ArrayList<String> custCIFs = new ArrayList<>(2);
 			if (getMandate() != null) {
 				custCIFs.add(getMandate().getCustCIF());
@@ -2842,7 +2840,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			Filter[] filter = new Filter[1];
 			filter[0] = new Filter("CustCIF", custCIFs, Filter.OP_IN);
 			this.custID.setFilters(filter);
-		}
 	}
 
 	// ******************************************************//

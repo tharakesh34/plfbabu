@@ -34758,5 +34758,12 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="SMT_01" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update smtparameters set sysparmcode='VER_RCU_VALIDITY_DAYS' where sysparmcode='RCU_VERIFICATION_VALIDITY_DAYS';
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>

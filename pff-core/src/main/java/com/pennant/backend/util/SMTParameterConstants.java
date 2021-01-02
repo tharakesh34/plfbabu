@@ -275,17 +275,13 @@ public class SMTParameterConstants {
 
 	// FIXME HL SMT Parameters
 	public static final String CREDIT_ELG_PARAMS = "CREDIT_ELG_PARAMS";
-	public static final String CHANGE_PAYMENT_AMT_DFLT_TO_MTRTY_DATE = "CHANGE_PAYMENT_AMT_DFLT_TO_MTRTY_DATE";
 	//Accounting validation Required
 	public static final String ACCOUNTING_VALIDATION_REQ = "ACCOUNTING_VALIDATION_REQ";
 	//Download perfios report
-	public static final String PERFIOS_REPORT_DOWNLOAD = "PERFIOS_REPORT_DOWNLOAD";
-	public static final String FI_VERIFICATION_VALIDITY_DAYS = "FI_VERIFICATION_VALIDITY_DAYS";
-	public static final String RCU_VERIFICATION_VALIDITY_DAYS = "RCU_VERIFICATION_VALIDITY_DAYS";
+	public static final String VER_RCU_VALIDITY_DAYS = "VER_RCU_VALIDITY_DAYS";
+	public static final String VER_FI_VALIDITY_DAYS = "VER_FI_VALIDITY_DAYS";
 	public static final String CUSTOMIZED_SOAREPORT = "CUSTOMIZED_SOAREPORT";
 	public static final String GST_DETAILS_TAB_REQUIRED_FOR_RETAIL = "GST_DETAILS_TAB_REQUIRED_FOR_RETAIL";
-
-	public static final String PMAY_PRODUCT = "PMAY_PRODUCT";
 
 	public static final String ALLOW_DEFAULT_MANDATE_REQ = "ALLOW_DEFAULT_MANDATE_REQ";
 	public static final String USER_NOTIFICATION_PUBLISH = "USER_NOTIFICATION_PUBLISH";
@@ -339,20 +335,14 @@ public class SMTParameterConstants {
 	public static final String ALLOW_MULITIPLE_EODS_ON_SAME_DAY = "ALLOW_MULITIPLE_EODS_ON_SAME_DAY";
 	public static final String AUTO_KNOCKOFF_THRESHOLD = "AUTO_KNOCKOFF_THRESHOLD";
 
-	public static final String IS_BT_LOANS_REQ_ONLY_IN_EXTLBTY = "IS_BT_LOANS_REQ_ONLY_IN_EXTLBTY";
-
 	//Parameter to configure the loan types for provisional certificate
 	public static final String PROVCERT_LOANTYPES = "PROVCERT_LOANTYPES";
-	public static final String APP_BUSINESS_START_DATE = "APP_BUSINESS_START_DATE";
-	//Collateral City Extended field column name
-	public static final String COLLATARAL_ADDRESSCITY_FOR_VERIFICATIONS = "COLLATARAL_ADDRESSCITY_FOR_VERIFICATIONS";
 
 	//Allow Instruction Based Schedule
 	public static final String IS_INST_BASED_SCHD_REQ = "IS_INST_BASED_SCHD_REQ";
 
 	//External BRE credit review details 
 	public static final String EXTCREDITREVIEW_TAB = "EXTCREDITREVIEW_TAB";
-	public static final String EXT_BRE_REQ = "EXT_BRE_REQUIRED";
 	public static final String PDF_OWNER_PASSWORD = "PDF_OWNER_PASSWORD";
 	public static final String PDF_PASSWORD_FORMAT = "PDF_PASSWORD_FORMAT";
 

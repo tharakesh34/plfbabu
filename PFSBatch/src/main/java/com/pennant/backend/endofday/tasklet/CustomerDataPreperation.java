@@ -25,10 +25,6 @@ public class CustomerDataPreperation implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		//Return if extraction is not required
-		if (!ImplementationConstants.ALW_CUSTOMER_DATA_EXTRACTION) {
-			return RepeatStatus.FINISHED;
-		}
 		//current date starting from midnight
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR, 0);
@@ -43,7 +39,7 @@ public class CustomerDataPreperation implements Tasklet {
 		}
 		logger.debug("START: Customer Data preparation : " + currentTime);
 		try {
-			getExtractData().processExtractCustomerDetails(currentTime);
+			extractData.processExtractCustomerDetails(currentTime);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION + " While executing customer data extraction");
 		}
@@ -61,10 +57,6 @@ public class CustomerDataPreperation implements Tasklet {
 
 	public DataSource getDataSource() {
 		return dataSource;
-	}
-
-	public ExtractDataExecution getExtractData() {
-		return extractData;
 	}
 
 	public void setExtractData(ExtractDataExecution extractData) {

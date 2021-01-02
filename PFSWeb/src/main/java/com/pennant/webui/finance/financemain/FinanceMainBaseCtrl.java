@@ -362,7 +362,6 @@ import com.pennant.webui.pdfupload.PdfParserCaller;
 import com.pennant.webui.systemmasters.pmay.PMAYDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
-import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -370,6 +369,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -3322,7 +3322,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			break;
 		case AssetConstants.UNIQUE_ID_MANDATE:
 			mandateDialogCtrl.doSetLabels(getFinBasicDetails());
-			mandateDialogCtrl.doSetCustomerFilters();
+			if (ImplementationConstants.MANDATE_ALLOW_CO_APP) {
+				mandateDialogCtrl.doSetCustomerFilters();
+			}
 			break;
 		case AssetConstants.UNIQUE_ID_TAX:
 			financeTaxDetailDialogCtrl.doSetLabels(getFinBasicDetails());
@@ -24022,19 +24024,31 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void validateRCUVerifications() {
 		List<Verification> verifications = verificationService.getVerifications(this.finReference.getValue(),
 				VerificationType.RCU.getKey());
-		if (CollectionUtils.isNotEmpty(verifications)) {
-			for (Verification verification : verifications) {
-				//RCU Verification validity check
-				if (verification.getDecision() == Decision.APPROVE.getKey() && PennantAppUtil.verificationValidityCheck(
-						verification.getVerificationDate(), SMTParameterConstants.RCU_VERIFICATION_VALIDITY_DAYS)) {
-					StringBuilder error = new StringBuilder("Group: ").append(verification.getReferenceType())
-							.append(", ");
-					error.append(Labels.getLabel("listheader_RCUVerification_DocumentType_Name.label")).append(": ")
-							.append(verification.getDocName()).append(", ");
-					error.append(Labels.getLabel("label_RCU_Verification_Exp"));
-					if (MessageUtil.confirm(error.toString()) == MessageUtil.NO) {
-						return;
-					}
+
+		if (CollectionUtils.isEmpty(verifications)) {
+			return;
+		}
+
+		int days = SysParamUtil.getValueAsInt(SMTParameterConstants.VER_RCU_VALIDITY_DAYS);
+
+		if (days == 0) {
+			return;
+		}
+
+		Date appDate = SysParamUtil.getAppDate();
+
+		for (Verification verification : verifications) {
+			//RCU Verification validity check
+
+			int diff = DateUtil.getDaysBetween(appDate, verification.getVerificationDate());
+
+			if (diff > days) {
+				StringBuilder error = new StringBuilder("Group: ").append(verification.getReferenceType()).append(", ");
+				error.append(Labels.getLabel("listheader_RCUVerification_DocumentType_Name.label")).append(": ")
+						.append(verification.getDocName()).append(", ");
+				error.append(Labels.getLabel("label_RCU_Verification_Exp"));
+				if (MessageUtil.confirm(error.toString()) == MessageUtil.NO) {
+					return;
 				}
 			}
 		}
@@ -24046,25 +24060,35 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void validateFIVerifications() {
 		List<Verification> verifications = verificationService.getVerifications(this.finReference.getValue(),
 				VerificationType.FI.getKey());
-		// verifications validity check based on right
-		if (CollectionUtils.isNotEmpty(verifications)) {
-			for (Verification verification : verifications) {
-				//FI Verification validity check
-				if (verification.getDecision() == Decision.APPROVE.getKey() && PennantAppUtil.verificationValidityCheck(
-						verification.getVerificationDate(), SMTParameterConstants.FI_VERIFICATION_VALIDITY_DAYS)) {
-					StringBuilder error = new StringBuilder("For ");
-					error.append(Labels.getLabel("listheader_FIVerification_ApplicantType.label")).append(": ")
-							.append(verification.getReferenceType()).append(", ");
-					error.append(Labels.getLabel("listheader_FIVerification_CIF.label")).append(": ")
-							.append(verification.getCif()).append(", ");
-					error.append(Labels.getLabel("listheader_FIVerification_Name.label")).append(": ")
-							.append(verification.getCustomerName()).append(", ");
-					error.append(Labels.getLabel("listheader_FIVerification_AddressType.label")).append(": ")
-							.append(verification.getReferenceFor()).append(", ");
-					error.append(Labels.getLabel("label_FI_Verification_Exp"));
-					if (MessageUtil.confirm(error.toString()) == MessageUtil.NO) {
-						return;
-					}
+
+		if (CollectionUtils.isEmpty(verifications)) {
+			return;
+		}
+
+		int days = SysParamUtil.getValueAsInt(SMTParameterConstants.VER_FI_VALIDITY_DAYS);
+
+		if (days == 0) {
+			return;
+		}
+
+		Date appDate = SysParamUtil.getAppDate();
+
+		for (Verification verification : verifications) {
+			int diff = DateUtil.getDaysBetween(appDate, verification.getVerificationDate());
+			//FI Verification validity check
+			if (verification.getDecision() == Decision.APPROVE.getKey() && diff > days) {
+				StringBuilder error = new StringBuilder("For ");
+				error.append(Labels.getLabel("listheader_FIVerification_ApplicantType.label")).append(": ")
+						.append(verification.getReferenceType()).append(", ");
+				error.append(Labels.getLabel("listheader_FIVerification_CIF.label")).append(": ")
+						.append(verification.getCif()).append(", ");
+				error.append(Labels.getLabel("listheader_FIVerification_Name.label")).append(": ")
+						.append(verification.getCustomerName()).append(", ");
+				error.append(Labels.getLabel("listheader_FIVerification_AddressType.label")).append(": ")
+						.append(verification.getReferenceFor()).append(", ");
+				error.append(Labels.getLabel("label_FI_Verification_Exp"));
+				if (MessageUtil.confirm(error.toString()) == MessageUtil.NO) {
+					return;
 				}
 			}
 		}

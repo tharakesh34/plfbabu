@@ -22,10 +22,6 @@ public class MasterDataPreparation implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		//Return if extraction is not required
-		if (!ImplementationConstants.ALW_MASTER_DATA_EXTRACTION) {
-			return RepeatStatus.FINISHED;
-		}
 		//current date starting from midnight
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR, 0);

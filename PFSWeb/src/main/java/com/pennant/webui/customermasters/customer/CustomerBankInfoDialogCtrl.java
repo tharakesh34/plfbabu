@@ -4263,55 +4263,55 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	}
 
 	public void onClickDownloadPerfiosReport(ForwardEvent event) {
-
 		logger.debug(Literal.ENTERING);
 
+		if (perfiosService == null) {
+			return;
+		}
+
 		try {
-			if (perfiosService != null) {
-				ExternalDocument externalDocument = (ExternalDocument) event.getData();
-				PerfiosHeader perfiosHeader = perfiosService.getPerfiosReponseDocDetails(externalDocument.getDocRefId(),
-						"");
+			ExternalDocument externalDocument = (ExternalDocument) event.getData();
+			PerfiosHeader perfiosHeader = perfiosService.getPerfiosReponseDocDetails(externalDocument.getDocRefId(),
+					"");
 
-				if (perfiosHeader != null) {
-					AMedia amedia = null;
-					final InputStream data;
-					if (perfiosHeader.getDocRefId() != null && perfiosHeader.getDocRefId() != 0
-							&& perfiosHeader.getDocRefId() != Long.MIN_VALUE) {
-						byte[] docImage = dmsService.getById(perfiosHeader.getDocRefId());
-						if (docImage != null) {
-							data = new ByteArrayInputStream(docImage);
-							amedia = new AMedia(perfiosHeader.getDocName(), "xlsx",
-									"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", data);
-							if (amedia != null) {
-								Filedownload.save(amedia);
-							}
-						}
-					} else if (StringUtils.equals(
-							SysParamUtil.getValueAsString(SMTParameterConstants.PERFIOS_REPORT_DOWNLOAD),
-							PennantConstants.YES) && StringUtils.equals(perfiosHeader.getStatusCode(), "S")
-							&& StringUtils.equals(perfiosHeader.getProcessStage(), "G")) { // Report generated but not downloaded.
+			if (perfiosHeader == null) {
+				MessageUtil.showMessage("Perfios Report details does not exist.");
+				return;
+			}
 
-						perfiosHeader = customerDetailsService
-								.processPerfiosDocumentAndBankInfoDetails(perfiosHeader.getTransactionId());
-						if (perfiosHeader != null && perfiosHeader.getDocImage() != null) {
-							data = new ByteArrayInputStream(perfiosHeader.getDocImage());
-							amedia = new AMedia(perfiosHeader.getDocName(), "xlsx",
-									"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", data);
-							if (amedia != null) {
-								Filedownload.save(amedia);
-							}
-						} else {
-							MessageUtil.showMessage(perfiosHeader.getStatusDesc());
-						}
-					} else if (StringUtils.equals(perfiosHeader.getStatusCode(), "E")
-							&& StringUtils.isNotEmpty(perfiosHeader.getStatusDesc())) {
-						MessageUtil.showMessage("Perfios Report not yet generated.");
-					} else {
-						MessageUtil.showMessage("Perfios Report not yet generated.");
+			AMedia amedia = null;
+			final InputStream data;
+			Long docRefId = perfiosHeader.getDocRefId();
+			if (docRefId != null && docRefId != 0 && docRefId != Long.MIN_VALUE) {
+				byte[] docImage = dmsService.getById(docRefId);
+				if (docImage != null) {
+					data = new ByteArrayInputStream(docImage);
+					amedia = new AMedia(perfiosHeader.getDocName(), "xlsx",
+							"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", data);
+					if (amedia != null) {
+						Filedownload.save(amedia);
+					}
+				}
+			} else if (StringUtils.equals(perfiosHeader.getStatusCode(), "S")
+					&& StringUtils.equals(perfiosHeader.getProcessStage(), "G")) { // Report generated but not downloaded.
+
+				perfiosHeader = customerDetailsService
+						.processPerfiosDocumentAndBankInfoDetails(perfiosHeader.getTransactionId());
+				if (perfiosHeader != null && perfiosHeader.getDocImage() != null) {
+					data = new ByteArrayInputStream(perfiosHeader.getDocImage());
+					amedia = new AMedia(perfiosHeader.getDocName(), "xlsx",
+							"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", data);
+					if (amedia != null) {
+						Filedownload.save(amedia);
 					}
 				} else {
-					MessageUtil.showMessage("Perfios Report details does not exist.");
+					MessageUtil.showMessage(perfiosHeader.getStatusDesc());
 				}
+			} else if (StringUtils.equals(perfiosHeader.getStatusCode(), "E")
+					&& StringUtils.isNotEmpty(perfiosHeader.getStatusDesc())) {
+				MessageUtil.showMessage("Perfios Report not yet generated.");
+			} else {
+				MessageUtil.showMessage("Perfios Report not yet generated.");
 			}
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);

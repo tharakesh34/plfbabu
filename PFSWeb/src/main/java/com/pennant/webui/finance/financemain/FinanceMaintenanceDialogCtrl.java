@@ -3629,7 +3629,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		//this change is to display co-applicant mandates along with primary customer 
 		List<Long> custIds = new ArrayList<Long>(1);
 		custIds.add(custid);
-		if (ImplementationConstants.COAPP_ALWD_FOR_MANDATE && getFinanceDetail() != null) {
+		if (ImplementationConstants.MANDATE_ALLOW_CO_APP && getFinanceDetail() != null) {
 			for (JointAccountDetail accountDetail : getFinanceDetail().getJountAccountDetailList()) {
 				custIds.add(accountDetail.getCustID());
 			}
