@@ -242,10 +242,15 @@ public class LegalVettingVerificationDialogCtrl extends GFCBaseCtrl<LegalVetting
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
+
 		Filter[] reasonFilter = new Filter[1];
-		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.LVSRES.getKey(), Filter.OP_EQUAL);
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			reasonFilter[0] = new Filter("ReasonTypecode", null, Filter.OP_EQUAL);
+		} else {
+			reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.LVSRES.getKey(), Filter.OP_EQUAL);
+		}
 		reason.setFilters(reasonFilter);
-		PennantAppUtil.setReasonCodeFilters(this.reason, null);
+
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(20);
@@ -810,13 +815,21 @@ public class LegalVettingVerificationDialogCtrl extends GFCBaseCtrl<LegalVetting
 	}
 
 	private void visibleComponent(Integer type) {
+		String reasonType = null;
 		if (type == VettingStatus.NEGATIVE.getKey()) {
 			this.reason.setMandatoryStyle(true);
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.LVNTVRTY.getKey());
+			reasonType = StatuReasons.LVNTVRTY.getKey();
 		} else {
 			this.reason.setMandatoryStyle(false);
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.LVPOSTVRTY.getKey());
+			reasonType = StatuReasons.LVPOSTVRTY.getKey();
 		}
+
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			Filter[] reasonFilter = new Filter[1];
+			reasonFilter[0] = new Filter("ReasonTypecode", reasonType, Filter.OP_EQUAL);
+			reason.setFilters(reasonFilter);
+		}
+
 	}
 
 	private void setValue(Listitem listitem, String componentId) {

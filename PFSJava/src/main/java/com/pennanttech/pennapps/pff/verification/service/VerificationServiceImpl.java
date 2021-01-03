@@ -257,7 +257,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verificationDAO.update(item, TableType.MAIN_TAB);
 				}
 
-				if (ImplementationConstants.INITATE_VERIFICATION_DURING_SAVE) {
+				if (ImplementationConstants.VER_INITATE_DURING_SAVE) {
 					if (verification.getWorkflowId() == 0 || (engine.compareTo(verification.getTaskId(),
 							verification.getNextTaskId().replace(";", "")) == Flow.SUCCESSOR
 							|| engine.compareTo(verification.getTaskId(),

@@ -41,7 +41,6 @@ public class ImplementationConstants {
 		ALLOW_CUSTOMER_RATINGS = getValueAsBoolean(extensions, "ALLOW_CUSTOMER_RATINGS", false);
 		ALLOW_CUSTOMER_INCOMES = getValueAsBoolean(extensions, "ALLOW_CUSTOMER_INCOMES", true);
 		ALLOW_CUSTOMER_SHAREHOLDERS = getValueAsBoolean(extensions, "ALLOW_CUSTOMER_SHAREHOLDERS", true);
-		INITATE_VERIFICATION_DURING_SAVE = getValueAsBoolean(extensions, "INITATE_VERIFICATION_DURING_SAVE", true);
 		ALLOW_COLLATERAL_VALUE_UPDATION = getValueAsBoolean(extensions, "ALLOW_COLLATERAL_VALUE_UPDATION", false);
 		INDIAN_IMPLEMENTATION = getValueAsBoolean(extensions, "INDIAN_IMPLEMENTATION", true);
 		VALIDATE_CORE_CUST_UPDATE = getValueAsBoolean(extensions, "VALIDATE_CORE_CUST_UPDATE", false);
@@ -118,7 +117,6 @@ public class ImplementationConstants {
 		ALW_SUBVENSION = getValueAsBoolean(extensions, "ALW_SUBVENSION", false);
 		ALLOW_ADVEMI_FREQUENCY = getValueAsBoolean(extensions, "ALLOW_ADVEMI_FREQUENCY", false);
 		ALLOW_ADVINT_FREQUENCY = getValueAsBoolean(extensions, "ALLOW_ADVINT_FREQUENCY", true);
-		INITATE_VERI_RCU_GRP_BY_AGENCY = getValueAsBoolean(extensions, "INITATE_VERI_RCU_GRP_BY_AGENCY", true);
 		RCVADV_CREATE_ON_INTEMI = getValueAsBoolean(extensions, "RCVADV_CREATE_ON_INTEMI", true);
 		PYBADV_CREATE_ON_INTEMI = getValueAsBoolean(extensions, "PYBADV_CREATE_ON_INTEMI", true);
 		COVENANT_REQUIRED = getValueAsBoolean(extensions, "COVENANT_REQUIRED", false);
@@ -176,17 +174,14 @@ public class ImplementationConstants {
 		DEDUP_BLACKLIST_COAPP = getValueAsBoolean(extensions, "DEDUP_BLACKLIST_COAPP", false);
 		POPULATE_DFT_INCOME_DETAILS = getValueAsBoolean(extensions, "POPULATE_DFT_INCOME_DETAILS", false);
 		CUST_MOB_MANDATORY = getValueAsBoolean(extensions, "CUST_MOB_MANDATORY", true);
-		VER_RCU_DFT_REQ_TYPE_REQUEST = getValueAsBoolean(extensions, "VER_RCU_DFT_REQ_TYPE_REQUEST", false);
-		VFN_REASONCODES_BASED_ON_REASONTYPE = getValueAsBoolean(extensions, "VFN_REASONCODES_BASED_ON_REASONTYPE",
-				false);
-		
+
 		NOC_GENERATION_MULTIPLE = getValueAsBoolean(extensions, "NOC_GENERATION_MULTIPLE", false);
 		NOC_LINKED_LOANS_CHECK_REQ = getValueAsBoolean(extensions, "NOC_LINKED_LOANS_CHECK_REQ", false);
-		
+
 		ACCOUNTING_VALIDATION = getValueAsBoolean(extensions, "ACCOUNTING_VALIDATION", false);
 		RCU_DOC_FIELDS_DISABLED = getValueAsBoolean(extensions, "RCU_DOC_FIELDS_DISABLED", false);
 		COLLATERAL_DEDUP_WARNING = getValueAsBoolean(extensions, "COLLATERAL_DEDUP_WARNING", false);
-		
+
 		CUSTOMIZED_TEMPLATES = getValueAsBoolean(extensions, "CUSTOMIZED_TEMPLATES", false);
 		BUILDER_INST_ON_DISB = getValueAsBoolean(extensions, "BUILDER_INST_ON_DISB", false);
 		DERIVED_EMI_REQ = getValueAsBoolean(extensions, "DERIVED_EMI_REQ", false);
@@ -232,11 +227,6 @@ public class ImplementationConstants {
 		PRESENTMENT_EXPORT_STATUS_MAX_LENGTH = getValueAsInt(extensions, "PRESENTMENT_EXPORT_STATUS_MAX_LENGTH", 1);
 
 		// FIXME HL >>
-		VER_TV_COLL_ED_ADDR_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_ADDR_COLUMN", "PROPERTYCITY"); // HL>>FIXME "CITY" for HL
-		VER_TV_COLL_ED_PROP_VAL_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_PROP_VAL_COLUMN",
-				"TOTALVALUATIONASPE"); // HL>>FIXME "DOCVALUE" for HL
-		VER_TV_COLL_ED_PROP_COST_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_PROP_COST_COLUMN",
-				"COSTOFPROPERTY"); // HL>>FIXME "DOCVALUE" for HL
 
 		//<<
 
@@ -268,16 +258,6 @@ public class ImplementationConstants {
 
 	}
 
-	public static boolean VER_INIT_FROM_OUTSIDE;
-	public static boolean VER_INIT_AGENT_MANDATORY;
-	public static boolean VER_AGENCY_FILTER_BY_CITY;
-
-	private static void setVerificationConstants(Map<String, Object> extensions) {
-		VER_INIT_FROM_OUTSIDE = getValueAsBoolean(extensions, "VER_INIT_FROM_OUTSIDE", false);
-		VER_INIT_AGENT_MANDATORY = getValueAsBoolean(extensions, "VER_INIT_AGENT_MANDATORY", false);
-		VER_AGENCY_FILTER_BY_CITY = getValueAsBoolean(extensions, "VER_AGENCY_FILTER_BY_CITY", false);
-	}
-
 	public static boolean ALLOW_MULTI_CCY = false;
 	public static String BASE_CCY = "INR";
 	public static int BASE_CCY_EDT_FIELD = 2;
@@ -292,7 +272,6 @@ public class ImplementationConstants {
 	public static boolean ALLOW_CUSTOMER_RATINGS;
 	public static boolean ALLOW_CUSTOMER_INCOMES;
 	public static boolean ALLOW_CUSTOMER_SHAREHOLDERS;
-	public static boolean INITATE_VERIFICATION_DURING_SAVE;
 	public static boolean ALLOW_COLLATERAL_VALUE_UPDATION;
 	public static boolean INDIAN_IMPLEMENTATION;
 	public static boolean VALIDATE_CORE_CUST_UPDATE;
@@ -368,7 +347,6 @@ public class ImplementationConstants {
 	public static boolean ALW_SUBVENSION;
 	public static boolean ALLOW_ADVEMI_FREQUENCY;
 	public static boolean ALLOW_ADVINT_FREQUENCY;
-	public static boolean INITATE_VERI_RCU_GRP_BY_AGENCY;
 	public static boolean RCVADV_CREATE_ON_INTEMI;
 	public static boolean PYBADV_CREATE_ON_INTEMI;
 	public static boolean COVENANT_REQUIRED;
@@ -425,8 +403,6 @@ public class ImplementationConstants {
 	public static boolean DEDUP_BLACKLIST_COAPP;
 	public static boolean POPULATE_DFT_INCOME_DETAILS;
 	public static boolean CUST_MOB_MANDATORY;
-	public static boolean VER_RCU_DFT_REQ_TYPE_REQUEST;
-	public static boolean VFN_REASONCODES_BASED_ON_REASONTYPE;
 	public static boolean NOC_LINKED_LOANS_CHECK_REQ;
 	public static boolean ACCOUNTING_VALIDATION;
 	public static boolean RCU_DOC_FIELDS_DISABLED;
@@ -468,22 +444,6 @@ public class ImplementationConstants {
 
 	public static int PRESENTMENT_EXPORT_STATUS_MIN_LENGTH;
 	public static int PRESENTMENT_EXPORT_STATUS_MAX_LENGTH;
-	// FIXME>>HL >>
-	/**
-	 * Technical verification collateral ED Address column Name
-	 */
-	public static String VER_TV_COLL_ED_ADDR_COLUMN;
-	/**
-	 * Technical verification collateral ED Property valuation column Name
-	 */
-	public static String VER_TV_COLL_ED_PROP_VAL_COLUMN;
-
-	/**
-	 * Technical verification collateral ED Property valuation column Name
-	 */
-	public static String VER_TV_COLL_ED_PROP_COST_COLUMN;
-
-	// FIXME>>HL >>
 
 	/**
 	 * GST Invoice Due basis/Receipt Basis
@@ -608,5 +568,48 @@ public class ImplementationConstants {
 	public static boolean ADV_EMI_STAGE_FRONT_END;
 	public static boolean ADV_EMI_STAGE_REAR_END;
 	public static boolean ADV_EMI_STAGE_REPAY_TERMS;
+
+	/**
+	 * Constants for Verification Module
+	 */
+	public static boolean VER_INIT_FROM_OUTSIDE;
+	public static boolean VER_INIT_AGENT_MANDATORY;
+	public static boolean VER_AGENCY_FILTER_BY_CITY;
+	public static boolean VER_RCU_DFT_REQ_TYPE_REQUEST;
+	public static boolean VER_REASON_CODE_FILTER_BY_REASONTYPE;
+	/**
+	 * Technical verification collateral ED Address column Name
+	 */
+	public static String VER_TV_COLL_ED_ADDR_COLUMN;
+	/**
+	 * Technical verification collateral ED Property valuation column Name
+	 */
+	public static String VER_TV_COLL_ED_PROP_VAL_COLUMN;
+
+	/**
+	 * Technical verification collateral ED Property valuation column Name
+	 */
+	public static String VER_TV_COLL_ED_PROP_COST_COLUMN;
+
+	public static boolean VER_INITATE_DURING_SAVE;
+
+	public static boolean VER_RCU_INITATE_BY_AGENCY;
+
+	private static void setVerificationConstants(Map<String, Object> extensions) {
+		VER_INIT_FROM_OUTSIDE = getValueAsBoolean(extensions, "VER_INIT_FROM_OUTSIDE", false);
+		VER_INIT_AGENT_MANDATORY = getValueAsBoolean(extensions, "VER_INIT_AGENT_MANDATORY", false);
+		VER_AGENCY_FILTER_BY_CITY = getValueAsBoolean(extensions, "VER_AGENCY_FILTER_BY_CITY", false);
+
+		VER_TV_COLL_ED_ADDR_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_ADDR_COLUMN", "PROPERTYCITY"); // HL>>FIXME "CITY" for HL
+		VER_TV_COLL_ED_PROP_VAL_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_PROP_VAL_COLUMN",
+				"TOTALVALUATIONASPE"); // HL>>FIXME "DOCVALUE" for HL
+		VER_TV_COLL_ED_PROP_COST_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_PROP_COST_COLUMN",
+				"COSTOFPROPERTY"); // HL>>FIXME "DOCVALUE" for HL
+		VER_RCU_DFT_REQ_TYPE_REQUEST = getValueAsBoolean(extensions, "VER_RCU_DFT_REQ_TYPE_REQUEST", false);
+		VER_REASON_CODE_FILTER_BY_REASONTYPE = getValueAsBoolean(extensions, "VER_REASON_CODES_REASONTYPE_FILTER",
+				false);
+		VER_INITATE_DURING_SAVE = getValueAsBoolean(extensions, "VER_INITATE_DURING_SAVE", true);
+		VER_RCU_INITATE_BY_AGENCY = getValueAsBoolean(extensions, "VER_RCU_INITATE_BY_AGENCY", true);
+	}
 
 }

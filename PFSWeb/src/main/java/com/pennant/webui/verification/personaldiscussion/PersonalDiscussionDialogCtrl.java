@@ -250,10 +250,15 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
+
 		Filter[] reasonFilter = new Filter[1];
-		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.FISRES.getKey(), Filter.OP_EQUAL);
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			reasonFilter[0] = new Filter("ReasonTypecode", null, Filter.OP_EQUAL);
+		} else {
+			reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.FISRES.getKey(), Filter.OP_EQUAL);
+		}
 		reason.setFilters(reasonFilter);
-		PennantAppUtil.setReasonCodeFilters(this.reason, null);
+
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(50);
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -694,16 +699,24 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 	}
 
 	private void visibleComponent(Integer type) {
+		String reasonType = null;
 		if (type == PDStatus.NEGATIVE.getKey()) {
 			this.reason.setMandatoryStyle(true);
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.PDNTVRTY.getKey());
+			reasonType = StatuReasons.PDNTVRTY.getKey();
 		} else if (type == PDStatus.REFERTOCREDIT.getKey()) {
 			this.reason.setMandatoryStyle(true);
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.PDRFRRTY.getKey());
+			reasonType = StatuReasons.PDRFRRTY.getKey();
 		} else if (type == PDStatus.POSITIVE.getKey()) {
 			this.reason.setMandatoryStyle(false);
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.PDPOSTVRTY.getKey());
+			reasonType = StatuReasons.PDPOSTVRTY.getKey();
 		}
+
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			Filter[] reasonFilter = new Filter[1];
+			reasonFilter[0] = new Filter("ReasonTypecode", reasonType, Filter.OP_EQUAL);
+			reason.setFilters(reasonFilter);
+		}
+
 	}
 
 	/**

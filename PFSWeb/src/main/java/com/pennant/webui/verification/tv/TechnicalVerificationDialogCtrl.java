@@ -283,10 +283,15 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
+
 		Filter[] reasonFilter = new Filter[1];
-		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.TVSRES.getKey(), Filter.OP_EQUAL);
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			reasonFilter[0] = new Filter("ReasonTypecode", null, Filter.OP_EQUAL);
+		} else {
+			reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.TVSRES.getKey(), Filter.OP_EQUAL);
+		}
 		reason.setFilters(reasonFilter);
-		PennantAppUtil.setReasonCodeFilters(reason, null);
+
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(20);
 		this.summaryRemarks.setMaxlength(500);
@@ -1055,14 +1060,21 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	}
 
 	private void visibleComponent(Integer type) {
+		String reasonType = null;
 		if (type == TVStatus.NEGATIVE.getKey()) {
 			this.reason.setMandatoryStyle(true);
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.TVPOSTVRTY.getKey());
+			reasonType = StatuReasons.TVPOSTVRTY.getKey();
 		} else if (type == TVStatus.POSITIVE.getKey()) {
 			this.reason.setMandatoryStyle(false);
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.TVNTVRTY.getKey());
+			reasonType = StatuReasons.TVNTVRTY.getKey();
 		} else if (type == TVStatus.REFERTOCREDIT.getKey()) {
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.TVRFRRTY.getKey());
+			reasonType = StatuReasons.TVRFRRTY.getKey();
+		}
+
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			Filter[] reasonFilter = new Filter[1];
+			reasonFilter[0] = new Filter("ReasonTypecode", reasonType, Filter.OP_EQUAL);
+			reason.setFilters(reasonFilter);
 		}
 
 	}

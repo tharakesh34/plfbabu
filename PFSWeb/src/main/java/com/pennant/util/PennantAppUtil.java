@@ -2433,21 +2433,6 @@ public class PennantAppUtil {
 	}
 
 	/**
-	 * This method will set the reason code filters for all verifications based on systemparam
-	 * 
-	 * @param ExtendedCombobox
-	 * @param filterCode
-	 * 
-	 */
-	public static void setReasonCodeFilters(ExtendedCombobox reason, String filterCode) {
-		Filter[] reasonFilter = new Filter[1];
-		if (ImplementationConstants.VFN_REASONCODES_BASED_ON_REASONTYPE) {
-			reasonFilter[0] = new Filter("ReasonTypecode", filterCode, Filter.OP_EQUAL);
-			reason.setFilters(reasonFilter);
-		}
-	}
-
-	/**
 	 * This method will set the address copy filters
 	 * 
 	 * @param window

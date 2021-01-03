@@ -229,10 +229,15 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
+
 		Filter[] reasonFilter = new Filter[1];
-		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.RCUSRES.getKey(), Filter.OP_EQUAL);
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			reasonFilter[0] = new Filter("ReasonTypecode", null, Filter.OP_EQUAL);
+		} else {
+			reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.RCUSRES.getKey(), Filter.OP_EQUAL);
+		}
 		reason.setFilters(reasonFilter);
-		PennantAppUtil.setReasonCodeFilters(reason, null);
+
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(20);
@@ -814,16 +819,24 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	}
 
 	private void visibleComponent(Integer type) {
+		String reasonType = null;
 		if (type == RCUStatus.NEGATIVE.getKey()) {
 			this.reason.setMandatoryStyle(true);
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.RCUNTVRTY.getKey());
+			reasonType = StatuReasons.RCUNTVRTY.getKey();
 		} else if (type == RCUStatus.REFERTOCREDIT.getKey()) {
 			this.reason.setMandatoryStyle(true);
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.RCURFRRTY.getKey());
+			reasonType = StatuReasons.RCURFRRTY.getKey();
 		} else if (type == RCUStatus.POSITIVE.getKey()) {
 			this.reason.setMandatoryStyle(false);
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.RCUPOSTVRTY.getKey());
+			reasonType = StatuReasons.RCUPOSTVRTY.getKey();
 		}
+
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			Filter[] reasonFilter = new Filter[1];
+			reasonFilter[0] = new Filter("ReasonTypecode", reasonType, Filter.OP_EQUAL);
+			reason.setFilters(reasonFilter);
+		}
+
 	}
 
 	private void setValue(Listitem listitem, String comonentId) {

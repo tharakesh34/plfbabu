@@ -1730,7 +1730,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		doClearMessage();
-		if (ImplementationConstants.INITATE_VERIFICATION_DURING_SAVE) {
+		if (ImplementationConstants.VER_INITATE_DURING_SAVE) {
 			doSetValidation();
 		} else if (!recSave) {
 			doSetValidation();
@@ -1805,7 +1805,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<Verification> newverifications = new ArrayList<>();
 
 		//Implementation constant related to, RCU initiation group by agency or not.
-		boolean grpByAgency = ImplementationConstants.INITATE_VERI_RCU_GRP_BY_AGENCY;
+		boolean grpByAgency = ImplementationConstants.VER_RCU_INITATE_BY_AGENCY;
 		Verification aVerification = null;
 
 		for (Verification vrf : this.verification.getVerifications()) {

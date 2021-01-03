@@ -67,7 +67,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -659,22 +658,23 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void fillDecision(Verification vrf, Combobox decision) {
 		List<ValueLabel> decisionList = new ArrayList<>();
-		if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-				|| vrf.getStatus() == FIStatus.POSITIVE.getKey()) {
+		int requestType = vrf.getRequestType();
+		int status = vrf.getStatus();
+
+		if (requestType == RequestType.NOT_REQUIRED.getKey() || status == FIStatus.POSITIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
 			decisionList.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
 			if (vrf.getDecision() == Decision.SELECT.getKey()) {
 				vrf.setDecision(Decision.APPROVE.getKey());
 			}
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-		} else if (vrf.getStatus() == FIStatus.NEGATIVE.getKey()
-				|| vrf.getStatus() == FIStatus.REFERTOCREDIT.getKey()) {
+		} else if (status == FIStatus.NEGATIVE.getKey() || status == FIStatus.REFER_TO_CREDIT.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
 			if (vrf.getDecision() == Decision.APPROVE.getKey()) {
 				vrf.setDecision(Decision.SELECT.getKey());
 			}
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-		} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
+		} else if (requestType == RequestType.WAIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
 		} else {
@@ -1282,7 +1282,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<Verification> list = new ArrayList<>();
 		doClearMessage();
 
-		if (ImplementationConstants.INITATE_VERIFICATION_DURING_SAVE) {
+		if (ImplementationConstants.VER_INITATE_DURING_SAVE) {
 			doSetValidation();
 		} else if (!recSave) {
 			doSetValidation();
@@ -1316,7 +1316,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private boolean validateReinitiation(List<Verification> verifications) {
 		int days = SysParamUtil.getValueAsInt(SMTParameterConstants.VER_FI_VALIDITY_DAYS);
 		Date appDate = SysParamUtil.getAppDate();
-		
+
 		for (Verification verification : verifications) {
 			if (verification.getDecision() == Decision.RE_INITIATE.getKey()
 					&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)

@@ -249,10 +249,15 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
+		
 		Filter[] reasonFilter = new Filter[1];
-		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.FISRES.getKey(), Filter.OP_EQUAL);
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			reasonFilter[0] = new Filter("ReasonTypecode", null, Filter.OP_EQUAL);
+		} else {
+			reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.FISRES.getKey(), Filter.OP_EQUAL);
+		}
 		reason.setFilters(reasonFilter);
-		PennantAppUtil.setReasonCodeFilters(reason, null);
+		
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(50);
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -698,15 +703,22 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	}
 
 	private void visibleComponent(Integer type) {
+		String reasonType = null;
 		if (type == FIStatus.NEGATIVE.getKey()) {
 			this.reason.setMandatoryStyle(true);
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.FINTVRTY.getKey());
-		} else if (type == FIStatus.REFERTOCREDIT.getKey()) {
+			reasonType = StatuReasons.FINTVRTY.getKey();
+		} else if (type == FIStatus.REFER_TO_CREDIT.getKey()) {
 			this.reason.setMandatoryStyle(true);
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.FIRFRRTY.getKey());
+			reasonType = StatuReasons.FIRFRRTY.getKey();
 		} else if (type == FIStatus.POSITIVE.getKey()) {
 			this.reason.setMandatoryStyle(false);
-			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.FIPOSTVRTY.getKey());
+			reasonType = StatuReasons.FIPOSTVRTY.getKey();
+		}
+
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			Filter[] reasonFilter = new Filter[1];
+			reasonFilter[0] = new Filter("ReasonTypecode", reasonType, Filter.OP_EQUAL);
+			reason.setFilters(reasonFilter);
 		}
 	}
 

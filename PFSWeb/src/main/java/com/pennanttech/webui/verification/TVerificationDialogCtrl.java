@@ -485,7 +485,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				for (CollateralAssignment collateral : collaterals) {
 					if (StringUtils.equals(collateral.getCollateralRef(), previous.getReferenceFor())) {
 						boolean collateralChanged = false;
-						if (ImplementationConstants.INITATE_VERIFICATION_DURING_SAVE) {
+						if (ImplementationConstants.VER_INITATE_DURING_SAVE) {
 							collateralChanged = technicalVerificationService.isCollateralChanged(previous,
 									TableType.TEMP_TAB);
 						} else {
@@ -1818,7 +1818,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.userAction = userAction;
 		doClearMessage();
 
-		if (ImplementationConstants.INITATE_VERIFICATION_DURING_SAVE) {
+		if (ImplementationConstants.VER_INITATE_DURING_SAVE) {
 			doSetValidation();
 		} else if (!recSave) {
 			doSetValidation();
