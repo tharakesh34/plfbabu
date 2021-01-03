@@ -1162,7 +1162,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		Date curBusDate = SysParamUtil.getAppDate();
+		Date curBusDate = appDate;
 		Date valueDate = rch.getValueDate();
 
 		profitDetail.setLpiAmount(rch.getLpiAmount());
@@ -4591,7 +4591,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		//RecAppDate 
 		if (header.getRecAppDate() == null) {
-			header.setRecAppDate(SysParamUtil.getAppDate());
+			header.setRecAppDate(curBussDate);
 		}
 
 		doRemoveValidation();
@@ -6968,7 +6968,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receipt.setReceiptAmount(PennantApplicationUtil.amountFormate(totalReceiptAmt, finFormatter));
 		receipt.setReceiptAmountInWords(NumberToEnglishWords
 				.getAmountInText(PennantApplicationUtil.formateAmount(totalReceiptAmt, finFormatter), ""));
-		receipt.setAppDate(DateUtility.formatToLongDate(DateUtility.getAppDate()));
+		receipt.setAppDate(DateUtility.formatToLongDate(SysParamUtil.getAppDate()));
 		receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());
 		receipt.setReceiptDate(DateUtil.formatToLongDate(receiptDate.getValue()));
 		//receipt.setReceivedDate(DateUtil.formatToLongDate(receivedDate.getValue()));

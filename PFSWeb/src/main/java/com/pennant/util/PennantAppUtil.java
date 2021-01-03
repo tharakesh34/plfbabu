@@ -72,6 +72,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.Property;
@@ -270,7 +271,7 @@ public class PennantAppUtil {
 	 * @deprecated use {@link PennantApplicationUtil#amountFormate} instead.
 	 */
 	public static BigDecimal unFormateAmount(BigDecimal amount, int dec) {
-		return PennantApplicationUtil.unFormateAmount(amount, dec);
+		return CurrencyUtil.unFormat(amount, dec);
 	}
 
 	/**
@@ -278,7 +279,7 @@ public class PennantAppUtil {
 	 * @deprecated use {@link PennantApplicationUtil#formateAmount} instead.
 	 */
 	public static BigDecimal formateAmount(BigDecimal amount, int dec) {
-		return PennantApplicationUtil.formateAmount(amount, dec);
+		return CurrencyUtil.parse(amount, dec);
 	}
 
 	/**
@@ -286,7 +287,7 @@ public class PennantAppUtil {
 	 * @deprecated use {@link CurrencyUtil#amountFormate} instead.
 	 */
 	public static String amountFormate(BigDecimal amount, int dec) {
-		return PennantApplicationUtil.amountFormate(amount, dec);
+		return CurrencyUtil.format(amount, dec);
 	}
 
 	/**
@@ -294,7 +295,7 @@ public class PennantAppUtil {
 	 * @deprecated use {@link PennantApplicationUtil#unFormateAmount} instead.
 	 */
 	public static BigDecimal unFormateAmount(String amount, int dec) {
-		return PennantApplicationUtil.unFormateAmount(amount, dec);
+		return CurrencyUtil.unFormat(amount, dec);
 	}
 
 	/**

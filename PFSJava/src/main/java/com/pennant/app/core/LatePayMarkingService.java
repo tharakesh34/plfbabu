@@ -117,9 +117,11 @@ public class LatePayMarkingService extends ServiceHelper {
 		//get penalty rates one time
 		FinODPenaltyRate penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finmain.getFinReference(), "");
 
+		Date appDate = SysParamUtil.getAppDate();
 		for (FinODDetails fod : fodList) {
 			FinanceScheduleDetail curSchd = getODSchedule(fsdList, fod);
-
+			//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
+			fod.setFinLMdfDate(appDate);
 			if (curSchd != null) {
 				if (!calcwithoutDue) {
 					//check due and proceeed
@@ -159,7 +161,7 @@ public class LatePayMarkingService extends ServiceHelper {
 				fod.setFinCurODAmt(BigDecimal.ZERO);
 				fod.setFinCurODDays(0);
 				//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
-				fod.setFinLMdfDate(SysParamUtil.getAppDate());
+				fod.setFinLMdfDate(appDate);
 				fod.setTotPenaltyAmt(BigDecimal.ZERO);
 				fod.setTotPenaltyBal(
 						fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
@@ -251,6 +253,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		finEODEvent.setFinODDetails(finODdetails);
 		finEODEvent.setFinODDetailsLBD(new ArrayList<>(finODdetails));
 		FinODPenaltyRate penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finRef, "");
+		Date appDate = SysParamUtil.getAppDate();
 
 		// Include Today in Late payment Calculation or NOT?
 		Date lppCheckingDate = valueDate;
@@ -296,7 +299,8 @@ public class LatePayMarkingService extends ServiceHelper {
 				if (ImplementationConstants.LPP_CALC_SOD) {
 					penaltyCalDate = DateUtility.addDays(valueDate, 1);
 				}
-
+				//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
+				fod.setFinLMdfDate(appDate);
 				latePayMarking(finMain, fod, penaltyRate, fsdList, null, curSchd, valueDate, penaltyCalDate, true);
 			}
 		}
@@ -426,9 +430,6 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 		fod.setFinODTillDate(odtCaldate);
 		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), odtCaldate));
-
-		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
-		fod.setFinLMdfDate(SysParamUtil.getAppDate());
 
 		/*
 		 * if (fod.getFinCurODPri().add(fod.getFinCurODPft()).compareTo(BigDecimal.ZERO) > 0 && !isEODprocess) {

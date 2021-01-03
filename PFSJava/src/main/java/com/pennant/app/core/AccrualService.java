@@ -82,11 +82,11 @@ public class AccrualService extends ServiceHelper {
 	private IRRScheduleDetailDAO irrScheduleDetailDAO;
 
 	private static final BigDecimal HUNDERED = new BigDecimal(100);
-	public static String TDS_ROUNDING_MODE = null;
-	public static int TDS_ROUNDING_TARGET = 0;
-	public static BigDecimal TDS_PERCENTAGE = BigDecimal.ZERO;
-	public static BigDecimal TDS_MULTIPLIER = BigDecimal.ZERO;
-	public static int TDS_SCHD_INDEX = -2;
+	public String TDS_ROUNDING_MODE = null;
+	public int TDS_ROUNDING_TARGET = 0;
+	public BigDecimal TDS_PERCENTAGE = BigDecimal.ZERO;
+	public BigDecimal TDS_MULTIPLIER = BigDecimal.ZERO;
+	public int TDS_SCHD_INDEX = -2;
 
 	public CustEODEvent processAccrual(CustEODEvent custEODEvent) throws Exception {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
@@ -1001,9 +1001,11 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	public void setSMTParms() {
-		TDS_ROUNDING_MODE = SysParamUtil.getValueAsString(CalculationConstants.TDS_ROUNDINGMODE);
-		TDS_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
-		TDS_PERCENTAGE = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
+		if (TDS_ROUNDING_MODE == null && TDS_ROUNDING_TARGET == 0 && TDS_PERCENTAGE.compareTo(BigDecimal.ZERO) == 0) {
+			TDS_ROUNDING_MODE = SysParamUtil.getValueAsString(CalculationConstants.TDS_ROUNDINGMODE);
+			TDS_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+			TDS_PERCENTAGE = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
+		}
 		TDS_MULTIPLIER = HUNDERED.divide(HUNDERED.subtract(TDS_PERCENTAGE), 20, RoundingMode.HALF_DOWN);
 
 		TDS_SCHD_INDEX = -2;

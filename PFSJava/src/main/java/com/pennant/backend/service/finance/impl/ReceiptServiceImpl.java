@@ -708,7 +708,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		Date appDate = SysParamUtil.getAppDate();
+		//Date appDate = SysParamUtil.getAppDate();
 		if (!aAuditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return aAuditHeader;
@@ -1791,7 +1791,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		Date curBusDate = SysParamUtil.getAppDate();
+		Date curBusDate = appDate;
 		Date valueDate = rch.getValueDate();
 
 		// Repayments Posting Process Execution

@@ -257,7 +257,9 @@ public class CurrencyUtil {
 		if (StringUtils.isEmpty(amount) || StringUtils.isBlank(amount)) {
 			return BigDecimal.ZERO;
 		}
-		return new BigDecimal(amount.replace(",", "")).multiply(BigDecimal.valueOf(Math.pow(10, dec)));
+		BigInteger bigInteger = new BigDecimal(amount.replace(",", "")).multiply(BigDecimal.valueOf(Math.pow(10, dec)))
+				.toBigInteger();
+		return new BigDecimal(bigInteger);
 	}
 
 	public static String convertInWords(BigDecimal amount) {
