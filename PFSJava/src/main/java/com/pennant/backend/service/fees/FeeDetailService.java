@@ -702,30 +702,38 @@ public class FeeDetailService {
 				int finAge = DateUtility.getMonthsBetween(SysParamUtil.getAppDate(), finMain.getFinStartDate());
 				executionMap.put("finAgetilldate", finAge);
 			}
+		}
+		if (finMain != null) {
+			executionMap.putAll(finMain.getDeclaredFieldValues());
+		}
 
-			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-				if (StringUtils.isEmpty(finFeeDetail.getRuleCode())) {
-					continue;
-				}
+		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+			if (StringUtils.isEmpty(finFeeDetail.getRuleCode())) {
+				continue;
+			}
 
-				BigDecimal feeResult = this.finFeeDetailService.getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()),
-						executionMap, finScheduleData.getFinanceMain().getFinCcy());
+			BigDecimal feeResult = this.finFeeDetailService.getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()),
+					executionMap, finScheduleData.getFinanceMain().getFinCcy());
 
-				//unFormating feeResult
-				feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
+			//unFormating feeResult
+			feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
 
-				finFeeDetail.setCalculatedAmount(feeResult);
+			finFeeDetail.setCalculatedAmount(feeResult);
 
-				if (finFeeDetail.isTaxApplicable()) {
+			if (finFeeDetail.isTaxApplicable()) {
+				if (enquiry) {
 					this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail,
 							getGSTPercentages(financeDetail), enquiry);
 				} else {
-					if (enquiry) {
-						finFeeDetail.setActualAmount(feeResult);
-					}
-					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
-							.subtract(finFeeDetail.getWaivedAmount()));
+					this.finFeeDetailService.processGSTCalForRule(finFeeDetail, finFeeDetail.getActualAmount(),
+							financeDetail, getGSTPercentages(financeDetail), enquiry);
 				}
+			} else {
+				if (enquiry) {
+					finFeeDetail.setActualAmount(feeResult);
+				}
+				finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
+						.subtract(finFeeDetail.getWaivedAmount()));
 			}
 		}
 	}
