@@ -100,7 +100,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -132,7 +131,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
-import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -256,7 +254,6 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	private DMSService dmsService;
 
 	protected Listbox listBoxDocuments;
-	private boolean isCustomPhoneRegexReq = ImplementationConstants.CUSTOM_PHONE_REGEX;
 
 	/**
 	 * default constructor.<br>
@@ -499,10 +496,6 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.ccLimit.setMandatory(false);
 		this.ccLimit.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.ccLimit.setScale(finFormatter);
-
-		if (isCustomPhoneRegexReq) {
-			this.phoneNumber.setMaxlength(18);
-		}
 
 		logger.debug("Leaving");
 	}
@@ -3330,14 +3323,9 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 		}
 		if (!this.phoneNumber.isReadonly()) {
-			if (isCustomPhoneRegexReq) {
-				this.phoneNumber.setConstraint(new PTPhoneNumberValidator(
-						Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), false));
-			} else {
-				this.phoneNumber.setConstraint(new PTMobileNumberValidator(
-						Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), false,
-						PennantRegularExpressions.MOBILE_REGEX, this.phoneNumber.getMaxlength()));
-			}
+			this.phoneNumber.setConstraint(new PTMobileNumberValidator(
+					Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), false,
+					PennantRegularExpressions.REGEX_MOBILE, this.phoneNumber.getMaxlength()));
 
 		}
 

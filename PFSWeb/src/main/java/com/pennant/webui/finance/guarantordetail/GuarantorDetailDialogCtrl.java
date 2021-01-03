@@ -79,7 +79,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
@@ -106,7 +105,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
-import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl;
@@ -254,7 +252,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private boolean isEnqProcess = false;
 	private boolean finsumryGurnatorEnq = false;
-	private boolean isCustomPhoneRegexReq = ImplementationConstants.CUSTOM_PHONE_REGEX;
 
 	/**
 	 * default constructor.<br>
@@ -960,10 +957,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.addrCity.setValidateColumns(new String[] { "PCCity" });
 		this.cityName.setMaxlength(8);
 		this.addrZIP.setMaxlength(50);
-
-		if (isCustomPhoneRegexReq) {
-			this.mobileNo.setMaxlength(18);
-		}
 
 		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
 		logger.debug("Leaving");
@@ -1744,14 +1737,9 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			 * String[] { Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value") }))); }
 			 */
 			if (!this.mobileNo.isReadonly()) {
-				if (isCustomPhoneRegexReq) {
-					this.mobileNo.setConstraint(new PTPhoneNumberValidator(
-							Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"), true));
-				} else {
-					this.mobileNo.setConstraint(
-							new PTMobileNumberValidator(Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"),
-									true, PennantRegularExpressions.TELEPHONE_FAX_REGEX));
-				}
+				this.mobileNo.setConstraint(
+						new PTMobileNumberValidator(Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"),
+								true, PennantRegularExpressions.REGEX_MOBILE));
 			}
 			// Email Id
 			if (!this.emailId.isReadonly()) {

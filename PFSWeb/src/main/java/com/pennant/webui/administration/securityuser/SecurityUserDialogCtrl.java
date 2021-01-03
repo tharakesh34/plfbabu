@@ -1150,7 +1150,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			if (StringUtils.isNotEmpty(this.usrMobile.getValue())) {
 				this.usrMobile.setConstraint(
 						new PTMobileNumberValidator(Labels.getLabel("label_SecurityUserSearch_UsrMobile.value"), true,
-								PennantRegularExpressions.MOBILE_REGEX));
+								PennantRegularExpressions.REGEX_MOBILE));
 			} else {
 				this.usrMobile.setConstraint(new PTMobileNumberValidator(
 						Labels.getLabel("label_SecurityUserSearch_UsrMobile.value"), false));

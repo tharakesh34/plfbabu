@@ -186,7 +186,6 @@ public class ImplementationConstants {
 		BUILDER_INST_ON_DISB = getValueAsBoolean(extensions, "BUILDER_INST_ON_DISB", false);
 		DERIVED_EMI_REQ = getValueAsBoolean(extensions, "DERIVED_EMI_REQ", false);
 		IS_DATA_SYNC_REQ_BY_APP_DATE = getValueAsBoolean(extensions, "IS_DATA_SYNC_REQ_BY_APP_DATE", false);
-		CUSTOM_PHONE_REGEX = getValueAsBoolean(extensions, "CUSTOM_PHONE_REGEX", false);
 		CUSTOM_BLACKLIST_PARAMS = getValueAsBoolean(extensions, "CUSTOM_BLACKLIST_PARAMS", false);
 		MANDATE_ALLOW_CO_APP = getValueAsBoolean(extensions, "MANDATE_ALLOW_CO_APP", false);
 		DISBURSEMENT_ALLOW_CO_APP = getValueAsBoolean(extensions, "DISBURSEMENT_ALLOW_CO_APP", false);
@@ -412,7 +411,6 @@ public class ImplementationConstants {
 	public static boolean BUILDER_INST_ON_DISB;
 	public static boolean DERIVED_EMI_REQ;
 	public static boolean IS_DATA_SYNC_REQ_BY_APP_DATE;
-	public static boolean CUSTOM_PHONE_REGEX;
 	public static boolean CUSTOM_BLACKLIST_PARAMS;
 	public static boolean MANDATE_ALLOW_CO_APP;
 	public static boolean DISBURSEMENT_ALLOW_CO_APP;

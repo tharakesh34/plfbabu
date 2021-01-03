@@ -65,7 +65,6 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -400,30 +399,11 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 					Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("listheader_PhoneNumber.label") }));
 		}
 
-		if (ImplementationConstants.CUSTOM_PHONE_REGEX
-				&& !StringUtils.contains(phoneTypeCode, PennantConstants.PHONETYPE_MOBILE)
-				&& !StringUtils.equals(phoneTypeCode, "AUTHM1") && !StringUtils.equals(phoneTypeCode, "AUTHM2")) {
-			if (phoneNumber.getValue().length() < 8) {
-				throw new WrongValueException(phoneNumber, Labels.getLabel("CUSTOM_PHONE_REGEX",
-						new String[] { Labels.getLabel("listheader_PhoneNumber.label") }));
-			} else {
-				Pattern pattern = Pattern.compile(regex);
-				Matcher matcher = pattern.matcher(phoneNumber.getValue());
-				if (!matcher.matches()) {
-					throw new WrongValueException(phoneNumber, Labels.getLabel("CUSTOM_PHONE_REGEX",
-							new String[] { Labels.getLabel("listheader_PhoneNumber.label") }));
-				}
-			}
-		} else if (phoneNumber.getValue().length() != phoneNumber.getMaxlength()) {
-			throw new WrongValueException(phoneNumber, Labels.getLabel("FIELD_NO_NUMBER",
-					new String[] { Labels.getLabel("listheader_PhoneNumber.label") }));
-		} else if (regex != null) {
-			Pattern pattern = Pattern.compile(regex);
-			Matcher matcher = pattern.matcher(phoneNumber.getValue());
-			if (!matcher.matches()) {
-				throw new WrongValueException(phoneNumber, Labels.getLabel("FIELD_MOBILE",
-						new String[] { Labels.getLabel("listheader_PhoneNumber.label"), String.valueOf(pattern) }));
-			}
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(phoneNumber.getValue());
+		if (!matcher.matches()) {
+			throw new WrongValueException(phoneNumber, Labels.getLabel("FIELD_MOBILE",
+					new String[] { Labels.getLabel("listheader_PhoneNumber.label"), String.valueOf(pattern) }));
 		}
 	}
 
@@ -481,7 +461,7 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 
 	public int dosetFieldLength(String regex) {
 		if (StringUtils.isBlank(regex)) {
-			regex = PennantRegularExpressions.TELEPHONE_FAX_REGEX;
+			regex = PennantRegularExpressions.REGEX_FAX;
 		}
 
 		String length = regex.substring(regex.lastIndexOf("}") - 2, regex.lastIndexOf("}"));

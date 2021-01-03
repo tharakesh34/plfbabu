@@ -111,9 +111,10 @@ public class PennantRegularExpressions {
 	public static final String ID_CODES = "([A-Za-z\\/]*|[0-9\\/]*|[a-zA-Z0-9\\/]*)+\\s*";
 	//public static final String	ID_CODES							= "([A-Za-z\\s]*|[0-9\\s]*|[a-zA-Z0-9\\s]*)";
 
-	public static final String REGEX_TELEPHONE = "^\\+?[0-9\\s]{8,}$";
-	public static final String TELEPHONE_FAX_REGEX = "[0-9]{10}";
-	public static final String MOBILE_REGEX = "[0-9]{10}";
+	public static final String REGEX_TELEPHONE = "REGEX_TELEPHONE";
+	public static final String REGEX_FAX = "REGEX_FAX";
+	public static final String REGEX_MOBILE= "REGEX_MOBILE";
+	
 	public static final String EMAIL_REGEX = "^[a-zA-Z]+[0-9]*((\\.?[a-zA-Z0-9]+)*|(\\_?[a-zA-Z0-9]+)*)?\\@{1}[a-zA-z]+[0-9]*(\\.?[a-zA-Z]{2,4})?\\.{1}[a-zA-Z]{2,3}";
 	public static final String ADDRESS_REGEX = "[a-zA-Z0-9.\\>\\<\\!\\@\\#\\$\\%\\&\\(\\)\\[\\]\\{\\}\\s]+";
 	public static final String WEB_REGEX = "^[wW]{3}[\\.]{1}([a-zA-z]+[0-9]*)(\\.?[a-zA-Z]{2,4})?\\.{1}[a-zA-Z]{2,3}";
@@ -197,6 +198,10 @@ public class PennantRegularExpressions {
 	public static final String REGEX_ALPHANUM_ALPHAFIRST = "REGEX_ALPHANUM_ALPHAFIRST";
 	public static final String REGEX_DOC_CODE = "REGEX_DOC_CODE";
 	public static final String NUMERIC_FL6_REGEX = "NUMERIC_FL6_REGEX";
+	public static final String REGEX_PHONE = "REGEX_PHONE";
+	public static final String REGEX_PHONE_COUNTRY = "REGEX_PHONE_COUNTRY";
+	public static final String REGEX_PHONE_AREA = "REGEX_PHONE_AREA";
+	public static final String REGEX_PHONE_NUMBER = "REGEX_PHONE_NUMBER";
 
 	private static Map<String, String> regexMapper = new HashMap<String, String>() {
 		private static final long serialVersionUID = -3549857310897774789L;
@@ -276,6 +281,19 @@ public class PennantRegularExpressions {
 			put(REGEX_ALPHANUM_SPACE_SPL_CHAR,
 					"^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\,\\-\\@\\$\\%\\&\\#\\=\\+\\*(\\)\\[\\]\\{\\}\\s\\_]*");
 			put(NUMERIC_FL6_REGEX, "[0-9]{6}");
+			
+			put(REGEX_PHONE, "^[0-9]{11}");
+			put(REGEX_MOBILE, "[0-9]{10}");
+			put(REGEX_TELEPHONE, "^\\+?[0-9\\s]{8,}$");
+			put(REGEX_FAX, "[0-9]{10}");
+			
+			put(REGEX_PHONE_COUNTRY, "^[1-9]{1}[0-9]{0,3}");
+			put(REGEX_PHONE_AREA, "^[1-9]{1}[0-9]{0,3}");
+			put(REGEX_PHONE_NUMBER, "[0-9]{6,8}");
+			
+			
+			
+
 		}
 	};
 

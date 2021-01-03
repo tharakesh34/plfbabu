@@ -1042,7 +1042,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			if (!this.mobileNo.isReadonly()) {
 				this.mobileNo.setConstraint(
 						new PTMobileNumberValidator(Labels.getLabel("label_CoOwnerDetailDialog_MobileNo.value"), false,
-								PennantRegularExpressions.TELEPHONE_FAX_REGEX));
+								PennantRegularExpressions.REGEX_FAX));
 			}
 
 			if (!this.emailId.isReadonly()) {
