@@ -43,6 +43,7 @@ import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
@@ -791,7 +792,10 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_ADDDISB);
 
-			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+			if (FinanceConstants.PRODUCT_ODFACILITY.equals(financeMain.getProductCategory())) {
+				if (CollectionUtils.isEmpty(finScheduleData.getFinanceScheduleDetails())) {
+					financeDetail.setFinScheduleData(ScheduleGenerator.getNewSchd(financeDetail.getFinScheduleData()));
+				}
 				financeMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 				financeMain.setEventFromDate(finServiceInst.getFromDate());
 				financeMain.setRecalFromDate(finServiceInst.getFromDate());
