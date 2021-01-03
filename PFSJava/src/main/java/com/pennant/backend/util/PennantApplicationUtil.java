@@ -24,6 +24,7 @@ import org.zkoss.zkplus.spring.SpringUtil;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
@@ -95,25 +96,19 @@ public class PennantApplicationUtil {
 		return new BigDecimal(bigInteger);
 	}
 
-	public static BigDecimal formateAmount(BigDecimal amount, int dec) {
-		BigDecimal bigDecimal = BigDecimal.ZERO;
-
-		if (amount != null) {
-			bigDecimal = amount.divide(new BigDecimal(Math.pow(10, dec)));
-		}
-		return bigDecimal;
+	public static BigDecimal formateAmount(BigDecimal amount, int decimals) {
+		return CurrencyUtil.parse(amount, decimals);
 	}
 
-	public static String amountFormate(BigDecimal amount, int dec) {
-		BigDecimal bigDecimal = BigDecimal.ZERO;
-		if (amount != null) {
-			bigDecimal = amount.divide(BigDecimal.valueOf(Math.pow(10, dec)));
-		}
-
-		return formatAmount(bigDecimal, dec, false);
+	public static String amountFormate(BigDecimal amount, int dec) {		
+		return CurrencyUtil.format(amount, dec);
 	}
-
-	public static String formatAmount(BigDecimal value, int decPos, boolean debitCreditSymbol) {
+	
+	public static String formatAmount(BigDecimal value, int decPos) {
+		return formatAmount(value, decPos, false);
+	}
+	
+	private static String formatAmount(BigDecimal value, int decPos, boolean debitCreditSymbol) {
 		if (value != null && value.compareTo(BigDecimal.ZERO) != 0) {
 			DecimalFormat df = new DecimalFormat();
 

@@ -1133,7 +1133,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			amount = new BigDecimal(data);
 		}
 
-		return PennantApplicationUtil.formatAmount(amount, 2, false);
+		return PennantApplicationUtil.formatAmount(amount, 2);
 	}
 
 	/**
@@ -1299,10 +1299,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 						value = PennantApplicationUtil.amountFormate(new BigDecimal(value), this.currFormatter);
 					} else if (finCreditRevSubCategory.isPercentCategory()) {
 						value = PennantApplicationUtil.formatAmount(new BigDecimal(value).multiply(new BigDecimal(100)),
-								2, false);
+								2);
 						value = value + " %";
 					} else {
-						value = PennantApplicationUtil.formatAmount(new BigDecimal(value), 2, false);
+						value = PennantApplicationUtil.formatAmount(new BigDecimal(value), 2);
 					}
 				} catch (Exception e) {
 					value = "--";
@@ -1428,13 +1428,12 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			if (subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_WRKCAP)
 					|| subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_EBITDA4)
 					|| subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_FCF)) {
-				return PennantApplicationUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE,
-						false);
+				return PennantApplicationUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE);
 			} else {
 				return "";
 			}
 		} else {
-			return PennantApplicationUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE, false);
+			return PennantApplicationUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE);
 		}
 	}
 

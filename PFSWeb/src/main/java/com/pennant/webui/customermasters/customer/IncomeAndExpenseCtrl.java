@@ -481,22 +481,22 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 			Listcell gropTotalCell = (Listcell) listbox.getFellowIfAny(groupkey);
 			if (gropTotalCell != null) {
 				gropTotalCell
-						.setLabel(PennantApplicationUtil.formatAmount(mapTotal.get(groupkey), ccyFormatter, false));
+						.setLabel(PennantApplicationUtil.formatAmount(mapTotal.get(groupkey), ccyFormatter));
 			}
 		}
 
 		//Gross Income
 		Listcell grsIncCell = (Listcell) listbox.getFellowIfAny(CUST_GRC_INCOME_CELL);
-		grsIncCell.setLabel(PennantApplicationUtil.formatAmount(totIncome, ccyFormatter, false));
+		grsIncCell.setLabel(PennantApplicationUtil.formatAmount(totIncome, ccyFormatter));
 
 		//Gross Expense
 		Listcell grsExpCell = (Listcell) listbox.getFellowIfAny(CUST_GRC_EXP_CELL);
-		grsExpCell.setLabel(PennantApplicationUtil.formatAmount(totExpense, ccyFormatter, false));
+		grsExpCell.setLabel(PennantApplicationUtil.formatAmount(totExpense, ccyFormatter));
 
 		//Net Income
 		Listcell netIncCell = (Listcell) listbox.getFellowIfAny(CUST_NET_INCOME_CELL);
 		netIncome = totIncome.subtract(totExpense);
-		netIncCell.setLabel(PennantApplicationUtil.formatAmount(netIncome, ccyFormatter, false));
+		netIncCell.setLabel(PennantApplicationUtil.formatAmount(netIncome, ccyFormatter));
 		returnMap.put("NET_ANNUAL",
 				PennantApplicationUtil.unFormateAmount(netIncome.multiply(new BigDecimal(12)), ccyFormatter));
 

@@ -636,7 +636,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 								Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
 										new String[] {
 												Labels.getLabel("label_OverdueChargeRecoveryDialog_FinODCWaived.value"),
-												PennantAppUtil.formatAmount(reqWaiver, format, false) }));
+												PennantAppUtil.formatAmount(reqWaiver, format) }));
 					}
 				} else if (this.finODCWaived.getValue() == null) {
 					this.finODCWaived.setValue(new BigDecimal(0));
@@ -1330,7 +1330,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 				throw new WrongValueException(this.finODCWaived,
 						Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
 								new String[] { Labels.getLabel("label_OverdueChargeRecoveryDialog_FinODCWaived.value"),
-										PennantAppUtil.formatAmount(reqWaiver, format, false) }));
+										PennantAppUtil.formatAmount(reqWaiver, format) }));
 			}
 		} else if (this.finODCWaived.getValue() == null) {
 			this.finODCWaived.setValue(new BigDecimal(0));

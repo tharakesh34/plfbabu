@@ -2495,14 +2495,14 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					throw new WrongValueException(this.downPayBank,
 							Labels.getLabel("MAND_FIELD_MIN", new String[] {
 									Labels.getLabel("label_FinanceMainDialog_DownPayment.value"), reqDwnPay.toString(),
-									PennantAppUtil.formatAmount(this.finAmount.getActualValue(), formatter, false) }));
+									PennantAppUtil.formatAmount(this.finAmount.getActualValue(), formatter) }));
 				}
 
 				if (downPayment.compareTo(reqDwnPay) == -1) {
 					throw new WrongValueException(this.downPayBank,
 							Labels.getLabel("PERC_MIN",
 									new String[] { Labels.getLabel("label_FinanceMainDialog_DownPayBS.value"),
-											PennantAppUtil.formatAmount(reqDwnPay, formatter, false) }));
+											PennantAppUtil.formatAmount(reqDwnPay, formatter) }));
 				}
 			}
 			aFinanceMain.setDownPayBank(PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter));

@@ -2119,9 +2119,9 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			lc = new Listcell(
 					PennantApplicationUtil.amountFormate(collateral.getBankvaluation(), collateral.getCcyFormat()));
 			lc.setParent(item);
-			lc = new Listcell(PennantApplicationUtil.formatAmount(collateral.getBankmargin(), 2, false));
+			lc = new Listcell(PennantApplicationUtil.formatAmount(collateral.getBankmargin(), 2));
 			lc.setParent(item);
-			lc = new Listcell(PennantApplicationUtil.formatAmount(collateral.getProposedCoverage(), 2, false));
+			lc = new Listcell(PennantApplicationUtil.formatAmount(collateral.getProposedCoverage(), 2));
 			lc.setParent(item);
 			lc = new Listcell(collateral.getRecordStatus());
 			lc.setParent(item);

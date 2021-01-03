@@ -219,7 +219,7 @@ public class CurrencyBox extends Hbox {
 
 	public void setValue(BigDecimal bigDecimal) {
 		decimalbox.setValue(bigDecimal);
-		textbox.setValue(PennantAppUtil.formatAmount(bigDecimal, this.scale, false));
+		textbox.setValue(PennantAppUtil.formatAmount(bigDecimal, this.scale));
 	}
 
 	public void setValue(String bigDecimal) {

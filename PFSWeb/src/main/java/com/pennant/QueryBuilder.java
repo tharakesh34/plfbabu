@@ -1739,7 +1739,7 @@ public class QueryBuilder extends Groupbox {
 					// AC == Account Number
 					// CD == Date with Century
 					if ("A".equalsIgnoreCase(type)) {
-						listCell = new Listcell(PennantAppUtil.formatAmount(new BigDecimal(data), 2, false));
+						listCell = new Listcell(PennantAppUtil.formatAmount(new BigDecimal(data), 2));
 						listCell.setParent(item);
 						listCell.setStyle("text-align:right;");
 					} else if ("D".equalsIgnoreCase(type)) {

@@ -1498,7 +1498,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 
 		try {
 			aAgreementDetail.setmMAContractAmt(
-					PennantApplicationUtil.formatAmount(this.contractAmt.getValidateValue(), ccyformatt, false));
+					PennantApplicationUtil.formatAmount(this.contractAmt.getValidateValue(), ccyformatt));
 			BigDecimal finAmt = this.contractAmt.getValidateValue();
 			BigDecimal contribution = BigDecimal.valueOf(30);
 			BigDecimal aHBBankShare = (contribution.multiply(finAmt)).divide(new BigDecimal(100));
@@ -1551,7 +1551,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 
 		try {
 			aAgreementDetail.setmMAFacilityLimit(
-					PennantApplicationUtil.formatAmount(this.facilityLimit.getValidateValue(), ccyformatt, false));
+					PennantApplicationUtil.formatAmount(this.facilityLimit.getValidateValue(), ccyformatt));
 			String word = NumberToEnglishWords.getAmountInText(this.facilityLimit.getValidateValue(), "");
 			aAgreementDetail.setFacLimitInWords(word);
 		} catch (WrongValueException we) {
@@ -1561,7 +1561,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		// aAgreementDetail.setFacLimitInWords(NumberToEnglishWords.getAmountInText(this.facilityLimit.getValidateValue(),aAgreementDetail.getFinCcy()));
 		try {
 			aAgreementDetail.setmMAMinAmount(
-					PennantApplicationUtil.formatAmount(this.minAmount.getValidateValue(), ccyformatt, false));
+					PennantApplicationUtil.formatAmount(this.minAmount.getValidateValue(), ccyformatt));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1678,7 +1678,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 
 		try {
 			aAgreementDetail.setAssetValue(
-					PennantApplicationUtil.formatAmount(this.assetValue.getActualValue(), ccyformatt, false));
+					PennantApplicationUtil.formatAmount(this.assetValue.getActualValue(), ccyformatt));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1691,7 +1691,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 
 		try {
 			aAgreementDetail.setSharePerc(
-					PennantApplicationUtil.formatAmount(this.sharePerc.getActualValue(), ccyformatt, false));
+					PennantApplicationUtil.formatAmount(this.sharePerc.getActualValue(), ccyformatt));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -343,7 +343,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	private BigDecimal totalDeduction = BigDecimal.ZERO;
 	private BigDecimal BPIAmount = BigDecimal.ZERO;
 	private List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
-	private boolean customizedTemplates = ImplementationConstants.CUSTOMIZED_TEMPLATES;
 
 	public AgreementGeneration() {
 		super();
@@ -717,7 +716,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 					// Customer address
 					List<CustomerAddres> addressList = detail.getCustomerDetails().getAddressList();
-					if (customizedTemplates) {
+					if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
 						setCustomerAddress(agreement, addressList, true);
 					}
 					setCustomerAddress(agreement, addressList);
@@ -1642,7 +1641,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 																BigDecimal ratioValue = new BigDecimal(
 																		ratiosDataMap.get(subCategory));
 																value = PennantApplicationUtil.formatAmount(ratioValue,
-																		2, false);
+																		2);
 
 															} catch (Exception e) {
 																logger.error(Literal.EXCEPTION, e);
@@ -1728,7 +1727,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 																BigDecimal ratioValue = new BigDecimal(
 																		ratiosDataMap.get(subCategory));
 																value = PennantApplicationUtil.formatAmount(ratioValue,
-																		2, false);
+																		2);
 
 															} catch (Exception e) {
 																logger.error(Literal.EXCEPTION, e);
@@ -1817,7 +1816,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 																	BigDecimal ratioValue = new BigDecimal(
 																			ratiosDataMap.get(subCategory));
 																	value = PennantApplicationUtil
-																			.formatAmount(ratioValue, 2, false);
+																			.formatAmount(ratioValue, 2);
 
 																} catch (Exception e) {
 																	logger.error(Literal.EXCEPTION, e);
@@ -1832,23 +1831,20 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 															} else {
 																try {
 																	if (subCategory.startsWith("Y0")) {
-																		ratioDoc.setY0Amount(
-																				PennantApplicationUtil.formatAmount(
-																						new BigDecimal(ratiosDataMap
-																								.get(subCategory)),
-																						2, false));
+																		ratioDoc.setY0Amount(PennantApplicationUtil
+																				.formatAmount(new BigDecimal(
+																						ratiosDataMap.get(subCategory)),
+																						2));
 																	} else if (subCategory.startsWith("Y1")) {
-																		ratioDoc.setY1Amount(
-																				PennantApplicationUtil.formatAmount(
-																						new BigDecimal(ratiosDataMap
-																								.get(subCategory)),
-																						2, false));
+																		ratioDoc.setY1Amount(PennantApplicationUtil
+																				.formatAmount(new BigDecimal(
+																						ratiosDataMap.get(subCategory)),
+																						2));
 																	} else if (subCategory.startsWith("Y2")) {
-																		ratioDoc.setY2Amount(
-																				PennantApplicationUtil.formatAmount(
-																						new BigDecimal(ratiosDataMap
-																								.get(subCategory)),
-																						2, false));
+																		ratioDoc.setY2Amount(PennantApplicationUtil
+																				.formatAmount(new BigDecimal(
+																						ratiosDataMap.get(subCategory)),
+																						2));
 																	}
 																} catch (Exception e) {
 																	logger.error(Literal.EXCEPTION, e);
@@ -2374,7 +2370,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			for (ChequeDetail chequeDetail : chequeDetailList) {
 				com.pennant.backend.model.finance.AgreementDetail.ChequeDetail chDetail = agreement.new ChequeDetail();
 				chDetail.setSeqNo(String.valueOf(seqNo++));
-				if (customizedTemplates) {
+				if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
 					String value = StringUtils.trimToEmpty(chequeDetail.getAccountNo());
 					value = maskString(value, 0,
 							value.length() > 4 ? value.substring(0, value.length() - 4).length() : value.length(), 'X');
@@ -2609,7 +2605,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			BigDecimal tempAmount = new BigDecimal(amount);
 			returnAmount = tempAmount.divide(BigDecimal.valueOf(Math.pow(10, dec)));
 		}
-		return PennantApplicationUtil.formatAmount(returnAmount, dec, false);
+		return PennantApplicationUtil.formatAmount(returnAmount, dec);
 	}
 
 	private AgreementDetail getLoanAppCoreBankIDDetails(AgreementDetail agreement, FinanceDetail detail,
@@ -3642,7 +3638,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				disbursement.setBankName(StringUtils.trimToEmpty(advancePayment.getBranchBankName()));
 				// FIX ME: Temporary fix to populate Disbursement Date
 				agreement.setLlDate(DateUtility.formatToLongDate(advancePayment.getLlDate()));
-				if (customizedTemplates) {
+				if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
 					String value = StringUtils.trimToEmpty(advancePayment.getBeneficiaryAccNo());
 					value = maskString(value, 0,
 							value.length() > 4 ? value.substring(0, value.length() - 4).length() : value.length(), 'X');
@@ -3825,7 +3821,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		agreement.setRepayBankName(StringUtils.trimToEmpty(mandate.getBankName()));
 		agreement.setRepayAcctIfscCode(StringUtils.trimToEmpty(mandate.getIFSC()));
 		agreement.setBranchName(StringUtils.trimToEmpty(mandate.getBranchDesc()));
-		if (customizedTemplates) {
+		if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
 			String value = StringUtils.trimToEmpty(mandate.getAccNumber());
 			value = maskString(value, 0,
 					value.length() > 4 ? value.substring(0, value.length() - 4).length() : value.length(), 'X');
@@ -4172,7 +4168,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 				List<CustomerAddres> addlist = custdetails.getAddressList();
 				if (CollectionUtils.isNotEmpty(addlist)) {
-					if (customizedTemplates) {
+					if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
 						setCoapplicantAddress(coapplicant, addlist, agreement, true);
 					}
 					setCoapplicantAddress(coapplicant, addlist);
@@ -4363,7 +4359,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		}
 		agreement.setScheduleData(new ArrayList<AgreementDetail.FinanceScheduleDetail>());
 		for (FinanceScheduleDetail finSchDetail : finschdetails) {
-			if (customizedTemplates) {
+			if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
 				if (finSchDetail.isDisbOnSchDate()) {
 					seqNo = seqNo + 1;
 					continue;
@@ -4393,7 +4389,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			scheduleData.setClosingBalance(
 					PennantApplicationUtil.amountFormate(finSchDetail.getClosingBalance(), formatter));
 			scheduleData.setSuplRent(PennantApplicationUtil.amountFormate(finSchDetail.getSuplRent(), formatter));
-			if (customizedTemplates) {
+			if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
 				if (finSchDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0
 						&& !StringUtils.equals(finSchDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
 						&& !StringUtils.equals(finSchDetail.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
@@ -4758,7 +4754,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			agreement.setNextInstDate(DateUtility.formatToLongDate(main.getNextRepayDate()));
 
 			BigDecimal emi = BigDecimal.ZERO;
-			if (customizedTemplates) {
+			if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
 				emi = ScheduleCalculator.getEMIOnFinAssetValue(detail);
 			}
 			agreement.setRepayOnLoanAmt(PennantApplicationUtil.amountFormate(emi, formatter));

@@ -14958,14 +14958,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					throw new WrongValueException(this.downPayBank.getErrorComp(),
 							Labels.getLabel("PERC_MIN",
 									new String[] { Labels.getLabel("label_FinanceMainDialog_DownPayBS.value"),
-											PennantApplicationUtil.formatAmount(reqDwnPay, formatter, false) }));
+											PennantApplicationUtil.formatAmount(reqDwnPay, formatter) }));
 				}
 
 				if (downPayment.compareTo(reqDwnPay) < 0 && this.downPaySupl.isReadonly()) {
 					throw new WrongValueException(this.downPayBank.getErrorComp(),
 							Labels.getLabel("PERC_MIN",
 									new String[] { Labels.getLabel("label_FinanceMainDialog_DownPayBank.value"),
-											PennantApplicationUtil.formatAmount(reqDwnPay, formatter, false) }));
+											PennantApplicationUtil.formatAmount(reqDwnPay, formatter) }));
 				}
 			}
 			aFinanceMain

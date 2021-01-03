@@ -846,14 +846,14 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					throw new WrongValueException(this.downPayBank,
 							Labels.getLabel("MAND_FIELD_MIN", new String[] {
 									Labels.getLabel("label_FinanceMainDialog_DownPayment.value"), reqDwnPay.toString(),
-									PennantAppUtil.formatAmount(this.finAmount.getActualValue(), format, false) }));
+									PennantAppUtil.formatAmount(this.finAmount.getActualValue(), format) }));
 				}
 
 				if (downPayment.compareTo(reqDwnPay) == -1) {
 					throw new WrongValueException(this.downPayBank,
 							Labels.getLabel("PERC_MIN",
 									new String[] { Labels.getLabel("label_FinanceMainDialog_DownPayBS.value"),
-											PennantAppUtil.formatAmount(reqDwnPay, format, false) }));
+											PennantAppUtil.formatAmount(reqDwnPay, format) }));
 				}
 			}
 			aFinanceMain

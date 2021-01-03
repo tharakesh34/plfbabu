@@ -956,7 +956,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 						if (validAmount) {
 							if (aAuthorizationLimit.getLimitAmount().compareTo(amount) < 0) {
 								parameters[1] = PennantApplicationUtil.formatAmount(this.limitAmount.getActualValue(),
-										CurrencyUtil.getFormat(""), false);
+										CurrencyUtil.getFormat(""));
 								throw new WrongValueException(codeLimitAmount,
 										Labels.getLabel("NUMBER_MAXVALUE_EQ", parameters));
 							}

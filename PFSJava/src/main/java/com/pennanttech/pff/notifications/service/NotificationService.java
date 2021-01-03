@@ -1017,8 +1017,8 @@ public class NotificationService extends GenericService<Notification> {
 		// Facility Data Preparation For Notifications
 		data.setCustShrtName(facility.getCustShrtName());
 		data.setCustId(facility.getCustID());
-		data.setTotAmountBD(PennantApplicationUtil.formatAmount(facility.getAmountBD(), 3, false));
-		data.setTotAmountUSD(PennantApplicationUtil.formatAmount(facility.getAmountUSD(), 2, false));
+		data.setTotAmountBD(PennantApplicationUtil.formatAmount(facility.getAmountBD(), 3));
+		data.setTotAmountUSD(PennantApplicationUtil.formatAmount(facility.getAmountUSD(), 2));
 		// Role Code For Alert Notification
 		data.setRoleCode(facility.getNextRoleCode());
 		data.setCafReference(facility.getCAFReference());

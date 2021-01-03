@@ -734,7 +734,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		if (StringUtils.equals("I", categoryValue)) {
 			metricExecScore = scoringMetric.getLovDescExecutedScore();
 			finExecScoreMap.put(key, metricExecScore);
-			lc = new Listcell(PennantApplicationUtil.formatAmount(metricExecScore, 2, false));
+			lc = new Listcell(PennantApplicationUtil.formatAmount(metricExecScore, 2));
 			lc.setStyle("text-align:right;font-weight:bold;color:#ff7300;");
 
 		} else if ("F".equals(categoryValue)) {
@@ -1022,7 +1022,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 			listgroupfoot.appendChild(cell);
 		}
 
-		cell = new Listcell(PennantApplicationUtil.formatAmount(totalMaxGrpScore, 2, false));
+		cell = new Listcell(PennantApplicationUtil.formatAmount(totalMaxGrpScore, 2));
 		cell.setStyle("font-weight:bold;text-align:right;");
 		listgroupfoot.appendChild(cell);
 
@@ -1030,7 +1030,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		 * if("N".equals(ctgType)){ cell = new Listcell(""); }else{
 		 */
 		cell = new Listcell();
-		Label label = new Label(PennantApplicationUtil.formatAmount(totalExecGrpScore, 2, false));
+		Label label = new Label(PennantApplicationUtil.formatAmount(totalExecGrpScore, 2));
 		label.setStyle("font-weight:bold;float:right;");
 		cell.appendChild(label);
 		if ("I".equals(ctgType)) {

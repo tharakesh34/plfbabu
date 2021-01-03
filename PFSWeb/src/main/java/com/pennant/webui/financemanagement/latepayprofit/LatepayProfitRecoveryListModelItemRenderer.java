@@ -103,7 +103,7 @@ public class LatepayProfitRecoveryListModelItemRenderer
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.formatAmount(overdueChargeRecovery.getPenaltyAmtPerc(), 2, false));
+			lc = new Listcell(PennantAppUtil.formatAmount(overdueChargeRecovery.getPenaltyAmtPerc(), 2));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 

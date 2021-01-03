@@ -67,7 +67,6 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
@@ -297,13 +296,13 @@ public class PennantAppUtil {
 	public static BigDecimal unFormateAmount(String amount, int dec) {
 		return CurrencyUtil.unFormat(amount, dec);
 	}
-
+	
 	/**
 	 * 
-	 * @deprecated use {@link PennantApplicationUtil#formatAmount} instead.
+	 * @deprecated use {@link CurrencyUtil#format} instead.
 	 */
-	public static String formatAmount(BigDecimal value, int decPos, boolean debitCreditSymbol) {
-		return PennantApplicationUtil.formatAmount(value, decPos, debitCreditSymbol);
+	public static String formatAmount(BigDecimal value, int decPos) {
+		return CurrencyUtil.format(value, decPos);
 	}
 
 	/**
