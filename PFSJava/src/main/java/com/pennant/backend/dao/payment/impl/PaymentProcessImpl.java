@@ -48,8 +48,13 @@ public class PaymentProcessImpl implements PaymentProcess {
 		int count = 0;
 
 		try {
+			String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
 			financeMain = financeMainDAO.getDisbursmentFinMainById(paymentInstruction.getFinReference(),
 					TableType.MAIN_TAB);
+
+			if (StringUtils.isNotBlank(disbStatus)) {
+				PAID_STATUS = disbStatus;
+			}
 
 			//In case of IMD or excess amount processing there is a chance of LAN in temp queue.
 			if (financeMain == null) {
@@ -65,7 +70,7 @@ public class PaymentProcessImpl implements PaymentProcess {
 			txStatus = this.transactionManager.getTransaction(txDef);
 
 			//E -> PAID 
-			if (StringUtils.equals("E", paymentInstruction.getStatus())
+			if (StringUtils.equals(PAID_STATUS, paymentInstruction.getStatus())
 					|| DisbursementConstants.STATUS_PAID.equals(paymentInstruction.getStatus())) {
 				paymentInstruction.setStatus(DisbursementConstants.STATUS_PAID);
 			} else if (StringUtils.equals("P", paymentInstruction.getStatus())//P->REALIZED

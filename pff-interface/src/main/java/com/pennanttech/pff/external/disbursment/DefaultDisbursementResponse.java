@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -36,10 +36,12 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.model.Configuration;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.DataEngineUtil;
@@ -58,15 +60,12 @@ import com.pennanttech.pff.external.DisbursementResponse;
 import com.pennanttech.pff.logging.dao.FinAutoApprovalDetailDAO;
 import com.pennanttech.pff.logging.dao.InstBasedSchdDetailDAO;
 
-public class DefaultDisbursementResponse extends AbstractInterface implements DisbursementResponse {
+public class DefaultDisbursementResponse extends AbstractInterface implements DisbursementResponse, ValidateRecord {
 	protected final Logger logger = LogManager.getLogger(getClass());
 
 	private DisbursementProcess disbursementProcess;
 	private PaymentProcess paymentProcess;
 	private LoggedInUser loggedInUser;
-	@Autowired(required = false)
-	@Qualifier("disbStatusUploadValidationImpl")
-	private ValidateRecord disbursementRespDataValidation;
 
 	@Autowired(required = false)
 	private FinAutoApprovalDetailDAO finAutoApprovalDetailDAO;
@@ -357,7 +356,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		// FIXME
 		//DisbStatusUploadValidationImpl disbStatusUploadValidationImpl=new DisbStatusUploadValidationImpl();
 		//disbStatusUploadValidationImpl.setFinAutoApprovalDetailDAO(finAutoApprovalDetailDAO);
-		dataEngine.setValidateRecord(disbursementRespDataValidation);
+		dataEngine.setValidateRecord(this);
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put(DisbursementConstants.STATUS_AWAITCON, DisbursementConstants.STATUS_AWAITCON);
@@ -685,5 +684,197 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+
+		String status = (String) record.getValue("STATUS");
+		String id = (String) record.getValue("ID");
+		FinAdvancePayments finAdvPayments = null;
+		String PAID_STATUS = "E";
+		String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
+		if (StringUtils.isNotBlank(disbStatus)) {
+			PAID_STATUS = disbStatus;
+		}
+		String channel = getDisbType(id);
+		if (DisbursementConstants.CHANNEL_DISBURSEMENT.equals(channel)) {
+			finAdvPayments = getFinAdvancePaymentDetails(id);
+		} else if (DisbursementConstants.CHANNEL_PAYMENT.equals(channel)) {
+			finAdvPayments = getPaymentInstructionDetails(id);
+		} else if (DisbursementConstants.CHANNEL_INSURANCE.equals(channel)) {
+			finAdvPayments = getInsuranceInstructionDetails(id);
+		}
+
+		if (PAID_STATUS.equals(status)) {
+			if (!DisbursementConstants.STATUS_AWAITCON.equals(finAdvPayments.getStatus())) {// for
+																								// paid
+				throw new Exception("Payment is in " + getStatus(finAdvPayments.getStatus()) + " status");
+			}
+		} else if ("REJECTED".equals(status)) {// for rejected
+			if (!DisbursementConstants.STATUS_AWAITCON.equals(finAdvPayments.getStatus())) {
+				throw new Exception("Payment is in " + getStatus(finAdvPayments.getStatus()) + " status cannot reject");
+			}
+		} else if ("P".equals(status)) {// for realized
+			if (!DisbursementConstants.STATUS_AWAITCON.equals(finAdvPayments.getStatus())
+					&& !DisbursementConstants.STATUS_PAID.equals(finAdvPayments.getStatus())) {
+				throw new Exception("Payment is in " + getStatus(finAdvPayments.getStatus()) + " status");
+			}
+		} else {
+			throw new Exception("Invalid Id " + id);
+		}
+	}
+
+	public String getStatus(String type) {
+		String status = "";
+		switch (type) {
+		case "AC":
+			status = "Awaiting Confirmation";
+			break;
+		case "E":
+			status = "Executed";
+			break;
+		case "P":
+			status = "Realized";
+			break;
+		case "R":
+			status = "Rejected";
+			break;
+		// PSD Ticket: 139134
+		case "PAID":
+			status = "Paid";
+			break;
+		case "REALIZED":
+			status = "Realized";
+			break;
+		case "REJECTED":
+			status = "Rejected";
+			break;
+		default:
+			status = "Invalid";
+			break;
+		}
+		return status;
+	}
+
+	public String getPaymentType(String type) {
+		String status = "";
+		switch (type) {
+		case "N":
+			status = "NEFT";
+			break;
+		case "R":
+			status = "RTGS";
+			break;
+		case "C":
+			status = "CHEQUE";
+			break;
+		case "D":
+			status = "DD";
+			break;
+		default:
+			status = "";
+			break;
+		}
+		return status;
+	}
+
+	public FinAdvancePayments getFinAdvancePaymentDetails(String id) {
+		logger.debug(Literal.ENTERING);
+
+		FinAdvancePayments finAdvancePayments = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ID", id);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select FA.STATUS, FA.PAYMENTTYPE, DS.NAME, FM.FINSTARTDATE ");
+		sql.append(" From DISBURSEMENT_REQUESTS DR ");
+		sql.append(" INNER JOIN FINADVANCEPAYMENTS FA ON FA.PAYMENTID = DR.DISBURSEMENT_ID ");
+		sql.append(" LEFT JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FA.FINREFERENCE ");
+		sql.append(" INNER JOIN DATA_ENGINE_STATUS DS ON DR.BATCH_ID=DS.ID WHERE DR.ID = :ID ");
+
+		logger.debug(Literal.SQL + sql.toString());
+		RowMapper<FinAdvancePayments> typeRowMapper = BeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
+		try {
+			finAdvancePayments = this.namedJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+			finAdvancePayments = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return finAdvancePayments;
+	}
+
+	public FinAdvancePayments getPaymentInstructionDetails(String id) {
+		logger.debug(Literal.ENTERING);
+
+		FinAdvancePayments finAdvancePayments = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ID", id);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select FA.STATUS,FA.PAYMENTTYPE,DS.NAME from DISBURSEMENT_REQUESTS DR");
+		sql.append(" INNER JOIN PAYMENTINSTRUCTIONS FA ON FA.PAYMENTINSTRUCTIONID = DR.DISBURSEMENT_ID ");
+		sql.append(" INNER JOIN DATA_ENGINE_STATUS DS ON DR.BATCH_ID=DS.ID WHERE DR.ID=:ID");
+
+		logger.debug(Literal.SQL + sql.toString());
+		RowMapper<FinAdvancePayments> typeRowMapper = BeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
+		try {
+			finAdvancePayments = this.namedJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+			finAdvancePayments = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return finAdvancePayments;
+	}
+
+	public FinAdvancePayments getInsuranceInstructionDetails(String id) {
+		logger.debug(Literal.ENTERING);
+
+		FinAdvancePayments finAdvancePayments = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ID", id);
+
+		StringBuilder sql = new StringBuilder(" Select FA.STATUS,FA.PAYMENTTYPE,DS.NAME from DISBURSEMENT_REQUESTS");
+		sql.append(" DR INNER JOIN INSURANCEPAYMENTINSTRUCTIONS FA ON FA.ID = DR.DISBURSEMENT_ID");
+		sql.append(" INNER JOIN DATA_ENGINE_STATUS DS ON DR.BATCH_ID=DS.ID WHERE DR.ID=:ID");
+
+		logger.debug(Literal.SQL + sql.toString());
+		RowMapper<FinAdvancePayments> typeRowMapper = BeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
+		try {
+			finAdvancePayments = this.namedJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+			finAdvancePayments = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return finAdvancePayments;
+	}
+
+	public String getDisbType(String id) {
+		logger.debug(Literal.ENTERING);
+
+		String disbType = "";
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Id", id);
+
+		StringBuilder sql = new StringBuilder(" Select Channel ");
+		sql.append(" From DISBURSEMENT_REQUESTS");
+		sql.append(" Where Id = :Id ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			disbType = this.namedJdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.info(e);
+			disbType = "";
+		} catch (Exception e) {
+			logger.info(e);
+			disbType = "";
+		}
+		logger.debug(Literal.LEAVING);
+		return disbType;
 	}
 }
