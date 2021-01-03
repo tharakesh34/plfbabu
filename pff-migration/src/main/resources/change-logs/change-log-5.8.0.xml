@@ -3045,15 +3045,15 @@
 	</changeSet>
 
 	<changeSet id="PSD#164364.1" author="sudheer.t">
-		<modifyDataType tableName="RMTFINANCETYPES" columnName="finminterm"  newDataType="numeric(10,0)" />
-		<modifyDataType tableName="RMTFINANCETYPES" columnName="finmaxterm"  newDataType="numeric(10,0)" />
-		<modifyDataType tableName="RMTFINANCETYPES" columnName="findftterms" newDataType="numeric(10,0)" />
+		<modifyDataType tableName="RMTFINANCETYPES" columnName="finminterm"  newDataType="int" />
+		<modifyDataType tableName="RMTFINANCETYPES" columnName="finmaxterm"  newDataType="int" />
+		<modifyDataType tableName="RMTFINANCETYPES" columnName="findftterms" newDataType="int" />
 	</changeSet>
 
 	<changeSet id="PSD#164364.2" author="sudheer.t">
-		<modifyDataType tableName="RMTFINANCETYPES_TEMP" columnName="finminterm"  newDataType="numeric(10,0)" />
-		<modifyDataType tableName="RMTFINANCETYPES_TEMP" columnName="finmaxterm"  newDataType="numeric(10,0)" />
-		<modifyDataType tableName="RMTFINANCETYPES_TEMP" columnName="findftterms" newDataType="numeric(10,0)" />
+		<modifyDataType tableName="RMTFINANCETYPES_TEMP" columnName="finminterm"  newDataType="int" />
+		<modifyDataType tableName="RMTFINANCETYPES_TEMP" columnName="finmaxterm"  newDataType="int" />
+		<modifyDataType tableName="RMTFINANCETYPES_TEMP" columnName="findftterms" newDataType="int" />
 	</changeSet>
 
 	<changeSet id="PSD#164364_post" author="sudheer.t" dbms="postgresql">
