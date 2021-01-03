@@ -499,11 +499,13 @@ public class CreateFinanceController extends SummaryDetailService {
 			/*
 			 * // Reset Data finScheduleData.getFinanceMain().setEqualRepay(financeMain. isEqualRepay());
 			 * finScheduleData.getFinanceMain().setRecalType(financeMain. getRecalType());
-			 * finScheduleData.getFinanceMain().setLastRepayDate(financeMain. getFinStartDate());
-			 * finScheduleData.getFinanceMain().setLastRepayPftDate(financeMain. getFinStartDate());
-			 * finScheduleData.getFinanceMain().setLastRepayRvwDate(financeMain. getFinStartDate());
-			 * finScheduleData.getFinanceMain().setLastRepayCpzDate(financeMain. getFinStartDate());
 			 */
+			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+				finScheduleData.getFinanceMain().setLastRepayDate(financeMain.getFinStartDate());
+				finScheduleData.getFinanceMain().setLastRepayPftDate(financeMain.getFinStartDate());
+				finScheduleData.getFinanceMain().setLastRepayRvwDate(financeMain.getFinStartDate());
+				finScheduleData.getFinanceMain().setLastRepayCpzDate(financeMain.getFinStartDate());
+			}
 
 			finScheduleData.getFinanceMain().setFinRemarks("SUCCESS");
 
