@@ -1118,6 +1118,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					NOInst = financeProfitDetail.getNOInst();
 					aFinanceMain.setNOInst(NOInst);
 				}
+
+				if (NOInst > 0) {
+					this.numberOfTerms_two.setValue(NOInst);
+				} else {
+					this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
+				}
+
 				//PSD# 145740:-The No.of terms are displayed incorrect in Loan basic details screen.
 				this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
 				this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());

@@ -320,7 +320,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount ");
 		updateSql.append(" Set ReservedAmt = ReservedAmt + :PaidNow, BalanceAmt = BalanceAmt - :PaidNow ");
-		updateSql.append(" Where ExcessID =:ExcessID And (BalanceAmt-ReservedAmt) >=:PaidNow ");
+		updateSql.append(" Where ExcessID =:ExcessID");
 
 		logger.trace(Literal.SQL + updateSql.toString());
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
