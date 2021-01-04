@@ -275,9 +275,6 @@ public class SMTParameterConstants {
 
 	// FIXME HL SMT Parameters
 	public static final String CREDIT_ELG_PARAMS = "CREDIT_ELG_PARAMS";
-	//Accounting validation Required
-	public static final String ACCOUNTING_VALIDATION_REQ = "ACCOUNTING_VALIDATION_REQ";
-	//Download perfios report
 	public static final String VER_RCU_VALIDITY_DAYS = "VER_RCU_VALIDITY_DAYS";
 	public static final String VER_FI_VALIDITY_DAYS = "VER_FI_VALIDITY_DAYS";
 	public static final String CUSTOMIZED_SOAREPORT = "CUSTOMIZED_SOAREPORT";
