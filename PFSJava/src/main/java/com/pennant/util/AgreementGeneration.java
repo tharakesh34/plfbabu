@@ -63,8 +63,6 @@ import java.util.Optional;
 import java.util.WeakHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections4.CollectionUtils;
@@ -80,14 +78,6 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Filedownload;
 
 import com.aspose.words.SaveFormat;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfAction;
-import com.itextpdf.text.pdf.PdfFormField;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.TextField;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
@@ -334,216 +324,75 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	private List<ValueLabel> subSectorList = PennantStaticListUtil.getSubSectorList();
 	private List<ValueLabel> subCategoryGeneralList = PennantStaticListUtil.getSubCategoryGeneralList();
 
-	BigDecimal totalIncome = BigDecimal.ZERO;
-	BigDecimal totalExpense = BigDecimal.ZERO;
+	//BigDecimal totalIncome = BigDecimal.ZERO;
+	//BigDecimal totalExpense = BigDecimal.ZERO;
 
 	private List<FinTypeFees> finTypeFeesList;
 
-	private BigDecimal totalDeduction = BigDecimal.ZERO;
-	private BigDecimal BPIAmount = BigDecimal.ZERO;
 	private List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
 
 	public AgreementGeneration() {
 		super();
 	}
 
-	/**
-	 * Method for Generating LPO Document
-	 * 
-	 * @param detail
-	 * @param data
-	 * @return
-	 * @throws Exception
-	 */
-	public byte[] getAggrementDocToPdf(AgreementDetail agreementDetail, String finPurpose, String aggrementName)
-			throws Exception {
-		logger.debug(" Entering ");
-
-		AgreementEngine engine = new AgreementEngine(finPurpose);
-		engine.setTemplate(aggrementName);
-		engine.loadTemplate();
-		engine.mergeFields(agreementDetail);
-
-		ByteArrayOutputStream asposePdf = new ByteArrayOutputStream();
-		engine.getDocument().save(asposePdf, SaveFormat.PDF);
-
-		ByteArrayOutputStream itesxPdf = new ByteArrayOutputStream();
-		PdfStamper stamper = new PdfStamper(new PdfReader(asposePdf.toByteArray()), itesxPdf);
-		PdfWriter writer = stamper.getWriter();
-
-		/* Combo box filed Creation */
-		TextField approvalStatus = new TextField(writer, new Rectangle(500, 595, 560, 610), statusField);
-		String[] selOption = { "Select", "Accept", "Decline" };
-		String[] selOptionValue = { "0", "A", "D" };
-		approvalStatus.setChoices(selOption);
-		approvalStatus.setChoiceExports(selOptionValue);
-		approvalStatus.setChoiceSelection(0);
-		approvalStatus.setBorderStyle(2);
-		approvalStatus.setBorderColor(BaseColor.BLACK);
-		approvalStatus.setFontSize(9);
-		approvalStatus.setBackgroundColor(BaseColor.ORANGE);
-		approvalStatus.setTextColor(BaseColor.BLACK);
-
-		PdfFormField fieldcombobx = approvalStatus.getComboField();
-		stamper.addAnnotation(fieldcombobx, 1);
-		/* Hidden box filed Creation */
-		TextField finref = new TextField(writer, new Rectangle(500, 700, 560, 710), refField);
-		finref.setVisibility(TextField.HIDDEN);
-		finref.setText(agreementDetail.getFinRef());
-		PdfFormField fieldmoreHiddenTextrefNo = finref.getTextField();
-		stamper.addAnnotation(fieldmoreHiddenTextrefNo, 1);
-
-		/* Hidden box filed Creation */
-		TextField delearid = new TextField(writer, new Rectangle(500, 710, 560, 720), dealerId);
-		delearid.setVisibility(TextField.HIDDEN);
-		delearid.setText(agreementDetail.getCarDealer());
-		PdfFormField fieldhiddentext = delearid.getTextField();
-		stamper.addAnnotation(fieldhiddentext, 1);
-
-		PdfAction action = PdfAction.javaScript("if(this.getField('" + statusField + "').value  =='0') { app.alert('"
-				+ Labels.getLabel("LPO_ACCEPT_DECLINE") + "',3); }", writer);
-		writer.setAdditionalAction(PdfWriter.DOCUMENT_CLOSE, action);
-		action = PdfAction.javaScript("", writer);
-		stamper.setPageAction(PdfWriter.PAGE_OPEN, action, 1);
-
-		engine.close();
-		stamper.close();
-		asposePdf.close();
-		itesxPdf.close();
-
-		engine = null;
-		stamper = null;
-		asposePdf = null;
-		logger.debug(" Leaving ");
-		return itesxPdf.toByteArray();
-	}
-
-	/**
-	 * @param data
-	 * @param list
-	 * @param finPurpose
-	 */
-	public void getGenerateAgreementsAsZIP(FinanceReferenceDetail data, List<AgreementDetail> list, String finPurpose) {
-		logger.debug(" Entering ");
-		try {
-
-			if (list != null && !list.isEmpty()) {
-
-				AgreementEngine engine = new AgreementEngine(finPurpose);
-				engine.setTemplate(data.getLovDescAggReportName());
-
-				ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
-				ZipOutputStream out = new ZipOutputStream(arrayOutputStream);
-
-				int count = 0;
-				String finReference = list.get(0).getFinRef();
-
-				for (AgreementDetail agreementDetail : list) {
-					engine.loadTemplate();
-					count++;
-					String fileName = "";
-					if (StringUtils.equals(data.getAggType(), PennantConstants.DOC_TYPE_PDF)) {
-						fileName = finReference + "_" + StringUtils.trimToEmpty(data.getLovDescNamelov()) + (count)
-								+ PennantConstants.DOC_TYPE_PDF_EXT;
-					} else {
-						fileName = finReference + "_" + StringUtils.trimToEmpty(data.getLovDescNamelov()) + (count)
-								+ PennantConstants.DOC_TYPE_WORD_EXT;
-					}
-
-					engine.mergeFields(agreementDetail);
-					ByteArrayOutputStream outputstram = new ByteArrayOutputStream();
-					engine.getDocument().save(outputstram, SaveFormat.PDF);
-					out.putNextEntry(new ZipEntry(fileName));
-					out.write(outputstram.toByteArray());
-					out.closeEntry();
-				}
-
-				out.close();
-				String zipfileName = finReference + StringUtils.trimToEmpty(data.getLovDescNamelov()) + ".zip";
-
-				byte[] tobytes = arrayOutputStream.toByteArray();
-				arrayOutputStream.close();
-				arrayOutputStream = null;
-
-				Filedownload.save(new AMedia(zipfileName, "zip", "application/*", tobytes));
-			}
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-
-		}
-		logger.debug(" Leaving ");
-	}
-
-	/**
-	 * @param data
-	 * @param list
-	 * @param finPurpose
-	 */
-	public void getGenerateAgreementsWithMultiplePages(FinanceReferenceDetail data, List<AgreementDetail> list,
+	private void getGenerateAgreementsWithMultiplePages(FinanceReferenceDetail data, List<AgreementDetail> list,
 			String finPurpose) {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
+
+		if (CollectionUtils.isEmpty(list)) {
+			return;
+		}
+
+		AgreementEngine engine = null;
 		try {
 
-			if (list != null && !list.isEmpty()) {
+			String finReference = list.get(0).getFinRef();
+			engine = new AgreementEngine(finPurpose);
+			engine.setTemplate(data.getLovDescAggReportName());
+			engine.loadTemplate();
 
-				String finReference = list.get(0).getFinRef();
-				AgreementEngine engine = new AgreementEngine(finPurpose);
-				engine.setTemplate(data.getLovDescAggReportName());
-				engine.loadTemplate();
+			for (AgreementDetail agreementDetail : list) {
+				engine.mergeFields(agreementDetail);
+				engine.appendToMasterDocument();
+			}
 
-				for (AgreementDetail agreementDetail : list) {
-					engine.mergeFields(agreementDetail);
-					engine.appendToMasterDocument();
-				}
+			StringBuilder fileName = new StringBuilder();
+			fileName.append(finReference);
+			fileName.append("_");
+			fileName.append(StringUtils.trimToEmpty(data.getLovDescNamelov()));
 
-				StringBuilder fileName = new StringBuilder();
-				fileName.append(finReference);
-				fileName.append("_");
-				fileName.append(StringUtils.trimToEmpty(data.getLovDescNamelov()));
-
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				if (StringUtils.equals(data.getAggType(), PennantConstants.DOC_TYPE_PDF)) {
-
+			try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
+				byte[] bytes = stream.toByteArray();
+				if (PennantConstants.DOC_TYPE_PDF.equals(data.getAggType())) {
 					fileName.append(PennantConstants.DOC_TYPE_PDF_EXT);
 					engine.getMasterDocument().save(stream, SaveFormat.PDF);
-
-					Filedownload.save(new AMedia(fileName.toString(), "pdf", "application/pdf", stream.toByteArray()));
+					Filedownload.save(new AMedia(fileName.toString(), "pdf", "application/pdf", bytes));
 				} else {
 					fileName.append(PennantConstants.DOC_TYPE_WORD_EXT);
 					engine.getMasterDocument().save(stream, SaveFormat.DOCX);
 
-					Filedownload.save(
-							new AMedia(fileName.toString(), "msword", "application/msword", stream.toByteArray()));
+					Filedownload.save(new AMedia(fileName.toString(), "msword", "application/msword", bytes));
 				}
-
-				engine.close();
-
 			}
+
 		} catch (Exception e) {
 			if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
 					|| e.getMessage().equals("Template site does not exist.")
 					|| e.getMessage().equals("Template does not exist."))) {
-				//throw new Exception("Template does not exists.Please configure Template.");
 				AppException exception = new AppException("Template does not exists.Please configure Template.");
 				MessageUtil.showError(exception);
 			} else {
 				MessageUtil.showError(e);
 			}
 
+		} finally {
+			if (engine != null) {
+				engine.close();
+			}
 		}
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
-	// ================================================
-	// =============== Agreement Generation============
-	// ================================================
-
-	/**
-	 * To prepare Agreement Data
-	 * 
-	 * @param detail
-	 * @return
-	 */
 	public AgreementDetail getAggrementData(FinanceDetail detail, String aggModuleDetails, User userDetails) {
 		logger.debug("Entering");
 
@@ -615,10 +464,10 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			agreement.setOcrAmount(PennantApplicationUtil.amountFormate(ocrAmount, formatter));
 		}
 
-		totalIncome = BigDecimal.ZERO;
-		totalExpense = BigDecimal.ZERO;
-		totalDeduction = BigDecimal.ZERO;
-		BPIAmount = BigDecimal.ZERO;
+		BigDecimal totalIncome = BigDecimal.ZERO;
+		BigDecimal totalExpense = BigDecimal.ZERO;
+		BigDecimal totalDeduction = BigDecimal.ZERO;
+		BigDecimal bpiAmount = BigDecimal.ZERO;
 		try {
 
 			// ------------------ Customer Details
@@ -1239,7 +1088,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			if (aggModuleDetails.contains(PennantConstants.AGG_INCOMDE) && null != detail.getCustomerDetails()
 					&& CollectionUtils.isNotEmpty(detail.getCustomerDetails().getCustomerIncomeList())) {
 				List<CustomerIncome> customerIncomeList = detail.getCustomerDetails().getCustomerIncomeList();
-				populateAppIncExpDetails(customerIncomeList, agreement, formatter, "Primary Applicant");
+				populateAppIncExpDetails(customerIncomeList, agreement, formatter, "Primary Applicant", totalIncome,
+						totalIncome);
 			}
 
 			if (aggModuleDetails.contains(PennantConstants.AGG_BANKING)) {
@@ -1256,7 +1106,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					if (aggModuleDetails.contains(PennantConstants.AGG_INCOMDE) && null != custdetails
 							&& CollectionUtils.isNotEmpty(custdetails.getCustomerIncomeList())) {
 						populateAppIncExpDetails(custdetails.getCustomerIncomeList(), agreement, formatter,
-								"Co-Applicant");
+								"Co-Applicant", totalIncome, totalExpense);
 					}
 					if (aggModuleDetails.contains(PennantConstants.AGG_BANKING) && null != custdetails
 							&& CollectionUtils.isNotEmpty(custdetails.getCustomerBankInfoList())) {
@@ -2189,7 +2039,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				setSamplingDetails(agreement, finRef, formatter);
 			}
 
-			BigDecimal totalDeductionWithBPI = totalDeduction.add(BPIAmount);
+			BigDecimal totalDeductionWithBPI = totalDeduction.add(bpiAmount);
 			BigDecimal firstDisbursementAmt = BigDecimal.ZERO;
 			if (detail != null && detail.getFinScheduleData() != null && financeMain != null) {
 				firstDisbursementAmt = financeMain.getFinAmount();
@@ -3404,7 +3254,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	}
 
 	private void populateAppIncExpDetails(List<CustomerIncome> customerIncomeList, AgreementDetail agreement,
-			int formatter, String applicantType) {
+			int formatter, String applicantType, BigDecimal totalIncome, BigDecimal totalExpense) {
 		BigDecimal income = BigDecimal.ZERO;
 		BigDecimal expance = BigDecimal.ZERO;
 
@@ -3775,6 +3625,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			}
 
 			String scheduleMethod = fee.getFeeScheduleMethod();
+			BigDecimal totalDeduction = BigDecimal.ZERO;
 			if (StringUtils.isNotBlank(scheduleMethod) && scheduleMethod.equals("DISB")) {
 				totalDeduction = totalDeduction.add(fee.getRemainingFee());
 			}
@@ -4371,10 +4222,10 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			scheduleData.setRateOfInterst(
 					PennantApplicationUtil.formatRate(finSchDetail.getCalculatedRate().doubleValue(), 2));
 			if (StringUtils.equals(finSchDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI) && bpiAmtReq) {
-				BPIAmount = finSchDetail.getRepayAmount();
+				BigDecimal bpiAmount = finSchDetail.getRepayAmount();
 				// Provides current customers BPI Amount When Bpi Treatment
 				// Include to Deduct From disbursement .
-				agreement.setBPIAmount(PennantApplicationUtil.amountFormate(BPIAmount, formatter));
+				agreement.setBPIAmount(PennantApplicationUtil.amountFormate(bpiAmount, formatter));
 			}
 			if (StringUtils.equals(finSchDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 				// Provides BPI Amount Irrespective of Bpi Treatment.
