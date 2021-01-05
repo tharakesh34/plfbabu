@@ -612,11 +612,6 @@
 
 	<bean id="expenseTypeDAO" class="com.pennant.backend.dao.amtmasters.impl.ExpenseTypeDAOImpl" parent="sequenceDao" />
 
-
-	<bean id="extractData" class="com.pennant.eod.ExtractDataExecution">
-		<property name="extractDataDAO" ref="extractDataDAO" />
-	</bean>
-
 	<!-- CovenantsService -->
 	<bean id="covenantsService" class="com.pennant.backend.service.finance.covenant.impl.CovenantsServiceImpl">
 		<property name="covenantsDAO" ref="covenantsDAO" />

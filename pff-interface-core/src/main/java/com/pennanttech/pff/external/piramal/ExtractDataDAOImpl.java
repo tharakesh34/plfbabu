@@ -1,4 +1,4 @@
-package com.pennant.backend.dao.ext.impl;
+package com.pennanttech.pff.external.piramal;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -15,9 +15,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.util.CollectionUtils;
 
-import com.pennant.backend.dao.ext.ExtractDataDAO;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.util.StaticQueryUtil;
 
 public class ExtractDataDAOImpl implements ExtractDataDAO {
 	private static Logger logger = Logger.getLogger(ExtractDataDAOImpl.class);

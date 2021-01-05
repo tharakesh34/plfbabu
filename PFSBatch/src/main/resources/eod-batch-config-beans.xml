@@ -904,9 +904,4 @@
 	</bean>
 
 	<bean id="bpsDAO" class="com.pennanttech.pff.batch.backend.dao.impl.BatchProcessStatusDAOImpl" parent="basicDao" />
-
-	<bean id="extractDataDAO" class="com.pennant.backend.dao.ext.impl.ExtractDataDAOImpl">
-		<property name="mainDataSource" ref="dataSource" />
-		<property name="extDataSource" ref="extDataSource" />
-	</bean>
 </beans>
