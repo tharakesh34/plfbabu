@@ -324,9 +324,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	private List<ValueLabel> subSectorList = PennantStaticListUtil.getSubSectorList();
 	private List<ValueLabel> subCategoryGeneralList = PennantStaticListUtil.getSubCategoryGeneralList();
 
-	//BigDecimal totalIncome = BigDecimal.ZERO;
-	//BigDecimal totalExpense = BigDecimal.ZERO;
-
 	private List<FinTypeFees> finTypeFeesList;
 
 	private List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
