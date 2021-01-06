@@ -119,7 +119,19 @@
 		<comment>New column added for RMTFinanceTypes</comment>
 		<addColumn tableName="rmtfinancetypes">
 			<column name="OCRRequired" type="smallint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="16.1.0" author="madhuri.n">
+		<comment>New column added for RMTFinanceTypes</comment>
+		<addColumn tableName="rmtfinancetypes">
 			<column name="AllowedOCRS" type="varchar(500)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="16.1.1" author="madhuri.n">
+		<comment>New column added for RMTFinanceTypes</comment>
+		<addColumn tableName="rmtfinancetypes">
 			<column name="DefaultOCR" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
@@ -140,7 +152,19 @@
 		<comment>New column added for RMTFinanceTypes_temp</comment>
 		<addColumn tableName="rmtfinancetypes_temp">
 			<column name="OCRRequired" type="smallint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="17.1.1" author="madhuri.n">
+		<comment>New column added for RMTFinanceTypes_temp</comment>
+		<addColumn tableName="rmtfinancetypes_temp">
 			<column name="AllowedOCRS" type="varchar(500)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="17.1.2" author="madhuri.n">
+		<comment>New column added for RMTFinanceTypes_temp</comment>
+		<addColumn tableName="rmtfinancetypes_temp">
 			<column name="DefaultOCR" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
@@ -372,12 +396,12 @@
 			<column name="UnitNumber" type="varchar(20)"></column>
 			<column name="UnitArea" type="int" defaultValue="0"></column>
 			<column name="Rate" type="int" defaultValue="0"></column>
-			<column name="Price" type="numeric(18,2)"></column>
-			<column name="OtherCharges" type="numeric(18,2)"></column>
-			<column name="TotalPrice" type="numeric(18,2)"></column>
-			<column name="UnitRpsf" type="numeric(18,2)"></column>
-			<column name="UnitPlotarea" type="numeric(18)"></column>
-			<column name="UnitSuperbuiltup" type="numeric(18)"></column>
+			<column name="Price" type="decimal(18,2)"></column>
+			<column name="OtherCharges" type="decimal(18,2)"></column>
+			<column name="TotalPrice" type="decimal(18,2)"></column>
+			<column name="UnitRpsf" type="decimal(18,2)"></column>
+			<column name="UnitPlotarea" type="decimal(18)"></column>
+			<column name="UnitSuperbuiltup" type="decimal(18)"></column>
 			<column name="projectid" type="bigint" defaultValue="0"></column>
 			<column name="version" type="int" />
 			<column name="lastmntby" type="bigint" />
@@ -3901,7 +3925,7 @@
 			<column name="TransactionId" type="varchar(20)"></column>
 			<column name="FinanceReference" type="varchar(20)"></column>
 			<column name="CustomerCIF" type="varchar(20)"></column>
-			<column name="FinanceAmount" type="numeric(18,0)"></column>
+			<column name="FinanceAmount" type="decimal(18,0)"></column>
 			<column name="FinanceTenor" type="int"></column>
 			<column name="FinanceType" type="varchar(20)"></column>
 			<column name="ProcessingType" type="varchar(20)"></column>
@@ -3914,8 +3938,8 @@
 			<column name="CompanyNames" type="varchar(20)" />
 			<column name="Facility" type="varchar(10)" />
 			<column name="LimitType" type="smallint" />
-			<column name="SanctionLimit" type="numeric(18,0)" />
-			<column name="DrawingPower" type="numeric(18,0)" />
+			<column name="SanctionLimit" type="decimal(18,0)" />
+			<column name="DrawingPower" type="decimal(18,0)" />
 			<column name="ProcessStage" type="char(1)" />
 			<column name="StatusCode" type="char(1)" />
 			<column name="StatusDesc" type="clob" />
@@ -3938,7 +3962,7 @@
 	</changeSet>
 
 	<changeSet id="371.3" author="rohit.s">
-		<addNotNullConstraint tableName="PerfiosHeader" columnName="FinanceAmount" columnDataType="numeric(18,0)" />
+		<addNotNullConstraint tableName="PerfiosHeader" columnName="FinanceAmount" columnDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="371.4" author="rohit.s" dbms="mssql">
@@ -3986,7 +4010,7 @@
 	</changeSet>
 
 	<changeSet id="371.12" author="rohit.s">
-		<addNotNullConstraint tableName="PerfiosHeader" columnName="SanctionLimit" columnDataType="numeric(18,0)" />
+		<addNotNullConstraint tableName="PerfiosHeader" columnName="SanctionLimit" columnDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="371.12_pre" author="rohit.s" dbms="mssql">
@@ -4002,7 +4026,7 @@
 	</changeSet>
 
 	<changeSet id="371.14" author="rohit.s">
-		<addNotNullConstraint tableName="PerfiosHeader" columnName="DrawingPower" columnDataType="numeric(18,0)" />
+		<addNotNullConstraint tableName="PerfiosHeader" columnName="DrawingPower" columnDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="371.15" author="rohit.s" dbms="mssql">
@@ -4218,10 +4242,10 @@
 			<column name="DisbSeq" type="integer">
 				<constraints nullable="false" />
 			</column>
-			<column name="DemandAmount" type="numeric(18,0)">
+			<column name="DemandAmount" type="decimal(18,0)">
 				<constraints nullable="false" />
 			</column>
-			<column name="PaidAmount" type="numeric(18,0)">
+			<column name="PaidAmount" type="decimal(18,0)">
 				<constraints nullable="false" />
 			</column>
 			<column name="remarks" type="varchar(500)">
@@ -4252,10 +4276,10 @@
 			<column name="DisbSeq" type="integer">
 				<constraints nullable="false" />
 			</column>
-			<column name="DemandAmount" type="numeric(18,0)">
+			<column name="DemandAmount" type="decimal(18,0)">
 				<constraints nullable="false" />
 			</column>
-			<column name="PaidAmount" type="numeric(18,0)">
+			<column name="PaidAmount" type="decimal(18,0)">
 				<constraints nullable="false" />
 			</column>
 			<column name="remarks" type="varchar(500)">
@@ -4294,10 +4318,10 @@
 			<column name="DisbSeq" type="integer">
 				<constraints nullable="false" />
 			</column>
-			<column name="DemandAmount" type="numeric(18,0)">
+			<column name="DemandAmount" type="decimal(18,0)">
 				<constraints nullable="false" />
 			</column>
-			<column name="PaidAmount" type="numeric(18,0)">
+			<column name="PaidAmount" type="decimal(18,0)">
 				<constraints nullable="false" />
 			</column>
 			<column name="remarks" type="varchar(500)">
@@ -15863,7 +15887,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
-	<changeSet id="HL_66_pre" author="sampath.d" dbms="postgresql">
+	<!-- <changeSet id="HL_66_pre" author="sampath.d" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finocrheader_view');
@@ -15926,7 +15950,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
+ -->
 	<changeSet id="HL_67" author="rajesh.n">
 		<createView viewName="finocrheader_aview" replaceIfExists="true">
 		<![CDATA[
@@ -20934,25 +20958,25 @@ UNION ALL
 
 	<changeSet id="844" author="madhuri.N">
 		<addColumn tableName="WIFFINFEEDETAIL">
-			<column name="actpercentage" type="numeric(5,2)" />
+			<column name="actpercentage" type="decimal(5,2)" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="845" author="madhuri.N">
 		<addColumn tableName="WIFFINFEEDETAIL_TEMP">
-			<column name="actpercentage" type="numeric(5,2)" />
+			<column name="actpercentage" type="decimal(5,2)" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="846" author="madhuri.N">
 		<addColumn tableName="WIFFINFEEDETAIL">
-			<column name="TaxPercent" type="numeric(5,2)" />
+			<column name="TaxPercent" type="decimal(5,2)" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="847" author="madhuri.N">
 		<addColumn tableName="WIFFINFEEDETAIL_TEMP">
-			<column name="TaxPercent" type="numeric(5,2)" />
+			<column name="TaxPercent" type="decimal(5,2)" />
 		</addColumn>
 	</changeSet>
 
@@ -30968,7 +30992,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#1211.100.48_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#1211.100.48.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'feerefundfinancemain_view');
@@ -30976,7 +31000,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1211.100.48" author="Gopal.p">
+	<changeSet id="ST#1211.100.48.1" author="Gopal.p">
 		<comment>TDS APPLICABLE ADDED</comment>
 		<createView viewName="FEEREFUNDFINANCEMAIN_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -31006,7 +31030,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#1211.100.48_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#1211.100.48.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'feerefundfinancemain_view');
