@@ -45,230 +45,245 @@
 				</div>
 			</north>
 			<center border="none" autoscroll="true">
-				<tabbox id="tabBoxIndexCenter" width="99%" height="100%">
-					<tabs id="tabsIndexCenter">
-						<tab id="manualAdviseDetailsTab" label="${c:l('label_ManualAdviseDialog_AdviseDetails')}" />
-					</tabs>
-					<tabpanels id="tabpanelsBoxIndexCenter">
-						<tabpanel style="overflow:auto">
-							<groupbox id="finBasicdetails" sclass="gb-dialog">
-								<grid id="grid_basicDetails" sclass="GridLayoutNoBorder" fixedLayout="true"
-									style="border:0px">
-									<columns>
-										<column width="220px" />
-										<column />
-										<column width="220px" />
-										<column />
-									</columns>
-									<rows>
-										<row height="24px">
-											<label value="${c:l('label_ManualAdviseDialog_LoanReference.value')}" />
-											<hbox>
-												<label id="lbl_LoanReference" style="font-weight:bold;" />
-											</hbox>
-											<label value="${c:l('label_ManualAdviseDialog_LoanType.value')}" />
-											<hbox>
-												<label id="lbl_LoanType" style="font-weight:bold;" />
-											</hbox>
-										</row>
-										<row height="24px">
-											<label value="${c:l('label_CustomerCIF')}" />
-											<hbox>
-												<label id="lbl_CustCIF" style="font-weight:bold;" />
-											</hbox>
-											<label value="${c:l('label_ManualAdviseDialog_FinAmount.value')}" />
-											<hbox>
-												<label id="lbl_FinAmount" style="font-weight:bold;" />
-											</hbox>
-										</row>
-										<row height="24px">
-											<label value="${c:l('label_ManualAdviseDialog_LoanStartDate.value')}" />
-											<hbox>
-												<label id="lbl_startDate" style="font-weight:bold;" />
-											</hbox>
-											<label value="${c:l('label_ManualAdviseDialog_MaturityDate.value')}" />
-											<hbox>
-												<label id="lbl_MaturityDate" style="font-weight:bold;" />
-											</hbox>
-										</row>
-									</rows>
-								</grid>
-							</groupbox>
+				<div>
+					<groupbox>
+						<tabbox id="tabBoxIndexCenter" width="99%" height="100%">
+							<tabs id="tabsIndexCenter">
+								<tab id="manualAdviseDetailsTab"
+									label="${c:l('label_ManualAdviseDialog_AdviseDetails')}" />
+							</tabs>
+							<tabpanels id="tabpanelsBoxIndexCenter">
+								<tabpanel style="overflow:auto">
+									<groupbox id="finBasicdetails" sclass="gb-dialog">
+										<grid id="grid_basicDetails" sclass="GridLayoutNoBorder" fixedLayout="true"
+											style="border:0px">
+											<columns>
+												<column width="220px" />
+												<column />
+												<column width="220px" />
+												<column />
+											</columns>
+											<rows>
+												<row height="24px">
+													<label
+														value="${c:l('label_ManualAdviseDialog_LoanReference.value')}" />
+													<hbox>
+														<label id="lbl_LoanReference" style="font-weight:bold;" />
+													</hbox>
+													<label value="${c:l('label_ManualAdviseDialog_LoanType.value')}" />
+													<hbox>
+														<label id="lbl_LoanType" style="font-weight:bold;" />
+													</hbox>
+												</row>
+												<row height="24px">
+													<label value="${c:l('label_CustomerCIF')}" />
+													<hbox>
+														<label id="lbl_CustCIF" style="font-weight:bold;" />
+													</hbox>
+													<label value="${c:l('label_ManualAdviseDialog_FinAmount.value')}" />
+													<hbox>
+														<label id="lbl_FinAmount" style="font-weight:bold;" />
+													</hbox>
+												</row>
+												<row height="24px">
+													<label
+														value="${c:l('label_ManualAdviseDialog_LoanStartDate.value')}" />
+													<hbox>
+														<label id="lbl_startDate" style="font-weight:bold;" />
+													</hbox>
+													<label
+														value="${c:l('label_ManualAdviseDialog_MaturityDate.value')}" />
+													<hbox>
+														<label id="lbl_MaturityDate" style="font-weight:bold;" />
+													</hbox>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
 
-							<groupbox id="gb_basicDetails" sclass="gb-dialog">
-								<caption label="${c:l('label_ManualAdviseDialog_ManualAdvise.value')}" />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="15%" />
-										<column width="35%" />
-										<column width="15%" />
-										<column width="35%" />
-									</columns>
-									<rows>
-										<row id="row0">
-											<label id="label_AdviseType"
-												value="${c:l('label_ManualAdviseDialog_AdviseType.value')}" visible="true" />
-											<hbox visible="true">
-												<space spacing="2px" sclass="mandatory" />
-												<combobox id="adviseType" width="120px" />
-											</hbox>
-											<label id="label_FinReference"
-												value="${c:l('label_ManualAdviseDialog_FinReference.value')}" visible="false" />
-											<hbox visible="false">
-												<extendedcombobox id="finReference" />
-											</hbox>
-										</row>
-										<row id="row1">
-											<label id="label_FeeTypeID"
-												value="${c:l('label_ManualAdviseDialog_FeeTypeID.value')}" />
-											<hbox>
-												<extendedcombobox id="feeTypeID" />
-											</hbox>
-											<label id="label_AdviseAmount"
-												value="${c:l('label_ManualAdviseDialog_AdviseAmount.value')}" />
-											<hbox>
-												<currencyBox id="adviseAmount" width="162px" />
-											</hbox>
-										</row>
-										<row>
-											<label id="label_ManualAdviseDialog_ValueDate"
-												value="${c:l('label_ManualAdviseDialog_ValueDate.value')}" />
-											<hbox id="hbox_ManualAdviseDialog_ValueDate">
-												<space spacing="2px" sclass="mandatory" />
-												<datebox id="valueDate" width="100px" />
-											</hbox>
-											<label id="label_ManualAdviseDialog_PostDate"
-												value="${c:l('label_ManualAdviseDialog_PostDate.value')}" />
-											<hbox id="hbox_ManualAdviseDialog_PostDate">
-												<space spacing="2px" sclass="mandatory" />
-												<datebox id="postDate" width="100px" />
-											</hbox>
-										</row>
-										<row id="row2" visible="false">
-											<label id="label_PaidAmount"
-												value="${c:l('label_ManualAdviseDialog_PaidAmount.value')}" />
-											<currencyBox id="paidAmount" width="162px" />
+									<groupbox id="gb_basicDetails" sclass="gb-dialog">
+										<caption label="${c:l('label_ManualAdviseDialog_ManualAdvise.value')}" />
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+											<columns>
+												<column width="15%" />
+												<column width="35%" />
+												<column width="15%" />
+												<column width="35%" />
+											</columns>
+											<rows>
+												<row id="row0">
+													<label id="label_AdviseType"
+														value="${c:l('label_ManualAdviseDialog_AdviseType.value')}" visible="true" />
+													<hbox visible="true">
+														<space spacing="2px" sclass="mandatory" />
+														<combobox id="adviseType" width="120px" />
+													</hbox>
+													<label id="label_FinReference"
+														value="${c:l('label_ManualAdviseDialog_FinReference.value')}" visible="false" />
+													<hbox visible="false">
+														<extendedcombobox id="finReference" />
+													</hbox>
+												</row>
+												<row id="row1">
+													<label id="label_FeeTypeID"
+														value="${c:l('label_ManualAdviseDialog_FeeTypeID.value')}" />
+													<hbox>
+														<extendedcombobox id="feeTypeID" />
+													</hbox>
+													<label id="label_AdviseAmount"
+														value="${c:l('label_ManualAdviseDialog_AdviseAmount.value')}" />
+													<hbox>
+														<currencyBox id="adviseAmount" width="162px" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_ManualAdviseDialog_ValueDate"
+														value="${c:l('label_ManualAdviseDialog_ValueDate.value')}" />
+													<hbox id="hbox_ManualAdviseDialog_ValueDate">
+														<space spacing="2px" sclass="mandatory" />
+														<datebox id="valueDate" width="100px" />
+													</hbox>
+													<label id="label_ManualAdviseDialog_PostDate"
+														value="${c:l('label_ManualAdviseDialog_PostDate.value')}" />
+													<hbox id="hbox_ManualAdviseDialog_PostDate">
+														<space spacing="2px" sclass="mandatory" />
+														<datebox id="postDate" width="100px" />
+													</hbox>
+												</row>
+												<row id="row2" visible="false">
+													<label id="label_PaidAmount"
+														value="${c:l('label_ManualAdviseDialog_PaidAmount.value')}" />
+													<currencyBox id="paidAmount" width="162px" />
 
-											<label id="label_WaivedAmount"
-												value="${c:l('label_ManualAdviseDialog_WaivedAmount.value')}" />
-											<currencyBox id="waivedAmount" width="162px" />
-										</row>
-										<row id="row3">
-											<label id="label_Remarks"
-												value="${c:l('label_ManualAdviseDialog_Remarks.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="remarks" maxlength="100" width="400px" rows="4"
-													multiline="true" />
-											</hbox>
-											<hbox id="hbox_Sequence">
-												<label id="label_Sequence"
-													value="${c:l('label_ManualAdviseDialog_Sequence.value')}" />
-												<intbox id="sequence" width="90px" maxlength="14" />
-											</hbox>
+													<label id="label_WaivedAmount"
+														value="${c:l('label_ManualAdviseDialog_WaivedAmount.value')}" />
+													<currencyBox id="waivedAmount" width="162px" />
+												</row>
+												<row id="row3">
+													<label id="label_Remarks"
+														value="${c:l('label_ManualAdviseDialog_Remarks.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="remarks" maxlength="100" width="400px" rows="4"
+															multiline="true" />
+													</hbox>
+													<hbox id="hbox_Sequence">
+														<label id="label_Sequence"
+															value="${c:l('label_ManualAdviseDialog_Sequence.value')}" />
+														<intbox id="sequence" width="90px" maxlength="14" />
+													</hbox>
 
-										</row>
+												</row>
 
-									</rows>
-								</grid>
-								</groupbox>
+											</rows>
+										</grid>
+									</groupbox>
 
-								<groupbox id="gb_GSTDetails" sclass="gb-dialog">
-									<caption label="${c:l('label_ManualAdviseDialog_GSTDetails.value')}" />
-									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-										<columns>
-											<column width="200px" />
-											<column />
-										</columns>
-										<rows>
-											<row>
-												<label id="label_ManualAdviseDialog_TaxComponent"
-													value="${c:l('label_ManualAdviseDialog_TaxComponent.value')}" />
-												<label id="label_TaxComponent" style="font-weight:bold;" />
-											</row>
-											<row>
-												<label id="label_ManualAdviseDialog_AdviseAmount"
-													value="${c:l('label_ManualAdviseDialog_AdviseAmount.value')}" />
-												<decimalbox id="feeAmount" maxlength="18" readonly="true"
-													style="border:none; background-color:white; font-weight:bold;" />
-											</row>
-											<row>
-												<label id="label_ManualAdviseDialog_CGST"
-													value="${c:l('label_ManualAdviseDialog_CGST.value')}" />
-												<decimalbox id="cgst" maxlength="18" readonly="true"
-													style="border:none; background-color:white; font-weight:bold;" />
-											</row>
-											<row>
-												<label id="label_ManualAdviseDialog_SGST"
-													value="${c:l('label_ManualAdviseDialog_SGST.value')}" />
-												<decimalbox id="sgst" maxlength="18" readonly="true"
-													style="border:none; background-color:white; font-weight:bold;" />
-											</row>
-											<row>
-												<label id="label_ManualAdviseDialog_IGST"
-													value="${c:l('label_ManualAdviseDialog_IGST.value')}" />
-												<decimalbox id="igst" maxlength="18" readonly="true"
-													style="border:none; background-color:white; font-weight:bold;" />
-											</row>
-											<row>
-												<label id="label_ManualAdviseDialog_UGST"
-													value="${c:l('label_ManualAdviseDialog_UGST.value')}" />
-												<decimalbox id="ugst" maxlength="18" readonly="true"
-													style="border:none; background-color:white; font-weight:bold;" />
-											</row>
-											<row>
-												<label id="label_ManualAdviseDialog_CESS"
-													value="${c:l('label_ManualAdviseDialog_CESS.value')}" />
-												<decimalbox id="cess" maxlength="18" readonly="true"
-													style="border:none; background-color:white; font-weight:bold;" />
-											</row>
-											<row>
-												<label id="label_ManualAdviseDialog_TotalGST"
-													value="${c:l('label_ManualAdviseDialog_TotalGST.value')}" />
-												<decimalbox id="totalGST" maxlength="18" readonly="true"
-													style="border:none; background-color:white; font-weight:bold;" />
-											</row>
-											<row>
-												<label id="label_ManualAdviseDialog_Total"
-													value="${c:l('label_ManualAdviseDialog_Total.value')}" />
-												<decimalbox id="total" maxlength="18" readonly="true"
-													style="border:none; background-color:white; font-weight:bold;" />
-											</row>
-										</rows>
-									</grid>
-								</groupbox>
+									<groupbox id="gb_GSTDetails" sclass="gb-dialog">
+										<caption label="${c:l('label_ManualAdviseDialog_GSTDetails.value')}" />
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+											<columns>
+												<column width="200px" />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<label id="label_ManualAdviseDialog_TaxComponent"
+														value="${c:l('label_ManualAdviseDialog_TaxComponent.value')}" />
+													<label id="label_TaxComponent" style="font-weight:bold;" />
+												</row>
+												<row>
+													<label id="label_ManualAdviseDialog_AdviseAmount"
+														value="${c:l('label_ManualAdviseDialog_AdviseAmount.value')}" />
+													<decimalbox id="feeAmount" maxlength="18" readonly="true"
+														style="border:none; background-color:white; font-weight:bold;" />
+												</row>
+												<row>
+													<label id="label_ManualAdviseDialog_CGST"
+														value="${c:l('label_ManualAdviseDialog_CGST.value')}" />
+													<decimalbox id="cgst" maxlength="18" readonly="true"
+														style="border:none; background-color:white; font-weight:bold;" />
+												</row>
+												<row>
+													<label id="label_ManualAdviseDialog_SGST"
+														value="${c:l('label_ManualAdviseDialog_SGST.value')}" />
+													<decimalbox id="sgst" maxlength="18" readonly="true"
+														style="border:none; background-color:white; font-weight:bold;" />
+												</row>
+												<row>
+													<label id="label_ManualAdviseDialog_IGST"
+														value="${c:l('label_ManualAdviseDialog_IGST.value')}" />
+													<decimalbox id="igst" maxlength="18" readonly="true"
+														style="border:none; background-color:white; font-weight:bold;" />
+												</row>
+												<row>
+													<label id="label_ManualAdviseDialog_UGST"
+														value="${c:l('label_ManualAdviseDialog_UGST.value')}" />
+													<decimalbox id="ugst" maxlength="18" readonly="true"
+														style="border:none; background-color:white; font-weight:bold;" />
+												</row>
+												<row>
+													<label id="label_ManualAdviseDialog_CESS"
+														value="${c:l('label_ManualAdviseDialog_CESS.value')}" />
+													<decimalbox id="cess" maxlength="18" readonly="true"
+														style="border:none; background-color:white; font-weight:bold;" />
+												</row>
+												<row>
+													<label id="label_ManualAdviseDialog_TotalGST"
+														value="${c:l('label_ManualAdviseDialog_TotalGST.value')}" />
+													<decimalbox id="totalGST" maxlength="18" readonly="true"
+														style="border:none; background-color:white; font-weight:bold;" />
+												</row>
+												<row>
+													<label id="label_ManualAdviseDialog_Total"
+														value="${c:l('label_ManualAdviseDialog_Total.value')}" />
+													<decimalbox id="total" maxlength="18" readonly="true"
+														style="border:none; background-color:white; font-weight:bold;" />
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
 
 
-								<!-- TDS details -->
-								<groupbox id="gb_TDSDetails" sclass="gb-dialog">
-									<caption label="${c:l('label_ManualAdviseDialog_TDSDetails.value')}" />
-									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-										<columns>
-											<column width="200px" />
-											<column />
-										</columns>
-										<rows>
-											<row>
-												<label id="label_ManualAdviseDialog_TDS"
-													value="${c:l('label_ManualAdviseDialog_TDS.value')}" />
-												<decimalbox id="tds" maxlength="18" readonly="true"
-													style="border:none; background-color:white; font-weight:bold;" />
-											</row>
-										</rows>
-									</grid>
-								</groupbox>
+									<!-- TDS details -->
+									<groupbox id="gb_TDSDetails" sclass="gb-dialog">
+										<caption label="${c:l('label_ManualAdviseDialog_TDSDetails.value')}" />
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+											<columns>
+												<column width="200px" />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<label id="label_ManualAdviseDialog_TDS"
+														value="${c:l('label_ManualAdviseDialog_TDS.value')}" />
+													<decimalbox id="tds" maxlength="18" readonly="true"
+														style="border:none; background-color:white; font-weight:bold;" />
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
 									<groupbox id="adviseMovements">
-										<listbox id="listBoxAdviseMovements" fixedLayout="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}"
-											multiple="true" width="99.8%" sizedByContent="true" height="100px">
+										<listbox id="listBoxAdviseMovements" fixedLayout="true" span="true"
+											emptyMessage="${c:l('listbox.emptyMessage')}" multiple="true" width="99.8%" sizedByContent="true"
+											height="100px">
 											<listhead sizable="true">
-												<listheader label="${c:l('listheader_AdviseMovement_MovementDate.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_AdviseMovement_MovementAmount.label')}" hflex="min" align="right" />
-												<listheader label="${c:l('listheader_AdviseMovement_PaidAmount.label')}" hflex="min" align="right" />
-												<listheader label="${c:l('listheader_AdviseMovement_PaidGST.label')}" hflex="min" align="right" />
-												<listheader label="${c:l('listheader_AdviseMovement_WaivedAmount.label')}" hflex="min" align="right" />
-												<listheader label="${c:l('listheader_AdviseMovement_WaivedGST.label')}" hflex="min" align="right" />
-												<listheader label="${c:l('listheader_AdviseMovement_Status.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_AdviseMovement_ReceiptDetails.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_AdviseMovement_MovementDate.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_AdviseMovement_MovementAmount.label')}" hflex="min" align="right" />
+												<listheader label="${c:l('listheader_AdviseMovement_PaidAmount.label')}"
+													hflex="min" align="right" />
+												<listheader label="${c:l('listheader_AdviseMovement_PaidGST.label')}"
+													hflex="min" align="right" />
+												<listheader
+													label="${c:l('listheader_AdviseMovement_WaivedAmount.label')}" hflex="min" align="right" />
+												<listheader label="${c:l('listheader_AdviseMovement_WaivedGST.label')}"
+													hflex="min" align="right" />
+												<listheader label="${c:l('listheader_AdviseMovement_Status.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_AdviseMovement_ReceiptDetails.label')}" hflex="min" />
 											</listhead>
 										</listbox>
 									</groupbox>
