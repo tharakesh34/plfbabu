@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerDialogCtrl.java                                              * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  27-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * * Modified
+ * Date : 27-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 09-05-2018		Vinay					 0.2      Extended Details tab changes for 		*
- * 													  Customer Enquiry menu based on rights	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2011 Pennant 0.1 * * 09-05-2018 Vinay 0.2 Extended Details tab changes for * Customer Enquiry menu based on
+ * rights * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customerphonenumber;
@@ -95,7 +77,7 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 
 	public void doRenderPhoneNumberList(List<CustomerPhoneNumber> customerPhoneNumbers, Listbox listbox, String custcif,
 			boolean isFinance) {
-		//render start
+		// render start
 		listbox.getItems().clear();
 		if (CollectionUtils.isNotEmpty(customerPhoneNumbers)) {
 			for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumbers) {
@@ -288,7 +270,7 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 		custPhoneType.setValue(customerPhoneNumber.getPhoneTypeCode(),
 				customerPhoneNumber.getLovDescPhoneTypeCodeName());
 		if (!customerPhoneNumber.isNewRecord()) {
-			//get the regex using dao if old record
+			// get the regex using dao if old record
 			PhoneType phoneType = phoneTypeService.getApprovedPhoneTypeById(customerPhoneNumber.getPhoneTypeCode());
 			custPhoneType.setAttribute("regex", phoneType.getPhoneTypeRegex());
 		} else if (customerPhoneNumber.isNewRecord()
@@ -388,7 +370,6 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 	}
 
 	private void validatePhoneNumber(Textbox phoneNumber, String regex, String phoneTypeCode) {
-		phoneNumber.setMaxlength(dosetFieldLength(regex));
 
 		if (phoneNumber.isReadonly()) {
 			return;
@@ -398,6 +379,12 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 			throw new WrongValueException(phoneNumber,
 					Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("listheader_PhoneNumber.label") }));
 		}
+
+		if (StringUtils.isBlank(regex)) {
+			regex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_FAX);
+		}
+
+		phoneNumber.setMaxlength(dosetFieldLength(regex));
 
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(phoneNumber.getValue());
@@ -461,7 +448,7 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 
 	public int dosetFieldLength(String regex) {
 		if (StringUtils.isBlank(regex)) {
-			regex = PennantRegularExpressions.REGEX_FAX;
+			regex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_FAX);
 		}
 
 		String length = regex.substring(regex.lastIndexOf("}") - 2, regex.lastIndexOf("}"));
