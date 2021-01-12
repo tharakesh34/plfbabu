@@ -26397,7 +26397,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#1211.100.16_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#1211.100.16.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_fview');
@@ -26405,7 +26405,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1211.100.16" author="Gopal.p">
+	<changeSet id="ST#1211.100.16.1" author="Gopal.p">
 		<createView viewName="FINRECEIPTHEADER_FVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.RECEIPTID,
@@ -26497,7 +26497,8 @@ UNION ALL
 					T1.RECEIPTSOURCE,       
 					T1.RECAPPDATE,          
 					T1.RECEIVEDDATE,
-					T1.KNOCKOFFTYPE
+					T1.KNOCKOFFTYPE,
+					T2.TDSAPPLICABLE FINTDSAPPLICABLE
 				FROM FINRECEIPTHEADER_TEMP T1
 				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
 				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
@@ -26516,7 +26517,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#1211.100.16_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#1211.100.16.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finreceiptheader_fview');
