@@ -247,11 +247,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(finType,
 				StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
 				FinanceConstants.PROCEDT_STAGEACC, userRole, "_AEView", true));
-		
+
 		//Finance Joint Account Details
-				financeDetail
-						.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(finReference, "_View"));
-				
+		financeDetail
+				.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(finReference, "_View"));
+
 		//Finance Guaranteer Details		
 		if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
 			financeDetail.setGurantorsDetailList(getGuarantorDetailService().getGuarantorDetail(finReference, "_View"));
@@ -1449,8 +1449,12 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		// Extended Field Details
 		if (financeDetail.getExtendedFieldRender() != null) {
-			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(), auditTranType, method, null));
+			ExtendedFieldHeader extendedFieldHeader = financeDetail.getExtendedFieldHeader();
+			financeDetail.getExtendedFieldRender().setTableName(
+					extendedFieldHeader.getModuleName() + "_" + extendedFieldHeader.getSubModuleName() + "_ED");
+			auditDetailMap.put("ExtendedFieldDetails",
+					extendedFieldDetailsService.setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(),
+							auditTranType, method, extendedFieldHeader.getModuleName()));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
