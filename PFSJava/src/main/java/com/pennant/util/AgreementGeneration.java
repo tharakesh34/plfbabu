@@ -84,7 +84,6 @@ import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.RateUtil;
@@ -313,7 +312,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	private TechnicalVerificationDAO technicalVerificationDAO;
 	@Autowired
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
-
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
 
@@ -323,9 +321,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	private List<ValueLabel> sectorList = PennantStaticListUtil.getPSLSectorList();
 	private List<ValueLabel> subSectorList = PennantStaticListUtil.getSubSectorList();
 	private List<ValueLabel> subCategoryGeneralList = PennantStaticListUtil.getSubCategoryGeneralList();
-
 	private List<FinTypeFees> finTypeFeesList;
-
 	private List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
 
 	public AgreementGeneration() {
@@ -397,7 +393,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		AgreementDetail agreement = new AgreementDetail();
 		// Application Date
 		Date appldate = SysParamUtil.getAppDate();
-		String appDate = DateUtility.formatToLongDate(appldate);
+		String appDate = DateUtil.formatToLongDate(appldate);
 		agreement.setAppDate(appDate);
 		long userId = userDetails.getUserId();
 		String usrName = userDetails.getUsername();
@@ -457,8 +453,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				builderDemandAmount = builderDemandAmount.add(finOCRCapture.getDemandAmount());
 				ocrAmount = ocrAmount.add(finOCRCapture.getPaidAmount());
 			}
-			agreement.setBuilderDemandAmount(PennantApplicationUtil.amountFormate(builderDemandAmount, formatter));
-			agreement.setOcrAmount(PennantApplicationUtil.amountFormate(ocrAmount, formatter));
+			agreement.setBuilderDemandAmount(CurrencyUtil.format(builderDemandAmount, formatter));
+			agreement.setOcrAmount(CurrencyUtil.format(ocrAmount, formatter));
 		}
 
 		BigDecimal totalIncome = BigDecimal.ZERO;
@@ -478,22 +474,20 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					agreement.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 					agreement.setCustArabicName(StringUtils.trimToEmpty(customer.getCustShrtNameLclLng()));
 					agreement.setCustPassport(StringUtils.trimToEmpty(customer.getCustPassportNo()));
-					agreement.setCustDOB(DateUtility.formatToLongDate(customer.getCustDOB()));
+					agreement.setCustDOB(DateUtil.formatToLongDate(customer.getCustDOB()));
 					agreement.setCustRO1(StringUtils.trimToEmpty(customer.getLovDescCustRO1Name()));
 					agreement.setCustNationality(StringUtils.trimToEmpty(customer.getLovDescCustNationalityName()));
 					agreement.setCustCPRNo(StringUtils.trimToEmpty(customer.getCustCRCPR()));
-					agreement.setCustAge(String.valueOf(DateUtility.getYearsBetween(appldate, customer.getCustDOB())));
-					agreement.setCustAgeAtMaturity(String.valueOf(
-							DateUtility.getYearsBetween(customer.getCustDOB(), financeMain.getMaturityDate())));
+					agreement.setCustAge(String.valueOf(DateUtil.getYearsBetween(appldate, customer.getCustDOB())));
+					agreement.setCustAgeAtMaturity(String
+							.valueOf(DateUtil.getYearsBetween(customer.getCustDOB(), financeMain.getMaturityDate())));
 					agreement.setCustIsNRI(StringUtils.trimToEmpty(PennantStaticListUtil.getlabelDesc(
 							customer.getCustResidentialSts(), PennantStaticListUtil.getResidentialStsList())));
-					agreement.setCustTotIncome(
-							PennantApplicationUtil.amountFormate(customer.getCustTotalIncome(), formatter));
+					agreement.setCustTotIncome(CurrencyUtil.format(customer.getCustTotalIncome(), formatter));
 					totalIncome = customer.getCustTotalIncome();
 					totalExpense = customer.getCustTotalExpense();
 
-					agreement.setCustTotExpense(
-							PennantApplicationUtil.amountFormate(customer.getCustTotalExpense(), formatter));
+					agreement.setCustTotExpense(CurrencyUtil.format(customer.getCustTotalExpense(), formatter));
 					agreement.setNoOfDependents(String.valueOf(customer.getNoOfDependents()));
 					agreement.setCustSector(StringUtils.trimToEmpty(customer.getCustSector()));
 					agreement.setCustSectorDesc(StringUtils.trimToEmpty(customer.getLovDescCustSectorName()));
@@ -502,7 +496,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					agreement.setCustSegment(StringUtils.trimToEmpty(customer.getLovDescCustSegmentName()));
 					agreement.setCustIndustry(StringUtils.trimToEmpty(customer.getLovDescCustIndustryName()));
 					agreement.setCustIndustryDesc(StringUtils.trimToEmpty(customer.getLovDescCustIndustryName()));
-					agreement.setCustJointDOB(DateUtility.formatToLongDate(customer.getJointCustDob()));
+					agreement.setCustJointDOB(DateUtil.formatToLongDate(customer.getJointCustDob()));
 					agreement.setCustJointName(StringUtils.trimToEmpty(customer.getJointCustName()));
 					agreement.setCustSalutation(StringUtils.trimToEmpty(customer.getLovDescCustSalutationCodeName()));
 					agreement.setCustGender(StringUtils.trimToEmpty(customer.getLovDescCustGenderCodeName()));
@@ -524,8 +518,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						CustEmployeeDetail empDetail = detail.getCustomerDetails().getCustEmployeeDetail();
 						agreement.setCustEmpName(StringUtils.trimToEmpty(empDetail.getLovDescEmpName()));
 						agreement.setCustYearsExp(
-								String.valueOf(DateUtility.getYearsBetween(appldate, empDetail.getEmpFrom())));
-						agreement.setCustEmpStartDate(DateUtility.formatToLongDate(empDetail.getEmpFrom()));
+								String.valueOf(DateUtil.getYearsBetween(appldate, empDetail.getEmpFrom())));
+						agreement.setCustEmpStartDate(DateUtil.formatToLongDate(empDetail.getEmpFrom()));
 						agreement.setCustEmpProf(StringUtils.trimToEmpty(empDetail.getLovDescProfession()));
 						agreement.setCustEmpStsDesc(StringUtils.trimToEmpty(empDetail.getLovDescEmpStatus()));
 						agreement.setCustOccupation(StringUtils.trimToEmpty(empDetail.getLovDescEmpDesg()));
@@ -585,8 +579,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 								kycDetail.setIdType(StringUtils.trimToEmpty(cusDocument.getCustDocCategory()));
 								kycDetail.setIdTypeDesc(
 										StringUtils.trimToEmpty(cusDocument.getLovDescCustDocCategory()));
-								kycDetail.setIssuedDate(DateUtility.formatToLongDate(cusDocument.getCustDocIssuedOn()));
-								kycDetail.setExpiryDate(DateUtility.formatToLongDate(cusDocument.getCustDocExpDate()));
+								kycDetail.setIssuedDate(DateUtil.formatToLongDate(cusDocument.getCustDocIssuedOn()));
+								kycDetail.setExpiryDate(DateUtil.formatToLongDate(cusDocument.getCustDocExpDate()));
 								agreement.getKycDetails().add(kycDetail);
 							}
 					}
@@ -611,7 +605,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 									agreement.setCustIdType(docCategory);
 									agreement.setCustDocIdNum(customerDocument.getCustDocTitle());
 									agreement.setCustDocExpDate(
-											DateUtility.formatToLongDate(customerDocument.getCustDocExpDate()));
+											DateUtil.formatToLongDate(customerDocument.getCustDocExpDate()));
 									break;
 								}
 							} else {
@@ -639,7 +633,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						// General Data
 						if ((legalDetail) != null) {
 							com.pennant.backend.model.finance.AgreementDetail.LegalDetail legalGeneralData = agreement.new LegalDetail();
-							legalGeneralData.setLegalDate(DateUtility.formatToLongDate(legalDetail.getLegalDate()));
+							legalGeneralData.setLegalDate(DateUtil.formatToLongDate(legalDetail.getLegalDate()));
 							agreement.getLegalDetails().add(legalGeneralData);
 						}
 						// Legal Applicant Detail
@@ -719,7 +713,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 								if (null != document) {
 									com.pennant.backend.model.finance.AgreementDetail.LegalDocument legalDocument = agreement.new LegalDocument();
 									legalDocument
-											.setDocumentDate(DateUtility.formatToLongDate(document.getDocumentDate()));
+											.setDocumentDate(DateUtil.formatToLongDate(document.getDocumentDate()));
 									legalDocument.setDocumentNo(document.getDocumentNo());
 									legalDocument.setDocumentDetail(document.getDocumentDetail());
 									legalDocument.setDocumentName(document.getDocumentName());
@@ -785,15 +779,15 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							for (LegalECDetail ecDetail : ecDetails) {
 								if (null != ecDetail) {
 									com.pennant.backend.model.finance.AgreementDetail.LegalECDetail legalECDetail = agreement.new LegalECDetail();
-									legalECDetail.setEcDate(DateUtility.formatToLongDate(ecDetail.getEcDate()));
+									legalECDetail.setEcDate(DateUtil.formatToLongDate(ecDetail.getEcDate()));
 									legalECDetail.setDocument(ecDetail.getDocument());
 									legalECDetail.setEcNumber(ecDetail.getEcNumber());
-									legalECDetail.setEcFrom(DateUtility.formatToLongDate(ecDetail.getEcFrom()));
-									legalECDetail.setEcTo(DateUtility.formatToLongDate(ecDetail.getEcTo()));
+									legalECDetail.setEcFrom(DateUtil.formatToLongDate(ecDetail.getEcFrom()));
+									legalECDetail.setEcTo(DateUtil.formatToLongDate(ecDetail.getEcTo()));
 									legalECDetail.setEcType(PennantStaticListUtil.getlabelDesc(ecDetail.getEcType(),
 											PennantStaticListUtil.getDocumentTypes()));
 									legalECDetail.setPropertyDetailECDate(
-											DateUtility.formatToLongDate(legalDetail.getPropertyDetailECDate()));
+											DateUtil.formatToLongDate(legalDetail.getPropertyDetailECDate()));
 									legalECDetail.setEcPropertyOwnerName(legalDetail.getEcPropertyOwnerName());
 
 									agreement.getLegalECDetails().add(legalECDetail);
@@ -887,11 +881,10 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							internalLiabilityDetail.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
 							internalLiabilityDetail.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 						}
-						internalLiabilityDetail.setEmiAmt(
-								PennantApplicationUtil.amountFormate(financeEnquiry.getMaxInstAmount(), formatter));
-						internalLiabilityDetail.setLanNumber(StringUtils.trimToEmpty(financeEnquiry.getFinReference()));
 						internalLiabilityDetail
-								.setAmt(PennantApplicationUtil.amountFormate(financeEnquiry.getFinAmount(), formatter));
+								.setEmiAmt(CurrencyUtil.format(financeEnquiry.getMaxInstAmount(), formatter));
+						internalLiabilityDetail.setLanNumber(StringUtils.trimToEmpty(financeEnquiry.getFinReference()));
+						internalLiabilityDetail.setAmt(CurrencyUtil.format(financeEnquiry.getFinAmount(), formatter));
 						internalLiabilityDetail.setStatus(StringUtils.trimToEmpty(financeEnquiry.getFinStatus()));
 						internalLiabilityDetail.setBalTerms(Integer.toString(financeEnquiry.getNumberOfTerms()));
 						agreement.getInternalLiabilityDetails().add(internalLiabilityDetail);
@@ -937,33 +930,33 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							externalLiabilityDetail.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
 							externalLiabilityDetail.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 						}
-						externalLiabilityDetail.setEmiAmt(
-								PennantApplicationUtil.amountFormate(extLiability.getInstalmentAmount(), formatter));
+						externalLiabilityDetail
+								.setEmiAmt(CurrencyUtil.format(extLiability.getInstalmentAmount(), formatter));
 						externalLiabilityDetail.setFinInstName(StringUtils.trimToEmpty(extLiability.getLoanBank()));
 						externalLiabilityDetail
 								.setFinBranchName(StringUtils.trimToEmpty(extLiability.getLoanBankName()));
-						externalLiabilityDetail.setAmt(
-								PennantApplicationUtil.amountFormate(extLiability.getOriginalAmount(), formatter));
+						externalLiabilityDetail
+								.setAmt(CurrencyUtil.format(extLiability.getOriginalAmount(), formatter));
 						externalLiabilityDetail.setOutStandingAmt(
-								PennantApplicationUtil.amountFormate(extLiability.getOutstandingBalance(), formatter));
-						externalLiabilityDetail.setLoanDate(DateUtility.formatToLongDate(extLiability.getFinDate()));
+								CurrencyUtil.format(extLiability.getOutstandingBalance(), formatter));
+						externalLiabilityDetail.setLoanDate(DateUtil.formatToLongDate(extLiability.getFinDate()));
 						externalLiabilityDetail.setStatus(StringUtils.trimToEmpty(extLiability.getCustStatusDesc()));
 
 						externalLiabilityDetail.setSeqNo(String.valueOf(extLiability.getSeqNo()));
 						externalLiabilityDetail.setFinType(extLiability.getFinType());
 						externalLiabilityDetail.setFinTypeDesc(extLiability.getFinTypeDesc());
-						externalLiabilityDetail.setFinDate(DateUtility.formatToLongDate(extLiability.getFinDate()));
+						externalLiabilityDetail.setFinDate(DateUtil.formatToLongDate(extLiability.getFinDate()));
 						externalLiabilityDetail.setLoanBank(extLiability.getLoanBank());
 						externalLiabilityDetail.setLoanBankName(extLiability.getLoanBankName());
-						externalLiabilityDetail.setRateOfInterest(
-								PennantApplicationUtil.amountFormate(extLiability.getRateOfInterest(), formatter));
+						externalLiabilityDetail
+								.setRateOfInterest(CurrencyUtil.format(extLiability.getRateOfInterest(), formatter));
 						externalLiabilityDetail.setTenure(String.valueOf(extLiability.getTenure()));
-						externalLiabilityDetail.setOriginalAmount(
-								PennantApplicationUtil.amountFormate(extLiability.getOriginalAmount(), formatter));
+						externalLiabilityDetail
+								.setOriginalAmount(CurrencyUtil.format(extLiability.getOriginalAmount(), formatter));
 						externalLiabilityDetail.setInstalmentAmount(
-								PennantApplicationUtil.amountFormate(extLiability.getInstalmentAmount(), formatter));
+								CurrencyUtil.format(extLiability.getInstalmentAmount(), formatter));
 						externalLiabilityDetail.setOutstandingBalance(
-								PennantApplicationUtil.amountFormate(extLiability.getOutstandingBalance(), formatter));
+								CurrencyUtil.format(extLiability.getOutstandingBalance(), formatter));
 						externalLiabilityDetail.setBalanceTenure(String.valueOf(extLiability.getBalanceTenure()));
 						externalLiabilityDetail
 								.setBounceInstalments(String.valueOf(extLiability.getBounceInstalments()));
@@ -973,8 +966,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 								String.valueOf(extLiability.getNoOfBouncesInTwelveMonths()));
 						externalLiabilityDetail.setPrincipalOutStanding(PennantApplicationUtil
 								.amountFormate(extLiability.getPrincipalOutstanding(), formatter));
-						externalLiabilityDetail.setOverDueAmount(
-								PennantApplicationUtil.amountFormate(extLiability.getOverdueAmount(), formatter));
+						externalLiabilityDetail
+								.setOverDueAmount(CurrencyUtil.format(extLiability.getOverdueAmount(), formatter));
 						externalLiabilityDetail.setIsFoir(String.valueOf(extLiability.isFoir()));
 						externalLiabilityDetail.setFinStatus(extLiability.getFinStatus());
 						externalLiabilityDetail.setSource(PennantApplicationUtil.getLabelDesc(
@@ -1008,7 +1001,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							ActivityDetail activityDetail = agreement.new ActivityDetail();
 
 							activityDetail.setRole(StringUtils.trimToEmpty(activity.getRoleCode()));
-							activityDetail.setActivityDate(DateUtility.formatToLongDate(activity.getAuditDate()));
+							activityDetail.setActivityDate(DateUtil.formatToLongDate(activity.getAuditDate()));
 							if (activity.getWorkflowId() > 0) {
 								WorkFlowDetails workflow = WorkFlowUtil.getWorkflow(activity.getWorkflowId());
 								if (null != workflow) {
@@ -1133,7 +1126,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 								externalLiabilityDetail.setOutStandingAmt(PennantApplicationUtil
 										.amountFormate(extLiability.getOutstandingBalance(), formatter));
 								externalLiabilityDetail
-										.setLoanDate(DateUtility.formatToLongDate(extLiability.getFinDate()));
+										.setLoanDate(DateUtil.formatToLongDate(extLiability.getFinDate()));
 								externalLiabilityDetail.setAmt(PennantApplicationUtil
 										.amountFormate(extLiability.getOriginalAmount(), formatter));
 								externalLiabilityDetail
@@ -1145,8 +1138,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 			}
 
-			agreement.setTotalIncome(PennantApplicationUtil.amountFormate(totalIncome, formatter));
-			agreement.setTotalExpense(PennantApplicationUtil.amountFormate(totalExpense, formatter));
+			agreement.setTotalIncome(CurrencyUtil.format(totalIncome, formatter));
+			agreement.setTotalExpense(CurrencyUtil.format(totalExpense, formatter));
 
 			// Size Checks
 			// InternalLiability
@@ -1240,8 +1233,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 			if (null != detail.getFinScheduleData() && null != financeMain) {
 				agreement.setNumOfPayGrace(Integer.toString(financeMain.getGraceTerms()));
-				agreement.setFirstDisbursementAmt(
-						PennantApplicationUtil.amountFormate(financeMain.getFinAmount(), formatter));
+				agreement.setFirstDisbursementAmt(CurrencyUtil.format(financeMain.getFinAmount(), formatter));
 				if (null != financeMain.getRepaySpecialRate()) {
 					agreement.setRepaySplRate(StringUtils.trimToEmpty(financeMain.getRepaySpecialRate()));
 				}
@@ -1359,7 +1351,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			if (aggModuleDetails.contains(PennantConstants.AGG_COLLTRL)
 					&& CollectionUtils.isNotEmpty(detail.getCollateralAssignmentList())) {
 				agreement.setCollateralAvail("Yes");
-				agreement = getCollateralDetails(agreement, detail, formatter);
+				getCollateralDetails(agreement, detail, formatter);
 			}
 			if (CollectionUtils.isEmpty(agreement.getCollateralData())) {
 				FinCollaterals collateral = agreement.new FinCollaterals();
@@ -1804,7 +1796,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			// MMAgreement Details
 			agreement = setGroupRecommendations(agreement, finRef);
 			if (mMAReference != null && !StringUtils.equals(mMAReference, "")) {
-				agreement = setMMAgreementGenDetails(agreement, appDate, formatter, mMAReference);
+				setMMAgreementGenDetails(agreement, appDate, formatter, mMAReference);
 			}
 			// --------------------Asset Evalution Details
 			if (detail.getFinAssetEvaluation() != null) {
@@ -2000,14 +1992,14 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 														"E MMM dd HH:mm:ss Z yyyy");
 												Date initialDate = dateFormatter.parse(vas_ext_dobn2);
 												vasMap.put("VAS_EXT_" + extendedDetail.getAgrField().toUpperCase(),
-														DateUtility.formatToLongDate(initialDate));
+														DateUtil.formatToLongDate(initialDate));
 											} catch (ParseException e) {
 												e.printStackTrace();
 												try {
 													DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 													Date initialDate = dateFormatter.parse(vas_ext_dobn2);
 													vasMap.put("VAS_EXT_" + extendedDetail.getAgrField().toUpperCase(),
-															DateUtility.formatToLongDate(initialDate));
+															DateUtil.formatToLongDate(initialDate));
 												} catch (ParseException exception) {
 													e.printStackTrace();
 												}
@@ -2041,10 +2033,10 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			if (detail != null && detail.getFinScheduleData() != null && financeMain != null) {
 				firstDisbursementAmt = financeMain.getFinAmount();
 			}
-			agreement.setTotalDeductionwithoutBPI(PennantApplicationUtil.amountFormate(totalDeduction, formatter));
-			agreement.setTotalDeductionwithBPI(PennantApplicationUtil.amountFormate(totalDeductionWithBPI, formatter));
+			agreement.setTotalDeductionwithoutBPI(CurrencyUtil.format(totalDeduction, formatter));
+			agreement.setTotalDeductionwithBPI(CurrencyUtil.format(totalDeductionWithBPI, formatter));
 			agreement.setNetDisbWithoutBPI(
-					PennantApplicationUtil.amountFormate(firstDisbursementAmt.subtract(totalDeduction), formatter));
+					CurrencyUtil.format(firstDisbursementAmt.subtract(totalDeduction), formatter));
 			agreement.setNetDisbWithBPI(PennantApplicationUtil
 					.amountFormate(firstDisbursementAmt.subtract(totalDeductionWithBPI), formatter));
 
@@ -2083,7 +2075,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							totalFeeAmount = totalFeeAmount.add(finReceiptDts.getAmount());
 						}
 					}
-					agreement.setTotalReceiptFeeAmount(PennantApplicationUtil.amountFormate(totalFeeAmount, formatter));
+					agreement.setTotalReceiptFeeAmount(CurrencyUtil.format(totalFeeAmount, formatter));
 				}
 			}
 			if (CollectionUtils.isNotEmpty(detail.getDueDiligenceDetailsList())) {
@@ -2192,7 +2184,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				for (AuditTransaction auditTransaction : facilityAuditDetails) {
 					if (StringUtils.equalsIgnoreCase("INITIALCREDIT", auditTransaction.getRoleCode())) {
 						Timestamp auditDate = auditTransaction.getAuditDate();
-						agreement.setInitialCreditCompletedDate(DateUtility.formatToLongDate(auditDate));
+						agreement.setInitialCreditCompletedDate(DateUtil.formatToLongDate(auditDate));
 						break;
 					}
 				}
@@ -2232,7 +2224,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					chDetail.setChequeDate(DateUtil.formatToShortDate(chequeDetail.getChequeDate()));
 				}
 				chDetail.seteMIRefNo(String.valueOf(chequeDetail.geteMIRefNo()));
-				chDetail.setAmount(PennantApplicationUtil.amountFormate(chequeDetail.getAmount(), formatter));
+				chDetail.setAmount(CurrencyUtil.format(chequeDetail.getAmount(), formatter));
 				chDetail.setChequeStatus(StringUtils.trimToEmpty(chequeDetail.getChequeStatus()));
 				chDetail.setAccHolderName(StringUtils.trimToEmpty(chequeDetail.getAccHolderName()));
 				chDetail.setStatus(StringUtils.trimToEmpty(chequeDetail.getStatus()));
@@ -2345,8 +2337,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		}
 
 		agreement.setSmplTolerance(StringUtils.trimToEmpty(sampling.getSamplingTolerance()));
-		agreement.setSmplRecommendedAmount(
-				PennantApplicationUtil.amountFormate(sampling.getRecommendedAmount(), formatter));
+		agreement.setSmplRecommendedAmount(CurrencyUtil.format(sampling.getRecommendedAmount(), formatter));
 		agreement.setSmplRemarks(StringUtils.trimToEmpty(sampling.getRemarks()));
 		agreement.setSmplResubmitReasonDesc(StringUtils.trimToEmpty(sampling.getResubmitReasonDesc()));
 	}
@@ -2359,7 +2350,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			return;
 		}
 
-		agreement.setPslAmount(PennantApplicationUtil.amountFormate(new BigDecimal(pslDetail.getAmount()), formatter));
+		agreement.setPslAmount(CurrencyUtil.format(new BigDecimal(pslDetail.getAmount()), formatter));
 		// categoryList
 		PagedListService pagedListService = (PagedListService) SpringBeanUtil.getBean("pagedListService");
 		JdbcSearchObject<PSLCategory> searchObject = new JdbcSearchObject<PSLCategory>(PSLCategory.class);
@@ -2379,7 +2370,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		if (StringUtils.isNotBlank(pslCategoryCodeName)) {
 			agreement.setPslCategoryCodeName(pslCategoryCodeName);
 		}
-		agreement.setPslEligibleAmount(PennantApplicationUtil.amountFormate(pslDetail.getEligibleAmount(), formatter));
+		agreement.setPslEligibleAmount(CurrencyUtil.format(pslDetail.getEligibleAmount(), formatter));
 		agreement.setPslEndUseName(StringUtils.trimToEmpty(pslDetail.getEndUseName()));
 		// landAreaList;
 		String pslLandAreaName = null;
@@ -2481,7 +2472,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				FinTypeFee.setFeeScheduleMethod(StringUtils.trimToEmpty(finTypeFeesDetails.getFeeScheduleMethod()));
 				FinTypeFee.setRuleCode(StringUtils.trimToEmpty(finTypeFeesDetails.getRuleCode()));
 				FinTypeFee.setRuleDesc(StringUtils.trimToEmpty(finTypeFeesDetails.getRuleDesc()));
-				FinTypeFee.setAmount(PennantApplicationUtil.amountFormate(finTypeFeesDetails.getAmount(), formatter));
+				FinTypeFee.setAmount(CurrencyUtil.format(finTypeFeesDetails.getAmount(), formatter));
 				FinTypeFee.setPercentage(
 						PennantApplicationUtil.formatRate(finTypeFeesDetails.getPercentage().doubleValue(), formatter));
 				FinTypeFee.setCalculateOn(StringUtils.trimToEmpty(finTypeFeesDetails.getCalculateOn()));
@@ -2541,7 +2532,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			vasRecordingList.forEach((vasDetails -> {
 				if (null != vasDetails) {
 					com.pennant.backend.model.finance.AgreementDetail.VasDetails vasData = agreement.new VasDetails();
-					vasData.setFee(PennantApplicationUtil.amountFormate(vasDetails.getFee(), formatter));
+					vasData.setFee(CurrencyUtil.format(vasDetails.getFee(), formatter));
 					vasData.setFeeAccounting(String.valueOf(vasDetails.getFeeAccounting()));
 					String feePaymentMode = vasDetails.getFeePaymentMode();
 					if (StringUtils.isNotBlank(feePaymentMode) && !StringUtils.equals(feePaymentMode, "#")) {
@@ -2555,7 +2546,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					vasData.setProductDesc(StringUtils.trimToEmpty(vasDetails.getProductDesc()));
 					vasData.setProductType(StringUtils.trimToEmpty(vasDetails.getProductType()));
 					vasData.setProductTypeDesc(StringUtils.trimToEmpty(vasDetails.getProductTypeDesc()));
-					vasData.setRenewalFee(PennantApplicationUtil.amountFormate(vasDetails.getRenewalFee(), formatter));
+					vasData.setRenewalFee(CurrencyUtil.format(vasDetails.getRenewalFee(), formatter));
 					vasData.setValueDate(String.valueOf(vasDetails.getValueDate()));
 					vasData.setVasReference(StringUtils.trimToEmpty(vasDetails.getVasReference()));
 					vasData.setVasStatus(StringUtils.trimToEmpty(vasDetails.getVasStatus()));
@@ -2622,8 +2613,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			if (null != mapValues.get(key)) {
 				if (extendedFieldDetail != null && StringUtils.equalsIgnoreCase(ExtendedFieldConstants.FIELDTYPE_AMOUNT,
 						extendedFieldDetail.getFieldType())) {
-					extendedDetail
-							.setValue(PennantApplicationUtil.amountFormate((BigDecimal) mapValues.get(key), formatter));
+					extendedDetail.setValue(CurrencyUtil.format((BigDecimal) mapValues.get(key), formatter));
 				} else {
 					extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
 				}
@@ -2689,8 +2679,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 				VerificationType type = VerificationType.getVerificationType(verification.getVerificationType());
 				VerificationDetail verificationData = agreement.new VerificationDetail();
-				verificationData.setInitiationDate(DateUtility.formatToLongDate(verification.getCreatedOn()));
-				verificationData.setCompletionDate(DateUtility.formatToLongDate(verification.getVerificationDate()));
+				verificationData.setInitiationDate(DateUtil.formatToLongDate(verification.getCreatedOn()));
+				verificationData.setCompletionDate(DateUtil.formatToLongDate(verification.getVerificationDate()));
 				String initialStatus = (null != RequestType.getType(verification.getRequestType()))
 						? RequestType.getType(verification.getRequestType()).getValue() : null;
 				verificationData.setInitialStatus(StringUtils.trimToEmpty(initialStatus));
@@ -2718,7 +2708,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						verificationData.setDoneBy(StringUtils.trimToEmpty(fieldInvestigation.getAgentCode())
 								.concat("-").concat(StringUtils.trimToEmpty(fieldInvestigation.getAgentName())));
 						verificationData
-								.setVerifiedDate(DateUtility.formatToLongDate(fieldInvestigation.getVerifiedDate()));
+								.setVerifiedDate(DateUtil.formatToLongDate(fieldInvestigation.getVerifiedDate()));
 					}
 					agreement.getFiVerification().add(verificationData);
 					if (fiCount == 1) {
@@ -2746,7 +2736,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						verificationData.setDoneBy(StringUtils.trimToEmpty(technicalVerification.getAgentCode())
 								.concat("-").concat(StringUtils.trimToEmpty(technicalVerification.getAgentName())));
 						verificationData
-								.setVerifiedDate(DateUtility.formatToLongDate(technicalVerification.getVerifiedDate()));
+								.setVerifiedDate(DateUtil.formatToLongDate(technicalVerification.getVerifiedDate()));
 					}
 					List<Long> verificationIDs = new ArrayList<>();
 					verificationIDs.add(verification.getId());
@@ -2763,15 +2753,15 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							.getExtendedField(String.valueOf(verification.getId()), tableName.toString(), "");
 					if (marketValueData != null && !marketValueData.isEmpty()
 							&& marketValueData.containsKey("marketvalue")) {
-						verificationData.setMarketValue(PennantApplicationUtil.amountFormate(
-								new BigDecimal(marketValueData.get("marketvalue").toString()),
-								PennantConstants.defaultCCYDecPos));
+						verificationData.setMarketValue(
+								CurrencyUtil.format(new BigDecimal(marketValueData.get("marketvalue").toString()),
+										PennantConstants.defaultCCYDecPos));
 					}
 					if (CollectionUtils.isNotEmpty(valuationDetails)) {
-						verificationData.setValuationAmount(PennantApplicationUtil.amountFormate(
+						verificationData.setValuationAmount(CurrencyUtil.format(
 								valuationDetails.get(0).getValuationAmount(), PennantConstants.defaultCCYDecPos));
-						verificationData.setFinalValAmt(PennantApplicationUtil.amountFormate(
-								valuationDetails.get(0).getFinalValAmt(), PennantConstants.defaultCCYDecPos));
+						verificationData.setFinalValAmt(CurrencyUtil.format(valuationDetails.get(0).getFinalValAmt(),
+								PennantConstants.defaultCCYDecPos));
 						finalValamt = PennantApplicationUtil.unFormateAmount(verificationData.getFinalValAmt(), 2);
 						if (finalValamt != null && finalValamt.compareTo(BigDecimal.ZERO) > 0) {
 							BigDecimal ltvPerc = finAssetValue.divide(finalValamt, MathContext.DECIMAL64)
@@ -2790,7 +2780,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						verificationData.setDoneBy(StringUtils.trimToEmpty(legalVerification.getAgentCode()).concat("-")
 								.concat(StringUtils.trimToEmpty(legalVerification.getAgentName())));
 						verificationData
-								.setVerifiedDate(DateUtility.formatToLongDate(legalVerification.getVerificationDate()));
+								.setVerifiedDate(DateUtil.formatToLongDate(legalVerification.getVerificationDate()));
 					}
 					agreement.getLegalVerification().add(verificationData);
 					break;
@@ -2817,9 +2807,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							if (null != rcuDocument) {
 								rcuVerificationData = agreement.new VerificationDetail();
 								rcuVerificationData
-										.setInitiationDate(DateUtility.formatToLongDate(verification.getCreatedOn()));
+										.setInitiationDate(DateUtil.formatToLongDate(verification.getCreatedOn()));
 								rcuVerificationData.setCompletionDate(
-										DateUtility.formatToLongDate(verification.getVerificationDate()));
+										DateUtil.formatToLongDate(verification.getVerificationDate()));
 								rcuVerificationData.setInitialStatus(StringUtils.trimToEmpty(initialStatus));
 								rcuVerificationData.setRecommanditionStatus(
 										StringUtils.trimToEmpty(verification.getVerificationStatus()));
@@ -2828,7 +2818,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 								rcuVerificationData
 										.setAgencyName(StringUtils.trimToEmpty(verification.getAgencyName()));
 								rcuVerificationData.setVerifiedDate(
-										DateUtility.formatToLongDate(riskContainmentUnit.getVerificationDate()));
+										DateUtil.formatToLongDate(riskContainmentUnit.getVerificationDate()));
 								String rcuDocVerficationType = null;
 								if (rcuDocument.getVerificationType() == 0) {
 									rcuDocVerficationType = "RCU Document Verification Not Available";
@@ -2888,7 +2878,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						verificationData.setDoneBy(StringUtils.trimToEmpty(personalDiscussion.getAgentCode())
 								.concat("-").concat(StringUtils.trimToEmpty(personalDiscussion.getAgentName())));
 						verificationData
-								.setVerifiedDate(DateUtility.formatToLongDate(personalDiscussion.getVerifiedDate()));
+								.setVerifiedDate(DateUtil.formatToLongDate(personalDiscussion.getVerifiedDate()));
 					}
 					agreement.getPdVerification().add(verificationData);
 					break;
@@ -3002,11 +2992,10 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				if (null != mapValues.get(key)) {
 					if (extendedFieldDetail != null
 							&& StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())) {
-						extendedDetail.setValue(
-								PennantApplicationUtil.amountFormate((BigDecimal) mapValues.get(key), formatter));
+						extendedDetail.setValue(CurrencyUtil.format((BigDecimal) mapValues.get(key), formatter));
 						if (coapplicant != null) {
 							coapplicant.getExtMap().put("CUST_EXT_" + key.toUpperCase(),
-									PennantApplicationUtil.amountFormate((BigDecimal) mapValues.get(key), formatter));
+									CurrencyUtil.format((BigDecimal) mapValues.get(key), formatter));
 						}
 					} else {
 						extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
@@ -3056,8 +3045,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 				if (extendedFieldDetail != null
 						&& StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())) {
-					extendedDetail
-							.setValue(PennantApplicationUtil.amountFormate((BigDecimal) mapValues.get(key), formater));
+					extendedDetail.setValue(CurrencyUtil.format((BigDecimal) mapValues.get(key), formater));
 				} else {
 					extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
 				}
@@ -3084,11 +3072,10 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						internalLiabilityDetail.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
 						internalLiabilityDetail.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 					}
-					internalLiabilityDetail.setEmiAmt(
-							PennantApplicationUtil.amountFormate(financeEnquiry.getMaxInstAmount(), formatter));
-					internalLiabilityDetail.setLanNumber(StringUtils.trimToEmpty(financeEnquiry.getFinReference()));
 					internalLiabilityDetail
-							.setAmt(PennantApplicationUtil.amountFormate(financeEnquiry.getFinAmount(), formatter));
+							.setEmiAmt(CurrencyUtil.format(financeEnquiry.getMaxInstAmount(), formatter));
+					internalLiabilityDetail.setLanNumber(StringUtils.trimToEmpty(financeEnquiry.getFinReference()));
+					internalLiabilityDetail.setAmt(CurrencyUtil.format(financeEnquiry.getFinAmount(), formatter));
 					internalLiabilityDetail.setStatus(StringUtils.trimToEmpty(financeEnquiry.getFinStatus()));
 					internalLiabilityDetail.setBalTerms(Integer.toString(financeEnquiry.getNumberOfTerms()));
 					agreement.getInternalLiabilityDetails().add(internalLiabilityDetail);
@@ -3202,48 +3189,37 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			bankingDetail.setAccType(StringUtils.trimToEmpty(customerBankInfo.getLovDescAccountType()));
 			bankingDetail.setAccNo(StringUtils.trimToEmpty(customerBankInfo.getAccountNumber()));
 			bankingDetail.setBankName(StringUtils.trimToEmpty(customerBankInfo.getLovDescBankName()));
-			bankingDetail.setTotCreditAmt(
-					PennantApplicationUtil.amountFormate(customerBankInfo.getCreditTranAmt(), formatter));
-			bankingDetail.setTotDebitAmt(
-					PennantApplicationUtil.amountFormate(customerBankInfo.getDebitTranAmt(), formatter));
+			bankingDetail.setTotCreditAmt(CurrencyUtil.format(customerBankInfo.getCreditTranAmt(), formatter));
+			bankingDetail.setTotDebitAmt(CurrencyUtil.format(customerBankInfo.getDebitTranAmt(), formatter));
 			bankingDetail.setNoCheqBounce(Integer.toString(customerBankInfo.getOutwardChqBounceNo()));
-			bankingDetail
-					.setAvgEODBalance(PennantApplicationUtil.amountFormate(customerBankInfo.getEodBalAvg(), formatter));
+			bankingDetail.setAvgEODBalance(CurrencyUtil.format(customerBankInfo.getEodBalAvg(), formatter));
 			bankingDetail.setTotNoCredTrans(String.valueOf(customerBankInfo.getCreditTranNo()));
-			bankingDetail.setAvgCreditAmt(
-					PennantApplicationUtil.amountFormate(customerBankInfo.getCreditTranAvg(), formatter));
+			bankingDetail.setAvgCreditAmt(CurrencyUtil.format(customerBankInfo.getCreditTranAvg(), formatter));
 			bankingDetail.setTotNoDebitTrans(String.valueOf(customerBankInfo.getDebitTranNo()));
 			bankingDetail.setNoCashDeposit(String.valueOf(customerBankInfo.getCashDepositNo()));
-			bankingDetail.setCashDepositAmt(
-					PennantApplicationUtil.amountFormate(customerBankInfo.getCashDepositAmt(), formatter));
+			bankingDetail.setCashDepositAmt(CurrencyUtil.format(customerBankInfo.getCashDepositAmt(), formatter));
 			bankingDetail.setNoCashWithDra(String.valueOf(customerBankInfo.getCashWithdrawalNo()));
-			bankingDetail.setCashWithDraAmt(
-					PennantApplicationUtil.amountFormate(customerBankInfo.getCashWithdrawalAmt(), formatter));
+			bankingDetail.setCashWithDraAmt(CurrencyUtil.format(customerBankInfo.getCashWithdrawalAmt(), formatter));
 			bankingDetail.setNoCheqDeposit(String.valueOf(customerBankInfo.getChqDepositNo()));
-			bankingDetail.setAmtCheqDeposit(
-					PennantApplicationUtil.amountFormate(customerBankInfo.getChqDepositAmt(), formatter));
+			bankingDetail.setAmtCheqDeposit(CurrencyUtil.format(customerBankInfo.getChqDepositAmt(), formatter));
 			bankingDetail.setNoCheqIssue(String.valueOf(customerBankInfo.getChqIssueNo()));
-			bankingDetail.setAmtCheqIssue(
-					PennantApplicationUtil.amountFormate(customerBankInfo.getChqIssueAmt(), formatter));
+			bankingDetail.setAmtCheqIssue(CurrencyUtil.format(customerBankInfo.getChqIssueAmt(), formatter));
 			bankingDetail.setNoInwardCheq(String.valueOf(customerBankInfo.getInwardChqBounceNo()));
 			bankingDetail.setNoOutwardCheq(String.valueOf(customerBankInfo.getOutwardChqBounceNo()));
-			bankingDetail
-					.setMinEodBalance(PennantApplicationUtil.amountFormate(customerBankInfo.getEodBalMin(), formatter));
-			bankingDetail
-					.setMaxEodBalance(PennantApplicationUtil.amountFormate(customerBankInfo.getEodBalMax(), formatter));
-			bankingDetail
-					.setAvgEodBalance(PennantApplicationUtil.amountFormate(customerBankInfo.getEodBalAvg(), formatter));
+			bankingDetail.setMinEodBalance(CurrencyUtil.format(customerBankInfo.getEodBalMin(), formatter));
+			bankingDetail.setMaxEodBalance(CurrencyUtil.format(customerBankInfo.getEodBalMax(), formatter));
+			bankingDetail.setAvgEodBalance(CurrencyUtil.format(customerBankInfo.getEodBalAvg(), formatter));
 
-			bankingDetail.setTotCreditAmt(PennantApplicationUtil.amountFormate(totalCreditTanAmt, formatter));
+			bankingDetail.setTotCreditAmt(CurrencyUtil.format(totalCreditTanAmt, formatter));
 
-			bankingDetail.setAvgCreditAmt(PennantApplicationUtil.amountFormate(avgCreditTran, formatter));
+			bankingDetail.setAvgCreditAmt(CurrencyUtil.format(avgCreditTran, formatter));
 			bankingDetail.setTotNoCredTrans(String.valueOf(totalCreditNo));
 			bankingDetail.setTotNoDebitTrans(String.valueOf(totalDebitNo));
 
-			bankingDetail.setTotDebitAmt(PennantApplicationUtil.amountFormate(totalDebitAmt, formatter));
+			bankingDetail.setTotDebitAmt(CurrencyUtil.format(totalDebitAmt, formatter));
 
-			bankingDetail.setAvgEODBalance(PennantApplicationUtil.amountFormate(totalEodBal, formatter));
-			bankingDetail.setNoCheqBounce(PennantApplicationUtil.amountFormate(totalOutBunCheq, formatter));
+			bankingDetail.setAvgEODBalance(CurrencyUtil.format(totalEodBal, formatter));
+			bankingDetail.setNoCheqBounce(CurrencyUtil.format(totalOutBunCheq, formatter));
 			bankingDetail.setNoEMIBounce(String.valueOf(totalEMIBounce));
 			agreement.getBankingDetails().add(bankingDetail);
 
@@ -3268,9 +3244,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				appIncDetail.setCustName(StringUtils.trimToEmpty(customerIncome.getCustShrtName()));
 				appIncDetail.setIncomeCategory(StringUtils.trimToEmpty(customerIncome.getCategoryDesc()));
 				appIncDetail.setIncomeType(StringUtils.trimToEmpty(customerIncome.getIncomeTypeDesc()));
-				appIncDetail
-						.setAmt(PennantApplicationUtil.amountFormate(customerIncome.getCalculatedAmount(), formatter));
-				appIncDetail.setMargin(PennantApplicationUtil.amountFormate(customerIncome.getMargin(), formatter));
+				appIncDetail.setAmt(CurrencyUtil.format(customerIncome.getCalculatedAmount(), formatter));
+				appIncDetail.setMargin(CurrencyUtil.format(customerIncome.getMargin(), formatter));
 				agreement.getAppIncDetails().add(appIncDetail);
 				income = income.add(customerIncome.getCalculatedAmount());
 			} else if (customerIncome.getIncomeExpense().equalsIgnoreCase("EXPENSE")) {
@@ -3279,9 +3254,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				appExpDetail.setApplicantType(StringUtils.trimToEmpty(applicantType));
 				appExpDetail.setExpenseCategory(StringUtils.trimToEmpty(customerIncome.getCategoryDesc()));
 				appExpDetail.setExpenseType(StringUtils.trimToEmpty(customerIncome.getIncomeTypeDesc()));
-				appExpDetail
-						.setAmt(PennantApplicationUtil.amountFormate(customerIncome.getCalculatedAmount(), formatter));
-				appExpDetail.setMargin(PennantApplicationUtil.amountFormate(customerIncome.getMargin(), formatter));
+				appExpDetail.setAmt(CurrencyUtil.format(customerIncome.getCalculatedAmount(), formatter));
+				appExpDetail.setMargin(CurrencyUtil.format(customerIncome.getMargin(), formatter));
 				agreement.getAppExpDetails().add(appExpDetail);
 				expance = expance.add(customerIncome.getCalculatedAmount());
 			}
@@ -3289,8 +3263,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		}
 
 		if (StringUtils.equalsIgnoreCase("Co-Applicant", applicantType)) {
-			agreement.setCoAppTotIncome(PennantApplicationUtil.amountFormate(income, formatter));
-			agreement.setCoAppTotExpense(PennantApplicationUtil.amountFormate(expance, formatter));
+			agreement.setCoAppTotIncome(CurrencyUtil.format(income, formatter));
+			agreement.setCoAppTotExpense(CurrencyUtil.format(expance, formatter));
 			totalIncome = totalIncome.add(income);
 			totalExpense = totalExpense.add(expance);
 		}
@@ -3322,7 +3296,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			if (null != custEmploymentDetail) {
 				Date toDate = (custEmploymentDetail.isCurrentEmployer()) ? SysParamUtil.getAppDate()
 						: custEmploymentDetail.getCustEmpTo();
-				int tempExperence = DateUtility.getYearsBetween(custEmploymentDetail.getCustEmpFrom(), toDate);
+				int tempExperence = DateUtil.getYearsBetween(custEmploymentDetail.getCustEmpFrom(), toDate);
 				empExperence = (tempExperence > 0) ? (empExperence + tempExperence) : empExperence;
 				if (custEmploymentDetail.isCurrentEmployer()) {
 					custEmpName = StringUtils.equals(custEmploymentDetail.getLovDesccustEmpName(), "")
@@ -3345,7 +3319,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				Document document = agreement.new Document();
 				document.setCusDocName(StringUtils.stripToEmpty(customerDocument.getCustDocCategory()) + "-"
 						+ StringUtils.stripToEmpty(customerDocument.getLovDescCustDocCategory()));
-				document.setReceiveDate(DateUtility.formatToLongDate(customerDocument.getCustDocRcvdOn()));
+				document.setReceiveDate(DateUtil.formatToLongDate(customerDocument.getCustDocRcvdOn()));
 				document.setDocType("CUSTOMER");
 				document.setDocCategory(StringUtils.trimToEmpty(customerDocument.getCustDocCategory()));
 				document.setUserName(StringUtils.stripToEmpty(document.getUserName()));
@@ -3380,12 +3354,12 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				covenant.setUserName(StringUtils.trimToEmpty(securityUser.getUsrLogin()));
 			}
 
-			covenant.setRaisedDate(DateUtility.formatToLongDate(covenantType.getLastMntOn()));
+			covenant.setRaisedDate(DateUtil.formatToLongDate(covenantType.getLastMntOn()));
 			covenant.setCusDocName(StringUtils.trimToEmpty(covenantType.getCovenantTypeDesc()));
 			covenant.setRemarks(StringUtils.trimToEmpty(covenantType.getDescription()));
 
 			if (covenantType.isAlwPostpone()) {
-				covenant.setTargetDate(DateUtility.formatToLongDate(covenantType.getReceivableDate()));
+				covenant.setTargetDate(DateUtil.formatToLongDate(covenantType.getReceivableDate()));
 				covenant.setStatus("Pending");
 			} else if (covenantType.isAlwWaiver()) {
 				covenant.setStatus("Waived");
@@ -3411,15 +3385,15 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			if (null != securityUser) {
 				covenant.setUserName(StringUtils.trimToEmpty(securityUser.getUsrLogin()));
 			}
-			covenant.setRaisedDate(DateUtility.formatToLongDate(covenantType.getLastMntOn()));
+			covenant.setRaisedDate(DateUtil.formatToLongDate(covenantType.getLastMntOn()));
 			covenant.setCusDocName(StringUtils.trimToEmpty(covenantType.getCovenantType()));
 			covenant.setCovenantTypeDesc(StringUtils.trimToEmpty(covenantType.getCovenantTypeDescription()));
 			covenant.setRemarks(StringUtils.trimToEmpty(covenantType.getAdditionalField1()));
-			covenant.setTargetDate(DateUtility.formatToLongDate(covenantType.getReceivableDate()));
+			covenant.setTargetDate(DateUtil.formatToLongDate(covenantType.getReceivableDate()));
 			covenant.setStatus(StringUtils.trimToEmpty(covenantType.getRecordStatus()));
 
 			if (covenant.isPdd()) {
-				covenant.setTargetDate(DateUtility.formatToLongDate(covenantType.getReceivableDate()));
+				covenant.setTargetDate(DateUtil.formatToLongDate(covenantType.getReceivableDate()));
 				covenant.setStatus("Pending");
 			} else if (covenant.isAllowWaiver()) {
 				covenant.setStatus("Waived");
@@ -3453,7 +3427,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					} else {
 						document.setCusDocName(StringUtils.trimToEmpty(documentDetail.getDocCategory()));
 					}
-					document.setReceiveDate(DateUtility.formatToLongDate(documentDetail.getDocReceivedDate()));
+					document.setReceiveDate(DateUtil.formatToLongDate(documentDetail.getDocReceivedDate()));
 					document.setDocType("LOAN");
 					document.setDocCategory(StringUtils.trimToEmpty(documentDetail.getDocCategory()));
 					document.setUserName(StringUtils.trimToEmpty(document.getUserName()));
@@ -3477,13 +3451,12 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		if (CollectionUtils.isNotEmpty(advancePaymentsList)) {
 			for (FinAdvancePayments advancePayment : advancePaymentsList) {
 				Disbursement disbursement = agreement.new Disbursement();
-				disbursement.setDisbursementAmt(
-						PennantApplicationUtil.amountFormate(advancePayment.getAmtToBeReleased(), formatter));
+				disbursement.setDisbursementAmt(CurrencyUtil.format(advancePayment.getAmtToBeReleased(), formatter));
 				disbursement.setAccountHolderName(StringUtils.trimToEmpty(advancePayment.getBeneficiaryName()));
-				disbursement.setDisbursementDate(DateUtility.formatToLongDate(advancePayment.getLlDate()));
+				disbursement.setDisbursementDate(DateUtil.formatToLongDate(advancePayment.getLlDate()));
 				disbursement.setBankName(StringUtils.trimToEmpty(advancePayment.getBranchBankName()));
 				// FIX ME: Temporary fix to populate Disbursement Date
-				agreement.setLlDate(DateUtility.formatToLongDate(advancePayment.getLlDate()));
+				agreement.setLlDate(DateUtil.formatToLongDate(advancePayment.getLlDate()));
 				if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
 					String value = StringUtils.trimToEmpty(advancePayment.getBeneficiaryAccNo());
 					value = maskString(value, 0,
@@ -3508,16 +3481,15 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						}
 					}
 				}
-				disbursement.setScheduleDisbursementDate(DateUtility.formatToLongDate(disbDate));
+				disbursement.setScheduleDisbursementDate(DateUtil.formatToLongDate(disbDate));
 				// additional details
 				disbursement.setPaymentId(String.valueOf(advancePayment.getPaymentId()));
 				disbursement.setPaymentSeq(String.valueOf(advancePayment.getPaymentSeq()));
 				disbursement.setDisbSeq(String.valueOf(advancePayment.getDisbSeq()));
 				disbursement.setPaymentDetail(StringUtils.trimToEmpty(advancePayment.getPaymentDetail()));
-				disbursement.setCustContribution(
-						PennantApplicationUtil.amountFormate(advancePayment.getCustContribution(), formatter));
-				disbursement.setSellerContribution(
-						PennantApplicationUtil.amountFormate(advancePayment.getSellerContribution(), formatter));
+				disbursement.setCustContribution(CurrencyUtil.format(advancePayment.getCustContribution(), formatter));
+				disbursement
+						.setSellerContribution(CurrencyUtil.format(advancePayment.getSellerContribution(), formatter));
 				disbursement.setRemarks(StringUtils.trimToEmpty(advancePayment.getRemarks()));
 				disbursement.setBankCode(StringUtils.trimToEmpty(advancePayment.getBankCode()));
 				disbursement.setBranchBankCode(StringUtils.trimToEmpty(advancePayment.getBranchBankCode()));
@@ -3526,15 +3498,15 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				disbursement.setCity(StringUtils.trimToEmpty(advancePayment.getCity()));
 				disbursement.setPayableLoc(StringUtils.trimToEmpty(advancePayment.getPayableLoc()));
 				disbursement.setPrintingLoc(StringUtils.trimToEmpty(advancePayment.getPrintingLoc()));
-				disbursement.setValueDate(DateUtility.formatToLongDate(advancePayment.getValueDate()));
+				disbursement.setValueDate(DateUtil.formatToLongDate(advancePayment.getValueDate()));
 				disbursement.setBankBranchID(String.valueOf(advancePayment.getBankBranchID()));
 				disbursement.setPhoneCountryCode(StringUtils.trimToEmpty(advancePayment.getPhoneCountryCode()));
 				disbursement.setPhoneAreaCode(StringUtils.trimToEmpty(advancePayment.getPhoneAreaCode()));
 				disbursement.setPhoneNumber(StringUtils.trimToEmpty(advancePayment.getPhoneNumber()));
-				disbursement.setClearingDate(DateUtility.formatToLongDate(advancePayment.getClearingDate()));
+				disbursement.setClearingDate(DateUtil.formatToLongDate(advancePayment.getClearingDate()));
 				disbursement.setStatus(StringUtils.trimToEmpty(advancePayment.getStatus()));
 				disbursement.setActive((advancePayment.isActive()) ? "YES" : "NO");
-				disbursement.setInputDate(DateUtility.formatToLongDate(advancePayment.getInputDate()));
+				disbursement.setInputDate(DateUtil.formatToLongDate(advancePayment.getInputDate()));
 				disbursement.setDisbCCy(StringUtils.trimToEmpty(advancePayment.getDisbCCy()));
 				disbursement.setpOIssued((advancePayment.ispOIssued()) ? "YES" : "NO");
 				disbursement.setLovValue(StringUtils.trimToEmpty(advancePayment.getLovValue()));
@@ -3559,7 +3531,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			Comparator<Disbursement> comp = new BeanComparator<Disbursement>("disbSeq");
 			Collections.sort(agreement.getDisbursements(), comp);
 		}
-		agreement.setTotalDisbursementAmt(PennantApplicationUtil.amountFormate(totalDisbursementAmt, formatter));
+		agreement.setTotalDisbursementAmt(CurrencyUtil.format(totalDisbursementAmt, formatter));
 	}
 
 	public void setNetFinanceAmount(AgreementDetail agreement, FinanceDetail financeDetail) {
@@ -3582,7 +3554,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				// Show the Tot.Remaining value for the Fee Details
 				if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
 						CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
-					agreement.setTotalRemain(PennantApplicationUtil.amountFormate(feeDetail.getRemainingFee(), 2));
+					agreement.setTotalRemain(CurrencyUtil.format(feeDetail.getRemainingFee(), 2));
 					continue;
 				}
 			}
@@ -3592,7 +3564,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		if (netFinanceVal.compareTo(BigDecimal.ZERO) < 0) {
 			netFinanceVal = BigDecimal.ZERO;
 		}
-		String netFinAmt = PennantApplicationUtil.amountFormate(netFinanceVal, formatter);
+		String netFinAmt = CurrencyUtil.format(netFinanceVal, formatter);
 		if (finAmount != null && finAmount.compareTo(BigDecimal.ZERO) > 0) {
 			if (ImplementationConstants.ADD_FEEINFTV_ONCALC) {
 				agreement.setNetFinAmount(netFinAmt);
@@ -3975,14 +3947,14 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				coapplicant.setCustRelation(StringUtils.trimToEmpty(jointAccountDetail.getCatOfcoApplicant()));
 				coapplicant.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 				coapplicant.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
-				coapplicant.setCustAgeAtMaturity(String.valueOf(DateUtility.getYearsBetween(customer.getCustDOB(),
+				coapplicant.setCustAgeAtMaturity(String.valueOf(DateUtil.getYearsBetween(customer.getCustDOB(),
 						detail.getFinScheduleData().getFinanceMain().getMaturityDate())));
 				coapplicant.setCustIsNRI(StringUtils.trimToEmpty(PennantStaticListUtil.getlabelDesc(
 						customer.getCustResidentialSts(), PennantStaticListUtil.getResidentialStsList())));
 				if (customer.getCustDOB() != null) {
 					Date custDob = customer.getCustDOB();
 					BigDecimal custAge = processDateDiff(custDob);
-					coapplicant.setCustAge(PennantApplicationUtil.amountFormate(custAge, 0));
+					coapplicant.setCustAge(CurrencyUtil.format(custAge, 0));
 				}
 				coapplicant.setCustSalutation(customer.getLovDescCustSalutationCodeName());
 				coapplicant.setCustFatherName(customer.getCustMotherMaiden());
@@ -4005,10 +3977,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							kycDetail.setIdType(StringUtils.trimToEmpty(coApplicantDocument.getCustDocCategory()));
 							kycDetail.setIdTypeDesc(
 									StringUtils.trimToEmpty(coApplicantDocument.getLovDescCustDocCategory()));
-							kycDetail.setIssuedDate(
-									DateUtility.formatToLongDate(coApplicantDocument.getCustDocIssuedOn()));
-							kycDetail.setExpiryDate(
-									DateUtility.formatToLongDate(coApplicantDocument.getCustDocExpDate()));
+							kycDetail
+									.setIssuedDate(DateUtil.formatToLongDate(coApplicantDocument.getCustDocIssuedOn()));
+							kycDetail.setExpiryDate(DateUtil.formatToLongDate(coApplicantDocument.getCustDocExpDate()));
 							agreement.getKycDetails().add(kycDetail);
 						}
 					});
@@ -4031,7 +4002,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					setCoapplicantEMailId(coapplicant, eMailList);
 				}
 
-				coapplicant.setCustDOB(DateUtility.formatToLongDate(customer.getCustDOB()));
+				coapplicant.setCustDOB(DateUtil.formatToLongDate(customer.getCustDOB()));
 				coapplicant.setCustType(StringUtils.trimToEmpty(customer.getLovDescCustTypeCodeName()));
 				coapplicant.setCustSegment(StringUtils.trimToEmpty(customer.getLovDescCustSegmentName()));
 				coapplicant.setCustIndustry(StringUtils.trimToEmpty(customer.getLovDescCustIndustryName()));
@@ -4082,7 +4053,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						setCoapplicantEMailId(coapplicant, eMailList);
 					}
 
-					coapplicant.setCustDOB(DateUtility.formatToLongDate(customer.getCustDOB()));
+					coapplicant.setCustDOB(DateUtil.formatToLongDate(customer.getCustDOB()));
 					coapplicant.setCustType(StringUtils.trimToEmpty(customer.getLovDescCustTypeCodeName()));
 					coapplicant.setCustSegment(StringUtils.trimToEmpty(customer.getLovDescCustSegmentName()));
 					coapplicant.setCustIndustry(StringUtils.trimToEmpty(customer.getLovDescCustIndustryName()));
@@ -4131,7 +4102,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		int years = 0;
 		int month = 0;
 		if (fromDate.compareTo(appDate) < 0) {
-			int months = DateUtility.getMonthsBetween(appDate, fromDate);
+			int months = DateUtil.getMonthsBetween(appDate, fromDate);
 			years = months / 12;
 			month = months % 12;
 			dateDiff = new BigDecimal(months % 12);
@@ -4147,8 +4118,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 	private AgreementDetail getFinRepayHeaderDetails(AgreementDetail agreement, FinRepayHeader finRepayHeader,
 			int formatter) {
-		agreement.setEarlySettleAmt(PennantApplicationUtil.amountFormate(finRepayHeader.getRepayAmount(), formatter));
-		agreement.setEarlySettleDate(DateUtility.formatToLongDate(finRepayHeader.getEarlyPayDate()));
+		agreement.setEarlySettleAmt(CurrencyUtil.format(finRepayHeader.getRepayAmount(), formatter));
+		agreement.setEarlySettleDate(DateUtil.formatToLongDate(finRepayHeader.getEarlyPayDate()));
 		return agreement;
 	}
 
@@ -4182,11 +4153,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 	private AgreementDetail getFinAssetEvaluationDetails(AgreementDetail agreement,
 			FinAssetEvaluation finAssetEvaluation, int formatter, String finCCy) throws Exception {
-		agreement.setMarketValue(
-				PennantApplicationUtil.amountFormate(finAssetEvaluation.getMarketValueAED(), formatter));
+		agreement.setMarketValue(CurrencyUtil.format(finAssetEvaluation.getMarketValueAED(), formatter));
 		agreement.setMarketValueInWords(NumberToEnglishWords
-				.getAmountInText(
-						PennantApplicationUtil.formateAmount(finAssetEvaluation.getMarketValueAED(), formatter), finCCy)
+				.getAmountInText(CurrencyUtil.parse(finAssetEvaluation.getMarketValueAED(), formatter), finCCy)
 				.toUpperCase());
 		return agreement;
 	}
@@ -4213,29 +4182,26 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 			}
 			com.pennant.backend.model.finance.AgreementDetail.FinanceScheduleDetail scheduleData = agreement.new FinanceScheduleDetail();
-			scheduleData.setSchDate(DateUtility.formatToLongDate(finSchDetail.getSchDate()));
-			scheduleData.setOpeningPrincipal(
-					PennantApplicationUtil.amountFormate(finSchDetail.getBalanceForPftCal(), formatter));
+			scheduleData.setSchDate(DateUtil.formatToLongDate(finSchDetail.getSchDate()));
+			scheduleData.setOpeningPrincipal(CurrencyUtil.format(finSchDetail.getBalanceForPftCal(), formatter));
 			scheduleData.setRateOfInterst(
 					PennantApplicationUtil.formatRate(finSchDetail.getCalculatedRate().doubleValue(), 2));
 			if (StringUtils.equals(finSchDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI) && bpiAmtReq) {
 				BigDecimal bpiAmount = finSchDetail.getRepayAmount();
 				// Provides current customers BPI Amount When Bpi Treatment
 				// Include to Deduct From disbursement .
-				agreement.setBPIAmount(PennantApplicationUtil.amountFormate(bpiAmount, formatter));
+				agreement.setBPIAmount(CurrencyUtil.format(bpiAmount, formatter));
 			}
 			if (StringUtils.equals(finSchDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 				// Provides BPI Amount Irrespective of Bpi Treatment.
-				agreement.setBpiAmt(PennantApplicationUtil.amountFormate(finSchDetail.getRepayAmount(), formatter));
+				agreement.setBpiAmt(CurrencyUtil.format(finSchDetail.getRepayAmount(), formatter));
 			}
-			scheduleData.setProfitCalc(PennantApplicationUtil.amountFormate(finSchDetail.getProfitCalc(), formatter));
-			scheduleData.setSchdPft(PennantApplicationUtil.amountFormate(finSchDetail.getProfitSchd(), formatter));
-			scheduleData.setSchdPri(PennantApplicationUtil.amountFormate(finSchDetail.getPrincipalSchd(), formatter));
-			scheduleData
-					.setSchTotalPriAmt(PennantApplicationUtil.amountFormate(finSchDetail.getRepayAmount(), formatter));
-			scheduleData.setClosingBalance(
-					PennantApplicationUtil.amountFormate(finSchDetail.getClosingBalance(), formatter));
-			scheduleData.setSuplRent(PennantApplicationUtil.amountFormate(finSchDetail.getSuplRent(), formatter));
+			scheduleData.setProfitCalc(CurrencyUtil.format(finSchDetail.getProfitCalc(), formatter));
+			scheduleData.setSchdPft(CurrencyUtil.format(finSchDetail.getProfitSchd(), formatter));
+			scheduleData.setSchdPri(CurrencyUtil.format(finSchDetail.getPrincipalSchd(), formatter));
+			scheduleData.setSchTotalPriAmt(CurrencyUtil.format(finSchDetail.getRepayAmount(), formatter));
+			scheduleData.setClosingBalance(CurrencyUtil.format(finSchDetail.getClosingBalance(), formatter));
+			scheduleData.setSuplRent(CurrencyUtil.format(finSchDetail.getSuplRent(), formatter));
 			if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
 				if (finSchDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0
 						&& !StringUtils.equals(finSchDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
@@ -4248,22 +4214,21 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			} else {
 				scheduleData.setSchdSeqNo(String.valueOf(seqNo++));
 			}
-			scheduleData.setInsSchd(PennantApplicationUtil.amountFormate(finSchDetail.getInsSchd(), formatter));
-			defDates = defDates.concat(DateUtility.formatToLongDate(finSchDetail.getDefSchdDate()) + ",");
-			scheduleData.setSchAdvPft(PennantApplicationUtil.amountFormate(finSchDetail.getAdvProfit(), formatter));
-			scheduleData
-					.setAdvPayment(PennantApplicationUtil.amountFormate(finSchDetail.getAdvRepayAmount(), formatter));
+			scheduleData.setInsSchd(CurrencyUtil.format(finSchDetail.getInsSchd(), formatter));
+			defDates = defDates.concat(DateUtil.formatToLongDate(finSchDetail.getDefSchdDate()) + ",");
+			scheduleData.setSchAdvPft(CurrencyUtil.format(finSchDetail.getAdvProfit(), formatter));
+			scheduleData.setAdvPayment(CurrencyUtil.format(finSchDetail.getAdvRepayAmount(), formatter));
 			agreement.getScheduleData().add(scheduleData);
 			if (finSchDetail.isRepayOnSchDate() && !isSchdPftFirstInst) {
 				agreement.setSchdPftFirstInstl(
-						String.valueOf(PennantApplicationUtil.amountFormate(finSchDetail.getProfitSchd(), formatter)));
+						String.valueOf(CurrencyUtil.format(finSchDetail.getProfitSchd(), formatter)));
 				agreement.setSchdAdvPftFirstInstl(
-						String.valueOf(PennantApplicationUtil.amountFormate(finSchDetail.getAdvProfit(), formatter)));
+						String.valueOf(CurrencyUtil.format(finSchDetail.getAdvProfit(), formatter)));
 				isSchdPftFirstInst = true;
 			}
 			if (seqNo == 2) {
 				agreement.setSecondInstDays(
-						String.valueOf(DateUtility.getDaysBetween(nextRepDate, finSchDetail.getSchDate())));
+						String.valueOf(DateUtil.getDaysBetween(nextRepDate, finSchDetail.getSchDate())));
 			}
 
 		}
@@ -4271,252 +4236,216 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		return agreement;
 	}
 
-	private AgreementDetail getCollateralDetails(AgreementDetail agreement, FinanceDetail aFinanceDetail,
-			int formatter) {
-		/*
-		 * List<FinCollaterals> finCollateralslist = detail.getFinanceCollaterals(); agreement.setCollateralData(new
-		 * ArrayList<AgreementDetail.FinCollaterals>());
-		 * 
-		 * for (FinCollaterals finCollaterals : finCollateralslist) {
-		 * com.pennant.backend.model.finance.AgreementDetail.FinCollaterals collateralData = agreement.new
-		 * FinCollaterals(); collateralData.setCollateralType(finCollaterals.getCollateralType());
-		 * collateralData.setReference(finCollaterals.getReference());
-		 * collateralData.setCollateralAmt(PennantAppUtil.amountFormate( finCollaterals.getValue(), formatter));
-		 * agreement.getCollateralData().add(collateralData);
-		 * 
-		 * }
-		 */
+	private void getCollateralDetails(AgreementDetail agreement, FinanceDetail aFinanceDetail, int formatter) {
 
-		// retrieving from CollateralSetup instead of FinanceCollaterals
+		List<CollateralSetup> collateralSetupList = null;
 
-		List<CollateralSetup> collateralSetupList = getCollateralSetupFetchingService()
-				.getCollateralSetupList(aFinanceDetail, false);
+		collateralSetupList = collateralSetupFetchingService.getCollateralSetupList(aFinanceDetail, false);
 
-		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
-			for (CollateralSetup collateralSetup : collateralSetupList) {
-				if (null != collateralSetup) {
+		if (CollectionUtils.isEmpty(collateralSetupList)) {
+			return;
+		}
 
-					FinCollaterals collateralData = agreement.new FinCollaterals();
-					collateralData.setCollateralType(StringUtils.trimToEmpty(collateralSetup.getCollateralType()));
-					collateralData.setDepositorName(StringUtils.trimToEmpty(collateralSetup.getDepositorName()));
-					collateralData.setReference(StringUtils.trimToEmpty(collateralSetup.getCollateralRef()));
-					collateralData.setCollateralAmt(
-							PennantApplicationUtil.amountFormate(collateralSetup.getCollateralValue(), formatter));
-					if (null != collateralSetup.getCollateralStructure()) {
-						collateralData.setColDesc(
-								StringUtils.trimToEmpty(collateralSetup.getCollateralStructure().getCollateralDesc()));
-						collateralData.setColLtv(PennantApplicationUtil.formatRate(
-								collateralSetup.getCollateralStructure().getLtvPercentage().doubleValue(), 2));
+		for (CollateralSetup cs : collateralSetupList) {
+			FinCollaterals collateralData = agreement.new FinCollaterals();
+			collateralData.setCollateralType(StringUtils.trimToEmpty(cs.getCollateralType()));
+			collateralData.setDepositorName(StringUtils.trimToEmpty(cs.getDepositorName()));
+			collateralData.setReference(StringUtils.trimToEmpty(cs.getCollateralRef()));
+			collateralData.setCollateralAmt(CurrencyUtil.format(cs.getCollateralValue(), formatter));
+			if (null != cs.getCollateralStructure()) {
+				collateralData.setColDesc(StringUtils.trimToEmpty(cs.getCollateralStructure().getCollateralDesc()));
+				collateralData.setColLtv(PennantApplicationUtil
+						.formatRate(cs.getCollateralStructure().getLtvPercentage().doubleValue(), 2));
+			}
+			collateralData.setColAddrCity(StringUtils.trimToEmpty(cs.getCollateralLoc()));
+			collateralData.setCollateralBankAmt(CurrencyUtil.format(cs.getBankValuation(), formatter));
+			agreement.getCollateralData().add(collateralData);
+
+			if (CollectionUtils.isEmpty(agreement.getExtendedDetails())) {
+				agreement.setExtendedDetails(new ArrayList<>());
+			}
+			List<ExtendedDetailCollateral> extendedDetailsList = new ArrayList<>();
+
+			if (CollectionUtils.isNotEmpty(cs.getExtendedFieldRenderList())) {
+				int colCcyFormat = CurrencyUtil.getFormat(cs.getCollateralCcy());
+
+				for (ExtendedFieldRender extendedFieldRender : cs.getExtendedFieldRenderList()) {
+					if (extendedFieldRender == null || MapUtils.isEmpty(extendedFieldRender.getMapValues())) {
+						continue;
 					}
-					collateralData.setColAddrCity(StringUtils.trimToEmpty(collateralSetup.getCollateralLoc()));
-					collateralData.setCollateralBankAmt(
-							PennantApplicationUtil.amountFormate(collateralSetup.getBankValuation(), formatter));
-					agreement.getCollateralData().add(collateralData);
 
-					if (CollectionUtils.isEmpty(agreement.getExtendedDetails())) {
-						agreement.setExtendedDetails(new ArrayList<>());
+					ExtendedDetailCollateral detailCol = agreement.new ExtendedDetailCollateral();
+					detailCol.setId(String.valueOf(extendedFieldRender.getSeqNo()));
+					if (null != cs.getCollateralStructure()) {
+						detailCol.setColType(StringUtils.trimToEmpty(cs.getCollateralStructure().getCollateralDesc()));
 					}
-					List<ExtendedDetailCollateral> extendedDetailsList = new ArrayList<>();
+					detailCol.setExtDtls(new ArrayList<>());
+					Map<String, Object> mapValues = new HashMap<>();
+					mapValues.putAll(extendedFieldRender.getMapValues());
 
-					if (CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())) {
-						int colCcyFormat = CurrencyUtil.getFormat(collateralSetup.getCollateralCcy());
-
-						for (ExtendedFieldRender extendedFieldRender : collateralSetup.getExtendedFieldRenderList()) {
-							if (null != extendedFieldRender
-									&& MapUtils.isNotEmpty(extendedFieldRender.getMapValues())) {
-
-								ExtendedDetailCollateral detailCol = agreement.new ExtendedDetailCollateral();
-								detailCol.setId(String.valueOf(extendedFieldRender.getSeqNo()));
-								if (null != collateralSetup.getCollateralStructure()) {
-									detailCol.setColType(StringUtils
-											.trimToEmpty(collateralSetup.getCollateralStructure().getCollateralDesc()));
+					for (String key : mapValues.keySet()) {
+						ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
+						ExtendedFieldDetail extendedFieldDetail = null;
+						if (null != cs.getCollateralStructure()
+								&& null != cs.getCollateralStructure().getExtendedFieldHeader()
+								&& CollectionUtils.isNotEmpty(cs.getCollateralStructure().getExtendedFieldHeader()
+										.getExtendedFieldDetails())) {
+							List<ExtendedFieldDetail> extendedFieldDetails = cs.getCollateralStructure()
+									.getExtendedFieldHeader().getExtendedFieldDetails();
+							List<ExtendedFieldDetail> requiredExtendedFields = extendedFieldDetails.stream()
+									.filter(efd -> StringUtils.equalsIgnoreCase(key, efd.getFieldName()))
+									.collect(Collectors.toList());
+							if (CollectionUtils.isNotEmpty(requiredExtendedFields)) {
+								extendedFieldDetail = requiredExtendedFields.get(0);
+								extendedDetail
+										.setFieldLabel(StringUtils.trimToEmpty(extendedFieldDetail.getFieldLabel()));
+								if (StringUtils.isNotEmpty(extendedFieldDetail.getAgrField())) {
+									extendedDetail
+											.setAgrField(StringUtils.trimToEmpty(extendedFieldDetail.getAgrField()));
 								}
-								detailCol.setExtDtls(new ArrayList<>());
-								Map<String, Object> mapValues = new HashMap<>();
-								mapValues.putAll(extendedFieldRender.getMapValues());
-
-								for (String key : mapValues.keySet()) {
-									ExtendedDetail extendedDetail = agreement.new ExtendedDetail();
-									ExtendedFieldDetail extendedFieldDetail = null;
-									if (null != collateralSetup.getCollateralStructure()
-											&& null != collateralSetup.getCollateralStructure().getExtendedFieldHeader()
-											&& CollectionUtils.isNotEmpty(collateralSetup.getCollateralStructure()
-													.getExtendedFieldHeader().getExtendedFieldDetails())) {
-										List<ExtendedFieldDetail> extendedFieldDetails = collateralSetup
-												.getCollateralStructure().getExtendedFieldHeader()
-												.getExtendedFieldDetails();
-										List<ExtendedFieldDetail> requiredExtendedFields = extendedFieldDetails.stream()
-												.filter(efd -> StringUtils.equalsIgnoreCase(key, efd.getFieldName()))
-												.collect(Collectors.toList());
-										if (CollectionUtils.isNotEmpty(requiredExtendedFields)) {
-											extendedFieldDetail = requiredExtendedFields.get(0);
-											extendedDetail.setFieldLabel(
-													StringUtils.trimToEmpty(extendedFieldDetail.getFieldLabel()));
-											if (StringUtils.isNotEmpty(extendedFieldDetail.getAgrField())) {
-												extendedDetail.setAgrField(
-														StringUtils.trimToEmpty(extendedFieldDetail.getAgrField()));
-											}
-										}
-									}
-
-									extendedDetail.setKey(StringUtils.trimToEmpty(key));
-									String desc = null;
-									if (extendedFieldDetail != null
-											&& StringUtils.equalsIgnoreCase("EXTENDEDCOMBO",
-													extendedFieldDetail.getFieldType())
-											&& StringUtils.isNotEmpty(extendedFieldDetail.getFieldList())) {
-										try {
-											ModuleMapping moduleMapping = PennantJavaUtil
-													.getModuleMap(extendedFieldDetail.getFieldList());
-											Search search = new Search();
-											search.setSearchClass(moduleMapping.getModuleClass());
-											List<Filter> filters = new ArrayList<>();
-											if (moduleMapping.getLovFilters() != null) {
-												Object[][] condArray = moduleMapping.getLovFilters();
-												Filter filter1;
-												for (int i = 0; i < condArray.length; i++) {
-													String property = (String) condArray[i][0];
-													Object value = condArray[i][2];
-													int filtertype = Integer.parseInt((String) condArray[i][1]);
-													filter1 = new Filter(property, value, filtertype);
-													filters.add(filter1);
-												}
-											}
-
-											String[] lovFields = moduleMapping.getLovFields();
-											if (lovFields != null) {
-												String[] condArray = moduleMapping.getLovFields();
-												Filter filter1;
-												String fieldName = extendedFieldDetail.getFieldName();
-												Stream<String> stream = mapValues.keySet().stream();
-												List<String> details = stream
-														.filter(key1 -> StringUtils.equalsIgnoreCase(key1, fieldName))
-														.collect(Collectors.toList());
-												String valueColumn = lovFields[0];
-												Object value = mapValues.get(details.get(0));
-												//Converting extended filed value to mapped field data type.
-												//Ex: Projectid in Builder project 
-												if (App.DATABASE == Database.POSTGRES) {
-													if (value != null && value != "") {
-														for (Field field : moduleMapping.getModuleClass()
-																.getDeclaredFields()) {
-															if (StringUtils.equalsIgnoreCase(field.getName(),
-																	valueColumn)) {
-																if (field.getType() == long.class
-																		|| field.getType() == Long.class) {
-																	value = NumberUtils.toLong(value.toString());
-																	break;
-																}
-															}
-														}
-													}
-												}
-												filter1 = new Filter(condArray[0], value, Filter.OP_EQUAL);
-												filters.add(filter1);
-												search.setFilters(filters);
-												List<Object> result = searchProcessor.getResults(search);
-												for (Object object2 : result) {
-													String descMethod = "get" + condArray[1];
-													desc = object2.getClass().getMethod(descMethod).invoke(object2)
-															.toString();
-
-												}
-											}
-										} catch (Exception e) {
-										}
-									}
-									if (null != mapValues.get(key)) {
-										extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
-										if (extendedFieldDetail != null && StringUtils.equalsIgnoreCase("CURRENCY",
-												extendedFieldDetail.getFieldType())) {
-											extendedDetail.setValue(PennantApplicationUtil
-													.amountFormate((BigDecimal) mapValues.get(key), colCcyFormat));
-										} else if (StringUtils.isNotBlank(desc) && !(StringUtils
-												.equalsIgnoreCase(extendedFieldDetail.getFieldList(), "PinCode")
-												|| StringUtils.equalsIgnoreCase(extendedFieldDetail.getFieldList(),
-														"ProjectTowers")
-												|| StringUtils.equalsIgnoreCase(extendedFieldDetail.getFieldList(),
-														"ProjectFloors")
-												|| StringUtils.equalsIgnoreCase(extendedFieldDetail.getFieldList(),
-														"UnitNumber"))) {
-											extendedDetail.setValue(StringUtils.trimToEmpty(desc));
-										} else {
-											extendedDetail
-													.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
-										}
-									} else {
-										extendedDetail.setValue(StringUtils.EMPTY);
-									}
-									mapValues.put(key, extendedDetail.getValue());
-									extendedDetail.setFieldType("COLLATERAL");
-									detailCol.getExtDtls().add(extendedDetail);
-									agreement.getExtendedDetails().add(extendedDetail);
-								}
-								detailCol.setFields(mapValues);
-								extendedDetailsList.add(detailCol);
 							}
 						}
+
+						extendedDetail.setKey(StringUtils.trimToEmpty(key));
+						String desc = null;
+						if (extendedFieldDetail != null
+								&& StringUtils.equalsIgnoreCase("EXTENDEDCOMBO", extendedFieldDetail.getFieldType())
+								&& StringUtils.isNotEmpty(extendedFieldDetail.getFieldList())) {
+							try {
+								ModuleMapping moduleMapping = PennantJavaUtil
+										.getModuleMap(extendedFieldDetail.getFieldList());
+								Search search = new Search();
+								search.setSearchClass(moduleMapping.getModuleClass());
+								List<Filter> filters = new ArrayList<>();
+								if (moduleMapping.getLovFilters() != null) {
+									Object[][] condArray = moduleMapping.getLovFilters();
+									Filter filter1;
+									for (int i = 0; i < condArray.length; i++) {
+										String property = (String) condArray[i][0];
+										Object value = condArray[i][2];
+										int filtertype = Integer.parseInt((String) condArray[i][1]);
+										filter1 = new Filter(property, value, filtertype);
+										filters.add(filter1);
+									}
+								}
+
+								String[] lovFields = moduleMapping.getLovFields();
+								if (lovFields != null) {
+									String[] condArray = moduleMapping.getLovFields();
+									Filter filter1;
+									String fieldName = extendedFieldDetail.getFieldName();
+									Stream<String> stream = mapValues.keySet().stream();
+									List<String> details = stream
+											.filter(key1 -> StringUtils.equalsIgnoreCase(key1, fieldName))
+											.collect(Collectors.toList());
+									String valueColumn = lovFields[0];
+									Object value = mapValues.get(details.get(0));
+									//Converting extended filed value to mapped field data type.
+									//Ex: Projectid in Builder project 
+									if (App.DATABASE == Database.POSTGRES) {
+										if (value != null && value != "") {
+											for (Field field : moduleMapping.getModuleClass().getDeclaredFields()) {
+												if (StringUtils.equalsIgnoreCase(field.getName(), valueColumn)) {
+													if (field.getType() == long.class
+															|| field.getType() == Long.class) {
+														value = NumberUtils.toLong(value.toString());
+														break;
+													}
+												}
+											}
+										}
+									}
+									filter1 = new Filter(condArray[0], value, Filter.OP_EQUAL);
+									filters.add(filter1);
+									search.setFilters(filters);
+									List<Object> result = searchProcessor.getResults(search);
+									for (Object object2 : result) {
+										String descMethod = "get" + condArray[1];
+										desc = object2.getClass().getMethod(descMethod).invoke(object2).toString();
+
+									}
+								}
+							} catch (Exception e) {
+							}
+						}
+						if (null != mapValues.get(key)) {
+							extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
+							if (extendedFieldDetail != null
+									&& StringUtils.equalsIgnoreCase("CURRENCY", extendedFieldDetail.getFieldType())) {
+								extendedDetail.setValue(PennantApplicationUtil
+										.amountFormate((BigDecimal) mapValues.get(key), colCcyFormat));
+							} else if (StringUtils.isNotBlank(desc) && !(StringUtils
+									.equalsIgnoreCase(extendedFieldDetail.getFieldList(), "PinCode")
+									|| StringUtils.equalsIgnoreCase(extendedFieldDetail.getFieldList(), "ProjectTowers")
+									|| StringUtils.equalsIgnoreCase(extendedFieldDetail.getFieldList(), "ProjectFloors")
+									|| StringUtils.equalsIgnoreCase(extendedFieldDetail.getFieldList(),
+											"UnitNumber"))) {
+								extendedDetail.setValue(StringUtils.trimToEmpty(desc));
+							} else {
+								extendedDetail.setValue(StringUtils.trimToEmpty(mapValues.get(key).toString()));
+							}
+						} else {
+							extendedDetail.setValue(StringUtils.EMPTY);
+						}
+						mapValues.put(key, extendedDetail.getValue());
+						extendedDetail.setFieldType("COLLATERAL");
+						detailCol.getExtDtls().add(extendedDetail);
+						agreement.getExtendedDetails().add(extendedDetail);
 					}
-					if (CollectionUtils.isEmpty(extendedDetailsList)) {
-						extendedDetailsList = new ArrayList<>();
-						extendedDetailsList.add(agreement.new ExtendedDetailCollateral());
-					}
-					collateralData.setExtendedDetailsList(extendedDetailsList);
+					detailCol.setFields(mapValues);
+					extendedDetailsList.add(detailCol);
 				}
 			}
+			if (CollectionUtils.isEmpty(extendedDetailsList)) {
+				extendedDetailsList = new ArrayList<>();
+				extendedDetailsList.add(agreement.new ExtendedDetailCollateral());
+			}
+			collateralData.setExtendedDetailsList(extendedDetailsList);
 		}
-		return agreement;
 	}
 
-	private AgreementDetail setMMAgreementGenDetails(AgreementDetail agreement, String appDate, int ccyformatt,
+	private void setMMAgreementGenDetails(AgreementDetail agreement, String appDate, int ccyformatt,
 			String mMAReference) throws Exception {
-		MMAgreement mMAgreement = getmMAgreementService().getMMAgreementByIdMMARef(mMAReference);
+		MMAgreement mMAgreement = mMAgreementService.getMMAgreementByIdMMARef(mMAReference);
 
-		if (agreement != null) {
-			if (mMAgreement != null) {
-				agreement.setmMADate(DateUtility.formatToLongDate(mMAgreement.getContractDate()));
-				agreement.setCustCIF(mMAgreement.getCustCIF());
-				agreement.setCustName(mMAgreement.getCustShrtName());
-				agreement.setmMAPurchRegOffice(mMAgreement.getLovDescPurchRegOffice());
-				agreement.setmMAContractAmt(
-						PennantApplicationUtil.amountFormate(mMAgreement.getContractAmt(), ccyformatt));
-				agreement.setmMAPurchaddress(mMAgreement.getPurchaddress());
-				agreement.setAttention(mMAgreement.getAttention());
-				agreement.setmMAFax(mMAgreement.getFax());
-				agreement.setmMARate(String.valueOf(mMAgreement.getRate()));
-				agreement.setmMAFOLIssueDate(DateUtility.formatToLongDate(mMAgreement.getfOLIssueDate()));
-				agreement.setMaturityDate(DateUtility.formatToLongDate(mMAgreement.getMaturityDate()));
-				agreement.setmMAFacilityLimit(
-						PennantApplicationUtil.amountFormate(mMAgreement.getFacilityLimit(), ccyformatt));
-				String word = NumberToEnglishWords.getAmountInText(
-						PennantApplicationUtil.formateAmount(mMAgreement.getFacilityLimit(), ccyformatt),
-						agreement.getFinCcy());
-				agreement.setFacLimitInWords(word);
-				agreement.setmMAMinAmount(PennantApplicationUtil.amountFormate(mMAgreement.getMinAmount(), ccyformatt));
-				if (mMAgreement.getProfitRate() != null) {
-					agreement.setmMAPftRate(
-							PennantApplicationUtil.formatRate(mMAgreement.getProfitRate().doubleValue(), 2));
-				}
-				agreement.setmMAMargin(PennantApplicationUtil.formatRate(mMAgreement.getMargin().doubleValue(), 9));
-				agreement.setmMAMinRate(PennantApplicationUtil.formatRate(mMAgreement.getMinRate().doubleValue(), 9));
-				agreement.setmMAMLatePayRate(
-						PennantApplicationUtil.formatRate(mMAgreement.getLatePayRate().doubleValue(), 9));
-				agreement.setmMANumberOfTerms(String.valueOf(mMAgreement.getNumberOfTerms()));
-				agreement.setmMAProfitPeriod(String.valueOf(mMAgreement.getProfitPeriod()));
-				agreement.setFolReference(String.valueOf(mMAgreement.getfOlReference()));
-				agreement.setAvlPerDays(String.valueOf(mMAgreement.getAvlPerDays()));
-				agreement.setMaxCapProfitRate(
-						PennantApplicationUtil.formatRate(mMAgreement.getMaxCapProfitRate().doubleValue(), 9));
-				agreement
-						.setMinCapRate(PennantApplicationUtil.formatRate(mMAgreement.getMinCapRate().doubleValue(), 9));
-				agreement.setFacOfferLetterDate(DateUtility.formatToLongDate(mMAgreement.getFacOfferLetterDate()));
-				agreement.setPmaryRelOfficer(String.valueOf(mMAgreement.getPmaryRelOfficer()));
-				agreement.setmMAFOLPeriod(String.valueOf(mMAgreement.getProfitPeriod()));
-				agreement.setBaseRateCode(mMAgreement.getBaseRateCode());
-			}
+		if (agreement == null || mMAgreement == null) {
+			return;
 		}
 
-		return agreement;
+		agreement.setmMADate(DateUtil.formatToLongDate(mMAgreement.getContractDate()));
+		agreement.setCustCIF(mMAgreement.getCustCIF());
+		agreement.setCustName(mMAgreement.getCustShrtName());
+		agreement.setmMAPurchRegOffice(mMAgreement.getLovDescPurchRegOffice());
+		agreement.setmMAContractAmt(CurrencyUtil.format(mMAgreement.getContractAmt(), ccyformatt));
+		agreement.setmMAPurchaddress(mMAgreement.getPurchaddress());
+		agreement.setAttention(mMAgreement.getAttention());
+		agreement.setmMAFax(mMAgreement.getFax());
+		agreement.setmMARate(String.valueOf(mMAgreement.getRate()));
+		agreement.setmMAFOLIssueDate(DateUtil.formatToLongDate(mMAgreement.getfOLIssueDate()));
+		agreement.setMaturityDate(DateUtil.formatToLongDate(mMAgreement.getMaturityDate()));
+		agreement.setmMAFacilityLimit(CurrencyUtil.format(mMAgreement.getFacilityLimit(), ccyformatt));
+		String word = NumberToEnglishWords
+				.getAmountInText(CurrencyUtil.parse(mMAgreement.getFacilityLimit(), ccyformatt), agreement.getFinCcy());
+		agreement.setFacLimitInWords(word);
+		agreement.setmMAMinAmount(CurrencyUtil.format(mMAgreement.getMinAmount(), ccyformatt));
+		if (mMAgreement.getProfitRate() != null) {
+			agreement.setmMAPftRate(PennantApplicationUtil.formatRate(mMAgreement.getProfitRate().doubleValue(), 2));
+		}
+		agreement.setmMAMargin(PennantApplicationUtil.formatRate(mMAgreement.getMargin().doubleValue(), 9));
+		agreement.setmMAMinRate(PennantApplicationUtil.formatRate(mMAgreement.getMinRate().doubleValue(), 9));
+		agreement.setmMAMLatePayRate(PennantApplicationUtil.formatRate(mMAgreement.getLatePayRate().doubleValue(), 9));
+		agreement.setmMANumberOfTerms(String.valueOf(mMAgreement.getNumberOfTerms()));
+		agreement.setmMAProfitPeriod(String.valueOf(mMAgreement.getProfitPeriod()));
+		agreement.setFolReference(String.valueOf(mMAgreement.getfOlReference()));
+		agreement.setAvlPerDays(String.valueOf(mMAgreement.getAvlPerDays()));
+		agreement.setMaxCapProfitRate(
+				PennantApplicationUtil.formatRate(mMAgreement.getMaxCapProfitRate().doubleValue(), 9));
+		agreement.setMinCapRate(PennantApplicationUtil.formatRate(mMAgreement.getMinCapRate().doubleValue(), 9));
+		agreement.setFacOfferLetterDate(DateUtil.formatToLongDate(mMAgreement.getFacOfferLetterDate()));
+		agreement.setPmaryRelOfficer(String.valueOf(mMAgreement.getPmaryRelOfficer()));
+		agreement.setmMAFOLPeriod(String.valueOf(mMAgreement.getProfitPeriod()));
+		agreement.setBaseRateCode(mMAgreement.getBaseRateCode());
+
 	}
 
 	public AgreementDetail setAdvancePaymentDetails(AgreementDetail agreement, FinAdvancePayments finAdvancePayments,
@@ -4526,109 +4455,92 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 			if (finAdvancePayments != null) {
 				agreement.setOtherBankName(StringUtils.trimToEmpty(finAdvancePayments.getBeneficiaryName()));
-				agreement.setCustContribution(
-						PennantApplicationUtil.amountFormate(finAdvancePayments.getCustContribution(), format));
-				agreement.setSellerContribution(
-						PennantApplicationUtil.amountFormate(finAdvancePayments.getSellerContribution(), format));
-				agreement.setOtherBankAmt(
-						PennantApplicationUtil.amountFormate(finAdvancePayments.getAmtToBeReleased(), format));
+				agreement.setCustContribution(CurrencyUtil.format(finAdvancePayments.getCustContribution(), format));
+				agreement
+						.setSellerContribution(CurrencyUtil.format(finAdvancePayments.getSellerContribution(), format));
+				agreement.setOtherBankAmt(CurrencyUtil.format(finAdvancePayments.getAmtToBeReleased(), format));
 				agreement.setLiabilityHoldName(StringUtils.trimToEmpty(finAdvancePayments.getLiabilityHoldName()));
 				agreement.setSellerContInWords(NumberToEnglishWords.getAmountInText(
-						PennantApplicationUtil.formateAmount(finAdvancePayments.getSellerContribution(), format),
-						finCcy));
-				agreement.setOtherBankAmtInWords(NumberToEnglishWords.getAmountInText(
-						PennantApplicationUtil.formateAmount(finAdvancePayments.getAmtToBeReleased(), format), finCcy));
+						CurrencyUtil.parse(finAdvancePayments.getSellerContribution(), format), finCcy));
+				agreement.setOtherBankAmtInWords(NumberToEnglishWords
+						.getAmountInText(CurrencyUtil.parse(finAdvancePayments.getAmtToBeReleased(), format), finCcy));
 				agreement.setLlReferenceNo(StringUtils.trimToEmpty(finAdvancePayments.getLlReferenceNo()));
-				agreement.setLlDate(DateUtility.formatToLongDate(finAdvancePayments.getLlDate()));
-				agreement.setCustConInWords(NumberToEnglishWords.getAmountInText(
-						PennantApplicationUtil.formateAmount(finAdvancePayments.getCustContribution(), format),
-						finCcy));
+				agreement.setLlDate(DateUtil.formatToLongDate(finAdvancePayments.getLlDate()));
+				agreement.setCustConInWords(NumberToEnglishWords
+						.getAmountInText(CurrencyUtil.parse(finAdvancePayments.getCustContribution(), format), finCcy));
 			}
 		}
 		return agreement;
 	}
 
-	public AgreementDetail setJointAccountDetails(AgreementDetail agreement, GuarantorDetail guarantorDetail,
-			int format, FinanceDetail detail) throws Exception {
-		logger.debug(" Entering ");
-		if (agreement != null) {
-
-			if (guarantorDetail != null) {
-				agreement.setGuarantName(StringUtils.trimToEmpty(guarantorDetail.getGuarantorCIFName()));
-				agreement.setGuarantHouseNo(StringUtils.trimToEmpty(guarantorDetail.getAddrHNbr()));
-				agreement.setGuarantStreet(StringUtils.trimToEmpty(guarantorDetail.getAddrStreet()));
-				agreement.setGuarantPO(StringUtils.trimToEmpty(guarantorDetail.getAddrZIP()));
-				agreement.setGuarantCountry(StringUtils.trimToEmpty(guarantorDetail.getLovDescAddrCountryName()));
-				agreement.setGuarantProvince(StringUtils.trimToEmpty(guarantorDetail.getLovDescAddrProvinceName()));
-				agreement.setGuranteeNum(StringUtils.trimToEmpty(guarantorDetail.getGuarantorIDNumber()));
-				BigDecimal guarnteeAmt = (guarantorDetail.getGuranteePercentage()
-						.multiply(detail.getFinScheduleData().getFinanceMain().getFinAmount()))
-								.divide(new BigDecimal(100));
-				agreement.setGuranteeAmt(PennantApplicationUtil.amountFormate(guarnteeAmt, format));
-				agreement.setGuranteeAmtInWords(
-						NumberToEnglishWords.getAmountInText(PennantApplicationUtil.formateAmount(guarnteeAmt, format),
-								detail.getFinScheduleData().getFinanceMain().getFinCcy()));
-				int days = DateUtility.getDaysBetween(detail.getFinScheduleData().getFinanceMain().getFinStartDate(),
-						detail.getFinScheduleData().getFinanceMain().getMaturityDate());
-				agreement.setGuranteeDays(String.valueOf(days));
-				agreement.setGuranteeEndDate(
-						DateUtility.formatToLongDate(detail.getFinScheduleData().getFinanceMain().getMaturityDate()));
-			}
+	public void setJointAccountDetails(AgreementDetail agreement, GuarantorDetail gd, int format, FinanceDetail detail)
+			throws Exception {
+		if (agreement == null || gd == null) {
+			return;
 		}
-		return agreement;
+
+		FinanceMain fm = detail.getFinScheduleData().getFinanceMain();
+
+		agreement.setGuarantName(StringUtils.trimToEmpty(gd.getGuarantorCIFName()));
+		agreement.setGuarantHouseNo(StringUtils.trimToEmpty(gd.getAddrHNbr()));
+		agreement.setGuarantStreet(StringUtils.trimToEmpty(gd.getAddrStreet()));
+		agreement.setGuarantPO(StringUtils.trimToEmpty(gd.getAddrZIP()));
+		agreement.setGuarantCountry(StringUtils.trimToEmpty(gd.getLovDescAddrCountryName()));
+		agreement.setGuarantProvince(StringUtils.trimToEmpty(gd.getLovDescAddrProvinceName()));
+		agreement.setGuranteeNum(StringUtils.trimToEmpty(gd.getGuarantorIDNumber()));
+
+		BigDecimal guarnteeAmt = (gd.getGuranteePercentage().multiply(fm.getFinAmount())).divide(new BigDecimal(100));
+		agreement.setGuranteeAmt(CurrencyUtil.format(guarnteeAmt, format));
+		agreement.setGuranteeAmtInWords(
+				NumberToEnglishWords.getAmountInText(CurrencyUtil.parse(guarnteeAmt, format), fm.getFinCcy()));
+		int days = DateUtil.getDaysBetween(fm.getFinStartDate(), fm.getMaturityDate());
+		agreement.setGuranteeDays(String.valueOf(days));
+		agreement.setGuranteeEndDate(DateUtil.formatToLongDate(fm.getMaturityDate()));
 	}
 
-	/**
-	 * Method for Preparing Finance Basic Details Data
-	 * 
-	 * @param agreement
-	 * @param detail
-	 * @return
-	 */
 	private AgreementDetail getFinanceDetails(AgreementDetail agreement, FinanceDetail detail) {
 		logger.debug("Entering");
 
 		try {
-			FinanceMain main = detail.getFinScheduleData().getFinanceMain();
+			FinanceMain fm = detail.getFinScheduleData().getFinanceMain();
 			FinanceType type = detail.getFinScheduleData().getFinanceType();
 
-			int formatter = CurrencyUtil.getFormat(main.getFinCcy());
+			int formatter = CurrencyUtil.getFormat(fm.getFinCcy());
 			agreement.setFinType(type.getFinType());
 			agreement.setFinTypeDesc(StringUtils.trimToEmpty(type.getFinTypeDesc()));
 			agreement.setFinDivision(StringUtils.trimToEmpty(type.getFinDivision()));
-			agreement.setInitiatedDate(DateUtility.formatToLongDate(main.getInitiateDate()));
+			agreement.setInitiatedDate(DateUtil.formatToLongDate(fm.getInitiateDate()));
 
-			agreement.setNextInstDate(DateUtility.formatToLongDate(main.getNextRepayDate()));
+			agreement.setNextInstDate(DateUtil.formatToLongDate(fm.getNextRepayDate()));
 
 			BigDecimal emi = BigDecimal.ZERO;
 			if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
 				emi = ScheduleCalculator.getEMIOnFinAssetValue(detail);
 			}
-			agreement.setRepayOnLoanAmt(PennantApplicationUtil.amountFormate(emi, formatter));
+			agreement.setRepayOnLoanAmt(CurrencyUtil.format(emi, formatter));
 			agreement.setRepayOnLoanAmtInWords(emi == BigDecimal.ZERO ? ""
+					: WordUtils.capitalize(
+							NumberToEnglishWords.getAmountInText(CurrencyUtil.parse(emi, formatter), fm.getFinCcy())));
+
+			agreement.setRepayAmount(CurrencyUtil.format(fm.getFirstRepay(), formatter));
+			agreement.setRepayAmtInWords(fm.getFirstRepay() == BigDecimal.ZERO ? ""
 					: WordUtils.capitalize(NumberToEnglishWords
-							.getAmountInText(PennantApplicationUtil.formateAmount(emi, formatter), main.getFinCcy())));
+							.getAmountInText(CurrencyUtil.parse(fm.getFirstRepay(), formatter), fm.getFinCcy())));
 
-			agreement.setRepayAmount(PennantApplicationUtil.amountFormate(main.getFirstRepay(), formatter));
-			agreement
-					.setRepayAmtInWords(main.getFirstRepay() == BigDecimal.ZERO ? ""
-							: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
-									PennantApplicationUtil.formateAmount(main.getFirstRepay(), formatter),
-									main.getFinCcy())));
+			agreement.setProfitRate(PennantApplicationUtil.formatRate(fm.getRepayProfitRate().doubleValue(), 2));
+			agreement.setTotPriAmount(CurrencyUtil.format(fm.getTotalPriAmt(), formatter));
+			agreement.setFinRef(fm.getFinReference());
+			agreement.setFinCcy(fm.getFinCcy());
+			agreement.setPftDaysBasis(fm.getProfitDaysBasis());
+			agreement.setFinBranch(fm.getFinBranch());
+			agreement.setFinBranchName(fm.getLovDescFinBranchName());
+			agreement.setFinEmpCode(fm.getEmployeeName());
+			agreement.setFinEmpName(fm.getEmployeeNameDesc());
+			agreement.setOfferId(fm.getOfferId());
 
-			agreement.setProfitRate(PennantApplicationUtil.formatRate(main.getRepayProfitRate().doubleValue(), 2));
-			agreement.setTotPriAmount(PennantApplicationUtil.amountFormate(main.getTotalPriAmt(), formatter));
-			agreement.setFinRef(main.getFinReference());
-			agreement.setFinCcy(main.getFinCcy());
-			agreement.setPftDaysBasis(main.getProfitDaysBasis());
-			agreement.setFinBranch(main.getFinBranch());
-			agreement.setFinBranchName(main.getLovDescFinBranchName());
-			agreement.setFinEmpCode(main.getEmployeeName());
-			agreement.setFinEmpName(main.getEmployeeNameDesc());
-			agreement.setOfferId(main.getOfferId());
-			if (StringUtils.isNotBlank(main.getFinBranch())) {
+			if (StringUtils.isNotBlank(fm.getFinBranch())) {
 				if (branchService != null) {
-					Branch branchdetails = branchService.getApprovedBranchById(main.getFinBranch());
+					Branch branchdetails = branchService.getApprovedBranchById(fm.getFinBranch());
 					if (branchdetails != null) {
 						agreement.setFinBranchAddrHNbr(branchdetails.getBranchAddrHNbr());
 						agreement.setFinBranchFlatNbr(branchdetails.getBranchFlatNbr());
@@ -4650,123 +4562,117 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 
 			}
-			agreement.setRepayRateBasis(PennantStaticListUtil.getlabelDesc(main.getRepayRateBasis(), interestRateType));
-			agreement.setStartDate(DateUtility.formatToLongDate(main.getFinStartDate()));
-			agreement.setRepayFrqDay(FrequencyUtil.getFrequencyDay(main.getRepayFrq()));
-			if (main.getFinStartDate() != null) {
-				agreement.setMM(String.valueOf(DateUtility.getMonth(main.getFinStartDate())));
-				agreement.setDD(String.valueOf(DateUtility.getDay(main.getFinStartDate())));
-				String year = String.valueOf(DateUtility.getYear(main.getFinStartDate()));
+			agreement.setRepayRateBasis(PennantStaticListUtil.getlabelDesc(fm.getRepayRateBasis(), interestRateType));
+			agreement.setStartDate(DateUtil.formatToLongDate(fm.getFinStartDate()));
+			agreement.setRepayFrqDay(FrequencyUtil.getFrequencyDay(fm.getRepayFrq()));
+			if (fm.getFinStartDate() != null) {
+				agreement.setMM(String.valueOf(DateUtil.getMonth(fm.getFinStartDate())));
+				agreement.setDD(String.valueOf(DateUtil.getDay(fm.getFinStartDate())));
+				String year = String.valueOf(DateUtil.getYear(fm.getFinStartDate()));
 				agreement.setYY(year.substring(2, 4));
 
 			}
-			agreement.setContractDate(DateUtility.formatToLongDate(main.getFinContractDate()));
-			BigDecimal finAmount = main.getFinAmount();
-			BigDecimal finAssetValue = main.getFinAssetValue();
+			agreement.setContractDate(DateUtil.formatToLongDate(fm.getFinContractDate()));
+			BigDecimal finAmount = fm.getFinAmount();
+			BigDecimal finAssetValue = fm.getFinAssetValue();
 
 			if (finAmount == null || BigDecimal.ZERO.equals(finAmount)) {
 				finAmount = finAssetValue;
 			}
 
-			agreement.setFinAmount(PennantApplicationUtil.amountFormate(finAmount, formatter));
-			agreement.setVanCode(main.getVanCode());
+			agreement.setFinAmount(CurrencyUtil.format(finAmount, formatter));
+			agreement.setVanCode(fm.getVanCode());
 			String srtFinAmount = NumberToEnglishWords.getAmountInText(
-					PennantApplicationUtil.formateAmount(finAmount, CurrencyUtil.getFormat(main.getFinCcy())),
-					main.getFinCcy());
+					CurrencyUtil.parse(finAmount, CurrencyUtil.getFormat(fm.getFinCcy())), fm.getFinCcy());
 			agreement.setFinAmountInWords(srtFinAmount == null ? "" : srtFinAmount.toUpperCase());
 
 			String strFinAssetValue = NumberToEnglishWords.getAmountInText(
-					PennantApplicationUtil.formateAmount(finAssetValue, CurrencyUtil.getFormat(main.getFinCcy())),
-					main.getFinCcy());
+					CurrencyUtil.parse(finAssetValue, CurrencyUtil.getFormat(fm.getFinCcy())), fm.getFinCcy());
 			agreement.setFinAssetValueInWords(strFinAssetValue == null ? "" : WordUtils.capitalize(strFinAssetValue));
-			agreement.setFinAssetValue(PennantApplicationUtil.amountFormate(main.getFinAssetValue(), formatter));
-			agreement.setFeeChargeAmt(PennantApplicationUtil.amountFormate(main.getFeeChargeAmt(), formatter));
-			agreement.setInsuranceAmt(PennantApplicationUtil.amountFormate(main.getInsuranceAmt(), formatter));
-			agreement.setDownPayment(PennantApplicationUtil.amountFormate(main.getDownPayment(), formatter));
-			agreement.setDownPayBank(PennantApplicationUtil.amountFormate(main.getDownPayBank(), formatter));
-			agreement.setDownPaySupl(PennantApplicationUtil.amountFormate(main.getDownPaySupl(), formatter));
-			agreement.setDisbAccount(PennantApplicationUtil.formatAccountNumber(main.getDisbAccountId()));
-			agreement.setRepayAccount(PennantApplicationUtil.formatAccountNumber(main.getRepayAccountId()));
-			agreement.setDownpayAc(PennantApplicationUtil.formatAccountNumber(main.getDownPayAccount()));
-			agreement.setFinPurpose(main.getLovDescFinPurposeName());
-			agreement.setFinRpyMethod(main.getFinRepayMethod());
-			agreement.setSourChannelCategory(StringUtils.trimToEmpty(main.getSourChannelCategory()));
-			agreement.setFacilityRef(main.getFinCommitmentRef());
-			agreement.setGrcEndDate(DateUtility.formatToLongDate(main.getGrcPeriodEndDate()));
-			agreement.setLpoPrice(PennantApplicationUtil
-					.amountFormate(main.getFinAmount().subtract(main.getDownPaySupl()), formatter));
+			agreement.setFinAssetValue(CurrencyUtil.format(fm.getFinAssetValue(), formatter));
+			agreement.setFeeChargeAmt(CurrencyUtil.format(fm.getFeeChargeAmt(), formatter));
+			agreement.setInsuranceAmt(CurrencyUtil.format(fm.getInsuranceAmt(), formatter));
+			agreement.setDownPayment(CurrencyUtil.format(fm.getDownPayment(), formatter));
+			agreement.setDownPayBank(CurrencyUtil.format(fm.getDownPayBank(), formatter));
+			agreement.setDownPaySupl(CurrencyUtil.format(fm.getDownPaySupl(), formatter));
+			agreement.setDisbAccount(PennantApplicationUtil.formatAccountNumber(fm.getDisbAccountId()));
+			agreement.setRepayAccount(PennantApplicationUtil.formatAccountNumber(fm.getRepayAccountId()));
+			agreement.setDownpayAc(PennantApplicationUtil.formatAccountNumber(fm.getDownPayAccount()));
+			agreement.setFinPurpose(fm.getLovDescFinPurposeName());
+			agreement.setFinRpyMethod(fm.getFinRepayMethod());
+			agreement.setSourChannelCategory(StringUtils.trimToEmpty(fm.getSourChannelCategory()));
+			agreement.setFacilityRef(fm.getFinCommitmentRef());
+			agreement.setGrcEndDate(DateUtil.formatToLongDate(fm.getGrcPeriodEndDate()));
+			agreement.setLpoPrice(
+					PennantApplicationUtil.amountFormate(fm.getFinAmount().subtract(fm.getDownPaySupl()), formatter));
 			agreement.setFormatter(formatter);
-			String word = NumberToEnglishWords.getAmountInText(
-					PennantApplicationUtil.formateAmount(main.getFinAmount().subtract(main.getDownPaySupl()),
-							CurrencyUtil.getFormat(main.getFinCcy())),
-					main.getFinCcy());
+			String word = NumberToEnglishWords.getAmountInText(CurrencyUtil
+					.parse(fm.getFinAmount().subtract(fm.getDownPaySupl()), CurrencyUtil.getFormat(fm.getFinCcy())),
+					fm.getFinCcy());
 			agreement.setLpoPriceInWords(word.toUpperCase());
 			String interestFrequenceType = " ";
-			if (FrequencyCodeTypes.FRQ_DAILY.equals(main.getRepayFrq().substring(0, 1))) {
+			if (FrequencyCodeTypes.FRQ_DAILY.equals(fm.getRepayFrq().substring(0, 1))) {
 				interestFrequenceType = " Days";
-			} else if (FrequencyCodeTypes.FRQ_MONTHLY.equals(main.getRepayFrq().substring(0, 1))) {
+			} else if (FrequencyCodeTypes.FRQ_MONTHLY.equals(fm.getRepayFrq().substring(0, 1))) {
 				interestFrequenceType = " Months";
 			}
-			agreement.setNoOfPayments(String.valueOf(main.getNumberOfTerms() + interestFrequenceType));
-			String repay = FrequencyUtil.getFrequencyDetail(main.getRepayFrq()).getFrequencyDescription();
+
+			agreement.setNoOfPayments(String.valueOf(fm.getNumberOfTerms() + interestFrequenceType));
+			String repay = FrequencyUtil.getFrequencyDetail(fm.getRepayFrq()).getFrequencyDescription();
 			if (repay.contains(",")) {
 				agreement.setRepayFrq(repay.substring(0, repay.indexOf(",")));
 			} else {
 				agreement.setRepayFrq(repay);
 			}
-			agreement.setRepayFrqCode(main.getRepayFrq().substring(0, 1));
-			agreement.setRpyRateBasis(PennantApplicationUtil.getLabelDesc(main.getRepayRateBasis(),
+			agreement.setRepayFrqCode(fm.getRepayFrq().substring(0, 1));
+			agreement.setRpyRateBasis(PennantApplicationUtil.getLabelDesc(fm.getRepayRateBasis(),
 					PennantStaticListUtil.getAccountTypes()));
-			agreement.setFirstInstDate(DateUtility.formatToLongDate(main.getNextRepayDate()));
-			agreement.setLastInstDate(DateUtility.formatToLongDate(main.getMaturityDate()));
-			agreement.setFirstInstAmount(PennantApplicationUtil.amountFormate(main.getFirstRepay(), formatter));
-			agreement.setLastInstAmount(PennantApplicationUtil.amountFormate(main.getLastRepay(), formatter));
-			agreement.setSchdMethod(main.getScheduleMethod());
-			agreement
-					.setEffPftRate(PennantApplicationUtil.formatRate(main.getEffectiveRateOfReturn().doubleValue(), 2));
-			agreement.setMaturityDate(DateUtility.formatToLongDate(main.getMaturityDate()));
-			agreement.setProfit(String.valueOf(PennantApplicationUtil.amountFormate(main.getTotalProfit(), formatter)));
-			agreement.setBankName(StringUtils.trimToEmpty(main.getBankName()));
-			agreement.setAccountType(StringUtils.trimToEmpty(main.getAccountType()));
-			agreement.setIban(StringUtils.trimToEmpty(main.getIban()));
+			agreement.setFirstInstDate(DateUtil.formatToLongDate(fm.getNextRepayDate()));
+			agreement.setLastInstDate(DateUtil.formatToLongDate(fm.getMaturityDate()));
+			agreement.setFirstInstAmount(CurrencyUtil.format(fm.getFirstRepay(), formatter));
+			agreement.setLastInstAmount(CurrencyUtil.format(fm.getLastRepay(), formatter));
+			agreement.setSchdMethod(fm.getScheduleMethod());
+			agreement.setEffPftRate(PennantApplicationUtil.formatRate(fm.getEffectiveRateOfReturn().doubleValue(), 2));
+			agreement.setMaturityDate(DateUtil.formatToLongDate(fm.getMaturityDate()));
+			agreement.setProfit(String.valueOf(CurrencyUtil.format(fm.getTotalProfit(), formatter)));
+			agreement.setBankName(StringUtils.trimToEmpty(fm.getBankName()));
+			agreement.setAccountType(StringUtils.trimToEmpty(fm.getAccountType()));
+			agreement.setIban(StringUtils.trimToEmpty(fm.getIban()));
 			agreement.setDdaPurposeCode(PennantConstants.REQ_TYPE_REG);
 
-			agreement.setCustDSR(String.valueOf(main.getCustDSR() == null ? "0.00" : main.getCustDSR()));
-			agreement.setAssetValue(PennantApplicationUtil.amountFormate(main.getFinAmount(), formatter));
-			agreement.setSchdInst(String.valueOf(main.getNumberOfTerms()));
-			agreement.setIfscCode(main.getIfscCode());
-			agreement.setSecSixTermAmt(PennantApplicationUtil.amountFormate(
-					main.getTotalRepayAmt().divide(new BigDecimal(6), RoundingMode.HALF_DOWN), formatter));
-			agreement.setTotalRepayAmt(PennantApplicationUtil.amountFormate(main.getTotalRepayAmt(), formatter));
+			agreement.setCustDSR(String.valueOf(fm.getCustDSR() == null ? "0.00" : fm.getCustDSR()));
+			agreement.setAssetValue(CurrencyUtil.format(fm.getFinAmount(), formatter));
+			agreement.setSchdInst(String.valueOf(fm.getNumberOfTerms()));
+			agreement.setIfscCode(fm.getIfscCode());
+			agreement.setSecSixTermAmt(CurrencyUtil
+					.format(fm.getTotalRepayAmt().divide(new BigDecimal(6), RoundingMode.HALF_DOWN), formatter));
+			agreement.setTotalRepayAmt(CurrencyUtil.format(fm.getTotalRepayAmt(), formatter));
 			agreement.setFinMinRate("");
-			if (main.getRpyMinRate() != null) {
-				agreement.setFinMinRate(PennantApplicationUtil.formatRate(main.getRpyMinRate().doubleValue(), 2));
+			if (fm.getRpyMinRate() != null) {
+				agreement.setFinMinRate(PennantApplicationUtil.formatRate(fm.getRpyMinRate().doubleValue(), 2));
 			}
 			agreement.setFinMaxRate("");
-			if (main.getRpyMinRate() != null) {
-				agreement.setFinMaxRate(PennantApplicationUtil.formatRate(main.getRpyMaxRate().doubleValue(), 2));
+			if (fm.getRpyMinRate() != null) {
+				agreement.setFinMaxRate(PennantApplicationUtil.formatRate(fm.getRpyMaxRate().doubleValue(), 2));
 			}
-			if (null != main.getRepayBaseRate()) {
-				agreement.setRepayBaseRate(main.getRepayBaseRate());
+			if (null != fm.getRepayBaseRate()) {
+				agreement.setRepayBaseRate(fm.getRepayBaseRate());
 			}
-			if (null != main.getRepayBaseRateVal()) {
+			if (null != fm.getRepayBaseRateVal()) {
 				agreement.setRepayBaseRateVal(
-						PennantApplicationUtil.formatRate(main.getRepayBaseRateVal().doubleValue(), 2));
+						PennantApplicationUtil.formatRate(fm.getRepayBaseRateVal().doubleValue(), 2));
 			}
-			agreement.setFinAmtPertg(PennantApplicationUtil.amountFormate(main.getFinAmount()
-					.multiply(new BigDecimal(125)).divide(new BigDecimal(100), RoundingMode.HALF_DOWN), formatter));
-			agreement.setPurchasePrice(PennantApplicationUtil
-					.amountFormate(main.getFinAmount().subtract(main.getDownPayment()), formatter));
-			agreement.setRepayMargin(PennantApplicationUtil.formatRate(main.getRepayMargin().doubleValue(), 2));
-			agreement.setSecDeposit(PennantApplicationUtil.amountFormate(main.getSecurityDeposit(), formatter));
-			agreement
-					.setSharePerc(PennantApplicationUtil.amountFormate(
-							(main.getFinAmount().subtract(main.getDownPayment()))
-									.divide(main.getFinAmount().multiply(new BigDecimal(100)), RoundingMode.HALF_DOWN),
-							formatter));
-			agreement.setFacilityAmt(PennantApplicationUtil.amountFormate(main.getAvailCommitAmount(), formatter));
-			agreement.setTotalPrice(
-					PennantApplicationUtil.amountFormate(main.getFinAmount().add(main.getTotalProfit()), formatter));
+			agreement.setFinAmtPertg(CurrencyUtil.format(
+					fm.getFinAmount().multiply(new BigDecimal(125)).divide(new BigDecimal(100), RoundingMode.HALF_DOWN),
+					formatter));
+			agreement.setPurchasePrice(
+					PennantApplicationUtil.amountFormate(fm.getFinAmount().subtract(fm.getDownPayment()), formatter));
+			agreement.setRepayMargin(PennantApplicationUtil.formatRate(fm.getRepayMargin().doubleValue(), 2));
+			agreement.setSecDeposit(CurrencyUtil.format(fm.getSecurityDeposit(), formatter));
+			agreement.setSharePerc(CurrencyUtil.format((fm.getFinAmount().subtract(fm.getDownPayment()))
+					.divide(fm.getFinAmount().multiply(new BigDecimal(100)), RoundingMode.HALF_DOWN), formatter));
+			agreement.setFacilityAmt(CurrencyUtil.format(fm.getAvailCommitAmount(), formatter));
+			agreement.setTotalPrice(CurrencyUtil.format(fm.getFinAmount().add(fm.getTotalProfit()), formatter));
 			List<FeeRule> feeChargesList = detail.getFinScheduleData().getFeeRules();
 			BigDecimal totalExpAmt = BigDecimal.ZERO;
 			BigDecimal insAmt = BigDecimal.ZERO;
@@ -4778,29 +4684,29 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					insAmt = (fee.getCalFeeAmount().subtract(fee.getWaiverAmount())).subtract(fee.getPaidAmount());
 				}
 			}
-			agreement.setInsAmt(PennantApplicationUtil.amountFormate(insAmt, formatter));
-			agreement.setTotalExpAmt(PennantApplicationUtil.amountFormate(totalExpAmt, formatter));
+			agreement.setInsAmt(CurrencyUtil.format(insAmt, formatter));
+			agreement.setTotalExpAmt(CurrencyUtil.format(totalExpAmt, formatter));
 			agreement.setFirstInstDays(
-					String.valueOf(DateUtility.getDaysBetween(main.getFinStartDate(), main.getNextRepayDate())));
-			agreement.setReviewDate(DateUtility.formatToLongDate(main.getNextRepayRvwDate()));
-			agreement.setFacilityDate(DateUtility.formatToLongDate(main.getFinStartDate()));
-			agreement.setProfitRateType(main.getRepayRateBasis());
-			int tenor = DateUtility.getMonthsBetween(main.getFinStartDate(), main.getMaturityDate(), true);
+					String.valueOf(DateUtil.getDaysBetween(fm.getFinStartDate(), fm.getNextRepayDate())));
+			agreement.setReviewDate(DateUtil.formatToLongDate(fm.getNextRepayRvwDate()));
+			agreement.setFacilityDate(DateUtil.formatToLongDate(fm.getFinStartDate()));
+			agreement.setProfitRateType(fm.getRepayRateBasis());
+			int tenor = DateUtil.getMonthsBetween(fm.getFinStartDate(), fm.getMaturityDate());
 			agreement.setTenor(String.valueOf(tenor));
 
-			if (main.getRepayBaseRate() != null) {
-				RateDetail details = RateUtil.rates(main.getRepayBaseRate(), main.getFinCcy(),
-						main.getRepaySpecialRate(), main.getRepayMargin(), main.getRpyMinRate(), main.getRpyMaxRate());
+			if (fm.getRepayBaseRate() != null) {
+				RateDetail details = RateUtil.rates(fm.getRepayBaseRate(), fm.getFinCcy(), fm.getRepaySpecialRate(),
+						fm.getRepayMargin(), fm.getRpyMinRate(), fm.getRpyMaxRate());
 				agreement.setNetRefRateLoan(
 						PennantApplicationUtil.formatRate(details.getNetRefRateLoan().doubleValue(), 2));
-				agreement.setBaseRate(details.getNetRefRateLoan().subtract(main.getRepayMargin()));
+				agreement.setBaseRate(details.getNetRefRateLoan().subtract(fm.getRepayMargin()));
 
 			} else {
-				agreement.setNetRefRateLoan(
-						PennantApplicationUtil.formatRate(main.getRepayProfitRate().doubleValue(), 2));
+				agreement
+						.setNetRefRateLoan(PennantApplicationUtil.formatRate(fm.getRepayProfitRate().doubleValue(), 2));
 			}
 
-			int totalTerms = main.getNumberOfTerms() + main.getGraceTerms();
+			int totalTerms = fm.getNumberOfTerms() + fm.getGraceTerms();
 			agreement.setTotalTerms(String.valueOf(totalTerms));
 
 			getEMITerms(agreement, detail);
@@ -4841,14 +4747,14 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			if (finSchDetail.isCpzOnSchDate() && !finSchDetail.isPftOnSchDate() && !finSchDetail.isRepayOnSchDate()) {
 				morPeriod = morPeriod + 1;
 				if (StringUtils.isEmpty(agreement.getMorStartDate())) {
-					agreement.setMorStartDate(DateUtility
-							.formatToLongDate(detail.getFinScheduleData().getFinanceMain().getFinStartDate()));
+					agreement.setMorStartDate(
+							DateUtil.formatToLongDate(detail.getFinScheduleData().getFinanceMain().getFinStartDate()));
 				}
 			} else if (!finSchDetail.isCpzOnSchDate() && finSchDetail.isPftOnSchDate()
 					&& !finSchDetail.isRepayOnSchDate()) {
 				morPeriod = morPeriod + 1;
 				if (StringUtils.isEmpty(agreement.getMorStartDate())) {
-					agreement.setMorStartDate(DateUtility.formatToLongDate(finSchDetail.getSchDate()));
+					agreement.setMorStartDate(DateUtil.formatToLongDate(finSchDetail.getSchDate()));
 				}
 			}
 			if (finSchDetail.isCpzOnSchDate() && finSchDetail.isPftOnSchDate() && !finSchDetail.isRepayOnSchDate()) {
@@ -4857,17 +4763,17 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 				if (morPeriod > 0 && StringUtils.isEmpty(agreement.getMorEndDate())) {
 					agreement.setMorEndDate(
-							DateUtility.formatToLongDate(DateUtility.addMonths(finSchDetail.getSchDate(), -1)));
+							DateUtil.formatToLongDate(DateUtil.addMonths(finSchDetail.getSchDate(), -1)));
 				}
 				if (StringUtils.isEmpty(agreement.getGrcStartDate())) {
-					agreement.setGrcStartDate(DateUtility.formatToLongDate(finSchDetail.getSchDate()));
+					agreement.setGrcStartDate(DateUtil.formatToLongDate(finSchDetail.getSchDate()));
 				}
 			}
 
 			if (finSchDetail.isRepayOnSchDate()) {
 				if (morPeriod > 0 && StringUtils.isEmpty(agreement.getMorEndDate())) {
 					agreement.setMorEndDate(
-							DateUtility.formatToLongDate(DateUtility.addMonths(finSchDetail.getSchDate(), -1)));
+							DateUtil.formatToLongDate(DateUtil.addMonths(finSchDetail.getSchDate(), -1)));
 				}
 				break;
 			}
@@ -4960,7 +4866,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					recommendation.setNoteType(noteType);
 					recommendation.setNoteDesc(notes.getRemarks());
 					recommendation.setCommentedDate(
-							DateUtility.format(notes.getInputDate(), PennantConstants.dateTimeAMPMFormat));
+							DateUtil.format(notes.getInputDate(), PennantConstants.dateTimeAMPMFormat));
 					recommendation.setUserName(notes.getUsrLogin().toUpperCase());
 					agreement.getRecommendations().add(recommendation);
 				}
@@ -5073,7 +4979,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						recommendation.setNoteType(noteType);
 						recommendation.setNoteDesc(notes.getRemarks());
 						recommendation.setCommentedDate(
-								DateUtility.format(notes.getInputDate(), PennantConstants.dateTimeAMPMFormat));
+								DateUtil.format(notes.getInputDate(), PennantConstants.dateTimeAMPMFormat));
 						recommendation.setUserName(notes.getUsrLogin());
 						recommendation.setUserRole(notes.getRoleDesc());
 						groupRecommendation.getRecommendations().add(recommendation);
@@ -5109,7 +5015,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		if (financeMains == null || financeMains.isEmpty()) {
 			agreement.setCustomerFinances(new ArrayList<AgreementDetail.CustomerFinance>());
 			agreement.getCustomerFinances().add(agreement.new CustomerFinance());
-			agreement.setTotCustFin(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, formatter));
+			agreement.setTotCustFin(CurrencyUtil.format(BigDecimal.ZERO, formatter));
 
 			return agreement;
 		}
@@ -5127,11 +5033,11 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				Date maturityDate = summary.getMaturityDate();
 				BigDecimal totalRepayAmt = summary.getTotalRepayAmt();
 
-				cf.setDealDate(DateUtility.formatToLongDate(finStartDate));
+				cf.setDealDate(DateUtil.formatToLongDate(finStartDate));
 				cf.setDealType(summary.getFinType() + "-" + summary.getFinReference());
 				cf.setOriginalAmount(amountFormate(summary.getTotalOriginal(), format));
 
-				int installmentMnts = DateUtility.getMonthsBetween(finStartDate, maturityDate, true);
+				int installmentMnts = DateUtil.getMonthsBetween(finStartDate, maturityDate);
 
 				totalRepayAmt = totalRepayAmt.divide(new BigDecimal(installmentMnts), RoundingMode.HALF_DOWN);
 
@@ -5150,11 +5056,11 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	}
 
 	private String amountFormate(BigDecimal amount, int format) {
-		return PennantApplicationUtil.amountFormate(amount, format);
+		return CurrencyUtil.format(amount, format);
 	}
 
 	private BigDecimal formateAmount(BigDecimal amount, int format) {
-		return PennantApplicationUtil.formateAmount(amount, format);
+		return CurrencyUtil.parse(amount, format);
 	}
 
 	/**
@@ -5178,11 +5084,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				AgreementDetail agreementDetail = getAggrementData(detail, data.getLovDescAggImage(), userDetails);
 
 				for (GuarantorDetail guarantorDetail : list) {
-					// Prepare to new object for each individual record to
-					// generate as separate files
 					AgreementDetail detailsToSend = new AgreementDetail();
 					BeanUtils.copyProperties(agreementDetail, detailsToSend);
-					detailsToSend = setJointAccountDetails(detailsToSend, guarantorDetail, formatter, detail);
+					setJointAccountDetails(detailsToSend, guarantorDetail, formatter, detail);
 					listtoGenerate.add(detailsToSend);
 				}
 
@@ -5447,7 +5351,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				BigDecimal actAmount = finFeeDetail.getActualAmount();
 				if (finFeeDetail.getFeeTypeCode() != null) {
 					map.put(finFeeDetail.getFeeTypeCode(),
-							PennantApplicationUtil.amountFormate(actAmount, CurrencyUtil.getFormat(finCcy)));
+							CurrencyUtil.format(actAmount, CurrencyUtil.getFormat(finCcy)));
 				}
 			}
 		}
@@ -5462,25 +5366,25 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 	public byte[] getCustomerAgreementGeneration(CustomerAgreementDetail custAgreementDetail, String templatepath,
 			String templateFile) {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
+
+		byte[] data = null;
 
 		TemplateEngine engine;
-		try {
+		try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
 			engine = new TemplateEngine();
 			engine.setTemplateSite(templatepath);
 			engine.setDocumentSite(templatepath);
 			engine.setTemplate(templateFile);
 			engine.loadTemplate();
 			engine.mergeFields(custAgreementDetail);
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			engine.getDocument().save(stream, SaveFormat.PDF);
-			stream.close();
-			return stream.toByteArray();
+			data = stream.toByteArray();
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(" Leaving ");
-		return null;
+		logger.info(Literal.LEAVING);
+		return data;
 
 	}
 

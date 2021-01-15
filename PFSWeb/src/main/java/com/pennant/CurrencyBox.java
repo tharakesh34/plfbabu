@@ -16,9 +16,9 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 
 public class CurrencyBox extends Hbox {
@@ -219,7 +219,7 @@ public class CurrencyBox extends Hbox {
 
 	public void setValue(BigDecimal bigDecimal) {
 		decimalbox.setValue(bigDecimal);
-		textbox.setValue(PennantAppUtil.formatAmount(bigDecimal, this.scale));
+		textbox.setValue(CurrencyUtil.formatAmount(bigDecimal, this.scale));
 	}
 
 	public void setValue(String bigDecimal) {

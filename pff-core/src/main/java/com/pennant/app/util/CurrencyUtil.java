@@ -292,7 +292,7 @@ public class CurrencyUtil {
 
 	}
 
-	private static String formatAmount(BigDecimal value, int decPos) {
+	public static String formatAmount(BigDecimal value, int decPos) {
 		if (value != null && value.compareTo(BigDecimal.ZERO) != 0) {
 			DecimalFormat df = new DecimalFormat();
 
