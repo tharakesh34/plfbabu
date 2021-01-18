@@ -911,10 +911,13 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		if (!isWIF) {
 			sql.append(", ActPercentage");
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				sql.append(", VasProductCode");
+			}
 		}
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc, VasProductCode");
+			sql.append(", FeeTypeCode, FeeTypeDesc");
 		}
 
 		if (isWIF) {
@@ -1046,12 +1049,15 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 				fd.setPaidTDS(rs.getBigDecimal("PaidTDS"));
 				fd.setRemTDS(rs.getBigDecimal("RemTDS"));
 				fd.setActPercentage(rs.getBigDecimal("ActPercentage"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					fd.setVasProductCode(rs.getString("VasProductCode"));
+				}
 			}
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				fd.setFeeTypeCode(rs.getString("FeeTypeCode"));
 				fd.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-				fd.setVasProductCode(rs.getString("VasProductCode"));
 			}
 
 			return fd;
