@@ -62,7 +62,7 @@
 
 									<label id="label_ProvisionSearch_CustID" value="${c:l('label_ProvisionSearch_CustID.value')}" />
 									<listbox id="sortOperator_custID" width="43px" mold="select" rows="1" />
-									<decimalbox id="custID" width="171px" maxlength="26" />
+									<intbox id="custID" width="171px" maxlength="26" />
 								</row>
 								<row>
 									<label id="label_ProvisionSearch_ProvisionCalDate" value="${c:l('label_ProvisionSearch_ProvisionCalDate.value')}" />
