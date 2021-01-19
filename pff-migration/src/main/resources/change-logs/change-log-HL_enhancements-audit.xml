@@ -1007,10 +1007,10 @@
 			<column name="DisbSeq" type="integer">
 				<constraints nullable="false" />
 			</column>
-			<column name="DemandAmount" type="numeric(18,0)">
+			<column name="DemandAmount" type="decimal(18,0)">
 				<constraints nullable="false" />
 			</column>
-			<column name="PaidAmount" type="numeric(18,0)">
+			<column name="PaidAmount" type="decimal(18,0)">
 				<constraints nullable="false" />
 			</column>
 			<column name="remarks" type="varchar(500)">
@@ -2090,8 +2090,8 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="214" author="lakshmi">
-		<modifyDataType tableName="adtFinFeeDetail" columnName="actpercentage" newDataType="numeric(5,2)" />
+	<changeSet id="214.1" author="lakshmi">
+		<modifyDataType tableName="adtFinFeeDetail" columnName="actpercentage" newDataType="decimal(5,2)" />
 	</changeSet>
 
 	<changeSet id="215" author="lakshmi">
