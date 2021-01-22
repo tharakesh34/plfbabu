@@ -1338,7 +1338,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.modeOfPayment.setDisabled(true);
 			this.allowFeeType.setDisabled(true);
-			this.btnInsurance_VasRecording.setVisible(false);
 		}
 		this.paidAmt.setReadonly(true);
 		this.paidAmt.setDisabled(true);
