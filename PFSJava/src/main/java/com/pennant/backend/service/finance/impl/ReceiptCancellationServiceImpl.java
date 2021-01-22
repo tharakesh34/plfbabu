@@ -1,41 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  ReceiptCancellationServiceImpl.java												*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : ReceiptCancellationServiceImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
-
- * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 *
+ * 
+ * 13-06-2018 Siva 0.2 Stage Accounting Modifications * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.finance.impl;
@@ -283,8 +278,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * table. based on the module workFlow Configuration. by using FinReceiptHeaderDAO's update method 3) Audit the
 	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -328,7 +322,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			}
 		}
 
-		//Document Details
+		// Document Details
 		List<DocumentDetails> documentsList = receiptHeader.getDocumentDetails();
 		if (CollectionUtils.isNotEmpty(documentsList)) {
 			List<AuditDetail> details = receiptHeader.getAuditDetailMap().get("DocumentDetails");
@@ -353,8 +347,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * workFlow table by using finReceiptHeaderDAO.delete with parameters finReceiptHeader,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 */
@@ -369,7 +362,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		}
 
 		FinReceiptHeader receiptHeader = null;
-		//Bug fix
+		// Bug fix
 		if (auditHeader.getAuditDetail().getModelData() instanceof FinReceiptData) {
 			FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 			receiptHeader = receiptData.getReceiptHeader();
@@ -382,7 +375,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			manualAdviseDAO.delete(receiptHeader.getManualAdvise(), TableType.TEMP_TAB);
 		}
 
-		//Deleting Receipt Documents
+		// Deleting Receipt Documents
 		auditDetails
 				.addAll(listDeletion(receiptHeader, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 		// Delete Receipt Header
@@ -407,8 +400,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * FinReceiptHeader. Audit the record in to AuditHeader and AdtFinReceiptHeader by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws Exception
 	 * @throws AccountNotFoundException
@@ -473,12 +465,12 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 				finReceiptHeaderDAO.update(receiptHeader, TableType.MAIN_TAB);
 
-				//Document Details
+				// Document Details
 				List<DocumentDetails> documentsList = receiptHeader.getDocumentDetails();
 				if (CollectionUtils.isNotEmpty(documentsList)) {
 					List<AuditDetail> details = receiptHeader.getAuditDetailMap().get("DocumentDetails");
 					details = processingDocumentDetailsList(details, receiptHeader, TableType.MAIN_TAB.getSuffix());
-					//deleting the data from temp table while Approve
+					// deleting the data from temp table while Approve
 					listDeletion(receiptHeader, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType());
 				}
 			}
@@ -518,7 +510,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			receiptHeader.setNextTaskId("");
 			receiptHeader.setWorkflowId(0);
 			receiptHeader.setRcdMaintainSts(null);
-			//FIXME:Checking the record is available in main table or not to fix PK issue
+			// FIXME:Checking the record is available in main table or not to fix PK issue
 			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptHeader.getReceiptPurpose())
 					&& finReceiptHeader != null) {
 				finReceiptHeaderDAO.update(receiptHeader, TableType.MAIN_TAB);
@@ -545,7 +537,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				}
 			}
 		} else {
-			//process FinFeeDetails
+			// process FinFeeDetails
 			processFinFeeDetails(receiptHeader);
 		}
 
@@ -686,8 +678,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * for any mismatch conditions Fetch the error details from finReceiptHeaderDAO.getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -732,12 +723,12 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + valueParm[0];
 
 		if (receiptHeader.isNew()) { // for New record or new record into work
-											// flow
+										// flow
 
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
 				if (beFinReceiptHeader != null) { // Record Already Exists in
-														// the
+													// the
 													// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
@@ -764,7 +755,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				// and delete
 
 				if (beFinReceiptHeader == null) { // if records not exists in
-														// the
+													// the
 													// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
@@ -1883,7 +1874,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				}
 			}
 		}
-		//FIXME:Added the below condition to skip the validation if we mark the CHEQUE/DD as Bounce since it is not realized based on below sys param
+		// FIXME:Added the below condition to skip the validation if we mark the CHEQUE/DD as Bounce since it is not
+		// realized based on below sys param
 		if (!isRcdFound && !SysParamUtil.isAllowed(SMTParameterConstants.CHEQUE_MODE_SCHDPAY_EFFT_ON_REALIZATION)) {
 			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60208", "", null),
 					PennantConstants.default_Language);
@@ -2476,10 +2468,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	/**
 	 * Method to get Schedule related data.
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param isWIF
-	 *            (boolean)
+	 * @param finReference (String)
+	 * @param isWIF        (boolean)
 	 **/
 	private FinScheduleData getFinSchDataByFinRef(String finReference, long logKey, String type) {
 		logger.debug("Entering");
@@ -2694,16 +2684,16 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			FinExcessAmount excess = null;
 			excess = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
 					RepayConstants.EXCESSADJUSTTO_EXCESS);
-			//Creating Excess
+			// Creating Excess
 			if (excess == null) {
-				//TODO:
-				//Throw Exception
+				// TODO:
+				// Throw Exception
 			} else {
 				excess.setBalanceAmt(excess.getBalanceAmt().subtract(excessAmt));
 				excess.setAmount(excess.getAmount().subtract(excessAmt));
 				finExcessAmountDAO.updateExcess(excess);
 			}
-			//Creating ExcessMoment
+			// Creating ExcessMoment
 			FinExcessMovement excessMovement = new FinExcessMovement();
 			excessMovement.setExcessID(excess.getExcessID());
 			excessMovement.setAmount(excessAmt);
@@ -2723,72 +2713,80 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 */
 	public void calculateGSTForCredit(List<FinFeeDetail> finFeeDetailsList, Map<String, BigDecimal> taxPercentages,
 			Long oldLinkTranId) {
+
+		if (oldLinkTranId <= 0) {
+			return;
+		}
+
 		Long invoiceId = gstInvoiceTxnDAO.getInvoiceIdByTranId(oldLinkTranId);
-		if (invoiceId != null) {
-			List<GSTInvoiceTxnDetails> txnDetailsList = gstInvoiceTxnDAO.getTxnListByInvoiceId(invoiceId);
-			for (GSTInvoiceTxnDetails txnDetails : txnDetailsList) {
-				for (FinFeeDetail finFeeDetail : finFeeDetailsList) {
 
-					if (!StringUtils.equals(finFeeDetail.getFeeTypeCode(), txnDetails.getFeeCode())) {
-						continue;
-					}
+		if (invoiceId == null) {
+			return;
+		}
 
-					finFeeDetail.setWaivedAmount(txnDetails.getFeeAmount());
-					TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-					Taxes cgstTax = null;
-					Taxes sgstTax = null;
-					Taxes igstTax = null;
-					Taxes ugstTax = null;
-					Taxes cessTax = null;
+		List<GSTInvoiceTxnDetails> txnDetailsList = gstInvoiceTxnDAO.getTxnListByInvoiceId(invoiceId);
+		for (GSTInvoiceTxnDetails txnDetails : txnDetailsList) {
+			for (FinFeeDetail finFeeDetail : finFeeDetailsList) {
 
-					if (taxHeader == null) {
-						taxHeader = new TaxHeader();
-						taxHeader.setNewRecord(true);
-						taxHeader.setRecordType(PennantConstants.RCD_ADD);
-						taxHeader.setVersion(taxHeader.getVersion() + 1);
-						finFeeDetail.setTaxHeader(taxHeader);
-					}
+				if (!StringUtils.equals(finFeeDetail.getFeeTypeCode(), txnDetails.getFeeCode())) {
+					continue;
+				}
 
-					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+				finFeeDetail.setWaivedAmount(txnDetails.getFeeAmount());
+				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+				Taxes cgstTax = null;
+				Taxes sgstTax = null;
+				Taxes igstTax = null;
+				Taxes ugstTax = null;
+				Taxes cessTax = null;
 
-					if (CollectionUtils.isNotEmpty(taxDetails)) {
-						for (Taxes taxes : taxDetails) {
-							String taxType = taxes.getTaxType();
-							switch (taxType) {
-							case RuleConstants.CODE_CGST:
-								cgstTax = taxes;
-								cgstTax.setWaivedTax(txnDetails.getCGST_AMT());
-								break;
-							case RuleConstants.CODE_SGST:
-								sgstTax = taxes;
-								sgstTax.setWaivedTax(txnDetails.getSGST_AMT());
-								break;
-							case RuleConstants.CODE_IGST:
-								igstTax = taxes;
-								igstTax.setWaivedTax(txnDetails.getIGST_AMT());
-								break;
-							case RuleConstants.CODE_UGST:
-								ugstTax = taxes;
-								ugstTax.setWaivedTax(txnDetails.getUGST_AMT());
-								break;
-							case RuleConstants.CODE_CESS:
-								cessTax = taxes;
-								cessTax.setWaivedTax(txnDetails.getCESS_AMT());
-								break;
-							default:
-								break;
-							}
+				if (taxHeader == null) {
+					taxHeader = new TaxHeader();
+					taxHeader.setNewRecord(true);
+					taxHeader.setRecordType(PennantConstants.RCD_ADD);
+					taxHeader.setVersion(taxHeader.getVersion() + 1);
+					finFeeDetail.setTaxHeader(taxHeader);
+				}
 
+				List<Taxes> taxDetails = taxHeader.getTaxDetails();
+
+				if (CollectionUtils.isNotEmpty(taxDetails)) {
+					for (Taxes taxes : taxDetails) {
+						String taxType = taxes.getTaxType();
+						switch (taxType) {
+						case RuleConstants.CODE_CGST:
+							cgstTax = taxes;
+							cgstTax.setWaivedTax(txnDetails.getCGST_AMT());
+							break;
+						case RuleConstants.CODE_SGST:
+							sgstTax = taxes;
+							sgstTax.setWaivedTax(txnDetails.getSGST_AMT());
+							break;
+						case RuleConstants.CODE_IGST:
+							igstTax = taxes;
+							igstTax.setWaivedTax(txnDetails.getIGST_AMT());
+							break;
+						case RuleConstants.CODE_UGST:
+							ugstTax = taxes;
+							ugstTax.setWaivedTax(txnDetails.getUGST_AMT());
+							break;
+						case RuleConstants.CODE_CESS:
+							cessTax = taxes;
+							cessTax.setWaivedTax(txnDetails.getCESS_AMT());
+							break;
+						default:
+							break;
 						}
-					}
 
-					BigDecimal gstAmount = cgstTax.getWaivedTax().add(sgstTax.getWaivedTax())
-							.add(igstTax.getWaivedTax()).add(ugstTax.getWaivedTax()).add(cessTax.getWaivedTax());
-					finFeeDetail.setWaivedGST(gstAmount);
-
-					if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equalsIgnoreCase(finFeeDetail.getTaxComponent())) {
-						finFeeDetail.setWaivedAmount(txnDetails.getFeeAmount().add(finFeeDetail.getWaivedGST()));
 					}
+				}
+
+				BigDecimal gstAmount = cgstTax.getWaivedTax().add(sgstTax.getWaivedTax()).add(igstTax.getWaivedTax())
+						.add(ugstTax.getWaivedTax()).add(cessTax.getWaivedTax());
+				finFeeDetail.setWaivedGST(gstAmount);
+
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equalsIgnoreCase(finFeeDetail.getTaxComponent())) {
+					finFeeDetail.setWaivedAmount(txnDetails.getFeeAmount().add(finFeeDetail.getWaivedGST()));
 				}
 			}
 		}
@@ -2928,7 +2926,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
-		// Document Details. 
+		// Document Details.
 		List<AuditDetail> documentDetails = finReceiptHeader.getAuditDetailMap().get("DocumentDetails");
 		if (documentDetails != null && documentDetails.size() > 0) {
 			DocumentDetails document = new DocumentDetails();
@@ -2971,7 +2969,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		//Document Details
+		// Document Details
 		if (CollectionUtils.isNotEmpty(finReceiptHeader.getDocumentDetails())) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(finReceiptHeader, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
