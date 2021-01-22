@@ -1053,6 +1053,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				extFieldMap.remove("WorkflowId");
 
 				aExetendedFieldRender.setMapValues(extFieldMap);
+				aExetendedFieldRender.setTableName(tableName.toString());
 				extendedFieldRenderList.add(aExetendedFieldRender);
 			}
 		}
@@ -7719,6 +7720,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						tableName.append("_ED");
 						assetDetail = extendedFieldDetailsService.validate(assetDetail, method, usrLanguage,
 								tableName.toString());
+						aExetendedFieldRender.setTableName(tableName.toString());
 						auditDetails.add(assetDetail);
 					}
 				}
