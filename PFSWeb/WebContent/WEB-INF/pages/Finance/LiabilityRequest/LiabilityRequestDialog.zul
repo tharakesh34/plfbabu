@@ -1175,7 +1175,7 @@
 												       <label id="label_FinanceMainDialog_ParentLoanReference" value="${c:l('label_FinanceMainDialog_ParentLoanReference.value')}" />
 													   <hbox>
 														  <space spacing="2px" />
-														  <textbox id="parentLoanReference" />
+														  <extendedcombobox id="parentLoanReference" />
 													   </hbox>
 												   </row>
 												</rows>
