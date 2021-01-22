@@ -43,6 +43,8 @@
 package com.pennant.backend.model.applicationmaster;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -90,6 +92,13 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	public AgreementDefinition(long id) {
 		super();
 		this.setId(id);
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("pwdProtected");
+
+		return excludeFields;
 	}
 
 	// ******************************************************//
