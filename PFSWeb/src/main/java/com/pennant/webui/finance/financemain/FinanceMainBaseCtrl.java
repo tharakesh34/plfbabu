@@ -14474,9 +14474,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 									new String[] { Labels.getLabel("label_FinanceMainDialog_RepayBaseRate.value"),
 											Labels.getLabel("label_FinanceMainDialog_ProfitRate.value") }));
 				}
-				aFinanceMain.setRepayProfitRate(this.repayProfitRate.getValue());
 			}
-
+			aFinanceMain.setRepayProfitRate(this.repayProfitRate.getValue());
 			if (aFinanceMain.getRepayProfitRate() == null) {
 				aFinanceMain.setRepayProfitRate(BigDecimal.ZERO);
 			}
