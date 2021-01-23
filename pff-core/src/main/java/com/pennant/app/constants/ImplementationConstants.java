@@ -555,8 +555,8 @@ public class ImplementationConstants {
 	public static final boolean LIST_RENDER_ON_LOAD;
 
 	public static boolean LOAN_ORG_DMS_TAB_REQ = false;
-	public static boolean ALLOW_PMAY = false;
-	public static boolean ALLOW_OCR = false;
+	public static boolean ALLOW_PMAY;
+	public static boolean ALLOW_OCR;
 
 	public static boolean ADVANCE_PAYMENT_INT = false;
 	public static boolean ADVANCE_PAYMENT_EMI = false;

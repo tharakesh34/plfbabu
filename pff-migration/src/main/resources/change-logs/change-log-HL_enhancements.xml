@@ -18439,14 +18439,15 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<!-- <changeSet id="387" author="rajesh.n">
+	<changeSet id="387" author="rajesh.n">
 		<comment>PLF_CORE_ST#6, TK#49</comment>
 		<sql>
             <![CDATA[
-                  insert into STAGETABDETAIL (tabid, tabcode, tabdescription, active) values (17, 'OCR', 'OCR Details', 1);
+            	delete from STAGETABDETAIL where tabcode = 'OCR';
+				insert into STAGETABDETAIL (tabid, tabcode, tabdescription, active) values ((SELECT max(TabId)+1 FROM StageTabDetail), 'OCR', 'OCR Details', 1);
             ]]>
 		</sql>
-	</changeSet> -->
+	</changeSet>
 
 	<changeSet id="388" author="venkatesh.ch">
 		<comment>PSD # 148614 </comment>
@@ -19576,13 +19577,14 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	<!-- <changeSet id="456" author="rajesh.n">
+	<changeSet id="456" author="rajesh.n">
 		<sql>
 			<![CDATA[
-				insert into STAGETABDETAIL (tabid, tabcode, tabdescription, active) values (18, 'PMAY', 'PMAY Details', 1);
+				delete from STAGETABDETAIL where tabcode = 'PMAY';
+				insert into STAGETABDETAIL (tabid, tabcode, tabdescription, active) values ((SELECT max(TabId)+1 FROM StageTabDetail), 'PMAY', 'PMAY Details', 1);
 			]]>
 		</sql>
-	</changeSet> -->
+	</changeSet>
 <!-- 
 	<changeSet id="457" author="rajesh.n">
 		<sql>
@@ -34836,5 +34838,15 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'FINANCETAXDETAILDIALOG_BTNADDRESSCOPY');
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FINANCETAXDETAILDIALOG_BTNADDRESSCOPY'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			]]>
+		</sql>
+	</changeSet>
+	
 	
 </databaseChangeLog>
