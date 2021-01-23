@@ -833,7 +833,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 
 				this.listBoxCustomerGst.setHeight(borderLayoutHeight - (isRetailCustomer ? 132 : 90) + "px");
-		
+
 				this.listBoxCustomerIncome.setHeight(borderLayoutHeight - 132 + "px");
 				this.gb_directorDetails.setHeight(borderLayoutHeight - 40 + "px");
 				this.listBoxCustomerDirectory.setHeight(borderLayoutHeight - 40 + "px");
@@ -1361,7 +1361,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// Sub categories
 			fillComboBox(this.subCategory, aCustomer.getSubCategory(), PennantStaticListUtil.getSubCategoriesList(),
 					subCategoryExcludeFields.toString());
-			
+
 			fillComboBox(this.natureOfBusiness, aCustomer.getNatureOfBusiness(),
 					PennantStaticListUtil.getNatureofBusinessList(), "");
 			fillComboBox(this.entityType, aCustomer.getEntityType(), PennantStaticListUtil.getEntityTypeList(), "");
@@ -2232,14 +2232,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (aCustomerDetails.getExtendedFieldHeader() != null) {
 			aCustomerDetails.setExtendedFieldRender(extendedFieldCtrl.save(true, aCustomerDetails));
 		}
-		
+
 		@SuppressWarnings("rawtypes")
 		Map<String, List> customerPhoneNumbers = customerPhoneNumberInLineEditCtrl
 				.prepareCustomerPhoneNumberData(aCustomerDetails, this.listBoxCustomerPhoneNumbersInlineEdit);
 		if (customerPhoneNumbers.get("errorList") != null) {
 			@SuppressWarnings("unchecked")
-			List<WrongValueException> errorlist = (List<WrongValueException>) customerPhoneNumbers
-					.get("errorList");
+			List<WrongValueException> errorlist = (List<WrongValueException>) customerPhoneNumbers.get("errorList");
 			showErrorDetails(errorlist, custTab, tabkYCDetails);
 		}
 		if (customerPhoneNumbers.get("customerPhoneNumbers") != null) {
@@ -2376,23 +2375,24 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * displaying exceptions if occured
 	 */
 	private void showErrorDetails(List<WrongValueException> wve, Tab parentTab, Tab childTab) {
+		logger.debug("Entering");
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (CollectionUtils.isEmpty(wve)) {
-			return;
+		if (wve.size() > 0) {
+			logger.debug("Throwing occured Errors By using WrongValueException");
+			if (parentTab != null) {
+				parentTab.setSelected(true);
+			}
+			childTab.setSelected(true);
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+				Clients.scrollIntoView(wvea[i].getComponent());
+			}
+			throw new WrongValuesException(wvea);
 		}
-
-		logger.debug("Throwing occured Errors By using WrongValueException");
-		if (parentTab != null) {
-			parentTab.setSelected(true);
-		}
-		childTab.setSelected(true);
-		WrongValueException[] wvea = new WrongValueException[wve.size()];
-		for (WrongValueException we : wve) {
-			Clients.scrollIntoView(we.getComponent());
-		}
-		throw new WrongValuesException(wvea);
+		logger.debug("Leaving");
 	}
 
 	/**
