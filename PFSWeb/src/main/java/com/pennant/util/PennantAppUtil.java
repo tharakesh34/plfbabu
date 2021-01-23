@@ -296,7 +296,7 @@ public class PennantAppUtil {
 	public static BigDecimal unFormateAmount(String amount, int dec) {
 		return CurrencyUtil.unFormat(amount, dec);
 	}
-	
+
 	/**
 	 * 
 	 * @deprecated use {@link CurrencyUtil#format} instead.
@@ -2442,7 +2442,7 @@ public class PennantAppUtil {
 	public static Object getAddressCopyList(Window window, long custID) {
 		Filter filter[] = new Filter[1];
 		filter[0] = new Filter("CustId", custID, Filter.OP_EQUAL);
-		return ExtendedSearchListBox.show(window, "CustomerAddress", filter, "");
+		return ExtendedSearchListBox.show(window, "CustomerAddres", filter, "");
 	}
 
 	/**
