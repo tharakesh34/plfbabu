@@ -20911,6 +20911,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (validate() != null) {
 			this.buildEvent = false;
 
+			if (finFeeDetailListCtrl == null) {
+				if (financeMainDialogCtrl instanceof ConvFinanceMainDialogCtrl) {
+					setFinFeeDetailListCtrl(
+							((ConvFinanceMainDialogCtrl) financeMainDialogCtrl).getFinFeeDetailListCtrl());
+				}
+			}
+
+			if (finFeeDetailListCtrl != null) {
+				finFeeDetailListCtrl.doExecuteFeeCharges(true, finScheduleData);
+			}
+
 			if (manualSchedule.isChecked()) {
 				if (manualScheduleDetailDialogCtrl != null) {
 					manualScheduleDetailDialogCtrl.doPrepareSchdData(finScheduleData, true);

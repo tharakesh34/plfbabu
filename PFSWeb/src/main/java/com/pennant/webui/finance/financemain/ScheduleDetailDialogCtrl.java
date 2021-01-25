@@ -1149,15 +1149,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 		this.financeSchdDetailsTab.setSelected(true);
 
-		if (finFeeDetailListCtrl == null) {
-			if (financeMainDialogCtrl instanceof ConvFinanceMainDialogCtrl) {
-				setFinFeeDetailListCtrl(((ConvFinanceMainDialogCtrl) financeMainDialogCtrl).getFinFeeDetailListCtrl());
-			}
-		}
-
-		if (finFeeDetailListCtrl != null) {
-			finFeeDetailListCtrl.doExecuteFeeCharges(true, finScheduleData);
-		}
 		logger.debug("Leaving");
 	}
 
