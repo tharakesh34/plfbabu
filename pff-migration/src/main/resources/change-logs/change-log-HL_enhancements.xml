@@ -23160,6 +23160,48 @@ UNION ALL
 			constraintName="pk_VasMovementDetails" tableName="VasMovementDetails" />
 	</changeSet>
 	
+	<changeSet id="ST#541.1" author="Gopal.p">
+		<addColumn tableName="DMS_QUEUE">
+			<column name="OfferId" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#541.2" author="Gopal.p">
+		<addColumn tableName="DMS_QUEUE">
+			<column name="ApplicationNo" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#541.3" author="Gopal.p">
+		<addColumn tableName="DMS_QUEUE">
+			<column name="AuxiloryFields1" type="varchar(500)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#541.4" author="Gopal.p">
+		<addColumn tableName="DMS_QUEUE">
+			<column name="AuxiloryFields2" type="varchar(500)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#541.5" author="Gopal.p">
+		<addColumn tableName="DMS_QUEUE">
+			<column name="AuxiloryFields3" type="varchar(500)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#541.6" author="Gopal.p">
+		<addColumn tableName="DMS_QUEUE">
+			<column name="AuxiloryFields4" type="varchar(500)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#541.7" author="Gopal.p">
+		<addColumn tableName="DMS_QUEUE">
+			<column name="AuxiloryFields5" type="varchar(500)" />
+		</addColumn>
+	</changeSet>
+	
 	<!-- ST#1211 - Views modification while Merging from HL >> CORE starts -->
 	
 	<changeSet id="ST#1211.100.48_pre" author="Gopal.p" dbms="postgresql">
