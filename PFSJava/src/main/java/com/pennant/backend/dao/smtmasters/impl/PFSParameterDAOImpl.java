@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PFSParameterDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-07-2011    														*
- *                                                                  						*
- * Modified Date    :  12-07-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PFSParameterDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-07-2011 * * Modified
+ * Date : 12-07-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-07-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-07-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -82,15 +64,12 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	/**
 	 * Fetch the Record System Parameter details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return PFSParameter
 	 */
 	@Override
 	public PFSParameter getPFSParameterById(final String id, String type) {
-		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength");
@@ -138,7 +117,6 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -146,10 +124,8 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * This method Deletes the Record from the SMTparameters or SMTparameters_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete System Parameter by key SysParmCode
 	 * 
-	 * @param System
-	 *            Parameter (pFSParameter)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param System Parameter (pFSParameter)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -183,10 +159,8 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * 
 	 * save System Parameter
 	 * 
-	 * @param System
-	 *            Parameter (pFSParameter)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param System Parameter (pFSParameter)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -219,10 +193,8 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * This method updates the Record SMTparameters or SMTparameters_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update System Parameter by key SysParmCode and Version
 	 * 
-	 * @param System
-	 *            Parameter (pFSParameter)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param System Parameter (pFSParameter)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
