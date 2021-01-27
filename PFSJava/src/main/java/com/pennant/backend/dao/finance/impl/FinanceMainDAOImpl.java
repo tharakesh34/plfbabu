@@ -5811,12 +5811,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", PromotionCode, FinCategory, ProductCategory, ReAgeBucket, TDSApplicable, BpiTreatment");
 		sql.append(", FinRepaymentAmount, GrcAdvType, AdvType, SanBsdSchdle");
 		sql.append(", PromotionSeqId, SvAmount, CbAmount, EmployeeName");
-		sql.append(", FinAssetValue, FinCurrAssetValue");
 		sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
 		sql.append(", Version, LastMntOn, ReferralId, GraceTerms");
 		sql.append(", FinAssetValue, FinCurrAssetValue");
-		sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
-		sql.append(", Version, LastMntOn, ReferralId, GraceTerms, NumberOfTerms, Alwmultidisb");
+		sql.append(", NumberOfTerms, Alwmultidisb");
 		sql.append(" from FinanceMain");
 		return sql;
 	}
