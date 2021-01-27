@@ -53,6 +53,10 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("IND_AS_ACCOUNTING_REQ", true);
 
+		customConstants.put("ALLOW_AUTO_GRACE_EXT", true);
+
+		customConstants.put("ALLOW_LOAN_DOWNSIZING", true);
+
 	}
 
 	@Override
