@@ -10242,7 +10242,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			return;
 		} else {
-			if (!this.graceTerms.isReadonly() && !this.gracePeriodEndDate.isReadonly()
+			if (this.graceTerms.isReadonly() && !this.gracePeriodEndDate.isReadonly()
 					&& !this.manualSchedule.isChecked()) {
 				if (this.gracePeriodEndDate.getValue() != null || this.gracePeriodEndDate_two.getValue() != null) {
 					if (this.finStartDate.getValue().compareTo(this.nextGrcPftDate_two.getValue()) == 0) {
