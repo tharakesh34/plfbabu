@@ -106,6 +106,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	protected Borderlayout borderLayout_QueueAssignmentDialog; // autoWired
 	protected Listbox listbox_AssignmentRecords; // autoWired
 	protected Listheader listheader_ActualOwner;
+	protected Listheader listheader_ToUser;
 	protected Uppercasebox finReference; // autoWired
 	protected Uppercasebox custCIF; // autoWired
 	protected ExtendedCombobox fromUser;
@@ -182,6 +183,8 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 			} else {
 				setQueueAssignmentHeader(null);
 			}
+
+			setQueueAssignment(getQueueAssignmentHeader().getQueueAssignmentsList().get(0));
 
 			doLoadWorkFlow(this.queueAssignmentHeader.isWorkflow(), this.queueAssignmentHeader.getWorkflowId(),
 					this.queueAssignmentHeader.getNextTaskId());
@@ -801,7 +804,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 					&& !foundinList(searchList, queueAssignment)) {
 				searchList.add(queueAssignment);
 			}
-			if (returnList(custFilterCode, custValue, queueAssignment.getLovDescCustCIF())
+			if (returnList(custFilterCode, custValue, String.valueOf(queueAssignment.getLovDescCustCIF()))
 					&& !foundinList(searchList, queueAssignment)) {
 				searchList.add(queueAssignment);
 			}
@@ -1043,7 +1046,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 				references[i] = queue.getReference();
 				listCell.setParent(item);
 
-				listCell = new Listcell(queue.getLovDescCustCIF());
+				listCell = new Listcell(String.valueOf(queue.getLovDescCustCIF()));
 				listCell.setParent(item);
 
 				listCell = new Listcell(
@@ -1051,7 +1054,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 				listCell.setStyle("text-align:right;");
 				listCell.setParent(item);
 
-				listCell = new Listcell(queue.getLovDescActualOwner());
+				listCell = new Listcell(String.valueOf(queue.getLovDescActualOwner()));
 				listCell.setParent(item);
 
 				ExtendedCombobox toUser = new ExtendedCombobox();

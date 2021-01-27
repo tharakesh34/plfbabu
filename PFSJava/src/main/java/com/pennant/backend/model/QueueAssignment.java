@@ -61,7 +61,7 @@ public class QueueAssignment extends AbstractWorkflowEntity {
 	private long fromUserId = Long.MIN_VALUE;
 	private long userId = Long.MIN_VALUE;
 	private String userRoleCode;
-	private String lovDescActualOwner;
+	private Long lovDescActualOwner;
 	private String reference;
 	private String lovDescUserName;
 	private String lovDescFinType;
@@ -72,7 +72,7 @@ public class QueueAssignment extends AbstractWorkflowEntity {
 	private String lovDescUserAction;
 	private BigDecimal lovDescFinAmount;
 	private int lovDescEditField;
-	private String lovDescCustCIF;
+	private Long lovDescCustCIF;
 
 	private int assignedCount = 0;
 	private Timestamp lastAssignedOn = new Timestamp(System.currentTimeMillis());
@@ -256,11 +256,11 @@ public class QueueAssignment extends AbstractWorkflowEntity {
 		this.lovDescFinAmount = lovDescFinAmount;
 	}
 
-	public String getLovDescCustCIF() {
+	public Long getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
 
-	public void setLovDescCustCIF(String lovDescCustCIF) {
+	public void setLovDescCustCIF(Long lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
 
@@ -317,11 +317,11 @@ public class QueueAssignment extends AbstractWorkflowEntity {
 		this.lovDescFinTypeDesc = lovDescFinTypeDesc;
 	}
 
-	public String getLovDescActualOwner() {
+	public Long getLovDescActualOwner() {
 		return lovDescActualOwner;
 	}
 
-	public void setLovDescActualOwner(String lovDescActualOwner) {
+	public void setLovDescActualOwner(Long lovDescActualOwner) {
 		this.lovDescActualOwner = lovDescActualOwner;
 	}
 
