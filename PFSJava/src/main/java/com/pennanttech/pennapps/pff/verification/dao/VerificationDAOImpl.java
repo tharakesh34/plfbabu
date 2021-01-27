@@ -317,6 +317,12 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		int type = verification.getVerificationType();
 
+		// FIXME : need to check for Legal Vetting
+
+		if (type == VerificationType.VETTING.getKey()) {
+			return null;
+		}
+
 		RCUDocument rcuDocument = null;
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
