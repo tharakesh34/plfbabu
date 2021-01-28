@@ -348,6 +348,8 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		// Adding Default Columns for Extended field Detail List (Number of units & Unit Price)
 		if (aExtendedFieldHeader.isNewRecord()) {
 
+			aExtendedFieldHeader.setExtendedFieldDetails(this.extendedFieldDetailsList);
+
 			if (aExtendedFieldHeader.getExtendedFieldDetails() == null
 					|| aExtendedFieldHeader.getExtendedFieldDetails().isEmpty()) {
 				aExtendedFieldHeader.setExtendedFieldDetails(new ArrayList<ExtendedFieldDetail>());
