@@ -1087,9 +1087,12 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			BigDecimal totalPaidFee = BigDecimal.ZERO;
 			List<Long> feeIds = new ArrayList<Long>(1);
 			for (FinFeeDetail finFeeDetail : feeDetails) {
-				feeIds.add(finFeeDetail.getFeeID());
-				if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) != 0) {
-					totalPaidFee = totalPaidFee.add(finFeeDetail.getPaidAmount());
+				//If we Select VAS Fee Payment Mode as Cash or Cheque getting error "Fees not paid"
+				if (!finFeeDetail.getFinEvent().equalsIgnoreCase("VASFEE")) {
+					feeIds.add(finFeeDetail.getFeeID());
+					if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) != 0) {
+						totalPaidFee = totalPaidFee.add(finFeeDetail.getPaidAmount());
+					}
 				}
 			}
 			ErrorDetail errorDetail = validateUpfrontFees(feeIds);
