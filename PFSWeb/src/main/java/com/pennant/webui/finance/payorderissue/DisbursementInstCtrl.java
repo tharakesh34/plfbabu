@@ -68,10 +68,7 @@ import org.zkoss.zul.Listitem;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.configuration.VASConfigurationDAO;
-import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -109,8 +106,6 @@ public class DisbursementInstCtrl {
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private DocumentDetails documentDetails;
 
-	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
-	private VASConfigurationDAO vASConfigurationDAO;
 	private DMSService dMSService;
 
 	private List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>(1);
@@ -331,76 +326,6 @@ public class DisbursementInstCtrl {
 					item.setAttribute("data", detail);
 					ComponentsCtrl.applyForward(item, "onDoubleClick=onFinAdvancePaymentsItemDoubleClicked");
 					listbox.appendChild(item);
-				}
-
-				if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB) && key == 1) {
-					if (vasRecordingList != null && vasRecordingList.size() > 0) {
-						for (VASRecording vasDetail : vasRecordingList) {
-
-							VASConfiguration configuration = vasDetail.getVasConfiguration();
-
-							if (configuration == null) {
-								configuration = this.vASConfigurationDAO
-										.getVASConfigurationByCode(vasDetail.getProductCode(), "");
-							}
-
-							VASProviderAccDetail vasProviderAccDetail = vASProviderAccDetailDAO
-									.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(),
-											vasDetail.getEntityCode(), "_view");
-							if (vasProviderAccDetail != null) {
-								Listitem item = new Listitem();
-								lc = new Listcell("");
-								lc.setParent(item);
-								lc = new Listcell(vasProviderAccDetail.getProviderDesc());
-								lc.setParent(item);
-								lc = new Listcell(vasProviderAccDetail.getPaymentMode());
-								lc.setParent(item);
-
-								lc = new Listcell(vasProviderAccDetail.getBankName());
-								lc.setParent(item);
-								lc = new Listcell(vasProviderAccDetail.getProviderDesc());
-								lc.setParent(item);
-
-								lc = new Listcell(vasProviderAccDetail.getAccountNumber());
-								lc.setParent(item);
-								grandTotal = grandTotal.add(vasDetail.getFee());
-								subTotal = subTotal.add(vasDetail.getFee());
-								lc = new Listcell(PennantApplicationUtil.amountFormate(vasDetail.getFee(), ccyFormat));
-								lc.setParent(item);
-
-								if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
-									lc = new Listcell(vasDetail.getInsStatus());
-								} else {
-									lc = new Listcell(PennantConstants.RECORD_TYPE_NEW);
-
-								}
-								lc.setParent(item);
-
-								if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
-									lc = new Listcell(PennantConstants.RCD_STATUS_APPROVED);
-
-								} else {
-									lc = new Listcell("");
-								}
-								lc.setParent(item);
-
-								if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
-									lc = new Listcell("");
-
-								} else {
-									lc = new Listcell(PennantConstants.RCD_ADD);
-								}
-
-								lc.setParent(item);
-
-								item.setAttribute("data", vasProviderAccDetail);
-								ComponentsCtrl.applyForward(item,
-										"onDoubleClick=onFinAdvancePaymentsItemDoubleClicked");
-								listbox.appendChild(item);
-							}
-
-						}
-					}
 				}
 
 				if (subtotalRequired) {
