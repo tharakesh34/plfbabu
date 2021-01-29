@@ -398,9 +398,12 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		map.put("ccy", ccy);
 		map.put("filter", setFilter(getjointAcFilter()));
 		map.put("coAppFilter", setFilter(getGurantorFilter())); // For getting coapplicant list from  getGurantorFilter()
-		if (financeMainDialogCtrl != null) {
+		if (financeMainDialogCtrl != null && financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
 			map.put("applicationNo", ((FinanceMainBaseCtrl) financeMainDialogCtrl).getApplicationNo());
 			map.put("leadId", ((FinanceMainBaseCtrl) financeMainDialogCtrl).getLeadId());
+		} else {
+			map.put("applicationNo", financeMain.getApplicationNo());
+			map.put("leadId", financeMain.getOfferId());
 		}
 		try {
 			Executions.createComponents("/WEB-INF/pages/JointAccountDetail/JointAccountDetailDialog.zul",
