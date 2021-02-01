@@ -427,7 +427,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 				wve.add(we);
 			}
 		} else {
-			finMaintainInstruction.setTdsPercentage(null);
+			finMaintainInstruction.setTdsPercentage(BigDecimal.ZERO);
 			finMaintainInstruction.setTdsStartDate(null);
 			finMaintainInstruction.setTdsEndDate(null);
 			finMaintainInstruction.setTdsLimit(BigDecimal.ZERO);

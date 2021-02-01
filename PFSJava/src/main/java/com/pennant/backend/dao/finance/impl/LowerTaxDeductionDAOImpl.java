@@ -42,7 +42,7 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 
 		sql.append(" from LowerTaxDeduction");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinReference = ? and Percentage > 0");
 
 		logger.trace(Literal.SQL + sql.toString());
 
