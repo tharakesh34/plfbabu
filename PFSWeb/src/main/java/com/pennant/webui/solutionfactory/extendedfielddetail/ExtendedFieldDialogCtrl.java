@@ -878,7 +878,6 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 	public ExtendedFieldHeader doSave_ExtendedFields(Tab tab) {
 		logger.debug("Entering");
 
-		doSetList(this.isMarketableSecurities, extendedFieldHeader);
 		doWriteComponentsToBean(extendedFieldHeader, tab);
 		if (StringUtils.isBlank(extendedFieldHeader.getRecordType())) {
 			extendedFieldHeader.setVersion(extendedFieldHeader.getVersion() + 1);
