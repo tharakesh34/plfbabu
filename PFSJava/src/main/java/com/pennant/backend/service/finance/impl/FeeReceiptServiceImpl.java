@@ -1220,33 +1220,6 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		for (FinFeeDetail feeDetail : feeDetails) {
 			FinFeeReceipt feeReceipt = feeDetail.getFinFeeReceipts().get(0);
 			if (feeReceipt.getId() == Long.MIN_VALUE) {
-				feeDetail.setTransactionId(receiptHeader.getExtReference());
-				if (feeDetail.getFeeID() <= 0) {
-					feeDetail.setFeeID(finFeeDetailDAO.save(feeDetail, false, type));
-					feeReceipt.setFeeID(feeDetail.getFeeID());
-					/*
-					 * if (feeDetail.getFinTaxDetails() != null) {
-					 * feeDetail.getFinTaxDetails().setFeeID(feeDetail.getFeeID());
-					 * getFinTaxDetailsDAO().save(feeDetail.getFinTaxDetails(), type); }
-					 */
-					//FIXME MURTHY
-				} else {
-					//FIXME:Satish Need to check record is available in main/temp tables or not(Loan is created from API with FEE's and it is in temp table
-					//user is trying to create a UPFEE with stp=true
-					FinFeeDetail detail = finFeeDetailDAO.getFinFeeDetailById(feeDetail, false, type);
-					if (detail == null) {
-						finFeeDetailDAO.save(feeDetail, false, type);
-					} else {
-						finFeeDetailDAO.update(feeDetail, false, type);
-					}
-
-					/*
-					 * if (feeDetail.getFinTaxDetails() != null) {
-					 * getFinTaxDetailsDAO().update(feeDetail.getFinTaxDetails(), type); }
-					 */
-
-					//FIXME Murthy
-				}
 				feeReceipt.setReceiptID(receiptHeader.getReceiptID());
 				feeReceipt.setFeeID(feeDetail.getFeeID());
 				feeReceipt.setFeeTypeId(feeDetail.getFeeTypeID());

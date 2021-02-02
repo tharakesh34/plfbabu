@@ -276,7 +276,7 @@ public class SMTParameterConstants {
 	// FIXME HL SMT Parameters
 	public static final String CREDIT_ELG_PARAMS = "CREDIT_ELG_PARAMS";
 	public static final String VER_RCU_VALIDITY_DAYS = "VER_RCU_VALIDITY_DAYS";
-	public static final String VER_FI_VALIDITY_DAYS = "VER_FI_VALIDITY_DAYS";
+	public static final String VER_FI_VALIDITY_DAYS = "FI_VERIFICATION_VALIDITY_DAYS";
 	public static final String CUSTOMIZED_SOAREPORT = "CUSTOMIZED_SOAREPORT";
 	public static final String GST_DETAILS_TAB_REQUIRED_FOR_RETAIL = "GST_DETAILS_TAB_REQUIRED_FOR_RETAIL";
 
