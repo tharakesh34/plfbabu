@@ -34906,6 +34906,10 @@ UNION ALL
 		</sql>
 </changeSet>
 
-
+<changeSet id="PSD#166885.1" author="saranya.s" dbms="postgresql,oracle">
+		<sql>
+			alter table verification_vt_dtls_stge rename to verification_vt_dtls_stage
+		</sql>
+</changeSet>
 
 </databaseChangeLog>
