@@ -1962,7 +1962,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// Account Number
 		if (!this.accNumber.isReadonly()) {
 			this.accNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_AccNumber.value"),
-					null, validate, minAccNoLength, maxAccNoLength));
+					PennantRegularExpressions.REGEX_ACCOUNTNUMBER, validate, minAccNoLength, maxAccNoLength));
 		}
 		// Account Holder Name
 		if (!this.accHolderName.isReadonly()) {
