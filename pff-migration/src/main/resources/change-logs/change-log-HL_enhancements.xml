@@ -25103,104 +25103,6 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1211.100.7_pre" author="Gopal.p" dbms="postgresql">
-		<sql> 
-		<![CDATA[ 
-			select deps_save_and_drop_dependencies ('plf', 'financemain_lview'); 
-		]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.7" author="Gopal.p">
-		<createView viewName="FINANCEMAIN_LVIEW" replaceIfExists="true">
-			<![CDATA[
-		 		SELECT T1.FINREFERENCE,
-					T1.INVESTMENTREF,
-					T1.FINTYPE,
-					T1.FINCCY,
-					T1.FINAMOUNT,
-					T1.DOWNPAYMENT,
-					T1.FEECHARGEAMT,
-					T1.SCHEDULEMETHOD,
-					T1.NUMBEROFTERMS,
-					T1.RECORDSTATUS,
-					T1.RECORDTYPE,
-					T1.ROLECODE,
-					T1.NEXTROLECODE,
-					T1.FINBRANCH,
-					T1.FINCONTRACTDATE,
-					T1.LINKEDFINREF,
-					T1.NEXTUSERID,
-					T1.PRIORITY,
-					T1.WORKFLOWID,
-					T1.TASKID,
-					T1.NEXTTASKID,
-					T1.FINPREAPPROVEDREF,
-					T1.RCDMAINTAINSTS,
-					T1.INSURANCEAMT,
-					T1.FINCURRASSETVALUE,
-					T1.CALTERMS,
-					T1.DEVIATIONAPPROVAL,
-					T1.FINPURPOSE,
-					T1.INITIATEDATE,
-					T1.FINASSETVALUE,
-					T2.CUSTCIF LOVDESCCUSTCIF,
-					T2.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
-					T2.CUSTPASSPORTNO LOVDESCCUSTPASSPORTNO,
-					T2.CUSTDOB LOVDESCCUSTDOB,
-					T2.CUSTCRCPR LOVDESCCUSTCRCPR,
-					T2.PHONENUMBER,
-					T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
-					T3.FINDIVISION LOVDESCFINDIVISION,
-					T3.PRODUCT LOVDESCFINPRODUCT,
-					T3.FINTYPEDESC LOVDESCFINTYPENAME,
-					COALESCE(T4.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
-					T1.SAMPLINGREQUIRED,
-					T1.ADVANCEEMI,
-					T1.ADVEMITERMS,
-					T1.BPIPFTDAYSBASIS,
-					T1.GRACETERMS,
-					T1.PRODUCTCATEGORY,
-					T1.REQLOANAMT,
-					T1.REQLOANTENOR,
-					T1.FINOCRREQUIRED,
-					T1.OFFERPRODUCT,
-					T1.OFFERAMOUNT,
-					T1.CUSTSEGMENTATION,
-					T1.BASEPRODUCT,
-					T1.PROCESSTYPE,
-					T1.BUREAUTIMESERIES,
-					T1.CAMPAIGNNAME,
-					T1.EXISTINGLANREFNO,
-					T1.LEADSOURCE,
-					T1.POSOURCE,
-					T1.RSA,
-					T1.VERIFICATION,
-					T1.SOURCINGBRANCH,
-					T1.SOURCHANNELCATEGORY,
-					T1.ASMNAME,
-					T1.OFFERID,
-					T1.APPLICATIONNO,
-					T1.LASTMNTON,
-					T2.CUSTID,
-					T1.INSTBASEDSCHD,
-					T1.VERSION
-				FROM FINANCEMAIN_TEMP T1
-				INNER JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
-				INNER JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE
-				LEFT JOIN SECROLES T4 ON T1.NEXTROLECODE= T4.ROLECD
-				  ]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.7_post" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'financemain_lview');	
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="ST#1211.100.8_pre" author="Gopal.p" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
@@ -25653,102 +25555,6 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1211.100.11_pre" author="Gopal.p" dbms="postgresql">
-		<sql> 
-		<![CDATA[ 
-			select deps_save_and_drop_dependencies ('plf', 'financemain_lview'); 
-		]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.11" author="Gopal.p">
-		<createView viewName="FINANCEMAIN_LVIEW" replaceIfExists="true">
-			<![CDATA[
-		 		SELECT T1.FINREFERENCE,
-					T1.INVESTMENTREF,
-					T1.FINTYPE,
-					T1.FINCCY,
-					T1.FINAMOUNT,
-					T1.DOWNPAYMENT,
-					T1.FEECHARGEAMT,
-					T1.SCHEDULEMETHOD,
-					T1.NUMBEROFTERMS,
-					T1.RECORDSTATUS,
-					T1.RECORDTYPE,
-					T1.ROLECODE,
-					T1.NEXTROLECODE,
-					T1.FINBRANCH,
-					T1.FINCONTRACTDATE,
-					T1.LINKEDFINREF,
-					T1.NEXTUSERID,
-					T1.PRIORITY,
-					T1.WORKFLOWID,
-					T1.TASKID,
-					T1.NEXTTASKID,
-					T1.FINPREAPPROVEDREF,
-					T1.RCDMAINTAINSTS,
-					T1.INSURANCEAMT,
-					T1.FINCURRASSETVALUE,
-					T1.CALTERMS,
-					T1.DEVIATIONAPPROVAL,
-					T1.FINPURPOSE,
-					T1.INITIATEDATE,
-					T1.FINASSETVALUE,
-					T2.CUSTCIF LOVDESCCUSTCIF,
-					T2.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
-					T2.CUSTPASSPORTNO LOVDESCCUSTPASSPORTNO,
-					T2.CUSTDOB LOVDESCCUSTDOB,
-					T2.CUSTCRCPR LOVDESCCUSTCRCPR,
-					T2.PHONENUMBER,
-					T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
-					T3.FINDIVISION LOVDESCFINDIVISION,
-					T3.PRODUCT LOVDESCFINPRODUCT,
-					T3.FINTYPEDESC LOVDESCFINTYPENAME,
-					COALESCE(T4.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
-					T1.SAMPLINGREQUIRED,
-					T1.ADVANCEEMI,
-					T1.ADVEMITERMS,
-					T1.BPIPFTDAYSBASIS,
-					T1.GRACETERMS,
-					T1.PRODUCTCATEGORY,
-					T1.REQLOANAMT,
-					T1.REQLOANTENOR,
-					T1.FINOCRREQUIRED,
-					T1.OFFERPRODUCT,
-					T1.OFFERAMOUNT,
-					T1.CUSTSEGMENTATION,
-					T1.BASEPRODUCT,
-					T1.PROCESSTYPE,
-					T1.BUREAUTIMESERIES,
-					T1.CAMPAIGNNAME,
-					T1.EXISTINGLANREFNO,
-					T1.LEADSOURCE,
-					T1.POSOURCE,
-					T1.RSA,
-					T1.VERIFICATION,
-					T1.SOURCINGBRANCH,
-					T1.SOURCHANNELCATEGORY,
-					T1.ASMNAME,
-					T1.OFFERID,
-					T1.APPLICATIONNO,
-					T1.LASTMNTON,
-					T1.VERSION
-					FROM FINANCEMAIN_TEMP T1
-					INNER JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
-					INNER JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE
-					LEFT JOIN SECROLES T4 ON T1.NEXTROLECODE= T4.ROLECD
-				  ]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.11_post" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-					select deps_restore_dependencies ('plf', 'financemain_lview');	
-			]]>
-		</sql>
-	</changeSet>
-	
 	<changeSet id="ST#1211.100.12_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -30940,7 +30746,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-		<changeSet id="ST#1211.100.47_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#1211.100.47.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
 			select deps_save_and_drop_dependencies ('plf', 'financemain_lview'); 
@@ -30948,7 +30754,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1211.100.47" author="Gopal.p">
+	<changeSet id="ST#1211.100.47.1" author="Gopal.p">
 		<createView viewName="FINANCEMAIN_LVIEW" replaceIfExists="true">
 			<![CDATA[
 		 		SELECT T1.FINREFERENCE,
@@ -31020,16 +30826,17 @@ UNION ALL
 					T1.APPLICATIONNO,
 					T1.LASTMNTON,
 					T1.VERSION,
-					T1.TDSAPPLICABLE
-					FROM FINANCEMAIN_TEMP T1
-					INNER JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
-					INNER JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE
-					LEFT JOIN SECROLES T4 ON T1.NEXTROLECODE= T4.ROLECD
-				  ]]>
+					T1.TDSAPPLICABLE,
+					T2.CUSTID
+				FROM FINANCEMAIN_TEMP T1
+				INNER JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				INNER JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE
+				LEFT JOIN SECROLES T4 ON T1.NEXTROLECODE= T4.ROLECD
+			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#1211.100.47_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#1211.100.47.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'financemain_lview');	
@@ -34906,10 +34713,12 @@ UNION ALL
 		</sql>
 </changeSet>
 
-<changeSet id="PSD#166885.1" author="saranya.s" dbms="postgresql,oracle">
+	<changeSet id="PSD#166885.1" author="saranya.s" dbms="postgresql,oracle">
 		<sql>
-			alter table verification_vt_dtls_stge rename to verification_vt_dtls_stage
+			<![CDATA[
+				alter table verification_vt_dtls_stge rename to verification_vt_dtls_stage
+			]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
 </databaseChangeLog>
