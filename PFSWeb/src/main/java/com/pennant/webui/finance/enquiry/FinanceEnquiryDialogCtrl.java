@@ -1107,128 +1107,129 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.gb_gracePeriodDetails.setVisible(false);
 			}
 
-			if (aFinanceMain.isAlwGrcAdj()) {
-				this.numberOfTerms_two.setValue(aFinanceMain.getNumberOfTerms());
+			/*
+			 * if (aFinanceMain.isAlwGrcAdj()) { this.numberOfTerms_two.setValue(aFinanceMain.getNumberOfTerms());
+			 * 
+			 * } else {
+			 */
+			FinanceProfitDetail financeProfitDetail = financeProfitDetailDAO
+					.getPftDetailForEarlyStlReport(aFinanceMain.getFinReference());
+			int NOInst = 0;
+			if (financeProfitDetail != null) {
+				NOInst = financeProfitDetail.getNOInst();
+				aFinanceMain.setNOInst(NOInst);
+			}
+
+			if (NOInst > 0) {
+				this.numberOfTerms_two.setValue(NOInst);
+			} else {
+				this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
+			}
+
+			// PSD# 145740:-The No.of terms are displayed incorrect in Loan basic details screen.
+			this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
+			this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
+			fillComboBox(this.repayRateBasis, aFinanceMain.getRepayRateBasis(),
+					PennantStaticListUtil.getInterestRateType(false), "");
+
+			this.repayProfitRate.setValue(aFinanceMain.getRepayProfitRate());
+			if (StringUtils.isNotBlank(aFinanceMain.getRepayBaseRate())) {
+				this.repayBaseRate.setValue(aFinanceMain.getRepayBaseRate());
+				this.repaySpecialRate.setValue(aFinanceMain.getRepaySpecialRate());
+				this.repayMargin.setValue(aFinanceMain.getRepayMargin());
+				RateDetail rateDetail = RateUtil.rates(aFinanceMain.getRepayBaseRate(), aFinanceMain.getFinCcy(),
+						StringUtils.trimToEmpty(aFinanceMain.getRepaySpecialRate()),
+						aFinanceMain.getRepayMargin() == null ? BigDecimal.ZERO : aFinanceMain.getRepayMargin(),
+						aFinanceMain.getRpyMinRate(), aFinanceMain.getRpyMaxRate());
+				this.repayEffectiveRate
+						.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
+			} else {
+				this.rowRepayRates1.setVisible(false);
+				this.rowRepayRates2.setVisible(false);
+			}
+
+			this.repaySchdMethod.setValue(aFinanceMain.getScheduleMethod());
+			/// Frequency Inquiry Code
+			if (StringUtils.trimToEmpty(aFinanceMain.getRepayFrq()).length() == 5) {
+				this.repayFrq.setValue(aFinanceMain.getRepayFrq());
+				this.repayFrq.setDisabled(true);
+			}
+			if (StringUtils.trimToEmpty(aFinanceMain.getRepayPftFrq()).length() == 5) {
+				this.repayPftFrq.setValue(aFinanceMain.getRepayPftFrq());
+				this.repayPftFrq.setDisabled(true);
+			}
+
+			if (StringUtils.trimToEmpty(aFinanceMain.getRepayRvwFrq()).length() == 5) {
+				this.repayRvwFrq.setValue(aFinanceMain.getRepayRvwFrq());
+				this.repayRvwFrq.setDisabled(true);
+			} else {
+				this.row_RepayRvwFrq.setVisible(false);
+			}
+
+			if (StringUtils.trimToEmpty(aFinanceMain.getRepayCpzFrq()).length() == 5) {
+				this.repayCpzFrq.setValue(aFinanceMain.getRepayCpzFrq());
+				this.repayCpzFrq.setDisabled(true);
+			} else {
+				this.row_RepayCpzFrq.setVisible(false);
+			}
+
+			// Show default date values beside the date components
+			if (aFinanceMain.isAllowGrcPeriod()) {
+				this.nextGrcPftDate_two.setValue(aFinanceMain.getNextGrcPftDate());
+				this.nextGrcPftRvwDate_two.setValue(aFinanceMain.getNextGrcPftRvwDate());
+				this.nextGrcCpzDate_two.setValue(aFinanceMain.getNextGrcCpzDate());
+			}
+			this.nextRepayDate_two.setValue(aFinanceMain.getNextRepayDate());
+			if (aFinanceMain.getLastRepayDate().compareTo(aFinanceMain.getFinStartDate()) != 0) {
+				this.lastFullyPaidRepayDate.setValue(aFinanceMain.getNextRepayDate());
+			}
+			this.nextRepayRvwDate_two.setValue(aFinanceMain.getNextRepayRvwDate());
+			this.nextRepayCpzDate_two.setValue(aFinanceMain.getNextRepayCpzDate());
+			this.nextRepayPftDate_two.setValue(aFinanceMain.getNextRepayPftDate());
+			this.finReference.setValue(aFinanceMain.getFinReference());
+			// KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
+			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(aFinanceMain.getClosingStatus())) {
+				this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
+			} else {
+				if (aFinanceMain.isFinIsActive()) {
+					this.finStatus.setValue(Labels.getLabel("label_Active"));
+				} else {
+					this.finStatus.setValue(Labels.getLabel("label_Matured"));
+				}
+			}
+
+			String closingStatus = StringUtils.trimToEmpty(aFinanceMain.getClosingStatus());
+			if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
+				this.finStatus_Reason.setValue(Labels.getLabel("label_normal"));
+			} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
+				this.finStatus_Reason.setValue(Labels.getLabel("label_Status_Cancelled"));
+			} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
+				this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
+			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
+				this.finStatus_Reason.setValue(Labels.getLabel("label_Settled"));
+			}
+			this.defferments.setDisabled(true);
+			this.defferments.setValue(aFinanceMain.getDefferments());
+			this.frqDefferments.setDisabled(true);
+			this.frqDefferments.setValue(aFinanceMain.getPlanDeferCount());
+			this.utilisedFrqDef.setValue(aFinanceMain.getPlanDeferCount());
+			this.finOverDueStatus.setValue(aFinanceMain.getFinStatus());
+
+			if (aFinanceMain.getDefferments() != 0 || aFinanceMain.getPlanDeferCount() != 0) {
+				if (aFinanceMain.getDefferments() == 0) {
+					this.label_FinanceMainDialog_Defferments.setVisible(false);
+					this.hbox_Defferments.setVisible(false);
+				}
+				if (aFinanceMain.getPlanDeferCount() == 0) {
+					this.label_FinanceMainDialog_FrqDefferments.setVisible(false);
+					this.hbox_FrqDefferments.setVisible(false);
+				}
 
 			} else {
-				FinanceProfitDetail financeProfitDetail = financeProfitDetailDAO
-						.getPftDetailForEarlyStlReport(aFinanceMain.getFinReference());
-				int NOInst = 0;
-				if (financeProfitDetail != null) {
-					NOInst = financeProfitDetail.getNOInst();
-					aFinanceMain.setNOInst(NOInst);
-				}
-
-				if (NOInst > 0) {
-					this.numberOfTerms_two.setValue(NOInst);
-				} else {
-					this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
-				}
-
-				//PSD# 145740:-The No.of terms are displayed incorrect in Loan basic details screen.
-				this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
-				this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
-				fillComboBox(this.repayRateBasis, aFinanceMain.getRepayRateBasis(),
-						PennantStaticListUtil.getInterestRateType(false), "");
-
-				this.repayProfitRate.setValue(aFinanceMain.getRepayProfitRate());
-				if (StringUtils.isNotBlank(aFinanceMain.getRepayBaseRate())) {
-					this.repayBaseRate.setValue(aFinanceMain.getRepayBaseRate());
-					this.repaySpecialRate.setValue(aFinanceMain.getRepaySpecialRate());
-					this.repayMargin.setValue(aFinanceMain.getRepayMargin());
-					RateDetail rateDetail = RateUtil.rates(aFinanceMain.getRepayBaseRate(), aFinanceMain.getFinCcy(),
-							StringUtils.trimToEmpty(aFinanceMain.getRepaySpecialRate()),
-							aFinanceMain.getRepayMargin() == null ? BigDecimal.ZERO : aFinanceMain.getRepayMargin(),
-							aFinanceMain.getRpyMinRate(), aFinanceMain.getRpyMaxRate());
-					this.repayEffectiveRate.setValue(
-							PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
-				} else {
-					this.rowRepayRates1.setVisible(false);
-					this.rowRepayRates2.setVisible(false);
-				}
-
-				this.repaySchdMethod.setValue(aFinanceMain.getScheduleMethod());
-				/// Frequency Inquiry Code
-				if (StringUtils.trimToEmpty(aFinanceMain.getRepayFrq()).length() == 5) {
-					this.repayFrq.setValue(aFinanceMain.getRepayFrq());
-					this.repayFrq.setDisabled(true);
-				}
-				if (StringUtils.trimToEmpty(aFinanceMain.getRepayPftFrq()).length() == 5) {
-					this.repayPftFrq.setValue(aFinanceMain.getRepayPftFrq());
-					this.repayPftFrq.setDisabled(true);
-				}
-
-				if (StringUtils.trimToEmpty(aFinanceMain.getRepayRvwFrq()).length() == 5) {
-					this.repayRvwFrq.setValue(aFinanceMain.getRepayRvwFrq());
-					this.repayRvwFrq.setDisabled(true);
-				} else {
-					this.row_RepayRvwFrq.setVisible(false);
-				}
-
-				if (StringUtils.trimToEmpty(aFinanceMain.getRepayCpzFrq()).length() == 5) {
-					this.repayCpzFrq.setValue(aFinanceMain.getRepayCpzFrq());
-					this.repayCpzFrq.setDisabled(true);
-				} else {
-					this.row_RepayCpzFrq.setVisible(false);
-				}
-
-				// Show default date values beside the date components
-				if (aFinanceMain.isAllowGrcPeriod()) {
-					this.nextGrcPftDate_two.setValue(aFinanceMain.getNextGrcPftDate());
-					this.nextGrcPftRvwDate_two.setValue(aFinanceMain.getNextGrcPftRvwDate());
-					this.nextGrcCpzDate_two.setValue(aFinanceMain.getNextGrcCpzDate());
-				}
-				this.nextRepayDate_two.setValue(aFinanceMain.getNextRepayDate());
-				if (aFinanceMain.getLastRepayDate().compareTo(aFinanceMain.getFinStartDate()) != 0) {
-					this.lastFullyPaidRepayDate.setValue(aFinanceMain.getNextRepayDate());
-				}
-				this.nextRepayRvwDate_two.setValue(aFinanceMain.getNextRepayRvwDate());
-				this.nextRepayCpzDate_two.setValue(aFinanceMain.getNextRepayCpzDate());
-				this.nextRepayPftDate_two.setValue(aFinanceMain.getNextRepayPftDate());
-				this.finReference.setValue(aFinanceMain.getFinReference());
-				//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
-				if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(aFinanceMain.getClosingStatus())) {
-					this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
-				} else {
-					if (aFinanceMain.isFinIsActive()) {
-						this.finStatus.setValue(Labels.getLabel("label_Active"));
-					} else {
-						this.finStatus.setValue(Labels.getLabel("label_Matured"));
-					}
-				}
-
-				String closingStatus = StringUtils.trimToEmpty(aFinanceMain.getClosingStatus());
-				if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
-					this.finStatus_Reason.setValue(Labels.getLabel("label_normal"));
-				} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
-					this.finStatus_Reason.setValue(Labels.getLabel("label_Status_Cancelled"));
-				} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
-					this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
-				} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
-					this.finStatus_Reason.setValue(Labels.getLabel("label_Settled"));
-				}
-				this.defferments.setDisabled(true);
-				this.defferments.setValue(aFinanceMain.getDefferments());
-				this.frqDefferments.setDisabled(true);
-				this.frqDefferments.setValue(aFinanceMain.getPlanDeferCount());
-				this.utilisedFrqDef.setValue(aFinanceMain.getPlanDeferCount());
-				this.finOverDueStatus.setValue(aFinanceMain.getFinStatus());
-
-				if (aFinanceMain.getDefferments() != 0 || aFinanceMain.getPlanDeferCount() != 0) {
-					if (aFinanceMain.getDefferments() == 0) {
-						this.label_FinanceMainDialog_Defferments.setVisible(false);
-						this.hbox_Defferments.setVisible(false);
-					}
-					if (aFinanceMain.getPlanDeferCount() == 0) {
-						this.label_FinanceMainDialog_FrqDefferments.setVisible(false);
-						this.hbox_FrqDefferments.setVisible(false);
-					}
-
-				} else {
-					this.rowDefferments.setVisible(false);
-				}
-
+				this.rowDefferments.setVisible(false);
 			}
+
+			//}
 		}
 		if (StringUtils.isNotBlank(aFinanceMain.getLinkedFinRef())) {
 			this.row_LinkedFinRef.setVisible(true);
@@ -1307,7 +1308,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.row_SancationAmount.setVisible(false);
 			this.row_AvailableAmt.setVisible(false);
 		}
-		//update loan installments section in enquiry
+		// update loan installments section in enquiry
 		BigDecimal waivedAmt = BigDecimal.ZERO;
 		List<FinanceScheduleDetail> financeScheduleDetails = getFinScheduleData().getFinanceScheduleDetails();
 		if (financeScheduleDetails != null) {
@@ -1423,7 +1424,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			this.totalOriginal.setStyle("text-align:right");
 
-			//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
+			// KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
 			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(aFinanceMain.getClosingStatus())) {
 				this.outStandPrincipal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
 				this.totalOutStanding.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
