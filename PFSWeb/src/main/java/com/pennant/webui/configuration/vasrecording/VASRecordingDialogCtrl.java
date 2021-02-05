@@ -867,22 +867,24 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						}
 
 						//Deciding the Fee Schedule method based on the configuration
-						if (StringUtils.equals(VASConsatnts.VAS_PAYMENT_COLLECTION,
-								aVASRecording.getVasConfiguration().getModeOfPayment())) {
-							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
-
-							finFeeDetail.setPaidAmountOriginal(aVASRecording.getFee());
-							finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
-							finFeeDetail.setPaidAmount(aVASRecording.getFee());
-
-							finFeeDetail.setRemainingFeeOriginal(BigDecimal.ZERO);
-							finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
-							finFeeDetail.setRemainingFee(BigDecimal.ZERO);
-						} else if (StringUtils.equals(VASConsatnts.VAS_PAYMENT_DEDUCTION,
-								aVASRecording.getVasConfiguration().getModeOfPayment())) {
-							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
-							if (ImplementationConstants.DEFAULT_VAS_MODE_OF_PAYMENT) {
+						if (! PennantConstants.List_Select.equals(aVASRecording.getFeePaymentMode())) {
+							if (StringUtils.equals(VASConsatnts.VAS_PAYMENT_COLLECTION,
+									aVASRecording.getVasConfiguration().getModeOfPayment())) {
 								finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
+
+								finFeeDetail.setPaidAmountOriginal(aVASRecording.getFee());
+								finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
+								finFeeDetail.setPaidAmount(aVASRecording.getFee());
+
+								finFeeDetail.setRemainingFeeOriginal(BigDecimal.ZERO);
+								finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
+								finFeeDetail.setRemainingFee(BigDecimal.ZERO);
+							} else if (StringUtils.equals(VASConsatnts.VAS_PAYMENT_DEDUCTION,
+									aVASRecording.getVasConfiguration().getModeOfPayment())) {
+								finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
+								if (ImplementationConstants.DEFAULT_VAS_MODE_OF_PAYMENT) {
+									finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
+								}
 							}
 						}
 
