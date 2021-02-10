@@ -301,7 +301,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		customerExtLiability.setOriginalAmount(PennantApplicationUtil.unFormateAmount(data[6], formater));
 
 		//Loan Date
-		customerExtLiability.setFinDate(DateUtility.getUtilDate(data[7], "dd-MM-yyyy"));
+		customerExtLiability.setFinDate(DateUtil.parse(data[7], DateFormat.SHORT_DATE));
 
 		//Status
 		customerExtLiability.setFinStatus(data[8]);
