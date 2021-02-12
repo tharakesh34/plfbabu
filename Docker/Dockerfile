@@ -6,7 +6,7 @@ EXPOSE 8080
 RUN sftp -rp -o StrictHostKeyChecking=no  root@sftpserver:/Pennant/PLF/Core/QC3/Docker-config/context.xml /opt/tomcat/conf/
 RUN sftp -rp -o StrictHostKeyChecking=no  root@sftpserver:/Pennant/PLF/Core/QC3/PFF /opt/
 RUN sftp -rp -o StrictHostKeyChecking=no  root@sftpserver:/Pennant/common-files/ojdbc8.jar /opt/tomcat/lib/
-RUN sftp -rp -o StrictHostKeyChecking=no  root@sftpserver:/Pennant/common-files/process-designer.war /opt/tomcat/webapps/
+RUN sftp -rp -o StrictHostKeyChecking=no  root@sftpserver:/Pennant/PLF/Core/QC3/Docker-config/process-designer.war /opt/tomcat/webapps/
 RUN sftp -rp -o StrictHostKeyChecking=no  root@sftpserver:/Pennant/PLF/Core/QC3/Docker-config/filebeat.yml /etc/filebeat/
 RUN chmod 755 /etc/filebeat/filebeat.yml
 COPY PFSWeb.war /opt/tomcat/webapps/
