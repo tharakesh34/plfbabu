@@ -1872,13 +1872,13 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			if (PennantConstants.PFF_CUSTCTG_CORP.equals(aCustomer.getCustCtgCode())
 					|| PennantConstants.PFF_CUSTCTG_SME.equals(aCustomer.getCustCtgCode())) {
 				this.shortName.setValue(aCustomer.getCustShrtName());
-				this.nationality.setValueColumn(aCustomer.getCustNationality());
+				this.nationality.setValue(aCustomer.getCustNationality());
 				this.nationality.setDescColumn(aCustomer.getLovDescCustNationalityName());
 				this.dob.setValue(aCustomer.getCustDOB());
 			} else if (PennantConstants.PFF_CUSTCTG_INDIV.equals(aCustomer.getCustCtgCode())) {
 				this.firstName.setValue(aCustomer.getCustFName());
 				this.lastName.setValue(aCustomer.getCustLName());
-				this.nationality.setValueColumn(aCustomer.getCustNationality());
+				this.nationality.setValue(aCustomer.getCustNationality());
 				this.nationality.setDescColumn(aCustomer.getLovDescCustNationalityName());
 				this.dob.setValue(aCustomer.getCustDOB());
 			}
