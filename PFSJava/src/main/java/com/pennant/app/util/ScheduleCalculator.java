@@ -1283,6 +1283,9 @@ public class ScheduleCalculator {
 		 */
 
 		Date evtFromDate = finMain.getRecalFromDate();
+		finMain.setEventFromDate(evtFromDate);
+		finMain.setEventToDate(evtFromDate);
+
 		sortRepayInstructions(repayInstructions);
 		if (StringUtils.equals(schdMethod, PennantConstants.List_Select) || StringUtils.equals(schdMethod, "")) {
 			for (int i = 0; i < risize; i++) {
