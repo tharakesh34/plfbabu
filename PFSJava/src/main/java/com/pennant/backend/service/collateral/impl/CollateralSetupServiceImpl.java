@@ -56,7 +56,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
@@ -126,7 +127,7 @@ import com.rits.cloning.Cloner;
  * 
  */
 public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> implements CollateralSetupService {
-	private static final Logger logger = Logger.getLogger(CollateralSetupServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CollateralSetupServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CollateralSetupDAO collateralSetupDAO;
@@ -2790,130 +2791,117 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 	@Override
 	public List<CollateralSetup> getCollateralDetails(String finReference, boolean isAutoRejection) {
-		List<CollateralSetup> collateralSetupList = getCollateralSetupDAO().getCollateralSetupByFinRef(finReference,
+		List<CollateralSetup> collateralSetupList = collateralSetupDAO.getCollateralSetupByFinRef(finReference,
 				"_Tview");
-		if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
-			for (CollateralSetup detail : collateralSetupList) {
-				getCollateralDetails(detail, isAutoRejection);
-			}
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+			collateralSetupList.forEach(detail -> getCollateralDetails(detail, isAutoRejection));
 		}
 		return collateralSetupList;
 	}
 
-	/**
-	 * Getting the Collateralsetup data
-	 * 
-	 * @param collateralSetup
-	 * @return
-	 */
-	private CollateralSetup getCollateralDetails(CollateralSetup collateralSetup, boolean isAutoRejection) {
-		logger.debug("Entering");
+	private void getCollateralDetails(CollateralSetup collateralSetup, boolean isAutoRejection) {
+		if (collateralSetup == null) {
+			return;
+		}
 
-		if (collateralSetup != null) {
-			String collateralRef = collateralSetup.getCollateralRef();
+		String reference = collateralSetup.getCollateralRef();
+		String type = collateralSetup.getCollateralType();
 
-			// Collateral Type/Structure Details
-			collateralSetup.setCollateralStructure(getCollateralStructureService()
-					.getApprovedCollateralStructureByType(collateralSetup.getCollateralType()));
+		// Collateral Type/Structure Details
+		collateralSetup.setCollateralStructure(collateralStructureService.getApprovedCollateralStructureByType(type));
 
-			// Co-Owner Details
-			collateralSetup.setCoOwnerDetailList(getCoOwnerDetailDAO().getCoOwnerDetailByRef(collateralRef, "_View"));
+		// Co-Owner Details
+		collateralSetup.setCoOwnerDetailList(coOwnerDetailDAO.getCoOwnerDetailByRef(reference, "_View"));
 
-			// Third Party Details
-			collateralSetup.setCollateralThirdPartyList(
-					getCollateralThirdPartyDAO().getCollThirdPartyDetails(collateralRef, "_View"));
+		// Third Party Details
+		collateralSetup
+				.setCollateralThirdPartyList(collateralThirdPartyDAO.getCollThirdPartyDetails(reference, "_View"));
 
-			// Flag Details
-			collateralSetup.setFinFlagsDetailsList(getFinFlagDetailsDAO().getFinFlagsByFinRef(collateralRef,
-					CollateralConstants.MODULE_NAME, "_View"));
+		// Flag Details
+		collateralSetup.setFinFlagsDetailsList(
+				finFlagDetailsDAO.getFinFlagsByFinRef(reference, CollateralConstants.MODULE_NAME, "_View"));
 
-			// Assignment Details
-			collateralSetup.setAssignmentDetails(getCollateralAssignmentDAO()
-					.getCollateralAssignmentByColRef(collateralRef, collateralSetup.getCollateralType()));
+		// Assignment Details
+		collateralSetup.setAssignmentDetails(collateralAssignmentDAO.getCollateralAssignmentByColRef(reference, type));
 
-			// Extended Field Details
-			ExtendedFieldHeader extendedFieldHeader = collateralSetup.getCollateralStructure().getExtendedFieldHeader();
+		// Extended Field Details
+		ExtendedFieldHeader extendedFieldHeader = collateralSetup.getCollateralStructure().getExtendedFieldHeader();
 
-			StringBuilder tableName = new StringBuilder();
-			tableName.append(extendedFieldHeader.getModuleName());
-			tableName.append("_");
-			tableName.append(extendedFieldHeader.getSubModuleName());
-			tableName.append("_ED");
+		StringBuilder tableName = new StringBuilder();
+		tableName.append(extendedFieldHeader.getModuleName());
+		tableName.append("_");
+		tableName.append(extendedFieldHeader.getSubModuleName());
+		tableName.append("_ED");
 
-			List<Map<String, Object>> renderMapList = extendedFieldRenderDAO.getExtendedFieldMap(collateralRef,
-					tableName.toString(), "_View");
+		List<Map<String, Object>> renderMapList = extendedFieldRenderDAO.getExtendedFieldMap(reference,
+				tableName.toString(), "_View");
 
-			List<ExtendedFieldRender> renderList = new ArrayList<>();
-			for (int i = 0; i < renderMapList.size(); i++) {
+		List<ExtendedFieldRender> renderList = new ArrayList<>();
+		for (Map<String, Object> extFieldMap : renderMapList) {
 
-				Map<String, Object> extFieldMap = renderMapList.get(i);
-				ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+			ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
 
-				extendedFieldRender.setReference(String.valueOf(extFieldMap.get("Reference")));
-				extFieldMap.remove("Reference");
-				extendedFieldRender.setSeqNo(Integer.valueOf(extFieldMap.get("SeqNo").toString()));
-				extFieldMap.remove("SeqNo");
-				extendedFieldRender.setVersion(Integer.valueOf(extFieldMap.get("Version").toString()));
-				extFieldMap.remove("Version");
-				extendedFieldRender.setLastMntOn((Timestamp) extFieldMap.get("LastMntOn"));
-				extFieldMap.remove("LastMntOn");
-				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
-				extFieldMap.remove("LastMntBy");
-				extendedFieldRender
-						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
-								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
-				extFieldMap.remove("RecordStatus");
-				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
-						? "" : String.valueOf(extFieldMap.get("RoleCode")));
-				extFieldMap.remove("RoleCode");
-				extendedFieldRender
-						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
-								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
-				extFieldMap.remove("NextRoleCode");
-				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
-						: String.valueOf(extFieldMap.get("TaskId")));
-				extFieldMap.remove("TaskId");
-				extendedFieldRender
-						.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
-								: String.valueOf(extFieldMap.get("NextTaskId")));
-				extFieldMap.remove("NextTaskId");
-				extendedFieldRender
-						.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RecordType")));
-				extFieldMap.remove("RecordType");
-				extendedFieldRender.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
-				extFieldMap.remove("WorkflowId");
+			extendedFieldRender.setReference(String.valueOf(extFieldMap.get("Reference")));
+			extFieldMap.remove("Reference");
+			extendedFieldRender.setSeqNo(Integer.valueOf(extFieldMap.get("SeqNo").toString()));
+			extFieldMap.remove("SeqNo");
+			extendedFieldRender.setVersion(Integer.valueOf(extFieldMap.get("Version").toString()));
+			extFieldMap.remove("Version");
+			extendedFieldRender.setLastMntOn((Timestamp) extFieldMap.get("LastMntOn"));
+			extFieldMap.remove("LastMntOn");
+			extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
+			extFieldMap.remove("LastMntBy");
+			extendedFieldRender
+					.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+							: String.valueOf(extFieldMap.get("RecordStatus")));
+			extFieldMap.remove("RecordStatus");
+			extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
+					: String.valueOf(extFieldMap.get("RoleCode")));
+			extFieldMap.remove("RoleCode");
+			extendedFieldRender
+					.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+							: String.valueOf(extFieldMap.get("NextRoleCode")));
+			extFieldMap.remove("NextRoleCode");
+			extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
+					: String.valueOf(extFieldMap.get("TaskId")));
+			extFieldMap.remove("TaskId");
+			extendedFieldRender.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null")
+					? "" : String.valueOf(extFieldMap.get("NextTaskId")));
+			extFieldMap.remove("NextTaskId");
+			extendedFieldRender.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null")
+					? "" : String.valueOf(extFieldMap.get("RecordType")));
+			extFieldMap.remove("RecordType");
+			extendedFieldRender.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
+			extFieldMap.remove("WorkflowId");
 
-				extendedFieldRender.setMapValues(extFieldMap);
-				renderList.add(extendedFieldRender);
+			extendedFieldRender.setMapValues(extFieldMap);
+
+			renderList.add(extendedFieldRender);
+		}
+		collateralSetup.setExtendedFieldRenderList(renderList);
+
+		// Customer Details
+		if (!isAutoRejection) {
+			long depId = collateralSetup.getDepositorId();
+			collateralSetup.setCustomerDetails(customerDetailsService.getCustomerDetailsById(depId, true, "_View"));
+
+			// Document Details
+			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(reference,
+					CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+			if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
+				collateralSetup.getDocuments().addAll(documentList);
+			} else {
+				collateralSetup.setDocuments(documentList);
 			}
-			collateralSetup.setExtendedFieldRenderList(renderList);
 
-			// Customer Details
-			if (!isAutoRejection) {
-				collateralSetup.setCustomerDetails(getCustomerDetailsService()
-						.getCustomerDetailsById(collateralSetup.getDepositorId(), true, "_View"));
-
-				// Document Details
-				List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef,
-						CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
-				if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
-					collateralSetup.getDocuments().addAll(documentList);
-				} else {
-					collateralSetup.setDocuments(documentList);
-				}
-
-				// Agreement Details & Check List Details
-				if (StringUtils.isNotEmpty(collateralSetup.getRecordType())
-						&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
-						&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-					collateralSetup = getProcessEditorDetails(collateralSetup, collateralSetup.getRoleCode(),
-							FinanceConstants.FINSER_EVENT_ORG);// FIXME
-				}
+			// Agreement Details & Check List Details
+			if (StringUtils.isNotEmpty(collateralSetup.getRecordType())
+					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
+					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+				collateralSetup = getProcessEditorDetails(collateralSetup, collateralSetup.getRoleCode(),
+						FinanceConstants.FINSER_EVENT_ORG);// FIXME
 			}
 		}
-		logger.debug("Leaving");
-		return collateralSetup;
 	}
 
 	/**

@@ -46,7 +46,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -59,7 +60,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ReferenceGenerator implements Serializable {
 	private static final long serialVersionUID = -4965488291173350445L;
-	private static Logger logger = Logger.getLogger(ReferenceGenerator.class);
+	private static Logger logger = LogManager.getLogger(ReferenceGenerator.class);
 
 	//private static NextidviewDAO	nextidviewDAO;
 	private static final String DEFAULT_FORMAT = "BBBB_PPP_SSSSSSS";

@@ -62,7 +62,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -126,7 +127,7 @@ import com.pennanttech.service.AmazonS3Bucket;
  */
 public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(GlFileDownloadListctrl.class);
+	private static final Logger logger = LogManager.getLogger(GlFileDownloadListctrl.class);
 
 	protected Window window_GlFileDownloadList;
 	protected Borderlayout borderLayout_GlFileDownloadList;

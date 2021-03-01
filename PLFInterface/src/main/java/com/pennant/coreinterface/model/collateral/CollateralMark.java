@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import com.pennant.coreinterface.model.account.AccountDetail;
 
 @XmlRootElement(name = "CollateralMark")

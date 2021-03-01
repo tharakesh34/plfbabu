@@ -44,18 +44,14 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -75,7 +71,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements FinFeeReceiptDAO {
-	private static Logger logger = Logger.getLogger(FinFeeReceiptDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinFeeReceiptDAOImpl.class);
 
 	public FinFeeReceiptDAOImpl() {
 		super();
@@ -153,8 +149,6 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 	@Override
 	public List<FinFeeReceipt> getFinFeeReceiptByFinRef(final List<Long> feeIds, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, FeeID, ReceiptID, PaidAmount, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PaidTds");
@@ -179,58 +173,43 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		sql.append(" and PaidAmount > ?");
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					for (Long feeId : feeIds) {
-						ps.setLong(index++, feeId);
-					}
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			for (Long feeId : feeIds) {
+				ps.setLong(index++, feeId);
+			}
+		}, (rs, rowNum) -> {
+			FinFeeReceipt gstD = new FinFeeReceipt();
 
-					ps.setInt(index++, 0);
-				}
-			}, new RowMapper<FinFeeReceipt>() {
-				@Override
-				public FinFeeReceipt mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinFeeReceipt gstD = new FinFeeReceipt();
+			gstD.setId(rs.getLong("Id"));
+			gstD.setFeeID(rs.getLong("FeeID"));
+			gstD.setReceiptID(rs.getLong("ReceiptID"));
+			gstD.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			gstD.setVersion(rs.getInt("Version"));
+			gstD.setLastMntBy(rs.getLong("LastMntBy"));
+			gstD.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			gstD.setRecordStatus(rs.getString("RecordStatus"));
+			gstD.setRoleCode(rs.getString("RoleCode"));
+			gstD.setNextRoleCode(rs.getString("NextRoleCode"));
+			gstD.setTaskId(rs.getString("TaskId"));
+			gstD.setNextTaskId(rs.getString("NextTaskId"));
+			gstD.setRecordType(rs.getString("RecordType"));
+			gstD.setWorkflowId(rs.getLong("WorkflowId"));
+			gstD.setPaidTds(rs.getBigDecimal("PaidTds"));
 
-					gstD.setId(rs.getLong("Id"));
-					gstD.setFeeID(rs.getLong("FeeID"));
-					gstD.setReceiptID(rs.getLong("ReceiptID"));
-					gstD.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					gstD.setVersion(rs.getInt("Version"));
-					gstD.setLastMntBy(rs.getLong("LastMntBy"));
-					gstD.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					gstD.setRecordStatus(rs.getString("RecordStatus"));
-					gstD.setRoleCode(rs.getString("RoleCode"));
-					gstD.setNextRoleCode(rs.getString("NextRoleCode"));
-					gstD.setTaskId(rs.getString("TaskId"));
-					gstD.setNextTaskId(rs.getString("NextTaskId"));
-					gstD.setRecordType(rs.getString("RecordType"));
-					gstD.setWorkflowId(rs.getLong("WorkflowId"));
-					gstD.setPaidTds(rs.getBigDecimal("PaidTds"));
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				gstD.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
+				gstD.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				gstD.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				gstD.setFeeTypeId(rs.getLong("FeeTypeId"));
+				gstD.setReceiptType(rs.getString("ReceiptType"));
+				gstD.setTransactionRef(rs.getString("TransactionRef"));
+				gstD.setFavourNumber(rs.getString("FavourNumber"));
+				gstD.setVasReference(rs.getString("VasReference"));
+			}
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						gstD.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
-						gstD.setFeeTypeCode(rs.getString("FeeTypeCode"));
-						gstD.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-						gstD.setFeeTypeId(rs.getLong("FeeTypeId"));
-						gstD.setReceiptType(rs.getString("ReceiptType"));
-						gstD.setTransactionRef(rs.getString("TransactionRef"));
-						gstD.setFavourNumber(rs.getString("FavourNumber"));
-						gstD.setVasReference(rs.getString("VasReference"));
-					}
-
-					return gstD;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return gstD;
+		});
 	}
 
 	/**

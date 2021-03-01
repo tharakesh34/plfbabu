@@ -11,7 +11,8 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.zkoss.json.JSONObject;
@@ -91,7 +92,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class MiscellaneousServiceController {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	private FinanceMainService financeMainService;
 	private TransactionCodeService transactionCodeService;
@@ -100,7 +101,6 @@ public class MiscellaneousServiceController {
 	private DashboardConfigurationService dashboardConfigurationService;
 	private SecurityUserService securityUserService;
 	private RuleService ruleService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private RuleDAO ruleDAO;
 	private FinanceDetailService financeDetailService;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
@@ -447,8 +447,7 @@ public class MiscellaneousServiceController {
 		if ((null == ruleReturnType) || (StringUtils.isBlank(ruleReturnType.value()))) {
 			logger.info("Improper 'ruleReturnType' value");
 		} else {
-			Object object = ruleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(), map, finCcy, ruleReturnType,
-					isSplRule);
+			Object object = RuleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(), map, finCcy, ruleReturnType);
 
 			String resultValue = null;
 			switch (ruleReturnType) {
@@ -1475,14 +1474,6 @@ public class MiscellaneousServiceController {
 
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public void setRuleDAO(RuleDAO ruleDAO) {

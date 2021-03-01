@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -62,7 +63,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class InterestRateTypeDAOImpl extends BasicDao<InterestRateType> implements InterestRateTypeDAO {
-	private static Logger logger = Logger.getLogger(InterestRateTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(InterestRateTypeDAOImpl.class);
 
 	public InterestRateTypeDAOImpl() {
 		super();

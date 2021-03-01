@@ -1,5 +1,6 @@
 package com.pennant.backend.model.rulefactory;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -8,12 +9,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.eventproperties.EventProperties;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "postref", "finEvent", "postDate", "valueDate", "tranCode", "tranDesc", "revTranCode", "account",
 		"drOrCr", "acCcy", "postAmount" })
-public class ReturnDataSet implements java.io.Serializable, Entity {
+public class ReturnDataSet implements Serializable {
 
 	private static final long serialVersionUID = 5269669204845337757L;
 
@@ -84,30 +85,68 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	/**
 	 * Possible values 0- NON EOD posting 1- EOD Postings 2- EOD Postings and Accounts Updates
 	 */
-	private int postCategory = 0;//FIXME:How to use constants-AccountConstants.POSTING_CATEGORY_NORMAL;;
+	private int postCategory = 0;
+
+	private EventProperties eventProperties = new EventProperties();
 
 	public ReturnDataSet() {
-
+		super();
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
+	public ReturnDataSet copyEntity() {
+		ReturnDataSet entity = new ReturnDataSet();
+		entity.setLinkedTranId(this.linkedTranId);
+		entity.setPostref(this.postref);
+		entity.setPostingId(this.postingId);
+		entity.setFinReference(this.finReference);
+		entity.setFinEvent(this.finEvent);
+		entity.setLovDescEventCodeName(this.lovDescEventCodeName);
+		entity.setPostDate(this.postDate);
+		entity.setValueDate(this.valueDate);
+		entity.setAppDate(this.appDate);
+		entity.setAppValueDate(this.appValueDate);
+		entity.setCustAppDate(this.custAppDate);
+		entity.setTranCode(this.tranCode);
+		entity.setTransOrder(this.transOrder);
+		entity.setDerivedTranOrder(this.derivedTranOrder);
+		entity.setTranDesc(this.tranDesc);
+		entity.setRevTranCode(this.revTranCode);
+		entity.setDrOrCr(this.drOrCr);
+		entity.setShadowPosting(this.shadowPosting);
+		entity.setAccount(this.account);
+		entity.setPostAmount(this.postAmount);
+		entity.setAmountType(this.amountType);
+		entity.setPostStatus(this.postStatus);
+		entity.setErrorId(this.errorId);
+		entity.setErrorMsg(this.errorMsg);
+		entity.setCustId(this.custId);
+		entity.setAcCcy(this.acCcy);
+		entity.setTranOrderId(this.tranOrderId);
+		entity.setPostToSys(this.postToSys);
+		entity.setPostBranch(this.postBranch);
+		entity.setExchangeRate(this.exchangeRate);
+		entity.setPostAmountLcCcy(this.postAmountLcCcy);
+		entity.setAccountType(this.accountType);
+		entity.setEventCodeName(this.eventCodeName);
+		entity.setAccSetCodeName(this.accSetCodeName);
+		entity.setAccSetId(this.accSetId);
+		entity.setFinType(this.finType);
+		entity.setCustCIF(this.CustCIF);
+		entity.setFlagCreateNew(this.flagCreateNew);
+		entity.setFlagCreateIfNF(this.flagCreateIfNF);
+		entity.setInternalAc(this.internalAc);
+		entity.setFormatter(this.formatter);
+		entity.setFinPurpose(this.finPurpose);
+		entity.setPostingGroupBy(this.postingGroupBy);
+		entity.setSecondaryAccounts(this.secondaryAccounts);
+		entity.setFinRpyFor(this.finRpyFor);
+		entity.setUserBranch(this.userBranch);
+		entity.setOldLinkedTranId(this.oldLinkedTranId);
+		entity.setEntityCode(this.entityCode);
+		entity.setPostCategory(this.postCategory);
+		entity.setEventProperties(this.eventProperties);
+		return entity;
 	}
-
-	@Override
-	public long getId() {
-		return linkedTranId;
-	}
-
-	@Override
-	public void setId(long id) {
-		this.linkedTranId = id;
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public long getLinkedTranId() {
 		return linkedTranId;
@@ -507,6 +546,14 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
+	}
+
+	public EventProperties getEventProperties() {
+		return eventProperties;
+	}
+
+	public void setEventProperties(EventProperties eventProperties) {
+		this.eventProperties = eventProperties;
 	}
 
 }

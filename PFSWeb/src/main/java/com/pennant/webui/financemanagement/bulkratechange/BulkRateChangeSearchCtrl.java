@@ -50,7 +50,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.ListModelList;
@@ -74,7 +75,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails> {
 
 	private static final long serialVersionUID = -4647934832219925649L;
-	private static final Logger logger = Logger.getLogger(BulkRateChangeSearchCtrl.class);
+	private static final Logger logger = LogManager.getLogger(BulkRateChangeSearchCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here

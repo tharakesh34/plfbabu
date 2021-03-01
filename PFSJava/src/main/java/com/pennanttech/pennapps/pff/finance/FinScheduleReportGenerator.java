@@ -11,7 +11,8 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Button;
 
@@ -40,7 +41,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 public class FinScheduleReportGenerator {
-	private static final Logger logger = Logger.getLogger(FinScheduleReportGenerator.class);
+	private static final Logger logger = LogManager.getLogger(FinScheduleReportGenerator.class);
 
 	private FinScheduleData finScheduleData;
 	private FinanceScheduleDetail financeScheduleDetail;

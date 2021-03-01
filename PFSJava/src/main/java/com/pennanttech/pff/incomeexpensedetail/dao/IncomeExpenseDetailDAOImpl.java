@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,7 +22,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.organization.model.IncomeExpenseDetail;
 
 public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail> implements IncomeExpenseDetailDAO {
-	private static final Logger logger = Logger.getLogger(IncomeExpenseDetailDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(IncomeExpenseDetailDAOImpl.class);
 
 	@Override
 	public long save(IncomeExpenseDetail incomeExpenseDetail, String type) {

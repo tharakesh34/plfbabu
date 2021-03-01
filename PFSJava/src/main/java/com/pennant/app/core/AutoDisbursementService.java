@@ -1,18 +1,25 @@
 package com.pennant.app.core;
 
+import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AEAmounts;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDisbursement;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class AutoDisbursementService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
-	private Logger logger = Logger.getLogger(AutoDisbursementService.class);
+	private Logger logger = LogManager.getLogger(AutoDisbursementService.class);
 
 	/**
 	 * @param custId
@@ -20,9 +27,10 @@ public class AutoDisbursementService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public void processDisbursementPostings(CustEODEvent custEODEvent) throws Exception {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+		Date eodDate = custEODEvent.getEodValueDate();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
@@ -32,8 +40,7 @@ public class AutoDisbursementService extends ServiceHelper {
 
 			String finReference = finEODEvent.getFinanceMain().getFinReference();
 
-			finEODEvent.setFinanceDisbursements(
-					getFinanceDisbursementDAO().getDisbursementToday(finReference, custEODEvent.getEodValueDate()));
+			finEODEvent.setFinanceDisbursements(financeDisbursementDAO.getDisbursementToday(finReference, eodDate));
 
 			List<FinanceDisbursement> disbrusments = finEODEvent.getFinanceDisbursements();
 			for (FinanceDisbursement financeDisbursement : disbrusments) {
@@ -42,8 +49,7 @@ public class AutoDisbursementService extends ServiceHelper {
 
 		}
 
-		logger.debug(" Leaving ");
-
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -52,22 +58,28 @@ public class AutoDisbursementService extends ServiceHelper {
 	 */
 	public void postFutureDisbursement(CustEODEvent custEODEvent, FinEODEvent finEODEvent,
 			FinanceDisbursement curDisbursment) throws Exception {
-		logger.debug(" Entering ");
-		long accountingID = getAccountingID(finEODEvent.getFinanceMain(), AccountEventConstants.ACCEVENT_ADDDBSN);
+		logger.debug(Literal.ENTERING);
 
-		if (accountingID == Long.MIN_VALUE) {
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		Long accountingID = getAccountingID(fm, AccountEventConstants.ACCEVENT_ADDDBSN);
+
+		if (accountingID == null || accountingID == Long.MIN_VALUE) {
+			logger.debug(Literal.LEAVING);
 			return;
 		}
 
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finEODEvent.getFinanceMain(), finEODEvent.getFinProfitDetail(),
-				finEODEvent.getFinanceScheduleDetails(), AccountEventConstants.ACCEVENT_ADDDBSN,
-				custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
+		FinanceProfitDetail pfd = finEODEvent.getFinProfitDetail();
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
+		Date eodValueDate = custEODEvent.getEodValueDate();
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, pfd, schedules, AccountEventConstants.ACCEVENT_ADDDBSN,
+				eodValueDate, eodValueDate);
 		aeEvent.getAcSetIDList().add(accountingID);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setDisburse(curDisbursment.getDisbAmount().add(curDisbursment.getFeeChargeAmt()));
 		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
-		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
-		aeEvent.setPostDate(custEODEvent.getCustomer().getCustAppDate());
+		Customer customer = custEODEvent.getCustomer();
+		aeEvent.setCustAppDate(customer.getCustAppDate());
+		aeEvent.setPostDate(customer.getCustAppDate());
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
@@ -76,7 +88,8 @@ public class AutoDisbursementService extends ServiceHelper {
 		//FIXME how to handle in case of cancellation
 		curDisbursment.setLinkedTranId(aeEvent.getLinkedTranId());
 		curDisbursment.setPosted(true);
-		logger.debug(" Leaving ");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 }

@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -58,14 +59,12 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-import oracle.net.aso.m;
-
 /**
  * DAO methods implementation for the <b>VasMovement model</b> class.<br>
  * 
  */
 public class VasMovementDAOImpl extends SequenceDao<VasMovement> implements VasMovementDAO {
-	private static Logger logger = Logger.getLogger(VasMovementDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(VasMovementDAOImpl.class);
 
 	public VasMovementDAOImpl() {
 		super();

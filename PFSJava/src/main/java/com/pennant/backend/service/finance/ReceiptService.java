@@ -141,7 +141,7 @@ public interface ReceiptService {
 
 	FinTaxReceivable getTaxReceivable(String finReference, String taxFor);
 
-	// ## For MultiReceipt 
+	// ## For MultiReceipt
 	void saveMultiReceipt(List<AuditHeader> auditHeaderList) throws Exception;
 
 	void saveMultiReceipt(AuditHeader auditHeader) throws Exception;
@@ -171,5 +171,7 @@ public interface ReceiptService {
 	int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference);
 
 	void getWaiverValidation(ReceiptUploadDetail rud);
+
+	ErrorDetail receiptCancelValidation(String finReference, Date lastReceivedDate);
 
 }

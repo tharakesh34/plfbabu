@@ -3,7 +3,8 @@ package com.pennant.backend.service.approvalstatusenquiry.impl;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.dao.approvalstatusenquiry.ApprovalStatusEnquiryDAO;
@@ -14,7 +15,7 @@ import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
 
 public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquiryService {
-	private static final Logger logger = Logger.getLogger(ApprovalStatusEnquiryServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ApprovalStatusEnquiryServiceImpl.class);
 
 	protected ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
 	protected ReasonDetailDAO reasonDetailDAO;

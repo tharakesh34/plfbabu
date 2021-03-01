@@ -48,7 +48,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -83,7 +84,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = -6125624350998749280L;
-	private static final Logger logger = Logger.getLogger(RecalculateDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RecalculateDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

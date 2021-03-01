@@ -44,7 +44,8 @@ package com.pennant.webui.customermasters.customerlimt;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCategoryBreakdown> {
 	private static final long serialVersionUID = 8602015982512929710L;
-	private static final Logger logger = Logger.getLogger(CustomerLimitCategoryEnquiryCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerLimitCategoryEnquiryCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

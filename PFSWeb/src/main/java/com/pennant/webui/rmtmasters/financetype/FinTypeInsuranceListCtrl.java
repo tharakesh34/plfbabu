@@ -48,7 +48,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -74,7 +75,7 @@ public class FinTypeInsuranceListCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 
 	private static final long serialVersionUID = 4521079241535245640L;
 
-	private static final Logger logger = Logger.getLogger(FinTypeInsuranceListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinTypeInsuranceListCtrl.class);
 
 	protected Window window_FinTypeInsuranceList;
 

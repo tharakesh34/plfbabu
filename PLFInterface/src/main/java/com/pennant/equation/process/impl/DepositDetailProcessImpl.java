@@ -1,6 +1,7 @@
 package com.pennant.equation.process.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.coreinterface.model.deposits.FetchDeposit;
 import com.pennant.coreinterface.model.deposits.FetchDepositDetail;
@@ -9,7 +10,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DepositDetailProcessImpl implements DepositDetailProcess {
 
-	private static final Logger logger = Logger.getLogger(DepositDetailProcessImpl.class);
+	private static final Logger logger = LogManager.getLogger(DepositDetailProcessImpl.class);
 
 	public DepositDetailProcessImpl() {
 

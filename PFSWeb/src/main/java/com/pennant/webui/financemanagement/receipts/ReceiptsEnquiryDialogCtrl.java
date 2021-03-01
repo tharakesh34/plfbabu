@@ -65,7 +65,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -111,7 +112,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
-import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
@@ -188,7 +188,7 @@ import com.rits.cloning.Cloner;
  */
 public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = Logger.getLogger(ReceiptsEnquiryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptsEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -354,7 +354,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private ReceiptService receiptService;
 	private ReceiptCancellationService receiptCancellationService;
 	private FinanceDetailService financeDetailService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private AccountEngineExecution engineExecution;
 	private CommitmentService commitmentService;
 	private ReceiptCalculator receiptCalculator;
@@ -2363,14 +2362,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
 	}
 
 	public AccountingDetailDialogCtrl getAccountingDetailDialogCtrl() {

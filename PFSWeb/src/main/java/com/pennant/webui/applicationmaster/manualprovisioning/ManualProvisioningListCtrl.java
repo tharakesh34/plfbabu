@@ -2,7 +2,8 @@ package com.pennant.webui.applicationmaster.manualprovisioning;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -32,7 +33,7 @@ import com.pennanttech.pff.core.TableType;
 
 public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ManualProvisioningListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ManualProvisioningListCtrl.class);
 
 	protected Window window_ManualProvisioningList;
 	protected Borderlayout borderLayout_ManualProvisioningList;

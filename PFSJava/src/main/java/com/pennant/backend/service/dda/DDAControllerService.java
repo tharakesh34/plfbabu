@@ -3,7 +3,8 @@ package com.pennant.backend.service.dda;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 
@@ -30,7 +31,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DDAControllerService extends GenericService<FinanceDetail> {
 
-	private static final Logger logger = Logger.getLogger(DDAControllerService.class);
+	private static final Logger logger = LogManager.getLogger(DDAControllerService.class);
 
 	private DDAInterfaceService ddaInterfaceService;
 	private DDAProcessService ddaProcessService;

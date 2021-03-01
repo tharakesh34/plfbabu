@@ -47,7 +47,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.legal.LegalDocumentDAO;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>LegalDocument</b>.<br>
  */
 public class LegalDocumentService extends GenericService<LegalDocument> {
-	private static final Logger logger = Logger.getLogger(LegalDocumentService.class);
+	private static final Logger logger = LogManager.getLogger(LegalDocumentService.class);
 
 	private LegalDocumentDAO legalDocumentDAO;
 

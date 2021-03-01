@@ -17,7 +17,8 @@ import javax.script.ScriptEngineManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 
@@ -88,7 +89,7 @@ import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CustomerController extends GenericService<Object> {
-	private final Logger logger = Logger.getLogger(CustomerController.class);
+	private final Logger logger = LogManager.getLogger(CustomerController.class);
 
 	private CustomerService customerService;
 	private CustomerDetailsService customerDetailsService;

@@ -47,7 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -74,7 +75,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>BuilderProjcet</b>.<br>
  */
 public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> implements BuilderProjcetService {
-	private static final Logger logger = Logger.getLogger(BuilderProjcetServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(BuilderProjcetServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BuilderProjcetDAO builderProjcetDAO;

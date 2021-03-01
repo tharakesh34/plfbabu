@@ -1,7 +1,8 @@
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -19,7 +20,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class MMAgreementServiceImpl extends GenericService<MMAgreement> implements MMAgreementService {
-	private static Logger logger = Logger.getLogger(MMAgreementServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(MMAgreementServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private MMAgreementDAO mMAgreementDAO;

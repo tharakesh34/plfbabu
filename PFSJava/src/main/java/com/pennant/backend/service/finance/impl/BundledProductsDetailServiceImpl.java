@@ -46,7 +46,8 @@ package com.pennant.backend.service.finance.impl;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -69,7 +70,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 public class BundledProductsDetailServiceImpl extends GenericService<BundledProductsDetail>
 		implements BundledProductsDetailService {
 
-	private static final Logger logger = Logger.getLogger(BundledProductsDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(BundledProductsDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BundledProductsDetailDAO bundledProductsDetailDAO;

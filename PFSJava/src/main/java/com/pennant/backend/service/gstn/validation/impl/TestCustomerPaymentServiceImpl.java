@@ -2,7 +2,8 @@ package com.pennant.backend.service.gstn.validation.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -10,7 +11,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.CustomerPaymentService;
 
 public class TestCustomerPaymentServiceImpl implements TestCustomerPaymentService {
-	private static Logger logger = Logger.getLogger(TestCustomerPaymentServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(TestCustomerPaymentServiceImpl.class);
 
 	@Autowired(required = false)
 	private CustomerPaymentService customerPaymentService;

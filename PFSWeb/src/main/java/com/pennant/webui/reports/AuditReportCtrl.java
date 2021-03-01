@@ -6,7 +6,8 @@ import java.util.HashMap;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -34,7 +35,7 @@ import net.sf.jasperreports.engine.JasperRunManager;
 public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 
 	private static final long serialVersionUID = 4678287540046204660L;
-	private static final Logger logger = Logger.getLogger(AuditReportCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AuditReportCtrl.class);
 
 	protected Window window_AuditReport;
 	protected Borderlayout borderlayout;

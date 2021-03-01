@@ -111,9 +111,9 @@
 											<cell colspan="2">
 												<hbox pack="stretch" width="100%">
 													<label value="${c:l('label_Number_Of_Thread_Started_MicroEod.value')}" />
-													<intbox id="noOfthread" width="60px" readonly="true" style="background-color : #fdf7fa;" />
+													<intbox id="noOfthread" width="100px" readonly="true" style="background-color : #fdf7fa;" />
 													<label value="Total Loans" />
-													<longbox id="noOfCustomer" width="60px" readonly="true" style="background-color : #fdf7fa;" />
+													<longbox id="noOfCustomer" width="100px" readonly="true" style="background-color : #fdf7fa;" />
 												</hbox>
 											</cell>
 										</row>

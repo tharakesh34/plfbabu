@@ -42,15 +42,12 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -68,7 +65,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>BaseRateCode model</b> class.<br>
  */
 public class BaseRateCodeDAOImpl extends BasicDao<BaseRateCode> implements BaseRateCodeDAO {
-	private static Logger logger = Logger.getLogger(BaseRateCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BaseRateCodeDAOImpl.class);
 
 	public BaseRateCodeDAOImpl() {
 		super();
@@ -85,8 +82,6 @@ public class BaseRateCodeDAOImpl extends BasicDao<BaseRateCode> implements BaseR
 	 */
 	@Override
 	public BaseRateCode getBaseRateCodeById(final String id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" BRType, BRTypeDesc, BRTypeIsActive, BRRepayRvwFrq, Version, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -94,35 +89,31 @@ public class BaseRateCodeDAOImpl extends BasicDao<BaseRateCode> implements BaseR
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where BRType = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
-					new RowMapper<BaseRateCode>() {
-						@Override
-						public BaseRateCode mapRow(ResultSet rs, int rowNum) throws SQLException {
-							BaseRateCode brc = new BaseRateCode();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+				BaseRateCode brc = new BaseRateCode();
 
-							brc.setBRType(rs.getString("BRType"));
-							brc.setBRTypeDesc(rs.getString("BRTypeDesc"));
-							brc.setbRTypeIsActive(rs.getBoolean("BRTypeIsActive"));
-							brc.setbRRepayRvwFrq(rs.getString("BRRepayRvwFrq"));
-							brc.setVersion(rs.getInt("Version"));
-							brc.setLastMntBy(rs.getLong("LastMntBy"));
-							brc.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							brc.setRecordStatus(rs.getString("RecordStatus"));
-							brc.setRoleCode(rs.getString("RoleCode"));
-							brc.setNextRoleCode(rs.getString("NextRoleCode"));
-							brc.setTaskId(rs.getString("TaskId"));
-							brc.setNextTaskId(rs.getString("NextTaskId"));
-							brc.setRecordType(rs.getString("RecordType"));
-							brc.setWorkflowId(rs.getLong("WorkflowId"));
+				brc.setBRType(rs.getString("BRType"));
+				brc.setBRTypeDesc(rs.getString("BRTypeDesc"));
+				brc.setbRTypeIsActive(rs.getBoolean("BRTypeIsActive"));
+				brc.setbRRepayRvwFrq(rs.getString("BRRepayRvwFrq"));
+				brc.setVersion(rs.getInt("Version"));
+				brc.setLastMntBy(rs.getLong("LastMntBy"));
+				brc.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				brc.setRecordStatus(rs.getString("RecordStatus"));
+				brc.setRoleCode(rs.getString("RoleCode"));
+				brc.setNextRoleCode(rs.getString("NextRoleCode"));
+				brc.setTaskId(rs.getString("TaskId"));
+				brc.setNextTaskId(rs.getString("NextTaskId"));
+				brc.setRecordType(rs.getString("RecordType"));
+				brc.setWorkflowId(rs.getLong("WorkflowId"));
 
-							return brc;
-						}
-					});
+				return brc;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Records are not found in RMTBaseRateCodes{} for the specified BRType >> {}", type, id);
 		}
 
 		logger.debug(Literal.LEAVING);

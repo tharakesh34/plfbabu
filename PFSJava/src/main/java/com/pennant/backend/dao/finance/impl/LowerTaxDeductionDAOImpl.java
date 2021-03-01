@@ -1,18 +1,13 @@
 package com.pennant.backend.dao.finance.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
@@ -23,7 +18,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> implements LowerTaxDeductionDAO {
-	private static Logger logger = Logger.getLogger(LowerTaxDeductionDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LowerTaxDeductionDAOImpl.class);
 
 	public LowerTaxDeductionDAOImpl() {
 		super();
@@ -31,8 +26,6 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 
 	@Override
 	public List<LowerTaxDeduction> getLowerTaxDeductionDetails(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, Seqno, FinMaintainId, StartDate, EndDate, Percentage, LimitAmt");
 
@@ -42,39 +35,26 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 
 		sql.append(" from LowerTaxDeduction");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ? and Percentage > 0");
-
+		sql.append(" Where FinReference = ? and Percentage > ?");
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, new RowMapper<LowerTaxDeduction>() {
-				@Override
-				public LowerTaxDeduction mapRow(ResultSet rs, int rowNum) throws SQLException {
-					LowerTaxDeduction td = new LowerTaxDeduction();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+			ps.setBigDecimal(index++, BigDecimal.ZERO);
+		}, (rs, rowNum) -> {
+			LowerTaxDeduction td = new LowerTaxDeduction();
 
-					td.setFinReference(rs.getString("FinReference"));
-					td.setSeqno(rs.getInt("Seqno"));
-					td.setFinMaintainId(rs.getLong("FinMaintainId"));
-					td.setStartDate(rs.getTimestamp("StartDate"));
-					td.setEndDate(rs.getTimestamp("EndDate"));
-					td.setPercentage(rs.getBigDecimal("Percentage"));
-					td.setLimitAmt(rs.getBigDecimal("LimitAmt"));
+			td.setFinReference(rs.getString("FinReference"));
+			td.setSeqno(rs.getInt("Seqno"));
+			td.setFinMaintainId(rs.getLong("FinMaintainId"));
+			td.setStartDate(rs.getTimestamp("StartDate"));
+			td.setEndDate(rs.getTimestamp("EndDate"));
+			td.setPercentage(rs.getBigDecimal("Percentage"));
+			td.setLimitAmt(rs.getBigDecimal("LimitAmt"));
 
-					return td;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return td;
+		});
 	}
 
 	@Override

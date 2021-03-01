@@ -7,7 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.Media;
@@ -60,7 +61,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInstructions> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(InsPaymentUploadDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(InsPaymentUploadDialogCtrl.class);
 
 	protected Window window_InsPaymentUploadDialog;
 

@@ -105,7 +105,6 @@
 	<bean id="projectedAmortizationService" class="com.pennant.app.core.ProjectedAmortizationService">
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="expenseTypeDAO" ref="expenseTypeDAO" />
@@ -114,10 +113,7 @@
 
 	<!-- Beans -->
 
-	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil">
-		<property name="scriptEngine" ref="scriptEngine" />
-		<property name="globalVariableService" ref="globalVariableService" />
-	</bean>
+	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil" />
 
 	<bean id="projectedAmortizationDAO" class="com.pennant.backend.dao.amortization.impl.ProjectedAmortizationDAOImpl"
 		parent="sequenceDao" />
@@ -154,7 +150,6 @@
 
 	<!-- Accounting Engine Execution -->
 	<bean name="engineExecution" class="com.pennant.app.util.AccountEngineExecution">
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 
@@ -169,7 +164,7 @@
 	<bean id="stagePostingDAO" class="com.pennanttech.pff.core.account.dao.StagePostingDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
+
 	<bean id="expenseTypeDAO" class="com.pennant.backend.dao.amtmasters.impl.ExpenseTypeDAOImpl" parent="sequenceDao" />
 	<bean id="feeTypeDAO" class="com.pennant.backend.dao.feetype.impl.FeeTypeDAOImpl" parent="sequenceDao" />
 </beans>

@@ -51,7 +51,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
@@ -105,7 +106,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ExtFieldConfigDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ExtFieldConfigDialogCtrl.class);
 
 	protected Window window_ExtFieldConfigDialog;
 	protected Combobox module;
@@ -1344,6 +1345,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 				ext.setNextTaskId(extendedFieldHeader.getNextTaskId());
 				ext.setRoleCode(extendedFieldHeader.getRoleCode());
 				ext.setNextRoleCode(extendedFieldHeader.getNextRoleCode());
+				ext.setLastMntBy(extendedFieldHeader.getLastMntBy());
 				if (PennantConstants.RECORD_TYPE_DEL.equals(extendedFieldHeader.getRecordType())) {
 					if (StringUtils.trimToNull(ext.getRecordType()) == null) {
 						ext.setRecordType(extendedFieldHeader.getRecordType());

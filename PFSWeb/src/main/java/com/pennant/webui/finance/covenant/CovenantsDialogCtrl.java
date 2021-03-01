@@ -55,7 +55,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -127,7 +128,7 @@ import com.pennanttech.pff.staticlist.AppStaticList;
  */
 public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CovenantsDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CovenantsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding compoonent with the same 'id' in the zul-file
@@ -450,7 +451,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		readOnlyComponent(isReadOnly("CovenantDialog_Alerttoroles"), this.notifyTo.getButton());
 		readOnlyComponent(isReadOnly("CovenantDialog_Alertdays"), this.alertDays);
 		readOnlyComponent(isReadOnly("CovenantDialog_Internaluse"), this.internalUse);
-		readOnlyComponent(isReadOnly("CovenantDialog_Description"), this.description);
+		this.description.setReadonly(true);
+		//readOnlyComponent(isReadOnly("CovenantDialog_Description"), this.description);
 		readOnlyComponent(isReadOnly("CovenantDialog_Remarks"), this.remarks);
 		readOnlyComponent(isReadOnly("CovenantDialog_StandardValue"), this.standardValue);
 		readOnlyComponent(isReadOnly("CovenantDialog_ActualValue"), this.actualValue);
@@ -688,7 +690,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			this.notifyTo.setSelectedValues(map);
 		}
 
-		this.description.setValue(covenant.getDescription());
+		this.description.setValue(covenantType.getDescription());
+
 		this.pdd.setChecked(covenant.isPdd());
 
 		this.otc.setChecked(covenant.isOtc());
@@ -847,7 +850,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		}
 
 		try {
-			covenant.setRemarks(this.description.getValue());
+			covenant.setCovenantTypeDescription(this.description.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -949,6 +952,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 		try {
 			covenant.setAdditionalField1(this.remarks.getValue());
+			covenant.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

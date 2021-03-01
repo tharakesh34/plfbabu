@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -226,7 +226,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		logger.debug("insertSql: " + sql.toString());
 
-		jdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				LVDocument document = lvDocuments.get(i);

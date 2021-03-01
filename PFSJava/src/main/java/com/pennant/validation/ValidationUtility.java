@@ -9,7 +9,8 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -27,7 +28,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 @Component
 public class ValidationUtility {
-	private static Logger logger = Logger.getLogger(ValidationUtility.class);
+	private static Logger logger = LogManager.getLogger(ValidationUtility.class);
 
 	private Validator validator;
 	@Autowired

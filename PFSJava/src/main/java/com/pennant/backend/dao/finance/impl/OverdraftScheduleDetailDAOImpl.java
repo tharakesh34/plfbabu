@@ -1,25 +1,27 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.model.finance.OverdraftMovements;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class OverdraftScheduleDetailDAOImpl extends BasicDao<OverdraftScheduleDetail>
 		implements OverdraftScheduleDetailDAO {
-	private static Logger logger = Logger.getLogger(OverdraftScheduleDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(OverdraftScheduleDetailDAOImpl.class);
 
 	public OverdraftScheduleDetailDAOImpl() {
 		super();
@@ -57,30 +59,46 @@ public class OverdraftScheduleDetailDAOImpl extends BasicDao<OverdraftScheduleDe
 	 */
 	@Override
 	public List<OverdraftScheduleDetail> getOverdraftScheduleDetails(String finRef, String type, boolean isWIF) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, DroplineDate, ActualRate, BaseRate");
+		sql.append(", SplRate, Margin, DroplineRate, LimitDrop, ODLimit, LimitIncreaseAmt");
 
-		OverdraftScheduleDetail detail = new OverdraftScheduleDetail();
-
-		detail.setFinReference(finRef);
-
-		StringBuilder selectSql = new StringBuilder(" Select FinReference, DroplineDate, ActualRate, BaseRate,");
-		selectSql.append(" SplRate, Margin, DroplineRate, LimitDrop,ODLimit,LimitIncreaseAmt ");
 		if (isWIF) {
-			selectSql.append(" From  WIFOverdraftScheduleDetail");
+			sql.append(" From WIFOverdraftScheduleDetail");
 		} else {
-			selectSql.append(" From OverdraftScheduleDetail");
+			sql.append(" From OverdraftScheduleDetail");
 		}
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference  order by DroplineDate asc");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		List<OverdraftScheduleDetail> odSchedules = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		RowMapper<OverdraftScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OverdraftScheduleDetail.class);
+			ps.setString(index++, finRef);
+		}, (rs, rowNum) -> {
+			OverdraftScheduleDetail schd = new OverdraftScheduleDetail();
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			schd.setFinReference(rs.getString("FinReference"));
+			schd.setDroplineDate(JdbcUtil.getDate(rs.getDate("DroplineDate")));
+			schd.setActualRate(rs.getBigDecimal("ActualRate"));
+			schd.setBaseRate(rs.getString("BaseRate"));
+			schd.setSplRate(rs.getString("SplRate"));
+			schd.setMargin(rs.getBigDecimal("Margin"));
+			schd.setDroplineRate(rs.getBigDecimal("DroplineRate"));
+			schd.setLimitDrop(rs.getBigDecimal("LimitDrop"));
+			schd.setODLimit(rs.getBigDecimal("ODLimit"));
+			schd.setLimitIncreaseAmt(rs.getBigDecimal("LimitIncreaseAmt"));
+
+			return schd;
+		});
+
+		return sortODSchedules(odSchedules);
+
+	}
+
+	private List<OverdraftScheduleDetail> sortODSchedules(List<OverdraftScheduleDetail> odSchedules) {
+		return odSchedules.stream().sorted((od1, od2) -> DateUtil.compare(od1.getDroplineDate(), od2.getDroplineDate()))
+				.collect(Collectors.toList());
 	}
 
 	/**

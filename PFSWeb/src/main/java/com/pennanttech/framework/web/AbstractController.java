@@ -11,7 +11,8 @@ import java.util.Map;
 import javax.xml.stream.FactoryConfigurationError;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.access.annotation.Secured;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -84,7 +85,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public abstract class AbstractController<T> extends GenericForwardComposer<Component> implements Serializable {
 	private static final long serialVersionUID = -1171206258809472640L;
-	private static final Logger logger = Logger.getLogger(AbstractController.class);
+	private static final Logger logger = LogManager.getLogger(AbstractController.class);
 
 	public static final int LIST_AREA_HEIGHT_OFFSET = 58;
 

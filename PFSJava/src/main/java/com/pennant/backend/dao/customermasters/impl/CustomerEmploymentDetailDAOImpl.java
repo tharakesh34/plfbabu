@@ -24,17 +24,13 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -54,7 +50,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploymentDetail>
 		implements CustomerEmploymentDetailDAO {
-	private static Logger logger = Logger.getLogger(CustomerEmploymentDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerEmploymentDetailDAOImpl.class);
 
 	public CustomerEmploymentDetailDAOImpl() {
 		super();
@@ -282,8 +278,6 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 
 	@Override
 	public List<CustomerEmploymentDetail> getCustomerEmploymentDetailsByID(long id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustEmpId, CustID, CustEmpName, CustEmpDept, CustEmpDesg, CustEmpType, CustEmpFrom");
 		sql.append(", CustEmpTo, CurrentEmployer, CompanyName, Version, LastMntBy, LastMntOn, RecordStatus");
@@ -300,57 +294,44 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, id);
-				}
-			}, new RowMapper<CustomerEmploymentDetail>() {
-				@Override
-				public CustomerEmploymentDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CustomerEmploymentDetail emp = new CustomerEmploymentDetail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, id);
+		}, (rs, rowNum) -> {
+			CustomerEmploymentDetail emp = new CustomerEmploymentDetail();
 
-					emp.setCustEmpId(rs.getLong("CustEmpId"));
-					emp.setCustID(rs.getLong("CustID"));
-					emp.setCustEmpName(rs.getLong("CustEmpName"));
-					emp.setCustEmpDept(rs.getString("CustEmpDept"));
-					emp.setCustEmpDesg(rs.getString("CustEmpDesg"));
-					emp.setCustEmpType(rs.getString("CustEmpType"));
-					emp.setCustEmpFrom(rs.getTimestamp("CustEmpFrom"));
-					emp.setCustEmpTo(rs.getTimestamp("CustEmpTo"));
-					emp.setCurrentEmployer(rs.getBoolean("CurrentEmployer"));
-					emp.setCompanyName(rs.getString("CompanyName"));
-					emp.setVersion(rs.getInt("Version"));
-					emp.setLastMntBy(rs.getLong("LastMntBy"));
-					emp.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					emp.setRecordStatus(rs.getString("RecordStatus"));
-					emp.setRoleCode(rs.getString("RoleCode"));
-					emp.setNextRoleCode(rs.getString("NextRoleCode"));
-					emp.setTaskId(rs.getString("TaskId"));
-					emp.setNextTaskId(rs.getString("NextTaskId"));
-					emp.setRecordType(rs.getString("RecordType"));
-					emp.setWorkflowId(rs.getLong("WorkflowId"));
+			emp.setCustEmpId(rs.getLong("CustEmpId"));
+			emp.setCustID(rs.getLong("CustID"));
+			emp.setCustEmpName(rs.getLong("CustEmpName"));
+			emp.setCustEmpDept(rs.getString("CustEmpDept"));
+			emp.setCustEmpDesg(rs.getString("CustEmpDesg"));
+			emp.setCustEmpType(rs.getString("CustEmpType"));
+			emp.setCustEmpFrom(rs.getTimestamp("CustEmpFrom"));
+			emp.setCustEmpTo(rs.getTimestamp("CustEmpTo"));
+			emp.setCurrentEmployer(rs.getBoolean("CurrentEmployer"));
+			emp.setCompanyName(rs.getString("CompanyName"));
+			emp.setVersion(rs.getInt("Version"));
+			emp.setLastMntBy(rs.getLong("LastMntBy"));
+			emp.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			emp.setRecordStatus(rs.getString("RecordStatus"));
+			emp.setRoleCode(rs.getString("RoleCode"));
+			emp.setNextRoleCode(rs.getString("NextRoleCode"));
+			emp.setTaskId(rs.getString("TaskId"));
+			emp.setNextTaskId(rs.getString("NextTaskId"));
+			emp.setRecordType(rs.getString("RecordType"));
+			emp.setWorkflowId(rs.getLong("WorkflowId"));
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						emp.setLovDescCustEmpDesgName(rs.getString("LovDescCustEmpDesgName"));
-						emp.setLovDescCustEmpDeptName(rs.getString("LovDescCustEmpDeptName"));
-						emp.setLovDescCustEmpTypeName(rs.getString("LovDescCustEmpTypeName"));
-						emp.setLovDesccustEmpName(rs.getString("LovDesccustEmpName"));
-						emp.setLovDescEmpCategory(rs.getString("LovDescEmpCategory"));
-						emp.setLovDescEmpIndustry(rs.getString("LovDescEmpIndustry"));
-					}
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				emp.setLovDescCustEmpDesgName(rs.getString("LovDescCustEmpDesgName"));
+				emp.setLovDescCustEmpDeptName(rs.getString("LovDescCustEmpDeptName"));
+				emp.setLovDescCustEmpTypeName(rs.getString("LovDescCustEmpTypeName"));
+				emp.setLovDesccustEmpName(rs.getString("LovDesccustEmpName"));
+				emp.setLovDescEmpCategory(rs.getString("LovDescEmpCategory"));
+				emp.setLovDescEmpIndustry(rs.getString("LovDescEmpIndustry"));
+			}
 
-					return emp;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return emp;
+		});
 	}
 
 	@Override

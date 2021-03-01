@@ -27,7 +27,8 @@ package com.pennant.backend.dao.commitment.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -49,7 +50,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 
 public class CommitmentMovementDAOImpl extends BasicDao<CommitmentMovement> implements CommitmentMovementDAO {
-	private static Logger logger = Logger.getLogger(CommitmentMovementDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CommitmentMovementDAOImpl.class);
 
 	public CommitmentMovementDAOImpl() {
 		super();

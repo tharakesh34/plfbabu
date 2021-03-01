@@ -42,17 +42,13 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -71,7 +67,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> implements CustomerChequeInfoDAO {
-	private static Logger logger = Logger.getLogger(CustomerChequeInfoDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerChequeInfoDAOImpl.class);
 
 	public CustomerChequeInfoDAOImpl() {
 		super();
@@ -88,7 +84,6 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 	 */
 	@Override
 	public CustomerChequeInfo getCustomerChequeInfoById(final long id, int chequeSeq, String type) {
-		logger.debug("Entering");
 		CustomerChequeInfo customerChequeInfo = new CustomerChequeInfo();
 		customerChequeInfo.setId(id);
 		customerChequeInfo.setChequeSeq(chequeSeq);
@@ -110,13 +105,14 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 				.newInstance(CustomerChequeInfo.class);
 
 		try {
-			customerChequeInfo = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerChequeInfo = null;
+			logger.warn(
+					"Cheque details found in CustomerChequeInfo{} table/view for the specified CustID >> {} and ChequeSeq >> {}",
+					type, id, chequeSeq);
 		}
-		logger.debug("Leaving");
-		return customerChequeInfo;
+
+		return null;
 	}
 
 	/**
@@ -124,8 +120,6 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 	 */
 	@Override
 	public List<CustomerChequeInfo> getChequeInfoByCustomer(final long id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustID, ChequeSeq, MonthYear, TotChequePayment, Salary, Debits, ReturnChequeAmt");
 		sql.append(", ReturnChequeCount, Remarks, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
@@ -141,47 +135,34 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, id);
-				}
-			}, new RowMapper<CustomerChequeInfo>() {
-				@Override
-				public CustomerChequeInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CustomerChequeInfo cci = new CustomerChequeInfo();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, id);
+		}, (rs, rowNum) -> {
+			CustomerChequeInfo cci = new CustomerChequeInfo();
 
-					cci.setCustID(rs.getLong("CustID"));
-					cci.setChequeSeq(rs.getInt("ChequeSeq"));
-					cci.setMonthYear(rs.getTimestamp("MonthYear"));
-					cci.setTotChequePayment(rs.getBigDecimal("TotChequePayment"));
-					cci.setSalary(rs.getBigDecimal("Salary"));
-					cci.setDebits(rs.getBigDecimal("Debits"));
-					cci.setReturnChequeAmt(rs.getBigDecimal("ReturnChequeAmt"));
-					cci.setReturnChequeCount(rs.getInt("ReturnChequeCount"));
-					cci.setRemarks(rs.getString("Remarks"));
-					cci.setVersion(rs.getInt("Version"));
-					cci.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					cci.setLastMntBy(rs.getLong("LastMntBy"));
-					cci.setRecordStatus(rs.getString("RecordStatus"));
-					cci.setRoleCode(rs.getString("RoleCode"));
-					cci.setNextRoleCode(rs.getString("NextRoleCode"));
-					cci.setTaskId(rs.getString("TaskId"));
-					cci.setNextTaskId(rs.getString("NextTaskId"));
-					cci.setRecordType(rs.getString("RecordType"));
-					cci.setWorkflowId(rs.getLong("WorkflowId"));
+			cci.setCustID(rs.getLong("CustID"));
+			cci.setChequeSeq(rs.getInt("ChequeSeq"));
+			cci.setMonthYear(rs.getTimestamp("MonthYear"));
+			cci.setTotChequePayment(rs.getBigDecimal("TotChequePayment"));
+			cci.setSalary(rs.getBigDecimal("Salary"));
+			cci.setDebits(rs.getBigDecimal("Debits"));
+			cci.setReturnChequeAmt(rs.getBigDecimal("ReturnChequeAmt"));
+			cci.setReturnChequeCount(rs.getInt("ReturnChequeCount"));
+			cci.setRemarks(rs.getString("Remarks"));
+			cci.setVersion(rs.getInt("Version"));
+			cci.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			cci.setLastMntBy(rs.getLong("LastMntBy"));
+			cci.setRecordStatus(rs.getString("RecordStatus"));
+			cci.setRoleCode(rs.getString("RoleCode"));
+			cci.setNextRoleCode(rs.getString("NextRoleCode"));
+			cci.setTaskId(rs.getString("TaskId"));
+			cci.setNextTaskId(rs.getString("NextTaskId"));
+			cci.setRecordType(rs.getString("RecordType"));
+			cci.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return cci;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return cci;
+		});
 	}
 
 	/**

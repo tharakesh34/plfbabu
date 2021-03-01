@@ -45,7 +45,9 @@ package com.pennant.backend.dao.masters.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -61,7 +63,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDAO {
-	private static Logger logger = Logger.getLogger(MasterDefDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(MasterDefDAOImpl.class);
 
 	public MasterDefDAOImpl() {
 		super();
@@ -114,24 +116,25 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 	 */
 	@Override
 	public String getMasterKeyTypeByCode(String masterType, String keyCode) {
-		logger.debug("Entering");
-
 		MasterDef masterDef = new MasterDef();
 		masterDef.setMasterType(masterType);
 		masterDef.setKeyCode(keyCode);
 
-		StringBuilder selectSql = new StringBuilder("Select Key_type ");
-		selectSql.append(" From Master_Def");
-		selectSql.append(" Where Master_Type =:MasterType and Key_Code=:keyCode ");
+		StringBuilder sql = new StringBuilder("Select Key_type");
+		sql.append(" From Master_Def");
+		sql.append(" Where Master_Type =:MasterType and Key_Code=:keyCode ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(masterDef);
 		logger.debug("Leaving");
+
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record not found in Master_Def table for the specified Master_Type >> {} and Key_Code >> {} ",
+					masterType, keyCode);
 		}
+
 		return null;
 	}
 

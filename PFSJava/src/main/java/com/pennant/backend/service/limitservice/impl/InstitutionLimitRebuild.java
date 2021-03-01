@@ -104,8 +104,6 @@ public class InstitutionLimitRebuild {
 	@Autowired
 	private FinanceDisbursementDAO financeDisbursementDAO;
 	@Autowired
-	private RuleExecutionUtil ruleExecutionUtil;
-	@Autowired
 	private LimitGroupLinesDAO limitGroupLinesDAO;
 	@Autowired
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -129,34 +127,37 @@ public class InstitutionLimitRebuild {
 
 			LimitFilterQuery limitFilterQuery = limitRuleDAO.getLimitRuleByQueryCode(ruleCode,
 					RuleConstants.MODULE_IRLFILTER, "_AView");
+
 			List<LimitDetails> limitDetailsList = limitDetailDAO.getLimitDetails(headerId);
 
 			processStructuralChanges(limitDetailsList, limitHeader);
 
 			resetLimitDetails(limitDetailsList);
 
-			// Finance List Based on SQL Rule
-			String sqlQuery = limitFilterQuery.getSQLQuery();
+			List<FinanceMain> financeMains = new ArrayList<>();
 
-			List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
-			financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), sqlQuery, false));
-			financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), sqlQuery, true));
+			// Finance List Based on SQL Rule
+			if (limitFilterQuery != null) {
+				String sqlQuery = limitFilterQuery.getSQLQuery();
+
+				financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), sqlQuery, false));
+				financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), sqlQuery, true));
+			}
 
 			financeMains.forEach(financeMain -> {
 				financeMain.setOsPriBal(limitDetailDAO.getOsPriBal(financeMain.getFinReference()));
 			});
-			Map<Long, List<FinanceMain>> custmains = new HashMap<Long, List<FinanceMain>>();
+			Map<Long, List<FinanceMain>> custmains = new HashMap<>();
 
 			StepUtil.INSTITUTION_LIMITS_UPDATE.setTotalRecords(financeMains.size());
 
 			for (FinanceMain financeMain : financeMains) {
-
 				if (!(FinanceConstants.CLOSE_STATUS_CANCELLED.equals(financeMain.getClosingStatus())
 						|| PennantConstants.RCD_STATUS_CANCELLED.equals(financeMain.getRecordStatus()))) {
 
 					List<FinanceMain> list = custmains.get(financeMain.getCustID());
 					if (list == null) {
-						list = new ArrayList<FinanceMain>();
+						list = new ArrayList<>();
 						custmains.put(financeMain.getCustID(), list);
 					}
 					list.add(financeMain);
@@ -458,7 +459,7 @@ public class InstitutionLimitRebuild {
 					continue;
 				}
 
-				boolean ruleResult = (boolean) ruleExecutionUtil.executeRule(details.getSqlRule(), dataMap, "",
+				boolean ruleResult = (boolean) RuleExecutionUtil.executeRule(details.getSqlRule(), dataMap, "",
 						RuleReturnType.BOOLEAN);
 				if (ruleResult) {
 					mapping.setLimitLine(details.getLimitLine());

@@ -45,7 +45,8 @@ package com.pennant.webui.reports;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class DealWiseIncomeReportCtrl extends GFCBaseCtrl<ReportConfiguration> {
 	private static final long serialVersionUID = 4678287540046204660L;
-	private static final Logger logger = Logger.getLogger(DealWiseIncomeReportCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DealWiseIncomeReportCtrl.class);
 
 	protected Window window_DealWiseIncomeReportCtrl;
 

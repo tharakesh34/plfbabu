@@ -3,7 +3,8 @@ package com.pennant.mq.process.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.coreinterface.model.CoreBankAvailCustomer;
 import com.pennant.coreinterface.model.CoreBankingCustomer;
@@ -17,7 +18,7 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerDataServiceImpl implements CustomerDataProcess {
-	private static final Logger logger = Logger.getLogger(CustomerDataServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerDataServiceImpl.class);
 
 	private FetchCustomerInfoProcess fetchCustomerInfoProcess;
 	private FinCustomerDetailProcess finCustomerDetailProcess;

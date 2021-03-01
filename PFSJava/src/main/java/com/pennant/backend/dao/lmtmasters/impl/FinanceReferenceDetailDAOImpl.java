@@ -44,7 +44,6 @@ package com.pennant.backend.dao.lmtmasters.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -274,25 +273,19 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	@Override
 	public List<FinanceReferenceDetail> getFinanceProcessEditorDetails(final String financeType, final String finEvent,
 			String type) {
-		logger.debug(Literal.ENTERING);
-		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
-		financeReferenceDetail.setFinType(financeType);
-		financeReferenceDetail.setFinEvent(finEvent);
+		StringBuilder sql = getSqlQuery(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinType = ? and FinEvent = ? and IsActive = ?");
 
-		StringBuilder selectSql = new StringBuilder("Select * FROM  LMTFINREFDETAIL");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType =:FinType AND FinEvent = :FinEvent and ISACTIVE = 1 ");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
-		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceReferenceDetail.class);
-
-		List<FinanceReferenceDetail> financeReferenceDetails = this.jdbcTemplate.query(selectSql.toString(),
-				beanParameters, typeRowMapper);
-
-		logger.debug(Literal.LEAVING);
-		return financeReferenceDetails;
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, financeType);
+			ps.setString(index++, finEvent);
+			ps.setBoolean(index++, true);
+		}, (rs, rowNum) -> {
+			return getRowMapper(rs, StringUtils.trimToEmpty(type));
+		});
 
 	}
 
@@ -529,8 +522,8 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	public long save(FinanceReferenceDetail financeReferenceDetail, String type) {
 		logger.debug(Literal.ENTERING);
 		if (financeReferenceDetail.getId() == Long.MIN_VALUE) {
-			financeReferenceDetail.setId(getNextId("SeqLMTFinRefDetail"));
-			logger.debug("get NextID:" + financeReferenceDetail.getId());
+			financeReferenceDetail.setId(getNextValue("SeqLMTFinRefDetail"));
+			logger.debug("get NextValue:" + financeReferenceDetail.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into LMTFinRefDetail");
@@ -614,64 +607,137 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	@Override
 	public List<FinanceReferenceDetail> getFinRefDetByRoleAndFinType(final String financeType, String finEvent,
 			String mandInputInStage, List<String> groupIds, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select FinRefDetailId, FinType,FinEvent,FinRefType, FinRefId, IsActive, ShowInStage, MandInputInStage, AllowInputInStage,");
-		selectSql.append(" AllowDeviation, AllowWaiver, AllowPostpone, AllowExpire,");
-		selectSql.append(
-				" OverRide,OverRideValue, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinRefDetailId, FinType, FinEvent, FinRefType, FinRefId, IsActive, ShowInStage");
+		sql.append(", MandInputInStage, AllowInputInStage, AllowDeviation, AllowWaiver, AllowPostpone");
+		sql.append(", AllowExpire, OverRide, OverRideValue, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if ("_AEView".equals(StringUtils.trimToEmpty(type))) {
-			selectSql.append(
-					",lovDescElgRuleValue,lovDescCodelov, lovDescNamelov,lovDescFinTypeDescName, lovDescRefDesc,lovDescFinCcyCode, lovDescProductCodeName,lovDescRuleReturnType ");
+			sql.append(", LovDescElgRuleValue, LovDescCodelov, LovDescNamelov, LovDescFinTypeDescName");
+			sql.append(", LovDescRefDesc, LovDescFinCcyCode, LovDescProductCodeName, LovDescRuleReturnType");
 		} else if ("_ASGView".equals(StringUtils.trimToEmpty(type))
 				|| "_ACSGView".equals(StringUtils.trimToEmpty(type))) {
-			selectSql.append(
-					",lovDescminScore,lovDescisoverride,lovDescoverrideScore,lovDescCodelov, lovDescNamelov,lovDescFinTypeDescName, lovDescRefDesc ");
+			sql.append(", LovDescminScore, LovDescisoverride, LovDescoverrideScore");
+			sql.append(", LovDescCodelov, LovDescNamelov, LovDescFinTypeDescName, LovDescRefDesc");
 		} else if ("_AAView".contains(StringUtils.trimToEmpty(type))
 				|| "_TAView".contains(StringUtils.trimToEmpty(type))) {
-			selectSql.append(
-					" ,lovDescFinTypeDescName, lovDescRefDesc,lovDescAggReportName,lovDescAggReportPath,lovDescCodelov, lovDescNamelov, lovDescAggImage, lovDescAggRuleName,AggType,AllowMultiple,ModuleType");
+			sql.append(", LovDescFinTypeDescName, LovDescRefDesc, LovDescAggReportName");
+			sql.append(", LovDescAggReportPath, LovDescCodelov, LovDescNamelov, LovDescAggImage, LovDescAggRuleName");
+			sql.append(", AggType, AllowMultiple, ModuleType");
 		}
-		selectSql.append(" From LMTFinRefDetail");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where ");
+		sql.append(" from LMTFinRefDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where ");
 
 		if (StringUtils.isNotBlank(financeType)) {
-			selectSql.append(" FinType =:FinType AND ");
+			sql.append(" FinType = ? and");
 		}
 		if (StringUtils.isNotBlank(finEvent)) {
-			selectSql.append(" FinEvent =:FinEvent AND ");
+			sql.append(" FinEvent = ? and");
 		}
-		if (groupIds != null && groupIds.size() > 0) {
-			selectSql.append(" FinRefId NOT IN (:GroupIds) AND ");
+		if (CollectionUtils.isNotEmpty(groupIds)) {
+			sql.append(" FinRefId NOT IN (");
+			int i = 0;
+			while (i < groupIds.size()) {
+				sql.append(" ?,");
+			}
+			sql.deleteCharAt(sql.length() - 1);
+			sql.append(") and");
 		}
 
 		if (mandInputInStage != null) {
 			if ("_AEView".equals(type)) {
-				selectSql.append(" AllowInputInStage like '%" + mandInputInStage + ",%' AND ");
+				sql.append(" AllowInputInStage");
 			} else {
-				selectSql.append(" MandInputInStage like '%" + mandInputInStage + ",%' AND ");
+				sql.append(" MandInputInStage");
 			}
+			sql.append(" like '%").append(mandInputInStage).append(",%' and");
 		}
-		selectSql.append(" IsActive = 1 ");
+		sql.append(" IsActive = ?");
 
-		Map<String, List<String>> parameterMap = new HashMap<String, List<String>>();
-		List<String> fintype = new ArrayList<String>();
-		fintype.add(financeType);
-		List<String> finevent = new ArrayList<String>();
-		finevent.add(finEvent);
-		parameterMap.put("GroupIds", groupIds);
-		parameterMap.put("FinType", fintype);
-		parameterMap.put("FinEvent", finevent);
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug(Literal.SQL + selectSql.toString());
-		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceReferenceDetail.class);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			if (StringUtils.isNotBlank(financeType)) {
+				ps.setString(index++, financeType);
+			}
+			if (StringUtils.isNotBlank(finEvent)) {
+				ps.setString(index++, finEvent);
+			}
+			if (CollectionUtils.isNotEmpty(groupIds)) {
+				for (String id : groupIds) {
+					ps.setString(index++, id);
+				}
+			}
 
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(selectSql.toString(), parameterMap, typeRowMapper);
+			ps.setBoolean(index++, true);
+
+		}, (rs, rowNum) -> {
+			FinanceReferenceDetail frd = new FinanceReferenceDetail();
+
+			frd.setFinRefDetailId(rs.getLong("FinRefDetailId"));
+			frd.setFinType(rs.getString("FinType"));
+			frd.setFinEvent(rs.getString("FinEvent"));
+			frd.setFinRefType(rs.getInt("FinRefType"));
+			frd.setFinRefId(rs.getLong("FinRefId"));
+			frd.setIsActive(rs.getBoolean("IsActive"));
+			frd.setShowInStage(rs.getString("ShowInStage"));
+			frd.setMandInputInStage(rs.getString("MandInputInStage"));
+			frd.setAllowInputInStage(rs.getString("AllowInputInStage"));
+			frd.setAllowDeviation(rs.getBoolean("AllowDeviation"));
+			frd.setAllowWaiver(rs.getBoolean("AllowWaiver"));
+			frd.setAllowPostpone(rs.getBoolean("AllowPostpone"));
+			frd.setAllowExpire(rs.getBoolean("AllowExpire"));
+			frd.setOverRide(rs.getBoolean("OverRide"));
+			frd.setOverRideValue(rs.getInt("OverRideValue"));
+			frd.setVersion(rs.getInt("Version"));
+			frd.setLastMntBy(rs.getLong("LastMntBy"));
+			frd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			frd.setRecordStatus(rs.getString("RecordStatus"));
+			frd.setRoleCode(rs.getString("RoleCode"));
+			frd.setNextRoleCode(rs.getString("NextRoleCode"));
+			frd.setTaskId(rs.getString("TaskId"));
+			frd.setNextTaskId(rs.getString("NextTaskId"));
+			frd.setRecordType(rs.getString("RecordType"));
+			frd.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if ("_AEView".equals(StringUtils.trimToEmpty(type))) {
+				frd.setLovDescElgRuleValue(rs.getString("LovDescElgRuleValue"));
+				frd.setLovDescCodelov(rs.getString("LovDescCodelov"));
+				frd.setLovDescNamelov(rs.getString("LovDescNamelov"));
+				frd.setLovDescFinTypeDescName(rs.getString("LovDescFinTypeDescName"));
+				frd.setLovDescRefDesc(rs.getString("LovDescRefDesc"));
+				frd.setLovDescFinCcyCode(rs.getString("LovDescFinCcyCode"));
+				frd.setLovDescProductCodeName(rs.getString("LovDescProductCodeName"));
+				frd.setLovDescRuleReturnType(rs.getString("LovDescRuleReturnType"));
+			} else if ("_ASGView".equals(StringUtils.trimToEmpty(type))
+					|| "_ACSGView".equals(StringUtils.trimToEmpty(type))) {
+				frd.setLovDescminScore(rs.getInt("LovDescminScore"));
+				frd.setLovDescisoverride(rs.getBoolean("LovDescisoverride"));
+				frd.setLovDescoverrideScore(rs.getInt("LovDescoverrideScore"));
+				frd.setLovDescCodelov(rs.getString("LovDescCodelov"));
+				frd.setLovDescNamelov(rs.getString("LovDescNamelov"));
+				frd.setLovDescFinTypeDescName(rs.getString("LovDescFinTypeDescName"));
+				frd.setLovDescRefDesc(rs.getString("LovDescRefDesc"));
+			} else if ("_AAView".contains(StringUtils.trimToEmpty(type))
+					|| "_TAView".contains(StringUtils.trimToEmpty(type))) {
+				frd.setLovDescFinTypeDescName(rs.getString("LovDescFinTypeDescName"));
+				frd.setLovDescRefDesc(rs.getString("LovDescRefDesc"));
+				frd.setLovDescCodelov(rs.getString("LovDescCodelov"));
+				frd.setLovDescNamelov(rs.getString("LovDescNamelov"));
+				frd.setLovDescAggReportName(rs.getString("LovDescAggReportName"));
+				frd.setLovDescAggReportPath(rs.getString("LovDescAggReportPath"));
+				frd.setLovDescAggImage(rs.getString("LovDescAggImage"));
+				frd.setLovDescAggRuleName(rs.getString("LovDescAggRuleName"));
+				frd.setAggType(rs.getString("AggType"));
+				frd.setAllowMultiple(rs.getBoolean("AllowMultiple"));
+				frd.setModuleType(rs.getString("ModuleType"));
+			}
+
+			return frd;
+		});
 
 	}
 
@@ -991,31 +1057,21 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	@Override
 	public List<FinanceReferenceDetail> getFinanceProcessEditorDetails(final String financeType, final String finEvent,
 			Integer finRefType, String type) {
-		logger.debug(Literal.ENTERING);
-		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
-		financeReferenceDetail.setFinType(financeType);
-		financeReferenceDetail.setFinEvent(finEvent);
-		financeReferenceDetail.setFinRefType(finRefType);
 
-		StringBuilder selectSql = new StringBuilder("Select * FROM  LMTFINREFDETAIL");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(
-				" Where FinType =:FinType AND FinEvent = :FinEvent and FinRefType = :FinRefType and ISACTIVE = 1 ");
+		StringBuilder sql = getSqlQuery(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinType = ? and FinEvent = ?  and FinRefType = ? and IsActive = ?");
 
-		logger.debug(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
-		RowMapper<FinanceReferenceDetail> typeRowMapper = BeanPropertyRowMapper
-				.newInstance(FinanceReferenceDetail.class);
-		List<FinanceReferenceDetail> financeReferenceDetails = new ArrayList<>();
-		try {
-			financeReferenceDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return financeReferenceDetails;
+		logger.trace(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, financeType);
+			ps.setString(index++, finEvent);
+			ps.setInt(index++, finRefType);
+			ps.setBoolean(index++, true);
+		}, (rs, rowNum) -> {
+			return getRowMapper(rs, StringUtils.trimToEmpty(type));
+		});
 	}
 
 	@Override
@@ -1063,4 +1119,86 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
+	private StringBuilder getSqlQuery(String tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinRefDetailId, FinType, FinRefType, FinRefId, IsActive, ShowInStage, MandInputInStage");
+		sql.append(", AllowInputInStage, AllowDeviation, AllowWaiver, AllowPostpone, AllowExpire, OverRide");
+		sql.append(", OverRideValue, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, FinEvent, AlertType");
+		if (tableType.contains("VASVIEW") || tableType.contains("FINVIEW")) {
+			sql.append(", LovDescFinTypeDescName");
+			sql.append(", LovDescAggImage, LovDescNamelov, LovDescCodelov, LovDescRefDesc, LovDescAggReportName");
+			sql.append(", LovDescAggReportPath, AllowMultiple, LovDescIsRemarksAllowed, LovDescCheckMinCount");
+			sql.append(", LovDescCheckMaxCount");
+		}
+		if (tableType.contains("FINVIEW")) {
+			sql.append(", LovDescFinCcyCode, LovDescProductCodeName, LovDescAggRuleName");
+			sql.append(", AggType, ModuleType, LovDescElgRuleValue, LovDescRuleReturnType, LovDescminScore");
+			sql.append(", LovDescisoverride, LovDescoverrideScore");
+		}
+
+		sql.append(" from LMTFINREFDETAIL");
+		sql.append(tableType);
+
+		return sql;
+	}
+
+	private FinanceReferenceDetail getRowMapper(ResultSet rs, String tableType) throws SQLException {
+		FinanceReferenceDetail rd = new FinanceReferenceDetail();
+
+		rd.setFinRefDetailId(rs.getLong("FinRefDetailId"));
+		rd.setFinType(rs.getString("FinType"));
+		rd.setFinRefType(rs.getInt("FinRefType"));
+		rd.setFinRefId(rs.getLong("FinRefId"));
+		rd.setIsActive(rs.getBoolean("IsActive"));
+		rd.setShowInStage(rs.getString("ShowInStage"));
+		rd.setMandInputInStage(rs.getString("MandInputInStage"));
+		rd.setAllowInputInStage(rs.getString("AllowInputInStage"));
+		rd.setAllowDeviation(rs.getBoolean("AllowDeviation"));
+		rd.setAllowWaiver(rs.getBoolean("AllowWaiver"));
+		rd.setAllowPostpone(rs.getBoolean("AllowPostpone"));
+		rd.setAllowExpire(rs.getBoolean("AllowExpire"));
+		rd.setOverRide(rs.getBoolean("OverRide"));
+		rd.setOverRideValue(rs.getInt("OverRideValue"));
+		rd.setVersion(rs.getInt("Version"));
+		rd.setLastMntBy(rs.getLong("LastMntBy"));
+		rd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+		rd.setRecordStatus(rs.getString("RecordStatus"));
+		rd.setRoleCode(rs.getString("RoleCode"));
+		rd.setNextRoleCode(rs.getString("NextRoleCode"));
+		rd.setTaskId(rs.getString("TaskId"));
+		rd.setNextTaskId(rs.getString("NextTaskId"));
+		rd.setRecordType(rs.getString("RecordType"));
+		rd.setWorkflowId(rs.getLong("WorkflowId"));
+		rd.setFinEvent(rs.getString("FinEvent"));
+		rd.setAlertType(rs.getString("AlertType"));
+
+		if (tableType.contains("VASVIEW") || tableType.contains("FINVIEW")) {
+			rd.setLovDescFinTypeDescName(rs.getString("LovDescFinTypeDescName"));
+			rd.setLovDescAggImage(rs.getString("LovDescAggImage"));
+			rd.setLovDescNamelov(rs.getString("LovDescNamelov"));
+			rd.setLovDescCodelov(rs.getString("LovDescCodelov"));
+			rd.setLovDescRefDesc(rs.getString("LovDescRefDesc"));
+			rd.setLovDescAggReportName(rs.getString("LovDescAggReportName"));
+			rd.setLovDescAggReportPath(rs.getString("LovDescAggReportPath"));
+			rd.setAllowMultiple(rs.getBoolean("AllowMultiple"));
+			rd.setLovDescIsRemarksAllowed(rs.getBoolean("LovDescIsRemarksAllowed"));
+			rd.setLovDescCheckMinCount(rs.getLong("LovDescCheckMinCount"));
+			rd.setLovDescCheckMaxCount(rs.getLong("LovDescCheckMaxCount"));
+		}
+		if (tableType.contains("FINVIEW")) {
+			rd.setLovDescFinCcyCode(rs.getString("LovDescFinCcyCode"));
+			rd.setLovDescProductCodeName(rs.getString("LovDescProductCodeName"));
+			rd.setLovDescAggRuleName(rs.getString("LovDescAggRuleName"));
+			rd.setAggType(rs.getString("AggType"));
+			rd.setModuleType(rs.getString("ModuleType"));
+			rd.setLovDescElgRuleValue(rs.getString("LovDescElgRuleValue"));
+			rd.setLovDescRuleReturnType(rs.getString("LovDescRuleReturnType"));
+			rd.setLovDescminScore(rs.getInt("LovDescminScore"));
+			rd.setLovDescisoverride(rs.getBoolean("LovDescisoverride"));
+			rd.setLovDescoverrideScore(rs.getInt("LovDescoverrideScore"));
+		}
+
+		return rd;
+	}
 }

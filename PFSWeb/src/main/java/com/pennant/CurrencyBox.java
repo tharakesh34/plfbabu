@@ -3,7 +3,8 @@ package com.pennant;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
@@ -23,7 +24,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 
 public class CurrencyBox extends Hbox {
 	private static final long serialVersionUID = -4246285143621221275L;
-	private static final Logger logger = Logger.getLogger(CurrencyBox.class);
+	private static final Logger logger = LogManager.getLogger(CurrencyBox.class);
 
 	private Space space;
 	private Space spaceBtwComp;

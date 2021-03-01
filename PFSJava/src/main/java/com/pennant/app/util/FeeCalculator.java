@@ -11,7 +11,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -49,10 +50,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FeeCalculator implements Serializable {
 	private static final long serialVersionUID = 8062681791631293126L;
-	private static Logger logger = Logger.getLogger(FeeCalculator.class);
+	private static Logger logger = LogManager.getLogger(FeeCalculator.class);
 
 	private FinFeeDetailService finFeeDetailService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private RuleDAO ruleDAO;
@@ -263,7 +263,7 @@ public class FeeCalculator implements Serializable {
 						String[] fields = feeRules.getFields().split(",");
 						for (String field : fields) {
 							if (!executionMap.containsKey(field)) {
-								this.ruleExecutionUtil.setExecutionMap(field, objectList, executionMap);
+								RuleExecutionUtil.setExecutionMap(field, objectList, executionMap);
 							}
 						}
 					}
@@ -421,7 +421,7 @@ public class FeeCalculator implements Serializable {
 						String[] fields = feeRule.getFields().split(",");
 						for (String field : fields) {
 							if (!executionMap.containsKey(field)) {
-								this.ruleExecutionUtil.setExecutionMap(field, objectList, executionMap);
+								RuleExecutionUtil.setExecutionMap(field, objectList, executionMap);
 							}
 						}
 					}
@@ -893,10 +893,6 @@ public class FeeCalculator implements Serializable {
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public void setRuleDAO(RuleDAO ruleDAO) {

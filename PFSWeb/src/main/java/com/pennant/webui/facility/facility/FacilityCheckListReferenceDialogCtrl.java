@@ -51,7 +51,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
@@ -95,7 +96,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceCheckListReference> {
 	private static final long serialVersionUID = 4028305737293383251L;
-	private static final Logger logger = Logger.getLogger(FacilityCheckListReferenceDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FacilityCheckListReferenceDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -120,7 +121,6 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	private Map<Long, FacilityReferenceDetail> notInputInStageMap;
 	private Object ctrlObject = null;
 	private Map<String, List<Listitem>> checkListDocTypeMap = null;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private CustomerService customerService;
 	private String userRole = "";
 	private boolean dataChanged = false;
@@ -239,8 +239,8 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		for (FacilityReferenceDetail finRefDetail : checkList) {
 			if (isAllowedToShow(finRefDetail, userRole)) {
 				if (StringUtils.isNotBlank(finRefDetail.getLovDescElgRuleValue())) {
-					boolean isValid = (boolean) this.ruleExecutionUtil.executeRule(
-							finRefDetail.getLovDescElgRuleValue(), fieldsandvalues, null, RuleReturnType.BOOLEAN);
+					boolean isValid = (boolean) RuleExecutionUtil.executeRule(finRefDetail.getLovDescElgRuleValue(),
+							fieldsandvalues, null, RuleReturnType.BOOLEAN);
 					if (isValid) {
 						notAllowedToShowMap.put(Long.valueOf(finRefDetail.getFinRefId()), finRefDetail);
 						continue;
@@ -933,10 +933,6 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 
 	public void setFacility(Facility facility) {
 		this.facility = facility;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public void setCustomerService(CustomerService customerService) {

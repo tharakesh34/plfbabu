@@ -3,7 +3,8 @@ package com.pennant.webui.dedup.dedupparm;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Window;
 
@@ -19,7 +20,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class FetchFinCustomerDedupDetails {
 
-	private static final Logger logger = Logger.getLogger(FetchFinCustomerDedupDetails.class);
+	private static final Logger logger = LogManager.getLogger(FetchFinCustomerDedupDetails.class);
 
 	private static String CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custFName,custLName,custCRCPR,"
 			+ "custPassportNo,mobileNumber,custNationality,dedupRule,override,overridenby";

@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.EtihadCreditBureauDetailDAO;
@@ -60,7 +61,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class EtihadCreditBureauDetailValidation {
 
-	private static final Logger logger = Logger.getLogger(EtihadCreditBureauDetailValidation.class);
+	private static final Logger logger = LogManager.getLogger(EtihadCreditBureauDetailValidation.class);
 	private EtihadCreditBureauDetailDAO etihadCreditBureauDetailDAO;
 
 	public EtihadCreditBureauDetailValidation(EtihadCreditBureauDetailDAO etihadCreditBureauDetailDAO) {

@@ -46,7 +46,8 @@ package com.pennant.backend.dao.rulefactory.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -59,7 +60,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeChargesDAO {
-	private static Logger logger = Logger.getLogger(FinFeeChargesDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinFeeChargesDAOImpl.class);
 
 	public FinFeeChargesDAOImpl() {
 		super();

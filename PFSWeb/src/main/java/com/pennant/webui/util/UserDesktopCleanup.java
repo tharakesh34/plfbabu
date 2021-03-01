@@ -43,7 +43,8 @@
 
 package com.pennant.webui.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.zk.ui.Desktop;
@@ -52,7 +53,7 @@ import org.zkoss.zk.ui.util.DesktopCleanup;
 import com.pennant.app.util.SessionUtil;
 
 public class UserDesktopCleanup implements DesktopCleanup {
-	private static final Logger logger = Logger.getLogger(UserDesktopCleanup.class);
+	private static final Logger logger = LogManager.getLogger(UserDesktopCleanup.class);
 
 	public UserDesktopCleanup() {
 

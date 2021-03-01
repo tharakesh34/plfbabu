@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.ddapayments.DDARepresentmentDAO;
@@ -19,7 +20,7 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 
 public class DDARepresentmentService {
 
-	private static Logger logger = Logger.getLogger(DDARepresentmentService.class);
+	private static Logger logger = LogManager.getLogger(DDARepresentmentService.class);
 
 	public DDARepresentmentService() {
 		super();

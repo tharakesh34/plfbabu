@@ -3,7 +3,8 @@ package com.pennant.backend.financeservice.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -23,7 +24,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class ChangeProfitServiceImpl extends GenericService<FinServiceInstruction> implements ChangeProfitService {
 
-	private static Logger logger = Logger.getLogger(ChangeProfitServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(ChangeProfitServiceImpl.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceMainDAO financeMainDAO;

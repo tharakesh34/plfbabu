@@ -11,7 +11,8 @@ import java.util.Date;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -22,10 +23,11 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.BatchFileUtil;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class PostLimitUtilization implements Tasklet {
 
-	private Logger logger = Logger.getLogger(PostLimitUtilization.class);
+	private Logger logger = LogManager.getLogger(PostLimitUtilization.class);
 
 	private Date appDate = null;
 
@@ -39,7 +41,7 @@ public class PostLimitUtilization implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
-		appDate = DateUtility.getAppDate();
+		appDate = EODUtil.getDate("APP_DATE", context);
 
 		logger.debug("START: Limit Utilization for Value Date: " + appDate);
 

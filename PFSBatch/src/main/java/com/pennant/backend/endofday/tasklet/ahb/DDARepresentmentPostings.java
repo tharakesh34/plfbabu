@@ -9,7 +9,8 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -17,13 +18,13 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennant.backend.service.ddapayments.impl.DDARepresentmentService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class DDARepresentmentPostings implements Tasklet {
-	private Logger logger = Logger.getLogger(DDARepresentmentPostings.class);
+	private Logger logger = LogManager.getLogger(DDARepresentmentPostings.class);
 
 	private Date dateValueDate = null;
 
@@ -39,7 +40,7 @@ public class DDARepresentmentPostings implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
-		dateValueDate = DateUtility.getAppValueDate();
+		dateValueDate = EODUtil.getDate("APP_VALUEDATE", context);
 
 		logger.debug("START: DDA Representment Postings for Value Date: " + dateValueDate);
 

@@ -52,7 +52,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -79,7 +80,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements LimitDetailDAO {
-	private static Logger logger = Logger.getLogger(LimitDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LimitDetailDAOImpl.class);
 
 	public LimitDetailDAOImpl() {
 		super();
@@ -215,7 +216,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	public long save(LimitDetails ld, String type) {
 		logger.debug(Literal.ENTERING);
 		if (ld.getId() == Long.MIN_VALUE) {
-			ld.setId(getNextId("SeqLimitDetails"));
+			ld.setId(getNextValue("SeqLimitDetails"));
 		}
 
 		StringBuilder sql = new StringBuilder("insert into");
@@ -678,7 +679,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		for (LimitDetails limitDetail : limitDetails) {
 			if (limitDetail.getId() == Long.MIN_VALUE) {
-				limitDetail.setId(getNextId("SeqLimitDetails"));
+				limitDetail.setId(getNextValue("SeqLimitDetails"));
 			}
 		}
 

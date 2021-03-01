@@ -7,13 +7,14 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.StoredProcedureUtil;
 
 public class BackupDatabase {
 
-	private Logger logger = Logger.getLogger(BackupDatabase.class);
+	private Logger logger = LogManager.getLogger(BackupDatabase.class);
 
 	private DataSource dataSource;
 

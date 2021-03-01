@@ -5,7 +5,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
@@ -19,7 +20,7 @@ public class DDAPaymentResponseProcess extends QuartzJobBean implements Stateful
 
 	private static final long serialVersionUID = 5973408474522551573L;
 
-	private static final Logger logger = Logger.getLogger(DDAPaymentResponseProcess.class);
+	private static final Logger logger = LogManager.getLogger(DDAPaymentResponseProcess.class);
 
 	public DDAPaymentResponseProcess() {
 		super();

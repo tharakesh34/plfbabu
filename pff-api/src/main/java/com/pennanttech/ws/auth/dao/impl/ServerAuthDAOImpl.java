@@ -42,7 +42,8 @@
 */
 package com.pennanttech.ws.auth.dao.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -58,7 +59,7 @@ import com.pennanttech.ws.auth.model.ServerAuthentication;
  * 
  */
 public class ServerAuthDAOImpl extends BasicDao<ServerAuthentication> implements ServerAuthDAO {
-	private static Logger logger = Logger.getLogger(ServerAuthDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ServerAuthDAOImpl.class);
 
 	public ServerAuthDAOImpl() {
 		super();

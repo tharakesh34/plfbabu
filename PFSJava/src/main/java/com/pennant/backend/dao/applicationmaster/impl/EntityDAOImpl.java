@@ -42,19 +42,15 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.model.applicationmaster.Entity;
@@ -69,7 +65,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>Entity</code> with set of CRUD operations.
  */
 public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
-	private static Logger logger = Logger.getLogger(EntityDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(EntityDAOImpl.class);
 
 	public EntityDAOImpl() {
 		super();
@@ -77,8 +73,6 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 
 	@Override
 	public Entity getEntity(String entityCode, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" EntityCode, EntityDesc, PANNumber, Country, StateCode, CityCode, PinCode, EntityAddrLine1");
 		sql.append(", EntityAddrLine2, EntityAddrHNbr, EntityFlatNbr, EntityAddrStreet, EntityPOBox");
@@ -96,55 +90,50 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { entityCode },
-					new RowMapper<Entity>() {
-						@Override
-						public Entity mapRow(ResultSet rs, int rowNum) throws SQLException {
-							Entity e = new Entity();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { entityCode }, (rs, rowNum) -> {
+				Entity e = new Entity();
 
-							e.setEntityCode(rs.getString("EntityCode"));
-							e.setEntityDesc(rs.getString("EntityDesc"));
-							e.setPANNumber(rs.getString("PANNumber"));
-							e.setCountry(rs.getString("Country"));
-							e.setStateCode(rs.getString("StateCode"));
-							e.setCityCode(rs.getString("CityCode"));
-							e.setPinCode(rs.getString("PinCode"));
-							e.setEntityAddrLine1(rs.getString("EntityAddrLine1"));
-							e.setEntityAddrLine2(rs.getString("EntityAddrLine2"));
-							e.setEntityAddrHNbr(rs.getString("EntityAddrHNbr"));
-							e.setEntityFlatNbr(rs.getString("EntityFlatNbr"));
-							e.setEntityAddrStreet(rs.getString("EntityAddrStreet"));
-							e.setEntityPOBox(rs.getString("EntityPOBox"));
-							e.setActive(rs.getBoolean("Active"));
-							e.setGstinAvailable(rs.getBoolean("GstinAvailable"));
-							e.setVersion(rs.getInt("Version"));
-							e.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							e.setLastMntBy(rs.getLong("LastMntBy"));
-							e.setRecordStatus(rs.getString("RecordStatus"));
-							e.setRoleCode(rs.getString("RoleCode"));
-							e.setNextRoleCode(rs.getString("NextRoleCode"));
-							e.setTaskId(rs.getString("TaskId"));
-							e.setNextTaskId(rs.getString("NextTaskId"));
-							e.setRecordType(rs.getString("RecordType"));
-							e.setWorkflowId(rs.getLong("WorkflowId"));
-							e.setcINNumber(rs.getString("CINNumber"));
-							e.setPinCodeId(rs.getLong("PinCodeId"));
+				e.setEntityCode(rs.getString("EntityCode"));
+				e.setEntityDesc(rs.getString("EntityDesc"));
+				e.setPANNumber(rs.getString("PANNumber"));
+				e.setCountry(rs.getString("Country"));
+				e.setStateCode(rs.getString("StateCode"));
+				e.setCityCode(rs.getString("CityCode"));
+				e.setPinCode(rs.getString("PinCode"));
+				e.setEntityAddrLine1(rs.getString("EntityAddrLine1"));
+				e.setEntityAddrLine2(rs.getString("EntityAddrLine2"));
+				e.setEntityAddrHNbr(rs.getString("EntityAddrHNbr"));
+				e.setEntityFlatNbr(rs.getString("EntityFlatNbr"));
+				e.setEntityAddrStreet(rs.getString("EntityAddrStreet"));
+				e.setEntityPOBox(rs.getString("EntityPOBox"));
+				e.setActive(rs.getBoolean("Active"));
+				e.setGstinAvailable(rs.getBoolean("GstinAvailable"));
+				e.setVersion(rs.getInt("Version"));
+				e.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				e.setLastMntBy(rs.getLong("LastMntBy"));
+				e.setRecordStatus(rs.getString("RecordStatus"));
+				e.setRoleCode(rs.getString("RoleCode"));
+				e.setNextRoleCode(rs.getString("NextRoleCode"));
+				e.setTaskId(rs.getString("TaskId"));
+				e.setNextTaskId(rs.getString("NextTaskId"));
+				e.setRecordType(rs.getString("RecordType"));
+				e.setWorkflowId(rs.getLong("WorkflowId"));
+				e.setcINNumber(rs.getString("CINNumber"));
+				e.setPinCodeId(rs.getLong("PinCodeId"));
 
-							if (StringUtils.trimToEmpty(type).contains("View")) {
-								e.setCountryName(rs.getString("CountryName"));
-								e.setProvinceName(rs.getString("ProvinceName"));
-								e.setCityName(rs.getString("CityName"));
-								e.setPinCodeName(rs.getString("PinCodeName"));
-							}
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					e.setCountryName(rs.getString("CountryName"));
+					e.setProvinceName(rs.getString("ProvinceName"));
+					e.setCityName(rs.getString("CityName"));
+					e.setPinCodeName(rs.getString("PinCodeName"));
+				}
 
-							return e;
-						}
-					});
+				return e;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record not found in Entity{} table/view for the specified EntityCode >> {}", type, entityCode);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -324,53 +313,53 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 
 	@Override
 	public Entity getEntityByFinDivision(String divisionCode, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" EntityCode, EntityDesc, PANNumber From Entity");
+		sql.append(" Where EntityCode = (Select EntityCode from SMTDivisionDetail where DivisionCode = ?)");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("DivisionCode", divisionCode);
+		logger.trace(Literal.SQL + sql.toString());
 
-		StringBuilder sql = new StringBuilder("SELECT entityCode, entityDesc, pANNumber From Entity");
-		sql.append(type);
-		sql.append(" Where entityCode = (Select EntityCode from SMTDivisionDetail where DivisionCode = :DivisionCode)");
-
-		logger.debug("selectSql: " + sql.toString());
-
-		RowMapper<Entity> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Entity.class);
-		Entity entity = null;
 		try {
-			entity = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			entity = null;
-		}
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { divisionCode }, (rs, rowNum) -> {
+				Entity e = new Entity();
 
-		logger.debug(Literal.LEAVING);
-		return entity;
+				e.setEntityCode(rs.getString("EntityCode"));
+				e.setEntityDesc(rs.getString("EntityDesc"));
+				e.setPANNumber(rs.getString("PANNumber"));
+
+				return e;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record not found in Entity{} table/view for the specified DivisionCode >> {}", type,
+					divisionCode);
+			return null;
+		}
 	}
 
 	@Override
 	public Entity getEntityByFinType(String finType, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("SELECT entityCode, entityDesc, PANNumber From Entity");
-		sql.append(type);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" EntityCode, EntityDesc, PANNumber");
+		sql.append(" From Entity");
+		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where EntityCode = (Select D.EntityCode From RMTFinanceTypes F ");
-		sql.append(" INNER JOIN SMTDivisionDetail D ON D.DivisionCode = F.FinDivision Where FinType = :FinType ) ");
+		sql.append(" Inner Join SMTDivisionDetail D ON D.DivisionCode = F.FinDivision");
+		sql.append(" Where FinType = ?)");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinType", finType);
-
-		logger.debug("sql: " + sql.toString());
-		RowMapper<Entity> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Entity.class);
-		Entity entity = null;
 		try {
-			entity = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			entity = null;
-		}
-		logger.debug("Leaving");
-		return entity;
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finType }, (rs, rowNum) -> {
+				Entity e = new Entity();
 
+				e.setEntityCode(rs.getString("EntityCode"));
+				e.setEntityDesc(rs.getString("EntityDesc"));
+				e.setPANNumber(rs.getString("PANNumber"));
+
+				return e;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Records are not found in Entity{} for the Loan type >> {}", type, finType);
+		}
+
+		return null;
 	}
 }

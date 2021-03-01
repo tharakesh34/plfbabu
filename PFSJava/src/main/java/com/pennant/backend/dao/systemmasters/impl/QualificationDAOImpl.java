@@ -1,7 +1,8 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,7 +22,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class QualificationDAOImpl extends BasicDao<Qualification> implements QualificationDAO {
-	private static Logger logger = Logger.getLogger(QualificationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(QualificationDAOImpl.class);
 
 	public QualificationDAOImpl() {
 		super();

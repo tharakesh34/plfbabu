@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements SecurityRoleDAO {
-	private static Logger logger = Logger.getLogger(SecurityRoleDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityRoleDAOImpl.class);
 
 	public SecurityRoleDAOImpl() {
 		super();
@@ -221,8 +222,8 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 	public long save(SecurityRole secRoles, String type) {
 		logger.debug("Entering");
 		if (secRoles.getId() == Long.MIN_VALUE) {
-			secRoles.setId(getNextId("SeqSecRoles"));
-			logger.debug("get NextID:" + secRoles.getId());
+			secRoles.setId(getNextValue("SeqSecRoles"));
+			logger.debug("get NextValue:" + secRoles.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into SecRoles");

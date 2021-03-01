@@ -224,7 +224,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	private FinFeeReceiptDAO finFeeReceiptDAO;
 	protected transient WorkflowEngine workFlow = null;
 	private CollateralStructureService collateralStructureService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private DedupParmService dedupParmService;
 	private AgreementDefinitionService agreementDefinitionService;
 	private NotificationsService notificationsService;
@@ -2004,7 +2003,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				declaredMap.put("collateralType", colSetup.getCollateralType());
 				declaredMap.put("collateralCcy", colSetup.getCollateralCcy());
 				try {
-					ruleResult = ruleExecutionUtil.executeRule(collateralStructure.getSQLRule(), declaredMap,
+					ruleResult = RuleExecutionUtil.executeRule(collateralStructure.getSQLRule(), declaredMap,
 							colSetup.getCollateralCcy(), RuleReturnType.DECIMAL);
 				} catch (Exception e) {
 					APIErrorHandlerService.logUnhandledException(e);
@@ -4101,7 +4100,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			Rule rule = ruleDAO.getRuleByID(RuleConstants.MODULE_DUEDATERULE, RuleConstants.MODULE_DUEDATERULE,
 					RuleConstants.EVENT_DUEDATERULE, "");
 			if (rule != null) {
-				result = (Integer) ruleExecutionUtil.executeRule(rule.getSQLRule(), declaredMap,
+				result = (Integer) RuleExecutionUtil.executeRule(rule.getSQLRule(), declaredMap,
 						financeMain.getFinCcy(), RuleReturnType.INTEGER);
 
 				Date nextRepayDate = financeMain.getFinStartDate();
@@ -4470,10 +4469,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setCollateralStructureService(CollateralStructureService collateralStructureService) {
 		this.collateralStructureService = collateralStructureService;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public DedupParmService getDedupParmService() {

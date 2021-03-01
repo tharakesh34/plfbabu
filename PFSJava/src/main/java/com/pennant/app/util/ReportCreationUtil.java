@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zul.Filedownload;
 
@@ -23,7 +24,7 @@ import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 public class ReportCreationUtil {
-	private static final Logger logger = Logger.getLogger(ReportCreationUtil.class);
+	private static final Logger logger = LogManager.getLogger(ReportCreationUtil.class);
 
 	public static byte[] reportGeneration(String reportName, Object object, List<Object> listData, String reportSrc,
 			String userName, boolean createExcel) throws JRException {

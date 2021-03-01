@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetailDAO {
-	private static Logger logger = Logger.getLogger(BankDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BankDetailDAOImpl.class);
 
 	public BankDetailDAOImpl() {
 		super();

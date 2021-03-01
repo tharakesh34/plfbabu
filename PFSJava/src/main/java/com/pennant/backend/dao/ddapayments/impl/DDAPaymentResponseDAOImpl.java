@@ -2,7 +2,8 @@ package com.pennant.backend.dao.ddapayments.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -15,7 +16,7 @@ import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class DDAPaymentResponseDAOImpl extends BasicDao<DDAPayments> implements DDAPaymentResponseDAO {
-	private static Logger logger = Logger.getLogger(DDAPaymentResponseDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DDAPaymentResponseDAOImpl.class);
 
 	public DDAPaymentResponseDAOImpl() {
 		super();

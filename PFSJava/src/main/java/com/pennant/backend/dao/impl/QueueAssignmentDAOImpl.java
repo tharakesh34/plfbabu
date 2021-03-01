@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.impl;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -53,14 +52,15 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -79,7 +79,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements QueueAssignmentDAO {
-	private static Logger logger = Logger.getLogger(QueueAssignmentDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(QueueAssignmentDAOImpl.class);
 	private DataSource dataSource;
 
 	public QueueAssignmentDAOImpl() {
@@ -272,81 +272,78 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 
 	@Override
 	public List<QueueAssignment> getFinances(String nextUserId, String nextRoleCode, boolean isManual) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Module, COALESCE(UserId, 0) UserId, COALESCE(FromUserId,0) FromUserId");
+		sql.append(", UserRoleCode, T1.FinReference Reference, T1.FinType lovDescFinType");
+		sql.append(", T5.FinTypeDesc lovDescFinTypeDesc, T1.CustId lovDescCustCIF, T1.FinAmount lovDescFinAmount");
+		sql.append(", T3.CcyEditField lovDescEditField, COALESCE(T2.Version,0) Ver, T2.LastMntOn");
+		sql.append(", COALESCE(T2.LastMntBy,0) LastMntBy,T2.RecordStatus, T2.RoleCode, T2.NextRoleCode");
+		sql.append(", T2.TaskId, T2.NextTaskId, T2.RecordType, COALESCE(T2.WorkflowId,0) WorkflowId");
+		sql.append(", T4.UsrFName LovDescUserName,T6.ActualOwner lovDescActualOwner");
+		sql.append(" FROM FinanceMain_Temp T1");
+		sql.append(" INNER JOIN Task_Owners T6 ON T1.FinReference = T6.Reference AND T6.Processed = 0");
+		sql.append(" INNER JOIN RMTCurrencies T3 ON T1.FinCcy= T3.CcyCode");
+		sql.append(" INNER JOIN RMTFinanceTypes T5 ON T1.FinType = T5.FinType");
+		sql.append(" LEFT OUTER JOIN Task_Assignments_Temp T2 ON T1.FinReference = T2.Reference");
+		sql.append(" AND T2.UserRoleCode=T6.RoleCode");
+		sql.append(" LEFT OUTER JOIN SecUsers T4 ON T2.UserId = T4.UsrId");
+		sql.append(" Where T6.RoleCode = ? and");
 
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT Module, COALESCE(UserId, 0) UserId, COALESCE(FromUserId,0) FromUserId, UserRoleCode, T1.FinReference Reference,");
-		selectSql.append(
-				" T1.FinType lovDescFinType, T5.FinTypeDesc lovDescFinTypeDesc, T1.CustId lovDescCustCIF, T1.FinAmount lovDescFinAmount, T3.CcyEditField lovDescEditField,");
-		selectSql.append(
-				" COALESCE(T2.Version,0) Ver, T2.LastMntOn, COALESCE(T2.LastMntBy,0) LastMntBy,T2.RecordStatus, T2.RoleCode, T2.NextRoleCode, ");
-		selectSql.append(
-				" T2.TaskId, T2.NextTaskId, T2.RecordType, COALESCE(T2.WorkflowId,0) WorkflowId, T4.UsrFName LovDescUserName,T6.ActualOwner lovDescActualOwner");
-		selectSql.append(
-				" FROM FinanceMain_Temp T1 INNER JOIN Task_Owners T6 ON T1.FinReference = T6.Reference AND T6.Processed=0 INNER JOIN ");
-		selectSql.append(
-				" RMTCurrencies T3 ON T1.FinCcy= T3.CcyCode INNER JOIN RMTFinanceTypes T5 ON T1.FinType = T5.FinType LEFT OUTER JOIN");
-		selectSql.append(
-				" Task_Assignments_Temp T2 ON T1.FinReference = T2.Reference AND T2.UserRoleCode=T6.RoleCode LEFT OUTER JOIN SecUsers T4 ON T2.UserId = T4.UsrId ");
-		selectSql.append(" Where T6.RoleCode=? AND ");
 		if (StringUtils.isBlank(nextUserId) || isManual) {
-			selectSql.append(" T6.CurrentOwner = ?");
+			sql.append(" T6.CurrentOwner = ?");
 		} else {
-			selectSql.append(" T6.CurrentOwner = ?");
+			sql.append(" T6.CurrentOwner = ?");
 		}
-		selectSql.append(" ORDER BY Module desc");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(selectSql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
+		List<QueueAssignment> list = this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, nextRoleCode);
+			if (StringUtils.isBlank(nextUserId) || isManual) {
+				ps.setLong(2, 0);
+			} else {
+				ps.setLong(2, Long.valueOf(nextUserId));
+			}
+		}, (rs, i) -> {
+			QueueAssignment qa = new QueueAssignment();
+			qa.setModule(rs.getString("Module"));
+			qa.setUserId(rs.getLong("UserId"));
+			qa.setFromUserId(rs.getLong("FromUserId"));
+			qa.setUserRoleCode(rs.getString("UserRoleCode"));
+			qa.setReference(rs.getString("Reference"));
+			qa.setLovDescFinType(rs.getString("lovDescFinType"));
+			qa.setLovDescFinTypeDesc(rs.getString("lovDescFinTypeDesc"));
+			qa.setLovDescCustCIF(rs.getLong("lovDescCustCIF"));
+			qa.setLovDescFinAmount(rs.getBigDecimal("LovDescFinAmount"));
+			qa.setLovDescEditField(rs.getInt("LovDescEditField"));
+			qa.setVersion(rs.getInt("Ver"));
+			qa.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			qa.setLastMntBy(rs.getLong("LastMntBy"));
+			qa.setRecordStatus(rs.getString("RecordStatus"));
+			qa.setRoleCode(rs.getString("RoleCode"));
+			qa.setNextRoleCode(rs.getString("NextRoleCode"));
+			qa.setTaskId(rs.getString("TaskId"));
+			qa.setNextTaskId(rs.getString("NextTaskId"));
+			qa.setRecordType(rs.getString("RecordType"));
+			qa.setWorkflowId(rs.getLong("WorkflowId"));
+			qa.setLovDescUserName(rs.getString("LovDescUserName"));
+			qa.setLovDescActualOwner(rs.getLong("lovDescActualOwner"));
 
-					ps.setString(index++, nextRoleCode);
-					if (StringUtils.isBlank(nextUserId) || isManual) {
-						ps.setLong(index++, 0);
-					} else {
-						ps.setLong(index++, Long.valueOf(nextUserId));
-					}
+			return qa;
+		});
 
-				}
-			}, new RowMapper<QueueAssignment>() {
-				@Override
-				public QueueAssignment mapRow(ResultSet rs, int rowNum) throws SQLException {
-					QueueAssignment qa = new QueueAssignment();
-					qa.setModule(rs.getString("Module"));
-					qa.setUserId(rs.getLong("UserId"));
-					qa.setFromUserId(rs.getLong("FromUserId"));
-					qa.setUserRoleCode(rs.getString("UserRoleCode"));
-					qa.setReference(rs.getString("Reference"));
-					qa.setLovDescFinType(rs.getString("lovDescFinType"));
-					qa.setLovDescFinTypeDesc(rs.getString("lovDescFinTypeDesc"));
-					qa.setLovDescCustCIF(rs.getLong("lovDescCustCIF"));
-					qa.setLovDescFinAmount(rs.getBigDecimal("LovDescFinAmount"));
-					qa.setLovDescEditField(rs.getInt("LovDescEditField"));
-					qa.setVersion(rs.getInt("Ver"));
-					qa.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					qa.setLastMntBy(rs.getLong("LastMntBy"));
-					qa.setRecordStatus(rs.getString("RecordStatus"));
-					qa.setRoleCode(rs.getString("RoleCode"));
-					qa.setNextRoleCode(rs.getString("NextRoleCode"));
-					qa.setTaskId(rs.getString("TaskId"));
-					qa.setNextTaskId(rs.getString("NextTaskId"));
-					qa.setRecordType(rs.getString("RecordType"));
-					qa.setWorkflowId(rs.getLong("WorkflowId"));
-					qa.setLovDescUserName(rs.getString("LovDescUserName"));
-					qa.setLovDescActualOwner(rs.getLong("lovDescActualOwner"));
+		return list.stream().sorted((l1, l2) -> compare(l2.getModule(), l1.getModule())).collect(Collectors.toList());
+	}
 
-					return qa;
-				}
-			});
-
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+	private int compare(String module, String module2) {
+		if (module == null) {
+			return -1;
 		}
-		return null;
+		if (module2 == null) {
+			return 1;
+		}
+
+		return module.compareTo(module2);
 	}
 
 	@Override
@@ -403,7 +400,7 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(queueAssignment);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
+ 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}

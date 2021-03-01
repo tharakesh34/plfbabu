@@ -51,7 +51,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -73,7 +74,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * DAO methods implementation for the <b>VehicleDealer model</b> class.<br>
  */
 public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements VehicleDealerDAO {
-	private static Logger logger = Logger.getLogger(VehicleDealerDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(VehicleDealerDAOImpl.class);
 
 	public VehicleDealerDAOImpl() {
 		super();
@@ -420,8 +421,8 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	public long save(VehicleDealer vehicleDealer, String type) {
 		logger.debug("Entering");
 		if (vehicleDealer.getId() == Long.MIN_VALUE) {
-			vehicleDealer.setId(getNextId("SeqAMTVehicleDealer"));
-			logger.debug("get NextID:" + vehicleDealer.getId());
+			vehicleDealer.setId(getNextValue("SeqAMTVehicleDealer"));
+			logger.debug("get NextValue:" + vehicleDealer.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder();
@@ -587,21 +588,40 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 
 	@Override
 	public List<VehicleDealer> getVehicleDealerById(List<Long> dealerIds) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder("Select DealerName, DealerCity, DealerId,Code From AMTVehicleDealer ");
-		sql.append(" WHERE DealerId IN(:dealerIds) ");
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("dealerIds", dealerIds);
-		try {
-			RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(VehicleDealer.class);
-			logger.debug(Literal.LEAVING);
-			return this.jdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DealerName, DealerCity, DealerId, Code");
+		sql.append(" From AMTVehicleDealer");
+		sql.append(" Where DealerId IN(");
 
-		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+		int i = 0;
+
+		while (i < dealerIds.size()) {
+			sql.append(" ?,");
+			i++;
 		}
-		return null;
+
+		sql.deleteCharAt(sql.length() - 1);
+		sql.append(")");
+
+		logger.trace(Literal.SQL, sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			for (Long id : dealerIds) {
+				ps.setLong(index++, id);
+			}
+
+		}, (rs, rowNum) -> {
+			VehicleDealer vd = new VehicleDealer();
+
+			vd.setCode(rs.getString("Code"));
+			vd.setDealerName(rs.getString("DealerName"));
+			vd.setDealerCity(rs.getString("DealerCity"));
+			vd.setDealerId(rs.getLong("DealerId"));
+
+			return vd;
+		});
+
 	}
 
 	@Override

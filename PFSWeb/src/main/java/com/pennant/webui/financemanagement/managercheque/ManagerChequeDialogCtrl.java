@@ -56,7 +56,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -140,7 +141,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ManagerChequeDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ManagerChequeDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here

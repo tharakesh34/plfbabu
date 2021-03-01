@@ -54,7 +54,8 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountEventConstants;
@@ -66,6 +67,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
@@ -123,7 +125,7 @@ import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class ManualPaymentServiceImpl extends GenericFinanceDetailService implements ManualPaymentService {
-	private static final Logger logger = Logger.getLogger(ManualPaymentServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ManualPaymentServiceImpl.class);
 
 	private FinanceRepayPriorityDAO financeRepayPriorityDAO;
 	private FinRepayQueueDAO finRepayQueueDAO;
@@ -1627,7 +1629,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			Rule insRefundRule = getRuleService().getApprovedRuleById("INSREFND", RuleConstants.MODULE_REFUND,
 					RuleConstants.EVENT_REFUND);
 			if (insRefundRule != null) {
-				BigDecimal refundResult = (BigDecimal) getRuleExecutionUtil().executeRule(insRefundRule.getSQLRule(),
+				BigDecimal refundResult = (BigDecimal) RuleExecutionUtil.executeRule(insRefundRule.getSQLRule(),
 						subHeadRule.getDeclaredFieldValues(), financeMain.getFinCcy(), RuleReturnType.DECIMAL);
 				repayData.getRepayMain().setInsRefund(refundResult);
 			}

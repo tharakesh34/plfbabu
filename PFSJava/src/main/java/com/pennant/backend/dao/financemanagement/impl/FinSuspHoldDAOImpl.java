@@ -46,7 +46,8 @@ package com.pennant.backend.dao.financemanagement.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold> implements FinSuspHoldDAO {
-	private static Logger logger = Logger.getLogger(FinSuspHoldDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinSuspHoldDAOImpl.class);
 
 	public FinSuspHoldDAOImpl() {
 		super();
@@ -202,7 +203,7 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold> implements FinS
 		logger.debug("Entering");
 
 		if (finSuspHold.getId() == Long.MIN_VALUE) {
-			finSuspHold.setSuspHoldID(getNextId("SeqFinSuspHold"));
+			finSuspHold.setSuspHoldID(getNextValue("SeqFinSuspHold"));
 		}
 
 		StringBuilder insertSql = new StringBuilder();

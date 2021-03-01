@@ -1,12 +1,13 @@
 package com.pennanttech.pff.external.disbursement.dao;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 
 public class DisbursementRequestsQueries {
-	private static Logger logger = Logger.getLogger(DisbursementRequestsQueries.class);
+	private static Logger logger = LogManager.getLogger(DisbursementRequestsQueries.class);
 
 	private static String selectQuery = null;
 	private static String insertHeaderQuery = null;

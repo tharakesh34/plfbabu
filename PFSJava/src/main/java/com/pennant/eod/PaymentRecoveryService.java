@@ -8,7 +8,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -25,7 +26,7 @@ import com.pennant.eod.dao.PaymentRecoveryHeaderDAO;
 
 public class PaymentRecoveryService {
 
-	private static Logger logger = Logger.getLogger(PaymentRecoveryService.class);
+	private static Logger logger = LogManager.getLogger(PaymentRecoveryService.class);
 
 	private DataSource dataSource;
 	private PaymentRecoveryHeaderDAO paymentRecoveryHeaderDAO;

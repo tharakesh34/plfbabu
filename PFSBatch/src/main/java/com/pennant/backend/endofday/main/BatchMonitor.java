@@ -54,7 +54,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.StepExecution;
@@ -66,7 +67,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennanttech.pennapps.core.App;
 
 public class BatchMonitor {
-	private static final Logger logger = Logger.getLogger(BatchMonitor.class);
+	private static final Logger logger = LogManager.getLogger(BatchMonitor.class);
 	private static BatchMonitor instance = null;
 
 	private static ClassPathXmlApplicationContext jobMonitorContext;

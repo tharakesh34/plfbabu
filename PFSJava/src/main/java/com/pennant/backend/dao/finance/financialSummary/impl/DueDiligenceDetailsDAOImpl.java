@@ -42,19 +42,13 @@
  */
 package com.pennant.backend.dao.finance.financialSummary.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -67,7 +61,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails> implements DueDiligenceDetailsDAO {
-	private static Logger logger = Logger.getLogger(DueDiligenceDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DueDiligenceDetailsDAOImpl.class);
 
 	public DueDiligenceDetailsDAOImpl() {
 		super();
@@ -75,8 +69,6 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 
 	@Override
 	public List<DueDiligenceDetails> getDueDiligenceDetails(String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" t1.Id,t1.FinReference, t1.ParticularId,t3.Particulars,t1.Status,t1.Remarks");
 		sql.append(", t1.Version, t1.LastMntBy, t1.LastMnton, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
@@ -98,45 +90,32 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setString(index++, finReference);
-				}
-			}, new RowMapper<DueDiligenceDetails>() {
-				@Override
-				public DueDiligenceDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-					DueDiligenceDetails ddd = new DueDiligenceDetails();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+			ps.setString(index++, finReference);
+		}, (rs, rowNum) -> {
+			DueDiligenceDetails ddd = new DueDiligenceDetails();
 
-					ddd.setId(rs.getLong("Id"));
-					ddd.setFinReference(rs.getString("FinReference"));
-					ddd.setParticularId(rs.getLong("ParticularId"));
-					ddd.setParticulars(rs.getString("Particulars"));
-					ddd.setStatus(rs.getString("Status"));
-					ddd.setRemarks(rs.getString("Remarks"));
-					ddd.setVersion(rs.getInt("Version"));
-					ddd.setLastMntBy(rs.getLong("LastMntBy"));
-					ddd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					ddd.setRecordStatus(rs.getString("RecordStatus"));
-					ddd.setRoleCode(rs.getString("RoleCode"));
-					ddd.setNextRoleCode(rs.getString("NextRoleCode"));
-					ddd.setTaskId(rs.getString("TaskId"));
-					ddd.setNextTaskId(rs.getString("NextTaskId"));
-					ddd.setRecordType(rs.getString("RecordType"));
-					ddd.setWorkflowId(rs.getLong("WorkflowId"));
+			ddd.setId(rs.getLong("Id"));
+			ddd.setFinReference(rs.getString("FinReference"));
+			ddd.setParticularId(rs.getLong("ParticularId"));
+			ddd.setParticulars(rs.getString("Particulars"));
+			ddd.setStatus(rs.getString("Status"));
+			ddd.setRemarks(rs.getString("Remarks"));
+			ddd.setVersion(rs.getInt("Version"));
+			ddd.setLastMntBy(rs.getLong("LastMntBy"));
+			ddd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ddd.setRecordStatus(rs.getString("RecordStatus"));
+			ddd.setRoleCode(rs.getString("RoleCode"));
+			ddd.setNextRoleCode(rs.getString("NextRoleCode"));
+			ddd.setTaskId(rs.getString("TaskId"));
+			ddd.setNextTaskId(rs.getString("NextTaskId"));
+			ddd.setRecordType(rs.getString("RecordType"));
+			ddd.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return ddd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return ddd;
+		});
 	}
 
 	@Override

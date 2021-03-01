@@ -9,7 +9,8 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -34,7 +35,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 	private static final long serialVersionUID = -546886879998950467L;
-	private static final Logger logger = Logger.getLogger(ScriptValidationResultCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ScriptValidationResultCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

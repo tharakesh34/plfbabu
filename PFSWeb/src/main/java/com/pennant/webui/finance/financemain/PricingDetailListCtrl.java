@@ -58,7 +58,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.spring.SpringUtil;
@@ -130,8 +131,8 @@ import com.rits.cloning.Cloner;
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/PricingDetailList.zul file.
  */
 public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
+	private static final Logger logger = LogManager.getLogger(PricingDetailListCtrl.class);
 	private static final long serialVersionUID = 4157448822555239535L;
-	private static final Logger logger = Logger.getLogger(PricingDetailListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

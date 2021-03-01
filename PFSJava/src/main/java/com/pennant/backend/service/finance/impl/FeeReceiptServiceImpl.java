@@ -16,7 +16,8 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
@@ -82,7 +83,7 @@ import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> implements FeeReceiptService {
-	private static final Logger logger = Logger.getLogger(FeeReceiptServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FeeReceiptServiceImpl.class);
 
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
@@ -452,23 +453,23 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 		if (map != null) {
 			BigDecimal alwFlexi = BigDecimal.ZERO;
-			if (map.get("AlwFlexi") instanceof Long) {
-				long value = (long) map.get("AlwFlexi");
+			if (map.get("ALWFLEXI") instanceof Long) {
+				long value = (long) map.get("ALWFLEXI");
 				amountCodes.setAlwflexi(value == 0 ? false : true);
-			} else if (map.get("AlwFlexi") instanceof BigDecimal) {
-				alwFlexi = (BigDecimal) map.get("AlwFlexi");
+			} else if (map.get("ALWFLEXI") instanceof BigDecimal) {
+				alwFlexi = (BigDecimal) map.get("ALWFLEXI");
 				amountCodes.setAlwflexi(alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);
-			} else if (map.get("AlwFlexi") instanceof Integer) {
-				int value = (int) map.get("AlwFlexi");
+			} else if (map.get("ALWFLEXI") instanceof Integer) {
+				int value = (int) map.get("ALWFLEXI");
 				amountCodes.setAlwflexi(value == 0 ? false : true);
 			}
 
-			amountCodes.setEntitycode((String) map.get("Entitycode"));
-			dataMap.put("ae_finbranch", map.get("FinBranch"));
-			dataMap.put("emptype", map.get("emptype"));
-			dataMap.put("branchcity", map.get("branchcity"));
-			dataMap.put("fincollateralreq", map.get("fincollateralreq"));
-			dataMap.put("btloan", map.get("btloan"));
+			amountCodes.setEntitycode((String) map.get("ENTITYCODE"));
+			dataMap.put("ae_finbranch", map.get("FINBRANCH"));
+			dataMap.put("emptype", map.get("EMPTYPE"));
+			dataMap.put("branchcity", map.get("BRANCHCITY"));
+			dataMap.put("fincollateralreq", map.get("FINCOLLATERALREQ"));
+			dataMap.put("btloan", map.get("BTLOAN"));
 
 		} else {
 			amountCodes.setEntitycode(receiptHeader.getEntityCode());
@@ -774,6 +775,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		List<FinFeeDetail> finFeeDetailList = finReceiptHeader.getPaidFeeList();
 
 		if (CollectionUtils.isEmpty(finFeeDetailList)) {
+			dataMap.put("ae_toExcessAmt", finReceiptHeader.getReceiptAmount());
 			return;
 		}
 

@@ -49,7 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -88,7 +89,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 	private static final long serialVersionUID = 3257569537441008225L;
-	private static final Logger logger = Logger.getLogger(CreditApplicationSelectCategoryCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CreditApplicationSelectCategoryCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

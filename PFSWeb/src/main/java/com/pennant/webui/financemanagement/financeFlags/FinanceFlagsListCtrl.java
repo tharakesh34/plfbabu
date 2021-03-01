@@ -46,7 +46,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -75,7 +76,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinanceFlagsListCtrl extends GFCBaseListCtrl<FinanceFlag> {
 	private static final long serialVersionUID = -5081318673331825306L;
-	private static final Logger logger = Logger.getLogger(FinanceFlagsListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceFlagsListCtrl.class);
 
 	protected Window window_FinanceFlagsList;
 	protected Borderlayout borderlayout_FinanceFlags;

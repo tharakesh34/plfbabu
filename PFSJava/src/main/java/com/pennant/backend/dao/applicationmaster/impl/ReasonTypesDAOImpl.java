@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>ReasonTypes</code> with set of CRUD operations.
  */
 public class ReasonTypesDAOImpl extends SequenceDao<ReasonTypes> implements ReasonTypesDAO {
-	private static Logger logger = Logger.getLogger(ReasonTypesDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ReasonTypesDAOImpl.class);
 
 	public ReasonTypesDAOImpl() {
 		super();
@@ -154,7 +155,7 @@ public class ReasonTypesDAOImpl extends SequenceDao<ReasonTypes> implements Reas
 
 		// Get the identity sequence number.
 		if (reasonTypes.getId() <= 0) {
-			reasonTypes.setId(getNextId("SeqReasonTypes"));
+			reasonTypes.setId(getNextValue("SeqReasonTypes"));
 		}
 
 		// Execute the SQL, binding the arguments.

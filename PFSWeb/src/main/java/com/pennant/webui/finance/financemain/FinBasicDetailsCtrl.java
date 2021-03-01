@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -32,7 +33,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private static final long serialVersionUID = -4843661930948561711L;
 
-	private static final Logger logger = Logger.getLogger(FinBasicDetailsCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinBasicDetailsCtrl.class);
 
 	protected Window window_FinBasicDetails; // autowired
 	// Finance Schedule Details Tab
@@ -124,8 +125,6 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	public void doWriteBeanToComponents(ArrayList<Object> finHeaderList) {
-		logger.debug("Entering");
-
 		if (finHeaderList != null) {
 			this.finHeaderList = finHeaderList;
 		}
@@ -167,7 +166,6 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.userActivityLog.setVisible(true);
 			this.reasonDeatilsLog.setVisible(true);
 		}
-		logger.debug("Leaving");
 	}
 
 	private boolean isActivityLogVisible(String finEvent) {

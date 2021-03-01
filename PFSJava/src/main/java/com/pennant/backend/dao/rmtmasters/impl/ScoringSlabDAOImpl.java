@@ -46,7 +46,8 @@ package com.pennant.backend.dao.rmtmasters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements ScoringSlabDAO {
-	private static Logger logger = Logger.getLogger(ScoringSlabDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ScoringSlabDAOImpl.class);
 
 	public ScoringSlabDAOImpl() {
 		super();
@@ -252,8 +253,8 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 	public long save(ScoringSlab scoringSlab, String type) {
 		logger.debug("Entering");
 		if (scoringSlab.getId() == Long.MIN_VALUE) {
-			scoringSlab.setId(getNextId("SeqRMTScoringSlab"));
-			logger.debug("get NextID:" + scoringSlab.getId());
+			scoringSlab.setId(getNextValue("SeqRMTScoringSlab"));
+			logger.debug("get NextValue:" + scoringSlab.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTScoringSlab");

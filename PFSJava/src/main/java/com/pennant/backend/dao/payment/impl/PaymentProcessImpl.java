@@ -3,7 +3,8 @@ package com.pennant.backend.dao.payment.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -28,7 +29,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.process.PaymentProcess;
 
 public class PaymentProcessImpl implements PaymentProcess {
-	private static Logger logger = Logger.getLogger(PaymentProcessImpl.class);
+	private static Logger logger = LogManager.getLogger(PaymentProcessImpl.class);
 
 	private FinanceMainDAO financeMainDAO;
 	private BeneficiaryDAO beneficiaryDAO;

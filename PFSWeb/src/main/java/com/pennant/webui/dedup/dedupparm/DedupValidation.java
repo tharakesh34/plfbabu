@@ -47,7 +47,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Window;
 
@@ -72,7 +73,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class DedupValidation implements Serializable {
 	private static final long serialVersionUID = -4728201973665323130L;
-	private static final Logger logger = Logger.getLogger(DedupValidation.class);
+	private static final Logger logger = LogManager.getLogger(DedupValidation.class);
 
 	private NorkamCheckService norkamCheckService;
 	private FinanceReferenceDetailService financeReferenceDetailService;

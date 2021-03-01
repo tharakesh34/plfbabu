@@ -6,8 +6,8 @@ import javax.jws.WebService;
 
 import com.pennant.backend.model.applicationmaster.ReasonCodeResponse;
 import com.pennant.ws.exception.ServiceException;
-import com.pennanttech.ws.model.deviation.ManualDeviationAuthorities;
 import com.pennanttech.ws.model.deviation.ManualDeviationAuthReq;
+import com.pennanttech.ws.model.deviation.ManualDeviationAuthorities;
 import com.pennanttech.ws.model.deviation.ManualDeviationList;
 
 @WebService

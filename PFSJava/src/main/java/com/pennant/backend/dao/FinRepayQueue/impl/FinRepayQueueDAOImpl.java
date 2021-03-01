@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -17,7 +18,7 @@ import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class FinRepayQueueDAOImpl extends BasicDao<FinRepayQueue> implements FinRepayQueueDAO {
-	private static Logger logger = Logger.getLogger(FinRepayQueueDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinRepayQueueDAOImpl.class);
 
 	public FinRepayQueueDAOImpl() {
 		super();

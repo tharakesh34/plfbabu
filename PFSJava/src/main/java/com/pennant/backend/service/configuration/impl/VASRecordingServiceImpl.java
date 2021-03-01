@@ -58,7 +58,8 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
@@ -158,7 +159,7 @@ import com.rits.cloning.Cloner;
  * 
  */
 public class VASRecordingServiceImpl extends GenericService<VASRecording> implements VASRecordingService {
-	private static final Logger logger = Logger.getLogger(VASRecordingServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(VASRecordingServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private VASRecordingDAO vASRecordingDAO;

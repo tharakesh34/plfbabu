@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
@@ -37,7 +38,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.rits.cloning.Cloner;
 
 public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction> implements ReScheduleService {
-	private static Logger logger = Logger.getLogger(ReScheduleServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(ReScheduleServiceImpl.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 

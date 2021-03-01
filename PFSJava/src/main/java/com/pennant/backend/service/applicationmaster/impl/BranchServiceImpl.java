@@ -50,7 +50,8 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -85,7 +86,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class BranchServiceImpl extends GenericService<Branch> implements BranchService {
-	private static Logger logger = Logger.getLogger(BranchDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BranchDAOImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BranchDAO branchDAO;

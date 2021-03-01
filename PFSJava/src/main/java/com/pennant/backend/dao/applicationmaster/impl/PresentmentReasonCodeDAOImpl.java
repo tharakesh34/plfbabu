@@ -1,7 +1,8 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,7 +17,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class PresentmentReasonCodeDAOImpl extends BasicDao<PresentmentReasonCode> implements PresentmentReasonCodeDAO {
-	private static Logger logger = Logger.getLogger(PresentmentReasonCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PresentmentReasonCodeDAOImpl.class);
 
 	public PresentmentReasonCodeDAOImpl() {
 		super();

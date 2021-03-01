@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.dda.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,7 +17,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class DDAProcessDAOImpl extends SequenceDao<FinanceLimitProcess> implements DDAProcessDAO {
-	private static Logger logger = Logger.getLogger(DDAProcessDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DDAProcessDAOImpl.class);
 
 	public DDAProcessDAOImpl() {
 		super();
@@ -32,7 +33,7 @@ public class DDAProcessDAOImpl extends SequenceDao<FinanceLimitProcess> implemen
 		logger.debug("Entering ");
 
 		if (ddaProcessData.getId() == 0 || ddaProcessData.getId() == Long.MIN_VALUE) {
-			ddaProcessData.setSeqNo(getNextId("SeqDDAReferenceLog"));
+			ddaProcessData.setSeqNo(getNextValue("SeqDDAReferenceLog"));
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into DDAReferenceLog");

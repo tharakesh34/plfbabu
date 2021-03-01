@@ -47,7 +47,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 
 public class FacilityDAOImpl extends BasicDao<Facility> implements FacilityDAO {
-	private static Logger logger = Logger.getLogger(FacilityDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FacilityDAOImpl.class);
 
 	public FacilityDAOImpl() {
 		super();

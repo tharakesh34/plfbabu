@@ -44,7 +44,8 @@ package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>ClusterHierarchey</b>.<br>
  */
 public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy> implements ClusterHierarchyService {
-	private static final Logger logger = Logger.getLogger(ClusterHierarchyServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ClusterHierarchyServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ClusterHierarchyDAO clusterHierarchyDAO;

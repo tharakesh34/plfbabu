@@ -2,7 +2,8 @@ package com.pennanttech.pff.logging.dao.impl;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -20,7 +21,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
 public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> implements InterfaceLoggingDAO {
-	private static final Logger logger = Logger.getLogger(InterfaceLoggingDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(InterfaceLoggingDAOImpl.class);
 
 	protected DefaultTransactionDefinition transDef;
 	private DataSourceTransactionManager transactionManager;

@@ -63,14 +63,14 @@ public interface RepayInstructionDAO {
 
 	void delete(RepayInstruction repayInstruction, String type, boolean isWIF);
 
-	void saveList(List<RepayInstruction> repayInstruction, String type, boolean isWIF);
+	int saveList(List<RepayInstruction> repayInstruction, String type, boolean isWIF);
 
-	void updateList(List<RepayInstruction> repayInstruction, String type, boolean isWIF);
+	int updateList(List<RepayInstruction> repayInstruction, String type, boolean isWIF);
 
 	//EOD
 	List<RepayInstruction> getRepayInstrEOD(String id);
 
-	void deleteInEOD(String id);
+	int deleteInEOD(String id);
 
-	void saveListInEOD(List<RepayInstruction> repayInstruction);
+	int saveListInEOD(List<RepayInstruction> repayInstruction);
 }

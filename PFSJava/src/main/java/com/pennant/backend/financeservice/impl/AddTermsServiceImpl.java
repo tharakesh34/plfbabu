@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -22,7 +23,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> implements AddTermsService {
 
-	private static Logger logger = Logger.getLogger(AddTermsServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(AddTermsServiceImpl.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 

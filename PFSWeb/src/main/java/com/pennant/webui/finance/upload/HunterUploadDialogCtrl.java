@@ -8,7 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -42,7 +43,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class HunterUploadDialogCtrl extends GFCBaseCtrl<HunterUpload> {
 	private static final long serialVersionUID = -1651727895823020231L;
-	private static final Logger logger = Logger.getLogger(HunterUploadDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(HunterUploadDialogCtrl.class);
 
 	protected Window window_HunterUpload;
 	protected Button btnUpload;

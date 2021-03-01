@@ -11,7 +11,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -70,7 +71,7 @@ import com.pennanttech.pff.core.TableType;
 
 public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	private static final long serialVersionUID = 4157448822555239535L;
-	private static final Logger logger = Logger.getLogger(FinOCRDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinOCRDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

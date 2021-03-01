@@ -14,7 +14,8 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.CallableStatementCreator;
@@ -43,7 +44,7 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class InterfaceDAOImpl implements InterfaceDAO {
-	private static Logger logger = Logger.getLogger(InterfaceDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(InterfaceDAOImpl.class);
 
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 

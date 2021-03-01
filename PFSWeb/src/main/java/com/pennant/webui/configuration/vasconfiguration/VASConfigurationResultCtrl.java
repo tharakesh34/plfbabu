@@ -7,7 +7,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -25,7 +26,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -546886879998950467L;
-	private static final Logger logger = Logger.getLogger(VASConfigurationResultCtrl.class);
+	private static final Logger logger = LogManager.getLogger(VASConfigurationResultCtrl.class);
 
 	protected Window window_VASConfigurationResult;
 

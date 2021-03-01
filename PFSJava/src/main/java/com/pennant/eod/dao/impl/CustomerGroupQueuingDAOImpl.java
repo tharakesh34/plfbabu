@@ -1,16 +1,15 @@
 package com.pennant.eod.dao.impl;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -28,7 +27,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> implements CustomerGroupQueuingDAO {
-	private static Logger logger = Logger.getLogger(CustomerQueuingDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerQueuingDAOImpl.class);
 
 	private static final String START_GRPID_RC = "UPDATE CustomerGroupQueuing set Progress = ? ,StartTime = ? Where GroupId = ? AND Progress= ?";
 
@@ -190,48 +189,29 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 
 	@Override
 	public List<CustomerGroupQueuing> getCustomerGroupsList() {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select GroupId, EodDate, StartTime, EndTime, Progress, ErrorLog, Status, EodProcess");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" GroupId, EodDate, StartTime, EndTime, Progress, ErrorLog, Status, EodProcess");
 		sql.append(" from CustomerGroupQueuing");
 		sql.append(" Where Progress = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL, sql);
 
-		List<CustomerGroupQueuing> customerGroupQueueingList = null;
-		try {
-			return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
+		return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> {
+			ps.setInt(1, EodConstants.PROGRESS_WAIT);
+		}, (rs, rowNum) -> {
+			CustomerGroupQueuing customerGroupQueuing = new CustomerGroupQueuing();
+			customerGroupQueuing.setGroupId(rs.getLong("GroupId"));
+			customerGroupQueuing.setEodDate(rs.getDate("EodDate"));
+			customerGroupQueuing.setStartTime(rs.getDate("StartTime"));
+			customerGroupQueuing.setEndTime(rs.getDate("EndTime"));
+			customerGroupQueuing.setProgress(rs.getInt("Progress"));
+			customerGroupQueuing.setErrorLog(rs.getString("ErrorLog"));
+			customerGroupQueuing.setStatus(rs.getString("Status"));
+			customerGroupQueuing.setEodProcess(rs.getBoolean("EodProcess"));
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setInt(1, EodConstants.PROGRESS_WAIT);
+			return customerGroupQueuing;
+		});
 
-				}
-			}, new RowMapper<CustomerGroupQueuing>() {
-
-				@Override
-				public CustomerGroupQueuing mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CustomerGroupQueuing customerGroupQueuing = new CustomerGroupQueuing();
-					customerGroupQueuing.setGroupId(rs.getLong("GroupId"));
-					customerGroupQueuing.setEodDate(rs.getDate("EodDate"));
-					customerGroupQueuing.setStartTime(rs.getDate("StartTime"));
-					customerGroupQueuing.setEndTime(rs.getDate("EndTime"));
-					customerGroupQueuing.setProgress(rs.getInt("Progress"));
-					customerGroupQueuing.setErrorLog(rs.getString("ErrorLog"));
-					customerGroupQueuing.setStatus(rs.getString("Status"));
-					customerGroupQueuing.setEodProcess(rs.getBoolean("EodProcess"));
-
-					return customerGroupQueuing;
-				}
-			});
-		} catch (Exception dae) {
-			logger.error("Exception: ", dae);
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return customerGroupQueueingList;
 	}
 
 	@Override

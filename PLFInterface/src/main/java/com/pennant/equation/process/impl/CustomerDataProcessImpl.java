@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.ConnectionPoolException;
@@ -28,7 +29,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerDataProcessImpl extends GenericProcess implements CustomerDataProcess {
 
-	private static Logger logger = Logger.getLogger(CustomerDataProcessImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerDataProcessImpl.class);
 	private HostConnection hostConnection;
 
 	public CustomerDataProcessImpl() {

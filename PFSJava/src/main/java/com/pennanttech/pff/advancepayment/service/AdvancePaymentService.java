@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
@@ -33,6 +34,7 @@ import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.AdvancePaymentDetail;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
@@ -67,7 +69,7 @@ import com.pennanttech.pff.core.TableType;
 
 public class AdvancePaymentService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
-	private Logger logger = Logger.getLogger(AdvancePaymentService.class);
+	private Logger logger = LogManager.getLogger(AdvancePaymentService.class);
 
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
@@ -85,6 +87,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
+		EventProperties eventProperties = custEODEvent.getEventProperties();
 
 		FinanceMain fm = null;
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -101,16 +104,15 @@ public class AdvancePaymentService extends ServiceHelper {
 			String amountType = "";
 
 			boolean isBPi = false;
-			if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
-				if (!StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, fm.getBpiTreatment())) {
+			if (FinanceConstants.FLAG_BPI.equals(curSchd.getBpiOrHoliday())) {
+				if (!FinanceConstants.BPI_DISBURSMENT.equals(fm.getBpiTreatment())) {
 					continue;
-				} else if (!SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)) {
+				} else if (!eventProperties.isBpiPaidOnInstDate()) {
 					continue;
 				}
 				advanceType = AdvanceType.AF;
 				isBPi = true;
 			} else {
-
 				if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) <= 0) {
 					advanceType = AdvanceType.getType(fm.getGrcAdvType());
 				} else {
@@ -122,13 +124,13 @@ public class AdvancePaymentService extends ServiceHelper {
 				continue;
 			}
 
-			boolean advTDSInczUpf = SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_TDS_INCZ_UPF);
+			boolean advTDSInczUpf = eventProperties.isAdvTdsIncsUpf();
 
 			BigDecimal profitDue = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())
 					.subtract(curSchd.getTDSAmount());
 
 			boolean tdsInclOnPftPaid = false;
-			if (isBPi && SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG)) {
+			if (isBPi && eventProperties.isBpiTdsDeductOnOrg()) {
 				profitDue = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
 				tdsInclOnPftPaid = true;
 			} else if (advTDSInczUpf) {
@@ -175,11 +177,11 @@ public class AdvancePaymentService extends ServiceHelper {
 			}
 
 			/* Schedule Update */
-			if (StringUtils.equals(amountType, RepayConstants.EXAMOUNTTYPE_ADVINT)) {
+			if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(amountType)) {
 
 				curSchd.setSchdPftPaid(adjustedAmount);
 
-			} else if (StringUtils.equals(amountType, RepayConstants.EXAMOUNTTYPE_ADVEMI)) {
+			} else if (RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(amountType)) {
 				BigDecimal emiPayNow = adjustedAmount;
 
 				if (emiPayNow.compareTo(profitDue) > 0) {
@@ -284,7 +286,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
 
 		String finEvent = AccountEventConstants.ACCEVENT_REPAY;
-		long accountingID = getAccountingID(fm, finEvent);
+		Long accountingID = getAccountingID(fm, finEvent);
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, profiDetails, schedules, finEvent, valueDate, schDate);
 		aeEvent.getAcSetIDList().add(accountingID);
 
@@ -325,7 +327,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		//Postings Process and save all postings related to finance for one time accounts update
 		try {
-			aeEvent = postAccountingEOD(aeEvent);
+			postAccountingEOD(aeEvent);
 		} catch (Exception e) {
 			throw new AppException();
 		}

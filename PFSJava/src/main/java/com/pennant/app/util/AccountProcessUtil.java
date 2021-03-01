@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.accounts.AccountsDAO;
 import com.pennant.backend.dao.accounts.AccountsHistoryDAO;
@@ -61,7 +62,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 public class AccountProcessUtil implements Serializable {
 
 	private static final long serialVersionUID = -1200799666995440280L;
-	private static Logger logger = Logger.getLogger(AccountProcessUtil.class);
+	private static Logger logger = LogManager.getLogger(AccountProcessUtil.class);
 
 	private AccountsDAO accountsDAO;
 	private AccountsHistoryDAO accountsHistoryDAO;

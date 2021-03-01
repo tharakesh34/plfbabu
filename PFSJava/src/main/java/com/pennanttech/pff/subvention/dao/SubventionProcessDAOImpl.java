@@ -1,6 +1,7 @@
 package com.pennanttech.pff.subvention.dao;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -11,7 +12,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.subventionprocess.model.SubventionProcess;
 
 public class SubventionProcessDAOImpl extends SequenceDao<SubventionProcess> implements SubventionProcessDAO {
-	private static Logger logger = Logger.getLogger(SubventionProcessDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SubventionProcessDAOImpl.class);
 
 	public SubventionProcessDAOImpl() {
 		super();

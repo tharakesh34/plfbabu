@@ -48,7 +48,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -73,7 +74,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CDFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(CDFinanceMainDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CDFinanceMainDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

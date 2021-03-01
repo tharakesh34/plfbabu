@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -282,11 +282,10 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 	@Override
 	public Sampling getSampling(long samplingid, String type) {
-		logger.debug(Literal.ENTERING);
 		Sampling sampling = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select * from sampling").append(type).append(" where id=:samplingid");
+		sql.append("select * from sampling").append(type).append(" where id = :samplingid");
 
 		RowMapper<Sampling> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Sampling.class);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
@@ -295,10 +294,9 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		try {
 			sampling = this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("Sampling not found in sampling{} table/view for the specified id >> {}", type, samplingid);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return sampling;
 	}
 
@@ -435,7 +433,6 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 	@Override
 	public Sampling getSampling(String keyReference, String type) {
-		logger.debug(Literal.ENTERING);
 		Sampling sampling = null;
 		StringBuilder sql = new StringBuilder();
 
@@ -449,10 +446,10 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		try {
 			sampling = this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Sampling not found in sampling{} table/view for the specified KeyReference >> {}", type,
+					keyReference);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return sampling;
 	}
 

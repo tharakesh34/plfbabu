@@ -50,7 +50,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
@@ -97,7 +98,7 @@ import com.pennanttech.pff.external.MandateProcesses;
  * 
  */
 public class FinMandateServiceImpl extends GenericService<Mandate> implements FinMandateService {
-	private static final Logger logger = Logger.getLogger(FinMandateServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinMandateServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private MandateDAO mandateDAO;

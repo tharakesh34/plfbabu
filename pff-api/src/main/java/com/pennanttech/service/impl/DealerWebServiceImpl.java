@@ -1,7 +1,8 @@
 package com.pennanttech.service.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class DealerWebServiceImpl implements DealerSaopService, DealerRestService {
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	private ValidationUtility validationUtility;
 	private VehicleDealerService vehicleDealerService;

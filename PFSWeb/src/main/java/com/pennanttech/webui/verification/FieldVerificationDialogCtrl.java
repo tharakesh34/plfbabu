@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -130,8 +130,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private transient CustomerDetailsService customerDetailsService;
 	@Autowired
 	private transient CustomerAddresService customerAddresService;
-	@Autowired
-	private RuleExecutionUtil ruleExecutionUtil;
 	@Autowired
 	private RuleService ruleService;
 	@Autowired
@@ -1388,7 +1386,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		dataMap.putAll(PennantApplicationUtil.getExtendedFieldsDataMap(customerDetails));
 		dataMap.putAll(customer.getDeclaredFieldValues());
 		dataMap.putAll(financeMain.getDeclaredFieldValues());
-		isverified = (boolean) ruleExecutionUtil.executeRule(rule.getSQLRule(), dataMap, financeMain.getFinCcy(),
+		isverified = (boolean) RuleExecutionUtil.executeRule(rule.getSQLRule(), dataMap, financeMain.getFinCcy(),
 				RuleReturnType.BOOLEAN);
 		return isverified;
 	}
@@ -1501,14 +1499,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public RuleService getRuleService() {

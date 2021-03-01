@@ -44,7 +44,8 @@ package com.pennant.webui.staticparms.lovfieldcode;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -71,7 +72,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class LovFieldCodeListCtrl extends GFCBaseListCtrl<LovFieldCode> {
 	private static final long serialVersionUID = 8396609468989226478L;
-	private static final Logger logger = Logger.getLogger(LovFieldCodeListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LovFieldCodeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

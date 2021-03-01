@@ -2,7 +2,8 @@ package com.pennant.backend.dao.systemmasters.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -20,7 +21,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ProjectUnitsDAOImpl extends SequenceDao<ProjectUnits> implements ProjectUnitsDAO {
-	private static Logger logger = Logger.getLogger(ProjectUnitsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ProjectUnitsDAOImpl.class);
 
 	public ProjectUnitsDAOImpl() {
 		super();

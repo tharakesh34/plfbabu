@@ -10,11 +10,11 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.collateral.reval.model.CollateralRevaluation;
 import com.pennanttech.pff.eod.step.StepUtil;
 
@@ -23,7 +23,8 @@ public class LoadCollateralRevaluationDataTasklet extends BasicDao<CollateralRev
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = SysParamUtil.getAppValueDate();
+		Date valueDate = EODUtil.getDate("APP_VALUEDATE", context);
+
 		long batchId = context.getStepContext().getStepExecution().getJobExecution().getJobInstance().getInstanceId();
 		BatchUtil.setExecutionStatus(context, StepUtil.COLLATERAL_REVALUATION);
 

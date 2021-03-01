@@ -8,7 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -35,14 +36,13 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> implements ScoringDetailService {
 
-	private static final Logger logger = Logger.getLogger(ScoringDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ScoringDetailServiceImpl.class);
 
 	private FinanceScoreHeaderDAO financeScoreHeaderDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private ScoringSlabDAO scoringSlabDAO;
 	private ScoringMetricsDAO scoringMetricsDAO;
 	private RuleDAO ruleDAO;
-	private RuleExecutionUtil ruleExecutionUtil;
 
 	public ScoringDetailServiceImpl() {
 		super();
@@ -289,8 +289,8 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 		}
 
 		for (ScoringMetrics scoringMetrics : scoringMetricsList) {
-			BigDecimal lovDescExecutedScore = (BigDecimal) this.ruleExecutionUtil.executeRule(
-					scoringMetrics.getLovDescSQLRule(), fieldsandvalues, null, RuleReturnType.DECIMAL, false);
+			BigDecimal lovDescExecutedScore = (BigDecimal) RuleExecutionUtil
+					.executeRule(scoringMetrics.getLovDescSQLRule(), fieldsandvalues, null, RuleReturnType.DECIMAL);
 			scoringMetrics.setLovDescExecutedScore(lovDescExecutedScore);
 		}
 		logger.debug("Leaving");
@@ -650,10 +650,6 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 
 	public RuleDAO getRuleDAO() {
 		return ruleDAO;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 }

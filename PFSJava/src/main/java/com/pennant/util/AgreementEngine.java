@@ -6,7 +6,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zul.Filedownload;
@@ -29,7 +30,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class AgreementEngine {
-	private static final Logger logger = Logger.getLogger(AgreementEngine.class);
+	private static final Logger logger = LogManager.getLogger(AgreementEngine.class);
 	private TemplateEngine templateEngine;
 
 	public AgreementEngine(String assetCode) throws Exception {

@@ -14,7 +14,8 @@ import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -61,7 +62,7 @@ import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 
 public class SamplingServiceImpl extends GenericService<Sampling> implements SamplingService {
-	private static final Logger logger = Logger.getLogger(SamplingServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(SamplingServiceImpl.class);
 
 	@Autowired
 	protected SamplingDAO samplingDAO;
@@ -80,8 +81,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	private CustomerExtLiabilityValidation extLiabilityValidation;
 	@Autowired
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
-	@Autowired
-	private RuleExecutionUtil ruleExecutionUtil;
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentDetailValidation documentValidation;
@@ -665,8 +664,8 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	}
 
 	private Object excuteRule(String foirRule, String finCcy, HashMap<String, Object> fieldsandvalues) {
-		logger.info(String.format("Rule>> %s", foirRule));
-		return ruleExecutionUtil.executeRule(foirRule, fieldsandvalues, finCcy, RuleReturnType.DECIMAL);
+		logger.info("Rule >> {}", foirRule);
+		return RuleExecutionUtil.executeRule(foirRule, fieldsandvalues, finCcy, RuleReturnType.DECIMAL);
 	}
 
 	@Override

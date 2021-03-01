@@ -52,10 +52,10 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class PrepareAmortizationQueue implements Tasklet {
@@ -65,7 +65,8 @@ public class PrepareAmortizationQueue implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = SysParamUtil.getAppValueDate();
+		Date valueDate = EODUtil.getDate("APP_VALUEDATE", context);
+
 		logger.info("START Prepare Amortization Queue on {}", valueDate);
 
 		Date amzMonth = (Date) context.getStepContext().getJobExecutionContext()

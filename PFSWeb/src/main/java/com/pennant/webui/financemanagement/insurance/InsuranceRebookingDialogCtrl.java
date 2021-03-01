@@ -56,7 +56,8 @@ import javax.script.ScriptException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -168,7 +169,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
  */
 public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(InsuranceRebookingDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(InsuranceRebookingDialogCtrl.class);
 
 	protected Window window_InsuranceRebooking;
 	protected Label windowTitle;
@@ -2255,7 +2256,8 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		getVASRecording().getDeclaredFieldValues(aeEvent.getDataMap());
 		aeEvent.getAcSetIDList().add(vASConfiguration.getFeeAccounting());
-		List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
+		engineExecution.getAccEngineExecResults(aeEvent);
+		List<ReturnDataSet> returnSetEntries = aeEvent.getReturnDataSet();
 		getVASRecording().setReturnDataSetList(returnSetEntries);
 		accountingSetEntries.addAll(returnSetEntries);
 

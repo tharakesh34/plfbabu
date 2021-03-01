@@ -3,25 +3,25 @@ package com.pennanttech.pennapps.dms.dao.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.RowMapper;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.dms.dao.DMSQueueDAO;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
-import com.pennanttech.pennapps.dms.service.DMSService;
 
 public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDAO {
-	private static Logger logger = Logger.getLogger(DMSQueueDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DMSQueueDAOImpl.class);
 
 	@Override
 	public void log(DMSQueue dMSQueue) {
@@ -61,7 +61,54 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 			});
 
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e.getCause());
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	public void insertDMSQueueLog(DMSQueue dMSQueue) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Insert into DMS_QUEUE_LOG");
+		sql.append(" (Id, DocManagerId, CustId, CustCIF, FinReference, Module, SubModule, Reference");
+		sql.append(", DocName, DocCategory, DocType, DocExt, Docuri, CreatedOn, CreatedBy, processflag");
+		sql.append(", attemptnum, errorcode, errordesc)");
+		sql.append(" values(?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					ps.setLong(1, JdbcUtil.setLong(dMSQueue.getId()));
+					ps.setLong(2, JdbcUtil.setLong(dMSQueue.getDocManagerID()));
+					ps.setLong(3, JdbcUtil.setLong(dMSQueue.getCustId()));
+					ps.setString(4, dMSQueue.getCustCif());
+					ps.setString(5, dMSQueue.getFinReference());
+					ps.setString(6, dMSQueue.getModule().name());
+					ps.setString(7, dMSQueue.getSubModule().name());
+					ps.setString(8, dMSQueue.getReference());
+					ps.setString(9, dMSQueue.getDocName());
+					ps.setString(10, dMSQueue.getDocCategory());
+					ps.setString(11, dMSQueue.getDocType());
+					ps.setString(12, dMSQueue.getDocExt());
+					ps.setString(13, dMSQueue.getDocUri());
+					ps.setDate(14, JdbcUtil.getDate(dMSQueue.getCreatedOn()));
+					ps.setLong(15, JdbcUtil.setLong(dMSQueue.getCreatedBy()));
+					ps.setInt(16, dMSQueue.getProcessingFlag());
+					ps.setInt(17, dMSQueue.getAttemptNum());
+					ps.setString(18, dMSQueue.getErrorCode());
+					ps.setString(19, dMSQueue.getErrorDesc());
+
+				}
+			});
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -69,55 +116,60 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 	}
 
 	@Override
-	public void processDMSQueue(DMSService dmsService) {
+	public List<Long> processDMSQueue() {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select dq.ID, DocmanagerId, dq.CustId, CustCIF, FinReference, Module, Submodule, Reference");
-		sql.append(
-				", DocName, DocCategory, DocType, DocExt, DocImage, OfferId, ApplicationNo,dq.docuri,auxiloryFields1");
-		sql.append(" from DMS_QUEUE dq");
-		sql.append(" inner join Documentmanager dm on dm.Id = dq.Docmanagerid");
+		sql.append("select ID from DMS_QUEUE");
 		sql.append(" where ProcessFlag = 0 and AttemptNum <=5");
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
+		return this.jdbcOperations.queryForList(sql.toString(), Long.class);
 
-			this.jdbcOperations.query(sql.toString(), new RowCallbackHandler() {
+	}
 
-				@Override
-				public void processRow(ResultSet rs) throws SQLException {
-					DMSQueue dmsQueue = new DMSQueue();
-					dmsQueue.setId(rs.getLong(1));
-					dmsQueue.setDocManagerID(rs.getLong(2));
-					dmsQueue.setCustId(rs.getLong(3));
-					dmsQueue.setCustCif(rs.getString(4));
-					dmsQueue.setFinReference(rs.getString(5));
-					dmsQueue.setModule(DMSModule.getModule(rs.getString(6)));
-					dmsQueue.setSubModule(DMSModule.getModule(rs.getString(7)));
-					dmsQueue.setReference(rs.getString(8));
-					dmsQueue.setDocName(rs.getString(9));
-					dmsQueue.setDocCategory(rs.getString(10));
-					dmsQueue.setDocType(rs.getString(11));
-					dmsQueue.setDocExt(rs.getString(12));
-					dmsQueue.setDocImage(rs.getBytes(13));
-					dmsQueue.setOfferId(rs.getString(14));
-					dmsQueue.setApplicationNo(rs.getString(15));
-					dmsQueue.setDocUri(rs.getString(16));
-					dmsQueue.setAuxiloryFields1(rs.getString(17));
+	public DMSQueue getDMSQueue(long queueID) {
+		logger.debug(Literal.ENTERING);
 
-					if (ImplementationConstants.UPDATE_METADATA_IN_DMS
-							|| (dmsQueue.getDocImage() != null && dmsQueue.getDocImage().length > 0)) {
-						dmsService.storeDocInFileSystem(dmsQueue);
-					}
+		StringBuilder sql = new StringBuilder();
+		sql.append("select dq.ID, DocmanagerId, dq.CustId, cs.CustCIF, FinReference, Module, Submodule, Reference");
+		sql.append(", DocName, DocCategory, DocType, DocExt, DocImage, cs.CustShrtName, auxiloryFields1");
+		sql.append(", dq.processflag, dq.attemptnum, OfferId, ApplicationNo, dq.docuri");
+		sql.append(" from DMS_QUEUE dq");
+		sql.append(" inner join Documentmanager dm on dm.Id = dq.Docmanagerid");
+		sql.append(" inner join Customers cs  on cs.CustId = dq.CustId");
+		sql.append(" where dq.ID = ?");
+		logger.trace(Literal.SQL + sql.toString());
 
-				}
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { queueID }, new RowMapper<DMSQueue>() {
 
-			});
+			@Override
+			public DMSQueue mapRow(ResultSet rs, int rowNum) throws SQLException {
+				DMSQueue dmsQueue = new DMSQueue();
+				dmsQueue.setId(rs.getLong(1));
+				dmsQueue.setDocManagerID(rs.getLong(2));
+				dmsQueue.setCustId(rs.getLong(3));
+				dmsQueue.setCustCif(rs.getString(4));
+				dmsQueue.setFinReference(rs.getString(5));
+				dmsQueue.setModule(DMSModule.getModule(rs.getString(6)));
+				dmsQueue.setSubModule(DMSModule.getModule(rs.getString(7)));
+				dmsQueue.setReference(rs.getString(8));
+				dmsQueue.setDocName(rs.getString(9));
+				dmsQueue.setDocCategory(rs.getString(10));
+				dmsQueue.setDocType(rs.getString(11));
+				dmsQueue.setDocExt(rs.getString(12));
+				dmsQueue.setDocImage(rs.getBytes(13));
+				dmsQueue.setAuxiloryFields1(rs.getString(15));
+				dmsQueue.setProcessingFlag(rs.getInt(16));
+				dmsQueue.setAttemptNum(rs.getInt(17));
+				dmsQueue.setOfferId(rs.getString(18));
+				dmsQueue.setApplicationNo(rs.getString(19));
+				dmsQueue.setDocUri(rs.getString(20));
 
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e.getCause());
-		}
+				return dmsQueue;
+			}
+
+		});
 
 	}
 
@@ -178,4 +230,17 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		return dmsQueue.getDocImage();
 	}
 
+	@Override
+	public int delete(long queueId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("delete from DMS_QUEUE where Id = ?");
+		try {
+			return this.jdbcOperations.update(sql.toString(), queueId);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return 0;
+	}
 }

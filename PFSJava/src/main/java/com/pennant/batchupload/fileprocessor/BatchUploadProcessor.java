@@ -21,7 +21,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -46,7 +47,7 @@ import com.pennant.batchupload.model.FaultDetails;
 import com.pennanttech.batchupload.util.BatchProcessorUtil;
 
 public class BatchUploadProcessor {
-	private static final Logger logger = Logger.getLogger(BatchUploadProcessor.class);
+	private static final Logger logger = LogManager.getLogger(BatchUploadProcessor.class);
 
 	private String authorization;
 	private Workbook workbook = null;

@@ -7,7 +7,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -23,7 +24,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class ControlDumpStoredProcedure extends StoredProcedure implements Tasklet {
-	private Logger logger = Logger.getLogger(ControlDumpStoredProcedure.class);
+	private Logger logger = LogManager.getLogger(ControlDumpStoredProcedure.class);
 
 	protected NamedParameterJdbcTemplate jdbcTemplate;
 

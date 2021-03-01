@@ -44,7 +44,8 @@ package com.pennant.batchupload.fileprocessor.dao.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -57,7 +58,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * Data access layer implementation for <code>BatchUploadConfig</code> with set of CRUD operations.
  */
 public class BatchUploadConfigDAOImpl extends BasicDao<BatchUploadConfig> implements BatchUploadConfigDAO {
-	private static Logger logger = Logger.getLogger(BatchUploadConfigDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BatchUploadConfigDAOImpl.class);
 
 	public BatchUploadConfigDAOImpl() {
 		super();

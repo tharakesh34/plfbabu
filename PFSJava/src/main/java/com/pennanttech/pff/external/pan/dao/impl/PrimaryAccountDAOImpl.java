@@ -3,7 +3,8 @@ package com.pennanttech.pff.external.pan.dao.impl;
 import java.sql.Timestamp;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,8 +18,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
 
 public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements PrimaryAccountDAO {
-
-	private static Logger logger = Logger.getLogger(PrimaryAccountDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PrimaryAccountDAOImpl.class);
 
 	public PrimaryAccountDAOImpl() {
 		super();

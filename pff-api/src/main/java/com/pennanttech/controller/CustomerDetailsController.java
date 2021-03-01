@@ -8,7 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.SessionUserDetails;
@@ -79,7 +80,7 @@ import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CustomerDetailsController extends GenericService<Object> {
-	private final Logger logger = Logger.getLogger(CustomerDetailsController.class);
+	private final Logger logger = LogManager.getLogger(CustomerDetailsController.class);
 
 	private CustomerDetailsService customerDetailsService;
 	private CustomerPhoneNumberService customerPhoneNumberService;

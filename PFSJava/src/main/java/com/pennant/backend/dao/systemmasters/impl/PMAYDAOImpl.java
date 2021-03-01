@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -26,7 +27,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
-	private static Logger logger = Logger.getLogger(PMAYDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PMAYDAOImpl.class);
 
 	public PMAYDAOImpl() {
 		super();

@@ -52,12 +52,12 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
-import com.pennant.backend.util.AmortizationConstants;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class PrepareCustomerQueue implements Tasklet {
@@ -72,16 +72,16 @@ public class PrepareCustomerQueue implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = SysParamUtil.getAppValueDate();
-		logger.info("START: Prepare Customer Queue On {}", valueDate);
+		EventProperties eventProperties = EODUtil.getEventProperties(EODUtil.EVENT_PROPERTIES, context);
+		Date valueDate = eventProperties.getAppValueDate();
+
 		BatchUtil.setExecutionStatus(context, StepUtil.PREPARE_CUSTOMER_QUEUE);
 
-		/* Delete Future ACCRUAL Records before customer queuing */
-
 		/* ACCRUALS calculation for Amortization */
-		if (SysParamUtil.isAllowed(AmortizationConstants.MONTHENDACC_CALREQ)) {
-			if (valueDate.compareTo(DateUtil.getMonthEnd(valueDate)) == 0 || SysParamUtil.isAllowed("EOM_ON_EOD")) {
-				if (SysParamUtil.isAllowed("MONTHENDACC_FROMFINSTARTDATE")) {
+		if (eventProperties.isMonthEndAccCallReq()) {
+			/* Delete Future ACCRUAL Records before customer queuing */
+			if (valueDate.compareTo(DateUtil.getMonthEnd(valueDate)) == 0 || eventProperties.isEomOnEOD()) {
+				if (eventProperties.isCalAccrualFromStart()) {
 					projectedAmortizationDAO.deleteAllProjAccruals();
 				} else {
 					Date monthStart = DateUtil.getMonthStart(valueDate);
@@ -91,7 +91,9 @@ public class PrepareCustomerQueue implements Tasklet {
 		}
 
 		/* Clear CustomerQueueing */
+		logger.info("Deleting customer queueing from previous run...");
 		this.customerQueuingDAO.delete();
+		logger.info("Preparing customer Queueing for current run...");
 		int count = customerQueuingDAO.prepareCustomerQueueByLoanCount(valueDate);
 
 		/* Update the LimitRebuild flag as true, if the Limit Structure has been changed */
@@ -100,7 +102,9 @@ public class PrepareCustomerQueue implements Tasklet {
 		StepUtil.PREPARE_CUSTOMER_QUEUE.setTotalRecords(count);
 		StepUtil.PREPARE_CUSTOMER_QUEUE.setProcessedRecords(count);
 
-		logger.info("COMPLETE: Prepare Customer Queue On {}", valueDate);
+		logger.info("Customer queueing preparation compled.");
+		logger.info("Total customer queue {}", count);
+
 		return RepeatStatus.FINISHED;
 	}
 

@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition> implements AgreementDefinitionDAO {
-	private static Logger logger = Logger.getLogger(AgreementDefinitionDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AgreementDefinitionDAOImpl.class);
 
 	public AgreementDefinitionDAOImpl() {
 		super();
@@ -215,8 +216,8 @@ public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition>
 		logger.debug(Literal.ENTERING);
 
 		if (agreementDefinition.getId() == Long.MIN_VALUE) {
-			agreementDefinition.setId(getNextId("SeqBMTAggrementDef"));
-			logger.debug("get NextID:" + agreementDefinition.getId());
+			agreementDefinition.setId(getNextValue("SeqBMTAggrementDef"));
+			logger.debug("get NextValue:" + agreementDefinition.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into BMTAggrementDef");

@@ -3,7 +3,8 @@ package com.pennant.backend.service.applicationmaster.impl;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -20,7 +21,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class PresentmentReasonCodeServiceImpl extends GenericService<PresentmentReasonCode>
 		implements PresentmentReasonCodeService {
-	private static Logger logger = Logger.getLogger(PresentmentReasonCodeServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(PresentmentReasonCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PresentmentReasonCodeDAO presentmentReasonCodeDAO;

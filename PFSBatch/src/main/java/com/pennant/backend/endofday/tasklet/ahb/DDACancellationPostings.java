@@ -8,7 +8,8 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -16,13 +17,13 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dda.DDAProcessService;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class DDACancellationPostings implements Tasklet {
 
-	private Logger logger = Logger.getLogger(DDACancellationPostings.class);
+	private Logger logger = LogManager.getLogger(DDACancellationPostings.class);
 
 	private DDAControllerService ddaControllerService;
 	private DDAProcessService ddaProcessService;
@@ -35,7 +36,7 @@ public class DDACancellationPostings implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
-		Date appDate = SysParamUtil.getAppDate();
+		Date appDate = EODUtil.getDate("APP_DATE", context);
 
 		logger.debug("START: DDA Cancellation Postings for Value Date: " + appDate);
 

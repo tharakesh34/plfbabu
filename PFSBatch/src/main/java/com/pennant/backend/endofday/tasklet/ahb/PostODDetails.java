@@ -11,19 +11,20 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.ext.ExtTablesDAO;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class PostODDetails implements Tasklet {
 
-	private Logger logger = Logger.getLogger(PostODDetails.class);
+	private Logger logger = LogManager.getLogger(PostODDetails.class);
 
 	private DataSource dataSource;
 	private ExtTablesDAO extTablesDAO;
@@ -38,9 +39,9 @@ public class PostODDetails implements Tasklet {
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		logger.debug("Entering");
 
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = EODUtil.getDate("APP_DATE", context);
 
-		logger.debug("START: Overdue Accounts for Value Date: " + appDate);
+		logger.debug("START: Overdue Accounts for Value Date:{} ", appDate);
 
 		Connection connection = null;
 		ResultSet resultSet = null;
@@ -90,7 +91,7 @@ public class PostODDetails implements Tasklet {
 			}
 			odAccList = null;
 		}
-		logger.debug("COMPLETE: Overdue Accounts for Value Date: " + appDate);
+		logger.debug("COMPLETE: Overdue Accounts for Value Date: {}", appDate);
 		return RepeatStatus.FINISHED;
 	}
 

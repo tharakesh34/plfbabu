@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +25,14 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.ApplicationMasterRestService;
 import com.pennanttech.pffws.ApplicationMasterSoapService;
-import com.pennanttech.ws.model.deviation.ManualDeviationAuthorities;
 import com.pennanttech.ws.model.deviation.ManualDeviationAuthReq;
+import com.pennanttech.ws.model.deviation.ManualDeviationAuthorities;
 import com.pennanttech.ws.model.deviation.ManualDeviationList;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class ApplicationMasterWebServiceImpl implements ApplicationMasterRestService, ApplicationMasterSoapService {
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	private ReasonCodeService reasonCodeService;
 	private ManualDeviationService manualDeviationService;

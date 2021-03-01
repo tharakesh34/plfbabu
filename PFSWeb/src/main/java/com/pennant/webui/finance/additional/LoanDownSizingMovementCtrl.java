@@ -2,7 +2,8 @@ package com.pennant.webui.finance.additional;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -19,7 +20,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class LoanDownSizingMovementCtrl extends GFCBaseCtrl<FinAssetAmtMovement> {
 
 	private static final long serialVersionUID = 454600127282110738L;
-	private static final Logger logger = Logger.getLogger(LoanDownSizingMovementCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LoanDownSizingMovementCtrl.class);
 
 	protected Window window_LoanDownSizingMovement;
 	protected Listbox listBoxMovementDetails;

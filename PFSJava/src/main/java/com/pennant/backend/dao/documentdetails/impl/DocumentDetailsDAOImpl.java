@@ -48,7 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -63,6 +64,7 @@ import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -71,7 +73,7 @@ import com.pennanttech.pff.core.TableType;
  * DAO methods implementation for the <b>documentDetails model</b> class.<br>
  */
 public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> implements DocumentDetailsDAO {
-	private static Logger logger = Logger.getLogger(DocumentDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DocumentDetailsDAOImpl.class);
 
 	public DocumentDetailsDAOImpl() {
 		super();
@@ -297,8 +299,6 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 
 	@Override
 	public List<DocumentDetails> getDocumentDetailsByRef(String ref, String module, String finEvent, String type) {
-		logger.debug("Entering");
-
 		StringBuilder sql = new StringBuilder("select DocId, DocModule, DocCategory,");
 		sql.append(
 				" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode, Remarks,");
@@ -310,50 +310,71 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		/*
 		 * if(StringUtils.isNotBlank(finEvent)){ sql.append(" AND (FinEvent = :FinEvent OR FinEvent = '' )"); }
 		 */
-		logger.debug("selectSql: " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		DocumentDetails documentDetails = new DocumentDetails();
 		documentDetails.setReferenceId(ref);
 		documentDetails.setDocModule(module);
 		documentDetails.setFinEvent(finEvent);
 
-		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
 		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(DocumentDetails.class);
 
-		List<DocumentDetails> documents = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 
-		logger.debug("Leaving");
-		return documents;
 	}
 
 	@Override
 	public List<DocumentDetails> getDocumentDetailsByRef(String ref, String module, String type) {
-		logger.debug("Entering");
-
-		StringBuilder sql = new StringBuilder("select DocId, DocModule, DocCategory,");
-		sql.append(
-				" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode, Remarks,");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID ");
-		sql.append(" from DocumentDetails");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DocId, DocModule, DocCategory, Doctype, DocName");
+		sql.append(", ReferenceId, FinEvent, DocPurpose, DocUri, DocReceivedDate");
+		sql.append(", DocReceived, DocOriginal, DocBarcode");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID");
+		sql.append(" From DocumentDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" where ReferenceId = :ReferenceId AND DocModule=:DocModule ");
-		logger.debug("selectSql: " + sql.toString());
+		sql.append(" Where ReferenceId = ? and DocModule= ?");
 
-		DocumentDetails documentDetails = new DocumentDetails();
-		documentDetails.setReferenceId(ref);
-		documentDetails.setDocModule(module);
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
-		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DocumentDetails.class);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug("Leaving");
+			ps.setString(index++, ref);
+			ps.setString(index++, module);
+		}, (rs, rowNum) -> {
+			DocumentDetails dd = new DocumentDetails();
 
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+			dd.setDocId(rs.getLong("DocId"));
+			dd.setDocModule(rs.getString("DocModule"));
+			dd.setDocCategory(rs.getString("DocCategory"));
+			dd.setDoctype(rs.getString("Doctype"));
+			dd.setDocName(rs.getString("DocName"));
+			dd.setReferenceId(rs.getString("ReferenceId"));
+			dd.setFinEvent(rs.getString("FinEvent"));
+			dd.setDocPurpose(rs.getString("DocPurpose"));
+			dd.setDocUri(rs.getString("DocUri"));
+			dd.setDocReceivedDate(JdbcUtil.getDate(rs.getDate("DocReceivedDate")));
+			dd.setDocReceived(rs.getBoolean("DocReceived"));
+			dd.setDocOriginal(rs.getBoolean("DocOriginal"));
+			dd.setDocBarcode(rs.getString("DocBarcode"));
+			dd.setVersion(rs.getInt("Version"));
+			dd.setLastMntBy(rs.getLong("LastMntBy"));
+			dd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			dd.setRecordStatus(rs.getString("RecordStatus"));
+			dd.setRoleCode(rs.getString("RoleCode"));
+			dd.setNextRoleCode(rs.getString("NextRoleCode"));
+			dd.setTaskId(rs.getString("TaskId"));
+			dd.setNextTaskId(rs.getString("NextTaskId"));
+			dd.setRecordType(rs.getString("RecordType"));
+			dd.setWorkflowId(rs.getLong("WorkflowId"));
+			dd.setDocRefId(rs.getLong("docRefId"));
+			dd.setInstructionUID(rs.getLong("instructionUID"));
+
+			return dd;
+		});
 
 	}
 

@@ -18,7 +18,8 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
@@ -42,7 +43,7 @@ import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
 public abstract class JsonService<T> {
-	protected static Logger logger = Logger.getLogger(JsonService.class.getClass());
+	protected static Logger logger = LogManager.getLogger(JsonService.class.getClass());
 
 	protected static final String READ_TIMEOUT = "exteranal.interface.read.timeout";
 	protected static final String CONNECTION_TIMEOUT = "exteranal.interface.connection.timeout";
@@ -85,7 +86,7 @@ public abstract class JsonService<T> {
 
 		Timestamp reqSentOn = null;
 
-		String url = App.getProperty(serviceDetail.getServiceUrl());
+		String url = serviceDetail.getServiceUrl();
 		if (StringUtils.trimToNull(serviceDetail.getServiceEndPoint()) != null) {
 			url = StringUtils.trimToEmpty(url) + serviceDetail.getServiceEndPoint();
 		}
@@ -115,8 +116,7 @@ public abstract class JsonService<T> {
 		}
 
 		HttpMethod method = serviceDetail.getMethod();
-		logger.trace(String.format("URL %s%nMethod %s%nRequest Data %s", url, method.name(),
-				serviceDetail.getRequestString()));
+		logger.trace("URL {} \nMethod {} \nRequest Data {}", url, method.name(), serviceDetail.getRequestString());
 		HttpEntity<String> httpEntity = new HttpEntity<>(serviceDetail.getRequestString(),
 				getHttpHeader(serviceDetail.getHeaders(), serviceDetail.isXmlRequest()));
 		ResponseEntity<String> response = null;
@@ -132,7 +132,7 @@ public abstract class JsonService<T> {
 			if (serviceDetail.getMethod() == HttpMethod.GET) {
 				logDetail.setRequest(url);
 			} else {
-				if (StringUtils.equalsIgnoreCase("Y", App.getProperty("external.interface.fulllog"))) {
+				if (App.getBooleanProperty("external.interface.fulllog")) {
 					logDetail.setRequest(serviceDetail.getRequestString());
 				} else {
 					logDetail.setRequest(StringUtils.left(serviceDetail.getRequestString(), 1000));
@@ -152,12 +152,6 @@ public abstract class JsonService<T> {
 			status = InterfaceConstants.STATUS_FAILED;
 			throw new InterfaceException(errorCode, "Connection Expection", e);
 
-			/*
-			 * if (e.getCause() != null && e.getCause() instanceof ConnectException) { errorCode = "8900"; errorDesc =
-			 * e.getMessage(); status = InterfaceConstants.STATUS_FAILED; throw new InterfaceException(errorCode,
-			 * "Connection Expection", e); } else { errorCode = "8901"; errorDesc = e.getMessage(); status =
-			 * InterfaceConstants.STATUS_FAILED; throw new InterfaceException(errorCode, "Timeout Expection", e); }
-			 */
 		} catch (Exception e) {
 			errorCode = "8904";
 			errorDesc = e.getMessage();
@@ -165,9 +159,9 @@ public abstract class JsonService<T> {
 			throw new InterfaceException("8904", e.getMessage(), e);
 
 		} finally {
-			logger.trace(String.format("Response Data %s", serviceDetail.getResponseString()));
+			logger.trace("Response Data {}", serviceDetail.getResponseString());
 			if (logDetail != null) {
-				if (StringUtils.equalsIgnoreCase("Y", App.getProperty("external.interface.fulllog"))) {
+				if (App.getBooleanProperty("external.interface.fulllog")) {
 					logDetail.setResponse(serviceDetail.getResponseString());
 				} else {
 					logDetail.setResponse(StringUtils.left(serviceDetail.getResponseString(), 1000));
@@ -176,6 +170,7 @@ public abstract class JsonService<T> {
 				logDetail.setStatus(status);
 				logDetail.setErrorCode(errorCode);
 				logDetail.setErrorDesc(StringUtils.left(StringUtils.trimToEmpty(errorDesc), 200));
+
 				updateResponse(logDetail);
 			}
 		}
@@ -243,7 +238,7 @@ public abstract class JsonService<T> {
 			Proxy proxy = new Proxy(Proxy.Type.HTTP,
 					new InetSocketAddress(jsonServiceDetail.getProxyUrl(), jsonServiceDetail.getProxyPort()));
 			rf.setProxy(proxy);
-			logger.debug("Proxy Details:" + proxy.toString());
+			logger.debug("Proxy Details {}", proxy.toString());
 		}
 
 		return restTemplate;
@@ -311,8 +306,6 @@ public abstract class JsonService<T> {
 		if (jsonServiceDetail.isExcludeEmpty()) {
 			mapper.setSerializationInclusion(Inclusion.NON_EMPTY);
 		}
-
-		// mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
 
 		return mapper;
 

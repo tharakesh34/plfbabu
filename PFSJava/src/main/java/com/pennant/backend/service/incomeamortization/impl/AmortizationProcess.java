@@ -3,7 +3,8 @@ package com.pennant.backend.service.incomeamortization.impl;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -12,7 +13,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class AmortizationProcess extends Thread {
-	private static final Logger logger = Logger.getLogger(AmortizationProcess.class);
+	private static final Logger logger = LogManager.getLogger(AmortizationProcess.class);
 
 	private List<FinanceMain> financeList = null;
 	private ProjectedAmortization projectedAmortization = null;

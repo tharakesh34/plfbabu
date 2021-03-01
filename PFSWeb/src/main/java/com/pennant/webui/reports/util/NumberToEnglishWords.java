@@ -14,7 +14,8 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
@@ -25,8 +26,8 @@ import net.sf.jasperreports.engine.JRDefaultScriptlet;
 import net.sf.jasperreports.engine.JRScriptletException;
 
 public class NumberToEnglishWords extends JRDefaultScriptlet implements Serializable {
+	private static Logger logger = LogManager.getLogger(NumberToEnglishWords.class);
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(NumberToEnglishWords.class);
 	private static CurrencyDAO currencyDAO;
 
 	static String[] wrdOnes = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",

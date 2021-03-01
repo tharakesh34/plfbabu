@@ -58,7 +58,8 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -205,7 +206,7 @@ import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class ReceiptServiceImpl extends GenericFinanceDetailService implements ReceiptService {
-	private static final Logger logger = Logger.getLogger(ReceiptServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptServiceImpl.class);
 
 	private LimitCheckDetails limitCheckDetails;
 	private FinanceDetailService financeDetailService;
@@ -478,7 +479,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (CollectionUtils.isNotEmpty(scheduleData.getFinFeeDetailList())) {
 			for (FinFeeDetail finFeeDetail : scheduleData.getFinFeeDetailList()) {
-				//Tax Details
+				// Tax Details
 				Long headerId = finFeeDetail.getTaxHeaderId();
 				if (headerId != null && headerId > 0) {
 					List<Taxes> taxDetails = taxHeaderDetailsDAO.getTaxDetailById(headerId, type);
@@ -1176,9 +1177,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		if (eventMapping != null) {
 			// dataMap = aeEvent.getDataMap();
-			dataMap.put("emptype", eventMapping.get("emptype"));
-			dataMap.put("branchcity", eventMapping.get("branchcity"));
-			dataMap.put("fincollateralreq", eventMapping.get("fincollateralreq"));
+			dataMap.put("emptype", eventMapping.get("EMPTYPE"));
+			dataMap.put("branchcity", eventMapping.get("BRANCHCITY"));
+			dataMap.put("fincollateralreq", eventMapping.get("FINCOLLATERALREQ"));
 			dataMap.put("btloan", btLoan);
 		}
 		receiptData.getReceiptHeader().getReceiptDetails().get(0).getDeclaredFieldValues(aeEvent.getDataMap());
@@ -2582,8 +2583,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		FinReceiptData repayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = repayData.getFinanceDetail();
-		//String usrLanguage = auditHeader.getUsrLanguage();
-		//Need to check with kranthi
+		// String usrLanguage = auditHeader.getUsrLanguage();
+		// Need to check with kranthi
 		String usrLanguage = repayData.getReceiptHeader().getUserDetails().getLanguage();
 		// Extended field details Validation
 		if (financeDetail.getExtendedFieldRender() != null) {
@@ -2703,7 +2704,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		// validation for not allowing  early settlement when presentation is in progress.
+		// validation for not allowing early settlement when presentation is in progress.
 		if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(finReceiptHeader.getReceiptPurpose())) {
 			boolean isPending = isReceiptsPending(finReceiptHeader.getReference(), finReceiptHeader.getReceiptID());
 			if (isPending) {
@@ -3296,7 +3297,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// set Default date formats
 		setDefaultDateFormats(fsi);
-		//closed loan
+		// closed loan
 		if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)
 				|| StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 
@@ -3439,7 +3440,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			logger.debug("Leaving - Data Validations Error");
 			return receiptData;
 		}
-		//receiptData = doBusinessValidations(receiptData, methodCtg);
+		// receiptData = doBusinessValidations(receiptData, methodCtg);
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
 			logger.debug("Leaving - Business Validations Error");
 			return receiptData;
@@ -3661,7 +3662,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		} else if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
 				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
 			// CASH OR ONLINE
-			//finScheduleData = validateForNonChequeOrDD(rcd, finScheduleData);
+			// finScheduleData = validateForNonChequeOrDD(rcd, finScheduleData);
 		}
 
 		if (StringUtils.equals(fsi.getReqType(), RepayConstants.REQTYPE_INQUIRY)) {
@@ -3907,9 +3908,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		// DE#555: In receipt upload, If the sub receipt mode is ESCROW and receipt mode is ONLINE , 
-		//system not allowing to upload. It is allowing only, if loan is related developer finance.
-		//Same functionality is working fine in front end screen’s(Receipt maker screen). Now we are removing the validation.
+		// DE#555: In receipt upload, If the sub receipt mode is ESCROW and receipt mode is ONLINE ,
+		// system not allowing to upload. It is allowing only, if loan is related developer finance.
+		// Same functionality is working fine in front end screen’s(Receipt maker screen). Now we are removing the
+		// validation.
+
 		/*
 		 * boolean isDeveloperFinance = financeMainDAO.isDeveloperFinance(finReference, "", false); if
 		 * (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) { if (!isDeveloperFinance &&
@@ -4527,8 +4530,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setValueDate(fsi.getValueDate());
 		receiptData.setSourceId(PennantConstants.FINSOURCE_ID_API);
 
-		//set additional data
-		//Setting data
+		// set additional data
+		// Setting data
 		rch.setDepositDate(rcd.getDepositDate());
 		if (StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rcd.getPaymentType())
 				|| StringUtils.equals(RepayConstants.RECEIPTMODE_DD, rcd.getPaymentType())) {
@@ -5515,7 +5518,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		//Setting fin tax details
+		// Setting fin tax details
 		financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, "_AView"));
 
 		// Finance Document Details
@@ -7008,7 +7011,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				payAdvMovement.setPaidAmount(payable.getPaidNow());
 				payAdvMovement.setFeeTypeCode(payable.getFeeTypeCode());
 
-				//GST Calculations
+				// GST Calculations
 				if (StringUtils.isNotBlank(payable.getTaxType())) {
 
 					if (taxPercMap == null) {
@@ -7105,6 +7108,32 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			// finReceiptDetail);
 		}
 		logger.debug("Leaving");
+	}
+
+	public ErrorDetail receiptCancelValidation(String finReference, Date lastReceivedDate) {
+		if (lastReceivedDate == null) {
+			return null;
+		}
+
+		Date appDate = SysParamUtil.getAppDate();
+
+		Date monthStart = DateUtil.getMonthStart(appDate);
+
+		if (lastReceivedDate.compareTo(monthStart) < 0) {
+			String[] valueParm = new String[4];
+			String msg = "Post Receipt Creation, EOM is completed. Hence System will not allow to cancel the receipt.";
+			return new ErrorDetail("21005", msg, valueParm);
+		}
+
+		Date maxPostDate = finLogEntryDetailDAO.getMaxPostDateByRef(finReference);
+
+		if (DateUtil.compare(lastReceivedDate, maxPostDate) <= 0) {
+			String[] valueParm = new String[4];
+			String msg = "Post Receipt Creation, Schedule is effected due to other Schedule Change event. Hence System will not allow to cancel the receipt.";
+			return new ErrorDetail("21005", msg, valueParm);
+		}
+
+		return null;
 	}
 
 	private AuditHeader approveValidation(AuditHeader auditHeader, String method) {

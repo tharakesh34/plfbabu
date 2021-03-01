@@ -11,7 +11,8 @@ import java.util.Set;
 import javax.script.ScriptEngine;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
@@ -21,7 +22,7 @@ import com.pennant.backend.util.FacilityConstants;
 
 public class CreditReviewSummaryData {
 
-	private static Logger logger = Logger.getLogger(CreditReviewSummaryData.class);
+	private static Logger logger = LogManager.getLogger(CreditReviewSummaryData.class);
 
 	private Map<String, List<FinCreditReviewSummary>> detailsMap = new HashMap<String, List<FinCreditReviewSummary>>();
 	private Map<String, String> dataMap = null;

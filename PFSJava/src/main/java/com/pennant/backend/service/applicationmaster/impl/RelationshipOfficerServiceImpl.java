@@ -43,8 +43,9 @@
 
 package com.pennant.backend.service.applicationmaster.impl;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -72,7 +73,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class RelationshipOfficerServiceImpl extends GenericService<RelationshipOfficer>
 		implements RelationshipOfficerService {
-	private static final Logger logger = Logger.getLogger(RelationshipOfficerServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(RelationshipOfficerServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private RelationshipOfficerDAO relationshipOfficerDAO;

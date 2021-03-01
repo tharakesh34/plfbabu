@@ -12,7 +12,8 @@ import java.util.Date;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -26,9 +27,10 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.eod.BatchFileUtil;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class PostGLPLPostings implements Tasklet {
-	private Logger logger = Logger.getLogger(PostGLPLPostings.class);
+	private Logger logger = LogManager.getLogger(PostGLPLPostings.class);
 
 	private Date appDate = null;
 	private DataSource dataSource;
@@ -39,7 +41,7 @@ public class PostGLPLPostings implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
-		appDate = SysParamUtil.getAppDate();
+		appDate = EODUtil.getDate("APP_DATE", context);
 
 		logger.debug("START: ERP Extracts Postings for Value Date: " + appDate);
 

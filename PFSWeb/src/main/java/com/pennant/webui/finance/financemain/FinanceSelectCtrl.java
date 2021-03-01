@@ -52,7 +52,8 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -60,6 +61,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
@@ -142,7 +144,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long serialVersionUID = -5081318673331825306L;
-	private static final Logger logger = Logger.getLogger(FinanceSelectCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceSelectCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -152,6 +154,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Borderlayout borderlayout_FinanceSelect; // autowired
 	protected Textbox custCIF; // autowired
 	protected Textbox finReference; // autowired
+	protected Checkbox allowPreMaturedCases;
 	protected Textbox finType; // autowired
 	protected Textbox finCcy; // autowired
 	protected Textbox finBranch; // autowired
@@ -227,7 +230,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	final Map<String, Object> map = getDefaultArguments();
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private List<String> usrfinRolesList = new ArrayList<String>();
-	private transient ChangeTDSService changeTDSService;//Clix Requirement added new change TDS Service
+	private transient ChangeTDSService changeTDSService;// Clix Requirement added new change TDS Service
 	private transient LoanDownSizingService loanDownSizingService;
 
 	/**
@@ -269,7 +272,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			checkAndSetModDef(tabbox);
 		}
 
-		//Listbox Sorting
+		// Listbox Sorting
 
 		this.listheader_FinType.setSortAscending(new FieldComparator("finType", true));
 		this.listheader_FinType.setSortDescending(new FieldComparator("finType", false));
@@ -504,7 +507,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		Filter[] filters = this.searchObject.getFilters().toArray(new Filter[this.searchObject.getFilters().size()]);
 		if (this.oldVar_sortOperator_finReference == Filter.OP_IN
 				|| this.oldVar_sortOperator_finReference == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceSelect,
 					"FinanceMaintenance", this.finReference.getValue(), filters,
 					StringUtils.trimToNull(this.searchObject.getWhereClause()));
@@ -538,7 +541,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		if (this.oldVar_sortOperator_finBranch == Filter.OP_IN
 				|| this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceSelect, "Branch",
 					this.finBranch.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -568,7 +571,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Entering " + event.toString());
 
 		if (this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceSelect, "FinanceType",
 					this.finType.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -599,7 +602,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Entering " + event.toString());
 
 		if (this.oldVar_sortOperator_finCcy == Filter.OP_IN || this.oldVar_sortOperator_finCcy == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceSelect, "Currency",
 					this.finCcy.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -680,7 +683,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		if (this.oldVar_sortOperator_scheduleMethod == Filter.OP_IN
 				|| this.oldVar_sortOperator_scheduleMethod == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = null;
 			if (StringUtils.isEmpty(whereClause)) {
 				selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceSelect, "ScheduleMethod",
@@ -722,7 +725,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		if (this.oldVar_sortOperator_profitDaysBasis == Filter.OP_IN
 				|| this.oldVar_sortOperator_profitDaysBasis == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceSelect,
 					"InterestRateBasisCode", this.profitDaysBasis.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -993,7 +996,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 		}
 
-		// Default Sort on the table	
+		// Default Sort on the table
 		Date appDate = DateUtility.getAppDate();
 		StringBuilder whereClause = new StringBuilder();
 
@@ -1005,7 +1008,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause = new StringBuilder(" FinIsActive = 1 ");
 		}
 
-		//### 11-10-2018,Ticket id:124998
+		// ### 11-10-2018,Ticket id:124998
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECEIPT)) {
 			whereClause.append(" CLOSINGSTATUS!='" + FinanceConstants.CLOSE_STATUS_CANCELLED
 					+ "' or (CLOSINGSTATUS is null or CLOSINGSTATUS  in ('" + FinanceConstants.CLOSE_STATUS_EARLYSETTLE
@@ -1105,7 +1108,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 			whereClause.append(" AND FinStartDate < '" + appDate + "' ");
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECEIPT)) {
-			//whereClause.append(" AND FinStartDate < '" + appDate+"' " );
+			// whereClause.append(" AND FinStartDate < '" + appDate+"' " );
 			whereClause.append(" AND FinCurrAssetValue > 0 ");
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 			whereClause.append(" AND FinStartDate < '" + appDate + "' ");
@@ -1118,17 +1121,27 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFF)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-			whereClause.append(" AND MaturityDate < '" + appDate + "'");
+			if (!this.allowPreMaturedCases.isChecked()) {
+				whereClause.append(" AND MaturityDate < '" + appDate + "'");
+			}
 			whereClause.append(" AND ((fincurrassetvalue+feechargeamt+insuranceamt) - finRepaymentAmount) > 0 ");
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
+		}
+		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFF)
+				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+			if (!this.allowPreMaturedCases.isChecked()) {
+				whereClause.append(" AND MaturityDate <= '" + appDate + "'");
+			} else {
+				whereClause.append(" AND MaturityDate > '" + appDate + "'");
+			}
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELRPY)) {
-			//whereClause.append(" OR (FinIsActive = 0 AND ClosingStatus = 'M') ");
+			// whereClause.append(" OR (FinIsActive = 0 AND ClosingStatus = 'M') ");
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELFIN)) {
 			backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_CANFIN_BACK_DATE");
 			backValueDate = DateUtility.addDays(appDate, backValueDays);
 
-			//whereClause.append(" AND MigratedFinance = 0 ");
+			// whereClause.append(" AND MigratedFinance = 0 ");
 			whereClause.append(" AND (FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND ");
 			whereClause.append(" FinStartDate >= '" + backValueDate.toString() + "')");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
@@ -1181,7 +1194,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND FinAssetvalue > FinCurrAssetValue ");
 		}
 
-		//Written Off Finance Reference Details Condition
+		// Written Off Finance Reference Details Condition
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 			whereClause.append(" AND FinReference IN (SELECT FinReference From FinWriteoffDetail) ");
 		} else {
@@ -1261,7 +1274,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					return;
 				}
 
-				//Add Disbursement, the Application will provide a warning message if there are some unadjusted dues in customer against all loans.
+				// Add Disbursement, the Application will provide a warning message if there are some unadjusted dues in
+				// customer against all loans.
 				String addDisbDuesWarningMsgReq = SysParamUtil
 						.getValueAsString(SMTParameterConstants.ADD_DISB_DUES_WARNG);
 
@@ -1379,7 +1393,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	private void setWorkflowDetails(String finType, boolean isPromotion) {
 
-		//Finance Maintenance Workflow Check & Assignment
+		// Finance Maintenance Workflow Check & Assignment
 		if (StringUtils.isNotEmpty(workflowCode)) {
 			String workflowTye = getFinanceWorkFlowService().getFinanceWorkFlowType(finType, workflowCode,
 					isPromotion ? PennantConstants.WORFLOW_MODULE_PROMOTION : PennantConstants.WORFLOW_MODULE_FINANCE);
@@ -1438,7 +1452,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceDetail financeDetail = getFinanceDetailService().getServicingFinance(aFinanceMain.getId(),
 					eventCodeRef, moduleDefiner, userRole);
 
-			//Role Code State Checking
+			// Role Code State Checking
 			String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
@@ -1567,7 +1581,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					.getFinanceDetailById(aFinanceMain.getId(), "_View", userRole, moduleDefiner, eventCodeRef);
 			financeDetail.setModuleDefiner(moduleDefiner);
 
-			//Role Code State Checking
+			// Role Code State Checking
 			String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
 			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 				String[] errParm = new String[1];
@@ -1671,7 +1685,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final RepayData repayData = getManualPaymentService().getRepayDataById(aFinanceMain.getFinReference(),
 					eventCodeRef, moduleDefiner, userRole);
 
-			//Role Code State Checking
+			// Role Code State Checking
 			String nextroleCode = repayData.getFinanceDetail().getFinScheduleData().getFinanceMain().getNextRoleCode();
 			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 				String[] errParm = new String[1];
@@ -1772,7 +1786,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinReceiptData receiptData = getReceiptService().getFinReceiptDataById(aFinanceMain.getFinReference(),
 					eventCodeRef, moduleDefiner, userRole);
 
-			//Role Code State Checking
+			// Role Code State Checking
 			String nextroleCode = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain()
 					.getNextRoleCode();
 			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
@@ -1886,7 +1900,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceWriteoffHeader writeoffHeader = getFinanceWriteoffService()
 					.getFinanceWriteoffDetailById(aFinanceMain.getFinReference(), "_View", userRole, moduleDefiner);
 
-			//Role Code State Checking
+			// Role Code State Checking
 			String nextroleCode = writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain()
 					.getNextRoleCode();
 			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
@@ -1991,7 +2005,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 			setFinanceMain(aFinanceMain);
 
-			//Role Code State Checking
+			// Role Code State Checking
 			String nextroleCode = finDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
 			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 				String[] errParm = new String[1];
@@ -2009,7 +2023,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				return;
 			}
 
-			// Check For Auto Insurance Fee 
+			// Check For Auto Insurance Fee
 			final FeeRule feeRule = getFinanceDetailService()
 					.getFeeChargesByFinRefAndFeeCode(aFinanceMain.getFinReference(), RuleConstants.TAKAFUL_FEE, "");
 			String maintainSts = "";
@@ -2090,7 +2104,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceDetail financeDetail = getFinanceCancellationService()
 					.getFinanceDetailById(aFinanceMain.getFinReference(), "_View", userRole, moduleDefiner);
 
-			//Role Code State Checking
+			// Role Code State Checking
 			String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
 			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 				String[] errParm = new String[1];
@@ -2136,7 +2150,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 						.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRcdMaintainSts());
 			}
 
-			//Check Repayments on Finance when it is not in Maintenance
+			// Check Repayments on Finance when it is not in Maintenance
 			if (StringUtils.isEmpty(maintainSts)) {
 				List<FinanceRepayments> listFinanceRepayments = new ArrayList<FinanceRepayments>();
 				listFinanceRepayments = getFinanceDetailService()
@@ -2144,7 +2158,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if (listFinanceRepayments != null && listFinanceRepayments.size() > 0) {
 					boolean onlyBPIPayment = true;
 					for (FinanceRepayments financeRepayments : listFinanceRepayments) {
-						//check for the BPI payment
+						// check for the BPI payment
 						if (bpiSchedule != null) {
 							if (financeRepayments.getFinSchdDate().compareTo(bpiSchedule.getSchDate()) != 0) {
 								onlyBPIPayment = false;
@@ -2160,7 +2174,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				}
 			}
 
-			//If the disbursements are REALIZED or PAID, we are not allow to cancel the loan until unless those disbursements are REVERSED.
+			// If the disbursements are REALIZED or PAID, we are not allow to cancel the loan until unless those
+			// disbursements are REVERSED.
 			if (ImplementationConstants.DISB_REVERSAL_REQ_BEFORE_LOAN_CANCEL) {
 				List<FinAdvancePayments> advancePayments = getFinanceCancellationService()
 						.getFinAdvancePaymentsByFinRef(financeDetail.getFinScheduleData().getFinReference());
@@ -2254,7 +2269,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceDetail financeDetail = getRepaymentCancellationService()
 					.getFinanceDetailById(aFinanceMain.getId(), "_View");
 
-			//Role Code State Checking
+			// Role Code State Checking
 			String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
 			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 				String[] errParm = new String[1];
@@ -2817,7 +2832,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForFinOptions(aFinanceMain);
 
 			// Covenants List
-			//finMaintainInstruction.setFinCovenantTypeList(financeDetail.getCovenantTypeList());
+			// finMaintainInstruction.setFinCovenantTypeList(financeDetail.getCovenantTypeList());
 
 			finMaintainInstruction.setFinOptions(financeDetail.getFinOptions());
 
@@ -2914,7 +2929,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				feeWaiverHeader.setFinReference(aFinanceMain.getFinReference());
 				feeWaiverHeader = feeWaiverHeaderService.getFeeWaiverByFinRef(feeWaiverHeader);
 			} else {
-				//get fee waiver details from manual advise and finoddetails to prepare the list. 
+				// get fee waiver details from manual advise and finoddetails to prepare the list.
 				feeWaiverHeader.setNewRecord(true);
 				feeWaiverHeader.setFinReference(aFinanceMain.getFinReference());
 				feeWaiverHeader = feeWaiverHeaderService.getFeeWaiverByFinRef(feeWaiverHeader);
@@ -3478,7 +3493,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		Filter[] rcdTypeFilter = new Filter[2];
 		rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
-		//rcdTypeFilter[1] = new Filter("RecordType", " ", Filter.OP_EQUAL);
+		// rcdTypeFilter[1] = new Filter("RecordType", " ", Filter.OP_EQUAL);
 		rcdTypeFilter[1] = Filter.isNull("RecordType");
 		if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER)
 				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)

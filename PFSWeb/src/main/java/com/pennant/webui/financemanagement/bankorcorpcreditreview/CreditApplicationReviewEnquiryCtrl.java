@@ -20,7 +20,8 @@ import javax.script.ScriptEngineManager;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -116,7 +117,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditReviewDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = Logger.getLogger(CreditApplicationReviewEnquiryCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CreditApplicationReviewEnquiryCtrl.class);
 
 	protected Window window_CreditApplicationReviewDialog;
 	protected Borderlayout borderlayout_CreditApplicationReview;

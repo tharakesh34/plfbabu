@@ -88,6 +88,20 @@ public class RepayInstruction extends AbstractWorkflowEntity {
 		super();
 	}
 
+	public RepayInstruction copyEntity() {
+		RepayInstruction entity = new RepayInstruction();
+		entity.setFinReference(this.finReference);
+		entity.setRepayDate(this.repayDate);
+		entity.setRepayAmount(this.repayAmount);
+		entity.setRepaySchdMethod(this.repaySchdMethod);
+		entity.setLogKey(this.logKey);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage);
+		entity.setUserDetails(this.userDetails);
+		return entity;
+	}
+
 	public RepayInstruction(String id) {
 		super();
 		this.setId(id);

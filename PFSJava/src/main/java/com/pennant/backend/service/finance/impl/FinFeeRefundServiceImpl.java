@@ -7,7 +7,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
@@ -58,7 +59,7 @@ import com.pennanttech.pff.core.TableType;
  *
  */
 public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> implements FinFeeRefundService {
-	private static final Logger logger = Logger.getLogger(FinFeeRefundServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinFeeRefundServiceImpl.class);
 
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private FinanceMainDAO financeMainDAO;

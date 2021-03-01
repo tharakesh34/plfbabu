@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>PinCode</code> with set of CRUD operations.
  */
 public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
-	private static Logger logger = Logger.getLogger(PinCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PinCodeDAOImpl.class);
 
 	public PinCodeDAOImpl() {
 		super();
@@ -163,7 +164,7 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (pinCode.getPinCodeId() <= 0) {
-			pinCode.setPinCodeId(getNextId("SeqPinCodes"));
+			pinCode.setPinCodeId(getNextValue("SeqPinCodes"));
 		}
 
 		// Execute the SQL, binding the arguments.

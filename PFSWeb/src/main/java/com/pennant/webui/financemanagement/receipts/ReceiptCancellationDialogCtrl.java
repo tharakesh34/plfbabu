@@ -54,7 +54,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -140,7 +141,7 @@ import com.rits.cloning.Cloner;
  */
 public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = Logger.getLogger(ReceiptCancellationDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptCancellationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -246,7 +247,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	private ReceiptCancellationListCtrl receiptCancellationListCtrl;
 	private ReceiptCancellationService receiptCancellationService;
 	private RuleService ruleService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private String module;
 
 	protected Textbox receiptId;
@@ -834,48 +834,51 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			this.bounceCode.setValue(dataObject.toString());
 		} else {
 			BounceReason bounceReason = (BounceReason) dataObject;
-			if (bounceReason != null) {
-				Map<String, Object> executeMap = bounceReason.getDeclaredFieldValues();
 
-				if (this.receiptHeader != null) {
-					if (this.receiptHeader.getReceiptDetails() != null
-							&& !this.receiptHeader.getReceiptDetails().isEmpty()) {
-						for (FinReceiptDetail finReceiptDetail : this.receiptHeader.getReceiptDetails()) {
-							if (StringUtils.equals(this.receiptHeader.getReceiptMode(),
-									finReceiptDetail.getPaymentType())) {
-								finReceiptDetail.getDeclaredFieldValues(executeMap);
-								break;
-							}
+			if (bounceReason == null) {
+				return;
+			}
+
+			Map<String, Object> executeMap = bounceReason.getDeclaredFieldValues();
+
+			if (this.receiptHeader != null) {
+				List<FinReceiptDetail> receiptDetails = this.receiptHeader.getReceiptDetails();
+				if (receiptDetails != null && !receiptDetails.isEmpty()) {
+					for (FinReceiptDetail finReceiptDetail : receiptDetails) {
+						if (StringUtils.equals(this.receiptHeader.getReceiptMode(),
+								finReceiptDetail.getPaymentType())) {
+							finReceiptDetail.getDeclaredFieldValues(executeMap);
+							break;
 						}
 					}
 				}
-
-				Map<String, Object> eventMapping = null;
-				Rule rule = getRuleService().getRuleById(bounceReason.getRuleID(), "");
-				BigDecimal bounceAmt = BigDecimal.ZERO;
-				int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
-				eventMapping = receiptCancellationService.getGLSubHeadCodes(receiptHeader.getReference());
-				if (rule != null) {
-
-					if (eventMapping != null) {
-						executeMap.put("emptype", eventMapping.get("Emptype"));
-						executeMap.put("branchcity", eventMapping.get("Branchcity"));
-						executeMap.put("fincollateralreq", eventMapping.get("fincollateralreq"));
-						executeMap.put("btloan", eventMapping.get("btloan"));
-						executeMap.put("ae_businessvertical", eventMapping.get("Businessvertical"));
-						BigDecimal alwFlexi = (BigDecimal) eventMapping.get("AlwFlexi");
-						executeMap.put("ae_alwflexi", alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);
-						executeMap.put("ae_finbranch", eventMapping.get("FinBranch"));
-						executeMap.put("ae_entitycode", eventMapping.get("Entitycode"));
-					}
-					executeMap.put("br_finType", getReceiptHeader().getFinType());
-					bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executeMap,
-							getReceiptHeader().getFinCcy(), RuleReturnType.DECIMAL);
-					// unFormating BounceAmt
-					bounceAmt = PennantApplicationUtil.unFormateAmount(bounceAmt, formatter);
-				}
-				this.bounceCharge.setValue(PennantApplicationUtil.formateAmount(bounceAmt, formatter));
 			}
+
+			Map<String, Object> eventMapping = null;
+			Rule rule = getRuleService().getRuleById(bounceReason.getRuleID(), "");
+			BigDecimal bounceAmt = BigDecimal.ZERO;
+			int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
+			eventMapping = receiptCancellationService.getGLSubHeadCodes(receiptHeader.getReference());
+			if (rule != null) {
+
+				if (eventMapping != null) {
+					executeMap.put("emptype", eventMapping.get("EMPTYPE"));
+					executeMap.put("branchcity", eventMapping.get("BRANCHCITY"));
+					executeMap.put("fincollateralreq", eventMapping.get("FINCOLLATERALREQ"));
+					executeMap.put("btloan", eventMapping.get("BTLOAN"));
+					executeMap.put("ae_businessvertical", eventMapping.get("BUSINESSVERTICAL"));
+					BigDecimal alwFlexi = (BigDecimal) eventMapping.get("ALWFLEXI");
+					executeMap.put("ae_alwflexi", alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);
+					executeMap.put("ae_finbranch", eventMapping.get("FINBRANCH"));
+					executeMap.put("ae_entitycode", eventMapping.get("ENTITYCODE"));
+				}
+				executeMap.put("br_finType", getReceiptHeader().getFinType());
+				bounceAmt = (BigDecimal) RuleExecutionUtil.executeRule(rule.getSQLRule(), executeMap,
+						getReceiptHeader().getFinCcy(), RuleReturnType.DECIMAL);
+				// unFormating BounceAmt
+				bounceAmt = PennantApplicationUtil.unFormateAmount(bounceAmt, formatter);
+			}
+			this.bounceCharge.setValue(PennantApplicationUtil.formateAmount(bounceAmt, formatter));
 		}
 	}
 
@@ -2026,15 +2029,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
 	public DocumentDetailDialogCtrl getDocumentDetailDialogCtrl() {
 		return documentDetailDialogCtrl;
 	}

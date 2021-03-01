@@ -12,7 +12,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -31,7 +32,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.mandate.dao.MandateProcessDAO;
 
 public class MandateProcessDAOImpl extends SequenceDao<Object> implements MandateProcessDAO {
-	protected final Logger logger = Logger.getLogger(getClass());
+	protected final Logger logger = LogManager.getLogger(getClass());
 
 	@Override
 	public long saveMandateRequests(List<Long> mandateIds) {

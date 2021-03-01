@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.amazonaws.util.CollectionUtils;
 import com.pennant.app.util.DateUtility;
@@ -29,7 +30,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CancelDisbursementServiceImpl extends GenericService<FinServiceInstruction>
 		implements CancelDisbursementService {
-	private static Logger logger = Logger.getLogger(CancelDisbursementServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CancelDisbursementServiceImpl.class);
 
 	private FinanceDataValidation financeDataValidation;
 	private FinServiceInstrutionDAO finServiceInstructionDAO;

@@ -49,7 +49,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -97,7 +98,7 @@ import com.pennanttech.pennapps.jdbc.search.SearchResult;
  */
 public class MultiSelectionSearchListBox extends Window implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(MultiSelectionSearchListBox.class);
+	private static final Logger logger = LogManager.getLogger(MultiSelectionSearchListBox.class);
 
 	private Textbox _textbox;
 	private Button _searchButton;

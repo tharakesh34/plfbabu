@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.others.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostingDAO {
-	private static Logger logger = Logger.getLogger(JVPostingDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(JVPostingDAOImpl.class);
 
 	public JVPostingDAOImpl() {
 		super();
@@ -258,7 +259,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 
 	@Override
 	public long createBatchReference() {
-		return getNextId("SeqJVpostings");
+		return getNextValue("SeqJVpostings");
 	}
 
 	/**

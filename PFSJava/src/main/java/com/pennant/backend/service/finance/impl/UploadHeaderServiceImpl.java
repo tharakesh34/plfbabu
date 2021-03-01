@@ -51,7 +51,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -110,7 +111,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implements UploadHeaderService {
-	private static final Logger logger = Logger.getLogger(UploadHeaderServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(UploadHeaderServiceImpl.class);
 
 	private UploadHeaderDAO uploadHeaderDAO;
 	private UploadFinExpensesDAO uploadFinExpensesDAO;

@@ -45,7 +45,8 @@ package com.pennant.webui.finance.financemain;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -90,7 +91,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long serialVersionUID = -5901195042041627750L;
-	private static final Logger logger = Logger.getLogger(FinanceDeviationsListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceDeviationsListCtrl.class);
 
 	protected Window window_FinanceDeviationsList;
 	protected Borderlayout borderLayout_FinanceMainList;

@@ -46,7 +46,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -80,7 +81,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 	private static final long serialVersionUID = -2314266107249438945L;
-	private static final Logger logger = Logger.getLogger(SecurityUserChangePasswordDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SecurityUserChangePasswordDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

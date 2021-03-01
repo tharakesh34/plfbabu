@@ -7,7 +7,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -58,7 +59,7 @@ import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
 public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHeader> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(IncomeExpenseDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(IncomeExpenseDetailDialogCtrl.class);
 
 	protected Window window_IncomeExpenseDetailsDialog;
 	protected Button btnNew_SchoolCoreIncome;

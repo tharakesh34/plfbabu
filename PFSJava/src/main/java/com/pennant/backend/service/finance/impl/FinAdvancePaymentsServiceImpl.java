@@ -54,7 +54,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -114,7 +115,7 @@ import com.pennanttech.pff.external.BankAccountValidationService;
  */
 public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePayments>
 		implements FinAdvancePaymentsService {
-	private static final Logger logger = Logger.getLogger(FinAdvancePaymentsServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinAdvancePaymentsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PostingsDAO postingsDAO;
@@ -181,11 +182,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	@Override
 	public List<FinAdvancePayments> getFinAdvancePaymentsById(String id, String type) {
-		logger.debug("Entering");
-		List<FinAdvancePayments> finAdvancePayments = getFinAdvancePaymentsDAO().getFinAdvancePaymentsByFinRef(id,
-				type);
-		logger.debug("Leaving");
-		return finAdvancePayments;
+		return finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(id, type);
 	}
 
 	@Override

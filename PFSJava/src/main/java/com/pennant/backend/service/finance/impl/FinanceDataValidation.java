@@ -19,7 +19,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
@@ -174,7 +175,7 @@ import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.staticlist.AppStaticList;
 
 public class FinanceDataValidation {
-	private static final Logger logger = Logger.getLogger(FinanceDataValidation.class);
+	private static final Logger logger = LogManager.getLogger(FinanceDataValidation.class);
 
 	private BaseRateDAO baseRateDAO;
 	private SplRateDAO splRateDAO;
@@ -197,7 +198,6 @@ public class FinanceDataValidation {
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private DocumentService documentService;
 	private VehicleDealerService vehicleDealerService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private RuleService ruleService;
 	private FinTypeVASProductsDAO finTypeVASProductsDAO;
 	private ProvinceDAO provinceDAO;
@@ -3507,7 +3507,7 @@ public class FinanceDataValidation {
 			BigDecimal downpayPercentage = BigDecimal.ZERO;
 			if (StringUtils.isNotEmpty(sqlRule)) {
 				HashMap<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
-				downpayPercentage = (BigDecimal) ruleExecutionUtil.executeRule(sqlRule, fieldsAndValues,
+				downpayPercentage = (BigDecimal) RuleExecutionUtil.executeRule(sqlRule, fieldsAndValues,
 						finMain.getFinCcy(), RuleReturnType.DECIMAL);
 			}
 			finMain.setMinDownPayPerc(downpayPercentage);
@@ -7657,10 +7657,6 @@ public class FinanceDataValidation {
 
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public void setFinTypeVASProductsDAO(FinTypeVASProductsDAO finTypeVASProductsDAO) {

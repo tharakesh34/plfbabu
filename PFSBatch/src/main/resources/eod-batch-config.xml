@@ -181,7 +181,9 @@
 	</step>
 
 	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor">
-		<property name="ConcurrencyLimit" value="100"></property>
+		<constructor-arg value="PLF_EOD_THREAD_" />
+		<property name="ConcurrencyLimit" value="100" />
 	</bean>
+
 	<bean id="partitioningMaster" class="com.pennant.backend.endofday.tasklet.PartitioningMaster" />
 </beans>

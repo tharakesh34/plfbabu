@@ -43,9 +43,11 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -69,7 +71,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class DPDBucketConfigurationDAOImpl extends SequenceDao<DPDBucketConfiguration>
 		implements DPDBucketConfigurationDAO {
-	private static Logger logger = Logger.getLogger(DPDBucketConfigurationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DPDBucketConfigurationDAOImpl.class);
 
 	public DPDBucketConfigurationDAOImpl() {
 		super();
@@ -167,7 +169,7 @@ public class DPDBucketConfigurationDAOImpl extends SequenceDao<DPDBucketConfigur
 
 		// Get the identity sequence number.
 		if (dPDBucketConfiguration.getConfigID() <= 0) {
-			dPDBucketConfiguration.setConfigID(getNextId("SeqDPDBUCKETSCONFIG"));
+			dPDBucketConfiguration.setConfigID(getNextValue("SeqDPDBUCKETSCONFIG"));
 		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -294,21 +296,26 @@ public class DPDBucketConfigurationDAOImpl extends SequenceDao<DPDBucketConfigur
 
 	@Override
 	public List<DPDBucketConfiguration> getDPDBucketConfigurations(String productCode) {
-		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ProductCode", productCode);
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" configID, productCode, bucketID, dueDays, suspendProfit ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ConfigID, ProductCode, BucketID, DueDays, SuspendProfit");
 		sql.append(" From DPDBUCKETSCONFIG");
-		sql.append(" Where ProductCode =:ProductCode Order by DueDays ");
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<DPDBucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DPDBucketConfiguration.class);
-		List<DPDBucketConfiguration> list = jdbcTemplate.query(sql.toString(), source, rowMapper);
-		logger.debug(Literal.LEAVING);
-		return list;
+		sql.append(" Where ProductCode = ?");
+
+		List<DPDBucketConfiguration> dpdConfig = this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, productCode);
+		}, (rs, rowNum) -> {
+			DPDBucketConfiguration bc = new DPDBucketConfiguration();
+
+			bc.setConfigID(rs.getLong("ConfigID"));
+			bc.setProductCode(rs.getString("ProductCode"));
+			bc.setBucketID(rs.getLong("BucketID"));
+			bc.setDueDays(rs.getInt("DueDays"));
+			bc.setSuspendProfit(rs.getBoolean("SuspendProfit"));
+
+			return bc;
+		});
+		return dpdConfig.stream().sorted((dpd1, dpd2) -> Integer.compare(dpd1.getDueDays(), dpd2.getDueDays()))
+				.collect(Collectors.toList());
 	}
 
 }

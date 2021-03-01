@@ -51,7 +51,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -77,7 +78,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> implements FinAdvancePaymentsDAO {
-	private static Logger logger = Logger.getLogger(FinAdvancePaymentsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinAdvancePaymentsDAOImpl.class);
 
 	public FinAdvancePaymentsDAOImpl() {
 		super();
@@ -128,8 +129,6 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	 */
 	@Override
 	public FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where PaymentId = ?");
 
@@ -137,13 +136,14 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 		logger.trace(Literal.SQL + sql.toString());
 
+		long paymentId = finAdvancePayments.getPaymentId();
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { finAdvancePayments.getPaymentId() }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentId }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record not found in FinAdvancePayments{} table for the specified PaymentId >> {}", type,
+					paymentId);
 		}
-		logger.debug(Literal.LEAVING);
+
 		return null;
 
 	}
@@ -174,27 +174,18 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 	@Override
 	public List<FinAdvancePayments> getFinAdvancePaymentsByFinRef(final String id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
-		sql.append("  Where FinReference = ?");
+		sql.append(" Where FinReference = ?");
 
 		FinAdvancePaymentsRowMapper rowMapper = new FinAdvancePaymentsRowMapper(type);
 
 		logger.trace(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, id);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, id);
+
+		}, rowMapper);
 	}
 
 	/**

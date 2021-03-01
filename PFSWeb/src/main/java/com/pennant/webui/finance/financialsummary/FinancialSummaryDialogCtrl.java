@@ -57,7 +57,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zhtml.Textarea;
@@ -146,7 +147,7 @@ import com.pennanttech.pff.external.eligibility.CustomerEligibiltyService;
 public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(FinancialSummaryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinancialSummaryDialogCtrl.class);
 	protected Window window_financialSummaryDialog;
 	private Textbox custCif;
 	private Textbox lanNo;

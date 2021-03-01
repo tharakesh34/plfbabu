@@ -1,6 +1,7 @@
 package com.pennant.equation.process.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.coreinterface.process.FinanceMaintenanceProcess;
@@ -8,7 +9,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class FinanceMaintenanceProcessImpl implements FinanceMaintenanceProcess {
 
-	private static final Logger logger = Logger.getLogger(FinanceMaintenanceProcessImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceMaintenanceProcessImpl.class);
 
 	public FinanceMaintenanceProcessImpl() {
 

@@ -49,7 +49,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -104,7 +105,7 @@ import com.pennanttech.pff.external.BankAccountValidationService;
  * 
  */
 public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader> implements PayOrderIssueService {
-	private static final Logger logger = Logger.getLogger(PayOrderIssueServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PayOrderIssueServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PayOrderIssueHeaderDAO payOrderIssueHeaderDAO;

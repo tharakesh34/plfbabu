@@ -44,7 +44,8 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>NPABucket</code> with set of CRUD operations.
  */
 public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucketDAO {
-	private static Logger logger = Logger.getLogger(NPABucketDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(NPABucketDAOImpl.class);
 
 	public NPABucketDAOImpl() {
 		super();
@@ -161,7 +162,7 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 
 		// Get the identity sequence number.
 		if (nPABucket.getBucketID() <= 0) {
-			nPABucket.setBucketID(getNextId("SeqNPABUCKETS"));
+			nPABucket.setBucketID(getNextValue("SeqNPABUCKETS"));
 		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

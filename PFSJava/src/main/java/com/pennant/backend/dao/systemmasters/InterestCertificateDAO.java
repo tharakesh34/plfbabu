@@ -74,9 +74,11 @@ public interface InterestCertificateDAO {
 
 	InterestCertificate getSumOfPrinicipalAndProfitAmountPaid(String finReference, Date startDate, Date endDate)
 			throws ParseException;
-
 	Map<String, Object> getSumOfPriPftEmiAmount(String finReference, Date finStartDate, Date finEndDate);
 
 	Map<String, Object> getTotalGrcRepayProfit(String finReference, Date finStartDate, Date finEndDate);
+
+	InterestCertificate getSchedPrinicipalAndProfit(String finReference, Date finStartDate, Date finEndDate)
+			throws ParseException;
 
 }

@@ -474,4 +474,5 @@ public interface FinanceMainDAO {
 	boolean ispmayApplicable(String finReference, String type);
 
 	void updateRepaymentAmount(FinanceMain financeMain);
+
 }

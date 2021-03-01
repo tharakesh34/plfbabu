@@ -45,7 +45,8 @@ package com.pennant.app.util;
 import java.io.Serializable;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 
 import com.pennant.app.constants.LengthConstants;
@@ -64,7 +65,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 public class AccountNumberGeneration implements Serializable {
 
 	private static final long serialVersionUID = 6730313822927151348L;
-	private static Logger logger = Logger.getLogger(AccountNumberGeneration.class);
+	private static Logger logger = LogManager.getLogger(AccountNumberGeneration.class);
 
 	private String acType = "";
 	private String accBranch = "";

@@ -42,7 +42,8 @@
  **/
 package com.pennant.backend.dao.messages.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -58,7 +59,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  *
  */
 public class UserContactsListDAOImpl extends BasicDao<UserContactsList> implements UserContactsListDAO {
-	Logger logger = Logger.getLogger(UserContactsListDAOImpl.class);
+	Logger logger = LogManager.getLogger(UserContactsListDAOImpl.class);
 
 	public UserContactsListDAOImpl() {
 		super();

@@ -44,7 +44,8 @@ package com.pennant.backend.dao.payment.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -70,7 +71,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>PaymentHeader</code> with set of CRUD operations.
  */
 public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements PaymentHeaderDAO {
-	private static Logger logger = Logger.getLogger(PaymentHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PaymentHeaderDAOImpl.class);
 
 	public PaymentHeaderDAOImpl() {
 		super();
@@ -130,7 +131,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		// Get the sequence number.
 		if (paymentHeader.getPaymentId() <= 0) {
-			paymentHeader.setPaymentId(getNextId("SeqPaymentHeader"));
+			paymentHeader.setPaymentId(getNextValue("SeqPaymentHeader"));
 		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -373,7 +374,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	@SuppressWarnings("deprecation")
 	@Override
 	public long getNewPaymentHeaderId() {
-		return getNextId("SeqPaymentHeader");
+		return getNextValue("SeqPaymentHeader");
 	}
 
 }

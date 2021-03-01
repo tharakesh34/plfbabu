@@ -45,7 +45,8 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -69,7 +70,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfiguration>
 		implements NPABucketConfigurationDAO {
-	private static Logger logger = Logger.getLogger(NPABucketConfigurationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(NPABucketConfigurationDAOImpl.class);
 
 	public NPABucketConfigurationDAOImpl() {
 		super();
@@ -166,7 +167,7 @@ public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfigur
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (nPABucketConfiguration.getConfigID() <= 0) {
-			nPABucketConfiguration.setConfigID(getNextId("SeqNPABUCKETSCONFIG"));
+			nPABucketConfiguration.setConfigID(getNextValue("SeqNPABUCKETSCONFIG"));
 		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

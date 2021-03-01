@@ -3,7 +3,8 @@ package com.pennant.backend.dao.cashmanagement.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,11 +21,11 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class BranchCashReplenishmentHeaderDAOImpl extends SequenceDao<BranchCashReplenishmentHeader>
 		implements BranchCashReplenishmentHeaderDAO {
-	private static Logger logger = Logger.getLogger(BranchCashReplenishmentHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BranchCashReplenishmentHeaderDAOImpl.class);
 
 	@Override
 	public long getNewRequestId() {
-		return getNextId("SeqBranchCashRepHeader");
+		return getNextValue("SeqBranchCashRepHeader");
 	}
 
 	@Override

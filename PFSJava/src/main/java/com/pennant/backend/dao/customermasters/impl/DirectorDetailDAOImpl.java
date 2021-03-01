@@ -42,17 +42,13 @@
 */
 package com.pennant.backend.dao.customermasters.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -73,7 +69,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implements DirectorDetailDAO {
-	private static Logger logger = Logger.getLogger(DirectorDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DirectorDetailDAOImpl.class);
 
 	public DirectorDetailDAOImpl() {
 		super();
@@ -176,24 +172,20 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	 */
 	@Override
 	public List<DirectorDetail> getCustomerDirectorByCustomer(final long id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(
-				" DirectorId, CustID, ShareHolderCustID, FirstName, MiddleName, LastName, ShortName, CustGenderCode");
-		sql.append(
-				", CustSalutationCode, SharePerc, Shareholder, ShareholderCustomer, Director, Designation, CustAddrHNbr");
-		sql.append(", CustFlatNbr, CustAddrStreet, CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity");
-		sql.append(", CustAddrProvince, CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom");
-		sql.append(", IdType, IdReference, Nationality, Dob, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(" DirectorId, CustID, ShareHolderCustID, FirstName, MiddleName, LastName, ShortName");
+		sql.append(", CustGenderCode, CustSalutationCode, SharePerc, Shareholder, ShareholderCustomer");
+		sql.append(", Director, Designation, CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustAddrLine1");
+		sql.append(", CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince, CustAddrCountry");
+		sql.append(", CustAddrZIP, CustAddrPhone, CustAddrFrom, IdType, IdReference, Nationality, Dob");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(
-					", LovDescShareHolderCustCIF,LovDescCustGenderCodeName, LovDescCustSalutationCodeName, LovDescCustAddrCityName");
-			sql.append(", LovDescCustAddrProvinceName, LovDescCustAddrCountryName, LovDescDesignationName");
-			sql.append(
-					", LovDescNationalityName, LovDescCustDocCategoryName, IdReferenceMand, lovShareHolderCustShrtName");
+			sql.append(", LovDescShareHolderCustCIF,LovDescCustGenderCodeName, LovDescCustSalutationCodeName");
+			sql.append(", LovDescCustAddrCityName, LovDescCustAddrProvinceName, LovDescCustAddrCountryName");
+			sql.append(", LovDescDesignationName, LovDescNationalityName, LovDescCustDocCategoryName");
+			sql.append(", IdReferenceMand, lovShareHolderCustShrtName");
 		}
 
 		sql.append(" from CustomerDirectorDetail");
@@ -202,83 +194,70 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, id);
-				}
-			}, new RowMapper<DirectorDetail>() {
-				@Override
-				public DirectorDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					DirectorDetail cd = new DirectorDetail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, id);
+		}, (rs, rowNum) -> {
+			DirectorDetail cd = new DirectorDetail();
+			cd.setDirectorId(rs.getLong("DirectorId"));
+			cd.setCustID(rs.getLong("CustID"));
+			cd.setShareHoldercustID(rs.getLong("ShareHolderCustID"));
+			cd.setFirstName(rs.getString("FirstName"));
+			cd.setMiddleName(rs.getString("MiddleName"));
+			cd.setLastName(rs.getString("LastName"));
+			cd.setShortName(rs.getString("ShortName"));
+			cd.setCustGenderCode(rs.getString("CustGenderCode"));
+			cd.setCustSalutationCode(rs.getString("CustSalutationCode"));
+			cd.setSharePerc(rs.getBigDecimal("SharePerc"));
+			cd.setShareholder(rs.getBoolean("Shareholder"));
+			cd.setShareholderCustomer(rs.getBoolean("ShareholderCustomer"));
+			cd.setDirector(rs.getBoolean("Director"));
+			cd.setDesignation(rs.getString("Designation"));
+			cd.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
+			cd.setCustFlatNbr(rs.getString("CustFlatNbr"));
+			cd.setCustAddrStreet(rs.getString("CustAddrStreet"));
+			cd.setCustAddrLine1(rs.getString("CustAddrLine1"));
+			cd.setCustAddrLine2(rs.getString("CustAddrLine2"));
+			cd.setCustPOBox(rs.getString("CustPOBox"));
+			cd.setCustAddrCity(rs.getString("CustAddrCity"));
+			cd.setCustAddrProvince(rs.getString("CustAddrProvince"));
+			cd.setCustAddrCountry(rs.getString("CustAddrCountry"));
+			cd.setCustAddrZIP(rs.getString("CustAddrZIP"));
+			cd.setCustAddrPhone(rs.getString("CustAddrPhone"));
+			cd.setCustAddrFrom(rs.getTimestamp("CustAddrFrom"));
+			cd.setIdType(rs.getString("IdType"));
+			cd.setIdReference(rs.getString("IdReference"));
+			cd.setNationality(rs.getString("Nationality"));
+			cd.setDob(rs.getTimestamp("Dob"));
+			cd.setVersion(rs.getInt("Version"));
+			cd.setLastMntBy(rs.getLong("LastMntBy"));
+			cd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			cd.setRecordStatus(rs.getString("RecordStatus"));
+			cd.setRoleCode(rs.getString("RoleCode"));
+			cd.setNextRoleCode(rs.getString("NextRoleCode"));
+			cd.setTaskId(rs.getString("TaskId"));
+			cd.setNextTaskId(rs.getString("NextTaskId"));
+			cd.setRecordType(rs.getString("RecordType"));
+			cd.setWorkflowId(rs.getLong("WorkflowId"));
 
-					cd.setDirectorId(rs.getLong("DirectorId"));
-					cd.setCustID(rs.getLong("CustID"));
-					cd.setShareHolderCustID(rs.getLong("ShareHolderCustID"));
-					cd.setFirstName(rs.getString("FirstName"));
-					cd.setMiddleName(rs.getString("MiddleName"));
-					cd.setLastName(rs.getString("LastName"));
-					cd.setShortName(rs.getString("ShortName"));
-					cd.setCustGenderCode(rs.getString("CustGenderCode"));
-					cd.setCustSalutationCode(rs.getString("CustSalutationCode"));
-					cd.setSharePerc(rs.getBigDecimal("SharePerc"));
-					cd.setShareholder(rs.getBoolean("Shareholder"));
-					cd.setShareholderCustomer(rs.getBoolean("ShareholderCustomer"));
-					cd.setDirector(rs.getBoolean("Director"));
-					cd.setDesignation(rs.getString("Designation"));
-					cd.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
-					cd.setCustFlatNbr(rs.getString("CustFlatNbr"));
-					cd.setCustAddrStreet(rs.getString("CustAddrStreet"));
-					cd.setCustAddrLine1(rs.getString("CustAddrLine1"));
-					cd.setCustAddrLine2(rs.getString("CustAddrLine2"));
-					cd.setCustPOBox(rs.getString("CustPOBox"));
-					cd.setCustAddrCity(rs.getString("CustAddrCity"));
-					cd.setCustAddrProvince(rs.getString("CustAddrProvince"));
-					cd.setCustAddrCountry(rs.getString("CustAddrCountry"));
-					cd.setCustAddrZIP(rs.getString("CustAddrZIP"));
-					cd.setCustAddrPhone(rs.getString("CustAddrPhone"));
-					cd.setCustAddrFrom(rs.getTimestamp("CustAddrFrom"));
-					cd.setIdType(rs.getString("IdType"));
-					cd.setIdReference(rs.getString("IdReference"));
-					cd.setNationality(rs.getString("Nationality"));
-					cd.setDob(rs.getTimestamp("Dob"));
-					cd.setVersion(rs.getInt("Version"));
-					cd.setLastMntBy(rs.getLong("LastMntBy"));
-					cd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					cd.setRecordStatus(rs.getString("RecordStatus"));
-					cd.setRoleCode(rs.getString("RoleCode"));
-					cd.setNextRoleCode(rs.getString("NextRoleCode"));
-					cd.setTaskId(rs.getString("TaskId"));
-					cd.setNextTaskId(rs.getString("NextTaskId"));
-					cd.setRecordType(rs.getString("RecordType"));
-					cd.setWorkflowId(rs.getLong("WorkflowId"));
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				cd.setLovDescShareHolderCustCIF(rs.getString("LovDescShareHolderCustCIF"));
+				cd.setLovDescCustGenderCodeName(rs.getString("LovDescCustGenderCodeName"));
+				cd.setLovDescCustSalutationCodeName(rs.getString("LovDescCustSalutationCodeName"));
+				cd.setLovDescCustSalutationCodeName(rs.getString("lovShareHolderCustShrtName"));
+				cd.setLovDescCustAddrCityName(rs.getString("LovDescCustAddrCityName"));
+				cd.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
+				cd.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
+				cd.setLovDescDesignationName(rs.getString("LovDescDesignationName"));
+				cd.setLovDescNationalityName(rs.getString("LovDescNationalityName"));
+				cd.setLovDescCustDocCategoryName(rs.getString("LovDescCustDocCategoryName"));
+				cd.setIdReferenceMand(rs.getBoolean("IdReferenceMand"));
+				cd.setLovShareHolderCustShrtName(rs.getString("lovShareHolderCustShrtName"));
+			}
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						cd.setLovDescShareHolderCustCIF(rs.getString("LovDescShareHolderCustCIF"));
-						cd.setLovDescCustGenderCodeName(rs.getString("LovDescCustGenderCodeName"));
-						cd.setLovDescCustSalutationCodeName(rs.getString("LovDescCustSalutationCodeName"));
-						cd.setLovDescCustSalutationCodeName(rs.getString("lovShareHolderCustShrtName"));
-						cd.setLovDescCustAddrCityName(rs.getString("LovDescCustAddrCityName"));
-						cd.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
-						cd.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
-						cd.setLovDescDesignationName(rs.getString("LovDescDesignationName"));
-						cd.setLovDescNationalityName(rs.getString("LovDescNationalityName"));
-						cd.setLovDescCustDocCategoryName(rs.getString("LovDescCustDocCategoryName"));
-						cd.setIdReferenceMand(rs.getBoolean("IdReferenceMand"));
-						cd.setLovShareHolderCustShrtName(rs.getString("lovShareHolderCustShrtName"));
-					}
+			return cd;
+		});
 
-					return cd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
 	}
 
 	/**

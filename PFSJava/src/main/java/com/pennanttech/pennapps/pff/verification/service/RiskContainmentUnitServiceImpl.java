@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,7 +41,7 @@ import com.pennanttech.pff.core.TableType;
 public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainmentUnit>
 		implements RiskContainmentUnitService {
 
-	private static final Logger logger = Logger.getLogger(RiskContainmentUnitServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(RiskContainmentUnitServiceImpl.class);
 
 	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;

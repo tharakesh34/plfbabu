@@ -10,7 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
@@ -36,7 +37,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtendedFieldDetailsValidation {
 
-	private static final Logger logger = Logger.getLogger(ExtendedFieldDetailsValidation.class);
+	private static final Logger logger = LogManager.getLogger(ExtendedFieldDetailsValidation.class);
 
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 

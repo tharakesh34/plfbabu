@@ -44,7 +44,8 @@ package com.pennant.backend.service.eod.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.springframework.beans.BeanUtils;
 
@@ -69,7 +70,7 @@ import com.pennanttech.pff.jobs.EODReminderJob;
  * Service implementation for methods that depends on <b>EODConfig</b>.<br>
  */
 public class EODConfigServiceImpl extends GenericService<EODConfig> implements EODConfigService {
-	private static final Logger logger = Logger.getLogger(EODConfigServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(EODConfigServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private EODConfigDAO eODConfigDAO;

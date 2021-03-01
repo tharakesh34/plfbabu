@@ -6,7 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -18,7 +19,7 @@ public class CollateralService extends ServiceHelper {
 
 	private static final long serialVersionUID = -3371115026576113554L;
 
-	private static Logger logger = Logger.getLogger(CollateralService.class);
+	private static Logger logger = LogManager.getLogger(CollateralService.class);
 
 	private CollateralMarkProcess collateralMarkProcess;
 

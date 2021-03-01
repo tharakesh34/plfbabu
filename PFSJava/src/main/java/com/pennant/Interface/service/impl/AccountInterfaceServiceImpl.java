@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
@@ -23,7 +24,7 @@ import com.pennant.coreinterface.process.AccountDetailProcess;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class AccountInterfaceServiceImpl implements AccountInterfaceService {
-	private static Logger logger = Logger.getLogger(AccountInterfaceServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(AccountInterfaceServiceImpl.class);
 
 	protected AccountDetailProcess accountDetailProcess;
 

@@ -9,7 +9,7 @@ import com.pennant.backend.model.finance.LMSServiceLog;
 
 public interface FinServiceInstrutionDAO {
 
-	void saveList(List<FinServiceInstruction> finServiceInstructionList, String type);
+	int saveList(List<FinServiceInstruction> finServiceInstructionList, String type);
 
 	void deleteList(String finReference, String tableType, String finEvent);
 

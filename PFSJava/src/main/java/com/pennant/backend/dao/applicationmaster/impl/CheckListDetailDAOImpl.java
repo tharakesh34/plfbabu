@@ -47,7 +47,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -71,7 +72,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements CheckListDetailDAO {
-	private static Logger logger = Logger.getLogger(CheckListDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CheckListDetailDAOImpl.class);
 
 	public CheckListDetailDAOImpl() {
 		super();
@@ -183,10 +184,8 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 	}
 
 	public List<CheckListDetail> getCheckListDetailByChkList(final long checkListId, String type) {
-		logger.debug("Entering");
 		CheckListDetail checkListDetail = new CheckListDetail();
 		checkListDetail.setCheckListId(checkListId);
-		List<CheckListDetail> chkListDetailList;
 
 		StringBuilder selectSql = new StringBuilder("Select CheckListId, AnsSeqNo, AnsDesc");
 		selectSql.append(", AnsCond,RemarksAllow, DocRequired,DocType, RemarksMand");
@@ -205,14 +204,7 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(CheckListDetail.class);
 
-		try {
-			chkListDetailList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			chkListDetailList = null;
-		}
-		logger.debug("Leaving");
-		return chkListDetailList;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	public List<CheckListDetail> getCheckListDetailByChkList(final Map<String, Set<Long>> checkListIdMap, String type) {

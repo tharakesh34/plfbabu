@@ -3,7 +3,8 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,7 +21,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements FinOCRCaptureDAO {
-	private static final Logger logger = Logger.getLogger(FinOCRCaptureDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinOCRCaptureDAOImpl.class);
 
 	public FinOCRCaptureDAOImpl() {
 		super();

@@ -1,6 +1,7 @@
 package com.pennant.equation.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
@@ -8,7 +9,7 @@ import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.data.ProgramCallDocument;
 
 public class HostConnection {
-	private static Logger logger = Logger.getLogger(HostConnection.class);
+	private static Logger logger = LogManager.getLogger(HostConnection.class);
 	private static AS400ConnectionPool connectionPool = new AS400ConnectionPool();
 
 	private String serverName;

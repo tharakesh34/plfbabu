@@ -3,7 +3,8 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -14,10 +15,12 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> implements FinLogEntryDetailDAO {
-	private static Logger logger = Logger.getLogger(FinLogEntryDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinLogEntryDetailDAOImpl.class);
 
 	public FinLogEntryDetailDAOImpl() {
 		super();
@@ -25,20 +28,27 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 
 	@Override
 	public long save(FinLogEntryDetail entryDetail) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("insert into");
+		sql.append(" FinLogEntryDetail ");
+		sql.append("(FinReference, LogKey, EventAction, SchdlRecal, PostDate, ReversalCompleted");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
 		entryDetail.setLogKey(getNextValue("seqFinLogEntryDetail"));
 
-		StringBuilder insertSql = new StringBuilder(" Insert Into FinLogEntryDetail ");
-		insertSql.append(" (FinReference, LogKey, EventAction, SchdlRecal, PostDate, ReversalCompleted ) ");
-		insertSql.append(" Values (:FinReference, :LogKey, :EventAction, :SchdlRecal, :PostDate, :ReversalCompleted)");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, entryDetail.getFinReference());
+			ps.setLong(index++, entryDetail.getLogKey());
+			ps.setString(index++, entryDetail.getEventAction());
+			ps.setBoolean(index++, entryDetail.isSchdlRecal());
+			ps.setDate(index++, JdbcUtil.getDate(entryDetail.getPostDate()));
+			ps.setBoolean(index++, entryDetail.isReversalCompleted());
+		});
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(entryDetail);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
 		return entryDetail.getLogKey();
 	}
 
@@ -164,4 +174,23 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 		logger.debug("Leaving");
 		return logKey;
 	}
+
+	@Override
+	public Date getMaxPostDateByRef(String finReference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" max(POSTDATE) from FINLOGENTRYDETAIL");
+		sql.append(" Where FinReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, Date.class);
+		} catch (DataAccessException e) {
+			logger.warn("Record is not found in FINLOGENTRYDETAIL table for the specified FinReference >> {}",
+					finReference);
+		}
+
+		return null;
+	}
+
 }

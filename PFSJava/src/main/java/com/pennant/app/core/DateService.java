@@ -3,17 +3,23 @@ package com.pennant.app.core;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.util.BusinessCalendar;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class DateService extends ServiceHelper {
 	private static final long serialVersionUID = -4861845683077000353L;
-	private static Logger logger = Logger.getLogger(DateService.class);
+	private static Logger logger = LogManager.getLogger(DateService.class);
 
 	/**
 	 * TO update system parameters before start of the end of day
@@ -21,21 +27,31 @@ public class DateService extends ServiceHelper {
 	 * @param updatePhase
 	 */
 	public void doUpdatebeforeEod(boolean updatePhase) {
-		logger.debug(" Entering ");
-		String localCcy = SysParamUtil.getAppCurrency();
-		//Reset Next Business Date after updating Calendar with Core System
-		Calendar calendar = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
-				SysParamUtil.getAppDate());
-		String nextBussDate = DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat);
+		logger.debug(Literal.ENTERING);
 
-		//set System Parameter Value
+		EventProperties eventProperties = EODUtil.EVENT_PROPS;
+		Date appDate = null;
+		String localccy = CurrencyUtil.getCcyNumber(PennantConstants.LOCAL_CCY);
+
+		if (eventProperties.isParameterLoaded()) {
+			appDate = eventProperties.getAppDate();
+		} else {
+			appDate = SysParamUtil.getAppDate();
+		}
+
+		// Reset Next Business Date after updating Calendar with Core System
+
+		Calendar calendar = BusinessCalendar.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_NEXT, appDate);
+		String nextBussDate = DateUtil.format(calendar.getTime(), PennantConstants.DBDateFormat);
+
+		// set System Parameter Value
 		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_NEXT, nextBussDate);
 
-		//set System Parameter Value
+		// set System Parameter Value
 		if (updatePhase) {
 			SysParamUtil.updateParamDetails(PennantConstants.APP_PHASE, PennantConstants.APP_PHASE_EOD);
 		}
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -45,12 +61,13 @@ public class DateService extends ServiceHelper {
 	 * @return
 	 */
 	public boolean doUpdateAftereod(boolean updatePhase) {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 
-		//current next business date
-		Date nextBusinessDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
+		// current next business date
+		EventProperties eventProperties = EODUtil.EVENT_PROPS;
+		Date nextBusinessDate = eventProperties.getNextDate();
 
-		String localccy = SysParamUtil.getAppCurrency();
+		String localccy = CurrencyUtil.getCcyNumber(PennantConstants.LOCAL_CCY);
 		Date tempnextBussDate = BusinessCalendar
 				.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_NEXT, nextBusinessDate).getTime();
 		String nextBussDate = DateUtility.format(tempnextBussDate, PennantConstants.DBDateFormat);
@@ -58,19 +75,20 @@ public class DateService extends ServiceHelper {
 		Date tempprevBussDate = BusinessCalendar
 				.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_PREVIOUS, nextBusinessDate).getTime();
 		String prevBussDate = DateUtility.format(tempprevBussDate, PennantConstants.DBDateFormat);
+
 		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_NEXT, nextBussDate);
 		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_LAST, prevBussDate);
-
-		Date appDate = SysParamUtil.getAppDate();
-		Date montEndDate = DateUtility.getMonthEnd(appDate);
+	
+		Date appDate = eventProperties.getAppDate();
+		Date montEndDate = eventProperties.getMonthEndDate();
 		boolean updatevalueDate = true;
 
-		//check month extension required
+		// check month extension required
 		if (appDate.compareTo(montEndDate) == 0) {
 			if (getEodConfig() != null) {
 				if (getEodConfig().isExtMnthRequired() && getEodConfig().getMnthExtTo().compareTo(montEndDate) > 0) {
 					getEodConfig().setInExtMnth(true);
-					getEodConfigDAO().updateExtMnthEnd(getEodConfig());
+					eodConfigDAO.updateExtMnthEnd(getEodConfig());
 					updatevalueDate = false;
 				}
 			}
@@ -81,7 +99,7 @@ public class DateService extends ServiceHelper {
 				updatevalueDate = true;
 				getEodConfig().setInExtMnth(false);
 				getEodConfig().setPrvExtMnth(appDate);
-				getEodConfigDAO().updateExtMnthEnd(getEodConfig());
+				eodConfigDAO.updateExtMnthEnd(getEodConfig());
 			} else {
 				updatevalueDate = false;
 			}
@@ -96,7 +114,8 @@ public class DateService extends ServiceHelper {
 		if (updatePhase) {
 			SysParamUtil.updateParamDetails(PennantConstants.APP_PHASE, PennantConstants.APP_PHASE_DAY);
 		}
-		logger.debug(" Leaving ");
+
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 

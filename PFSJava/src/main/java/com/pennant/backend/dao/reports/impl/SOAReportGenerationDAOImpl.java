@@ -53,7 +53,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -103,7 +104,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> implements SOAReportGenerationDAO {
-	private static Logger logger = Logger.getLogger(SOAReportGenerationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SOAReportGenerationDAOImpl.class);
 
 	public SOAReportGenerationDAOImpl() {
 		super();
@@ -270,8 +271,10 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		List<FinODDetails> finODDetailslist;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select TotPenaltyAmt,TotWaived,TotPenaltyPaid,FinODSchdDate,FinODTillDate,LPIAmt, FinCurODAmt");
-		sql.append(" FROM FinODDetails Where TOtPenaltyAmt > 0 and FinReference = :FinReference");
+
+		sql.append(
+				" Select TotPenaltyAmt,TotWaived,TotPenaltyPaid,FinODSchdDate,FinODTillDate,LPIAmt, LPIPaid FROM FinODDetails");
+		sql.append(" Where TOtPenaltyAmt > 0 and FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -364,7 +367,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(", FWD.currwaivergst,FWD.curractualwaiver from feewaiverheader FW");
 		sql.append(" INNER JOIN feewaiverdetails FWD on FWD.waiverid = FW.waiverid) FW");
 		sql.append(" on FW.FinReference = MA.FinReference and FW.WaiverID = MAM.WaiverID");
-		sql.append(" where FW.Adviseid  in  (-1, -2, -3) and F.FeeTypeCode is null ");
+		sql.append(" where FW.Adviseid  in  (-1, -2, -3) and F.FeeTypeCode is not null ");
 		sql.append(
 				" ) ma where ma.FinReference = :FinReference and ma.WaivedAmount > 0 and ((ma.curractualwaiver > 0 or ma.currwaivergst > 0) or (ma.curractualwaiver != 0 and ma.curractualwaiver <=600))");
 		sql.append(" order by ma.MovementId, ma.Adviseid");
@@ -466,7 +469,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ReceiptID, ReceiptModeStatus, ReceiptDate, ReceiptMode, BounceDate");
-		sql.append(", ReceiptPurpose, RefWaiverAmt, RecAppDate, ReceivedDate");
+		sql.append(", ReceiptPurpose, RefWaiverAmt, RecAppDate, ReceivedDate, ValueDate");
 		sql.append(" From FinReceiptHeader");
 		sql.append(" Where Reference = ?");
 
@@ -495,6 +498,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 					frh.setRefWaiverAmt(rs.getBigDecimal("RefWaiverAmt"));
 					frh.setRecAppDate(JdbcUtil.getDate(rs.getDate("RecAppDate")));
 					frh.setReceivedDate(JdbcUtil.getDate(rs.getDate("ReceivedDate")));
+					frh.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
 
 					return frh;
 				}

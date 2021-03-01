@@ -45,7 +45,8 @@ package com.pennant.backend.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -61,7 +62,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
-	private static Logger logger = Logger.getLogger(NotesDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(NotesDAOImpl.class);
 
 	public NotesDAOImpl() {
 		super();
@@ -214,7 +215,7 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 	@Override
 	public void save(Notes notes) {
 		logger.debug("Entering");
-		notes.setId(getNextId("SeqNotes"));
+		notes.setId(getNextValue("SeqNotes"));
 
 		StringBuilder insertSql = new StringBuilder(" INSERT INTO Notes (NoteId, ModuleName, Reference , ");
 		insertSql.append(" RemarkType, AlignType, RoleCode, Version, Remarks, InputBy, InputDate )");

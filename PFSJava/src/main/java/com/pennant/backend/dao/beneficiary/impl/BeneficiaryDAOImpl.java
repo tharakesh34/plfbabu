@@ -47,7 +47,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements BeneficiaryDAO {
-	private static Logger logger = Logger.getLogger(BeneficiaryDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BeneficiaryDAOImpl.class);
 
 	public BeneficiaryDAOImpl() {
 		super();
@@ -105,7 +106,6 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 		try {
 			beneficiary = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
 			beneficiary = null;
 		}
 		logger.debug("Leaving");
@@ -219,11 +219,8 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 
 	@Override
 	public long save(Beneficiary beneficiary, String type) {
-		logger.debug("Entering");
-
 		if (beneficiary.getId() == Long.MIN_VALUE) {
-			beneficiary.setId(getNextId("SeqBeneficiary"));
-			logger.debug("get NextID:" + beneficiary.getId());
+			beneficiary.setId(getNextValue("SeqBeneficiary"));
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into Beneficiary");
@@ -241,7 +238,6 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(beneficiary);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
 		return beneficiary.getId();
 	}
 

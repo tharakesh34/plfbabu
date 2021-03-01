@@ -14,7 +14,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -39,7 +40,7 @@ import com.pennanttech.pff.external.DisbursementRequest;
 import com.pennanttech.pff.model.disbursment.DisbursementData;
 
 public class DefaultDisbursementRequest extends AbstractInterface implements DisbursementRequest {
-	protected final Logger logger = Logger.getLogger(getClass());
+	protected final Logger logger = LogManager.getLogger(getClass());
 
 	public enum DisbursementTypes {
 		IMPS, RTGS, NEFT, DD, CHEQUE, I, IFT;

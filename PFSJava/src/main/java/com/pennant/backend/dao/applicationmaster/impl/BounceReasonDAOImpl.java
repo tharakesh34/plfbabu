@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>BounceReason</code> with set of CRUD operations.
  */
 public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements BounceReasonDAO {
-	private static Logger logger = Logger.getLogger(BounceReasonDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BounceReasonDAOImpl.class);
 
 	public BounceReasonDAOImpl() {
 		super();
@@ -165,7 +166,7 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (bounceReason.getBounceID() <= 0) {
-			bounceReason.setBounceID(getNextId("SeqBounceReasons"));
+			bounceReason.setBounceID(getNextValue("SeqBounceReasons"));
 		}
 
 		// Execute the SQL, binding the arguments.

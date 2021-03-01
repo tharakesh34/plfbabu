@@ -1,6 +1,7 @@
 package com.pennant.backend.service.systemmasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -18,7 +19,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class OCRDetailServiceImpl extends GenericService<OCRDetail> implements OCRDetailService {
-	private static Logger logger = Logger.getLogger(OCRDetailServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(OCRDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private OCRDetailDAO ocrDetailDAO;

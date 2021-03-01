@@ -53,7 +53,8 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -123,7 +124,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private static final long serialVersionUID = -3093280086658721485L;
-	private static final Logger logger = Logger.getLogger(LVInitiationDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LVInitiationDialogCtrl.class);
 
 	protected Window window_LVInitiationDialog;
 

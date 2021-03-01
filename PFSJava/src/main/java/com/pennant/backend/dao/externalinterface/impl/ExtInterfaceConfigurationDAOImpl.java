@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.dao.externalinterface.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class ExtInterfaceConfigurationDAOImpl extends SequenceDao<InterfaceConfiguration>
 		implements ExtInterfaceConfigurationDAO {
-	private static Logger logger = Logger.getLogger(ExtInterfaceConfigurationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ExtInterfaceConfigurationDAOImpl.class);
 
 	public ExtInterfaceConfigurationDAOImpl() {
 		super();
@@ -160,7 +161,7 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao<InterfaceConfi
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :EodDate)");
 
 		if (interfaceConfiguration.getId() == Long.MIN_VALUE) {
-			interfaceConfiguration.setId(getNextValue("seqExternalInterfaceConfig"));
+			interfaceConfiguration.setId(getNextValue("SeqExtInterfaceConf"));
 			logger.debug("get NextID:" + interfaceConfiguration.getId());
 		}
 

@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -32,7 +33,7 @@ import com.pennanttech.pff.organization.model.Organization;
 
 public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeader> {
 	private static final long serialVersionUID = 3473801015405406986L;
-	private static final Logger logger = Logger.getLogger(SchoolOrganizationSelectCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SchoolOrganizationSelectCtrl.class);
 
 	protected Window window_SchoolOrganizationSelect;
 	protected Borderlayout borderLayout_SchoolOrganizationTypeList;

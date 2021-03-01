@@ -1,6 +1,7 @@
 package com.pennanttech.pff.external.pan.service;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +13,7 @@ import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
 
 @Component
 public class PrimaryAccountServiceImpl implements PrimaryAccountService {
-	private static final Logger logger = Logger.getLogger(PrimaryAccountServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PrimaryAccountServiceImpl.class);
 
 	@Value("${pan.enquiry:false}")
 	private boolean panValidationRequired = false;

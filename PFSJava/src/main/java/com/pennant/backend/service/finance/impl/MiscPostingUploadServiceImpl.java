@@ -10,7 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
@@ -46,7 +47,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUpload>
 		implements MiscPostingUploadService {
-	private static final Logger logger = Logger.getLogger(MiscPostingUploadServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(MiscPostingUploadServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private MiscPostingUploadDAO miscPostingUploadDAO;
@@ -910,11 +911,11 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 		return auditDetails;
 	}
 
-	public JVPostingService getjVPostingService() {
+	public JVPostingService getJVPostingService() {
 		return jVPostingService;
 	}
 
-	public void setjVPostingService(JVPostingService jVPostingService) {
+	public void setJVPostingService(JVPostingService jVPostingService) {
 		this.jVPostingService = jVPostingService;
 	}
 

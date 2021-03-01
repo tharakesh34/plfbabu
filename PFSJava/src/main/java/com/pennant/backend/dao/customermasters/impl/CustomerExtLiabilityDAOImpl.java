@@ -10,7 +10,8 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -29,12 +30,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl;
 
 public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> implements CustomerExtLiabilityDAO {
-	private static Logger logger = Logger.getLogger(CustomerExtLiabilityDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerExtLiabilityDAOImpl.class);
 
 	@Override
 	public CustomerExtLiability getLiability(CustomerExtLiability liability, String type, String inputSource) {
-		logger.debug(Literal.ENTERING);
-
 		type = StringUtils.trimToEmpty(type).toLowerCase();
 
 		String view = null;
@@ -105,9 +104,9 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("Record not found in {} for the specified LinkId >> {} and CustId >> {} and SeqNo >> {}", view,
+					liability.getLinkId(), liability.getCustId(), liability.getSeqNo());
 		}
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

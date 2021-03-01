@@ -54,7 +54,8 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
@@ -89,7 +90,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  *
  */
 public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
-	private static final Logger logger = Logger.getLogger(IncomeAndExpenseCtrl.class);
+	private static final Logger logger = LogManager.getLogger(IncomeAndExpenseCtrl.class);
 	private static final long serialVersionUID = -1289772081447044673L;
 	private static final String FONT_WEIGHT_BOLD = "font-weight:bold;";
 	private static final String DEFAULT_CURSOR = "cursor:default";

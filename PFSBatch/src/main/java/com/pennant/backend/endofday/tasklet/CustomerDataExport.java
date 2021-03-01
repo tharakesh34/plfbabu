@@ -1,6 +1,7 @@
 package com.pennant.backend.endofday.tasklet;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -10,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennanttech.pff.external.DataExportProcess;
 
 public class CustomerDataExport implements Tasklet {
-	private Logger logger = Logger.getLogger(CustomerDataExport.class);
+	private Logger logger = LogManager.getLogger(CustomerDataExport.class);
 
 	@Autowired(required = false)
 	private DataExportProcess dataExtractProcess;

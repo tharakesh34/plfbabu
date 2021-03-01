@@ -245,7 +245,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						feeWaiverDetail.setTaxApplicable(manualAdvise.isTaxApplicable());
 						feeWaiverDetail.setTaxComponent(manualAdvise.getTaxComponent());
 						feeWaiverDetail.setReceivedAmount(manualAdvise.getPaidAmount());
-						feeWaiverDetail.setWaivedAmount(manualAdvise.getWaivedAmount());
 
 						if (currWaiverGst != null && currWaiverGst.compareTo(BigDecimal.ZERO) > 0) {
 							waivedGstAmt = currWaiverGst;
@@ -324,7 +323,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 			if (CollectionUtils.isNotEmpty(finODPenaltyList)) {
 				for (FinODDetails finoddetails : finODPenaltyList) {
-					//lpi amount getting  crossed schedule date.
+					// lpi amount getting crossed schedule date.
 					if (finoddetails.getFinODSchdDate().compareTo(reqMaxODDate) > 0) {
 						break;
 					}
@@ -831,7 +830,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			allocateWaiverAmounts(feeWaiverHeader);
 		}
 
-		getFeeWaiverHeaderDAO().delete(feeWaiverHeader, TableType.TEMP_TAB);
+		feeWaiverHeaderDAO.delete(feeWaiverHeader, TableType.TEMP_TAB);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -846,13 +845,12 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	}
 
 	private void allocateWaiverAmounts(FeeWaiverHeader feeWaiverHeader) throws Exception {
-		logger.debug("Entering");
-
 		String finReference = feeWaiverHeader.getFinReference();
+
 		List<FinODDetails> odList = finODDetailsDAO.getFinODPenalityByFinRef(finReference, true, false);
 		List<FinODDetails> lppList = finODDetailsDAO.getFinODPenalityByFinRef(finReference, false, false);
 
-		List<ManualAdviseMovements> movements = new ArrayList<ManualAdviseMovements>();
+		List<ManualAdviseMovements> movements = new ArrayList<>();
 
 		// Update ManualAdvise and Bounce Waivers
 		List<ManualAdviseMovements> advMovements = allocateWaiverToBounceAndAdvise(feeWaiverHeader);
@@ -990,7 +988,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
 			}
 		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -1173,8 +1170,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			List<FinODDetails> finodPftdetails, List<FinODDetails> finodPenalitydetails) {
 		logger.debug(Literal.ENTERING);
 
-		List<ManualAdviseMovements> movements = new ArrayList<ManualAdviseMovements>();
+		List<ManualAdviseMovements> movements = new ArrayList<>();
 		Date appDate = SysParamUtil.getAppDate();
+		boolean gstInvOnDue = SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE);
 		List<FinanceRepayments> rpyList = new ArrayList<>();
 
 		// For GST Calculations
@@ -1282,11 +1280,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					}
 
 					// TODO update LPP related GST Table data
-					if (SysParamUtil.isAllowed("GST_INV_ON_DUE")
-							&& waiverdetail.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
+					if (gstInvOnDue && waiverdetail.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 						if (amountWaived.compareTo(BigDecimal.ZERO) > 0) {
 							ManualAdviseMovements movement = new ManualAdviseMovements();
-							movement.setMovementDate(DateUtility.getAppDate());
+							movement.setMovementDate(appDate);
 							movement.setMovementAmount(waiverdetail.getCurrWaiverAmount());
 							movement.setSchDate(oddetail.getFinODSchdDate());
 							movement.setPaidAmount(BigDecimal.ZERO);
@@ -1804,11 +1801,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	}
 
 	private List<ManualAdviseMovements> allocateWaiverToBounceAndAdvise(FeeWaiverHeader feeWaiverHeader) {
-		logger.debug(Literal.ENTERING);
+		List<ManualAdviseMovements> movements = new ArrayList<>();
 
-		List<ManualAdviseMovements> movements = new ArrayList<ManualAdviseMovements>();
 		for (FeeWaiverDetail waiverdetail : feeWaiverHeader.getFeeWaiverDetails()) {
-
 			if (!RepayConstants.ALLOCATION_ODC.equals(waiverdetail.getFeeTypeCode())
 					&& !RepayConstants.ALLOCATION_LPFT.equals(waiverdetail.getFeeTypeCode())
 					&& !RepayConstants.ALLOCATION_PFT.equals(waiverdetail.getFeeTypeCode())
@@ -1835,8 +1830,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				waiverdetail.setCurrActualWaiver(curActualwaivedAmt);
 			}
 		}
-
-		logger.debug(Literal.LEAVING);
 
 		return movements;
 	}
@@ -1892,6 +1885,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				}
 				waiverdetail.setCurrWaiverAmount(waiverdetail.getCurrWaiverAmount().subtract(amountWaived));
 				taxSplit = GSTCalculator.getInclusiveGST(amountWaived, gstPercentages);
+				waiverdetail.setCurrWaiverAmount(amountWaived);
 			}
 
 			// Taxes Splitting
@@ -1940,6 +1934,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 				movement.setTaxHeaderId(taxHeader.getHeaderId());
 				movement.setTaxHeader(taxHeader);
+				movement.setWaivedCGST(taxSplit.getcGST());
+				movement.setWaivedSGST(taxSplit.getsGST());
+				movement.setWaivedIGST(taxSplit.getiGST());
+				movement.setWaivedUGST(taxSplit.getuGST());
 			}
 
 			manualAdviseDAO.saveMovement(movement, "");
@@ -1948,7 +1946,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		logger.debug(Literal.LEAVING);
 
 		// GST Invoice data resetting based on Accounting Process
-		if (SysParamUtil.isAllowed("GST_INV_ON_DUE") && advise.isDueCreation()) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE) && advise.isDueCreation()) {
 			return movement;
 		}
 
@@ -2479,10 +2477,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
-	}
-
-	public RepaymentPostingsUtil getRepayPostingUtil() {
-		return repayPostingUtil;
 	}
 
 	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {

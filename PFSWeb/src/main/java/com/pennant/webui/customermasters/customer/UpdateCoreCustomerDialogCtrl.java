@@ -47,7 +47,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -91,7 +92,7 @@ import com.rits.cloning.Cloner;
  */
 public class UpdateCoreCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	private static final long serialVersionUID = 9031340167587772517L;
-	private static final Logger logger = Logger.getLogger(UpdateCoreCustomerDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(UpdateCoreCustomerDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

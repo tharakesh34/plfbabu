@@ -43,7 +43,8 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -61,7 +62,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class AdvancePaymentDetailDAOImpl extends BasicDao<AdvancePaymentDetail> implements AdvancePaymentDetailDAO {
-	private static Logger logger = Logger.getLogger(AdvancePaymentDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AdvancePaymentDetailDAOImpl.class);
 
 	public AdvancePaymentDetailDAOImpl() {
 		super();

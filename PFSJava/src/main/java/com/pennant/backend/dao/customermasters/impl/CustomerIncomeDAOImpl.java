@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl;
  * 
  */
 public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implements CustomerIncomeDAO {
-	private static Logger logger = Logger.getLogger(CustomerIncomeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerIncomeDAOImpl.class);
 
 	public CustomerIncomeDAOImpl() {
 		super();
@@ -147,7 +148,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		try {
 			customerIncome = this.jdbcTemplate.queryForObject(query.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("CustomerIncome details not found.");
 			customerIncome = null;
 		}
 		logger.debug(Literal.LEAVING);

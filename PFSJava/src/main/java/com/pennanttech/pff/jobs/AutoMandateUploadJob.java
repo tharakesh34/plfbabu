@@ -3,7 +3,8 @@ package com.pennanttech.pff.jobs;
 import java.io.Serializable;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.CronExpression;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -26,7 +27,7 @@ public class AutoMandateUploadJob implements Job, Serializable {
 	 */
 	private static final long serialVersionUID = 5701320979597722338L;
 
-	private static final Logger logger = Logger.getLogger(AutoMandateUploadJob.class);
+	private static final Logger logger = LogManager.getLogger(AutoMandateUploadJob.class);
 
 	public static final String JOB_ENABLED = SMTParameterConstants.MANDATE_AUTO_UPLOAD_JOB_ENABLED;
 	public static final String JOB_KEY = "MANDATE_AUTO_UPLOAD_JOB";

@@ -3,7 +3,8 @@ package com.pennant.cache.util;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -27,7 +28,7 @@ import com.pennanttech.pff.core.TableType;
 
 public class FinanceConfigCache {
 
-	private static final Logger logger = Logger.getLogger(FinanceConfigCache.class);
+	private static final Logger logger = LogManager.getLogger(FinanceConfigCache.class);
 
 	private static FinanceTypeDAO financeTypeDAO;
 	private static DPDBucketDAO dPDBucketDAO;
@@ -44,7 +45,7 @@ public class FinanceConfigCache {
 			});
 
 	protected static FinanceType getFinanceTypeByID(String finType) {
-		return getFinanceTypeDAO().getFinanceTypeByID(finType, TableType.MAIN_TAB.getSuffix());
+		return financeTypeDAO.getFinanceTypeByID(finType, TableType.MAIN_TAB.getSuffix());
 	}
 
 	private static LoadingCache<Long, DPDBucket> dPDBucketCache = CacheBuilder.newBuilder()
@@ -132,7 +133,6 @@ public class FinanceConfigCache {
 		try {
 			financeType = financeTypeCache.get(finType);
 		} catch (Exception e) {
-			logger.warn("Unable to load data from FinanceType cache: ", e);
 			financeType = getFinanceTypeByID(finType);
 		}
 		return financeType;

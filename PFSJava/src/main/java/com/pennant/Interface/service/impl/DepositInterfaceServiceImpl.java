@@ -1,6 +1,7 @@
 package com.pennant.Interface.service.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.Interface.service.DepositInterfaceService;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -11,7 +12,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DepositInterfaceServiceImpl implements DepositInterfaceService {
 
-	private static final Logger logger = Logger.getLogger(DepositInterfaceServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DepositInterfaceServiceImpl.class);
 
 	public DepositInterfaceServiceImpl() {
 

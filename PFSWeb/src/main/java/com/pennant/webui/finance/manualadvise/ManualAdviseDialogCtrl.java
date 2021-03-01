@@ -51,7 +51,8 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -131,7 +132,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ManualAdviseDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ManualAdviseDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -789,7 +790,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				item.appendChild(lc);
 
 				BigDecimal totalPaidGst = movement.getPaidCGST().add(movement.getPaidUGST()).add(movement.getPaidSGST())
-						.add(movement.getPaidIGST());
+						.add(movement.getPaidIGST()).add(movement.getPaidCESS());
 
 				lc = new Listcell(
 						PennantApplicationUtil.amountFormate(totalPaidGst, PennantConstants.defaultCCYDecPos));
@@ -802,7 +803,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				item.appendChild(lc);
 
 				BigDecimal totalWaivedGST = movement.getWaivedCGST().add(movement.getWaivedUGST())
-						.add(movement.getWaivedSGST()).add(movement.getWaivedIGST());
+						.add(movement.getWaivedSGST()).add(movement.getWaivedIGST()).add(movement.getWaivedCESS());
 
 				lc = new Listcell(
 						PennantApplicationUtil.amountFormate(totalWaivedGST, PennantConstants.defaultCCYDecPos));

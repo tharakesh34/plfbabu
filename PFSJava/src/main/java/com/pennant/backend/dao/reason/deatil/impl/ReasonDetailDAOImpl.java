@@ -3,7 +3,8 @@ package com.pennant.backend.dao.reason.deatil.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -24,7 +25,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements ReasonDetailDAO {
-	private static Logger logger = Logger.getLogger(ReasonDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ReasonDetailDAOImpl.class);
 
 	public ReasonDetailDAOImpl() {
 		super();
@@ -61,7 +62,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		logger.debug("insertSql: " + sql.toString());
 
 		if (reasonHeader.getId() == Long.MIN_VALUE) {
-			reasonHeader.setId(getNextId("SeqReasonHeader"));
+			reasonHeader.setId(getNextValue("SeqReasonHeader"));
 		}
 
 		try {

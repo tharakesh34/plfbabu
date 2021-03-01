@@ -46,7 +46,8 @@ package com.pennant.backend.dao.rmtmasters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> implements FinTypeAccountingDAO {
-	private static Logger logger = Logger.getLogger(FinTypeAccountingDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinTypeAccountingDAOImpl.class);
 
 	public FinTypeAccountingDAOImpl() {
 		super();
@@ -334,31 +335,31 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 
 	@Override
 	public Long getAccountSetID(String finType, String event, int moduleId) {
-		logger.debug("Entering");
-
 		if (StringUtils.isEmpty(finType) || StringUtils.isEmpty(event)) {
-			logger.debug("Leaving");
 			return Long.MIN_VALUE;
 		}
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinType", finType);
-		source.addValue("Event", event);
-		source.addValue("ModuleId", moduleId);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AccountSetID");
+		sql.append(" From FinTypeAccounting");
+		sql.append(" Where FinType = ? and Event = ? and ModuleId = ?");
 
-		StringBuilder selectSql = new StringBuilder("SELECT AccountSetID  FROM FinTypeAccounting ");
-		selectSql.append(" Where FinType = :FinType And Event = :Event And ModuleId = :ModuleId");
+		logger.trace(Literal.SQL, sql);
 
-		logger.debug("selectSql: " + selectSql.toString());
+		Long accSetID = null;
 
-		Long result = Long.MIN_VALUE;
 		try {
-			result = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+			accSetID = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finType, event, moduleId },
+					Long.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn("Accouting configuration not exists for specified FinType {}, Event {} and ModuleId {}",
+					finType, event, moduleId);
 		}
-		logger.debug("Leaving");
-		return result;
+		if (accSetID == null) {
+			return Long.MIN_VALUE;
+		}
+
+		return accSetID;
 	}
 
 	@Override

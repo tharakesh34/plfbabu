@@ -44,7 +44,8 @@
 package com.pennant.backend.dao.vasproduct.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -64,7 +65,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class VASProductCategoryDAOImpl extends BasicDao<VASProductCategory> implements VASProductCategoryDAO {
-	private static Logger logger = Logger.getLogger(VASProductCategoryDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(VASProductCategoryDAOImpl.class);
 
 	/**
 	 * This method set the Work Flow id based on the module name and return the new VASProductCategory

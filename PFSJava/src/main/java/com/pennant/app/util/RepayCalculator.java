@@ -54,7 +54,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -78,7 +79,7 @@ import com.rits.cloning.Cloner;
 public class RepayCalculator implements Serializable {
 
 	private static final long serialVersionUID = 8062681791631293126L;
-	private static Logger logger = Logger.getLogger(RepayCalculator.class);
+	private static Logger logger = LogManager.getLogger(RepayCalculator.class);
 	private RepayData repayData;
 	private BigDecimal balanceRepayAmount = BigDecimal.ZERO;
 	private boolean setEarlyPayAmt = false;
@@ -87,8 +88,7 @@ public class RepayCalculator implements Serializable {
 	private SubHeadRule subHeadRule;
 	private Map<Date, FinanceScheduleDetail> scheduleMap = null;
 
-	Date curBussniessDate = DateUtility.getAppDate();
-	private RuleExecutionUtil ruleExecutionUtil;
+	Date curBussniessDate = SysParamUtil.getAppDate();
 	private OverDueRecoveryPostingsUtil recoveryPostingsUtil;
 	private FinanceMainDAO financeMainDAO;
 	private OverdueChargeRecoveryDAO recoveryDAO;
@@ -974,7 +974,7 @@ public class RepayCalculator implements Serializable {
 		//Refund Rule Execution for Max Allowed Refund Amount
 		BigDecimal refundResult = BigDecimal.ZERO;
 		subHeadRule.setREFUNDPFT(calRefundPft);
-		refundResult = (BigDecimal) getRuleExecutionUtil().executeRule(this.sqlRule,
+		refundResult = (BigDecimal) RuleExecutionUtil.executeRule(this.sqlRule,
 				this.subHeadRule.getDeclaredFieldValues(), repayData.getRepayMain().getFinCcy(),
 				RuleReturnType.DECIMAL);
 
@@ -1099,14 +1099,6 @@ public class RepayCalculator implements Serializable {
 
 	public void setRepayData(RepayData repayData) {
 		this.repayData = repayData;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
 	}
 
 	public void setRecoveryPostingsUtil(OverDueRecoveryPostingsUtil recoveryPostingsUtil) {

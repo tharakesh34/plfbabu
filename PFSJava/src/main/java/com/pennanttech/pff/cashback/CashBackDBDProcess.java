@@ -6,7 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -22,7 +23,7 @@ import com.pennanttech.pff.subvention.dao.SubventionProcessDAO;
 
 public class CashBackDBDProcess {
 
-	private static final Logger logger = Logger.getLogger(CashBackDBDProcess.class);
+	private static final Logger logger = LogManager.getLogger(CashBackDBDProcess.class);
 
 	private CashBackDetailDAO cashBackDetailDAO;
 	private PromotionDAO promotionDAO;

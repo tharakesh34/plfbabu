@@ -1,6 +1,7 @@
 package com.pennant.backend.service.dealermapping.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -19,7 +20,7 @@ import com.pennanttech.pff.core.TableType;
 
 public class DealerMappingServiceImpl extends GenericService<DealerMapping> implements DealerMappingService {
 
-	private static final Logger logger = Logger.getLogger(DealerMappingServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DealerMappingServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DealerMappingDAO dealerMappingDAO;

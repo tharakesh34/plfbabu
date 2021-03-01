@@ -6,7 +6,8 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
@@ -19,7 +20,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class HandlingInstructionProcess extends MQProcess {
 
-	private static final Logger logger = Logger.getLogger(HandlingInstructionProcess.class);
+	private static final Logger logger = LogManager.getLogger(HandlingInstructionProcess.class);
 
 	public HandlingInstructionProcess() {
 		super();

@@ -49,7 +49,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 
@@ -88,7 +89,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService implements TreasuaryFinanceService {
-	private static final Logger logger = Logger.getLogger(TreasuaryFinanceServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(TreasuaryFinanceServiceImpl.class);
 
 	private TreasuaryFinHeaderDAO treasuaryFinHeaderDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;

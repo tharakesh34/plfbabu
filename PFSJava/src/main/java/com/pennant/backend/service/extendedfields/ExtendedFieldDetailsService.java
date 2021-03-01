@@ -16,7 +16,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.LengthConstants;
@@ -60,7 +61,7 @@ import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pff.core.TableType;
 
 public class ExtendedFieldDetailsService {
-	private static final Logger logger = Logger.getLogger(ExtendedFieldDetailsService.class);
+	private static final Logger logger = LogManager.getLogger(ExtendedFieldDetailsService.class);
 
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private ScriptValidationService scriptValidationService;

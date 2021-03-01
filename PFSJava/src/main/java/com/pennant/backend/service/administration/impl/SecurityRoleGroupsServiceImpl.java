@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.administration.SecurityGroupRightsDAO;
@@ -69,7 +70,7 @@ public class SecurityRoleGroupsServiceImpl extends GenericService<SecurityRoleGr
 	private SecurityGroupRightsDAO securityGroupRightsDAO;
 	private AuditHeaderDAO auditHeaderDAO;
 
-	private static final Logger logger = Logger.getLogger(SecurityRoleGroupsServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(SecurityRoleGroupsServiceImpl.class);
 
 	public SecurityRoleGroupsServiceImpl() {
 		super();

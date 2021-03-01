@@ -45,7 +45,8 @@ package com.pennant.backend.service.applicationmaster.impl;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * Service implementation for methods that depends on <b>ChequePurpose</b>.<br>
  */
 public class ChequePurposeServiceImpl extends GenericService<ChequePurpose> implements ChequePurposeService {
-	private static final Logger logger = Logger.getLogger(ChequePurposeServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ChequePurposeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -19,7 +20,7 @@ import com.pennant.backend.model.finance.RolledoverFinanceHeader;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class RolledoverFinanceDAOImpl extends BasicDao<RolledoverFinanceHeader> implements RolledoverFinanceDAO {
-	private static Logger logger = Logger.getLogger(RolledoverFinanceDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(RolledoverFinanceDAOImpl.class);
 
 	public RolledoverFinanceDAOImpl() {
 		super();

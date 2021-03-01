@@ -2,7 +2,8 @@ package com.pennant.backend.service.finance.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -23,8 +24,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class PricingDetailServiceImpl implements PricingDetailService {
-
-	private static Logger logger = Logger.getLogger(PricingDetailServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(PricingDetailServiceImpl.class);
 
 	private FinanceTypeDAO financeTypeDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;

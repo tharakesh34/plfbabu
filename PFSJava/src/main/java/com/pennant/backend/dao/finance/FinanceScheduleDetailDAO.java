@@ -73,9 +73,9 @@ public interface FinanceScheduleDetailDAO {
 
 	int getFrqDfrCount(String finReference);
 
-	void updateForRateReview(List<FinanceScheduleDetail> financeScheduleDetail);
+	int updateForRateReview(List<FinanceScheduleDetail> financeScheduleDetail);
 
-	void saveList(List<FinanceScheduleDetail> financeScheduleDetail, String type, boolean isWIF);
+	int saveList(List<FinanceScheduleDetail> financeScheduleDetail, String type, boolean isWIF);
 
 	BigDecimal getSuspenseAmount(String finReference, Date dateValueDate);
 
@@ -134,12 +134,8 @@ public interface FinanceScheduleDetailDAO {
 	// Mandate Registration Request
 	List<FinanceScheduleDetail> getFirstRepayAmt(String finReference);
 
-	FinanceScheduleDetail getFinScheduleDetailForCOf(String finReference, Date appDate);
-
 	// ## Ticket id:124998(receipt upload) 16/8/2018
 	BigDecimal getClosingBalance(String finReference, Date valueDate);
-
-	List<FinanceScheduleDetail> getDMFinScheduleDetails(String id, String type);
 
 	FinanceScheduleDetail getPrvSchd(String finReference, Date curBussDate);
 

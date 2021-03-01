@@ -4,7 +4,8 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -12,7 +13,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SnapshotService {
-	private static Logger logger = Logger.getLogger(SnapshotService.class);
+	private static Logger logger = LogManager.getLogger(SnapshotService.class);
 
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 

@@ -1,6 +1,7 @@
 package com.pennanttech.pff.mmfl.cd.service;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -17,7 +18,7 @@ import com.pennanttech.pff.mmfl.cd.model.Manufacturer;
 import com.pennattech.pff.mmfl.cd.dao.ManufacturerDAO;
 
 public class ManufacturerServiceImpl extends GenericService<Manufacturer> implements ManufacturerService {
-	private static final Logger logger = Logger.getLogger(ManufacturerServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ManufacturerServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ManufacturerDAO manufacturerDAO;

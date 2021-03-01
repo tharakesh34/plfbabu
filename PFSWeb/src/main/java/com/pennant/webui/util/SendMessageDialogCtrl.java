@@ -47,7 +47,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -78,7 +79,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 	private static final long serialVersionUID = -7028973478971693678L;
-	private static final Logger logger = Logger.getLogger(SendMessageDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SendMessageDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

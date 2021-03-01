@@ -53,7 +53,8 @@ import java.util.Map;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -90,7 +91,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class SuspenseServiceImpl extends GenericFinanceDetailService implements SuspenseService {
 
-	private static final Logger logger = Logger.getLogger(SuspenseServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(SuspenseServiceImpl.class);
 
 	private FinanceSuspHeadDAO financeSuspHeadDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;

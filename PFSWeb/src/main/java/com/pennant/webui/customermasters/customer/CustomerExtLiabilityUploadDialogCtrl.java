@@ -16,7 +16,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
@@ -66,9 +67,9 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 
 public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerExtLiability> {
+	private final static Logger logger = LogManager.getLogger(CustomerExtLiabilityUploadDialogCtrl.class);
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(CustomerExtLiabilityUploadDialogCtrl.class);
 
 	protected Window window_CustomerExtLiabilityUpload; // autoWired
 	protected Label extFileUpload; // autoWired

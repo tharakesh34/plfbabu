@@ -52,7 +52,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -125,7 +126,7 @@ import com.pennanttech.pff.model.mandate.MandateData;
 public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(MandateRegistrationListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(MandateRegistrationListCtrl.class);
 
 	protected Window window_MandateRegistrationList;
 	protected Borderlayout borderLayout_MandateList;

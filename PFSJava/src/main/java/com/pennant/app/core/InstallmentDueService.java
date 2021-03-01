@@ -6,14 +6,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -38,27 +40,20 @@ import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 
 public class InstallmentDueService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
-	private Logger logger = Logger.getLogger(InstallmentDueService.class);
+	private Logger logger = LogManager.getLogger(InstallmentDueService.class);
 
 	private AccountEngineExecution engineExecution;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private AdvancePaymentService advancePaymentService;
 
-	/**
-	 * @param custId
-	 * @param date
-	 * @throws Exception
-	 */
 	public void processDueDatePostings(CustEODEvent custEODEvent) throws Exception {
-		logger.debug(Literal.ENTERING);
-
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
-			long accountingID = getAccountingID(finEODEvent.getFinanceMain(), AccountEventConstants.ACCEVENT_INSTDATE);
+			Long accountingID = getAccountingID(finEODEvent.getFinanceMain(), AccountEventConstants.ACCEVENT_INSTDATE);
 
-			if (accountingID == Long.MIN_VALUE) {
+			if (accountingID == null || accountingID == Long.MIN_VALUE) {
 				return;
 			}
 
@@ -67,62 +62,57 @@ public class InstallmentDueService extends ServiceHelper {
 				continue;
 			}
 
-			FinanceScheduleDetail curSchd = finEODEvent.getFinanceScheduleDetails().get(idx);
-			postInstallmentDues(finEODEvent, curSchd, custEODEvent, accountingID);
+			FinanceScheduleDetail schd = finEODEvent.getFinanceScheduleDetails().get(idx);
+			postInstallmentDues(finEODEvent, schd, custEODEvent, accountingID);
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * @param resultSet
-	 * @throws Exception
-	 */
-	public void postInstallmentDues(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd, CustEODEvent custEODEvent,
+	private void postInstallmentDues(FinEODEvent finEODEvent, FinanceScheduleDetail schd, CustEODEvent custEODEvent,
 			long accountingID) throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		String finReference = curSchd.getFinReference();
-
 		FinanceMain fm = finEODEvent.getFinanceMain();
+		logger.info("Installment due date postings started for the FinReference {}.", fm.getFinReference());
 
-		BigDecimal dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
+		String finReference = schd.getFinReference();
+
+		fm.setEventProperties(custEODEvent.getEventProperties());
+
+		BigDecimal dueAmount = schd.getFeeSchd().subtract(schd.getSchdFeePaid());
 		Date valueDate = custEODEvent.getEodValueDate();
 		if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 			finEODEvent.setFinFeeScheduleDetails(finFeeScheduleDetailDAO.getFeeSchdTPost(finReference, valueDate));
 		}
 
-		dueAmount = curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid());
+		dueAmount = schd.getInsSchd().subtract(schd.getSchdInsPaid());
 		if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 			finEODEvent.setFinSchFrqInsurances(finInsurancesDAO.getInsSchdToPost(finReference, valueDate));
 		}
 
-		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, profiDetails, finEODEvent.getFinanceScheduleDetails(),
-				AccountEventConstants.ACCEVENT_INSTDATE, valueDate, curSchd.getSchDate());
+		FinanceProfitDetail fpd = finEODEvent.getFinProfitDetail();
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, fpd, finEODEvent.getFinanceScheduleDetails(),
+				AccountEventConstants.ACCEVENT_INSTDATE, valueDate, schd.getSchDate());
 		aeEvent.getAcSetIDList().add(accountingID);
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		amountCodes.setInstpft(curSchd.getProfitSchd());
-		amountCodes.setInstTds(curSchd.getTDSAmount());
-		amountCodes.setInstpri(curSchd.getPrincipalSchd());
-		amountCodes.setInstcpz(curSchd.getCpzAmount());
+		amountCodes.setInstpft(schd.getProfitSchd());
+		amountCodes.setInstTds(schd.getTDSAmount());
+		amountCodes.setInstpri(schd.getPrincipalSchd());
+		amountCodes.setInstcpz(schd.getCpzAmount());
 		amountCodes.setInsttot(amountCodes.getInstpft().add(amountCodes.getInstpri()));
 
-		if (StringUtils.equals("B", curSchd.getBpiOrHoliday())) {
+		if ("B".equals(schd.getBpiOrHoliday())) {
 			advancePaymentService.setIntAdvFlag(fm, amountCodes, true);
 		}
 
-		amountCodes.setPftS(profiDetails.getTdSchdPft());
-		amountCodes.setPftSP(profiDetails.getTdSchdPftPaid());
+		amountCodes.setPftS(fpd.getTdSchdPft());
+		amountCodes.setPftSP(fpd.getTdSchdPftPaid());
 		amountCodes.setPftSB(amountCodes.getPftS().subtract(amountCodes.getPftSP()));
 
 		if (amountCodes.getPftSB().compareTo(BigDecimal.ZERO) < 0) {
 			amountCodes.setPftSB(BigDecimal.ZERO);
 		}
 
-		amountCodes.setPriS(profiDetails.getTdSchdPri());
-		amountCodes.setPriSP(profiDetails.getTdSchdPriPaid());
+		amountCodes.setPriS(fpd.getTdSchdPri());
+		amountCodes.setPriSP(fpd.getTdSchdPriPaid());
 		amountCodes.setPriSB(amountCodes.getPriS().subtract(amountCodes.getPriSP()));
 
 		if (amountCodes.getPriSB().compareTo(BigDecimal.ZERO) < 0) {
@@ -130,7 +120,7 @@ public class InstallmentDueService extends ServiceHelper {
 		}
 
 		//Provision and Fin Od days Greater than zero
-		if (profiDetails.isProvision() && profiDetails.getCurODDays() > 0) {
+		if (fpd.isProvision() && fpd.getCurODDays() > 0) {
 			setProvisionData(amountCodes);
 		}
 
@@ -140,10 +130,11 @@ public class InstallmentDueService extends ServiceHelper {
 		if (feelist != null && !feelist.isEmpty()) {
 			for (FinFeeScheduleDetail feeSchd : feelist) {
 				//"_C" Should be there to post then amount
-				dataMap.put(feeSchd.getFeeTypeCode() + "_C", feeSchd.getSchAmount());
-				dataMap.put(feeSchd.getFeeTypeCode() + "_SCH", feeSchd.getSchAmount());
-				dataMap.put(feeSchd.getFeeTypeCode() + "_P", feeSchd.getPaidAmount());
-				dataMap.put(feeSchd.getFeeTypeCode() + "_W", feeSchd.getWaiverAmount());
+				String feeTypeCode = feeSchd.getFeeTypeCode();
+				dataMap.put(feeTypeCode + "_C", feeSchd.getSchAmount());
+				dataMap.put(feeTypeCode + "_SCH", feeSchd.getSchAmount());
+				dataMap.put(feeTypeCode + "_P", feeSchd.getPaidAmount());
+				dataMap.put(feeTypeCode + "_W", feeSchd.getWaiverAmount());
 			}
 		}
 
@@ -151,9 +142,10 @@ public class InstallmentDueService extends ServiceHelper {
 		if (finInsList != null && !finInsList.isEmpty()) {
 			for (FinSchFrqInsurance insschd : finInsList) {
 				//"_C" Should be there to post then amount
-				dataMap.put(insschd.getInsuranceType() + "_C", insschd.getAmount());
-				dataMap.put(insschd.getInsuranceType() + "_SCH", insschd.getAmount());
-				dataMap.put(insschd.getInsuranceType() + "_P", insschd.getInsurancePaid());
+				String insuranceType = insschd.getInsuranceType();
+				dataMap.put(insuranceType + "_C", insschd.getAmount());
+				dataMap.put(insuranceType + "_SCH", insschd.getAmount());
+				dataMap.put(insuranceType + "_P", insschd.getInsurancePaid());
 			}
 		}
 
@@ -162,46 +154,62 @@ public class InstallmentDueService extends ServiceHelper {
 		aeEvent.setPostDate(custEODEvent.getCustomer().getCustAppDate());
 		//Postings Process and save all postings related to finance for one time accounts update
 
-		aeEvent = postAccountingEOD(aeEvent);
+		EventProperties eventProperties = fm.getEventProperties();
+		aeEvent.setAppDate(eventProperties.getAppDate());
+		aeEvent.setAppValueDate(eventProperties.getAppValueDate());
+		aeEvent.setEventProperties(eventProperties);
+
+		postAccountingEOD(aeEvent);
 		fm.setEodValueDate(valueDate);
 
 		long linkedTranId = aeEvent.getLinkedTranId();
 		if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && linkedTranId > 0) {
 			FinanceDetail financeDetail = new FinanceDetail();
-			financeDetail.getFinScheduleData().setFinanceMain(finEODEvent.getFinanceMain());
+			financeDetail.getFinScheduleData().setFinanceMain(fm);
 			financeDetail.getFinScheduleData().setFinanceType(finEODEvent.getFinType());
 			financeDetail.setFinanceTaxDetail(null);
 			financeDetail.setCustomerDetails(null);
-			createInovice(financeDetail, curSchd, linkedTranId);
+			createInovice(financeDetail, schd, linkedTranId);
 		}
 
 		//Accrual posted on the installment due postings
 		if (aeEvent.isuAmzExists()) {
-			profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(aeEvent.getAeAmountCodes().getuAmz()));
+			fpd.setAmzTillLBD(fpd.getAmzTillLBD().add(aeEvent.getAeAmountCodes().getuAmz()));
 			finEODEvent.setUpdLBDPostings(true);
-		} else if (SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ)) {
-			profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(amountCodes.getInstpft()));
-			finEODEvent.setUpdLBDPostings(true);
+		} else {
+			boolean accrualReversalReq = false;
+			if (eventProperties.isParameterLoaded()) {
+				accrualReversalReq = eventProperties.isAccrualReversalReq();
+			} else {
+				accrualReversalReq = SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ);
+			}
+
+			if (accrualReversalReq) {
+				fpd.setAmzTillLBD(fpd.getAmzTillLBD().add(amountCodes.getInstpft()));
+				finEODEvent.setUpdLBDPostings(true);
+			}
 		}
 
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
-		logger.debug(Literal.LEAVING);
+		logger.info("Installment due date postings completed for the FinReference {}.", fm.getFinReference());
 	}
 
-	private void createInovice(FinanceDetail financeDetail, FinanceScheduleDetail curSchd, long linkedTranId) {
+	private void createInovice(FinanceDetail fd, FinanceScheduleDetail schd, long linkedTranId) {
 		BigDecimal pftAmount = BigDecimal.ZERO;
 		BigDecimal priAmount = BigDecimal.ZERO;
 
+		EventProperties eventProperties = fd.getFinScheduleData().getFinanceMain().getEventProperties();
+
 		switch (ImplementationConstants.GST_SCHD_CAL_ON) {
 		case FinanceConstants.GST_SCHD_CAL_ON_PFT:
-			pftAmount = curSchd.getProfitSchd();
-			priAmount = curSchd.getPrincipalSchd();
+			pftAmount = schd.getProfitSchd();
+			priAmount = schd.getPrincipalSchd();
 			break;
 		case FinanceConstants.GST_SCHD_CAL_ON_PRI:
-			priAmount = curSchd.getPrincipalSchd();
+			priAmount = schd.getPrincipalSchd();
 			break;
 		case FinanceConstants.GST_SCHD_CAL_ON_EMI:
-			pftAmount = curSchd.getProfitSchd();
+			pftAmount = schd.getProfitSchd();
 			break;
 		default:
 			break;
@@ -209,45 +217,50 @@ public class InstallmentDueService extends ServiceHelper {
 
 		InvoiceDetail invoiceDetail = new InvoiceDetail();
 		invoiceDetail.setLinkedTranId(linkedTranId);
-		invoiceDetail.setFinanceDetail(financeDetail);
+		invoiceDetail.setFinanceDetail(fd);
 		invoiceDetail.setPftAmount(pftAmount);
 		invoiceDetail.setPriAmount(priAmount);
 		invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
+		invoiceDetail.setEventProperties(eventProperties);
 
 		Long invoiceID = gstInvoiceTxnService.schdDueTaxInovicePrepration(invoiceDetail);
 
-		saveDueTaxDetail(curSchd, invoiceID);
+		if (schd.getFinReference() == null) {
+			schd.setFinReference(fd.getFinReference());
+		}
+
+		saveDueTaxDetail(schd, invoiceID);
 	}
 
-	/**
-	 * Method for saving Schedule Due Tax Details
-	 */
-	private void saveDueTaxDetail(FinanceScheduleDetail curSchd, Long invoiceID) {
-		ScheduleDueTaxDetail dueTaxDetail = new ScheduleDueTaxDetail();
-		dueTaxDetail.setFinReference(curSchd.getFinReference());
-		dueTaxDetail.setSchDate(curSchd.getSchDate());
-		dueTaxDetail.setTaxType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
-		dueTaxDetail.setTaxCalcOn(ImplementationConstants.GST_SCHD_CAL_ON);
+	private void saveDueTaxDetail(FinanceScheduleDetail schd, Long invoiceID) {
+		String gstShdCalOn = ImplementationConstants.GST_SCHD_CAL_ON;
+
+		ScheduleDueTaxDetail taxDetails = new ScheduleDueTaxDetail();
+		taxDetails.setFinReference(schd.getFinReference());
+		taxDetails.setSchDate(schd.getSchDate());
+		taxDetails.setTaxType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
+		taxDetails.setTaxCalcOn(gstShdCalOn);
 
 		BigDecimal invoiceAmt = BigDecimal.ZERO;
-		switch (ImplementationConstants.GST_SCHD_CAL_ON) {
+
+		switch (gstShdCalOn) {
 		case FinanceConstants.GST_SCHD_CAL_ON_PFT:
-			invoiceAmt = curSchd.getProfitSchd();
+			invoiceAmt = schd.getProfitSchd();
 			break;
 		case FinanceConstants.GST_SCHD_CAL_ON_PRI:
-			invoiceAmt = curSchd.getPrincipalSchd();
+			invoiceAmt = schd.getPrincipalSchd();
 			break;
 		case FinanceConstants.GST_SCHD_CAL_ON_EMI:
-			invoiceAmt = curSchd.getPrincipalSchd().add(curSchd.getProfitSchd());
+			invoiceAmt = schd.getPrincipalSchd().add(schd.getProfitSchd());
 			break;
 		default:
 			break;
 		}
 
-		dueTaxDetail.setAmount(invoiceAmt);
-		dueTaxDetail.setInvoiceID(invoiceID);
+		taxDetails.setAmount(invoiceAmt);
+		taxDetails.setInvoiceID(invoiceID);
 
-		financeScheduleDetailDAO.saveSchDueTaxDetail(dueTaxDetail);
+		financeScheduleDetailDAO.saveSchDueTaxDetail(taxDetails);
 	}
 
 	private void setProvisionData(AEAmountCodes amountCodes) {
@@ -268,15 +281,16 @@ public class InstallmentDueService extends ServiceHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<ReturnDataSet> processbackDateInstallmentDues(FinanceDetail financeDetail,
-			FinanceProfitDetail profiDetails, Date appDate, boolean post, String postBranch) throws InterfaceException {
+	public List<ReturnDataSet> processbackDateInstallmentDues(FinanceDetail fd, FinanceProfitDetail pfd, Date appDate,
+			boolean post, String postBranch) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
-		List<ReturnDataSet> datasets = new ArrayList<ReturnDataSet>();
-		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
-		List<FinanceScheduleDetail> list = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
+		List<ReturnDataSet> datasets = new ArrayList<>();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
+		EventProperties eventProperties = fm.getEventProperties();
 
-		long accountingID = Long.MIN_VALUE;
+		Long accountingID = Long.MIN_VALUE;
 		//FIXME: PV:  28AUG19. No Separate Accounting for Promotion
 		/*
 		 * if (StringUtils.isNotBlank(main.getPromotionCode())) { accountingID =
@@ -286,36 +300,44 @@ public class InstallmentDueService extends ServiceHelper {
 		 * FinanceConstants.MODULEID_FINTYPE); }
 		 */
 
-		accountingID = AccountingConfigCache.getCacheAccountSetID(main.getFinType(),
+		accountingID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(),
 				AccountEventConstants.ACCEVENT_INSTDATE, FinanceConstants.MODULEID_FINTYPE);
 
-		if (accountingID == Long.MIN_VALUE) {
+		if (accountingID == null || accountingID == Long.MIN_VALUE) {
+			logger.debug(Literal.LEAVING);
 			return datasets;
 		}
 
-		if (main.getFinStartDate().compareTo(SysParamUtil.getAppDate()) >= 0) {
+		if (fm.getFinStartDate().compareTo(appDate) >= 0) {
+			logger.debug(Literal.LEAVING);
 			return datasets;
 		}
 
 		//prepare schedule based fees
-		List<FinFeeDetail> totalFees = financeDetail.getFinScheduleData().getFinFeeDetailList();
-		List<FinFeeScheduleDetail> finFeeSchdDet = new ArrayList<FinFeeScheduleDetail>();
-		if (totalFees != null && !totalFees.isEmpty()) {
+		List<FinFeeDetail> totalFees = fd.getFinScheduleData().getFinFeeDetailList();
+		List<FinFeeScheduleDetail> scheduleFees = new ArrayList<>();
+
+		if (CollectionUtils.isNotEmpty(totalFees)) {
 			for (FinFeeDetail detail : totalFees) {
-				for (FinFeeScheduleDetail finFeeScheduleDetail : detail.getFinFeeScheduleDetailList()) {
-					finFeeScheduleDetail.setFeeTypeCode(detail.getFeeTypeCode());
-					finFeeSchdDet.add(finFeeScheduleDetail);
+				String feeTypeCode = detail.getFeeTypeCode();
+				List<FinFeeScheduleDetail> feeSchedules = detail.getFinFeeScheduleDetailList();
+				for (FinFeeScheduleDetail finFeeScheduleDetail : feeSchedules) {
+					finFeeScheduleDetail.setFeeTypeCode(feeTypeCode);
+					scheduleFees.add(finFeeScheduleDetail);
 				}
 			}
 		}
 
 		//prepare schedule based insurance
-		List<FinInsurances> totIns = financeDetail.getFinScheduleData().getFinInsuranceList();
-		List<FinSchFrqInsurance> totfinschIns = new ArrayList<FinSchFrqInsurance>();
-		if (totIns != null && !totIns.isEmpty()) {
+		List<FinInsurances> totIns = fd.getFinScheduleData().getFinInsuranceList();
+		List<FinSchFrqInsurance> totfinschIns = new ArrayList<>();
+
+		if (CollectionUtils.isNotEmpty(totIns)) {
 			for (FinInsurances finInsurances : totIns) {
-				for (FinSchFrqInsurance finSchFrqInsurance : finInsurances.getFinSchFrqInsurances()) {
-					finSchFrqInsurance.setInsuranceType(finInsurances.getInsuranceType());
+				String insuranceType = finInsurances.getInsuranceType();
+				List<FinSchFrqInsurance> finSchFrqInsurances = finInsurances.getFinSchFrqInsurances();
+				for (FinSchFrqInsurance finSchFrqInsurance : finSchFrqInsurances) {
+					finSchFrqInsurance.setInsuranceType(insuranceType);
 					totfinschIns.add(finSchFrqInsurance);
 				}
 			}
@@ -323,19 +345,18 @@ public class InstallmentDueService extends ServiceHelper {
 
 		BigDecimal totPft = BigDecimal.ZERO;
 		//check the schedule is back dated or not if yes then post them
-		for (FinanceScheduleDetail financeScheduleDetail : list) {
+		for (FinanceScheduleDetail curSchd : schedules) {
 
-			if (financeScheduleDetail.getDefSchdDate().compareTo(SysParamUtil.getAppDate()) > 0) {
+			if (curSchd.getDefSchdDate().compareTo(SysParamUtil.getAppDate()) > 0) {
 				break;
 			}
 
-			if (StringUtils.equals(FinanceConstants.FLAG_BPI, financeScheduleDetail.getBpiOrHoliday())) {
-				if (main.isAlwBPI() && StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, main.getBpiTreatment())) {
+			if (FinanceConstants.FLAG_BPI.equals(curSchd.getBpiOrHoliday())) {
+				if (fm.isAlwBPI() && FinanceConstants.BPI_DISBURSMENT.equals(fm.getBpiTreatment())) {
 					continue;
 				}
 			}
 
-			FinanceScheduleDetail curSchd = financeScheduleDetail;
 			// Installment Due Exist
 			BigDecimal dueAmount = curSchd.getPrincipalSchd().add(curSchd.getProfitSchd())
 					.subtract(curSchd.getSchdPriPaid()).subtract(curSchd.getSchdPftPaid());
@@ -345,31 +366,33 @@ public class InstallmentDueService extends ServiceHelper {
 				continue;
 			}
 
-			List<FinFeeScheduleDetail> feelist = new ArrayList<FinFeeScheduleDetail>();
-			List<FinSchFrqInsurance> finInsList = new ArrayList<FinSchFrqInsurance>();
+			List<FinFeeScheduleDetail> feelist = new ArrayList<>();
+			List<FinSchFrqInsurance> finInsList = new ArrayList<>();
 
 			dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
+			Date schDate = curSchd.getSchDate();
 
 			//prepare fee list
 			if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
-				for (FinFeeScheduleDetail finFeeScheduleDetail : finFeeSchdDet) {
-					if (finFeeScheduleDetail.getSchDate().compareTo(curSchd.getSchDate()) == 0) {
-						feelist.add(finFeeScheduleDetail);
+				for (FinFeeScheduleDetail scheduleFee : scheduleFees) {
+					if (scheduleFee.getSchDate().compareTo(schDate) == 0) {
+						feelist.add(scheduleFee);
 					}
 				}
 			}
 
 			dueAmount = curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid());
+
 			if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 				for (FinSchFrqInsurance finSchFrqInsurance : totfinschIns) {
-					if (finSchFrqInsurance.getInsSchDate().compareTo(curSchd.getSchDate()) == 0) {
+					if (finSchFrqInsurance.getInsSchDate().compareTo(schDate) == 0) {
 						finInsList.add(finSchFrqInsurance);
 					}
 				}
 			}
 
-			AEEvent aeEvent = AEAmounts.procCalAEAmounts(main, profiDetails, list,
-					AccountEventConstants.ACCEVENT_INSTDATE, curSchd.getSchDate(), curSchd.getSchDate());
+			AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, pfd, schedules, AccountEventConstants.ACCEVENT_INSTDATE,
+					schDate, schDate);
 			aeEvent.getAcSetIDList().add(accountingID);
 
 			aeEvent.setPostingUserBranch(postBranch);
@@ -378,16 +401,16 @@ public class InstallmentDueService extends ServiceHelper {
 			amountCodes.setInstpri(curSchd.getPrincipalSchd());
 			amountCodes.setInsttot(amountCodes.getInstpft().add(amountCodes.getInstpri()));
 
-			amountCodes.setPftS(profiDetails.getTdSchdPft());
-			amountCodes.setPftSP(profiDetails.getTdSchdPftPaid());
+			amountCodes.setPftS(pfd.getTdSchdPft());
+			amountCodes.setPftSP(pfd.getTdSchdPftPaid());
 			amountCodes.setPftSB(amountCodes.getPftS().subtract(amountCodes.getPftSP()));
 
 			if (amountCodes.getPftSB().compareTo(BigDecimal.ZERO) < 0) {
 				amountCodes.setPftSB(BigDecimal.ZERO);
 			}
 
-			amountCodes.setPriS(profiDetails.getTdSchdPri());
-			amountCodes.setPriSP(profiDetails.getTdSchdPriPaid());
+			amountCodes.setPriS(pfd.getTdSchdPri());
+			amountCodes.setPriSP(pfd.getTdSchdPriPaid());
 			amountCodes.setPriSB(amountCodes.getPriS().subtract(amountCodes.getPriSP()));
 
 			if (amountCodes.getPriSB().compareTo(BigDecimal.ZERO) < 0) {
@@ -396,7 +419,7 @@ public class InstallmentDueService extends ServiceHelper {
 
 			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
-			if (feelist != null && !feelist.isEmpty()) {
+			if (CollectionUtils.isNotEmpty(feelist)) {
 				for (FinFeeScheduleDetail feeSchd : feelist) {
 					//"_C" Should be there to post then amount
 					dataMap.put(feeSchd.getFeeTypeCode() + "_C", feeSchd.getSchAmount());
@@ -406,7 +429,7 @@ public class InstallmentDueService extends ServiceHelper {
 				}
 			}
 
-			if (finInsList != null && !finInsList.isEmpty()) {
+			if (CollectionUtils.isNotEmpty(finInsList)) {
 				for (FinSchFrqInsurance insschd : finInsList) {
 					//"_C" Should be there to post then amount
 					dataMap.put(insschd.getInsuranceType() + "_C", insschd.getAmount());
@@ -418,19 +441,26 @@ public class InstallmentDueService extends ServiceHelper {
 			aeEvent.setDataMap(dataMap);
 			aeEvent.setPostDate(appDate);
 			if (post) {
-				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+				aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 
-				if (SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ)) {
-					profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(amountCodes.getInstpft()));
+				boolean alwPostingRev = false;
+				if (eventProperties.isParameterLoaded()) {
+					alwPostingRev = eventProperties.isAccrualReversalReq();
+				} else {
+					alwPostingRev = SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ);
+				}
+
+				if (alwPostingRev) {
+					pfd.setAmzTillLBD(pfd.getAmzTillLBD().add(amountCodes.getInstpft()));
 				}
 
 				long linkedTranId = aeEvent.getLinkedTranId();
 				if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && linkedTranId > 0) {
-					createInovice(financeDetail, curSchd, linkedTranId);
+					createInovice(fd, curSchd, linkedTranId);
 				}
-				profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(totPft));
+				pfd.setAmzTillLBD(pfd.getAmzTillLBD().add(totPft));
 			} else {
-				aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
+				engineExecution.getAccEngineExecResults(aeEvent);
 				datasets.addAll(aeEvent.getReturnDataSet());
 			}
 

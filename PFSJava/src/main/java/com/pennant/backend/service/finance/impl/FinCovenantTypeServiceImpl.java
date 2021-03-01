@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -68,7 +69,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> implements FinCovenantTypeService {
-	private static final Logger logger = Logger.getLogger(FinCovenantTypeServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinCovenantTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

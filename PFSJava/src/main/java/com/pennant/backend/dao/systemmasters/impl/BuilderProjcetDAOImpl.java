@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>BuilderProjcet</code> with set of CRUD operations.
  */
 public class BuilderProjcetDAOImpl extends SequenceDao<BuilderProjcet> implements BuilderProjcetDAO {
-	private static Logger logger = Logger.getLogger(BuilderProjcetDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BuilderProjcetDAOImpl.class);
 
 	public BuilderProjcetDAOImpl() {
 		super();
@@ -148,7 +149,7 @@ public class BuilderProjcetDAOImpl extends SequenceDao<BuilderProjcet> implement
 
 		/*
 		 * // Get the identity sequence number. if (builderProjcet.getId() <= 0) {
-		 * builderProjcet.setId(getNextidviewDAO().getNextId("SeqBuilderProjcet" )); }
+		 * builderProjcet.setId(getNextidviewDAO().getNextValue("SeqBuilderProjcet" )); }
 		 */
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

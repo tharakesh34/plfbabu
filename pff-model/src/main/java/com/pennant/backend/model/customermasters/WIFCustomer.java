@@ -29,7 +29,7 @@ public class WIFCustomer implements Serializable {
 	private String custSegment;
 	private boolean jointCust = false;
 	private boolean elgRequired = false;
-	private boolean isNewRecord = true;
+	private boolean isNewRecord = false;
 	private String custSalutationCode;
 	private boolean salariedCustomer;
 	private long empName;

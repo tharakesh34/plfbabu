@@ -47,7 +47,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -70,7 +71,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
-	private static Logger logger = Logger.getLogger(ProvinceDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ProvinceDAOImpl.class);
 
 	public ProvinceDAOImpl() {
 		super();
@@ -86,8 +87,6 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 	 * @return Province
 	 */
 	public Province getProvinceById(final String cPCountry, String cPProvince, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where CPCountry = ? and CPProvince = ?");
 
@@ -99,10 +98,11 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cPCountry, cPProvince },
 					rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(
+					"Records are not found in RMTCountryVsProvince{} for the combination of CPCountry :{} and CPProvince : {}",
+					type, cPCountry, cPProvince);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

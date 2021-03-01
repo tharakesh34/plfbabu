@@ -9,7 +9,8 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 	private static final long serialVersionUID = 778410382420505812L;
-	private static final Logger logger = Logger.getLogger(ReceiptListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptListCtrl.class);
 
 	protected Window window_ReceiptList;
 	protected Borderlayout borderLayout_ReceiptList;
@@ -246,7 +247,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			registerField("receiptMode", listheader_ReceiptMode, SortOrder.NONE, receiptMode, sortOperator_receiptMode,
 					Operators.DEFAULT);
 		}
-		//Bug fix while click on list header of knock off from in Knock off maker and approver 
+		// Bug fix while click on list header of knock off from in Knock off maker and approver
 		if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)
 				|| StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_APPROVER)) {
 			registerField("PaymentType", listheader_ExcessType);
@@ -303,7 +304,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			List<String> filterList = new ArrayList<>();
 			filterList.add(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
 			searchObject.addFilterNotIn("RECEIPTPURPOSE", filterList);
-			//searchObject.addWhereClause(" PAYAGAINSTID = 0");
+			// searchObject.addWhereClause(" PAYAGAINSTID = 0");
 		} else if (!enqiryModule) {
 			if (StringUtils.equals(module, FinanceConstants.REALIZATION_APPROVER)
 					|| StringUtils.equals(module, FinanceConstants.RECEIPT_APPROVER)) {
@@ -330,7 +331,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 			} else if (StringUtils.equals(module, FinanceConstants.REALIZATION_MAKER)) {
 				searchObject.addWhereClause(
-						" PAYAGAINSTID = 0 AND ((RECEIPTMODESTATUS IN ('R', 'D')  AND RECEIPTPURPOSE = 'SchdlRepayment' and ((NEXTROLECODE is null Or NEXTROLECODE = '') or NEXTROLECODE='REALIZATION_MAKER')) OR NEXTROLECODE ='"
+						" PAYAGAINSTID = 0 AND ((RECEIPTMODESTATUS IN ('R', 'D')  AND RECEIPTPURPOSE = 'SchdlRepayment' AND RECEIPTMODE NOT IN ('PRESENT') and ((NEXTROLECODE is null Or NEXTROLECODE = '') or NEXTROLECODE='REALIZATION_MAKER')) OR NEXTROLECODE ='"
 								+ module + "')");
 
 			} else if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_MAKER)) {
@@ -729,10 +730,11 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		}
 
 		String nextroleCode = finReceiptHeader.getNextRoleCode();
+		String reference = finReceiptHeader.getReference();
 		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
-			valueParm[0] = finReceiptHeader.getReference();
+			valueParm[0] = reference;
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(
@@ -740,7 +742,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetail.getError());
 
-			//Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+			// Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
 			doRefresh();
 			logger.debug("Leaving");
 			return;
@@ -761,7 +763,20 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			return;
 		}
 
-		String whereCond = " FinReference='" + finReceiptHeader.getReference() + "'";
+		if (FinanceConstants.KNOCKOFFCAN_MAKER.equals(module) || FinanceConstants.KNOCKOFFCAN_APPROVER.equals(module)) {
+			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(finRcptHeader.getKnockOffType())) {
+				ErrorDetail ed = receiptService.receiptCancelValidation(reference, finReceiptHeader.getReceiptDate());
+				if (ed != null) {
+					MessageUtil.showError(ed.getError());
+
+					doRefresh();
+					logger.debug(Literal.LEAVING);
+					return;
+				}
+			}
+		}
+
+		String whereCond = " FinReference='" + reference + "'";
 		FinReceiptData finReceiptData = null;
 		if (isWorkFlowEnabled()) {
 			String eventCode = "";
@@ -791,7 +806,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					ErrorDetail errorDtl = ErrorUtil.getErrorDetail(errorDetail);
 					MessageUtil.showError(errorDtl.getError());
 
-					//Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+					// Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
 					doRefresh();
 					logger.debug("Leaving");
 					return;
@@ -966,12 +981,12 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("recHeaderMap", recHeaderMap);
-		//map.put("finReceiptHeader", finReceiptHeader);
+		// map.put("finReceiptHeader", finReceiptHeader);
 		map.put("receiptListCtrl", this);
 		map.put("module", module);
 		map.put("moduleCode", moduleCode);
 		map.put("roleCode", roleCode);
-		//	map.put("nextRoleCode", nextRoleCode);
+		// map.put("nextRoleCode", nextRoleCode);
 		map.put("recordAction", recordAction);
 
 		try {

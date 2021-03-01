@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,7 +23,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransactionDetail>
 		implements LimitTransactionDetailsDAO {
-	private static Logger logger = Logger.getLogger(LimitTransactionDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LimitTransactionDetailsDAOImpl.class);
 
 	public LimitTransactionDetailsDAOImpl() {
 		super();
@@ -191,8 +192,8 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 	public long saveLimitRuleTransactiondetails(LimitTransactionDetail limitTransactionDetail, String type) {
 		logger.debug("Entering");
 		if (limitTransactionDetail.getId() == Long.MIN_VALUE) {
-			limitTransactionDetail.setId(getNextId("SeqLimitRuleTransactions"));
-			logger.debug("get NextID:" + limitTransactionDetail.getId());
+			limitTransactionDetail.setId(getNextValue("SeqLimitRuleTransactions"));
+			logger.debug("get NextValue:" + limitTransactionDetail.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into LimitRuleTransactionDetails");

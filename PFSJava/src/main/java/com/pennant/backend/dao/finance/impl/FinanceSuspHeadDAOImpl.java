@@ -49,7 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements FinanceSuspHeadDAO {
-	private static Logger logger = Logger.getLogger(FinanceSuspHeadDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceSuspHeadDAOImpl.class);
 
 	public FinanceSuspHeadDAOImpl() {
 		super();
@@ -134,8 +135,6 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 
 	@Override
 	public Date getFinSuspDate(String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinSuspDate");
 		sql.append(" From FinSuspHead");
@@ -146,10 +145,9 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, 1 }, Date.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.trace(Literal.EXCEPTION, e);
+			logger.warn("Records are not found in FinSuspHead table for this FinReference >> {} ", finReference);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

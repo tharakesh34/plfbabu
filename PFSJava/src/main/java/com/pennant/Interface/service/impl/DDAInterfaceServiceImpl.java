@@ -1,6 +1,7 @@
 package com.pennant.Interface.service.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,7 +16,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DDAInterfaceServiceImpl implements DDAInterfaceService {
 
-	private static final Logger logger = Logger.getLogger(DDAInterfaceServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DDAInterfaceServiceImpl.class);
 
 	public DDAInterfaceServiceImpl() {
 

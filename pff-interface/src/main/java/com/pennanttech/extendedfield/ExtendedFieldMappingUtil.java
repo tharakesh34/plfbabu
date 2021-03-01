@@ -7,18 +7,18 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennanttech.extendedfield.ExtendedFieldsMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtendedFieldMappingUtil {
 	private static final CustType RETAIL = null;
-	public static Logger logger = org.apache.log4j.Logger.getLogger(ExtendedFieldMappingUtil.class);
+	public static Logger logger = LogManager.getLogger(ExtendedFieldMappingUtil.class);
 
 	public static enum CustType {
 		RETAIL, CORP, SME;

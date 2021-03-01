@@ -51,7 +51,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -108,7 +109,7 @@ import com.pennanttech.pff.model.IDBInterfaceLogDetail;
 public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(InterfaceServiceListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(InterfaceServiceListCtrl.class);
 
 	private static final int SEARCH_ROW_SIZE = 27;
 	private static final int LIST_ROW_SIZE = 26;

@@ -46,7 +46,8 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -57,7 +58,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
  * </p>
  */
 public final class DateUtility extends DateUtil {
-	private static final Logger logger = Logger.getLogger(DateUtility.class);
+	private static final Logger logger = LogManager.getLogger(DateUtility.class);
 
 	/**
 	 * Returns a {@link java.util.Date} object that represents the application date.

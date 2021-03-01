@@ -48,7 +48,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.lang.Strings;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
@@ -79,7 +80,7 @@ import com.pennanttech.pennapps.jdbc.search.SearchResult;
 @SuppressWarnings("rawtypes")
 public class PagedListWrapper<E> extends ListModelList implements Serializable {
 	private static final long serialVersionUID = -7399762307122148637L;
-	static final Logger logger = Logger.getLogger(PagedListWrapper.class);
+	static final Logger logger = LogManager.getLogger(PagedListWrapper.class);
 
 	// Service that calls the DAO methods
 	private PagedListService pagedListService;
@@ -305,6 +306,9 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 	// ******************************************************//
 
 	public int getPageSize() {
+		if (getPaging() == null) {
+			return 0;
+		}
 		return getPaging().getPageSize();
 	}
 

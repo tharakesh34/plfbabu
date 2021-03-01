@@ -49,7 +49,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
@@ -80,7 +81,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/customerDialog.zul file.
  */
 public class CustomerEmailInlineEditCtrl extends GFCBaseCtrl<CustomerDetails> {
-	private static final Logger logger = Logger.getLogger(CustomerEmailInlineEditCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerEmailInlineEditCtrl.class);
 	private static final long serialVersionUID = -1289772081447044673L;
 	private final List<ValueLabel> customerPriorityList = PennantStaticListUtil.getCustomerEmailPriority();
 	private boolean isFinanceProcess;

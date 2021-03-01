@@ -7,7 +7,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNode;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.coreinterface.model.customer.InterfaceCoreCustomer;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerAddress;
@@ -25,7 +26,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class AddNewCustomerProcess extends MQProcess {
 
-	private static final Logger logger = Logger.getLogger(AddNewCustomerProcess.class);
+	private static final Logger logger = LogManager.getLogger(AddNewCustomerProcess.class);
 	String preferedMailId = "";
 	String createCIFError = "";
 

@@ -3,7 +3,8 @@ package com.pennant.backend.dao.collateral.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,7 +20,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoOwnerDetailDAO {
-	private static Logger logger = Logger.getLogger(CoOwnerDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CoOwnerDetailDAOImpl.class);
 
 	public CoOwnerDetailDAOImpl() {
 		super();
@@ -138,34 +139,62 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 
 	@Override
 	public List<CoOwnerDetail> getCoOwnerDetailByRef(String collateralRef, String type) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
-
-		sql = new StringBuilder();
-		sql.append(" Select CoOwnerId, CollateralRef, BankCustomer, CustomerId, CoOwnerIDType, CoOwnerIDNumber");
-		sql.append(", CoOwnerCIFName, CoOwnerPercentage, MobileNo, EmailId, CoOwnerProofName, Remarks, AddrHNbr");
-		sql.append(", FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP");
-		sql.append(", CoOwnerProof, CoOwnerCIF,  Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CoOwnerId, CollateralRef, BankCustomer, CustomerId, CoOwnerIDType, CoOwnerIDNumber");
+		sql.append(", CoOwnerCIFName, CoOwnerPercentage, MobileNo, EmailId, CoOwnerProofName, Remarks");
+		sql.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince");
+		sql.append(", AddrCountry, AddrZIP, CoOwnerProof, CoOwnerCIF, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CollateralCoOwners");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where CollateralRef = :CollateralRef");
+		sql.append(" Where CollateralRef = ?");
+
 		logger.debug(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("CollateralRef", collateralRef);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, collateralRef);
+		}, (rs, rowNum) -> {
+			CoOwnerDetail cc = new CoOwnerDetail();
 
-		RowMapper<CoOwnerDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CoOwnerDetail.class);
-		try {
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		} finally {
-			source = null;
-			sql = null;
-		}
-		return null;
+			cc.setCoOwnerId(rs.getInt("CoOwnerId"));
+			cc.setCollateralRef(rs.getString("CollateralRef"));
+			cc.setBankCustomer(rs.getBoolean("BankCustomer"));
+			cc.setCustomerId(rs.getLong("CustomerId"));
+			cc.setCoOwnerIDType(rs.getString("CoOwnerIDType"));
+			cc.setCoOwnerIDNumber(rs.getString("CoOwnerIDNumber"));
+			cc.setCoOwnerCIFName(rs.getString("CoOwnerCIFName"));
+			cc.setCoOwnerPercentage(rs.getBigDecimal("CoOwnerPercentage"));
+			cc.setMobileNo(rs.getString("MobileNo"));
+			cc.setEmailId(rs.getString("EmailId"));
+			cc.setCoOwnerProofName(rs.getString("CoOwnerProofName"));
+			cc.setRemarks(rs.getString("Remarks"));
+			cc.setAddrHNbr(rs.getString("AddrHNbr"));
+			cc.setFlatNbr(rs.getString("FlatNbr"));
+			cc.setAddrStreet(rs.getString("AddrStreet"));
+			cc.setAddrLine1(rs.getString("AddrLine1"));
+			cc.setAddrLine2(rs.getString("AddrLine2"));
+			cc.setPOBox(rs.getString("POBox"));
+			cc.setAddrCity(rs.getString("AddrCity"));
+			cc.setAddrProvince(rs.getString("AddrProvince"));
+			cc.setAddrCountry(rs.getString("AddrCountry"));
+			cc.setAddrZIP(rs.getString("AddrZIP"));
+			cc.setCoOwnerProof(rs.getBytes("CoOwnerProof"));
+			cc.setCoOwnerCIF(rs.getString("CoOwnerCIF"));
+			cc.setVersion(rs.getInt("Version"));
+			cc.setLastMntBy(rs.getLong("LastMntBy"));
+			cc.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			cc.setRecordStatus(rs.getString("RecordStatus"));
+			cc.setRoleCode(rs.getString("RoleCode"));
+			cc.setNextRoleCode(rs.getString("NextRoleCode"));
+			cc.setTaskId(rs.getString("TaskId"));
+			cc.setNextTaskId(rs.getString("NextTaskId"));
+			cc.setRecordType(rs.getString("RecordType"));
+			cc.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return cc;
+		});
+
 	}
 
 	@Override

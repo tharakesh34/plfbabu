@@ -1,6 +1,7 @@
 package com.pennant.backend.service.finance.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.finance.FinanceMainExtDAO;
 import com.pennant.backend.model.finance.FinanceMainExt;
@@ -8,7 +9,7 @@ import com.pennant.backend.service.finance.FinanceMainExtService;
 
 public class FinanceMainExtServiceImpl implements FinanceMainExtService {
 
-	private static Logger logger = Logger.getLogger(FinanceMainExtServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceMainExtServiceImpl.class);
 
 	public FinanceMainExtServiceImpl() {
 		super();

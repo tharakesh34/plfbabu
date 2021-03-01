@@ -3,7 +3,8 @@ package com.pennant.backend.dao.manualadviseupload.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -19,7 +20,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> implements UploadManualAdviseDAO {
-	private static Logger logger = Logger.getLogger(UploadManualAdviseDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(UploadManualAdviseDAOImpl.class);
 
 	public UploadManualAdviseDAOImpl() {
 		super();

@@ -54,7 +54,6 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.applicationmaster.Currency;

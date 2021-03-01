@@ -9,7 +9,8 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -53,9 +54,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.DocumentManagementService;
 
 public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
-
 	private static final long serialVersionUID = -5248483770568884148L;
-	private static final Logger logger = Logger.getLogger(DMSDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DMSDialogCtrl.class);
 
 	protected Window window_DocManagementControlDialog;
 	protected Groupbox finBasicdetails;

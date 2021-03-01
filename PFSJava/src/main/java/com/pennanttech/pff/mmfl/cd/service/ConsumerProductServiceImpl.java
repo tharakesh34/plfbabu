@@ -1,6 +1,7 @@
 package com.pennanttech.pff.mmfl.cd.service;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -17,7 +18,7 @@ import com.pennanttech.pff.mmfl.cd.model.ConsumerProduct;
 import com.pennattech.pff.mmfl.cd.dao.ConsumerProductDAO;
 
 public class ConsumerProductServiceImpl extends GenericService<ConsumerProduct> implements ConsumerProductService {
-	private static final Logger logger = Logger.getLogger(ConsumerProductServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ConsumerProductServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ConsumerProductDAO consumerProductDAO;

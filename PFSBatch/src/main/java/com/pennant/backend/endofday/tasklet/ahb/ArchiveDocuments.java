@@ -8,7 +8,8 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -16,19 +17,20 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.ArchivalService;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class ArchiveDocuments implements Tasklet {
 
-	private Logger logger = Logger.getLogger(ArchiveDocuments.class);
+	private Logger logger = LogManager.getLogger(ArchiveDocuments.class);
 
 	private ArchivalService archivalService;
 	private DataSource dataSource;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		Date appDate = SysParamUtil.getAppDate();
+		Date appDate = EODUtil.getDate("APP_DATE", context);
+		;
 
 		logger.debug("START: Archive Documents for Value Date: " + appDate);
 
@@ -44,7 +46,7 @@ public class ArchiveDocuments implements Tasklet {
 			financeResultSet = financeStatement.executeQuery();
 
 			while (financeResultSet.next()) {
-				getArchivalService().doDocumentArchive(financeResultSet);
+				archivalService.doDocumentArchive(financeResultSet);
 			}
 
 		} catch (SQLException e) {

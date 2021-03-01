@@ -46,7 +46,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.map.HashedMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -73,7 +74,7 @@ import com.pennanttech.pennapps.lic.License;
 
 public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 	private static final long serialVersionUID = 5633232048842356789L;
-	private static final Logger logger = Logger.getLogger(MessageBarCtrl.class);
+	private static final Logger logger = LogManager.getLogger(MessageBarCtrl.class);
 
 	protected Window statusBar;
 	//protected Row statusBarSections;

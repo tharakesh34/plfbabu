@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruction>
 		implements PaymentInstructionService {
-	private static final Logger logger = Logger.getLogger(PaymentInstructionServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PaymentInstructionServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PaymentInstructionDAO paymentInstructionDAO;

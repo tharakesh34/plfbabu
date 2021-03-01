@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>RelationshipOfficer</code> with set of CRUD operations.
  */
 public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> implements RelationshipOfficerDAO {
-	private static Logger logger = Logger.getLogger(RelationshipOfficerDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(RelationshipOfficerDAOImpl.class);
 
 	public RelationshipOfficerDAOImpl() {
 		super();
@@ -107,7 +108,8 @@ public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> im
 		try {
 			relationshipOfficer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn("Records are not found in RelationshipOfficers{} for the specified ROfficerCode >> {}", type,
+					id);
 			relationshipOfficer = null;
 		}
 		logger.debug("Leaving");

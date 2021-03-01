@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
@@ -32,7 +33,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class VasMovementDetailServiceImpl implements CheckListDetailService {
-	private static final Logger logger = Logger.getLogger(VasMovementDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(VasMovementDetailServiceImpl.class);
 
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;

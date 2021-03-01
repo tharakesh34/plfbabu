@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -37,7 +38,7 @@ import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.PresentmentRequest;
 
 public class DefaultPresentmentRequest extends AbstractInterface implements PresentmentRequest {
-	protected static final Logger logger = Logger.getLogger(DefaultPresentmentRequest.class);
+	protected static final Logger logger = LogManager.getLogger(DefaultPresentmentRequest.class);
 
 	private static final String STATUS = "STATUS";
 

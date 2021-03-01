@@ -49,7 +49,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>IRRFeeType</code> with set of CRUD operations.
  */
 public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTypeDAO {
-	private static Logger logger = Logger.getLogger(IRRFeeTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(IRRFeeTypeDAOImpl.class);
 
 	public IRRFeeTypeDAOImpl() {
 		super();

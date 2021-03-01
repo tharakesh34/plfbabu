@@ -50,7 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -168,7 +169,7 @@ import net.sf.jasperreports.engine.JRException;
  */
 public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = -6646226859133636932L;
-	private static final Logger logger = Logger.getLogger(FinanceEnquiryHeaderDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceEnquiryHeaderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -726,7 +727,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_VerificationEnquiry.value"));
 			FinanceDetail financeDetail = new FinanceDetail();
+			FinanceMain financeMain = new FinanceMain();
+			financeMain.setFinCcy(enquiry.getFinCcy());
+			financeMain.setFinReference(this.finReference);
 			financeDetail.getFinScheduleData().setFinReference(this.finReference);
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 			if (enquiry.getCustID() != 0 && enquiry.getCustID() != Long.MIN_VALUE) {
 				financeDetail.setCustomerDetails(
 						customerDetailsService.getCustomerDetailsById(enquiry.getCustID(), true, "_AView"));

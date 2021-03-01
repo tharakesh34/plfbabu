@@ -27,7 +27,8 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.AMedia;
@@ -162,7 +163,7 @@ import com.rits.cloning.Cloner;
 
 public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = Logger.getLogger(LoanClosureEnquiryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LoanClosureEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -1945,7 +1946,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				aeEvent.setDataMap(dataMap);
 
 				// Accounting Entry Execution
-				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+				engineExecution.getAccEngineExecResults(aeEvent);
 				returnSetEntries.addAll(aeEvent.getReturnDataSet());
 
 				amountCodes.setToExcessAmt(BigDecimal.ZERO);
@@ -2342,7 +2343,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				prepareFeeRulesMap(amountCodes, dataMap, receiptDetail.getPaymentType());
 			}
 			aeEvent.setDataMap(dataMap);
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+			engineExecution.getAccEngineExecResults(aeEvent);
 			returnSetEntries.addAll(aeEvent.getReturnDataSet());
 
 			if (amountCodes.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0
@@ -2374,7 +2375,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				aeEvent.getDataMap().put("LPP_IGST_W", penaltyIGSTWaived);
 				aeEvent.getDataMap().put("LPP_CESS_W", penaltyCESSWaived);
 
-				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+				engineExecution.getAccEngineExecResults(aeEvent);
 				returnSetEntries.addAll(aeEvent.getReturnDataSet());
 			}
 
@@ -2580,7 +2581,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				aeEvent.setDataMap(dataMap);
 
 				// Accounting Entry Execution
-				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+				engineExecution.getAccEngineExecResults(aeEvent);
 				returnSetEntries.addAll(aeEvent.getReturnDataSet());
 
 			}
@@ -2626,7 +2627,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 
 					aeEvent.setDataMap(dataMap);
-					aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+					engineExecution.getAccEngineExecResults(aeEvent);
 
 					// FIXME: PV: 04MAY17 why separate method is required for
 					// commitment dialog show

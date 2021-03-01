@@ -48,7 +48,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
@@ -60,7 +61,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 public class StatusMovementService extends ServiceHelper {
 
 	private static final long serialVersionUID = 4165353615228874397L;
-	private static Logger logger = Logger.getLogger(StatusMovementService.class);
+	private static Logger logger = LogManager.getLogger(StatusMovementService.class);
 
 	static final String NORM_PD = "select * from FinPftDetails where CurODDays=1 and PrvODDate = ? and  CustId = ?";
 	static final String PD_NORM = " select * from (select FinReference, SUM(FinCurODAmt) FinCurODAmt,MAX(FinODTillDate) FinODTillDate  from FInODDetails group by FinReference)t "

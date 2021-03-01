@@ -44,7 +44,8 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -60,7 +61,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * DAO methods implementation for the <b>WIFIRRScheduleDetail model</b> class.<br>
  */
 public class IRRScheduleDetailDAOImpl extends BasicDao<IRRScheduleDetail> implements IRRScheduleDetailDAO {
-	private static Logger logger = Logger.getLogger(IRRScheduleDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(IRRScheduleDetailDAOImpl.class);
 
 	public IRRScheduleDetailDAOImpl() {
 		super();

@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.dao.externalinterface.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class InterfaceConfigurationDAOImpl extends SequenceDao<InterfaceConfiguration>
 		implements InterfaceConfigurationDAO {
-	private static Logger logger = Logger.getLogger(InterfaceConfigurationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(InterfaceConfigurationDAOImpl.class);
 
 	public InterfaceConfigurationDAOImpl() {
 		super();

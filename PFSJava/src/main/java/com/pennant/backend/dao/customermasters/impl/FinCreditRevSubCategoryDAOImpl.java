@@ -47,7 +47,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -71,7 +72,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class FinCreditRevSubCategoryDAOImpl extends BasicDao<FinCreditRevSubCategory>
 		implements FinCreditRevSubCategoryDAO {
-	private static Logger logger = Logger.getLogger(FinCreditRevSubCategoryDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinCreditRevSubCategoryDAOImpl.class);
 
 	public FinCreditRevSubCategoryDAOImpl() {
 		super();

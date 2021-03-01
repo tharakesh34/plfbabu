@@ -44,7 +44,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -58,7 +59,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 
 public class FeeScheduleCalculator {
-	private static final Logger logger = Logger.getLogger(FeeScheduleCalculator.class);
+	private static final Logger logger = LogManager.getLogger(FeeScheduleCalculator.class);
 
 	private FeeScheduleCalculator() {
 		super();

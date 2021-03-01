@@ -54,7 +54,8 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
@@ -110,7 +111,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	private static final long serialVersionUID = 6496923785082021678L;
-	private static final Logger logger = Logger.getLogger(ScoringGroupDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ScoringGroupDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -158,7 +159,6 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	private PagedListWrapper<ScoringSlab> scoringSlabPagedListWrapper;
 	private List<ScoringMetrics> scoringMetricList = new ArrayList<ScoringMetrics>();
 	private PagedListWrapper<ScoringMetrics> scoringMetricsPagedListWrapper;
-	private RuleExecutionUtil ruleExecutionUtil;
 
 	private List<ScoringMetrics> finScoringMetricList = new ArrayList<ScoringMetrics>();
 	private List<ScoringMetrics> nonFinScoringMetricList = new ArrayList<ScoringMetrics>();
@@ -1606,8 +1606,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 							fieldValuesMap.put(fields[j], BigDecimal.ONE);
 						}
 					}
-					code = String.valueOf(this.ruleExecutionUtil.executeRule("Result = " + code + ";", fieldValuesMap,
-							null, RuleReturnType.INTEGER)); //FIXME Why Code is being Used and Unnecessary Conversions to be Removed 
+					code = String.valueOf(RuleExecutionUtil.executeRule("Result = " + code + ";", fieldValuesMap, null,
+							RuleReturnType.INTEGER)); //FIXME Why Code is being Used and Unnecessary Conversions to be Removed 
 				}
 
 				if (new BigDecimal(code.trim()).compareTo(max) > 0) {
@@ -1880,9 +1880,4 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	public void setFinScoreMap(Map<Long, List<ScoringMetrics>> finScoreMap) {
 		this.finScoreMap = finScoreMap;
 	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
 }

@@ -52,7 +52,8 @@ import javax.ws.rs.ProcessingException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,7 +103,7 @@ import com.pennanttech.pff.external.CustomerDedupService;
  * 
  */
 public class DedupParmServiceImpl extends GenericService<DedupParm> implements DedupParmService {
-	private static final Logger logger = Logger.getLogger(DedupParmServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DedupParmServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DedupParmDAO dedupParmDAO;

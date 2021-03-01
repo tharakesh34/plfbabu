@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -120,7 +121,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAPService {
-	private static final Logger logger = Logger.getLogger(CustomerWebServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerWebServiceImpl.class);
 
 	private CustomerController customerController;
 	private CustomerDetailsController customerDetailsController;

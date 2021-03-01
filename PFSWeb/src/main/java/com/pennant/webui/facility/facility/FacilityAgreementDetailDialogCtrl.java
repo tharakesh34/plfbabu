@@ -51,7 +51,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -116,7 +117,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(FacilityAgreementDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FacilityAgreementDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

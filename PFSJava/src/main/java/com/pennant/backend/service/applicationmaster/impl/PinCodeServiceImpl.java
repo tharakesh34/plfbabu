@@ -43,7 +43,8 @@
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>PinCode</b>.<br>
  */
 public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCodeService {
-	private static final Logger logger = Logger.getLogger(PinCodeServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PinCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PinCodeDAO pinCodeDAO;

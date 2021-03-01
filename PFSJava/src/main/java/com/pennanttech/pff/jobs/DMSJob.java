@@ -1,6 +1,7 @@
 package com.pennanttech.pff.jobs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.CronExpression;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -15,7 +16,7 @@ import com.pennanttech.pennapps.dms.service.DMSService;
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
 public class DMSJob implements Job {
-	private static Logger logger = Logger.getLogger(DMSJob.class);
+	private static Logger logger = LogManager.getLogger(DMSJob.class);
 
 	public static final String JOB_KEY = "DMS_JOB";
 	public static final String JOB_KEY_DESCRIPTION = "File Based Document Management System";

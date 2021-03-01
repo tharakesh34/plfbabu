@@ -50,7 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwnersDAO {
-	private static Logger logger = Logger.getLogger(TaskOwnersDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(TaskOwnersDAOImpl.class);
 
 	public TaskOwnersDAOImpl() {
 		super();
@@ -234,7 +235,8 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record not found in Task_Owners table for the specified Reference >> {} and Role Code >> {}",
+					finReference, roleCode);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -267,8 +269,6 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 
 	@Override
 	public String getUserRoleCodeByRefernce(long userId, String reference, List<String> userRoles) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" RoleCode");
 		sql.append(" from Task_Owners");
@@ -302,7 +302,9 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 			try {
 				return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 			} catch (EmptyResultDataAccessException e1) {
-				logger.warn(Literal.EXCEPTION, e1);
+				logger.warn(
+						"Record not found in Task_Owners table for the specified Reference >> {} and CurrentOwner {} and UserRoles >> {} ",
+						reference, 0, userRoles);
 				return null;
 			}
 		} catch (IncorrectResultSizeDataAccessException e) {

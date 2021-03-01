@@ -3,7 +3,8 @@ package com.pennant.corebanking.process.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.model.CoreBankAvailCustomer;
@@ -17,7 +18,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerDataProcessImpl extends GenericProcess implements CustomerDataProcess {
 
-	private static Logger logger = Logger.getLogger(CustomerDataProcessImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerDataProcessImpl.class);
 	private InterfaceDAO interfaceDAO;
 
 	public CustomerDataProcessImpl() {

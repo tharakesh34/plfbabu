@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.dealermapping.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,7 +21,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 
 public class DealerMappingDAOImpl extends SequenceDao<DealerMapping> implements DealerMappingDAO {
 
-	private final static Logger logger = Logger.getLogger(DealerMappingDAOImpl.class);
+	private final static Logger logger = LogManager.getLogger(DealerMappingDAOImpl.class);
 
 	@Override
 	public String save(DealerMapping dealerMapping, TableType tableType) {

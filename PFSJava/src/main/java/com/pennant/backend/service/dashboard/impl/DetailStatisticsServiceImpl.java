@@ -4,7 +4,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.dashboard.DetailStatisticsDAO;
 import com.pennant.backend.dao.dashboard.DetailStatisticsHeaderDAO;
@@ -14,7 +15,7 @@ import com.pennant.backend.service.dashboard.DetailStatisticsService;
 
 public class DetailStatisticsServiceImpl implements DetailStatisticsService {
 
-	private static final Logger logger = Logger.getLogger(DetailStatisticsServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DetailStatisticsServiceImpl.class);
 
 	DetailStatisticsDAO detailStatisticsDAO;
 	DetailStatisticsHeaderDAO detailStatisticsHeaderDAO;

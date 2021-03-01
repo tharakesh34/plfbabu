@@ -45,7 +45,8 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> implements FinExpenseDetailsDAO {
-	private static Logger logger = Logger.getLogger(FinExpenseDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinExpenseDetailsDAOImpl.class);
 
 	public FinExpenseDetailsDAOImpl() {
 		super();

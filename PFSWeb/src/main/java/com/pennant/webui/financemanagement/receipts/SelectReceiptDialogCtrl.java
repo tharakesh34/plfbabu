@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -75,7 +76,7 @@ import com.pennanttech.pff.receipt.upload.MultiReceiptThreadProcess;
 public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private static final long serialVersionUID = 8556168885363682933L;
-	private static final Logger logger = Logger.getLogger(SelectReceiptDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SelectReceiptDialogCtrl.class);
 
 	protected Window window_SelectReceiptDialog;
 	protected ExtendedCombobox fundingAccount;
@@ -113,8 +114,6 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	@Autowired
 	private RuleService ruleService;
-	@Autowired
-	private RuleExecutionUtil ruleExecutionUtil;
 	@Autowired
 	private MultiReceiptThreadProcess threadprocess;
 
@@ -579,7 +578,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					BigDecimal bounceAmt = BigDecimal.ZERO;
 					if (rule != null) {
 						executeMap.put("br_finType", receiptHeader.getFinType());
-						bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executeMap,
+						bounceAmt = (BigDecimal) RuleExecutionUtil.executeRule(rule.getSQLRule(), executeMap,
 								receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
 
 						ManualAdvise bounce = new ManualAdvise();
@@ -940,13 +939,4 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
 }

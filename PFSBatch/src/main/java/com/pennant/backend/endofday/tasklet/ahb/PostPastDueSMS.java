@@ -10,7 +10,8 @@ import java.util.Date;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -26,10 +27,11 @@ import com.pennant.eod.BatchFileUtil;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class PostPastDueSMS implements Tasklet {
 
-	private Logger logger = Logger.getLogger(PostPastDueSMS.class);
+	private Logger logger = LogManager.getLogger(PostPastDueSMS.class);
 
 	private DataSource dataSource;
 	private ExtTablesDAO extTablesDAO;
@@ -40,7 +42,7 @@ public class PostPastDueSMS implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = EODUtil.getDate("APP_DATE", context);
 
 		logger.debug("START: Finance Data Feed for Value Date: " + appDate);
 

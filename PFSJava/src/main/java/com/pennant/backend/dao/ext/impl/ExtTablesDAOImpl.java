@@ -6,7 +6,8 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,7 +23,7 @@ import com.pennant.backend.model.finance.salary.FinSalariedPayment;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO {
-	private static Logger logger = Logger.getLogger(ExtTablesDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ExtTablesDAOImpl.class);
 
 	public ExtTablesDAOImpl() {
 		super();

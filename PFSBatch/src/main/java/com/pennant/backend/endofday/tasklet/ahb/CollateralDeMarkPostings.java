@@ -7,7 +7,8 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -16,12 +17,12 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.core.CollateralService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class CollateralDeMarkPostings implements Tasklet {
-	private Logger logger = Logger.getLogger(CollateralDeMarkPostings.class);
+	private Logger logger = LogManager.getLogger(CollateralDeMarkPostings.class);
 
 	private DataSource dataSource;
 	private CollateralService collateralService;
@@ -33,8 +34,7 @@ public class CollateralDeMarkPostings implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
 		int processed = 0;
-
-		Date valueDate = SysParamUtil.getAppValueDate();
+		Date valueDate = EODUtil.getDate("APP_VALUEDATE", context);
 
 		logger.debug("START: Collateral Demarking Postings for Value Date: " + valueDate);
 

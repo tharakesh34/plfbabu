@@ -50,7 +50,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
@@ -87,7 +88,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class CovenantsServiceImpl extends GenericService<Covenant> implements CovenantsService {
-	private static final Logger logger = Logger.getLogger(CovenantsServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CovenantsServiceImpl.class);
 
 	private CovenantsDAO covenantsDAO;
 	private FinanceMainDAO financeMainDAO;

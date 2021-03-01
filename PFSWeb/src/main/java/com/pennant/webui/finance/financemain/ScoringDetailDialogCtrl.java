@@ -49,7 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -102,7 +103,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(ScoringDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ScoringDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -160,8 +161,6 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	private CustomerService customerService;
 	private RatingCodeService ratingCodeService;
 	private CreditReviewSummaryData creditReviewSummaryData;
-	private RuleExecutionUtil ruleExecutionUtil;
-
 	private Object financeMainDialogCtrl;
 	private BigDecimal[] scores = null;
 	String userRole = "";
@@ -1069,8 +1068,8 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 							fieldValuesMap.put(fields[j], BigDecimal.ONE);
 						}
 					}
-					code = String.valueOf(this.ruleExecutionUtil.executeRule("Result = " + code + ";", fieldValuesMap,
-							null, RuleReturnType.INTEGER)); //FIXME Code should be checked
+					code = String.valueOf(RuleExecutionUtil.executeRule("Result = " + code + ";", fieldValuesMap, null,
+							RuleReturnType.INTEGER)); //FIXME Code should be checked
 				}
 
 				if (new BigDecimal(code.trim()).compareTo(max) > 0) {
@@ -1648,10 +1647,6 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 
 	public boolean isScoreExecuted() {
 		return scoreExecuted;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	private String getUserRole() {

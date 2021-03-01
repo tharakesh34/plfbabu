@@ -56,7 +56,8 @@ import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -93,7 +94,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PromotionListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PromotionListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

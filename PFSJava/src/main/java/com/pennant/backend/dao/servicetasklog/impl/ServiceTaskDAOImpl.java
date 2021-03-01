@@ -4,7 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -22,7 +23,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ServiceTaskDAOImpl extends SequenceDao<ServiceTaskDetail> implements ServiceTaskDAO {
-	private static Logger logger = Logger.getLogger(ServiceTaskDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ServiceTaskDAOImpl.class);
 
 	public ServiceTaskDAOImpl() {
 		super();

@@ -54,7 +54,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -158,7 +159,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
  */
 public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CollateralSetupDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CollateralSetupDialogCtrl.class);
 
 	protected Window window_CollateralSetupDialog;
 
@@ -233,7 +234,6 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private CollateralSetup collateralSetup;
 	private transient CollateralSetupListCtrl collateralSetupListCtrl;
 	private transient CollateralSetupService collateralSetupService;
-	private transient RuleExecutionUtil ruleExecutionUtil;
 	private NotificationService notificationService;
 	private FinanceReferenceDetailService financeReferenceDetailService;
 
@@ -818,7 +818,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 
 		try {
-			ruleResult = getRuleExecutionUtil().executeRule(structure.getSQLRule(), declaredMap,
+			ruleResult = RuleExecutionUtil.executeRule(structure.getSQLRule(), declaredMap,
 					aCollateralSetup.getCollateralCcy(), RuleReturnType.DECIMAL);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -3206,14 +3206,6 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	public void setSelectedAnsCountMap(HashMap<Long, Long> selectedAnsCountMap) {
 		this.selectedAnsCountMap = selectedAnsCountMap;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public List<FinFlagsDetail> getFinFlagsDetailList() {

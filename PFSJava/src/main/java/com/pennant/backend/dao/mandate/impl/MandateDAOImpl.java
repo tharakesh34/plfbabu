@@ -51,7 +51,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -75,7 +76,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
-	private static Logger logger = Logger.getLogger(MandateDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(MandateDAOImpl.class);
 
 	public MandateDAOImpl() {
 		super();
@@ -176,22 +177,21 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 	@Override
 	public Mandate getMandateByOrgReference(final String orgReference, String status, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where OrgReference = ?  and Status = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		MandateRowMapper rowMapper = new MandateRowMapper(type);
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { orgReference, status }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(
+					"Mandate not found in Mandates{} table/view for the specified OrgReference >> {} and Status >> {}",
+					type, orgReference, status);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

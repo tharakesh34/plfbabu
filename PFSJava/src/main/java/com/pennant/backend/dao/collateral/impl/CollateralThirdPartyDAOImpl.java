@@ -1,10 +1,10 @@
 package com.pennant.backend.dao.collateral.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,9 +17,10 @@ import com.pennant.backend.dao.collateral.CollateralThirdPartyDAO;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> implements CollateralThirdPartyDAO {
-	private static Logger logger = Logger.getLogger(CollateralThirdPartyDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CollateralThirdPartyDAOImpl.class);
 
 	public CollateralThirdPartyDAOImpl() {
 		super();
@@ -141,38 +142,49 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 
 	@Override
 	public List<CollateralThirdParty> getCollThirdPartyDetails(String collateralRef, String type) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
-
-		sql = new StringBuilder();
-		sql.append(" Select CollateralRef, CustomerId, Version, LastMntBy, LastMntOn, ");
-		sql.append(" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CollateralRef, CustomerId, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (type.contains("View")) {
-			sql.append(", custCIF, custShrtName, custCRCPR, custPassportNo, custNationality, custCtgCode ");
+			sql.append(", CustCIF, CustShrtName, CustCRCPR, CustPassportNo, CustNationality, CustCtgCode");
 		}
-		sql.append(" From CollateralThirdParty");
+		sql.append(" from CollateralThirdParty");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where CollateralRef = :CollateralRef");
-		logger.debug("selectSql: " + sql.toString());
+		sql.append(" Where CollateralRef = ?");
 
-		source = new MapSqlParameterSource();
-		source.addValue("CollateralRef", collateralRef);
+		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<CollateralThirdParty> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CollateralThirdParty.class);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, collateralRef);
+		}, (rs, rowNum) -> {
+			CollateralThirdParty ctp = new CollateralThirdParty();
 
-		List<CollateralThirdParty> list = null;
-		try {
-			list = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			list = new ArrayList<>();
-		} finally {
-			source = null;
-			sql = null;
-		}
-		return list;
+			ctp.setCollateralRef(rs.getString("CollateralRef"));
+			ctp.setCustomerId(rs.getLong("CustomerId"));
+			ctp.setVersion(rs.getInt("Version"));
+			ctp.setLastMntBy(rs.getLong("LastMntBy"));
+			ctp.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ctp.setRecordStatus(rs.getString("RecordStatus"));
+			ctp.setRoleCode(rs.getString("RoleCode"));
+			ctp.setNextRoleCode(rs.getString("NextRoleCode"));
+			ctp.setTaskId(rs.getString("TaskId"));
+			ctp.setNextTaskId(rs.getString("NextTaskId"));
+			ctp.setRecordType(rs.getString("RecordType"));
+			ctp.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (type.contains("View")) {
+				ctp.setCustCIF(rs.getString("CustCIF"));
+				ctp.setCustShrtName(rs.getString("CustShrtName"));
+				ctp.setCustCRCPR(rs.getString("CustCRCPR"));
+				ctp.setCustPassportNo(rs.getString("CustPassportNo"));
+				ctp.setCustNationality(rs.getString("CustNationality"));
+				ctp.setCustCtgCode(rs.getString("CustCtgCode"));
+			}
+
+			return ctp;
+		});
+
 	}
 
 	/**

@@ -4,7 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Iframe;
@@ -25,7 +26,7 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 	protected Iframe document;
 	protected Label label_RefId;
 
-	private static final Logger logger = Logger.getLogger(ImageViewCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ImageViewCtrl.class);
 
 	public ImageViewCtrl() {
 		super();

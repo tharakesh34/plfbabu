@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
@@ -52,7 +53,7 @@ import com.pennanttech.pff.external.HoldFinanceService;
 import com.pennanttech.pff.external.LegalDeskService;
 
 public class FinanceExternalServiceTask implements CustomServiceTask {
-	private static final Logger logger = Logger.getLogger(FinanceExternalServiceTask.class);
+	private static final Logger logger = LogManager.getLogger(FinanceExternalServiceTask.class);
 
 	// Open the below commented code once pff-interface configuration setup completed.
 	@Autowired(required = false)

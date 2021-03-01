@@ -47,7 +47,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -57,6 +58,8 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.finance.FinanceRateReviewDAO;
 import com.pennant.backend.model.finance.FinanceRateReview;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>RepayInstruction model</b> class.<br>
@@ -64,7 +67,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 
 public class FinanceRateReviewDAOImpl extends BasicDao<FinanceRateReview> implements FinanceRateReviewDAO {
-	private static Logger logger = Logger.getLogger(FinanceRateReviewDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceRateReviewDAOImpl.class);
 
 	public FinanceRateReviewDAOImpl() {
 		super();
@@ -108,22 +111,30 @@ public class FinanceRateReviewDAOImpl extends BasicDao<FinanceRateReview> implem
 	}
 
 	@Override
-	public void save(FinanceRateReview financeRateReview) {
-		logger.debug("Entering");
+	public void save(FinanceRateReview frr) {
+		StringBuilder sql = new StringBuilder("Insert Into ");
+		sql.append(" FinanceRateReview");
+		sql.append(" (FinReference, RateType, Currency, ValueDate, EffectiveDate, EventFromDate");
+		sql.append(", EventToDate, RecalFromdate, RecalToDate, EMIAmount) ");
+		sql.append(" Values (?, ?, ?, ? , ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into ");
-		insertSql.append(" FinanceRateReview");
-		insertSql.append(" ( FinReference, RateType, Currency,ValueDate, EffectiveDate, EventFromDate, EventToDate, ");
-		insertSql.append("  RecalFromdate, RecalToDate, EMIAmount ) ");
-		insertSql
-				.append(" Values ( :FinReference, :RateType, :Currency, :ValueDate , :EffectiveDate, :EventFromDate, ");
-		insertSql.append(" :EventToDate, :RecalFromdate, :RecalToDate, :EMIAmount)");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRateReview);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+			ps.setString(index++, frr.getFinReference());
+			ps.setString(index++, frr.getRateType());
+			ps.setString(index++, frr.getCurrency());
+			ps.setDate(index++, JdbcUtil.getDate(frr.getValueDate()));
+			ps.setDate(index++, JdbcUtil.getDate(frr.getEffectiveDate()));
+			ps.setDate(index++, JdbcUtil.getDate(frr.getEventFromDate()));
+			ps.setDate(index++, JdbcUtil.getDate(frr.getEventToDate()));
+			ps.setDate(index++, JdbcUtil.getDate(frr.getRecalFromdate()));
+			ps.setDate(index++, JdbcUtil.getDate(frr.getRecalToDate()));
+			ps.setBigDecimal(index++, frr.geteMIAmount());
+		});
+
 	}
 
 }

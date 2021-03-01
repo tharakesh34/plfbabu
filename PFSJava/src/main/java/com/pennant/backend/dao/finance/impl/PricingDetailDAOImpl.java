@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.finance.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.dao.finance.PricingDetailDAO;
@@ -10,7 +11,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class PricingDetailDAOImpl extends SequenceDao<PricingDetail> implements PricingDetailDAO {
 
-	private static Logger logger = Logger.getLogger(PricingDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PricingDetailDAOImpl.class);
 
 	public PricingDetailDAOImpl() {
 		super();

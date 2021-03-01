@@ -54,7 +54,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -86,7 +87,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>PresentmentHeader</code> with set of CRUD operations.
  */
 public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> implements PresentmentDetailDAO {
-	private static Logger logger = Logger.getLogger(PresentmentDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PresentmentDetailDAOImpl.class);
 
 	private DataSource dataSource;
 
@@ -232,7 +233,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	@Override
 	public long getSeqNumber(String tableName) {
-		return getNextId(tableName);
+		return getNextValue(tableName);
 	}
 
 	@Override
@@ -240,7 +241,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		logger.debug(Literal.ENTERING);
 
 		if (detail.getId() == Long.MIN_VALUE) {
-			detail.setId(getNextId("SEQPRESENTMENTDETAILS"));
+			detail.setId(getNextValue("SEQPRESENTMENTDETAILS"));
 		}
 		if (detail.getPresentmentRef() != null) {
 			String reference = detail.getPresentmentRef();
@@ -293,7 +294,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			sql.append(
 					" FEESCHD, SCHDFEEPAID, INSSCHD, T2.MANDATEID, T1.DEFSCHDDATE, T4.MANDATETYPE, T4.EMANDATESOURCE, T4.STATUS,");
 			sql.append(" T4.EXPIRYDATE, T2.FINTYPE LOANTYPE, T5.BRANCHCODE, T1.TDSAMOUNT, T6.BANKCODE, T7.ENTITYCODE,");
-			sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH, T1.BPIORHOLIDAY, T2.BPITREATMENT ");
+			sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH, T1.BPIORHOLIDAY, T2.BPITREATMENT");
 			sql.append(", T2.GRCADVTYPE, T2.ADVTYPE, T2.GRCPERIODENDDATE,T2.ADVSTAGE ,T4.PARTNERBANKID ");
 			sql.append(", T1.BPIORHOLIDAY, T2.BPITREATMENT, T2.GRCADVTYPE, T2.ADVTYPE");
 			sql.append(", T2.GRCPERIODENDDATE, T2.ADVSTAGE");
@@ -346,25 +347,27 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				sql.append(" AND (T7.ENTITYCODE = ?) ");
 			}
 
-			//For Presentment records not exit in the PresentmentDetails table with that scheduleDate
+			// For Presentment records not exit in the PresentmentDetails table with that scheduleDate
 			sql.append(" AND Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference ");
 			sql.append(
 					" AND T6.SCHDATE = T1.SCHDATE  AND (T6.ExcludeReason = '0' OR T6.ExcludeReason = '1' OR T6.ExcludeReason = '12' OR T6.ExcludeReason = '13' )) ");
 
-			//if record is manual exclude  and batch not complete approve in that case record not extracted again until batch is complete approve.
-			//#Bug Fix related to 135196
+			// if record is manual exclude and batch not complete approve in that case record not extracted again until
+			// batch is complete approve.
+			// #Bug Fix related to 135196
 			sql.append(
 					" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
 			sql.append(
 					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where  Status =1 OR  Status =2 OR Status =3 )) ");
 
 			if (ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK) {
-				sql.append("ORDER BY T1.DEFSCHDDATE, T6.BANKCODE, T7.EntityCode, T4.PARTNERBANKID");
+				sql.append("ORDER BY T6.BANKCODE, T1.DEFSCHDDATE, T7.EntityCode, T4.PARTNERBANKID");
 			} else {
-				sql.append("ORDER BY T1.DEFSCHDDATE, T6.BANKCODE, T7.EntityCode");
+				sql.append("ORDER BY T6.BANKCODE, T1.DEFSCHDDATE, T7.EntityCode");
 			}
 
-			//sql.append(" AND T6.ExcludeReason = '0' AND T6.ExcludeReason <> '6'  AND T6.STATUS <> 'A')  ORDER BY T1.DEFSCHDDATE ");
+			// sql.append(" AND T6.ExcludeReason = '0' AND T6.ExcludeReason <> '6' AND T6.STATUS <> 'A') ORDER BY
+			// T1.DEFSCHDDATE ");
 
 			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
 			stmt = conn.prepareStatement(sql.toString());
@@ -488,13 +491,14 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				sql.append(" AND (T7.ENTITYCODE = ?) ");
 			}
 
-			//For Presentment records not exit in the PresentmentDetails table with that scheduleDate
+			// For Presentment records not exit in the PresentmentDetails table with that scheduleDate
 			sql.append(" AND Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference ");
 			sql.append(
 					" AND T6.SCHDATE = T1.SCHDATE  AND (T6.ExcludeReason = '0' OR T6.ExcludeReason = '1'  OR T6.ExcludeReason = '12' OR T6.ExcludeReason = '13' )) ");
 
-			//if record is manual exclude  and batch not complete approve in that case record not extracted again until batch is complete approve.
-			//#Bug Fix related to 135196
+			// if record is manual exclude and batch not complete approve in that case record not extracted again until
+			// batch is complete approve.
+			// #Bug Fix related to 135196
 			sql.append(
 					" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
 			sql.append(
@@ -646,8 +650,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		//Fix related Bulk-Processing in case of list having huge records IN operator is not working.
-		//So instead on IN Operator using BatchUpdate.
+		// Fix related Bulk-Processing in case of list having huge records IN operator is not working.
+		// So instead on IN Operator using BatchUpdate.
 		List<MapSqlParameterSource> sources = new ArrayList<MapSqlParameterSource>();
 
 		for (Long id : list) {
@@ -975,71 +979,56 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, custId);
-					ps.setDate(index++, JdbcUtil.getDate(schData));
-					ps.setString(index++, RepayConstants.PEXC_APPROV);
-				}
-			}, new RowMapper<PresentmentDetail>() {
-				@Override
-				public PresentmentDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					PresentmentDetail pd = new PresentmentDetail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, custId);
+			ps.setDate(index++, JdbcUtil.getDate(schData));
+			ps.setString(index++, RepayConstants.PEXC_APPROV);
+		}, (rs, rowNum) -> {
+			PresentmentDetail pd = new PresentmentDetail();
 
-					//pd.setCustId(rs.getLong("CustId"));     (not available in bean)
-					//pd.setFinBranch(rs.getString("FinBranch"));  (not available in bean)
-					pd.setFinType(rs.getString("FinType"));
-					pd.setId(rs.getLong("Id"));
-					pd.setPresentmentId(rs.getLong("PresentmentId"));
-					pd.setFinReference(rs.getString("FinReference"));
-					pd.setSchDate(rs.getTimestamp("SchDate"));
-					pd.setMandateId(rs.getLong("MandateId"));
-					pd.setAdvanceAmt(rs.getBigDecimal("AdvanceAmt"));
-					pd.setExcessID(rs.getLong("ExcessID"));
-					pd.setPresentmentAmt(rs.getBigDecimal("PresentmentAmt"));
-					pd.setExcludeReason(rs.getInt("ExcludeReason"));
-					pd.setBounceID(rs.getLong("BounceID"));
-					pd.setAccountNo(rs.getString("AccountNo"));
-					pd.setAcType(rs.getString("AcType"));
+			// pd.setCustId(rs.getLong("CustId")); (not available in bean)
+			// pd.setFinBranch(rs.getString("FinBranch")); (not available in bean)
+			pd.setFinType(rs.getString("FinType"));
+			pd.setId(rs.getLong("Id"));
+			pd.setPresentmentId(rs.getLong("PresentmentId"));
+			pd.setFinReference(rs.getString("FinReference"));
+			pd.setSchDate(rs.getTimestamp("SchDate"));
+			pd.setMandateId(rs.getLong("MandateId"));
+			pd.setAdvanceAmt(rs.getBigDecimal("AdvanceAmt"));
+			pd.setExcessID(rs.getLong("ExcessID"));
+			pd.setPresentmentAmt(rs.getBigDecimal("PresentmentAmt"));
+			pd.setExcludeReason(rs.getInt("ExcludeReason"));
+			pd.setBounceID(rs.getLong("BounceID"));
+			pd.setAccountNo(rs.getString("AccountNo"));
+			pd.setAcType(rs.getString("AcType"));
 
-					return pd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			return pd;
+		});
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
 	}
 
 	@Override
 	public void updateReceptId(long id, long receiptID) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Update PRESENTMENTDETAILS set RECEIPTID = ? Where ID = ?");
 
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-
-		sql = new StringBuilder();
-		sql.append(" Update PRESENTMENTDETAILS set RECEIPTID = :RECEIPTID Where ID = :ID ");
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("ID", id);
-		source.addValue("RECEIPTID", receiptID);
 		try {
-			this.jdbcTemplate.update(sql.toString(), source);
+			this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					ps.setLong(1, receiptID);
+					ps.setLong(2, id);
+
+				}
+			});
 		} catch (Exception e) {
-			logger.error("Exception :", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
-		} finally {
-			source = null;
-			sql = null;
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	// Update the presentment status and bounceid

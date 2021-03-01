@@ -25,17 +25,13 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -57,7 +53,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> implements GuarantorDetailDAO {
-	private static Logger logger = Logger.getLogger(GuarantorDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(GuarantorDetailDAOImpl.class);
 
 	public GuarantorDetailDAOImpl() {
 		super();
@@ -337,8 +333,6 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 	@Override
 	public List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType");
 		sql.append(", GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProofName");
@@ -357,69 +351,56 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, new RowMapper<GuarantorDetail>() {
-				@Override
-				public GuarantorDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					GuarantorDetail gd = new GuarantorDetail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+		}, (rs, rowNum) -> {
+			GuarantorDetail gd = new GuarantorDetail();
 
-					gd.setGuarantorId(rs.getLong("GuarantorId"));
-					gd.setFinReference(rs.getString("FinReference"));
-					gd.setBankCustomer(rs.getBoolean("BankCustomer"));
-					gd.setGuarantorCIF(rs.getString("GuarantorCIF"));
-					gd.setGuarantorIDType(rs.getString("GuarantorIDType"));
-					gd.setGuarantorIDNumber(rs.getString("GuarantorIDNumber"));
-					gd.setGuarantorCIFName(rs.getString("GuarantorCIFName"));
-					gd.setGuranteePercentage(rs.getBigDecimal("GuranteePercentage"));
-					gd.setMobileNo(rs.getString("MobileNo"));
-					gd.setEmailId(rs.getString("EmailId"));
-					gd.setGuarantorProofName(rs.getString("GuarantorProofName"));
-					gd.setAddrHNbr(rs.getString("AddrHNbr"));
-					gd.setFlatNbr(rs.getString("FlatNbr"));
-					gd.setAddrStreet(rs.getString("AddrStreet"));
-					gd.setAddrLine1(rs.getString("AddrLine1"));
-					gd.setAddrLine2(rs.getString("AddrLine2"));
-					gd.setPOBox(rs.getString("POBox"));
-					gd.setAddrCity(rs.getString("AddrCity"));
-					gd.setAddrProvince(rs.getString("AddrProvince"));
-					gd.setAddrCountry(rs.getString("AddrCountry"));
-					gd.setAddrZIP(rs.getString("AddrZIP"));
-					gd.setRemarks(rs.getString("Remarks"));
-					gd.setVersion(rs.getInt("Version"));
-					gd.setLastMntBy(rs.getLong("LastMntBy"));
-					gd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					gd.setRecordStatus(rs.getString("RecordStatus"));
-					gd.setRoleCode(rs.getString("RoleCode"));
-					gd.setNextRoleCode(rs.getString("NextRoleCode"));
-					gd.setTaskId(rs.getString("TaskId"));
-					gd.setNextTaskId(rs.getString("NextTaskId"));
-					gd.setRecordType(rs.getString("RecordType"));
-					gd.setWorkflowId(rs.getLong("WorkflowId"));
-					gd.setGuarantorProof(rs.getBytes("GuarantorProof"));
-					gd.setGuarantorGenderCode(rs.getString("GuarantorGenderCode"));
+			gd.setGuarantorId(rs.getLong("GuarantorId"));
+			gd.setFinReference(rs.getString("FinReference"));
+			gd.setBankCustomer(rs.getBoolean("BankCustomer"));
+			gd.setGuarantorCIF(rs.getString("GuarantorCIF"));
+			gd.setGuarantorIDType(rs.getString("GuarantorIDType"));
+			gd.setGuarantorIDNumber(rs.getString("GuarantorIDNumber"));
+			gd.setGuarantorCIFName(rs.getString("GuarantorCIFName"));
+			gd.setGuranteePercentage(rs.getBigDecimal("GuranteePercentage"));
+			gd.setMobileNo(rs.getString("MobileNo"));
+			gd.setEmailId(rs.getString("EmailId"));
+			gd.setGuarantorProofName(rs.getString("GuarantorProofName"));
+			gd.setAddrHNbr(rs.getString("AddrHNbr"));
+			gd.setFlatNbr(rs.getString("FlatNbr"));
+			gd.setAddrStreet(rs.getString("AddrStreet"));
+			gd.setAddrLine1(rs.getString("AddrLine1"));
+			gd.setAddrLine2(rs.getString("AddrLine2"));
+			gd.setPOBox(rs.getString("POBox"));
+			gd.setAddrCity(rs.getString("AddrCity"));
+			gd.setAddrProvince(rs.getString("AddrProvince"));
+			gd.setAddrCountry(rs.getString("AddrCountry"));
+			gd.setAddrZIP(rs.getString("AddrZIP"));
+			gd.setRemarks(rs.getString("Remarks"));
+			gd.setVersion(rs.getInt("Version"));
+			gd.setLastMntBy(rs.getLong("LastMntBy"));
+			gd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			gd.setRecordStatus(rs.getString("RecordStatus"));
+			gd.setRoleCode(rs.getString("RoleCode"));
+			gd.setNextRoleCode(rs.getString("NextRoleCode"));
+			gd.setTaskId(rs.getString("TaskId"));
+			gd.setNextTaskId(rs.getString("NextTaskId"));
+			gd.setRecordType(rs.getString("RecordType"));
+			gd.setWorkflowId(rs.getLong("WorkflowId"));
+			gd.setGuarantorProof(rs.getBytes("GuarantorProof"));
+			gd.setGuarantorGenderCode(rs.getString("GuarantorGenderCode"));
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						gd.setGuarantorIDTypeName(rs.getString("GuarantorIDTypeName"));
-						gd.setCustID(rs.getLong("CustID"));
-						gd.setCustShrtName(rs.getString("CustShrtName"));
-						gd.setLovCustDob(rs.getTimestamp("LovCustDob"));
-					}
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				gd.setGuarantorIDTypeName(rs.getString("GuarantorIDTypeName"));
+				gd.setCustID(rs.getLong("CustID"));
+				gd.setCustShrtName(rs.getString("CustShrtName"));
+				gd.setLovCustDob(rs.getTimestamp("LovCustDob"));
+			}
 
-					return gd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return gd;
+		});
 	}
 
 	@Override

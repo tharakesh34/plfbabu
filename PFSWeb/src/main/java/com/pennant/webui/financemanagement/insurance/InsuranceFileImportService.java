@@ -11,7 +11,8 @@ import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -55,7 +56,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class InsuranceFileImportService {
-	private static final Logger logger = Logger.getLogger(InsuranceFileImportService.class);
+	private static final Logger logger = LogManager.getLogger(InsuranceFileImportService.class);
 
 	private DataSource dataSource;
 	private InsuranceDetailService insuranceDetailService;

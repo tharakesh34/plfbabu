@@ -38,7 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.QueueAssignmentDAO;
 import com.pennant.backend.dao.TaskOwnersDAO;
@@ -58,7 +59,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> implements QueueAssignmentService {
-	private static final Logger logger = Logger.getLogger(QueueAssignmentServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(QueueAssignmentServiceImpl.class);
 
 	private QueueAssignmentDAO queueAssignmentDAO;
 	private TaskOwnersDAO taskOwnersDAO;
@@ -225,7 +226,8 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 			if (saveRecord) {
 				if (approveRec) {
 					if (queueDetail.getUserId() != 0) {
-						// If single user Insert one time and update remaining else Insert and Update counts in task_assignments table
+						// If single user Insert one time and update remaining else Insert and Update counts in
+						// task_assignments table
 						if (queueAssignment.isSingleUser()) {
 							if (i == 0) {
 								getQueueAssignmentDAO().save(queueDetail);
@@ -243,7 +245,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 									queueDetail.getUserRoleCode(), queueDetail.getFromUserId(), false, true);
 						}
 
-						//update task_owners table
+						// update task_owners table
 						TaskOwners owner = new TaskOwners();
 						owner.setReference(queueDetail.getReference());
 						owner.setRoleCode(queueDetail.getUserRoleCode());
@@ -382,15 +384,15 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 
 			boolean isRcdType = false;
 
-			if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+			if (PennantConstants.RCD_ADD.equalsIgnoreCase(queueDetail.getRecordType())) {
 				queueDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				isRcdType = true;
-			} else if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+			} else if (PennantConstants.RCD_UPD.equalsIgnoreCase(queueDetail.getRecordType())) {
 				queueDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				if (queueAssignment.isWorkflow()) {
 					isRcdType = true;
 				}
-			} else if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+			} else if (PennantConstants.RCD_DEL.equalsIgnoreCase(queueDetail.getRecordType())) {
 				queueDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
@@ -481,7 +483,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 		return auditHeader;
 	}
 
-	//Method for Deleting all records related to QueueAssignment in _Temp tables  depend on method type
+	// Method for Deleting all records related to QueueAssignment in _Temp tables depend on method type
 	public List<AuditDetail> listDeletion(QueueAssignmentHeader queueAssignmentHeader, String tableType,
 			String auditTranType) {
 		logger.debug("Entering");
@@ -535,7 +537,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 					}
 
 					if (StringUtils.isNotEmpty(transType)) {
-						//check and change below line for Complete code
+						// check and change below line for Complete code
 						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
 								.invoke(object, object.getClass().getClasses());
 						auditDetailsList.add(
@@ -568,6 +570,19 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 			aQueueAssignmentHeader.setFromUserId(0);
 		} else {
 			aQueueAssignmentHeader.setFromUserId(Long.parseLong(aQueueAssignmentHeader.getUserId()));
+		}
+
+		List<QueueAssignment> list = aQueueAssignmentHeader.getQueueAssignmentsList();
+
+		long usrId = Long.parseLong(aQueueAssignmentHeader.getUserId());
+		String module = aQueueAssignmentHeader.getModule();
+		for (QueueAssignment qa : list) {
+			if (qa.getModule() == null) {
+				qa.setModule(module);
+			}
+			if (qa.getUserId() == 0) {
+				qa.setUserId(usrId);
+			}
 		}
 		logger.debug("Leaving");
 		return aQueueAssignmentHeader;

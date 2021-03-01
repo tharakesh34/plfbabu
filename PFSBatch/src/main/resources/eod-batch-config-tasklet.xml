@@ -36,7 +36,7 @@
 
 	<bean id="corporatecibilTaskLet" class="com.pennant.backend.endofday.tasklet.CorporateCibil" />
 
-	<bean id="datesUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.DatesUpdate" />
+	<bean id="datesUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.DatesUpdate" parent="sequenceDao" />
 
 	<bean id="limitsUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.LimitsUpdate" />
 

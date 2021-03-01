@@ -46,7 +46,8 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements UploadHeaderDAO {
-	private static Logger logger = Logger.getLogger(UploadHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(UploadHeaderDAOImpl.class);
 
 	public UploadHeaderDAOImpl() {
 		super();

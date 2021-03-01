@@ -57,7 +57,10 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class EndOfMonthDecider implements JobExecutionDecider {
 	private static final Logger logger = LogManager.getLogger(EndOfMonthDecider.class);
@@ -83,11 +86,28 @@ public class EndOfMonthDecider implements JobExecutionDecider {
 
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
 		logger.debug(Literal.ENTERING);
-		Date valueDate = (Date) jobExecution.getExecutionContext().get("APP_VALUEDATE");
+		Object object = jobExecution.getExecutionContext().get(EODUtil.EVENT_PROPERTIES);
+		EventProperties eventProperties = new EventProperties();
+
+		Date valueDate = null;
+		int amzPostingEvent = 0;
+		boolean eomOnEOD = false;
+
+		if (object == null) {
+			valueDate = (Date) jobExecution.getExecutionContext().get("APP_VALUEDATE");
+			amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
+			eomOnEOD = SysParamUtil.isAllowed(SMTParameterConstants.EOM_ON_EOD);
+		} else {
+			eventProperties = (EventProperties) object;
+			valueDate = eventProperties.getAppValueDate();
+			amzPostingEvent = eventProperties.getAmzPostingEvent();
+			eomOnEOD = eventProperties.isEomOnEOD();
+		}
+
 		try {
 
 			boolean monthEnd = false;
-			int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
+
 			if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
 				if (valueDate.compareTo(DateUtility.getMonthEnd(valueDate)) == 0) {
 					monthEnd = true;
@@ -101,7 +121,7 @@ public class EndOfMonthDecider implements JobExecutionDecider {
 			}
 
 			/* If month start date then only it should run */
-			if (monthEnd || SysParamUtil.isAllowed("EOM_ON_EOD")) {
+			if (monthEnd || eomOnEOD) {
 				return new FlowExecutionStatus("EndOfMonth");
 			}
 

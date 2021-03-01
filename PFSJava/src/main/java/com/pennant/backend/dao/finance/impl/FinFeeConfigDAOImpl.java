@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -70,7 +71,7 @@ import com.pennanttech.pff.core.TableType;
  */
 
 public class FinFeeConfigDAOImpl extends SequenceDao<FinFeeDetail> implements FinFeeConfigDAO {
-	private static Logger logger = Logger.getLogger(FinFeeConfigDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinFeeConfigDAOImpl.class);
 
 	public FinFeeConfigDAOImpl() {
 		super();

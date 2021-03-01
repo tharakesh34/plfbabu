@@ -45,7 +45,8 @@ package com.pennant.webui.finance.enquiry;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -63,7 +64,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
  */
 public class FinancePurposeSelectDialogCtrl extends GFCBaseCtrl<FinanceEligibility> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(FinancePurposeSelectDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinancePurposeSelectDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

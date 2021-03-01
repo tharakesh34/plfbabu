@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>AddressType model</b> class.<br>
  */
 public class AddressTypeDAOImpl extends BasicDao<AddressType> implements AddressTypeDAO {
-	private static Logger logger = Logger.getLogger(AddressTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AddressTypeDAOImpl.class);
 
 	public AddressTypeDAOImpl() {
 		super();

@@ -75,7 +75,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -254,7 +255,7 @@ import com.rits.cloning.Cloner;
  */
 public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = Logger.getLogger(ReceiptDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -428,7 +429,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private ReceiptService receiptService;
 	private ReceiptCancellationService receiptCancellationService;
 	private FinanceDetailService financeDetailService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private AccountEngineExecution engineExecution;
 	private CommitmentService commitmentService;
 	private ReceiptCalculator receiptCalculator;
@@ -1592,7 +1592,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					executeMap.put("br_finType", receiptHeader.getFinType());
 					executeMap.put("eligibilityMethod",
 							financeDetail.getFinScheduleData().getFinanceMain().getEligibilityMethod());
-					bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executeMap,
+					bounceAmt = (BigDecimal) RuleExecutionUtil.executeRule(rule.getSQLRule(), executeMap,
 							receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
 					// unFormating BounceAmt
 					bounceAmt = PennantApplicationUtil.unFormateAmount(bounceAmt, formatter);
@@ -4935,7 +4935,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				aeEvent.setDataMap(dataMap);
 
 				// Accounting Entry Execution
-				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+				engineExecution.getAccEngineExecResults(aeEvent);
 				returnSetEntries.addAll(aeEvent.getReturnDataSet());
 
 				amountCodes.setToExcessAmt(BigDecimal.ZERO);
@@ -5274,7 +5274,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				prepareFeeRulesMap(amountCodes, dataMap, receiptDetail.getPaymentType());
 			}
 			aeEvent.setDataMap(dataMap);
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+			engineExecution.getAccEngineExecResults(aeEvent);
 			returnSetEntries.addAll(aeEvent.getReturnDataSet());
 
 			if (amountCodes.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0
@@ -5369,7 +5369,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				aeEvent.getDataMap().put("LPP_IGST_W", penaltyUGSTWaived);
 				aeEvent.getDataMap().put("LPP_CESS_W", penaltyCESSWaived);
 
-				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+				engineExecution.getAccEngineExecResults(aeEvent);
 				returnSetEntries.addAll(aeEvent.getReturnDataSet());
 			}
 
@@ -5585,7 +5585,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				aeEvent.setDataMap(dataMap);
 
 				// Accounting Entry Execution
-				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+				engineExecution.getAccEngineExecResults(aeEvent);
 				returnSetEntries.addAll(aeEvent.getReturnDataSet());
 
 			}
@@ -5631,7 +5631,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					}
 
 					aeEvent.setDataMap(dataMap);
-					aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+					engineExecution.getAccEngineExecResults(aeEvent);
 
 					// FIXME: PV: 04MAY17 why separate method is required for
 					// commitment dialog show
@@ -6576,32 +6576,22 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			// If Schedule Already Paid, not allowed to do Early settlement on
 			// same received date
 			// when Date is with in Grace and No Profit Payment case
-			if (financeMain.isAllowGrcPeriod()) {
-				boolean isAlwEarlyStl = true;
-				for (int i = 0; i < scheduleList.size(); i++) {
-					FinanceScheduleDetail curSchd = scheduleList.get(i);
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) == 0) {
-						if (DateUtility.compare(curSchd.getSchDate(), receiptData.getFinanceDetail()
-								.getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0) {
-							BigDecimal pftBal = scheduleList.get(i - 1).getProfitBalance().add(curSchd.getProfitCalc())
-									.subtract(curSchd.getSchdPftPaid())
-									.subtract(scheduleList.get(i - 1).getCpzAmount());
-
-							if (pftBal.compareTo(BigDecimal.ZERO) > 0 && curSchd.isSchPftPaid()) {
-								isAlwEarlyStl = false;
-								break;
-							}
-						}
-					} else if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) < 0) {
-						break;
-					}
-				}
-
-				if (!isAlwEarlyStl) {
-					MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_RePaid_EarlySettlement"));
-					return false;
-				}
-			}
+			/*
+			 * if (financeMain.isAllowGrcPeriod()) { boolean isAlwEarlyStl = true; for (int i = 0; i <
+			 * scheduleList.size(); i++) { FinanceScheduleDetail curSchd = scheduleList.get(i); if
+			 * (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) == 0) { if
+			 * (DateUtility.compare(curSchd.getSchDate(), receiptData.getFinanceDetail()
+			 * .getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0) { BigDecimal pftBal =
+			 * scheduleList.get(i - 1).getProfitBalance().add(curSchd.getProfitCalc())
+			 * .subtract(curSchd.getSchdPftPaid()) .subtract(scheduleList.get(i - 1).getCpzAmount());
+			 * 
+			 * if (pftBal.compareTo(BigDecimal.ZERO) > 0 && curSchd.isSchPftPaid()) { isAlwEarlyStl = false; break; } }
+			 * } else if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) < 0) { break; } }
+			 * 
+			 * if (!isAlwEarlyStl) {
+			 * MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_RePaid_EarlySettlement")); return false;
+			 * } }
+			 */
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -7092,7 +7082,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	private boolean isApprover() {
-		return getWorkFlow() != null && !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole());
+		return getWorkFlow() != null && !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())
+				&& !(receiptData.getReceiptHeader().getNextRoleCode().contains("MAKER"));
 	}
 
 	// ******************************************************//
@@ -7129,14 +7120,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
 	}
 
 	public AccountingDetailDialogCtrl getAccountingDetailDialogCtrl() {

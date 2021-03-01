@@ -56,7 +56,8 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -99,7 +100,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 public class FinScheduleListItemRenderer implements Serializable {
 
 	private static final long serialVersionUID = 598041940390030115L;
-	private static final Logger logger = Logger.getLogger(FinScheduleListItemRenderer.class);
+	private static final Logger logger = LogManager.getLogger(FinScheduleListItemRenderer.class);
 
 	protected FinScheduleData finScheduleData;
 	protected FinanceScheduleDetail financeScheduleDetail;

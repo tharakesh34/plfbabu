@@ -86,6 +86,65 @@ public class FinEODEvent implements Serializable {
 	private List<FinanceScheduleDetail> orgFinSchdDetails = new ArrayList<>(1);
 	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<>();
 
+	public FinEODEvent copyEntity() {
+		FinEODEvent entity = new FinEODEvent();
+		entity.setFinanceMain(this.financeMain);
+		entity.setFinType(this.finType);
+
+		for (FinanceScheduleDetail schd : this.financeScheduleDetails) {
+			entity.getFinanceScheduleDetails().add(schd.copyEntity());
+		}
+
+		entity.setFinanceScheduleDetails(this.financeScheduleDetails);
+		entity.setRepayInstructions(this.RepayInstructions);
+		entity.setFinProfitDetail(this.finProfitDetail);
+		entity.setFinODDetails(this.finODDetails);
+		entity.setFinODDetailsLBD(this.finODDetailsLBD);
+		entity.setOdcRecoveries(this.odcRecoveries);
+		entity.setPenaltyrate(this.penaltyrate);
+		entity.setFinanceDisbursements(this.financeDisbursements);
+		entity.setFinFeeScheduleDetails(this.finFeeScheduleDetails);
+		entity.setFinSchFrqInsurances(this.finSchFrqInsurances);
+		entity.setPresentmentDetails(this.presentmentDetails);
+		entity.setReturnDataSet(this.returnDataSet);
+		entity.setProvisions(this.provisions);
+		entity.setFinExcessAmounts(this.finExcessAmounts);
+		entity.setEventFromDate(this.eventFromDate);
+		entity.setEventToDate(this.eventToDate);
+		entity.setRecalFromDate(this.recalFromDate);
+		entity.setRecalToDate(this.recalToDate);
+		entity.setRecalType(this.recalType);
+		entity.setRecalSchdMethod(this.recalSchdMethod);
+		entity.setRateOnChgDate(this.rateOnChgDate);
+		entity.setAccruedAmount(this.accruedAmount);
+		entity.setRateReviewExist(this.rateReviewExist);
+		entity.setIdxPD(this.idxPD);
+		entity.setIdxGrcCpz(this.idxGrcCpz);
+		entity.setIdxGrcPft(this.idxGrcPft);
+		entity.setIdxGrcPftRvw(this.idxGrcPftRvw);
+		entity.setIdxRpyCpz(this.idxRpyCpz);
+		entity.setIdxRpyPft(this.idxRpyPft);
+		entity.setIdxRpyPftRvw(this.idxRpyPftRvw);
+		entity.setIdxRpy(this.idxRpy);
+		entity.setIdxDisb(this.idxDisb);
+		entity.setIdxDue(this.idxDue);
+		entity.setIdxPresentment(this.idxPresentment);
+		entity.setUpdFinMain(this.updFinMain);
+		entity.setUpdFinSchdForRateRvw(this.updFinSchdForRateRvw);
+		entity.setUpdRepayInstruct(this.updRepayInstruct);
+		entity.setUpdLBDPostings(this.updLBDPostings);
+		entity.setUpdMonthEndPostings(this.updMonthEndPostings);
+		entity.setFinMainUpdateFields(this.finMainUpdateFields);
+		entity.setProjectedAccrualList(this.projectedAccrualList);
+		entity.setIncomeAMZList(this.incomeAMZList);
+		entity.setAppDate(this.appDate);
+		entity.setUpdFinSchdForChangeGrcEnd(this.updFinSchdForChangeGrcEnd);
+		entity.setOrgRepayInsts(this.orgRepayInsts);
+		entity.setOrgFinSchdDetails(this.orgFinSchdDetails);
+		entity.setFinServiceInstructions(this.finServiceInstructions);
+		return entity;
+	}
+
 	public FinanceMain getFinanceMain() {
 		return financeMain;
 	}

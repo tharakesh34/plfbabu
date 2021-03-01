@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -59,13 +60,14 @@ import com.pennant.backend.model.mail.MailTemplate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>MailTemplate model</b> class.<br>
  * 
  */
 public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements MailTemplateDAO {
-	private static Logger logger = Logger.getLogger(MailTemplateDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(MailTemplateDAOImpl.class);
 
 	public MailTemplateDAOImpl() {
 		super();
@@ -82,33 +84,55 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 	 */
 	@Override
 	public MailTemplate getMailTemplateById(final long id, String type) {
-		logger.debug("Entering");
-		MailTemplate mailTemplate = new MailTemplate();
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" TemplateId, TemplateFor, Module, TemplateCode, Event, TemplateDesc, SmsTemplate");
+		sql.append(", SmsContent, EmailTemplate, EmailContent, EmailFormat, EmailSubject, EmailSendTo");
+		sql.append(", TurnAroundTime, Repeat, Active, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from Templates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where TemplateId = ?");
 
-		mailTemplate.setId(id);
-
-		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, TemplateCode, Event, ");
-		selectSql.append(" TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, ");
-		selectSql.append(" EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active, ");
-		selectSql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From Templates");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where TemplateId =:TemplateId ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mailTemplate);
-		RowMapper<MailTemplate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MailTemplate.class);
+		logger.trace(Literal.SQL, sql.toString());
 
 		try {
-			mailTemplate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+				MailTemplate t = new MailTemplate();
+
+				t.setTemplateId(rs.getLong("TemplateId"));
+				t.setTemplateFor(rs.getString("TemplateFor"));
+				t.setModule(rs.getString("Module"));
+				t.setTemplateCode(rs.getString("TemplateCode"));
+				t.setEvent(rs.getString("Event"));
+				t.setTemplateDesc(rs.getString("TemplateDesc"));
+				t.setSmsTemplate(rs.getBoolean("SmsTemplate"));
+				t.setSmsContent(rs.getString("SmsContent"));
+				t.setEmailTemplate(rs.getBoolean("EmailTemplate"));
+				t.setEmailContent(rs.getBytes("EmailContent"));
+				t.setEmailFormat(rs.getString("EmailFormat"));
+				t.setEmailSubject(rs.getString("EmailSubject"));
+				t.setEmailSendTo(rs.getString("EmailSendTo"));
+				t.setTurnAroundTime(rs.getInt("TurnAroundTime"));
+				t.setRepeat(rs.getBoolean("Repeat"));
+				t.setActive(rs.getBoolean("Active"));
+				t.setVersion(rs.getInt("Version"));
+				t.setLastMntBy(rs.getLong("LastMntBy"));
+				t.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				t.setRecordStatus(rs.getString("RecordStatus"));
+				t.setRoleCode(rs.getString("RoleCode"));
+				t.setNextRoleCode(rs.getString("NextRoleCode"));
+				t.setTaskId(rs.getString("TaskId"));
+				t.setNextTaskId(rs.getString("NextTaskId"));
+				t.setRecordType(rs.getString("RecordType"));
+				t.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return t;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			mailTemplate = null;
+			logger.warn("Record are not found in Templates{} for the TemplateId >> {}", type, id);
 		}
 
-		logger.debug("Leaving");
-		return mailTemplate;
+		return null;
 	}
 
 	/**
@@ -203,8 +227,8 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 	public long save(MailTemplate mailTemplate, String type) {
 		logger.debug("Entering");
 		if (mailTemplate.getId() == Long.MIN_VALUE) {
-			mailTemplate.setId(getNextId("SeqMailTemplate"));
-			logger.debug("get NextID:" + mailTemplate.getId());
+			mailTemplate.setId(getNextValue("SeqMailTemplate"));
+			logger.debug("get NextValue:" + mailTemplate.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder(" Insert Into Templates");

@@ -54,7 +54,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -111,7 +112,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = -4578996988245614938L;
-	private static final Logger logger = Logger.getLogger(RateChangeDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RateChangeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -1035,7 +1036,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 		try {
-			if (this.reviewDateToDateRow.isVisible() && !this.profitDaysBasis.isDisabled()) {
+			if (this.reviewDateToDateRow.isVisible() && this.profitDaysBasis.isDisabled()) {
 				if (isValidComboValue(this.cbRateChangeToDate, Labels.getLabel("label_RateChangeDialog_ToDate.value"))
 						&& this.cbRateChangeFromDate.getSelectedIndex() != 0) {
 					if (((Date) this.cbRateChangeToDate.getSelectedItem().getValue())

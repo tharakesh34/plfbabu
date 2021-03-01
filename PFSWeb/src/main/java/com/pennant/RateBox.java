@@ -44,7 +44,8 @@ package com.pennant;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Constraint;
@@ -59,7 +60,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class RateBox extends Hbox {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(RateBox.class);
+	private static final Logger logger = LogManager.getLogger(RateBox.class);
 
 	private Space space;
 	private ExtendedCombobox baseRateBox;

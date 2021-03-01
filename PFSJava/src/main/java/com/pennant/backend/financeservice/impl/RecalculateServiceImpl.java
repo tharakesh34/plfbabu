@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
@@ -26,7 +27,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class RecalculateServiceImpl extends GenericService<FinServiceInstruction> implements RecalculateService {
-	private static Logger logger = Logger.getLogger(RecalculateServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(RecalculateServiceImpl.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceMainDAO financeMainDAO;

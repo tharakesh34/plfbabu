@@ -52,7 +52,8 @@ import java.util.List;
 import javax.script.ScriptException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -70,7 +71,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -97,7 +97,7 @@ import com.rits.cloning.Cloner;
  */
 public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(EligibilityDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(EligibilityDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -126,7 +126,6 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	private EligibilityDetailService eligibilityDetailService;
 	private CurrencyService currencyService;
 	private RuleService ruleService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	protected Groupbox finBasicdetails;
 	DeviationExecutionCtrl deviationExecutionCtrl;
@@ -895,14 +894,6 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {

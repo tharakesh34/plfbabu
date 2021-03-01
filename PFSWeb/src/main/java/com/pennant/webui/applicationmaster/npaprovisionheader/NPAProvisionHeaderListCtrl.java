@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -79,7 +80,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class NPAProvisionHeaderListCtrl extends GFCBaseListCtrl<NPAProvisionHeader> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(NPAProvisionHeaderListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(NPAProvisionHeaderListCtrl.class);
 
 	protected Window window_NPAProvisionHeaderList;
 	protected Borderlayout borderLayout_NPAProvisionHeaderList;
@@ -95,8 +96,8 @@ public class NPAProvisionHeaderListCtrl extends GFCBaseListCtrl<NPAProvisionHead
 	protected Button button_NPAProvisionHeaderList_NPAProvisionHeaderSearch;
 
 	// Search Fields
-	protected Textbox entity;  
-	protected Textbox finType;  
+	protected Textbox entity;
+	protected Textbox finType;
 
 	protected Listbox sortOperator_Entity;
 	protected Listbox sortOperator_FinType;
@@ -174,10 +175,11 @@ public class NPAProvisionHeaderListCtrl extends GFCBaseListCtrl<NPAProvisionHead
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$button_NPAProvisionHeaderList_NewNPAProvisionHeader(Event event) throws IllegalAccessException, InvocationTargetException {
+	public void onClick$button_NPAProvisionHeaderList_NewNPAProvisionHeader(Event event)
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 
 		// Create a new entity.

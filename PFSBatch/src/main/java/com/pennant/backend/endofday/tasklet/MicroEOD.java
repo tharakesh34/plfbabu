@@ -43,8 +43,6 @@
  */
 package com.pennant.backend.endofday.tasklet;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,8 +58,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -69,36 +65,32 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
-import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.ProvisionConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.EodService;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennant.pff.eod.cache.RuleConfigCache;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class MicroEOD implements Tasklet {
 	private Logger logger = LogManager.getLogger(MicroEOD.class);
 
 	private EodService eodService;
-	private RuleDAO ruleDAO;
 	private CustomerQueuingDAO customerQueuingDAO;
 	private PlatformTransactionManager transactionManager;
 	private DataSource dataSource;
 	private CustomerDAO customerDAO;
-
-	private boolean executeNPAAndProvision;
-	private boolean customerProvision;
-	private String provisionBooks;
-	private Date provisionEffectiveDate;
 
 	// ##_0.2
 	private static final String CUSTOMER_SQL = "Select CustID, LoanExist, LimitRebuild from CustomerQueuing  Where ThreadID = ? and Progress= ?";
@@ -109,16 +101,22 @@ public class MicroEOD implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date appDate = SysParamUtil.getAppDate();
-		logger.debug("START: Micro EOD On {}", appDate);
+		EventProperties eventProperties = EODUtil.getEventProperties(EODUtil.EVENT_PROPERTIES, context);
 
 		Map<String, Object> stepExecutionContext = context.getStepContext().getStepExecutionContext();
+
+		Date appDate = eventProperties.getAppDate();
 		final int threadId = Integer.parseInt(stepExecutionContext.get(EodConstants.THREAD).toString());
+
+		String strAppDate = DateUtil.formatToLongDate(appDate);
+		String sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
+
+		logger.info("Micro EOD Start on {} for the application date {} with Thread ID {}", sysDate, strAppDate,
+				threadId);
 
 		DataEngineStatus status = (DataEngineStatus) stepExecutionContext.get("microEOD:" + String.valueOf(threadId));
 		long processedCount = 1;
 		long failedCount = 0;
-		logger.info("process Statred by the Thread {} with date {}", threadId, appDate.toString());
 
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
@@ -127,49 +125,60 @@ public class MicroEOD implements Tasklet {
 		JdbcCursorItemReader<CustomerQueuing> cursorItemReader = new JdbcCursorItemReader<CustomerQueuing>();
 		cursorItemReader.setSql(CUSTOMER_SQL);
 		cursorItemReader.setDataSource(dataSource);
-		cursorItemReader.setRowMapper(ParameterizedBeanPropertyRowMapper.newInstance(CustomerQueuing.class));
-		cursorItemReader.setPreparedStatementSetter(new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setLong(1, threadId);
-				ps.setInt(2, EodConstants.PROGRESS_WAIT);
-			}
+		cursorItemReader.setRowMapper((rs, rowNum) -> {
+			CustomerQueuing cq = new CustomerQueuing();
+
+			cq.setCustID(rs.getLong("CustID"));
+			cq.setLoanExist(rs.getBoolean("LoanExist"));
+			cq.setLimitRebuild(rs.getBoolean("LimitRebuild"));
+
+			return cq;
+		});
+		cursorItemReader.setPreparedStatementSetter(ps -> {
+			ps.setLong(1, threadId);
+			ps.setInt(2, EodConstants.PROGRESS_WAIT);
 		});
 
 		// Get the Rules 
 		String provisionRule = null;
 		String amzMethodRule = null;
 
-		String provRule = SysParamUtil.getValueAsString("PROVISION_RULE");
+		String provRule = eventProperties.getProvRule();
+
 		if (provRule != null) {
-			provisionRule = ruleDAO.getAmountRule(provRule, RuleConstants.MODULE_PROVSN, RuleConstants.EVENT_PROVSN);
+			String moduleProvsn = RuleConstants.MODULE_PROVSN;
+			String eventProvsn = RuleConstants.EVENT_PROVSN;
+
+			provisionRule = RuleConfigCache.getCacheRuleCode(provRule, moduleProvsn, eventProvsn);
 		}
 
-		amzMethodRule = ruleDAO.getAmountRule(AmortizationConstants.AMZ_METHOD_RULE,
-				AmortizationConstants.AMZ_METHOD_RULE, AmortizationConstants.AMZ_METHOD_RULE);
-
+		String methodRule = AmortizationConstants.AMZ_METHOD_RULE;
+		amzMethodRule = RuleConfigCache.getCacheRuleCode(methodRule, methodRule, methodRule);
 		// Load SMT Parameters here and set into custEODEvent to reduce the number of DB hits
+
+		boolean customerProvision = false;
+		Date provisionEffectiveDate = null;
+		String provisionBooks = null;
 
 		if (ImplementationConstants.ALLOW_NPA_PROVISION) {
 			logger.info("NPA and Provisining Enabled");
 
-			executeNPAAndProvision = true;
-			provisionBooks = SysParamUtil.getValueAsString(SMTParameterConstants.PROVISION_BOOKS);
-			String npaTagging = SysParamUtil.getValueAsString(SMTParameterConstants.NPA_TAGGING);
+			provisionBooks = eventProperties.getProvisionBooks();
+			String npaTagging = eventProperties.getNpaTagging();
 
 			if (ProvisionConstants.NPA_TAGGING_CUSTOMER.equals(npaTagging)) {
 				customerProvision = true;
 			}
 
-			String provEffPostDate = SysParamUtil.getValueAsString(SMTParameterConstants.PROVISION_EFF_POSTDATE);
+			String provEffPostDate = eventProperties.getProvEffPostDate();
 
 			if (PennantConstants.NO.equals(provEffPostDate)) {
-				provisionEffectiveDate = SysParamUtil.getPostDate();
+				provisionEffectiveDate = eventProperties.getPostDate();
 			}
 
-			logger.info("ProvisionBooks >> {}", provisionBooks);
-			logger.info("NPA Tagging >> {}", npaTagging);
-			logger.info("Customer Provision >> {}", customerProvision);
+			logger.info("ProvisionBooks  {}", provisionBooks);
+			logger.info("NPA Tagging {}", npaTagging);
+			logger.info("Customer Provision {}", customerProvision);
 		}
 
 		//to hold the exception till the process completed for all the customers
@@ -185,23 +194,21 @@ public class MicroEOD implements Tasklet {
 			long custId = customerQueuing.getCustID();
 
 			try {
-				//update start
-				customerQueuingDAO.startEODForCID(custId);
+				sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
+				logger.info("Micro EOD started on {} for the customer ID {}", sysDate, custId);
+				customerQueuingDAO.startEODForCID(custId, appDate);
 
-				// begin transaction
 				txStatus = transactionManager.getTransaction(txDef);
 
 				CustEODEvent custEODEvent = new CustEODEvent();
 				custEODEvent.setProvisionRule(provisionRule);
 				custEODEvent.setAmzMethodRule(amzMethodRule);
 
-				/* Set SMT Parameter values to CustEODEvent */
-
-				/* NPA and Provisioning Parameters setting */
-				custEODEvent.setExecuteNPAaAndProvision(executeNPAAndProvision);
+				custEODEvent.setExecuteNPAaAndProvision(ImplementationConstants.ALLOW_NPA_PROVISION);
 				custEODEvent.setProvisionBooks(provisionBooks);
 				custEODEvent.setCustomerProvision(customerProvision);
 				custEODEvent.setProvisionEffectiveDate(provisionEffectiveDate);
+				custEODEvent.setEventProperties(eventProperties);
 
 				if (customerQueuing.isLoanExist()) {
 					customerQueuing.setLoanExist(false);
@@ -213,16 +220,18 @@ public class MicroEOD implements Tasklet {
 					eodService.doProcess(custEODEvent);
 					eodService.doUpdate(custEODEvent, customerQueuing.isLimitRebuild());
 				} else {
+					logger.info("There is no active loans exists for the customer ID {}", custId);
 					if (customerQueuing.isLimitRebuild()) {
 						eodService.processCustomerRebuild(custId, true);
 					}
 				}
 
-				//update  end
-				customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_SUCCESS);
+				logger.info("Updating the EOD status for the customer ID {}", custId);
+				customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_SUCCESS, appDate);
 
-				//commit
 				transactionManager.commit(txStatus);
+				sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
+				logger.info("Micro EOD completed on {} for the customer ID {}", sysDate, custId);
 
 				custEODEvent.getFinEODEvents().clear();
 				custEODEvent = null;
@@ -232,21 +241,28 @@ public class MicroEOD implements Tasklet {
 				logError(e);
 				transactionManager.rollback(txStatus);
 				exceptions.add(e);
+				sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
+				logger.info("Micro EOD failed on {} for the customer ID {}", sysDate, custId);
 				updateFailed(custId);
 			}
-			//clear data after the process
+
 			customerQueuing = null;
 		}
+
 		cursorItemReader.close();
 
 		if (!exceptions.isEmpty()) {
 			Exception exception = new Exception(exceptions.get(0));
 			exceptions.clear();
 			exceptions = null;
+			sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
+			logger.info("Micro EOD failed on {}\n, Application Date {}\n Thread ID {}", sysDate, strAppDate, threadId);
 			throw exception;
 		}
 
-		logger.debug("COMPLETE: Micro EOD On {}", appDate);
+		sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
+		logger.info("Micro EOD Completed on {},  for the application Date {} with Thread ID {}", sysDate, strAppDate,
+				threadId);
 
 		return RepeatStatus.FINISHED;
 	}
@@ -301,13 +317,7 @@ public class MicroEOD implements Tasklet {
 	}
 
 	@Autowired
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
-	}
-
-	@Autowired
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
 	}
-
 }

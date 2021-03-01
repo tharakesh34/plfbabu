@@ -1,6 +1,7 @@
 package com.pennant.backend.service.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -18,7 +19,7 @@ import com.pennanttech.pff.core.TableType;
 
 public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup> implements AccountTypeGroupService {
 
-	private static Logger logger = Logger.getLogger(AccountTypeGroupServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(AccountTypeGroupServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AccountTypeGroupDAO accountTypeGroupDAO;

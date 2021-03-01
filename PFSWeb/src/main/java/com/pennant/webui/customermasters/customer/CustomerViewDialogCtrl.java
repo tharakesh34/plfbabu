@@ -22,7 +22,8 @@ import javax.imageio.ImageIO;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.BeanUtils;
@@ -127,7 +128,7 @@ import freemarker.template.Template;
  */
 public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private static final long serialVersionUID = 9031340167587772517L;
-	private static final Logger logger = Logger.getLogger(CustomerViewDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerViewDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

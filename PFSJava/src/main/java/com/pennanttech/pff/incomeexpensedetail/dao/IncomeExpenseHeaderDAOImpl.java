@@ -1,7 +1,8 @@
 package com.pennanttech.pff.incomeexpensedetail.dao;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -16,7 +17,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
 public class IncomeExpenseHeaderDAOImpl extends SequenceDao<IncomeExpenseHeader> implements IncomeExpenseHeaderDAO {
-	private static Logger logger = Logger.getLogger(IncomeExpenseHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(IncomeExpenseHeaderDAOImpl.class);
 
 	@Override
 	public IncomeExpenseHeader getIncomeExpenseHeader(long id, String type) {

@@ -57,7 +57,8 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -142,7 +143,7 @@ import com.rits.cloning.Cloner;
  */
 public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private static final long serialVersionUID = 4157448822555239535L;
-	private static final Logger logger = Logger.getLogger(FinFeeDetailListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinFeeDetailListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -222,7 +223,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private FinFeeDetailService finFeeDetailService;
 	private RuleService ruleService;
 	private FeeTypeService feeTypeService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private FinanceMain financeMain = null;
 	private boolean dataChanged = false;
 	private String numberOfTermsLabel = "";
@@ -2855,7 +2855,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 						rule = ruleService.getRuleById(insurance.getCalRule(), RuleConstants.MODULE_INSRULE,
 								RuleConstants.MODULE_INSRULE);
 						if (rule != null) {
-							insAmount = (BigDecimal) this.ruleExecutionUtil.executeRule(rule.getSQLRule(),
+							insAmount = (BigDecimal) RuleExecutionUtil.executeRule(rule.getSQLRule(),
 									declaredFieldValues, financeMain.getFinCcy(), RuleReturnType.DECIMAL);
 						}
 					}
@@ -3027,7 +3027,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				String[] fields = feeRule.getFields().split(",");
 				for (String field : fields) {
 					if (!executionMap.containsKey(field)) {
-						this.ruleExecutionUtil.setExecutionMap(field, objectList, executionMap);
+						RuleExecutionUtil.setExecutionMap(field, objectList, executionMap);
 					}
 				}
 			}
@@ -3501,10 +3501,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public void setRuleService(RuleService ruleService) {

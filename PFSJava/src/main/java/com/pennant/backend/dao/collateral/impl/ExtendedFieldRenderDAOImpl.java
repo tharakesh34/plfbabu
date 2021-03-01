@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -23,7 +24,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> implements ExtendedFieldRenderDAO {
-	private static Logger logger = Logger.getLogger(ExtendedFieldRenderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ExtendedFieldRenderDAOImpl.class);
 
 	public ExtendedFieldRenderDAOImpl() {
 		super();
@@ -52,7 +53,8 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		try {
 			fieldRender = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.info("Exceprtion ", e);
+			logger.warn("Records are not found in {} for the specified Reference >> {} and Seq No >> {}", tableName,
+					reference, seqNo);
 			fieldRender = null;
 		}
 
@@ -65,13 +67,9 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	 */
 	@Override
 	public List<Map<String, Object>> getExtendedFieldMap(String reference, String tableName, String type) {
-		logger.debug(Literal.ENTERING);
-
 		List<Map<String, Object>> renderMap = null;
 
-		type = StringUtils.trimToEmpty(type);
-
-		type = type.toLowerCase();
+		type = StringUtils.trimToEmpty(type).toLowerCase();
 
 		StringBuilder sql = new StringBuilder();
 		if (StringUtils.startsWith(type, "_view")) {
@@ -90,6 +88,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			sql.append(StringUtils.trimToEmpty(type));
 			sql.append(" where reference = :reference order by seqno");
 		}
+
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -97,11 +96,10 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		try {
 			renderMap = this.jdbcTemplate.queryForList(sql.toString(), source);
 		} catch (Exception e) {
-			logger.error(Literal.ENTERING, e);
+			logger.warn("Records not found in {}{} for the reference : {}", tableName, type, reference);
 			renderMap = new ArrayList<>();
 		}
 
-		logger.debug(Literal.LEAVING);
 		return renderMap;
 	}
 
@@ -165,7 +163,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		try {
 			renderMap = this.jdbcTemplate.queryForMap(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exceprtion ", e);
+			logger.warn("Records are not found in {}{} for the specified Reference >> {}", tableName, type, reference);
 			renderMap = null;
 		}
 

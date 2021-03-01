@@ -51,7 +51,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -77,7 +78,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> implements CustomerBankInfoDAO {
-	private static Logger logger = Logger.getLogger(CustomerBankInfoDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerBankInfoDAOImpl.class);
 
 	public CustomerBankInfoDAOImpl() {
 		super();
@@ -136,8 +137,6 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	 * Method to return the customer email based on given customer id
 	 */
 	public List<CustomerBankInfo> getBankInfoByCustomer(final long id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" BankId, CustID, BankName, AccountNumber, AccountType, SalaryAccount, CreditTranNo");
 		sql.append(", CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt");
@@ -158,84 +157,68 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, id);
-				}
-			}, new RowMapper<CustomerBankInfo>() {
-				@Override
-				public CustomerBankInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CustomerBankInfo cbi = new CustomerBankInfo();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, id);
+		}, (rs, rowNum) -> {
+			CustomerBankInfo cbi = new CustomerBankInfo();
 
-					cbi.setBankId(rs.getLong("BankId"));
-					cbi.setCustID(rs.getLong("CustID"));
-					cbi.setBankName(rs.getString("BankName"));
-					cbi.setAccountNumber(rs.getString("AccountNumber"));
-					cbi.setAccountType(rs.getString("AccountType"));
-					cbi.setSalaryAccount(rs.getBoolean("SalaryAccount"));
-					cbi.setCreditTranNo(rs.getInt("CreditTranNo"));
-					cbi.setCreditTranAmt(rs.getBigDecimal("CreditTranAmt"));
-					cbi.setCreditTranAvg(rs.getBigDecimal("CreditTranAvg"));
-					cbi.setDebitTranNo(rs.getInt("DebitTranNo"));
-					cbi.setDebitTranAmt(rs.getBigDecimal("DebitTranAmt"));
-					cbi.setCashDepositNo(rs.getInt("CashDepositNo"));
-					cbi.setCashDepositAmt(rs.getBigDecimal("CashDepositAmt"));
-					cbi.setCashWithdrawalNo(rs.getInt("CashWithdrawalNo"));
-					cbi.setCashWithdrawalAmt(rs.getBigDecimal("CashWithdrawalAmt"));
-					cbi.setChqDepositNo(rs.getInt("ChqDepositNo"));
-					cbi.setChqDepositAmt(rs.getBigDecimal("ChqDepositAmt"));
-					cbi.setChqIssueNo(rs.getInt("ChqIssueNo"));
-					cbi.setChqIssueAmt(rs.getBigDecimal("ChqIssueAmt"));
-					cbi.setInwardChqBounceNo(rs.getInt("InwardChqBounceNo"));
-					cbi.setOutwardChqBounceNo(rs.getInt("OutwardChqBounceNo"));
-					cbi.setEodBalMin(rs.getBigDecimal("EodBalMin"));
-					cbi.setEodBalMax(rs.getBigDecimal("EodBalMax"));
-					cbi.setEodBalAvg(rs.getBigDecimal("EodBalAvg"));
-					cbi.setBankBranch(rs.getString("BankBranch"));
-					cbi.setFromDate(rs.getTimestamp("FromDate"));
-					cbi.setToDate(rs.getTimestamp("ToDate"));
-					cbi.setRepaymentFrom(rs.getString("RepaymentFrom"));
-					cbi.setNoOfMonthsBanking(rs.getInt("NoOfMonthsBanking"));
-					cbi.setLwowRatio(rs.getString("LwowRatio"));
-					cbi.setCcLimit(rs.getBigDecimal("CcLimit"));
-					cbi.setTypeOfBanks(rs.getString("TypeOfBanks"));
-					cbi.setAccountOpeningDate(rs.getTimestamp("AccountOpeningDate"));
-					cbi.setAddToBenficiary(rs.getBoolean("AddToBenficiary"));
-					cbi.setBankBranchID(rs.getLong("BankBranchID"));
-					cbi.setAccountHolderName(rs.getString("AccountHolderName"));
-					cbi.setPhoneNumber(rs.getString("PhoneNumber"));
-					cbi.setVersion(rs.getInt("Version"));
-					cbi.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					cbi.setLastMntBy(rs.getLong("LastMntBy"));
-					cbi.setRecordStatus(rs.getString("RecordStatus"));
-					cbi.setRoleCode(rs.getString("RoleCode"));
-					cbi.setNextRoleCode(rs.getString("NextRoleCode"));
-					cbi.setTaskId(rs.getString("TaskId"));
-					cbi.setNextTaskId(rs.getString("NextTaskId"));
-					cbi.setRecordType(rs.getString("RecordType"));
-					cbi.setWorkflowId(rs.getLong("WorkflowId"));
+			cbi.setBankId(rs.getLong("BankId"));
+			cbi.setCustID(rs.getLong("CustID"));
+			cbi.setBankName(rs.getString("BankName"));
+			cbi.setAccountNumber(rs.getString("AccountNumber"));
+			cbi.setAccountType(rs.getString("AccountType"));
+			cbi.setSalaryAccount(rs.getBoolean("SalaryAccount"));
+			cbi.setCreditTranNo(rs.getInt("CreditTranNo"));
+			cbi.setCreditTranAmt(rs.getBigDecimal("CreditTranAmt"));
+			cbi.setCreditTranAvg(rs.getBigDecimal("CreditTranAvg"));
+			cbi.setDebitTranNo(rs.getInt("DebitTranNo"));
+			cbi.setDebitTranAmt(rs.getBigDecimal("DebitTranAmt"));
+			cbi.setCashDepositNo(rs.getInt("CashDepositNo"));
+			cbi.setCashDepositAmt(rs.getBigDecimal("CashDepositAmt"));
+			cbi.setCashWithdrawalNo(rs.getInt("CashWithdrawalNo"));
+			cbi.setCashWithdrawalAmt(rs.getBigDecimal("CashWithdrawalAmt"));
+			cbi.setChqDepositNo(rs.getInt("ChqDepositNo"));
+			cbi.setChqDepositAmt(rs.getBigDecimal("ChqDepositAmt"));
+			cbi.setChqIssueNo(rs.getInt("ChqIssueNo"));
+			cbi.setChqIssueAmt(rs.getBigDecimal("ChqIssueAmt"));
+			cbi.setInwardChqBounceNo(rs.getInt("InwardChqBounceNo"));
+			cbi.setOutwardChqBounceNo(rs.getInt("OutwardChqBounceNo"));
+			cbi.setEodBalMin(rs.getBigDecimal("EodBalMin"));
+			cbi.setEodBalMax(rs.getBigDecimal("EodBalMax"));
+			cbi.setEodBalAvg(rs.getBigDecimal("EodBalAvg"));
+			cbi.setBankBranch(rs.getString("BankBranch"));
+			cbi.setFromDate(rs.getTimestamp("FromDate"));
+			cbi.setToDate(rs.getTimestamp("ToDate"));
+			cbi.setRepaymentFrom(rs.getString("RepaymentFrom"));
+			cbi.setNoOfMonthsBanking(rs.getInt("NoOfMonthsBanking"));
+			cbi.setLwowRatio(rs.getString("LwowRatio"));
+			cbi.setCcLimit(rs.getBigDecimal("CcLimit"));
+			cbi.setTypeOfBanks(rs.getString("TypeOfBanks"));
+			cbi.setAccountOpeningDate(rs.getTimestamp("AccountOpeningDate"));
+			cbi.setAddToBenficiary(rs.getBoolean("AddToBenficiary"));
+			cbi.setBankBranchID(rs.getLong("BankBranchID"));
+			cbi.setAccountHolderName(rs.getString("AccountHolderName"));
+			cbi.setPhoneNumber(rs.getString("PhoneNumber"));
+			cbi.setVersion(rs.getInt("Version"));
+			cbi.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			cbi.setLastMntBy(rs.getLong("LastMntBy"));
+			cbi.setRecordStatus(rs.getString("RecordStatus"));
+			cbi.setRoleCode(rs.getString("RoleCode"));
+			cbi.setNextRoleCode(rs.getString("NextRoleCode"));
+			cbi.setTaskId(rs.getString("TaskId"));
+			cbi.setNextTaskId(rs.getString("NextTaskId"));
+			cbi.setRecordType(rs.getString("RecordType"));
+			cbi.setWorkflowId(rs.getLong("WorkflowId"));
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						cbi.setLovDescBankName(rs.getString("LovDescBankName"));
-						cbi.setLovDescAccountType(rs.getString("LovDescAccountType"));
-						cbi.setiFSC(rs.getString("IFSC"));
-						cbi.setCity(rs.getString("City"));
-						cbi.setMicr(rs.getString("Micr"));
-						cbi.setBranchCode(rs.getString("BranchCode"));
-					}
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				cbi.setLovDescBankName(rs.getString("LovDescBankName"));
+				cbi.setLovDescAccountType(rs.getString("LovDescAccountType"));
+				cbi.setiFSC(rs.getString("IFSC"));
+			}
 
-					return cbi;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return cbi;
+		});
 
 	}
 
@@ -536,8 +519,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	}
 
 	@Override
-	public CustomerBankInfo getCustomerBankInfoByCustId(CustomerBankInfo customerBankInfo, String type) {
-		logger.debug("Entering");
+	public CustomerBankInfo getCustomerBankInfoByCustId(CustomerBankInfo cbi, String type) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT bankId, CustID, BankName, AccountNumber, AccountType,SalaryAccount,");
 		sql.append(
@@ -557,17 +539,18 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(" Where CustID = :CustID and BankName = :BankName and BankId =:BankId");
 
 		logger.debug("selectSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cbi);
 		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(CustomerBankInfo.class);
 		try {
-			customerBankInfo = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerBankInfo = null;
+			logger.warn(
+					"CustomerBankInfo details not found in CustomerBankInfo{} table/view for the specified CustID >> {} and BankName >> {} and BankId >> {}",
+					type, cbi.getCustID(), cbi.getBankName(), cbi.getBankId());
+			cbi = null;
 		}
-		logger.debug("Leaving");
-		return customerBankInfo;
+		return null;
 	}
 
 	@Override

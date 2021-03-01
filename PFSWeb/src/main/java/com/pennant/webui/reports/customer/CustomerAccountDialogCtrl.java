@@ -3,7 +3,8 @@ package com.pennant.webui.reports.customer;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
@@ -39,7 +40,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	private static final long serialVersionUID = -6646226859133636932L;
-	private static final Logger logger = Logger.getLogger(CustomerAccountDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerAccountDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

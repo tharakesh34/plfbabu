@@ -44,7 +44,8 @@
 package com.pennant.backend.dao.administration.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements SecurityGroupDAO {
-	private static Logger logger = Logger.getLogger(SecurityGroupDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityGroupDAOImpl.class);
 
 	public SecurityGroupDAOImpl() {
 		super();
@@ -203,8 +204,8 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 		logger.debug("Entering ");
 
 		if (securityGroup.getId() == Long.MIN_VALUE) {
-			securityGroup.setId(getNextId("SeqSecGroups"));
-			logger.debug("get NextID:" + securityGroup.getId());
+			securityGroup.setId(getNextValue("SeqSecGroups"));
+			logger.debug("get NextValue:" + securityGroup.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into SecGroups");

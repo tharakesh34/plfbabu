@@ -49,12 +49,14 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.util.AEAmounts;
@@ -64,6 +66,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -85,6 +88,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
@@ -144,11 +148,12 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService implements ReceiptCancellationService {
-	private static final Logger logger = Logger.getLogger(ReceiptCancellationServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptCancellationServiceImpl.class);
 
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
@@ -963,17 +968,17 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		if (rule != null) {
 			fieldsAndValues.put("br_finType", receiptHeader.getFinType());
 			if (eventMapping != null && eventMapping.size() > 0) {
-				fieldsAndValues.put("emptype", eventMapping.get("Emptype"));
-				fieldsAndValues.put("branchcity", eventMapping.get("Branchcity"));
-				fieldsAndValues.put("fincollateralreq", eventMapping.get("fincollateralreq"));
-				fieldsAndValues.put("btloan", eventMapping.get("btloan"));
-				fieldsAndValues.put("ae_businessvertical", eventMapping.get("Businessvertical"));
-				fieldsAndValues.put("ae_alwflexi", eventMapping.get("AlwFlexi"));
-				fieldsAndValues.put("ae_finbranch", eventMapping.get("FinBranch"));
-				fieldsAndValues.put("ae_entitycode", eventMapping.get("Entitycode"));
+				fieldsAndValues.put("emptype", eventMapping.get("EMPTYPE"));
+				fieldsAndValues.put("branchcity", eventMapping.get("BRANCHCITY"));
+				fieldsAndValues.put("fincollateralreq", eventMapping.get("FINCOLLATERALREQ"));
+				fieldsAndValues.put("btloan", eventMapping.get("BTLOAN"));
+				fieldsAndValues.put("ae_businessvertical", eventMapping.get("BUSINESSVERTICAL"));
+				fieldsAndValues.put("ae_alwflexi", eventMapping.get("ALWFLEXI"));
+				fieldsAndValues.put("ae_finbranch", eventMapping.get("FINBRANCH"));
+				fieldsAndValues.put("ae_entitycode", eventMapping.get("ENTITYCODE"));
 			}
 
-			bounceAmt = (BigDecimal) ruleExecutionUtil.executeRule(rule.getSQLRule(), fieldsAndValues,
+			bounceAmt = (BigDecimal) RuleExecutionUtil.executeRule(rule.getSQLRule(), fieldsAndValues,
 					receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
 		}
 
@@ -1835,7 +1840,11 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				finEodEvent.setFinanceMain(scheduleData.getFinanceMain());
 				finEodEvent.setFinanceScheduleDetails(scheduleData.getFinanceScheduleDetails());
 				finEodEvent.setFinProfitDetail(pftDetail);
-				finEodEvent = latePayMarkingService.findLatePay(finEodEvent, null, DateUtility.addDays(valueDate, -1));
+
+				CustEODEvent custEODEvent = new CustEODEvent();
+				custEODEvent.setEodValueDate(DateUtil.addDays(valueDate, -1));
+
+				latePayMarkingService.findLatePay(finEodEvent, custEODEvent);
 
 				// Status Updation
 				repaymentPostingsUtil.updateStatus(financeMain, valueDate, scheduleData.getFinanceScheduleDetails(),
@@ -2136,12 +2145,20 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 
 		// Accrual Difference Postings
-		long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(),
+		Long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(),
 				AccountEventConstants.ACCEVENT_AMZ, FinanceConstants.MODULEID_FINTYPE);
 
-		Date derivedAppDate = DateUtility.getAppDate();
+		EventProperties eventProperties = financeMain.getEventProperties();
 
-		if (accountingID != Long.MIN_VALUE) {
+		Date derivedAppDate = null;
+
+		if (eventProperties.isParameterLoaded()) {
+			derivedAppDate = eventProperties.getAppDate();
+		} else {
+			derivedAppDate = SysParamUtil.getAppDate();
+		}
+
+		if (accountingID != null && accountingID != Long.MIN_VALUE) {
 
 			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
 
@@ -2210,9 +2227,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				// Save Tax Details
 				finODAmzTaxDetailDAO.save(odTaxDetail);
 
-				String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
-				if (StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
-					addGSTInvoice = true;
+				if (eventProperties.isParameterLoaded()) {
+					addGSTInvoice = eventProperties.isGstInvOnDue();
+				} else {
+					addGSTInvoice = SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE);
 				}
 			} else {
 				addZeroifNotContains(calGstMap, "LPP_CGST_R");

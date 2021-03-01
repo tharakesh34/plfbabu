@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 
 import com.pennant.backend.model.customermasters.Customer;
@@ -25,7 +26,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 
 public class FetchDedupDetails {
-	private static final Logger logger = Logger.getLogger(FetchDedupDetails.class);
+	private static final Logger logger = LogManager.getLogger(FetchDedupDetails.class);
 
 	private int userAction = -1;
 

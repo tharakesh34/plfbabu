@@ -49,7 +49,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
@@ -89,7 +90,7 @@ import net.sf.jasperreports.engine.JRException;
  */
 public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccount> {
 	private static final long serialVersionUID = 4678287540046204660L;
-	private final static Logger logger = Logger.getLogger(SOAReportGenerationDialogCtrl.class);
+	private final static Logger logger = LogManager.getLogger(SOAReportGenerationDialogCtrl.class);
 
 	protected Window window_SOAReportGenerationDialogCtrl;
 	protected ExtendedCombobox finReference;

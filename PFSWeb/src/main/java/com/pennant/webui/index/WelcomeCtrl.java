@@ -47,7 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zkmax.zul.Portalchildren;
@@ -78,7 +79,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	private static final long serialVersionUID = 8242094102118374753L;
 
-	private static final Logger logger = Logger.getLogger(WelcomeCtrl.class);
+	private static final Logger logger = LogManager.getLogger(WelcomeCtrl.class);
 	protected Window window_Welcome;
 	protected Button addbtn;
 	protected Radiogroup columnSelect;

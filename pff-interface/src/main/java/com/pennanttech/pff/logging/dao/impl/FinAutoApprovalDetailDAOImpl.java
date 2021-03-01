@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -33,7 +34,7 @@ import com.pennanttech.pff.logging.dao.FinAutoApprovalDetailDAO;
  */
 public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDetails>
 		implements FinAutoApprovalDetailDAO {
-	private static Logger logger = Logger.getLogger(FinAutoApprovalDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinAutoApprovalDetailDAOImpl.class);
 
 	public FinAutoApprovalDetailDAOImpl() {
 		super();

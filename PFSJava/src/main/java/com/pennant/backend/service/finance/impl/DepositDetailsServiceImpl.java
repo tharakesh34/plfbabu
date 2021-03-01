@@ -46,7 +46,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -78,7 +79,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class DepositDetailsServiceImpl extends GenericService<DepositDetails> implements DepositDetailsService {
-	private static final Logger logger = Logger.getLogger(DepositDetailsServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DepositDetailsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DepositDetailsDAO depositDetailsDAO;

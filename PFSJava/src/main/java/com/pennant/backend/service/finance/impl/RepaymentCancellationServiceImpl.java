@@ -11,7 +11,8 @@ import java.util.List;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.CalculationUtil;
@@ -59,7 +60,7 @@ import com.rits.cloning.Cloner;
 public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain>
 		implements RepaymentCancellationService {
 
-	private static final Logger logger = Logger.getLogger(RepaymentCancellationServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(RepaymentCancellationServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

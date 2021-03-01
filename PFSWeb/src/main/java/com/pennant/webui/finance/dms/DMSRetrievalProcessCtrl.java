@@ -1,7 +1,8 @@
 
 package com.pennant.webui.finance.dms;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -16,7 +17,7 @@ import com.pennanttech.pff.external.DocumentManagementService;
 
 public class DMSRetrievalProcessCtrl extends GFCBaseCtrl {
 	private static final long serialVersionUID = 223801324705386693L;
-	private static final Logger logger = Logger.getLogger(DMSRetrievalProcessCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DMSRetrievalProcessCtrl.class);
 
 	protected Window window_DMSRetrieve; // autoWired
 	protected Button btnStartDMSRetrieve;

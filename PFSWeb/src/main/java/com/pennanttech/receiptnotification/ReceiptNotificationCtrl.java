@@ -2,7 +2,8 @@ package com.pennanttech.receiptnotification;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
@@ -23,7 +24,7 @@ public class ReceiptNotificationCtrl extends GFCBaseListCtrl<String> implements 
 	@Autowired(required = false)
 	ReceiptNotificationService receiptNotificationService;
 
-	Logger logger = Logger.getLogger(ReceiptNotificationCtrl.class);
+	Logger logger = LogManager.getLogger(ReceiptNotificationCtrl.class);
 
 	protected Window window_ReceiptNotificationCtrl;
 	protected Borderlayout borderLayout_ReceiptNotification;

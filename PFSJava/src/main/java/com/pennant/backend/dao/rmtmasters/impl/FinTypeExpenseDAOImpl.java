@@ -50,7 +50,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -72,7 +73,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implements FinTypeExpenseDAO {
-	private static Logger logger = Logger.getLogger(FinTypeExpenseDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinTypeExpenseDAOImpl.class);
 
 	public FinTypeExpenseDAOImpl() {
 		super();

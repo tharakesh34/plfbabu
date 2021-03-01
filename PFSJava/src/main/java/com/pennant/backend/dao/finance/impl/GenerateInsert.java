@@ -4,63 +4,22 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.SecLoginlog;
 
 public class GenerateInsert {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new FinanceMain();
-	private static String tableName = "FinanceMain";
-	private static String varibaleName = "fm";
+	private static Object object = new SecLoginlog();
+	private static String tableName = "SecLoginLog";
+	private static String varibaleName = "ssl";
 	private static boolean bulkInsert = false;
-	private static String listVaribaleName = "finaneMain";
+	private static String listVaribaleName = "fmList";
 
 	private static String getSelectQuery() {
-		StringBuilder sql = new StringBuilder();
-		sql.append(" FinReference, GraceTerms, NumberOfTerms, GrcPeriodEndDate, AllowGrcPeriod");
-		sql.append(", GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq, NextGrcPftDate, AllowGrcPftRvw");
-		sql.append(", GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate, RepayBaseRate");
-		sql.append(", RepaySpecialRate, RepayProfitRate, RepayFrq, NextRepayDate, RepayPftFrq, NextRepayPftDate");
-		sql.append(", AllowRepayRvw, RepayRvwFrq, NextRepayRvwDate, AllowRepayCpz, RepayCpzFrq, NextRepayCpzDate");
-		sql.append(", MaturityDate, CpzAtGraceEnd, DownPayment, DownPayBank, DownPaySupl, ReqRepayAmount");
-		sql.append(", TotalProfit, TotalCpz, TotalGrossPft, TotalGracePft, TotalGraceCpz, TotalGrossGrcPft");
-		sql.append(", TotalRepayAmt, GrcRateBasis, RepayRateBasis, FinType, FinRemarks, FinCcy, ScheduleMethod");
-		sql.append(", FinContractDate, ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay");
-		sql.append(", LastRepay, FinStartDate, FinAmount, FinRepaymentAmount, CustID, Defferments");
-		sql.append(", PlanDeferCount, FinBranch, FinSourceID, AllowedDefRpyChange, AvailedDefRpyChange");
-		sql.append(", AllowedDefFrqChange, AvailedDefFrqChange, RecalType, FinIsActive, FinAssetValue");
-		sql.append(", disbAccountId, repayAccountId, LastRepayDate, LastRepayPftDate, LastRepayRvwDate");
-		sql.append(", LastRepayCpzDate, AllowGrcRepay, GrcSchdMthd, GrcMargin, RepayMargin, FinCommitmentRef");
-		sql.append(", FinLimitRef, DepreciationFrq, FinCurrAssetValue, NextDepDate, LastDepDate, FinAccount");
-		sql.append(", FinCustPftAccount, ClosingStatus, FinApprovedDate, DedupFound, SkipDedup, Blacklisted");
-		sql.append(", GrcProfitDaysBasis, StepFinance, StepPolicy, AlwManualSteps, NoOfSteps, StepType");
-		sql.append(", AnualizedPercRate, EffectiveRateOfReturn, FinRepayPftOnFrq, LinkedFinRef, GrcMinRate");
-		sql.append(", GrcMaxRate, GrcMaxAmount, RpyMinRate, RpyMaxRate, ManualSchedule, TakeOverFinance");
-		sql.append(", GrcAdvBaseRate, GrcAdvMargin, GrcAdvPftRate, RpyAdvBaseRate, RpyAdvMargin, RpyAdvPftRate");
-		sql.append(", SupplementRent, IncreasedCost, feeAccountId, MinDownPayPerc, TDSApplicable, InsuranceAmt");
-		sql.append(", AlwBPI, BpiTreatment, PlanEMIHAlw, PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax");
-		sql.append(", PlanEMIHLockPeriod, PlanEMICpz, CalRoundingMode, RoundingTarget, AlwMultiDisb");
-		sql.append(", FinRepayMethod, FeeChargeAmt, BpiAmount, DeductFeeDisb, RvwRateApplFor, SchCalOnRvw");
-		sql.append(", PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin, FinCategory");
-		sql.append(", ProductCategory, AdvanceEMI, BpiPftDaysBasis, FixedTenorRate, FixedRateTenor");
-		sql.append(", BusinessVertical, GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower");
-		sql.append(", AllowRevolving, appliedLoanAmt, FinIsRateRvwAtGrcEnd, Version, LastMntBy, LastMntOn");
-		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-
-		sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
-		sql.append(", CustDSR, LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason, InitiateUser");
-		sql.append(", BankName, Iban, AccountType, DdaReferenceNo, DeviationApproval, FinPreApprovedRef");
-		sql.append(", MandateID, JointAccount, JointCustId, DownPayAccount, SecurityDeposit, RcdMaintainSts");
-		sql.append(", FinCancelAc, NextUserId, Priority, RolloverFrq, NextRolloverDate, ShariaStatus");
-		sql.append(", InitiateDate, MMAId, AccountsOfficer, ApplicationNo, DsaCode, DroplineFrq, FirstDroplineDate");
-		sql.append(", PftServicingODLimit, ReferralId, EmployeeName, DmaCode, SalesDepartment, QuickDisb");
-		sql.append(", WifReference, UnPlanEMIHLockPeriod, UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi");
-		sql.append(", MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod");
-		sql.append(", SamplingRequired, LegalRequired, Connector, ProcessAttributes, PromotionCode");
-		sql.append(", TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt, VanReq, VanCode, SanBsdSchdle");
-		sql.append(", PromotionSeqId, SvAmount, CbAmount");
-
-		return sql.toString();
+		StringBuilder insertSql = new StringBuilder(
+				"LoginLogID,loginUsrLogin,LoginTime,LoginIP,LoginBrowserType,LoginStsID,");
+		insertSql.append("LoginSessionID,LoginError");
+		return insertSql.toString();
 	}
 
 	public static void main(String[] args) throws NoSuchFieldException, SecurityException {
@@ -129,15 +88,13 @@ public class GenerateInsert {
 		builder.append("\n\n\n");
 
 		if (bulkInsert) {
-			builder.append(
-					"\t\tjdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {");
+			builder.append("\t\tjdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {");
 			builder.append("\n\n\t\t\t@Override");
 			builder.append("\n\t\t\tpublic void setValues(PreparedStatement ps, int i) throws SQLException {");
 			builder.append("\n\t\t\t\t").append(object.getClass().getSimpleName()).append(" ").append(varibaleName)
 					.append(" = ").append(listVaribaleName).append(".get(i);\n\t\t\t\t");
 		} else {
-			builder.append(
-					"\t\tjdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {");
+			builder.append("\t\tjdbcOperations.update(sql.toString(), new PreparedStatementSetter() {");
 			builder.append("\n\n\t\t\t@Override");
 			builder.append("\n\t\t\tpublic void setValues(PreparedStatement ps) throws SQLException {");
 		}

@@ -1,18 +1,19 @@
 package com.pennant.backend.endofday.tasklet;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.external.OGLDownloadService;
 
 public class OGLDownload implements Tasklet {
-	private Logger logger = Logger.getLogger(OGLDownload.class);
+	private Logger logger = LogManager.getLogger(OGLDownload.class);
 
 	@Autowired(required = false)
 	private OGLDownloadService oglDownloadService;
@@ -22,7 +23,7 @@ public class OGLDownload implements Tasklet {
 		logger.debug(Literal.ENTERING);
 
 		if (oglDownloadService != null) {
-			oglDownloadService.processDownload(DateUtility.getAppDate());
+			oglDownloadService.processDownload(EODUtil.getDate("APP_DATE", chunkContext));
 		} else {
 			logger.debug("OGLDownloadService Not Configured");
 		}

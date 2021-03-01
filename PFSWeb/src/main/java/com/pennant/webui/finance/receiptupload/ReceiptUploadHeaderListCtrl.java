@@ -62,7 +62,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
@@ -124,7 +125,7 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
  */
 public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHeader> {
 	private static final long serialVersionUID = 1817958653208633892L;
-	private static final Logger logger = Logger.getLogger(ReceiptUploadHeaderListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptUploadHeaderListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

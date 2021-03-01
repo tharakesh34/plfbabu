@@ -3,7 +3,8 @@ package com.pennant.mq.process.impl;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.CustomerLimit;
@@ -18,7 +19,7 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerLimitServiceImpl implements CustomerLimitProcess {
-	private static final Logger logger = Logger.getLogger(CustomerLimitServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerLimitServiceImpl.class);
 
 	private CustomerLimitDetailProcess customerLimitDetailProcess;
 	private CustomerLimitPositionProcess customerLimitPositionProcess;

@@ -52,7 +52,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.CurrencyUtil;
@@ -79,7 +80,7 @@ import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
  */
 public class InterestCertificateServiceImpl extends GenericService<InterestCertificate>
 		implements InterestCertificateService {
-	private static Logger logger = Logger.getLogger(InterestCertificateServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(InterestCertificateServiceImpl.class);
 
 	private ExtendedFieldService extendedFieldService;
 	private InterestCertificateDAO interestCertificateDAO;
@@ -190,6 +191,26 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 			BigDecimal grcPftPaid = (BigDecimal) graceRepayMap.get("grcpftpaid");
 			intCert.setGrcPft(PennantApplicationUtil.amountFormate(grcPft, format));
 			intCert.setGrcPftPaid(PennantApplicationUtil.amountFormate(grcPftPaid, format));
+		}
+
+		// The bellow is the setting for the interest amount and principle amounts based on financial year related to
+		// Interest certificate agreement.
+		InterestCertificate interestCert = interestCertificateDAO.getSchedPrinicipalAndProfit(finReference, startDate,
+				endDate);
+		if (interestCert != null && interestCert.getRepayPftAmt() != null && interestCert.getRepayPriAmt() != null) {
+
+			intCert.setRepayPftAmtStr(PennantApplicationUtil.amountFormate(interestCert.getRepayPftAmt(), format));
+			intCert.setRepayPriAmtStr(PennantApplicationUtil.amountFormate(interestCert.getRepayPriAmt(), format));
+
+			intCert.setTotRepayAmount(PennantApplicationUtil
+					.amountFormate(interestCert.getRepayPftAmt().add(interestCert.getRepayPriAmt()), format));
+
+			intCert.setSchdPftPaidStr(PennantApplicationUtil.amountFormate(interestCert.getSchdProfitPaid(), format));
+			intCert.setSchdPriPaidStr(
+					PennantApplicationUtil.amountFormate(interestCert.getSchdPrinciplePaid(), format));
+
+			intCert.setTotSchdAmount(PennantApplicationUtil
+					.amountFormate(interestCert.getSchdProfitPaid().add(interestCert.getSchdPrinciplePaid()), format));
 		}
 
 		// collateral address setup

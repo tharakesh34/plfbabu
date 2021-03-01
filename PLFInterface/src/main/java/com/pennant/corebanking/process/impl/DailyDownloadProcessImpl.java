@@ -44,7 +44,8 @@ package com.pennant.corebanking.process.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.model.EquationAbuser;
@@ -69,7 +70,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DailyDownloadProcessImpl implements DailyDownloadProcess {
 
-	private static Logger logger = Logger.getLogger(DailyDownloadProcessImpl.class);
+	private static Logger logger = LogManager.getLogger(DailyDownloadProcessImpl.class);
 
 	private InterfaceDAO interfaceDAO;
 

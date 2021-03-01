@@ -1,6 +1,7 @@
 package com.pennant.mq.process.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.coreinterface.model.deposits.FetchDeposit;
 import com.pennant.coreinterface.model.deposits.FetchDepositDetail;
@@ -12,7 +13,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DepositDetailServiceImpl implements DepositDetailProcess {
 
-	private static final Logger logger = Logger.getLogger(DepositDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DepositDetailServiceImpl.class);
 
 	private FetchDepositsProcess fetchDepositsProcess;
 	private FetchDepositDetailProcess fetchDepositDetailProcess;

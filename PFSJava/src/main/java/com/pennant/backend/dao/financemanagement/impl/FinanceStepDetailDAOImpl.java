@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -23,7 +24,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> implements FinanceStepDetailDAO {
-	private static Logger logger = Logger.getLogger(FinanceStepDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceStepDetailDAOImpl.class);
 
 	public FinanceStepDetailDAOImpl() {
 		super();

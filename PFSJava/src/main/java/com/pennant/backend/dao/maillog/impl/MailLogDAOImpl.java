@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.maillog.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -11,7 +12,7 @@ import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class MailLogDAOImpl extends BasicDao<Notifications> implements MailLogDAO {
-	private static Logger logger = Logger.getLogger(MailLogDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(MailLogDAOImpl.class);
 
 	public MailLogDAOImpl() {
 		super();

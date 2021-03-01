@@ -2,7 +2,8 @@ package com.pennant.backend.dao.ddapayments.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
@@ -12,7 +13,7 @@ import com.pennant.backend.model.finance.DdaPresentment;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class DDARepresentmentDAOImpl extends SequenceDao<DDAPayments> implements DDARepresentmentDAO {
-	private static Logger logger = Logger.getLogger(DDARepresentmentDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DDARepresentmentDAOImpl.class);
 
 	public DDARepresentmentDAOImpl() {
 		super();
@@ -27,7 +28,7 @@ public class DDARepresentmentDAOImpl extends SequenceDao<DDAPayments> implements
 		logger.debug("Entering");
 
 		if (ddaRepresentment.getId() == 0 || ddaRepresentment.getId() == Long.MIN_VALUE) {
-			ddaRepresentment.setDdaSeqId(getNextId("SeqDDS_PFF_DD500_SETTLED"));
+			ddaRepresentment.setDdaSeqId(getNextValue("SeqDDS_PFF_DD500_SETTLED"));
 		}
 
 		ddaRepresentment.setDirectDebitRefNo(ddaRepresentment.getdDAReferenceNo() + ddaRepresentment.getDdaSeqId());

@@ -7,7 +7,8 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.llom.util.AXIOMUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ibm.mq.MQC;
 import com.ibm.mq.MQEnvironment;
@@ -22,7 +23,7 @@ import com.ibm.mq.constants.MQConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class MessageQueueClient {
-	private static final Logger logger = Logger.getLogger(MessageQueueClient.class);
+	private static final Logger logger = LogManager.getLogger(MessageQueueClient.class);
 
 	MQQueueManager queueManager;
 	private String hostName;

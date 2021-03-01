@@ -10,7 +10,8 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.aspose.words.BreakType;
 import com.aspose.words.ConvertUtil;
@@ -26,7 +27,7 @@ import com.aspose.words.RelativeVerticalPosition;
 import com.aspose.words.WrapType;
 
 public class PDFConversion implements IFieldMergingCallback {
-	private static final Logger logger = Logger.getLogger(PDFConversion.class);
+	private static final Logger logger = LogManager.getLogger(PDFConversion.class);
 
 	public static void generatePDFFromWord(byte[] inputByteData, String destinationPDFDocPath) throws Exception {
 

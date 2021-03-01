@@ -6,7 +6,8 @@ import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.BadSqlGrammarException;
 
@@ -25,7 +26,7 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class RelationShipOfficersController {
-	Logger logger = Logger.getLogger(RelationShipOfficersController.class);
+	private Logger logger = LogManager.getLogger(RelationShipOfficersController.class);
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
 	public RelationshipOfficerService relationshipOfficerService;

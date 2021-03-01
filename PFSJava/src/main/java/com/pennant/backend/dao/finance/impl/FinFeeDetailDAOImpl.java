@@ -51,7 +51,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -79,7 +80,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
  */
 
 public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements FinFeeDetailDAO {
-	private static Logger logger = Logger.getLogger(FinFeeDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinFeeDetailDAOImpl.class);
 
 	public FinFeeDetailDAOImpl() {
 		super();
@@ -96,8 +97,6 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	 */
 	@Override
 	public FinFeeDetail getFinFeeDetailById(FinFeeDetail finFeeDetail, boolean isWIF, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSelectQuery(isWIF, type);
 		sql.append(" where FeeID = ?");
 
@@ -109,17 +108,20 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finFeeDetail.getFeeID() },
 					rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			String table = "FINFEEDETAIL";
+			if (isWIF) {
+				table = "WIFFINFEEDETAIL";
+			}
+
+			logger.warn("Record not found in {}{} table for the specified FeeID >> {}", table, type,
+					finFeeDetail.getFeeID());
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
 	public List<FinFeeDetail> getFinFeeDetailByFinRef(final String reference, boolean isWIF, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSelectQuery(isWIF, type);
 		sql.append(" Where FinReference = ?");
 
@@ -127,21 +129,10 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		FinFeeDetailsRowMapper rowMapper = new FinFeeDetailsRowMapper(type, isWIF);
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, reference);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, reference);
+		}, rowMapper);
 	}
 
 	/**
@@ -911,13 +902,13 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		if (!isWIF) {
 			sql.append(", ActPercentage");
-			if (StringUtils.trimToEmpty(type).contains("View")) {
-				sql.append(", VasProductCode");
-			}
 		}
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc");
+			if (!isWIF) {
+				sql.append(", VasProductCode");
+			}
 		}
 
 		if (isWIF) {
@@ -1058,6 +1049,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				fd.setFeeTypeCode(rs.getString("FeeTypeCode"));
 				fd.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				if (!wIf) {
+					fd.setVasProductCode(rs.getString("VasProductCode"));
+				}
 			}
 
 			return fd;

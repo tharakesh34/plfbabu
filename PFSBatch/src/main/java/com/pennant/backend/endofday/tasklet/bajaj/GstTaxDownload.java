@@ -6,7 +6,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -26,7 +27,7 @@ import com.pennanttech.pff.external.TaxDownloadProcess;
 import com.pennanttech.pff.external.gst.TaxDownlaodExtract;
 
 public class GstTaxDownload implements Tasklet {
-	private Logger logger = Logger.getLogger(GstTaxDownload.class);
+	private Logger logger = LogManager.getLogger(GstTaxDownload.class);
 
 	private Date valueDate;
 	private Date appDate;

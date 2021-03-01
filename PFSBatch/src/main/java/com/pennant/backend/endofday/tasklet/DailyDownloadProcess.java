@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -12,13 +13,14 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.Interface.service.DailyDownloadInterfaceService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class DailyDownloadProcess implements Tasklet {
-	private Logger logger = Logger.getLogger(DailyDownloadProcess.class);
+	private Logger logger = LogManager.getLogger(DailyDownloadProcess.class);
 
 	private DailyDownloadInterfaceService dailyDownloadInterfaceService;
 
@@ -32,9 +34,9 @@ public class DailyDownloadProcess implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		dateValueDate = SysParamUtil.getAppValueDate();
+		dateValueDate = EODUtil.getDate("APP_VALUEDATE", context);
 
-		logger.debug("START: Daily Download Details for Value Date: " + DateUtility.addDays(dateValueDate, -1));
+		logger.debug("START: Daily Download Details for Value Date: " + DateUtil.addDays(dateValueDate, -1));
 
 		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();
 		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
@@ -85,7 +87,7 @@ public class DailyDownloadProcess implements Tasklet {
 			throw e;
 		}
 
-		logger.debug("COMPLETE: Daily Download Details for Value Date: " + DateUtility.addDays(dateValueDate, -1));
+		logger.debug("COMPLETE: Daily Download Details for Value Date: " + DateUtil.addDays(dateValueDate, -1));
 		return RepeatStatus.FINISHED;
 	}
 

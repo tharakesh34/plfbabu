@@ -5,7 +5,8 @@ import javax.xml.namespace.QName;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
@@ -18,7 +19,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class NorkamCheckUtilProcess extends MQProcess {
 
-	private static final Logger logger = Logger.getLogger(NorkamCheckUtilProcess.class);
+	private static final Logger logger = LogManager.getLogger(NorkamCheckUtilProcess.class);
 
 	public NorkamCheckUtilProcess() {
 		super();

@@ -45,7 +45,8 @@ package com.pennant.webui.finance.financemain;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
@@ -81,7 +82,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHeader> {
 	private static final long serialVersionUID = -5901195042041627750L;
-	private static final Logger logger = Logger.getLogger(TreasuryFinHeaderListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(TreasuryFinHeaderListCtrl.class);
 
 	protected Window window_TreasuaryFinHeaderList;
 	protected Borderlayout borderLayout_TreasuaryFinHeaderList;

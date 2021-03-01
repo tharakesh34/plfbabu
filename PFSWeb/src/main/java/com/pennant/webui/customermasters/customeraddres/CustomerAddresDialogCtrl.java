@@ -49,7 +49,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -77,6 +78,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -101,7 +103,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	private static final long serialVersionUID = -221443986307588127L;
-	private static final Logger logger = Logger.getLogger(CustomerAddresDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerAddresDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -133,8 +135,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	protected Textbox custSubDist; // autoWired
 	protected Textbox custDistrict; // autoWired
 
-	protected Label CustomerSname; // autoWired	
-	protected Textbox cityName; //autowired
+	protected Label CustomerSname; // autoWired
+	protected Textbox cityName; // autowired
 	protected Space space_custAddrStreet;
 
 	// not autoWired variables
@@ -292,7 +294,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		doSetFieldProperties();
 		doShowDialog(getCustomerAddres());
 
-		//Calling SelectCtrl For proper selection of Customer
+		// Calling SelectCtrl For proper selection of Customer
 		if (isNewRecord() && !isNewCustomer()) {
 			onLoad();
 		}
@@ -1335,7 +1337,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 					}
 				}
 
-				if (aCustomerAddres.getCustAddrType().equals(customerAddres.getCustAddrType())) { // Both Current and Existing list addresses same
+				if (aCustomerAddres.getCustAddrType().equals(customerAddres.getCustAddrType())) { // Both Current and
+																										// Existing list
+																									// addresses same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -1582,6 +1586,57 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 * 
 	 * @param event
 	 */
+
+	public void onFulfill$custAddrCountry(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = custAddrCountry.getObject();
+		String pcProvince = null;
+		if (dataObject instanceof String) {
+			this.custAddrProvince.setValue("");
+			this.custAddrProvince.setDescription("");
+			this.custAddrCity.setValue("");
+			this.custAddrCity.setDescription("");
+			this.custAddrZIP.setValue("");
+			this.custAddrZIP.setDescription("");
+		} else if (!(dataObject instanceof String)) {
+			Country country = (Country) dataObject;
+			if (country != null) {
+				this.custAddrProvince.setErrorMessage("");
+				pcProvince = country.getCountryCode();
+				fillProvinceDetails(pcProvince);
+			} else {
+				this.custAddrProvince.setObject("");
+				this.custAddrCity.setObject("");
+				this.custAddrZIP.setObject("");
+				this.custAddrProvince.setValue("");
+				this.custAddrProvince.setDescription("");
+				this.custAddrCity.setValue("");
+				this.custAddrCity.setDescription("");
+				this.custAddrZIP.setValue("");
+				this.custAddrZIP.setDescription("");
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	private void fillProvinceDetails(String country) {
+		this.custAddrProvince.setMandatoryStyle(true);
+		this.custAddrProvince.setModuleName("Province");
+		this.custAddrProvince.setValueColumn("CPProvince");
+		this.custAddrProvince.setDescColumn("CPProvinceName");
+		this.custAddrProvince.setValidateColumns(new String[] { "CPProvince" });
+
+		Filter[] filters1 = new Filter[1];
+
+		if (country == null || country.equals("")) {
+			filters1[0] = new Filter("CPCountry", null, Filter.OP_NOT_EQUAL);
+		} else {
+			filters1[0] = new Filter("CPCountry", country, Filter.OP_EQUAL);
+		}
+
+		this.custAddrProvince.setFilters(filters1);
+	}
 
 	public void onFulfill$custAddrProvince(Event event) {
 		logger.debug("Entering");

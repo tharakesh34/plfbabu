@@ -52,7 +52,8 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
@@ -136,7 +137,7 @@ import com.rits.cloning.Cloner;
  */
 public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private static final long serialVersionUID = -8931742880858169171L;
-	private static final Logger logger = Logger.getLogger(CustomerDocumentDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerDocumentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

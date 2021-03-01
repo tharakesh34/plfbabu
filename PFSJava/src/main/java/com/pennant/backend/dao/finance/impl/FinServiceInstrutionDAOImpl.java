@@ -9,66 +9,105 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.LMSServiceLog;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstruction> implements FinServiceInstrutionDAO {
-	private static Logger logger = Logger.getLogger(FinServiceInstrutionDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinServiceInstrutionDAOImpl.class);
 
 	public FinServiceInstrutionDAOImpl() {
 		super();
 	}
 
-	public void saveList(List<FinServiceInstruction> finServiceInstructionList, String type) {
-		logger.debug("Entering");
-
+	public int saveList(List<FinServiceInstruction> finServiceInstructionList, String type) {
 		for (FinServiceInstruction finSerList : finServiceInstructionList) {
 			if (finSerList.getServiceSeqId() == Long.MIN_VALUE) {
 				finSerList.setServiceSeqId(getNextValue("SeqFinInstruction"));
-				logger.debug("get NextID:" + finSerList.getServiceSeqId());
 			}
 		}
 
 		String sql = getInsertQuery(type);
 
-		logger.trace(Literal.SQL + sql);
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finServiceInstructionList.toArray());
-		try {
-			this.jdbcTemplate.batchUpdate(sql, beanParameters);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
-		}
+		logger.trace(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinServiceInstruction fsd = finServiceInstructionList.get(i);
+
+				int index = 1;
+				ps.setLong(index++, fsd.getServiceSeqId());
+				ps.setString(index++, fsd.getFinEvent());
+				ps.setString(index++, fsd.getFinReference());
+				ps.setDate(index++, JdbcUtil.getDate(fsd.getFromDate()));
+				ps.setDate(index++, JdbcUtil.getDate(fsd.getToDate()));
+				ps.setString(index++, fsd.getPftDaysBasis());
+				ps.setString(index++, fsd.getSchdMethod());
+				ps.setBigDecimal(index++, fsd.getActualRate());
+				ps.setString(index++, fsd.getBaseRate());
+				ps.setString(index++, fsd.getSplRate());
+				ps.setBigDecimal(index++, fsd.getMargin());
+				ps.setDate(index++, JdbcUtil.getDate(fsd.getGrcPeriodEndDate()));
+				ps.setString(index++, fsd.getRepayPftFrq());
+				ps.setString(index++, fsd.getRepayRvwFrq());
+				ps.setString(index++, fsd.getRepayCpzFrq());
+				ps.setString(index++, fsd.getGrcPftFrq());
+				ps.setString(index++, fsd.getGrcRvwFrq());
+				ps.setString(index++, fsd.getGrcCpzFrq());
+				ps.setDate(index++, JdbcUtil.getDate(fsd.getNextGrcRepayDate()));
+				ps.setString(index++, fsd.getRepayFrq());
+				ps.setDate(index++, JdbcUtil.getDate(fsd.getNextRepayDate()));
+				ps.setBigDecimal(index++, fsd.getAmount());
+				ps.setString(index++, fsd.getRecalType());
+				ps.setDate(index++, JdbcUtil.getDate(fsd.getRecalFromDate()));
+				ps.setDate(index++, JdbcUtil.getDate(fsd.getRecalToDate()));
+				ps.setBoolean(index++, fsd.isPftIntact());
+				ps.setInt(index++, fsd.getTerms());
+				ps.setString(index++, fsd.getServiceReqNo());
+				ps.setString(index++, fsd.getRemarks());
+				ps.setBigDecimal(index++, fsd.getPftChg());
+				ps.setLong(index++, fsd.getInstructionUID());
+				ps.setLong(index++, fsd.getLinkedTranID());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return finServiceInstructionList.size();
+			}
+		}).length;
 	}
 
 	private String getInsertQuery(String type) {
-		StringBuilder sql = new StringBuilder("Insert Into FinServiceInstruction");
+		StringBuilder sql = new StringBuilder("Insert into");
+		sql.append(" FinServiceInstruction");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (ServiceSeqId, FinEvent, FinReference, FromDate, ToDate");
-		sql.append(", PftDaysBasis, SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate");
+		sql.append(" (ServiceSeqId, FinEvent, FinReference, FromDate, ToDate, PftDaysBasis");
+		sql.append(", SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate");
 		sql.append(", RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
-		sql.append(", NextGrcRepayDate, RepayFrq, NextRepayDate, Amount, RecalType");
-		sql.append(", RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo, Remarks, PftChg");
+		sql.append(", NextGrcRepayDate, RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate");
+		sql.append(", RecalToDate, PftIntact, Terms, ServiceReqNo, Remarks, PftChg");
 		sql.append(", InstructionUID, LinkedTranID)");
-		sql.append(" Values (:ServiceSeqId, :FinEvent, :FinReference, :FromDate, :ToDate");
-		sql.append(", :PftDaysBasis, :SchdMethod, :ActualRate, :BaseRate, :SplRate, :Margin, :GrcPeriodEndDate");
-		sql.append(", :RepayPftFrq, :RepayRvwFrq, :RepayCpzFrq, :GrcPftFrq, :GrcRvwFrq, :GrcCpzFrq");
-		sql.append(", :NextGrcRepayDate, :RepayFrq, :NextRepayDate, :Amount, :RecalType");
-		sql.append(", :RecalFromDate, :RecalToDate, :PftIntact, :Terms, :ServiceReqNo, :Remarks, :PftChg");
-		sql.append(", :InstructionUID, :LinkedTranID)");
+		sql.append(" values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?");
+		sql.append(")");
+
 		return sql.toString();
 	}
 
@@ -77,27 +116,57 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	 * @param finServiceInstruction
 	 * @param type
 	 */
-	public void save(FinServiceInstruction finServiceInstruction, String type) {
-		logger.debug("Entering");
-
-		if (finServiceInstruction.getServiceSeqId() == Long.MIN_VALUE) {
-			finServiceInstruction.setServiceSeqId(getNextValue("SeqFinInstruction"));
-			logger.debug("get NextID:" + finServiceInstruction.getServiceSeqId());
+	public void save(FinServiceInstruction sd, String type) {
+		if (sd.getServiceSeqId() == Long.MIN_VALUE) {
+			sd.setServiceSeqId(getNextValue("SeqFinInstruction"));
 		}
 
 		String sql = getInsertQuery(type);
 
 		logger.trace(Literal.SQL + sql);
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
 
 		try {
-			this.jdbcTemplate.update(sql, beanParameters);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, JdbcUtil.setLong(sd.getServiceSeqId()));
+				ps.setString(index++, sd.getFinEvent());
+				ps.setString(index++, sd.getFinReference());
+				ps.setDate(index++, JdbcUtil.getDate(sd.getFromDate()));
+				ps.setDate(index++, JdbcUtil.getDate(sd.getToDate()));
+				ps.setString(index++, sd.getPftDaysBasis());
+				ps.setString(index++, sd.getSchdMethod());
+				ps.setBigDecimal(index++, sd.getActualRate());
+				ps.setString(index++, sd.getBaseRate());
+				ps.setString(index++, sd.getSplRate());
+				ps.setBigDecimal(index++, sd.getMargin());
+				ps.setDate(index++, JdbcUtil.getDate(sd.getGrcPeriodEndDate()));
+				ps.setString(index++, sd.getRepayPftFrq());
+				ps.setString(index++, sd.getRepayRvwFrq());
+				ps.setString(index++, sd.getRepayCpzFrq());
+				ps.setString(index++, sd.getGrcPftFrq());
+				ps.setString(index++, sd.getGrcRvwFrq());
+				ps.setString(index++, sd.getGrcCpzFrq());
+				ps.setDate(index++, JdbcUtil.getDate(sd.getNextGrcRepayDate()));
+				ps.setString(index++, sd.getRepayFrq());
+				ps.setDate(index++, JdbcUtil.getDate(sd.getNextRepayDate()));
+				ps.setBigDecimal(index++, sd.getAmount());
+				ps.setString(index++, sd.getRecalType());
+				ps.setDate(index++, JdbcUtil.getDate(sd.getRecalFromDate()));
+				ps.setDate(index++, JdbcUtil.getDate(sd.getRecalToDate()));
+				ps.setBoolean(index++, sd.isPftIntact());
+				ps.setInt(index++, sd.getTerms());
+				ps.setString(index++, sd.getServiceReqNo());
+				ps.setString(index++, sd.getRemarks());
+				ps.setBigDecimal(index++, sd.getPftChg());
+				ps.setLong(index++, JdbcUtil.setLong(sd.getInstructionUID()));
+				ps.setLong(index++, JdbcUtil.setLong(sd.getLinkedTranID()));
+			});
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("");
 			throw e;
 		}
 
-		logger.debug("Leaving");
 	}
 
 	@Override
@@ -401,26 +470,25 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 	@Override
 	public BigDecimal getOldRate(String finReference, Date schdate) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select calculatedrate from finscheduledetails where Finreference = :FinReference ");
-		sql.append("and Schdate = (select max(schdate) from finscheduledetails ");
-		sql.append("where Finreference = :FinReference and Schdate <= :Schdate) ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CalculatedRate");
+		sql.append(" From FinScheduleDetails");
+		sql.append(" Where Finreference = ?");
+		sql.append(" and Schdate = (Select max(schdate) From FinScheduleDetails");
+		sql.append(" Where Finreference = ? and Schdate <= ?) ");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("FinReference", finReference);
-		paramSource.addValue("Schdate", schdate);
-
-		BigDecimal result = BigDecimal.ZERO;
 		try {
-			result = this.jdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
+			Object[] object = new Object[] { finReference, finReference, schdate };
+			return this.jdbcOperations.queryForObject(sql.toString(), object, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
+			logger.warn(
+					"Rate not found in FinScheduleDetails table for the specified FinReference >> {} and Schdate <= {}",
+					finReference, schdate);
 		}
-		logger.debug(Literal.LEAVING);
-		return result;
+
+		return BigDecimal.ZERO;
 	}
 
 	@Override
@@ -448,24 +516,36 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	}
 
 	@Override
-	public void saveLMSServiceLOGList(List<LMSServiceLog> lmsServiceLog) {
-		logger.debug(Literal.ENTERING);
+	public void saveLMSServiceLOGList(List<LMSServiceLog> slList) {
+		StringBuilder sql = new StringBuilder("Insert into");
+		sql.append(" LMSServiceLog");
+		sql.append("(Event, FinReference, OldRate, NewRate, EffectiveDate, NotificationFlag");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
-		StringBuilder sql = new StringBuilder("Insert into LMSServiceLog");
-		sql.append(" (Event, FinReference, OldRate, NewRate, EffectiveDate, NotificationFlag)");
-		sql.append(" Values(:Event, :FinReference, :OldRate, :NewRate, :EffectiveDate, :NotificationFlag)");
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(lmsServiceLog.toArray());
-		logger.debug("Leaving");
-		try {
-			this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
-		}
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				LMSServiceLog sl = slList.get(i);
 
-		logger.debug(Literal.LEAVING);
+				int index = 1;
+
+				ps.setString(index++, sl.getEvent());
+				ps.setString(index++, sl.getFinReference());
+				ps.setBigDecimal(index++, sl.getOldRate());
+				ps.setBigDecimal(index++, sl.getNewRate());
+				ps.setDate(index++, JdbcUtil.getDate(sl.getEffectiveDate()));
+				ps.setString(index++, sl.getNotificationFlag());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return slList.size();
+			}
+		});
+
 	}
 
 	@Override

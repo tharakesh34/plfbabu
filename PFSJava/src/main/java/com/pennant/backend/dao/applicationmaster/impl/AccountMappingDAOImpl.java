@@ -44,7 +44,8 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>AccountMapping</code> with set of CRUD operations.
  */
 public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements AccountMappingDAO {
-	private static Logger logger = Logger.getLogger(AccountMappingDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AccountMappingDAOImpl.class);
 
 	public AccountMappingDAOImpl() {
 		super();

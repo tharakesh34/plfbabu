@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
@@ -16,7 +17,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class AccountDetailServiceImpl implements AccountDetailProcess {
 
-	private static final Logger logger = Logger.getLogger(AccountDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(AccountDetailServiceImpl.class);
 
 	private FetchAllAccountsProcess fetchAllAccountsProcess;
 	private FetchAccountDetailProcess fetchAccountDetailProcess;

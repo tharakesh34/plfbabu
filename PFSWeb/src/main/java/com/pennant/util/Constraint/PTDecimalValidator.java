@@ -47,7 +47,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
@@ -57,7 +58,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 
 public class PTDecimalValidator implements Constraint {
-	private static final Logger logger = Logger.getLogger(PTDecimalValidator.class);
+	private static final Logger logger = LogManager.getLogger(PTDecimalValidator.class);
 
 	private String fieldParm;
 	private boolean mandatory = false;

@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class CommodityBrokerDetailServiceImpl extends GenericService<CommodityBrokerDetail>
 		implements CommodityBrokerDetailService {
-	private static final Logger logger = Logger.getLogger(CommodityBrokerDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CommodityBrokerDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

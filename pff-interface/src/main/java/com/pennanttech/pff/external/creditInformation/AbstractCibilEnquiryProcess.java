@@ -36,7 +36,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -75,7 +76,7 @@ import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 
 public class AbstractCibilEnquiryProcess extends AbstractInterface implements CreditInformation {
-	private static final Logger logger = Logger.getLogger(AbstractCibilEnquiryProcess.class);
+	private static final Logger logger = LogManager.getLogger(AbstractCibilEnquiryProcess.class);
 
 	JSONObject jsonObject;
 	JSONObject primaryApplicant;

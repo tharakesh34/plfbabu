@@ -1,6 +1,7 @@
 package com.pennanttech.service.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.DateUtility;
@@ -13,7 +14,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class SystemDateWebServiceImpl implements SystemDateRestService, SystemDateSoapService {
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	@Override
 	public SystemDate getSystemDate() throws ServiceException {

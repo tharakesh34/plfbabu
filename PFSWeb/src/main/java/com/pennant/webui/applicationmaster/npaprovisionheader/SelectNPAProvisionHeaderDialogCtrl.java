@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -22,7 +23,6 @@ import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
 import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.NPAProvisionHeaderService;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -31,7 +31,7 @@ import com.pennanttech.pff.core.TableType;
 public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader> {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(SelectNPAProvisionHeaderDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SelectNPAProvisionHeaderDialogCtrl.class);
 	protected Window window_SelectNPAProvisionHeaderDialog;
 	protected ExtendedCombobox finType;
 	protected ExtendedCombobox entity;
@@ -178,7 +178,7 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 
 			List<NPAProvisionDetail> resvDetailsList = new ArrayList<>();
 			List<NPAProvisionDetail> newDetailsList = new ArrayList<>();
-			
+
 			NPAProvisionHeader newNPAProvisionHeader = new NPAProvisionHeader();
 			newNPAProvisionHeader.setFinType(this.finType.getValue());
 			newNPAProvisionHeader = this.nPAProvisionHeaderService.getNewNPAProvisionHeader(newNPAProvisionHeader,
@@ -187,7 +187,7 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 			if (newNPAProvisionHeader != null) {
 				newDetailsList = newNPAProvisionHeader.getProvisionDetailsList();
 			}
-			
+
 			if (CollectionUtils.isEmpty(newDetailsList)) {
 				MessageUtil.showError(Labels.getLabel("label_FinType_AssetCodes_Configurations_Notavailable"));
 				return;
@@ -196,7 +196,7 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 			if (CollectionUtils.isNotEmpty(oldDetailsList) && CollectionUtils.isNotEmpty(newDetailsList)) {
 
 				resvDetailsList = newDetailsList;
-				
+
 				for (NPAProvisionDetail oldDetails : oldDetailsList) {
 					for (NPAProvisionDetail newDetails : newDetailsList) {
 						if (StringUtils.equals(oldDetails.getAssetCode(), newDetails.getAssetCode())
@@ -212,16 +212,16 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 				this.nPAProvisionHeader.setEntityName(this.entity.getDescription());
 				this.nPAProvisionHeader.setFinTypeName(this.finType.getDescription());
 				showDetailView();
-			} 
+			}
 		} else {
 			this.nPAProvisionHeader = this.nPAProvisionHeaderService.getNewNPAProvisionHeader(nPAProvisionHeader,
 					TableType.VIEW);
-			
+
 			if (CollectionUtils.isEmpty(this.nPAProvisionHeader.getProvisionDetailsList())) {
 				MessageUtil.showError(Labels.getLabel("label_FinType_AssetCodes_Configurations_Notavailable"));
 				return;
 			}
-			
+
 			this.nPAProvisionHeader.setEntityName(this.entity.getDescription());
 			this.nPAProvisionHeader.setFinTypeName(this.finType.getDescription());
 			showDetailView();

@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.MasterDefUtil.DocType;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.masters.MasterDefDAO;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
@@ -24,14 +24,13 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FetchBlackListDetails {
 
-	private static final Logger logger = Logger.getLogger(FetchBlackListDetails.class);
+	private static final Logger logger = LogManager.getLogger(FetchBlackListDetails.class);
 	private static DedupParmService dedupParmService;
 	private List<BlackListCustomers> blackListCustomers;
 	private List<FinBlacklistCustomer> finBlacklistCustomer;

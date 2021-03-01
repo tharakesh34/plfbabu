@@ -44,7 +44,8 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassificationHeader>
 		implements AssetClassificationHeaderDAO {
-	private static Logger logger = Logger.getLogger(AssetClassificationHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AssetClassificationHeaderDAOImpl.class);
 
 	public AssetClassificationHeaderDAOImpl() {
 		super();

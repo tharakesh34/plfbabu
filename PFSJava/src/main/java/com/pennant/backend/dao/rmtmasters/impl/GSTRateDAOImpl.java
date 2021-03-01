@@ -45,7 +45,8 @@ package com.pennant.backend.dao.rmtmasters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -68,7 +69,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>GSTRate</code> with set of CRUD operations.
  */
 public class GSTRateDAOImpl extends SequenceDao<GSTRate> implements GSTRateDAO {
-	private static Logger logger = Logger.getLogger(GSTRateDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(GSTRateDAOImpl.class);
 
 	public GSTRateDAOImpl() {
 		super();

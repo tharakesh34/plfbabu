@@ -144,6 +144,8 @@ public class SMTParameterConstants {
 	// If True, Makes Frequency Dates to empty for change gestation period
 	public static final String CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES = "CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES";
 
+	public static final String NEW_COVENANT_MODULE = "NEW_COVENANT_MODULE";
+	
 	// Upfront Fee reversal required on loan cancellation
 	public static final String UPFRONT_FEE_REVERSAL_REQ = "UPFRONT_FEE_REVERSAL_REQ";
 
@@ -364,4 +366,13 @@ public class SMTParameterConstants {
 	//Update the Manual Cheque Receipt status as paid at Deposit approver
 	public static final String CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER = "CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER";
 	public static final String EOD_INTERVAL_TIME = "EOD_INTERVAL_TIME";
+	public static final String EOD_SKIP_LATE_PAY_MARKING = "EOD_SKIP_LATE_PAY_MARKING";
+	public static final String GST_INV_ON_DUE = "GST_INV_ON_DUE";
+	public static final String ALLOW_ZERO_POSTINGS = "ALLOW_ZERO_POSTINGS";
+	public static final String PROVISION_RULE = "PROVISION_RULE";
+	public static final String EOM_ON_EOD = "EOM_ON_EOD";
+	public static final String MONTHENDACC_FROMFINSTARTDATE = "MONTHENDACC_FROMFINSTARTDATE";
+	public static final String DPD_CALC_INCLUDE_EXCESS = "DPD_CALC_INCLUDE_EXCESS";
+	public static final String ALW_PROV_EOD = "ALW_PROV_EOD";
+	public static final String ENTITY_CODE = "ENTITYCODE";
 }

@@ -37,7 +37,8 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
@@ -54,7 +55,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 @Component
 @Qualifier("nsdlPANService")
 public class NSDLPANService implements PANService {
-	private static final Logger logger = Logger.getLogger(NSDLPANService.class);
+	private static final Logger logger = LogManager.getLogger(NSDLPANService.class);
 
 	@Value("${nsdl.pan.enquiry.certificate.name:#{null}}")
 	private String certName = null;

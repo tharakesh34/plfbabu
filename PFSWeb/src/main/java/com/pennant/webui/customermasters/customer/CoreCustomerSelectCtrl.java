@@ -50,7 +50,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -112,7 +113,7 @@ import com.pennanttech.pff.external.pan.service.PrimaryAccountService;
  */
 public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private static final long serialVersionUID = 9086034736503097868L;
-	private static final Logger logger = Logger.getLogger(CoreCustomerSelectCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CoreCustomerSelectCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUl-file

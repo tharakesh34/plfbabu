@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ReceiptCalculator;
@@ -16,6 +17,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -28,10 +30,11 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ReceiptPaymentService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
-	private static Logger logger = Logger.getLogger(ReceiptPaymentService.class);
+	private static Logger logger = LogManager.getLogger(ReceiptPaymentService.class);
 
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private RepaymentProcessUtil repaymentProcessUtil;
@@ -40,26 +43,21 @@ public class ReceiptPaymentService extends ServiceHelper {
 	private FinanceMainDAO financeMainDAO;
 	private FinanceProfitDetailDAO profitDetailDAO;
 
-	/**
-	 * @param custId
-	 * @param custEODEvents
-	 * @param date
-	 * @throws Exception
-	 */
 	public void processrReceipts(CustEODEvent custEODEvent) throws Exception {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		//	check at least one banking presentation  exists or not.
-		boolean presetment = false;
+		boolean presentment = false;
+
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			if (finEODEvent.getIdxPresentment() >= 0) {
-				presetment = true;
+				presentment = true;
 				break;
 			}
 		}
 
-		if (!presetment) {
+		if (!presentment) {
 			return;
 		}
 
@@ -69,7 +67,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		Customer customer = custEODEvent.getCustomer();
 		long custID = customer.getCustID();
 
-		List<PresentmentDetail> presentments = getPresentmentDetailDAO().getPresentmenToPost(custID, businessDate);
+		List<PresentmentDetail> presentments = presentmentDetailDAO.getPresentmenToPost(custID, businessDate);
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
@@ -77,8 +75,8 @@ public class ReceiptPaymentService extends ServiceHelper {
 				continue;
 			}
 
-			FinanceMain finMain = finEODEvent.getFinanceMain();
-			String finReference = finMain.getFinReference();
+			FinanceMain fm = finEODEvent.getFinanceMain();
+			String finReference = fm.getFinReference();
 
 			//check banking presentation exists
 			PresentmentDetail prestDetails = getPresentmentDetail(presentments, finReference, businessDate);
@@ -104,7 +102,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 					BigDecimal tdsDue = BigDecimal.ZERO;
 					if (sch.isTDSApplicable()) {
-						tdsDue = receiptCalculator.getTDS(finMain, pftDue);
+						tdsDue = receiptCalculator.getTDS(fm, pftDue);
 					}
 
 					BigDecimal priDue = sch.getPrincipalSchd().subtract(sch.getSchdPriPaid());
@@ -115,38 +113,38 @@ public class ReceiptPaymentService extends ServiceHelper {
 						continue;
 					}
 
-					PresentmentDetail pDetail = new PresentmentDetail();
+					PresentmentDetail pd = new PresentmentDetail();
 					// Schedule Setup
-					pDetail.setFinReference(finReference);
-					pDetail.setSchDate(sch.getSchDate());
+					pd.setFinReference(finReference);
+					pd.setSchDate(sch.getSchDate());
 
 					if (emiInAdvanceAmt.compareTo(schAmtDue) >= 0) {
-						pDetail.setAdvanceAmt(schAmtDue);
+						pd.setAdvanceAmt(schAmtDue);
 					} else {
-						pDetail.setAdvanceAmt(emiInAdvanceAmt);
+						pd.setAdvanceAmt(emiInAdvanceAmt);
 					}
 
-					pDetail.setPresentmentAmt(BigDecimal.ZERO);
-					pDetail.setExcessID(finExcessAmount.getExcessID());
-					processprestment(pDetail, finEODEvent, customer, businessDate, true, false);
+					pd.setPresentmentAmt(BigDecimal.ZERO);
+					pd.setExcessID(finExcessAmount.getExcessID());
+					processprestment(pd, finEODEvent, customer, businessDate, true, false);
 				}
 			}
 		}
 
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 
 	}
 
-	private void processprestment(PresentmentDetail presentmentDetail, FinEODEvent finEODEvent, Customer customer,
-			Date businessDate, boolean noReserve, boolean isPDetailsExits) throws Exception {
+	private void processprestment(PresentmentDetail pd, FinEODEvent finEODEvent, Customer customer, Date businessDate,
+			boolean noReserve, boolean isPDetailsExits) throws Exception {
 
-		String finref = presentmentDetail.getFinReference();
-		Date schDate = presentmentDetail.getSchDate();
-		BigDecimal advanceAmt = presentmentDetail.getAdvanceAmt();
-		BigDecimal presentmentAmt = presentmentDetail.getPresentmentAmt();
+		String finReference = pd.getFinReference();
+		Date schDate = pd.getSchDate();
+		BigDecimal advanceAmt = pd.getAdvanceAmt();
+		BigDecimal presentmentAmt = pd.getPresentmentAmt();
 
 		FinReceiptHeader header = new FinReceiptHeader();
-		header.setReference(finref);
+		header.setReference(finReference);
 		header.setReceiptDate(schDate);
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
@@ -170,7 +168,14 @@ public class ReceiptPaymentService extends ServiceHelper {
 		 * update).
 		 */
 
-		header.setRealizationDate(SysParamUtil.getAppDate());
+		FinanceMain fm = finEODEvent.getFinanceMain();
+
+		EventProperties eventProperties = fm.getEventProperties();
+		if (eventProperties.isParameterLoaded()) {
+			header.setRealizationDate(eventProperties.getAppDate());
+		} else {
+			header.setRealizationDate(SysParamUtil.getAppDate());
+		}
 
 		header.setLogSchInPresentment(true);
 		header.setPostBranch("EOD");//FIXME
@@ -178,12 +183,11 @@ public class ReceiptPaymentService extends ServiceHelper {
 		//work flow details
 		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
-		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
+		List<FinReceiptDetail> receiptDetails = new ArrayList<>();
 
-		FinanceMain financeMain = finEODEvent.getFinanceMain();
 		FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
 
-		List<FinanceScheduleDetail> scheduleDetails = finEODEvent.getFinanceScheduleDetails();
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 		String repayHeirarchy = finEODEvent.getFinType().getRpyHierarchy();
 
 		FinReceiptDetail receiptDetail = null;
@@ -191,9 +195,9 @@ public class ReceiptPaymentService extends ServiceHelper {
 		 * we are storing excessID in case of EMIAdvance case only and in advance Amount Other Advance amounts also
 		 * included like ADVINT,ADVEMI
 		 */
-		long excessID = presentmentDetail.getExcessID();
+		long excessID = pd.getExcessID();
 		if (advanceAmt.compareTo(BigDecimal.ZERO) > 0 && excessID != 0) {
-			processAdvanceEMi(presentmentDetail, finEODEvent, customer, businessDate, noReserve);
+			processAdvanceEMi(pd, finEODEvent, customer, businessDate, noReserve);
 		}
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.CREATE_PRESENTMENT_RECEIPT_EOD)
@@ -206,16 +210,16 @@ public class ReceiptPaymentService extends ServiceHelper {
 			receiptDetail.setDueAmount(presentmentAmt);
 			receiptDetail.setValueDate(schDate);
 			receiptDetail.setReceivedDate(businessDate);
-			receiptDetail.setFundingAc(presentmentDetail.getPartnerBankId());
-			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
-			receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
+			receiptDetail.setFundingAc(pd.getPartnerBankId());
+			receiptDetail.setPartnerBankAc(pd.getAccountNo());
+			receiptDetail.setPartnerBankAcType(pd.getAcType());
 			receiptDetails.add(receiptDetail);
 
 			header.setReceiptDetails(receiptDetails);
-			repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail,
-					header, repayHeirarchy, businessDate, businessDate);
-			if (presentmentDetail.getId() != Long.MIN_VALUE) {
-				getPresentmentDetailDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
+			repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, schedules, null, profitDetail, header,
+					repayHeirarchy, businessDate, businessDate);
+			if (pd.getId() != Long.MIN_VALUE) {
+				presentmentDetailDAO.updateReceptId(pd.getId(), header.getReceiptID());
 			}
 		}
 	}
@@ -229,11 +233,11 @@ public class ReceiptPaymentService extends ServiceHelper {
 			return;
 		}
 
-		String finref = detail.getFinReference();
+		String finReference = detail.getFinReference();
 		Date schDate = detail.getSchDate();
 
 		FinReceiptHeader header = new FinReceiptHeader();
-		header.setReference(finref);
+		header.setReference(finReference);
 		header.setReceiptDate(schDate);
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
@@ -280,32 +284,37 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 		header.getXcessPayables().add(xcessPayable);
 
-		FinanceMain financeMain = finEODEvent.getFinanceMain();
+		FinanceMain fm = finEODEvent.getFinanceMain();
 		FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
 
 		List<FinanceScheduleDetail> scheduleDetails = finEODEvent.getFinanceScheduleDetails();
 		String repayHeirarchy = finEODEvent.getFinType().getRpyHierarchy();
-		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail, header,
+		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, scheduleDetails, null, profitDetail, header,
 				repayHeirarchy, businessDate, businessDate);
 
-		boolean isFinFullyPaid = repaymentPostingsUtil.isSchdFullyPaid(financeMain.getFinReference(), scheduleDetails);
+		boolean isFinFullyPaid = repaymentPostingsUtil.isSchdFullyPaid(fm.getFinReference(), scheduleDetails);
 
 		if (isFinFullyPaid) {
-			String finReference = financeMain.getFinReference();
-			financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false,
-					SysParamUtil.getAppDate());
-			profitDetailDAO.updateFinPftMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
+			EventProperties eventProperties = fm.getEventProperties();
+			Date appDate = null;
+
+			if (eventProperties.isParameterLoaded()) {
+				appDate = eventProperties.getAppDate();
+			} else {
+				appDate = SysParamUtil.getAppDate();
+			}
+
+			financeMainDAO.updateMaturity(fm.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
+			profitDetailDAO.updateFinPftMaturity(fm.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED, false);
 
 		}
 	}
 
-	private PresentmentDetail getPresentmentDetail(List<PresentmentDetail> presentmentDetails, String finref,
-			Date schDate) {
+	private PresentmentDetail getPresentmentDetail(List<PresentmentDetail> pd, String finReference, Date schDate) {
 
-		for (PresentmentDetail presentmentDetail : presentmentDetails) {
-			if (presentmentDetail.getFinReference().equals(finref)
-					&& presentmentDetail.getSchDate().compareTo(schDate) == 0) {
-				return presentmentDetail;
+		for (PresentmentDetail detail : pd) {
+			if (detail.getFinReference().equals(finReference) && detail.getSchDate().compareTo(schDate) == 0) {
+				return detail;
 			}
 
 		}

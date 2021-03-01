@@ -48,7 +48,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -59,11 +60,11 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.core.StatusMovementService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class FinanceMovement extends ServiceHelper implements Tasklet {
 	private static final long serialVersionUID = 6169223754136126786L;
-	private Logger logger = Logger.getLogger(FinanceMovement.class);
+	private Logger logger = LogManager.getLogger(FinanceMovement.class);
 
 	int processed = 0;
 	private StatusMovementService statusMovementService;
@@ -74,7 +75,7 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = SysParamUtil.getAppValueDate();
+		Date valueDate = EODUtil.getDate("APP_VALUEDATE", context);
 
 		logger.debug("START: Amortization Caluclation for Value Date: " + valueDate);
 
@@ -84,13 +85,13 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			//Normal to PD
-			getStatusMovementService().processMovement(context, connection, getNormalToPD(),
+			statusMovementService.processMovement(context, connection, getNormalToPD(),
 					AccountEventConstants.ACCEVENT_NORM_PD, valueDate, processed);
 			//PD to Normal
-			getStatusMovementService().processMovement(context, connection, getPDToNormal(),
+			statusMovementService.processMovement(context, connection, getPDToNormal(),
 					AccountEventConstants.ACCEVENT_PD_NORM, valueDate, processed);
 			//PD to PIS
-			getStatusMovementService().processMovement(context, connection, getPDToPIS(),
+			statusMovementService.processMovement(context, connection, getPDToPIS(),
 					AccountEventConstants.ACCEVENT_PD_PIS, valueDate, processed);
 
 		} catch (Exception e) {

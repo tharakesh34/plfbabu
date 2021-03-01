@@ -60,6 +60,7 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 
 public class CalculationUtil implements Serializable {
 	private static final long serialVersionUID = -7140560124513312794L;
@@ -85,33 +86,36 @@ public class CalculationUtil implements Serializable {
 			endCalendar = tempCalendar;
 		}
 
-		if (strDaysBasis.equals(CalculationConstants.IDB_30U360)) {
+		switch (strDaysBasis) {
+
+		case CalculationConstants.IDB_30U360:
 			return getIDB_30U360(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_30E360)) {
+		case CalculationConstants.IDB_30E360:
 			return getIDB_30E360(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_30E360I)) {
+		case CalculationConstants.IDB_30E360I:
 			return getIDB_30E360I(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_30EP360)) {
+		case CalculationConstants.IDB_30EP360:
 			return getIDB_30EP360(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_ISDA)) {
+		case CalculationConstants.IDB_ACT_ISDA:
 			return getIDB_ACT_ISDA(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_365FIXED)) {
+		case CalculationConstants.IDB_ACT_365FIXED:
 			return getIDB_ACT_365FIXED(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_360)) {
+		case CalculationConstants.IDB_ACT_360:
 			return getIDB_ACT_360(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAP)) {
+		case CalculationConstants.IDB_ACT_365LEAP:
 			return getIDB_ACT_365LEAP(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAPS)) {
+		case CalculationConstants.IDB_ACT_365LEAPS:
 			return getIDB_ACT_365LEAPStart(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_BY_PERIOD)) {
+		case CalculationConstants.IDB_BY_PERIOD:
 			return getIDB_BY_PERIOD(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_30E360IH)) {
+		case CalculationConstants.IDB_30E360IH:
 			return getIDB_30E360IH(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_30E360IA)) {
+		case CalculationConstants.IDB_30E360IA:
 			return getIDB_30E360IA(startCalendar, endCalendar);
+		default:
+			return BigDecimal.ONE;
 		}
 
-		return BigDecimal.ONE;
 	}
 
 	private static BigDecimal getIDB_30U360(Calendar startCalendar, Calendar endCalendar) {
@@ -601,8 +605,6 @@ public class CalculationUtil implements Serializable {
 			localCcy = ImplementationConstants.BASE_CCY;
 		}
 
-		// Base Currency
-		
 		if (fromCcyCode == null) {
 			fromCcyCode = localCcy;
 		}
@@ -680,6 +682,11 @@ public class CalculationUtil implements Serializable {
 
 		// Base Currency
 		String localCcy = SysParamUtil.getAppCurrency();
+
+		if (fromCcy == null || toCcy == null) {
+			localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		}
+
 		if (fromCcy == null) {
 			fromCcy = localCcy;
 		}

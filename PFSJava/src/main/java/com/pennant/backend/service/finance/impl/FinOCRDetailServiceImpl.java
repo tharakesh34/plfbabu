@@ -2,7 +2,8 @@ package com.pennant.backend.service.finance.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -17,7 +18,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class FinOCRDetailServiceImpl extends GenericService<FinOCRDetail> implements FinOCRDetailService {
-	private static final Logger logger = Logger.getLogger(FinOCRDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinOCRDetailServiceImpl.class);
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinOCRDetailDAO finOCRDetailDAO;
 

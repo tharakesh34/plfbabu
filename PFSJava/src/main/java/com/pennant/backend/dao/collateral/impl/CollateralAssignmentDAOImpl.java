@@ -43,17 +43,15 @@
 package com.pennant.backend.dao.collateral.impl;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -66,6 +64,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -76,7 +75,7 @@ import com.pennanttech.pff.core.TableType;
  */
 
 public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement> implements CollateralAssignmentDAO {
-	private static Logger logger = Logger.getLogger(CollateralAssignmentDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CollateralAssignmentDAOImpl.class);
 
 	public CollateralAssignmentDAOImpl() {
 		super();
@@ -218,8 +217,6 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	@Override
 	public List<CollateralAssignment> getCollateralAssignmentByFinRef(String reference, String moduleName,
 			String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where Reference = ? and Module = ?");
 
@@ -227,21 +224,11 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		CollateralAssignmentRowMapper rowMapper = new CollateralAssignmentRowMapper(type);
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, reference);
-					ps.setString(index++, moduleName);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, reference);
+			ps.setString(index++, moduleName);
+		}, rowMapper);
 	}
 
 	/**
@@ -249,39 +236,51 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 */
 	@Override
 	public List<AssignmentDetails> getCollateralAssignmentByColRef(String collateralRef, String collateralType) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Module, CA.Reference, Coalesce(FM.FinCcy, CM.CmtCcy) Currency");
+		sql.append(", AssignPerc AssignedPerc, BankValuation CollateralValue, TotAssignedPerc");
+		sql.append(", Coalesce(FinCurrAssetValue+FeeChargeAmt+InsuranceAmt-FinRepaymentAmount, CmtUtilizedAmount)");
+		sql.append(" FinCurrAssetValue, Coalesce(FinAssetValue+FeeChargeAmt+InsuranceAmt, CmtUtilizedAmount)");
+		sql.append(" FinAssetValue, CmtExpDate , Coalesce(FM.FinIsActive,Coalesce(CmtActive,0)) FinIsActive");
+		sql.append(", TotalUtilized, FT.FinLTVCheck");
+		sql.append(" From CollateralAssignment CA");
+		sql.append(" Left Join FinanceMain FM on CA.Reference = FM.FinReference");
+		sql.append(" Left Join RMTFinanceTypes FT on  FM.FINTYPE = FT.FINTYPE");
+		sql.append(" Left Join Commitments CM on CM.CmtReference = CA.Reference");
+		sql.append(" Inner Join CollateralSetUp CS on CS.CollateralRef = CA.CollateralRef");
+		sql.append(" Left Join ( Select CollateralRef, SUM(AssignPerc) TotAssignedPerc");
+		sql.append(" From CollateralAssignment group by CollateralRef) T");
+		sql.append("  on T.CollateralRef = CA.CollateralRef");
+		sql.append(" LEFT JOIN (Select CA.Reference, SUM((CS.BankValuation * CA.AssignPerc)/100)");
+		sql.append(" TotalUtilized from CollateralAssignment CA");
+		sql.append(" Inner Join CollateralSetUp CS on CS.CollateralRef = CA.CollateralRef");
+		sql.append(" Group by CA.Reference) T1 on CA.Reference = T1.Reference");
+		sql.append(" Where CA.CollateralRef = ?");
 
-		CollateralAssignment collateralAssignment = new CollateralAssignment();
-		collateralAssignment.setCollateralRef(collateralRef);
+		logger.trace(Literal.SQL, sql.toString());
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select Module, CA.Reference, Coalesce(FM.FinCcy,CM.CmtCcy) Currency, AssignPerc AssignedPerc, ");
-		selectSql.append(" BankValuation CollateralValue, TotAssignedPerc,  ");
-		selectSql.append(
-				"Coalesce(FinCurrAssetValue+FeeChargeAmt+InsuranceAmt-FinRepaymentAmount,CmtUtilizedAmount) FinCurrAssetValue, ");
-		selectSql.append("Coalesce(FinAssetValue+FeeChargeAmt+InsuranceAmt,CmtUtilizedAmount) FinAssetValue, ");
-		selectSql.append(
-				" CmtExpDate , Coalesce(FM.FinIsActive,Coalesce(CmtActive,0)) FinIsActive, TotalUtilized,FT.FinLTVCheck from CollateralAssignment CA Left Join ");
-		selectSql.append(" FinanceMain FM on CA.Reference = FM.FinReference left join ");
-		selectSql.append(" RMTFinanceTypes FT on  FM.FINTYPE = FT.FINTYPE Left Join ");
-		selectSql.append(" Commitments CM on CM.CmtReference = CA.Reference ");
-		selectSql.append(" inner join CollateralSetUp CS on CS.CollateralRef = CA.CollateralRef ");
-		selectSql.append(
-				" Left join ( Select CollateralRef, SUM(AssignPerc) TotAssignedPerc from CollateralAssignment group by CollateralRef) T ");
-		selectSql.append(" on T.CollateralRef = CA.CollateralRef  ");
-		selectSql.append(" LEFT JOIN (Select CA.Reference, SUM((CS.BankValuation * CA.AssignPerc)/100) TotalUtilized ");
-		selectSql.append(
-				" from CollateralAssignment CA inner join CollateralSetUp CS on CS.CollateralRef = CA.CollateralRef ");
-		selectSql.append(" group by CA.Reference) T1 on CA.Reference = T1.Reference  ");
-		selectSql.append(" Where CA.CollateralRef =:CollateralRef ");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, collateralRef);
+		}, (rs, rowNum) -> {
+			AssignmentDetails ad = new AssignmentDetails();
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
-		RowMapper<AssignmentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AssignmentDetails.class);
+			ad.setModule(rs.getString("Module"));
+			ad.setReference(rs.getString("Reference"));
+			ad.setCurrency(rs.getString("Currency"));
+			ad.setAssignedPerc(rs.getBigDecimal("AssignedPerc"));
+			ad.setCollateralValue(rs.getBigDecimal("CollateralValue"));
+			ad.setAssignedPerc(rs.getBigDecimal("TotAssignedPerc"));
+			ad.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+			ad.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+			ad.setCmtExpDate(JdbcUtil.getDate(rs.getDate("CmtExpDate")));
+			ad.setFinIsActive(rs.getBoolean("FinIsActive"));
+			ad.setTotalUtilized(rs.getBigDecimal("TotalUtilized"));
+			ad.setFinLTVCheck(rs.getString("FinLTVCheck"));
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return ad;
+		});
+
 	}
 
 	/**
@@ -558,27 +557,19 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 */
 	@Override
 	public boolean isSecuredLoan(String finReference, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select count(*)  From CollateralAssignment");
+		sql.append("Select count(*) From CollateralAssignment");
 		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
-		sql.append(" Where Reference = :Reference");
+		sql.append(" Where Reference = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Reference", finReference);
-
-		int count = 0;
 		try {
-			logger.debug(Literal.LEAVING);
-			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, Integer.class) > 0
+					? true : false;
 		} catch (EmptyResultDataAccessException e) {
-			count = 0;
+			return false;
 		}
-
-		return count == 0 ? false : true;
 	}
 
 	private StringBuilder getSqlQuery(String type) {
@@ -670,26 +661,20 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 	@Override
 	public BigDecimal getCollateralValue(String finReference) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT sum(CS.collateralValue) CollateralValue from COLLATERALASSIGNMENT CA Inner Join");
-		sql.append(" COLLATERALSETUP CS ON CA.COLLATERALREF= CS.COLLATERALREF Where CA.Reference = :Reference");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" coalesce(sum(CS.collateralValue), 0) CollateralValue");
+		sql.append(" from COLLATERALASSIGNMENT CA");
+		sql.append(" Inner Join COLLATERALSETUP CS ON CA.COLLATERALREF= CS.COLLATERALREF");
+		sql.append(" Where CA.Reference = ?");
 		sql.append(" GROUP by CA.Reference");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Reference", finReference);
-
-		BigDecimal collateralValue = BigDecimal.ZERO;
 		try {
-			logger.debug(Literal.LEAVING);
-			collateralValue = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			return BigDecimal.ZERO;
 		}
-
-		return collateralValue;
-
 	}
 }

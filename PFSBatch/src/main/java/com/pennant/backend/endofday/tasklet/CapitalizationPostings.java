@@ -53,7 +53,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -62,16 +63,16 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SuspensePostingUtil;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class CapitalizationPostings implements Tasklet {
 
-	private Logger logger = Logger.getLogger(CapitalizationPostings.class);
+	private Logger logger = LogManager.getLogger(CapitalizationPostings.class);
 
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private SuspensePostingUtil suspensePostingUtil;
@@ -91,8 +92,8 @@ public class CapitalizationPostings implements Tasklet {
 	@SuppressWarnings("serial")
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		dateValueDate = DateUtility.getAppValueDate();
-		dateAppDate = DateUtility.getAppDate();
+		dateValueDate = EODUtil.getDate("APP_VALUEDATE", context);
+		dateAppDate = EODUtil.getDate("APP_DATE", context);
 
 		logger.debug("START: Capitalization Postings for Value Date: " + dateValueDate);
 
@@ -151,13 +152,13 @@ public class CapitalizationPostings implements Tasklet {
 
 				pftDetailsList.add(pftDetail);
 				if (pftDetailsList.size() == 500) {
-					getFinanceProfitDetailDAO().updateCpzDetail(pftDetailsList, "");
+					financeProfitDetailDAO.updateCpzDetail(pftDetailsList, "");
 					pftDetailsList.clear();
 				}
 			}
 
 			if (pftDetailsList.size() > 0) {
-				getFinanceProfitDetailDAO().updateCpzDetail(pftDetailsList, "");
+				financeProfitDetailDAO.updateCpzDetail(pftDetailsList, "");
 				pftDetailsList = null;
 			}
 

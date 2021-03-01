@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.CreateEvent;
 import org.zkoss.zk.ui.event.Event;
@@ -87,7 +88,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class MainMenuCtrl extends WindowBaseCtrl {
 	private static final long serialVersionUID = -909795057747345551L;
-	private static final Logger logger = Logger.getLogger(MainMenuCtrl.class);
+	private static final Logger logger = LogManager.getLogger(MainMenuCtrl.class);
 
 	protected Window mainMenuWindow;
 	protected Image expandAll;

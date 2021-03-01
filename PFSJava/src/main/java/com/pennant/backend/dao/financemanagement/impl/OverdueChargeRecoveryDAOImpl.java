@@ -53,7 +53,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -76,7 +77,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery> implements OverdueChargeRecoveryDAO {
-	private static Logger logger = Logger.getLogger(OverdueChargeRecoveryDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(OverdueChargeRecoveryDAOImpl.class);
 
 	public OverdueChargeRecoveryDAOImpl() {
 		super();

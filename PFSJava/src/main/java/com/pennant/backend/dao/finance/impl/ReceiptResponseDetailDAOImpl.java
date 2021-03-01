@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -56,6 +57,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
@@ -68,7 +70,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetail> implements ReceiptResponseDetailDAO {
 
-	private static Logger logger = Logger.getLogger(ReceiptResponseDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ReceiptResponseDetailDAOImpl.class);
 
 	public ReceiptResponseDetailDAOImpl() {
 		super();
@@ -89,7 +91,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		source.addValue("ID", batchId);
 		source.addValue("FileName", fileName);
-		source.addValue("StartTime", DateUtility.getAppDate());
+		source.addValue("StartTime", SysParamUtil.getAppDate());
 
 		try {
 			this.jdbcTemplate.update(sql.toString(), source);

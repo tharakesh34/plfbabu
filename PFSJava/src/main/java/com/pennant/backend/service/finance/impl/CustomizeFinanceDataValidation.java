@@ -6,7 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -39,7 +40,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CustomizeFinanceDataValidation {
 
-	private static final Logger logger = Logger.getLogger(CustomizeFinanceDataValidation.class);
+	private static final Logger logger = LogManager.getLogger(CustomizeFinanceDataValidation.class);
 
 	private CustomerDAO customerDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;

@@ -2,14 +2,15 @@ package com.pennanttech.auth;
 
 import java.io.UnsupportedEncodingException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.codec.Base64;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 @Test
 public class AuthKey {
-	private static Logger logger = Logger.getLogger(AuthKey.class);
+	private static Logger logger = LogManager.getLogger(AuthKey.class);
 
 	@Test(enabled = true)
 	public void generate() throws UnsupportedEncodingException {

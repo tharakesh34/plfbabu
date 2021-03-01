@@ -180,7 +180,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		// Get the identity sequence number.
 		if (feeType.getId() == Long.MIN_VALUE) {
-			feeType.setId(getNextId("SeqFeeTypes"));
+			feeType.setId(getNextValue("SeqFeeTypes"));
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -341,19 +341,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		return null;
 	}
 
-	/**
-	 * Fetch the Record FeeType details by FeeTypeCode field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return FeeType
-	 */
 	@Override
 	public FeeType getTaxDetailByCode(final String feeTypeCode) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" TaxComponent, TaxApplicable, AmortzReq, AccountSetId");
 		sql.append(", FeeTypeCode, FeeTypeDesc, Refundable, TdsReq");
@@ -363,30 +352,24 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { feeTypeCode },
-					new RowMapper<FeeType>() {
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { feeTypeCode }, (rs, rowNum) -> {
+				FeeType f = new FeeType();
 
-						@Override
-						public FeeType mapRow(ResultSet rs, int arg1) throws SQLException {
-							FeeType f = new FeeType();
+				f.setTaxComponent(rs.getString("TaxComponent"));
+				f.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+				f.setAmortzReq(rs.getBoolean("AmortzReq"));
+				f.setAccountSetId(rs.getLong("AccountSetId"));
+				f.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				f.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				f.setrefundable(rs.getBoolean("Refundable"));
+				f.setTdsReq(rs.getBoolean("TdsReq"));
 
-							f.setTaxComponent(rs.getString("TaxComponent"));
-							f.setTaxApplicable(rs.getBoolean("TaxApplicable"));
-							f.setAmortzReq(rs.getBoolean("AmortzReq"));
-							f.setAccountSetId(rs.getLong("AccountSetId"));
-							f.setFeeTypeCode(rs.getString("FeeTypeCode"));
-							f.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-							f.setrefundable(rs.getBoolean("Refundable"));
-							f.setTdsReq(rs.getBoolean("TdsReq"));
-
-							return f;
-						}
-					});
+				return f;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("Record not found in FeeTypes table for the specified FeeTypeCode >> {}", feeTypeCode);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

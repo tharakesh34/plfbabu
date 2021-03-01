@@ -49,7 +49,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -75,7 +76,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>AssignmentDeal</code> with set of CRUD operations.
  */
 public class AssignmentDealDAOImpl extends SequenceDao<AssignmentDeal> implements AssignmentDealDAO {
-	private static Logger logger = Logger.getLogger(AssignmentDealDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AssignmentDealDAOImpl.class);
 
 	public AssignmentDealDAOImpl() {
 		super();
@@ -83,36 +84,44 @@ public class AssignmentDealDAOImpl extends SequenceDao<AssignmentDeal> implement
 
 	@Override
 	public AssignmentDeal getAssignmentDeal(long id, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, code, description, partnerCode, partnerCodeName, partnerCodeDesc, active, ");
-
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, Code, Description, PartnerCodeDesc, PartnerCodeName, PartnerCodeDesc, Active");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From AssignmentDeal");
-		sql.append(type);
-		sql.append(" Where id = :id");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where id = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		AssignmentDeal assignmentDeal = new AssignmentDeal();
-		assignmentDeal.setId(id);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(assignmentDeal);
-		RowMapper<AssignmentDeal> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AssignmentDeal.class);
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			assignmentDeal = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			assignmentDeal = null;
-		}
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+				AssignmentDeal ad = new AssignmentDeal();
 
-		logger.debug(Literal.LEAVING);
-		return assignmentDeal;
+				ad.setId(rs.getLong("Id"));
+				ad.setCode(rs.getString("Code"));
+				ad.setDescription(rs.getString("Description"));
+				ad.setPartnerCode(rs.getLong("PartnerCode"));
+				ad.setActive(rs.getBoolean("Active"));
+				ad.setPartnerCodeName(rs.getString("PartnerCodeName"));
+				ad.setPartnerCodeDesc(rs.getString("PartnerCodeDesc"));
+				ad.setVersion(rs.getInt("Version"));
+				ad.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ad.setLastMntBy(rs.getInt("LastMntBy"));
+				ad.setRecordStatus(rs.getString("RecordStatus"));
+				ad.setRoleCode(rs.getString("RoleCode"));
+				ad.setNextRoleCode(rs.getString("NextRoleCode"));
+				ad.setTaskId(rs.getString("TaskId"));
+				ad.setNextTaskId(rs.getString("NextTaskId"));
+				ad.setRecordType(rs.getString("RecordType"));
+				ad.setWorkflowId(rs.getInt("WorkflowId"));
+
+				return ad;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record not found in AssignmentDeal{} for the specified id {}", type, id);
+		}
+		return null;
 	}
 
 	public AssignmentDealLoanType getAssignmentDealLoanType(long dealId, String type) {
@@ -588,8 +597,6 @@ public class AssignmentDealDAOImpl extends SequenceDao<AssignmentDeal> implement
 
 	@Override
 	public List<AssignmentDealExcludedFee> getApprovedAssignmentDealExcludedFeeList(long dealId) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, DealId, FeeTypeId, FeeTypeCode, FeeTypeCode, Version, LastMntOn, LastMntBy");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -629,10 +636,11 @@ public class AssignmentDealDAOImpl extends SequenceDao<AssignmentDeal> implement
 				}
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(
+					"AssignmentDeal Excluded Fee List not found in AssDealExcludedFee_AView for the specified dealId {}",
+					dealId);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
 }

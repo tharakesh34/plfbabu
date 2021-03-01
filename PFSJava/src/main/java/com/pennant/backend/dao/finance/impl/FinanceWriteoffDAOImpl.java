@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,7 +22,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements FinanceWriteoffDAO {
-	private static Logger logger = Logger.getLogger(FinanceWriteoffDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceWriteoffDAOImpl.class);
 
 	public FinanceWriteoffDAOImpl() {
 		super();

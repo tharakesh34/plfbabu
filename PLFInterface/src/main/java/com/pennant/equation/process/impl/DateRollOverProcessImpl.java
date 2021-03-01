@@ -3,7 +3,8 @@ package com.pennant.equation.process.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.ConnectionPoolException;
@@ -14,7 +15,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DateRollOverProcessImpl implements DateRollOverProcess {
 
-	private static Logger logger = Logger.getLogger(DateRollOverProcessImpl.class);
+	private static Logger logger = LogManager.getLogger(DateRollOverProcessImpl.class);
 
 	private HostConnection hostConnection;
 

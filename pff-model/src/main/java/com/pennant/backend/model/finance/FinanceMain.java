@@ -62,6 +62,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -862,6 +863,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean instBasedSchd;
 	private boolean ocrDeviation = false;
 
+	private EventProperties eventProperties = new EventProperties();
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -1093,6 +1096,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("simulateAccounting");
 		excludeFields.add("returnDataSet");
 		excludeFields.add("ocrDeviation");
+		excludeFields.add("eventProperties");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -5114,4 +5118,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setOcrDeviation(boolean ocrDeviation) {
 		this.ocrDeviation = ocrDeviation;
 	}
+	public EventProperties getEventProperties() {
+		return eventProperties;
+	}
+
+	public void setEventProperties(EventProperties eventProperties) {
+		this.eventProperties = eventProperties;
+	}
+
 }

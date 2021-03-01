@@ -2,7 +2,8 @@ package com.pennant.webui.dedup.dedupparm;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
@@ -16,7 +17,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 
 public class FetchPoliceCaseDetails {
-	private static final Logger logger = Logger.getLogger(FetchPoliceCaseDetails.class);
+	private static final Logger logger = LogManager.getLogger(FetchPoliceCaseDetails.class);
 
 	private int userAction = -1;
 	private static DedupParmService dedupParmService;

@@ -48,7 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -73,7 +74,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> implements LimitStructureDetailDAO {
-	private static Logger logger = Logger.getLogger(LimitStructureDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LimitStructureDetailDAOImpl.class);
 
 	/**
 	 * This method set the Work Flow id based on the module name and return the new LimitStructureDetail
@@ -213,8 +214,8 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 			limitStructureDetail.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}
 		if (limitStructureDetail.getId() == Long.MIN_VALUE) {
-			limitStructureDetail.setId(getNextId("SeqLimitStructureDetails"));
-			logger.debug("get NextID:" + limitStructureDetail.getId());
+			limitStructureDetail.setId(getNextValue("SeqLimitStructureDetails"));
+			logger.debug("get NextValue:" + limitStructureDetail.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into LimitStructureDetails");

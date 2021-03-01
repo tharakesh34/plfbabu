@@ -42,11 +42,9 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -69,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>InstrumentwiseLimit</code> with set of CRUD operations.
  */
 public class InstrumentwiseLimitDAOImpl extends SequenceDao<InstrumentwiseLimit> implements InstrumentwiseLimitDAO {
-	private static Logger logger = Logger.getLogger(InstrumentwiseLimitDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(InstrumentwiseLimitDAOImpl.class);
 
 	public InstrumentwiseLimitDAOImpl() {
 		super();
@@ -247,8 +245,6 @@ public class InstrumentwiseLimitDAOImpl extends SequenceDao<InstrumentwiseLimit>
 	}
 
 	public InstrumentwiseLimit getInstrumentWiseModeLimit(String instrumentMode, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, InstrumentMode, PaymentMinAmtperTrans, PaymentMaxAmtperTran, PaymentMaxAmtperDay");
 		sql.append(", ReceiptMinAmtperTran, ReceiptMaxAmtperTran, ReceiptMaxAmtperDay, MaxAmtPerInstruction");
@@ -261,40 +257,36 @@ public class InstrumentwiseLimitDAOImpl extends SequenceDao<InstrumentwiseLimit>
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { instrumentMode },
-					new RowMapper<InstrumentwiseLimit>() {
-						@Override
-						public InstrumentwiseLimit mapRow(ResultSet rs, int rowNum) throws SQLException {
-							InstrumentwiseLimit iwl = new InstrumentwiseLimit();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { instrumentMode }, (rs, rowNum) -> {
+				InstrumentwiseLimit iwl = new InstrumentwiseLimit();
 
-							iwl.setId(rs.getLong("Id"));
-							iwl.setInstrumentMode(rs.getString("InstrumentMode"));
-							iwl.setPaymentMinAmtperTrans(rs.getBigDecimal("PaymentMinAmtperTrans"));
-							iwl.setPaymentMaxAmtperTran(rs.getBigDecimal("PaymentMaxAmtperTran"));
-							iwl.setPaymentMaxAmtperDay(rs.getBigDecimal("PaymentMaxAmtperDay"));
-							iwl.setReceiptMinAmtperTran(rs.getBigDecimal("ReceiptMinAmtperTran"));
-							iwl.setReceiptMaxAmtperTran(rs.getBigDecimal("ReceiptMaxAmtperTran"));
-							iwl.setReceiptMaxAmtperDay(rs.getBigDecimal("ReceiptMaxAmtperDay"));
-							iwl.setMaxAmtPerInstruction(rs.getBigDecimal("MaxAmtPerInstruction"));
-							iwl.setVersion(rs.getInt("Version"));
-							iwl.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							iwl.setLastMntBy(rs.getLong("LastMntBy"));
-							iwl.setRecordStatus(rs.getString("RecordStatus"));
-							iwl.setRoleCode(rs.getString("RoleCode"));
-							iwl.setNextRoleCode(rs.getString("NextRoleCode"));
-							iwl.setTaskId(rs.getString("TaskId"));
-							iwl.setNextTaskId(rs.getString("NextTaskId"));
-							iwl.setRecordType(rs.getString("RecordType"));
-							iwl.setWorkflowId(rs.getLong("WorkflowId"));
+				iwl.setId(rs.getLong("Id"));
+				iwl.setInstrumentMode(rs.getString("InstrumentMode"));
+				iwl.setPaymentMinAmtperTrans(rs.getBigDecimal("PaymentMinAmtperTrans"));
+				iwl.setPaymentMaxAmtperTran(rs.getBigDecimal("PaymentMaxAmtperTran"));
+				iwl.setPaymentMaxAmtperDay(rs.getBigDecimal("PaymentMaxAmtperDay"));
+				iwl.setReceiptMinAmtperTran(rs.getBigDecimal("ReceiptMinAmtperTran"));
+				iwl.setReceiptMaxAmtperTran(rs.getBigDecimal("ReceiptMaxAmtperTran"));
+				iwl.setReceiptMaxAmtperDay(rs.getBigDecimal("ReceiptMaxAmtperDay"));
+				iwl.setMaxAmtPerInstruction(rs.getBigDecimal("MaxAmtPerInstruction"));
+				iwl.setVersion(rs.getInt("Version"));
+				iwl.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				iwl.setLastMntBy(rs.getLong("LastMntBy"));
+				iwl.setRecordStatus(rs.getString("RecordStatus"));
+				iwl.setRoleCode(rs.getString("RoleCode"));
+				iwl.setNextRoleCode(rs.getString("NextRoleCode"));
+				iwl.setTaskId(rs.getString("TaskId"));
+				iwl.setNextTaskId(rs.getString("NextTaskId"));
+				iwl.setRecordType(rs.getString("RecordType"));
+				iwl.setWorkflowId(rs.getLong("WorkflowId"));
 
-							return iwl;
-						}
-					});
+				return iwl;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Records are not found in InstrumentwiseLimit{} for specified InstrumentMode >> {} ", type,
+					instrumentMode);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 }

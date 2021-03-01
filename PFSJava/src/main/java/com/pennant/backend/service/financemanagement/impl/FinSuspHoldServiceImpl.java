@@ -46,7 +46,8 @@ package com.pennant.backend.service.financemanagement.impl;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class FinSuspHoldServiceImpl extends GenericService<FinSuspHold> implements FinSuspHoldService {
 
-	private static Logger logger = Logger.getLogger(FinSuspHoldServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(FinSuspHoldServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinSuspHoldDAO finSuspHoldDAO;

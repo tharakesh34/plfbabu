@@ -50,7 +50,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -74,7 +75,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements CollateralSetupDAO {
-	private static Logger logger = Logger.getLogger(CollateralSetupDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CollateralSetupDAOImpl.class);
 
 	/**
 	 * Fetch the Record CollateralSetup details by key field
@@ -464,8 +465,6 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 	@Override
 	public List<CollateralSetup> getCollateralSetupByFinRef(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where FinReference = ? and Status is null");
 
@@ -473,20 +472,11 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 		CollateralSetupRowMapper rowMapper = new CollateralSetupRowMapper(type);
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			ps.setString(index++, finReference);
+		}, rowMapper);
 	}
 
 	/**

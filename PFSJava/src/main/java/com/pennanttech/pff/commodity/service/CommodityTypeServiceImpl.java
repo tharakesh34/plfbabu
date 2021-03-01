@@ -1,6 +1,7 @@
 package com.pennanttech.pff.commodity.service;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -17,7 +18,7 @@ import com.pennanttech.pff.commodity.model.CommodityType;
 import com.pennanttech.pff.core.TableType;
 
 public class CommodityTypeServiceImpl extends GenericService<CommodityType> implements CommodityTypeService {
-	private static final Logger logger = Logger.getLogger(CommodityTypeServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CommodityTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CommodityTypeDAO commodityTypeDAO;

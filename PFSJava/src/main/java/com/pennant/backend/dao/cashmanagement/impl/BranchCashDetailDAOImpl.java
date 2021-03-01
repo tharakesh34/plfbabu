@@ -45,7 +45,8 @@ package com.pennant.backend.dao.cashmanagement.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -72,7 +73,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>BranchCashDetail</code> with set of CRUD operations.
  */
 public class BranchCashDetailDAOImpl extends BasicDao<BranchCashDetail> implements BranchCashDetailDAO {
-	private static Logger logger = Logger.getLogger(BranchCashDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BranchCashDetailDAOImpl.class);
 
 	public BranchCashDetailDAOImpl() {
 		super();

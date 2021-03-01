@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.ErrorUtil;
@@ -24,6 +25,7 @@ import com.pennant.backend.dao.limit.LimitReferenceMappingDAO;
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -43,12 +45,11 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class LimitManagement {
-	private static Logger logger = Logger.getLogger(LimitManagement.class);
+	private static Logger logger = LogManager.getLogger(LimitManagement.class);
 
 	private CommitmentDAO commitmentDAO;
 	private LimitDetailDAO limitDetailDAO;
 	private LimitHeaderDAO limitHeaderDAO;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private LimitGroupLinesDAO limitGroupLinesDAO;
 	private LimitReferenceMappingDAO limitReferenceMappingDAO;
 	private LimitTransactionDetailsDAO limitTransactionDetailDAO;
@@ -276,7 +277,15 @@ public class LimitManagement {
 		logger.debug(Literal.ENTERING);
 
 		Date maturityDate = finMain.getMaturityDate();
-		Date valueDate = SysParamUtil.getAppDate();
+
+		EventProperties eventProperties = finMain.getEventProperties();
+
+		Date valueDate = null;
+		if (eventProperties.isParameterLoaded()) {
+			valueDate = eventProperties.getAppDate();
+		} else {
+			valueDate = SysParamUtil.getAppDate();
+		}
 
 		String tansType = LimitConstants.PRINPAY;
 		if (prodCategory.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
@@ -1076,9 +1085,15 @@ public class LimitManagement {
 			limittrans.setLastMntBy(userDetails.getUserId());
 		}
 
-		limittrans.setTransactionDate(new Timestamp(SysParamUtil.getAppDate().getTime()));
+		EventProperties eventProperties = finMain.getEventProperties();
+		if (eventProperties.isParameterLoaded()) {
+			limittrans.setTransactionDate(new Timestamp(eventProperties.getAppDate().getTime()));
+		} else {
+			limittrans.setTransactionDate(new Timestamp(SysParamUtil.getAppDate().getTime()));
+		}
+
 		limittrans.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-		limittrans.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		limittrans.setLastMntOn(limittrans.getCreatedOn());
 
 		if (limittrans.getLimitAmount() != null && limittrans.getLimitAmount().compareTo(BigDecimal.ZERO) > 0) {
 			limitTransactionDetailDAO.save(limittrans);
@@ -1149,7 +1164,7 @@ public class LimitManagement {
 			if (limitDetailsList != null && !limitDetailsList.isEmpty()) {
 				boolean uncalssifed = true;
 				for (LimitDetails details : limitDetailsList) {
-					boolean ruleResult = (boolean) ruleExecutionUtil.executeRule(details.getSqlRule(), dataMap, "",
+					boolean ruleResult = (boolean) RuleExecutionUtil.executeRule(details.getSqlRule(), dataMap, "",
 							RuleReturnType.BOOLEAN);
 					if (ruleResult) {
 						mapping = getLimitRefMapping(LimitConstants.FINANCE, finRef, details.getLimitLine(), headerId);
@@ -1349,10 +1364,6 @@ public class LimitManagement {
 
 	public void setLimitTransactionDetailDAO(LimitTransactionDetailsDAO limitTransactionDetailDAO) {
 		this.limitTransactionDetailDAO = limitTransactionDetailDAO;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {

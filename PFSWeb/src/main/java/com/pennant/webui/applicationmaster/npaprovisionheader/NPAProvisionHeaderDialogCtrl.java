@@ -51,7 +51,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -95,7 +96,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(NPAProvisionHeaderDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(NPAProvisionHeaderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -834,7 +835,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		npa_CheckBox.setId("NPACheckBox_" + stageOrder);
 		npa_CheckBox.setAttribute("Sequence", seqNum + 1);
 		readOnlyComponent(isReadOnly, npa_CheckBox);
-		npa_CheckBox.setChecked(detail.isnPAActive());
+		npa_CheckBox.setChecked(detail.isNPAActive());
 		npa_CheckBox.setWidth("50px");
 		npa_CheckBox.addForward(Events.ON_CLICK, self, "onClick_NPA_CheckBox");
 		lc_NPACheckBox.appendChild(npa_CheckBox);
@@ -972,7 +973,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 			regUnSecPerc.setErrorMessage("");
 			regUnSecPerc.setConstraint("");
 
-			detail.setnPAActive(npaCheckBox.isChecked());
+			detail.setNPAActive(npaCheckBox.isChecked());
 			detail.setDPDdays(dpdDays.intValue());
 			detail.setNPARepayApprtnmnt(getComboboxValue(npaPymntApprtn));
 			detail.setIntSecPerc(getDecimalValue(intSecPerc));

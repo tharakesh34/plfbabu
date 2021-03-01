@@ -8,7 +8,8 @@ import java.util.regex.Pattern;
 
 import javax.script.ScriptException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -33,7 +34,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -546886879998950467L;
-	private static final Logger logger = Logger.getLogger(RuleResultViewCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RuleResultViewCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -48,7 +49,6 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 	protected RuleResultDialogCtrl ruleResultDialogCtrl;
 	protected FinCreditRevSubCategoryDialogCtrl finCreditRevSubCategoryDialogCtrl;
 
-	private RuleExecutionUtil ruleExecutionUtil;
 	private List<ValueLabel> variablesList = null;
 	private String unKnwVar = "Math,round,pow,sqrt";
 
@@ -112,7 +112,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 			}
 
 			if (rows_ruleValues.getVisibleItemCount() == 0) {
-				BigDecimal result = (BigDecimal) ruleExecutionUtil.executeRule(amountRuleFormula, null, null,
+				BigDecimal result = (BigDecimal) RuleExecutionUtil.executeRule(amountRuleFormula, null, null,
 						RuleReturnType.DECIMAL);
 				this.btn_Simulate.setVisible(false);
 				setRuleResult(result);
@@ -186,7 +186,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 			}
 
 			// Execute the Rule
-			BigDecimal result = (BigDecimal) this.ruleExecutionUtil.executeRule("Result = " + rule, map, null,
+			BigDecimal result = (BigDecimal) RuleExecutionUtil.executeRule("Result = " + rule, map, null,
 					RuleReturnType.DECIMAL);
 
 			setRuleResult(result);
@@ -219,13 +219,5 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 			 */
 		}
 		// make result row visible and set value
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 }

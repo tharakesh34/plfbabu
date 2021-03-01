@@ -18,12 +18,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -75,7 +74,7 @@ import freemarker.template.TemplateExceptionHandler;
 import net.sf.jasperreports.engine.JRException;
 
 public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
-	private static final Logger logger = Logger.getLogger(ProcessSystemNotifications.class);
+	private static final Logger logger = LogManager.getLogger(ProcessSystemNotifications.class);
 	Map<String, Configuration> TEMPLATES = new HashMap<String, Configuration>();
 	@Autowired
 	private EmailEngine emailEngine;
@@ -554,24 +553,40 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 	}
 
 	private List<SystemNotificationExecutionDetails> getSystemNotificationExecDetails() {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" snl.Id, Executionid, NotificationId, Email, Mobilenumber, NotificationData, Attributes");
+		sql.append(", NotificationType, ContentLocation, ContentFileName, Subject, Code Notificationcode");
+		sql.append(", sn.AttachmentFileNames, TemplateCode, KeyReference");
+		sql.append(" From sys_notification_exec_log snl");
+		sql.append(" Inner Join sys_notifications sn on sn.id = snl.notificationid");
+		sql.append(" Where snl.processingflag = ?");
 
-		SystemNotificationExecutionDetails systemNotifications = new SystemNotificationExecutionDetails();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setBoolean(index++, false);
+		}, (rs, roeNum) -> {
+			SystemNotificationExecutionDetails sysNoti = new SystemNotificationExecutionDetails();
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" select snl.id, Executionid, Notificationid, Email, Mobilenumber, Notificationdata, Attributes,");
-		sql.append(" Notificationtype, Contentlocation, Contentfilename, Subject, code as Notificationcode, ");
-		sql.append(" sn.AttachmentFileNames, ");
-		sql.append(" TemplateCode, keyReference from sys_notification_exec_log snl");
-		sql.append(" inner join sys_notifications sn on sn.id = snl.notificationid");
-		sql.append(" where snl.processingflag = :ProcessingFlag ");
-		systemNotifications.setProcessingFlag(false);
+			sysNoti.setId(rs.getLong("Id"));
+			sysNoti.setExecutionId(rs.getLong("Executionid"));
+			sysNoti.setNotificationId(rs.getLong("NotificationId"));
+			sysNoti.setEmail(rs.getString("Email"));
+			sysNoti.setMobileNumber(rs.getString("Mobilenumber"));
+			sysNoti.setNotificationData(rs.getBytes("NotificationData"));
+			sysNoti.setAttributes(rs.getString("Attributes"));
+			sysNoti.setNotificationType(rs.getString("NotificationType"));
+			sysNoti.setContentLocation(rs.getString("ContentLocation"));
+			sysNoti.setContentFileName(rs.getString("ContentFileName"));
+			sysNoti.setSubject(rs.getString("Subject"));
+			sysNoti.setNotificationCode(rs.getString("Notificationcode"));
+			sysNoti.setAttachmentFileNames(rs.getString("AttachmentFileNames"));
+			sysNoti.setTemplateCode(rs.getString("TemplateCode"));
+			sysNoti.setKeyReference(rs.getString("KeyReference"));
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(systemNotifications);
-		RowMapper<SystemNotificationExecutionDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SystemNotificationExecutionDetails.class);
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+			sysNoti.setProcessingFlag(false);
+
+			return sysNoti;
+		});
 	}
 
 	public SOAReportGenerationService getSoaReportGenerationService() {

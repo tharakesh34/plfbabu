@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -15,7 +16,7 @@ import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 public class FinanceWorkflowRoleUtil {
 
 	private static FinanceWorkFlowDAO financeWorkFlowDAO;
-	private static final Logger logger = Logger.getLogger(FinanceWorkflowRoleUtil.class);
+	private static final Logger logger = LogManager.getLogger(FinanceWorkflowRoleUtil.class);
 
 	private static LoadingCache<String, Set<String>> financeRoleCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(30, TimeUnit.MINUTES).build(new CacheLoader<String, Set<String>>() {

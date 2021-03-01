@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
@@ -23,7 +24,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 public class GraceEndNotificationProcess extends QuartzJobBean implements StatefulJob, Serializable {
 
 	private static final long serialVersionUID = 7176903574364316129L;
-	private static final Logger logger = Logger.getLogger(GraceEndNotificationProcess.class);
+	private static final Logger logger = LogManager.getLogger(GraceEndNotificationProcess.class);
 
 	public GraceEndNotificationProcess() {
 		super();

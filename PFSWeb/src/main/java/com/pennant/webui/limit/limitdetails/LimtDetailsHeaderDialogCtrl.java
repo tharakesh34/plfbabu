@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -26,7 +27,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(LimtDetailsHeaderDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LimtDetailsHeaderDialogCtrl.class);
 
 	/*
 	 * ************************************************************************ All the components that are defined here

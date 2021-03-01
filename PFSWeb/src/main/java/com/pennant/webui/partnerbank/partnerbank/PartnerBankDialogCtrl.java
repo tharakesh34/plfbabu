@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -104,7 +105,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PartnerBankDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PartnerBankDialogCtrl.class);
 
 	protected Window window_PartnerBankDialog;
 

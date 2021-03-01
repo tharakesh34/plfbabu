@@ -54,7 +54,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -137,7 +138,7 @@ import com.pennanttech.pff.external.BankAccountValidationService;
 public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ChequeDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ChequeDetailDialogCtrl.class);
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
@@ -1507,10 +1508,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 			for (ChequeDetail detail : chequeDetails) {
 
-				if (!fromLoan && PennantConstants.RCD_STATUS_CANCELLED.equals(detail.getRecordStatus())
-						&& !PennantConstants.RCD_STATUS_SUBMITTED.equals(getChequeHeader().getRecordStatus())) {
-					continue;
-				}
+				/*
+				 * if (!fromLoan && PennantConstants.RCD_STATUS_CANCELLED.equals(detail.getRecordStatus()) &&
+				 * !PennantConstants.RCD_STATUS_SUBMITTED.equals(getChequeHeader().getRecordStatus())) { continue; }
+				 */
 
 				boolean isReadOnly = this.btnGen.isDisabled();
 				if (!fromLoan && !((PennantConstants.CHEQUESTATUS_NEW.equals(detail.getChequeStatus()))

@@ -51,7 +51,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -59,7 +60,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.ClassUtil;
 
 public class AuditDetail implements java.io.Serializable {
-	private static final Logger logger = Logger.getLogger(AuditDetail.class);
+	private static final Logger logger = LogManager.getLogger(AuditDetail.class);
 	private static final long serialVersionUID = 4576632220854658678L;
 
 	private long auditId = Long.MIN_VALUE;

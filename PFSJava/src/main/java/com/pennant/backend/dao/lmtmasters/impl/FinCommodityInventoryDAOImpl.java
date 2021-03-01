@@ -3,7 +3,8 @@ package com.pennant.backend.dao.lmtmasters.impl;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -16,7 +17,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class FinCommodityInventoryDAOImpl extends SequenceDao<FinCommodityInventory>
 		implements FinCommodityInventoryDAO {
-	private static Logger logger = Logger.getLogger(FinCommodityInventoryDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinCommodityInventoryDAOImpl.class);
 
 	public FinCommodityInventoryDAOImpl() {
 		super();
@@ -27,7 +28,7 @@ public class FinCommodityInventoryDAOImpl extends SequenceDao<FinCommodityInvent
 		logger.debug("Entering");
 
 		if (finCommodityInventory.getId() == 0 || finCommodityInventory.getId() == Long.MIN_VALUE) {
-			finCommodityInventory.setFinInventoryID(getNextId("SeqFinCommodityInventory"));
+			finCommodityInventory.setFinInventoryID(getNextValue("SeqFinCommodityInventory"));
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into FinCommodityInventory");

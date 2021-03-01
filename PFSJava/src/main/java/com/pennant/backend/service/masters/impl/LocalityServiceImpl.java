@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.service.masters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -60,7 +61,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>Locality</b>.<br>
  */
 public class LocalityServiceImpl extends GenericService<Locality> implements LocalityService {
-	private static final Logger logger = Logger.getLogger(LocalityServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(LocalityServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private LocalityDAO localityDAO;

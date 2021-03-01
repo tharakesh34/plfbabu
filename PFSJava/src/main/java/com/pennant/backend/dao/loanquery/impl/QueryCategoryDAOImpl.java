@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.dao.loanquery.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>QueryCategory</code> with set of CRUD operations.
  */
 public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements QueryCategoryDAO {
-	private static Logger logger = Logger.getLogger(QueryCategoryDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(QueryCategoryDAOImpl.class);
 
 	public QueryCategoryDAOImpl() {
 		super();

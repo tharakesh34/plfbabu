@@ -52,7 +52,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -109,7 +110,7 @@ import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
  */
 public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(DocumentDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DocumentDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

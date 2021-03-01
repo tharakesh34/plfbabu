@@ -11,7 +11,8 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -32,7 +33,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CKYCProcessCtrl extends GFCBaseCtrl {
 	private static final long serialVersionUID = 223801324705386693L;
-	private static final Logger logger = Logger.getLogger(CKYCProcessCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CKYCProcessCtrl.class);
 
 	protected Window window_Download; // autoWired
 	protected Textbox fileName;

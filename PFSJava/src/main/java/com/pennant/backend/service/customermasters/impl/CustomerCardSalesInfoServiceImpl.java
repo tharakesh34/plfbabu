@@ -4,7 +4,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -19,7 +20,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CustomerCardSalesInfoServiceImpl implements CustomerCardSalesInfoService {
-	private static Logger logger = Logger.getLogger(CustomerCardSalesInfoServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerCardSalesInfoServiceImpl.class);
 
 	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
 	private AuditHeaderDAO auditHeaderDAO;

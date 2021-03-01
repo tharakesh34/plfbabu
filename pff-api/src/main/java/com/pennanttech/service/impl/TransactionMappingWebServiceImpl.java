@@ -1,7 +1,8 @@
 package com.pennanttech.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 @Service
 public class TransactionMappingWebServiceImpl implements TransactionMappingRestService, TransactionMappingSoapervice {
 
-	private static final Logger logger = Logger.getLogger(TransactionMappingWebServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(TransactionMappingWebServiceImpl.class);
 
 	private TransactionMappingDAO transactionMappingDAO;
 

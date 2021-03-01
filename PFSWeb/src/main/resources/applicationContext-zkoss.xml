@@ -1285,12 +1285,10 @@
 
 	<bean id="ruleResultViewCtrl" class="com.pennant.webui.rulefactory.rule.RuleResultViewCtrl" parent="basisCtrl"
 		scope="prototype">
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 
 	<bean id="ruleResultSimulationCtrl" class="com.pennant.webui.rulefactory.rule.RuleResultSimulationCtrl" parent="basisCtrl"
 		scope="prototype">
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 
 	<!--============ Mail Template Detail ============== -->
@@ -1329,7 +1327,6 @@
 	<bean id="scoringGroupDialogCtrl" class="com.pennant.webui.rmtmasters.scoringgroup.ScoringGroupDialogCtrl" parent="basisCtrl"
 		scope="prototype">
 		<property name="scoringGroupService" ref="scoringGroupService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 
 	<bean id="scoringSlabDialogCtrl" class="com.pennant.webui.rmtmasters.scoringslab.ScoringSlabDialogCtrl" parent="basisCtrl"
@@ -1527,7 +1524,6 @@
 	<!-- ChekList -->
 	<bean id="financeCheckListReferenceDialogCtrl" class="com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="customerService" ref="customerService" />
 	</bean>
 
@@ -1630,7 +1626,6 @@
 		<property name="customerInterfaceService" ref="customerInterfaceService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="ddaInterfaceService" ref="ddaInterfaceService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleService" ref="ruleService" />
 		<property name="ddaProcessService" ref="ddaProcessService" />
 		<property name="ddaControllerService" ref="ddaControllerService" />
@@ -1768,7 +1763,6 @@
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
 		<property name="currencyService" ref="currencyService" />
 		<property name="ruleService" ref="ruleService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 
 	<!--============ Accounting Detail ============== -->
@@ -1824,7 +1818,6 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="scoringDetailService" ref="finScoringDetailService" />
 		<property name="ratingCodeService" ref="ratingCodeService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 
 	<!--============ Finance Joint Account Detail ============== -->
@@ -1839,7 +1832,6 @@
 
 	<bean id="agreementDetailDialogCtrl" class="com.pennant.webui.finance.financemain.AgreementDetailDialogCtrl"
 		parent="basisCtrl">
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleService" ref="ruleService" />
 		<property name="agreementGeneration" ref="agreementGeneration" />
 		<property name="ddaControllerService" ref="ddaControllerService" />
@@ -2359,7 +2351,6 @@
 		scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="ruleService" ref="ruleService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="feeTypeService" ref="feeTypeService" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<!--<property name="branchService" ref="branchService" /> <property name="provinceService" ref="provinceService" /> <property 
@@ -2545,7 +2536,6 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="manualPaymentService" ref="manualPaymentService" />
 		<property name="accountsService" ref="accountsService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="repayCalculator" ref="repayCalculator" />
@@ -2565,7 +2555,6 @@
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="receiptService" ref="receiptService" />
 		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
@@ -2635,7 +2624,6 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="receiptCancellationService" ref="receiptCancellationService" />
 		<property name="ruleService" ref="ruleService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<!-- <property name="notificationService" ref="notificationService" /> <property name="customerDetailsService" ref="customerDetailsService" 
 			/> <property name="financeDetailService" ref="financeDetailService" /> -->
 	</bean>
@@ -2893,7 +2881,6 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="stepPolicyService" ref="stepPolicyService" />
 		<property name="ruleService" ref="ruleService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 
 	<bean id="wifinanceTypeSelectListCtrl" class="com.pennant.webui.finance.wiffinancemain.WIFinanceTypeSelectListCtrl"
@@ -3047,7 +3034,6 @@
 		parent="basisListCtrl" scope="prototype">
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 		<property name="ruleService" ref="ruleService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
@@ -3068,7 +3054,6 @@
 	<bean id="promotionPickListCtrl" class="com.pennant.webui.finance.enquiry.PromotionPickListCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="ruleService" ref="ruleService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="relationshipOfficerService" ref="relationshipOfficerService" />
@@ -3337,7 +3322,6 @@
 
 	<bean id="facilityCheckListReferenceDialogCtrl" class="com.pennant.webui.facility.facility.FacilityCheckListReferenceDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="customerService" ref="customerService" />
 	</bean>
 
@@ -3492,7 +3476,6 @@
 	</bean>
 
 	<bean id="deviationExecutionCtrl" scope="prototype" class="com.pennant.webui.delegationdeviation.DeviationExecutionCtrl">
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 	</bean>
 
@@ -3908,7 +3891,6 @@
 	<bean id="collateralSetupDialogCtrl" class="com.pennant.webui.collateral.collateralsetup.CollateralSetupDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="collateralSetupService" ref="collateralSetupService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="notificationService" ref="notificationService" />
 		<property name="eventManager" ref="eventManager" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
@@ -4261,7 +4243,6 @@
 	<bean id="accountMappingDialogCtrl" class="com.pennant.webui.applicationmaster.accountmapping.AccountMappingDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="accountMappingService" ref="accountMappingService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 	<bean id="normAccountMappingDialogCtrl" class="com.pennant.webui.applicationmaster.accountmapping.NormAccountMappingDialogCtrl"
 		parent="basisCtrl" scope="prototype">
@@ -5268,7 +5249,6 @@
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="receiptService" ref="receiptService" />
 		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="receiptCalculator" ref="receiptCalculator" />

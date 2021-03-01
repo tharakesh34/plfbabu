@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -75,7 +76,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance> implements ReinstateFinanceService {
 
-	private static Logger logger = Logger.getLogger(ReinstateFinanceServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(ReinstateFinanceServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ReinstateFinanceDAO reinstateFinanceDAO;

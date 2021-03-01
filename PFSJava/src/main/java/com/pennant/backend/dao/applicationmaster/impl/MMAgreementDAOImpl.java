@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * DAO methods implementation for the <b>MMAgreement model</b> class.<br>
  */
 public class MMAgreementDAOImpl extends SequenceDao<MMAgreement> implements MMAgreementDAO {
-	private static Logger logger = Logger.getLogger(MMAgreementDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(MMAgreementDAOImpl.class);
 
 	public MMAgreementDAOImpl() {
 		super();
@@ -251,8 +252,8 @@ public class MMAgreementDAOImpl extends SequenceDao<MMAgreement> implements MMAg
 	public long save(MMAgreement aMMAgreement, String type) {
 		logger.debug("Entering ");
 		if (aMMAgreement.getId() == Long.MIN_VALUE) {
-			aMMAgreement.setId(getNextId("SeqMMAgreements"));
-			logger.debug("get NextID:" + aMMAgreement.getId());
+			aMMAgreement.setId(getNextValue("SeqMMAgreements"));
+			logger.debug("get NextValue:" + aMMAgreement.getId());
 		}
 		StringBuilder insertSql = new StringBuilder("Insert Into MMAgreements");
 		insertSql.append(StringUtils.trimToEmpty(type));

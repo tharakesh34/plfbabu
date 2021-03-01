@@ -42,7 +42,8 @@
 */
 package com.pennanttech.ws.auth.dao.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -59,7 +60,7 @@ import com.pennanttech.ws.auth.model.UserAuthentication;
  * 
  */
 public class UserAuthDAOImpl extends BasicDao<UserAuthentication> implements UserAuthDAO {
-	private static Logger logger = Logger.getLogger(UserAuthDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(UserAuthDAOImpl.class);
 
 	public UserAuthDAOImpl() {
 		super();

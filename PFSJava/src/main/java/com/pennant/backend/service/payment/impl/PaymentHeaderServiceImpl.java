@@ -54,7 +54,8 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -97,6 +98,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -108,7 +110,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>PaymentHeader</b>.<br>
  */
 public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> implements PaymentHeaderService {
-	private static final Logger logger = Logger.getLogger(PaymentHeaderServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PaymentHeaderServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PaymentHeaderDAO paymentHeaderDAO;
@@ -1018,7 +1020,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		logger.debug(Literal.LEAVING);
 
 		// GST Invoice data resetting based on Accounting Process
-		if (SysParamUtil.isAllowed("GST_INV_ON_DUE") && advise.isDueCreation()) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE) && advise.isDueCreation()) {
 			return movement;
 		}
 

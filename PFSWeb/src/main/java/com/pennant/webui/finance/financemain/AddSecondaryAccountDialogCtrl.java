@@ -45,7 +45,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -74,7 +75,7 @@ import com.rits.cloning.Cloner;
 
 public class AddSecondaryAccountDialogCtrl extends GFCBaseCtrl<SecondaryAccount> {
 	private static final long serialVersionUID = 6004939933729664896L;
-	private static final Logger logger = Logger.getLogger(AddSecondaryAccountDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AddSecondaryAccountDialogCtrl.class);
 
 	protected Window window_SecondaryAccountDialog; // autoWired
 	protected AccountSelectionBox secondaryAccountId;

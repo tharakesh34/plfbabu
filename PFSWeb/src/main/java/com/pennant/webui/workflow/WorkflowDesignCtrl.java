@@ -42,7 +42,8 @@
  */
 package com.pennant.webui.workflow;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
@@ -57,7 +58,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	private static final long serialVersionUID = -1351367303946249042L;
-	private static Logger logger = Logger.getLogger(WorkflowDesignCtrl.class);
+	private static Logger logger = LogManager.getLogger(WorkflowDesignCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

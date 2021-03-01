@@ -50,7 +50,6 @@ public class AccountNumberUtil implements Serializable {
 	private static final long serialVersionUID = -1200799666995440280L;
 
 	private RuleDAO ruleDAO;
-	private RuleExecutionUtil ruleExecutionUtil;
 
 	public AccountNumberUtil() {
 		super();
@@ -65,14 +64,6 @@ public class AccountNumberUtil implements Serializable {
 
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 }

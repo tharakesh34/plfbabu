@@ -45,7 +45,8 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * Data access layer implementation for <code>ManualAdvise</code> with set of CRUD operations.
  */
 public class FinTaxUploadDetailDAOImpl extends SequenceDao<FinTaxUploadHeader> implements FinTaxUploadDetailDAO {
-	private static Logger logger = Logger.getLogger(FinTaxUploadDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinTaxUploadDetailDAOImpl.class);
 
 	public FinTaxUploadDetailDAOImpl() {
 		super();

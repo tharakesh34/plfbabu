@@ -1,16 +1,12 @@
 package com.pennant.backend.dao.collateral.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -24,7 +20,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements FinAssetTypeDAO {
-	private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinAssetTypesDAOImpl.class);
 
 	public FinAssetTypesDAOImpl() {
 		super();
@@ -116,8 +112,6 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 	 */
 	@Override
 	public List<FinAssetTypes> getFinAssetTypesByFinRef(String reference, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AssetTypeId, Reference, AssetType, SeqNo, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -127,42 +121,29 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, reference);
-				}
-			}, new RowMapper<FinAssetTypes>() {
-				@Override
-				public FinAssetTypes mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinAssetTypes fat = new FinAssetTypes();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, reference);
+		}, (rs, rowNum) -> {
+			FinAssetTypes fat = new FinAssetTypes();
 
-					fat.setAssetTypeId(rs.getLong("AssetTypeId"));
-					fat.setReference(rs.getString("Reference"));
-					fat.setAssetType(rs.getString("AssetType"));
-					fat.setSeqNo(rs.getInt("SeqNo"));
-					fat.setVersion(rs.getInt("Version"));
-					fat.setLastMntBy(rs.getLong("LastMntBy"));
-					fat.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					fat.setRecordStatus(rs.getString("RecordStatus"));
-					fat.setRoleCode(rs.getString("RoleCode"));
-					fat.setNextRoleCode(rs.getString("NextRoleCode"));
-					fat.setTaskId(rs.getString("TaskId"));
-					fat.setNextTaskId(rs.getString("NextTaskId"));
-					fat.setRecordType(rs.getString("RecordType"));
-					fat.setWorkflowId(rs.getLong("WorkflowId"));
+			fat.setAssetTypeId(rs.getLong("AssetTypeId"));
+			fat.setReference(rs.getString("Reference"));
+			fat.setAssetType(rs.getString("AssetType"));
+			fat.setSeqNo(rs.getInt("SeqNo"));
+			fat.setVersion(rs.getInt("Version"));
+			fat.setLastMntBy(rs.getLong("LastMntBy"));
+			fat.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			fat.setRecordStatus(rs.getString("RecordStatus"));
+			fat.setRoleCode(rs.getString("RoleCode"));
+			fat.setNextRoleCode(rs.getString("NextRoleCode"));
+			fat.setTaskId(rs.getString("TaskId"));
+			fat.setNextTaskId(rs.getString("NextTaskId"));
+			fat.setRecordType(rs.getString("RecordType"));
+			fat.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return fat;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return fat;
+		});
 	}
 
 	/**

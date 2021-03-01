@@ -14,7 +14,8 @@ import javax.script.ScriptException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.pff.service.hook.PostDeviationHook;
 import com.rits.cloning.Cloner;
 
 public class DeviationExecutionCtrl {
-	private static final Logger logger = Logger.getLogger(DeviationExecutionCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DeviationExecutionCtrl.class);
 
 	private int format = 0;
 	private String userRole;
@@ -74,7 +75,6 @@ public class DeviationExecutionCtrl {
 	private List<FinanceDeviations> approvedFinanceDeviations;
 	@Autowired
 	private DeviationConfigService deviationConfigService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private CheckListDetailService checkListDetailService;
 	@Autowired
 	private CustomerDetailsService customerDetailsService;
@@ -302,7 +302,7 @@ public class DeviationExecutionCtrl {
 			ruleReturnType = RuleReturnType.OBJECT;
 		}
 
-		Object object = this.ruleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(),
+		Object object = RuleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(),
 				customerEligibilityCheck.getDeclaredFieldValues(), finCcy, ruleReturnType);
 
 		String resultValue = null;
@@ -576,10 +576,6 @@ public class DeviationExecutionCtrl {
 
 	public void setFinanceMainBaseCtrl(FinanceMainBaseCtrl financeMainBaseCtrl) {
 		this.financeMainBaseCtrl = financeMainBaseCtrl;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public void setCheckListDetailService(CheckListDetailService checkListDetailService) {

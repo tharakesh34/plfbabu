@@ -55,13 +55,13 @@ public interface ProvisionDAO {
 
 	Provision getProvisionById(String finReference, TableType type, boolean isMovement);
 
-	void update(Provision provision, TableType type);
+	int update(Provision provision, TableType type);
 
 	void delete(Provision provision, TableType type);
 
 	long save(Provision provision, TableType type);
 
-	void saveAmounts(List<ProvisionAmount> provisionAmounts, TableType mainTab, boolean isMovement);
+	int saveAmounts(List<ProvisionAmount> provisionAmounts, TableType mainTab, boolean isMovement);
 
 	boolean isProvisionExists(String finReference, TableType type);
 
@@ -71,7 +71,7 @@ public interface ProvisionDAO {
 
 	List<ProvisionAmount> getProvisionAmounts(long id, TableType type);
 
-	void updateAmounts(List<ProvisionAmount> provisionAmounts, TableType type);
+	int updateAmounts(List<ProvisionAmount> provisionAmounts, TableType type);
 
 	long saveMovements(Provision provision, TableType tableType);
 

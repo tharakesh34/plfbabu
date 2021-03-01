@@ -11,7 +11,8 @@
  */
 package com.pennanttech.framework.web;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
@@ -28,7 +29,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 public class ErrorCtrl extends GenericForwardComposer<Component> {
 	private static final long serialVersionUID = 4590439096983686575L;
-	private static final Logger logger = Logger.getLogger(ErrorCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ErrorCtrl.class);
 	protected Window window_ErrorDialog;
 	protected Panel panel;
 	protected Label message;

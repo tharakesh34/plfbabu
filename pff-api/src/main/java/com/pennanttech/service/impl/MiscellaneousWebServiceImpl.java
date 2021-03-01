@@ -7,7 +7,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
@@ -56,7 +57,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, MiscellaneousSoapService {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = LogManager.getLogger(getClass());
 	private MiscellaneousServiceController miscellaneousController;
 	private JVPostingService jVPostingService;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;

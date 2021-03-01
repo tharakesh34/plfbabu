@@ -44,7 +44,8 @@ package com.pennant.webui.bmtmasters.product;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -73,7 +74,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ProductListCtrl extends GFCBaseListCtrl<Product> {
 	private static final long serialVersionUID = -6951358943287040101L;
-	private static final Logger logger = Logger.getLogger(ProductListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ProductListCtrl.class);
 
 	protected Window window_ProductList;
 	protected Borderlayout borderLayout_ProductList;

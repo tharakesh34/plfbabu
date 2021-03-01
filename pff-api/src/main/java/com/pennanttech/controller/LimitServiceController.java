@@ -7,7 +7,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
@@ -44,7 +45,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class LimitServiceController {
-	private static Logger logger = Logger.getLogger(LimitServiceController.class);
+	private static Logger logger = LogManager.getLogger(LimitServiceController.class);
 
 	private LimitStructureService limitStructureService;
 	private LimitDetailService limitDetailService;

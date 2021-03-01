@@ -50,7 +50,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -111,8 +112,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>FinanceType</b>.<br>
  */
 public class FinanceTypeServiceImpl extends GenericService<FinanceType> implements FinanceTypeService {
-
-	private static final Logger logger = Logger.getLogger(FinanceTypeServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceTypeDAO financeTypeDAO;
@@ -785,7 +785,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
 
 					if (exist && AdvanceRuleCode.DSF.name().equals(fee.getFeeTypeCode())) {
-						if (fee.isOriginationFee() && fee.getModuleId() == moduleId) {
+						if (!fee.isOriginationFee() && fee.getModuleId() == moduleId) {
 							fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 						}
 					}
@@ -841,7 +841,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
 
 					if (exist && AdvanceRuleCode.CASHCLT.name().equals(fee.getFeeTypeCode())) {
-						if (fee.isOriginationFee() && fee.getModuleId() == moduleId) {
+						if (!fee.isOriginationFee() && fee.getModuleId() == moduleId) {
 							fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 						}
 					}

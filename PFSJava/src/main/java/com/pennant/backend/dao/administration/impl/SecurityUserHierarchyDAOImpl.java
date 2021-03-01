@@ -45,7 +45,8 @@ package com.pennant.backend.dao.administration.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierarchy>
 		implements SecurityUserHierarchyDAO {
 
-	private static Logger logger = Logger.getLogger(SecurityUserHierarchyDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityUserHierarchyDAOImpl.class);
 
 	public SecurityUserHierarchyDAOImpl() {
 		super();

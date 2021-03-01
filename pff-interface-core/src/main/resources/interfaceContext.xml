@@ -11,20 +11,20 @@
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 		http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
-	
+
 	<bean id="portalDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="resourceRef" value="true" />
 		<property name="jndiName" value="jdbc/PDP" />
 		<property name="lookupOnStartup" value="true" />
 	</bean>
-	
+
 	<bean id="extractCustomerDataDAO" class="com.pennanttech.backend.dao.impl.ExtractCustomerDataDAOImpl" parent="basicDao">
 		<property name="portalDataSource" ref="portalDataSource" />
 	</bean>
-	
+
 	<bean id="extractCustomerData" class="com.pennanttech.pff.process.ExtractCustomerData">
 		<property name="extractCustomerDataDAO" ref="extractCustomerDataDAO" />
 		<property name="pushPullControlService" ref="pushPullControlService" />
 	</bean>
-	
+
 </beans>

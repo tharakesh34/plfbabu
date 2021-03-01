@@ -43,7 +43,8 @@
 
 package com.pennant.backend.dao.util.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -60,7 +61,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class GenerateAccountNumberDAOImpl extends BasicDao<SeqAccountNumber> implements GenerateAccountNumberDAO {
-	private static Logger logger = Logger.getLogger(GenerateAccountNumberDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(GenerateAccountNumberDAOImpl.class);
 
 	public GenerateAccountNumberDAOImpl() {
 		super();

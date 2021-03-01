@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.amtmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -61,7 +62,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * DAO methods implementation for the <b>VehicleVersion model</b> class.<br>
  */
 public class VehicleVersionDAOImpl extends SequenceDao<VehicleVersion> implements VehicleVersionDAO {
-	private static Logger logger = Logger.getLogger(VehicleVersionDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(VehicleVersionDAOImpl.class);
 
 	public VehicleVersionDAOImpl() {
 		super();
@@ -160,8 +161,8 @@ public class VehicleVersionDAOImpl extends SequenceDao<VehicleVersion> implement
 	public long save(VehicleVersion vehicleVersion, String type) {
 		logger.debug("Entering");
 		if (vehicleVersion.getId() == Long.MIN_VALUE) {
-			vehicleVersion.setId(getNextId("SeqAMTVehicleVersion"));
-			logger.debug("get NextID:" + vehicleVersion.getId());
+			vehicleVersion.setId(getNextValue("SeqAMTVehicleVersion"));
+			logger.debug("get NextValue:" + vehicleVersion.getId());
 		}
 		StringBuilder insertSql = new StringBuilder();
 

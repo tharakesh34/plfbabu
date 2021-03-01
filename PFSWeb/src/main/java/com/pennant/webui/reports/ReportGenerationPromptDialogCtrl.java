@@ -59,7 +59,8 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
@@ -152,7 +153,7 @@ import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
  */
 public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 	private static final long serialVersionUID = 4678287540046204660L;
-	private final static Logger logger = Logger.getLogger(ReportGenerationPromptDialogCtrl.class);
+	private final static Logger logger = LogManager.getLogger(ReportGenerationPromptDialogCtrl.class);
 
 	protected Window window_ReportPromptFilterCtrl;
 	protected Borderlayout borderlayout;

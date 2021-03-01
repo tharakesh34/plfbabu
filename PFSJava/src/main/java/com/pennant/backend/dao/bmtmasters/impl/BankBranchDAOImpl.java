@@ -47,7 +47,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -74,7 +75,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 
 public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBranchDAO {
-	private static Logger logger = Logger.getLogger(BankBranchDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BankBranchDAOImpl.class);
 
 	public BankBranchDAOImpl() {
 		super();
@@ -237,8 +238,8 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	public long save(BankBranch bankBranch, String type) {
 		logger.debug(Literal.ENTERING);
 		if (bankBranch.getId() == Long.MIN_VALUE) {
-			bankBranch.setId(getNextId("SeqBankBranches"));
-			logger.debug("get NextID:" + bankBranch.getId());
+			bankBranch.setId(getNextValue("SeqBankBranches"));
+			logger.debug("get NextValue:" + bankBranch.getId());
 		}
 		//since it has foreign key
 		bankBranch.setCity(StringUtils.trimToNull(bankBranch.getCity()));

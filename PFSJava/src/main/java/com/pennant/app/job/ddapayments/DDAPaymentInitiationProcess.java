@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
@@ -20,7 +21,7 @@ import com.pennant.backend.util.FinanceConstants;
 public class DDAPaymentInitiationProcess extends QuartzJobBean implements StatefulJob, Serializable {
 
 	private static final long serialVersionUID = 809983809253088428L;
-	private static final Logger logger = Logger.getLogger(DDAPaymentInitiationProcess.class);
+	private static final Logger logger = LogManager.getLogger(DDAPaymentInitiationProcess.class);
 
 	public DDAPaymentInitiationProcess() {
 		super();

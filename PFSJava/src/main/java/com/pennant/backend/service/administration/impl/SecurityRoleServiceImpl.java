@@ -44,7 +44,8 @@ package com.pennant.backend.service.administration.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -68,7 +69,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implements SecurityRoleService {
-	private static final Logger logger = Logger.getLogger(SecurityRoleServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(SecurityRoleServiceImpl.class);
 	private AuditHeaderDAO auditHeaderDAO;
 
 	private SecurityRoleDAO securityRoleDAO;

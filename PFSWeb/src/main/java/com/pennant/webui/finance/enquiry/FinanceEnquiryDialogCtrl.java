@@ -52,7 +52,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -150,7 +151,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(FinanceEnquiryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -535,7 +536,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Button btnReasons;
 	protected Textbox cancelRemarks;
 
-	//Employee Details
+	// Employee Details
 	protected Row row_employeeName;
 	protected Label label_FinanceMainDialog_EmployeeName;
 	protected ExtendedCombobox employeeName;
@@ -1126,8 +1127,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
 			}
 
-			// PSD# 145740:-The No.of terms are displayed incorrect in Loan basic details screen.
-			this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
+
 			this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 			fillComboBox(this.repayRateBasis, aFinanceMain.getRepayRateBasis(),
 					PennantStaticListUtil.getInterestRateType(false), "");

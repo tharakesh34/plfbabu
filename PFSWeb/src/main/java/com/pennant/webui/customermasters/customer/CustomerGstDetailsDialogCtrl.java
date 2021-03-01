@@ -9,7 +9,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
@@ -63,7 +64,7 @@ import com.rits.cloning.Cloner;
 
 public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 	private static final long serialVersionUID = 9031340167587772517L;
-	private static final Logger logger = Logger.getLogger(CustomerGstDetailsDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerGstDetailsDialogCtrl.class);
 
 	// autowired
 	protected Window window_customerGstDetailsDialog;

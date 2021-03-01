@@ -3,7 +3,8 @@ package com.pennanttech.pff.schedule.jobs;
 import java.io.Serializable;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.CronExpression;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -20,7 +21,7 @@ import com.pennanttech.pff.process.ExtractCustomerData;
 @PersistJobDataAfterExecution
 public class CustomerExtractJob implements Job, Serializable {
 	private static final long serialVersionUID = 7243833242165622897L;
-	private static final Logger logger = Logger.getLogger(CustomerExtractJob.class);
+	private static final Logger logger = LogManager.getLogger(CustomerExtractJob.class);
 
 	public static final String JOB_KEY = "PORTAL_CUSTOMER_EXTRACT_JOB";
 	public static final String JOB_KEY_DESCRIPTION = "Customer extract Job";

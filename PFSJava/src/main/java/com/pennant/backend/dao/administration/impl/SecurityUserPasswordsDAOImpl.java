@@ -2,7 +2,8 @@ package com.pennant.backend.dao.administration.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -16,7 +17,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class SecurityUserPasswordsDAOImpl extends BasicDao<SecurityUser> implements SecurityUserPasswordsDAO {
-	private static Logger logger = Logger.getLogger(SecurityUserPasswordsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityUserPasswordsDAOImpl.class);
 
 	public SecurityUserPasswordsDAOImpl() {
 		super();

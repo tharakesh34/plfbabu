@@ -9,7 +9,8 @@ import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -30,7 +31,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> implements DMSIdentificationDAO {
-	private static Logger logger = Logger.getLogger(DMSIdentificationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DMSIdentificationDAOImpl.class);
 
 	private static String insertQuery = insertQuery("dmsdocprocess");
 	private static String insertLogQuery = insertLogQuery("dmsdocprocesslog");

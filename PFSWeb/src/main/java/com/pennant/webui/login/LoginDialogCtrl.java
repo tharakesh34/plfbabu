@@ -45,7 +45,8 @@ package com.pennant.webui.login;
 import java.util.Map;
 
 import org.apache.commons.collections4.map.HashedMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.lic.exception.LicenseException;
  */
 public class LoginDialogCtrl extends WindowBaseCtrl {
 	private static final long serialVersionUID = -71422545405325060L;
-	private static final Logger logger = Logger.getLogger(LoginDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LoginDialogCtrl.class);
 
 	protected Window loginwin;
 	protected Textbox txtbox_Username;

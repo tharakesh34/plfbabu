@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> implements WorkFlowDetailsService {
 
-	private static Logger logger = Logger.getLogger(WorkFlowDetailsServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(WorkFlowDetailsServiceImpl.class);
 
 	private WorkFlowDetailsDAO workFlowDetailsDAO;
 	private AuditHeaderDAO auditHeaderDAO;

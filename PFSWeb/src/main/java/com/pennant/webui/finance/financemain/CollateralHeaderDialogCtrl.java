@@ -50,7 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -93,7 +94,7 @@ import com.pennanttech.webui.verification.TVerificationDialogCtrl;
  */
 public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(CollateralHeaderDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CollateralHeaderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

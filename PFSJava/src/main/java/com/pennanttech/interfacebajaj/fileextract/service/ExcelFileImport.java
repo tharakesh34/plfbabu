@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.zip.DataFormatException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -26,7 +27,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExcelFileImport {
 
-	private static Logger logger = Logger.getLogger(UploadHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(UploadHeaderDAOImpl.class);
 
 	private String filePath = "";
 	private Workbook workbook = null;

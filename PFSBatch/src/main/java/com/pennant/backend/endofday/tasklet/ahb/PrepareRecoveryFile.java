@@ -48,11 +48,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -70,10 +72,11 @@ import com.pennant.eod.BatchFileUtil;
 import com.pennant.eod.beans.PaymentRecoveryDetail;
 import com.pennant.eod.beans.PaymentRecoveryHeader;
 import com.pennant.eod.dao.PaymentRecoveryHeaderDAO;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class PrepareRecoveryFile implements Tasklet {
 
-	private static Logger logger = Logger.getLogger(PrepareRecoveryFile.class);
+	private static Logger logger = LogManager.getLogger(PrepareRecoveryFile.class);
 
 	private PaymentRecoveryHeaderDAO paymentRecoveryHeaderDAO;
 	private DataSource dataSource;
@@ -85,8 +88,9 @@ public class PrepareRecoveryFile implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
+		Date valueDate = EODUtil.getDate("APP_VALUEDATE", context);
 
-		logger.debug("START: Request File Preparation  for Value Date: " + DateUtility.getAppValueDate());
+		logger.debug("START: Request File Preparation  for Value Date: " + valueDate);
 
 		// READ REPAYMENTS DUE TODAY
 		Connection connection = null;
@@ -159,7 +163,7 @@ public class PrepareRecoveryFile implements Tasklet {
 			}
 		}
 
-		logger.debug("START: Request File Preparation for Value Date: " + DateUtility.getAppValueDate());
+		logger.debug("START: Request File Preparation for Value Date: " + valueDate);
 		return RepeatStatus.FINISHED;
 
 	}

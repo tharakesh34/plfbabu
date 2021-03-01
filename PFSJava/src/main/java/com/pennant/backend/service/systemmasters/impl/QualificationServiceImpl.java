@@ -1,6 +1,7 @@
 package com.pennant.backend.service.systemmasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -18,8 +19,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class QualificationServiceImpl extends GenericService<Qualification> implements QualificationService {
-
-	private static Logger logger = Logger.getLogger(QualificationServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(QualificationServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private QualificationDAO qualificationDAO;

@@ -70,7 +70,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.AMedia;
@@ -267,7 +268,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AgreementGeneration extends GenericService<AgreementDetail> implements Serializable {
 	private static final long serialVersionUID = -2030216591697935342L;
-	private static final Logger logger = Logger.getLogger(AgreementGeneration.class);
+	private static final Logger logger = LogManager.getLogger(AgreementGeneration.class);
 
 	public static final String refField = "SmartForm[0].LPOForm[0].txtrefno[0]";
 	public static final String statusField = "SmartForm[0].LPOForm[0].ddlIsActive[0]";

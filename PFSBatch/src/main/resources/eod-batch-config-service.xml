@@ -40,7 +40,6 @@
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
 	</bean>
 	<bean id="paymentRecoveryService" class="com.pennant.eod.PaymentRecoveryService">
@@ -74,13 +73,11 @@
 	<!-- Late Pay Penalty -->
 	<bean id="latePayPenaltyService" class="com.pennant.app.core.LatePayPenaltyService" parent="serviceHelper">
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!-- NPA Service -->
 	<bean id="npaService" class="com.pennant.app.core.NPAService" parent="serviceHelper">
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="nPAProvisionHeaderDAO" ref="nPAProvisionHeaderDAO" />
 		<property name="nPAProvisionDetailDAO" ref="nPAProvisionDetailDAO" />
@@ -115,7 +112,6 @@
 
 	<!-- LPP/LPI Accrual -->
 	<bean id="latePaydueCreationService" class="com.pennant.app.core.LatePayDueCreationService" parent="serviceHelper">
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
@@ -277,7 +273,6 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="financeEligibilityDetailDAO" ref="financeEligibilityDetailDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 
 	<!-- Finance Eligibility Details -->
@@ -291,7 +286,6 @@
 		<property name="scoringSlabDAO" ref="scoringSlabDAO" />
 		<property name="scoringMetricsDAO" ref="scoringMetricsDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 
 	<!--============ Finance Scoring Details ============== -->
@@ -341,7 +335,6 @@
 		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="provinceDAO" ref="provinceDAO" />
@@ -395,7 +388,6 @@
 		<property name="limitReferenceMappingDAO" ref="limitReferenceMappingDAO" />
 		<property name="limitTransactionDetailDAO" ref="limitTransactionDetailDAO" />
 		<property name="limitGroupLinesDAO" ref="limitGroupLinesDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
@@ -537,20 +529,12 @@
 	<!--============ Account Engine Rule Execution ============== -->
 	<bean name="engineExecution" class="com.pennant.app.util.AccountEngineExecution" scope="prototype">
 		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="currencyDAO" ref="currencyDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
-		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
-		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
-		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="accountProcessUtil" ref="accountProcessUtil" />
-		<property name="divisionDetailDAO" ref="divisionDetailDAO" />
 	</bean>
 
 	<bean id="receiptAllocationDetailDAO" class="com.pennant.backend.dao.receipts.impl.ReceiptAllocationDetailDAOImpl"
@@ -570,7 +554,6 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="expenseTypeDAO" ref="expenseTypeDAO" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
@@ -651,4 +634,6 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 	</bean>
+
+	<bean id="eventPropertiesService" class="com.pennant.backend.eventproperties.service.impl.EventPropertiesServiceImpl" />
 </beans>

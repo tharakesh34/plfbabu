@@ -113,5 +113,5 @@ public class TaxDetail extends AbstractWorkflowEntity {
 	public void setNetCESS(BigDecimal netCESS) {
 		this.netCESS = netCESS;
 	}
-	
+
 }

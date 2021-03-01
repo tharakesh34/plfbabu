@@ -3,7 +3,8 @@ package com.pennanttech.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.bmtmasters.ProductDAO;
@@ -31,7 +32,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class FinanceTypeController {
 
-	private static final Logger logger = Logger.getLogger(FinanceTypeController.class);
+	private static final Logger logger = LogManager.getLogger(FinanceTypeController.class);
 
 	private FinanceTypeService financeTypeService;
 	private StepPolicyService stepPolicyService;

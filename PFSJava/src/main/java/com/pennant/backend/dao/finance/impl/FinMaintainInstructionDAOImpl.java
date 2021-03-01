@@ -44,7 +44,8 @@
 package com.pennant.backend.dao.finance.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -69,7 +70,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 
 public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstruction>
 		implements FinMaintainInstructionDAO {
-	private static Logger logger = Logger.getLogger(FinMaintainInstructionDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinMaintainInstructionDAOImpl.class);
 
 	public FinMaintainInstructionDAOImpl() {
 		super();

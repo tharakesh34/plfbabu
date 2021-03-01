@@ -5,7 +5,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -18,7 +19,7 @@ import org.springframework.util.CollectionUtils;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtractDataDAOImpl implements ExtractDataDAO {
-	private static Logger logger = Logger.getLogger(ExtractDataDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ExtractDataDAOImpl.class);
 	private static String SELECT_QUERY = "select * from tableName where  LastMntOn >=:LastMntOn";
 	private static String DELETE_QUERY = "Delete from tableName";
 

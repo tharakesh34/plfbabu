@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
@@ -29,7 +30,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class RateChangeServiceImpl extends GenericService<FinServiceInstruction> implements RateChangeService {
-	private static final Logger logger = Logger.getLogger(RateChangeServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(RateChangeServiceImpl.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceStepDetailDAO financeStepDetailDAO;

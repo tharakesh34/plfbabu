@@ -68,7 +68,6 @@ import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennant.backend.model.customermasters.CustomerGST;
 
 /**
  * Model class for the <b>Customer table</b>.<br>

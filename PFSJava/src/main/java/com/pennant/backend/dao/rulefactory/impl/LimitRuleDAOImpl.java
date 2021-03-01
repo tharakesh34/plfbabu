@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -70,7 +71,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * DAO methods implementation for the <b>Rule model</b> class.<br>
  */
 public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements LimitRuleDAO {
-	private static Logger logger = Logger.getLogger(LimitRuleDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LimitRuleDAOImpl.class);
 
 	public LimitRuleDAOImpl() {
 		super();
@@ -248,8 +249,8 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		logger.debug("Entering");
 
 		if (dedupParm.getQueryId() == Long.MIN_VALUE) {
-			dedupParm.setQueryId(getNextId("SeqLimitParams"));
-			logger.debug("get NextID:" + dedupParm.getQueryId());
+			dedupParm.setQueryId(getNextValue("SeqLimitParams"));
+			logger.debug("get NextValue:" + dedupParm.getQueryId());
 		}
 
 		StringBuilder insertSql = new StringBuilder(" Insert Into LimitParams");

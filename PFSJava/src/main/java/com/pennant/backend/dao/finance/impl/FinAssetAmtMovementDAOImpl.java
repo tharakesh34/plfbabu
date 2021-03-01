@@ -2,7 +2,8 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -14,8 +15,7 @@ import com.pennant.backend.model.finance.FinAssetAmtMovement;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class FinAssetAmtMovementDAOImpl extends SequenceDao<FinAssetAmtMovement> implements FinAssetAmtMovementDAO {
-
-	private static Logger logger = Logger.getLogger(FinAssetAmtMovementDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinAssetAmtMovementDAOImpl.class);
 
 	public FinAssetAmtMovementDAOImpl() {
 		super();

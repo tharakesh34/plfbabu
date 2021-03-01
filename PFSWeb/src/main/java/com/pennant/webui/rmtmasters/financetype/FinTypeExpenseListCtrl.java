@@ -49,7 +49,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -76,7 +77,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class FinTypeExpenseListCtrl extends GFCBaseCtrl<FinTypeExpense> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(FinTypeExpenseListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinTypeExpenseListCtrl.class);
 
 	protected Window window_FinTypeExpenseList;
 	private Component parent = null;

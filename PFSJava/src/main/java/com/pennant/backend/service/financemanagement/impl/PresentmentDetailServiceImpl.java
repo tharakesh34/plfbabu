@@ -50,7 +50,8 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
@@ -108,7 +109,7 @@ import com.pennanttech.pff.external.PresentmentRequest;
  */
 public class PresentmentDetailServiceImpl extends GenericService<PresentmentHeader>
 		implements PresentmentDetailService {
-	private static final Logger logger = Logger.getLogger(PresentmentDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PresentmentDetailServiceImpl.class);
 
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;

@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.finance.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -14,7 +15,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ZIPCodeDetailsDAOImpl extends BasicDao<ZIPCodeDetails> implements ZIPCodeDetailsDAO {
 
-	private static Logger logger = Logger.getLogger(ZIPCodeDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ZIPCodeDetailsDAOImpl.class);
 
 	public ZIPCodeDetailsDAOImpl() {
 	}

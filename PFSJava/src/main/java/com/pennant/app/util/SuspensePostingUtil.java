@@ -53,7 +53,8 @@ import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
@@ -71,7 +72,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class SuspensePostingUtil implements Serializable {
 	private static final long serialVersionUID = -7469564513544156223L;
-	private static Logger logger = Logger.getLogger(SuspensePostingUtil.class);
+	private static Logger logger = LogManager.getLogger(SuspensePostingUtil.class);
 
 	private FinanceSuspHeadDAO financeSuspHeadDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;

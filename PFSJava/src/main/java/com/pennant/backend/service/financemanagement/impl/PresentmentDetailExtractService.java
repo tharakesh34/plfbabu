@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
@@ -35,7 +36,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.core.TableType;
 
 public class PresentmentDetailExtractService {
-	private static final Logger logger = Logger.getLogger(PresentmentDetailExtractService.class);
+	private static final Logger logger = LogManager.getLogger(PresentmentDetailExtractService.class);
 
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
@@ -528,8 +529,8 @@ public class PresentmentDetailExtractService {
 			advanceType = AdvanceType.getType(prd.getAdvType());
 		}
 
-		if (StringUtils.equals(prd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
-			if (StringUtils.equals(prd.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)
+		if (FinanceConstants.FLAG_BPI.equals(prd.getBpiOrHoliday())) {
+			if (FinanceConstants.BPI_DISBURSMENT.equals(prd.getBpiTreatment())
 					&& SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)) {
 				advanceType = AdvanceType.AF;
 			}
@@ -578,6 +579,13 @@ public class PresentmentDetailExtractService {
 			if (adjAmount.compareTo(dueAmt) == 0) {
 				prd.setAdvAdjusted(adjAmount);
 				prd.setExcludeReason(exculdeReason);
+			}
+
+			if (FinanceConstants.FLAG_BPI.equals(prd.getBpiOrHoliday())) {
+				if (FinanceConstants.BPI_DISBURSMENT.equals(prd.getBpiTreatment())
+						&& SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)) {
+					return;
+				}
 			}
 
 			//process advance moment

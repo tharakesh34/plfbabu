@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.legal.LegalPropertyTitleDAO;
@@ -64,7 +65,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>LegalPropertyTitle</b>.<br>
  */
 public class LegalPropertyTitleService extends GenericService<LegalPropertyTitle> {
-	private static final Logger logger = Logger.getLogger(LegalPropertyTitleService.class);
+	private static final Logger logger = LogManager.getLogger(LegalPropertyTitleService.class);
 
 	private LegalPropertyTitleDAO legalPropertyTitleDAO;
 

@@ -14,7 +14,8 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -32,7 +33,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class TrailBalanceEngine extends DataEngineExport {
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus();
-	private static final Logger logger = Logger.getLogger(TrailBalanceEngine.class);
+	private static final Logger logger = LogManager.getLogger(TrailBalanceEngine.class);
 
 	private long headerId = 0;
 	private long seqNo = 0;

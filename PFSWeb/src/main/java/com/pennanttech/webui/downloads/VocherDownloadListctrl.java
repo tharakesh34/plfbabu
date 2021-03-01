@@ -12,7 +12,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -49,7 +50,7 @@ import com.pennanttech.service.AmazonS3Bucket;
 
 public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(VocherDownloadListctrl.class);
+	private static final Logger logger = LogManager.getLogger(VocherDownloadListctrl.class);
 
 	protected Window window_VocherDownloadList;
 	protected Borderlayout borderLayout_VocherDownloadList;

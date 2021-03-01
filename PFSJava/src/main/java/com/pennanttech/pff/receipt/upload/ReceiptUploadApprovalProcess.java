@@ -5,7 +5,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.receiptuploadqueue.ReceiptUploadQueuing;
 import com.pennant.app.util.DateUtility;
@@ -21,7 +22,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ReceiptUploadApprovalProcess {
-	private static final Logger logger = Logger.getLogger(ReceiptUploadApprovalProcess.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptUploadApprovalProcess.class);
 
 	private DataSource dataSource;
 	private ProjectedRUDAO projectedRUDAO;

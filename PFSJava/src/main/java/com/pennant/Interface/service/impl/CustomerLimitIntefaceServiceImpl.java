@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ import com.pennant.coreinterface.process.CustomerLimitProcess;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceService {
-	private static Logger logger = Logger.getLogger(CustomerLimitIntefaceServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerLimitIntefaceServiceImpl.class);
 
 	protected CustomerLimitProcess customerLimitProcess;
 	protected LimitInterfaceDAO limitInterfaceDAO;

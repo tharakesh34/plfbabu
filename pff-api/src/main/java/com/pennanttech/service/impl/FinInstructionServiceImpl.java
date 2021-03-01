@@ -8,7 +8,8 @@ import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -111,7 +112,7 @@ import com.pennanttech.ws.service.FinanceValidationService;
 
 @Service
 public class FinInstructionServiceImpl implements FinServiceInstRESTService, FinServiceInstSOAPService {
-	private static final Logger logger = Logger.getLogger(FinInstructionServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinInstructionServiceImpl.class);
 
 	private FinServiceInstController finServiceInstController;
 	private CreateFinanceController createFinanceController;

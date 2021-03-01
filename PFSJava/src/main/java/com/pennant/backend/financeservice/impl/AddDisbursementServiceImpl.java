@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.ChangeGraceEndService;
@@ -40,7 +41,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruction>
 		implements AddDisbursementService {
-	private static Logger logger = Logger.getLogger(AddDisbursementServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(AddDisbursementServiceImpl.class);
 
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -133,7 +134,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 					&& finMain.getGrcPeriodEndDate().compareTo(finMain.getEventFromDate()) > 0) {
 
 				// reset grace n repay fields and end grace period
-				finSchData = changeGraceEndService.changeGraceEnd(finSchData, true);
+				changeGraceEndService.changeGraceEnd(finSchData, true);
 			}
 		} else {
 

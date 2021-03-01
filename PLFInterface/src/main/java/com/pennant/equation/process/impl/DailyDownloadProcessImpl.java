@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.data.PcmlException;
@@ -80,7 +81,7 @@ import com.pennant.equation.util.HostConnection;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DailyDownloadProcessImpl extends GenericProcess implements DailyDownloadProcess {
-	private static Logger logger = Logger.getLogger(DailyDownloadProcessImpl.class);
+	private static Logger logger = LogManager.getLogger(DailyDownloadProcessImpl.class);
 
 	private HostConnection hostConnection;
 

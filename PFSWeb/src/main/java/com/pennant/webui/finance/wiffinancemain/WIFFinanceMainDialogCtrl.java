@@ -55,7 +55,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
@@ -163,7 +164,7 @@ import com.rits.cloning.Cloner;
  */
 public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(WIFFinanceMainDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(WIFFinanceMainDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -495,8 +496,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient FinanceDetailService financeDetailService;
 	private StepPolicyService stepPolicyService;
 	private RuleService ruleService;
-	private RuleExecutionUtil ruleExecutionUtil;
-
 	private boolean isPastDeal = true;
 	private transient Boolean assetDataChanged = false;
 	private boolean isEnquiry = false;
@@ -2746,7 +2745,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					RuleConstants.MODULE_DOWNPAYRULE, RuleConstants.EVENT_DOWNPAYRULE);
 			if (rule != null) {
 				HashMap<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
-				downpayPercentage = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldsAndValues,
+				downpayPercentage = (BigDecimal) RuleExecutionUtil.executeRule(rule.getSQLRule(), fieldsAndValues,
 						finCcy.getValue(), RuleReturnType.DECIMAL);
 			}
 			financeMain.setMinDownPayPerc(downpayPercentage);
@@ -7626,14 +7625,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public FinFeeDetailListCtrl getFinFeeDetailListCtrl() {

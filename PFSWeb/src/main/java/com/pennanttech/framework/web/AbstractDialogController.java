@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -37,7 +38,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public abstract class AbstractDialogController<T> extends AbstractController<T> {
 	private static final long serialVersionUID = 4993596882485929197L;
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	// Button controller for the CRUD buttons
 	protected transient ButtonStatusCtrl btnCtrl;

@@ -690,7 +690,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
 
 		String status = (String) record.getValue("STATUS");
-		String id = (String) record.getValue("ID");
+		Long id = Long.valueOf(String.valueOf((Object) record.getValue("ID")));
 		FinAdvancePayments finAdvPayments = null;
 		String PAID_STATUS = "E";
 		String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
@@ -698,6 +698,9 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			PAID_STATUS = disbStatus;
 		}
 		String channel = getDisbType(id);
+		if (channel.equals("")) {
+			throw new Exception("No data matched with this disbursement id:-" + id);
+		}
 		if (DisbursementConstants.CHANNEL_DISBURSEMENT.equals(channel)) {
 			finAdvPayments = getFinAdvancePaymentDetails(id);
 		} else if (DisbursementConstants.CHANNEL_PAYMENT.equals(channel)) {
@@ -779,7 +782,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		return status;
 	}
 
-	public FinAdvancePayments getFinAdvancePaymentDetails(String id) {
+	public FinAdvancePayments getFinAdvancePaymentDetails(Long id) {
 		logger.debug(Literal.ENTERING);
 
 		FinAdvancePayments finAdvancePayments = null;
@@ -805,7 +808,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		return finAdvancePayments;
 	}
 
-	public FinAdvancePayments getPaymentInstructionDetails(String id) {
+	public FinAdvancePayments getPaymentInstructionDetails(Long id) {
 		logger.debug(Literal.ENTERING);
 
 		FinAdvancePayments finAdvancePayments = null;
@@ -829,7 +832,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		return finAdvancePayments;
 	}
 
-	public FinAdvancePayments getInsuranceInstructionDetails(String id) {
+	public FinAdvancePayments getInsuranceInstructionDetails(Long id) {
 		logger.debug(Literal.ENTERING);
 
 		FinAdvancePayments finAdvancePayments = null;
@@ -852,7 +855,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		return finAdvancePayments;
 	}
 
-	public String getDisbType(String id) {
+	public String getDisbType(Long id) {
 		logger.debug(Literal.ENTERING);
 
 		String disbType = "";

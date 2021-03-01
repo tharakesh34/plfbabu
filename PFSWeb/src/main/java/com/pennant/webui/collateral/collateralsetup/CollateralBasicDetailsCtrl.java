@@ -3,7 +3,8 @@ package com.pennant.webui.collateral.collateralsetup;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Label;
@@ -20,7 +21,7 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private static final long serialVersionUID = -4843661930948561711L;
-	private static final Logger logger = Logger.getLogger(CollateralBasicDetailsCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CollateralBasicDetailsCtrl.class);
 
 	protected Window window_CollateralBasicDetails; // autowired
 	protected Label colBasic_depositerCif; // autoWired

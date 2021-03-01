@@ -112,46 +112,101 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
-	public long save(FinReceiptHeader receiptHeader, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		if (receiptHeader.getId() == 0 || receiptHeader.getId() == Long.MIN_VALUE) {
-			receiptHeader.setId(getNextValue("SeqFinReceiptHeader"));
-			logger.debug("get NextID:" + receiptHeader.getId());
+	public long save(FinReceiptHeader rh, TableType tableType) {
+		if (rh.getId() == 0 || rh.getId() == Long.MIN_VALUE) {
+			rh.setId(getNextValue("SeqFinReceiptHeader"));
 		}
 
-		StringBuilder sql = new StringBuilder("Insert Into FinReceiptHeader");
-		sql.append(tableType.getSuffix());
-		sql.append("(ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose, RcdMaintainSts");
-		sql.append(", ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod");
-		sql.append(", ReceiptModeStatus,RealizationDate,CancelReason, WaviedAmt, TotFeeAmount, BounceDate");
-		sql.append(", Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
-		sql.append(", CashierBranch, InitiateDate, DepositProcess, DepositBranch, LppAmount, GstLpiAmount");
-		sql.append(", GstLppAmount, ExtReference, Module, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber");
-		sql.append(", CollectionAgentId, ActFinReceipt, FinDivision, PostBranch, ReasonCode, CancelRemarks");
-		sql.append(", KnockOffType, FinType, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(", RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate, PartnerBankId");
-		sql.append(", PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate )");
-		sql.append(" Values");
-		sql.append(" (:ReceiptID, :ReceiptDate , :ReceiptType, :RecAgainst, :Reference, :ReceiptPurpose");
-		sql.append(", :RcdMaintainSts, :ReceiptMode, :ExcessAdjustTo , :AllocationType, :ReceiptAmount");
-		sql.append(", :EffectSchdMethod, :ReceiptModeStatus, :RealizationDate, :CancelReason, :WaviedAmt");
-		sql.append(", :TotFeeAmount, :BounceDate, :Remarks, :GDRAvailable, :ReleaseType, :ThirdPartyName");
-		sql.append(", :ThirdPartyMobileNum, :LpiAmount,:CashierBranch,:InitiateDate, :DepositProcess");
-		sql.append(", :DepositBranch, :LppAmount, :GstLpiAmount, :GstLppAmount, :ExtReference, :Module");
-		sql.append(", :subReceiptMode, :receiptChannel, :receivedFrom, :panNumber, :collectionAgentId");
-		sql.append(", :ActFinReceipt, :FinDivision, :PostBranch, :ReasonCode, :CancelRemarks");
-		sql.append(", :KnockOffType, :FinType, :Version, :LastMntOn, :LastMntBy, :RecordStatus, :RoleCode");
-		sql.append(", :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
-		sql.append(", :RefWaiverAmt, :Source, :ValueDate, :TransactionRef, :DepositDate, :PartnerBankId");
-		sql.append(", :PrvReceiptPurpose, :ReceiptSource, :RecAppDate, :ReceivedDate)");
+		StringBuilder sql = new StringBuilder("Insert into");
+		sql.append(" FinReceiptHeader").append(tableType.getSuffix());
+		sql.append("(ReceiptID, ReceiptDate, ReceiptType, RecAgainst, Reference, ReceiptPurpose, RcdMaintainSts");
+		sql.append(", ReceiptMode, ExcessAdjustTo, AllocationType, ReceiptAmount, EffectSchdMethod, ReceiptModeStatus");
+		sql.append(", RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks, GDRAvailable");
+		sql.append(", ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount, CashierBranch, InitiateDate");
+		sql.append(", DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount, ExtReference");
+		sql.append(", Module, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId");
+		sql.append(", ActFinReceipt, FinDivision, PostBranch, ReasonCode, CancelRemarks, KnockOffType");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId, RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate");
+		sql.append(", PartnerBankId, PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(receiptHeader);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
-		return receiptHeader.getId();
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, JdbcUtil.setLong(rh.getReceiptID()));
+			ps.setDate(index++, JdbcUtil.getDate(rh.getReceiptDate()));
+			ps.setString(index++, rh.getReceiptType());
+			ps.setString(index++, rh.getRecAgainst());
+			ps.setString(index++, rh.getReference());
+			ps.setString(index++, rh.getReceiptPurpose());
+			ps.setString(index++, rh.getRcdMaintainSts());
+			ps.setString(index++, rh.getReceiptMode());
+			ps.setString(index++, rh.getExcessAdjustTo());
+			ps.setString(index++, rh.getAllocationType());
+			ps.setBigDecimal(index++, rh.getReceiptAmount());
+			ps.setString(index++, rh.getEffectSchdMethod());
+			ps.setString(index++, rh.getReceiptModeStatus());
+			ps.setDate(index++, JdbcUtil.getDate(rh.getRealizationDate()));
+			ps.setString(index++, rh.getCancelReason());
+			ps.setBigDecimal(index++, rh.getWaviedAmt());
+			ps.setBigDecimal(index++, rh.getTotFeeAmount());
+			ps.setDate(index++, JdbcUtil.getDate(rh.getBounceDate()));
+			ps.setString(index++, rh.getRemarks());
+			ps.setBoolean(index++, rh.isGDRAvailable());
+			ps.setString(index++, rh.getReleaseType());
+			ps.setString(index++, rh.getThirdPartyName());
+			ps.setString(index++, rh.getThirdPartyMobileNum());
+			ps.setBigDecimal(index++, rh.getLpiAmount());
+			ps.setString(index++, rh.getCashierBranch());
+			ps.setDate(index++, JdbcUtil.getDate(rh.getInitiateDate()));
+			ps.setBoolean(index++, rh.isDepositProcess());
+			ps.setString(index++, rh.getDepositBranch());
+			ps.setBigDecimal(index++, rh.getLppAmount());
+			ps.setBigDecimal(index++, rh.getGstLpiAmount());
+			ps.setBigDecimal(index++, rh.getGstLppAmount());
+			ps.setString(index++, rh.getExtReference());
+			ps.setString(index++, rh.getModule());
+			ps.setString(index++, rh.getSubReceiptMode());
+			ps.setString(index++, rh.getReceiptChannel());
+			ps.setString(index++, rh.getReceivedFrom());
+			ps.setString(index++, rh.getPanNumber());
+			ps.setLong(index++, JdbcUtil.setLong(rh.getCollectionAgentId()));
+			ps.setBoolean(index++, rh.isActFinReceipt());
+			ps.setString(index++, rh.getFinDivision());
+			ps.setString(index++, rh.getPostBranch());
+			ps.setLong(index++, JdbcUtil.setLong(rh.getReasonCode()));
+			ps.setString(index++, rh.getCancelRemarks());
+			ps.setString(index++, rh.getKnockOffType());
+			ps.setInt(index++, rh.getVersion());
+			ps.setTimestamp(index++, rh.getLastMntOn());
+			ps.setLong(index++, JdbcUtil.setLong(rh.getLastMntBy()));
+			ps.setString(index++, rh.getRecordStatus());
+			ps.setString(index++, rh.getRoleCode());
+			ps.setString(index++, rh.getNextRoleCode());
+			ps.setString(index++, rh.getTaskId());
+			ps.setString(index++, rh.getNextTaskId());
+			ps.setString(index++, rh.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(rh.getWorkflowId()));
+			ps.setBigDecimal(index++, rh.getRefWaiverAmt());
+			ps.setString(index++, rh.getSource());
+			ps.setDate(index++, JdbcUtil.getDate(rh.getValueDate()));
+			ps.setString(index++, rh.getTransactionRef());
+			ps.setDate(index++, JdbcUtil.getDate(rh.getDepositDate()));
+			ps.setLong(index++, JdbcUtil.setLong(rh.getPartnerBankId()));
+			ps.setString(index++, rh.getPrvReceiptPurpose());
+			ps.setString(index++, rh.getReceiptSource());
+			ps.setDate(index++, JdbcUtil.getDate(rh.getRecAppDate()));
+			ps.setDate(index++, JdbcUtil.getDate(rh.getReceivedDate()));
+		});
+
+		return rh.getId();
 	}
 
 	@Override
@@ -181,7 +236,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", RefWaiverAmt = :RefWaiverAmt, Source = :Source, ValueDate = :ValueDate");
 		sql.append(", TransactionRef = :TransactionRef, DepositDate = :DepositDate, PartnerBankId = :PartnerBankId");
 		sql.append(", PrvReceiptPurpose = :PrvReceiptPurpose, ReceiptSource = :ReceiptSource");
-		sql.append(", RecAppDate = :RecAppDate, ReceivedDate = :ReceivedDate");
+		sql.append(", RecAppDate = :RecAppDate, ReceivedDate = :ReceivedDate, ExtReference = :ExtReference");
 		sql.append(" Where ReceiptID =:ReceiptID");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -354,12 +409,9 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	@Override
 	public long generatedReceiptID(FinReceiptHeader receiptHeader) {
-		logger.debug(Literal.ENTERING);
 		if (receiptHeader.getId() == 0 || receiptHeader.getId() == Long.MIN_VALUE) {
 			receiptHeader.setId(getNextValue("SeqFinReceiptHeader"));
-			logger.debug("get NextID:" + receiptHeader.getId());
 		}
-		logger.debug(Literal.LEAVING);
 		return receiptHeader.getId();
 	}
 

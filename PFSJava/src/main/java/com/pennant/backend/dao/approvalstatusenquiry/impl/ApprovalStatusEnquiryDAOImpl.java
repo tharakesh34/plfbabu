@@ -9,7 +9,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -25,7 +26,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail> implements ApprovalStatusEnquiryDAO {
-	private static final Logger logger = Logger.getLogger(ApprovalStatusEnquiryDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(ApprovalStatusEnquiryDAOImpl.class);
 
 	private NamedParameterJdbcTemplate auditJdbcTemplate;
 

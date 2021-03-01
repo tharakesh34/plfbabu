@@ -1,7 +1,8 @@
 package com.pennanttech.controller;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,13 +11,12 @@ import com.pennant.backend.model.refundupload.RefundUpload;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
-import com.pennanttech.controller.RefundUploadController;
 import com.pennanttech.pffws.RefundUploadRestService;
 import com.pennanttech.pffws.RefundUploadSoapService;
 
 @Service
 public class RefundUploadWebServiceImpl implements RefundUploadRestService, RefundUploadSoapService {
-	private static final Logger logger = Logger.getLogger(RefundUploadWebServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(RefundUploadWebServiceImpl.class);
 
 	private ValidationUtility validationUtility;
 	private RefundUploadController refundUploadController;

@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 @Service
 public class VASWebServiceImpl implements VASSoapService, VASRestService {
 
-	private static final Logger logger = Logger.getLogger(VASWebServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(VASWebServiceImpl.class);
 
 	private ValidationUtility validationUtility;
 	private VASConfigurationService vASConfigurationService;

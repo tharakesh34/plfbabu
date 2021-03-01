@@ -56,7 +56,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.lang.Objects;
@@ -237,7 +238,7 @@ import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
 import com.rits.cloning.Cloner;
 
 public class CustomerDetailsServiceImpl extends GenericService<Customer> implements CustomerDetailsService {
-	private static final Logger logger = Logger.getLogger(CustomerDetailsServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerDetailsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerDAO customerDAO;
@@ -866,94 +867,92 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CustomerDetails getCustomerDetailsbyID(long id, boolean reqChildDetails, String type) {
 		logger.debug(Literal.ENTERING);
 
-		CustomerDetails customerDetails = new CustomerDetails();
-		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, type));
-		customerDetails.setCustID(id);
+		CustomerDetails cd = new CustomerDetails();
+		cd.setCustomer(customerDAO.getCustomerByID(id, type));
+		cd.setCustID(id);
 
-		PrimaryAccount primaryAccount = getPrimaryAccountDAO()
-				.getPrimaryAccountDetails(customerDetails.getCustomer().getCustCRCPR());
+		Customer customer = cd.getCustomer();
+		PrimaryAccount primaryAccount = primaryAccountDAO.getPrimaryAccountDetails(customer.getCustCRCPR());
+
 		if (primaryAccount != null) {
-			customerDetails.getCustomer().setPrimaryIdName(primaryAccount.getDocumentName());
+			customer.setPrimaryIdName(primaryAccount.getDocumentName());
 		}
 
-		if (reqChildDetails) {
-			if (ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS) {
-				customerDetails.setEmploymentDetailsList(
-						getCustomerEmploymentDetailDAO().getCustomerEmploymentDetailsByID(id, type));
-			} else {
-				customerDetails.setCustEmployeeDetail(getCustEmployeeDetailDAO().getCustEmployeeDetailById(id, type));
+		if (!reqChildDetails) {
+			return cd;
+		}
+		if (ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS) {
+			cd.setEmploymentDetailsList(customerEmploymentDetailDAO.getCustomerEmploymentDetailsByID(id, type));
+		} else {
+			cd.setCustEmployeeDetail(custEmployeeDetailDAO.getCustEmployeeDetailById(id, type));
+		}
+		if (ImplementationConstants.ALLOW_CUSTOMER_INCOMES) {
+			cd.setCustomerIncomeList(incomeDetailDAO.getIncomesByCustomer(id, type));
+		}
+		// ### Ticket 126612 LMS > PDE > newly added shareholder are not
+		// displayed in PDE. Changed the condition to
+		// non individual.
+		if (StringUtils.isNotEmpty(customer.getCustCtgCode())
+				&& !StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+			if (ImplementationConstants.ALLOW_CUSTOMER_SHAREHOLDERS) {
+				cd.setCustomerDirectorList(directorDetailDAO.getCustomerDirectorByCustomer(id, type));
 			}
-			if (ImplementationConstants.ALLOW_CUSTOMER_INCOMES) {
-				customerDetails.setCustomerIncomeList(incomeDetailDAO.getIncomesByCustomer(id, type));
+			if (ImplementationConstants.ALLOW_CUSTOMER_RATINGS) {
+				cd.setRatingsList(customerRatingDAO.getCustomerRatingByCustomer(id, type));
 			}
-			// ### Ticket 126612 LMS > PDE > newly added shareholder are not
-			// displayed in PDE. Changed the condition to
-			// non individual.
-			if (StringUtils.isNotEmpty(customerDetails.getCustomer().getCustCtgCode()) && !StringUtils
-					.equals(customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
-				if (ImplementationConstants.ALLOW_CUSTOMER_SHAREHOLDERS) {
-					customerDetails
-							.setCustomerDirectorList(getDirectorDetailDAO().getCustomerDirectorByCustomer(id, type));
-				}
-				if (ImplementationConstants.ALLOW_CUSTOMER_RATINGS) {
-					customerDetails.setRatingsList(getCustomerRatingDAO().getCustomerRatingByCustomer(id, type));
-				}
-			}
-			customerDetails.setCustomerDocumentsList(customerDocumentDAO.getCustomerDocumentByCustomer(id, type));
-			customerDetails.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(id, type));
-			customerDetails.setCustomerPhoneNumList(customerPhoneNumberDAO.getCustomerPhoneNumberByCustomer(id, type));
-			customerDetails.setCustomerEMailList(customerEMailDAO.getCustomerEmailByCustomer(id, type));
-			customerDetails.setCustomerBankInfoList(customerBankInfoDAO.getBankInfoByCustomer(id, type));
-			if (customerDetails.getCustomerBankInfoList() != null
-					&& customerDetails.getCustomerBankInfoList().size() > 0) {
-				for (CustomerBankInfo customerBankInfo : customerDetails.getCustomerBankInfoList()) {
-					customerBankInfo.setBankInfoDetails(
-							customerBankInfoDAO.getBankInfoDetailById(customerBankInfo.getBankId(), type));
+		}
+		cd.setCustomerDocumentsList(customerDocumentDAO.getCustomerDocumentByCustomer(id, type));
+		cd.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(id, type));
+		cd.setCustomerPhoneNumList(customerPhoneNumberDAO.getCustomerPhoneNumberByCustomer(id, type));
+		cd.setCustomerEMailList(customerEMailDAO.getCustomerEmailByCustomer(id, type));
+		cd.setCustomerBankInfoList(customerBankInfoDAO.getBankInfoByCustomer(id, type));
+		if (cd.getCustomerBankInfoList() != null && cd.getCustomerBankInfoList().size() > 0) {
+			for (CustomerBankInfo customerBankInfo : cd.getCustomerBankInfoList()) {
+				customerBankInfo.setBankInfoDetails(
+						customerBankInfoDAO.getBankInfoDetailById(customerBankInfo.getBankId(), type));
 
-					if (CollectionUtils.isNotEmpty(customerBankInfo.getBankInfoDetails())) {
-						for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
-							bankInfoDetail.setBankInfoSubDetails(customerBankInfoDAO.getBankInfoSubDetailById(
-									bankInfoDetail.getBankId(), bankInfoDetail.getMonthYear(), type));
-						}
+				if (CollectionUtils.isNotEmpty(customerBankInfo.getBankInfoDetails())) {
+					for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+						bankInfoDetail.setBankInfoSubDetails(customerBankInfoDAO.getBankInfoSubDetailById(
+								bankInfoDetail.getBankId(), bankInfoDetail.getMonthYear(), type));
 					}
 					customerBankInfo.setExternalDocuments(
 							customerDocumentDAO.getExternalDocuments(customerBankInfo.getBankId(), ""));
 				}
 			}
-			customerDetails.setCustomerGstList(customerGstDetailDAO.getCustomerGSTById(id, type));
+		}
+		cd.setCustomerGstList(customerGstDetailDAO.getCustomerGSTById(id, type));
 
-			if (customerDetails.getCustomerGstList() != null && customerDetails.getCustomerGstList().size() > 0) {
-				for (CustomerGST customerGST : customerDetails.getCustomerGstList()) {
-					customerGST.setCustomerGSTDetailslist(
-							customerGstDetailDAO.getCustomerGSTDetailsByCustomer(customerGST.getId(), type));
-				}
+		if (cd.getCustomerGstList() != null && cd.getCustomerGstList().size() > 0) {
+			for (CustomerGST customerGST : cd.getCustomerGstList()) {
+				customerGST.setCustomerGSTDetailslist(
+						customerGstDetailDAO.getCustomerGSTDetailsByCustomer(customerGST.getId(), type));
 			}
-			customerDetails.setCustomerChequeInfoList(customerChequeInfoDAO.getChequeInfoByCustomer(id, type));
+		}
+		cd.setCustomerChequeInfoList(customerChequeInfoDAO.getChequeInfoByCustomer(id, type));
 
-			CustomerExtLiability liability = new CustomerExtLiability();
-			liability.setCustId(id);
-			customerDetails
-					.setCustomerExtLiabilityList(externalLiabilityDAO.getLiabilities(liability.getCustId(), type));
+		CustomerExtLiability liability = new CustomerExtLiability();
+		liability.setCustId(id);
+		cd.setCustomerExtLiabilityList(externalLiabilityDAO.getLiabilities(liability.getCustId(), type));
 
-			if (CollectionUtils.isNotEmpty(customerDetails.getCustomerExtLiabilityList())) {
-				for (CustomerExtLiability extLiability : customerDetails.getCustomerExtLiabilityList()) {
-					extLiability.setExtLiabilitiesPayments(
-							customerExtLiabilityDAO.getExtLiabilitySubDetailById(extLiability.getId(), type));
-				}
+		if (CollectionUtils.isNotEmpty(cd.getCustomerExtLiabilityList())) {
+			for (CustomerExtLiability extLiability : cd.getCustomerExtLiabilityList()) {
+				extLiability.setExtLiabilitiesPayments(
+						customerExtLiabilityDAO.getExtLiabilitySubDetailById(extLiability.getId(), type));
 			}
-
-			customerDetails.setCustCardSales(customerCardSalesInfoDAO.getCardSalesInfoByCustomer(id, type));
-			if (customerDetails.getCustCardSales() != null && customerDetails.getCustCardSales().size() > 0) {
-				for (CustCardSales customerCardSalesInfo : customerDetails.getCustCardSales()) {
-					customerCardSalesInfo.setCustCardMonthSales(customerCardSalesInfoDAO
-							.getCardSalesInfoSubDetailById(customerCardSalesInfo.getId(), type));
-				}
-			}
-			customerDetails.setCustFinanceExposureList(getCustomerDAO().getCustomerFinanceDetailById(id));
 		}
 
+		cd.setCustCardSales(customerCardSalesInfoDAO.getCardSalesInfoByCustomer(id, type));
+		if (cd.getCustCardSales() != null && cd.getCustCardSales().size() > 0) {
+			for (CustCardSales customerCardSalesInfo : cd.getCustCardSales()) {
+				customerCardSalesInfo.setCustCardMonthSales(
+						customerCardSalesInfoDAO.getCardSalesInfoSubDetailById(customerCardSalesInfo.getId(), type));
+			}
+		}
+		cd.setCustFinanceExposureList(getCustomerDAO().getCustomerFinanceDetailById(id));
+
 		logger.debug(Literal.LEAVING);
-		return customerDetails;
+		return cd;
 	}
 
 	/**

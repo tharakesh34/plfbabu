@@ -3,7 +3,8 @@ package com.pennanttech.controller;
 import java.sql.Timestamp;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -19,7 +20,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class QueryModuleController {
 
-	private static final Logger logger = Logger.getLogger(FinInstructionServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinInstructionServiceImpl.class);
 
 	private QueryDetailService queryDetailService;
 

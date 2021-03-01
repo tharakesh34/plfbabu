@@ -1,8 +1,12 @@
 package com.pennanttech.pennapps.dms.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
@@ -35,6 +39,7 @@ public class DMSServiceImpl implements DMSService {
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentFileSystem documentFileSystem;
 	private VASRecordingDAO vASRecordingDAO;
+	private SimpleAsyncTaskExecutor taskExecutor;
 
 	@Override
 	public long save(DMSQueue dmsQueue) {
@@ -102,7 +107,67 @@ public class DMSServiceImpl implements DMSService {
 	public void processDocuments() {
 		logger.debug(Literal.ENTERING);
 
-		dMSQueueDAO.processDMSQueue(this);
+		List<Long> queueList = new ArrayList<>();
+		queueList = dMSQueueDAO.processDMSQueue();
+		long[][] identifiers = null;
+
+		taskExecutor = new SimpleAsyncTaskExecutor("Send-DMS");
+
+		int threadCount = App.getIntegerProperty("dms.fs.thread.size");
+		int batchSize = App.getIntegerProperty("dms.fs.batch.size");
+
+		int threadNum = 0;
+		int queuIDNum = 0;
+
+		for (long id : queueList) {
+			if (identifiers == null) {
+				identifiers = new long[threadCount][batchSize];
+			}
+
+			identifiers[threadNum++][queuIDNum] = id;
+
+			if (threadNum == threadCount) {
+				threadNum = 0;
+				queuIDNum++;
+			}
+
+			if (queuIDNum == batchSize) {
+				break;
+			}
+		}
+
+		DocumentStorageProcessThread.usedThreads.set(identifiers.length);
+		for (int i = 0; i < identifiers.length; i++) {
+			DocumentStorageProcessThread thread = new DocumentStorageProcessThread(identifiers[i]);
+
+			thread.setCustomerDocumentDAO(customerDocumentDAO);
+			thread.setdMSQueueDAO(dMSQueueDAO);
+			thread.setDocumentDetailsDAO(documentDetailsDAO);
+			thread.setDocumentFileSystem(documentFileSystem);
+			thread.setDocumentManagerDAO(documentManagerDAO);
+
+			taskExecutor.execute(thread);
+		}
+
+		identifiers = null;
+
+		while (true) {
+			if (DocumentStorageProcessThread.usedThreads.get() > 0) {
+				logger.info("Waiting for designated threads' execution completion.");
+				if (DocumentStorageProcessThread.usedThreads.get() > 0) {
+					logger.info("Waiting for designated threads' execution completion.");
+					try {
+						Thread.sleep(10000);
+					} catch (InterruptedException e) {
+						logger.error("Exception: {}", e.getMessage());
+					}
+				} else {
+					break;
+				}
+			} else {
+				break;
+			}
+		}
 
 		logger.debug(Literal.LEAVING);
 	}

@@ -45,7 +45,8 @@ package com.pennant.backend.service.customermasters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhoneNumber>
 		implements CustomerPhoneNumberService {
-	private static Logger logger = Logger.getLogger(CustomerPhoneNumberServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerPhoneNumberServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerPhoneNumberDAO customerPhoneNumberDAO;

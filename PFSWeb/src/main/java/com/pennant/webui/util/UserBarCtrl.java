@@ -45,7 +45,8 @@ package com.pennant.webui.util;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.web.util.ComponentUtil;
 
 public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(UserBarCtrl.class);
+	private static final Logger logger = LogManager.getLogger(UserBarCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

@@ -46,7 +46,8 @@ package com.pennant.backend.service.applicationmaster.impl;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory> implements CustomerCategoryService {
 
-	private static Logger logger = Logger.getLogger(CustomerCategoryServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerCategoryServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerCategoryDAO customerCategoryDAO;

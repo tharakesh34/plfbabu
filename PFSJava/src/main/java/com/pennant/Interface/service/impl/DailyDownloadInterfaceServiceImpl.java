@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
@@ -52,7 +53,7 @@ import com.pennant.coreinterface.process.DailyDownloadProcess;
 import com.pennant.equation.dao.CoreInterfaceDAO;
 
 public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterfaceService {
-	private static final Logger logger = Logger.getLogger(DailyDownloadInterfaceServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DailyDownloadInterfaceServiceImpl.class);
 
 	private DailyDownloadProcess dailyDownloadProcess;
 	private CoreInterfaceDAO coreInterfaceDAO;
@@ -61,7 +62,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 
 	private EquationMasterMissedDetail masterMissedDetail;
 
-	private Date dateValueDate = DateUtility.getAppValueDate();
+	private Date dateValueDate = SysParamUtil.getAppValueDate();
 
 	public DailyDownloadInterfaceServiceImpl() {
 		super();

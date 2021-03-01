@@ -48,7 +48,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -70,7 +71,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>Assignment</code> with set of CRUD operations.
  */
 public class AssignmentDAOImpl extends SequenceDao<Assignment> implements AssignmentDAO {
-	private static Logger logger = Logger.getLogger(AssignmentDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AssignmentDAOImpl.class);
 
 	public AssignmentDAOImpl() {
 		super();

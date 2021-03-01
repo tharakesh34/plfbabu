@@ -45,7 +45,8 @@ package com.pennant.backend.dao.interfacemapping.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -60,7 +61,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements MasterMappingDAO {
-	private static Logger logger = Logger.getLogger(MasterMappingDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(MasterMappingDAOImpl.class);
 
 	public MasterMappingDAOImpl() {
 		super();

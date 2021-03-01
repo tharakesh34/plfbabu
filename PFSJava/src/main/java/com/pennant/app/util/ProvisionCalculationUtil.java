@@ -52,7 +52,8 @@ import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -74,7 +75,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class ProvisionCalculationUtil implements Serializable {
 	private static final long serialVersionUID = 193855810060181970L;
-	private static Logger logger = Logger.getLogger(ProvisionCalculationUtil.class);
+	private static Logger logger = LogManager.getLogger(ProvisionCalculationUtil.class);
 
 	private FinanceMainDAO financeMainDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;

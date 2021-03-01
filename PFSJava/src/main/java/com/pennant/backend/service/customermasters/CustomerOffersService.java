@@ -3,7 +3,8 @@ package com.pennant.backend.service.customermasters;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,7 +21,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CustomerOffersService {
 
-	private static final Logger logger = Logger.getLogger(CustomerOffersService.class);
+	private static final Logger logger = LogManager.getLogger(CustomerOffersService.class);
 
 	public static String customerOffersServiceUrl = App.getProperty("CustomerOffersServiceUrl");
 	public static String customerOffersAuthorization = App.getProperty("CustomerOffersAuthorization");

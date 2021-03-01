@@ -44,7 +44,8 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>Sector</code> with set of CRUD operations.
  */
 public class SectorDAOImpl extends BasicDao<Sector> implements SectorDAO {
-	private static Logger logger = Logger.getLogger(SectorDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SectorDAOImpl.class);
 
 	public SectorDAOImpl() {
 		super();

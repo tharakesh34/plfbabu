@@ -5,7 +5,8 @@ import java.io.StringWriter;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.model.applicationmaster.Query;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
@@ -16,7 +17,7 @@ import freemarker.template.Template;
 public class StringReplacement {
 
 	String templateStr = "";
-	private static Logger logger = Logger.getLogger(StringReplacement.class);
+	private static Logger logger = LogManager.getLogger(StringReplacement.class);
 
 	public static String getReplacedQuery(String templateStr, List<GlobalVariable> globalList,
 			List<Query> subQueryList) {

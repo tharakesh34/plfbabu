@@ -10,7 +10,8 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.APIHeader;
@@ -54,7 +55,7 @@ import com.pennanttech.ws.model.manualAdvice.ManualAdviseResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class FeePostingController {
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	private FeePostingService feePostingService;
 	private FeeTypeDAO feeTypeDAO;

@@ -20,6 +20,7 @@ import com.pennant.backend.model.finance.AutoKnockOffFeeMapping;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 import AutoKnockOffExcess.AutoKnockOffExcessDetails;
@@ -32,6 +33,7 @@ public class AutoKnockOffProcessor extends BasicDao<AutoKnockOffExcess>
 
 	private Map<String, AutoKnockOffExcess> processMap = new HashedMap<>();
 	private AutoKnockOffExcess knockOffData = null;
+	long processedRecords = 0;
 
 	@Override
 	public AutoKnockOffExcess process(AutoKnockOffExcess autoKnockoff) throws Exception {
@@ -39,9 +41,7 @@ public class AutoKnockOffProcessor extends BasicDao<AutoKnockOffExcess>
 
 		String key = autoKnockoff.getID() + "_" + autoKnockoff.getFinReference();
 
-		long processedRecords = StepUtil.AUTO_KNOCKOFF_PROCESS.getProcessedRecords();
-		processedRecords = processedRecords + 1;
-		StepUtil.AUTO_KNOCKOFF_PROCESS.setProcessedRecords(processedRecords);
+		StepUtil.AUTO_KNOCKOFF_PROCESS.setProcessedRecords(processedRecords++);
 
 		int count = 0;
 
@@ -112,6 +112,7 @@ public class AutoKnockOffProcessor extends BasicDao<AutoKnockOffExcess>
 		ad.setAmount(knockOffData.getBalanceAmount());
 		ad.setPayableType(knockOffData.getAmountType());
 		ad.setPayableId(knockOffData.getPayableID());
+		ad.setEventProperties(EODUtil.EVENT_PROPS);
 
 		for (Entry<Long, List<AutoKnockOffFeeMapping>> entry : knockOffMap.entrySet()) {
 			ad.setBalAmount(ad.getAmount().subtract(ad.getUtilzedAmount()));

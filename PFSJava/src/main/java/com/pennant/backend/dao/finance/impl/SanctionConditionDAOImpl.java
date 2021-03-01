@@ -3,7 +3,8 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -18,7 +19,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SanctionConditionDAOImpl extends BasicDao<ExposureLinking> implements SanctionConditionDAO {
-	private static Logger logger = Logger.getLogger(ExposureLinkingDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ExposureLinkingDAOImpl.class);
 
 	@Override
 	public String save(List<SanctionCondition> conditions) {

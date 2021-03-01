@@ -2,7 +2,8 @@ package com.pennant.webui.applicationmaster.MMAgreement;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -28,7 +29,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class MMAgreementsListCtrl extends GFCBaseListCtrl<MMAgreement> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(MMAgreementsListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(MMAgreementsListCtrl.class);
 
 	protected Window window_MMAgreementsList;
 	protected Borderlayout borderLayout_MMAgreementsList;

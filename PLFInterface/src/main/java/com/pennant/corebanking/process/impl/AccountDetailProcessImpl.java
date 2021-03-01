@@ -5,7 +5,8 @@ import java.util.List;
 
 import javax.security.auth.login.AccountNotFoundException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
@@ -14,7 +15,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class AccountDetailProcessImpl extends GenericProcess implements AccountDetailProcess {
 
-	private static Logger logger = Logger.getLogger(AccountDetailProcessImpl.class);
+	private static Logger logger = LogManager.getLogger(AccountDetailProcessImpl.class);
 
 	private InterfaceDAO interfaceDAO;
 

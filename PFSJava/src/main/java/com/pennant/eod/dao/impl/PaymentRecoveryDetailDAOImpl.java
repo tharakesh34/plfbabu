@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -17,7 +18,7 @@ import com.pennant.eod.dao.PaymentRecoveryDetailDAO;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail> implements PaymentRecoveryDetailDAO {
-	private static Logger logger = Logger.getLogger(PaymentRecoveryDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PaymentRecoveryDetailDAOImpl.class);
 
 	@Override
 	public void save(List<PaymentRecoveryDetail> detail) {

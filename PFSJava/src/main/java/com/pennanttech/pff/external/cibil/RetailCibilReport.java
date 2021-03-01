@@ -129,12 +129,14 @@ public class RetailCibilReport extends BasicDao<Object> {
 		// Move the File into S3 bucket
 		try {
 			EventProperties properties = cibilService.getEventProperties("CIBIL_REPORT");
-			if (properties.getStorageType().equalsIgnoreCase("MOVE_TO_S3_BUCKET")) {
-				DataEngineUtil.postEvents(Event.MOVE_TO_S3_BUCKET.name(), properties, cibilFile);
-			} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_SFTP")) {
-				DataEngineUtil.postEvents(Event.COPY_TO_SFTP.name(), properties, cibilFile);
-			} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_FTP")) {
-				DataEngineUtil.postEvents(Event.COPY_TO_FTP.name(), properties, cibilFile);
+			if (properties != null) {
+				if (properties.getStorageType().equalsIgnoreCase("MOVE_TO_S3_BUCKET")) {
+					DataEngineUtil.postEvents(Event.MOVE_TO_S3_BUCKET.name(), properties, cibilFile);
+				} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_SFTP")) {
+					DataEngineUtil.postEvents(Event.COPY_TO_SFTP.name(), properties, cibilFile);
+				} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_FTP")) {
+					DataEngineUtil.postEvents(Event.COPY_TO_FTP.name(), properties, cibilFile);
+				}
 			}
 			EXTRACT_STATUS.setStatus("S");
 		} catch (Exception e) {

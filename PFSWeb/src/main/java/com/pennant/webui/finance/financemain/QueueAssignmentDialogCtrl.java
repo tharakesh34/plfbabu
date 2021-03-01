@@ -48,7 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
@@ -96,7 +97,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	private static final long serialVersionUID = 4149506032336052235L;
-	private static final Logger logger = Logger.getLogger(QueueAssignmentDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(QueueAssignmentDialogCtrl.class);
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.

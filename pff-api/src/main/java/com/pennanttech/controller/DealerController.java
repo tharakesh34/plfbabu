@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.SessionUserDetails;
@@ -22,7 +23,7 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class DealerController {
-	Logger logger = Logger.getLogger(DealerController.class);
+	Logger logger = LogManager.getLogger(DealerController.class);
 
 	VehicleDealerService vehicleDealerService;
 	BankBranchService bankBranchService;

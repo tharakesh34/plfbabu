@@ -45,7 +45,8 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -61,7 +62,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class UploadTaxPercentDAOImpl extends BasicDao<UploadTaxPercent> implements UploadTaxPercentDAO {
-	private static Logger logger = Logger.getLogger(UploadTaxPercentDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(UploadTaxPercentDAOImpl.class);
 
 	public UploadTaxPercentDAOImpl() {
 		super();

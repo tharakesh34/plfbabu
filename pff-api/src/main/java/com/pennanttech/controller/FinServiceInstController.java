@@ -22,7 +22,8 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -164,7 +165,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 import com.rits.cloning.Cloner;
 
 public class FinServiceInstController extends SummaryDetailService {
-	private static final Logger logger = Logger.getLogger(FinServiceInstController.class);
+	private static final Logger logger = LogManager.getLogger(FinServiceInstController.class);
 
 	private FinanceDetailService financeDetailService;
 	private RateChangeService rateChangeService;

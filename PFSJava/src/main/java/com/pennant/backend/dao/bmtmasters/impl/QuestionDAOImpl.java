@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.bmtmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class QuestionDAOImpl extends SequenceDao<Question> implements QuestionDAO {
-	private static Logger logger = Logger.getLogger(QuestionDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(QuestionDAOImpl.class);
 
 	/**
 	 * This method set the Work Flow id based on the module name and return the new Question
@@ -195,8 +196,8 @@ public class QuestionDAOImpl extends SequenceDao<Question> implements QuestionDA
 	public long save(Question question, String type) {
 		logger.debug("Entering");
 		if (question.getId() == Long.MIN_VALUE) {
-			question.setId(getNextId("SeqBMTQuestion"));
-			logger.debug("get NextID:" + question.getId());
+			question.setId(getNextValue("SeqBMTQuestion"));
+			logger.debug("get NextValue:" + question.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into BMTQuestion");

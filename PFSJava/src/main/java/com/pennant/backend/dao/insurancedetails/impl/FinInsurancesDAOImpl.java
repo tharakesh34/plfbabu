@@ -50,7 +50,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -65,6 +66,7 @@ import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -72,7 +74,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * DAO methods implementation for the <b>documentDetails model</b> class.<br>
  */
 public class FinInsurancesDAOImpl extends SequenceDao<FinInsurances> implements FinInsurancesDAO {
-	private static Logger logger = Logger.getLogger(FinInsurancesDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinInsurancesDAOImpl.class);
 
 	public FinInsurancesDAOImpl() {
 		super();
@@ -518,24 +520,29 @@ public class FinInsurancesDAOImpl extends SequenceDao<FinInsurances> implements 
 
 	@Override
 	public List<FinSchFrqInsurance> getInsSchdToPost(String finReference, Date schDate) {
-		logger.debug("Entering");
-		FinSchFrqInsurance insSchd = new FinSchFrqInsurance();
-		insSchd.setReference(finReference);
-		insSchd.setInsSchDate(schDate);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fi.Reference, fsi.InsSchDate, fi.InsuranceType");
+		sql.append(", fsi.Amount, fsi.InsurancePaid");
+		sql.append(" From FinSchFrqInsurance fsi");
+		sql.append(" Inner Join FinInsurances fi on fsi.InsId = fi.InsId");
+		sql.append(" Where fi.Reference = ? and fsi.InsSchDate = ?");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FIN.REFERENCE, INSD.INSSCHDATE, FIN.INSURANCETYPE, ");
-		selectSql.append(" INSD.AMOUNT, INSD.INSURANCEPAID  FROM FINSCHFRQINSURANCE INSD");
-		selectSql.append(" INNER JOIN FININSURANCES FIN ON INSD.INSID=FIN.INSID");
-		selectSql.append(" WHERE FIN.REFERENCE = :Reference AND INSD.INSSCHDATE=:InsSchDate ");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insSchd);
-		RowMapper<FinSchFrqInsurance> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinSchFrqInsurance.class);
-		List<FinSchFrqInsurance> insList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		logger.debug("Leaving");
-		return insList;
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+			ps.setDate(index, JdbcUtil.getDate(schDate));
+		}, (rs, rowNum) -> {
+			FinSchFrqInsurance fsi = new FinSchFrqInsurance();
+			fsi.setReference(rs.getString("Reference"));
+			fsi.setInsSchDate(rs.getDate("InsSchDate"));
+			fsi.setInsuranceType(rs.getString("InsuranceType"));
+			fsi.setAmount(rs.getBigDecimal("Amount"));
+			fsi.setInsurancePaid(rs.getBigDecimal("InsurancePaid"));
+
+			return fsi;
+		});
 	}
 
 	@Override

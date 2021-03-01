@@ -50,7 +50,8 @@ import java.util.List;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -92,7 +93,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.rits.cloning.Cloner;
 
 public class FeePostingServiceImpl extends GenericService<FeePostings> implements FeePostingService {
-	private static final Logger logger = Logger.getLogger(FeePostingServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FeePostingServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FeePostingsDAO feePostingsDAO;
@@ -422,7 +423,8 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				aeEvent.getAcSetIDList().add(Long.valueOf(feePostings.getAccountSetId()));
 				getPostingsPreparationUtil().postAccounting(aeEvent);
 
-				list = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
+				engineExecution.getAccEngineExecResults(aeEvent);
+				list = aeEvent.getReturnDataSet();
 
 				validateCreditandDebitAmounts(aeEvent);
 			}

@@ -2,7 +2,8 @@ package com.pennant.backend.dao.ddapayments.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -15,7 +16,7 @@ import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class DDAPaymentInitiateDAOImpl extends SequenceDao<DDAPayments> implements DDAPaymentInitiateDAO {
-	private static Logger logger = Logger.getLogger(DDAPaymentInitiateDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DDAPaymentInitiateDAOImpl.class);
 
 	public DDAPaymentInitiateDAOImpl() {
 		super();
@@ -30,7 +31,7 @@ public class DDAPaymentInitiateDAOImpl extends SequenceDao<DDAPayments> implemen
 		logger.debug("Entering");
 
 		if (ddaPaymentInitiation.getId() == 0 || ddaPaymentInitiation.getId() == Long.MIN_VALUE) {
-			ddaPaymentInitiation.setDdaSeqId(getNextId("SeqDDS_PFF_DD500"));
+			ddaPaymentInitiation.setDdaSeqId(getNextValue("SeqDDS_PFF_DD500"));
 		}
 
 		ddaPaymentInitiation

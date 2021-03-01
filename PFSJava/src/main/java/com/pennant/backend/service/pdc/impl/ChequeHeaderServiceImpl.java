@@ -50,7 +50,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -90,7 +91,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>ChequeHeader</b>.<br>
  */
 public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implements ChequeHeaderService {
-	private static final Logger logger = Logger.getLogger(ChequeHeaderServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ChequeHeaderServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
@@ -282,8 +283,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 					chequeDetail.setWorkflowId(0);
 				}
 				chequeDetail.setHeaderID(headerID);
-				if (StringUtils.equals(chequeDetail.getRecordStatus(), PennantConstants.RCD_STATUS_CANCELLED)
-						|| chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				if (chequeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					deleteRecord = true;
 				} else if (chequeDetail.isNewRecord()) {
 					saveRecord = true;
@@ -579,8 +579,6 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 			auditHeader.setAuditDetails(getListAuditDetails(
 					listDeletion(chequeHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType())));// FIXME
 			getChequeHeaderDAO().delete(chequeHeader, TableType.TEMP_TAB);
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			auditHeaderDAO.addAudit(auditHeader);
 		}
 
 		auditHeader.setAuditTranType(tranType);

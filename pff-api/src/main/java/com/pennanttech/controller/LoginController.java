@@ -7,7 +7,8 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +29,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class LoginController {
 
-	private final static Logger logger = Logger.getLogger(LoginController.class);
+	private final static Logger logger = LogManager.getLogger(LoginController.class);
 
 	private SessionValidationDAO sessionValidationDAO;
 	private transient UserService userService;

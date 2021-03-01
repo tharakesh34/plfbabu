@@ -41,7 +41,8 @@ package com.pennant.app.bulkratechange;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.model.finance.BulkRateChangeDetails;
 import com.pennant.backend.model.finance.BulkRateChangeHeader;
@@ -49,7 +50,7 @@ import com.pennant.backend.service.finance.BulkRateChangeProcessService;
 
 public class BulkRateChangeProcess extends Thread {
 
-	private static final Logger logger = Logger.getLogger(BulkRateChangeProcess.class);
+	private static final Logger logger = LogManager.getLogger(BulkRateChangeProcess.class);
 
 	private BulkRateChangeProcessService bulkRateChangeProcessService;
 	private BulkRateChangeHeader bulkRateChangeHeader = null;

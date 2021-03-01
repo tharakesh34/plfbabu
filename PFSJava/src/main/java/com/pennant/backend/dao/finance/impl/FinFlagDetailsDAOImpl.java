@@ -1,22 +1,16 @@
 package com.pennant.backend.dao.finance.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -26,7 +20,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements FinFlagDetailsDAO {
-	private static Logger logger = Logger.getLogger(FinFlagDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinFlagDetailsDAOImpl.class);
 
 	public FinFlagDetailsDAOImpl() {
 		super();
@@ -104,8 +98,6 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 
 	@Override
 	public List<FinFlagsDetail> getFinFlagsByFinRef(String finReference, String moduleName, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Reference, FlagCode, ModuleName, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -115,42 +107,29 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setString(index++, moduleName);
-				}
-			}, new RowMapper<FinFlagsDetail>() {
-				@Override
-				public FinFlagsDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinFlagsDetail fd = new FinFlagsDetail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+			ps.setString(index++, moduleName);
+		}, (rs, rowNum) -> {
+			FinFlagsDetail fd = new FinFlagsDetail();
 
-					fd.setReference(rs.getString("Reference"));
-					fd.setFlagCode(rs.getString("FlagCode"));
-					fd.setModuleName(rs.getString("ModuleName"));
-					fd.setVersion(rs.getInt("Version"));
-					fd.setLastMntBy(rs.getLong("LastMntBy"));
-					fd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					fd.setRecordStatus(rs.getString("RecordStatus"));
-					fd.setRoleCode(rs.getString("RoleCode"));
-					fd.setNextRoleCode(rs.getString("NextRoleCode"));
-					fd.setTaskId(rs.getString("TaskId"));
-					fd.setNextTaskId(rs.getString("NextTaskId"));
-					fd.setRecordType(rs.getString("RecordType"));
-					fd.setWorkflowId(rs.getLong("WorkflowId"));
+			fd.setReference(rs.getString("Reference"));
+			fd.setFlagCode(rs.getString("FlagCode"));
+			fd.setModuleName(rs.getString("ModuleName"));
+			fd.setVersion(rs.getInt("Version"));
+			fd.setLastMntBy(rs.getLong("LastMntBy"));
+			fd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			fd.setRecordStatus(rs.getString("RecordStatus"));
+			fd.setRoleCode(rs.getString("RoleCode"));
+			fd.setNextRoleCode(rs.getString("NextRoleCode"));
+			fd.setTaskId(rs.getString("TaskId"));
+			fd.setNextTaskId(rs.getString("NextTaskId"));
+			fd.setRecordType(rs.getString("RecordType"));
+			fd.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return fd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return fd;
+		});
 	}
 
 	/**
@@ -164,31 +143,44 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 	 */
 	@Override
 	public FinFlagsDetail getFinFlagsByRef(final String finRef, String flagCode, String moduleName, String type) {
-		logger.debug("Entering");
-		FinFlagsDetail finFlagsDetail = new FinFlagsDetail();
-		finFlagsDetail.setReference(finRef);
-		finFlagsDetail.setFlagCode(flagCode);
-		finFlagsDetail.setModuleName(moduleName);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Reference, FlagCode, ModuleName, Version, LastMntBy");
+		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
+		sql.append(" From FlagDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Reference = ? and FlagCode = ? and ModuleName = ?");
 
-		StringBuilder selectSql = new StringBuilder(" Select Reference,FlagCode,ModuleName, ");
-		selectSql.append(" Version,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		selectSql.append(" NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From FlagDetails");
-
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where Reference =:Reference AND FlagCode =:FlagCode AND ModuleName =:ModuleName");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFlagsDetail);
-		RowMapper<FinFlagsDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFlagsDetail.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			finFlagsDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finRef, flagCode, moduleName },
+					(rs, i) -> {
+						FinFlagsDetail ffd = new FinFlagsDetail();
+
+						ffd.setReference(rs.getString("Reference"));
+						ffd.setFlagCode(rs.getString("FlagCode"));
+						ffd.setModuleName(rs.getString("ModuleName"));
+						ffd.setVersion(rs.getInt("Version"));
+						ffd.setLastMntBy(rs.getLong("LastMntBy"));
+						ffd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+						ffd.setRecordStatus(rs.getString("RecordStatus"));
+						ffd.setRoleCode(rs.getString("RoleCode"));
+						ffd.setNextRoleCode(rs.getString("NextRoleCode"));
+						ffd.setTaskId(rs.getString("TaskId"));
+						ffd.setNextTaskId(rs.getString("NextTaskId"));
+						ffd.setRecordType(rs.getString("RecordType"));
+						ffd.setWorkflowId(rs.getLong("WorkflowId"));
+
+						return ffd;
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finFlagsDetail = null;
+			logger.warn(
+					"Record not found in FlagDetails{} table for the specified Reference >> {}, FlagCode >> {} and ModuleName >> {}",
+					type, finRef, flagCode, moduleName);
 		}
-		logger.debug("Leaving");
-		return finFlagsDetail;
+
+		return null;
 	}
 
 	/**

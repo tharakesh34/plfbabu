@@ -44,7 +44,8 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -69,7 +70,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 
 public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implements EmployerDetailDAO {
-	private static Logger logger = Logger.getLogger(EmployerDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(EmployerDetailDAOImpl.class);
 
 	public EmployerDetailDAOImpl() {
 		super();
@@ -174,8 +175,8 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 	public String save(EmployerDetail employerDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		if (employerDetail.getId() == Long.MIN_VALUE) {
-			employerDetail.setId(getNextId("SeqEmployerDetail"));
-			logger.debug("get NextID:" + employerDetail.getId());
+			employerDetail.setId(getNextValue("SeqEmployerDetail"));
+			logger.debug("get NextValue:" + employerDetail.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into EmployerDetail");

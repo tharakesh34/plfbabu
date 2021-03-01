@@ -131,6 +131,68 @@ public class FinReceiptData implements Serializable {
 		super();
 	}
 
+	public FinReceiptData copyEntity() {
+		FinReceiptData entity = new FinReceiptData();
+		entity.setFinReference(this.finReference);
+		entity.setBuildProcess(this.buildProcess);
+		entity.setAccruedTillLBD(this.accruedTillLBD);
+		entity.setPendingODC(this.pendingODC);
+		entity.setSufficientRefund(this.sufficientRefund);
+		entity.setMaxRefundAmt(this.maxRefundAmt);
+		entity.setActInsRefundAmt(this.actInsRefundAmt);
+		entity.setEventCodeRef(this.eventCodeRef);
+		entity.setSourceId(this.sourceId);
+		entity.setTotReceiptAmount(this.totReceiptAmount);
+		entity.setPaidNow(this.paidNow);
+		entity.setRepayMain(this.repayMain);
+		entity.setAllocationMap(this.allocationMap);
+		entity.setWaiverMap(this.waiverMap);
+		entity.setAllocationDescMap(this.allocationDescMap);
+		entity.setReceiptHeader(this.receiptHeader);
+		entity.setFinanceDetail(this.financeDetail);
+		entity.setRepledgeDetail(this.repledgeDetail);
+		entity.setPromotion(this.promotion);
+		entity.setCashierTransaction(this.cashierTransaction);
+		entity.setCalReq(this.isCalReq);
+		entity.setExcessAvailable(this.excessAvailable);
+		entity.setEnquiry(this.isEnquiry);
+		entity.setValueDate(this.valueDate);
+		entity.setDueAdjusted(this.isDueAdjusted);
+		entity.setFCDueChanged(this.isFCDueChanged);
+		entity.setUserDetails(this.userDetails);
+		entity.setRemBal(this.remBal);
+		entity.setPartialPaidAmount(this.partialPaidAmount);
+		entity.setTotalDueAmount(this.totalDueAmount);
+		entity.setInPresPri(this.inPresPri);
+		entity.setInPresPft(this.inPresPft);
+		entity.setInPresTds(this.inPresTds);
+		entity.setInPresNpft(this.inPresNpft);
+		entity.setTotalPastDues(this.totalPastDues);
+		entity.setPresentment(this.isPresentment);
+		entity.setForeClosure(this.isForeClosure);
+		entity.setActualReceiptAmount(this.actualReceiptAmount);
+		entity.setAllocList(this.allocList);
+		entity.setOrgFinPftDtls(this.orgFinPftDtls);
+		entity.setFinFeeDetails(this.finFeeDetails);
+		entity.setInProcRchList(this.inProcRchList);
+		entity.setInProcRadList(this.inProcRadList);
+		entity.setErrorDetails(this.errorDetails);
+		entity.setInProcRepayments(this.inProcRepayments);
+		entity.setEventFeePercent(this.isEventFeePercent);
+		entity.setEarlySettle(this.isEarlySettle);
+		entity.setAdjSchedule(this.isAdjSchedule);
+		entity.setCurEventFeePercent(this.curEventFeePercent);
+		entity.setNewEventFeePercent(this.newEventFeePercent);
+		entity.setInitiation(this.isInitiation);
+		entity.setSetPaidValues(this.setPaidValues);
+		entity.setManAdvList(this.manAdvList);
+		entity.setExcessPayables(this.excessPayables);
+		entity.setTdPriBal(this.tdPriBal);
+		entity.setLppFeeType(this.lppFeeType);
+		entity.setForeClosureEnq(this.isForeClosureEnq);
+		return entity;
+	}
+
 	public String getFinReference() {
 		return finReference;
 	}

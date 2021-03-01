@@ -6,7 +6,8 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.coreinterface.model.dda.DDACancellation;
 import com.pennant.mq.model.AHBMQHeader;
@@ -17,7 +18,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DDACancelProcess extends MQProcess {
 
-	private static final Logger logger = Logger.getLogger(DDACancelProcess.class);
+	private static final Logger logger = LogManager.getLogger(DDACancelProcess.class);
 
 	public DDACancelProcess() {
 		super();

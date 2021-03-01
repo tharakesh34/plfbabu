@@ -9,7 +9,8 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -19,7 +20,7 @@ import com.rits.cloning.Cloner;
 
 public class ScriptValidationService {
 
-	private static final Logger logger = Logger.getLogger(ScriptValidationService.class);
+	private static final Logger logger = LogManager.getLogger(ScriptValidationService.class);
 
 	private ScriptEngine scriptEngine;
 	private List<Object> objectList = null;

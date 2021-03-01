@@ -55,8 +55,10 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -69,6 +71,8 @@ import com.pennant.backend.model.smtmasters.HolidayDetail;
 import com.pennant.backend.model.smtmasters.HolidayMaster;
 import com.pennant.backend.model.smtmasters.WeekendMaster;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 import net.objectlab.kit.datecalc.common.DateCalculator;
 import net.objectlab.kit.datecalc.common.DefaultHolidayCalendar;
@@ -82,7 +86,7 @@ import net.objectlab.kit.datecalc.jdk.CalendarKitCalculatorsFactory;
  */
 public class BusinessCalendar implements Serializable {
 	private static final long serialVersionUID = -4728201973665323130L;
-	private static final Logger logger = Logger.getLogger(BusinessCalendar.class);
+	private static final Logger logger = LogManager.getLogger(BusinessCalendar.class);
 
 	private static WeekendMasterDAO weekendMasterDAO;
 	private static HolidayMasterDAO holidayMasterDAO;
@@ -242,26 +246,26 @@ public class BusinessCalendar implements Serializable {
 	 * 
 	 */
 	private static Map<String, Boolean> getHolidayMap(List<HolidayMaster> holidayList) {
-		logger.debug("Entering");
 		Map<String, Boolean> holidayMap = null;
-		if (holidayList != null) {
-			holidayMap = new HashMap<String, Boolean>();
-			for (int i = 0; i < holidayList.size(); i++) {
-				BigDecimal holidayYear = holidayList.get(i).getHolidayYear();
-				List<HolidayDetail> holidayDetails = holidayList.get(i).getHolidayList(holidayYear);
-				if (holidayDetails == null) {
-					continue;
-				}
-				for (int j = 0; j < holidayDetails.size(); j++) {
-					String curDate = DateUtility.format(holidayDetails.get(j).getHoliday().getTime(),
-							PennantConstants.DBDateFormat);
-					if (!holidayMap.containsKey(curDate)) {
-						holidayMap.put(curDate, true);
-					}
+
+		if (CollectionUtils.isEmpty(holidayList)) {
+			return new HashMap<>();
+		}
+
+		holidayMap = new HashMap<String, Boolean>();
+		for (HolidayMaster hm : holidayList) {
+			BigDecimal holidayYear = hm.getHolidayYear();
+			List<HolidayDetail> holidayDetails = hm.getHolidayList(holidayYear);
+			if (holidayDetails == null) {
+				continue;
+			}
+			for (HolidayDetail hd : holidayDetails) {
+				String curDate = DateUtil.format(hd.getHoliday().getTime(), DateFormat.FULL_DATE);
+				if (!holidayMap.containsKey(curDate)) {
+					holidayMap.put(curDate, true);
 				}
 			}
 		}
-		logger.debug("Leaving");
 		return holidayMap;
 	}
 
@@ -455,7 +459,7 @@ public class BusinessCalendar implements Serializable {
 			} else if (handlerType.equals(HolidayHandlerTypes.MOVE_PREVIOUS)) {
 				tempDate.add(Calendar.DATE, -1);
 			}
-			if (!holidayListMap.containsKey(DateUtility.format(tempDate.getTime(), PennantConstants.DBDateFormat))) {
+			if (!holidayListMap.containsKey(DateUtil.format(tempDate.getTime(), PennantConstants.DBDateFormat))) {
 				workingBussDateFound = true;
 			}
 		}

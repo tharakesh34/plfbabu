@@ -2,7 +2,8 @@ package com.pennattech.pff.mmfl.cd.dao;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -22,7 +23,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.mmfl.cd.model.SchemeDealerGroup;
 
 public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> implements SchemeDealerGroupDAO {
-	private static Logger logger = Logger.getLogger(SchemeDealerGroupDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SchemeDealerGroupDAOImpl.class);
 
 	public SchemeDealerGroupDAOImpl() {
 		super();

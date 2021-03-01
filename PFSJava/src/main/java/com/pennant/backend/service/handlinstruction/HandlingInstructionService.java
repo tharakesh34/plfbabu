@@ -1,7 +1,8 @@
 package com.pennant.backend.service.handlinstruction;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
@@ -15,7 +16,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class HandlingInstructionService {
 
-	private static final Logger logger = Logger.getLogger(HandlingInstructionService.class);
+	private static final Logger logger = LogManager.getLogger(HandlingInstructionService.class);
 
 	private FinanceMaintenanceProcess financeMaintenanceProcess;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;

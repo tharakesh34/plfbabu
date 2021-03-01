@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -37,7 +38,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
-	private static Logger logger = Logger.getLogger(CKYCDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CKYCDAOImpl.class);
 
 	public CKYCDAOImpl() {
 		super();

@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.lenderupload.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -12,7 +13,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class LenderDataDAOImpl extends BasicDao<LenderDataUpload> implements LenderDataDAO {
 
-	private static Logger logger = Logger.getLogger(LenderDataDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LenderDataDAOImpl.class);
 
 	@Override
 	public int update(LenderDataUpload dataUpload, String tableName, String type) {

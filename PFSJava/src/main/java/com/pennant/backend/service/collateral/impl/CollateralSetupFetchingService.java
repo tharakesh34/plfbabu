@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -18,7 +19,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 
 public class CollateralSetupFetchingService {
-	private static final Logger logger = Logger.getLogger(CollateralSetupFetchingService.class);
+	private static final Logger logger = LogManager.getLogger(CollateralSetupFetchingService.class);
 
 	private transient DocumentDetailsDAO documentDetailsDAO;
 	private transient CollateralSetupService collateralSetupService;

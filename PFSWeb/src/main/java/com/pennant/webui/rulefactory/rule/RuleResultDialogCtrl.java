@@ -47,7 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -82,7 +83,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 	private static final long serialVersionUID = -2393925908398735705L;
-	private static final Logger logger = Logger.getLogger(RuleResultDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RuleResultDialogCtrl.class);
 
 	protected Window window_RuleResultDialog;
 	public Codemirror formula; // FIXME change the modifier into protected

@@ -47,7 +47,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
@@ -63,10 +64,12 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class SuspenseService extends ServiceHelper {
 	private static final long serialVersionUID = -7469564513544156223L;
-	private static Logger logger = Logger.getLogger(SuspenseService.class);
+	private static Logger logger = LogManager.getLogger(SuspenseService.class);
 
 	private FinanceSuspHeadDAO financeSuspHeadDAO;
 	private FinSuspHoldDAO finSuspHoldDAO;
@@ -111,31 +114,29 @@ public class SuspenseService extends ServiceHelper {
 			boolean isPastDeferment) throws Exception {
 		logger.debug("Entering");
 
-		int curOdDays = getFinODDetailsDAO().getFinCurSchdODDays(financeMain.getFinReference(),
-				repayQueue.getRpyDate());
+		int curOdDays = finODDetailsDAO.getFinCurSchdODDays(financeMain.getFinReference(), repayQueue.getRpyDate());
 
 		// Check Profit will Suspend or not based upon Current Overdue Days
-		boolean suspendProfit = getCustomerStatusCodeDAO().getFinanceSuspendStatus(curOdDays);
+		boolean suspendProfit = customerStatusCodeDAO.getFinanceSuspendStatus(curOdDays);
 		if (!suspendProfit) {
 			return;
 		}
 
 		FinanceType fintype = getFinanceType(repayQueue.getFinType());
 		// Check suspense has hold or not
-		boolean holdsuspense = getFinSuspHoldDAO().holdSuspense(fintype.getFinCategory(), fintype.getFinType(),
+		boolean holdsuspense = finSuspHoldDAO.holdSuspense(fintype.getFinCategory(), fintype.getFinType(),
 				repayQueue.getFinReference(), financeMain.getCustID());
 		if (holdsuspense) {
 			return;
 		}
 
-		FinanceSuspHead suspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(financeMain.getFinReference(), "");
+		FinanceSuspHead suspHead = financeSuspHeadDAO.getFinanceSuspHeadById(financeMain.getFinReference(), "");
 		if (suspHead != null && suspHead.isFinIsInSusp()) {
 			return;
 		}
 
 		//Finance Related Details Fetching
-		BigDecimal suspAmount = getFinanceScheduleDetailDAO().getSuspenseAmount(financeMain.getFinReference(),
-				valueDate);
+		BigDecimal suspAmount = financeScheduleDetailDAO.getSuspenseAmount(financeMain.getFinReference(), valueDate);
 
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -153,7 +154,7 @@ public class SuspenseService extends ServiceHelper {
 		if (suspHead != null) {
 			// Update Finance Suspend Head
 			suspHead = prepareSuspHeadData(suspHead, repayQueue, valueDate, suspAmount, isPastDeferment);
-			getFinanceSuspHeadDAO().update(suspHead, "");
+			financeSuspHeadDAO.update(suspHead, "");
 		} else {
 			// Insert Finance Suspend Head
 			suspHead = prepareSuspHeadData(suspHead, repayQueue, valueDate, suspAmount, isPastDeferment);
@@ -167,13 +168,13 @@ public class SuspenseService extends ServiceHelper {
 			suspHead.setNextTaskId("");
 			suspHead.setRecordType("");
 			suspHead.setWorkflowId(0);
-			getFinanceSuspHeadDAO().save(suspHead, "");
+			financeSuspHeadDAO.save(suspHead, "");
 		}
 
 		// Insert Finance Suspend Details data
 		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspHead.getFinSuspAmt(), suspHead.getFinSuspSeq(),
 				valueDate, repayQueue.getRpyDate(), "S", valueDate, linkedTranId);
-		getFinanceSuspHeadDAO().saveSuspenseDetails(suspDetails, "");
+		financeSuspHeadDAO.saveSuspenseDetails(suspDetails, "");
 
 		logger.debug("Leaving");
 	}
@@ -181,19 +182,21 @@ public class SuspenseService extends ServiceHelper {
 	/**
 	 * Method for update of Finance Suspend Data for Release
 	 * 
-	 * @param financeMain
+	 * @param fm
 	 * @param profitDetail
 	 * @param details
 	 * @param valueDate
 	 * @param isEODProcess
 	 * @throws Exception
 	 */
-	private void suspReleasePreparation(FinanceMain financeMain, BigDecimal releasePftAmount,
-			FinRepayQueue finRepayQueue, Date valueDate) throws Exception {
-		logger.debug("Entering");
+	private void suspReleasePreparation(FinanceMain fm, BigDecimal releasePftAmount, FinRepayQueue repayQueue,
+			Date valueDate) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		String finReference = repayQueue.getFinReference();
 
 		// Fetch the Finance Suspend head
-		FinanceSuspHead suspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(finRepayQueue.getFinReference(), "");
+		FinanceSuspHead suspHead = financeSuspHeadDAO.getFinanceSuspHeadById(finReference, "");
 		if (suspHead == null || !suspHead.isFinIsInSusp()) {
 			return;
 		}
@@ -206,12 +209,12 @@ public class SuspenseService extends ServiceHelper {
 
 		// Pending OverDue Details for that particular Schedule date and overDue
 		// For
-		int curOverDueDays = getFinODDetailsDAO().getPendingOverDuePayment(finRepayQueue.getFinReference());
+		int curOverDueDays = finODDetailsDAO.getPendingOverDuePayment(finReference);
 		int suspenceGraceDays = SysParamUtil.getValueAsInt("SUSP_AFTER");
 
 		if (curOverDueDays > suspenceGraceDays) {
 
-			suspFromDate = DateUtility.addDays(valueDate, -suspenceGraceDays);
+			suspFromDate = DateUtil.addDays(valueDate, -suspenceGraceDays);
 
 			// Suspend Amount Calculation
 			if (suspFromDate.compareTo(valueDate) > 0 && !suspHead.isManualSusp()) {
@@ -251,28 +254,19 @@ public class SuspenseService extends ServiceHelper {
 			suspHead.setFinSuspTrfDate(null);
 		}
 
-		getFinanceSuspHeadDAO().update(suspHead, "");
+		financeSuspHeadDAO.update(suspHead, "");
 
 		// Finance Suspend Details Record Insert
 		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspAmtToMove, 1, valueDate,
-				finRepayQueue.getRpyDate(), "R", suspFromDate, linkedTranId);
-		getFinanceSuspHeadDAO().saveSuspenseDetails(suspDetails, "");
+				repayQueue.getRpyDate(), "R", suspFromDate, linkedTranId);
+		financeSuspHeadDAO.saveSuspenseDetails(suspDetails, "");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Prepare data for Finance Suspend Head
-	 * 
-	 * @param head
-	 * @param financeMain
-	 * @param suspFromDate
-	 * @param suspAmount
-	 * @return
-	 */
 	private FinanceSuspHead prepareSuspHeadData(FinanceSuspHead head, FinRepayQueue repayQueue, Date suspFromDate,
 			BigDecimal suspAmount, boolean isPastDeferment) {
-		logger.debug("Entering");
+
 		if (head == null) {
 			head = new FinanceSuspHead();
 			head.setFinReference(repayQueue.getFinReference());
@@ -294,21 +288,12 @@ public class SuspenseService extends ServiceHelper {
 		} else {
 			head.setFinSuspDate(head.getFinSuspTrfDate());
 		}
-		logger.debug("Leaving");
+
 		return head;
 	}
 
-	/**
-	 * Method for Preparation of Finance Suspend Details data
-	 * 
-	 * @param head
-	 * @param valueDate
-	 * @param oDDate
-	 * @return
-	 */
 	private FinanceSuspDetails prepareSuspDetail(FinanceSuspHead head, BigDecimal suspAmt, int suspSeq, Date valueDate,
 			Date oDDate, String trfMvt, Date suspFromDate, long linkedTranId) {
-		logger.debug("Entering");
 
 		FinanceSuspDetails suspDetails = new FinanceSuspDetails();
 		suspDetails.setFinReference(head.getFinReference());
@@ -323,16 +308,8 @@ public class SuspenseService extends ServiceHelper {
 		suspDetails.setFinODDate(date);
 		suspDetails.setFinTrfFromDate(suspFromDate);
 		suspDetails.setLinkedTranId(linkedTranId);
-		logger.debug("Leaving");
+
 		return suspDetails;
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public FinanceSuspHeadDAO getFinanceSuspHeadDAO() {
-		return financeSuspHeadDAO;
 	}
 
 	public void setFinanceSuspHeadDAO(FinanceSuspHeadDAO financeSuspHeadDAO) {
@@ -341,14 +318,6 @@ public class SuspenseService extends ServiceHelper {
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
-	}
-
-	public FinSuspHoldDAO getFinSuspHoldDAO() {
-		return finSuspHoldDAO;
 	}
 
 	public void setFinSuspHoldDAO(FinSuspHoldDAO finSuspHoldDAO) {

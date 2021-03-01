@@ -2,7 +2,8 @@ package com.pennanttech.pff.logging.dao.impl;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -17,7 +18,7 @@ import com.pennanttech.pff.logging.dao.IDBInterfaceLoggingDao;
 import com.pennanttech.pff.model.IDBInterfaceLogDetail;
 
 public class IDBInterfaceLoggingDaoImpl extends SequenceDao<InterfaceLogDetail> implements IDBInterfaceLoggingDao {
-	private static Logger logger = Logger.getLogger(IDBInterfaceLoggingDaoImpl.class);
+	private static Logger logger = LogManager.getLogger(IDBInterfaceLoggingDaoImpl.class);
 
 	protected DefaultTransactionDefinition transDef;
 	private DataSourceTransactionManager transactionManager;

@@ -16,7 +16,8 @@ import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.zkoss.zkplus.spring.SpringUtil;
@@ -50,7 +51,7 @@ import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 
 public class PennantApplicationUtil {
-	private static final Logger logger = Logger.getLogger(PennantApplicationUtil.class);
+	private static final Logger logger = LogManager.getLogger(PennantApplicationUtil.class);
 	private static final SearchProcessor SEARCH_PROCESSOR = getSearchProcessor();
 	private static Country defaultCountry = null;
 
@@ -718,17 +719,14 @@ public class PennantApplicationUtil {
 	}
 
 	public static String getEventCode(Date date) {
-		logger.debug("Entering");
-
 		String feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
 
-		if (date.after(DateUtility.getAppDate())) {
+		if (date.after(SysParamUtil.getAppDate())) {
 			if (ImplementationConstants.ALLOW_ADDDBSF) {
 				feeEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
 			}
 		}
 
-		logger.debug("Leaving");
 		return feeEvent;
 	}
 

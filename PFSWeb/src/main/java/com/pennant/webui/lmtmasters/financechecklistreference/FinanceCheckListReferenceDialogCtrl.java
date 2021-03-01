@@ -51,7 +51,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -110,7 +111,7 @@ import com.pennanttech.pff.core.util.CollectionUtil;
  */
 public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceCheckListReference> {
 	private static final long serialVersionUID = 4028305737293383251L;
-	private static final Logger logger = Logger.getLogger(FinanceCheckListReferenceDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceCheckListReferenceDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -133,7 +134,6 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 	private Map<Long, FinanceReferenceDetail> notInputInStageMap;
 	private Object financeMainDialogCtrl = null;
 	private Map<String, List<Listitem>> checkListDocTypeMap = null;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private CustomerService customerService;
 	private Tabpanel panel = null;
 	private String userRole = "";
@@ -323,7 +323,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 
 				if (!finRefDetail.getAllowInputInStage().contains(userRole)) {
 					if (StringUtils.isNotBlank(rule)) {
-						boolean ruleResult = (boolean) ruleExecutionUtil.executeRule(rule, fieldsAndValues, finCcy,
+						boolean ruleResult = (boolean) RuleExecutionUtil.executeRule(rule, fieldsAndValues, finCcy,
 								RuleReturnType.BOOLEAN);
 						if (ruleResult) {
 							notInputInStageMap.put(Long.valueOf(finRefDetail.getFinRefId()), finRefDetail);
@@ -337,7 +337,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 					}
 				} else {
 					if (StringUtils.isNotBlank(rule)) {
-						boolean ruleResult = (boolean) ruleExecutionUtil.executeRule(rule, fieldsAndValues, finCcy,
+						boolean ruleResult = (boolean) RuleExecutionUtil.executeRule(rule, fieldsAndValues, finCcy,
 								RuleReturnType.BOOLEAN);
 						if (ruleResult) {
 							tempCheckList.add(finRefDetail);
@@ -1323,14 +1323,6 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
 	}
 
 	public void setCustomerService(CustomerService customerService) {

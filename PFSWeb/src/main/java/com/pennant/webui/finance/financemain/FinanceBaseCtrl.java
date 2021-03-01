@@ -58,7 +58,8 @@ import java.util.Map;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -181,7 +182,7 @@ import com.rits.cloning.Cloner;
 public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	private static final long serialVersionUID = -1171206258809472640L;
-	private static final Logger logger = Logger.getLogger(FinanceBaseCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceBaseCtrl.class);
 
 	protected Datebox finStartDate; // autoWireda
 	protected Textbox promotionProduct; // autoWired

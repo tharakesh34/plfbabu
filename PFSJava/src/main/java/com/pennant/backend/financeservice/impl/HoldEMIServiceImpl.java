@@ -3,7 +3,8 @@ package com.pennant.backend.financeservice.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
@@ -19,7 +20,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> implements HoldEMIService {
-	private static Logger logger = Logger.getLogger(AddRepaymentServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(AddRepaymentServiceImpl.class);
 
 	public HoldEMIServiceImpl() {
 		super();

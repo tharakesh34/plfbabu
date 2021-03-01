@@ -61,7 +61,8 @@ import javax.script.ScriptException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -193,7 +194,7 @@ import com.rits.cloning.Cloner;
  */
 public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(VASRecordingDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(VASRecordingDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
@@ -252,7 +253,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	protected Tabs tabsIndexCenter;
 	protected Tabpanels tabpanelsBoxIndexCenter;
 	protected Tab basicDetailsTab;
-	protected Tab extendedDetailsTab; //NOt required
+	protected Tab extendedDetailsTab; // NOt required
 	protected Component checkListChildWindow;
 	private transient ExtendedFieldRenderDialogCtrl extendedFieldRenderDialogCtrl;
 	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
@@ -571,7 +572,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					this.btnCtrl.setBtnStatus_Edit();
 					this.btnCancel.setVisible(false);
 				} else {
-					//this.btnCtrl.setWFBtnStatus_Edit(isFinanceVas());
+					// this.btnCtrl.setWFBtnStatus_Edit(isFinanceVas());
 					this.btnCancel.setVisible(false);
 					if (getFinanceDetail().getFinScheduleData().getFinanceMain().isNewRecord()) {
 						this.btnDelete.setVisible(true);
@@ -734,7 +735,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			return;
 		}
 
-		//Finance CheckList Details Saving
+		// Finance CheckList Details Saving
 		if (checkListChildWindow != null) {
 			boolean validationSuccess = doSave_CheckList(aVASRecording, false);
 			if (!validationSuccess) {
@@ -744,7 +745,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			aVASRecording.setCheckLists(getVASRecording().getCheckLists());
 		}
 
-		//Document Details Saving
+		// Document Details Saving
 		if (documentDetailDialogCtrl != null) {
 			aVASRecording.setDocuments(documentDetailDialogCtrl.getDocumentDetailsList());
 		} else {
@@ -832,9 +833,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						finFeeDetail.setFeeSeq(0);
 						finFeeDetail.setFeeOrder(0);
 						finFeeDetail.setCalculatedAmount(aVASRecording.getFee());
-						//finFeeDetail.setActualAmount(aVASRecording.getFee());
+						// finFeeDetail.setActualAmount(aVASRecording.getFee());
 						finFeeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
-						//finFeeDetail.setRemainingFee(aVASRecording.getFee());
+						// finFeeDetail.setRemainingFee(aVASRecording.getFee());
 						finFeeDetail.setFixedAmount(aVASRecording.getFee());
 						finFeeDetail.setCalculateOn(PennantConstants.List_Select);
 						finFeeDetail.setAlwDeviation(true);
@@ -854,7 +855,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
 						finFeeDetail.setRemainingFee(aVASRecording.getFee());
 
-						//FIXME
+						// FIXME
 						if (!StringUtils.equals(aVASRecording.getFeePaymentMode(), PennantConstants.List_Select)) {
 							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PAID_BY_CUSTOMER);
 							finFeeDetail.setPaidAmountOriginal(aVASRecording.getFee());
@@ -866,8 +867,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 							finFeeDetail.setRemainingFee(BigDecimal.ZERO);
 						}
 
-						//Deciding the Fee Schedule method based on the configuration
-						if (! PennantConstants.List_Select.equals(aVASRecording.getFeePaymentMode())) {
+						// Deciding the Fee Schedule method based on the configuration
+						if (!PennantConstants.List_Select.equals(aVASRecording.getFeePaymentMode())) {
 							if (StringUtils.equals(VASConsatnts.VAS_PAYMENT_COLLECTION,
 									aVASRecording.getVasConfiguration().getModeOfPayment())) {
 								finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
@@ -899,7 +900,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						processVasDisbInstructions();
 						aVASRecording.setFinFeeDetailsList(finFeeDetailsList);
 
-						//Deleting the Fee if Customer provided the out side the system insurance
+						// Deleting the Fee if Customer provided the out side the system insurance
 					} else if (!isNewrecord() && (this.termInsuranceLien.isChecked())) {
 						removeFeesFromFeeList(aVASRecording.getVasReference());
 						processVasDisbInstructions();
@@ -911,7 +912,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 			} else if (doProcess(aVASRecording, tranType)) {
 
-				//Mail Alert Notification for Customer/Dealer/Provider...etc
+				// Mail Alert Notification for Customer/Dealer/Provider...etc
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 					Notification notification = new Notification();
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
@@ -1029,7 +1030,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			aVASRecording.setRoleCode(getRole());
 			aVASRecording.setNextRoleCode(nextRoleCode);
 
-			//Extended Field details
+			// Extended Field details
 			if (aVASRecording.getExtendedFieldRender() != null) {
 				ExtendedFieldRender details = aVASRecording.getExtendedFieldRender();
 				details.setReference(aVASRecording.getVasReference());
@@ -1052,7 +1053,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 			}
 
-			//Document Details
+			// Document Details
 			if (aVASRecording.getDocuments() != null && !aVASRecording.getDocuments().isEmpty()) {
 				for (DocumentDetails details : aVASRecording.getDocuments()) {
 					if (StringUtils.isEmpty(StringUtils.trimToEmpty(details.getRecordType()))) {
@@ -1080,7 +1081,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 			}
 
-			//CheckList details
+			// CheckList details
 			if (aVASRecording.getVasCheckLists() != null && !aVASRecording.getVasCheckLists().isEmpty()) {
 				for (FinanceCheckListReference details : aVASRecording.getVasCheckLists()) {
 					details.setFinReference(aVASRecording.getVasReference());
@@ -1263,7 +1264,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			vasRecordings.add(aVASRecording);
 		}
 
-		//Extended Field details
+		// Extended Field details
 		if (aVASRecording.getExtendedFieldRender() != null) {
 			ExtendedFieldRender details = aVASRecording.getExtendedFieldRender();
 			details.setReference(aVASRecording.getVasReference());
@@ -1497,16 +1498,16 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.medicalApplicable.setChecked(aVASRecording.isMedicalApplicable());
 		}
 
-		//Medical Applicable
+		// Medical Applicable
 		setMedicalStatusVisibility(this.medicalApplicable.isChecked());
 
-		//Vas configuration 
+		// Vas configuration
 		fillComboBox(this.modeOfPayment, vASConfiguration.getModeOfPayment(),
 				PennantStaticListUtil.getVasModeOfPayments(), "");
 		fillComboBox(this.allowFeeType, vASConfiguration.getAllowFeeType(), PennantStaticListUtil.getVasAllowFeeTypes(),
 				"");
 
-		//Entity code
+		// Entity code
 		this.entityCode.setValue(aVASRecording.getEntityCode());
 		this.entityDesc.setValue(aVASRecording.getEntityDesc());
 
@@ -1520,7 +1521,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				"");
 		fillComboBox(this.feePaymentMode, aVASRecording.getFeePaymentMode(), PennantStaticListUtil.getFeeTypes(), "");
 
-		//Vas fee
+		// Vas fee
 		if (isFinanceVas()) {
 			if (isFeeEditable() && vASConfiguration.isAllowFeeToModify()) {
 				this.fee.setReadonly(isReadOnly("VASRecordingDialog_Fee"));
@@ -1550,7 +1551,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 		}
 
-		//vasReference
+		// vasReference
 		if (StringUtils.trimToNull(aVASRecording.getVasReference()) == null) {
 			this.vasReference.setValue(ReferenceUtil.generateVASRef());
 		} else {
@@ -1582,7 +1583,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.recurringDate.setValue(aVASRecording.getRecurringDate());
 		}
 
-		//Renewal fee
+		// Renewal fee
 		if (vASConfiguration.isRecurringType() && !isCancelProcess && !enqiryModule) {
 			this.renewalFee.setReadonly(isReadOnly("VASRecordingDialog_Fee"));
 		} else {
@@ -1602,7 +1603,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.fulfilOfficerId.setValue(aVASRecording.getFulfilOfficerId());
 		this.fulfilOfficerId.setDescription(aVASRecording.getFulfilOfficerIdDesc());
 
-		//Term Insurance Lien Fields
+		// Term Insurance Lien Fields
 		this.termInsuranceLien.setChecked(aVASRecording.isTermInsuranceLien());
 		this.providerName.setValue(aVASRecording.getProviderName());
 		this.policyNumber.setValue(aVASRecording.getPolicyNumber());
@@ -1617,22 +1618,22 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		this.recordStatus.setValue(aVASRecording.getRecordStatus());
 
-		//Extended Field Details
+		// Extended Field Details
 		appendExtendedFieldDetails(aVASRecording);
 
 		if (!isFinanceVas()) {
-			//Agreements Detail Tab Addition
+			// Agreements Detail Tab Addition
 			if (!enqiryModule && !isCancelProcess) {
 				appendAgreementsDetailTab(true);
 
-				//CheckList Details Tab Addition
+				// CheckList Details Tab Addition
 				appendCheckListDetailTab(aVASRecording);
 			}
 
 			// Document Detail Tab Addition
 			appendDocumentDetailTab();
 
-			//Recommend & Comments Details Tab Addition
+			// Recommend & Comments Details Tab Addition
 			appendRecommendDetailTab(true);
 
 			// Accounting Details Tab Addition
@@ -1678,68 +1679,70 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		setExtendedFieldRender(aVASRecording.getExtendedFieldRender());
 
-		// Setting the objects list 
+		// Setting the objects list
 		List<Object> objectList = new ArrayList<>();
 		setObjectData(objectList);
 
-		//Pre-Validation Checking & Setting Defaults
-		Map<String, Object> fieldValuesMap = null;
-		if (getExtendedFieldRender() != null && getExtendedFieldRender().getMapValues() != null) {
-			fieldValuesMap = aVASRecording.getExtendedFieldRender().getMapValues();
-		}
-
-		List<ExtendedFieldDetail> extendedFieldDetails = extendedFieldHeader.getExtendedFieldDetails();
-
-		//setting the pre and post validation scripts
-		setPreValidationScript(vasConfiguration.getPreValidation());
-		setPostValidationScript(vasConfiguration.getPostValidation());
-		setExtendedFieldHeader(extendedFieldHeader);
-		aVASRecording.getRecordType();
-		aVASRecording.getRecordStatus();
-
-		String preValidationScript = vasConfiguration.getPreValidation();
-		if (StringUtils.isNotEmpty(preValidationScript)) {
-			ScriptErrors defaults = getScriptValidationService().setPreValidationDefaults(preValidationScript,
-					fieldValuesMap);
-
-			// Initiation of Field Value Map
-			if (fieldValuesMap == null) {
-				fieldValuesMap = new HashMap<>();
+		if (!enqiryModule) {
+			// Pre-Validation Checking & Setting Defaults
+			Map<String, Object> fieldValuesMap = null;
+			if (getExtendedFieldRender() != null && getExtendedFieldRender().getMapValues() != null) {
+				fieldValuesMap = aVASRecording.getExtendedFieldRender().getMapValues();
 			}
-			// Overriding Default values
-			List<ScriptError> defaultList = defaults.getAll();
-			for (int i = 0; i < defaultList.size(); i++) {
-				ScriptError dftKeyValue = defaultList.get(i);
-				//if VAS is a new record we have to set the default values
-				if (StringUtils.trimToNull(this.vASRecording.getVasReference()) == null
-						&& aVASRecording.isNewRecord()) {
-					ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
-					if (!detail.isVisible() || detail.isValFromScript()) {
+
+			List<ExtendedFieldDetail> extendedFieldDetails = extendedFieldHeader.getExtendedFieldDetails();
+
+			// setting the pre and post validation scripts
+			setPreValidationScript(vasConfiguration.getPreValidation());
+			setPostValidationScript(vasConfiguration.getPostValidation());
+			setExtendedFieldHeader(extendedFieldHeader);
+			aVASRecording.getRecordType();
+			aVASRecording.getRecordStatus();
+
+			String preValidationScript = vasConfiguration.getPreValidation();
+			if (StringUtils.isNotEmpty(preValidationScript)) {
+				ScriptErrors defaults = getScriptValidationService().setPreValidationDefaults(preValidationScript,
+						fieldValuesMap);
+
+				// Initiation of Field Value Map
+				if (fieldValuesMap == null) {
+					fieldValuesMap = new HashMap<>();
+				}
+				// Overriding Default values
+				List<ScriptError> defaultList = defaults.getAll();
+				for (int i = 0; i < defaultList.size(); i++) {
+					ScriptError dftKeyValue = defaultList.get(i);
+					//if VAS is a new record we have to set the default values
+					if (StringUtils.trimToNull(this.vASRecording.getVasReference()) == null
+							&& aVASRecording.isNewRecord()) {
+						ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
+						if (!detail.isVisible() || detail.isValFromScript()) {
+							if (detail.isValFromScript()) {
+								detail.setFieldList(dftKeyValue.getValue());
+							}
+							fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
+						}
+					} else { //Is VAS record is saved in DB or memory? then we have to set the saved data to extended fields
+						ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
 						if (detail.isValFromScript()) {
 							detail.setFieldList(dftKeyValue.getValue());
 						}
-						fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
-					}
-				} else { //Is VAS record is saved in DB or memory? then we have to set the saved data to extended fields
-					ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
-					if (detail.isValFromScript()) {
-						detail.setFieldList(dftKeyValue.getValue());
 					}
 				}
 			}
-		}
 
-		if (fieldValuesMap != null) {
-			generator.setFieldValueMap((HashMap<String, Object>) fieldValuesMap);
-		}
-		try {
-			generator.renderWindow(extendedFieldHeader, newRecord);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
+			if (fieldValuesMap != null) {
+				generator.setFieldValueMap((HashMap<String, Object>) fieldValuesMap);
+			}
+			try {
+				generator.renderWindow(extendedFieldHeader, newRecord);
+			} catch (Exception e) {
+				logger.error("Exception: ", e);
+			}
 
-		//Enable and disabling the Premium amount Button 
-		setPremiumCalcButton(aVASRecording);
+			//Enable and disabling the Premium amount Button 
+			setPremiumCalcButton(aVASRecording);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -2182,7 +2185,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			wve.add(we);
 		}
 
-		// Renewal Fee  
+		// Renewal Fee
 		try {
 			aVASRecording.setRenewalFee(
 					PennantApplicationUtil.unFormateAmount(this.renewalFee.getActualValue(), getCcyFormat()));
@@ -2497,13 +2500,13 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnSave"));
-			if (insuranceCalculatorService != null) {
-				this.btnInsurance_VasRecording
-						.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnInsurance"));
-			} else {
-				this.btnInsurance_VasRecording.setVisible(false);
-			}
 			this.btnCancel.setVisible(false);
+		}
+		if (insuranceCalculatorService != null) {
+			this.btnInsurance_VasRecording
+					.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnInsurance"));
+		} else {
+			this.btnInsurance_VasRecording.setVisible(false);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -2754,7 +2757,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				amountCodes = new AEAmountCodes();
 			}
 
-			// Based on VAS Created Against, details will be captured  
+			// Based on VAS Created Against, details will be captured
 			if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, getVASRecording().getPostingAgainst())) {
 				FinanceMain financeMain = getFinanceDetailService()
 						.getFinanceMainForBatch(getVASRecording().getPrimaryLinkRef());
@@ -2782,8 +2785,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 			getVASRecording().getDeclaredFieldValues(aeEvent.getDataMap());
 			aeEvent.getAcSetIDList().add(vASConfiguration.getFeeAccounting());
-			List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(aeEvent)
-					.getReturnDataSet();
+			engineExecution.getAccEngineExecResults(aeEvent);
+			List<ReturnDataSet> returnSetEntries = aeEvent.getReturnDataSet();
 			getVASRecording().setReturnDataSetList(returnSetEntries);
 			accountingSetEntries.addAll(returnSetEntries);
 		}
@@ -3166,7 +3169,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 	}
 
-	//Premium calculation button enable and disable
+	// Premium calculation button enable and disable
 	private void setPremiumCalcButton(VASRecording aVASRecording) {
 		Component component = generator.getWindow().getFellowIfAny("CALCULATEPREMIUM");
 		if (component != null) {
@@ -3274,7 +3277,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 				formData.put("AadharNumber", cd.getCustDocTitle());
 		}
-		formData.put("ClientIdentifier", customer.getCustCIF());//cifid
+		formData.put("ClientIdentifier", customer.getCustCIF());// cifid
 		formData.put("UserId", String.valueOf(getUserWorkspace().getLoggedInUser().getUserId()));
 		formData.put("Occupation", customer.getCustSector());
 
@@ -3284,7 +3287,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		formData.put("PortfolioId", "84");
 		formData.put("ApplicantType", "ApplicantType");
 		formData.put("BusinessCode", "SME");
-		formData.put("ProspectNo", financeMain.getFinReference());//lanno
+		formData.put("ProspectNo", financeMain.getFinReference());// lanno
 		formData.put("UserId", String.valueOf(getUserWorkspace().getLoggedInUser().getUserId()));
 		formData.put("StageCode", "");
 
@@ -3360,7 +3363,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			Component component = null;
 			BigDecimal loanAmt = BigDecimal.ZERO;
 
-			//CustomerCif
+			// CustomerCif
 			component = generator.getWindow().getFellowIfAny("ad_CUSTOMERCIF");
 			if (component != null) {
 				Textbox txtCustomerCif = (Textbox) component;
@@ -3372,7 +3375,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 			}
 
-			//Insurance Terms
+			// Insurance Terms
 			component = generator.getWindow().getFellowIfAny("ad_INSURANCETERMS");
 			if (component != null) {
 				Intbox intInsuranceTerms = (Intbox) component;
@@ -3383,13 +3386,13 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 			}
 
-			//Finance details Object
+			// Finance details Object
 			if (getClonedFinanceDetail() == null) {
 				MessageUtil.showError("Required details are not available for the premium calculation.");
 				return;
 			}
 
-			//Loan Amount
+			// Loan Amount
 			loanAmt = getClonedFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue();
 			loanAmt = PennantApplicationUtil.formateAmount(loanAmt, getCcyFormat());
 			if (BigDecimal.ZERO.compareTo(loanAmt) >= 0) {
@@ -3435,7 +3438,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			VASPremiumCalcDetails newPremiumCalcDetails = this.vasPremiumCalculation
 					.getPrimiumPercentage(premiumCalcDetails);
 
-			//Medical applicable or not checking
+			// Medical applicable or not checking
 			if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("VAS_MEDICAL_STATUS_CALCULATION_YES_NO"))
 					&& (getVASRecording().isNewRecord()) && (this.vASConfiguration.isMedicalApplicable())) {
 				boolean medicalApplicable = this.vasPremiumCalculation.getMedicalStatus(premiumCalcDetails);
@@ -3463,7 +3466,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				return;
 			} else {
 				vasFee = vasFee.divide(new BigDecimal(100));
-				//Adds gst value to vasfee 
+				// Adds gst value to vasfee
 				vasFee = vasFee.add(this.vasPremiumCalculation.getGSTPercentage(vasFee));
 				vasFee = vasFee.setScale(0, RoundingMode.HALF_UP);
 				vasFee = vasFee.setScale(2, RoundingMode.HALF_UP);

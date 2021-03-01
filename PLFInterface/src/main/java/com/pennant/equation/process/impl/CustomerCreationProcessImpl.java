@@ -3,7 +3,8 @@ package com.pennant.equation.process.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.data.PcmlException;
@@ -19,7 +20,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerCreationProcessImpl extends GenericProcess implements CustomerCreationProcess {
 
-	private static Logger logger = Logger.getLogger(CustomerCreationProcessImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerCreationProcessImpl.class);
 	private HostConnection hostConnection;
 
 	public CustomerCreationProcessImpl() {

@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -69,7 +70,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements FinanceWorkFlowDAO {
-	private static Logger logger = Logger.getLogger(FinanceWorkFlowDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceWorkFlowDAOImpl.class);
 
 	public FinanceWorkFlowDAOImpl() {
 		super();
@@ -344,19 +345,13 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 
 	@Override
 	public List<String> getFinanceWorkFlowRoles(String module, String finEvent) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT DISTINCT WD.WorkFlowRoles");
+		sql.append(" FROM LMTFinanceWorkFlowDef FWD");
+		sql.append(" INNER JOIN WorkFlowDetails WD ON WD.WorkFlowType = FWD.WorkFlowType ");
+		sql.append(" Where FWD.ModuleName= ? and FWD.FinEvent = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ModuleName", module);
-		source.addValue("FinEvent", finEvent);
-		StringBuilder selectSql = new StringBuilder();
-
-		selectSql.append(" SELECT DISTINCT WD.WorkFlowRoles ");
-		selectSql.append(" FROM  LMTFinanceWorkFlowDef FWD INNER JOIN ");
-		selectSql.append(" WorkFlowDetails WD ON FWD.WorkFlowType = WD.WorkFlowType ");
-		selectSql.append(" Where FWD.ModuleName=:ModuleName and FWD.FinEvent =:FinEvent ");
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+		return this.jdbcOperations.queryForList(sql.toString(), new Object[] { module, finEvent }, String.class);
 	}
 
 	@Override

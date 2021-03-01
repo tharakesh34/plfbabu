@@ -9,7 +9,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 
@@ -41,7 +42,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implements FinOCRHeaderService {
-	private static final Logger logger = Logger.getLogger(FinOCRHeaderServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinOCRHeaderServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinOCRHeaderDAO finOCRHeaderDAO;

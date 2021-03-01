@@ -46,7 +46,8 @@ package com.pennant.backend.dao.administration.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -62,13 +63,14 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>SecurityOperation model</b> class.<br>
  * 
  */
 public class SecurityOperationDAOImpl extends SequenceDao<SecurityOperation> implements SecurityOperationDAO {
-	private static Logger logger = Logger.getLogger(SecurityOperationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityOperationDAOImpl.class);
 
 	public SecurityOperationDAOImpl() {
 		super();
@@ -81,13 +83,11 @@ public class SecurityOperationDAOImpl extends SequenceDao<SecurityOperation> imp
 	 */
 	@Override
 	public SecurityOperation getSecurityOperation() {
-		logger.debug("Entering ");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("SecurityOperation");
 		SecurityOperation securityOperation = new SecurityOperation();
 		if (workFlowDetails != null) {
 			securityOperation.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving ");
 		return securityOperation;
 	}
 
@@ -225,8 +225,8 @@ public class SecurityOperationDAOImpl extends SequenceDao<SecurityOperation> imp
 	public long save(SecurityOperation securityOperation, String type) {
 		logger.debug("Entering ");
 		if (securityOperation.getId() == Long.MIN_VALUE) {
-			securityOperation.setId(getNextId("SeqSecOperations"));
-			logger.debug("get NextID:" + securityOperation.getId());
+			securityOperation.setId(getNextValue("SeqSecOperations"));
+			logger.debug("get NextValue:" + securityOperation.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into SecOperations");
@@ -290,25 +290,33 @@ public class SecurityOperationDAOImpl extends SequenceDao<SecurityOperation> imp
 
 	@Override
 	public List<SecurityOperation> getApprovedSecurityOperation() {
-		logger.debug("Entering");
-		String type = "_AView";
-		SecurityOperation secOperations = getSecurityOperation();
+		StringBuilder sql = new StringBuilder("Select OprID, OprCode, OprDesc");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From SecOperations_AView");
 
-		StringBuilder selectSql = new StringBuilder("Select OprID, OprCode, OprDesc");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			//selectSql.append(" ,lovDescRoleAppName ");	
-		}
-		selectSql.append(" From SecOperations_AView");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql:" + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secOperations);
-		RowMapper<SecurityOperation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityOperation.class);
-		logger.debug("Leaving");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
 
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		}, (rs, rowNum) -> {
+			SecurityOperation so = new SecurityOperation();
+			so.setOprID(rs.getLong("OprID"));
+			so.setOprCode(rs.getString("OprCode"));
+			so.setOprDesc(rs.getString("OprDesc"));
+			so.setVersion(rs.getInt("Version"));
+			so.setLastMntBy(rs.getLong("LastMntBy"));
+			so.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			so.setRecordStatus(rs.getString("RecordStatus"));
+			so.setRoleCode(rs.getString("RoleCode"));
+			so.setNextRoleCode(rs.getString("NextRoleCode"));
+			so.setTaskId(rs.getString("TaskId"));
+			so.setNextTaskId(rs.getString("NextTaskId"));
+			so.setRecordType(rs.getString("RecordType"));
+			so.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return so;
+		});
 	}
 
 }

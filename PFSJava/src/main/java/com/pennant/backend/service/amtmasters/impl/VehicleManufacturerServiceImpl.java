@@ -45,7 +45,8 @@ package com.pennant.backend.service.amtmasters.impl;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class VehicleManufacturerServiceImpl extends GenericService<VehicleManufacturer>
 		implements VehicleManufacturerService {
-	private static final Logger logger = Logger.getLogger(VehicleManufacturerServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(VehicleManufacturerServiceImpl.class);
 	private AuditHeaderDAO auditHeaderDAO;
 	private VehicleManufacturerDAO vehicleManufacturerDAO;
 

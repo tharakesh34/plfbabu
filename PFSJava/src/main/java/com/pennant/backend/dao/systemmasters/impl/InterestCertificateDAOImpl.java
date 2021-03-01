@@ -49,7 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -63,13 +64,16 @@ import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * DAO methods implementation for the <b>AddressType model</b> class.<br>
  */
 public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> implements InterestCertificateDAO {
-	private static Logger logger = Logger.getLogger(InterestCertificateDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(InterestCertificateDAOImpl.class);
 
 	public InterestCertificateDAOImpl() {
 		super();
@@ -339,6 +343,37 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		}
 		logger.debug(Literal.LEAVING);
 		return amounts;
+	}
+
+	@Override
+	public InterestCertificate getSchedPrinicipalAndProfit(String finReference, Date startDate, Date endDate)
+			throws ParseException {
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" SUM(PRINCIPALSCHD) RepayPriAmt ,SUM(PROFITSCHD) RepayPftAmt");
+		sql.append(", SUM(SCHDPFTPAID) SchdProfitPaid ,SUM(SCHDPRIPAID) SchdPrinciplePaid");
+		sql.append(" From FINSCHEDULEDETAILS");
+		sql.append(" Where FinReference = ? and (schdate >= ? and schdate <= ?)");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			Object[] object = new Object[] { finReference, startDate, endDate };
+			return this.jdbcOperations.queryForObject(sql.toString(), object, (rs, rowNum) -> {
+				InterestCertificate ic = new InterestCertificate();
+
+				ic.setRepayPriAmt(rs.getBigDecimal("RepayPriAmt"));
+				ic.setRepayPftAmt(rs.getBigDecimal("RepayPftAmt"));
+				ic.setSchdProfitPaid(rs.getBigDecimal("SchdProfitPaid"));
+				ic.setSchdPrinciplePaid(rs.getBigDecimal("SchdPrinciplePaid"));
+
+				return ic;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Records are not found in FINSCHEDULEDETAILS for the  finreference >> {}");
+		}
+
+		return null;
 	}
 
 }

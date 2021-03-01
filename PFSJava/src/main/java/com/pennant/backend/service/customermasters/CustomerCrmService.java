@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,7 +23,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class CustomerCrmService {
 
 	private static final long serialVersionUID = 8556168885363682933L;
-	private static final Logger logger = Logger.getLogger(CustomerCrmService.class);
+	private static final Logger logger = LogManager.getLogger(CustomerCrmService.class);
 
 	static final String authorization = App.getProperty("CrmAuthorizationToken");
 	static final String Crmurl = App.getProperty("Crmurl");

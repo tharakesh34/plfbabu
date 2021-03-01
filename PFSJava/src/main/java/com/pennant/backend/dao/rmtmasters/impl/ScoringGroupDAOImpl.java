@@ -48,7 +48,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -70,7 +71,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class ScoringGroupDAOImpl extends SequenceDao<ScoringGroup> implements ScoringGroupDAO {
-	private static Logger logger = Logger.getLogger(ScoringGroupDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ScoringGroupDAOImpl.class);
 
 	public ScoringGroupDAOImpl() {
 		super();
@@ -171,8 +172,8 @@ public class ScoringGroupDAOImpl extends SequenceDao<ScoringGroup> implements Sc
 	public long save(ScoringGroup scoringGroup, String type) {
 		logger.debug("Entering");
 		if (scoringGroup.getId() == Long.MIN_VALUE) {
-			scoringGroup.setId(getNextId("SeqRMTScoringGroup"));
-			logger.debug("get NextID:" + scoringGroup.getId());
+			scoringGroup.setId(getNextValue("SeqRMTScoringGroup"));
+			logger.debug("get NextValue:" + scoringGroup.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTScoringGroup");

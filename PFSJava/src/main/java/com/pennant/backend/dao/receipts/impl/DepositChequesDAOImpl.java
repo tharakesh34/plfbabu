@@ -46,7 +46,8 @@ package com.pennant.backend.dao.receipts.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -70,7 +71,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>DepositCheques</code> with set of CRUD operations.
  */
 public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implements DepositChequesDAO {
-	private static Logger logger = Logger.getLogger(DepositChequesDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DepositChequesDAOImpl.class);
 
 	public DepositChequesDAOImpl() {
 		super();

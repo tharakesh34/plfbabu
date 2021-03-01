@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> implements SecurityRoleGroupsDAO {
-	private static Logger logger = Logger.getLogger(SecurityRoleGroupsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityRoleGroupsDAOImpl.class);
 
 	public SecurityRoleGroupsDAOImpl() {
 		super();
@@ -120,8 +121,8 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 		logger.debug("Entering");
 
 		if (securityRoleGroups.getRoleGrpID() == Long.MIN_VALUE) {
-			securityRoleGroups.setId(getNextId("SeqSecRoleGroups"));
-			logger.debug("get NextID:" + securityRoleGroups.getRoleGrpID());
+			securityRoleGroups.setId(getNextValue("SeqSecRoleGroups"));
+			logger.debug("get NextValue:" + securityRoleGroups.getRoleGrpID());
 		}
 
 		StringBuilder insertSql = new StringBuilder(" INSERT INTO SecRoleGroups ");
@@ -339,6 +340,6 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 
 	@Override
 	public long getNextValue() {
-		return getNextId("SeqSecRoleGroups");
+		return getNextValue("SeqSecRoleGroups");
 	}
 }

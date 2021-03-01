@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 @Service
 public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, CreateFinanceRestService {
 
-	private static final Logger logger = Logger.getLogger(CreateFinanceWebServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CreateFinanceWebServiceImpl.class);
 
 	private CreateFinanceController createFinanceController;
 	private CustomerDetailsService customerDetailsService;
@@ -908,11 +909,12 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		logger.debug(Literal.ENTERING);
 
 		// for logging purpose
-		APIErrorHandlerService.logReference(financeDetail.getFinReference());
+		String finReference = financeDetail.getFinScheduleData().getFinReference();
+		APIErrorHandlerService.logReference(finReference);
 		FinanceDetail findetail = null;
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		try {
-			if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinReference())
+			if (StringUtils.isNotBlank(finReference)
 					&& StringUtils.isNotBlank(financeDetail.getFinScheduleData().getExternalReference())) {
 				findetail = new FinanceDetail();
 				String[] valueParm = new String[2];
@@ -923,10 +925,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				return findetail;
 
 			}
+			financeDetail.setFinReference(finReference);
 			// service level validations
-			if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinReference())) {
-				int count = financeMainDAO.getCountByFinReference(financeDetail.getFinScheduleData().getFinReference(),
-						false);
+			if (StringUtils.isNotBlank(finReference)) {
+				int count = financeMainDAO.getCountByFinReference(finReference, false);
 				if (count <= 0) {
 					findetail = new FinanceDetail();
 					String[] valueParm = new String[1];
@@ -969,7 +971,6 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 					return findetail;
 				}
 			}
-			String finReference = financeDetail.getFinScheduleData().getFinReference();
 			financeDetail.setFinReference(finReference);
 			findetail = createFinanceController.doReInitiateFinance(financeDetail);
 		} catch (Exception e) {

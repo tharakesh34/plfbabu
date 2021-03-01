@@ -56,7 +56,8 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -110,7 +111,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	private static final long serialVersionUID = -6945930303723518608L;
-	private static final Logger logger = Logger.getLogger(ReinstateFinanceDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReinstateFinanceDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

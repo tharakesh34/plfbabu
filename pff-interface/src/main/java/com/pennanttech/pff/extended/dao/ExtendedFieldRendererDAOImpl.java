@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -15,8 +16,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class ExtendedFieldRendererDAOImpl extends BasicDao<ExtendedFieldRender> implements ExtendedFieldRendererDAO {
-
-	private static Logger logger = Logger.getLogger(ExtendedFieldRendererDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ExtendedFieldRendererDAOImpl.class);
 
 	public Map<String, Object> getExtendedField(String reference, String tableName, String type) {
 		logger.debug("Entering");

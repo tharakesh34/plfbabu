@@ -44,7 +44,8 @@
 package com.pennant.backend.dao.finance.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -62,7 +63,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * DAO methods implementation for the <b>BundledProductsDetail model</b> class.<br>
  */
 public class BundledProductsDetailDAOImpl extends BasicDao<BundledProductsDetail> implements BundledProductsDetailDAO {
-	private static Logger logger = Logger.getLogger(BundledProductsDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BundledProductsDetailDAOImpl.class);
 
 	public BundledProductsDetailDAOImpl() {
 		super();

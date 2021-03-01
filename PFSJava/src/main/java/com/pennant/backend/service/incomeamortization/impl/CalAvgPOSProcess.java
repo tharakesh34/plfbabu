@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.util.DateUtility;
@@ -20,7 +21,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CalAvgPOSProcess extends Thread {
-	private static final Logger logger = Logger.getLogger(CalAvgPOSProcess.class);
+	private static final Logger logger = LogManager.getLogger(CalAvgPOSProcess.class);
 
 	private List<FinanceMain> financeList = null;
 	private ProjectedAmortization projectedAmortization = null;

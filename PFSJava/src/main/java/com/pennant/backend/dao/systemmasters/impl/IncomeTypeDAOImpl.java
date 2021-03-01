@@ -45,7 +45,8 @@ package com.pennant.backend.dao.systemmasters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -68,7 +69,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>IncomeType model</b> class.<br>
  */
 public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTypeDAO {
-	private static Logger logger = Logger.getLogger(IncomeTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(IncomeTypeDAOImpl.class);
 
 	public IncomeTypeDAOImpl() {
 		super();

@@ -42,10 +42,6 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -53,12 +49,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -90,8 +83,6 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	 */
 	@Override
 	public CustomerAddres getCustomerAddresById(final long id, String addType, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustAddressId, CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet");
 		sql.append(", CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince, CustAddrPriority");
@@ -112,61 +103,58 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, addType },
-					new RowMapper<CustomerAddres>() {
-						@Override
-						public CustomerAddres mapRow(ResultSet rs, int rowNum) throws SQLException {
-							CustomerAddres ca = new CustomerAddres();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, addType }, (rs, rowNum) -> {
+				CustomerAddres ca = new CustomerAddres();
 
-							ca.setCustAddressId(rs.getLong("CustAddressId"));
-							ca.setCustID(rs.getLong("CustID"));
-							ca.setCustAddrType(rs.getString("CustAddrType"));
-							ca.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
-							ca.setCustFlatNbr(rs.getString("CustFlatNbr"));
-							ca.setCustAddrStreet(rs.getString("CustAddrStreet"));
-							ca.setCustAddrLine1(rs.getString("CustAddrLine1"));
-							ca.setCustAddrLine2(rs.getString("CustAddrLine2"));
-							ca.setCustPOBox(rs.getString("CustPOBox"));
-							ca.setCustAddrCity(rs.getString("CustAddrCity"));
-							ca.setCustAddrProvince(rs.getString("CustAddrProvince"));
-							ca.setCustAddrPriority(rs.getInt("CustAddrPriority"));
-							ca.setCustAddrCountry(rs.getString("CustAddrCountry"));
-							ca.setCustAddrZIP(rs.getString("CustAddrZIP"));
-							ca.setCustAddrPhone(rs.getString("CustAddrPhone"));
-							ca.setCustAddrFrom(rs.getTimestamp("CustAddrFrom"));
-							ca.setTypeOfResidence(rs.getString("TypeOfResidence"));
-							ca.setCustAddrLine3(rs.getString("CustAddrLine3"));
-							ca.setCustAddrLine4(rs.getString("CustAddrLine4"));
-							ca.setCustDistrict(rs.getString("CustDistrict"));
-							ca.setPinCodeId(rs.getLong("PinCodeId"));
+				ca.setCustAddressId(rs.getLong("CustAddressId"));
+				ca.setCustID(rs.getLong("CustID"));
+				ca.setCustAddrType(rs.getString("CustAddrType"));
+				ca.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
+				ca.setCustFlatNbr(rs.getString("CustFlatNbr"));
+				ca.setCustAddrStreet(rs.getString("CustAddrStreet"));
+				ca.setCustAddrLine1(rs.getString("CustAddrLine1"));
+				ca.setCustAddrLine2(rs.getString("CustAddrLine2"));
+				ca.setCustPOBox(rs.getString("CustPOBox"));
+				ca.setCustAddrCity(rs.getString("CustAddrCity"));
+				ca.setCustAddrProvince(rs.getString("CustAddrProvince"));
+				ca.setCustAddrPriority(rs.getInt("CustAddrPriority"));
+				ca.setCustAddrCountry(rs.getString("CustAddrCountry"));
+				ca.setCustAddrZIP(rs.getString("CustAddrZIP"));
+				ca.setCustAddrPhone(rs.getString("CustAddrPhone"));
+				ca.setCustAddrFrom(rs.getTimestamp("CustAddrFrom"));
+				ca.setTypeOfResidence(rs.getString("TypeOfResidence"));
+				ca.setCustAddrLine3(rs.getString("CustAddrLine3"));
+				ca.setCustAddrLine4(rs.getString("CustAddrLine4"));
+				ca.setCustDistrict(rs.getString("CustDistrict"));
+				ca.setPinCodeId(rs.getLong("PinCodeId"));
 
-							if (type.contains("View")) {
-								ca.setLovDescCustAddrTypeName(rs.getString("LovDescCustAddrTypeName"));
-								ca.setLovDescCustAddrCityName(rs.getString("LovDescCustAddrCityName"));
-								ca.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
-								ca.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
-								ca.setLovDescCustAddrZip(rs.getString("LovDescCustAddrZip"));
-							}
+				if (type.contains("View")) {
+					ca.setLovDescCustAddrTypeName(rs.getString("LovDescCustAddrTypeName"));
+					ca.setLovDescCustAddrCityName(rs.getString("LovDescCustAddrCityName"));
+					ca.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
+					ca.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
+					ca.setLovDescCustAddrZip(rs.getString("LovDescCustAddrZip"));
+				}
 
-							ca.setVersion(rs.getInt("Version"));
-							ca.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							ca.setLastMntBy(rs.getLong("LastMntBy"));
-							ca.setRecordStatus(rs.getString("RecordStatus"));
-							ca.setRoleCode(rs.getString("RoleCode"));
-							ca.setNextRoleCode(rs.getString("NextRoleCode"));
-							ca.setTaskId(rs.getString("TaskId"));
-							ca.setNextTaskId(rs.getString("NextTaskId"));
-							ca.setRecordType(rs.getString("RecordType"));
-							ca.setWorkflowId(rs.getLong("WorkflowId"));
+				ca.setVersion(rs.getInt("Version"));
+				ca.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ca.setLastMntBy(rs.getLong("LastMntBy"));
+				ca.setRecordStatus(rs.getString("RecordStatus"));
+				ca.setRoleCode(rs.getString("RoleCode"));
+				ca.setNextRoleCode(rs.getString("NextRoleCode"));
+				ca.setTaskId(rs.getString("TaskId"));
+				ca.setNextTaskId(rs.getString("NextTaskId"));
+				ca.setRecordType(rs.getString("RecordType"));
+				ca.setWorkflowId(rs.getLong("WorkflowId"));
 
-							return ca;
-						}
-					});
+				return ca;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(
+					"Records are not found in CustomerAddresses{} for the specified CustID >> {} and CustAddrType >> {}",
+					type, id, addType);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -174,8 +162,6 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	 * Method For getting List of Customer related Addresses for Customer
 	 */
 	public List<CustomerAddres> getCustomerAddresByCustomer(final long custId, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustAddrLine1");
 		sql.append(", CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince, CustAddrPriority, CustAddrCountry");
@@ -194,66 +180,54 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, custId);
-				}
-			}, new RowMapper<CustomerAddres>() {
-				@Override
-				public CustomerAddres mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CustomerAddres ca = new CustomerAddres();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, custId);
+		}, (rs, rowNum) -> {
+			CustomerAddres ca = new CustomerAddres();
 
-					ca.setCustID(rs.getLong("CustID"));
-					ca.setCustAddrType(rs.getString("CustAddrType"));
-					ca.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
-					ca.setCustFlatNbr(rs.getString("CustFlatNbr"));
-					ca.setCustAddrStreet(rs.getString("CustAddrStreet"));
-					ca.setCustAddrLine1(rs.getString("CustAddrLine1"));
-					ca.setCustAddrLine2(rs.getString("CustAddrLine2"));
-					ca.setCustPOBox(rs.getString("CustPOBox"));
-					ca.setCustAddrCity(rs.getString("CustAddrCity"));
-					ca.setCustAddrProvince(rs.getString("CustAddrProvince"));
-					ca.setCustAddrPriority(rs.getInt("CustAddrPriority"));
-					ca.setCustAddrCountry(rs.getString("CustAddrCountry"));
-					ca.setCustAddrZIP(rs.getString("CustAddrZIP"));
-					ca.setCustAddrPhone(rs.getString("CustAddrPhone"));
-					ca.setCustAddrFrom(rs.getTimestamp("CustAddrFrom"));
-					ca.setTypeOfResidence(rs.getString("TypeOfResidence"));
-					ca.setCustAddrLine3(rs.getString("CustAddrLine3"));
-					ca.setCustAddrLine4(rs.getString("CustAddrLine4"));
-					ca.setCustDistrict(rs.getString("CustDistrict"));
-					ca.setVersion(rs.getInt("Version"));
-					ca.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					ca.setLastMntBy(rs.getLong("LastMntBy"));
-					ca.setRecordStatus(rs.getString("RecordStatus"));
-					ca.setRoleCode(rs.getString("RoleCode"));
-					ca.setNextRoleCode(rs.getString("NextRoleCode"));
-					ca.setTaskId(rs.getString("TaskId"));
-					ca.setNextTaskId(rs.getString("NextTaskId"));
-					ca.setRecordType(rs.getString("RecordType"));
-					ca.setWorkflowId(rs.getLong("WorkflowId"));
-					ca.setPinCodeId(rs.getLong("PinCodeId"));
+			ca.setCustID(rs.getLong("CustID"));
+			ca.setCustAddrType(rs.getString("CustAddrType"));
+			ca.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
+			ca.setCustFlatNbr(rs.getString("CustFlatNbr"));
+			ca.setCustAddrStreet(rs.getString("CustAddrStreet"));
+			ca.setCustAddrLine1(rs.getString("CustAddrLine1"));
+			ca.setCustAddrLine2(rs.getString("CustAddrLine2"));
+			ca.setCustPOBox(rs.getString("CustPOBox"));
+			ca.setCustAddrCity(rs.getString("CustAddrCity"));
+			ca.setCustAddrProvince(rs.getString("CustAddrProvince"));
+			ca.setCustAddrPriority(rs.getInt("CustAddrPriority"));
+			ca.setCustAddrCountry(rs.getString("CustAddrCountry"));
+			ca.setCustAddrZIP(rs.getString("CustAddrZIP"));
+			ca.setCustAddrPhone(rs.getString("CustAddrPhone"));
+			ca.setCustAddrFrom(rs.getTimestamp("CustAddrFrom"));
+			ca.setTypeOfResidence(rs.getString("TypeOfResidence"));
+			ca.setCustAddrLine3(rs.getString("CustAddrLine3"));
+			ca.setCustAddrLine4(rs.getString("CustAddrLine4"));
+			ca.setCustDistrict(rs.getString("CustDistrict"));
+			ca.setVersion(rs.getInt("Version"));
+			ca.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ca.setLastMntBy(rs.getLong("LastMntBy"));
+			ca.setRecordStatus(rs.getString("RecordStatus"));
+			ca.setRoleCode(rs.getString("RoleCode"));
+			ca.setNextRoleCode(rs.getString("NextRoleCode"));
+			ca.setTaskId(rs.getString("TaskId"));
+			ca.setNextTaskId(rs.getString("NextTaskId"));
+			ca.setRecordType(rs.getString("RecordType"));
+			ca.setWorkflowId(rs.getLong("WorkflowId"));
+			ca.setPinCodeId(rs.getLong("PinCodeId"));
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						ca.setLovDescCustAddrTypeName(rs.getString("LovDescCustAddrTypeName"));
-						ca.setLovDescCustAddrCityName(rs.getString("LovDescCustAddrCityName"));
-						ca.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
-						ca.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
-						ca.setLovDescCustAddrZip(rs.getString("LovDescCustAddrZip"));
-					}
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				ca.setLovDescCustAddrTypeName(rs.getString("LovDescCustAddrTypeName"));
+				ca.setLovDescCustAddrCityName(rs.getString("LovDescCustAddrCityName"));
+				ca.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
+				ca.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
+				ca.setLovDescCustAddrZip(rs.getString("LovDescCustAddrZip"));
+			}
 
-					return ca;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			return ca;
+		});
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
 	}
 
 	/**
@@ -535,36 +509,66 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	 */
 	@Override
 	public CustomerAddres getHighPriorityCustAddr(final long id, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustAddrLine1");
+		sql.append(", CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince, CustAddrPriority, CustAddrCountry");
+		sql.append(", CustAddrZIP, CustAddrPhone, CustAddrFrom, TypeOfResidence, CustAddrLine3, CustAddrLine4");
+		sql.append(", CustDistrict, PinCodeId");
 
-		CustomerAddres customerAddres = new CustomerAddres();
-		customerAddres.setId(id);
-		customerAddres.setCustAddrPriority(Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
-		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince, CustAddrPriority,");
-		selectSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom, TypeOfResidence, CustAddrLine3,");
-		selectSql.append(" CustAddrLine4, CustDistrict, PinCodeId");
-		if (type.contains("View")) {
-			selectSql.append(", lovDescCustAddrTypeName, lovDescCustAddrCityName,");
-			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName, lovDescCustAddrZip");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", LovDescCustAddrTypeName, LovDescCustAddrCityName, LovDescCustAddrProvinceName");
+			sql.append(", LovDescCustAddrCountryName, LovDescCustAddrZip");
 		}
 
-		selectSql.append(" FROM CustomerAddresses");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :CustID AND CustAddrPriority = :CustAddrPriority");
+		sql.append(" From CustomerAddresses");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("  Where CustID = ? and CustAddrPriority = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
+		int priority = Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH);
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, priority }, (rs, rowNum) -> {
+				CustomerAddres ca = new CustomerAddres();
+
+				ca.setCustID(rs.getLong("CustID"));
+				ca.setCustAddrType(rs.getString("CustAddrType"));
+				ca.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
+				ca.setCustFlatNbr(rs.getString("CustFlatNbr"));
+				ca.setCustAddrStreet(rs.getString("CustAddrStreet"));
+				ca.setCustAddrLine1(rs.getString("CustAddrLine1"));
+				ca.setCustAddrLine2(rs.getString("CustAddrLine2"));
+				ca.setCustPOBox(rs.getString("CustPOBox"));
+				ca.setCustAddrCity(rs.getString("CustAddrCity"));
+				ca.setCustAddrProvince(rs.getString("CustAddrProvince"));
+				ca.setCustAddrPriority(rs.getInt("CustAddrPriority"));
+				ca.setCustAddrCountry(rs.getString("CustAddrCountry"));
+				ca.setCustAddrZIP(rs.getString("CustAddrZIP"));
+				ca.setCustAddrPhone(rs.getString("CustAddrPhone"));
+				ca.setCustAddrFrom(rs.getTimestamp("CustAddrFrom"));
+				ca.setTypeOfResidence(rs.getString("TypeOfResidence"));
+				ca.setCustAddrLine3(rs.getString("CustAddrLine3"));
+				ca.setCustAddrLine4(rs.getString("CustAddrLine4"));
+				ca.setCustDistrict(rs.getString("CustDistrict"));
+				ca.setPinCodeId(rs.getLong("PinCodeId"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					ca.setLovDescCustAddrTypeName(rs.getString("LovDescCustAddrTypeName"));
+					ca.setLovDescCustAddrCityName(rs.getString("LovDescCustAddrCityName"));
+					ca.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
+					ca.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
+					ca.setLovDescCustAddrZip(rs.getString("LovDescCustAddrZip"));
+				}
+
+				return ca;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Customer address details not available for the customer Id {}", id);
+			logger.warn(
+					"Record not found in CustomerAddresses{} table for the specified CustID >> {} and CustAddrPriority",
+					type, id, priority);
 		}
-		logger.debug("Leaving");
+
 		return null;
 	}
 }

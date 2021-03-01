@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -39,7 +40,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class AssignmentRateDialogCtrl extends GFCBaseCtrl<AssignmentRate> {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(AssignmentRateDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AssignmentRateDialogCtrl.class);
 
 	protected Window window_AssignmentRateDialog;
 	protected Textbox assignmentId;

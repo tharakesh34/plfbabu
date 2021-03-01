@@ -45,7 +45,8 @@ package com.pennant.backend.dao.finance.covenant.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements CovenantTypeDAO {
-	private static Logger logger = Logger.getLogger(CovenantTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CovenantTypeDAOImpl.class);
 
 	public CovenantTypeDAOImpl() {
 		super();

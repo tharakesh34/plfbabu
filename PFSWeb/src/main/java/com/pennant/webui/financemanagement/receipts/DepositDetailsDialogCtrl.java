@@ -49,7 +49,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -109,7 +110,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(DepositDetailsDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DepositDetailsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

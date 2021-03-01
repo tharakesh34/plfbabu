@@ -46,7 +46,8 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -73,7 +74,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 
 public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> implements FinFeeRefundDAO {
-	private static Logger logger = Logger.getLogger(FinFeeRefundDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinFeeRefundDAOImpl.class);
 
 	public FinFeeRefundDAOImpl() {
 		super();

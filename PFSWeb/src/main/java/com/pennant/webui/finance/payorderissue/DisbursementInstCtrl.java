@@ -55,7 +55,8 @@ import java.util.Map.Entry;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
@@ -91,7 +92,7 @@ import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class DisbursementInstCtrl {
-	private static final Logger logger = Logger.getLogger(DisbursementInstCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DisbursementInstCtrl.class);
 	private Listbox listbox;
 	private String ccy;
 	private int ccyFormat;

@@ -1,7 +1,8 @@
 package com.pennanttech.pff.organization.dao;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -17,7 +18,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.organization.model.Organization;
 
 public class OrganizationDAOImpl extends SequenceDao<Organization> implements OrganizationDAO {
-	private static Logger logger = Logger.getLogger(OrganizationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(OrganizationDAOImpl.class);
 
 	@Override
 	public Organization getOrganization(long id, String type) {

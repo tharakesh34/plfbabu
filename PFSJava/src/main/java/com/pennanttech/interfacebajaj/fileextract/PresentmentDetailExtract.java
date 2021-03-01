@@ -14,7 +14,13 @@ import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -69,7 +75,7 @@ import com.pennanttech.pff.external.presentment.PresentmentCustomeExtractor;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class PresentmentDetailExtract extends FileImport implements Runnable {
-	private static final Logger logger = Logger.getLogger(PresentmentDetailExtract.class);
+	private static final Logger logger = LogManager.getLogger(PresentmentDetailExtract.class);
 
 	// Constant values used in the interface
 	private static final long CON_RESPONSE_BOUNCE = 99;

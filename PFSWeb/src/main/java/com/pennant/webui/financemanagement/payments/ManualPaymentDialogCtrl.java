@@ -61,7 +61,8 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -182,7 +183,7 @@ import com.rits.cloning.Cloner;
  */
 public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = Logger.getLogger(ManualPaymentDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ManualPaymentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -312,7 +313,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private transient ManualPaymentService manualPaymentService;
 	private transient ProvisionService provisionService;
 	private transient FinanceDetailService financeDetailService;
-	private transient RuleExecutionUtil ruleExecutionUtil;
 	private transient AccountEngineExecution engineExecution;
 	private transient CommitmentService commitmentService;
 	private transient RepayCalculator repayCalculator;
@@ -1480,7 +1480,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					RuleConstants.EVENT_REFUND);
 			if (insRefundRule != null) {
 
-				BigDecimal refundResult = (BigDecimal) getRuleExecutionUtil().executeRule(insRefundRule.getSQLRule(),
+				BigDecimal refundResult = (BigDecimal) RuleExecutionUtil.executeRule(insRefundRule.getSQLRule(),
 						subHeadRule.getDeclaredFieldValues(), financeMain.getFinCcy(), RuleReturnType.DECIMAL);
 				repayData.getRepayMain().setInsRefund(refundResult);
 				this.insRefundAmt.setValue(PennantApplicationUtil.formateAmount(refundResult,
@@ -2097,7 +2097,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
-		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+		engineExecution.getAccEngineExecResults(aeEvent);
 
 		returnSetEntries = aeEvent.getReturnDataSet();
 
@@ -3472,14 +3472,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
 	}
 
 	public FinRepayHeader getFinRepayHeader() {

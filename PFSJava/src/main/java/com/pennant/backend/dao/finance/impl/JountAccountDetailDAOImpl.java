@@ -52,7 +52,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -79,7 +80,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> implements JountAccountDetailDAO {
-	private static Logger logger = Logger.getLogger(JountAccountDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(JountAccountDetailDAOImpl.class);
 
 	public JountAccountDetailDAOImpl() {
 		super();
@@ -339,8 +340,6 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 	@Override
 	public List<JointAccountDetail> getJountAccountDetailByFinnRef(String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" JointAccountId, FinReference, CustCIF");
 		sql.append(" from FinJointAccountDetails");
@@ -348,31 +347,18 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, new RowMapper<JointAccountDetail>() {
-				@Override
-				public JointAccountDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					JointAccountDetail ad = new JointAccountDetail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+		}, (rs, rowNum) -> {
+			JointAccountDetail ad = new JointAccountDetail();
 
-					ad.setJointAccountId(rs.getLong("JointAccountId"));
-					ad.setFinReference(rs.getString("FinReference"));
-					ad.setCustCIF(rs.getString("CustCIF"));
+			ad.setJointAccountId(rs.getLong("JointAccountId"));
+			ad.setFinReference(rs.getString("FinReference"));
+			ad.setCustCIF(rs.getString("CustCIF"));
 
-					return ad;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return ad;
+		});
 	}
 
 	@Override

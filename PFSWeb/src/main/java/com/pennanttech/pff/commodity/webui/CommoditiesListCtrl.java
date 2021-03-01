@@ -2,7 +2,8 @@ package com.pennanttech.pff.commodity.webui;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -26,7 +27,7 @@ import com.pennanttech.pff.commodity.service.CommoditiesService;
 
 public class CommoditiesListCtrl extends GFCBaseListCtrl<Commodity> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CovenantTypeListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CovenantTypeListCtrl.class);
 
 	protected Window window_commodities;
 	protected Borderlayout borderLayout_commodities;

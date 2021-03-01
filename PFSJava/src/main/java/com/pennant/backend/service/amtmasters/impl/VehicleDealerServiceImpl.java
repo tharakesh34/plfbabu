@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 
@@ -79,7 +80,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> implements VehicleDealerService {
-	private static final Logger logger = Logger.getLogger(VehicleDealerServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(VehicleDealerServiceImpl.class);
 	private AuditHeaderDAO auditHeaderDAO;
 	private VehicleDealerDAO vehicleDealerDAO;
 	private CustomerDAO customerDAO;

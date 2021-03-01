@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -23,7 +24,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptionDAO {
-	private static Logger logger = Logger.getLogger(FinOptionDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinOptionDAOImpl.class);
 
 	@Override
 	public String save(FinOption finoption, TableType tableType) {

@@ -44,7 +44,8 @@
 package com.pennant.backend.service.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class AddressTypeServiceImpl extends GenericService<AddressType> implements AddressTypeService {
 
-	private static Logger logger = Logger.getLogger(AddressTypeServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(AddressTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AddressTypeDAO addressTypeDAO;

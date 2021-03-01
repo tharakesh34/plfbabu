@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -31,7 +32,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSummary> implements CreditReviewSummaryDAO {
-	private static Logger logger = Logger.getLogger(CreditReviewSummaryDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CreditReviewSummaryDAOImpl.class);
 
 	public CreditReviewSummaryDAOImpl() {
 		super();
@@ -223,7 +224,7 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 		logger.debug("Entering");
 
 		if (creditReviewSummary.getSummaryId() == Long.MIN_VALUE) {
-			creditReviewSummary.setSummaryId(getNextId("SeqFinCreditReviewSummary"));
+			creditReviewSummary.setSummaryId(getNextValue("SeqFinCreditReviewSummary"));
 		}
 
 		logger.debug("get NextID:" + creditReviewSummary.getSummaryId());

@@ -1,6 +1,7 @@
 package com.pennant.webui.applicationmaster.download;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.zk.ui.event.Event;
@@ -14,7 +15,7 @@ import com.pennanttech.pff.external.LedgerDownloadService;
 
 public class LedgerDownloadProcessCtrl extends GFCBaseCtrl {
 	private static final long serialVersionUID = 223801324705386693L;
-	private static final Logger logger = Logger.getLogger(LedgerDownloadProcessCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LedgerDownloadProcessCtrl.class);
 
 	protected Window window_Download; // autoWired
 	protected Button btnStartLedgerFile;

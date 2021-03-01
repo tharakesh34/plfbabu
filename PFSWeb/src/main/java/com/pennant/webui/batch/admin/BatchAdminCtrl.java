@@ -70,9 +70,9 @@ import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.batch.model.BatchProcessStatus;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.eod.step.StepUtil.Step;
 import com.pennanttech.pff.external.GSTDownloadService;
@@ -134,6 +134,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private static boolean allowEODStartOnSameDay = false;
 	private boolean allowClearParameters = true;
 	private static String QDP = null;
+	private static int EOD_BATCH_REFRESH_TIME = -1;
+	private static String EOD_BATCH_MONITOR = "NA";
+	private static int EOD_THREAD_COUNT = -1;
 
 	public BatchAdminCtrl() {
 		super();
@@ -141,6 +144,11 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onCreate$window_BatchAdmin(Event event) throws Exception {
+
+		if (EOD_BATCH_REFRESH_TIME == -1) {
+			EOD_BATCH_REFRESH_TIME = SysParamUtil.getValueAsInt("EOD_BATCH_REFRESH_TIME");
+		}
+
 		if (allowClearParameters) {
 			doClearParameters();
 		}
@@ -155,7 +163,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 		if (!isInitialise) {
 			setDates();
-			this.timer.setDelay(SysParamUtil.getValueAsInt("EOD_BATCH_REFRESH_TIME"));
+			this.timer.setDelay(EOD_BATCH_REFRESH_TIME);
 			noOfthread.setValue(SysParamUtil.getValueAsInt("EOD_THREAD_COUNT"));
 			this.borderLayoutBatchAdmin.setHeight(getBorderLayoutHeight());
 			isInitialise = true;
@@ -292,6 +300,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		allowEODStartOnSameDay = false;
 		allowClearParameters = false;
 		QDP = null;
+		EODUtil.setDatesReload(true);
 	}
 
 	/**
@@ -332,18 +341,25 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	private void setDates() {
-		lable_Value_Date.setValue(SysParamUtil.getAppValueDate(DateFormat.LONG_DATE));
-		lable_NextBusiness_Date
-				.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
-		lable_LastBusiness_Date
-				.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST)));
+		if (EODUtil.isDatesReload()) {
+			lable_Value_Date.setValue(DateUtil.formatToLongDate(SysParamUtil.getAppDate()));
+			lable_NextBusiness_Date
+					.setValue(DateUtil.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
+			lable_LastBusiness_Date
+					.setValue(DateUtil.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST)));
+			EODUtil.setDatesReload(false);
+		}
 	}
 
 	private void setRunningStatus(boolean collectionProcess) {
 		String jobStatus = this.jobExecution.getStatus().toString();
 
+		if (EOD_BATCH_MONITOR.equals("NA")) {
+			EOD_BATCH_MONITOR = SysParamUtil.getValueAsString("EOD_BATCH_MONITOR");
+		}
+
 		try {
-			if ("Y".equals(SysParamUtil.getValueAsString("EOD_BATCH_MONITOR"))) {
+			if ("Y".equals(EOD_BATCH_MONITOR)) {
 				if (!islock) {
 					doFillStepExecutions(BatchMonitor.getStepExecution(this.jobExecution.getJobInstance()));
 				}
@@ -358,6 +374,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			this.btnStartJob.setLabel("Restart");
 			this.btnStartJob.setTooltiptext("Restart Job");
 			estimatedTime.setValue("");
+			EODUtil.setDatesReload(true);
+			setDates();
 		}
 
 		if ("COMPLETED".equals(jobStatus)) {
@@ -365,6 +383,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			this.btnStartJob.setTooltiptext("Start");
 			this.lable_current_step.setValue("");
 			estimatedTime.setValue("");
+			EODUtil.setDatesReload(true);
 			setDates();
 
 			String jobStatusMsg = "";
@@ -403,7 +422,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 		String msg = "";
 		if ("Start".equals(this.btnStartJob.getLabel())) {
-			args[0] = DateUtility.formatToShortDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT));
+			args[0] = DateUtil.formatToShortDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT));
 			msg = Labels.getLabel("labe_start_job", args);
 		} else {
 			msg = Labels.getLabel("labe_reStart_job");
@@ -747,6 +766,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		if (status == null) {
 			return;
 		}
+
+		if (EOD_THREAD_COUNT == -1) {
+			EOD_THREAD_COUNT = SysParamUtil.getValueAsInt("EOD_THREAD_COUNT");
+		}
+
+		noOfthread.setValue(EOD_THREAD_COUNT);
 
 		boolean containsKey = status.getKeyAttributes().containsKey(EodConstants.DATA_TOTALCUSTOMER);
 

@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -47,7 +48,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = 9031340167587772517L;
-	private static final Logger logger = Logger.getLogger(AgreementGenerationDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AgreementGenerationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

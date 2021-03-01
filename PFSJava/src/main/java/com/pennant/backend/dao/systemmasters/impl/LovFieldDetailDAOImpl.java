@@ -44,7 +44,8 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -68,7 +69,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implements LovFieldDetailDAO {
-	private static Logger logger = Logger.getLogger(LovFieldDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LovFieldDetailDAOImpl.class);
 
 	public LovFieldDetailDAOImpl() {
 		super();
@@ -172,8 +173,8 @@ public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implement
 		logger.debug(Literal.ENTERING);
 
 		if (lovFieldDetail.getId() == Long.MIN_VALUE) {
-			lovFieldDetail.setId(getNextId("SeqRMTLovFieldDetail"));
-			logger.debug("get NextID:" + lovFieldDetail.getId());
+			lovFieldDetail.setId(getNextValue("SeqRMTLovFieldDetail"));
+			logger.debug("get NextValue:" + lovFieldDetail.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTLovFieldDetail");

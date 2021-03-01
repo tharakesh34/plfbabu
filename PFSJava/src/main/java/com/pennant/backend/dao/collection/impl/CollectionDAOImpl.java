@@ -44,7 +44,8 @@ package com.pennant.backend.dao.collection.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -57,7 +58,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * DAO methods implementation for the <b>Collection model</b> class.<br>
  */
 public class CollectionDAOImpl extends BasicDao<Collection> implements CollectionDAO {
-	private static Logger logger = Logger.getLogger(CollectionDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CollectionDAOImpl.class);
 
 	public CollectionDAOImpl() {
 		super();

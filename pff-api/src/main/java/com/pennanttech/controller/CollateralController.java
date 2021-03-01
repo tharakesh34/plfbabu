@@ -11,7 +11,8 @@ import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.BadSqlGrammarException;
 
@@ -51,7 +52,7 @@ import com.pennanttech.ws.model.collateral.CollateralDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CollateralController {
-	Logger logger = Logger.getLogger(CollateralController.class);
+	Logger logger = LogManager.getLogger(CollateralController.class);
 
 	private CollateralStructureService collateralStructureService;
 	private CollateralSetupService collateralSetupService;
@@ -60,7 +61,6 @@ public class CollateralController {
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private DocumentDetailsDAO documentDetailsDAO;
 	private CoOwnerDetailDAO coOwnerDetailDAO;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private CustomerEMailService customerEMailService;
 
 	private final String PROCESS_TYPE_SAVE = "Save";
@@ -606,7 +606,7 @@ public class CollateralController {
 				declaredMap.put("collateralType", collateralSetup.getCollateralType());
 				declaredMap.put("collateralCcy", collateralSetup.getCollateralCcy());
 				try {
-					ruleResult = ruleExecutionUtil.executeRule(collateralStructure.getSQLRule(), declaredMap,
+					ruleResult = RuleExecutionUtil.executeRule(collateralStructure.getSQLRule(), declaredMap,
 							collateralSetup.getCollateralCcy(), RuleReturnType.DECIMAL);
 				} catch (Exception e) {
 					APIErrorHandlerService.logUnhandledException(e);
@@ -719,10 +719,6 @@ public class CollateralController {
 
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public void setCustomerEMailService(CustomerEMailService customerEMailService) {

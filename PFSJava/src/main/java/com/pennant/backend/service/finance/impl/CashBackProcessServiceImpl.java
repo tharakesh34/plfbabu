@@ -10,7 +10,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -73,7 +74,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CashBackProcessServiceImpl implements CashBackProcessService {
-	private static final Logger logger = Logger.getLogger(CashBackProcessServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CashBackProcessServiceImpl.class);
 
 	private FeeTypeDAO feeTypeDAO;
 	private ManualAdviseService manualAdviseService;
@@ -93,7 +94,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private RuleDAO ruleDAO;
 	private GSTRateDAO gstRateDAO;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private FinODDetailsDAO finODDetailsDAO;
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private LatePayMarkingService latePayMarkingService;
@@ -689,16 +689,16 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 
 			for (Rule rule : rules) {
 				if (StringUtils.equals(RuleConstants.CODE_CGST, rule.getRuleCode())) {
-					cgstPerc = ruleExecutionUtil.getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+					cgstPerc = RuleExecutionUtil.getRuleResult(rule.getSQLRule(), dataMap, finCcy);
 					tgstPerc = tgstPerc.add(cgstPerc);
 				} else if (StringUtils.equals(RuleConstants.CODE_IGST, rule.getRuleCode())) {
-					igstPerc = ruleExecutionUtil.getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+					igstPerc = RuleExecutionUtil.getRuleResult(rule.getSQLRule(), dataMap, finCcy);
 					tgstPerc = tgstPerc.add(igstPerc);
 				} else if (StringUtils.equals(RuleConstants.CODE_SGST, rule.getRuleCode())) {
-					sgstPerc = ruleExecutionUtil.getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+					sgstPerc = RuleExecutionUtil.getRuleResult(rule.getSQLRule(), dataMap, finCcy);
 					tgstPerc = tgstPerc.add(sgstPerc);
 				} else if (StringUtils.equals(RuleConstants.CODE_UGST, rule.getRuleCode())) {
-					ugstPerc = ruleExecutionUtil.getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+					ugstPerc = RuleExecutionUtil.getRuleResult(rule.getSQLRule(), dataMap, finCcy);
 					tgstPerc = tgstPerc.add(ugstPerc);
 				}
 			}
@@ -860,14 +860,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 
 	public void setGstRateDAO(GSTRateDAO gstRateDAO) {
 		this.gstRateDAO = gstRateDAO;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public FinODDetailsDAO getFinODDetailsDAO() {

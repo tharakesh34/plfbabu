@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.pennant.backend.model.eventproperties.EventProperties;
+
 public class FinanceProfitDetail implements Serializable {
 	private static final long serialVersionUID = 6601637251967752181L;
 
@@ -218,8 +220,192 @@ public class FinanceProfitDetail implements Serializable {
 	// IND AS Amortization
 	private String aMZMethod;
 
+	private EventProperties eventProperties = new EventProperties();
+
 	public FinanceProfitDetail() {
 		super();
+	}
+
+	public FinanceProfitDetail copyEntity() {
+		FinanceProfitDetail entity = new FinanceProfitDetail();
+		entity.setFinReference(this.finReference);
+		entity.setCustId(this.custId);
+		entity.setFinBranch(this.finBranch);
+		entity.setFinType(this.finType);
+		entity.setLastMdfDate(this.lastMdfDate);
+		entity.setTotalPftSchd(this.totalPftSchd);
+		entity.setTotalPftCpz(this.totalPftCpz);
+		entity.setTotalPftPaid(this.totalPftPaid);
+		entity.setTotalPftBal(this.totalPftBal);
+		entity.setTotalPftPaidInAdv(this.totalPftPaidInAdv);
+		entity.setTotalAdvPftSchd(this.totalAdvPftSchd);
+		entity.setTotalRbtSchd(this.totalRbtSchd);
+		entity.setTotalpriSchd(this.totalpriSchd);
+		entity.setTotalPriPaid(this.totalPriPaid);
+		entity.setTotalPriPaidInAdv(this.totalPriPaidInAdv);
+		entity.setTotalPriBal(this.totalPriBal);
+		entity.setTdSchdPft(this.tdSchdPft);
+		entity.setTdPftCpz(this.tdPftCpz);
+		entity.setTdSchdPftPaid(this.tdSchdPftPaid);
+		entity.setTdSchdPftBal(this.tdSchdPftBal);
+		entity.setTdSchdAdvPft(this.tdSchdAdvPft);
+		entity.setTdSchdRbt(this.tdSchdRbt);
+		entity.setPftAmz(this.pftAmz);
+		entity.setPftAmzNormal(this.pftAmzNormal);
+		entity.setPftAmzPD(this.pftAmzPD);
+		entity.setPftAmzSusp(this.pftAmzSusp);
+		entity.setTdSchdPri(this.tdSchdPri);
+		entity.setTdSchdPriPaid(this.tdSchdPriPaid);
+		entity.setTdSchdPriBal(this.tdSchdPriBal);
+		entity.setAmzTillLBD(this.amzTillLBD);
+		entity.setLpiTillLBD(this.lpiTillLBD);
+		entity.setGstLpiTillLBD(this.gstLpiTillLBD);
+		entity.setLppTillLBD(this.lppTillLBD);
+		entity.setGstLppTillLBD(this.gstLppTillLBD);
+		entity.setAmzTillLBDNormal(this.amzTillLBDNormal);
+		entity.setAmzTillLBDPD(this.amzTillLBDPD);
+		entity.setAmzTillLBDPIS(this.amzTillLBDPIS);
+		entity.setRepayFrq(this.RepayFrq);
+		entity.setCustCIF(this.CustCIF);
+		entity.setFinCcy(this.FinCcy);
+		entity.setFinPurpose(this.FinPurpose);
+		entity.setFinContractDate(this.FinContractDate);
+		entity.setFinApprovedDate(this.FinApprovedDate);
+		entity.setFinStartDate(this.FinStartDate);
+		entity.setMaturityDate(this.MaturityDate);
+		entity.setFullPaidDate(this.FullPaidDate);
+		entity.setFinAmount(this.FinAmount);
+		entity.setDownPayment(this.DownPayment);
+		entity.setAdvanceEMI(this.advanceEMI);
+		entity.setCurReducingRate(this.CurReducingRate);
+		entity.setCurFlatRate(this.curFlatRate);
+		entity.setODPrincipal(this.ODPrincipal);
+		entity.setODProfit(this.ODProfit);
+		entity.setPenaltyPaid(this.PenaltyPaid);
+		entity.setPenaltyDue(this.PenaltyDue);
+		entity.setPenaltyWaived(this.PenaltyWaived);
+		entity.setNSchdDate(this.NSchdDate);
+		entity.setNSchdPri(this.NSchdPri);
+		entity.setNSchdPft(this.NSchdPft);
+		entity.setNSchdPriDue(this.NSchdPriDue);
+		entity.setNSchdPftDue(this.NSchdPftDue);
+		entity.setPftInSusp(this.PftInSusp);
+		entity.setProvision(this.provision);
+		entity.setFinStatus(this.FinStatus);
+		entity.setFinStsReason(this.FinStsReason);
+		entity.setFinWorstStatus(this.FinWorstStatus);
+		entity.setNOInst(this.NOInst);
+		entity.setNOPaidInst(this.NOPaidInst);
+		entity.setNOODInst(this.NOODInst);
+		entity.setFinAccount(this.FinAccount);
+		entity.setFinAcType(this.FinAcType);
+		entity.setDisbAccountId(this.DisbAccountId);
+		entity.setDisbActCcy(this.DisbActCcy);
+		entity.setRepayAccountId(this.RepayAccountId);
+		entity.setFinCustPftAccount(this.FinCustPftAccount);
+		entity.setIncomeAccount(this.IncomeAccount);
+		entity.setUEIncomeSuspAccount(this.UEIncomeSuspAccount);
+		entity.setFinCommitmentRef(this.FinCommitmentRef);
+		entity.setFinIsActive(this.FinIsActive);
+		entity.setFirstRepayDate(this.firstRepayDate);
+		entity.setFirstRepayAmt(this.FirstRepayAmt);
+		entity.setFinalRepayAmt(this.finalRepayAmt);
+		entity.setCurODDays(this.curODDays);
+		entity.setActualODDays(this.actualODDays);
+		entity.setDueBucket(this.dueBucket);
+		entity.setFirstODDate(this.firstODDate);
+		entity.setPrvODDate(this.prvODDate);
+		entity.setClosingStatus(this.closingStatus);
+		entity.setFinCategory(this.finCategory);
+		entity.setPrvRpySchDate(this.prvRpySchDate);
+		entity.setPrvRpySchPri(this.prvRpySchPri);
+		entity.setPrvRpySchPft(this.prvRpySchPft);
+		entity.setLatestRpyDate(this.latestRpyDate);
+		entity.setLatestRpyPri(this.latestRpyPri);
+		entity.setLatestRpyPft(this.latestRpyPft);
+		entity.setTotalWriteoff(this.totalWriteoff);
+		entity.setAccumulatedDepPri(this.accumulatedDepPri);
+		entity.setDepreciatePri(this.depreciatePri);
+		entity.setAcrTillLBD(this.acrTillLBD);
+		entity.setEarnedPft(this.EarnedPft);
+		entity.setUnearned(this.Unearned);
+		entity.setPftAccrued(this.pftAccrued);
+		entity.setPftAccrueSusp(this.pftAccrueSusp);
+		entity.setMaxODDays(this.maxODDays);
+		entity.setCalPftOnPD(this.calPftOnPD);
+		entity.setPftOnPDMethod(this.pftOnPDMethod);
+		entity.setPftOnPDMrg(this.pftOnPDMrg);
+		entity.setTotPftOnPD(this.totPftOnPD);
+		entity.setTotPftOnPDPaid(this.totPftOnPDPaid);
+		entity.setTotPftOnPDWaived(this.totPftOnPDWaived);
+		entity.setTotPftOnPDDue(this.totPftOnPDDue);
+		entity.setAcrSuspTillLBD(this.acrSuspTillLBD);
+		entity.setPrvMthAmz(this.prvMthAmz);
+		entity.setPrvMthAmzNrm(this.prvMthAmzNrm);
+		entity.setPrvMthAmzPD(this.prvMthAmzPD);
+		entity.setPrvMthAmzSusp(this.prvMthAmzSusp);
+		entity.setPrvMthAcr(this.prvMthAcr);
+		entity.setPrvMthAcrSusp(this.prvMthAcrSusp);
+		entity.setFirstDisbDate(this.firstDisbDate);
+		entity.setLatestDisbDate(this.latestDisbDate);
+		entity.setFutureInst(this.futureInst);
+		entity.setRemainingTenor(this.remainingTenor);
+		entity.setTotalTenor(this.totalTenor);
+		entity.setExcessAmt(this.excessAmt);
+		entity.setEmiInAdvance(this.emiInAdvance);
+		entity.setPayableAdvise(this.payableAdvise);
+		entity.setExcessAmtResv(this.excessAmtResv);
+		entity.setEmiInAdvanceResv(this.emiInAdvanceResv);
+		entity.setPayableAdviseResv(this.payableAdviseResv);
+		entity.setProductCategory(this.productCategory);
+		entity.setFutureRpyPri(this.futureRpyPri);
+		entity.setFutureRpyPft(this.futureRpyPft);
+		entity.setTotChargesPaid(this.totChargesPaid);
+		entity.setLinkedFinRef(this.linkedFinRef);
+		entity.setClosedlinkedFinRef(this.closedlinkedFinRef);
+		entity.setBounceAmt(this.bounceAmt);
+		entity.setBounceAmtDue(this.bounceAmtDue);
+		entity.setBounceAmtPaid(this.bounceAmtPaid);
+		entity.setUpfrontFee(this.upfrontFee);
+		entity.setLastDisburseDate(this.lastDisburseDate);
+		entity.setReceivableAdvise(this.receivableAdvise);
+		entity.setExcessAmtBal(this.excessAmtBal);
+		entity.setEmiInAdvanceBal(this.emiInAdvanceBal);
+		entity.setReceivableAdviseBal(this.receivableAdviseBal);
+		entity.setPayableAdviseBal(this.payableAdviseBal);
+		entity.setMaxRpyAmount(this.maxRpyAmount);
+		entity.setCpzPosted(this.cpzPosted);
+		entity.setCurCpzBalance(this.curCpzBalance);
+		entity.setLpiAmount(this.lpiAmount);
+		entity.setGstLpiAmount(this.gstLpiAmount);
+		entity.setLppAmount(this.lppAmount);
+		entity.setGstLppAmount(this.gstLppAmount);
+		entity.setGlPaymentSts(this.glPaymentSts);
+		entity.setSvnAcrTillLBD(this.svnAcrTillLBD);
+		entity.setSvnPftAmount(this.svnPftAmount);
+		entity.setSvnAcrCalReq(this.svnAcrCalReq);
+		entity.setNOAutoIncGrcEnd(this.NOAutoIncGrcEnd);
+		entity.setAssignBPI1(this.assignBPI1);
+		entity.setAssignBPI2(this.assignBPI2);
+		entity.setBaseRateCode(this.baseRateCode);
+		entity.setSplRateCode(this.splRateCode);
+		entity.setBaseRate(this.baseRate);
+		entity.setSplRate(this.splRate);
+		entity.setMrgRate(this.mrgRate);
+		entity.setTdTdsAmount(this.tdTdsAmount);
+		entity.setTdTdsPaid(this.tdTdsPaid);
+		entity.setTdTdsBal(this.tdTdsBal);
+		entity.setTdsAccrued(this.tdsAccrued);
+		entity.setTotalSvnAmount(this.totalSvnAmount);
+		entity.setNoInstEarlyStl(this.noInstEarlyStl);
+		entity.setGapIntAmz(this.gapIntAmz);
+		entity.setGapIntAmzLbd(this.gapIntAmzLbd);
+		entity.setPrvMthGapIntAmz(this.prvMthGapIntAmz);
+		entity.setSvAmount(this.svAmount);
+		entity.setCbAmount(this.cbAmount);
+		entity.setAMZMethod(this.aMZMethod);
+		entity.setEventProperties(this.eventProperties);
+		return entity;
 	}
 
 	// ******************************************************//
@@ -1670,4 +1856,11 @@ public class FinanceProfitDetail implements Serializable {
 		this.provision = provision;
 	}
 
+	public EventProperties getEventProperties() {
+		return eventProperties;
+	}
+
+	public void setEventProperties(EventProperties eventProperties) {
+		this.eventProperties = eventProperties;
+	}
 }

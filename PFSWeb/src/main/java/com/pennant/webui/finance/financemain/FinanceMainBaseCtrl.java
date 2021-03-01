@@ -90,7 +90,8 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -405,7 +406,7 @@ import com.rits.cloning.Cloner;
  */
 public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = -1171206258809472640L;
-	private static final Logger logger = Logger.getLogger(FinanceMainBaseCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceMainBaseCtrl.class);
 
 	protected Label windowTitle;
 
@@ -1025,7 +1026,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private boolean extSMSService;
 	private StepPolicyService stepPolicyService;
 	private FinanceReferenceDetailService financeReferenceDetailService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private RuleService ruleService;
 	private DedupParmService dedupParmService;
 	private NotificationsService notificationsService;
@@ -8607,7 +8607,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								fieldsAndValues.put("empType",
 										aFinanceDetail.getCustomerDetails().getCustomer().getSubCategory());
 
-								rateCode = (String) getRuleExecutionUtil().executeRule(sqlRule, fieldsAndValues,
+								rateCode = (String) RuleExecutionUtil.executeRule(sqlRule, fieldsAndValues,
 										finCcy.getValue(), RuleReturnType.STRING);
 
 								if (StringUtils.isNotEmpty(rateCode)) {
@@ -9666,7 +9666,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (rule != null) {
 						HashMap<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
 								.getDeclaredFieldValues();
-						isAgrRender = (boolean) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldsAndValues,
+						isAgrRender = (boolean) RuleExecutionUtil.executeRule(rule.getSQLRule(), fieldsAndValues,
 								getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(),
 								RuleReturnType.BOOLEAN);
 					}
@@ -14816,7 +14816,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 
-				aFinanceMain.setNumberOfTerms(noterms);
+				if (aFinanceMain.getRecordStatus() == null
+						|| PennantConstants.RCD_STATUS_SAVED.equals(aFinanceMain.getRecordStatus())) {
+					aFinanceMain.setNumberOfTerms(noterms);
+				} else {
+					aFinanceMain.setNumberOfTerms(FrequencyUtil.getTerms(aFinanceMain.getRepayFrq(),
+							aFinanceMain.getNextRepayDate(), aFinanceMain.getMaturityDate(), true, true).getTerms());
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -16126,7 +16132,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 			aeEvent.setDataMap(dataMap);
 
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+			engineExecution.getAccEngineExecResults(aeEvent);
 			accountingSetEntries.addAll(aeEvent.getReturnDataSet());
 
 		} else {
@@ -16159,7 +16165,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				aeEvent.setDataMap(dataMap);
 
-				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+				engineExecution.getAccEngineExecResults(aeEvent);
 				accountingSetEntries.addAll(aeEvent.getReturnDataSet());
 			}
 		}
@@ -18828,7 +18834,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			BigDecimal downpayPercentage = BigDecimal.ZERO;
 			if (StringUtils.isNotEmpty(sqlRule)) {
 				HashMap<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
-				downpayPercentage = (BigDecimal) getRuleExecutionUtil().executeRule(sqlRule, fieldsAndValues,
+				downpayPercentage = (BigDecimal) RuleExecutionUtil.executeRule(sqlRule, fieldsAndValues,
 						finCcy.getValue(), RuleReturnType.DECIMAL);
 			}
 			getFinanceDetail().getFinScheduleData().getFinanceMain().setMinDownPayPerc(downpayPercentage);
@@ -18862,7 +18868,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						CustomerEligibilityCheck customerEligibilityCheck = prepareCustElgDetail(isLoadProcess)
 								.getCustomerEligibilityCheck();
 						HashMap<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
-						actRate = (BigDecimal) getRuleExecutionUtil().executeRule(sqlRule, fieldsAndValues,
+						actRate = (BigDecimal) RuleExecutionUtil.executeRule(sqlRule, fieldsAndValues,
 								finCcy.getValue(), RuleReturnType.DECIMAL);
 					}
 
@@ -18921,7 +18927,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						CustomerEligibilityCheck customerEligibilityCheck = prepareCustElgDetail(isLoadProcess)
 								.getCustomerEligibilityCheck();
 						HashMap<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
-						actRate = (BigDecimal) getRuleExecutionUtil().executeRule(sqlRule, fieldsAndValues,
+						actRate = (BigDecimal) RuleExecutionUtil.executeRule(sqlRule, fieldsAndValues,
 								finCcy.getValue(), RuleReturnType.DECIMAL);
 					}
 
@@ -21125,7 +21131,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Rule rule = ruleService.getRuleById(RuleConstants.MODULE_DUEDATERULE, RuleConstants.MODULE_DUEDATERULE,
 					RuleConstants.EVENT_DUEDATERULE, TableType.AVIEW.getSuffix());
 			if (rule != null) {
-				result = (Integer) ruleExecutionUtil.executeRule(rule.getSQLRule(), declaredMap,
+				result = (Integer) RuleExecutionUtil.executeRule(rule.getSQLRule(), declaredMap,
 						financeMain.getFinCcy(), RuleReturnType.INTEGER);
 
 				Date nextRepayDate = financeMain.getFinStartDate();
@@ -21168,7 +21174,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				 */
 			}
 		} catch (Exception e) {
-			//APIErrorHandlerService.logUnhandledException(e);
+			// APIErrorHandlerService.logUnhandledException(e);
 			logger.error(Literal.EXCEPTION, e);
 			result = 0;
 		}
@@ -22127,14 +22133,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setAgreementGeneration(AgreementGeneration agreementGeneration) {
 		this.agreementGeneration = agreementGeneration;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public RuleService getRuleService() {

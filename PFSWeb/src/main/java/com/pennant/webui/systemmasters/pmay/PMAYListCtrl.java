@@ -2,7 +2,8 @@ package com.pennant.webui.systemmasters.pmay;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -34,7 +35,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class PMAYListCtrl extends GFCBaseListCtrl<PMAY> {
 	private static final long serialVersionUID = 485796535935527728L;
-	private static final Logger logger = Logger.getLogger(PMAYListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PMAYListCtrl.class);
 
 	protected Window window_PmayList;
 	protected Borderlayout borderLayout_PmayList;

@@ -42,18 +42,15 @@
  */
 package com.pennant.backend.dao.dedup.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -76,7 +73,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupParmDAO {
-	private static Logger logger = Logger.getLogger(DedupParmDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DedupParmDAOImpl.class);
 
 	public DedupParmDAOImpl() {
 		super();
@@ -116,7 +113,9 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		try {
 			dedupParm = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(
+					"DedupParams not found in DedupParams{} for the specified QueryCode >> {} and QuerySubCode >> {} and QueryModule >> {}",
+					type, id, querySubCode, queryModule);
 			dedupParm = null;
 		}
 		logger.debug("Leaving");
@@ -226,8 +225,8 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		logger.debug("Entering");
 
 		if (dedupParm.getQueryId() == Long.MIN_VALUE) {
-			dedupParm.setQueryId(getNextId("SeqDedupParams"));
-			logger.debug("get NextID:" + dedupParm.getQueryId());
+			dedupParm.setQueryId(getNextValue("SeqDedupParams"));
+			logger.debug("get NextValue:" + dedupParm.getQueryId());
 		}
 
 		StringBuilder insertSql = new StringBuilder(" Insert Into DedupParams");
@@ -352,8 +351,6 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	 */
 	@Override
 	public List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail financeRefDetail, String tableType) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AlertType, LovDescNamelov, OverRide, LovDescRefDesc");
 		sql.append(" from LMTFinRefDetail");
@@ -362,34 +359,21 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, "%" + financeRefDetail.getMandInputInStage() + "%");
-					ps.setString(index++, financeRefDetail.getFinType());
-					ps.setInt(index++, 1);
-				}
-			}, new RowMapper<FinanceReferenceDetail>() {
-				@Override
-				public FinanceReferenceDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceReferenceDetail br = new FinanceReferenceDetail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, "%" + financeRefDetail.getMandInputInStage() + "%");
+			ps.setString(index++, financeRefDetail.getFinType());
+			ps.setInt(index++, 1);
+		}, (rs, rowNum) -> {
+			FinanceReferenceDetail br = new FinanceReferenceDetail();
 
-					br.setAlertType(rs.getString("AlertType"));
-					br.setLovDescNamelov(rs.getString("LovDescNamelov"));
-					br.setOverRide(rs.getBoolean("OverRide"));
-					br.setLovDescRefDesc(rs.getString("LovDescRefDesc"));
+			br.setAlertType(rs.getString("AlertType"));
+			br.setLovDescNamelov(rs.getString("LovDescNamelov"));
+			br.setOverRide(rs.getBoolean("OverRide"));
+			br.setLovDescRefDesc(rs.getString("LovDescRefDesc"));
 
-					return br;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return br;
+		});
 	}
 
 	@Override

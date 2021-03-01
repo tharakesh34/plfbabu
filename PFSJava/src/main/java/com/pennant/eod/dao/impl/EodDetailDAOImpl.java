@@ -2,7 +2,8 @@ package com.pennant.eod.dao.impl;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -16,7 +17,7 @@ import com.pennant.eod.model.EodDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDAO {
-	private static Logger logger = Logger.getLogger(EodDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(EodDetailDAOImpl.class);
 
 	@Override
 	public void save(EodDetail eodDetail) {

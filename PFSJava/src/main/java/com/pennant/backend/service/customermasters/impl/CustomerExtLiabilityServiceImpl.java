@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,7 +21,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 
 public class CustomerExtLiabilityServiceImpl implements CustomerExtLiabilityService {
-	private static Logger logger = Logger.getLogger(CustomerExtLiabilityServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerExtLiabilityServiceImpl.class);
 
 	@Autowired
 	private CustomerExtLiabilityDAO customerExtLiabilityDAO;

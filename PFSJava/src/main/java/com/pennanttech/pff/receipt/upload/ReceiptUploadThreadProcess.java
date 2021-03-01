@@ -8,7 +8,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -36,7 +37,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ReceiptUploadThreadProcess {
-	private static Logger logger = Logger.getLogger(ReceiptUploadThreadProcess.class);
+	private static Logger logger = LogManager.getLogger(ReceiptUploadThreadProcess.class);
 
 	private static final String QUERY = "Select FinReference, uploadheaderid, uploaddetailid from ReceiptUploadQueuing  Where ThreadID = :ThreadId and Progress = :Progress order by uploaddetailid";
 

@@ -1,6 +1,7 @@
 package com.pennant.webservice.services;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.RequestDetail;
@@ -18,7 +19,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 public class ExtFinanceService {
-	private Logger logger = Logger.getLogger(ExtFinanceService.class);
+	private Logger logger = LogManager.getLogger(ExtFinanceService.class);
 	private ExtFinanceUploadService extFinanceUploadService;
 
 	PFSLoanCreationResponse response;

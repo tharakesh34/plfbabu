@@ -1,6 +1,7 @@
 package com.pennanttech.external.control.service.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.backend.model.external.control.PushPullControl;
 import com.pennanttech.external.control.service.PushPullControlService;
@@ -8,7 +9,7 @@ import com.pennanttech.external.dao.PushPullControlDAO;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class PushPullControlServiceImpl implements PushPullControlService {
-	private static final Logger logger = Logger.getLogger(PushPullControlServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PushPullControlServiceImpl.class);
 
 	private PushPullControlDAO pushPullControlDAO;
 

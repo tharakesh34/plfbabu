@@ -50,14 +50,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
@@ -65,6 +66,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -73,7 +75,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implements RepayInstructionDAO {
-	private static Logger logger = Logger.getLogger(RepayInstructionDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(RepayInstructionDAOImpl.class);
 
 	public RepayInstructionDAOImpl() {
 		super();
@@ -122,40 +124,33 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 		return repayInstruction;
 	}
 
-	/**
-	 * This method Deletes the Record from the FinRepayInstruction or FinRepayInstruction_Temp. if Record not deleted
-	 * then throws DataAccessException with error 41003. delete Repay Instruction Detail by key FinReference
-	 * 
-	 * @param Repay
-	 *            Instruction Detail (repayInstruction)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	public void deleteByFinReference(String id, String type, boolean isWIF, long logKey) {
-		logger.debug("Entering");
 		RepayInstruction repayInstruction = new RepayInstruction();
 		repayInstruction.setId(id);
 
-		StringBuilder deleteSql = new StringBuilder("Delete ");
+		StringBuilder sql = new StringBuilder("Delete");
 		if (isWIF) {
-			deleteSql.append(" From WIFFinRepayInstruction");
+			sql.append(" From WIFFinRepayInstruction");
 		} else {
-			deleteSql.append(" From FinRepayInstruction");
+			sql.append(" From FinRepayInstruction");
 		}
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
+
 		if (logKey != 0) {
-			deleteSql.append(" AND LogKey =:LogKey");
+			sql.append(" and LogKey = ?");
 		}
 
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayInstruction);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), ps -> {
+
+			ps.setString(1, id);
+			if (logKey != 0) {
+				ps.setLong(2, logKey);
+			}
+
+		});
 	}
 
 	/**
@@ -252,64 +247,103 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 	 */
 
 	@Override
-	public void saveList(List<RepayInstruction> repayInstruction, String type, boolean isWIF) {
-		logger.debug("Entering");
-
-		StringBuilder insertSql = new StringBuilder("Insert Into ");
+	public int saveList(List<RepayInstruction> repayInstruction, String type, boolean isWIF) {
+		StringBuilder sql = new StringBuilder("Insert Into ");
 		if (isWIF) {
-			insertSql.append(" WIFFinRepayInstruction");
+			sql.append(" WIFFinRepayInstruction");
 		} else {
-			insertSql.append(" FinRepayInstruction");
+			sql.append(" FinRepayInstruction");
 		}
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, RepayDate, RepayAmount, RepaySchdMethod, ");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinReference, RepayDate, RepayAmount, RepaySchdMethod");
 		if (type.contains("Log")) {
-			insertSql.append(" LogKey , ");
+			sql.append(", LogKey");
 		}
-		insertSql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:FinReference, :RepayDate, :RepayAmount, :RepaySchdMethod, ");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?");
+
 		if (type.contains("Log")) {
-			insertSql.append(" :LogKey , ");
+			sql.append(",? ");
 		}
-		insertSql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(repayInstruction.toArray());
-		try {
-			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error("Exception", e);
-			throw e;
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				RepayInstruction rI = repayInstruction.get(i);
+
+				int index = 1;
+				ps.setString(index++, rI.getFinReference());
+				ps.setDate(index++, JdbcUtil.getDate(rI.getRepayDate()));
+				ps.setBigDecimal(index++, rI.getRepayAmount());
+				ps.setString(index++, rI.getRepaySchdMethod());
+				if (type.contains("Log")) {
+					ps.setLong(index++, rI.getLogKey());
+				}
+				ps.setInt(index++, rI.getVersion());
+				ps.setLong(index++, rI.getLastMntBy());
+				ps.setTimestamp(index++, rI.getLastMntOn());
+				ps.setString(index++, rI.getRecordStatus());
+				ps.setString(index++, rI.getRoleCode());
+				ps.setString(index++, rI.getNextRoleCode());
+				ps.setString(index++, rI.getTaskId());
+				ps.setString(index++, rI.getNextTaskId());
+				ps.setString(index++, rI.getRecordType());
+				ps.setLong(index++, rI.getWorkflowId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return repayInstruction.size();
+			}
+		}).length;
 	}
 
 	/**
 	 * Method for Updation of RepaymentInstruction Details after Rate Changes
 	 */
 	@Override
-	public void updateList(List<RepayInstruction> repayInstruction, String type, boolean isWIF) {
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder("Update ");
+	public int updateList(List<RepayInstruction> repayInstruction, String type, boolean isWIF) {
+		StringBuilder sql = new StringBuilder("Update");
 		if (isWIF) {
-			updateSql.append(" WIFFinRepayInstruction");
+			sql.append(" WIFFinRepayInstruction");
 		} else {
-			updateSql.append(" FinRepayInstruction");
+			sql.append(" FinRepayInstruction");
 		}
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set RepayDate = :RepayDate, ");
-		updateSql.append(" RepayAmount = :RepayAmount, RepaySchdMethod= :RepaySchdMethod ");
-		updateSql.append(" Where FinReference =:FinReference");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set RepayDate = ?");
+		sql.append(", RepayAmount = ?, RepaySchdMethod = ?");
+		sql.append(" Where FinReference = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(repayInstruction.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		return this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				RepayInstruction ri = repayInstruction.get(i);
+				int index = 1;
+
+				ps.setDate(index++, JdbcUtil.getDate(ri.getRepayDate()));
+				ps.setBigDecimal(index++, ri.getRepayAmount());
+				ps.setString(index++, ri.getRepaySchdMethod());
+				ps.setString(index, ri.getFinReference());
+
+			}
+
+			@Override
+			public int getBatchSize() {
+				return repayInstruction.size();
+			}
+
+		}).length;
 	}
 
 	/**
@@ -367,8 +401,6 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 	 */
 	@Override
 	public List<RepayInstruction> getRepayInstructions(final String id, String type, boolean isWIF) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type, isWIF);
 		sql.append(" Where FinReference = ?");
 
@@ -376,20 +408,10 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 
 		RepayInsRowMapper rowMapper = new RepayInsRowMapper();
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, id);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, id);
+		}, rowMapper);
 	}
 
 	/**
@@ -431,76 +453,78 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 
 	@Override
 	public List<RepayInstruction> getRepayInstrEOD(String id) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, RepayDate, RepayAmount, RepaySchdMethod");
+		sql.append(" From FinRepayInstruction");
+		sql.append(" Where FinReference = ?");
 
-		RepayInstruction repayInstruction = new RepayInstruction();
-		repayInstruction.setId(id);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference, RepayDate, RepayAmount, RepaySchdMethod");
-		selectSql.append(" From FinRepayInstruction  Where FinReference =:FinReference");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index, id);
+		}, (rs, rowNum) -> {
+			RepayInstruction ri = new RepayInstruction();
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayInstruction);
-		RowMapper<RepayInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(RepayInstruction.class);
+			ri.setFinReference(rs.getString("FinReference"));
+			ri.setRepayDate(JdbcUtil.getDate(rs.getDate("RepayDate")));
+			ri.setRepayAmount(rs.getBigDecimal("RepayAmount"));
+			ri.setRepaySchdMethod(rs.getString("RepaySchdMethod"));
 
-		List<RepayInstruction> repayInstructions = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
-		logger.debug("Leaving");
-		return repayInstructions;
+			return ri;
+		});
 	}
 
 	@Override
-	public void deleteInEOD(String id) {
-		logger.debug("Entering");
-		RepayInstruction repayInstruction = new RepayInstruction();
-		repayInstruction.setId(id);
-		StringBuilder deleteSql = new StringBuilder("Delete ");
-		deleteSql.append(" From FinRepayInstruction");
-		deleteSql.append(" Where FinReference =:FinReference");
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayInstruction);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+	public int deleteInEOD(String id) {
+		String sql = "Delete From FinRepayInstruction Where FinReference = ?";
+		logger.trace(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setString(1, id);
+		});
 	}
 
-	/**
-	 * This method insert list of new Records into FinRepayInstruction or FinRepayInstruction_Temp.
-	 *
-	 * save Repay Instruction Detail
-	 * 
-	 * @param Repay
-	 *            Instruction Detail (repayInstruction)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
 	@Override
-	public void saveListInEOD(List<RepayInstruction> repayInstruction) {
-		logger.debug("Entering");
+	public int saveListInEOD(List<RepayInstruction> rpiList) {
+		StringBuilder sql = new StringBuilder("Insert into");
+		sql.append(" FinRepayInstruction");
+		sql.append("(FinReference, RepayDate, RepayAmount, RepaySchdMethod, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into ");
-		insertSql.append(" FinRepayInstruction");
-		insertSql.append(" (FinReference, RepayDate, RepayAmount, RepaySchdMethod, ");
-		insertSql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:FinReference, :RepayDate, :RepayAmount, :RepaySchdMethod, ");
-		insertSql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-		logger.debug("insertSql: " + insertSql.toString());
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				RepayInstruction rpi = rpiList.get(i);
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(repayInstruction.toArray());
-		try {
-			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error("Exception", e);
-			throw e;
-		}
-		logger.debug("Leaving");
+				int index = 1;
+
+				ps.setString(index++, rpi.getFinReference());
+				ps.setDate(index++, JdbcUtil.getDate(rpi.getRepayDate()));
+				ps.setBigDecimal(index++, rpi.getRepayAmount());
+				ps.setString(index++, rpi.getRepaySchdMethod());
+				ps.setInt(index++, rpi.getVersion());
+				ps.setLong(index++, JdbcUtil.setLong(rpi.getLastMntBy()));
+				ps.setTimestamp(index++, rpi.getLastMntOn());
+				ps.setString(index++, rpi.getRecordStatus());
+				ps.setString(index++, rpi.getRoleCode());
+				ps.setString(index++, rpi.getNextRoleCode());
+				ps.setString(index++, rpi.getTaskId());
+				ps.setString(index++, rpi.getNextTaskId());
+				ps.setString(index++, rpi.getRecordType());
+				ps.setLong(index++, JdbcUtil.setLong(rpi.getWorkflowId()));
+			}
+
+			@Override
+			public int getBatchSize() {
+				return rpiList.size();
+			}
+		}).length;
+
 	}
 
 	private StringBuilder getSqlQuery(String type, boolean isWIF) {

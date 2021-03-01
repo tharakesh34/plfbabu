@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -33,7 +34,7 @@ import com.pennanttech.pff.logging.dao.InstBasedSchdDetailDAO;
  * 
  */
 public class InstBasedSchdDetailDAOImpl extends SequenceDao<InstBasedSchdDetails> implements InstBasedSchdDetailDAO {
-	private static Logger logger = Logger.getLogger(InstBasedSchdDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(InstBasedSchdDetailDAOImpl.class);
 
 	public InstBasedSchdDetailDAOImpl() {
 		super();

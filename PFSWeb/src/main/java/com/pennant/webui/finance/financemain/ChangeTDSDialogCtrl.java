@@ -51,7 +51,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -109,7 +110,7 @@ import com.rits.cloning.Cloner;
  */
 public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(ChangeTDSDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ChangeTDSDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -262,7 +263,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 					this.userAction = setRejectRecordStatus(this.userAction);
 				} else {
 					this.userAction = setListRecordStatus(this.userAction);
-					//					getUserWorkspace().allocateMenuRoleAuthorities(getRole(), this.pageRightName, menuItemRightName);
+					// getUserWorkspace().allocateMenuRoleAuthorities(getRole(), this.pageRightName, menuItemRightName);
 				}
 			} else {
 				this.south.setHeight("0px");
@@ -319,7 +320,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		//getUserWorkspace().allocateAuthorities(this.pageRightName, getRole(), menuItemRightName);
+		// getUserWorkspace().allocateAuthorities(this.pageRightName, getRole(), menuItemRightName);
 
 		getUserWorkspace().allocateAuthorities(pageRightName, getRole());
 

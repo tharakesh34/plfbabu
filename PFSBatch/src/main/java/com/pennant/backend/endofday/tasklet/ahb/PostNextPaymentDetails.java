@@ -7,8 +7,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -19,10 +21,11 @@ import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.BatchFileUtil;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
 	private static final long serialVersionUID = 426232865118229782L;
-	private static Logger logger = Logger.getLogger(PostNextPaymentDetails.class);
+	private static Logger logger = LogManager.getLogger(PostNextPaymentDetails.class);
 
 	public PostNextPaymentDetails() {
 		super();
@@ -30,9 +33,9 @@ public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		logger.debug("Entering");
+		Date appDate = EODUtil.getDate("APP_DATE", context);
 
-		logger.debug("START: Next payment Details for Value Date: " + DateUtility.getAppDate());
+		logger.debug("START: Next payment Details for Value Date:{} ", appDate);
 
 		Connection connection = null;
 		ResultSet resultSet = null;
@@ -43,7 +46,7 @@ public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
 
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(getCountQuery());
-			sqlStatement.setDate(1, DateUtility.getDBDate(DateUtility.getAppValueDate().toString()));
+			sqlStatement.setDate(1, DateUtility.getDBDate(appDate.toString()));
 			resultSet = sqlStatement.executeQuery();
 			int count = 0;
 			if (resultSet.next()) {
@@ -53,13 +56,13 @@ public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
 			sqlStatement.close();
 
 			sqlStatement = connection.prepareStatement(prepareSelectQuery());
-			sqlStatement.setDate(1, DateUtility.getDBDate(DateUtility.getAppValueDate().toString()));
+			sqlStatement.setDate(1, DateUtility.getDBDate(appDate.toString()));
 			resultSet = sqlStatement.executeQuery();
 
 			File file = BatchFileUtil.getBatchFile(BatchFileUtil.getSlaryPostingFileName());
 			FileWriter filewriter = BatchFileUtil.getFileWriter(file);
 			// header
-			BatchFileUtil.writeline(filewriter, writeHeader(batchref));
+			BatchFileUtil.writeline(filewriter, writeHeader(batchref, appDate));
 
 			while (resultSet.next()) {
 				// details
@@ -81,7 +84,7 @@ public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
 				sqlStatement.close();
 			}
 		}
-		logger.debug("COMPLETE: Next payment Details for Value Date: " + DateUtility.getAppDate());
+		logger.debug("COMPLETE: Next payment Details for Value Date:{} ", appDate);
 		return RepeatStatus.FINISHED;
 	}
 
@@ -89,7 +92,7 @@ public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
 	 * @param header
 	 * @return
 	 */
-	private static String writeHeader(String batchRef) {
+	private static String writeHeader(String batchRef, Date appDate) {
 		logger.debug(" Entering ");
 
 		StringBuilder builder = new StringBuilder();
@@ -101,7 +104,7 @@ public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
 		builder.append(BatchFileUtil.DELIMITER);
 		builder.append(BatchFileUtil.getSlaryPostingFileName());
 		builder.append(BatchFileUtil.DELIMITER);
-		builder.append(DateUtility.format(DateUtility.getAppDate(), DateUtility.DateFormat.SHORT_DATE_TIME));
+		builder.append(DateUtility.format(appDate, DateUtility.DateFormat.SHORT_DATE_TIME));
 
 		logger.debug(" Leaving ");
 		return builder.toString();

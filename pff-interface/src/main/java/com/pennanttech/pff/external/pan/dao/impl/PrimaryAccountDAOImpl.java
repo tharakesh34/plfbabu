@@ -5,7 +5,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,7 +20,7 @@ import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
 
 public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements PrimaryAccountDAO {
 
-	private static Logger logger = Logger.getLogger(PrimaryAccountDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PrimaryAccountDAOImpl.class);
 
 	public PrimaryAccountDAOImpl() {
 		super();
@@ -102,8 +103,6 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 
 	@Override
 	public PrimaryAccount getPrimaryAccountDetails(String primaryID) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Document_Number, Document_Name");
 		sql.append(" from CUST_KYC_VALIDATION");
@@ -125,10 +124,10 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Primary Account is not found in CUST_KYC_VALIDATION table for the document_Number >> {}",
+					"*****");
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 }

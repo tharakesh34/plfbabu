@@ -50,7 +50,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -79,7 +80,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 
 public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements CovenantsDAO {
-	private static Logger logger = Logger.getLogger(CovenantsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CovenantsDAOImpl.class);
 
 	public CovenantsDAOImpl() {
 		super();
@@ -108,30 +109,22 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 
 	@Override
 	public List<Covenant> getCovenants(final String finreference, String module, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSelectQuery(tableType.getSuffix());
 		sql.append(" Where KeyReference = ? And Module = ?");
-		logger.debug(Literal.SQL + sql.toString());
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		CovenantsRowMapper rowMapper = new CovenantsRowMapper(tableType.getSuffix());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finreference);
-					ps.setString(index++, module);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, finreference);
+				ps.setString(index++, module);
+			}
+		}, rowMapper);
 	}
 
 	@Override
@@ -459,8 +452,6 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 
 	@Override
 	public List<Covenant> getCovenantsAlertList() {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("select distinct c.Id, c.CovenantTypeId");
@@ -486,20 +477,12 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 
 		RowMapper<Covenant> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Covenant.class);
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 
 	}
 
 	@Override
 	public List<Covenant> getCovenants(String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" c.Frequency, NextFrequencyDate, CovenantTypeCode, CovenantTypeDescription, ct.DocType");
 		sql.append(", DocTypeName, c.id ");
@@ -512,35 +495,22 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setInt(index++, 1);
-				}
-			}, new RowMapper<Covenant>() {
-				@Override
-				public Covenant mapRow(ResultSet rs, int rowNum) throws SQLException {
-					Covenant c = new Covenant();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+			ps.setInt(index++, 1);
+		}, (rs, rowNum) -> {
+			Covenant c = new Covenant();
 
-					c.setFrequency(rs.getString("Frequency"));
-					c.setNextFrequencyDate(rs.getTimestamp("NextFrequencyDate"));
-					c.setCovenantTypeCode(rs.getString("CovenantTypeCode"));
-					c.setCovenantTypeDescription(rs.getString("CovenantTypeDescription"));
-					c.setDocType(rs.getString("DocType"));
-					c.setDocTypeName(rs.getString("DocTypeName"));
-					c.setId(rs.getLong("id"));
-					return c;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			c.setFrequency(rs.getString("Frequency"));
+			c.setNextFrequencyDate(rs.getTimestamp("NextFrequencyDate"));
+			c.setCovenantTypeCode(rs.getString("CovenantTypeCode"));
+			c.setCovenantTypeDescription(rs.getString("CovenantTypeDescription"));
+			c.setDocType(rs.getString("DocType"));
+			c.setDocTypeName(rs.getString("DocTypeName"));
+			c.setId(rs.getLong("id"));
+			return c;
+		});
 	}
 
 	@Override

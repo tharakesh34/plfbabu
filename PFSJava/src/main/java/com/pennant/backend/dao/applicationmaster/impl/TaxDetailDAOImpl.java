@@ -49,7 +49,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -58,7 +59,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
@@ -73,7 +73,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>TaxDetail</code> with set of CRUD operations.
  */
 public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetailDAO {
-	private static Logger logger = Logger.getLogger(TaxDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(TaxDetailDAOImpl.class);
 
 	public TaxDetailDAOImpl() {
 		super();
@@ -386,33 +386,64 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 
 	@Override
 	public List<TaxDetail> getTaxDetailsbyEntityCode(String statecode, String type, String entityCode) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select id, country, stateCode, entityCode, taxCode, addressLine1, ");
-		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode, hsnNumber, natureService, ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, Country, StateCode, EntityCode, TaxCode, AddressLine1, AddressLine2, AddressLine3");
+		sql.append(", AddressLine4, PinCode, CityCode, HsnNumber, NatureService");
 
 		if (type.contains("View")) {
-			sql.append(" cityName, countryName, provinceName, entityDesc, GstInAvailable,");
+			sql.append(", CityName, CountryName, ProvinceName, EntityDesc, GstinAvailable");
 		}
 
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, ");
-		sql.append(" NextTaskId, RecordType, WorkflowId");
-		sql.append(" From TAXDETAIL");
-		sql.append(type);
-		sql.append(" Where StateCode = :StateCode and EntityCode = :EntityCode");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from TAXDETAIL");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where StateCode = ? and EntityCode = ?");
 
-		source.addValue("StateCode", statecode);
-		source.addValue("EntityCode", entityCode);
+		logger.trace(Literal.SQL, sql.toString());
 
-		RowMapper<TaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDetail.class);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, statecode);
+			ps.setString(index++, entityCode);
+		}, (rs, rowNum) -> {
+			TaxDetail td = new TaxDetail();
 
-		logger.debug("selectSql: " + sql.toString());
-		logger.debug("Leaving");
+			td.setId(rs.getLong("Id"));
+			td.setCountry(rs.getString("Country"));
+			td.setStateCode(rs.getString("StateCode"));
+			td.setEntityCode(rs.getString("EntityCode"));
+			td.setTaxCode(rs.getString("TaxCode"));
+			td.setAddressLine1(rs.getString("AddressLine1"));
+			td.setAddressLine2(rs.getString("AddressLine2"));
+			td.setAddressLine3(rs.getString("AddressLine3"));
+			td.setAddressLine4(rs.getString("AddressLine4"));
+			td.setPinCode(rs.getString("PinCode"));
+			td.setCityCode(rs.getString("CityCode"));
+			td.setHsnNumber(rs.getString("HsnNumber"));
+			td.setNatureService(rs.getString("NatureService"));
 
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			if (type.contains("View")) {
+				td.setCityName(rs.getString("CityName"));
+				td.setCountryName(rs.getString("CountryName"));
+				td.setProvinceName(rs.getString("ProvinceName"));
+				td.setEntityDesc(rs.getString("EntityDesc"));
+				td.setGstinAvailable(rs.getBoolean("GstinAvailable"));
+			}
+
+			td.setVersion(rs.getInt("Version"));
+			td.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			td.setLastMntBy(rs.getLong("LastMntBy"));
+			td.setRecordStatus(rs.getString("RecordStatus"));
+			td.setRoleCode(rs.getString("RoleCode"));
+			td.setNextRoleCode(rs.getString("NextRoleCode"));
+			td.setTaskId(rs.getString("TaskId"));
+			td.setNextTaskId(rs.getString("NextTaskId"));
+			td.setRecordType(rs.getString("RecordType"));
+			td.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return td;
+		});
 
 	}
 

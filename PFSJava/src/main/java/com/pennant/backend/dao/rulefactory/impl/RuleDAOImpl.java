@@ -94,24 +94,16 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public Rule getRuleByID(final String id, final String module, final String event, String type) {
-		logger.debug(Literal.ENTERING);
-
-		Rule rule = new Rule();
-		rule.setRuleCode(id);
-		rule.setRuleModule(module);
-		rule.setRuleEvent(event);
-
 		StringBuilder sql = getSelectQuery(type);
-		sql.append(" Where RuleCode =:RuleCode AND RuleModule =:RuleModule AND RuleEvent =:RuleEvent");
-		sql.append(" Order BY SeqOrder ");
+		sql.append(" Where RuleCode = ? and RuleModule = ? and RuleEvent = ?");
+		sql.append(" Order BY SeqOrder");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+		RuleRowMapper rowMapper = new RuleRowMapper(type);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, module, event }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Rule not exist for the specified Rule Code {}, Module {} and Event {}", id, module, type);
 		}
@@ -120,10 +112,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	}
 
 	private StringBuilder getSelectQuery(String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT RuleId, RuleCode, RuleModule, RuleEvent, RuleCodeDesc, AllowDeviation");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" RuleId, RuleCode, RuleModule, RuleEvent, RuleCodeDesc, AllowDeviation");
 		sql.append(
 				", CalFeeModify, FeeToFinance, WaiverDecider, Waiver, WaiverPerc, SQLRule, SPLRule, ActualBlock, SeqOrder");
 		sql.append(", ReturnType, DeviationType, GroupId, Revolving, FixedOrVariableLimit, Active, Fields, FeeTypeID");
@@ -135,8 +125,62 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		sql.append(" From Rules");
 		sql.append(StringUtils.trimToEmpty(type));
 
-		logger.debug(Literal.LEAVING);
 		return sql;
+	}
+
+	private class RuleRowMapper implements RowMapper<Rule> {
+		private String type;
+
+		private RuleRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public Rule mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Rule fea = new Rule();
+
+			fea.setRuleId(rs.getLong("RuleId"));
+			fea.setRuleCode(rs.getString("RuleCode"));
+			fea.setRuleModule(rs.getString("RuleModule"));
+			fea.setRuleEvent(rs.getString("RuleEvent"));
+			fea.setRuleCodeDesc(rs.getString("RuleCodeDesc"));
+			fea.setAllowDeviation(rs.getBoolean("AllowDeviation"));
+			fea.setCalFeeModify(rs.getBoolean("CalFeeModify"));
+			fea.setFeeToFinance(rs.getString("FeeToFinance"));
+			fea.setWaiverDecider(rs.getString("WaiverDecider"));
+			fea.setWaiver(rs.getBoolean("Waiver"));
+			fea.setWaiverPerc(rs.getBigDecimal("WaiverPerc"));
+			fea.setSQLRule(rs.getString("SQLRule"));
+			fea.setActualBlock(rs.getString("ActualBlock"));
+			fea.setSeqOrder(rs.getInt("SeqOrder"));
+			fea.setReturnType(rs.getString("ReturnType"));
+			fea.setDeviationType(rs.getString("DeviationType"));
+			fea.setGroupId(rs.getLong("GroupId"));
+			fea.setRevolving(rs.getBoolean("Revolving"));
+			fea.setFixedOrVariableLimit(rs.getString("FixedOrVariableLimit"));
+			fea.setActive(rs.getBoolean("Active"));
+			fea.setFields(rs.getString("Fields"));
+			fea.setFeeTypeID(rs.getLong("FeeTypeID"));
+
+			if (type.contains("View")) {
+				fea.setLovDescGroupName(rs.getString("LovDescGroupName"));
+				fea.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				fea.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+			}
+
+			fea.setVersion(rs.getInt("Version"));
+			fea.setLastMntBy(rs.getLong("LastMntBy"));
+			fea.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			fea.setRecordStatus(rs.getString("RecordStatus"));
+			fea.setRoleCode(rs.getString("RoleCode"));
+			fea.setNextRoleCode(rs.getString("NextRoleCode"));
+			fea.setTaskId(rs.getString("TaskId"));
+			fea.setNextTaskId(rs.getString("NextTaskId"));
+			fea.setRecordType(rs.getString("RecordType"));
+			fea.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return fea;
+		}
 	}
 
 	@Override
@@ -222,26 +266,19 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 	@Override
 	public Rule getRuleByID(long ruleId, String type) {
-		logger.debug(Literal.ENTERING);
-
-		Rule rule = new Rule();
-		rule.setRuleId(ruleId);
-
 		StringBuilder sql = getSelectQuery(type);
-		sql.append(" Where RuleId =:RuleId");
-		sql.append(" Order BY SeqOrder ");
+		sql.append(" Where RuleId = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+		RuleRowMapper rowMapper = new RuleRowMapper(type);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { ruleId }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Rule not exist for the specified Rule Id {}, Module {} and Event {}", ruleId);
-			rule = null;
 		}
-		return rule;
+
+		return null;
 	}
 
 	/**
@@ -255,27 +292,20 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public String getAmountRule(final String id, final String module, final String event) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" SQLRule");
+		sql.append(" From Rules");
+		sql.append(" Where RuleCode = ? and RuleModule = ? and RuleEvent = ?");
 
-		Rule rule = new Rule();
-		rule.setRuleCode(id);
-		rule.setRuleModule(module);
-		rule.setRuleEvent(event);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT SQLRule From Rules ");
-		sql.append(" Where RuleCode =:RuleCode AND RuleModule =:RuleModule AND RuleEvent =:RuleEvent");
-
-		logger.trace("selectSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			logger.debug(Literal.LEAVING);
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, module, event }, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("Rule not exist's for the specified RuleCode >> {}, RuleModule >> {}, RuleEvent >> {}", id,
+					module, event);
 		}
-		logger.debug(Literal.LEAVING);
+
 		return "";
 	}
 
@@ -328,22 +358,15 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<Rule> getRuleByModuleAndEvent(final String module, final String event, String type) {
-		logger.debug(Literal.ENTERING);
-
-		Rule rule = new Rule();
-		rule.setRuleModule(module);
-		rule.setRuleEvent(event);
-
 		StringBuilder sql = getSelectQuery(type);
-		sql.append(" Where RuleModule =:RuleModule AND RuleEvent =:RuleEvent");
-		sql.append(" Order BY SeqOrder ");
+		sql.append(" Where RuleModule = ? and RuleEvent = ?");
+		sql.append(" Order BY SeqOrder");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		RuleRowMapper rowMapper = new RuleRowMapper(type);
+
+		return this.jdbcOperations.query(sql.toString(), new Object[] { module, event }, rowMapper);
 	}
 
 	/**
@@ -407,7 +430,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		logger.debug(Literal.ENTERING);
 
 		if (rule.getId() == Long.MIN_VALUE) {
-			rule.setId(getNextId("SeqRules"));
+			rule.setId(getNextValue("SeqRules"));
 		}
 
 		StringBuilder sql = new StringBuilder();
@@ -804,27 +827,28 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public Rule getRuleById(String ruleCode, String module, String type) {
-		logger.debug(Literal.ENTERING);
-
-		Rule rule = new Rule();
-		rule.setRuleCode(ruleCode);
-		rule.setRuleModule(module);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT * ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" RuleModule, RuleCode, RuleCodeDesc");
 		sql.append(" From Rules");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" WHERE RuleModule =:RuleModule AND  RuleCode =:RuleCode");
+		sql.append(" Where RuleModule = ? and RuleCode = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameter = new BeanPropertySqlParameterSource(rule);
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 
 		try {
-			logger.debug(Literal.LEAVING);
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameter, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.warn(Literal.EXCEPTION, dae);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { module, ruleCode },
+					(rs, rowNum) -> {
+						Rule rule = new Rule();
+
+						rule.setRuleModule(rs.getString("RuleModule"));
+						rule.setRuleCode(rs.getString("RuleCode"));
+						rule.setRuleCodeDesc(rs.getString("RuleCodeDesc"));
+
+						return rule;
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Records are not found in Rules{} for the combination of Rule module >> {} and Rule Code >> {}",
+					type, module, ruleCode);
 		}
 
 		return null;
@@ -839,29 +863,60 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<Rule> getRuleDetailList(List<String> ruleCodeList, String ruleModule, String ruleEvent) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select RuleId, RuleCode, RuleModule,RuleEvent, RuleCodeDesc, AllowDeviation, CalFeeModify");
-		sql.append(", FeeToFinance, WaiverDecider, Waiver, WaiverPerc, SQLRule, ActualBlock,SeqOrder, ReturnType");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" RuleId, RuleCode, RuleModule, RuleEvent, RuleCodeDesc, AllowDeviation, CalFeeModify");
+		sql.append(", FeeToFinance, WaiverDecider, Waiver, WaiverPerc, SQLRule, ActualBlock, SeqOrder, ReturnType");
 		sql.append(", DeviationType, GroupId, Revolving, FixedOrVariableLimit, Active, Fields");
-		sql.append(" From Rules ");
-		sql.append(" WHERE RuleModule = :RuleModule AND RuleEvent = :RuleEvent AND RuleCode In (:RuleCode)");
+		sql.append(" From Rules");
+		sql.append(" Where RuleModule = ? and RuleEvent = ? and RuleCode In (");
+
+		int i = 0;
+
+		while (i < ruleCodeList.size()) {
+			sql.append(" ?,");
+			i++;
+		}
+
+		sql.deleteCharAt(sql.length() - 1);
+		sql.append(")");
 
 		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("RuleModule", ruleModule);
-		source.addValue("RuleEvent", ruleEvent);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, ruleModule);
+			ps.setString(index++, ruleEvent);
 
-		if (ruleCodeList != null && !ruleCodeList.isEmpty()) {
-			source.addValue("RuleCode", ruleCodeList);
-		} else {
-			source.addValue("RuleCode", null);
-		}
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			for (String ruleCode : ruleCodeList) {
+				ps.setString(index++, ruleCode);
+			}
+		}, (rs, rowNum) -> {
+			Rule r = new Rule();
+
+			r.setRuleId(rs.getLong("RuleId"));
+			r.setRuleCode(rs.getString("RuleCode"));
+			r.setRuleModule(rs.getString("RuleModule"));
+			r.setRuleEvent(rs.getString("RuleEvent"));
+			r.setRuleCodeDesc(rs.getString("RuleCodeDesc"));
+			r.setAllowDeviation(rs.getBoolean("AllowDeviation"));
+			r.setCalFeeModify(rs.getBoolean("CalFeeModify"));
+			r.setFeeToFinance(rs.getString("FeeToFinance"));
+			r.setWaiverDecider(rs.getString("WaiverDecider"));
+			r.setWaiver(rs.getBoolean("Waiver"));
+			r.setWaiverPerc(rs.getBigDecimal("WaiverPerc"));
+			r.setSQLRule(rs.getString("SQLRule"));
+			r.setActualBlock(rs.getString("ActualBlock"));
+			r.setSeqOrder(rs.getInt("SeqOrder"));
+			r.setReturnType(rs.getString("ReturnType"));
+			r.setDeviationType(rs.getString("DeviationType"));
+			r.setGroupId(rs.getLong("GroupId"));
+			r.setRevolving(rs.getBoolean("Revolving"));
+			r.setFixedOrVariableLimit(rs.getString("FixedOrVariableLimit"));
+			r.setActive(rs.getBoolean("Active"));
+			r.setFields(rs.getString("Fields"));
+
+			return r;
+		});
 	}
 
 	@Override
@@ -889,19 +944,14 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 	@Override
 	public List<Rule> getGSTRuleDetails(String ruleModule, String type) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("RuleModule", ruleModule);
-
 		StringBuilder sql = getSelectQuery(type);
-		sql.append(" WHERE RuleModule = :RuleModule");
+		sql.append(" WHERE RuleModule = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		RuleRowMapper rowMapper = new RuleRowMapper(type);
+
+		return this.jdbcOperations.query(sql.toString(), new Object[] { ruleModule }, rowMapper);
 	}
 
 	// ### 08-05-2018 Start Development Iteam 81

@@ -5,7 +5,8 @@ import java.lang.reflect.Method;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StopWatch;
 
@@ -13,7 +14,7 @@ import com.sun.management.OperatingSystemMXBean;
 
 @SuppressWarnings("restriction")
 public class PerfLogInterceptor implements MethodInterceptor {
-	private final Logger log = Logger.getLogger(PerfLogInterceptor.class);
+	private final Logger log = LogManager.getLogger(PerfLogInterceptor.class);
 
 	private long thresholdMs;
 	private long warnThresholdMs;

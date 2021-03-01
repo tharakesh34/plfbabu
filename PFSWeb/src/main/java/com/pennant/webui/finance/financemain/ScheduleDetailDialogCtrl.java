@@ -56,7 +56,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -132,7 +133,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
  */
 public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(ScheduleDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ScheduleDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -359,7 +360,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					|| financeMainDialogCtrl instanceof LoanClosureEnquiryDialogCtrl) {
 				//
 			} else {
-				logger.warn("Replace the below buy using instanceof " + financeMainDialogCtrl.getClass());
+				//logger.warn("Replace the below buy using instanceof " + financeMainDialogCtrl.getClass());
 				// FIXME MUR>> Replace me as above otherwise you don't know where i
 				// came.
 				this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass()

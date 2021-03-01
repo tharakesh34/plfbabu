@@ -7,14 +7,13 @@ import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;

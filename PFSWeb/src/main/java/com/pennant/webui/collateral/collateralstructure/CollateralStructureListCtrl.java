@@ -56,7 +56,8 @@ import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -92,7 +93,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStructure> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CollateralStructureListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CollateralStructureListCtrl.class);
 
 	protected Window window_CollateralStructureList;
 	protected Borderlayout borderLayout_CollateralStructureList;

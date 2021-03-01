@@ -51,7 +51,8 @@ import java.util.Map;
 import javax.script.ScriptException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -101,7 +102,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
  */
 public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerEligibilityCheck> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(CustomerEligibilityCheckDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerEligibilityCheckDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -126,8 +127,6 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	private FinanceReferenceDetailService financeReferenceDetailService;
 	private RuleService ruleService;
 	private FinanceDetailService financeDetailService;
-	private RuleExecutionUtil ruleExecutionUtil;
-
 	protected List<FinanceReferenceDetail> elgRuleList;
 	protected List<String> feildList = null;
 	protected Map<String, BMTRBFldDetails> fldDetailsMap = null;
@@ -548,7 +547,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 
 				// Currency Conversions if Courrency Constants Exists in Rule
 				String rule = detail.getLovDescElgRuleValue();
-				rule = getRuleExecutionUtil().replaceCurrencyCode(rule, null);
+				rule = RuleExecutionUtil.replaceCurrencyCode(rule, null);
 
 				String returnType = detail.getLovDescRuleReturnType();
 				RuleReturnType ruleReturnType = null;
@@ -566,7 +565,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 				}
 
 				// Execute the engine
-				Object object = this.ruleExecutionUtil.executeRule(rule, fieldsAndValues, null, ruleReturnType);
+				Object object = RuleExecutionUtil.executeRule(rule, fieldsAndValues, null, ruleReturnType);
 
 				String resultValue = null;
 				switch (ruleReturnType) {
@@ -734,14 +733,6 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
 	}
 
 }

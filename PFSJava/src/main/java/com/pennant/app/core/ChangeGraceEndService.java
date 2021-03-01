@@ -50,18 +50,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.AEAmounts;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
-import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -73,30 +72,21 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
-import com.rits.cloning.Cloner;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class ChangeGraceEndService extends ServiceHelper {
 
 	private static final long serialVersionUID = -6254138886117514225L;
-	private static Logger logger = Logger.getLogger(ChangeGraceEndService.class);
+	private static Logger logger = LogManager.getLogger(ChangeGraceEndService.class);
 
 	private AccrualService accrualService;
 
-	/**
-	 * Auto Increment Grace End in EOD Process
-	 * 
-	 * @param custEODEvent
-	 * @throws Exception
-	 */
 	public void processChangeGraceEnd(CustEODEvent custEODEvent) {
-
 		Date eodValueDate = custEODEvent.getEodValueDate();
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
-
-			// Full Disbursement, Other than Grace End Date
-			FinanceMain financeMain = finEODEvent.getFinanceMain();
+			FinanceMain fm = finEODEvent.getFinanceMain();
 			/*
 			 * if (!(financeMain.isAllowGrcPeriod() && financeMain.getGrcPeriodEndDate().compareTo(eodValueDate) == 0 &&
 			 * financeMain.getFinAssetValue().compareTo(financeMain.getFinCurrAssetValue()) != 0)) {
@@ -105,41 +95,40 @@ public class ChangeGraceEndService extends ServiceHelper {
 			 */
 			//Above condition was splitted as separate conditions for better understanding
 			//If Grace is not allowed
-			if (!financeMain.isAllowGrcPeriod()) {
+			if (!fm.isAllowGrcPeriod()) {
 				continue;
 			}
 
 			//If it is Fully Disbursed
-			if (!(financeMain.getFinAssetValue().compareTo(financeMain.getFinCurrAssetValue()) != 0)) {
+			if (!(fm.getFinAssetValue().compareTo(fm.getFinCurrAssetValue()) != 0)) {
 				continue;
 			}
 
-			//Threshold Gestation Period less than future grace emi count
 			int thrldtoMaintainGrcPrd = finEODEvent.getFinType().getThrldtoMaintainGrcPrd();
+
+			Date grcPeriodEndDate = fm.getGrcPeriodEndDate();
+
 			if (thrldtoMaintainGrcPrd > 0) {
 				int pendingGraceEMICount = 0;
 				boolean duefound = false;
 				boolean thrldfound = false;
 
-				for (FinanceScheduleDetail scheduleDetail : finEODEvent.getFinanceScheduleDetails()) {
-					//Checking weather the schedule date has due on EOD date.
-					if (scheduleDetail.getSchDate().compareTo(eodValueDate) == 0) {
+				List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
+				for (FinanceScheduleDetail schd : schedules) {
+					Date schDate = schd.getSchDate();
+
+					if (schDate.compareTo(eodValueDate) == 0) {
 						duefound = true;
 						pendingGraceEMICount += 1;
 					}
-					//if schedule due found on eod value date(5-march-2020(Schedule due ) == 5-march-2020(EOD))	
+
 					if (duefound) {
-						//checking schedule date is greater than eod date and less than grace end date for pending grace emi count
-						if (scheduleDetail.getSchDate().compareTo(eodValueDate) > 0
-								&& scheduleDetail.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
+						if (schDate.compareTo(eodValueDate) > 0 && schDate.compareTo(grcPeriodEndDate) <= 0) {
 							pendingGraceEMICount += 1;
 						}
-						//if no due found and schedule is greater than grace end date	
-					} else if (!duefound
-							&& scheduleDetail.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) > 0) {
+					} else if (!duefound && schDate.compareTo(grcPeriodEndDate) > 0) {
 						break;
 					}
-					//we need to break the loop if future  emi's are greater than Threshold Gestation Period
 					if (pendingGraceEMICount > thrldtoMaintainGrcPrd) {
 						thrldfound = true;
 						break;
@@ -155,34 +144,30 @@ public class ChangeGraceEndService extends ServiceHelper {
 				}
 			} else {
 				//If EOD value date is other than grace end date
-				if (!(financeMain.getGrcPeriodEndDate().compareTo(eodValueDate) == 0)) {
+				if (!(grcPeriodEndDate.compareTo(eodValueDate) == 0)) {
 					continue;
 				}
 			}
 
 			// Allow AutoIncGrcEndDate
-			FinanceProfitDetail finProfitDetail = finEODEvent.getFinProfitDetail();
+			FinanceProfitDetail pfd = finEODEvent.getFinProfitDetail();
 			FinanceType finType = getFinanceType(finEODEvent.getFinanceMain().getFinType());
 			finEODEvent.setFinType(finType);
 
-			if (!(financeMain.isAutoIncGrcEndDate()
-					&& finProfitDetail.getNOAutoIncGrcEnd() < finType.getMaxAutoIncrAllowed())) {
+			if (!(fm.isAutoIncGrcEndDate() && pfd.getNOAutoIncGrcEnd() < finType.getMaxAutoIncrAllowed())) {
 
 				continue;
 			}
 
 			AEEvent aeEvent = null;
 			boolean isChangeGrcEndSuccess = true;
-			FinScheduleData finScheduleData = prepareFinScheduleData(finEODEvent);
+			FinScheduleData fsd = prepareFinScheduleData(finEODEvent);
 
 			try {
+				changeGraceEnd(fsd, false);
 
-				// Schedule Re Calculation Based on New Grace End
-				finScheduleData = changeGraceEnd(finScheduleData, false);
-
-				// Posting Entries Related Profit Change
-				if (finScheduleData.getErrorDetails().isEmpty()) {
-					aeEvent = getChangeGrcEndPostings(finScheduleData);
+				if (fsd.getErrorDetails().isEmpty()) {
+					aeEvent = getChangeGrcEndPostings(fsd);
 				} else {
 					isChangeGrcEndSuccess = false;
 				}
@@ -192,20 +177,18 @@ public class ChangeGraceEndService extends ServiceHelper {
 			}
 
 			if (isChangeGrcEndSuccess) {
+				fsd.getFinanceMain().setScheduleChange(true);
+				pfd.setNOAutoIncGrcEnd(pfd.getNOAutoIncGrcEnd() + 1);
 
-				finScheduleData.getFinanceMain().setScheduleChange(true);
-				finProfitDetail.setNOAutoIncGrcEnd(finProfitDetail.getNOAutoIncGrcEnd() + 1);
-
-				// Data Saving Parameters
 				finEODEvent.setUpdFinMain(true);
 				finEODEvent.setUpdRepayInstruct(true);
 				finEODEvent.setUpdFinSchdForChangeGrcEnd(true);
-				finEODEvent.setFinanceMain(finScheduleData.getFinanceMain());
-				finEODEvent.setRepayInstructions(finScheduleData.getRepayInstructions());
-				finEODEvent.setFinanceScheduleDetails(finScheduleData.getFinanceScheduleDetails());
+				finEODEvent.setFinanceMain(fsd.getFinanceMain());
+				finEODEvent.setRepayInstructions(fsd.getRepayInstructions());
+				finEODEvent.setFinanceScheduleDetails(fsd.getFinanceScheduleDetails());
 
 				// Prepare FinServiceInstruction
-				List<FinServiceInstruction> finServInstList = getFinServiceInstruction(finScheduleData);
+				List<FinServiceInstruction> finServInstList = getFinServiceInstruction(fsd);
 				finEODEvent.setFinServiceInstructions(finServInstList);
 
 				if (aeEvent != null) {
@@ -215,185 +198,142 @@ public class ChangeGraceEndService extends ServiceHelper {
 		}
 	}
 
-	/**
-	 * Method for preparing data to end grace period after full disbursement
-	 * 
-	 * @param finScheduleData
-	 */
 	@SuppressWarnings("unused")
-	public FinScheduleData changeGraceEnd(FinScheduleData finScheduleData, boolean isFullDisb) {
-		logger.debug("Entering");
-
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
+	public void changeGraceEnd(FinScheduleData finScheduleData, boolean isFullDisb) {
+		FinanceMain fm = finScheduleData.getFinanceMain();
 		FinanceType financeType = finScheduleData.getFinanceType();
 
 		// Previous GrcPeriodEndDate
-		Date newGrcEndDate = financeMain.getEventFromDate();
-		Date prvGraceEnd = financeMain.getGrcPeriodEndDate();
+		Date newGrcEndDate = fm.getEventFromDate();
+		Date prvGraceEnd = fm.getGrcPeriodEndDate();
 
 		// Setting Details ---> 1. Grace Details
 
 		int fddLockPeriod = financeType.getFddLockPeriod();
-		if (financeMain.isAllowGrcPeriod() && !ImplementationConstants.APPLY_FDDLOCKPERIOD_AFTERGRACE) {
+		if (fm.isAllowGrcPeriod() && !ImplementationConstants.APPLY_FDDLOCKPERIOD_AFTERGRACE) {
 			fddLockPeriod = 0;
 		}
 
-		financeMain.setEventFromDate(formatDate(prvGraceEnd));
+		fm.setEventFromDate(formatDate(prvGraceEnd));
 
 		// NextGrcPftDate
-		Date nextGrcPftDate = FrequencyUtil.getNextDate(financeMain.getGrcPftFrq(), 1, financeMain.getFinStartDate(),
-				HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
+		Date nextGrcPftDate = FrequencyUtil.getNextDate(fm.getGrcPftFrq(), 1, fm.getFinStartDate(),
+				HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod).getNextFrequencyDate();
 
 		nextGrcPftDate = formatDate(nextGrcPftDate);
-		financeMain.setNextGrcPftDate(nextGrcPftDate);
+		fm.setNextGrcPftDate(nextGrcPftDate);
 
 		boolean includeStartDate = false;
-		if (financeMain.getFinStartDate().compareTo(nextGrcPftDate) < 0) {
+		if (fm.getFinStartDate().compareTo(nextGrcPftDate) < 0) {
 			includeStartDate = true;
 		}
 
 		// GraceEndDate AND GraceTerms
 		if (isFullDisb) {
 
-			financeMain.setGrcPeriodEndDate(formatDate(newGrcEndDate));
+			fm.setGrcPeriodEndDate(formatDate(newGrcEndDate));
 
-			financeMain.setGraceTerms(FrequencyUtil
-					.getTerms(financeMain.getGrcPftFrq(), nextGrcPftDate, newGrcEndDate, includeStartDate, false)
-					.getTerms());
+			fm.setGraceTerms(FrequencyUtil
+					.getTerms(fm.getGrcPftFrq(), nextGrcPftDate, newGrcEndDate, includeStartDate, false).getTerms());
 		} else {
 
-			int graceTerms = financeMain.getGraceTerms() + financeType.getGrcAutoIncrMonths();
-			financeMain.setGraceTerms(graceTerms);
+			int graceTerms = fm.getGraceTerms() + financeType.getGrcAutoIncrMonths();
+			fm.setGraceTerms(graceTerms);
 
-			List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(financeMain.getGrcPftFrq(), graceTerms,
-					nextGrcPftDate, HolidayHandlerTypes.MOVE_NONE, true, 0).getScheduleList();
+			List<Calendar> scheduleDateList = FrequencyUtil
+					.getNextDate(fm.getGrcPftFrq(), graceTerms, nextGrcPftDate, HolidayHandlerTypes.MOVE_NONE, true, 0)
+					.getScheduleList();
 
 			if (scheduleDateList != null) {
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 
 				newGrcEndDate = formatDate(calendar.getTime());
-				financeMain.setGrcPeriodEndDate(newGrcEndDate);
+				fm.setGrcPeriodEndDate(newGrcEndDate);
 			}
 			scheduleDateList = null;
 		}
 
 		// NextGrcPftRvwDate
-		if (financeMain.isAllowGrcPftRvw()) {
+		if (fm.isAllowGrcPftRvw()) {
+			fm.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(fm.getGrcPftRvwFrq(), 1, fm.getFinStartDate(),
+					HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod).getNextFrequencyDate());
 
-			RateDetail rateDetail = RateUtil.rates(financeMain.getGraceBaseRate(), financeMain.getFinCcy(),
-					financeMain.getGraceSpecialRate(), financeMain.getGrcMargin(), financeType.getFInGrcMinRate(),
-					financeType.getFinGrcMaxRate());
+			fm.setNextGrcPftRvwDate(formatDate(fm.getNextGrcPftRvwDate()));
 
-			// Date baseDate =
-			// DateUtility.addDays(financeMain.getFinStartDate(),
-			// rateDetail.getLockingPeriod());
-
-			financeMain.setNextGrcPftRvwDate(FrequencyUtil
-					.getNextDate(financeMain.getGrcPftRvwFrq(), 1, financeMain.getFinStartDate(),
-							HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
-					.getNextFrequencyDate());
-
-			financeMain.setNextGrcPftRvwDate(formatDate(financeMain.getNextGrcPftRvwDate()));
-
-			if (financeMain.getNextGrcPftRvwDate().after(financeMain.getGrcPeriodEndDate())) {
-				financeMain.setNextGrcPftRvwDate(financeMain.getGrcPeriodEndDate());
+			if (fm.getNextGrcPftRvwDate().after(fm.getGrcPeriodEndDate())) {
+				fm.setNextGrcPftRvwDate(fm.getGrcPeriodEndDate());
 			}
 		}
 
 		// NextGrcCpzDate
-		if (financeMain.isAllowGrcCpz()) {
+		if (fm.isAllowGrcCpz()) {
 
-			financeMain.setAllowGrcCpz(true);
+			fm.setAllowGrcCpz(true);
 
-			financeMain.setNextGrcCpzDate(FrequencyUtil
-					.getNextDate(financeMain.getGrcCpzFrq(), 1, financeMain.getFinStartDate(),
-							HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
-					.getNextFrequencyDate());
+			fm.setNextGrcCpzDate(FrequencyUtil.getNextDate(fm.getGrcCpzFrq(), 1, fm.getFinStartDate(),
+					HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod).getNextFrequencyDate());
 
-			financeMain.setNextGrcCpzDate(formatDate(financeMain.getNextGrcCpzDate()));
+			fm.setNextGrcCpzDate(formatDate(fm.getNextGrcCpzDate()));
 
-			if (financeMain.getNextGrcCpzDate().after(financeMain.getGrcPeriodEndDate())) {
-				financeMain.setNextGrcCpzDate(financeMain.getGrcPeriodEndDate());
+			if (fm.getNextGrcCpzDate().after(fm.getGrcPeriodEndDate())) {
+				fm.setNextGrcCpzDate(fm.getGrcPeriodEndDate());
 			}
 		}
 
 		// Setting Details ---> 2. Repay Details
 
 		// NextRepayDate AND NextRepayPftDate
-		if (financeMain.getRepayFrq() != null) {
+		if (fm.getRepayFrq() != null) {
+			Date nextRepayDate = FrequencyUtil.getNextDate(fm.getRepayFrq(), 1, fm.getGrcPeriodEndDate(),
+					HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod).getNextFrequencyDate();
 
-			Date nextRepayDate = FrequencyUtil.getNextDate(financeMain.getRepayFrq(), 1,
-					financeMain.getGrcPeriodEndDate(), HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod)
-					.getNextFrequencyDate();
-
-			financeMain.setNextRepayDate(formatDate(nextRepayDate));
+			fm.setNextRepayDate(formatDate(nextRepayDate));
 		}
 
-		if (financeMain.getRepayPftFrq() != null) {
-			financeMain.setNextRepayPftDate(formatDate(financeMain.getNextRepayDate()));
+		if (fm.getRepayPftFrq() != null) {
+			fm.setNextRepayPftDate(formatDate(fm.getNextRepayDate()));
 		}
 
 		// RepayRvwFrq AND NextRepayRvwDate
-		if (financeMain.isAllowRepayRvw()) {
+		if (fm.isAllowRepayRvw()) {
+			fm.setNextRepayRvwDate(FrequencyUtil.getNextDate(fm.getRepayRvwFrq(), 1, fm.getGrcPeriodEndDate(),
+					HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod).getNextFrequencyDate());
 
-			RateDetail rateDetail = RateUtil.rates(financeMain.getRepayBaseRate(), financeMain.getFinCcy(),
-					financeMain.getRepaySpecialRate(), financeMain.getRepayMargin(), financeType.getFInMinRate(),
-					financeType.getFinMaxRate());
-
-			// Date baseDate =
-			// DateUtility.addDays(financeMain.getGrcPeriodEndDate(),
-			// rateDetail.getLockingPeriod());
-
-			financeMain
-					.setNextRepayRvwDate(
-							FrequencyUtil
-									.getNextDate(financeMain.getRepayRvwFrq(), 1, financeMain.getGrcPeriodEndDate(),
-											HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod)
-									.getNextFrequencyDate());
-
-			financeMain.setNextRepayRvwDate(formatDate(financeMain.getNextRepayRvwDate()));
+			fm.setNextRepayRvwDate(formatDate(fm.getNextRepayRvwDate()));
 
 		} else {
-			financeMain.setRepayRvwFrq("");
+			fm.setRepayRvwFrq("");
 		}
 
 		// NextRepayCpzDate
-		if (financeMain.isAllowRepayCpz()) {
+		if (fm.isAllowRepayCpz()) {
+			fm.setNextRepayCpzDate(FrequencyUtil.getNextDate(fm.getRepayCpzFrq(), 1, fm.getGrcPeriodEndDate(),
+					HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod).getNextFrequencyDate());
 
-			financeMain
-					.setNextRepayCpzDate(
-							FrequencyUtil
-									.getNextDate(financeMain.getRepayCpzFrq(), 1, financeMain.getGrcPeriodEndDate(),
-											HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod)
-									.getNextFrequencyDate());
-
-			financeMain.setNextRepayCpzDate(formatDate(financeMain.getNextRepayCpzDate()));
-
+			fm.setNextRepayCpzDate(formatDate(fm.getNextRepayCpzDate()));
 		} else {
-			financeMain.setRepayCpzFrq("");
+			fm.setRepayCpzFrq("");
 		}
 
 		// MaturityDate AND NumberOfTerms
-		if (financeMain.getRepayFrq() != null && financeMain.getNextRepayDate() != null) {
+		if (fm.getRepayFrq() != null && fm.getNextRepayDate() != null) {
 
-			List<Calendar> scheduleDateList = FrequencyUtil
-					.getNextDate(financeMain.getRepayFrq(), financeMain.getNumberOfTerms(),
-							financeMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true, 0)
-					.getScheduleList();
+			List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(fm.getRepayFrq(), fm.getNumberOfTerms(),
+					fm.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true, 0).getScheduleList();
 
 			if (scheduleDateList != null) {
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 
-				financeMain.setMaturityDate(calendar.getTime());
-				financeMain.setMaturityDate(formatDate(financeMain.getMaturityDate()));
+				fm.setMaturityDate(calendar.getTime());
+				fm.setMaturityDate(formatDate(fm.getMaturityDate()));
 			}
 			scheduleDateList = null;
 
-			financeMain.setNumberOfTerms(FrequencyUtil.getTerms(financeMain.getRepayFrq(),
-					financeMain.getNextRepayDate(), financeMain.getMaturityDate(), true, true).getTerms());
+			fm.setNumberOfTerms(FrequencyUtil
+					.getTerms(fm.getRepayFrq(), fm.getNextRepayDate(), fm.getMaturityDate(), true, true).getTerms());
 		}
 
-		financeMain.setDevFinCalReq(false);
+		fm.setDevFinCalReq(false);
 		// financeMain.setChgDropLineSchd(true);
 
 		// Schedule Re Calculation by Changing Grace End
@@ -402,73 +342,70 @@ public class ChangeGraceEndService extends ServiceHelper {
 		if (finScheduleData.getErrorDetails() == null || finScheduleData.getErrorDetails().isEmpty()) {
 
 			// Plan EMI Holidays Resetting after Change Grace Period End Date
-			if (financeMain.isPlanEMIHAlw()) {
+			if (fm.isPlanEMIHAlw()) {
 
-				financeMain.setEventFromDate(financeMain.getRecalFromDate());
-				financeMain.setEventToDate(financeMain.getMaturityDate());
-				financeMain.setRecalFromDate(financeMain.getRecalFromDate());
-				financeMain.setRecalToDate(financeMain.getMaturityDate());
-				financeMain.setRecalSchdMethod(financeMain.getScheduleMethod());
+				fm.setEventFromDate(fm.getRecalFromDate());
+				fm.setEventToDate(fm.getMaturityDate());
+				fm.setRecalFromDate(fm.getRecalFromDate());
+				fm.setRecalToDate(fm.getMaturityDate());
+				fm.setRecalSchdMethod(fm.getScheduleMethod());
 
-				financeMain.setEqualRepay(true);
-				financeMain.setCalculateRepay(true);
+				fm.setEqualRepay(true);
+				fm.setCalculateRepay(true);
 
-				if (StringUtils.equals(financeMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+				if (StringUtils.equals(fm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
 					finScheduleData = ScheduleCalculator.getFrqEMIHoliday(finScheduleData);
 				} else {
 					finScheduleData = ScheduleCalculator.getAdhocEMIHoliday(finScheduleData);
 				}
 			}
 
-			financeMain.setScheduleRegenerated(true);
+			fm.setScheduleRegenerated(true);
 			finScheduleData.setSchduleGenerated(true);
 		}
-
-		logger.debug("Leaving");
-		return finScheduleData;
 	}
 
-	/**
-	 * Prepare Profit Change Posting Entries
-	 * 
-	 * 
-	 * @param finSchdData
-	 * @throws Exception
-	 */
-	public AEEvent getChangeGrcEndPostings(FinScheduleData finSchdData) throws Exception {
+	public AEEvent getChangeGrcEndPostings(FinScheduleData fsd) throws Exception {
+		FinanceMain fm = fsd.getFinanceMain();
+		EventProperties eventProperties = fm.getEventProperties();
 
-		Date valueDate = SysParamUtil.getAppDate();
-		FinanceMain finMain = finSchdData.getFinanceMain();
-		List<FinanceScheduleDetail> finSchdDetails = finSchdData.getFinanceScheduleDetails();
+		Date valueDate = null;
+		if (eventProperties.isParameterLoaded()) {
+			valueDate = eventProperties.getValueDate();
+		} else {
+			valueDate = SysParamUtil.getAppDate();
+		}
+
+		String finReference = fm.getFinReference();
+		List<FinanceScheduleDetail> schedules = fsd.getFinanceScheduleDetails();
 
 		// Get Profit Detail
-		FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO()
-				.getFinProfitDetailsById(finMain.getFinReference());
+		FinanceProfitDetail pd = financeProfitDetailDAO.getFinProfitDetailsById(finReference);
 
-		BigDecimal totalPftSchdOld = profitDetail.getTotalPftSchd();
-		BigDecimal totalPftCpzOld = profitDetail.getTotalPftCpz();
+		BigDecimal totalPftSchdOld = pd.getTotalPftSchd();
+		BigDecimal totalPftCpzOld = pd.getTotalPftCpz();
 
 		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
-		newProfitDetail = accrualService.calProfitDetails(finMain, finSchdDetails, profitDetail, valueDate);
+		newProfitDetail = accrualService.calProfitDetails(fm, schedules, pd, valueDate);
 
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
 
 		// Amount Codes Details Preparation
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finMain, profitDetail, finSchdDetails,
-				AccountEventConstants.ACCEVENT_SCDCHG, valueDate, valueDate);
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, pd, schedules, AccountEventConstants.ACCEVENT_SCDCHG,
+				valueDate, valueDate);
 
 		Map<String, Object> dataMap = aeEvent.getDataMap();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
-		Map<String, Object> map = getFinanceMainDAO().getGLSubHeadCodes(finMain.getFinReference());
+		Map<String, Object> map = financeMainDAO.getGLSubHeadCodes(finReference);
 
-		amountCodes.setBusinessvertical((String) map.get("Businessvertical"));
-		amountCodes.setAlwflexi(finMain.isAlwFlexi());
-		amountCodes.setFinbranch(finMain.getFinBranch());
-		amountCodes.setEntitycode(finMain.getEntityCode());
+		amountCodes.setBusinessvertical((String) map.get("BUSINESSVERTICAL"));
+		amountCodes.setAlwflexi(fm.isAlwFlexi());
+		amountCodes.setFinbranch(fm.getFinBranch());
+		amountCodes.setEntitycode(fm.getEntityCode());
 
 		if (amountCodes.getPftChg().compareTo(BigDecimal.ZERO) == 0) {
 			return null;
@@ -476,41 +413,31 @@ public class ChangeGraceEndService extends ServiceHelper {
 
 		aeEvent.setPostDate(valueDate);
 		aeEvent.setCustAppDate(valueDate);
-		aeEvent.setFinType(finMain.getFinType());
+		aeEvent.setFinType(fm.getFinType());
 
 		// TODO : Need to validate
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
 
-		long accountingID = getAccountingID(finMain, AccountEventConstants.ACCEVENT_SCDCHG);
-		if (accountingID == Long.MIN_VALUE) {
+		Long accountingID = getAccountingID(fm, AccountEventConstants.ACCEVENT_SCDCHG);
+		if (accountingID == null || accountingID == Long.MIN_VALUE) {
 			return null;
 		} else {
 			aeEvent.getAcSetIDList().add(accountingID);
 		}
 
 		//Postings Process and save all postings related to finance for one time accounts update
-		aeEvent = postAccountingEOD(aeEvent);
+		postAccountingEOD(aeEvent);
 
-		finSchdData.setPftChg(amountCodes.getPftChg());
+		fsd.setPftChg(amountCodes.getPftChg());
 		aeEvent.getReturnDataSet();
 
 		return aeEvent;
 	}
 
-	/**
-	 * Method for fetching Finance Schedule Data based on FinReference
-	 * 
-	 * @param finRef
-	 * @param type
-	 * @return
-	 */
-	public FinScheduleData prepareFinScheduleData(FinEODEvent finEODEvent) {
-
+	private FinScheduleData prepareFinScheduleData(FinEODEvent finEODEvent) {
 		FinScheduleData finSchData = new FinScheduleData();
-
-		Cloner finEODCloner = new Cloner();
-		FinEODEvent finEODEvt = finEODCloner.deepClone(finEODEvent);
+		FinEODEvent finEODEvt = finEODEvent.copyEntity();
 
 		String finRef = finEODEvt.getFinanceMain().getFinReference();
 		finSchData.setFinReference(finRef);
@@ -518,39 +445,40 @@ public class ChangeGraceEndService extends ServiceHelper {
 		finSchData.setFinanceMain(finEODEvt.getFinanceMain());
 		finSchData.setFinanceType(finEODEvt.getFinType());
 		finSchData.setFinanceScheduleDetails(finEODEvt.getFinanceScheduleDetails());
-		//finSchData.setSubventionDetail(finEODEvt.getSubventionDetail());
 
-		List<RepayInstruction> repayInstructions = getRepayInstructionDAO()
-				.getRepayInstrEOD(finSchData.getFinReference());
+		String finReference = finSchData.getFinReference();
+		List<RepayInstruction> repayInstructions = repayInstructionDAO.getRepayInstrEOD(finReference);
 
-		Cloner rpyInstCloner = new Cloner();
-		finEODEvent.setOrgRepayInsts(rpyInstCloner.deepClone(repayInstructions));
+		List<RepayInstruction> repayIns = new ArrayList<>();
+		for (RepayInstruction repay : repayIns) {
+			repayIns.add(repay.copyEntity());
+		}
+
+		finEODEvent.setOrgRepayInsts(repayIns);
 		finSchData.setRepayInstructions(repayInstructions);
 
-		// Finance Disbursement Details
-		List<FinanceDisbursement> finDisbDetails = getFinanceDisbursementDAO()
-				.getFinanceDisbursementDetails(finSchData.getFinReference(), "", false);
+		List<FinanceDisbursement> fd = financeDisbursementDAO.getFinanceDisbursementDetails(finReference, "", false);
 
-		finSchData.setDisbursementDetails(finDisbDetails);
-		finEODEvent.setFinanceDisbursements(finDisbDetails);
-
-		finEODCloner = null;
-		rpyInstCloner = null;
+		finSchData.setDisbursementDetails(fd);
+		finEODEvent.setFinanceDisbursements(fd);
 
 		return finSchData;
 	}
 
-	/**
-	 * 
-	 * @param financeMain
-	 * @return
-	 */
 	private List<FinServiceInstruction> getFinServiceInstruction(FinScheduleData finScheduleData) {
 
 		FinServiceInstruction finServInst = new FinServiceInstruction();
 		List<FinServiceInstruction> finServInstList = new ArrayList<FinServiceInstruction>();
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		EventProperties eventProperties = financeMain.getEventProperties();
+
+		Date appDate = null;
+		if (eventProperties.isParameterLoaded()) {
+			appDate = eventProperties.getAppDate();
+		} else {
+			appDate = SysParamUtil.getAppDate();
+		}
 
 		finServInst.setFinReference(financeMain.getFinReference());
 		finServInst.setFinEvent(FinanceConstants.FINSER_EVENT_CHGGRCEND);
@@ -560,10 +488,11 @@ public class ChangeGraceEndService extends ServiceHelper {
 		finServInst.setGrcCpzFrq(financeMain.getGrcCpzFrq());
 		finServInst.setGrcRvwFrq(financeMain.getGrcPftRvwFrq());
 		finServInst.setNextGrcRepayDate(financeMain.getNextGrcPftDate());
-		finServInst.setSystemDate(DateUtility.getSysDate());
-		finServInst.setAppDate(SysParamUtil.getAppDate());
-		finServInst.setMakerAppDate(SysParamUtil.getAppDate());
-		finServInst.setMakerSysDate(DateUtility.getSysDate());
+		Date sysDate = DateUtil.getSysDate();
+		finServInst.setSystemDate(sysDate);
+		finServInst.setAppDate(appDate);
+		finServInst.setMakerAppDate(appDate);
+		finServInst.setMakerSysDate(sysDate);
 		finServInst.setMaker(999); // EOD
 
 		// PftChg is the POST AMOUNT in Posting entries 
@@ -572,8 +501,6 @@ public class ChangeGraceEndService extends ServiceHelper {
 		finServInstList.add(finServInst);
 		return finServInstList;
 	}
-
-	// setters / getters
 
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;

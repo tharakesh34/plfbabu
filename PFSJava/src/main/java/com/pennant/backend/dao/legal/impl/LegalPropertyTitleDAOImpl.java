@@ -49,7 +49,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>LegalPropertyTitle</code> with set of CRUD operations.
  */
 public class LegalPropertyTitleDAOImpl extends SequenceDao<LegalPropertyTitle> implements LegalPropertyTitleDAO {
-	private static Logger logger = Logger.getLogger(LegalPropertyTitleDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LegalPropertyTitleDAOImpl.class);
 
 	public LegalPropertyTitleDAOImpl() {
 		super();
@@ -179,8 +180,8 @@ public class LegalPropertyTitleDAOImpl extends SequenceDao<LegalPropertyTitle> i
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalPropertyTitle.getId() == Long.MIN_VALUE) {
-			legalPropertyTitle.setId(getNextId("SeqLegalPropertyTitle"));
-			logger.debug("get NextID:" + legalPropertyTitle.getId());
+			legalPropertyTitle.setId(getNextValue("SeqLegalPropertyTitle"));
+			logger.debug("get NextValue:" + legalPropertyTitle.getId());
 		}
 
 		// Execute the SQL, binding the arguments.

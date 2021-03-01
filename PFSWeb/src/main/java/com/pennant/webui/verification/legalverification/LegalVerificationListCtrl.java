@@ -2,7 +2,8 @@ package com.pennant.webui.verification.legalverification;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -36,7 +37,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(LegalVerificationListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LegalVerificationListCtrl.class);
 
 	protected Window window_LegalVerification;
 	protected Borderlayout borderLayout_LegalVerificationList;

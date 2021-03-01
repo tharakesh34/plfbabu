@@ -8,7 +8,8 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.accounts.AccountsDAO;
@@ -22,7 +23,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
 public class CustomerAccountService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
-	private Logger logger = Logger.getLogger(CustomerAccountService.class);
+	private Logger logger = LogManager.getLogger(CustomerAccountService.class);
 
 	private AccountsDAO accountsDAO;
 	private AccountsHistoryDAO accountsHistoryDAO;

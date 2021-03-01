@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,7 +22,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 
 public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements DealerGroupDAO {
 
-	private static Logger logger = Logger.getLogger(DealerGroupDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DealerGroupDAOImpl.class);
 
 	public DealerGroupDAOImpl() {
 		super();

@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,7 +27,7 @@ import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
 public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpenseDetail>
 		implements IncomeExpenseDetailService {
-	private static final Logger logger = Logger.getLogger(IncomeExpenseDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(IncomeExpenseDetailServiceImpl.class);
 
 	@Autowired
 	protected IncomeExpenseHeaderDAO incomeExpenseHeaderDAO;

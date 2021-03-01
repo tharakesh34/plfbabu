@@ -1,6 +1,7 @@
 package com.pennanttech.pff.settlement.dao;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -12,7 +13,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.settlementprocess.model.SettlementProcess;
 
 public class SettlementProcessDAOImpl extends SequenceDao<SettlementProcess> implements SettlementProcessDAO {
-	private static Logger logger = Logger.getLogger(SettlementProcessDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SettlementProcessDAOImpl.class);
 
 	public SettlementProcessDAOImpl() {
 		super();

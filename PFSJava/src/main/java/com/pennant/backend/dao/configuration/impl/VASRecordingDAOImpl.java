@@ -43,17 +43,16 @@
 package com.pennant.backend.dao.configuration.impl;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -76,7 +75,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRecordingDAO {
-	private static Logger logger = Logger.getLogger(VASRecordingDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(VASRecordingDAOImpl.class);
 
 	public VASRecordingDAOImpl() {
 		super();
@@ -204,8 +203,6 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	 */
 	@Override
 	public List<VASRecording> getVASRecordingsByLinkRef(String primaryLinkRef, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where PrimaryLinkRef = ?");
 
@@ -213,20 +210,10 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, primaryLinkRef);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, primaryLinkRef);
+		}, rowMapper);
 	}
 
 	/**

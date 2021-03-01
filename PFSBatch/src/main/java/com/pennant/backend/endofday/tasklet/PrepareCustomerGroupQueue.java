@@ -10,9 +10,9 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class PrepareCustomerGroupQueue implements Tasklet {
@@ -22,8 +22,10 @@ public class PrepareCustomerGroupQueue implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		Date valueDate = SysParamUtil.getAppValueDate();
+		Date valueDate = EODUtil.getDate("APP_VALUEDATE", context);
+
 		logger.info("START Prepare Customer Groups On {}", valueDate);
+
 		BatchUtil.setExecutionStatus(context, StepUtil.PREPARE_CUSTOMER_GROUP_QUEUE);
 
 		/* Delete the CustomerGroupQueuing data */

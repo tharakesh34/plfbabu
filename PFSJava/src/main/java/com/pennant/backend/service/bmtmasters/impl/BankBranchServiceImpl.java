@@ -44,7 +44,8 @@ package com.pennant.backend.service.bmtmasters.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -72,7 +73,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class BankBranchServiceImpl extends GenericService<BankBranch> implements BankBranchService {
-	private static final Logger logger = Logger.getLogger(BankBranchServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(BankBranchServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BankBranchDAO bankBranchDAO;

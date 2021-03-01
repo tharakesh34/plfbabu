@@ -15,7 +15,8 @@ package com.pennant.backend.dao.receiptUpload;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -29,7 +30,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ProjectedRUDAOImpl extends BasicDao<ReceiptUploadQueuing> implements ProjectedRUDAO {
-	private static Logger logger = Logger.getLogger(ProjectedRUDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ProjectedRUDAOImpl.class);
 
 	private static final String UPDATE_SQL = "UPDATE ReceiptUploadQueuing set ThreadId = :ThreadId Where ThreadId = :AcThreadId";
 

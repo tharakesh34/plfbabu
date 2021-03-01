@@ -55,7 +55,8 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -224,7 +225,7 @@ import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
-	private static final Logger logger = Logger.getLogger(GenericFinanceDetailService.class);
+	private static final Logger logger = LogManager.getLogger(GenericFinanceDetailService.class);
 
 	protected AuditHeaderDAO auditHeaderDAO;
 	protected CustomerStatusCodeDAO customerStatusCodeDAO;
@@ -307,7 +308,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected QueryDetailService queryDetailService;
 	protected FeeTypeDAO feeTypeDAO;
 	protected ReceiptCalculator receiptCalculator;
-	protected RuleExecutionUtil ruleExecutionUtil;
 	protected RuleDAO ruleDAO;
 	protected CovenantsService covenantsService;
 	protected FinOptionService finOptionService;
@@ -2078,7 +2078,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			if (doPostings) {
 				aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 			} else {
-				aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
+				engineExecution.getAccEngineExecResults(aeEvent);
 			}
 
 			datasetList.addAll(aeEvent.getReturnDataSet());
@@ -2172,7 +2172,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		// If No Rule Sets added against stage, no action to be done
-		if (getRuleExecutionUtil() == null || getRuleDAO() == null || CollectionUtils.isEmpty(stageAccRuleIdList)) {
+		if (getRuleDAO() == null || CollectionUtils.isEmpty(stageAccRuleIdList)) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
@@ -2196,7 +2196,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		for (Long stageRuleId : stageAccRuleIdList) {
 			Rule rule = getRuleDAO().getRuleByID(stageRuleId, "");
 			if (rule != null) {
-				accountSetId = (Integer) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executeMap,
+				accountSetId = (Integer) RuleExecutionUtil.executeRule(rule.getSQLRule(), executeMap,
 						finMain.getFinCcy(), RuleReturnType.INTEGER);
 				if (accountSetId <= 0) {
 					continue;
@@ -2249,7 +2249,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					}
 				}
 			}
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+			engineExecution.getAccEngineExecResults(aeEvent);
 			newStageAcEntries = aeEvent.getReturnDataSet();
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -2405,10 +2405,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 */
 	protected void cancelStageAccounting(String finReference, String finEvent) {
 
-		List<Long> excdTranIdList = getFinStageAccountingLogDAO().getLinkedTranIdList(finReference, finEvent);
-		if (excdTranIdList != null && !excdTranIdList.isEmpty()) {
+		List<Long> excdTranIdList = finStageAccountingLogDAO.getLinkedTranIdList(finReference, finEvent);
+		if (CollectionUtils.isNotEmpty(excdTranIdList)) {
 			for (Long linkedTranId : excdTranIdList) {
-				getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
+				postingsPreparationUtil.postReversalsByLinkedTranID(linkedTranId);
 				logger.debug("Reverse Transaction Success for Transaction ID : " + linkedTranId);
 			}
 		}
@@ -3031,16 +3031,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return taxes;
 	}
 
-	/**
-	 * Method for Creating Invoice Transaction details
-	 * 
-	 * @param advise
-	 * @param aeEvent
-	 * @param feeType
-	 * @param financeDetail
-	 */
-	private void createGSTInvoiceForBounce(FinanceMain financeMain, ManualAdvise advise, AEEvent aeEvent,
-			FeeType feeType, TaxHeader taxHeader) {
+	private void createGSTInvoiceForBounce(FinanceMain fm, ManualAdvise ma, AEEvent aeEvent, FeeType feeType,
+			TaxHeader taxHeader) {
 
 		long linkedTranID = aeEvent.getLinkedTranId();
 
@@ -3052,17 +3044,16 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			return;
 		}
 
-		String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
-		if (!StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE)) {
 			return;
 		}
 
-		advise.setDueCreation(true);
+		ma.setDueCreation(true);
 
 		ManualAdviseMovements advMovement = new ManualAdviseMovements();
-		advMovement.setFeeTypeCode(advise.getFeeTypeCode());
-		advMovement.setFeeTypeDesc(advise.getFeeTypeDesc());
-		advMovement.setMovementAmount(advise.getAdviseAmount());
+		advMovement.setFeeTypeCode(ma.getFeeTypeCode());
+		advMovement.setFeeTypeDesc(ma.getFeeTypeDesc());
+		advMovement.setMovementAmount(ma.getAdviseAmount());
 
 		advMovement.setFeeTypeCode(feeType.getFeeTypeCode());
 		advMovement.setFeeTypeDesc(feeType.getFeeTypeDesc());
@@ -3071,7 +3062,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		advMovement.setStatus("D");
 
 		Map<String, Object> dataMap = aeEvent.getDataMap();
-		advMovement.setPaidAmount(advise.getAdviseAmount());
+		advMovement.setPaidAmount(ma.getAdviseAmount());
 		advMovement.setTaxHeader(taxHeader);
 
 		List<Taxes> taxDetails = taxHeader.getTaxDetails();
@@ -3082,11 +3073,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		// GST Invoice data resetting based on Accounting Process
 		if (gstAmount.compareTo(BigDecimal.ZERO) > 0) {
-			List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>();
+			List<ManualAdviseMovements> advMovements = new ArrayList<>();
 			advMovements.add(advMovement);
 
 			FinanceDetail financeDetail = new FinanceDetail();
-			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+			financeDetail.getFinScheduleData().setFinanceMain(fm);
 
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setLinkedTranId(aeEvent.getLinkedTranId());
@@ -3099,16 +3090,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			Long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
 
 			// saving Due tax advice details
-			saveDueTaxDetail(dataMap, feeType.getTaxComponent(), advise.getAdviseID(), invoiceID);
+			saveDueTaxDetail(dataMap, feeType.getTaxComponent(), ma.getAdviseID(), invoiceID);
 		}
 
 	}
 
-	/**
-	 * Saving Due tax advice details
-	 * 
-	 * @param advise
-	 */
 	private void saveDueTaxDetail(Map<String, Object> dataMap, String taxType, long adviseId, Long invoiceID) {
 		AdviseDueTaxDetail detail = new AdviseDueTaxDetail();
 
@@ -3117,52 +3103,42 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		detail.setTaxType(taxType);
 		detail.setInvoiceID(invoiceID);
 
+		detail.setAmount(BigDecimal.ZERO);
+		detail.setCGST(BigDecimal.ZERO);
+		detail.setSGST(BigDecimal.ZERO);
+		detail.setIGST(BigDecimal.ZERO);
+		detail.setUGST(BigDecimal.ZERO);
+		detail.setCESS(BigDecimal.ZERO);
+
 		if (dataMap.containsKey("bounceCharge")) {
 			detail.setAmount(new BigDecimal(dataMap.get("bounceCharge").toString()));
-		} else {
-			detail.setAmount(BigDecimal.ZERO);
 		}
 
 		if (dataMap.containsKey("bounceCharge_CGST")) {
 			detail.setCGST(new BigDecimal(dataMap.get("bounceCharge_CGST").toString()));
-		} else {
-			detail.setCGST(BigDecimal.ZERO);
 		}
 
 		if (dataMap.containsKey("bounceCharge_SGST")) {
 			detail.setSGST(new BigDecimal(dataMap.get("bounceCharge_SGST").toString()));
-		} else {
-			detail.setSGST(BigDecimal.ZERO);
 		}
 
 		if (dataMap.containsKey("bounceCharge_IGST")) {
 			detail.setIGST(new BigDecimal(dataMap.get("bounceCharge_IGST").toString()));
-		} else {
-			detail.setIGST(BigDecimal.ZERO);
 		}
 
 		if (dataMap.containsKey("bounceCharge_UGST")) {
 			detail.setUGST(new BigDecimal(dataMap.get("bounceCharge_UGST").toString()));
-		} else {
-			detail.setUGST(BigDecimal.ZERO);
 		}
 
 		if (dataMap.containsKey("bounceCharge_CESS")) {
 			detail.setCESS(new BigDecimal(dataMap.get("bounceCharge_CESS").toString()));
-		} else {
-			detail.setCESS(BigDecimal.ZERO);
 		}
 
 		detail.setTotalGST(detail.getCGST().add(detail.getSGST()).add(detail.getIGST()).add(detail.getUGST())
 				.add(detail.getCESS()));
 
-		// Saving Tax Details
 		this.manualAdviseDAO.saveDueTaxDetail(detail);
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public void setCustomerStatusCodeDAO(CustomerStatusCodeDAO customerStatusCodeDAO) {
 		this.customerStatusCodeDAO = customerStatusCodeDAO;
@@ -3785,14 +3761,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public RuleDAO getRuleDAO() {

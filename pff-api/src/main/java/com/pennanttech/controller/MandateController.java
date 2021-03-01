@@ -8,7 +8,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -46,7 +47,7 @@ import com.pennanttech.ws.model.mandate.MandateDetial;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class MandateController {
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	private MandateService mandateService;
 	private BankBranchService bankBranchService;

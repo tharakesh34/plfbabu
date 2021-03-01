@@ -3,7 +3,8 @@ package com.pennanttech.pff.notifications.dao;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -17,7 +18,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SystemNotificationsDAOImpl extends SequenceDao<SystemNotifications> implements SystemNotificationsDAO {
 
-	private static Logger logger = Logger.getLogger(SystemNotificationsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SystemNotificationsDAOImpl.class);
 
 	public SystemNotificationsDAOImpl() {
 		super();

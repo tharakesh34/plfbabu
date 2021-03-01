@@ -4,7 +4,8 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -22,7 +23,7 @@ import com.pennanttech.pff.external.CersaiProcess;
 
 
 public class AbstractCersaiProcess extends AbstractInterface implements CersaiProcess {
-	protected final Logger logger = Logger.getLogger(getClass());
+	protected final Logger logger = LogManager.getLogger(getClass());
 
 	public AbstractCersaiProcess() {
 		super();

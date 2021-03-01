@@ -45,7 +45,8 @@ package com.pennant.webui.finance.enquiry;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -64,7 +65,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
  */
 public class EligibilityRuleResultCtrl extends GFCBaseListCtrl<EligibilityRule> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(EligibilityRuleResultCtrl.class);
+	private static final Logger logger = LogManager.getLogger(EligibilityRuleResultCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

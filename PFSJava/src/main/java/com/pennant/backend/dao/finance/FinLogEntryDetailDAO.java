@@ -18,4 +18,6 @@ public interface FinLogEntryDetailDAO {
 	Date getMaxPostDate(String finReference);
 
 	long getPrevSchedLogKey(String finReference, Date date);
+
+	Date getMaxPostDateByRef(String finReference);
 }

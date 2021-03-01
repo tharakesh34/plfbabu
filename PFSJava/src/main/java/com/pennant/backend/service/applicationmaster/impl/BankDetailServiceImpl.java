@@ -43,7 +43,8 @@
 
 package com.pennant.backend.service.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -74,7 +75,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class BankDetailServiceImpl extends GenericService<BankDetail> implements BankDetailService {
 
-	private static Logger logger = Logger.getLogger(BankDetailServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(BankDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BankDetailDAO bankDetailDAO;

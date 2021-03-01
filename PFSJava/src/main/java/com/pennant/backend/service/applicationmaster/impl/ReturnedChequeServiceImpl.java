@@ -2,7 +2,8 @@ package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -25,7 +26,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDetails> implements ReturnedChequeService {
 
-	private static Logger logger = Logger.getLogger(ReturnedChequeServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(ReturnedChequeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ReturnedChequeDAO returnedChequeDAO;

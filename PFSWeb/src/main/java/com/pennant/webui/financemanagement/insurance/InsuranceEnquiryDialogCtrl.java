@@ -5,7 +5,8 @@ import java.util.Map;
 
 import javax.script.ScriptException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
@@ -42,7 +43,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = Logger.getLogger(InsuranceEnquiryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(InsuranceEnquiryDialogCtrl.class);
 
 	protected Window window_InsuranceEnquiryDialog;
 	protected Borderlayout borderlayout_Receipt;

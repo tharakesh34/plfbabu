@@ -1,6 +1,7 @@
 package com.pennant.webui.dedup.dedupparm;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.customermasters.Customer;
@@ -8,8 +9,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FetchBlackListCustomerAdditionalDetails {
-
-	private static final Logger logger = Logger.getLogger(FetchBlackListCustomerAdditionalDetails.class);
+	private static final Logger logger = LogManager.getLogger(FetchBlackListCustomerAdditionalDetails.class);
 
 	/**
 	 * Prepare Black List Customer Object Data

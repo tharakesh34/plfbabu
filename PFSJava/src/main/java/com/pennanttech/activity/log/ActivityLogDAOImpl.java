@@ -2,7 +2,8 @@ package com.pennanttech.activity.log;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -11,7 +12,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ActivityLogDAOImpl extends BasicDao<Activity> implements ActivityLogDAO {
-	private static Logger logger = Logger.getLogger(ActivityLogDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ActivityLogDAOImpl.class);
 
 	public ActivityLogDAOImpl() {
 		super();

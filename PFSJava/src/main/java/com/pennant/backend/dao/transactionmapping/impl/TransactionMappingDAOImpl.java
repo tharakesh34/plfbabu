@@ -2,7 +2,8 @@ package com.pennant.backend.dao.transactionmapping.impl;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -23,7 +24,7 @@ import com.pennanttech.pff.mmfl.cd.model.TransactionMapping;
 
 public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> implements TransactionMappingDAO {
 
-	private static final Logger logger = Logger.getLogger(TransactionMappingDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(TransactionMappingDAOImpl.class);
 
 	@Override
 	public String save(TransactionMapping mapping, TableType tableType) {

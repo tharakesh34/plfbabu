@@ -50,7 +50,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -84,7 +85,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
  * 
  */
 public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements SecurityUserDAO {
-	private static Logger logger = Logger.getLogger(SecurityUserDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityUserDAOImpl.class);
 
 	public SecurityUserDAOImpl() {
 		super();
@@ -101,46 +102,40 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	 */
 	@Override
 	public SecurityUser getSecurityUserById(final long usrid, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSecurityUserQuery(type);
-		sql.append(" where usrid =:usrid");
+		sql.append(" where usrid = ?");
 
 		logger.trace(Literal.SQL + sql);
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("usrid", usrid);
-		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
-
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { usrid }, (rs, rowNum) -> {
+				return getTypeRowMapper(rs, type);
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("Records are not found in secusers{} for the user Id >> {} ", type, usrid);
 		}
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	//DE#374 :User Creation : After approving the user, work-flow before and after image values not coming properly in audit table.
 	private StringBuilder getSecurityUserQuery(String type) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("select UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile, UsrEmail");
-		sql.append(", UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, UsrAcExp, UsrAcExpDt");
-		sql.append(", UsrAcLocked, UsrLanguage, UsrDftAppId, UsrBranchCode, UsrDeptCode, UsrToken");
-		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType, UsrDftAppCode");
-		sql.append(", PwdExpDt, UserType,businessvertical, LDAPDomainName");
-
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile");
+		sql.append(", UsrEmail, UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits");
+		sql.append(", UsrAcExp, UsrAcExpDt, UsrAcLocked, UsrLanguage, UsrDftAppId, UsrBranchCode, UsrDeptCode");
+		sql.append(", UsrToken, UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType, UsrDftAppCode");
+		sql.append(", PwdExpDt, UserType, BusinessVertical, LdapDomainName");
+		
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", lovDescUsrDftAppCode, lovDescUsrDftAppCodeName, lovDescUsrDeptCodeName");
-			sql.append(
-					", lovDescUsrBranchCodeName, LovDescUsrLanguage, lovDescUsrDesg, businessVerticalCode,businessVerticalDesc");
-
+			sql.append(", LovDescUsrDftAppCode, LovDescUsrDftAppCodeName, LovDescUsrDeptCodeName");
+			sql.append(", LovDescUsrBranchCodeName, LovDescUsrLanguage, LovDescUsrDesg");
+			sql.append(", BusinessVerticalCode, BusinessVerticalDesc");
 		}
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId");
-
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" from secusers");
 		sql.append(StringUtils.trimToEmpty(type));
+
 		return sql;
 	}
 
@@ -155,23 +150,19 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	 */
 	@Override
 	public SecurityUser getSecurityUserByLogin(final String usrLogin, String type) {
-		logger.debug(Literal.ENTERING);
 		StringBuilder sql = getSecurityUserQuery(type);
-		sql.append(" where usrlogin =:usrlogin");
+		sql.append(" where usrlogin = ?");
 
 		logger.trace(Literal.SQL + sql);
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("usrlogin", usrLogin);
-
-		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
-
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { usrLogin }, (rs, rowNum) -> {
+				return getTypeRowMapper(rs, type);
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("Records are not found in secusers{} for the user Login >> {} ", type, usrLogin);
 		}
-		logger.debug(Literal.LEAVING);
+
 		return null;
 	}
 
@@ -235,8 +226,8 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	public long save(SecurityUser securityUser, String type) {
 		logger.debug(Literal.ENTERING);
 		if (securityUser.getId() == Long.MIN_VALUE) {
-			securityUser.setId(getNextId("SeqSecUsers"));
-			logger.debug("get NextID:" + securityUser.getId());
+			securityUser.setId(getNextValue("SeqSecUsers"));
+			logger.debug("get NextValue:" + securityUser.getId());
 		}
 
 		StringBuilder sql = new StringBuilder();
@@ -775,6 +766,62 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 			updateLockUser(userAccounts);
 			userAccounts.clear();
 		}
+	}
+
+	private SecurityUser getTypeRowMapper(ResultSet rs, String type) throws SQLException {
+		SecurityUser su = new SecurityUser();
+
+		su.setUsrID(rs.getLong("UsrID"));
+		su.setUsrLogin(rs.getString("UsrLogin"));
+		su.setUsrPwd(rs.getString("UsrPwd"));
+		su.setUserStaffID(rs.getString("UserStaffID"));
+		su.setUsrFName(rs.getString("UsrFName"));
+		su.setUsrMName(rs.getString("UsrMName"));
+		su.setUsrLName(rs.getString("UsrLName"));
+		su.setUsrMobile(rs.getString("UsrMobile"));
+		su.setUsrEmail(rs.getString("UsrEmail"));
+		su.setUsrEnabled(rs.getBoolean("UsrEnabled"));
+		su.setUsrCanSignonFrom(rs.getTimestamp("UsrCanSignonFrom"));
+		su.setUsrCanSignonTo(rs.getTimestamp("UsrCanSignonTo"));
+		su.setUsrCanOverrideLimits(rs.getBoolean("UsrCanOverrideLimits"));
+		su.setUsrAcExp(rs.getBoolean("UsrAcExp"));
+		su.setUsrAcExpDt(rs.getTimestamp("UsrAcExpDt"));
+		su.setUsrAcLocked(rs.getBoolean("UsrAcLocked"));
+		su.setUsrLanguage(rs.getString("UsrLanguage"));
+		su.setUsrDftAppId(rs.getLong("UsrDftAppId"));
+		su.setUsrBranchCode(rs.getString("UsrBranchCode"));
+		su.setUsrDeptCode(rs.getString("UsrDeptCode"));
+		su.setUsrToken(rs.getString("UsrToken"));
+		su.setUsrIsMultiBranch(rs.getBoolean("UsrIsMultiBranch"));
+		su.setUsrInvldLoginTries(rs.getInt("UsrInvldLoginTries"));
+		su.setUsrDesg(rs.getString("UsrDesg"));
+		su.setAuthType(rs.getString("AuthType"));
+		su.setUsrDftAppCode(rs.getString("UsrDftAppCode"));
+		su.setPwdExpDt(rs.getTimestamp("PwdExpDt"));
+		su.setUserType(rs.getString("UserType"));
+		su.setBusinessVertical(rs.getLong("BusinessVertical"));
+		su.setldapDomainName(rs.getString("LdapDomainName"));
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			su.setLovDescUsrDftAppCodeName(rs.getString("LovDescUsrDftAppCodeName"));
+			su.setLovDescUsrDeptCodeName(rs.getString("LovDescUsrDeptCodeName"));
+			su.setLovDescUsrBranchCodeName(rs.getString("LovDescUsrBranchCodeName"));
+			su.setLovDescUsrLanguage(rs.getString("LovDescUsrLanguage"));
+			su.setLovDescUsrDesg(rs.getString("LovDescUsrDesg"));
+			su.setBusinessVerticalCode(rs.getString("BusinessVerticalCode"));
+			su.setBusinessVerticalDesc(rs.getString("BusinessVerticalDesc"));
+		}
+		su.setVersion(rs.getInt("Version"));
+		su.setLastMntBy(rs.getLong("LastMntBy"));
+		su.setLastMntOn(rs.getTimestamp("LastMntOn"));
+		su.setRecordStatus(rs.getString("RecordStatus"));
+		su.setRoleCode(rs.getString("RoleCode"));
+		su.setNextRoleCode(rs.getString("NextRoleCode"));
+		su.setTaskId(rs.getString("TaskId"));
+		su.setNextTaskId(rs.getString("NextTaskId"));
+		su.setRecordType(rs.getString("RecordType"));
+		su.setWorkflowId(rs.getLong("WorkflowId"));
+
+		return su;
 	}
 
 }

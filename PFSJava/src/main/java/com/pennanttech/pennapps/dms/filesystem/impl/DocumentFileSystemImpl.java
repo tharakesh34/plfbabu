@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -45,29 +44,30 @@ public class DocumentFileSystemImpl implements DocumentFileSystem {
 		logger.debug("Writing Document to FS...");
 
 		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
-			if (externalDocumentManagementService != null) {
-				try {
-					dmsQueue.setDocUri(externalDocumentManagementService.store(dmsQueue));
-					return dmsQueue.getDocUri();
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-					dmsQueue.setErrorCode("DMS99");
-					dmsQueue.setErrorDesc(e.getMessage());
-					if (dmsQueue.getAttemptNum() >= 3) {
-						dmsQueue.setProcessingFlag(-1);
-					} else {
-						dmsQueue.setProcessingFlag(0);
-					}
-				} finally {
-					dmsQueue.setProcessingFlag(1);
-				}
-			} else {
-				if (ImplementationConstants.UPDATE_METADATA_IN_DMS) {
-					return null;
-				}
+			if (externalDocumentManagementService == null) {
 				storeDocIntoFileSystems(dmsQueue);
 				return dmsQueue.getDocUri();
 			}
+			try {
+				dmsQueue.setDocUri(externalDocumentManagementService.store(dmsQueue));
+				return dmsQueue.getDocUri();
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+				dmsQueue.setErrorCode("DMS99");
+				dmsQueue.setErrorDesc(e.getMessage());
+			} finally {
+				int incre = dmsQueue.getAttemptNum() + 1;
+				dmsQueue.setAttemptNum(incre);
+				if (dmsQueue.getAttemptNum() >= 5) {
+					dmsQueue.setProcessingFlag(-1);
+				} else {
+					dmsQueue.setProcessingFlag(0);
+				}
+			}
+		} else if (DMSStorage.EXTERNAL == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+			dmsQueue.setErrorCode("");
+			dmsQueue.setErrorDesc("");
+
 		}
 		logger.debug(Literal.LEAVING);
 		return dmsQueue.getDocUri();

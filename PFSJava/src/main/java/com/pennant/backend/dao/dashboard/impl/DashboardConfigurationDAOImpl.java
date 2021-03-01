@@ -42,16 +42,16 @@
  */
 package com.pennant.backend.dao.dashboard.impl;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -70,7 +70,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfiguration>
 		implements DashboardConfigurationDAO {
-	private static Logger logger = Logger.getLogger(DashboardConfigurationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DashboardConfigurationDAOImpl.class);
 
 	public DashboardConfigurationDAOImpl() {
 		super();
@@ -285,31 +285,38 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	 */
 	@Override
 	public List<DashboardPosition> getDashboardPositionsByUser(long userId) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("  UsrId, DashboardRef, DashboardCol, DashboardRow, DashboardColIndex");
+		sql.append(" from DashboardPositions");
+		sql.append(" Where UsrId = ?");
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("select UsrId, DashboardRef,");
-		sql.append(" DashboardCol, DashboardRow, DashboardColIndex from DashboardPositions");
-		sql.append(" where UsrId = :userId ORDER BY DashboardRef");
+		logger.trace(Literal.SQL, sql);
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("userId", userId);
+		List<DashboardPosition> dpList = this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, userId);
+		}, (rs, rowNum) -> {
+			DashboardPosition dp = new DashboardPosition();
 
-		RowMapper<DashboardPosition> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DashboardPosition.class);
+			dp.setDashboardRow(rs.getInt("DashboardRow"));
+			dp.setDashboardCol(rs.getInt("DashboardCol"));
+			dp.setDashboardRef(rs.getString("DashboardRef"));
+			dp.setDashboardColIndex(rs.getInt("DashboardColIndex"));
 
-		List<DashboardPosition> positions = new ArrayList<>();
+			return dp;
+		});
 
-		try {
-			positions = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+		return dpList.stream().sorted((dp1, dp2) -> compareTo(dp1.getDashboardRef(), dp2.getDashboardRef()))
+				.collect(Collectors.toList());
+	}
+
+	private int compareTo(String dashboardRef, String dashboardRef2) {
+		if (dashboardRef == null) {
+			return -1;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return positions;
+		if (dashboardRef2 == null) {
+			return 1;
+		}
+		return dashboardRef.compareTo(dashboardRef2);
 	}
 
 	/**
@@ -346,29 +353,39 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	 */
 	@Override
 	public List<DashboardConfiguration> getDashboardConfigurations(long userId) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DashboardCode, DashboardDesc, DashboardType");
+		sql.append(", Dimension, Caption, SubCaption, Query, Remarks, DrillDownChart, MultiSeries");
+		sql.append(", SeriesType, SeriesValues, FieldQuery, DataXML, AdtDataSource");
+		sql.append(" from DashboardConfiguration");
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("select DashboardCode, DashboardDesc, DashboardType,");
-		sql.append(" dimension, caption, subCaption, Query, remarks, DrillDownChart, multiSeries,");
-		sql.append(" SeriesType, SeriesValues, FieldQuery, DataXML, AdtDataSource");
-		sql.append(" from DashboardConfiguration ORDER BY DashboardDesc Asc");
-
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql);
-		RowMapper<DashboardConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DashboardConfiguration.class);
 
-		List<DashboardConfiguration> dashboards = new ArrayList<>();
+		List<DashboardConfiguration> dcList = this.jdbcOperations.query(sql.toString(), ps -> {
 
-		try {
-			dashboards = this.jdbcTemplate.query(sql.toString(), rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		}, (rs, rowNum) -> {
+			DashboardConfiguration dc = new DashboardConfiguration();
 
-		logger.debug(Literal.LEAVING);
-		return dashboards;
+			dc.setQuery(rs.getString("Query"));
+			dc.setDashboardDesc(rs.getString("DashboardDesc"));
+			dc.setDataXML(rs.getString("DataXML"));
+			dc.setRemarks(rs.getString("Remarks"));
+			dc.setSubCaption(rs.getString("SubCaption"));
+			dc.setDrillDownChart(rs.getBoolean("DrillDownChart"));
+			dc.setFieldQuery(rs.getString("FieldQuery"));
+			dc.setAdtDataSource(rs.getBoolean("AdtDataSource"));
+			dc.setMultiSeries(rs.getBoolean("MultiSeries"));
+			dc.setSeriesType(rs.getString("SeriesType"));
+			dc.setDimension(rs.getString("Dimension"));
+			dc.setCaption(rs.getString("Caption"));
+			dc.setDashboardType(rs.getString("DashboardType"));
+			dc.setSeriesValues(rs.getString("SeriesValues"));
+
+			return dc;
+		});
+
+		return dcList.stream().sorted((dc1, dc2) -> dc1.getDashboardDesc().compareTo(dc2.getDashboardDesc()))
+				.collect(Collectors.toList());
 	}
 
 	/**

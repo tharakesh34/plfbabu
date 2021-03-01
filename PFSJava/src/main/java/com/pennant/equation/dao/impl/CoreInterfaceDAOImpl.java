@@ -7,7 +7,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -59,9 +60,10 @@ import com.pennant.coreinterface.model.EquationTransactionCode;
 import com.pennant.coreinterface.model.IncomeAccountTransaction;
 import com.pennant.equation.dao.CoreInterfaceDAO;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements CoreInterfaceDAO {
-	private static Logger logger = Logger.getLogger(CoreInterfaceDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CoreInterfaceDAOImpl.class);
 	private NamedParameterJdbcTemplate auditJdbcTemplate;
 
 	public CoreInterfaceDAOImpl() {
@@ -1939,33 +1941,43 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 		}
 	}
 
-	/**
-	 * Method for fetching Currency Details
-	 */
 	@Override
 	public List<TransactionEntry> fetchTransactionEntryDetails(long accountSetID) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AccountSetid, TransOrder, TransDesc, Debitcredit, ShadowPosting, Account, AccountType");
+		sql.append(", AccountBranch, AccountSubHeadRule, TranscationCode, RvsTransactionCode, AmountRule");
+		sql.append(", FeeCode, ChargeType, EntryByInvestment, OpenNewFinAc");
+		sql.append(" from RMTTransactionEntry");
+		sql.append(" Where AccountSetid = ? and Debitcredit = ?");
 
-		TransactionEntry transactionEntry = new TransactionEntry();
-		transactionEntry.setAccountSetid(accountSetID);
-		StringBuilder selectSql = new StringBuilder("Select AccountSetid, TransOrder, TransDesc,");
-		selectSql.append(" Debitcredit, ShadowPosting, Account, AccountType, AccountBranch, AccountSubHeadRule,");
-		selectSql.append(" TranscationCode, RvsTransactionCode, AmountRule, FeeCode, ChargeType, EntryByInvestment,  ");
-		selectSql.append(
-				" OpenNewFinAc  From RMTTransactionEntry Where AccountSetid = :AccountSetid and Debitcredit='C' ");
+		logger.trace(Literal.SQL, sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, accountSetID);
+			ps.setString(index++, "C");
+		}, (rs, rowNum) -> {
+			TransactionEntry te = new TransactionEntry();
 
-		logger.debug("Leaving");
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		}
+			te.setAccountSetid(rs.getLong("AccountSetid"));
+			te.setTransOrder(rs.getInt("TransOrder"));
+			te.setTransDesc(rs.getString("TransDesc"));
+			te.setDebitcredit(rs.getString("Debitcredit"));
+			te.setShadowPosting(rs.getBoolean("ShadowPosting"));
+			te.setAccount(rs.getString("Account"));
+			te.setAccountType(rs.getString("AccountType"));
+			te.setAccountBranch(rs.getString("AccountBranch"));
+			te.setAccountSubHeadRule(rs.getString("AccountSubHeadRule"));
+			te.setTranscationCode(rs.getString("TranscationCode"));
+			te.setRvsTransactionCode(rs.getString("RvsTransactionCode"));
+			te.setAmountRule(rs.getString("AmountRule"));
+			te.setFeeCode(rs.getString("FeeCode"));
+			te.setChargeType(rs.getString("ChargeType"));
+			te.setEntryByInvestment(rs.getBoolean("EntryByInvestment"));
+			te.setOpenNewFinAc(rs.getBoolean("OpenNewFinAc"));
+
+			return te;
+		});
 	}
 
 	/**

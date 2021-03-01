@@ -43,7 +43,8 @@
 package com.pennant.backend.service.rmtmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>GSTRate</b>.<br>
  */
 public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRateService {
-	private static final Logger logger = Logger.getLogger(GSTRateServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(GSTRateServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private GSTRateDAO gstRateDAO;

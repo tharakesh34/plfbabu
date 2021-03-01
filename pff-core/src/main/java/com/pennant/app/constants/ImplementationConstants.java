@@ -200,7 +200,7 @@ public class ImplementationConstants {
 		ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE = getValueAsBoolean(extensions,
 				"ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE", false);
 		DEFAULT_VAS_MODE_OF_PAYMENT = getValueAsBoolean(extensions, "DEFAULT_VAS_MODE_OF_PAYMENT", false);
-
+		SUSP_CHECK_REQ = getValueAsBoolean(extensions, "SUSP_CHECK_REQ", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -222,9 +222,10 @@ public class ImplementationConstants {
 		GST_SCHD_CAL_ON = getValueAsString(extensions, "GST_SCHD_CAL_ON", "I");
 		ALLOW_AMOIUNT_INTEGRAL_PART = getValueAsString(extensions, "ALLOW_AMOIUNT_INTEGRAL_PART", "Y");
 
+		BASE_CCY = getValueAsString(extensions, "BASE_CCY", "INR");
 		PRESENTMENT_EXPORT_STATUS_MIN_LENGTH = getValueAsInt(extensions, "PRESENTMENT_EXPORT_STATUS_MIN_LENGTH", 1);
 		PRESENTMENT_EXPORT_STATUS_MAX_LENGTH = getValueAsInt(extensions, "PRESENTMENT_EXPORT_STATUS_MAX_LENGTH", 1);
-
+		BASE_CCY_EDT_FIELD = 2;
 		// FIXME HL >>
 
 		//<<
@@ -257,9 +258,9 @@ public class ImplementationConstants {
 
 	}
 
-	public static boolean ALLOW_MULTI_CCY = false;
-	public static String BASE_CCY = "INR";
-	public static int BASE_CCY_EDT_FIELD = 2;
+	public static boolean ALLOW_MULTI_CCY;
+	public static String BASE_CCY;
+	public static int BASE_CCY_EDT_FIELD;
 	public static boolean IMPLEMENTATION_CONVENTIONAL;
 	public static boolean IMPLEMENTATION_ISLAMIC;
 	public static boolean ALLOW_FINACTYPES;
@@ -423,6 +424,7 @@ public class ImplementationConstants {
 	public static boolean DEFAULT_VAS_MODE_OF_PAYMENT;
 	public static boolean PRESENTMENT_EXTRACT_DEALER_MAN;
 	public static boolean ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE;
+	public static boolean SUSP_CHECK_REQ;
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static
 	 * boolean ALLOW_LV_INITIATION_LOS; public static boolean ALLOW_RCU_INITIATION_LOS;

@@ -61,7 +61,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.spring.SpringUtil;
@@ -110,7 +111,7 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
  */
 public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHeader> {
 	private static final long serialVersionUID = 3184249234920071313L;
-	private static final Logger logger = Logger.getLogger(ReceiptUploadApprovalDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptUploadApprovalDialogCtrl.class);
 
 	protected Window window_ReceiptUploadApproval; // autoWired
 

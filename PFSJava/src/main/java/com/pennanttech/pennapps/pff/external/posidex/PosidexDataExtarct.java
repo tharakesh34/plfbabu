@@ -13,7 +13,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -38,7 +39,7 @@ import com.pennanttech.pff.model.external.posidex.PosidexCustomerAddress;
 import com.pennanttech.pff.model.external.posidex.PosidexCustomerLoan;
 
 public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexProcess {
-	private static final Logger logger = Logger.getLogger(PosidexDataExtarct.class);
+	private static final Logger logger = LogManager.getLogger(PosidexDataExtarct.class);
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("POSIDEX_CUSTOMER_UPDATE_REQUEST");
 
 	private Date lastRunDate;

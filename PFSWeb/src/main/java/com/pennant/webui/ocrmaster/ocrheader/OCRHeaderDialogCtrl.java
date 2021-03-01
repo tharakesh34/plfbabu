@@ -9,7 +9,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -51,8 +52,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
+	private static final Logger logger = LogManager.getLogger(OCRHeaderDialogCtrl.class);
 	private static final long serialVersionUID = -210929672381582779L;
-	private static final Logger logger = Logger.getLogger(OCRHeaderDialogCtrl.class);
 	protected Window window_OCRDialog;
 
 	protected Uppercasebox ocrID;

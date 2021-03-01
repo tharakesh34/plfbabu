@@ -3,7 +3,8 @@ package com.pennant.backend.service.systemmasters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -24,7 +25,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService {
-	private static final Logger logger = Logger.getLogger(PMAYServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PMAYServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PMAYDAO pmayDAO;

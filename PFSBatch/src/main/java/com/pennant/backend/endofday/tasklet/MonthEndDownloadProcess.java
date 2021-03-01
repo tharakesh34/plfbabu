@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -21,9 +22,11 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.SubHeadRule;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class MonthEndDownloadProcess implements Tasklet {
-	private Logger logger = Logger.getLogger(MonthEndDownloadProcess.class);
+	private Logger logger = LogManager.getLogger(MonthEndDownloadProcess.class);
 
 	private DailyDownloadInterfaceService dailyDownloadInterfaceService;
 	private AccountNumberUtil accountNumberUtil;
@@ -37,21 +40,21 @@ public class MonthEndDownloadProcess implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		dateValueDate = DateUtility.getAppValueDate();
+		dateValueDate = EODUtil.getDate("APP_VALUEDATE", context);
 
-		logger.debug("START: Month End Download Details for Value Date: " + DateUtility.addDays(dateValueDate, -1));
+		logger.debug("START: Month End Download Details for Value Date: {}", DateUtil.addDays(dateValueDate, -1));
 
 		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();
 		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 
 		try {
-			List<FinanceType> financeTypeList = getDailyDownloadInterfaceService().fetchFinanceTypeDetails();
+			List<FinanceType> financeTypeList = dailyDownloadInterfaceService.fetchFinanceTypeDetails();
 			if (financeTypeList != null) {
 
 				List<FinanceProfitDetail> updateFinPftDetailList = processIncomeAccountDetails(financeTypeList);
 
 				if (!updateFinPftDetailList.isEmpty()) {
-					getDailyDownloadInterfaceService().updateFinProfitIncomeAccounts(updateFinPftDetailList);
+					dailyDownloadInterfaceService.updateFinProfitIncomeAccounts(updateFinPftDetailList);
 				}
 			}
 
@@ -79,7 +82,7 @@ public class MonthEndDownloadProcess implements Tasklet {
 			if (eventCodes.containsKey(accSetID)) {
 				transactionEntries = eventCodes.get(accSetID);
 			} else {
-				transactionEntries = getDailyDownloadInterfaceService().fetchTransactionEntryDetails(accSetID);
+				transactionEntries = dailyDownloadInterfaceService.fetchTransactionEntryDetails(accSetID);
 				eventCodes.put(accSetID, transactionEntries);
 			}
 			if (transactionEntries != null) {

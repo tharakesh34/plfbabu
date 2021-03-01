@@ -64,7 +64,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
@@ -105,7 +106,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.rits.cloning.Cloner;
 
 public class ScheduleCalculator {
-	private static final Logger logger = Logger.getLogger(ScheduleCalculator.class);
+	private static final Logger logger = LogManager.getLogger(ScheduleCalculator.class);
 
 	private FinScheduleData finScheduleData;
 	private static BaseRateDAO baseRateDAO;
@@ -1243,7 +1244,7 @@ public class ScheduleCalculator {
 			}
 
 			finMain.setRecalFromDate(curSchd.getSchDate());
-			//finMain.setEventFromDate(curSchd.getSchDate());
+			// finMain.setEventFromDate(curSchd.getSchDate());
 			finMain.setRecalSchdMethod(finMain.getScheduleMethod());
 			finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			break;
@@ -1276,7 +1277,7 @@ public class ScheduleCalculator {
 
 		int risize = repayInstructions.size();
 
-		//DE#1550(24-10-2020) - While doing the ReScheduling, RPS is not plotting properly in case of Grace.
+		// DE#1550(24-10-2020) - While doing the ReScheduling, RPS is not plotting properly in case of Grace.
 		/*
 		 * Date evtFromDate = finMain.getRecalFromDate(); finMain.setEventFromDate(evtFromDate);
 		 * finMain.setEventToDate(evtFromDate);
@@ -1379,7 +1380,7 @@ public class ScheduleCalculator {
 		 */
 
 		// Current Schedule Date is after current business date
-		//PV 02JUN18: isException is not in use. To overcome Business Date comparison in TestNG cases it is introduced.
+		// PV 02JUN18: isException is not in use. To overcome Business Date comparison in TestNG cases it is introduced.
 		if (DateUtil.compare(evtFromDate, curBussniessDate) < 0 && !finMain.isException()) {
 			// Through Error
 			finScheduleData.setErrorDetail(new ErrorDetail("SCH36",
@@ -1644,7 +1645,7 @@ public class ScheduleCalculator {
 
 					recalculateRate = calRate;
 
-					//If Refresh Rate Consider whatever rates available in Schedule
+					// If Refresh Rate Consider whatever rates available in Schedule
 					if (isRefreshRates) {
 						baseRate = curSchd.getBaseRate();
 						splRate = curSchd.getSplRate();
@@ -1684,7 +1685,7 @@ public class ScheduleCalculator {
 			}
 		}
 
-		//Rate Change Not Required. Do not recalculate again
+		// Rate Change Not Required. Do not recalculate again
 		if (!isRateChgReq) {
 			logger.debug("Leaving - No change in Rates, so exit without calculation");
 			return finScheduleData;
@@ -1894,7 +1895,7 @@ public class ScheduleCalculator {
 		finMain.setRecalSchdMethod(finMain.getScheduleMethod());
 
 		if (finScheduleData.getFinanceMain().getRecalFromDate() == null) {
-			//FIXME:Passing evtFromDate as RecalFromDate to resolve 900 error 
+			// FIXME:Passing evtFromDate as RecalFromDate to resolve 900 error
 			finScheduleData.getFinanceMain().setRecalFromDate(evtFromDate);
 		}
 
@@ -2024,7 +2025,7 @@ public class ScheduleCalculator {
 			}
 
 			// Commented to Add Flags to change amount on Change Repay option based on previous schedule flags.
-			//sd = resetCurSchdFlags(sd, finMain);
+			// sd = resetCurSchdFlags(sd, finMain);
 			sd.setPftOnSchDate(prvSchd.isPftOnSchDate());
 			sd.setCpzOnSchDate(prvSchd.isCpzOnSchDate());
 			sd.setRvwOnSchDate(prvSchd.isRvwOnSchDate());
@@ -2052,7 +2053,7 @@ public class ScheduleCalculator {
 		finScheduleData = fetchRepayCurRates(finScheduleData);
 
 		finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
-		//finScheduleData = procChangeRepay(finScheduleData, BigDecimal.ZERO, finMain.getScheduleMethod());
+		// finScheduleData = procChangeRepay(finScheduleData, BigDecimal.ZERO, finMain.getScheduleMethod());
 		finScheduleData = getRpyInstructDetails(finScheduleData);
 
 		/* Grace Schedule calculation */
@@ -3080,7 +3081,8 @@ public class ScheduleCalculator {
 
 		}
 
-		//finScheduleData = calSchdProcess(finScheduleData, false, false); // In auto rate review process we commented this
+		// finScheduleData = calSchdProcess(finScheduleData, false, false); // In auto rate review process we commented
+		// this
 
 		// In auto rate review process we added this
 		if (DateUtility.compare(finMain.getGrcPeriodEndDate(), finMain.getAppDate()) > 0) {
@@ -4813,7 +4815,8 @@ public class ScheduleCalculator {
 			curSchd.setCpzOnSchDate(true);
 		}
 
-		// In the Process of Rate Change, for Future Review Period method, schedule should not modify for Past Due schedules 
+		// In the Process of Rate Change, for Future Review Period method, schedule should not modify for Past Due
+		// schedules
 		// Because of Installment dues already passed for the same
 		boolean cpzResetReq = true;
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())) {
@@ -5174,7 +5177,8 @@ public class ScheduleCalculator {
 
 				curSchd.setProfitBalance(getProfitBalance(curSchd, prvSchd, finMain.getScheduleMethod(), cpzPOSIntact));
 
-				// In the Process of Rate Change, for Future Review Period method, schedule should not modify for Past Due schedules 
+				// In the Process of Rate Change, for Future Review Period method, schedule should not modify for Past
+				// Due schedules
 				// Because of Installment dues already passed for the same
 				boolean cpzResetReq = true;
 				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())) {
@@ -5304,7 +5308,8 @@ public class ScheduleCalculator {
 			}
 		}
 
-		// In the Process of Rate Change, for Future Review Period method, schedule should not modify for Past Due schedules 
+		// In the Process of Rate Change, for Future Review Period method, schedule should not modify for Past Due
+		// schedules
 		// Because of Installment dues already passed for the same
 		boolean protectPftSchd = finMain.isProtectSchdPft();
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())) {
@@ -7925,6 +7930,7 @@ public class ScheduleCalculator {
 
 		} else if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_TILLMDT)) {
 			finMain.setRecalToDate(finSchdDetails.get(sdSize - 1).getSchDate());
+			//finMain.setEventFromDate(finMain.getRecalFromDate());
 		}
 
 		// Set maturity Date schedule amount
@@ -8189,7 +8195,7 @@ public class ScheduleCalculator {
 
 		Date recalFromDate = finMain.getRecalFromDate();
 		BigDecimal disbursedAmount = BigDecimal.ZERO;
-		//BigDecimal recalPosBalance = BigDecimal.ZERO;
+		// BigDecimal recalPosBalance = BigDecimal.ZERO;
 
 		if (isResetRecalFRomDate) {
 			recalFromDate = finMain.getFinStartDate();
@@ -8216,7 +8222,7 @@ public class ScheduleCalculator {
 			FinanceScheduleDetail curSchd = fsdList.get(iFsd);
 
 			if (curSchd.getSchDate().compareTo(finMain.getEventFromDate()) < 0) {
-				//recalPosBalance = curSchd.getClosingBalance();
+				// recalPosBalance = curSchd.getClosingBalance();
 				disbursedAmount = disbursedAmount.add(curSchd.getDisbAmount());
 				continue;
 			}
@@ -8237,7 +8243,7 @@ public class ScheduleCalculator {
 		// THIS IS BASED ON ASSUMPTION. MAX DISBURSEMENT CHECK REQUIRED MUST BE
 		// TRUE FOR LOAN TYPE
 		BigDecimal unDisbursedAmount = finMain.getFinAssetValue().subtract(disbursedAmount);
-		//recalPosBalance = unDisbursedAmount.add(recalPosBalance);
+		// recalPosBalance = unDisbursedAmount.add(recalPosBalance);
 
 		BigDecimal instAmt = unDisbursedAmount.divide(BigDecimal.valueOf(adjTerms), 0, RoundingMode.HALF_DOWN);
 		finMain.setEqualRepay(false);

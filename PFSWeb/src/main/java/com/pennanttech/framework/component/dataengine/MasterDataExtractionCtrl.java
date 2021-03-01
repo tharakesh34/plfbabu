@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
@@ -22,7 +23,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
-	private static final Logger logger = Logger.getLogger(MasterDataExtractionCtrl.class);
+	private static final Logger logger = LogManager.getLogger(MasterDataExtractionCtrl.class);
 	private static final long serialVersionUID = 1297405999029019920L;
 
 	protected Window window_MasterDataExtractCtrl;

@@ -52,7 +52,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -99,7 +100,7 @@ import com.pennanttech.pff.external.MandateProcesses;
  * 
  */
 public class MandateServiceImpl extends GenericService<Mandate> implements MandateService {
-	private static final Logger logger = Logger.getLogger(MandateServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(MandateServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private MandateDAO mandateDAO;

@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.spring.SpringUtil;
@@ -58,7 +59,7 @@ import com.pennanttech.pff.external.CustomerInterfaceService;
 
 public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final long serialVersionUID = 8556168885363682933L;
-	private static final Logger logger = Logger.getLogger(CustomerDedupDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerDedupDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

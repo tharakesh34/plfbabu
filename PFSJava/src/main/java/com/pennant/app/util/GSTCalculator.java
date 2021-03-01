@@ -41,7 +41,6 @@ public class GSTCalculator {
 	private static ProvinceDAO provinceDAO;
 	private static FinanceMainDAO financeMainDAO;
 	private static FinanceTaxDetailDAO financeTaxDetailDAO;
-	private static RuleExecutionUtil ruleExecutionUtil;
 	private static GSTRateDAO gstRateDAO;
 
 	private static final BigDecimal HUNDRED = new BigDecimal(100);
@@ -56,8 +55,8 @@ public class GSTCalculator {
 	private static String GST_DEFAULT_STATE_CODE = null;
 
 	public GSTCalculator(RuleDAO ruleDAO, BranchDAO branchDAO, ProvinceDAO provinceDAO, FinanceMainDAO financeMainDAO,
-			FinanceTaxDetailDAO financeTaxDetailDAO, RuleExecutionUtil ruleExecutionUtil, GSTRateDAO gstRateDAO) {
-		initilize(ruleDAO, branchDAO, provinceDAO, financeMainDAO, financeTaxDetailDAO, ruleExecutionUtil, gstRateDAO);
+			FinanceTaxDetailDAO financeTaxDetailDAO, GSTRateDAO gstRateDAO) {
+		initilize(ruleDAO, branchDAO, provinceDAO, financeMainDAO, financeTaxDetailDAO, gstRateDAO);
 	}
 
 	/**
@@ -366,10 +365,6 @@ public class GSTCalculator {
 			dataMap = financeMainDAO.getGSTDataMap(finReference, TableType.TEMP_TAB);
 		}
 
-		if (MapUtils.isEmpty(dataMap)) {
-			dataMap = financeMainDAO.getGSTDataMap(finReference, TableType.VIEW);
-		}
-
 		String finBranch = (String) dataMap.computeIfAbsent("FinBranch", ft -> "");
 		String custBranch = (String) dataMap.computeIfAbsent("CustBranch", ft -> "");
 		String custProvince = (String) dataMap.computeIfAbsent("CustProvince", ft -> "");
@@ -479,7 +474,7 @@ public class GSTCalculator {
 	private static BigDecimal getRuleResult(String sqlRule, Map<String, Object> executionMap, String finCcy) {
 		BigDecimal result = BigDecimal.ZERO;
 		try {
-			Object exereslut = ruleExecutionUtil.executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
+			Object exereslut = RuleExecutionUtil.executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
 			if (exereslut == null || StringUtils.isEmpty(exereslut.toString())) {
 				result = BigDecimal.ZERO;
 			} else {
@@ -537,13 +532,12 @@ public class GSTCalculator {
 	}
 
 	private void initilize(RuleDAO ruleDAO, BranchDAO branchDAO, ProvinceDAO provinceDAO, FinanceMainDAO financeMainDAO,
-			FinanceTaxDetailDAO financeTaxDetailDAO, RuleExecutionUtil ruleExecutionUtil, GSTRateDAO gstRateDAO) {
+			FinanceTaxDetailDAO financeTaxDetailDAO, GSTRateDAO gstRateDAO) {
 		GSTCalculator.ruleDAO = ruleDAO;
 		GSTCalculator.branchDAO = branchDAO;
 		GSTCalculator.provinceDAO = provinceDAO;
 		GSTCalculator.financeMainDAO = financeMainDAO;
 		GSTCalculator.financeTaxDetailDAO = financeTaxDetailDAO;
-		GSTCalculator.ruleExecutionUtil = ruleExecutionUtil;
 		GSTCalculator.gstRateDAO = gstRateDAO;
 	}
 

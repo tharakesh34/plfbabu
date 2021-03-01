@@ -51,7 +51,8 @@ import java.util.Map;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
@@ -112,7 +113,7 @@ import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService implements FinanceMaintenanceService {
-	private static final Logger logger = Logger.getLogger(FinanceMaintenanceServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceMaintenanceServiceImpl.class);
 
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceWriteoffDAO financeWriteoffDAO;

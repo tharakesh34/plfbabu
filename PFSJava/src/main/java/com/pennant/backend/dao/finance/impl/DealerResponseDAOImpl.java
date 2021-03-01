@@ -3,7 +3,8 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -14,7 +15,7 @@ import com.pennant.backend.model.finance.DealerResponse;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implements DealerResponseDAO {
-	private static Logger logger = Logger.getLogger(DealerResponseDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DealerResponseDAOImpl.class);
 
 	public DealerResponseDAOImpl() {
 		super();
@@ -128,7 +129,7 @@ public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implement
 		logger.debug("Entering");
 
 		if (dealerResponse.getDealerResponseId() == Long.MIN_VALUE) {
-			dealerResponse.setDealerResponseId(getNextId("SeqDealerResponse"));
+			dealerResponse.setDealerResponseId(getNextValue("SeqDealerResponse"));
 		}
 		StringBuilder insertSql = new StringBuilder("Insert Into DealerResponse");
 		insertSql.append(StringUtils.trimToEmpty(type));

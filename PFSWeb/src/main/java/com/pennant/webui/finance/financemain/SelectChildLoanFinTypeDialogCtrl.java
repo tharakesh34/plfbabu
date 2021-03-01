@@ -4,7 +4,8 @@ package com.pennant.webui.finance.financemain;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -28,9 +29,9 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/SelectChildLoanFinanceTypeDialog.zul file.
  */
 public class SelectChildLoanFinTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
+	private static final Logger logger = LogManager.getLogger(SelectFinanceTypeDialogCtrl.class);
 
 	private static final long serialVersionUID = 8556168885363682933L;
-	private static final Logger logger = Logger.getLogger(SelectFinanceTypeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

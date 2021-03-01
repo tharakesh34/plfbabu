@@ -47,20 +47,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.CollateralStructureDAO;
 import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CollateralStructure model</b> class.<br>
@@ -68,7 +68,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 
 public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> implements CollateralStructureDAO {
-	private static Logger logger = Logger.getLogger(CollateralStructureDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CollateralStructureDAOImpl.class);
 
 	public CollateralStructureDAOImpl() {
 		super();
@@ -84,40 +84,78 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 	 * @return CollateralStructure
 	 */
 	@Override
-	public CollateralStructure getCollateralStructureByType(String collateralType, String type) {
-		logger.debug("Entering");
+	public CollateralStructure getCollateralStructureByType(String colType, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CollateralType, CollateralDesc, LtvType, LtvPercentage, MarketableSecurities");
+		sql.append(", PreValidationReq, PostValidationReq, CollateralLocReq, CollateralValuatorReq");
+		sql.append(", Remarks, AllowLtvWaiver, MaxLtvWaiver, PostValidation, PreValidation, Active");
+		sql.append(", Fields, ActualBlock, SQLRule");
 
-		MapSqlParameterSource source = null;
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" SELECT  CollateralType, CollateralDesc, LtvType, LtvPercentage, MarketableSecurities ");
-		sql.append(", PreValidationReq, PostValidationReq, CollateralLocReq, CollateralValuatorReq, Remarks");
-		sql.append(", AllowLtvWaiver, MaxLtvWaiver,PostValidation,PreValidation, Active, Fields, ActualBlock, SQLRule");
-		sql.append(", ");
 		if (type.contains("View")) {
-			sql.append("QueryCode, QuerySubCode, ");
+			sql.append(", QueryCode, QuerySubCode");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId, ValuationFrequency, NextValuationDate, ValuationPending, QueryId");
-		sql.append(", ThresholdLtvPercentage, CommodityId From CollateralStructure");
+
+		sql.append(", Version, LastMntOn, LastMntBy");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", ValuationFrequency, NextValuationDate, ValuationPending, QueryId, ThresholdLtvPercentage");
+		sql.append(", CommodityId");
+		sql.append(" From CollateralStructure");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where CollateralType = :CollateralType");
-		logger.debug("SelectSql: " + sql.toString());
+		sql.append(" Where CollateralType = ?");
 
-		source = new MapSqlParameterSource();
-		source.addValue("CollateralType", collateralType);
+		logger.debug(Literal.SQL + sql.toString());
 
-		RowMapper<CollateralStructure> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CollateralStructure.class);
-		CollateralStructure collateralStructure = null;
 		try {
-			collateralStructure = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { colType }, (rs, rowNum) -> {
+				CollateralStructure ct = new CollateralStructure();
+
+				ct.setCollateralType(rs.getString("CollateralType"));
+				ct.setCollateralDesc(rs.getString("CollateralDesc"));
+				ct.setLtvType(rs.getString("LtvType"));
+				ct.setLtvPercentage(rs.getBigDecimal("LtvPercentage"));
+				ct.setMarketableSecurities(rs.getBoolean("MarketableSecurities"));
+				ct.setPreValidationReq(rs.getBoolean("PreValidationReq"));
+				ct.setPostValidationReq(rs.getBoolean("PostValidationReq"));
+				ct.setCollateralLocReq(rs.getBoolean("CollateralLocReq"));
+				ct.setCollateralValuatorReq(rs.getBoolean("CollateralValuatorReq"));
+				ct.setRemarks(rs.getString("Remarks"));
+				ct.setAllowLtvWaiver(rs.getBoolean("AllowLtvWaiver"));
+				ct.setMaxLtvWaiver(rs.getBigDecimal("MaxLtvWaiver"));
+				ct.setPostValidation(rs.getString("PostValidation"));
+				ct.setPreValidation(rs.getString("PreValidation"));
+				ct.setActive(rs.getBoolean("Active"));
+				ct.setFields(rs.getString("Fields"));
+				ct.setActualBlock(rs.getString("ActualBlock"));
+				ct.setSQLRule(rs.getString("SQLRule"));
+
+				if (type.contains("View")) {
+					ct.setQueryCode(rs.getString("QueryCode"));
+					ct.setQuerySubCode(rs.getString("QuerySubCode"));
+				}
+
+				ct.setVersion(rs.getInt("Version"));
+				ct.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ct.setLastMntBy(rs.getLong("LastMntBy"));
+				ct.setRecordStatus(rs.getString("RecordStatus"));
+				ct.setRoleCode(rs.getString("RoleCode"));
+				ct.setNextRoleCode(rs.getString("NextRoleCode"));
+				ct.setTaskId(rs.getString("TaskId"));
+				ct.setNextTaskId(rs.getString("NextTaskId"));
+				ct.setRecordType(rs.getString("RecordType"));
+				ct.setWorkflowId(rs.getLong("WorkflowId"));
+				ct.setValuationFrequency(rs.getString("ValuationFrequency"));
+				ct.setNextValuationDate(rs.getTimestamp("NextValuationDate"));
+				ct.setValuationPending(rs.getBoolean("ValuationPending"));
+				ct.setQueryId(rs.getLong("QueryId"));
+				ct.setThresholdLtvPercentage(rs.getBigDecimal("ThresholdLtvPercentage"));
+				ct.setCommodityId(rs.getLong("CommodityId"));
+
+				return ct;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception :", e);
-			collateralStructure = null;
+			logger.warn("Records not found in CollateralStructure{} for the collateral reference {} ", type, colType);
 		}
-		logger.debug("Leaving");
-		return collateralStructure;
+		return null;
 	}
 
 	/**

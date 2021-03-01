@@ -51,7 +51,8 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -125,7 +126,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long serialVersionUID = -5901195042041627750L;
-	private static final Logger logger = Logger.getLogger(FinanceMainListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceMainListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

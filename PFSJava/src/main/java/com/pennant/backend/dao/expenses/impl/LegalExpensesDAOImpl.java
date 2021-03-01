@@ -46,7 +46,8 @@ package com.pennant.backend.dao.expenses.impl;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class LegalExpensesDAOImpl extends SequenceDao<LegalExpenses> implements LegalExpensesDAO {
-	private static Logger logger = Logger.getLogger(LegalExpensesDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LegalExpensesDAOImpl.class);
 
 	public LegalExpensesDAOImpl() {
 		super();
@@ -166,7 +167,7 @@ public class LegalExpensesDAOImpl extends SequenceDao<LegalExpenses> implements 
 		if (legalExpenses.getExpReference() == null) {
 
 			if (legalExpenses.getId() == 0 || legalExpenses.getId() == Long.MIN_VALUE) {
-				legalExpenses.setId(getNextId("SeqFinLegalExpenses"));
+				legalExpenses.setId(getNextValue("SeqFinLegalExpenses"));
 			}
 			if (legalExpenses.getTransactionType().equals(PennantConstants.LEGEL_FEES)) {
 				legalExpenses.setExpReference(legalExpenses.getFinReference() + "L" + legalExpenses.getId());

@@ -44,7 +44,8 @@
 package com.pennant.backend.service.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class SalutationServiceImpl extends GenericService<Salutation> implements SalutationService {
-	private static Logger logger = Logger.getLogger(SalutationServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(SalutationServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private SalutationDAO salutationDAO;

@@ -12,7 +12,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
@@ -43,7 +44,7 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
  */
 public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -546886879998950467L;
-	private static final Logger logger = Logger.getLogger(RuleResultSimulationCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RuleResultSimulationCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -68,7 +69,6 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 	List<String> variables = new ArrayList<String>();
 	List<GlobalVariable> globalList = new ArrayList<GlobalVariable>();
 	String ruleResult = "";
-	private RuleExecutionUtil ruleExecutionUtil;
 	private RuleReturnType returnType = null;
 
 	/**
@@ -179,7 +179,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if (rows_Fields.getVisibleItemCount() == 0) {
-			Object result = ruleExecutionUtil.executeRule(ruleResult, null, null, this.returnType);
+			Object result = RuleExecutionUtil.executeRule(ruleResult, null, null, this.returnType);
 			getRuleResult(result);
 			this.btn_Stimulate.setVisible(false);
 		}
@@ -322,7 +322,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 					}
 				}
 
-				Object object = ruleExecutionUtil.executeRule(ruleResult, map, null, returnType);
+				Object object = RuleExecutionUtil.executeRule(ruleResult, map, null, returnType);
 
 				// make result row visible and set value
 				getRuleResult(object);
@@ -390,13 +390,5 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 		// make result row visible and set value
 		this.rowResult.setVisible(true);
 		this.result.setValue(resultValue);
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 }

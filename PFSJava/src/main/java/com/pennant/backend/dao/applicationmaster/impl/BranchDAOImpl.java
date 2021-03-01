@@ -42,13 +42,12 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -73,7 +72,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
-	private static Logger logger = Logger.getLogger(BranchDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BranchDAOImpl.class);
 
 	public BranchDAOImpl() {
 		super();
@@ -90,8 +89,6 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 	 */
 	@Override
 	public Branch getBranchById(final String id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" BranchCode, BranchDesc, BranchAddrLine1, BranchAddrLine2, BranchPOBox, BranchCity");
 		sql.append(", BranchProvince, BranchCountry, BranchFax, BranchTel, BranchSwiftBankCde, BranchSwiftCountry");
@@ -113,69 +110,66 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<Branch>() {
-				@Override
-				public Branch mapRow(ResultSet rs, int rowNum) throws SQLException {
-					Branch b = new Branch();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+				Branch b = new Branch();
 
-					b.setBranchCode(rs.getString("BranchCode"));
-					b.setBranchDesc(rs.getString("BranchDesc"));
-					b.setBranchAddrLine1(rs.getString("BranchAddrLine1"));
-					b.setBranchAddrLine2(rs.getString("BranchAddrLine2"));
-					b.setBranchPOBox(rs.getString("BranchPOBox"));
-					b.setBranchCity(rs.getString("BranchCity"));
-					b.setBranchProvince(rs.getString("BranchProvince"));
-					b.setBranchCountry(rs.getString("BranchCountry"));
-					b.setBranchFax(rs.getString("BranchFax"));
-					b.setBranchTel(rs.getString("BranchTel"));
-					b.setBranchSwiftBankCde(rs.getString("BranchSwiftBankCde"));
-					b.setBranchSwiftCountry(rs.getString("BranchSwiftCountry"));
-					b.setBranchSwiftLocCode(rs.getString("BranchSwiftLocCode"));
-					b.setBranchSwiftBrnCde(rs.getString("BranchSwiftBrnCde"));
-					b.setBranchSortCode(rs.getString("BranchSortCode"));
-					b.setBranchIsActive(rs.getBoolean("BranchIsActive"));
-					b.setNewBranchCode(rs.getString("NewBranchCode"));
-					b.setMiniBranch(rs.getBoolean("MiniBranch"));
-					b.setBranchType(rs.getString("BranchType"));
-					b.setParentBranch(rs.getString("ParentBranch"));
-					b.setRegion(rs.getString("Region"));
-					b.setBankRefNo(rs.getString("BankRefNo"));
-					b.setBranchAddrHNbr(rs.getString("BranchAddrHNbr"));
-					b.setBranchFlatNbr(rs.getString("BranchFlatNbr"));
-					b.setBranchAddrStreet(rs.getString("BranchAddrStreet"));
-					b.setPinCode(rs.getString("PinCode"));
-					b.setEntity(rs.getString("Entity"));
-					b.setClusterId(JdbcUtil.getLong(rs.getObject("ClusterId")));
-					b.setVersion(rs.getInt("Version"));
-					b.setLastMntBy(rs.getLong("LastMntBy"));
-					b.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					b.setRecordStatus(rs.getString("RecordStatus"));
-					b.setRoleCode(rs.getString("RoleCode"));
-					b.setNextRoleCode(rs.getString("NextRoleCode"));
-					b.setTaskId(rs.getString("TaskId"));
-					b.setNextTaskId(rs.getString("NextTaskId"));
-					b.setRecordType(rs.getString("RecordType"));
-					b.setWorkflowId(rs.getLong("WorkflowId"));
-					b.setPinCodeId(rs.getLong("PinCodeId"));
+				b.setBranchCode(rs.getString("BranchCode"));
+				b.setBranchDesc(rs.getString("BranchDesc"));
+				b.setBranchAddrLine1(rs.getString("BranchAddrLine1"));
+				b.setBranchAddrLine2(rs.getString("BranchAddrLine2"));
+				b.setBranchPOBox(rs.getString("BranchPOBox"));
+				b.setBranchCity(rs.getString("BranchCity"));
+				b.setBranchProvince(rs.getString("BranchProvince"));
+				b.setBranchCountry(rs.getString("BranchCountry"));
+				b.setBranchFax(rs.getString("BranchFax"));
+				b.setBranchTel(rs.getString("BranchTel"));
+				b.setBranchSwiftBankCde(rs.getString("BranchSwiftBankCde"));
+				b.setBranchSwiftCountry(rs.getString("BranchSwiftCountry"));
+				b.setBranchSwiftLocCode(rs.getString("BranchSwiftLocCode"));
+				b.setBranchSwiftBrnCde(rs.getString("BranchSwiftBrnCde"));
+				b.setBranchSortCode(rs.getString("BranchSortCode"));
+				b.setBranchIsActive(rs.getBoolean("BranchIsActive"));
+				b.setNewBranchCode(rs.getString("NewBranchCode"));
+				b.setMiniBranch(rs.getBoolean("MiniBranch"));
+				b.setBranchType(rs.getString("BranchType"));
+				b.setParentBranch(rs.getString("ParentBranch"));
+				b.setRegion(rs.getString("Region"));
+				b.setBankRefNo(rs.getString("BankRefNo"));
+				b.setBranchAddrHNbr(rs.getString("BranchAddrHNbr"));
+				b.setBranchFlatNbr(rs.getString("BranchFlatNbr"));
+				b.setBranchAddrStreet(rs.getString("BranchAddrStreet"));
+				b.setPinCode(rs.getString("PinCode"));
+				b.setEntity(rs.getString("Entity"));
+				b.setClusterId(JdbcUtil.getLong(rs.getObject("ClusterId")));
+				b.setVersion(rs.getInt("Version"));
+				b.setLastMntBy(rs.getLong("LastMntBy"));
+				b.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				b.setRecordStatus(rs.getString("RecordStatus"));
+				b.setRoleCode(rs.getString("RoleCode"));
+				b.setNextRoleCode(rs.getString("NextRoleCode"));
+				b.setTaskId(rs.getString("TaskId"));
+				b.setNextTaskId(rs.getString("NextTaskId"));
+				b.setRecordType(rs.getString("RecordType"));
+				b.setWorkflowId(rs.getLong("WorkflowId"));
+				b.setPinCodeId(rs.getLong("PinCodeId"));
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						b.setLovDescBranchCityName(rs.getString("LovDescBranchCityName"));
-						b.setLovDescBranchProvinceName(rs.getString("LovDescBranchProvinceName"));
-						b.setLovDescBranchCountryName(rs.getString("LovDescBranchCountryName"));
-						b.setLovDescBranchSwiftCountryName(rs.getString("LovDescBranchSwiftCountryName"));
-						b.setNewBranchDesc(rs.getString("NewBranchDesc"));
-						b.setParentBranchDesc(rs.getString("ParentBranchDesc"));
-						b.setPinAreaDesc(rs.getString("PinAreaDesc"));
-						b.setEntityDesc(rs.getString("EntityDesc"));
-						b.setClusterCode(rs.getString("ClusterCode"));
-						b.setClusterName(rs.getString("ClusterName"));
-					}
-
-					return b;
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					b.setLovDescBranchCityName(rs.getString("LovDescBranchCityName"));
+					b.setLovDescBranchProvinceName(rs.getString("LovDescBranchProvinceName"));
+					b.setLovDescBranchCountryName(rs.getString("LovDescBranchCountryName"));
+					b.setLovDescBranchSwiftCountryName(rs.getString("LovDescBranchSwiftCountryName"));
+					b.setNewBranchDesc(rs.getString("NewBranchDesc"));
+					b.setParentBranchDesc(rs.getString("ParentBranchDesc"));
+					b.setPinAreaDesc(rs.getString("PinAreaDesc"));
+					b.setEntityDesc(rs.getString("EntityDesc"));
+					b.setClusterCode(rs.getString("ClusterCode"));
+					b.setClusterName(rs.getString("ClusterName"));
 				}
+
+				return b;
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Records not found in RMTBranches{} for the BranchCode >> {}", type, id);
 		}
 
 		logger.debug(Literal.LEAVING);

@@ -54,7 +54,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.CalculationUtil;
@@ -85,7 +86,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LimitRebuildService implements LimitRebuild {
-	private static Logger logger = Logger.getLogger(LimitRebuildService.class);
+	private static Logger logger = LogManager.getLogger(LimitRebuildService.class);
 
 	@Autowired
 	private CustomerDAO customerDAO;
@@ -95,8 +96,6 @@ public class LimitRebuildService implements LimitRebuild {
 	private LimitHeaderDAO limitHeaderDAO;
 	@Autowired
 	private FinanceDisbursementDAO financeDisbursementDAO;
-	@Autowired
-	private RuleExecutionUtil ruleExecutionUtil;
 	@Autowired
 	private LimitGroupLinesDAO limitGroupLinesDAO;
 	@Autowired
@@ -702,7 +701,7 @@ public class LimitRebuildService implements LimitRebuild {
 				continue;
 			}
 
-			boolean ruleResult = (boolean) ruleExecutionUtil.executeRule(details.getSqlRule(), dataMap, "",
+			boolean ruleResult = (boolean) RuleExecutionUtil.executeRule(details.getSqlRule(), dataMap, "",
 					RuleReturnType.BOOLEAN);
 			if (ruleResult) {
 				mapping.setLimitLine(details.getLimitLine());

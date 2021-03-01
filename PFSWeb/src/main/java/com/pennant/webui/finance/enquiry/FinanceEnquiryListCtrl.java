@@ -47,7 +47,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -105,7 +106,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	private static final long serialVersionUID = -6646226859133636932L;
-	private static final Logger logger = Logger.getLogger(FinanceEnquiryListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceEnquiryListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

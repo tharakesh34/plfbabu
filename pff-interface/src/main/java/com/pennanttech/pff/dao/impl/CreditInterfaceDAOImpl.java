@@ -7,7 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -38,7 +39,7 @@ import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.dao.CreditInterfaceDAO;
 
 public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implements CreditInterfaceDAO {
-	private static final Logger logger = Logger.getLogger(CreditInterfaceDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(CreditInterfaceDAOImpl.class);
 
 	protected DefaultTransactionDefinition transDef;
 	private PlatformTransactionManager transactionManager;
@@ -389,7 +390,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		txStatus = transactionManager.getTransaction(txDef);
 
 		if (serviceTaskDetail.getId() == Long.MIN_VALUE) {
-			//serviceTaskDetail.setId(getNextId("SeqBMTAcademics"));
+			//serviceTaskDetail.setId(getNextValue("SeqBMTAcademics"));
 		}
 
 		StringBuilder insertSql = new StringBuilder();

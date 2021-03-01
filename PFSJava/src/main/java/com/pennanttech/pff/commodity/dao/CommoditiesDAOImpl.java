@@ -1,6 +1,7 @@
 package com.pennanttech.pff.commodity.dao;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,7 +20,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements CommoditiesDAO {
-	private static Logger logger = Logger.getLogger(CommoditiesDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CommoditiesDAOImpl.class);
 
 	public CommoditiesDAOImpl() {
 		super();

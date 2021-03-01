@@ -44,7 +44,8 @@
 package com.pennant.backend.dao.limit.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements LimitStructureDAO {
-	private static Logger logger = Logger.getLogger(LimitStructureDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LimitStructureDAOImpl.class);
 
 	/**
 	 * This method set the Work Flow id based on the module name and return the new LimitStructure

@@ -49,11 +49,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.login.AccountNotFoundException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -91,6 +90,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -101,7 +101,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>ManualAdvise</b>.<br>
  */
 public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implements ManualAdviseService {
-	private static final Logger logger = Logger.getLogger(ManualAdviseServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ManualAdviseServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ManualAdviseDAO manualAdviseDAO;
@@ -432,14 +432,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -453,16 +445,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return auditHeader;
 	}
 
-	/**
-	 * Method for Execute posting Details on Core Banking Side
-	 * 
-	 * @param auditHeader
-	 * @param appDate
-	 * @return
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
-	 */
 	private ManualAdvise executeDueAccountingProcess(ManualAdvise advise, String postBranch) {
 		logger.debug(Literal.ENTERING);
 
@@ -484,9 +466,8 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		// Resetting Advise Data
 		advise.setLinkedTranId(linkedTranId);
 
-		// GST Invoice data resetting based on Accounting Process
-		String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
-		if (!StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
+		boolean isGSTInvOnDue = SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE);
+		if (!isGSTInvOnDue) {
 			return advise;
 		}
 
@@ -500,24 +481,35 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		BigDecimal gstAmount = BigDecimal.ZERO;
 		for (Taxes taxes : taxDetails) {
 			gstAmount = gstAmount.add(taxes.getPaidTax());
-			if (StringUtils.equals(taxes.getTaxType(), RuleConstants.CODE_CGST)) {
+			String taxType = taxes.getTaxType();
+
+			switch (taxType) {
+			case RuleConstants.CODE_CGST:
 				detail.setCGST(taxes.getPaidTax());
-			} else if (StringUtils.equals(taxes.getTaxType(), RuleConstants.CODE_SGST)) {
+				break;
+			case RuleConstants.CODE_SGST:
 				detail.setSGST(taxes.getPaidTax());
-			} else if (StringUtils.equals(taxes.getTaxType(), RuleConstants.CODE_IGST)) {
+				break;
+			case RuleConstants.CODE_IGST:
 				detail.setIGST(taxes.getPaidTax());
-			} else if (StringUtils.equals(taxes.getTaxType(), RuleConstants.CODE_UGST)) {
+				break;
+			case RuleConstants.CODE_UGST:
 				detail.setUGST(taxes.getPaidTax());
-			} else if (StringUtils.equals(taxes.getTaxType(), RuleConstants.CODE_CESS)) {
+				break;
+			case RuleConstants.CODE_CESS:
 				detail.setCESS(taxes.getPaidTax());
+				break;
+			default:
+				break;
 			}
+
 		}
 		detail.setAmount(advMovement.getPaidAmount());
 		detail.setTotalGST(gstAmount);
 
 		Long invoiceID = null;
-		if (gstAmount.compareTo(BigDecimal.ZERO) > 0 && StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
-			List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>();
+		if (gstAmount.compareTo(BigDecimal.ZERO) > 0 && isGSTInvOnDue) {
+			List<ManualAdviseMovements> advMovements = new ArrayList<>();
 			advMovements.add(advMovement);
 			FinanceDetail financeDetail = new FinanceDetail();
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);

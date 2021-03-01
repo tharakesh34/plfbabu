@@ -7,7 +7,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -61,7 +62,7 @@ import com.pennanttech.pff.core.TableType;
 
 public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 
-	private static Logger logger = Logger.getLogger(CustomerInterfaceServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerInterfaceServiceImpl.class);
 
 	private CustomerDataProcess customerDataProcess;
 	private CustomerCreationProcess customerCreationProcess;

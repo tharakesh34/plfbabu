@@ -5,7 +5,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.media.Media;
@@ -50,7 +51,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 
 	private static final long serialVersionUID = 4783031677099154138L;
-	private static final Logger logger = Logger.getLogger(ImportPresentmentDetailCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ImportPresentmentDetailCtrl.class);
 
 	protected Window window_ImportPresentmentDetails;
 

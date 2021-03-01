@@ -8,7 +8,8 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.coreinterface.model.customer.FinanceCustomerDetails;
 import com.pennant.mq.model.AHBMQHeader;
@@ -19,7 +20,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class FinCustomerDetailProcess extends MQProcess {
 
-	private static final Logger logger = Logger.getLogger(FinCustomerDetailProcess.class);
+	private static final Logger logger = LogManager.getLogger(FinCustomerDetailProcess.class);
 
 	public FinCustomerDetailProcess() {
 		super();

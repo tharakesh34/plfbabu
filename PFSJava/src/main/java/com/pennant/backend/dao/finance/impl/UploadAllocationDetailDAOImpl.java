@@ -45,7 +45,8 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDetail>
 		implements UploadAllocationDetailDAO {
 
-	private static Logger logger = Logger.getLogger(UploadAllocationDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(UploadAllocationDetailDAOImpl.class);
 
 	public UploadAllocationDetailDAOImpl() {
 		super();

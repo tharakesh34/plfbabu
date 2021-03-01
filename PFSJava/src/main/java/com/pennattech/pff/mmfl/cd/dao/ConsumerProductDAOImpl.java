@@ -1,6 +1,7 @@
 package com.pennattech.pff.mmfl.cd.dao;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,7 +20,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.mmfl.cd.model.ConsumerProduct;
 
 public class ConsumerProductDAOImpl extends SequenceDao<ConsumerProduct> implements ConsumerProductDAO {
-	private static Logger logger = Logger.getLogger(ConsumerProductDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ConsumerProductDAOImpl.class);
 
 	public ConsumerProductDAOImpl() {
 		super();

@@ -6,7 +6,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -29,7 +30,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.process.DisbursementProcess;
 
 public class DisbursementProcessImpl implements DisbursementProcess {
-	private static Logger logger = Logger.getLogger(DisbursementProcessImpl.class);
+	private static Logger logger = LogManager.getLogger(DisbursementProcessImpl.class);
 
 	private BeneficiaryDAO beneficiaryDAO;
 	private FinanceMainDAO financeMainDAO;

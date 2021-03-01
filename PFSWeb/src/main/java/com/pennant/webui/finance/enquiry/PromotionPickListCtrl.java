@@ -53,7 +53,8 @@ import java.util.Map;
 import javax.script.ScriptException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -118,7 +119,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(PromotionPickListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PromotionPickListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -140,8 +141,6 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 
 	private RuleService ruleService;
 	private FinanceDetailService financeDetailService;
-	private RuleExecutionUtil ruleExecutionUtil;
-
 	protected List<String> feildList = null;
 	protected Map<String, BMTRBFldDetails> fldDetailsMap = null;
 
@@ -359,7 +358,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 
 					//Currency Conversions if Currency Constants Exists in Rule 
 					String sqlRule = rule.getSQLRule();
-					sqlRule = getRuleExecutionUtil().replaceCurrencyCode(sqlRule, null);
+					sqlRule = RuleExecutionUtil.replaceCurrencyCode(sqlRule, null);
 
 					String returnType = rule.getReturnType();
 					RuleReturnType ruleReturnType = null;
@@ -377,7 +376,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 					}
 
 					//Rule Execution Process
-					Object object = getRuleExecutionUtil().executeRule(sqlRule, fieldsandvalues, null, ruleReturnType);
+					Object object = RuleExecutionUtil.executeRule(sqlRule, fieldsandvalues, null, ruleReturnType);
 
 					financeEligibility = new FinanceEligibility();
 					financeEligibility.setCustCIF(this.customerCIF.getValue());
@@ -677,14 +676,6 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
 	}
 
 	public CustomerDialogCtrl getCustomerDialogCtrl() {

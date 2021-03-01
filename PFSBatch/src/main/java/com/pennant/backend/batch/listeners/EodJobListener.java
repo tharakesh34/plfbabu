@@ -6,6 +6,7 @@ import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map.Entry;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -13,6 +14,7 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -23,19 +25,25 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
+import com.pennant.backend.eventproperties.service.EventPropertiesService;
+import com.pennant.backend.eventproperties.service.impl.EventPropertiesServiceImpl.EventType;
 import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.script.ScriptEngine;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.lic.License;
 import com.pennanttech.pff.batch.backend.dao.BatchProcessStatusDAO;
 import com.pennanttech.pff.batch.model.BatchProcessStatus;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 import freemarker.cache.FileTemplateLoader;
@@ -48,6 +56,7 @@ public class EodJobListener implements JobExecutionListener {
 	private EODConfigDAO eODConfigDAO;
 	private BatchProcessStatusDAO bpsDAO;
 	private EODConfig eodConfig;
+	private EventPropertiesService eventPropertiesService;
 
 	public EodJobListener() {
 		super();
@@ -55,11 +64,23 @@ public class EodJobListener implements JobExecutionListener {
 
 	@Override
 	public void afterJob(JobExecution jobExecution) {
-		logger.debug(Literal.ENTERING);
+		for (Entry<String, ScriptEngine> entry : RuleExecutionUtil.EOD_SCRIPT_ENGINE_MAP.entrySet()) {
+			try {
+				entry.getValue().setEod(false);
+				entry.getValue().close();
+			} catch (Exception e) {
+				//
+			}
+		}
+		Date eodDate = EODUtil.EVENT_PROPS.getAppDate();
+
+		RuleExecutionUtil.EOD_SCRIPT_ENGINE_MAP.clear();
+		EODUtil.EVENT_PROPS = new EventProperties();
+		EODUtil.setEod(false);
 
 		PennantConstants.EOD_DELAY_REQ = false;
+
 		List<EODConfig> eodList = eODConfigDAO.getEODConfig();
-		Date eodDate = SysParamUtil.getAppValueDate();
 
 		if (eodList.size() <= 0) {
 			logger.info("EOD Configuration is not available.");
@@ -143,6 +164,7 @@ public class EodJobListener implements JobExecutionListener {
 			logger.warn(Literal.EXCEPTION, e);
 		}
 
+		ThreadContext.clearAll();
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -217,6 +239,7 @@ public class EodJobListener implements JobExecutionListener {
 			eod.setEndTime(DateUtil.format(endTime, DateFormat.LONG_TIME));
 			eod.setCompletedTime(DateUtility.timeBetween(endTime, startTime));
 			long totalLoans = 0;
+
 			for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
 				if (stepExecution.getStepName().startsWith("microEOD")) {
 					DataEngineStatus status = (DataEngineStatus) stepExecution.getExecutionContext()
@@ -263,15 +286,25 @@ public class EodJobListener implements JobExecutionListener {
 
 	@Override
 	public void beforeJob(JobExecution arg0) {
-		logger.debug(Literal.ENTERING);
+		ThreadContext.put("MODULE", "EOD");
+		logger.debug("Preparing before EOD details...");
+
+		RuleExecutionUtil.EOD_SCRIPT_ENGINE_MAP.clear();
+
+		logger.debug("Loading EOD properties into EventProperties bean to reuse during EOD...");
+		EODUtil.EVENT_PROPS = eventPropertiesService.getEventProperties(EventType.EOD);
+		EODUtil.setEod(true);
 
 		ExecutionContext executionContext = arg0.getExecutionContext();
-		if (executionContext.get("APP_VALUEDATE") == null) {
-			executionContext.put("APP_VALUEDATE", SysParamUtil.getAppValueDate());
-			executionContext.put("APP_DATE", SysParamUtil.getAppDate());
-		}
 
-		logger.debug(Literal.LEAVING);
+		executionContext.put("APP_VALUEDATE", SysParamUtil.getAppValueDate());
+		executionContext.put("APP_DATE", SysParamUtil.getAppDate());
+		executionContext.put("APP_NEXT_BUS_DATE", SysParamUtil.getValueAsDate("APP_NEXT_BUS_DATE"));
+		executionContext.put("APP_LAST_BUS_DATE", SysParamUtil.getValueAsDate("APP_LAST_BUS_DATE"));
+
+		executionContext.put(EODUtil.EVENT_PROPERTIES, EODUtil.EVENT_PROPS);
+
+		logger.debug("Prepared before EOD details..");
 	}
 
 	public void seteODConfigDAO(EODConfigDAO eODConfigDAO) {
@@ -282,24 +315,28 @@ public class EodJobListener implements JobExecutionListener {
 		this.bpsDAO = bpsDAO;
 	}
 
+	public void setEventPropertiesService(EventPropertiesService eventPropertiesService) {
+		this.eventPropertiesService = eventPropertiesService;
+	}
+
 	public class EODStatus implements Serializable {
 		private static final long serialVersionUID = 8845475181314388995L;
 
-		String subject;
-		String status;
-		String startTime;
-		String endTime;
-		String completedTime;
-		String lastBusinessDate;
-		String nextBusinessDate;
-		String valueDate;
-		String totalCustomers;
-		String processedCustomers;
-		String totalLoans;
-		String client;
-		String version;
-		String environment;
-		String startedBy;
+		private String subject;
+		private String status;
+		private String startTime;
+		private String endTime;
+		private String completedTime;
+		private String lastBusinessDate;
+		private String nextBusinessDate;
+		private String valueDate;
+		private String totalCustomers;
+		private String processedCustomers;
+		private String totalLoans;
+		private String client;
+		private String version;
+		private String environment;
+		private String startedBy;
 
 		public String getSubject() {
 			return subject;

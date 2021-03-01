@@ -11,7 +11,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -53,9 +54,9 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
 public class LoanMasterReportServiceImpl implements LoanMasterReportService {
+	private static final Logger logger = LogManager.getLogger(LoanMasterReportServiceImpl.class);
 	private static final String VAS = "VAS";
 	private static final String LOAN = "LOAN";
-	private static final Logger logger = Logger.getLogger(LoanMasterReportServiceImpl.class);
 	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private transient VASRecordingDAO vASRecordingDAO;
 	private transient VasMovementDetailDAO vasMovementDetailDAO;

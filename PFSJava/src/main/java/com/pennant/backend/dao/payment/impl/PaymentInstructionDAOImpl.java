@@ -46,7 +46,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -69,7 +70,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>PaymentInstruction</code> with set of CRUD operations.
  */
 public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> implements PaymentInstructionDAO {
-	private static Logger logger = Logger.getLogger(PaymentInstructionDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PaymentInstructionDAOImpl.class);
 
 	public PaymentInstructionDAOImpl() {
 		super();

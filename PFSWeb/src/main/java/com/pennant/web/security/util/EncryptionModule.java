@@ -6,10 +6,11 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class EncryptionModule {
-	private static final Logger logger = Logger.getLogger(EncryptionModule.class);
+	private static final Logger logger = LogManager.getLogger(EncryptionModule.class);
 
 	public EncryptionModule() {
 		super();

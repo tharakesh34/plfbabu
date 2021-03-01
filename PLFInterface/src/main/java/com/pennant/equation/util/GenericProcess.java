@@ -4,13 +4,14 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ibm.as400.data.PcmlException;
 import com.ibm.as400.data.ProgramCallDocument;
 
 public class GenericProcess {
-	private static final Logger logger = Logger.getLogger(GenericProcess.class);
+	private static final Logger logger = LogManager.getLogger(GenericProcess.class);
 
 	public static final String DEFAULT_COUNTRY = "971";
 	public static final String PHONE_AREACODE = "50";

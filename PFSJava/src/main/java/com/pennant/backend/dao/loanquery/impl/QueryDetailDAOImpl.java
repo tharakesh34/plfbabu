@@ -48,7 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>QueryDetail</code> with set of CRUD operations.
  */
 public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements QueryDetailDAO {
-	private static Logger logger = Logger.getLogger(QueryDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(QueryDetailDAOImpl.class);
 
 	public QueryDetailDAOImpl() {
 		super();

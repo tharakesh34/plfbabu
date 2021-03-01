@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.app.util.DateUtility;
@@ -30,7 +31,7 @@ import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CovenantAlerts extends BasicDao<Covenant> {
-	private static Logger logger = Logger.getLogger(CovenantAlerts.class);
+	private static Logger logger = LogManager.getLogger(CovenantAlerts.class);
 
 	private SecurityUserDAO securityUserDAO;
 	private FinanceMainDAO financeMainDAO;

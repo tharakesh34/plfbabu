@@ -3,17 +3,18 @@ package com.pennant.backend.endofday.tasklet;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.util.BackupDatabase;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class BackupDatabaseTaskLet implements Tasklet {
-	private Logger logger = Logger.getLogger(BackupDatabaseTaskLet.class);
+	private Logger logger = LogManager.getLogger(BackupDatabaseTaskLet.class);
 
 	private BackupDatabase backupDatabase;
 	private boolean beforeEod;
@@ -26,9 +27,9 @@ public class BackupDatabaseTaskLet implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		//Date Parameter List
-		dateValueDate = SysParamUtil.getAppValueDate();
+		dateValueDate = EODUtil.getDate("APP_VALUEDATE", context);
 
-		logger.debug("START: Data Base Backup for Value Date: " + dateValueDate);
+		logger.info("START: Data Base Backup for Value Date {}", dateValueDate);
 		try {
 			String dbBackUpStatus = getBackupDatabase().backupDatabase(isBeforeEod());
 

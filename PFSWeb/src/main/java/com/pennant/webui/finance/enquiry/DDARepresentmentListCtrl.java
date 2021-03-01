@@ -45,7 +45,8 @@ package com.pennant.webui.finance.enquiry;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
@@ -79,7 +80,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class DDARepresentmentListCtrl extends GFCBaseListCtrl<DdaPresentment> {
 	private static final long serialVersionUID = 2808357374960437326L;
-	private static final Logger logger = Logger.getLogger(DDARepresentmentListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DDARepresentmentListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

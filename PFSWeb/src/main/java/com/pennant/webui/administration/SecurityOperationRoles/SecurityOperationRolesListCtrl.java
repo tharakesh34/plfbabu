@@ -44,7 +44,8 @@ package com.pennant.webui.administration.SecurityOperationRoles;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -75,7 +76,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOperation> {
 
 	private static final long serialVersionUID = -577256448245687404L;
-	private static final Logger logger = Logger.getLogger(SecurityOperationRolesListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SecurityOperationRolesListCtrl.class);
 
 	protected Window window_OperationRolesList;
 	protected Borderlayout borderLayout_OperationRolesList;

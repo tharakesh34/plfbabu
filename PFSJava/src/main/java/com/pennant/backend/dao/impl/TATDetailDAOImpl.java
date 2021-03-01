@@ -2,7 +2,8 @@ package com.pennant.backend.dao.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,7 +18,7 @@ import com.pennant.backend.model.finance.TATNotificationLog;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetailDAO {
-	private static Logger logger = Logger.getLogger(TATDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(TATDetailDAOImpl.class);
 
 	public TATDetailDAOImpl() {
 		super();
@@ -80,7 +81,7 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 	@Override
 	public void save(TATDetail tatDetail) {
 		logger.debug("Entering");
-		tatDetail.setSerialNo(getNextId("SeqTATDetails"));
+		tatDetail.setSerialNo(getNextValue("SeqTATDetails"));
 
 		StringBuilder insertSql = new StringBuilder(" INSERT INTO TATDetails ");
 		insertSql.append(" (Module, Reference, SerialNo, RoleCode, TATStartTime, TATEndTime, FinType)");

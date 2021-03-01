@@ -59,7 +59,8 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
@@ -99,14 +100,11 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FeeDetailService {
-	Logger logger = Logger.getLogger(FeeDetailService.class);
+	Logger logger = LogManager.getLogger(FeeDetailService.class);
 
 	private FinanceDetailService financeDetailService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private RuleService ruleService;
 	private FinFeeDetailService finFeeDetailService;
-
-	private List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>();
 
 	/**
 	 * Calculate and execute fee details
@@ -121,6 +119,9 @@ public class FeeDetailService {
 		logger.debug("Entering");
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+
+		// PSD# to fix the concurrent issue
+		List<FinFeeDetail> finFeeDetailList = new ArrayList<>();
 
 		// set FinType fees details
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
@@ -234,7 +235,7 @@ public class FeeDetailService {
 						rule = ruleService.getRuleById(insurance.getCalRule(), RuleConstants.MODULE_INSRULE,
 								RuleConstants.MODULE_INSRULE);
 						if (rule != null) {
-							insAmount = (BigDecimal) ruleExecutionUtil.executeRule(rule.getSQLRule(),
+							insAmount = (BigDecimal) RuleExecutionUtil.executeRule(rule.getSQLRule(),
 									declaredFieldValues, financeMain.getFinCcy(), RuleReturnType.DECIMAL);
 						}
 					}
@@ -273,7 +274,7 @@ public class FeeDetailService {
 		if (AccountEventConstants.ACCEVENT_EARLYSTL.equals(finScheduleData.getFinanceMain().getFinSourceID())) {
 			finScheduleData.setFinFeeDetailList(finFeeDetailList);
 		}
-		//Insurance Amounts
+		// Insurance Amounts
 		finScheduleData.getFinanceMain().setInsuranceAmt(insAddToDisb);
 		finScheduleData.getFinanceMain().setDeductInsDisb(deductInsFromDisb);
 
@@ -316,7 +317,7 @@ public class FeeDetailService {
 			}
 
 			// Excluding GST & TDS -- SO COMMENTED
-			//fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
+			// fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
 			//BUG FIX RELATED TO FEE IN CASE OF WAIVE REMAINING AMT RELATED
 			//TODO:GANESH Need to move to core.
 			fee.setRemainingFee(fee.getNetAmount().subtract(fee.getPaidAmount())
@@ -379,7 +380,7 @@ public class FeeDetailService {
 			BigDecimal maxWaiverPer = finFeeDetail.getMaxWaiverPerc();
 			BigDecimal finWaiverAmount = (calcAmount.multiply(maxWaiverPer)).divide(new BigDecimal(100), 0,
 					RoundingMode.HALF_DOWN);
-			//finWaiverAmount = PennantApplicationUtil.unFormateAmount(finWaiverAmount, formatter);
+			// finWaiverAmount = PennantApplicationUtil.unFormateAmount(finWaiverAmount, formatter);
 
 			if (finFeeDetail.getWaivedAmount().compareTo(finWaiverAmount) > 0) {
 				String[] valueParm = new String[3];
@@ -390,7 +391,7 @@ public class FeeDetailService {
 				finScheduleData.setErrorDetails(errorDetails);
 			}
 
-			//finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount()).subtract(finFeeDetail.getWaivedAmount()));
+			// finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount()).subtract(finFeeDetail.getWaivedAmount()));
 
 			if (!finFeeDetail.isOriginationFee()) {
 				if (finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) != 0) {
@@ -448,13 +449,16 @@ public class FeeDetailService {
 		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
+		// PSD# to fix the concurrent issue
+		List<FinFeeDetail> finFeeDetailList = new ArrayList<>();
+
 		// set FinType fees details
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
 		finFeeDetailList = convertToFinanceFees(financeDetail, finReference);
 		finFeeDetailList = prepareActualFinFees(finFeeDetailList, finScheduleData.getFinFeeDetailList());
 
 		// Organize Fee detail changes
-		//doSetFeeChanges(financeDetail, isOriginationFee);
+		// doSetFeeChanges(financeDetail, isOriginationFee);
 
 		List<String> feeRuleCodes = new ArrayList<String>();
 		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
@@ -511,7 +515,7 @@ public class FeeDetailService {
 
 		finScheduleData.getFinFeeDetailList().addAll(finFeeDetailList);
 
-		//Calculating GST
+		// Calculating GST
 		for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
 			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, gstPercentages);
 		}
@@ -524,7 +528,7 @@ public class FeeDetailService {
 			FinServiceInstruction finServiceInst, boolean enquiry)
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		//PSD# to fix the concurrent issue
+		// PSD# to fix the concurrent issue
 		List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		if (!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
@@ -544,7 +548,7 @@ public class FeeDetailService {
 		finFeeDetailList = prepareActualFinFees(finFeeDetailList, finScheduleData.getFinFeeDetailList());
 
 		// Organize Fee detail changes
-		//doSetFeeChanges(financeDetail, isOriginationFee);
+		// doSetFeeChanges(financeDetail, isOriginationFee);
 
 		List<String> feeRuleCodes = new ArrayList<String>();
 		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
@@ -613,7 +617,7 @@ public class FeeDetailService {
 
 		finScheduleData.getFinFeeDetailList().addAll(finFeeDetailList);
 
-		//### Ticket id:124998
+		// ### Ticket id:124998
 		if (finServiceInst != null && finServiceInst.isReceiptUpload()) {
 			finServiceInst.setFinFeeDetails(finScheduleData.getFinFeeDetailList());
 		}
@@ -663,7 +667,7 @@ public class FeeDetailService {
 				String[] fields = feeRule.getFields().split(",");
 				for (String field : fields) {
 					if (!executionMap.containsKey(field)) {
-						ruleExecutionUtil.setExecutionMap(field, objectList, executionMap);
+						RuleExecutionUtil.setExecutionMap(field, objectList, executionMap);
 					}
 				}
 			}
@@ -715,7 +719,7 @@ public class FeeDetailService {
 			BigDecimal feeResult = this.finFeeDetailService.getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()),
 					executionMap, finScheduleData.getFinanceMain().getFinCcy());
 
-			//unFormating feeResult
+			// unFormating feeResult
 			feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
 
 			finFeeDetail.setCalculatedAmount(feeResult);
@@ -1079,13 +1083,14 @@ public class FeeDetailService {
 					finFeeDetail.setNetAmount(finFeeDetail.getNetAmountOriginal().add(totalGST));
 					finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(totalGST));
 
-					//finFeeDetail.setPaidAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
+					// finFeeDetail.setPaidAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
 					finFeeDetail.setPaidAmountOriginal(finFeeDetail.getNetAmountOriginal());
 					finFeeDetail.setPaidAmount(finFeeDetail.getNetAmountOriginal().add(totalGST));
 					finFeeDetail.setPaidAmountGST(totalGST);
 				}
 
-				//this.finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, gstExecutionMap);
+				// this.finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail,
+				// gstExecutionMap);
 				this.finFeeDetailService.calculateFees(finFeeDetail, finMain, taxPercentages);
 			} else {
 				finFeeDetail.setActualAmountOriginal(finTypeFee.getAmount());
@@ -1225,21 +1230,6 @@ public class FeeDetailService {
 		return StringUtils.trimToEmpty(finFeeDetail.getFinEvent()) + "_" + String.valueOf(finFeeDetail.getFeeTypeID());
 	}
 
-	public List<FinFeeDetail> getFinFeeDetailUpdateList() {
-		return this.finFeeDetailList;
-	}
-
-	public List<FinFeeDetail> getFinFeeDetailList() {
-		List<FinFeeDetail> finFeeDetailTemp = new ArrayList<FinFeeDetail>();
-		finFeeDetailTemp.addAll(finFeeDetailList);
-
-		/*
-		 * for (FinFeeDetail finFeeDetail : finFeeDetailList) { // if (finFeeDetail.isRcdVisible()) {
-		 * finFeeDetailTemp.add(finFeeDetail); //} }
-		 */
-		return finFeeDetailTemp;
-	}
-
 	private BigDecimal calculateInclusivePercentage(BigDecimal amount, BigDecimal cgstPerc, BigDecimal sgstPerc,
 			BigDecimal ugstPerc, BigDecimal igstPerc, String taxRoundMode, int taxRoundingTarget) {
 		logger.debug(Literal.ENTERING);
@@ -1299,20 +1289,12 @@ public class FeeDetailService {
 				financeDetail.getFinanceTaxDetail());
 	}
 
-	public void setFinFeeDetailList(List<FinFeeDetail> finFeeDetailList) {
-		this.finFeeDetailList = finFeeDetailList;
-	}
-
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
 
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {

@@ -57,7 +57,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
@@ -139,7 +140,7 @@ import com.pennanttech.pff.soa.SOAReportService;
 
 public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAccount>
 		implements SOAReportGenerationService {
-	private static Logger logger = Logger.getLogger(SOAReportGenerationServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(SOAReportGenerationServiceImpl.class);
 
 	private static final String inclusive = "*";
 	private static final String exclusive = "^";
@@ -150,7 +151,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private CustomerDetailsService customerDetailsService;
 	private RuleDAO ruleDAO;
 	private FinFeeDetailService finFeeDetailService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private FeeTypeDAO feeTypeDAO;
 	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
 	private PromotionDAO promotionDAO;
@@ -1241,8 +1241,15 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
 							BigDecimal gstAmount = GSTCalculator.getTotalGST(finReference, adviseAmt,
 									bounceFeeType.getTaxComponent());
-							gstAmount = gstAmount.subtract(currWaiverGst);
-							bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(gstAmount);
+							if (currWaiverGst.compareTo(BigDecimal.ZERO) > 0) {
+								gstAmount = gstAmount.subtract(currWaiverGst);
+								bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(gstAmount);
+							} else {
+								gstAmount = gstAmount.subtract(manualAdvise.getWaivedCGST()
+										.add(manualAdvise.getWaivedIGST()).add(manualAdvise.getWaivedSGST())
+										.add(manualAdvise.getWaivedUGST()).add(manualAdvise.getWaivedCESS()));
+								bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(gstAmount);
+							}
 						}
 					}
 
@@ -1928,7 +1935,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							String receiptModeStatus = StringUtils.trimToEmpty(finReceiptHeader.getReceiptModeStatus());
 							//30-08-2019:Receipt date and value date should populate in SOA
 							Date receiptDate = finReceiptHeader.getReceiptDate();
-							Date receivedDate = finReceiptHeader.getReceivedDate();
+							Date receivedDate = finReceiptHeader.getValueDate();
 
 							String favourNumber = finReceiptDetail.getFavourNumber();
 
@@ -3423,8 +3430,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		BigDecimal result = BigDecimal.ZERO;
 		try {
-			Object exereslut = getRuleExecutionUtil().executeRule(sqlRule, executionMap, finCcy,
-					RuleReturnType.DECIMAL);
+			Object exereslut = RuleExecutionUtil.executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
 			if (exereslut == null || StringUtils.isEmpty(exereslut.toString())) {
 				result = BigDecimal.ZERO;
 			} else {
@@ -3542,14 +3548,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public FeeTypeDAO getFeeTypeDAO() {

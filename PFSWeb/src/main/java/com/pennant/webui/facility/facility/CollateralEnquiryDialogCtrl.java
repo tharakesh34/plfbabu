@@ -44,7 +44,8 @@ package com.pennant.webui.facility.facility;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Textbox;
@@ -59,7 +60,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CollateralEnquiryDialogCtrl extends GFCBaseCtrl<CustomerCollateral> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CollateralDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CollateralDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

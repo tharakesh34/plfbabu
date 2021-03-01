@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -46,7 +47,7 @@ import com.pennant.ws.exception.APIException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class APIChannelServiceImpl extends GenericService<APIChannel> implements APIChannelService {
-	private static final Logger logger = Logger.getLogger(APIChannelServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(APIChannelServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private APIChannelDAO apiChannelDAO;

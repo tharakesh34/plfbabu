@@ -50,7 +50,8 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.AMedia;
@@ -105,7 +106,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CovenantDocumentDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CovenantDocumentDialogCtrl.class);
 
 	protected Window window_CovenantDocumentDialog;
 

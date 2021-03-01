@@ -18,7 +18,8 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennanttech.logging.model.InterfaceLogDetail;
@@ -29,7 +30,7 @@ import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
 public abstract class SoapClient<T> {
-	protected static Logger logger = Logger.getLogger(SoapClient.class.getClass());
+	protected static Logger logger = LogManager.getLogger(SoapClient.class.getClass());
 
 	protected static final String READ_TIMEOUT = "exteranal.interface.read.timeout";
 	protected static final String CONNECTION_TIMEOUT = "exteranal.interface.connection.timeout";

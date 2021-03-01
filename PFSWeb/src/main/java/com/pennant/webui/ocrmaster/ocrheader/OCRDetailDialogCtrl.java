@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -37,9 +38,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
+	private static final Logger logger = LogManager.getLogger(OCRDetailDialogCtrl.class);
 
 	private static final long serialVersionUID = -6708644161007723783L;
-	private static final Logger logger = Logger.getLogger(OCRDetailDialogCtrl.class);
 
 	protected Window window_OCRDetailDialog;
 	protected Intbox stepSequence;

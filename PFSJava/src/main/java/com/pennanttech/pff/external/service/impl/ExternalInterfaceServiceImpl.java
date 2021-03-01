@@ -3,7 +3,8 @@ package com.pennanttech.pff.external.service.impl;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -15,7 +16,7 @@ import com.pennanttech.pff.external.service.ExternalInterfaceService;
 import com.pennanttech.pff.model.mandate.MandateData;
 
 public class ExternalInterfaceServiceImpl implements ExternalInterfaceService {
-	private static final Logger logger = Logger.getLogger(ExternalInterfaceServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ExternalInterfaceServiceImpl.class);
 	private MandateProcesses mandateProcesses;
 	private MandateProcesses defaultMandateProcess;
 	private MandateProcessDAO mandateProcessdao;

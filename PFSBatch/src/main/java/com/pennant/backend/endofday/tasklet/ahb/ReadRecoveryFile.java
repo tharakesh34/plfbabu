@@ -53,7 +53,8 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -62,16 +63,17 @@ import org.springframework.batch.repeat.RepeatStatus;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.BatchFileUtil;
 import com.pennant.eod.beans.PaymentRecoveryDetail;
 import com.pennant.eod.dao.PaymentRecoveryDetailDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class ReadRecoveryFile implements Tasklet {
-	private Logger logger = Logger.getLogger(ReadRecoveryFile.class);
+	private Logger logger = LogManager.getLogger(ReadRecoveryFile.class);
 	private PaymentRecoveryDetailDAO paymentRecoveryDetailDAO;
 
 	public ReadRecoveryFile() {
@@ -80,21 +82,22 @@ public class ReadRecoveryFile implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date date = SysParamUtil.getAppValueDate();
+		Date date = EODUtil.getDate("APP_VALUEDATE", context);
+
 		logger.debug("START: Request File Reading for Value Date: " + date);
 
 		boolean fileRecieved = false;
-		long reuest = DateUtility.getSysDate().getTime();
+		long reuest = DateUtil.getSysDate().getTime();
 		long delay = 1 * 15 * 1000;
 		int count = 0;
 
 		while (!fileRecieved) {
-			long current = DateUtility.getSysDate().getTime();
+			long current = DateUtil.getSysDate().getTime();
 
 			if ((current - reuest) >= delay) {
 				File file = readFile();
 				if (!file.exists()) {
-					reuest = DateUtility.getSysDate().getTime();
+					reuest = DateUtil.getSysDate().getTime();
 					continue;
 				}
 

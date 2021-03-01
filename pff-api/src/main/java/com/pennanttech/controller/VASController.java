@@ -9,7 +9,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.APIHeader;
@@ -39,7 +40,7 @@ import com.pennanttech.ws.model.vas.VASRecordingDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class VASController {
-	private static final Logger logger = Logger.getLogger(VASController.class);
+	private static final Logger logger = LogManager.getLogger(VASController.class);
 	private VASRecordingService vASRecordingService;
 	private VASConfigurationService vASConfigurationService;
 	private FinanceMainDAO financeMainDAO;

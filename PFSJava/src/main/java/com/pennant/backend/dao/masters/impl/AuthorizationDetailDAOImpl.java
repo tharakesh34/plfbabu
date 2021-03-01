@@ -46,7 +46,8 @@ package com.pennant.backend.dao.masters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -62,7 +63,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class AuthorizationDetailDAOImpl extends SequenceDao<AuthorizationDetail> implements AuthorizationDetailDAO {
-	private static Logger logger = Logger.getLogger(AuthorizationDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AuthorizationDetailDAOImpl.class);
 
 	@Override
 	public AuthorizationDetail getAuthorizationDetail() {
@@ -78,8 +79,8 @@ public class AuthorizationDetailDAOImpl extends SequenceDao<AuthorizationDetail>
 	public long save(AuthorizationDetail authorizationDetail, String type) {
 		logger.debug("Entering");
 		if (authorizationDetail.getId() == Long.MIN_VALUE) {
-			authorizationDetail.setId(getNextId("SeqAuthDetails"));
-			logger.debug("get NextID:" + authorizationDetail.getId());
+			authorizationDetail.setId(getNextValue("SeqAuthDetails"));
+			logger.debug("get NextValue:" + authorizationDetail.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into AuthDetails");

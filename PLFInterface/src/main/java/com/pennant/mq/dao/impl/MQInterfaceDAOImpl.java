@@ -2,7 +2,8 @@ package com.pennant.mq.dao.impl;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -10,7 +11,7 @@ import com.pennant.mq.dao.MQInterfaceDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class MQInterfaceDAOImpl implements MQInterfaceDAO {
-	private static Logger logger = Logger.getLogger(MQInterfaceDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(MQInterfaceDAOImpl.class);
 
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 

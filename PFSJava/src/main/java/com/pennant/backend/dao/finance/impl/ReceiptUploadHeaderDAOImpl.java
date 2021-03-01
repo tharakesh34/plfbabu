@@ -46,7 +46,8 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader> implements ReceiptUploadHeaderDAO {
 
-	private static Logger logger = Logger.getLogger(ReceiptUploadHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ReceiptUploadHeaderDAOImpl.class);
 
 	public ReceiptUploadHeaderDAOImpl() {
 		super();

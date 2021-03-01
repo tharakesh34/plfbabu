@@ -10,7 +10,8 @@ import javax.xml.stream.FactoryConfigurationError;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -49,7 +50,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.logging.dao.InstBasedSchdDetailDAO;
 
 public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
-	private static Logger logger = Logger.getLogger(InstBasedSchdProcess.class);
+	private static Logger logger = LogManager.getLogger(InstBasedSchdProcess.class);
 
 	private transient FinanceDetailService financeDetailService;
 	private transient InstBasedSchdDetailDAO instBasedSchdDetailDAO;

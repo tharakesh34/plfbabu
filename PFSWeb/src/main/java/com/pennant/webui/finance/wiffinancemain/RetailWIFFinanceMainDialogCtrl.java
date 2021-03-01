@@ -58,7 +58,8 @@ import java.util.Map;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
@@ -182,7 +183,7 @@ import com.rits.cloning.Cloner;
  */
 public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(RetailWIFFinanceMainDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RetailWIFFinanceMainDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

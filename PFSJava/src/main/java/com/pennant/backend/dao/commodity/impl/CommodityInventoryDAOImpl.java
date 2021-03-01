@@ -27,7 +27,8 @@ package com.pennant.backend.dao.commodity.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -49,7 +50,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> implements CommodityInventoryDAO {
-	private static Logger logger = Logger.getLogger(CommodityInventoryDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CommodityInventoryDAOImpl.class);
 
 	public CommodityInventoryDAOImpl() {
 		super();
@@ -159,8 +160,8 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 		logger.debug("Entering");
 
 		if (commodityInventory.getId() == Long.MIN_VALUE) {
-			commodityInventory.setId(getNextId("SeqFCMTCommodityInventory"));
-			logger.debug("get NextID:" + commodityInventory.getId());
+			commodityInventory.setId(getNextValue("SeqFCMTCommodityInventory"));
+			logger.debug("get NextValue:" + commodityInventory.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into FCMTCommodityInventory");

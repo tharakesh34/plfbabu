@@ -9,7 +9,8 @@ import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.llom.util.AXIOMUtil;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.PFFXmlUtil;
@@ -17,7 +18,7 @@ import com.pennant.mqconnection.InterfacePropertiesUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public abstract class MQProcess {
-	private static final Logger logger = Logger.getLogger(MQProcess.class);
+	private static final Logger logger = LogManager.getLogger(MQProcess.class);
 	private String[] configDetails = null;
 
 	public MQProcess() {

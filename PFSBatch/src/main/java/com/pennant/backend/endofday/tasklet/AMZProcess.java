@@ -67,7 +67,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ProjectedAmortizationService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.model.amortization.AmortizationQueuing;
 import com.pennant.backend.model.amortization.ProjectedAmortization;
@@ -81,6 +80,7 @@ import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class AMZProcess implements Tasklet {
 	private Logger logger = LogManager.getLogger(AMZProcess.class);
@@ -94,7 +94,8 @@ public class AMZProcess implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date appDate = SysParamUtil.getAppDate();
+		Date appDate = EODUtil.getDate("APP_DATE", context);
+
 		logger.debug("START: Amortization On {}", appDate);
 
 		Map<String, Object> stepExecutionContext = context.getStepContext().getStepExecutionContext();

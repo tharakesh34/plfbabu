@@ -45,7 +45,8 @@ package com.pennant.backend.dao.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -59,7 +60,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements UserActivityLogDAO {
-	private static Logger logger = Logger.getLogger(UserActivityLogDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(UserActivityLogDAOImpl.class);
 
 	public UserActivityLogDAOImpl() {
 		super();

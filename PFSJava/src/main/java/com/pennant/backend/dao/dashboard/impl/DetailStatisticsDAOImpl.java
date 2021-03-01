@@ -2,7 +2,8 @@ package com.pennant.backend.dao.dashboard.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -17,7 +18,7 @@ import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class DetailStatisticsDAOImpl extends BasicDao<DetailStatistics> implements DetailStatisticsDAO {
-	private static Logger logger = Logger.getLogger(DetailStatisticsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DetailStatisticsDAOImpl.class);
 
 	public DetailStatisticsDAOImpl() {
 		super();

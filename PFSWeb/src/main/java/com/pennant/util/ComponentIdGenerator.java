@@ -5,7 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.IdSpace;
@@ -18,7 +19,7 @@ import org.zkoss.zul.Radio;
 import org.zkoss.zul.Window;
 
 public class ComponentIdGenerator implements IdGenerator {
-	private static final Logger logger = Logger.getLogger(ComponentIdGenerator.class);
+	private static final Logger logger = LogManager.getLogger(ComponentIdGenerator.class);
 
 	private static final String DEFAULT_PREFIX = "zk_comp_";
 	private static final String[] COMPONENTS = { "Textbox", "Intbox", "Decimalbox", "Datebox", "Checkbox", "Radio",

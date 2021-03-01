@@ -43,10 +43,14 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -70,7 +74,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>NPAProvisionDetail</code> with set of CRUD operations.
  */
 public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> implements NPAProvisionDetailDAO {
-	private static Logger logger = Logger.getLogger(NPAProvisionDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(NPAProvisionDetailDAOImpl.class);
 
 	public NPAProvisionDetailDAOImpl() {
 		super();
@@ -109,41 +113,65 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 
 	@Override
 	public List<NPAProvisionDetail> getNPAProvisionDetailList(long id, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, headerId, assetClassificationId, nPAActive, dPDdays, nPARepayApprtnmnt, ");
-		sql.append(" intSecPerc, intUnSecPerc, regSecPerc, regUnSecPerc ,");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, ");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, HeaderId, AssetClassificationId, NPAActive, DPDdays, NPARepayApprtnmnt, IntSecPerc");
+		sql.append(", IntUnSecPerc, RegSecPerc, RegUnSecPerc, Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.containsIgnoreCase(tableType.getSuffix(), "view")) {
-			sql.append(", assetCode, assetStageOrder");
+			sql.append(", AssetCode, AssetStageOrder");
 		}
-
 		sql.append(" from NPA_PROVISION_DETAILS");
 		sql.append(tableType.getSuffix());
-		sql.append(" Where headerId = :HeaderId  order by assetStageOrder ");
+		sql.append(" Where headerId = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		NPAProvisionDetail detail = new NPAProvisionDetail();
-		detail.setHeaderId(id);
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(detail);
-		RowMapper<NPAProvisionDetail> rowMapper = BeanPropertyRowMapper.newInstance(NPAProvisionDetail.class);
+		List<NPAProvisionDetail> npaProvsionDetails = null;
 
-		List<NPAProvisionDetail> idList = null;
 		try {
-			idList = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			npaProvsionDetails = this.jdbcOperations.query(sql.toString(), ps -> {
+				int index = 1;
+				ps.setLong(index, id);
+			}, (rs, rowNum) -> {
+				NPAProvisionDetail pd = new NPAProvisionDetail();
+
+				pd.setId(rs.getLong("Id"));
+				pd.setHeaderId(rs.getLong("HeaderId"));
+				pd.setAssetClassificationId(rs.getLong("AssetClassificationId"));
+				pd.setNPAActive(rs.getBoolean("NPAActive"));
+				pd.setDPDdays(rs.getInt("DPDdays"));
+				pd.setNPARepayApprtnmnt(rs.getString("NPARepayApprtnmnt"));
+				pd.setIntSecPerc(rs.getBigDecimal("IntSecPerc"));
+				pd.setIntUnSecPerc(rs.getBigDecimal("IntUnSecPerc"));
+				pd.setRegSecPerc(rs.getBigDecimal("RegSecPerc"));
+				pd.setRegUnSecPerc(rs.getBigDecimal("RegUnSecPerc"));
+				pd.setVersion(rs.getInt("Version"));
+				pd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				pd.setLastMntBy(rs.getLong("LastMntBy"));
+				pd.setRecordStatus(rs.getString("RecordStatus"));
+				pd.setRoleCode(rs.getString("RoleCode"));
+				pd.setNextRoleCode(rs.getString("NextRoleCode"));
+				pd.setTaskId(rs.getString("TaskId"));
+				pd.setNextTaskId(rs.getString("NextTaskId"));
+				pd.setRecordType(rs.getString("RecordType"));
+				pd.setWorkflowId(rs.getLong("WorkflowId"));
+
+				if (StringUtils.containsIgnoreCase(tableType.getSuffix(), "view")) {
+					pd.setAssetCode(rs.getString("AssetCode"));
+					pd.setAssetStageOrder(rs.getInt("AssetStageOrder"));
+				}
+
+				return pd;
+
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			idList = new ArrayList<>();
+			npaProvsionDetails = new ArrayList<>();
+			logger.warn("Records not found in NPA_PROVISION_DETAILS{} for the specified id {}", tableType.getSuffix(),
+					id);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return idList;
+		return sortByAssetStageOrder(npaProvsionDetails);
+
 	}
 
 	@Override
@@ -342,6 +370,26 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 
 		logger.debug(Literal.LEAVING);
 		return nPAProvisionDetail;
+	}
+
+	public static List<NPAProvisionDetail> sortByAssetStageOrder(List<NPAProvisionDetail> npaProvisionDetails) {
+		if (CollectionUtils.isNotEmpty(npaProvisionDetails)) {
+			Collections.sort(npaProvisionDetails, new Comparator<NPAProvisionDetail>() {
+				@Override
+				public int compare(NPAProvisionDetail detail1, NPAProvisionDetail detail2) {
+					int asset1 = detail1.getAssetStageOrder();
+					int asset2 = detail2.getAssetStageOrder();
+					if (asset1 == asset2)
+						return 0;
+					else if (asset1 > asset2)
+						return 1;
+					else
+						return -1;
+				}
+			});
+		}
+
+		return npaProvisionDetails;
 	}
 
 }

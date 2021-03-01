@@ -2,7 +2,8 @@ package com.pennant.webui.financemanagement.insurance;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
@@ -25,7 +26,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class InsPaymentUploadListCtrl extends GFCBaseListCtrl<InsurancePaymentInstructions> {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(InsPaymentUploadListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(InsPaymentUploadListCtrl.class);
 
 	protected Window window_InsPaymentUploadList;
 	protected Borderlayout borderLayout_InsPaymentUploadList;

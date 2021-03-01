@@ -54,7 +54,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
@@ -117,7 +118,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implements FinFeeDetailService {
-	private static final Logger logger = Logger.getLogger(FinFeeDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinFeeDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 
@@ -127,9 +128,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
-
-	// Newly added
-	private RuleExecutionUtil ruleExecutionUtil;
 	private RuleDAO ruleDAO;
 	private BranchDAO branchDAO;
 	private ProvinceDAO provinceDAO;
@@ -1580,8 +1578,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		BigDecimal result = BigDecimal.ZERO;
 		try {
-			Object exereslut = this.ruleExecutionUtil.executeRule(sqlRule, executionMap, finCcy,
-					RuleReturnType.DECIMAL);
+			Object exereslut = RuleExecutionUtil.executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
 			if (exereslut == null || StringUtils.isEmpty(exereslut.toString())) {
 				result = BigDecimal.ZERO;
 			} else {
@@ -2037,10 +2034,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public RuleDAO getRuleDAO() {

@@ -68,6 +68,23 @@ public class Taxes extends AbstractWorkflowEntity {
 	private BigDecimal remFeeTax = BigDecimal.ZERO;
 	private BigDecimal waivedTax = BigDecimal.ZERO;
 
+	public Taxes copyEntity() {
+		Taxes entity = new Taxes();
+		entity.setId(this.id);
+		entity.setReferenceId(this.referenceId);
+		entity.setTaxType(this.taxType);
+		entity.setTaxPerc(this.taxPerc);
+		entity.setNewRecord(this.newRecord);
+		entity.setBefImage(this.befImage);
+		entity.setUserDetails(this.userDetails);
+		entity.setActualTax(this.actualTax);
+		entity.setPaidTax(this.paidTax);
+		entity.setNetTax(this.netTax);
+		entity.setRemFeeTax(this.remFeeTax);
+		entity.setWaivedTax(this.waivedTax);
+		return entity;
+	}
+
 	public long getId() {
 		return id;
 	}

@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -70,7 +71,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>Cluster</code> with set of CRUD operations.
  */
 public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
-	private static Logger logger = Logger.getLogger(ClusterDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ClusterDAOImpl.class);
 
 	public ClusterDAOImpl() {
 		super();

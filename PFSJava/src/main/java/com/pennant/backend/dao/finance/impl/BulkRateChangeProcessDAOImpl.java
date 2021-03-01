@@ -3,7 +3,8 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,7 +24,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHeader>
 		implements BulkRateChangeProcessDAO {
-	private static Logger logger = Logger.getLogger(BulkRateChangeProcessDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BulkRateChangeProcessDAOImpl.class);
 
 	public BulkRateChangeProcessDAOImpl() {
 		super();
@@ -79,9 +80,9 @@ public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHead
 
 		if (StringUtils.isBlank(bulkRateChangeHeader.getBulkRateChangeRef())) {
 			String appMonthName = DateUtility.format(DateUtility.getAppDate(), PennantConstants.monthYearFormat);
-			String seqNo = String.valueOf(getNextId("SeqBulkRateChangeHeader"));
+			String seqNo = String.valueOf(getNextValue("SeqBulkRateChangeHeader"));
 			bulkRateChangeHeader.setBulkRateChangeRef(appMonthName + " - " + seqNo);
-			logger.debug("get NextID: " + bulkRateChangeHeader.getBulkRateChangeRef());
+			logger.debug("get NextValue: " + bulkRateChangeHeader.getBulkRateChangeRef());
 		}
 
 		StringBuilder insertSql = new StringBuilder();
@@ -276,7 +277,7 @@ public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHead
 	public String getBulkRateChangeReference() {
 		logger.debug("Entering");
 		String appMonthName = DateUtility.format(DateUtility.getAppDate(), PennantConstants.monthYearFormat);
-		String seqNo = String.valueOf(getNextId("SeqBulkRateChangeHeader"));
+		String seqNo = String.valueOf(getNextValue("SeqBulkRateChangeHeader"));
 		logger.debug("BulkRateChange Ref: " + appMonthName + " - " + seqNo);
 
 		logger.debug("Leaving");

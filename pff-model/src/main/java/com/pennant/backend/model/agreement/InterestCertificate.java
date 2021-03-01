@@ -39,6 +39,16 @@ public class InterestCertificate {
 	private String schdPftPaid = "0.00";
 	private String schdPriPaid = "0.00";
 	private String totalPaid = "0.00";
+	private BigDecimal repayPriAmt = BigDecimal.ZERO;
+	private BigDecimal repayPftAmt = BigDecimal.ZERO;
+	private BigDecimal schdProfitPaid = BigDecimal.ZERO;
+	private BigDecimal schdPrinciplePaid = BigDecimal.ZERO;
+	private String repayPriAmtStr = "0.00";
+	private String repayPftAmtStr = "0.00";
+	private String schdPftPaidStr = "0.00";
+	private String schdPriPaidStr = "0.00";
+	private String totRepayAmount = "0.00";
+	private String totSchdAmount = "0.00";
 	private String finCcy;
 	private String finStartDate;
 	private String finEndDate;
@@ -346,6 +356,86 @@ public class InterestCertificate {
 
 	public void setTotalPaid(String totalPaid) {
 		this.totalPaid = totalPaid;
+	}
+
+	public BigDecimal getRepayPriAmt() {
+		return repayPriAmt;
+	}
+
+	public void setRepayPriAmt(BigDecimal repayPriAmt) {
+		this.repayPriAmt = repayPriAmt;
+	}
+
+	public BigDecimal getRepayPftAmt() {
+		return repayPftAmt;
+	}
+
+	public void setRepayPftAmt(BigDecimal repayPftAmt) {
+		this.repayPftAmt = repayPftAmt;
+	}
+
+	public BigDecimal getSchdProfitPaid() {
+		return schdProfitPaid;
+	}
+
+	public void setSchdProfitPaid(BigDecimal schdProfitPaid) {
+		this.schdProfitPaid = schdProfitPaid;
+	}
+
+	public String getRepayPftAmtStr() {
+		return repayPftAmtStr;
+	}
+
+	public void setRepayPftAmtStr(String repayPftAmtStr) {
+		this.repayPftAmtStr = repayPftAmtStr;
+	}
+
+	public String getSchdPftPaidStr() {
+		return schdPftPaidStr;
+	}
+
+	public void setSchdPftPaidStr(String schdPftPaidStr) {
+		this.schdPftPaidStr = schdPftPaidStr;
+	}
+
+	public String getSchdPriPaidStr() {
+		return schdPriPaidStr;
+	}
+
+	public void setSchdPriPaidStr(String schdPriPaidStr) {
+		this.schdPriPaidStr = schdPriPaidStr;
+	}
+
+	public String getTotRepayAmount() {
+		return totRepayAmount;
+	}
+
+	public void setTotRepayAmount(String totRepayAmount) {
+		this.totRepayAmount = totRepayAmount;
+	}
+
+	public String getRepayPriAmtStr() {
+		return repayPriAmtStr;
+	}
+
+	public void setRepayPriAmtStr(String repayPriAmtStr) {
+		this.repayPriAmtStr = repayPriAmtStr;
+	}
+
+	public BigDecimal getSchdPrinciplePaid() {
+		return schdPrinciplePaid;
+	}
+
+	public void setSchdPrinciplePaid(BigDecimal schdPrinciplePaid) {
+		this.schdPrinciplePaid = schdPrinciplePaid;
+	}
+
+	public String getTotSchdAmount() {
+		return totSchdAmount;
+	}
+
+	public void setTotSchdAmount(String totSchdAmount) {
+		this.totSchdAmount = totSchdAmount;
 	}
 
 	public String getFinType() {

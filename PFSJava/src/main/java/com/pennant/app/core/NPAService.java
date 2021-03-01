@@ -53,6 +53,7 @@ import com.pennant.backend.dao.applicationmaster.NPAProvisionHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
 import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -88,15 +89,14 @@ public class NPAService extends ServiceHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	public CustEODEvent processProvisions(CustEODEvent custEODEvent) throws Exception {
-		String strCustId = custEODEvent.getCustIdAsString();
-		logger.info("Provision Calculation started for the Customer ID {}", strCustId);
+	public void processProvisions(CustEODEvent custEODEvent) throws Exception {
 
 		Date eodDate = custEODEvent.getEodDate();
 		Date monthEnd = DateUtil.getMonthEnd(eodDate);
-		if (!(DateUtil.compare(eodDate, monthEnd) == 0)) {
-			return custEODEvent;
+		if (!(eodDate.compareTo(monthEnd) == 0)) {
+			return;
 		}
+		logger.info("Provision Calculation started...");
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
@@ -108,7 +108,8 @@ public class NPAService extends ServiceHelper {
 			Provision provision = getMaxProvisionAsset(finEODEvents, provisionBooks);
 
 			if (provision == null) {
-				return custEODEvent;
+				logger.info("Provision not found for the customer.");
+				return;
 			}
 
 			for (FinEODEvent finEODEvent : finEODEvents) {
@@ -130,9 +131,7 @@ public class NPAService extends ServiceHelper {
 			}
 		}
 
-		logger.info("Provision Calculation completd for the Customer ID {}", strCustId);
-		return custEODEvent;
-
+		logger.info("Provision Calculation completd.");
 	}
 
 	private FinEODEvent findProvision(FinEODEvent finEODEvent, Date valueDate, String provisionBooks,
@@ -244,20 +243,18 @@ public class NPAService extends ServiceHelper {
 		FinanceMain financeMain = finEODEvent.getFinanceMain();
 		String finType = financeMain.getFinType();
 		int dpdDays = pftDetail.getCurODDays();
+		NPAProvisionHeader provisionHeader = null;
 		NPAProvisionDetail provisionDetail = null;
+		List<NPAProvisionDetail> provisionDetails = null;
 		Provision provision = null;
 
-		NPAProvisionHeader provisionHeader = nPAProvisionHeaderDAO.getNPAProvisionByFintype(finType,
-				TableType.MAIN_TAB);
-
+		provisionHeader = nPAProvisionHeaderDAO.getNPAProvisionByFintype(finType, TableType.MAIN_TAB);
 		// If Provision details are not available against the loan type.
 		if (provisionHeader == null) {
 			return provision;
 		}
 
-		List<NPAProvisionDetail> provisionDetails = this.nPAProvisionDetailDAO
-				.getNPAProvisionDetailList(provisionHeader.getId(), TableType.AVIEW);
-
+		provisionDetails = nPAProvisionDetailDAO.getNPAProvisionDetailList(provisionHeader.getId(), TableType.AVIEW);
 		// If Provision Percentages are not available against the loan type.
 		if (CollectionUtils.isEmpty(provisionDetails)) {
 			return provision;
@@ -302,7 +299,7 @@ public class NPAService extends ServiceHelper {
 
 		provision.setAssetCode(provisionDetail.getAssetCode());
 		provision.setAssetStageOrder(provisionDetail.getAssetStageOrder());
-		provision.setNpa(provisionDetail.isnPAActive());
+		provision.setNpa(provisionDetail.isNPAActive());
 		provision.setManualProvision(false);
 
 		return provision;
@@ -349,16 +346,16 @@ public class NPAService extends ServiceHelper {
 	private Provision setProvisionRate(FinEODEvent finEODEvent, Provision provision, NPAProvisionDetail provisionDetail,
 			String provisionBooks) {
 
-		boolean isSecured = this.collateralAssignmentDAO.isSecuredLoan(finEODEvent.getFinanceMain().getFinReference(),
-				TableType.MAIN_TAB);
+		String finReference = finEODEvent.getFinanceMain().getFinReference();
+		boolean isSecured = this.collateralAssignmentDAO.isSecuredLoan(finReference, TableType.MAIN_TAB);
 
-		if (StringUtils.equals(ProvisionConstants.PROVISION_BOOKS_REG, provisionBooks)) {
+		if (ProvisionConstants.PROVISION_BOOKS_REG.equals(provisionBooks)) {
 			if (isSecured) {
 				provision.setProvisionRate(provisionDetail.getRegSecPerc());
 			} else {
 				provision.setProvisionRate(provisionDetail.getRegUnSecPerc());
 			}
-		} else if (StringUtils.equals(ProvisionConstants.PROVISION_BOOKS_INT, provisionBooks)) {
+		} else if (ProvisionConstants.PROVISION_BOOKS_INT.equals(provisionBooks)) {
 			if (isSecured) {
 				provision.setProvisionRate(provisionDetail.getIntSecPerc());
 			} else {
@@ -367,7 +364,7 @@ public class NPAService extends ServiceHelper {
 		}
 
 		if (isSecured) {
-			provision = setCollateralValue(finEODEvent, provision);
+			provision.setCollateralValue(collateralAssignmentDAO.getCollateralValue(finReference));
 		} else {
 			provision.setCollateralValue(BigDecimal.ZERO);
 		}
@@ -386,18 +383,6 @@ public class NPAService extends ServiceHelper {
 				provision.setAssetBkwMov(true);
 			}
 		}
-	}
-
-	/**
-	 * Set Collateral Value
-	 * 
-	 * @param finEODEvent
-	 * @param provision
-	 */
-	private Provision setCollateralValue(FinEODEvent finEODEvent, Provision provision) {
-		provision.setCollateralValue(
-				this.collateralAssignmentDAO.getCollateralValue(finEODEvent.getFinanceMain().getFinReference()));
-		return provision;
 	}
 
 	/**
@@ -442,7 +427,7 @@ public class NPAService extends ServiceHelper {
 			return false;
 		}
 
-		if (StringUtils.equals(PennantConstants.YES, npaProvisionDetail.getNPARepayApprtnmnt())) {
+		if (PennantConstants.YES.equals(npaProvisionDetail.getNPARepayApprtnmnt())) {
 			return true;
 		}
 
@@ -495,8 +480,14 @@ public class NPAService extends ServiceHelper {
 		return maxProvision;
 	}
 
-	public CustEODEvent processAccounting(CustEODEvent custEODEvent) throws Exception {
+	public void processAccounting(CustEODEvent custEODEvent) throws Exception {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+
+		Date eodDate = custEODEvent.getEodDate();
+		Date monthEnd = DateUtil.getMonthEnd(eodDate);
+		if (DateUtil.compare(eodDate, monthEnd) != 0) {
+			return;
+		}
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			List<Provision> provisions = finEODEvent.getProvisions();
@@ -506,11 +497,6 @@ public class NPAService extends ServiceHelper {
 			}
 
 			for (Provision provision : provisions) {
-				Date eodDate = custEODEvent.getEodDate();
-				Date monthEnd = DateUtil.getMonthEnd(eodDate);
-				if ((DateUtil.compare(eodDate, monthEnd) != 0)) {
-					continue;
-				}
 
 				// Process Provision Accounting.
 				finEODEvent = processProvAccounting(finEODEvent, custEODEvent, provision);
@@ -522,7 +508,6 @@ public class NPAService extends ServiceHelper {
 				finEODEvent = processNPAChgAccounting(finEODEvent, custEODEvent, provision);
 			}
 		}
-		return custEODEvent;
 	}
 
 	private FinEODEvent processProvAccounting(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Provision provision)
@@ -532,8 +517,8 @@ public class NPAService extends ServiceHelper {
 		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain main = finEODEvent.getFinanceMain();
 
-		long accountingID = getAccountingID(main, eventCode);
-		if (accountingID == Long.MIN_VALUE) {
+		Long accountingID = getAccountingID(main, eventCode);
+		if (accountingID == null || accountingID == Long.MIN_VALUE) {
 			logger.debug(" Leaving. Accounting Not Found");
 			return finEODEvent;
 		}
@@ -541,14 +526,20 @@ public class NPAService extends ServiceHelper {
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(main, finPftDetail, finEODEvent.getFinanceScheduleDetails(),
 				eventCode, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
 
-		aeEvent.setValueDate(SysParamUtil.getPostDate());
+		EventProperties eventProperties = main.getEventProperties();
+		if (eventProperties.isParameterLoaded()) {
+			aeEvent.setValueDate(eventProperties.getPostDate());
+		} else {
+			aeEvent.setValueDate(SysParamUtil.getPostDate());
+		}
+
 		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
 		aeAmountCodes.setProvAmt(provision.getProvisionedAmt());
 
 		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
-		aeEvent = postAccountingEOD(aeEvent);
+		postAccountingEOD(aeEvent);
 
 		provision.setLinkedTranId(aeEvent.getLinkedTranId());
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
@@ -563,8 +554,8 @@ public class NPAService extends ServiceHelper {
 		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain main = finEODEvent.getFinanceMain();
 
-		long accountingID = getAccountingID(main, eventCode);
-		if (accountingID == Long.MIN_VALUE) {
+		Long accountingID = getAccountingID(main, eventCode);
+		if (accountingID == null || accountingID == Long.MIN_VALUE) {
 			logger.debug(" Leaving. Accounting Not Found");
 			return finEODEvent;
 		}
@@ -583,7 +574,7 @@ public class NPAService extends ServiceHelper {
 		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
-		aeEvent = postAccountingEOD(aeEvent);
+		postAccountingEOD(aeEvent);
 
 		provision.setLinkedTranId(aeEvent.getLinkedTranId());
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
@@ -605,7 +596,7 @@ public class NPAService extends ServiceHelper {
 		}
 
 		provision.setChgLinkedTranId(aeEvent.getLinkedTranId());
-		aeEvent = postAccountingEOD(aeEvent);
+		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 
 		return finEODEvent;
@@ -618,8 +609,8 @@ public class NPAService extends ServiceHelper {
 		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain main = finEODEvent.getFinanceMain();
 
-		long accountingID = getAccountingID(main, eventCode);
-		if (accountingID == Long.MIN_VALUE) {
+		Long accountingID = getAccountingID(main, eventCode);
+		if (accountingID == null || accountingID == Long.MIN_VALUE) {
 			logger.debug(" Leaving. Accounting Not Found");
 			return null;
 		}

@@ -10,7 +10,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
@@ -85,8 +86,8 @@ import com.pennanttech.pff.model.PMAYResponse;
 import com.pennanttech.pff.model.PmayDetails;
 
 public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
+	private static final Logger logger = LogManager.getLogger(PMAYDialogCtrl.class);
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PMAYDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

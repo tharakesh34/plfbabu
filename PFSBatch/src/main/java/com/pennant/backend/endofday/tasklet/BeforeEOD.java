@@ -53,8 +53,8 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.core.DateService;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class BeforeEOD implements Tasklet {
@@ -68,7 +68,8 @@ public class BeforeEOD implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = SysParamUtil.getAppValueDate();
+		Date valueDate = EODUtil.getDate("APP_DATE", context);
+
 		logger.info("START Before EOD On {}", valueDate);
 
 		dateService.doUpdatebeforeEod(true);

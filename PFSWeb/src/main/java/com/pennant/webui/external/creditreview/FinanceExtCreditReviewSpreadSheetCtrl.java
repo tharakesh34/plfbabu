@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.type.TypeReference;
@@ -72,7 +73,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(FinanceExtCreditReviewSpreadSheetCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceExtCreditReviewSpreadSheetCtrl.class);
 
 	protected Window window_SpreadSheetDialog;
 	protected Spreadsheet spreadSheet = null;

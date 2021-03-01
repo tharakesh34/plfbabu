@@ -1,6 +1,7 @@
 package com.pennant.mq.process.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.dda.DDAAmendment;
@@ -16,7 +17,7 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DDAServiceImpl implements DDAProcess {
-	private static final Logger logger = Logger.getLogger(DDAServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DDAServiceImpl.class);
 
 	private DDARequestProcess ddaRequestProcess;
 	private DDAAmendmentProcess ddaAmendmentProcess;

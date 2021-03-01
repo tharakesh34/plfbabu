@@ -46,7 +46,8 @@ package com.pennant.backend.service.staticparms.impl;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRateBasisCode>
 		implements InterestRateBasisCodeService {
 
-	private static Logger logger = Logger.getLogger(InterestRateBasisCodeServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(InterestRateBasisCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private InterestRateBasisCodeDAO interestRateBasisCodeDAO;

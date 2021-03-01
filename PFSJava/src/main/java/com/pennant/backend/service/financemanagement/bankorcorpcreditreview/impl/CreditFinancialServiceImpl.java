@@ -3,7 +3,8 @@ package com.pennant.backend.service.financemanagement.bankorcorpcreditreview.imp
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -27,7 +28,7 @@ public class CreditFinancialServiceImpl extends GenericService<CreditReviewData>
 	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;
 
-	private static Logger logger = Logger.getLogger(CreditFinancialServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CreditFinancialServiceImpl.class);
 
 	@Override
 	public void saveOrUpdate(FinanceDetail financeDetail, AuditHeader auditHeader, String tableType) {

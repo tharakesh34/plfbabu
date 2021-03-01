@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
@@ -29,7 +30,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class LimitCheckDetails {
 
-	private static final Logger logger = Logger.getLogger(LimitCheckDetails.class);
+	private static final Logger logger = LogManager.getLogger(LimitCheckDetails.class);
 
 	private DedupParmService dedupParmService;
 	private CustomerLimitIntefaceService customerLimitIntefaceService;

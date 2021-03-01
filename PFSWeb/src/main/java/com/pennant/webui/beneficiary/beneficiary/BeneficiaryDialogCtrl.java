@@ -46,7 +46,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -91,7 +92,7 @@ import com.pennanttech.pff.external.BankAccountValidationService;
  */
 public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(BeneficiaryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(BeneficiaryDialogCtrl.class);
 
 	protected Window window_BeneficiaryDialog;
 	protected ExtendedCombobox custID;

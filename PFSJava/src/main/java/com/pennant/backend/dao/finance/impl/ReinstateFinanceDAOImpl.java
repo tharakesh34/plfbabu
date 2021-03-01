@@ -44,7 +44,8 @@
 package com.pennant.backend.dao.finance.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -71,7 +72,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  *
  */
 public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implements ReinstateFinanceDAO {
-	private static Logger logger = Logger.getLogger(ReinstateFinanceDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ReinstateFinanceDAOImpl.class);
 
 	public ReinstateFinanceDAOImpl() {
 		super();

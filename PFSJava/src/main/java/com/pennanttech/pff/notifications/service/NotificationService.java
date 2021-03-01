@@ -16,7 +16,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,13 +112,12 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 public class NotificationService extends GenericService<Notification> {
-	private static final Logger logger = Logger.getLogger(NotificationService.class);
+	private static final Logger logger = LogManager.getLogger(NotificationService.class);
 
 	private Configuration freemarkerMailConfiguration;
 	private MailTemplateDAO mailTemplateDAO;
 	private NotificationsDAO notificationsDAO;
 	private NotesDAO notesDAO;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private SecurityRoleDAO securityRoleDAO;
 	private SecurityUserDAO securityUserDAO;
 	private ReportingManagerDAO reportingManagerDAO;
@@ -1323,7 +1323,7 @@ public class NotificationService extends GenericService<Notification> {
 		MailTemplate template = null;
 		try {
 
-			int templateId = (Integer) this.ruleExecutionUtil.executeRule(rule, fieldsAndValues, null,
+			int templateId = (Integer) RuleExecutionUtil.executeRule(rule, fieldsAndValues, null,
 					RuleReturnType.INTEGER);
 			if (templateId == 0) {
 				logger.warn(String.format("Template not found for the notification rule %s", rule));
@@ -1340,7 +1340,7 @@ public class NotificationService extends GenericService<Notification> {
 
 	private String[] getAttachmentCode(String attachmentRule, Map<String, Object> fieldsAndValues) {
 		// Getting the Attached Documents
-		String ruleResString = (String) this.ruleExecutionUtil.executeRule(attachmentRule, fieldsAndValues, null,
+		String ruleResString = (String) RuleExecutionUtil.executeRule(attachmentRule, fieldsAndValues, null,
 				RuleReturnType.STRING);
 		return StringUtils.trimToEmpty(ruleResString).split(",");
 	}
@@ -1410,7 +1410,7 @@ public class NotificationService extends GenericService<Notification> {
 				|| NotificationConstants.TEMPLATE_FOR_QP.equals(templateType)
 				|| NotificationConstants.TEMPLATE_FOR_GE.equals(templateType)) {
 
-			String ruleResString = (String) this.ruleExecutionUtil.executeRule(notification.getRuleReciepent(),
+			String ruleResString = (String) RuleExecutionUtil.executeRule(notification.getRuleReciepent(),
 					fieldsAndValues, null, RuleReturnType.STRING);
 			if (StringUtils.isNotEmpty(ruleResString)) {
 				List<String> emailList = securityUserOperationsDAO.getUsrMailsByRoleIds(ruleResString);
@@ -1505,10 +1505,6 @@ public class NotificationService extends GenericService<Notification> {
 
 	public void setNotesDAO(NotesDAO notesDAO) {
 		this.notesDAO = notesDAO;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public void setSecurityRoleDAO(SecurityRoleDAO securityRoleDAO) {

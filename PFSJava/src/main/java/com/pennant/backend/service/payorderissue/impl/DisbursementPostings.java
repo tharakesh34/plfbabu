@@ -9,7 +9,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AccountEngineExecution;
@@ -28,7 +29,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class DisbursementPostings {
-	private Logger logger = Logger.getLogger(DisbursementPostings.class);
+	private Logger logger = LogManager.getLogger(DisbursementPostings.class);
 
 	private AccountEngineExecution engineExecution;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
@@ -123,7 +124,7 @@ public class DisbursementPostings {
 				}
 				aeEvent.setLinkedTranId(0);
 				aeEvent.setEntityCode(finMain.getLovDescEntityCode());
-				aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
+				engineExecution.getAccEngineExecResults(aeEvent);
 
 				datasetList = aeEvent.getReturnDataSet();
 				disbMap.put(finAdvancePayments.getPaymentId(), datasetList);

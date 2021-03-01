@@ -46,7 +46,8 @@ package com.pennant.backend.dao.financemanagement.impl;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class ManagerChequeDAOImpl extends SequenceDao<ManagerCheque> implements ManagerChequeDAO {
-	private static Logger logger = Logger.getLogger(ManagerChequeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ManagerChequeDAOImpl.class);
 
 	public ManagerChequeDAOImpl() {
 		super();
@@ -112,7 +113,7 @@ public class ManagerChequeDAOImpl extends SequenceDao<ManagerCheque> implements 
 	 * Method for get the Next Sequence Id In Notes table ChequeID is stored in reference field.
 	 */
 	public long getNextId() {
-		return getNextId("SeqManagerCheques");
+		return getNextValue("SeqManagerCheques");
 	}
 
 	/**
@@ -254,7 +255,7 @@ public class ManagerChequeDAOImpl extends SequenceDao<ManagerCheque> implements 
 	public long save(ManagerCheque managerCheque, String type) {
 		logger.debug("Entering");
 		if (managerCheque.getId() == Long.MIN_VALUE) {
-			managerCheque.setId(getNextId("SeqManagerCheques"));
+			managerCheque.setId(getNextValue("SeqManagerCheques"));
 			logger.debug("get NextID:" + managerCheque.getId());
 		}
 

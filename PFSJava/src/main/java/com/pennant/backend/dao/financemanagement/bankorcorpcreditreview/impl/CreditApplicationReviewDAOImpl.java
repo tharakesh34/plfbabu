@@ -10,7 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -33,7 +34,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewDetails>
 		implements CreditApplicationReviewDAO {
-	private static Logger logger = Logger.getLogger(CreditApplicationReviewDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CreditApplicationReviewDAOImpl.class);
 
 	public CreditApplicationReviewDAOImpl() {
 		super();
@@ -420,7 +421,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	public long save(FinCreditReviewDetails creditReviewDetails, String type) {
 		logger.debug("Entering");
 		if (creditReviewDetails.getDetailId() == Long.MIN_VALUE) {
-			creditReviewDetails.setDetailId(getNextId("SeqFinCreditReviewDetails"));
+			creditReviewDetails.setDetailId(getNextValue("SeqFinCreditReviewDetails"));
 		}
 		StringBuilder insertSql = new StringBuilder("Insert Into FinCreditReviewDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -575,23 +576,23 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 	@Override
 	public String getMaxAuditYearByCustomerId(long customerId, String type) {
-		logger.debug("Entering");
 		FinCreditReviewDetails creditReviewDetails = new FinCreditReviewDetails();
 		creditReviewDetails.setCustomerId(customerId);
 		int maxAuditYear = 0;
 		SqlParameterSource beanParameters;
 
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT COALESCE(Max(AuditYear), '0') FROM  FinCreditReviewDetails_View ");
-		selectSql.append(" where CustomerId = :CustomerId");
-		logger.debug("selectSql: " + selectSql.toString());
+		StringBuilder sql = new StringBuilder("SELECT COALESCE(Max(AuditYear), '0') FROM  FinCreditReviewDetails_View");
+		sql.append(" where CustomerId = :CustomerId");
+
+		logger.trace(Literal.SQL + sql.toString());
+
 		beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
 		try {
-			maxAuditYear = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			maxAuditYear = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+
 		return String.valueOf(maxAuditYear);
 	}
 

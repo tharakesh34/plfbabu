@@ -45,7 +45,8 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class SysNotificationDAOImpl extends SequenceDao<SysNotification> implements SysNotificationDAO {
-	private static Logger logger = Logger.getLogger(SysNotificationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SysNotificationDAOImpl.class);
 
 	public SysNotificationDAOImpl() {
 		super();
@@ -170,8 +171,8 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 		logger.debug("Entering");
 
 		if (sysNotification.getId() == Long.MIN_VALUE) {
-			sysNotification.setSysNotificationId(getNextId("SeqSysNotification"));
-			logger.debug("Next ID ; " + sysNotification.getSysNotificationId());
+			sysNotification.setSysNotificationId(getNextValue("SeqSysNotification"));
+			logger.debug("Next Value; " + sysNotification.getSysNotificationId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into SysNotification");

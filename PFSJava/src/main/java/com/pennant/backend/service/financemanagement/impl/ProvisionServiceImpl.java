@@ -50,7 +50,8 @@ import java.util.List;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -63,6 +64,7 @@ import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -88,7 +90,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class ProvisionServiceImpl extends GenericFinanceDetailService implements ProvisionService {
-	private static final Logger logger = Logger.getLogger(ProvisionServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ProvisionServiceImpl.class);
 
 	private ProvisionDAO provisionDAO;
 	private ProvisionMovementDAO provisionMovementDAO;
@@ -319,7 +321,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		return auditHeader;
 	}
 
-	//Document Details List Maintenance
+	// Document Details List Maintenance
 	public void listDocDeletion(FinanceDetail custDetails, String tableType) {
 		getDocumentDetailsDAO().deleteList(new ArrayList<DocumentDetails>(custDetails.getDocumentDetailsList()),
 				tableType);
@@ -356,7 +358,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 			serviceUID = finServInst.getInstructionUID();
 		}
 		// Cancel All Transactions done by Finance Reference
-		//=======================================
+		// =======================================
 		cancelStageAccounting(financeMain.getFinReference(), FinanceConstants.FINSER_EVENT_PROVISION);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -382,7 +384,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 				provision.getFinanceDetail().getModuleDefiner(), false, "_Temp");
 
 		// Checklist Details delete
-		//=======================================
+		// =======================================
 		getCheckListDetailService().delete(provision.getFinanceDetail(), "_Temp", tranType);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -432,8 +434,8 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 		if (provision.isNew()) { // for New record or new record into work flow
 
-			if (!provision.isWorkflow()) {// With out Work flow only new records  
-				if (befProvision != null) { // Record Already Exists in the table then error  
+			if (!provision.isWorkflow()) {// With out Work flow only new records
+				if (befProvision != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
@@ -503,7 +505,8 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 		Provision provision = (Provision) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = provision.getFinanceDetail();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinScheduleData schdule = financeDetail.getFinScheduleData();
+		FinanceMain financeMain = schdule.getFinanceMain();
 
 		String auditTranType = "";
 		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
@@ -512,14 +515,14 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 			}
 		}
 
-		//Finance Document Details
+		// Finance Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
-		//Finance Check List Details 
-		//=======================================
+		// Finance Check List Details
+		// =======================================
 		List<FinanceCheckListReference> financeCheckList = financeDetail.getFinanceCheckList();
 
 		if (StringUtils.equals(method, "saveOrUpdate")) {
@@ -529,12 +532,11 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 			}
 		} else {
 			String tableType = "_Temp";
-			if (financeDetail.getFinScheduleData().getFinanceMain().getRecordType()
-					.equals(PennantConstants.RECORD_TYPE_DEL)) {
+			if (PennantConstants.RECORD_TYPE_DEL.equals(schdule.getFinanceMain().getRecordType())) {
 				tableType = "";
 			}
 
-			String finReference = financeDetail.getFinScheduleData().getFinReference();
+			String finReference = schdule.getFinReference();
 			financeCheckList = getCheckListDetailService().getCheckListByFinRef(finReference, tableType);
 			financeDetail.setFinanceCheckList(financeCheckList);
 
@@ -572,7 +574,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PROVSN);
-		long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(),
+		Long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(),
 				AccountEventConstants.ACCEVENT_PROVSN, FinanceConstants.MODULEID_FINTYPE);
 
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
@@ -589,7 +591,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		aeEvent.setCustID(financeMain.getCustID());
 		aeEvent.setCcy(SysParamUtil.getAppCurrency());
 
-		//amountCodes.setProvDue(provision.getProfitAccruedAndDue());
+		// amountCodes.setProvDue(provision.getProfitAccruedAndDue());
 		amountCodes.setProvAmt(provision.getProvisionedAmt());
 
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());

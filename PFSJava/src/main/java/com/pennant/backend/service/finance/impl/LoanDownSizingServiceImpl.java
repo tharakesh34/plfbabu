@@ -48,7 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 
@@ -78,7 +79,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class LoanDownSizingServiceImpl extends GenericFinanceDetailService implements LoanDownSizingService {
-	private static final Logger logger = Logger.getLogger(LoanDownSizingServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(LoanDownSizingServiceImpl.class);
 
 	private ChangeGraceEndService changeGraceEndService;
 	private FinAssetAmtMovementDAO finAssetAmtMovementDAO;
@@ -168,7 +169,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		financeMain.setEventFromDate(SysParamUtil.getAppDate());
 
-		finScheduleData = changeGraceEndService.changeGraceEnd(finScheduleData, true);
+		changeGraceEndService.changeGraceEnd(finScheduleData, true);
 
 		return finScheduleData;
 	}

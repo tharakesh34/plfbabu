@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService, FinanceScheduleSoapService {
-	private static final Logger logger = Logger.getLogger(FinanceScheduleWebServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceScheduleWebServiceImpl.class);
 
 	private FinanceDetailController financeDetailController;
 	private ValidationUtility validationUtility;

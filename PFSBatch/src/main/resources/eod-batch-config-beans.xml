@@ -87,26 +87,15 @@
 	<!-- Accounting Engine Execution -->
 	<bean name="engineExecution" class="com.pennant.app.util.AccountEngineExecution">
 		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="currencyDAO" ref="currencyDAO" />
-		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
-		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
-		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
-		<property name="accountProcessUtil" ref="accountProcessUtil" />
 	</bean>
 
-	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil">
-		<property name="scriptEngine" ref="scriptEngine" />
-		<property name="globalVariableService" ref="globalVariableService" />
-	</bean>
+	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil" />
 
 	<bean id="accountingSetDAO" class="com.pennant.backend.dao.rmtmasters.impl.AccountingSetDAOImpl" parent="sequenceDao" />
 
@@ -284,7 +273,6 @@
 
 	<bean name="accountNumberUtil" class="com.pennant.app.util.AccountNumberUtil">
 		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 
 	<bean id="secondaryAccountDAO" class="com.pennant.backend.dao.finance.impl.SecondaryAccountDAOImpl" parent="basicDao" />
@@ -298,6 +286,7 @@
 	<bean id="eodJobListener" class="com.pennant.backend.batch.listeners.EodJobListener">
 		<property name="eODConfigDAO" ref="eODConfigDAO" />
 		<property name="bpsDAO" ref="bpsDAO" />
+		<property name="eventPropertiesService" ref="eventPropertiesService" />
 	</bean>
 
 	<bean id="eodBackupDecider" class="com.pennant.backend.endofday.limitdecider.EodBackupDecider" />
@@ -470,7 +459,6 @@
 		<property name="limitReferenceMappingDAO" ref="limitReferenceMappingDAO" />
 		<property name="limitTransactionDetailDAO" ref="limitTransactionDetailDAO" />
 		<property name="limitGroupLinesDAO" ref="limitGroupLinesDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="commitmentDAO" ref="commitmentDAO" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
@@ -802,7 +790,6 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
@@ -838,7 +825,6 @@
 		<property name="mailTemplateDAO" ref="mailTemplateDAO" />
 		<property name="notificationsDAO" ref="notificationsDAO" />
 		<property name="notesDAO" ref="notesDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="securityRoleDAO" ref="securityRoleDAO" />
 		<property name="securityUserDAO" ref="securityUserDAO" />
 		<property name="reportingManagerDAO" ref="reportingManagerDAO" />
@@ -858,7 +844,6 @@
 		<constructor-arg ref="provinceDAO" />
 		<constructor-arg ref="financeMainDAO" />
 		<constructor-arg ref="financeTaxDetailDAO" />
-		<constructor-arg ref="ruleExecutionUtil" />
 		<constructor-arg ref="gstRateDAO" />
 	</bean>
 
@@ -904,4 +889,30 @@
 	</bean>
 
 	<bean id="bpsDAO" class="com.pennanttech.pff.batch.backend.dao.impl.BatchProcessStatusDAOImpl" parent="basicDao" />
+
+	<bean id="financeConfigCache" class="com.pennant.cache.util.FinanceConfigCache">
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="dPDBucketDAO" ref="dPDBucketDAO" />
+		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
+		<property name="nPABucketDAO" ref="nPABucketDAO" />
+		<property name="nPABucketConfigurationDAO" ref="nPABucketConfigurationDAO" />
+	</bean>
+
+	<bean id="feeTypeConfigCache" class="com.pennant.pff.eod.cache.FeeTypeConfigCache">
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+	</bean>
+
+	<bean id="ruleCache" class="com.pennant.pff.eod.cache.RuleConfigCache">
+		<property name="ruleDAO" ref="ruleDAO" />
+	</bean>
+
+	<bean id="currencyCache" class="com.pennant.pff.eod.cache.CurrencyConfigCache">
+		<property name="currencyService" ref="currencyService" />
+	</bean>
+	<bean id="accountingConfigCache" class="com.pennant.cache.util.AccountingConfigCache">
+		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
+		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="accountTypeDAO" ref="accountTypeDAO" />
+	</bean>
 </beans>

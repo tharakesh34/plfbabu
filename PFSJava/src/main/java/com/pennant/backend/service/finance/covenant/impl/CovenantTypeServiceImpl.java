@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.service.finance.covenant.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>CovenantType</b>.<br>
  */
 public class CovenantTypeServiceImpl extends GenericService<CovenantType> implements CovenantTypeService {
-	private static final Logger logger = Logger.getLogger(CovenantTypeServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CovenantTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CovenantTypeDAO covenantTypeDAO;

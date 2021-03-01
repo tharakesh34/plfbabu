@@ -51,7 +51,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -116,7 +117,7 @@ import com.rits.cloning.Cloner;
  */
 public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = Logger.getLogger(BulkRateChangeDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(BulkRateChangeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

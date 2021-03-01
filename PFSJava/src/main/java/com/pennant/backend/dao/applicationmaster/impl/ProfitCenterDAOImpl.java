@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>ProfitCenter</code> with set of CRUD operations.
  */
 public class ProfitCenterDAOImpl extends SequenceDao<ProfitCenter> implements ProfitCenterDAO {
-	private static Logger logger = Logger.getLogger(ProfitCenterDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ProfitCenterDAOImpl.class);
 
 	public ProfitCenterDAOImpl() {
 		super();
@@ -158,7 +159,7 @@ public class ProfitCenterDAOImpl extends SequenceDao<ProfitCenter> implements Pr
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (profitCenter.getProfitCenterID() <= 0) {
-			profitCenter.setProfitCenterID(getNextId("SeqProfitCenters"));
+			profitCenter.setProfitCenterID(getNextValue("SeqProfitCenters"));
 		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

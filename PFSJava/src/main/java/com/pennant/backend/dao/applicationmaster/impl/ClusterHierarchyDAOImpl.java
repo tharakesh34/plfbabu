@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -70,7 +71,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>ClusterHierarchey</code> with set of CRUD operations.
  */
 public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implements ClusterHierarchyDAO {
-	private static Logger logger = Logger.getLogger(ClusterHierarchyDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ClusterHierarchyDAOImpl.class);
 
 	public ClusterHierarchyDAOImpl() {
 		super();

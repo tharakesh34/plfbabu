@@ -47,7 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -76,7 +77,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class CollateralStructureServiceImpl extends GenericService<CollateralStructure>
 		implements CollateralStructureService {
-	private static final Logger logger = Logger.getLogger(CollateralStructureServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CollateralStructureServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CollateralStructureDAO collateralStructureDAO;
@@ -307,23 +308,24 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	 * @return CollateralStructure
 	 */
 	@Override
-	public CollateralStructure getApprovedCollateralStructureByType(String collateralType) {
-		logger.debug("Entering");
+	public CollateralStructure getApprovedCollateralStructureByType(String type) {
+		CollateralStructure collaStructure = collateralStructureDAO.getCollateralStructureByType(type, "_AView");
 
-		CollateralStructure collaStructure = getCollateralStructureDAO().getCollateralStructureByType(collateralType,
-				"_AView");
-		ExtendedFieldHeader extFldHeader = null;
-		if (collaStructure != null) {
-			extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
-					CollateralConstants.MODULE_NAME, collaStructure.getCollateralType(), "_AView");
-			if (extFldHeader != null) {
-				extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(
-						extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD, "_AView"));
-			}
+		if (collaStructure == null) {
+			return collaStructure;
+		}
+		ExtendedFieldHeader extFldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+				CollateralConstants.MODULE_NAME, collaStructure.getCollateralType(), "_AView");
+
+		if (extFldHeader == null) {
 			collaStructure.setExtendedFieldHeader(extFldHeader);
+			return collaStructure;
 		}
 
-		logger.debug("Leaving");
+		extFldHeader.setExtendedFieldDetails(extendedFieldDetailDAO.getExtendedFieldDetailById(
+				extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD, "_AView"));
+		collaStructure.setExtendedFieldHeader(extFldHeader);
+
 		return collaStructure;
 
 	}

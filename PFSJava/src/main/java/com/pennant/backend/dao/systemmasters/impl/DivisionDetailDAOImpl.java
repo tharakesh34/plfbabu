@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -68,7 +69,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 
 public class DivisionDetailDAOImpl extends BasicDao<DivisionDetail> implements DivisionDetailDAO {
-	private static Logger logger = Logger.getLogger(DivisionDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DivisionDetailDAOImpl.class);
 
 	public DivisionDetailDAOImpl() {
 		super();

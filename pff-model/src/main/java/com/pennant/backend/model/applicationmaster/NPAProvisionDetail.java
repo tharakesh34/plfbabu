@@ -127,11 +127,11 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 		this.headerIdName = headerIdName;
 	}
 
-	public boolean isnPAActive() {
+	public boolean isNPAActive() {
 		return nPAActive;
 	}
 
-	public void setnPAActive(boolean nPAActive) {
+	public void setNPAActive(boolean nPAActive) {
 		this.nPAActive = nPAActive;
 	}
 

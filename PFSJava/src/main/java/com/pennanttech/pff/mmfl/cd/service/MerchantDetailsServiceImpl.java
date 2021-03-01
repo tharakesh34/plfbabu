@@ -2,7 +2,8 @@ package com.pennanttech.pff.mmfl.cd.service;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -19,7 +20,7 @@ import com.pennanttech.pff.mmfl.cd.model.MerchantDetails;
 import com.pennattech.pff.mmfl.cd.dao.MerchantDetailsDAO;
 
 public class MerchantDetailsServiceImpl extends GenericService<MerchantDetails> implements MerchantDetailsService {
-	private static final Logger logger = Logger.getLogger(MerchantDetailsServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(MerchantDetailsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private MerchantDetailsDAO merchantDetailsDAO;

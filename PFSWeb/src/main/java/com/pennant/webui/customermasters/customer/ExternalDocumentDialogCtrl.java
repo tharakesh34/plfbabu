@@ -10,7 +10,8 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
@@ -50,9 +51,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ExternalDocumentDialogCtrl extends GFCBaseCtrl<ExternalDocument> {
-
 	private static final long serialVersionUID = 2559057422619011362L;
-	private static final Logger logger = Logger.getLogger(ExternalDocumentDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ExternalDocumentDialogCtrl.class);
 
 	protected Window window_ExtDocumentDetailDialog;
 	protected Datebox fromDate;

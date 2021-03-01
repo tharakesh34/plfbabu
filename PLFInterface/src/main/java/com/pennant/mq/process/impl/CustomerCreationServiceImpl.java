@@ -3,7 +3,8 @@ package com.pennant.mq.process.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.CoreBankNewCustomer;
@@ -20,7 +21,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 
-	private static final Logger logger = Logger.getLogger(CustomerCreationServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerCreationServiceImpl.class);
 
 	private AddNewCustomerProcess addNewCustomerProcess;
 	private CustomerDedupProcess customerDedupProcess;

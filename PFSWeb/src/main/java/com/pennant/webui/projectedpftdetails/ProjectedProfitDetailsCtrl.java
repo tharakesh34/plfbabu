@@ -8,7 +8,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
@@ -49,7 +50,7 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 	private static final long serialVersionUID = 1L;
-	public static final Logger logger = Logger.getLogger(ProjectedProfitDetailsCtrl.class);
+	public static final Logger logger = LogManager.getLogger(ProjectedProfitDetailsCtrl.class);
 
 	protected Window window_ProjectedProfitDetails;
 	protected Datebox valueDate; //autowire

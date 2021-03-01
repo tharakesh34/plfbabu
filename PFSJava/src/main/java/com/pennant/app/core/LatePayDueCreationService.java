@@ -57,7 +57,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
@@ -66,6 +65,7 @@ import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
@@ -81,19 +81,20 @@ import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.eod.cache.FeeTypeConfigCache;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class LatePayDueCreationService extends ServiceHelper {
 	private static final long serialVersionUID = 6161809223570900644L;
 	private static Logger logger = LogManager.getLogger(LatePayDueCreationService.class);
 
-	private FinFeeDetailService finFeeDetailService;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private CustomerAddresDAO customerAddresDAO;
 	private FeeTypeDAO feeTypeDAO;
@@ -104,24 +105,18 @@ public class LatePayDueCreationService extends ServiceHelper {
 		super();
 	}
 
-	public CustEODEvent processLatePayAccrual(CustEODEvent custEODEvent) throws Exception {
+	public void processLatePayAccrual(CustEODEvent custEODEvent) throws Exception {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		// Post LPP / LPI Accruals on Application Extended Month End OR Application Month End OR Daily
-		boolean isAmzPostToday = false;
 		Date eodDate = custEODEvent.getEodDate();
 
-		if (eodDate.compareTo(DateUtility.getMonthEnd(eodDate)) == 0) {
-			isAmzPostToday = true;
-		}
-
-		if (isAmzPostToday) {
+		if (eodDate.compareTo(DateUtil.getMonthEnd(eodDate)) == 0) {
 			for (FinEODEvent finEODEvent : finEODEvents) {
 				postLatePayAccruals(finEODEvent, custEODEvent);
 			}
 		}
 
-		return custEODEvent;
 	}
 
 	public void postLatePayAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
@@ -130,25 +125,29 @@ public class LatePayDueCreationService extends ServiceHelper {
 		String lppEventCode = AccountEventConstants.ACCEVENT_LPPAMZ;
 		String lpiEventCode = AccountEventConstants.ACCEVENT_LPIAMZ;
 
-		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
+		FinanceProfitDetail pfd = finEODEvent.getFinProfitDetail();
 		FinanceMain fm = finEODEvent.getFinanceMain();
 
 		List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
 
-		long lppAccountingID = getAccountingID(fm, lppEventCode);
-		long lpiAccountingID = getAccountingID(fm, lpiEventCode);
+		Long lppAccountingID = getAccountingID(fm, lppEventCode);
+		Long lpiAccountingID = getAccountingID(fm, lpiEventCode);
+
+		if (lppAccountingID == null || lpiAccountingID == null) {
+			return;
+		}
 
 		if (lppAccountingID == Long.MIN_VALUE && lpiAccountingID == Long.MIN_VALUE) {
 			return;
 		}
 
-		logger.info("Processing Late Payment accrual for the customer ID {} started", custID);
+		logger.info("Processing Late Payment accrual for the customer ID >> {}", custID);
 
 		FinanceDetail detail = new FinanceDetail();
-		FinScheduleData finScheduleData = detail.getFinScheduleData();
+		FinScheduleData schdData = detail.getFinScheduleData();
 
-		finScheduleData.setFinanceMain(fm);
-		finScheduleData.setFinanceType(finEODEvent.getFinType());
+		schdData.setFinanceMain(fm);
+		schdData.setFinanceType(finEODEvent.getFinType());
 
 		prepareFinanceDetail(detail, custEODEvent);
 
@@ -160,16 +159,16 @@ public class LatePayDueCreationService extends ServiceHelper {
 		BigDecimal lppAmz = BigDecimal.ZERO;
 		BigDecimal lppGSTAmount = BigDecimal.ZERO;
 		BigDecimal lppGSTAmz = BigDecimal.ZERO;
-		BigDecimal lppTillLBD = finPftDetail.getLppTillLBD();
-		BigDecimal lppGSTTillLBD = finPftDetail.getGstLppTillLBD();
+		BigDecimal lppTillLBD = pfd.getLppTillLBD();
+		BigDecimal lppGSTTillLBD = pfd.getGstLppTillLBD();
 
 		FeeType lpiFeeType = null;
 		BigDecimal lpiAmount = BigDecimal.ZERO;
 		BigDecimal lpiAmz = BigDecimal.ZERO;
 		BigDecimal lpiGSTAmount = BigDecimal.ZERO;
 		BigDecimal lpiGSTAmz = BigDecimal.ZERO;
-		BigDecimal lpiTillLBD = finPftDetail.getLpiTillLBD();
-		BigDecimal lpiGSTTillLBD = finPftDetail.getGstLpiTillLBD();
+		BigDecimal lpiTillLBD = pfd.getLpiTillLBD();
+		BigDecimal lpiGSTTillLBD = pfd.getGstLpiTillLBD();
 
 		if (ImplementationConstants.LPP_GST_DUE_ON.equals("A") && CollectionUtils.isNotEmpty(odDetails)) {
 			for (FinODDetails od : odDetails) {
@@ -183,37 +182,45 @@ public class LatePayDueCreationService extends ServiceHelper {
 			}
 
 			if (lppAmount.compareTo(BigDecimal.ZERO) > 0) {
-				lppFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+				if (EODUtil.isEod()) {
+					lppFeeType = FeeTypeConfigCache.getCacheFeeTypeByCode(RepayConstants.ALLOCATION_ODC);
+				} else {
+					lppFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+				}
 				lppGSTAmount = calculateGST(lppAmount, lppFeeType, taxPercmap);
 			}
 
 			if (lpiAmount.compareTo(BigDecimal.ZERO) > 0) {
-				lpiFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_LPFT);
+				if (EODUtil.isEod()) {
+					lpiFeeType = FeeTypeConfigCache.getCacheFeeTypeByCode(RepayConstants.ALLOCATION_LPFT);
+				} else {
+					lpiFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_LPFT);
+				}
 				lpiGSTAmount = calculateGST(lpiAmount, lpiFeeType, taxPercmap);
 			}
 		}
 
-		finPftDetail.setLppAmount(lppAmount);
-		finPftDetail.setGstLpiAmount(lpiGSTAmount);
+		pfd.setLppAmount(lppAmount);
+		pfd.setGstLpiAmount(lpiGSTAmount);
 
-		finPftDetail.setLpiAmount(lpiAmount);
-		finPftDetail.setGstLppAmount(lppGSTAmount);
+		pfd.setLpiAmount(lpiAmount);
+		pfd.setGstLppAmount(lppGSTAmount);
 
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = new AEAmountCodes();
 
-		String finReference = finPftDetail.getFinReference();
+		String finReference = pfd.getFinReference();
 		aeEvent.setFinReference(finReference);
 		aeEvent.setPostDate(custEODEvent.getEodValueDate());
 		aeEvent.setValueDate(custEODEvent.getEodValueDate());
 		aeEvent.setSchdDate(custEODEvent.getEodValueDate());
-		aeEvent.setBranch(finPftDetail.getFinBranch());
-		aeEvent.setCcy(finPftDetail.getFinCcy());
-		aeEvent.setFinType(finPftDetail.getFinType());
-		aeEvent.setCustID(finPftDetail.getCustId());
+		aeEvent.setBranch(pfd.getFinBranch());
+		aeEvent.setCcy(pfd.getFinCcy());
+		aeEvent.setFinType(pfd.getFinType());
+		aeEvent.setCustID(pfd.getCustId());
 
 		// Finance Fields
-		amountCodes.setFinType(finPftDetail.getFinType());
+		amountCodes.setFinType(pfd.getFinType());
 
 		/* LPI Amortization calculation */
 		if (lpiAmount.compareTo(BigDecimal.ZERO) > 0) {
@@ -264,7 +271,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 				lpiTaxDetail.setFinReference(finReference);
 				lpiTaxDetail.setTaxFor("LPI");
 				lpiTaxDetail.setAmount(lpiAmz);
-				lpiTaxDetail.setValueDate(DateUtility.addDays(custEODEvent.getEodValueDate(), -1));
+				lpiTaxDetail.setValueDate(DateUtil.addDays(custEODEvent.getEodValueDate(), -1));
 				lpiTaxDetail.setPostDate(new Timestamp(System.currentTimeMillis()));
 			}
 
@@ -273,7 +280,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 				lppTaxDetail.setFinReference(finReference);
 				lppTaxDetail.setTaxFor("LPP");
 				lppTaxDetail.setAmount(lppAmz);
-				lppTaxDetail.setValueDate(DateUtility.addDays(custEODEvent.getEodValueDate(), -1));
+				lppTaxDetail.setValueDate(DateUtil.addDays(custEODEvent.getEodValueDate(), -1));
 				lppTaxDetail.setPostDate(new Timestamp(System.currentTimeMillis()));
 			}
 		}
@@ -310,7 +317,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 		if (lppAccountingID != Long.MIN_VALUE) {
 			aeEvent.getAcSetIDList().add(lppAccountingID);
 			aeEvent.setAccountingEvent(lppEventCode);
-			aeEvent = postAccountingEOD(aeEvent);
+			postAccountingEOD(aeEvent);
 
 			linkedTranId = aeEvent.getLinkedTranId();
 			finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
@@ -323,7 +330,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 		if (lpiAccountingID != Long.MIN_VALUE) {
 			aeEvent.getAcSetIDList().add(lpiAccountingID);
 			aeEvent.setAccountingEvent(lpiEventCode);
-			aeEvent = postAccountingEOD(aeEvent);
+			postAccountingEOD(aeEvent);
 
 			linkedTranId = aeEvent.getLinkedTranId();
 			finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
@@ -333,7 +340,15 @@ public class LatePayDueCreationService extends ServiceHelper {
 			}
 		}
 
-		if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("GST_INV_ON_DUE"))) {
+		EventProperties eventProperties = custEODEvent.getEventProperties();
+		boolean gstInvOnDue = false;
+		if (eventProperties.isParameterLoaded()) {
+			gstInvOnDue = eventProperties.isGstInvOnDue();
+		} else {
+			gstInvOnDue = SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE);
+		}
+
+		if (gstInvOnDue) {
 			List<FinFeeDetail> feesList = getFeeDetail(lppFeeType, taxPercmap, calGstMap, aeEvent);
 
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
@@ -373,16 +388,15 @@ public class LatePayDueCreationService extends ServiceHelper {
 		finEODEvent.setUpdLBDPostings(true);
 
 		// LPP & LPI Due Amount , Which is already marked as Income/Receivable should be updated
-		finPftDetail.setLppTillLBD(lppTillLBD.add(lppAmz));
-		finPftDetail.setGstLppTillLBD(lppGSTTillLBD.add(lppGSTAmz));
-		finPftDetail.setLpiTillLBD(lpiTillLBD.add(lpiAmz));
-		finPftDetail.setGstLpiTillLBD(lpiGSTTillLBD.add(lpiGSTAmz));
+		pfd.setLppTillLBD(lppTillLBD.add(lppAmz));
+		pfd.setGstLppTillLBD(lppGSTTillLBD.add(lppGSTAmz));
+		pfd.setLpiTillLBD(lpiTillLBD.add(lpiAmz));
+		pfd.setGstLpiTillLBD(lpiGSTTillLBD.add(lpiGSTAmz));
 
-		logger.info("Processing Late Payment accrual for the customer ID {} completed.", custID);
+		logger.info("Processing Late Payment accrual for the customer ID >> {} completed.", custID);
 	}
 
 	private void saveOrUpdateReceivable(AEEvent aeEvent, Map<String, BigDecimal> calGstMap, String feeTypeCode) {
-		// LPP Receivable Data Update for Future Accounting
 		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
 		String finReference = aeEvent.getFinReference();
 
@@ -414,8 +428,10 @@ public class LatePayDueCreationService extends ServiceHelper {
 		taxRcv.setReceivableAmount(taxRcv.getReceivableAmount().add(amzAmount));
 
 		if (isSave) {
+			logger.info("Creating Tax Receivable for FinReference >> {} and FeeCode >> {}", finReference, feeTypeCode);
 			finODAmzTaxDetailDAO.saveTaxReceivable(taxRcv);
 		} else {
+			logger.info("updating Tax Receivable for FinReference >> {} and FeeCode >> {}", finReference, feeTypeCode);
 			finODAmzTaxDetailDAO.updateTaxReceivable(taxRcv);
 		}
 
@@ -483,33 +499,28 @@ public class LatePayDueCreationService extends ServiceHelper {
 
 	}
 
-	private void prepareFinanceDetail(FinanceDetail financeDetail, CustEODEvent custEODEvent) {
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
+	private void prepareFinanceDetail(FinanceDetail fd, CustEODEvent custEODEvent) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 
-		if (financeDetail.getFinanceTaxDetail() == null) {
-			String finReference = financeMain.getFinReference();
-			financeDetail.setFinanceTaxDetail(financeTaxDetailDAO.getFinanceTaxDetail(finReference, ""));
+		if (fd.getFinanceTaxDetail() == null) {
+			String finReference = fm.getFinReference();
+			fd.setFinanceTaxDetail(financeTaxDetailDAO.getFinanceTaxDetail(finReference, ""));
 		}
 
-		CustomerAddres addres = customerAddresDAO.getHighPriorityCustAddr(financeMain.getCustID(), "_AView");
+		CustomerAddres addres = customerAddresDAO.getHighPriorityCustAddr(fm.getCustID(), "_AView");
 
 		if (addres != null) {
 			CustomerDetails customerDetails = new CustomerDetails();
-			List<CustomerAddres> addressList = new ArrayList<CustomerAddres>();
+			List<CustomerAddres> addressList = new ArrayList<>();
 			addressList.add(addres);
 			customerDetails.setAddressList(addressList);
 			customerDetails.setCustomer(custEODEvent.getCustomer());
-			financeDetail.setCustomerDetails(customerDetails);
+			fd.setCustomerDetails(customerDetails);
 		}
 	}
 
-	/**
-	 * Method for Calculating Total GST Amount with the Requested Amount
-	 */
 	private BigDecimal getTotalTaxAmount(Map<String, BigDecimal> taxPercmap, BigDecimal amount, String taxType) {
-		logger.debug(Literal.ENTERING);
-
 		TaxAmountSplit taxSplit = null;
 		BigDecimal gstAmount = BigDecimal.ZERO;
 
@@ -522,8 +533,6 @@ public class LatePayDueCreationService extends ServiceHelper {
 		if (taxSplit != null) {
 			gstAmount = taxSplit.gettGST();
 		}
-
-		logger.debug(Literal.LEAVING);
 
 		return gstAmount;
 	}
@@ -589,48 +598,20 @@ public class LatePayDueCreationService extends ServiceHelper {
 
 	}
 
-	public FeeTypeDAO getFeeTypeDAO() {
-		return feeTypeDAO;
-	}
-
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
-	}
-
-	public FinODAmzTaxDetailDAO getFinODAmzTaxDetailDAO() {
-		return finODAmzTaxDetailDAO;
 	}
 
 	public void setFinODAmzTaxDetailDAO(FinODAmzTaxDetailDAO finODAmzTaxDetailDAO) {
 		this.finODAmzTaxDetailDAO = finODAmzTaxDetailDAO;
 	}
 
-	public FinFeeDetailService getFinFeeDetailService() {
-		return finFeeDetailService;
-	}
-
-	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
-		this.finFeeDetailService = finFeeDetailService;
-	}
-
-	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
-		return financeTaxDetailDAO;
-	}
-
 	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
 		this.financeTaxDetailDAO = financeTaxDetailDAO;
 	}
 
-	public CustomerAddresDAO getCustomerAddresDAO() {
-		return customerAddresDAO;
-	}
-
 	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
 		this.customerAddresDAO = customerAddresDAO;
-	}
-
-	public GSTInvoiceTxnService getGstInvoiceTxnService() {
-		return gstInvoiceTxnService;
 	}
 
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {

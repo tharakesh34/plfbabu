@@ -61,7 +61,8 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -85,6 +86,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.RateUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
@@ -131,7 +133,7 @@ import com.rits.cloning.Cloner;
  */
 public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(LiabilityRequestDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LiabilityRequestDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -845,7 +847,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				if (rule != null) {
 					HashMap<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
 							.getDeclaredFieldValues();
-					isAgrRender = (boolean) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldsAndValues,
+					isAgrRender = (boolean) RuleExecutionUtil.executeRule(rule.getSQLRule(), fieldsAndValues,
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(),
 							RuleReturnType.BOOLEAN);
 				}

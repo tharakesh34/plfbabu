@@ -45,25 +45,24 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AEAmounts;
-import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class AccrualReversalService extends ServiceHelper {
 	private static final long serialVersionUID = 6161809223570900644L;
-	private static Logger logger = Logger.getLogger(AccrualReversalService.class);
+	private static Logger logger = LogManager.getLogger(AccrualReversalService.class);
 
-	public CustEODEvent processAccrual(CustEODEvent custEODEvent) throws Exception {
+	public void processAccrual(CustEODEvent custEODEvent) throws Exception {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -72,13 +71,14 @@ public class AccrualReversalService extends ServiceHelper {
 			}
 			finEODEvent = calculateAccruals(finEODEvent, custEODEvent);
 		}
-		return custEODEvent;
 	}
 
 	public FinEODEvent calculateAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
 
 		//Post Accruals on Application Extended Month End OR Application Month End OR Daily
-		int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
+		EventProperties eventProperties = custEODEvent.getEventProperties();
+		int amzPostingEvent = eventProperties.getAmzPostingEvent();
+
 		boolean isAmzPostToday = false;
 		if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
 			if (DateUtil.compare(custEODEvent.getEodDate(), DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0) {
@@ -113,10 +113,11 @@ public class AccrualReversalService extends ServiceHelper {
 		String eventCode = AccountEventConstants.ACCEVENT_AMZ_MON;
 		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain main = finEODEvent.getFinanceMain();
+		EventProperties eventProperties = custEODEvent.getEventProperties();
 
-		long accountingID = getAccountingID(main, eventCode);
-		if (accountingID == Long.MIN_VALUE) {
-			logger.debug(" Leaving. Accounting Not Found");
+		Long accountingID = getAccountingID(main, eventCode);
+		if (accountingID == null || accountingID == Long.MIN_VALUE) {
+			logger.info(" Leaving. Accounting Not Found");
 			return;
 		}
 
@@ -124,10 +125,9 @@ public class AccrualReversalService extends ServiceHelper {
 				eventCode, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
 
 		// Y - Accrual Effective Post Date will be Value Date, N - Accrual Effective Post Date will be APP Date
-		String acc_eff_postDate = SysParamUtil.getValueAsString(SMTParameterConstants.ACCREV_EFF_POSTDATE);
 
-		if (StringUtils.equals(acc_eff_postDate, "N")) {
-			aeEvent.setPostDate(SysParamUtil.getPostDate());
+		if (!eventProperties.isAcEffPostDate()) {
+			aeEvent.setPostDate(eventProperties.getPostDate());
 		} else {
 			aeEvent.setPostDate(custEODEvent.getEodValueDate());
 		}

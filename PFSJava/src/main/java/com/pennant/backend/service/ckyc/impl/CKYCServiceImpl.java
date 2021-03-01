@@ -22,7 +22,8 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.util.FileSystemUtils;
 
 import com.pennant.backend.dao.ckyc.CKYCDAO;
@@ -48,7 +49,7 @@ import com.pennanttech.pff.external.DocumentManagementService;
 
 public class CKYCServiceImpl extends GenericService implements CKYCService {
 
-	private static Logger logger = Logger.getLogger(CKYCServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CKYCServiceImpl.class);
 	private static int emailRemove;
 	private static int addrRemove;
 	private static int phoneRemove;

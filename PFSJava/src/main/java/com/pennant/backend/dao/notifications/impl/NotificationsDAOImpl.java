@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -69,7 +70,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class NotificationsDAOImpl extends SequenceDao<Notifications> implements NotificationsDAO {
-	private static Logger logger = Logger.getLogger(NotificationsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(NotificationsDAOImpl.class);
 
 	public NotificationsDAOImpl() {
 		super();
@@ -212,8 +213,8 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		logger.debug("Entering");
 
 		if (notifications.getId() == Long.MIN_VALUE) {
-			notifications.setId(getNextId("SeqNotifications"));
-			logger.debug("get NextID:" + notifications.getId());
+			notifications.setId(getNextValue("SeqNotifications"));
+			logger.debug("get NextValue:" + notifications.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into Notifications");

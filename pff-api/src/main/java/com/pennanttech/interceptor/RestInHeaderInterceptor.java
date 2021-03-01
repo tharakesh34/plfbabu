@@ -24,7 +24,8 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -66,7 +67,7 @@ import com.pennanttech.ws.log.model.APILogDetail;
  */
 public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 
-	Logger logger = Logger.getLogger(RestInHeaderInterceptor.class);
+	Logger logger = LogManager.getLogger(RestInHeaderInterceptor.class);
 
 	// Static variables
 	public static final String CHANNEL_USER = "user";

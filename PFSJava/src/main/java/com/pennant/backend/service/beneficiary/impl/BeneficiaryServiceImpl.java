@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implements BeneficiaryService {
-	private static final Logger logger = Logger.getLogger(BeneficiaryServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(BeneficiaryServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BeneficiaryDAO beneficiaryDAO;

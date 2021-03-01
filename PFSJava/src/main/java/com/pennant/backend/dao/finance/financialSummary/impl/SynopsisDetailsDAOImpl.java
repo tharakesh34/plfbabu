@@ -42,7 +42,8 @@
  */
 package com.pennant.backend.dao.finance.financialSummary.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -63,7 +64,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>PSLDetail</code> with set of CRUD operations.
  */
 public class SynopsisDetailsDAOImpl extends SequenceDao<SynopsisDetails> implements SynopsisDetailsDAO {
-	private static Logger logger = Logger.getLogger(SynopsisDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SynopsisDetailsDAOImpl.class);
 
 	public SynopsisDetailsDAOImpl() {
 		super();

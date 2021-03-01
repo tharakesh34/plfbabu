@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
@@ -23,7 +24,7 @@ import com.pennant.eod.beans.PaymentRecoveryHeader;
 
 public class EODResponseSimulator {
 
-	private static Logger logger = Logger.getLogger(EODResponseSimulator.class);
+	private static Logger logger = LogManager.getLogger(EODResponseSimulator.class);
 
 	public static final String DELIMITER = "|";
 
