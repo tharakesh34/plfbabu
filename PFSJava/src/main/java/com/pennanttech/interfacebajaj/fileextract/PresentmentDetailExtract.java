@@ -21,11 +21,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -285,7 +280,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		map.addValue("PaymentDue", getDateValue(row, pos_PaymentDue), Types.DATE);
 		map.addValue("ReasonCode", getStringCellValue(row, pos_ReasonCode));
 
-		//TODO:check set the value
+		// TODO:check set the value
 		if (row.getPhysicalNumberOfCells() > pos_FailureReasons) {
 			map.addValue("Failure reason",
 					StringUtils.trimToNull(row.getCell(pos_FailureReasons).getStringCellValue()));
@@ -470,13 +465,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		Object batchid = map.getValue("Batchid");
 		if (batchid == null) {
 			throw new Exception("Debit Ref should be mandatory.");
-		} else {
-			int statusLength = status.toString().length();
-			int minLength = ImplementationConstants.PRESENTMENT_EXPORT_STATUS_MIN_LENGTH;
-			int maxLength = ImplementationConstants.PRESENTMENT_EXPORT_STATUS_MAX_LENGTH;
-			if (statusLength != minLength && statusLength != maxLength) {
-				throw new Exception("Status length should be minimum" + minLength + "and maximum" + maxLength);
-			}
+		} else if (batchid.toString().length() != 29) {
+			throw new Exception("Debit Ref length should be 29.");
 		}
 
 		// status
@@ -485,6 +475,13 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			throw new Exception("Status should be mandatory.");
 		} else if (status.toString().length() != 1) {
 			throw new Exception("Status length should be 1.");
+		} else {
+			int statusLength = status.toString().length();
+			int minLength = ImplementationConstants.PRESENTMENT_EXPORT_STATUS_MIN_LENGTH;
+			int maxLength = ImplementationConstants.PRESENTMENT_EXPORT_STATUS_MAX_LENGTH;
+			if (statusLength != minLength && statusLength != maxLength) {
+				throw new Exception("Status length should be minimum" + minLength + "and maximum" + maxLength);
+			}
 		}
 
 		// ReasonCode
@@ -672,7 +669,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							}
 							updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_REALISED);
 							saveBatchLog(batchId, status, presentmentRef, null);
-							//Send customer notification for successful presentment
+							// Send customer notification for successful presentment
 							sendMailNotification(presentmentDetailService.getPresentmentDetail(presentmentRef), "");
 						} else {
 							try {
