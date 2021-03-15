@@ -59,7 +59,9 @@ import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
+import com.pennant.backend.dao.insurance.InsuranceDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -121,13 +123,17 @@ import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.fees.FeeDetailService;
@@ -140,7 +146,9 @@ import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
+import com.pennant.backend.service.insurance.InsuranceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
+import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
@@ -216,6 +224,10 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
 	private ChequeDetailDAO chequeDetailDAO;
+	private PayOrderIssueService payOrderIssueService;
+	private PayOrderIssueHeaderDAO payOrderIssueHeaderDAO;
+	private InsuranceDetailDAO insuranceDetailDAO;
+	private InsuranceDetailService insuranceDetailService;
 
 	/**
 	 * Method for process AddRateChange request and re-calculate schedule details
@@ -1267,7 +1279,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		String receiptPurpose = financeDetail.getFinScheduleData().getFinServiceInstruction().getModuleDefiner();
 
 		if (!RepayConstants.ALLOCATIONTYPE_MANUAL.equals(finServiceInstruction.getAllocationType())) {
-			financeDetail = validateFees(financeDetail);
+			financeDetail = validateFees(financeDetail, receiptData);
 		}
 
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
@@ -1323,17 +1335,21 @@ public class FinServiceInstController extends SummaryDetailService {
 		return financeDetail;
 	}
 
-	public FinanceDetail validateFees(FinanceDetail financeDetail) {
+	public FinanceDetail validateFees(FinanceDetail financeDetail, FinReceiptData receiptData) {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinServiceInstruction finServiceInst = finScheduleData.getFinServiceInstruction();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		String roundingMode = finScheduleData.getFinanceMain().getCalRoundingMode();
 		int roundingTarget = finScheduleData.getFinanceMain().getRoundingTarget();
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		List<ReceiptAllocationDetail> allocationList = rch.getAllocations();
 
 		// FIXME: PV AS OF NOW, PNLY ONE FEE IS HANDLED. AFTER FIRST RELEASE
 		// MULTI FEES TO BE DEVELOPED.
 		// GST to be tested
 		boolean isAPIFeeRequested = false;
 		boolean isEventFeeRequired = false;
+		boolean isFee = false;
 		String apiFeeCode = null;
 		BigDecimal apiActualFee = BigDecimal.ZERO;
 		BigDecimal apiPaidFee = BigDecimal.ZERO;
@@ -1413,20 +1429,65 @@ public class FinServiceInstController extends SummaryDetailService {
 			return financeDetail;
 		}
 
-		// API Actual Amount <> EVENT Actual Amount
-		if ((apiActualFee.compareTo(eventActualFee) != 0)) {
-			parm0 = "Fee Amount";
-			parm1 = PennantApplicationUtil.amountFormate(eventActualFee, formatter);
-			finScheduleData = receiptService.setErrorToFSD(finScheduleData, "90258", parm0, parm1, apiFeeCode);
-			return financeDetail;
+		FinODPenaltyRate finODPenaltyRate = receiptData.getFinanceDetail().getFinScheduleData().getFinODPenaltyRate();
+		if (finODPenaltyRate == null) {
+			finODPenaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(financeMain.getFinReference(), "_AView");
 		}
 
-		// Actual Amount - Paid - Waived <> 0
-		if ((apiActualFee.subtract(apiPaidFee).subtract(apiWaived)).compareTo(BigDecimal.ZERO) != 0) {
-			parm0 = "Fee Amount - Fee Waived";
-			parm1 = "Fee Paid";
-			finScheduleData = receiptService.setErrorToFSD(finScheduleData, "90258", parm0, parm1, apiFeeCode);
-			return financeDetail;
+		if (CollectionUtils.isNotEmpty(allocationList)) {
+
+			for (ReceiptAllocationDetail allocate : allocationList) {
+				if (allocate.getAllocationType() == RepayConstants.ALLOCATION_ODC) {
+					if (financeMain.istDSApplicable() && finODPenaltyRate.isoDTDSReq() && finScheduleData
+							.getFinFeeDetailList().get(0).getFeeTypeCode() == allocate.getFeeTypeCode()) {
+						eventActualFee = allocate.getPaidAmount();
+						isFee = true;
+						break;
+					}
+				}
+
+				if (allocate.getAllocationType() == RepayConstants.ALLOCATION_FEE) {
+					if (financeMain.istDSApplicable() && finScheduleData.getFinFeeDetailList().get(0)
+							.getFeeTypeCode() == allocate.getFeeTypeCode()) {
+						eventActualFee = allocate.getPaidAmount();
+						isFee = true;
+						break;
+					}
+
+				}
+			}
+		}
+
+		apiActualFee = finServiceInst.getFinFeeDetails().get(0).getActualAmount();
+		if (isFee) {
+			if ((apiActualFee.compareTo(eventActualFee) != 0)) {
+				parm0 = "Fee Amount";
+				parm1 = PennantApplicationUtil.amountFormate(eventActualFee, formatter);
+				finScheduleData = receiptService.setErrorToFSD(finScheduleData, "90258", parm0, parm1, apiFeeCode);
+				return financeDetail;
+			}
+			if ((apiActualFee.subtract(apiPaidFee).subtract(apiWaived)).compareTo(BigDecimal.ZERO) != 0) {
+				parm0 = "Fee Amount - Fee Waived";
+				parm1 = "Fee Paid";
+				finScheduleData = receiptService.setErrorToFSD(finScheduleData, "90258", parm0, parm1, apiFeeCode);
+				return financeDetail;
+			}
+		} else {
+			// API Actual Amount <> EVENT Actual Amount
+			if ((apiActualFee.compareTo(eventActualFee) != 0)) {
+				parm0 = "Fee Amount";
+				parm1 = PennantApplicationUtil.amountFormate(eventActualFee, formatter);
+				finScheduleData = receiptService.setErrorToFSD(finScheduleData, "90258", parm0, parm1, apiFeeCode);
+				return financeDetail;
+			}
+
+			// Actual Amount - Paid - Waived <> 0
+			if ((apiActualFee.subtract(apiPaidFee).subtract(apiWaived)).compareTo(BigDecimal.ZERO) != 0) {
+				parm0 = "Fee Amount - Fee Waived";
+				parm1 = "Fee Paid";
+				finScheduleData = receiptService.setErrorToFSD(finScheduleData, "90258", parm0, parm1, apiFeeCode);
+				return financeDetail;
+			}
 		}
 
 		return financeDetail;
@@ -1631,6 +1692,8 @@ public class FinServiceInstController extends SummaryDetailService {
 							allocate.setBalance(allocate.getTotalDue());
 							allocate.setWaivedAmount(BigDecimal.ZERO);
 							allocate.setWaivedGST(BigDecimal.ZERO);
+							allocate.setTdsPaid(BigDecimal.ZERO);
+							allocate.setTdsWaived(BigDecimal.ZERO);
 						}
 
 						receiptData.setBuildProcess("R");
@@ -2023,13 +2086,12 @@ public class FinServiceInstController extends SummaryDetailService {
 					returnMap.put("ReturnCode", status.getReturnCode());
 					returnMap.put("ReturnText", status.getReturnText());
 				}
-			} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-				if (totReceiptAmt.compareTo(remBal) <= 0) {
-					WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90332");
-					returnMap.put("ReturnCode", status.getReturnCode());
-					returnMap.put("ReturnText", status.getReturnText());
-				}
-			}
+			} /*
+				 * else if (StringUtils.equals(finServiceInst.getModuleDefiner(),
+				 * FinanceConstants.FINSER_EVENT_EARLYRPY)) { if (totReceiptAmt.compareTo(remBal) <= 0) { WSReturnStatus
+				 * status = APIErrorHandlerService.getFailedStatus("90332"); returnMap.put("ReturnCode",
+				 * status.getReturnCode()); returnMap.put("ReturnText", status.getReturnText()); } }
+				 */
 		}
 		return returnMap;
 	}
@@ -3643,85 +3705,146 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.info(Literal.ENTERING);
 
 		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
-		finAdvancePayments.setPaymentId(disbRequest.getPaymentId());
-		int count = finAdvancePaymentsService.getCountByPaymentId(disbRequest.getFinReference(),
-				disbRequest.getPaymentId());
-		if (count <= 0) {
-			String[] valueParam = new String[2];
-			valueParam[0] = "PaymentId";
-			return APIErrorHandlerService.getFailedStatus("90405", valueParam);
-		} else {
-			FinAdvancePayments finAdv = finAdvancePaymentsService.getFinAdvancePaymentsById(finAdvancePayments, "");
-			if (finAdv == null) {
-				String[] valueParam = new String[2];
+		long paymentId = disbRequest.getPaymentId();
+		finAdvancePayments.setPaymentId(paymentId);
+		String PAID_STATUS = "E";
+		String REJECTED_STATUS = "R";
+
+		String finReference = disbRequest.getFinReference();
+		String type = disbRequest.getType();
+		if (StringUtils.isNotBlank(type) && DisbursementConstants.CHANNEL_DISBURSEMENT.equals(type)) {
+			int count = finAdvancePaymensDAO.getCountByPaymentId(finReference, paymentId);
+			if (count <= 0) {
+				String[] valueParam = new String[1];
 				valueParam[0] = "PaymentId";
 				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
-			} else {
-				if (StringUtils.equals(finAdv.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
-					if (DisbursementConstants.STATUS_REJECTED.equals(finAdv.getStatus())
-							|| DisbursementConstants.STATUS_PAID.equals(finAdv.getStatus())) {
-						String[] valueParam = new String[2];
-						valueParam[0] = "PaymentId";
-						return APIErrorHandlerService.getFailedStatus("90405", valueParam);
-					}
+			}
+			FinAdvancePayments finAdv = finAdvancePaymensDAO.getFinAdvancePaymentsById(finAdvancePayments, "");
 
-					if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
-						FinanceMain finMain = financeMainDAO.getFinanceMainById(disbRequest.getFinReference(), "",
-								false);
-						finAdv.setStatus("AC");
-						finMain.setLovDescEntityCode(
-								financeMainDAO.getLovDescEntityCode(finMain.getFinReference(), "_View"));
-						FinanceDetail financeDetail = new FinanceDetail();
-						List<FinAdvancePayments> finAdvList = new ArrayList<FinAdvancePayments>();
+			if (finAdv == null) {
+				String[] valueParam = new String[1];
+				valueParam[0] = "PaymentId";
+				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
+			}
+			String status = finAdv.getStatus();
 
-						finAdvList.add(finAdv);
-						financeDetail.setAdvancePaymentsList(finAdvList);
+			if (!DisbursementConstants.STATUS_AWAITCON.equals(status)) {
+				String[] valueParam = new String[2];
+				valueParam[0] = "Disbursement status already updated";
+				return APIErrorHandlerService.getFailedStatus("21005", valueParam);
+			}
 
-						Map<Integer, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(
-								financeDetail.getAdvancePaymentsList(), finMain, finMain.getFinBranch());
+			if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+				FinanceMain fm = financeMainDAO.getFinanceMainById(finReference, "", false);
+				if (DisbursementConstants.STATUS_AWAITCON.equals(status)) {
+					finAdv.setStatus(DisbursementConstants.STATUS_APPROVED);
+				} else {
+					finAdv.setStatus(DisbursementConstants.STATUS_AWAITCON);
+				}
+				fm.setLovDescEntityCode(financeMainDAO.getLovDescEntityCode(fm.getFinReference(), "_View"));
+				FinanceDetail financeDetail = new FinanceDetail();
+				List<FinAdvancePayments> finAdvList = new ArrayList<FinAdvancePayments>();
 
-						List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
+				finAdvList.add(finAdv);
+				financeDetail.setAdvancePaymentsList(finAdvList);
 
-						// loop through the disbursements.
-						if (CollectionUtils.isNotEmpty(advPayList)) {
-							for (int i = 0; i < advPayList.size(); i++) {
-								FinAdvancePayments advPayment = advPayList.get(i);
-								if (finAdvanceMap.containsKey(advPayment.getPaymentSeq())) {
-									advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentSeq()));
-									finAdvancePaymensDAO.updateLinkedTranId(advPayment);
-								}
-							}
+				List<FinAdvancePayments> advancePaymentsList = financeDetail.getAdvancePaymentsList();
+				Map<Integer, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(advancePaymentsList,
+						fm, fm.getFinBranch());
+
+				List<FinAdvancePayments> advPayList = advancePaymentsList;
+
+				// loop through the disbursements.
+				if (CollectionUtils.isNotEmpty(advPayList)) {
+					for (FinAdvancePayments advPayment : advPayList) {
+						if (finAdvanceMap.containsKey(advPayment.getPaymentSeq())) {
+							advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentSeq()));
+							finAdvancePaymensDAO.updateLinkedTranId(advPayment);
 						}
 					}
-
-					finAdvancePayments.setPaymentId(disbRequest.getPaymentId());
-					finAdvancePayments.setStatus(disbRequest.getStatus());
-					finAdvancePayments.setFinReference(disbRequest.getFinReference());
-					finAdvancePayments.setClearingDate(disbRequest.getClearingDate());
-					if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbRequest.getDisbType())
-							|| DisbursementConstants.PAYMENT_TYPE_DD.equals(disbRequest.getDisbType())) {
-						finAdvancePayments.setClearingDate(disbRequest.getDisbDate());
-						finAdvancePayments.setLLReferenceNo(disbRequest.getChequeNo());
-					}
-					finAdvancePayments.setRejectReason(disbRequest.getRejectReason());
-					finAdvancePayments.setTransactionRef(disbRequest.getTransactionRef());
-
-					if (StringUtils.equals("R", disbRequest.getStatus())
-							&& !PennantConstants.YES.equalsIgnoreCase(SMTParameterConstants.HOLD_DISB_INST_POST)) {
-						postingsPreparationUtil.postReversalsByLinkedTranID(finAdv.getLinkedTranId());
-						finAdvancePayments.setStatus(DisbursementConstants.STATUS_REJECTED);
-					} else {
-						finAdvancePayments.setStatus(DisbursementConstants.STATUS_PAID);
-					}
-
-					finAdvancePaymensDAO.updateDisbursmentStatus(finAdvancePayments);
-				} else {
-					String[] valueParam = new String[2];
-					valueParam[0] = "Disbursement status already updated";
-					return APIErrorHandlerService.getFailedStatus("21005", valueParam);
 				}
 			}
+
+			finAdvancePayments.setPaymentId(paymentId);
+			finAdvancePayments.setStatus(disbRequest.getStatus());
+			finAdvancePayments.setFinReference(finReference);
+			finAdvancePayments.setClearingDate(disbRequest.getClearingDate());
+			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbRequest.getDisbType())
+					|| DisbursementConstants.PAYMENT_TYPE_DD.equals(disbRequest.getDisbType())) {
+				finAdvancePayments.setClearingDate(disbRequest.getDisbDate());
+				finAdvancePayments.setLLReferenceNo(disbRequest.getChequeNo());
+			}
+			finAdvancePayments.setRejectReason(disbRequest.getRejectReason());
+			finAdvancePayments.setTransactionRef(disbRequest.getTransactionRef());
+
+			if (REJECTED_STATUS.equals(disbRequest.getStatus())
+					&& !PennantConstants.YES.equalsIgnoreCase(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+				postingsPreparationUtil.postReversalsByLinkedTranID(finAdv.getLinkedTranId());
+				finAdvancePayments.setStatus(DisbursementConstants.STATUS_REJECTED);
+			} else {
+				finAdvancePayments.setStatus(DisbursementConstants.STATUS_PAID);
+			}
+
+			finAdvancePaymensDAO.updateDisbursmentStatus(finAdvancePayments);
 		}
+
+		if (StringUtils.isNotBlank(type) && DisbursementConstants.CHANNEL_INSURANCE.equals(type)) {
+			InsurancePaymentInstructions insPayInst = insuranceDetailDAO
+					.getInsurancePaymentInstructionStatus(paymentId);
+			if (insPayInst == null) {
+				String[] valueParam = new String[1];
+				valueParam[0] = "PaymentId";
+				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
+			}
+
+			if (DisbursementConstants.STATUS_REJECTED.equals(insPayInst.getStatus())
+					|| DisbursementConstants.STATUS_PAID.equals(insPayInst.getStatus())) {
+				String[] valueParam = new String[1];
+				valueParam[0] = "PaymentId";
+				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
+			}
+
+			InsurancePaymentInstructions instruction = insuranceDetailDAO.getInsurancePaymentInstructionById(paymentId);
+
+			if (instruction == null) {
+				String[] valueParam = new String[1];
+				valueParam[0] = "PaymentId";
+				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
+			}
+
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			instruction.setUserDetails(userDetails);
+			instruction.setId(paymentId);
+			instruction.setStatus(disbRequest.getStatus());
+			instruction.setFinReference(finReference);
+			instruction.setTransactionRef(disbRequest.getTransactionRef());
+			instruction.setRespDate(disbRequest.getClearingDate());
+			instruction.setRealizationDate(disbRequest.getClearingDate());
+
+			if (PAID_STATUS.equals(disbRequest.getStatus())) {
+				instruction.setStatus(DisbursementConstants.STATUS_PAID);
+				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
+					insuranceDetailService.executeVasPaymentsAccountingProcess(instruction);
+				}
+
+			} else {
+				if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
+					AEEvent aeEvent = new AEEvent();
+					aeEvent.setLinkedTranId(instruction.getLinkedTranId());
+					List<ReturnDataSet> list = postingsPreparationUtil
+							.postReversalsByLinkedTranID(instruction.getLinkedTranId());
+					aeEvent.setReturnDataSet(list);
+					try {
+						aeEvent = postingsPreparationUtil.processPostings(aeEvent);
+					} catch (Exception e) {
+						APIErrorHandlerService.logUnhandledException(e);
+					}
+				}
+				instruction.setStatus(DisbursementConstants.STATUS_REJECTED);
+			}
+			insuranceDetailService.updatePaymentStatus(instruction);
+		}
+
 		logger.info(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
 	}
@@ -4204,6 +4327,98 @@ public class FinServiceInstController extends SummaryDetailService {
 		return response;
 	}
 
+	public WSReturnStatus doCancelDisbursementInstructions(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus response = new WSReturnStatus();
+		FinScheduleData schd = financeDetail.getFinScheduleData();
+		FinanceMain fm = schd.getFinanceMain();
+
+		List<FinAdvancePayments> advancePayments = financeDetail.getAdvancePaymentsList();
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
+		int paymentSeq = finAdvancePaymensDAO.getCountByFinReference(fm.getFinReference());
+		for (FinAdvancePayments advPayment : advancePayments) {
+			if (DisbursementConstants.STATUS_PAID.equals(advPayment.getStatus())) {
+				advPayment.setRecordType(PennantConstants.RCD_DEL);
+				advPayment.setVersion(advPayment.getVersion() + 1);
+				continue;
+			}
+
+			advPayment.setFinReference(fm.getFinReference());
+			advPayment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			advPayment.setNewRecord(true);
+			advPayment.setLastMntBy(userDetails.getUserId());
+			advPayment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			advPayment.setUserDetails(fm.getUserDetails());
+			advPayment.setVersion(1);
+			advPayment.setPaymentSeq(paymentSeq + 1);
+			paymentSeq++;
+			advPayment.setDisbCCy(fm.getFinCcy());
+
+			String paymentType = advPayment.getPaymentType();
+			if (isOnlinePayment(paymentType)) {
+				BankBranch bankBranch = new BankBranch();
+				String ifscCode = advPayment.getiFSC();
+				if (StringUtils.isNotBlank(ifscCode)) {
+					bankBranch = bankBranchService.getBankBrachByIFSC(ifscCode);
+				} else {
+					String bankCode = advPayment.getBranchBankCode();
+					String branchCode = advPayment.getBranchCode();
+					if (StringUtils.isNotBlank(bankCode) && StringUtils.isNotBlank(branchCode)) {
+						bankBranch = bankBranchService.getBankBrachByCode(bankCode, branchCode);
+					}
+				}
+
+				if (bankBranch != null) {
+					advPayment.setiFSC(bankBranch.getIFSC());
+					advPayment.setBranchBankCode(bankBranch.getBankCode());
+					advPayment.setBranchCode(bankBranch.getBranchCode());
+					advPayment.setBankBranchID(bankBranch.getBankBranchID());
+				}
+			}
+		}
+
+		PayOrderIssueHeader poih = payOrderIssueHeaderDAO.getPayOrderIssueByHeaderRef(fm.getFinReference(), "");
+
+		poih.setVersion(poih.getVersion() + 1);
+		poih.setFinAdvancePaymentsList(advancePayments);
+		AuditHeader auditHeader = getAuditHeader(poih, PennantConstants.TRAN_WF);
+
+		auditHeader = payOrderIssueService.doApprove(auditHeader);
+
+		if (auditHeader.getOverideMessage() != null) {
+			for (ErrorDetail errorDetail : auditHeader.getOverideMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+			}
+		}
+
+		if (auditHeader.getErrorMessage() != null) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+			}
+		} else {
+			return APIErrorHandlerService.getSuccessStatus();
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	private boolean isOnlinePayment(String paymentType) {
+		return DisbursementConstants.PAYMENT_TYPE_IMPS.equals(paymentType)
+				|| DisbursementConstants.PAYMENT_TYPE_NEFT.equals(paymentType)
+				|| DisbursementConstants.PAYMENT_TYPE_RTGS.equals(paymentType)
+				|| DisbursementConstants.PAYMENT_TYPE_IFT.equals(paymentType);
+	}
+
+	protected AuditHeader getAuditHeader(PayOrderIssueHeader payOrderIssueByHeader, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, payOrderIssueByHeader);
+		return new AuditHeader(payOrderIssueByHeader.getFinReference(), null, null, null, auditDetail,
+				payOrderIssueByHeader.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+	}
+
 	protected AuditHeader getAuditHeader(ChequeHeader chequeHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, chequeHeader);
 		return new AuditHeader(chequeHeader.getFinReference(), null, null, null, auditDetail,
@@ -4381,16 +4596,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.bankDetailDAO = bankDetailDAO;
 	}
 
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	public DisbursementPostings getDisbursementPostings() {
-		return disbursementPostings;
 	}
 
 	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
@@ -4413,4 +4620,19 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.documentDetailsDAO = documentDetailsDAO;
 	}
 
+	public void setPayOrderIssueHeaderDAO(PayOrderIssueHeaderDAO payOrderIssueHeaderDAO) {
+		this.payOrderIssueHeaderDAO = payOrderIssueHeaderDAO;
+	}
+
+	public void setPayOrderIssueService(PayOrderIssueService payOrderIssueService) {
+		this.payOrderIssueService = payOrderIssueService;
+	}
+
+	public void setInsuranceDetailDAO(InsuranceDetailDAO insuranceDetailDAO) {
+		this.insuranceDetailDAO = insuranceDetailDAO;
+	}
+
+	public void setInsuranceDetailService(InsuranceDetailService insuranceDetailService) {
+		this.insuranceDetailService = insuranceDetailService;
+	}
 }

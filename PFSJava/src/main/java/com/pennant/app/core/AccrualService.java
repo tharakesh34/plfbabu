@@ -585,9 +585,12 @@ public class AccrualService extends ServiceHelper {
 				pfd.setTdTdsPaid(pfd.getTdTdsPaid().add(schd.getTDSPaid()));
 
 				schdTDSDue = schdTDSDue.subtract(schd.getTDSPaid());
-				if (schdPftDue.compareTo(schdTDSDue) <= 0) { // this will happen only when there is profitschd is 1 rupee and TDS is 1 rupee
+
+				// This will happen only when there is profit schedule is 1/-rs 1 and TDS is 1/-rs
+				if (schdPftDue.compareTo(schdTDSDue) <= 0) {
 					schdTDSDue = BigDecimal.ZERO;
 				}
+
 				pfd.setTdTdsBal(pfd.getTdTdsBal().add(schdTDSDue));
 			} else {
 				pfd.setTdTdsAmount(pfd.getTdTdsAmount().add(schd.getTDSAmount()));
@@ -664,6 +667,7 @@ public class AccrualService extends ServiceHelper {
 		// Current Flat Rate
 		BigDecimal calPart1 = pfd.getTotalPftSchd().add(pfd.getTotalPftCpz());
 		BigDecimal calPart2 = pfd.getTotalpriSchd().subtract(pfd.getTotalPftCpz());
+		pfd.setFinStartDate(pfd.getFinStartDate() == null ? fm.getFinStartDate() : pfd.getFinStartDate());
 		BigDecimal daysFactor = CalculationUtil.getInterestDays(pfd.getFinStartDate(), pfd.getMaturityDate(),
 				fm.getProfitDaysBasis());
 		if (calPart2.compareTo(BigDecimal.ZERO) > 0) {

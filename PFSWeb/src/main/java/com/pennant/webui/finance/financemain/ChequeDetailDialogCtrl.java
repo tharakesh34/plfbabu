@@ -1768,7 +1768,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 				// Validation of Cheque EMI Amount & Cheque Emi Reference.
 				Combobox comboItem = getCombobox(getComboboxValue(emiComboBox));
-				if (!StringUtils.equals(getComboboxValue(emiComboBox), PennantConstants.List_Select)) {
+				if (!StringUtils.equals(getComboboxValue(emiComboBox), "0")
+						&& !StringUtils.equals(getComboboxValue(emiComboBox), PennantConstants.List_Select)) {
 					Date emiDate = DateUtility.parse(comboItem.getSelectedItem().getLabel(),
 							PennantConstants.dateFormat);
 					if (getFinanceSchedules() != null) {
@@ -2310,7 +2311,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		combobox.setSelectedItem(comboitem);
 		combobox.setReadonly(true);
 		for (FinanceScheduleDetail valueLabel : getFinanceSchedules()) {
-			if (valueLabel.isRepayOnSchDate() || valueLabel.isPftOnSchDate()) {
+			if ((valueLabel.isRepayOnSchDate() || valueLabel.isPftOnSchDate())
+					&& (valueLabel.getInstNumber() != 0
+							|| StringUtils.equals(valueLabel.getBpiOrHoliday(), FinanceConstants.FLAG_BPI))
+					&& BigDecimal.ZERO.equals(valueLabel.getPartialPaidAmt())) {
 				comboitem = new Comboitem();
 				comboitem.setValue(valueLabel.getInstNumber());
 				comboitem.setLabel(DateUtility.formatToShortDate(valueLabel.getSchDate()));

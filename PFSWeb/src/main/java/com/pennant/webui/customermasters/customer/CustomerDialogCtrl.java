@@ -147,6 +147,7 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -6207,28 +6208,29 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		final Listitem item = this.listBoxCustomerDocuments.getSelectedItem();
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
-			final CustomerDocument customerDocument = (CustomerDocument) item.getAttribute("data");
-			if (isDeleteRecord(customerDocument.getRecordType())) {
+			final CustomerDocument cd = (CustomerDocument) item.getAttribute("data");
+			if (isDeleteRecord(cd.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
-				if (customerDocument.getCustDocImage() == null) {
-					if (customerDocument.getDocRefId() != null && customerDocument.getDocRefId() != Long.MIN_VALUE) {
-						customerDocument.setCustDocImage(dMSService.getById(customerDocument.getDocRefId()));
-					} /*
-						 * else if (StringUtils.isNotBlank(customerDocument.getDocUri())) { try { // Fetch document from
-						 * interface String custCif = this.custCIF.getValue(); // here document name is required to
-						 * identify the // file type DocumentDetails detail =
-						 * externalDocumentManager.getExternalDocument( customerDocument.getCustDocName(),
-						 * customerDocument.getDocUri(), custCif); if (detail != null && detail.getDocImage() != null) {
-						 * customerDocument.setCustDocImage(detail.getDocImage());
-						 * customerDocument.setCustDocName(detail.getDocName()); } } catch (InterfaceException e) {
-						 * MessageUtil.showError(e); } }
-						 */
+				final Map<String, Object> map = new HashMap<String, Object>();
+				String docName = cd.getCustDocName();
+				String docUri = cd.getDocUri();
+				Long docRefId = cd.getDocRefId();
+				if (StringUtils.isNotBlank(docUri)) {
+					DocumentDetails dd = dMSService.getExternalDocument(this.custCIF.getValue(), docName, docUri);
+					cd.setCustDocImage(dd.getDocImage());
+					cd.setCustDocName(dd.getDocName());
+				} else {
+					if (cd.getCustDocImage() == null) {
+						if (docRefId != null && docRefId != Long.MIN_VALUE) {
+							cd.setCustDocImage(dMSService.getById(docRefId));
+						}
+					}
 				}
-				customerDocument.setLovDescCustCIF(this.custCIF.getValue());
-				customerDocument.setLovDescCustShrtName(this.custShrtName.getValue());
-				map.put("customerDocument", customerDocument);
+
+				cd.setLovDescCustCIF(this.custCIF.getValue());
+				cd.setLovDescCustShrtName(this.custShrtName.getValue());
+				map.put("customerDocument", cd);
 				map.put("customerDialogCtrl", this);
 				map.put("roleCode", getRole());
 				map.put("isFinanceProcess", isFinanceProcess);

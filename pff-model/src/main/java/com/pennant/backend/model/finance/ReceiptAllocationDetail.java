@@ -141,14 +141,10 @@ public class ReceiptAllocationDetail implements Serializable {
 		entity.setFeeTypeCode(this.feeTypeCode);
 		entity.setFeeId(this.feeId);
 		entity.setTaxHeaderId(this.taxHeaderId);
-		entity.setTaxHeader(this.taxHeader);
+		entity.setTaxHeader(this.taxHeader == null ? null : this.taxHeader.copyEntity());
 		entity.setSubListAvailable(this.isSubListAvailable);
 		entity.setEditable(this.isEditable);
-
-		for (ReceiptAllocationDetail subEntity : this.getSubList()) {
-			entity.getSubList().add(subEntity.copyEntity());
-		}
-
+		this.subList.stream().forEach(e -> entity.getSubList().add(e.copyEntity()));
 		entity.setDispayOrder(this.dispayOrder);
 		entity.setTdsPaidNow(this.tdsPaidNow);
 		entity.setTdsWaivedNow(this.tdsWaivedNow);

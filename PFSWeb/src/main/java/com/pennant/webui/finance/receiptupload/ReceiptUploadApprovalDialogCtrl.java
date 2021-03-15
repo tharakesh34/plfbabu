@@ -883,7 +883,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 			} else {
 				UploadDetail.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
 				UploadDetail.setReason(ReturnText);
-				UploadDetail.setReceiptId(0);
+				UploadDetail.setReceiptId(null);
 			}
 			receiptUploadList.add(UploadDetail);
 		}

@@ -534,7 +534,6 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", AlwModifyFee = :AlwModifyFee");
 		sql.append(", AlwModifyFeeSchdMthd = :AlwModifyFeeSchdMthd");
 		sql.append(", Refundable = :Refundable");
-		sql.append(", TaxPercent = :TaxPercent");
 		sql.append(", PaidAmountOriginal = :PaidAmountOriginal");
 		sql.append(", PaidAmountGST = :PaidAmountGST");
 		sql.append(", NetAmountOriginal = :NetAmountOriginal");
@@ -550,8 +549,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", PaidTDS = :PaidTDS");
 		sql.append(", RemTDS = :RemTDS");
 		sql.append(", InstructionUID = :InstructionUID");
-		if (isWIF) {
+		if (!isWIF) {
 			sql.append(", ActPercentage = :ActPercentage");
+			sql.append(", TaxPercent = :TaxPercent");
 		}
 		sql.append(", WaivedGST = :WaivedGST");
 		sql.append(", ReferenceId = :ReferenceId");

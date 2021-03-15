@@ -153,4 +153,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	ManualAdviseMovements getAdvMovByReceiptSeq(long receiptID, long receiptSeqID, long adviseId, String type);
 
+	void updatePayableReserveAmount(long payAgainstID, BigDecimal reserveAmt);
+
 }

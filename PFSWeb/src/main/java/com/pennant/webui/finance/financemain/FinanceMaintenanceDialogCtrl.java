@@ -93,7 +93,6 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -128,7 +127,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
@@ -845,9 +844,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				if (downPayment.compareTo(this.finAmount.getValidateValue()) > 0) {
 					throw new WrongValueException(this.downPayBank,
-							Labels.getLabel("MAND_FIELD_MIN", new String[] {
-									Labels.getLabel("label_FinanceMainDialog_DownPayment.value"), reqDwnPay.toString(),
-									PennantAppUtil.formatAmount(this.finAmount.getActualValue(), format) }));
+							Labels.getLabel("MAND_FIELD_MIN",
+									new String[] { Labels.getLabel("label_FinanceMainDialog_DownPayment.value"),
+											reqDwnPay.toString(),
+											PennantAppUtil.formatAmount(this.finAmount.getActualValue(), format) }));
 				}
 
 				if (downPayment.compareTo(reqDwnPay) == -1) {
@@ -1281,6 +1281,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// AmountCodes Setting the FinwriteoffPayAmount
 			amountCodes.setWoPayAmt(
 					PennantApplicationUtil.unFormateAmount(this.finWriteoffPayAmount.getActualValue(), format));
+			amountCodes.setFinType(finMain.getFinType());
 
 			Map<String, Object> dataMap = aeEvent.getDataMap();
 			dataMap = amountCodes.getDeclaredFieldValues();
@@ -1290,7 +1291,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Loop Repetition for Multiple Disbursement
 
 			List<ReturnDataSet> returnSetEntries = null;
-			Map<String, FeeRule> map = null;
+			Map<String, FeeRule> map = new HashMap<>();
+
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
+					FinanceConstants.MODULEID_FINTYPE));
 
 			dataMap.putAll(map);
 			aeEvent.setDataMap(dataMap);

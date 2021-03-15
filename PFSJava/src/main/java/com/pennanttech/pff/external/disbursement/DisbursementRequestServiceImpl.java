@@ -27,6 +27,7 @@ import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
@@ -108,7 +109,6 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 			}
 
 			if (CollectionUtils.isEmpty(list) && headerId != null) {
-
 				logger.info("AppException, list is empty and headerid is not null. ");
 				throw new AppException("Unable to process the disbursement requests, please contact administrator.");
 			}
@@ -156,13 +156,13 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 		}
 
 		long total = 0;
-
-		for (DataEngineStatus ds : list) {
-			total = total + ds.getTotalRecords();
-		}
-
-		if (total != disbursementRequest.getDisbursementRequests().size()) {
-			throw new AppException("Unable to process the disbursement requests, please contact administrator.");
+		if (!disbursementRequest.getRequestSource().equals(PennantConstants.FINSOURCE_ID_API)) {
+			for (DataEngineStatus ds : list) {
+				total = total + ds.getTotalRecords();
+			}
+			if (total != disbursementRequest.getDisbursementRequests().size()) {
+				throw new AppException("Unable to process the disbursement requests, please contact administrator.");
+			}
 		}
 
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
@@ -173,7 +173,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 		try {
 
 			for (DataEngineStatus ds : list) {
-				long btachId = ds.getId();
+				Long btachId = ds.getId();
 				String disbursementType = ds.getKeyAttributes().get("DISBURSEMENT_TYPE").toString();
 				for (DisbursementRequest request : disbursementRequest.getDisbursementRequests()) {
 					if (PaymentChannel.Disbursement.getValue().equals(request.getChannel())) {
@@ -208,9 +208,13 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 				req.setStatus("AC");
 
 				int count = disbursementRequestDAO.updateBatchStatus(req);
-				disbursementRequestDAO.logDisbursementMovement(req, false);
-				logger.info("{} disbursements processed successfully  with {} batch Id", count, btachId);
 
+				if ("OFF_LINE".endsWith(disbursementRequest.getRequestSource())) {
+					disbursementRequestDAO.logDisbursementMovement(req, false);
+					logger.info("{} disbursements processed successfully  with {} batch Id", count, btachId);
+				} else {
+					logger.info("{} disbursements processed successfully", count);
+				}
 			}
 
 			transactionManager.commit(transactionStatus);
@@ -245,7 +249,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 		} catch (Exception e) {
 			transactionManager.rollback(transactionStatus);
 
-			logger.info("ConcurrencyException, " + e.getMessage());
+			logger.error("ConcurrencyException", e);
 			throw new ConcurrencyException();
 		}
 	}

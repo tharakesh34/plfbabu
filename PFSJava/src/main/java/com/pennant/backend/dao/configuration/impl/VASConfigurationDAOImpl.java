@@ -110,19 +110,9 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		return vASConfiguration;
 	}
 
-	/**
-	 * Fetch the Record VASConfiguration details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return VASConfiguration
-	 */
+	
 	@Override
 	public VASConfiguration getVASConfigurationByCode(String productCode, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ProductCode, ProductDesc, RecAgainst, FeeAccrued, FeeAccounting, AccrualAccounting");
 		sql.append(", RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks");
@@ -202,10 +192,10 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record not found in VasStructure{} table for the specified ProductCode >> {}", type,
+					productCode);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

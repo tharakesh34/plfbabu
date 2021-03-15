@@ -93,6 +93,39 @@ public class FinTypeExpense extends AbstractWorkflowEntity {
 		super();
 	}
 
+	public FinTypeExpense copyEntity() {
+		FinTypeExpense entity = new FinTypeExpense();
+		entity.setFinType(this.finType);
+		entity.setFinTypeExpenseID(this.finTypeExpenseID);
+		entity.setExpenseTypeID(this.expenseTypeID);
+		entity.setExpenseTypeCode(this.expenseTypeCode);
+		entity.setExpenseTypeDesc(this.expenseTypeDesc);
+		entity.setCalculationType(this.calculationType);
+		entity.setAmount(this.amount);
+		entity.setPercentage(this.percentage);
+		entity.setCalculateOn(this.calculateOn);
+		entity.setAmortReq(this.amortReq);
+		entity.setTaxApplicable(this.taxApplicable);
+		entity.setActive(this.active);
+		entity.setFinEvent(this.finEvent);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("expenseTypeCode");

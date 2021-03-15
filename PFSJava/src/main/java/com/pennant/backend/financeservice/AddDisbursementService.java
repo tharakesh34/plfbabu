@@ -13,4 +13,7 @@ public interface AddDisbursementService {
 			boolean alwAssetUtilize, String moduleDefiner);
 
 	AuditDetail doValidations(FinanceDetail financeDetail, FinServiceInstruction finServiceInstruction);
+
+	AuditDetail doCancelDisbValidations(FinanceDetail financeDetail);
+
 }

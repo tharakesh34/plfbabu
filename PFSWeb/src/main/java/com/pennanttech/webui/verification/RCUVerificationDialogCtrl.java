@@ -1511,14 +1511,12 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		case "Remarks":
 			Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
 			verification.setRemarks(remarks.getValue());
-			if (!remarks.isReadonly()) {
-				if (this.userAction != null) {
-					if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
-						if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-								&& StringUtils.isEmpty(verification.getRemarks())) {
-							throw new WrongValueException(remarks,
-									"Remarks are mandatory when Verification is Not Required");
-						}
+			if (ImplementationConstants.VER_INITATE_REMARKS_MANDATORY) {
+				if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
+					if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+							&& StringUtils.isEmpty(verification.getRemarks())) {
+						throw new WrongValueException(remarks,
+								"Remarks are mandatory when Verification is Not Required");
 					}
 				}
 			}

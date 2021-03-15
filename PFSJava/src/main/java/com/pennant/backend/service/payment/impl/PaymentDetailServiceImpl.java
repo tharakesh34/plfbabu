@@ -668,7 +668,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			}
 			if (payableReserve == null) {
 				// Update Payable Amount in Reserve
-				getManualAdviseDAO().updatePayableReserve(paymentDetail.getReferenceId(), amount);
+				getManualAdviseDAO().updatePayableReserveAmount(paymentDetail.getReferenceId(), amount);
 
 				// Save Payable Reserve Log Amount
 				getManualAdviseDAO().savePayableReserveLog(paymentDetail.getPaymentDetailId(),
@@ -678,7 +678,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 					BigDecimal diffInReserve = amount.subtract(payableReserve.getReservedAmt());
 
 					// Update Reserve Amount in Manual Advise
-					getManualAdviseDAO().updatePayableReserve(paymentDetail.getReferenceId(), diffInReserve);
+					getManualAdviseDAO().updatePayableReserveAmount(paymentDetail.getReferenceId(), diffInReserve);
 
 					// Update Payable Reserve Log
 					getManualAdviseDAO().updatePayableReserveLog(paymentDetail.getPaymentDetailId(),
@@ -778,12 +778,12 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			}
 
 			advise.setPaidAmount(amount);
+			advise.setBalanceAmt(amount.negate());
 			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentDetail.getFinSource())) {
 				advise.setReservedAmt(amount.negate());
+				advise.setBalanceAmt(BigDecimal.ZERO);
 			}
 
-			// TODO: FIX ME : srikanth.m to check for CD loans
-			//advise.setBalanceAmt(amount.negate());
 			getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
 
 			// Delete Reserved Log against Advise and Receipt Seq ID
@@ -861,6 +861,11 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	@Override
 	public PaymentInstruction getPaymentInstructionDetails(long paymentId, String type) {
 		return getPaymentInstructionDAO().getPaymentInstructionDetails(paymentId, type);
+	}
+
+	@Override
+	public long getPymntsCustId(long paymentId) {
+		return getPaymentInstructionDAO().getPymntsCustId(paymentId);
 	}
 
 	public TaxHeaderDetailsDAO getTaxHeaderDetailsDAO() {

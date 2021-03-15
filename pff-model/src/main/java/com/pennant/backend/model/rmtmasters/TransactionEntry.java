@@ -109,6 +109,55 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
+	public TransactionEntry copyEntity() {
+		TransactionEntry entity = new TransactionEntry();
+		entity.setAccountSetid(this.accountSetid);
+		entity.setTransOrder(this.transOrder);
+		entity.setTransDesc(this.transDesc);
+		entity.setDebitcredit(this.debitcredit);
+		entity.setShadowPosting(this.shadowPosting);
+		entity.setAccount(this.account);
+		entity.setAccountType(this.accountType);
+		entity.setAccountBranch(this.accountBranch);
+		entity.setLovDescAccountTypeName(this.lovDescAccountTypeName);
+		entity.setLovDescAccountBranchName(this.lovDescAccountBranchName);
+		entity.setAccountSubHeadRule(this.accountSubHeadRule);
+		entity.setLovDescAccountSubHeadRuleName(this.lovDescAccountSubHeadRuleName);
+		entity.setTranscationCode(this.transcationCode);
+		entity.setLovDescTranscationCodeName(this.lovDescTranscationCodeName);
+		entity.setRvsTransactionCode(this.rvsTransactionCode);
+		entity.setLovDescRvsTransactionCodeName(this.lovDescRvsTransactionCodeName);
+		entity.setAmountRule(this.amountRule);
+		entity.setChargeType(this.chargeType);
+		entity.setPostToSys(this.postToSys);
+		entity.setDerivedTranOrder(this.derivedTranOrder);
+		entity.setFeeCode(this.feeCode);
+		entity.setLovDescFeeCodeName(this.lovDescFeeCodeName);
+		entity.setEntryByInvestment(this.entryByInvestment);
+		entity.setOpenNewFinAc(this.openNewFinAc);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setLovDescEventCodeName(this.lovDescEventCodeName);
+		entity.setLovDescEventCodeDesc(this.lovDescEventCodeDesc);
+		entity.setLovDescAccSetCodeName(this.lovDescAccSetCodeName);
+		entity.setLovDescAccSetCodeDesc(this.lovDescAccSetCodeDesc);
+		entity.setLovDescSysInAcTypeName(this.lovDescSysInAcTypeName);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	//Getter and Setter methods
 
 	public long getId() {

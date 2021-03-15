@@ -165,4 +165,8 @@
 
 	<!-- ST#1544 Under Construction Changes change sets end -->
 
+	 <changeSet id="DE#185.2" author="narendra.m">
+		 <modifyDataType tableName="ADTBOUNCEREASONS" columnName="REASON" newDataType="VARCHAR(150)" />
+	</changeSet>
+	
 </databaseChangeLog>

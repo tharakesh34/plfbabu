@@ -165,6 +165,97 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 		return excludeFields;
 	}
 
+	public Promotion copyEntity() {
+		Promotion entity = new Promotion();
+		entity.setPromotionId(this.promotionId);
+		entity.setPromotionCode(this.promotionCode);
+		entity.setPromotionDesc(this.promotionDesc);
+		entity.setFinType(this.finType);
+		entity.setStartDate(this.startDate);
+		entity.setEndDate(this.endDate);
+		entity.setFinIsDwPayRequired(this.finIsDwPayRequired);
+		entity.setDownPayRule(this.downPayRule);
+		entity.setActualInterestRate(this.actualInterestRate);
+		entity.setFinBaseRate(this.finBaseRate);
+		entity.setFinBaseRateName(this.finBaseRateName);
+		entity.setFinSplRate(this.finSplRate);
+		entity.setFinSplRateName(this.finSplRateName);
+		entity.setFinMargin(this.finMargin);
+		entity.setApplyRpyPricing(this.applyRpyPricing);
+		entity.setRpyPricingMethod(this.rpyPricingMethod);
+		entity.setFinMinTerm(this.finMinTerm);
+		entity.setFinMaxTerm(this.finMaxTerm);
+		entity.setFinMinAmount(this.finMinAmount);
+		entity.setFinMaxAmount(this.finMaxAmount);
+		entity.setFinMinRate(this.finMinRate);
+		entity.setFinMaxRate(this.finMaxRate);
+		entity.setActive(this.active);
+		entity.setNewRecord(this.newRecord);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setProductCategory(this.productCategory);
+		entity.setFinTypeDesc(this.finTypeDesc);
+		entity.setFinCcy(this.finCcy);
+		entity.setDownPayRuleCode(this.downPayRuleCode);
+		entity.setDownPayRuleDesc(this.downPayRuleDesc);
+		entity.setRpyPricingCode(this.rpyPricingCode);
+		entity.setRpyPricingDesc(this.rpyPricingDesc);
+		entity.setReferenceID(this.referenceID);
+		entity.setOpenBalOnPV(this.openBalOnPV);
+		entity.setTenor(this.tenor);
+		entity.setAdvEMITerms(this.advEMITerms);
+		entity.setPftDaysBasis(this.pftDaysBasis);
+		entity.setSubventionRate(this.subventionRate);
+		entity.setTaxApplicable(this.taxApplicable);
+		entity.setCashBackFromDealer(this.cashBackFromDealer);
+		entity.setCashBackToCustomer(this.cashBackToCustomer);
+		entity.setSpecialScheme(this.specialScheme);
+		entity.setRemarks(this.remarks);
+		entity.setCbFrmMnf(this.cbFrmMnf);
+		entity.setMnfCbToCust(this.mnfCbToCust);
+		entity.setDlrCbToCust(this.dlrCbToCust);
+		entity.setCbPyt(this.cbPyt);
+		entity.setDbd(this.dbd);
+		entity.setMbd(this.mbd);
+		entity.setDbdPerc(this.dbdPerc);
+		entity.setDbdPercCal(this.dbdPercCal);
+		entity.setDbdRtnd(this.dbdRtnd);
+		entity.setMbdRtnd(this.mbdRtnd);
+		entity.setKnckOffDueAmt(this.knckOffDueAmt);
+		entity.setDbdFeeTypId(this.dbdFeeTypId);
+		entity.setMbdFeeTypId(this.mbdFeeTypId);
+		entity.setDbdAndMbdFeeTypId(this.dbdAndMbdFeeTypId);
+		entity.setCDLoan(this.isCDLoan);
+		entity.setLovValue(this.lovValue);
+		this.finTypeFeesList.stream().forEach(e -> entity.getFinTypeFeesList().add(e == null ? null : e.copyEntity()));
+		this.finTypeInsurancesList.stream()
+				.forEach(e -> entity.getFinTypeInsurancesList().add(e == null ? null : e.copyEntity()));
+		this.finTypeAccountingList.stream()
+				.forEach(e -> entity.getFinTypeAccountingList().add(e == null ? null : e.copyEntity()));
+		this.auditDetailMap.entrySet().stream().forEach(e -> {
+			List<AuditDetail> newList = new ArrayList<AuditDetail>();
+			if (e.getValue() != null) {
+				e.getValue().forEach(
+						auditDetail -> newList.add(auditDetail == null ? null : auditDetail.getNewCopyInstance()));
+				entity.getAuditDetailMap().put(e.getKey(), newList);
+			} else
+				entity.getAuditDetailMap().put(e.getKey(), null);
+		});
+
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

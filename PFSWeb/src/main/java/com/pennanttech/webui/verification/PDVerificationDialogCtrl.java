@@ -38,6 +38,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
@@ -1027,10 +1028,13 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		case "Remarks":
 			Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
 			verification.setRemarks(remarks.getValue());
-			if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
-				if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-						&& StringUtils.isEmpty(verification.getRemarks())) {
-					throw new WrongValueException(remarks, "Remarks are mandatory when Verification is Not Required");
+			if (ImplementationConstants.VER_INITATE_REMARKS_MANDATORY) {
+				if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
+					if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+							&& StringUtils.isEmpty(verification.getRemarks())) {
+						throw new WrongValueException(remarks,
+								"Remarks are mandatory when Verification is Not Required");
+					}
 				}
 			}
 			break;

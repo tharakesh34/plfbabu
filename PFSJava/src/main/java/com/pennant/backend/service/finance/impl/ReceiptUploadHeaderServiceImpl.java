@@ -62,7 +62,6 @@ import com.pennant.backend.dao.finance.UploadAllocationDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
@@ -93,10 +92,6 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 
 	public ReceiptUploadHeaderServiceImpl() {
 		super();
-	}
-
-	public UploadHeader getUploadHeader(long uploadId) {
-		return this.receiptUploadHeaderDAO.getUploadHeader(uploadId);
 	}
 
 	public ReceiptUploadHeaderDAO getReceiptUploadHeaderDAO() {

@@ -192,15 +192,6 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		return sql;
 	}
 
-	/**
-	 * Fetch the Record VASRecording details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return VASRecording
-	 */
 	@Override
 	public List<VASRecording> getVASRecordingsByLinkRef(String primaryLinkRef, String type) {
 		StringBuilder sql = getSqlQuery(type);

@@ -854,7 +854,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 					}
 					eventMapping.put(feeTypeCode + "_CESS_P", gstAmount.add(cessTax.getPaidTax()));
 				}
-
+				break;
 			case RepayConstants.EXAMOUNTTYPE_EXCESS:
 				excessAmount = excessAmount.add(paymentDetail.getAmount());
 				break;
@@ -1036,6 +1036,11 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	@Override
 	public PaymentInstruction getPaymentInstruction(long paymentId) {
 		return this.paymentInstructionService.getPaymentInstruction(paymentId);
+	}
+
+	@Override
+	public boolean isInstructionInProgress(String finReference) {
+		return this.paymentInstructionService.isInstructionInProgress(finReference);
 	}
 
 	public FinFeeDetailService getFinFeeDetailService() {

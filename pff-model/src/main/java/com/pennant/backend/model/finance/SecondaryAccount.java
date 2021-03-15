@@ -7,6 +7,15 @@ public class SecondaryAccount {
 	private String accountNumber;
 	private String finEvent;
 
+	public SecondaryAccount copyEntity() {
+		SecondaryAccount entity = new SecondaryAccount();
+		entity.setFinReference(this.finReference);
+		entity.setPriority(this.priority);
+		entity.setAccountNumber(this.accountNumber);
+		entity.setFinEvent(this.finEvent);
+		return entity;
+	}
+
 	public String getFinReference() {
 		return finReference;
 	}

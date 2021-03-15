@@ -43,6 +43,7 @@
 package com.pennant.backend.model.applicationmaster;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -89,6 +90,42 @@ public class NPAProvisionHeader extends AbstractWorkflowEntity {
 	public NPAProvisionHeader(long id) {
 		super();
 		this.setId(id);
+	}
+
+	public NPAProvisionHeader copyEntity() {
+		NPAProvisionHeader entity = new NPAProvisionHeader();
+		entity.setId(this.id);
+		entity.setEntity(this.entity);
+		entity.setEntityName(this.entityName);
+		entity.setFinType(this.finType);
+		entity.setFinTypeName(this.finTypeName);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		this.provisionDetailsList.stream()
+				.forEach(e -> entity.getProvisionDetailsList().add(e == null ? null : e.copyEntity()));
+		this.auditDetailMap.entrySet().stream().forEach(e -> {
+			List<AuditDetail> newList = new ArrayList<AuditDetail>();
+			if (e.getValue() != null) {
+				e.getValue().forEach(
+						auditDetail -> newList.add(auditDetail == null ? null : auditDetail.getNewCopyInstance()));
+				entity.getAuditDetailMap().put(e.getKey(), newList);
+			} else
+				entity.getAuditDetailMap().put(e.getKey(), null);
+		});
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
 	}
 
 	public Set<String> getExcludeFields() {

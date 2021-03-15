@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 
@@ -80,6 +81,8 @@ public interface PresentmentDetailService {
 	void updatePresentmentIdAsZero(List<Long> presentmentIds);
 
 	FinanceDetail getFinanceDetailsByRef(String finReference);
+	
+	FinanceMain getDefualtPostingDetails(String finReference, Date schDate);
 
 	PresentmentDetail getPresentmentDetail(String presentmentRef);
 
@@ -104,4 +107,12 @@ public interface PresentmentDetailService {
 
 	void executeReceipts(PresentmentDetail presentmentDetail, boolean isFullEMIPresent, boolean isRealized)
 			throws Exception;
+
+	void updatePresentmentDetail(String batchId, String pexcSuccess);
+
+	String getPresementStatus(String presentmentRef);
+
+	void updatePresentmentDetail(String presentmentRef, String status, Long linkedTranId);
+
+	long getPresentmentId(String presentmentRef);
 }

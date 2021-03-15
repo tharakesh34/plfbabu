@@ -267,8 +267,8 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		events.append(",'LATEPAY','PIS_NORM','NORM_PIS','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE', ");
 		events.append("'ISTBILL', 'GRACEEND','DISBINS','FEEPAY','VASFEE','MANFEE','INSTDATE','PAYMTINS', 'REAGING',");
 		events.append("'JVPOST', 'D2C', 'CHQ2B', 'ASSIGN','INSADJ','INSPAY','CANINS','LPPAMZ', 'WAIVER', 'INSPAY',");
-		events.append("'ADVDUE', 'WRITEBK', 'OEMSBV', 'MIGR', 'PROVSN', 'PROVCHG','PRVSN_MN', 'FEREFUND'");
-
+		events.append("'ADVDUE', 'WRITEBK', 'OEMSBV', 'MIGR', 'PROVSN', 'PROVCHG','PRVSN_MN', 'FEREFUND', 'PRSNT',");
+		events.append("'PRSNTRSP'");
 		if (this.showAccrual.isChecked()) {
 			events.append(",'AMZ','AMZSUSP','AMZ_MON', 'INDAS', 'EXPENSE'");
 		}

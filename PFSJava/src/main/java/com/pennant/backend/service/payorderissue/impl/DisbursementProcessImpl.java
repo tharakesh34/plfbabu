@@ -43,51 +43,34 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 	private static String REALIZED_STATUS = "P";
 
 	@Override
-	public void process(FinAdvancePayments disbursement) {
-		logger.debug(Literal.ENTERING);
-
-		TransactionStatus txStatus = null;
-		FinanceMain financeMain = null;
-		String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
-		if (StringUtils.isNotBlank(disbStatus)) {
-			PAID_STATUS = disbStatus;
-		}
-		//FIXME:Shinde - Need to check the Impact Rendering the data from View.
-		financeMain = financeMainDAO.getDisbursmentFinMainById(disbursement.getFinReference(), TableType.VIEW);
-		String paymentType = disbursement.getPaymentType();
-
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
-		txStatus = this.transactionManager.getTransaction(txDef);
+	public int processDisbursement(FinAdvancePayments disbursement) {
 		int count = 0;
 
 		try {
+			//FIXME:Shinde - Need to check the Impact Rendering the data from View.
+			String finReference = disbursement.getFinReference();
+			FinanceMain fm = financeMainDAO.getDisbursmentFinMainById(finReference, TableType.VIEW);
+			String paymentType = disbursement.getPaymentType();
+
 			if (StringUtils.equals(PAID_STATUS, disbursement.getStatus())) {
 				disbursement.setStatus(DisbursementConstants.STATUS_PAID);
 				// Postings entry
 				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
-					financeMain.setLovDescEntityCode(
-							financeMainDAO.getLovDescEntityCode(disbursement.getFinReference(), "_View"));
+					fm.setLovDescEntityCode(financeMainDAO.getLovDescEntityCode(finReference, "_View"));
 					FinanceDetail financeDetail = new FinanceDetail();
 
-					List<FinAdvancePayments> finAdvancePayments = new ArrayList<FinAdvancePayments>();
-					finAdvancePayments.add(disbursement);
-					financeDetail.setAdvancePaymentsList(finAdvancePayments);
+					List<FinAdvancePayments> list = new ArrayList<>();
+					list.add(disbursement);
+					financeDetail.setAdvancePaymentsList(list);
 
-					Map<Integer, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(
-							financeDetail.getAdvancePaymentsList(), financeMain, financeMain.getFinBranch());
-
-					List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
+					Map<Integer, Long> map = disbursementPostings.prepareDisbPostingApproval(list, fm,
+							fm.getFinBranch());
 
 					// loop through the disbursements.
-					if (CollectionUtils.isNotEmpty(advPayList)) {
-						for (int i = 0; i < advPayList.size(); i++) {
-							FinAdvancePayments advPayment = advPayList.get(i);
-							if (finAdvanceMap.containsKey(advPayment.getPaymentSeq())) {
-								advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentSeq()));
-								finAdvancePaymentsDAO.updateLinkedTranId(advPayment);
-							}
+					for (FinAdvancePayments advPayment : list) {
+						if (map.containsKey(advPayment.getPaymentSeq())) {
+							advPayment.setLinkedTranId(map.get(advPayment.getPaymentSeq()));
+							finAdvancePaymentsDAO.updateLinkedTranId(advPayment);
 						}
 					}
 				}
@@ -111,19 +94,46 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 					|| DisbursementConstants.PAYMENT_TYPE_NEFT.equals(paymentType)
 					|| DisbursementConstants.PAYMENT_TYPE_RTGS.equals(paymentType)
 					|| DisbursementConstants.PAYMENT_TYPE_IFT.equals(paymentType)) {
-				addToCustomerBeneficiary(disbursement, financeMain.getCustID());
+				addToCustomerBeneficiary(disbursement, fm.getCustID());
 			}
 
 			// update paid or rejected
 			count = finAdvancePaymentsDAO.updateDisbursmentStatus(disbursement);
-			if (count == 0) {
-				transactionManager.rollback(txStatus);
-			} else {
-				this.transactionManager.commit(txStatus);
-			}
+		} catch (Exception e) {
+			throw e;
+		}
+
+		return count;
+	}
+
+	@Override
+	public void process(FinAdvancePayments disbursement) {
+		logger.debug(Literal.ENTERING);
+
+		TransactionStatus txStatus = null;
+
+		String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
+		if (StringUtils.isNotBlank(disbStatus)) {
+			PAID_STATUS = disbStatus;
+		}
+
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+		txStatus = this.transactionManager.getTransaction(txDef);
+		int count = 0;
+
+		try {
+			count = processDisbursement(disbursement);
 		} catch (Exception e) {
 			this.transactionManager.rollback(txStatus);
 			logger.error(Literal.EXCEPTION, e);
+		}
+
+		if (count == 0) {
+			transactionManager.rollback(txStatus);
+		} else {
+			this.transactionManager.commit(txStatus);
 		}
 
 		logger.debug(Literal.LEAVING);

@@ -52,6 +52,19 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("ALLOW_OCR", true);
 
 		customConstants.put("IND_AS_ACCOUNTING_REQ", true);
+		
+		customConstants.put("DISB_PAID_CANCELLATION_ALLOW", true);  
+		
+		customConstants.put("MANDATE_PTNRBNK_IN_DWNLD", true);  
+		
+		customConstants.put("LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", true); 
+		
+		customConstants.put("GROUP_BATCH_BY_PARTNERBANK", true);
+		
+		customConstants.put("ALLOW_PRESENTMENT_STAGE_ACCOUNTING", true);
+
+
+		customConstants.put("AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT", true);
 
 		customConstants.put("ALLOW_AUTO_GRACE_EXT", true);
 

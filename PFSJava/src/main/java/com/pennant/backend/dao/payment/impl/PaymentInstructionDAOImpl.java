@@ -61,6 +61,7 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -403,6 +404,47 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 
 			return fpd;
 		}
+
+	}
+
+	@Override
+	public long getPymntsCustId(long paymentId) {
+		StringBuilder sql = new StringBuilder("Select c.custid from customers c");
+		sql.append(" inner join financemain fm on fm.custid = c.custid");
+		sql.append(" inner join  paymentheader ph on ph.finreference = fm.finreference");
+		sql.append(" where ph.paymentid = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentId }, Long.class);
+		} catch (Exception e) {
+			logger.warn("Record is not found in PaymentHeader for the specified PaymentId >> {}", paymentId);
+			throw new InterfaceException(Literal.EXCEPTION, e.getMessage());
+		}
+	}
+
+	@Override
+	public boolean isInstructionInProgress(String finReference) {
+		logger.debug(Literal.ENTERING);
+		boolean exists = false;
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select ");
+		sql.append(" count(*) from PAYMENTINSTRUCTIONS_TEMP pi");
+		sql.append(" left join PAYMENTHEADER_temp ph on ph.PAYMENTID = pi.PAYMENTID");
+		sql.append(" left join PAYMENTDETAILS_temp pd on pd.PAYMENTID = ph.PAYMENTID");
+		sql.append(" where ph.finReference =:finReference");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("finReference", finReference);
+		Integer count = jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
+		if (count > 0) {
+			exists = true;
+		}
+		logger.debug(Literal.LEAVING);
+		return exists;
 
 	}
 }

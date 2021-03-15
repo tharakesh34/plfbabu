@@ -17,7 +17,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -91,7 +90,6 @@ import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServi
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-@Component(value = "fieldVerificationDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private static final long serialVersionUID = 8661799804403963415L;
@@ -1097,10 +1095,12 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
 					Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
 					verification.setRemarks(remarks.getValue());
-					if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-							&& StringUtils.isEmpty(verification.getRemarks()) && !remarks.isReadonly()) {
-						throw new WrongValueException(remarks,
-								"Remarks are mandatory when Verification is Not Required");
+					if (ImplementationConstants.VER_INITATE_REMARKS_MANDATORY) {
+						if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+								&& StringUtils.isEmpty(verification.getRemarks())) {
+							throw new WrongValueException(remarks,
+									"Remarks are mandatory when Verification is Not Required");
+						}
 					}
 				}
 			}

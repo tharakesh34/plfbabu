@@ -275,13 +275,20 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 		auditHeader.getAuditDetail().setModelData(eODConfig);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		if (ImplementationConstants.AUTO_EOD_REQUIRED && eODConfig.isAutoEodRequired()) {
+		if (ImplementationConstants.AUTO_EOD_REQUIRED) {
 			DefaultJobSchedular defaultJobSchedular = (DefaultJobSchedular) SpringBeanUtil
 					.getBean("defaultJobSchedular");
 			try {
-				defaultJobSchedular.reScheduleJob(AutoEODJob.JOB_KEY, eODConfig.getEODStartJobFrequency());
-				defaultJobSchedular.reScheduleJob(EODReminderJob.JOB_KEY, eODConfig.getReminderFrequency());
-				defaultJobSchedular.reScheduleJob(EODDelayJob.JOB_KEY, eODConfig.getDelayFrequency());
+				if (eODConfig.isAutoEodRequired()) {
+					defaultJobSchedular.reScheduleJob(AutoEODJob.JOB_KEY, eODConfig.getEODStartJobFrequency());
+				}
+				if (eODConfig.isEmailNotifReqrd()) {
+					defaultJobSchedular.reScheduleJob(EODReminderJob.JOB_KEY, eODConfig.getReminderFrequency());
+				}
+				if (eODConfig.isDelayNotifyReq()) {
+					defaultJobSchedular.reScheduleJob(EODDelayJob.JOB_KEY, eODConfig.getDelayFrequency());
+				}
+
 			} catch (SchedulerException e) {
 				e.printStackTrace();
 			}

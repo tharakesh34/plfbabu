@@ -652,7 +652,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		String jobKey = EODDelayJob.JOB_KEY;
 		String jobDescription = EODDelayJob.JOB_KEY_DESCRIPTION;
 		String trigger = EODDelayJob.JOB_TRIGGER;
-		String cronExpression = eodService.getReminderCronExp();
+		String cronExpression = eodService.getDelayCronExp();
 
 		try {
 			CronExpression.validateExpression(cronExpression);

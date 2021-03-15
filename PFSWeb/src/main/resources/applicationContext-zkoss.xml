@@ -2343,6 +2343,7 @@
 		<property name="bankDetailService" ref="bankDetailService" />
 		<property name="partnerBankService" ref="partnerBankService" />
 		<property name="pennyDropService" ref="pennyDropService" />
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 	</bean>
 
 	<!--============ Finance Fee Details ============== -->
@@ -2955,6 +2956,7 @@
 		scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="agreementDetailService" ref="finAgreementDetailService" />
+		<property name="dMSService" ref="dMSService" />
 	</bean>
 
 	<bean id="dDAEnquiryDialogCtrl" class="com.pennant.webui.finance.enquiry.DDAEnquiryDialogCtrl" parent="basisListCtrl"
@@ -3786,6 +3788,7 @@
 		scope="prototype">
 		<!-- <property name="financeDetailService" ref="financeDetailService" /> -->
 		<property name="mandateService" ref="mandateService" />
+		<property name="dMSService" ref="dMSService" />
 	</bean>
 
 	<!-- dedupValidation -->
@@ -4843,7 +4846,9 @@
 		parent="basisListCtrl" scope="prototype" />
 
 	<bean id="riskContainmentUnitDialogCtrl" class="com.pennant.webui.verification.rcu.RiskContainmentUnitDialogCtrl"
-		parent="basisCtrl" scope="prototype" />
+		parent="basisCtrl" scope="prototype" >
+		<property name="dMSService" ref="dMSService"/>
+	</bean>
 
 	<bean id="rcuInitiationListCtrl" class="com.pennant.webui.verification.rcu.RCUInitiationListCtrl" parent="basisListCtrl"
 		scope="prototype" />

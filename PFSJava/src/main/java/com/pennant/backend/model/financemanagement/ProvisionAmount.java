@@ -14,6 +14,17 @@ public class ProvisionAmount {
 		super();
 	}
 
+	public ProvisionAmount copyEntity() {
+		ProvisionAmount entity = new ProvisionAmount();
+		entity.setId(this.id);
+		entity.setProvisionId(this.provisionId);
+		entity.setProvisionType(this.provisionType);
+		entity.setProvisionPer(this.provisionPer);
+		entity.setProvisionAmtCal(this.provisionAmtCal);
+		entity.setAssetCode(this.assetCode);
+		return entity;
+	}
+
 	public long getId() {
 		return id;
 	}

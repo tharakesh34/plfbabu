@@ -966,6 +966,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				documentDetails.setCustId(financeMain.getCustID());
 				documentDetails.setFinReference(financeMain.getFinReference());
 
+				if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(documentDetails.getRecordType()) && approveRec) {
+					updateRecord = false;
+				}
+
 				if (saveRecord) {
 					if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
 						documentDetails.setReferenceId(financeMain.getFinReference());

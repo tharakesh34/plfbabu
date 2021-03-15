@@ -44,6 +44,7 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -139,6 +140,67 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 		excludeFields.add("subventionSchedules");
 		excludeFields.add("subventionAmount");
 		return excludeFields;
+	}
+
+	public FinanceDisbursement copyEntity() {
+		FinanceDisbursement entity = new FinanceDisbursement();
+		entity.setFinReference(this.finReference);
+		entity.setDisbDate(this.disbDate);
+		entity.setDisbSeq(this.disbSeq);
+		entity.setLogKey(this.logKey);
+		entity.setDisbType(this.disbType);
+		entity.setDisbDesc(this.disbDesc);
+		entity.setDisbExpType(this.disbExpType);
+		entity.setLovDescDisbExpType(this.lovDescDisbExpType);
+		entity.setContractorId(this.contractorId);
+		entity.setDisbRetPerc(this.disbRetPerc);
+		entity.setDisbRetAmount(this.disbRetAmount);
+		entity.setDisbRetPaid(this.disbRetPaid);
+		entity.setRetPaidDate(this.retPaidDate);
+		entity.setAutoDisb(this.autoDisb);
+		entity.setDisbAccountId(this.disbAccountId);
+		entity.setDisbAmount(this.disbAmount);
+		entity.setDisbReqDate(this.disbReqDate);
+		entity.setDisbClaim(this.disbClaim);
+		entity.setDisbDisbursed(this.disbDisbursed);
+		entity.setFeeChargeAmt(this.feeChargeAmt);
+		entity.setInsuranceAmt(this.insuranceAmt);
+		entity.setDisbIsActive(this.disbIsActive);
+		entity.setDisbStatus(this.disbStatus);
+		entity.setDisbRemarks(this.disbRemarks);
+		entity.setNetAdvDue(this.netAdvDue);
+		entity.setNetRetDue(this.netRetDue);
+		entity.setConsultFeeFrq(this.consultFeeFrq);
+		entity.setConsultFeeStartDate(this.consultFeeStartDate);
+		entity.setConsultFeeEndDate(this.consultFeeEndDate);
+		entity.setQuickDisb(this.quickDisb);
+		entity.setLinkedTranId(this.linkedTranId);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setPosted(this.posted);
+		entity.setInstructionUID(this.instructionUID);
+		entity.setDeductFeeDisb(this.deductFeeDisb);
+		entity.setDeductInsDisb(this.deductInsDisb);
+		if (subventionSchedules != null) {
+			entity.setSubventionSchedules(new ArrayList<SubventionScheduleDetail>());
+			this.subventionSchedules.stream()
+					.forEach(e -> entity.getSubventionSchedules().add(e == null ? null : e.copyEntity()));
+			entity.setSubventionAmount(this.subventionAmount);
+		}
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
 	}
 
 	// ******************************************************//

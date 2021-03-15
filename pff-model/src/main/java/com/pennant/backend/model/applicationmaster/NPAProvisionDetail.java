@@ -92,6 +92,42 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public NPAProvisionDetail copyEntity() {
+		NPAProvisionDetail entity = new NPAProvisionDetail();
+		entity.setId(this.id);
+		entity.setHeaderId(this.headerId);
+		entity.setHeaderIdName(this.headerIdName);
+		entity.setNPAActive(this.nPAActive);
+		entity.setDPDdays(this.dPDdays);
+		entity.setNPARepayApprtnmnt(this.nPARepayApprtnmnt);
+		entity.setIntSecPerc(this.intSecPerc);
+		entity.setIntUnSecPerc(this.intUnSecPerc);
+		entity.setRegSecPerc(this.regSecPerc);
+		entity.setRegUnSecPerc(this.regUnSecPerc);
+		entity.setEntity(this.entity);
+		entity.setFinType(this.finType);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setAssetClassificationId(this.assetClassificationId);
+		entity.setAssetCode(this.assetCode);
+		entity.setAssetStageOrder(this.assetStageOrder);
+		entity.setNewPrvDetail(this.newPrvDetail);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("headerIdName");

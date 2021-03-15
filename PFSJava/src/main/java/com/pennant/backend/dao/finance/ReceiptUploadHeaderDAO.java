@@ -44,13 +44,10 @@ package com.pennant.backend.dao.finance;
 
 import java.util.List;
 
-import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennanttech.pff.core.TableType;
 
 public interface ReceiptUploadHeaderDAO {
-
-	UploadHeader getUploadHeader(long uploadId);
 
 	boolean isFileNameExist(String fileName);
 

@@ -1,7 +1,5 @@
 package com.pennanttech.pff.receipt.upload;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,9 +8,6 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -29,17 +24,13 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptService;
-import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.ReceiptUploadConstants;
-import com.pennant.eod.constants.EodConstants;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ReceiptUploadThreadProcess {
 	private static Logger logger = LogManager.getLogger(ReceiptUploadThreadProcess.class);
-
-	private static final String QUERY = "Select FinReference, uploadheaderid, uploaddetailid from ReceiptUploadQueuing  Where ThreadID = :ThreadId and Progress = :Progress order by uploaddetailid";
 
 	private DataSource dataSource;
 	private ProjectedRUDAO projectedRUDAO;
@@ -47,16 +38,11 @@ public class ReceiptUploadThreadProcess {
 	private UploadAllocationDetailDAO uploadAllocationDetailDAO;
 	private ReceiptService receiptService;
 	private LoggedInUser loggedInUser;
-	private ReceiptUploadHeaderService receiptUploadHeaderService;
-
-	private NamedParameterJdbcTemplate jdbcTemplate;
 	private DataSourceTransactionManager transactionManager;
-	private DefaultTransactionDefinition transactionDefinition;
 
 	public ReceiptUploadThreadProcess(DataSource dataSource, ProjectedRUDAO projectedRUDAO,
 			ReceiptUploadDetailDAO receiptUploadDetailDAO, ReceiptService receiptService,
-			UploadAllocationDetailDAO uploadAllocationDetailDAO, LoggedInUser loggedInUser,
-			ReceiptUploadHeaderService receiptUploadHeaderService) {
+			UploadAllocationDetailDAO uploadAllocationDetailDAO, LoggedInUser loggedInUser) {
 		super();
 
 		this.dataSource = dataSource;
@@ -65,53 +51,61 @@ public class ReceiptUploadThreadProcess {
 		this.receiptService = receiptService;
 		this.loggedInUser = loggedInUser;
 		this.uploadAllocationDetailDAO = uploadAllocationDetailDAO;
-		this.receiptUploadHeaderService = receiptUploadHeaderService;
 
 		initilize();
 	}
 
-	public void processesThread(long threadId) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Progress", EodConstants.PROGRESS_WAIT);
-		source.addValue("ThreadId", threadId);
+	public void processesThread(List<Long> headerIdList) {
+		logger.info("Selected receipt upload batch count >> {}", headerIdList.size());
+		List<Long> details = receiptUploadDetailDAO.getReceiptDetails(headerIdList);
 
-		jdbcTemplate.query(QUERY, source, new RowCallbackHandler() {
-			ReceiptUploadDetail uploadDetail = null;
+		int total = details.size();
+		int success = 0;
+		int failed = 0;
 
-			@Override
-			public void processRow(ResultSet rs) throws SQLException {
-				long uploadheaderid = rs.getLong(2);
-				long uploaddetailid = rs.getLong(3);
+		logger.info("{} receipts needs to be created for the selected upload headers {}", total,
+				headerIdList.toString());
 
-				uploadDetail = receiptUploadDetailDAO.getUploadReceiptDetail(uploadheaderid, uploaddetailid);
-				uploadDetail.setLoggedInUser(loggedInUser);
+		for (Long detailId : details) {
+			ReceiptUploadDetail rud = receiptUploadDetailDAO.getUploadReceiptDetail(detailId);
+			rud.setLoggedInUser(loggedInUser);
 
-				if (StringUtils.equals(uploadDetail.getAllocationType(), "M")) {
-					List<UploadAlloctionDetail> listAllocationDetails = new ArrayList<>();
-					listAllocationDetails = uploadAllocationDetailDAO.getUploadedAllocatations(uploaddetailid);
-					uploadDetail.setListAllocationDetails(listAllocationDetails);
-				}
-
-				processReceipt(uploadDetail);
+			if (StringUtils.equals(rud.getAllocationType(), "M")) {
+				List<UploadAlloctionDetail> listAllocationDetails = new ArrayList<>();
+				listAllocationDetails = uploadAllocationDetailDAO.getUploadedAllocatations(detailId);
+				rud.setListAllocationDetails(listAllocationDetails);
 			}
-		});
+
+			processReceipt(rud);
+
+			if (PennantConstants.UPLOAD_STATUS_FAIL.equals(rud.getUploadStatus())) {
+				failed++;
+			} else {
+				success++;
+			}
+
+		}
+
+		logger.info("Total Receipts >> {} Success >> {} Failures >> {}", total, success, failed);
 	}
 
-	private void processReceipt(ReceiptUploadDetail uploadDetail) {
-		long uploadheaderid = uploadDetail.getUploadheaderId();
-		long uploaddetailid = uploadDetail.getUploadDetailId();
+	private void processReceipt(ReceiptUploadDetail rud) {
+		long headerId = rud.getUploadheaderId();
+		long detailId = rud.getUploadDetailId();
+		logger.info("Receipt creation started with HeaderId >> {} and DetailId >> {}", headerId, detailId);
 
-		TransactionStatus transactionStatus = this.transactionManager.getTransaction(transactionDefinition);
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
 
 		try {
-			postExternalReceipt(uploadDetail);
+			postExternalReceipt(rud);
 
-			this.receiptUploadDetailDAO.updateStatus(uploadDetail);
-
-			this.projectedRUDAO.updateStatusQueue(uploadheaderid, uploaddetailid,
-					ReceiptUploadConstants.PROGRESS_SUCCESS);
+			this.receiptUploadDetailDAO.updateStatus(rud);
 
 			this.transactionManager.commit(transactionStatus);
+			logger.info("Receipt created successfully.");
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			transactionManager.rollback(transactionStatus);
@@ -121,33 +115,35 @@ public class ReceiptUploadThreadProcess {
 			if (error.length() > 1999) {
 				error = error.substring(0, 1999);
 			}
-			updateFailed(uploadheaderid, uploaddetailid, error);
+			updateFailed(headerId, detailId, error);
 
-			uploadDetail.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
-			uploadDetail.setReceiptId(0);
-			uploadDetail.setReason(error);
-			this.receiptUploadDetailDAO.updateStatus(uploadDetail);
+			rud.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
+			rud.setReceiptId(null);
+			rud.setReason(error);
+			this.receiptUploadDetailDAO.updateStatus(rud);
 		}
 	}
 
-	private void postExternalReceipt(ReceiptUploadDetail uploadDetail) {
-		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(uploadDetail, "");
+	private void postExternalReceipt(ReceiptUploadDetail rud) {
+		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, "");
 		fsi.setReqType("Post");
 		fsi.setReceiptUpload(true);
-		fsi.setLoggedInUser(uploadDetail.getLoggedInUser());
+		fsi.setLoggedInUser(rud.getLoggedInUser());
 		FinanceDetail financeDetail = receiptService.receiptTransaction(fsi, fsi.getReceiptPurpose());
 
 		WSReturnStatus returnStatus = financeDetail.getReturnStatus();
 		if (returnStatus != null) {
-			uploadDetail.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
+			rud.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
 
 			String code = StringUtils.trimToEmpty(returnStatus.getReturnCode());
 			String description = StringUtils.trimToEmpty(returnStatus.getReturnText());
 
-			uploadDetail.setReason(String.format("%s %s %s", code, "-", description));
+			rud.setReason(String.format("%s %s %s", code, "-", description));
+			throw new AppException("Unable to create receipt for the FinReference " + rud.getReference() + ", Reason "
+					+ rud.getReason());
 		} else {
-			uploadDetail.setUploadStatus(PennantConstants.UPLOAD_STATUS_SUCCESS);
-			uploadDetail.setReason("");
+			rud.setUploadStatus(PennantConstants.UPLOAD_STATUS_SUCCESS);
+			rud.setReason("");
 		}
 	}
 
@@ -162,15 +158,7 @@ public class ReceiptUploadThreadProcess {
 	}
 
 	private void initilize() {
-		jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-
 		this.transactionManager = new DataSourceTransactionManager(dataSource);
-		this.transactionDefinition = new DefaultTransactionDefinition();
-		this.transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		this.transactionDefinition.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
-
-		//FIXME: PV change the time to 60 seocnds after code review completed
-		this.transactionDefinition.setTimeout(600);
-
 	}
+
 }

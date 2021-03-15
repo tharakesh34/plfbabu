@@ -132,6 +132,9 @@ public class AccountEventConstants {
 	public static final String ACCEVENT_OEMSBV = "OEMSBV";
 	public static final String ACCEVENT_EXPENSE = "EXPENSE";
 	public static final String ACCEVENT_INDAS = "INDAS";
+	public static final String ACCEVENT_PRSNT = "PRSNT";
+	public static final String ACCEVENT_PRSNTRSP = "PRSNTRSP";
+
 
 	// Category Code Constants
 	public static final String EVENTCTG_FINANCE = "F";

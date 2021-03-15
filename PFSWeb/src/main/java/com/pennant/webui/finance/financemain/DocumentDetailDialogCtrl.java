@@ -742,23 +742,24 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			map.put("finDocumentDetail", finDocumentDetail);
 		}
 
-		//If the document uploaded in DMS DocRefId is null
-		if (finDocumentDetail.getDocRefId() != null && finDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
-			finDocumentDetail.setDocImage(dMSService.getById(finDocumentDetail.getDocRefId()));
+		String docName = finDocumentDetail.getDocName();
+		String docUri = finDocumentDetail.getDocUri();
+		Long docRefId = finDocumentDetail.getDocRefId();
+		String custCif = finDocumentDetail.getLovDescCustCIF();
+		byte[] docImage = finDocumentDetail.getDocImage();
+
+		if (StringUtils.isNotBlank(docUri)) {
+			DocumentDetails dd = dMSService.getExternalDocument(custCif, docName, docUri);
+			finDocumentDetail.setDocImage(dd.getDocImage());
+			finDocumentDetail.setDocName(dd.getDocName());
 		} else {
-			finDocumentDetail.setDocImage(dMSService.getImageByUri(finDocumentDetail.getDocUri()));
+			if (docImage == null) {
+				if (docRefId != null && docRefId != Long.MIN_VALUE) {
+					finDocumentDetail.setDocImage(dMSService.getById(docRefId));
+				}
+			}
 		}
 
-		/*
-		 * if (finDocumentDetail.getDocImage() == null) { if (finDocumentDetail.getDocRefId() != null &&
-		 * finDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
-		 * finDocumentDetail.setDocImage(dMSService.getById(finDocumentDetail.getDocRefId())); } else if
-		 * (StringUtils.isNotBlank(finDocumentDetail.getDocUri())) { // Fetch document from interface String custCif =
-		 * finDocumentDetail.getLovDescCustCIF(); DocumentDetails detail =
-		 * externalDocumentManager.getExternalDocument(finDocumentDetail.getDocName(), finDocumentDetail.getDocUri(),
-		 * custCif); if (detail != null && detail.getDocImage() != null) {
-		 * finDocumentDetail.setDocImage(detail.getDocImage()); finDocumentDetail.setDocName(detail.getDocName()); } } }
-		 */
 		return finDocumentDetail;
 	}
 

@@ -284,6 +284,11 @@ public class NPAService extends ServiceHelper {
 				provisionDetail = provisionDetails.get(i + 1);
 				break;
 			}
+
+			if (i == 3 && dpdDays > provisionDetails.get(i + 1).getDPDdays()) {
+				provisionDetail = provisionDetails.get(i + 1);
+				break;
+			}
 		}
 
 		if (provisionDetail == null) {

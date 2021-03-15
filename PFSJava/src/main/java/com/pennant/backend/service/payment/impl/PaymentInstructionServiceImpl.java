@@ -418,6 +418,11 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 		return getPaymentInstructionDAO().getPaymentInstructionDetails(paymentId, type);
 	}
 
+	@Override
+	public boolean isInstructionInProgress(String finReference) {
+		return getPaymentInstructionDAO().isInstructionInProgress(finReference);
+	}
+
 	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {
 		this.paymentsProcessService = paymentsProcessService;
 	}

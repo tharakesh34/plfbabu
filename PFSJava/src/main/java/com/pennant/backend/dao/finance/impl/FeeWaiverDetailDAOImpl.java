@@ -214,6 +214,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		sql.append(", fd.FeeTypeCode, fd.WaiverType, fd.ReceivedAmount, fd.WaivedAmount, fd.BalanceAmount");
 		sql.append(", fd.CurrWaiverAmount, fd.FeeTypeDesc, fd.actualreceivable");
 		sql.append(", fd.receivablegst, fd.curractualwaiver, fd.currwaivergst, fh.valueDate, su.usrFName waivedBy");
+		sql.append(", fd.TaxApplicable, fd.taxComponent, fh.finreference");
 		sql.append(" from FeeWaiverDetails fd");
 		sql.append(" inner join FeeWaiverHeader fh on fh.waiverId = fd.waiverId");
 		sql.append(" left join SecUsers su on fh.lastMntBy = su.usrid");

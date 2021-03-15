@@ -305,41 +305,11 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		return parmMap;
 	}
 
-	@Override
-	public List<Long> getMandateList(String entityCode) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = null;
-		try {
-			sql = new StringBuilder("Select mandateID ");
-			sql.append("from  INT_MANDATE_REQUEST_VIEW where entitycode =:entityCode");
-			MapSqlParameterSource paramMap = new MapSqlParameterSource();
-			paramMap.addValue("entityCode", entityCode);
-
-			logger.debug("Query--->" + sql.toString());
-			return jdbcTemplate.queryForList(sql.toString(), paramMap, Long.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
-	}
 
 	@Override
 	public List<String> getEntityCodes() {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = null;
-		try {
-			sql = new StringBuilder("Select EntityCode ");
-			sql.append("from  Entity ");
-			MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-
-			logger.debug("Query--->" + sql.toString());
-			return jdbcTemplate.queryForList(sql.toString(), mapSqlParameterSource, String.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
+		String sql = "Select EntityCode from Entity";
+		return jdbcOperations.queryForList(sql, new Object[] {}, String.class);
 	}
 
 	@Override
@@ -406,7 +376,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		sql.append("WHERE MANDATEID IN (:MANDATEID) ");
 		sql.append("AND STATUS = :AC");
 
-		logger.debug("Query--->" + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MANDATEID", Arrays.asList(result));
@@ -415,6 +385,39 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		this.jdbcTemplate.update(sql.toString(), paramMap);
 
 		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
+	public List<Long> getMandateList(String entityCode) {
+		String sql = "Select MandateID from MANDATES Where Entitycode = ?";
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return jdbcOperations.queryForList(sql.toString(), new Object[] { entityCode}, Long.class);
+	}
+	
+	@Override
+	public List<Long> getMandateList(String entityCode, String partnerBankCode) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select MandateID");
+		sql.append(" from MANDATES M");
+		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID");
+		sql.append(" Where Entitycode = ? and PartnerBankCode = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return jdbcOperations.queryForList(sql.toString(), new Object[] { entityCode, partnerBankCode }, Long.class);
+	}
+	
+	
+
+	@Override
+	public List<String> getPartnerBankCodeByEntity(String entityCode) {
+		String sql = "Select PartnerbankCode from PartnerBanks Where Entity = ?";
+		
+		logger.trace(Literal.SQL + sql);
+		
+		return jdbcOperations.queryForList(sql, new Object[] { entityCode }, String.class);
 	}
 
 }

@@ -196,7 +196,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		BigDecimal odPri = fod.getFinMaxODPri();
 		BigDecimal odPft = fod.getFinMaxODPft();
 
-		fod.setTotPenaltyAmt(BigDecimal.ZERO);
+		//fod.setTotPenaltyAmt(BigDecimal.ZERO);
 		fod.setTotPenaltyPaid(BigDecimal.ZERO);
 		fod.setTotPenaltyBal(BigDecimal.ZERO);
 		fod.setTotWaived(BigDecimal.ZERO);
@@ -242,6 +242,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 				continue;
 			}
 
+			//PSD#163479
+			totPenaltyPaid = totPenaltyPaid.add(rpd.getPenaltyPaid());
+			totWaived = totWaived.add(rpd.getPenaltyWaived());
+
 			if (finValueDate.compareTo(valueDate) > 0) {
 				continue;
 			}
@@ -249,10 +253,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (schdDate.compareTo(finValueDate) == 0 || grcDate.compareTo(finValueDate) > 0) {
 				continue;
 			}
-
-			//PSD#163479
-			totPenaltyPaid = totPenaltyPaid.add(rpd.getPenaltyPaid());
-			totWaived = totWaived.add(rpd.getPenaltyWaived());
 
 			// MAx OD amounts is same as repayments balance amounts
 			if (schdDate.compareTo(finValueDate) == 0 || grcDate.compareTo(finValueDate) >= 0) {
@@ -305,8 +305,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		}
 
-		fod.setTotPenaltyAmt(BigDecimal.ZERO);
-
 		// Add record with today date
 		if (isAddTodayRcd) {
 			odcr = new OverdueChargeRecovery();
@@ -337,6 +335,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 		for (int iOdcr = 1; iOdcr < odcrList.size(); iOdcr++) {
 			odcrCur = odcrList.get(iOdcr);
 			odcrPrv = odcrList.get(iOdcr - 1);
+
+			fod.setTotPenaltyAmt(BigDecimal.ZERO);
 
 			// Calculate the Penalty
 			BigDecimal balanceForCal = BigDecimal.ZERO;

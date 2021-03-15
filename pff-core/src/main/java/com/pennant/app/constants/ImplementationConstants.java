@@ -201,6 +201,13 @@ public class ImplementationConstants {
 				"ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE", false);
 		DEFAULT_VAS_MODE_OF_PAYMENT = getValueAsBoolean(extensions, "DEFAULT_VAS_MODE_OF_PAYMENT", false);
 		SUSP_CHECK_REQ = getValueAsBoolean(extensions, "SUSP_CHECK_REQ", false);
+		VER_INITATE_REMARKS_MANDATORY = getValueAsBoolean(extensions, "VER_INITATE_REMARKS_MANDATORY", false);
+		ALLOW_NEGATIVE_VALUES_EXTFIELDS = getValueAsBoolean(extensions, "ALLOW_NEGATIVE_VALUES_EXTFIELDS", false);
+		FINREFERENCE_ALW_SWIFT_CODE = getValueAsBoolean(extensions, "FINREFERENCE_ALW_SWIFT_CODE", false);
+		DEFAULT_PRESENTMENT_UPLOAD = getValueAsBoolean(extensions, "DEFAULT_PRESENTMENT_UPLOAD", true);
+		DISB_PAID_CANCELLATION_ALLOW = getValueAsBoolean(extensions, "DISB_PAID_CANCELLATION_ALLOW", false);
+		MANDATE_PTNRBNK_IN_DWNLD = getValueAsBoolean(extensions, "MANDATE_PTNRBNK_IN_DWNLD", false);
+		ALLOW_PRESENTMENT_STAGE_ACCOUNTING = getValueAsBoolean(extensions, "ALLOW_PRESENTMENT_STAGE_ACCOUNTING", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -225,7 +232,7 @@ public class ImplementationConstants {
 		BASE_CCY = getValueAsString(extensions, "BASE_CCY", "INR");
 		PRESENTMENT_EXPORT_STATUS_MIN_LENGTH = getValueAsInt(extensions, "PRESENTMENT_EXPORT_STATUS_MIN_LENGTH", 1);
 		PRESENTMENT_EXPORT_STATUS_MAX_LENGTH = getValueAsInt(extensions, "PRESENTMENT_EXPORT_STATUS_MAX_LENGTH", 1);
-		BASE_CCY_EDT_FIELD = 2;
+		BASE_CCY_EDT_FIELD = getValueAsInt(extensions, "BASE_CCY_EDT_FIELD", 2);
 		// FIXME HL >>
 
 		//<<
@@ -256,11 +263,10 @@ public class ImplementationConstants {
 		ADV_EMI_STAGE_REAR_END = getValueAsBoolean(extensions, "ADV_EMI_STAGE_REAR_END", false);
 		ADV_EMI_STAGE_REPAY_TERMS = getValueAsBoolean(extensions, "ADV_EMI_STAGE_REPAY_TERMS", false);
 
+		AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT = getValueAsBoolean(extensions, "AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT", false);
+		RECEIPTS_SHOW_ACCOUNTING = getValueAsBoolean(extensions, "RECEIPTS_SHOW_ACCOUNTING", true);
 	}
 
-	public static boolean ALLOW_MULTI_CCY;
-	public static String BASE_CCY;
-	public static int BASE_CCY_EDT_FIELD;
 	public static boolean IMPLEMENTATION_CONVENTIONAL;
 	public static boolean IMPLEMENTATION_ISLAMIC;
 	public static boolean ALLOW_FINACTYPES;
@@ -424,12 +430,24 @@ public class ImplementationConstants {
 	public static boolean DEFAULT_VAS_MODE_OF_PAYMENT;
 	public static boolean PRESENTMENT_EXTRACT_DEALER_MAN;
 	public static boolean ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE;
+	public static boolean VER_INITATE_REMARKS_MANDATORY;
+	public static boolean ALLOW_NEGATIVE_VALUES_EXTFIELDS;
+	public static boolean FINREFERENCE_ALW_SWIFT_CODE;
+	public static boolean DEFAULT_PRESENTMENT_UPLOAD;
+
+	//Currency constants for Performance
+	public static boolean ALLOW_MULTI_CCY;
+	public static String BASE_CCY;
+	public static int BASE_CCY_EDT_FIELD;
 	public static boolean SUSP_CHECK_REQ;
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static
 	 * boolean ALLOW_LV_INITIATION_LOS; public static boolean ALLOW_RCU_INITIATION_LOS;
 	 */
 	public static boolean ALLOW_EOD_INTERVAL_VALIDATION;
+	public static boolean DISB_PAID_CANCELLATION_ALLOW;
+	public static boolean MANDATE_PTNRBNK_IN_DWNLD;
+	public static boolean ALLOW_PRESENTMENT_STAGE_ACCOUNTING;
 
 	public static String REPAY_HIERARCHY_METHOD;
 	public static String REPAY_INTEREST_HIERARCHY;
@@ -444,6 +462,8 @@ public class ImplementationConstants {
 
 	public static int PRESENTMENT_EXPORT_STATUS_MIN_LENGTH;
 	public static int PRESENTMENT_EXPORT_STATUS_MAX_LENGTH;
+	public static boolean AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT;
+	public static boolean RECEIPTS_SHOW_ACCOUNTING;
 
 	/**
 	 * GST Invoice Due basis/Receipt Basis

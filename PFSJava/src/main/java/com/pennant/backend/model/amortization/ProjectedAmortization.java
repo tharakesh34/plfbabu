@@ -86,6 +86,42 @@ public class ProjectedAmortization implements Serializable {
 		super();
 	}
 
+	public ProjectedAmortization copyEntity() {
+		ProjectedAmortization entity = new ProjectedAmortization();
+		entity.setAmzLogId(this.amzLogId);
+		entity.setFinReference(this.finReference);
+		entity.setFinType(this.finType);
+		entity.setFinBranch(this.finBranch);
+		entity.setFinCcy(this.finCcy);
+		entity.setEntityCode(this.entityCode);
+		entity.setCustID(this.custID);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setIncomeType(this.incomeType);
+		entity.setReferenceID(this.referenceID);
+		entity.setIncomeTypeID(this.incomeTypeID);
+		entity.setaMZMethod(this.aMZMethod);
+		entity.setLastMntOn(this.lastMntOn);
+		entity.setCalculatedOn(this.calculatedOn);
+		entity.setCalcFactor(this.calcFactor);
+		entity.setAmount(this.amount);
+		entity.setActualAmount(this.actualAmount);
+		entity.setAmortizedAmount(this.amortizedAmount);
+		entity.setUnAmortizedAmount(this.unAmortizedAmount);
+		entity.setCurMonthAmz(this.curMonthAmz);
+		entity.setPrvMonthAmz(this.prvMonthAmz);
+		entity.setActive(this.active);
+		entity.setCumulativeAmount(this.cumulativeAmount);
+		entity.setMonthEndDate(this.monthEndDate);
+		entity.setUpdProjAMZ(this.updProjAMZ);
+		entity.setSaveProjAMZ(this.saveProjAMZ);
+		entity.setStatus(this.status);
+		entity.setStartTime(this.startTime);
+		entity.setEndTime(this.endTime);
+		entity.setLastMntBy(this.lastMntBy);
+		entity.setStartDate(this.startDate);
+		return entity;
+	}
+
 	public long getAmzLogId() {
 		return amzLogId;
 	}

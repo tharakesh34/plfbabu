@@ -304,10 +304,10 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 		entity.setPresentmentId(this.presentmentId);
 		entity.setNewRecord(this.newRecord);
 		entity.setLovValue(this.lovValue);
-		entity.setBefImage(this.befImage);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
 		entity.setRepayComplete(this.repayComplete);
-		entity.setErrorDetails(this.errorDetails);
+		this.errorDetails.stream().forEach(e -> entity.getErrorDetails().add(e));
 		entity.setFeeTax(this.feeTax);
 		entity.setSubventionAmount(this.subventionAmount);
 		entity.setTDSApplicable(this.tDSApplicable);
@@ -315,6 +315,17 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 		entity.setLimitDrop(this.limitDrop);
 		entity.setODLimit(this.oDLimit);
 		entity.setAvailableLimit(this.availableLimit);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
 		return entity;
 	}
 

@@ -70,14 +70,21 @@ public class TaxHeader extends AbstractWorkflowEntity {
 		TaxHeader entity = new TaxHeader();
 		entity.setHeaderId(this.headerId);
 		entity.setInvoiceID(this.invoiceID);
-
-		for (Taxes taxes : this.taxDetails) {
-			entity.getTaxDetails().add(taxes.copyEntity());
-		}
-
+		this.taxDetails.stream().forEach(e -> entity.getTaxDetails().add(e.copyEntity()));
 		entity.setNewRecord(this.newRecord);
-		entity.setBefImage(this.befImage);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
 		return entity;
 	}
 

@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.pennant.backend.model.finance.DisbursementDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 
 public interface DisbursementDAO {
@@ -46,5 +48,21 @@ public interface DisbursementDAO {
 	String isDisbursementExist(DisbursementDetails detail);
 
 	List<FinAdvancePayments> getAutoDisbInstructions(Date llDate);
+
+	List<DisbursementRequest> getDisbursementInstructions(DisbursementRequest disbursementRequest);
+
+	FinAdvancePayments getDisbursementInstruction(long paymentId, String channel);
+
+	List<DisbursementRequest> getDetailsByHeaderID(long headerID);
+
+	DisbursementRequest getDisbRequest(long id);
+
+	FinAdvancePayments getDisbursementInstruction(long disbReqId);
+
+	PaymentInstruction getPaymentInstruction(long disbReqId);
+
+	InsurancePaymentInstructions getInsuranceInstruction(long disbReqId);
+
+	int updateDisbRequest(DisbursementRequest request);
 
 }

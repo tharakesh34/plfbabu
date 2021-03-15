@@ -13,5 +13,6 @@
 	<include file="change-logs/change-log-5.8.0-audit.xml" />
 	<include file="change-logs/change-log-5.9.0-audit.xml" />
 	<include file="change-logs/change-log-5.10.0-audit.xml" />
+	<include file="change-logs/change-log-5.12.0-audit.xml" />
 	<include file="change-logs/change-log-HL_enhancements-audit.xml" />
 </databaseChangeLog>

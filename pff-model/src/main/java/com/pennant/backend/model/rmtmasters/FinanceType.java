@@ -386,6 +386,302 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public FinanceType copyEntity() {
+		FinanceType entity = new FinanceType();
+		entity.setProduct(this.product);
+		entity.setFinType(this.finType);
+		entity.setFinCategory(this.finCategory);
+		entity.setFinCategoryDesc(this.finCategoryDesc);
+		entity.setFinTypeDesc(this.finTypeDesc);
+		entity.setFinCcy(this.finCcy);
+		entity.setFinDaysCalType(this.finDaysCalType);
+		entity.setFinAcType(this.finAcType);
+		entity.setFinContingentAcType(this.finContingentAcType);
+		entity.setFinSuspAcType(this.finSuspAcType);
+		entity.setFinBankContingentAcType(this.finBankContingentAcType);
+		entity.setFinProvisionAcType(this.finProvisionAcType);
+		entity.setPftPayAcType(this.pftPayAcType);
+		entity.setFinIsOpenPftPayAcc(this.finIsOpenPftPayAcc);
+		entity.setFinDivision(this.finDivision);
+		entity.setFinIsGenRef(this.finIsGenRef);
+		entity.setFinIsOpenNewFinAc(this.finIsOpenNewFinAc);
+		entity.setFinMaxAmount(this.finMaxAmount);
+		entity.setFinMinAmount(this.finMinAmount);
+		entity.setFinDftStmtFrq(this.finDftStmtFrq);
+		entity.setFinIsAlwMD(this.finIsAlwMD);
+		entity.setFinHistRetension(this.finHistRetension);
+		entity.setEqualRepayment(this.equalRepayment);
+		entity.setFinAssetType(this.finAssetType);
+		entity.setFinIsDwPayRequired(this.finIsDwPayRequired);
+		entity.setDownPayRule(this.downPayRule);
+		entity.setDownPayRuleCode(this.downPayRuleCode);
+		entity.setDownPayRuleDesc(this.downPayRuleDesc);
+		entity.setFInIsAlwGrace(this.fInIsAlwGrace);
+		entity.setFinRateType(this.finRateType);
+		entity.setAlwZeroIntAcc(this.alwZeroIntAcc);
+		entity.setFinBaseRate(this.finBaseRate);
+		entity.setFinSplRate(this.finSplRate);
+		entity.setFinMargin(this.finMargin);
+		entity.setFinIntRate(this.finIntRate);
+		entity.setFInMinRate(this.fInMinRate);
+		entity.setFinMaxRate(this.finMaxRate);
+		entity.setAlwHybridRate(this.alwHybridRate);
+		entity.setFixedRateTenor(this.fixedRateTenor);
+		entity.setFinDftIntFrq(this.finDftIntFrq);
+		entity.setFinSchdMthd(this.finSchdMthd);
+		entity.setFinIsIntCpz(this.finIsIntCpz);
+		entity.setFinCpzFrq(this.finCpzFrq);
+		entity.setFinIsRvwAlw(this.finIsRvwAlw);
+		entity.setFinRvwFrq(this.finRvwFrq);
+		entity.setFinRvwRateApplFor(this.finRvwRateApplFor);
+		entity.setFinAlwRateChangeAnyDate(this.finAlwRateChangeAnyDate);
+		entity.setFinSchCalCodeOnRvw(this.finSchCalCodeOnRvw);
+		entity.setFinGrcRateType(this.finGrcRateType);
+		entity.setFinGrcBaseRate(this.finGrcBaseRate);
+		entity.setFinGrcSplRate(this.finGrcSplRate);
+		entity.setFinGrcMargin(this.finGrcMargin);
+		entity.setFinGrcIntRate(this.finGrcIntRate);
+		entity.setFInGrcMinRate(this.fInGrcMinRate);
+		entity.setFinGrcMaxRate(this.finGrcMaxRate);
+		entity.setFinGrcDftIntFrq(this.finGrcDftIntFrq);
+		entity.setFinIsAlwGrcRepay(this.finIsAlwGrcRepay);
+		entity.setFinGrcSchdMthd(this.finGrcSchdMthd);
+		entity.setFinGrcIsIntCpz(this.finGrcIsIntCpz);
+		entity.setFinGrcCpzFrq(this.finGrcCpzFrq);
+		entity.setFinGrcIsRvwAlw(this.finGrcIsRvwAlw);
+		entity.setFinGrcRvwFrq(this.finGrcRvwFrq);
+		entity.setFinIsIntCpzAtGrcEnd(this.finIsIntCpzAtGrcEnd);
+		entity.setFinMinTerm(this.finMinTerm);
+		entity.setFinMaxTerm(this.finMaxTerm);
+		entity.setFinDftTerms(this.finDftTerms);
+		entity.setFinRepayPftOnFrq(this.finRepayPftOnFrq);
+		entity.setFinRpyFrq(this.finRpyFrq);
+		entity.setFinRepayMethod(this.finRepayMethod);
+		entity.setAlwdRpyMethods(this.alwdRpyMethods);
+		entity.setFinIsAlwPartialRpy(this.finIsAlwPartialRpy);
+		entity.setFinIsAlwDifferment(this.finIsAlwDifferment);
+		entity.setFinMaxDifferment(this.finMaxDifferment);
+		entity.setAlwPlanDeferment(this.alwPlanDeferment);
+		entity.setPlanDeferCount(this.planDeferCount);
+		entity.setFinIsAlwEarlyRpy(this.finIsAlwEarlyRpy);
+		entity.setFinIsAlwEarlySettle(this.finIsAlwEarlySettle);
+		entity.setFinODRpyTries(this.finODRpyTries);
+		entity.setFinDepositRestrictedTo(this.finDepositRestrictedTo);
+		entity.setFinAEBuyOrInception(this.finAEBuyOrInception);
+		entity.setFinAESellOrMaturity(this.finAESellOrMaturity);
+		entity.setFinIsActive(this.finIsActive);
+		entity.setFinScheduleOn(this.finScheduleOn);
+		entity.setAlwEarlyPayMethods(this.alwEarlyPayMethods);
+		entity.setFinGrcScheduleOn(this.finGrcScheduleOn);
+		entity.setFinCommitmentReq(this.finCommitmentReq);
+		entity.setFinCollateralReq(this.finCollateralReq);
+		entity.setCollateralType(this.collateralType);
+		entity.setFinDepreciationReq(this.finDepreciationReq);
+		entity.setFinDepreciationFrq(this.finDepreciationFrq);
+		entity.setAllowRIAInvestment(this.allowRIAInvestment);
+		entity.setOverrideLimit(this.overrideLimit);
+		entity.setLimitRequired(this.limitRequired);
+		entity.setFinCommitmentOvrride(this.finCommitmentOvrride);
+		entity.setFinCollateralOvrride(this.finCollateralOvrride);
+		entity.setPartiallySecured(this.partiallySecured);
+		entity.setFinPftUnChanged(this.finPftUnChanged);
+		entity.setStartDate(this.startDate);
+		entity.setEndDate(this.endDate);
+		entity.setAllowDownpayPgm(this.allowDownpayPgm);
+		entity.setAlwAdvanceRent(this.alwAdvanceRent);
+		entity.setManualSchedule(this.manualSchedule);
+		entity.setApplyGrcPricing(this.applyGrcPricing);
+		entity.setGrcPricingMethod(this.grcPricingMethod);
+		entity.setApplyRpyPricing(this.applyRpyPricing);
+		entity.setRpyPricingMethod(this.rpyPricingMethod);
+		entity.setRpyHierarchy(this.rpyHierarchy);
+		entity.setGrcPricingMethodDesc(this.grcPricingMethodDesc);
+		entity.setRpyPricingMethodDesc(this.rpyPricingMethodDesc);
+		entity.setDroplineOD(this.droplineOD);
+		entity.setDroppingMethod(this.droppingMethod);
+		entity.setRateChgAnyDay(this.rateChgAnyDay);
+		entity.setFrequencyDays(this.frequencyDays);
+		entity.setAlwBPI(this.alwBPI);
+		entity.setBpiTreatment(this.bpiTreatment);
+		entity.setBpiPftDaysBasis(this.bpiPftDaysBasis);
+		entity.setPftDueSchOn(this.pftDueSchOn);
+		entity.setPlanEMIHAlw(this.planEMIHAlw);
+		entity.setalwPlannedEmiInGrc(this.alwPlannedEmiInGrc);
+		entity.setPlanEMIHMethod(this.planEMIHMethod);
+		entity.setPlanEMIHMaxPerYear(this.planEMIHMaxPerYear);
+		entity.setPlanEMIHMax(this.planEMIHMax);
+		entity.setPlanEMIHLockPeriod(this.planEMIHLockPeriod);
+		entity.setPlanEMICpz(this.planEMICpz);
+		entity.setUnPlanEMIHLockPeriod(this.unPlanEMIHLockPeriod);
+		entity.setUnPlanEMICpz(this.unPlanEMICpz);
+		entity.setAlwReage(this.alwReage);
+		entity.setAlwUnPlanEmiHoliday(this.alwUnPlanEmiHoliday);
+		entity.setReAgeCpz(this.reAgeCpz);
+		entity.setFddLockPeriod(this.fddLockPeriod);
+		entity.setMaxUnplannedEmi(this.maxUnplannedEmi);
+		entity.setMaxReAgeHolidays(this.maxReAgeHolidays);
+		entity.setRoundingMode(this.roundingMode);
+		entity.setRoundingTarget(this.roundingTarget);
+		entity.setDeveloperFinance(this.developerFinance);
+		entity.setGrcAdvBaseRate(this.grcAdvBaseRate);
+		entity.setGrcAdvBaseRateDesc(this.grcAdvBaseRateDesc);
+		entity.setGrcAdvMargin(this.grcAdvMargin);
+		entity.setGrcAdvPftRate(this.grcAdvPftRate);
+		entity.setRpyAdvBaseRate(this.rpyAdvBaseRate);
+		entity.setRpyAdvBaseRateDesc(this.rpyAdvBaseRateDesc);
+		entity.setRpyAdvMargin(this.rpyAdvMargin);
+		entity.setRpyAdvPftRate(this.rpyAdvPftRate);
+		entity.setAlwMultiPartyDisb(this.alwMultiPartyDisb);
+		entity.setTdsApplicable(this.tdsApplicable);
+		entity.setTdsAllowToModify(this.tdsAllowToModify);
+		entity.setTdsApplicableTo(this.tdsApplicableTo);
+		entity.setAddrLine1(this.addrLine1);
+		entity.setPastduePftCalMthd(this.pastduePftCalMthd);
+		entity.setPastduePftMargin(this.pastduePftMargin);
+		entity.setRollOverFinance(this.rollOverFinance);
+		entity.setRollOverFrq(this.rollOverFrq);
+		entity.setApplyODPenalty(this.applyODPenalty);
+		entity.setODIncGrcDays(this.oDIncGrcDays);
+		entity.setODChargeType(this.oDChargeType);
+		entity.setODGraceDays(this.oDGraceDays);
+		entity.setODChargeCalOn(this.oDChargeCalOn);
+		entity.setODChargeAmtOrPerc(this.oDChargeAmtOrPerc);
+		entity.setODRuleCode(this.oDRuleCode);
+		entity.setODAllowWaiver(this.oDAllowWaiver);
+		entity.setODMaxWaiverPerc(this.oDMaxWaiverPerc);
+		entity.setODMinCapAmount(this.oDMinCapAmount);
+		entity.setStepFinance(this.stepFinance);
+		entity.setSteppingMandatory(this.steppingMandatory);
+		entity.setAlwManualSteps(this.alwManualSteps);
+		entity.setAlwdStepPolicies(this.alwdStepPolicies);
+		entity.setDftStepPolicy(this.dftStepPolicy);
+		entity.setDftStepPolicyType(this.dftStepPolicyType);
+		entity.setLovDescDftStepPolicyName(this.lovDescDftStepPolicyName);
+		entity.setRemarks(this.remarks);
+		if (finTypeVASProductsList != null) {
+			entity.setFinTypeVASProductsList(new ArrayList<FinTypeVASProducts>());
+			this.finTypeVASProductsList.stream()
+					.forEach(e -> entity.getFinTypeVASProductsList().add(e == null ? null : e.copyEntity()));
+		}
+		this.finTypeReceiptModesList.stream()
+				.forEach(e -> entity.getFinTypeReceiptModesList().add(e == null ? null : e.copyEntity()));
+		entity.setFinSuspTrigger(this.finSuspTrigger);
+		entity.setFinSuspRemarks(this.finSuspRemarks);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setAlwMaxDisbCheckReq(this.alwMaxDisbCheckReq);
+		entity.setQuickDisb(this.quickDisb);
+		entity.setAutoApprove(this.autoApprove);
+		entity.setPromotionCode(this.promotionCode);
+		entity.setPromotionDesc(this.promotionDesc);
+		entity.setProfitCenterID(this.profitCenterID);
+		entity.setProfitCenterCode(this.profitCenterCode);
+		entity.setProfitCenterDesc(this.profitCenterDesc);
+		entity.setLovDescEntityCode(this.lovDescEntityCode);
+		entity.setLovDescEntityDesc(this.lovDescEntityDesc);
+		entity.setChequeCaptureReq(this.chequeCaptureReq);
+		entity.setAutoRejectionDays(this.autoRejectionDays);
+		entity.setTaxNoMand(this.taxNoMand);
+		entity.setAlwVan(this.alwVan);
+		entity.setVanAllocationMethod(this.vanAllocationMethod);
+		entity.setAllowDrawingPower(this.allowDrawingPower);
+		entity.setAllowRevolving(this.allowRevolving);
+		entity.setSanBsdSchdle(this.sanBsdSchdle);
+		entity.setAlwSanctionAmt(this.alwSanctionAmt);
+		entity.setAlwSanctionAmtOverride(this.alwSanctionAmtOverride);
+		entity.setFinIsRateRvwAtGrcEnd(this.finIsRateRvwAtGrcEnd);
+		entity.setSchdOnPMTCal(this.schdOnPMTCal);
+		entity.setUserDetails(this.userDetails);
+		this.lovDescAERule.entrySet().stream().forEach(e -> entity.getLovDescAERule().put(e.getKey(), e.getValue()));
+		this.auditDetailMap.entrySet().stream().forEach(e -> {
+			List<AuditDetail> newList = new ArrayList<AuditDetail>();
+			if (e.getValue() != null) {
+				e.getValue().forEach(
+						auditDetail -> newList.add(auditDetail == null ? null : auditDetail.getNewCopyInstance()));
+				entity.getAuditDetailMap().put(e.getKey(), newList);
+			} else
+				entity.getAuditDetailMap().put(e.getKey(), null);
+		});
+		entity.setLovDescFinDivisionName(this.lovDescFinDivisionName);
+		entity.setLovDescFinAcTypeName(this.lovDescFinAcTypeName);
+		entity.setLovDescPftPayAcTypeName(this.lovDescPftPayAcTypeName);
+		entity.setLovDescFinContingentAcTypeName(this.lovDescFinContingentAcTypeName);
+		entity.setLovDescFinSuspAcTypeName(this.lovDescFinSuspAcTypeName);
+		entity.setLovDescFinBankContAcTypeName(this.lovDescFinBankContAcTypeName);
+		entity.setLovDescFinProvisionAcTypeName(this.lovDescFinProvisionAcTypeName);
+		entity.setLovDescWorkFlowRolesName(this.lovDescWorkFlowRolesName);
+		entity.setLovDescWorkFlowTypeName(this.lovDescWorkFlowTypeName);
+		entity.setLovDescFinDepositRestrictedTo(this.lovDescFinDepositRestrictedTo);
+		entity.setLovDescFinAEBuyOrInceptionName(this.lovDescFinAEBuyOrInceptionName);
+		entity.setLovDescEVFinAEBuyOrInceptionName(this.lovDescEVFinAEBuyOrInceptionName);
+		entity.setLovDescFinAESellOrMaturityName(this.lovDescFinAESellOrMaturityName);
+		entity.setLovDescEVFinAESellOrMaturityName(this.lovDescEVFinAESellOrMaturityName);
+		entity.setLovDescPromoFinTypeDesc(this.lovDescPromoFinTypeDesc);
+		entity.setProductCategory(this.productCategory);
+		entity.setPromotionType(this.promotionType);
+		this.finTypeAccounts.stream().forEach(e -> entity.getFinTypeAccounts().add(e == null ? null : e.copyEntity()));
+		this.finTypeInsurances.stream()
+				.forEach(e -> entity.getFinTypeInsurances().add(e == null ? null : e.copyEntity()));
+		this.finTypeAccountingList.stream()
+				.forEach(e -> entity.getFinTypeAccountingList().add(e == null ? null : e.copyEntity()));
+		this.finTypeAccountingMap.entrySet().stream()
+				.forEach(e -> entity.getFinTypeAccountingMap().put(e.getKey(), e.getValue()));
+		this.finTypeFeesList.stream().forEach(e -> entity.getFinTypeFeesList().add(e == null ? null : e.copyEntity()));
+		this.finTypePartnerBankList.stream()
+				.forEach(e -> entity.getFinTypePartnerBankList().add(e == null ? null : e.copyEntity()));
+		this.finTypeExpenseList.stream()
+				.forEach(e -> entity.getFinTypeExpenseList().add(e == null ? null : e.copyEntity()));
+		entity.setCostOfFunds(this.costOfFunds);
+		this.irrFinanceTypeList.stream()
+				.forEach(e -> entity.getIrrFinanceTypeList().add(e == null ? null : e.copyEntity()));
+		entity.setFinLTVCheck(this.finLTVCheck);
+		entity.setEligibilityMethods(this.eligibilityMethods);
+		entity.setPutCallRequired(this.putCallRequired);
+		entity.setGrcAdvIntersetReq(this.grcAdvIntersetReq);
+		entity.setGrcAdvType(this.grcAdvType);
+		entity.setGrcAdvMinTerms(this.grcAdvMinTerms);
+		entity.setGrcAdvMaxTerms(this.grcAdvMaxTerms);
+		entity.setGrcAdvDefaultTerms(this.grcAdvDefaultTerms);
+		entity.setAdvIntersetReq(this.advIntersetReq);
+		entity.setAdvType(this.advType);
+		entity.setAdvMinTerms(this.advMinTerms);
+		entity.setAdvMaxTerms(this.advMaxTerms);
+		entity.setAdvDefaultTerms(this.advDefaultTerms);
+		entity.setAdvStage(this.advStage);
+		entity.setDsfReq(this.dsfReq);
+		entity.setCashCollateralReq(this.cashCollateralReq);
+		entity.setMinGrcTerms(this.minGrcTerms);
+		entity.setMaxGrcTerms(this.maxGrcTerms);
+		entity.setDefaultGrcTerms(this.defaultGrcTerms);
+		entity.setAlwChgGrcTerms(this.alwChgGrcTerms);
+		entity.setMinPureTerms(this.minPureTerms);
+		entity.setMaxPureTerms(this.maxPureTerms);
+		entity.setDefaultPureTerms(this.defaultPureTerms);
+		entity.setAlwChgPureTerms(this.alwChgPureTerms);
+		entity.setAlwCloBefDUe(this.alwCloBefDUe);
+		entity.setFinTypeClassification(this.finTypeClassification);
+		entity.setAllowPftBal(this.allowPftBal);
+		entity.setGrcAdjReq(this.grcAdjReq);
+		entity.setGrcPeriodAftrFullDisb(this.grcPeriodAftrFullDisb);
+		entity.setAutoIncrGrcEndDate(this.autoIncrGrcEndDate);
+		entity.setGrcAutoIncrMonths(this.grcAutoIncrMonths);
+		entity.setMaxAutoIncrAllowed(this.maxAutoIncrAllowed);
+		entity.setThrldtoMaintainGrcPrd(this.thrldtoMaintainGrcPrd);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("finTypeAccounts");
@@ -2618,6 +2914,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setAutoIncrGrcEndDate(boolean autoIncrGrcEndDate) {
 		this.autoIncrGrcEndDate = autoIncrGrcEndDate;
+	}
+
+	public Map<String, Long> getFinTypeAccountingMap() {
+		return finTypeAccountingMap;
+	}
+
+	public void setFinTypeAccountingMap(Map<String, Long> finTypeAccountingMap) {
+		this.finTypeAccountingMap = finTypeAccountingMap;
 	}
 
 	public int getGrcAutoIncrMonths() {

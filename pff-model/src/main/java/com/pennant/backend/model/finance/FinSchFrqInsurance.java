@@ -33,6 +33,37 @@ public class FinSchFrqInsurance extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
+	public FinSchFrqInsurance copyEntity() {
+		FinSchFrqInsurance entity = new FinSchFrqInsurance();
+		entity.setInsId(this.insId);
+		entity.setReference(this.reference);
+		entity.setModule(this.module);
+		entity.setInsuranceType(this.insuranceType);
+		entity.setInsReference(this.insReference);
+		entity.setInsSchDate(this.InsSchDate);
+		entity.setInsuranceRate(this.insuranceRate);
+		entity.setInsuranceFrq(this.insuranceFrq);
+		entity.setAmount(this.amount);
+		entity.setNewRecord(this.newRecord);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setClosingBalance(this.closingBalance);
+		entity.setInsurancePaid(this.insurancePaid);
+		entity.setInsuranceWaived(this.insuranceWaived);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public FinSchFrqInsurance() {
 		super();
 	}

@@ -99,6 +99,45 @@ public class FeeType extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public FeeType copyEntity() {
+		FeeType entity = new FeeType();
+		entity.setFeeTypeID(this.feeTypeID);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setFeeTypeDesc(this.feeTypeDesc);
+		entity.setManualAdvice(this.manualAdvice);
+		entity.setAdviseType(this.adviseType);
+		entity.setAccountSetId(this.accountSetId);
+		entity.setAccountSetCode(this.accountSetCode);
+		entity.setAccountSetCodeName(this.accountSetCodeName);
+		entity.setActive(this.active);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setHostFeeTypeCode(this.hostFeeTypeCode);
+		entity.setTaxApplicable(this.taxApplicable);
+		entity.setTaxComponent(this.taxComponent);
+		entity.setAmortzReq(this.amortzReq);
+		entity.setrefundable(this.refundable);
+		entity.setDueAccReq(this.dueAccReq);
+		entity.setDueAccSet(this.dueAccSet);
+		entity.setDueAcctSetCode(this.dueAcctSetCode);
+		entity.setDueAcctSetCodeName(this.dueAcctSetCodeName);
+		entity.setTdsReq(this.tdsReq);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("accountSetCode");

@@ -100,6 +100,40 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 		this.setId(id);
 	}
 
+	public FinTypePartnerBank copyEntity() {
+		FinTypePartnerBank entity = new FinTypePartnerBank();
+		entity.setID(this.iD);
+		entity.setFinType(this.finType);
+		entity.setPurpose(this.purpose);
+		entity.setPaymentMode(this.paymentMode);
+		entity.setPartnerBankID(this.partnerBankID);
+		entity.setPartnerBankCode(this.partnerBankCode);
+		entity.setPartnerBankName(this.partnerBankName);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setAccountNo(this.accountNo);
+		entity.setAccountType(this.accountType);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setVanApplicable(this.vanApplicable);
+		entity.setFinTypeDesc(this.finTypeDesc);
+		entity.setSponsorBankCode(this.sponsorBankCode);
+		entity.setClientCode(this.clientCode);
+		entity.setUtilityCode(this.utilityCode);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("finTypeDesc");

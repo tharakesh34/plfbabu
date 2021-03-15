@@ -66,4 +66,8 @@ public interface ReceiptUploadDetailDAO {
 
 	ReceiptUploadDetail getUploadReceiptDetail(long headerID, long detailID);
 
+	List<Long> getReceiptDetails(List<Long> list);
+
+	ReceiptUploadDetail getUploadReceiptDetail(long detailID);
+
 }

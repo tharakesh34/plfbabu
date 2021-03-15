@@ -1066,7 +1066,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Leaving");
 	}
 
-	public void processFeeDetails(FinScheduleData aFinScheduleData) {
+	public void processFeeDetails(FinScheduleData aFinScheduleData, boolean isWif) {
 		logger.debug("Entering");
 
 		if (aFinScheduleData != null) {
@@ -1074,7 +1074,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			if (!aFinScheduleData.getFinanceMain().isNewRecord() && StringUtils.isBlank(this.moduleDefiner)) {
 				List<FinFeeDetail> finFeeDetails = this.finFeeDetailService
-						.getFinFeeDetailById(aFinScheduleData.getFinanceMain().getFinReference(), false, "_Temp");
+						.getFinFeeDetailById(aFinScheduleData.getFinanceMain().getFinReference(), isWif, "_Temp");
 
 				if (CollectionUtils.isNotEmpty(finFeeDetails)) {
 					for (FinFeeDetail feeDetail : finFeeDetails) {
@@ -2250,7 +2250,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		if (netFeeBoxOriginal.isDisabled() || paidBoxOriginal.isDisabled()) {
 			resetTDSonFee(finFeeDetail, financeMain);
 		}
-
 		this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getTaxPercentages());
 		resetTDSonFee(finFeeDetail, financeMain);
 

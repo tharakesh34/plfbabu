@@ -48,7 +48,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -94,7 +93,7 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 
 	private FinanceDetailService financeDetailService;
 	private AgreementDetailService agreementDetailService;
-	private DMSService dmsService;
+	private DMSService dMSService;
 
 	/**
 	 * default constructor.<br>
@@ -229,40 +228,57 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	public void onDocViewButtonClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		DocumentDetails documentDetail = (DocumentDetails) event.getData();
+		DocumentDetails detail = (DocumentDetails) event.getData();
 
 		//Display the Message for the Not Available Doc Image.
-		if (documentDetail == null) {
+		if (detail == null) {
 			MessageUtil.showMessage(" Document not Avaialble / Generated Yet.");
 			return;
 		}
 
-		if (documentDetail.getDocRefId() != null && documentDetail.getDocRefId() > 0) {
-			documentDetail.setDocImage(dmsService.getById(documentDetail.getDocRefId()));
+		//Display the Message for the Not Available Doc Image.
+		if (detail == null) {
+			MessageUtil.showMessage(" Document not Avaialble / Generated Yet.");
+			return;
 		}
 
-		if (StringUtils.isNotBlank(documentDetail.getDocName()) && documentDetail.getDocImage() != null
-				&& StringUtils.isNotBlank(documentDetail.getDocImage().toString())) {
+		String custCif = detail.getLovDescCustCIF();
+		String docName = detail.getDocName();
+		String docUri = detail.getDocUri();
+		Long docRefId = detail.getDocRefId();
+
+		DocumentDetails dd = null;
+		if (StringUtils.isNotBlank(docUri)) {
+			dd = dMSService.getExternalDocument(custCif, docName, docUri);
+		} else {
+			if (detail.getDocImage() == null) {
+				if (docRefId != null && docRefId != Long.MIN_VALUE) {
+					detail.setDocImage(dMSService.getById(docRefId));
+				}
+			}
+		}
+
+		if (StringUtils.isNotBlank(detail.getDocName()) && detail.getDocImage() != null
+				&& StringUtils.isNotBlank(detail.getDocImage().toString())) {
 			try {
-				if (StringUtils.trimToEmpty(documentDetail.getDoctype()).equals(PennantConstants.DOC_TYPE_WORD)
-						|| StringUtils.trimToEmpty(documentDetail.getDoctype()).equals(PennantConstants.DOC_TYPE_MSG)
-						|| StringUtils.trimToEmpty(documentDetail.getDoctype()).equals(PennantConstants.DOC_TYPE_DOC)
-						|| StringUtils.trimToEmpty(documentDetail.getDoctype()).equals(PennantConstants.DOC_TYPE_DOCX)
-						|| StringUtils.trimToEmpty(documentDetail.getDoctype())
-								.equals(PennantConstants.DOC_TYPE_EXCEL)) {
-					Filedownload.save(documentDetail.getDocImage(), "application/octet-stream",
-							documentDetail.getDocName());
+				if (StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_WORD)
+						|| StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_MSG)
+						|| StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_DOC)
+						|| StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_DOCX)
+						|| StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_EXCEL)) {
+					Filedownload.save(detail.getDocImage(), "application/octet-stream", detail.getDocName());
 				} else {
 					HashMap<String, Object> map = new HashMap<String, Object>();
-					map.put("FinDocumentDetail", documentDetail);
+					map.put("FinDocumentDetail", detail);
 					Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
 				}
 			} catch (Exception e) {
 				logger.debug(e);
 			}
-		} else if (StringUtils.isNotBlank(documentDetail.getDocUri())) {
+		} else if (StringUtils.isNotBlank(detail.getDocUri())) {
 			HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("documentRef", documentDetail);
+			map.put("documentRef", dd);
+			map.put("docType", detail);
 			Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
 		} else {
 			MessageUtil.showError("Document Details not Found.");
@@ -290,9 +306,8 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		return agreementDetailService;
 	}
 
-	@Autowired
-	public void setDmsService(DMSService dmsService) {
-		this.dmsService = dmsService;
+	public void setDMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 }

@@ -4406,7 +4406,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Finance Fee Details Tab
 		if (finFeeDetailListCtrl != null) {
-			finFeeDetailListCtrl.processFeeDetails(aFinanceDetail.getFinScheduleData());
+			finFeeDetailListCtrl.processFeeDetails(aFinanceDetail.getFinScheduleData(), true);
 		}
 
 		//Indicative Term Sheet Details

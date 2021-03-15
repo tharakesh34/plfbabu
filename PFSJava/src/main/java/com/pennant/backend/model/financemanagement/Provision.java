@@ -131,6 +131,62 @@ public class Provision extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
+	public Provision copyEntity() {
+		Provision entity = new Provision();
+		entity.setId(this.id);
+		entity.setProvisionId(this.provisionId);
+		entity.setFinReference(this.finReference);
+		entity.setClosingBalance(this.closingBalance);
+		entity.setOutStandPrincipal(this.outStandPrincipal);
+		entity.setOutStandProfit(this.outStandProfit);
+		entity.setProfitAccruedAndDue(this.profitAccruedAndDue);
+		entity.setProfitAccruedAndNotDue(this.profitAccruedAndNotDue);
+		entity.setCollateralValue(this.collateralValue);
+		entity.setDueFromDate(this.dueFromDate);
+		entity.setLastFullyPaidDate(this.lastFullyPaidDate);
+		entity.setDueDays(this.dueDays);
+		entity.setCurrBucket(this.currBucket);
+		entity.setDpd(this.dpd);
+		entity.setProvisionDate(this.provisionDate);
+		entity.setProvisionedAmt(this.provisionedAmt);
+		entity.setProvisionRate(this.provisionRate);
+		entity.setAssetCode(this.assetCode);
+		entity.setAssetStageOrder(this.assetStageOrder);
+		entity.setNpa(this.npa);
+		entity.setManualProvision(this.manualProvision);
+		entity.setLinkedTranId(this.linkedTranId);
+		entity.setChgLinkedTranId(this.chgLinkedTranId);
+		this.provisionAmounts.stream()
+				.forEach(e -> entity.getProvisionAmounts().add(e == null ? null : e.copyEntity()));
+		entity.setFinBranch(this.finBranch);
+		entity.setFinType(this.finType);
+		entity.setFinIsActive(this.finIsActive);
+		entity.setCustID(this.custID);
+		entity.setCustCIF(this.custCIF);
+		entity.setCustShrtName(this.custShrtName);
+		entity.setAssetFwdMov(this.assetFwdMov);
+		entity.setAssetBkwMov(this.assetBkwMov);
+		entity.setFinanceDetail(this.financeDetail);
+		entity.setNpaHeader(this.npaHeader == null ? null : this.npaHeader.copyEntity());
+		entity.setFinCcy(this.finCcy);
+		entity.setNewRecord(this.newRecord);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setOldProvision(this.oldProvision == null ? null : this.oldProvision.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public boolean isNew() {
 		return isNewRecord();
 	}

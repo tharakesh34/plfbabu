@@ -32,12 +32,14 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruction>
 		implements AddDisbursementService {
@@ -49,6 +51,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 	private FinanceDataValidation financeDataValidation;
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 	private ChangeGraceEndService changeGraceEndService;
+	private FinAdvancePaymentsService finAdvancePaymentsService;
 
 	/**
 	 * Method for perform add disbursement action
@@ -551,6 +554,42 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		return null;
 	}
 
+	@Override
+	public AuditDetail doCancelDisbValidations(FinanceDetail financeDetail) {
+		logger.info(Literal.ENTERING);
+		AuditDetail auditDetail = new AuditDetail();
+		FinScheduleData schd = financeDetail.getFinScheduleData();
+		FinanceMain fm = schd.getFinanceMain();
+		List<ErrorDetail> errorDetailList = financeDataValidation.disbursementValidation(financeDetail);
+
+		if (CollectionUtils.isNotEmpty(errorDetailList)) {
+			for (ErrorDetail errorDetails : errorDetailList) {
+				auditDetail.setErrorDetail(errorDetails);
+			}
+			return auditDetail;
+		}
+
+		List<FinAdvancePayments> advancePayments = financeDetail.getAdvancePaymentsList();
+		if (advancePayments == null) {
+			return auditDetail;
+		}
+
+		List<FinanceDisbursement> disbursements = schd.getDisbursementDetails();
+		for (FinAdvancePayments advPayments : advancePayments) {
+			advPayments.setDisbSeq(disbursements.size());
+		}
+
+		List<ErrorDetail> errors = finAdvancePaymentsService.validateFinAdvPayments(advancePayments, disbursements, fm,
+				true);
+		for (ErrorDetail erroDetails : errors) {
+			auditDetail.setErrorDetail(
+					ErrorUtil.getErrorDetail(new ErrorDetail(erroDetails.getCode(), erroDetails.getParameters())));
+		}
+
+		logger.info(Literal.LEAVING);
+		return auditDetail;
+	}
+
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
@@ -585,6 +624,10 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 	public void setChangeGraceEndService(ChangeGraceEndService changeGraceEndService) {
 		this.changeGraceEndService = changeGraceEndService;
+	}
+
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 }

@@ -4472,7 +4472,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Finance Fee Details Tab
 		if (finFeeDetailListCtrl != null) {
-			finFeeDetailListCtrl.processFeeDetails(aFinanceDetail.getFinScheduleData());
+			finFeeDetailListCtrl.processFeeDetails(aFinanceDetail.getFinScheduleData(), true);
 		}
 
 		aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();

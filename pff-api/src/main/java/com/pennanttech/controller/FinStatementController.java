@@ -796,7 +796,7 @@ public class FinStatementController extends SummaryDetailService {
 					String envVariable = System.getenv("APP_ROOT_PATH");
 					PathUtil.setRootPath(envVariable);
 					StatementOfAccount soa = soaReportGenerationService.getStatmentofAccountDetails(finReference,
-							fromdate, todate, true);
+							fromdate, todate, false);
 
 					List<Object> list = new ArrayList<Object>();
 

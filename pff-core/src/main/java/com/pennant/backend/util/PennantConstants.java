@@ -274,6 +274,8 @@ public class PennantConstants {
 
 	public static final String DOC_TYPE_PDF_EXT = ".pdf";
 	public static final String DOC_TYPE_WORD_EXT = ".docx";
+	public static final String DOC_TYPE_JPG_EXT = ".jpg";
+	public static final String DOC_TYPE_PNG_EXT = ".png";
 
 	// Commitment Constants
 	public static final String CMT_TOTALCMT = "TotCommitments";
@@ -894,7 +896,7 @@ public class PennantConstants {
 
 	public static final String PROCESS_PRESENTMENT = "P";
 	public static final String PROCESS_REPRESENTMENT = "R";
-	public static final int BULKPROCESSING_SIZE = 500;
+	public static final int CHUNK_SIZE = 500;
 
 	// Sorting
 	public static final String SortOrder_ASC = "ASC";

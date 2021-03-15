@@ -460,6 +460,8 @@ public class FeeCalculator implements Serializable {
 
 						executionMap.put("principalSchdOutstanding",
 								finProfitDetail.getTotalpriSchd().subtract(finProfitDetail.getTdSchdPri()));
+						// Fore closure charges calculation should be sum of principal amount and future principal amount.
+						executionMap.put("principalAmtFutPrincipalAmt", finProfitDetail.getTotalPriBal());
 						executionMap.put("totOSExcludeFees",
 								finProfitDetail.getTotalPftBal().add(finProfitDetail.getTotalPriBal()));
 						executionMap.put("totOSIncludeFees", finProfitDetail.getTotalPftBal()
@@ -471,6 +473,8 @@ public class FeeCalculator implements Serializable {
 					if (receiptData.isForeClosureEnq()) {
 						executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal()
 								.subtract(receiptData.getOrgFinPftDtls().getTdSchdPriBal()));
+						// Fore closure charges calculation should be sum of principal amount and future principal amount.
+						executionMap.put("principalAmtFutPrincipalAmt", finProfitDetail.getTotalPriBal());
 					}
 				}
 
@@ -785,6 +789,10 @@ public class FeeCalculator implements Serializable {
 		dataMap.put(feeTypeCode + "_IGST_W", igstTax.getWaivedTax());
 		dataMap.put(feeTypeCode + "_UGST_W", ugstTax.getWaivedTax());
 		dataMap.put(feeTypeCode + "_CESS_W", cessTax.getWaivedTax());
+
+		//TDS
+		dataMap.put(feeTypeCode + "_TDS_N", finFeeDetail.getNetTDS());
+		dataMap.put(feeTypeCode + "_TDS_P", finFeeDetail.getPaidTDS());
 
 		return dataMap;
 	}

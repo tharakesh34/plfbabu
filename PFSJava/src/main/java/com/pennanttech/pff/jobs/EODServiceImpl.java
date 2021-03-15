@@ -147,7 +147,7 @@ public class EODServiceImpl implements EODService {
 		String cronExpression = eODConfigDAO.getFrequency();
 
 		if (StringUtils.isEmpty(cronExpression)) {
-			cronExpression = DEFAULT_JOB_FREQUENCY;
+			return null;
 		}
 
 		if (!CronExpression.isValidExpression(cronExpression)) {
@@ -166,7 +166,7 @@ public class EODServiceImpl implements EODService {
 		String cronExpression = eODConfigDAO.getReminderFrequency();
 
 		if (StringUtils.isEmpty(cronExpression)) {
-			cronExpression = DEFAULT_JOB_FREQUENCY;
+			return null;
 		}
 
 		if (!CronExpression.isValidExpression(cronExpression)) {
@@ -185,7 +185,7 @@ public class EODServiceImpl implements EODService {
 		String cronExpression = eODConfigDAO.getDelayFrequency();
 
 		if (StringUtils.isEmpty(cronExpression)) {
-			cronExpression = DEFAULT_JOB_FREQUENCY;
+			return null;
 		}
 
 		if (!CronExpression.isValidExpression(cronExpression)) {

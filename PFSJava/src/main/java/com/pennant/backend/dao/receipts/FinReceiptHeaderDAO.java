@@ -8,6 +8,7 @@ import java.util.Map;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinReceiptQueueLog;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennanttech.pff.core.TableType;
 
@@ -102,4 +103,6 @@ public interface FinReceiptHeaderDAO {
 	int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference);
 
 	boolean isReceiptExists(String reference, String type);
+
+	List<Long> isDedupReceiptExists(FinServiceInstruction fsi);
 }

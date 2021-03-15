@@ -69,7 +69,6 @@ public class DocumentManagerDAOImpl extends SequenceDao<DocumentManager> impleme
 
 	@Override
 	public void update(long id, Long custId, String uri) {
-		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder("Update DocumentManager");
 		sql.append(" set DocURI = ? ");
 		sql.append(" Where id = ?");
@@ -88,7 +87,6 @@ public class DocumentManagerDAOImpl extends SequenceDao<DocumentManager> impleme
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override

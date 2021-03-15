@@ -66,6 +66,7 @@ import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -647,20 +648,23 @@ public class DisbursementInstCtrl {
 	}
 
 	public static boolean isDeleteRecord(FinAdvancePayments aFinAdvancePayments) {
-		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, aFinAdvancePayments.getRecordType())
-				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, aFinAdvancePayments.getRecordType())
-				|| StringUtils.equals(DisbursementConstants.STATUS_CANCEL, aFinAdvancePayments.getStatus())
-				|| StringUtils.equals(DisbursementConstants.STATUS_REJECTED, aFinAdvancePayments.getStatus())) {
+		String recordType = aFinAdvancePayments.getRecordType();
+		String status = aFinAdvancePayments.getStatus();
+		if (PennantConstants.RECORD_TYPE_CAN.equals(recordType) || PennantConstants.RECORD_TYPE_DEL.equals(recordType)
+				|| DisbursementConstants.STATUS_CANCEL.equals(status)
+				|| DisbursementConstants.STATUS_REJECTED.equals(status)
+				|| DisbursementConstants.STATUS_PAID_BUT_CANCELLED.equals(status)) {
 			return true;
 		}
 		return false;
 	}
 
 	private boolean allowMaintainAfterRequestSent(FinAdvancePayments aFinAdvancePayments) {
-		if (StringUtils.equals(DisbursementConstants.STATUS_AWAITCON, aFinAdvancePayments.getStatus())) {
-			if (StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, aFinAdvancePayments.getPaymentType())
-					|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD,
-							aFinAdvancePayments.getPaymentType())) {
+		String status = aFinAdvancePayments.getStatus();
+		String paymentType = aFinAdvancePayments.getPaymentType();
+		if (DisbursementConstants.STATUS_AWAITCON.equals(status)) {
+			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)
+					|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType)) {
 				return true;
 			}
 			return false;
@@ -674,8 +678,15 @@ public class DisbursementInstCtrl {
 		 * !StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD, aFinAdvancePayments.getPaymentType()))) { return
 		 * false; }
 		 */
-
-		if (StringUtils.equals(DisbursementConstants.STATUS_PAID, aFinAdvancePayments.getStatus())) {
+		if (ImplementationConstants.DISB_PAID_CANCELLATION_ALLOW) {
+			if (DisbursementConstants.STATUS_PAID.equals(status)) {
+				return true;
+			}
+			if (DisbursementConstants.STATUS_PAID_BUT_CANCELLED.equals(status)) {
+				return false;
+			}
+		}
+		if (DisbursementConstants.STATUS_PAID.equals(status)) {
 			return false;
 		}
 

@@ -61,13 +61,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.RuleExecutionUtil;
-import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
+import com.pennant.backend.dao.limit.LimitReferenceMappingDAO;
 import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
 import com.pennant.backend.dao.rulefactory.impl.LimitRuleDAO;
@@ -110,7 +110,7 @@ public class InstitutionLimitRebuild {
 	@Autowired
 	private LimitStructureDetailDAO limitStructureDetailDAO;
 	@Autowired
-	private CustomerAddresDAO customerAddresDAO;
+	private LimitReferenceMappingDAO limitReferenceMappingDAO;
 	@Autowired
 	private LimitTransactionDetailsDAO limitTransactionDetailDAO;
 
@@ -187,6 +187,9 @@ public class InstitutionLimitRebuild {
 		FinanceType financeType = null;
 		int processedRecords = 0;
 		LimitReferenceMapping mapping = null;
+		long headerId = limitHeader.getHeaderId();
+		List<LimitReferenceMapping> mappings = new ArrayList<>();
+
 		for (FinanceMain finMain : finMains) {
 			StepUtil.INSTITUTION_LIMITS_UPDATE.setProcessedRecords(++processedRecords);
 			String finType = finMain.getFinType();
@@ -194,28 +197,19 @@ public class InstitutionLimitRebuild {
 
 			Customer customer = customerDAO.getCustomerByID(finMain.getCustID(), "");
 
-			/**
-			 * Commented the below code since customer address details are not using.
-			 */
-			/*
-			 * CustomerAddres custAddress = customerAddresDAO.getHighPriorityCustAddr(finMain.getCustID(), ""); if
-			 * (custAddress != null) { customer.setCustAddrProvince(custAddress.getCustAddrProvince()); }
-			 */
-
 			mapping = identifyLine(finMain, financeType, customer, limitHeader.getHeaderId(), limitDetailsList);
 			processRebuild(finMain, limitHeader, limitHeader.getHeaderId(), limitDetailsList, mapping);
+			mappings.add(mapping);
+		}
+
+		if (!mappings.isEmpty()) {
+			limitReferenceMappingDAO.deleteByHeaderID(headerId);
+			limitReferenceMappingDAO.saveBatch(mappings);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * 
-	 * @param finMain
-	 * @param limitHeader
-	 * @param limitDetailsList
-	 * @param mapping
-	 */
 	private void processRebuild(FinanceMain finMain, LimitHeader limitHeader, long inProgressHeaderID,
 			List<LimitDetails> limitDetailsList, LimitReferenceMapping mapping) {
 		logger.debug(Literal.LEAVING);
@@ -225,6 +219,7 @@ public class InstitutionLimitRebuild {
 		String finCcy = finMain.getFinCcy();
 		String limitCcy = limitHeader.getLimitCcy();
 		List<LimitDetails> list = getCustomerLimitDetails(mapping);
+		String limitLine = mapping.getLimitLine();
 		boolean addTempblock = false;
 
 		// calculate reserve and utilized
@@ -306,7 +301,17 @@ public class InstitutionLimitRebuild {
 
 		for (LimitDetails details : list) {
 			LimitDetails limitToUpdate = getLimitdetails(limitDetailsList, details);
-			limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().subtract(repayLimit));
+
+			if (limitToUpdate == null) {
+				continue;
+			}
+
+			if (isRevolving(limitLine, list)) {
+				limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().subtract(repayLimit));
+			} else {
+				limitToUpdate.setNonRvlUtilised(limitToUpdate.getNonRvlUtilised().subtract(repayLimit));
+			}
+
 			if (FinanceConstants.PRODUCT_ODFACILITY.equals(finCategory)) {
 				limitToUpdate.setReservedLimit(limitToUpdate.getReservedLimit().add(repayLimit));
 			}
@@ -315,17 +320,21 @@ public class InstitutionLimitRebuild {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private boolean isRevolving(String limitLine, List<LimitDetails> limitDetails) {
+		for (LimitDetails limitDetail : limitDetails) {
+			if (StringUtils.equals(limitDetail.getLimitLine(), limitLine)) {
+				return limitDetail.isRevolving();
+			}
+		}
+
+		return false;
+	}
+
 	private LimitTransactionDetail getTransaction(String finRef, long headerid, int type) {
 		return limitTransactionDetailDAO.getTransaction(LimitConstants.FINANCE, finRef, LimitConstants.BLOCK, headerid,
 				type);
 	}
 
-	/**
-	 * 
-	 * @param limitDetailsList
-	 * @param limitHeader
-	 * @throws DatatypeConfigurationException
-	 */
 	private void processStructuralChanges(List<LimitDetails> limitDetailsList, LimitHeader limitHeader)
 			throws DatatypeConfigurationException {
 		logger.debug(Literal.ENTERING);
@@ -349,12 +358,6 @@ public class InstitutionLimitRebuild {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * 
-	 * @param limitDetailsList
-	 * @param limitStructureDetail
-	 * @return
-	 */
 	private boolean isExist(List<LimitDetails> limitDetailsList, LimitStructureDetail limitStructureDetail) {
 		for (LimitDetails limitDetails : limitDetailsList) {
 			if (limitDetails.getLimitStructureDetailsID() == limitStructureDetail.getLimitStructureDetailsID()) {
@@ -364,13 +367,6 @@ public class InstitutionLimitRebuild {
 		return false;
 	}
 
-	/**
-	 * 
-	 * @param limitStructureDetail
-	 * @param limitHeader
-	 * @return
-	 * @throws DatatypeConfigurationException
-	 */
 	private LimitDetails getLimitDetails(LimitStructureDetail limitStructureDetail, LimitHeader limitHeader)
 			throws DatatypeConfigurationException {
 
@@ -405,10 +401,6 @@ public class InstitutionLimitRebuild {
 		return limitDetail;
 	}
 
-	/**
-	 * 
-	 * @param limitDetailsList
-	 */
 	private void resetLimitDetails(List<LimitDetails> limitDetailsList) {
 		for (LimitDetails limitDetail : limitDetailsList) {
 			limitDetail.setReservedLimit(BigDecimal.ZERO);
@@ -416,12 +408,6 @@ public class InstitutionLimitRebuild {
 		}
 	}
 
-	/**
-	 * 
-	 * @param list
-	 * @param limitofind
-	 * @return
-	 */
 	private LimitDetails getLimitdetails(List<LimitDetails> list, LimitDetails limitofind) {
 		for (LimitDetails limitDetails : list) {
 			if (limitofind.getDetailId() == limitDetails.getDetailId()) {
@@ -432,13 +418,6 @@ public class InstitutionLimitRebuild {
 		return null;
 	}
 
-	/**
-	 * @param finMain
-	 * @param financeType
-	 * @param headerId
-	 * @param limitDetailsList2
-	 * @return
-	 */
 	private LimitReferenceMapping identifyLine(FinanceMain finMain, FinanceType financeType, Customer customer,
 			long headerId, List<LimitDetails> limitDetailsList) {
 		logger.debug(Literal.ENTERING);

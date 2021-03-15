@@ -314,8 +314,6 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	 */
 	@Override
 	public BankBranch getBankBrachByIFSC(String ifsc, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR");
 		sql.append(", IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
@@ -367,14 +365,11 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
 	public BankBranch getBankBrachByCode(String bankCode, String branchCode, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch");
 		sql.append(", Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc, Emandate, AllowedSources");
@@ -424,10 +419,11 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(
+					"Record not found in BankBranches {} table/view for the specified BankCode >> {} and BranchCode >> {} ",
+					type, bankCode, branchCode);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

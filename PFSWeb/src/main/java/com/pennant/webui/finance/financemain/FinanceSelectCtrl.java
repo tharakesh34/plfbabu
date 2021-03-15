@@ -1124,7 +1124,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if (!this.allowPreMaturedCases.isChecked()) {
 				whereClause.append(" AND MaturityDate < '" + appDate + "'");
 			}
-			whereClause.append(" AND ((fincurrassetvalue+feechargeamt+insuranceamt) - finRepaymentAmount) > 0 ");
+			whereClause.append(
+					" AND ((fincurrassetvalue+feechargeamt+insuranceamt + TotalCpz) - finRepaymentAmount) > 0 ");
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 		}

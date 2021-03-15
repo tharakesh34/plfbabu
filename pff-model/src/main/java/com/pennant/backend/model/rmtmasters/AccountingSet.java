@@ -98,6 +98,44 @@ public class AccountingSet extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
+	public AccountingSet copyEntity() {
+		AccountingSet entity = new AccountingSet();
+		entity.setAccountSetid(this.accountSetid);
+		entity.setEventCode(this.eventCode);
+		entity.setLovDescEventCodeName(this.lovDescEventCodeName);
+		entity.setAccountSetCode(this.accountSetCode);
+		entity.setAccountSetCodeName(this.accountSetCodeName);
+		entity.setEntryByInvestment(this.entryByInvestment);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setSystemDefault(this.SystemDefault);
+		this.lovDescTransactionEntries.stream()
+				.forEach(e -> entity.getTransactionEntries().add(e == null ? null : e.copyEntity()));
+		this.auditDetailMap.entrySet().stream().forEach(e -> {
+			List<AuditDetail> newList = new ArrayList<AuditDetail>();
+			if (e.getValue() != null) {
+				e.getValue().forEach(
+						auditDetail -> newList.add(auditDetail == null ? null : auditDetail.getNewCopyInstance()));
+				entity.getAuditDetailMap().put(e.getKey(), newList);
+			} else
+				entity.getAuditDetailMap().put(e.getKey(), null);
+		});
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

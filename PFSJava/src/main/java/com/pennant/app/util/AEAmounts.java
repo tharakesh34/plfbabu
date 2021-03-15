@@ -127,6 +127,7 @@ public class AEAmounts implements Serializable {
 		amountCodes.setAmzS(pfd.getPftAmzSusp());
 		amountCodes.setdAmz(amountCodes.getAmz().subtract(pfd.getAmzTillLBD()));
 		amountCodes.setdGapAmz(pfd.getGapIntAmz().subtract(pfd.getGapIntAmzLbd()));
+		amountCodes.setPrvMthAcr(pfd.getPrvMthAcr());
 
 		// LPI Amortization calculation
 		if (pfd.getLpiAmount().compareTo(BigDecimal.ZERO) > 0) {

@@ -978,6 +978,28 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		}
 	}
 
+	@Override
+	public void updatePayableReserveAmount(long payAgainstID, BigDecimal reserveAmt) {
+		logger.debug("Entering");
+
+		int recordCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("AdviseID", payAgainstID);
+		source.addValue("PaidNow", reserveAmt);
+
+		StringBuilder updateSql = new StringBuilder("Update ManualAdvise ");
+		updateSql.append(" Set ReservedAmt = ReservedAmt + :PaidNow, BalanceAmt = BalanceAmt - :PaidNow ");
+		updateSql.append(" Where AdviseID =:AdviseID ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug("Leaving");
+	}
+
 	/**
 	 * Method for Update utilization amount after amounts Approval
 	 */
@@ -1095,7 +1117,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName, FM.FinBranch");
 		sql.append(", FM.CustId, Cust.CUSTCIF LovDescCustCif, Cust.CUSTSHRTNAME LovDescCustShrtName,  SD.EntityCode");
-		sql.append(", FM.FinAssetValue,FM.FINSTARTDATE, FM.MATURITYDATE,FM.FinCcy");
+		sql.append(", FM.FinAssetValue,FM.FINSTARTDATE, FM.MATURITYDATE,FM.FinCcy, FM.TDSApplicable");
 		sql.append(" from FINANCEMAIN FM");
 		sql.append(" INNER JOIN Customers Cust on FM.CUSTID=Cust.CUSTID");
 		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
@@ -1120,6 +1142,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				financeMain.setFinStartDate(rs.getTimestamp("FinStartDate"));
 				financeMain.setMaturityDate(rs.getTimestamp("MaturityDate"));
 				financeMain.setFinCcy(rs.getString("FinCcy"));
+				financeMain.setTDSApplicable(rs.getBoolean("TDSApplicable"));
 
 				return financeMain;
 			});

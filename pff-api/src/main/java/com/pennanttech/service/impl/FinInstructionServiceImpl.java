@@ -22,11 +22,16 @@ import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
+import com.pennant.backend.dao.configuration.VASConfigurationDAO;
+import com.pennant.backend.dao.configuration.VASRecordingDAO;
+import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.insurance.InsuranceDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
+import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.financeservice.AddRepaymentService;
 import com.pennant.backend.financeservice.AddTermsService;
@@ -45,6 +50,8 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.applicationmaster.LoanPendingDetails;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.configuration.VASConfiguration;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
@@ -61,6 +68,8 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
+import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
@@ -146,6 +155,11 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private ChequeHeaderService chequeHeaderService;
 	private ChequeHeaderDAO chequeHeaderDAO;
 	private ChequeDetailDAO chequeDetailDAO;
+	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
+	private VASRecordingDAO vASRecordingDAO;
+	private InsuranceDetailDAO insuranceDetailDAO;
+	private VASConfigurationDAO vASConfigurationDAO;
+	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
 
 	/**
 	 * Method for perform addRateChange operation
@@ -2030,53 +2044,112 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		return null;
 	}
 
-	/**
-	 * Method to get DisbusmentDetails based on finReference
-	 * 
-	 * @param finReference
-	 */
 	@Override
 	public FinAdvPaymentDetail getDisbursmentDetails(String finReference) throws ServiceException {
-		logger.debug(Literal.ENTERING);
+		logger.info("Identifying Disb/Vas instructions for the specified FinReference>> {}", finReference);
 
-		List<DisbResponse> disbResponse = new ArrayList<DisbResponse>();
+		List<DisbResponse> disbResponse = new ArrayList<>();
+
 		// Mandatory validation
 		if (StringUtils.isBlank(finReference)) {
 			validationUtility.fieldLevelException();
 		}
+
 		// for logging purpose
 		APIErrorHandlerService.logReference(finReference);
 		FinAdvPaymentDetail response = new FinAdvPaymentDetail();
+
 		// validation
 		int count = financeMainDAO.getFinanceCountById(finReference, " ", false);
 		if (count <= 0) {
 			String[] valueParam = new String[1];
 			valueParam[0] = finReference;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
-		} else {
-			List<FinAdvancePayments> fapList = finAdvancePaymentsService.getFinAdvancePaymentsById(finReference, " ");
-			for (FinAdvancePayments fap : fapList) {
-				DisbResponse detail = new DisbResponse();
-				detail.setPaymentId(fap.getPaymentId());
-				detail.setAccountNo(fap.getBeneficiaryAccNo());
-				detail.setDisbAmount(fap.getAmtToBeReleased());
-				detail.setDisbDate(fap.getLlDate());
-				detail.setStatus(fap.getStatus()); //FIXME set the actual status after marking the disbursement status as AC
-				disbResponse.add(detail);
+
+			logger.info("The specified FinReference>> {} is not exists or in-active", finReference);
+			return response;
+		}
+
+		/* Fetching Disbursement instructions */
+		disbResponse.addAll(getDisbInstructions(finReference));
+
+		/* Fetching VAS instructions */
+		disbResponse.addAll(getVasInstructions(finReference));
+
+		int size = disbResponse.size();
+
+		if (size == 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "There is no pending Disb/Vas instructions to update the status";
+			valueParam[1] = "FinReference " + finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParam));
+
+			logger.info("There is no pending Disb/Vas instructions for the specified FinReference>> {}", finReference);
+			return response;
+		}
+
+		response.setDisbResponse(disbResponse);
+		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+		logger.info("Total {} Disb/Vas instructions found the specified FinReference>> {}", size, finReference);
+
+		return response;
+	}
+
+	private List<DisbResponse> getVasInstructions(String finReference) {
+		List<DisbResponse> vasInstructions = new ArrayList<>();
+		List<VASRecording> vrList = vASRecordingDAO.getVASRecordingsByLinkRef(finReference, "");
+
+		VASProviderAccDetail vpad = null;
+		VASConfiguration vc = null;
+
+		for (VASRecording vr : vrList) {
+			long paymentInsId = vr.getPaymentInsId();
+			InsurancePaymentInstructions ipi = insuranceDetailDAO.getInsurancePaymentInstructionStatus(paymentInsId);
+
+			if (ipi == null) {
+				continue;
 			}
 
-			if (CollectionUtils.isEmpty(disbResponse)) {
-				String[] valueParam = new String[2];
-				valueParam[0] = "There is no pending disbursement instructions to update the status";
-				valueParam[1] = "FinReference " + finReference;
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParam));
-				return response;
+			vc = vASConfigurationDAO.getVASConfigurationByCode(vr.getProductCode(), "");
+
+			if (vc != null) {
+				long manufacturerId = vc.getManufacturerId();
+				String entityCode = vr.getEntityCode();
+				vpad = vASProviderAccDetailDAO.getVASProviderAccDetByPRoviderId(manufacturerId, entityCode, "_view");
 			}
-			response.setDisbResponse(disbResponse);
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+			DisbResponse detail = new DisbResponse();
+			detail.setPaymentId(paymentInsId);
+
+			if (vpad != null) {
+				detail.setAccountNo(vpad.getAccountNumber());
+			}
+
+			detail.setDisbAmount(vr.getFee());
+			// detail.setDisbDate(fap.getLlDate());
+			detail.setStatus(ipi.getStatus());
+			detail.setType(DisbursementConstants.CHANNEL_INSURANCE);
+			vasInstructions.add(detail);
 		}
-		logger.info(Literal.LEAVING);
-		return response;
+
+		return vasInstructions;
+	}
+
+	private List<DisbResponse> getDisbInstructions(String finReference) {
+		List<DisbResponse> disbInstructions = new ArrayList<>();
+		List<FinAdvancePayments> fapList = finAdvancePaymentsService.getFinAdvancePaymentsById(finReference, " ");
+		for (FinAdvancePayments fap : fapList) {
+			DisbResponse detail = new DisbResponse();
+			detail.setPaymentId(fap.getPaymentId());
+			detail.setAccountNo(fap.getBeneficiaryAccNo());
+			detail.setDisbAmount(fap.getAmtToBeReleased());
+			detail.setDisbDate(fap.getLlDate());
+			detail.setStatus(fap.getStatus());
+			detail.setType(DisbursementConstants.CHANNEL_DISBURSEMENT);
+			disbInstructions.add(detail);
+		}
+		return disbInstructions;
 	}
 
 	@Override
@@ -2645,6 +2718,85 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		return response;
 	}
 
+	@Override
+	public WSReturnStatus cancelDisbursementInstructions(FinServiceInstruction finServiceInstRequest)
+			throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus response = new WSReturnStatus();
+
+		// for logging purpose
+		String finReference = finServiceInstRequest.getFinReference();
+		APIErrorHandlerService.logReference(finReference);
+
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstRequest);
+
+		int countRef = financeMainDAO.getFinanceCountById(finReference, "", false);
+		if (countRef < 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			return APIErrorHandlerService.getFailedStatus("90248", valueParm);
+		}
+
+		int count = validateBlockedFinances(finReference);
+		if (count > 0) {
+			String valueParm[] = new String[2];
+			valueParm[0] = "Disbursement";
+			valueParm[1] = "FinReference: " + finReference;
+			return APIErrorHandlerService.getFailedStatus("90204", valueParm);
+		}
+
+		long paymentId = finServiceInstRequest.getPaymentId();
+		if (paymentId == Long.MIN_VALUE && paymentId <= 0) {
+			String valueParm[] = new String[1];
+			valueParm[0] = "PaymentId";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		int paymentIdCount = finAdvancePaymentsService.getCountByPaymentId(finReference, paymentId);
+		if (paymentIdCount <= 0) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "PaymentId";
+			return APIErrorHandlerService.getFailedStatus("90405", valueParam);
+		}
+
+		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+		finAdvancePayments.setPaymentId(paymentId);
+		FinAdvancePayments finAdv = finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "");
+
+		if (DisbursementConstants.STATUS_PAID.equals(finAdv.getStatus())) {
+			List<FinAdvancePayments> disbursementDetailsList = finServiceInstRequest.getDisbursementDetails();
+			if (CollectionUtils.isEmpty(disbursementDetailsList)) {
+				String valueParm[] = new String[1];
+				valueParm[0] = "DisbursementDetails";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
+			String eventCode = AccountEventConstants.ACCEVENT_ADDDBSN;
+			FinanceDetail financeDetail = finServiceInstController.getFinanceDetails(finServiceInstRequest, eventCode);
+			financeDetail.setAdvancePaymentsList(disbursementDetailsList);
+			AuditDetail auditDetail = addDisbursementService.doCancelDisbValidations(financeDetail);
+
+			if (CollectionUtils.isNotEmpty(auditDetail.getErrorDetails())) {
+				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+
+			financeDetail.getAdvancePaymentsList().add(finAdv);
+			response = finServiceInstController.doCancelDisbursementInstructions(financeDetail);
+		} else {
+			String[] valueParam = new String[2];
+			valueParam[0] = "Cancel Disbursement Instructions";
+			valueParam[1] = finAdv.getStatus();
+			return APIErrorHandlerService.getFailedStatus("90329", valueParam);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
 	private void buildFinFeeForUpload(FinServiceInstruction finSrvcInst) {
 		for (FinFeeDetail feeDtl : finSrvcInst.getFinFeeDetails()) {
 			feeDtl.setFeeScheduleMethod("");
@@ -2699,6 +2851,36 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Autowired
 	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
 		this.chequeDetailDAO = chequeDetailDAO;
+	}
+
+	@Autowired
+	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
+		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
+
+	@Autowired
+	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
+		this.vASRecordingDAO = vASRecordingDAO;
+	}
+
+	@Autowired
+	public void setInsuranceDetailDAOImpl(InsuranceDetailDAO insuranceDetailDAO) {
+		this.insuranceDetailDAO = insuranceDetailDAO;
+	}
+
+	@Autowired
+	public void setInsuranceDetailDAO(InsuranceDetailDAO insuranceDetailDAO) {
+		this.insuranceDetailDAO = insuranceDetailDAO;
+	}
+
+	@Autowired
+	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
+		this.vASConfigurationDAO = vASConfigurationDAO;
+	}
+
+	@Autowired
+	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
+		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
 	}
 
 }

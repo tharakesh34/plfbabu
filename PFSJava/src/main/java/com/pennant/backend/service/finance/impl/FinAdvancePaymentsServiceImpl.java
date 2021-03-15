@@ -45,6 +45,7 @@ package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,6 +68,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.configuration.VASConfigurationDAO;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
@@ -78,6 +80,7 @@ import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -104,9 +107,11 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.BankAccountValidationService;
 
 /**
@@ -133,6 +138,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private transient PennyDropService pennyDropService;
 	@Autowired(required = false)
 	private transient BankAccountValidationService bankAccountValidationService;
+	private DocumentDetailsDAO documentDetailsDAO;
 
 	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
 	private VASConfigurationDAO vASConfigurationDAO;
@@ -286,10 +292,16 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 						finPayment.setOnlineProcReq(true);
 					}
 					getFinAdvancePaymentsDAO().save(finPayment, tableType);
+					if (finPayment.getDocImage() != null) {
+						saveDocumentDetails(finPayment);
+					}
 				}
 
 				if (updateRecord) {
 					getFinAdvancePaymentsDAO().update(finPayment, tableType);
+					if (finPayment.getDocImage() != null) {
+						saveDocumentDetails(finPayment);
+					}
 				}
 
 				if (deleteRecord) {
@@ -1326,10 +1338,12 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	}
 
 	private boolean isDeleteRecord(FinAdvancePayments aFinAdvancePayments) {
-		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, aFinAdvancePayments.getRecordType())
-				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, aFinAdvancePayments.getRecordType())
-				|| StringUtils.equals(DisbursementConstants.STATUS_CANCEL, aFinAdvancePayments.getStatus())
-				|| StringUtils.equals(DisbursementConstants.STATUS_REJECTED, aFinAdvancePayments.getStatus())) {
+		String recordType = aFinAdvancePayments.getRecordType();
+		String status = aFinAdvancePayments.getStatus();
+		if (PennantConstants.RECORD_TYPE_CAN.equals(recordType) || PennantConstants.RECORD_TYPE_DEL.equals(recordType)
+				|| DisbursementConstants.STATUS_CANCEL.equals(status)
+				|| DisbursementConstants.STATUS_REJECTED.equals(status)
+				|| DisbursementConstants.STATUS_PAID_BUT_CANCELLED.equals(status)) {
 			return true;
 		}
 		return false;
@@ -1344,6 +1358,32 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 		return noValidation;
+	}
+
+	private void saveDocumentDetails(FinAdvancePayments finPayment) {
+		DocumentDetails details = new DocumentDetails();
+		details.setDocModule(DisbursementConstants.DISB_MODULE);
+		details.setDoctype(finPayment.getDocType());
+		details.setDocCategory(DisbursementConstants.DISB_DOC_TYPE);
+		details.setDocName(finPayment.getDocumentName());
+		details.setLastMntBy(finPayment.getLastMntBy());
+		details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		details.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+		details.setDocImage(finPayment.getDocImage());
+		details.setReferenceId(String.valueOf(finPayment.getPaymentId()));
+		details.setFinReference(finPayment.getFinReference());
+
+		saveDocument(DMSModule.FINANCE, DMSModule.DISBINST, details);
+		DocumentDetails oldDocumentDetails = documentDetailsDAO.getDocumentDetails(details.getReferenceId(),
+				details.getDocCategory(), details.getDocModule(), TableType.MAIN_TAB.getSuffix());
+
+		if (oldDocumentDetails != null && oldDocumentDetails.getDocId() != Long.MIN_VALUE) {
+			details.setDocId(oldDocumentDetails.getDocId());
+			documentDetailsDAO.update(details, TableType.MAIN_TAB.getSuffix());
+		} else {
+			documentDetailsDAO.save(details, TableType.MAIN_TAB.getSuffix());
+		}
 	}
 
 	@Override
@@ -1481,4 +1521,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		this.vASConfigurationDAO = vASConfigurationDAO;
 	}
 
+	public DocumentDetailsDAO getDocumentDetailsDAO() {
+		return documentDetailsDAO;
+	}
+
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
 }

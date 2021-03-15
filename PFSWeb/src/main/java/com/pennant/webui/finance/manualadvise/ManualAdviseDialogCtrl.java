@@ -627,32 +627,30 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 * Calculate TDS based fee type TDS applicable parameter.
 	 */
 	private void calculateTDS() {
-		logger.debug(Literal.ENTERING);
-
 		boolean tdsApplicable = (boolean) this.feeTypeID.getAttribute("TDSApplicable");
 
-		if (tdsApplicable) {
-			this.gb_TDSDetails.setVisible(true);
-			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "",
-					false);
-			int formatter = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
-
-			BigDecimal adviseAmountVal = BigDecimal.ZERO;
-			BigDecimal tdsAmount = BigDecimal.ZERO;
-
-			if (this.adviseAmount.getActualValue() != null) {
-				adviseAmountVal = PennantApplicationUtil.unFormateAmount(this.adviseAmount.getActualValue(), formatter);
-			}
-
-			tdsAmount = TDSCalculator.getTDSAmount(adviseAmountVal);
-
-			this.tds.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-			this.tds.setValue(PennantApplicationUtil.formateAmount(tdsAmount, formatter));
-		} else {
+		if (!tdsApplicable || !financeMain.istDSApplicable()) {
 			this.gb_TDSDetails.setVisible(false);
 			this.tds.setValue(BigDecimal.ZERO);
+			return;
 		}
-		logger.debug(Literal.LEAVING);
+
+		FinanceDetail fd = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "", false);
+		tdsApplicable = fd.getFinScheduleData().getFinanceMain().isTDSApplicable();
+		this.gb_TDSDetails.setVisible(true);
+		int formatter = CurrencyUtil.getFormat(fd.getFinScheduleData().getFinanceMain().getFinCcy());
+
+		BigDecimal adviseAmountVal = BigDecimal.ZERO;
+		BigDecimal tdsAmount = BigDecimal.ZERO;
+
+		if (this.adviseAmount.getActualValue() != null) {
+			adviseAmountVal = PennantApplicationUtil.unFormateAmount(this.adviseAmount.getActualValue(), formatter);
+		}
+
+		tdsAmount = TDSCalculator.getTDSAmount(adviseAmountVal);
+
+		this.tds.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+		this.tds.setValue(PennantApplicationUtil.formateAmount(tdsAmount, formatter));
 	}
 
 	public void setFeeTypeFilters() {

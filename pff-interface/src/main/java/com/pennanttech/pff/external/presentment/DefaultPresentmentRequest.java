@@ -540,7 +540,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			batchValues.addValue("ID", id);
 			sources.add(batchValues);
 			SqlParameterSource[] batchArgs = sources.toArray(new SqlParameterSource[sources.size()]);
-			if (sources.size() == PennantConstants.BULKPROCESSING_SIZE) {
+			if (sources.size() == PennantConstants.CHUNK_SIZE) {
 				this.namedJdbcTemplate.batchUpdate(sql.toString(), batchArgs);
 				sources.clear();
 			}

@@ -75,8 +75,9 @@ public class DisbursementConstants {
 	public static final String STATUS_REALIZED = "REALIZED";
 	public static final String STATUS_REVERSED = "REVERSED";
 	public static final String STATUS_HOLD = "HOLD";
+	public static final String STATUS_PAID_BUT_CANCELLED = "PAID BUT CANCELLED";
 
-	// Payment Channels
+	// Payment Channels 
 	public static final String CHANNEL_PAYMENT = "P";
 	public static final String CHANNEL_FLEXIDISBURSEMENT = "F";
 	public static final String CHANNEL_DISBURSEMENT = "D";
@@ -87,4 +88,7 @@ public class DisbursementConstants {
 	public static final String AUTODISB_STATUS_PENDING = "P";
 	public static final String AUTODISB_STATUS_SUCCESS = "S";
 	public static final String AUTODISB_STATUS_FAILED = "F";
+
+	public static final String DISB_MODULE = "DISBINST";
+	public static final String DISB_DOC_TYPE = "DISBDOC";
 }

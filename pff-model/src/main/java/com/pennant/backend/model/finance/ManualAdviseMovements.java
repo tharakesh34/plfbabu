@@ -59,6 +59,46 @@ public class ManualAdviseMovements implements Serializable {
 		return excludeFields;
 	}
 
+	public ManualAdviseMovements copyEntity() {
+		ManualAdviseMovements entity = new ManualAdviseMovements();
+		entity.setMovementID(this.movementID);
+		entity.setAdviseID(this.adviseID);
+		entity.setReceiptID(this.receiptID);
+		entity.setReceiptSeqID(this.receiptSeqID);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setFeeTypeDesc(this.feeTypeDesc);
+		entity.setMovementDate(this.movementDate);
+		entity.setMovementAmount(this.movementAmount);
+		entity.setPaidAmount(this.paidAmount);
+		entity.setWaivedAmount(this.waivedAmount);
+		entity.setTdsPaid(this.tdsPaid);
+		entity.setStatus(this.status);
+		entity.setPaidCGST(this.paidCGST);
+		entity.setPaidSGST(this.paidSGST);
+		entity.setPaidUGST(this.paidUGST);
+		entity.setPaidIGST(this.paidIGST);
+		entity.setPaidCESS(this.paidCESS);
+		entity.setWaivedCGST(this.waivedCGST);
+		entity.setWaivedSGST(this.waivedSGST);
+		entity.setWaivedUGST(this.waivedUGST);
+		entity.setWaivedIGST(this.waivedIGST);
+		entity.setWaivedCESS(this.waivedCESS);
+		entity.setTaxApplicable(this.taxApplicable);
+		entity.setTaxComponent(this.taxComponent);
+		entity.setAdviseType(this.adviseType);
+		entity.setReceiptMode(this.receiptMode);
+		entity.setValueDate(this.valueDate);
+		entity.setWaiverID(this.waiverID);
+		entity.setTaxHeaderId(this.taxHeaderId);
+		entity.setDebitInvoiceId(this.debitInvoiceId);
+		entity.setTaxHeader(this.taxHeader == null ? null : this.taxHeader.copyEntity());
+		entity.setSchDate(this.schDate);
+		entity.setLppAmzReqonME(this.lppAmzReqonME);
+		entity.setCurrWaiverGst(this.currWaiverGst);
+		entity.setTdsReq(this.tdsReq);
+		return entity;
+	}
+
 	public long getMovementID() {
 		return movementID;
 	}

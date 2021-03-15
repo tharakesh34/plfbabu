@@ -60,6 +60,7 @@ import org.apache.commons.lang.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
 import com.google.common.collect.ComparisonChain;
@@ -134,6 +135,7 @@ import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.pff.extension.feature.SOAExtensionService;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.soa.SOAReportService;
@@ -158,6 +160,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private SOAReportService soaReportService;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 	private FeeWaiverDetailDAO feeWaiverDetailDAO;
+	@Autowired(required = false)
+	@Qualifier("sOAExtensionService")
+	private SOAExtensionService sOAExtensionService;
 
 	private Date fixedEndDate = null;
 
@@ -518,8 +523,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				statementOfAccount.setRepayFrq(FrequencyUtil.getRepayFrequencyLabel(statementOfAccount.getRepayFrq()));
 			}
 
-			//Including advance EMI terms
+			// Including advance and moratorium EMI terms
 			int tenure = statementOfAccount.getTenure();
+			if (sOAExtensionService != null) {
+				tenure = tenure + sOAExtensionService.getMortoriumTerms(finReference);
+				tenure = tenure + finMain.getAdvTerms();
+			}
 
 			// Based on Repay Frequency codes it will set
 			String frequency = FrequencyUtil.getFrequencyCode(finMain.getRepayFrq());
@@ -1178,88 +1187,93 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				}
 			}
 
-			for (ManualAdvise manualAdvise : manualAdviseList) {
-				if (manualAdvise.getAdviseType() == 2 && manualAdvise.getBalanceAmt() != null) {
+			for (ManualAdvise ma : manualAdviseList) {
+				String taxComponent = ma.getTaxComponent();
+				if (ma.getAdviseType() == 2 && ma.getBalanceAmt() != null) {
 					BigDecimal gstAmount = BigDecimal.ZERO;
-					// # PSD :151411 17-03-20 :In SOA, Payable amount(Other Payables) displayed with GST when User add Payable Exclusive Charge.
-					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())
-							&& manualAdvise.getBalanceAmt().compareTo(BigDecimal.ZERO) > 0) {
-						gstAmount = GSTCalculator.getTotalGST(finReference, manualAdvise.getAdviseAmount(),
-								manualAdvise.getTaxComponent());
+					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)
+							&& ma.getBalanceAmt().compareTo(BigDecimal.ZERO) > 0) {
+						gstAmount = GSTCalculator.getTotalGST(finReference, ma.getBalanceAmt(), taxComponent);
+						BigDecimal totGST = GSTCalculator.getTotalGST(finReference, ma.getAdviseAmount(), taxComponent);
+
+						BigDecimal paidGST = CalculationUtil.getTotalPaidGST(ma);
+						BigDecimal waivedGST = CalculationUtil.getTotalWaivedGST(ma);
+						gstAmount = gstAmount.subtract(gstAmount.add(paidGST).add(waivedGST).subtract(totGST));
 					}
-					adviseBalanceAmt = adviseBalanceAmt.add(manualAdvise.getBalanceAmt().add(gstAmount));
+					adviseBalanceAmt = adviseBalanceAmt.add(ma.getBalanceAmt().add(gstAmount));
 				}
-				if (manualAdvise.getBounceID() != 0) {
-					manualAdvise.setAdviseID(-3);
+				if (ma.getBounceID() != 0) {
+					ma.setAdviseID(-3);
 				}
 
-				if (manualAdvise.getAdviseType() == 1 && manualAdvise.getBounceID() == 0) {
+				if (ma.getAdviseType() == 1 && ma.getBounceID() == 0) {
 
-					if (manualAdvise.getAdviseAmount() != null) {
+					if (ma.getAdviseAmount() != null) {
 						BigDecimal currWaiverGst = feeWaiverDetailDAO.getFeeWaiverDetailList(finReference,
-								manualAdvise.getAdviseID());
+								ma.getAdviseID());
 						if (currWaiverGst == null) {
 							currWaiverGst = BigDecimal.ZERO;
 						}
-						bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(manualAdvise.getAdviseAmount())
-								.subtract(manualAdvise.getWaivedAmount());
-
-						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())) { //GST Calculation only for Exclusive case
-							BigDecimal gstAmount = GSTCalculator.getTotalGST(finReference,
-									manualAdvise.getAdviseAmount(), manualAdvise.getTaxComponent());
+						bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(ma.getAdviseAmount())
+								.subtract(ma.getWaivedAmount());
+						/* GST Calculation only for Exclusive case */
+						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+							BigDecimal gstAmount = GSTCalculator.getTotalGST(finReference, ma.getAdviseAmount(),
+									taxComponent);
 							gstAmount = gstAmount.subtract(currWaiverGst);
 							bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(gstAmount);
 						}
 					}
 
-					if (manualAdvise.getPaidAmount() != null) {
-						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())) { //GST Calculation only for Exclusive case
-							bounceZeroPaidAmount = bounceZeroPaidAmount.add(manualAdvise.getPaidAmount())
-									.add(CalculationUtil.getTotalPaidGST(manualAdvise));
+					if (ma.getPaidAmount() != null) {
+						/* GST Calculation only for Exclusive case */
+						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+							bounceZeroPaidAmount = bounceZeroPaidAmount.add(ma.getPaidAmount())
+									.add(CalculationUtil.getTotalPaidGST(ma));
 						} else {
-							bounceZeroPaidAmount = bounceZeroPaidAmount.add(manualAdvise.getPaidAmount());
+							bounceZeroPaidAmount = bounceZeroPaidAmount.add(ma.getPaidAmount());
 						}
 					}
 				}
 
-				if (manualAdvise.getBounceID() > 0) {
+				if (ma.getBounceID() > 0) {
 
 					if (bounceFeeType == null) {
-						bounceFeeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
+						bounceFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
 					}
 
-					if (manualAdvise.getAdviseAmount() != null) {
-						manualAdvise.setAdviseID(-3);
+					if (ma.getAdviseAmount() != null) {
+						ma.setAdviseID(-3);
 						BigDecimal currWaiverGst = feeWaiverDetailDAO.getFeeWaiverDetailList(finReference,
-								manualAdvise.getAdviseID());
+								ma.getAdviseID());
 						if (currWaiverGst == null) {
 							currWaiverGst = BigDecimal.ZERO;
 						}
-						bounceGreaterZeroAdviseAmount = adviseAmt.subtract(bounceWaivedAmount);
 
+						bounceGreaterZeroAdviseAmount = adviseAmt.subtract(bounceWaivedAmount);
+						/* GST Calculation only for Exclusive case */
 						if (bounceFeeType != null && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE
-								.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
+								.equals(bounceFeeType.getTaxComponent())) {
 							BigDecimal gstAmount = GSTCalculator.getTotalGST(finReference, adviseAmt,
 									bounceFeeType.getTaxComponent());
 							if (currWaiverGst.compareTo(BigDecimal.ZERO) > 0) {
 								gstAmount = gstAmount.subtract(currWaiverGst);
 								bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(gstAmount);
 							} else {
-								gstAmount = gstAmount.subtract(manualAdvise.getWaivedCGST()
-										.add(manualAdvise.getWaivedIGST()).add(manualAdvise.getWaivedSGST())
-										.add(manualAdvise.getWaivedUGST()).add(manualAdvise.getWaivedCESS()));
+								gstAmount = gstAmount.subtract(CalculationUtil.getTotalWaivedGST(ma));
 								bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(gstAmount);
 							}
 						}
 					}
 
-					if (manualAdvise.getPaidAmount() != null) {
+					if (ma.getPaidAmount() != null) {
+						/* GST Calculation only for Exclusive case */
 						if (bounceFeeType != null && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE
-								.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
-							bounceGreaterZeroPaidAmount = bounceGreaterZeroPaidAmount.add(manualAdvise.getPaidAmount())
-									.add(CalculationUtil.getTotalPaidGST(manualAdvise));
+								.equals(bounceFeeType.getTaxComponent())) {
+							bounceGreaterZeroPaidAmount = bounceGreaterZeroPaidAmount.add(ma.getPaidAmount())
+									.add(CalculationUtil.getTotalPaidGST(ma));
 						} else {
-							bounceGreaterZeroPaidAmount = bounceGreaterZeroPaidAmount.add(manualAdvise.getPaidAmount());
+							bounceGreaterZeroPaidAmount = bounceGreaterZeroPaidAmount.add(ma.getPaidAmount());
 						}
 					}
 				}
@@ -1916,6 +1930,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				//FinReceipt Allocation Details
 				finReceiptAllocDetails = getReceiptAllocationDetailsList(finReference);
 
+				// Inst NO Based on
+				Map<Long, Integer> instNumbers = soaReportGenerationDAO.getInstNumber(finReference);
+
 				for (FinReceiptHeader finReceiptHeader : finReceiptHeadersList) {
 
 					for (FinReceiptDetail finReceiptDetail : finReceiptDetailsList) {
@@ -1958,7 +1975,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 												status = "";
 											}
 										}
-										instlNo = presentmentDetail.getEmiNo();
+										instlNo = instNumbers.get(presentmentDetail.getReceiptID());
 
 										if (mandateType.equals(MandateConstants.TYPE_DDM)) {
 											paymentType = "Direct Debit";

@@ -54,6 +54,44 @@ public class FinTypeInsurances extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public FinTypeInsurances copyEntity() {
+		FinTypeInsurances entity = new FinTypeInsurances();
+		entity.setFinType(this.finType);
+		entity.setFinTypeDesc(this.finTypeDesc);
+		entity.setInsuranceType(this.insuranceType);
+		entity.setInsuranceTypeDesc(this.insuranceTypeDesc);
+		entity.setInsuranceProvider(this.insuranceProvider);
+		entity.setTakafulName(this.takafulName);
+		entity.setPolicyRate(this.policyRate);
+		entity.setPolicyType(this.policyType);
+		entity.setPolicyDesc(this.policyDesc);
+		entity.setDftPayType(this.dftPayType);
+		entity.setCalType(this.calType);
+		entity.setAmountRule(this.amountRule);
+		entity.setRuleCodeDesc(this.ruleCodeDesc);
+		entity.setConstAmt(this.constAmt);
+		entity.setPercentage(this.percentage);
+		entity.setCalculateOn(this.calculateOn);
+		entity.setMandatory(this.mandatory);
+		entity.setAlwRateChange(this.alwRateChange);
+		entity.setNewRecord(this.newRecord);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setModuleId(this.moduleId);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	//Getter and Setter methods
 
 	public String getId() {

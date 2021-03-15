@@ -71,12 +71,26 @@ import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.collateral.CollateralThirdPartyDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
+import com.pennant.backend.dao.customermasters.CustEmployeeDetailDAO;
+import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
+import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
+import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
+import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
+import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
+import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
+import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
+import com.pennant.backend.dao.customermasters.CustomerGstDetailDAO;
+import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
+import com.pennant.backend.dao.customermasters.CustomerRatingDAO;
+import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
+import com.pennant.backend.model.PrimaryAccount;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -88,8 +102,14 @@ import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
+import com.pennant.backend.model.customermasters.BankInfoDetail;
+import com.pennant.backend.model.customermasters.CustCardSales;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerBankInfo;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.CustomerGST;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
@@ -106,7 +126,6 @@ import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.CollateralStructureService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
@@ -120,6 +139,9 @@ import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
+import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
+import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
 import com.rits.cloning.Cloner;
 
 /**
@@ -132,7 +154,6 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CollateralSetupDAO collateralSetupDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
-
 	private CollateralThirdPartyDAO collateralThirdPartyDAO;
 	private CoOwnerDetailDAO coOwnerDetailDAO;
 	private DocumentDetailsDAO documentDetailsDAO;
@@ -140,21 +161,33 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	private FinFlagDetailsDAO finFlagDetailsDAO;
 	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
 	private CityDAO cityDAO;
-	private CustomerDetailsService customerDetailsService;
 	private CheckListDetailService checkListDetailService;
 	private CollateralStructureService collateralStructureService;
 	private CurrencyDAO currencyDAO;
 	private DocumentTypeService documentTypeService;
 	private CollateralAssignmentDAO collateralAssignmentDAO;
-
-	// Validation Service Classes
 	private CollateralThirdPartyValidation collateralThirdPartyValidation;
 	private FlagDetailValidation collateralFlagValidation;
 	private DocumentDetailValidation collateralDocumentValidation;
 	private CoOwnerDetailsValidation coOwnerDetailsValidation;
-
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
+	private CustomerDAO customerDAO;
+	private PrimaryAccountDAO primaryAccountDAO;
+	private CustomerEmploymentDetailDAO customerEmploymentDetailDAO;
+	private CustEmployeeDetailDAO custEmployeeDetailDAO;
+	private IncomeDetailDAO incomeDetailDAO;
+	private DirectorDetailDAO directorDetailDAO;
+	private CustomerRatingDAO customerRatingDAO;
+	private CustomerPhoneNumberDAO customerPhoneNumberDAO;
+	private CustomerEMailDAO customerEMailDAO;
+	private CustomerBankInfoDAO customerBankInfoDAO;
+	private CustomerGstDetailDAO customerGstDetailDAO;
+	private CustomerChequeInfoDAO customerChequeInfoDAO;
+	private ExternalLiabilityDAO externalLiabilityDAO;
+	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
+	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
+	private CustomerAddresDAO customerAddresDAO;
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
@@ -234,14 +267,6 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 	public void setFinFlagDetailsDAO(FinFlagDetailsDAO finFlagDetailsDAO) {
 		this.finFlagDetailsDAO = finFlagDetailsDAO;
-	}
-
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
 	}
 
 	public void setDocumentTypeService(DocumentTypeService documentTypeService) {
@@ -517,16 +542,17 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				extFieldMap.remove("LastMntOn");
 				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
 				extFieldMap.remove("LastMntBy");
-				extendedFieldRender
-						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
-								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extendedFieldRender.setRecordStatus(
+						StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RecordStatus")));
 				extFieldMap.remove("RecordStatus");
-				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
-						? "" : String.valueOf(extFieldMap.get("RoleCode")));
-				extFieldMap.remove("RoleCode");
 				extendedFieldRender
-						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
-								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+						.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RoleCode")));
+				extFieldMap.remove("RoleCode");
+				extendedFieldRender.setNextRoleCode(
+						StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+								: String.valueOf(extFieldMap.get("NextRoleCode")));
 				extFieldMap.remove("NextRoleCode");
 				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 						: String.valueOf(extFieldMap.get("TaskId")));
@@ -560,8 +586,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			if (!isEnquiry) {
 
 				// Customer Details
-				collateralSetup.setCustomerDetails(getCustomerDetailsService()
-						.getCustomerDetailsById(collateralSetup.getDepositorId(), true, "_View"));
+				collateralSetup
+						.setCustomerDetails(getCustomerDetailsbyID(collateralSetup.getDepositorId(), true, "_View"));
 
 				// Agreement Details & Check List Details
 				if (StringUtils.isNotEmpty(collateralSetup.getRecordType())
@@ -600,8 +626,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			collateralSetup.setCollateralThirdPartyList(
 					getCollateralThirdPartyDAO().getCollThirdPartyDetails(collateralRef, "_View"));
 			// Customer Details
-			collateralSetup.setCustomerDetails(getCustomerDetailsService()
-					.getCustomerDetailsById(collateralSetup.getDepositorId(), false, "_View"));
+			collateralSetup
+					.setCustomerDetails(getCustomerDetailsbyID(collateralSetup.getDepositorId(), false, "_View"));
 
 			// Document Details
 			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef,
@@ -2152,7 +2178,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				|| StringUtils.equals(method, "delete")) {
 			// customer cif
 			if (StringUtils.isNotBlank(collateralSetup.getDepositorCif())) {
-				Customer customer = customerDetailsService.getCustomerByCIF(collateralSetup.getDepositorCif());
+				Customer customer = customerDAO.getCustomerByCIF(collateralSetup.getDepositorCif(), "");
 				if (customer == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = collateralSetup.getDepositorCif();
@@ -2323,7 +2349,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			List<CollateralThirdParty> thirdPartyCollateral = collateralSetup.getCollateralThirdPartyList();
 			if (thirdPartyCollateral != null) {
 				for (CollateralThirdParty thirdPartyCust : thirdPartyCollateral) {
-					int rcdCount = customerDetailsService.getCustomerCountByCIF(thirdPartyCust.getCustCIF(), "");
+					int rcdCount = customerDAO.getCustomerCountByCIF(thirdPartyCust.getCustCIF(), "");
 					if (rcdCount <= 0) {
 						String[] valueParm = new String[1];
 						valueParm[0] = thirdPartyCust.getCustCIF();
@@ -2339,7 +2365,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 					// validate co-owner cif
 					if (coOwnerDetail.isBankCustomer()) {
-						int rcdCount = customerDetailsService.getCustomerCountByCIF(coOwnerDetail.getCoOwnerCIF(), "");
+						int rcdCount = customerDAO.getCustomerCountByCIF(coOwnerDetail.getCoOwnerCIF(), "");
 						if (rcdCount <= 0) {
 							String[] valueParm = new String[1];
 							valueParm[0] = coOwnerDetail.getCoOwnerCIF();
@@ -2865,11 +2891,13 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 					: String.valueOf(extFieldMap.get("TaskId")));
 			extFieldMap.remove("TaskId");
-			extendedFieldRender.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null")
-					? "" : String.valueOf(extFieldMap.get("NextTaskId")));
+			extendedFieldRender
+					.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+							: String.valueOf(extFieldMap.get("NextTaskId")));
 			extFieldMap.remove("NextTaskId");
-			extendedFieldRender.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null")
-					? "" : String.valueOf(extFieldMap.get("RecordType")));
+			extendedFieldRender
+					.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+							: String.valueOf(extFieldMap.get("RecordType")));
 			extFieldMap.remove("RecordType");
 			extendedFieldRender.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
 			extFieldMap.remove("WorkflowId");
@@ -2883,7 +2911,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		// Customer Details
 		if (!isAutoRejection) {
 			long depId = collateralSetup.getDepositorId();
-			collateralSetup.setCustomerDetails(customerDetailsService.getCustomerDetailsById(depId, true, "_View"));
+			collateralSetup.setCustomerDetails(getCustomerDetailsbyID(depId, true, "_View"));
 
 			// Document Details
 			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(reference,
@@ -3271,16 +3299,17 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				extFieldMap.remove("LastMntOn");
 				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
 				extFieldMap.remove("LastMntBy");
-				extendedFieldRender
-						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
-								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extendedFieldRender.setRecordStatus(
+						StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RecordStatus")));
 				extFieldMap.remove("RecordStatus");
-				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
-						? "" : String.valueOf(extFieldMap.get("RoleCode")));
-				extFieldMap.remove("RoleCode");
 				extendedFieldRender
-						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
-								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+						.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RoleCode")));
+				extFieldMap.remove("RoleCode");
+				extendedFieldRender.setNextRoleCode(
+						StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+								: String.valueOf(extFieldMap.get("NextRoleCode")));
 				extFieldMap.remove("NextRoleCode");
 				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 						: String.valueOf(extFieldMap.get("TaskId")));
@@ -3302,8 +3331,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			collateralSetup.setExtendedFieldRenderList(renderList);
 
 			// Customer Details
-			collateralSetup.setCustomerDetails(getCustomerDetailsService()
-					.getCustomerDetailsById(collateralSetup.getDepositorId(), true, "_View"));
+			collateralSetup.setCustomerDetails(getCustomerDetailsbyID(collateralSetup.getDepositorId(), true, "_View"));
 
 			// Document Details
 			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef,
@@ -3365,16 +3393,17 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				extFieldMap.remove("LastMntOn");
 				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
 				extFieldMap.remove("LastMntBy");
-				extendedFieldRender
-						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
-								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extendedFieldRender.setRecordStatus(
+						StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RecordStatus")));
 				extFieldMap.remove("RecordStatus");
-				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
-						? "" : String.valueOf(extFieldMap.get("RoleCode")));
-				extFieldMap.remove("RoleCode");
 				extendedFieldRender
-						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
-								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+						.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RoleCode")));
+				extFieldMap.remove("RoleCode");
+				extendedFieldRender.setNextRoleCode(
+						StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+								: String.valueOf(extFieldMap.get("NextRoleCode")));
 				extFieldMap.remove("NextRoleCode");
 				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 						: String.valueOf(extFieldMap.get("TaskId")));
@@ -3399,4 +3428,158 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		return collateralSetup;
 	}
 
+	private CustomerDetails getCustomerDetailsbyID(long id, boolean reqChildDetails, String type) {
+		logger.debug(Literal.ENTERING);
+
+		CustomerDetails cd = new CustomerDetails();
+		cd.setCustomer(customerDAO.getCustomerByID(id, type));
+		cd.setCustID(id);
+
+		Customer customer = cd.getCustomer();
+		PrimaryAccount primaryAccount = primaryAccountDAO.getPrimaryAccountDetails(customer.getCustCRCPR());
+
+		if (primaryAccount != null) {
+			customer.setPrimaryIdName(primaryAccount.getDocumentName());
+		}
+
+		if (!reqChildDetails) {
+			return cd;
+		}
+
+		if (ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS) {
+			cd.setEmploymentDetailsList(customerEmploymentDetailDAO.getCustomerEmploymentDetailsByID(id, type));
+		} else {
+			cd.setCustEmployeeDetail(custEmployeeDetailDAO.getCustEmployeeDetailById(id, type));
+		}
+
+		if (ImplementationConstants.ALLOW_CUSTOMER_INCOMES) {
+			cd.setCustomerIncomeList(incomeDetailDAO.getIncomesByCustomer(id, type));
+		}
+		// ### Ticket 126612 LMS > PDE > newly added shareholder are not
+		// displayed in PDE. Changed the condition to
+		// non individual.
+		if (StringUtils.isNotEmpty(customer.getCustCtgCode())
+				&& !StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+			if (ImplementationConstants.ALLOW_CUSTOMER_SHAREHOLDERS) {
+				cd.setCustomerDirectorList(directorDetailDAO.getCustomerDirectorByCustomer(id, type));
+			}
+			if (ImplementationConstants.ALLOW_CUSTOMER_RATINGS) {
+				cd.setRatingsList(customerRatingDAO.getCustomerRatingByCustomer(id, type));
+			}
+		}
+		cd.setCustomerDocumentsList(customerDocumentDAO.getCustomerDocumentByCustomer(id, type));
+		cd.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(id, type));
+		cd.setCustomerPhoneNumList(customerPhoneNumberDAO.getCustomerPhoneNumberByCustomer(id, type));
+		cd.setCustomerEMailList(customerEMailDAO.getCustomerEmailByCustomer(id, type));
+		cd.setCustomerBankInfoList(customerBankInfoDAO.getBankInfoByCustomer(id, type));
+		if (cd.getCustomerBankInfoList() != null && cd.getCustomerBankInfoList().size() > 0) {
+			for (CustomerBankInfo customerBankInfo : cd.getCustomerBankInfoList()) {
+				customerBankInfo.setBankInfoDetails(
+						customerBankInfoDAO.getBankInfoDetailById(customerBankInfo.getBankId(), type));
+
+				if (CollectionUtils.isNotEmpty(customerBankInfo.getBankInfoDetails())) {
+					for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+						bankInfoDetail.setBankInfoSubDetails(customerBankInfoDAO.getBankInfoSubDetailById(
+								bankInfoDetail.getBankId(), bankInfoDetail.getMonthYear(), type));
+					}
+				}
+			}
+		}
+		cd.setCustomerGstList(customerGstDetailDAO.getCustomerGSTById(id, type));
+
+		if (cd.getCustomerGstList() != null && cd.getCustomerGstList().size() > 0) {
+			for (CustomerGST customerGST : cd.getCustomerGstList()) {
+				customerGST.setCustomerGSTDetailslist(
+						customerGstDetailDAO.getCustomerGSTDetailsByCustomer(customerGST.getId(), type));
+			}
+		}
+		cd.setCustomerChequeInfoList(customerChequeInfoDAO.getChequeInfoByCustomer(id, type));
+
+		CustomerExtLiability liability = new CustomerExtLiability();
+		liability.setCustId(id);
+		cd.setCustomerExtLiabilityList(externalLiabilityDAO.getLiabilities(liability.getCustId(), type));
+
+		if (CollectionUtils.isNotEmpty(cd.getCustomerExtLiabilityList())) {
+			for (CustomerExtLiability extLiability : cd.getCustomerExtLiabilityList()) {
+				extLiability.setExtLiabilitiesPayments(
+						customerExtLiabilityDAO.getExtLiabilitySubDetailById(extLiability.getId(), type));
+			}
+		}
+
+		cd.setCustCardSales(customerCardSalesInfoDAO.getCardSalesInfoByCustomer(id, type));
+		if (cd.getCustCardSales() != null && cd.getCustCardSales().size() > 0) {
+			for (CustCardSales customerCardSalesInfo : cd.getCustCardSales()) {
+				customerCardSalesInfo.setCustCardMonthSales(
+						customerCardSalesInfoDAO.getCardSalesInfoSubDetailById(customerCardSalesInfo.getId(), type));
+			}
+		}
+		cd.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(id));
+
+		logger.debug(Literal.LEAVING);
+		return cd;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	public void setPrimaryAccountDAO(PrimaryAccountDAO primaryAccountDAO) {
+		this.primaryAccountDAO = primaryAccountDAO;
+	}
+
+	public void setCustomerEmploymentDetailDAO(CustomerEmploymentDetailDAO customerEmploymentDetailDAO) {
+		this.customerEmploymentDetailDAO = customerEmploymentDetailDAO;
+	}
+
+	public void setCustEmployeeDetailDAO(CustEmployeeDetailDAO custEmployeeDetailDAO) {
+		this.custEmployeeDetailDAO = custEmployeeDetailDAO;
+	}
+
+	public void setIncomeDetailDAO(IncomeDetailDAO incomeDetailDAO) {
+		this.incomeDetailDAO = incomeDetailDAO;
+	}
+
+	public void setDirectorDetailDAO(DirectorDetailDAO directorDetailDAO) {
+		this.directorDetailDAO = directorDetailDAO;
+	}
+
+	public void setCustomerRatingDAO(CustomerRatingDAO customerRatingDAO) {
+		this.customerRatingDAO = customerRatingDAO;
+	}
+
+	public void setCustomerPhoneNumberDAO(CustomerPhoneNumberDAO customerPhoneNumberDAO) {
+		this.customerPhoneNumberDAO = customerPhoneNumberDAO;
+	}
+
+	public void setCustomerEMailDAO(CustomerEMailDAO customerEMailDAO) {
+		this.customerEMailDAO = customerEMailDAO;
+	}
+
+	public void setCustomerBankInfoDAO(CustomerBankInfoDAO customerBankInfoDAO) {
+		this.customerBankInfoDAO = customerBankInfoDAO;
+	}
+
+	public void setCustomerGstDetailDAO(CustomerGstDetailDAO customerGstDetailDAO) {
+		this.customerGstDetailDAO = customerGstDetailDAO;
+	}
+
+	public void setCustomerChequeInfoDAO(CustomerChequeInfoDAO customerChequeInfoDAO) {
+		this.customerChequeInfoDAO = customerChequeInfoDAO;
+	}
+
+	public void setExternalLiabilityDAO(ExternalLiabilityDAO externalLiabilityDAO) {
+		this.externalLiabilityDAO = externalLiabilityDAO;
+	}
+
+	public void setCustomerCardSalesInfoDAO(CustomerCardSalesInfoDAO customerCardSalesInfoDAO) {
+		this.customerCardSalesInfoDAO = customerCardSalesInfoDAO;
+	}
+
+	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
+		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
+	}
+
+	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
+		this.customerAddresDAO = customerAddresDAO;
+	}
 }

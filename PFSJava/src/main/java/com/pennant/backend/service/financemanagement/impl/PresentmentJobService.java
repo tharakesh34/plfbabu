@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,65 +67,73 @@ public class PresentmentJobService extends AbstractInterface {
 	private static List<Configuration> PRESENTMENT_CONFIG = new ArrayList<>();
 	private static Map<Long, Map<String, EventProperties>> eventProperties = new HashMap<>();
 
-	// method for presentment extraction,creation and approval
 	public void extractPresentment(PresentmentHeader header) {
-		logger.debug(Literal.ENTERING);
+		Date fromDate = header.getFromDate();
+		Date toDate = header.getToDate();
 		LoggedInUser loggedInUser = new LoggedInUser();
-
+		
+		logger.info("Presentment Extraction Process Started...");
+		
+		List<PresentmentHeader> headerList = null;
 		try {
-			logger.debug("Presentment Extraction Process Started...... ");
 
-			presentmentDetailService.savePresentmentDetails(header); // extraction
-			List<PresentmentHeader> headerList = presentmentDetailService.getPresenmentHeaderList(header.getFromDate(),
-					header.getToDate(), RepayConstants.PEXC_EXTRACT);
+			presentmentDetailService.savePresentmentDetails(header); 
+			
+			headerList = presentmentDetailService.getPresenmentHeaderList(fromDate, toDate,
+					RepayConstants.PEXC_EXTRACT);
 			logger.debug("No of Records Extracted : {}", headerList.size());
 
-			for (PresentmentHeader presentmentHeader : headerList) {
-				long id = presentmentHeader.getId();
+			for (PresentmentHeader ph : headerList) {
+				long id = ph.getId();
 
 				List<Long> includeList = presentmentDetailService.getIncludeList(id);
-				presentmentHeader.setIncludeList(includeList);
+				ph.setIncludeList(includeList);
 
-				logger.debug("No of Records in Include List  : {}", includeList.size());
+				logger.info("No of Records in Include List  : {}", includeList.size());
 
 				boolean searchIncludeList = presentmentDetailService.searchIncludeList(id, 0);
 
 				if (!searchIncludeList) {
 					logger.debug("No Records are there to Create Presentment Batch : {}", includeList.size());
-					return;
+					continue;
 				}
 
 				List<Long> excludeList = presentmentDetailService.getExcludeList(id);
-				presentmentHeader.setExcludeList(excludeList);
+				ph.setExcludeList(excludeList);
 
 				logger.debug("No of Records in Exclude List  : {}", excludeList.size());
+				
+				if (StringUtils.isEmpty(ph.getPartnerAcctNumber()) && ph.getPartnerBankId() == 0) {
+					Presentment pb = getPartnerBankId(ph.getLoanType());
+					ph.setPartnerAcctNumber(pb.getAccountNo());
+					ph.setPartnerBankId(pb.getPartnerBankId());
+				} else {
+					ph.setPartnerAcctNumber(ph.getPartnerAcctNumber());
+					ph.setPartnerBankId(ph.getPartnerBankId());
+				}
 
-				Presentment partnerBank = getPartnerBankId(presentmentHeader.getLoanType());
+				logger.debug("Presentment Batch Creation Process Started...");
 
-				logger.debug("Presentment Batch Creation Process Started...... ");
+				ph.setUserDetails(loggedInUser);
 
-				presentmentHeader.setPartnerAcctNumber(partnerBank.getAccountNo());
-				presentmentHeader.setPartnerBankId(partnerBank.getPartnerBankId());
-				presentmentHeader.setUserDetails(loggedInUser);
-
-				presentmentHeader.setUserAction(STATUS_SUBMIT);
-				presentmentDetailService.updatePresentmentDetails(presentmentHeader);
+				ph.setUserAction(STATUS_SUBMIT);
+				presentmentDetailService.updatePresentmentDetails(ph);
 
 				logger.debug("No of Presentment Records Created  : {}", includeList.size());
 
 				logger.debug("Presentment Batch Approval Process...... ");
 
-				presentmentHeader.setUserAction(STATUS_APPROVE);
-				presentmentDetailService.updatePresentmentDetails(presentmentHeader);
+				ph.setUserAction(STATUS_APPROVE);
+				presentmentDetailService.updatePresentmentDetails(ph);
 				logger.debug("No of Presentment Records Approved  : {}", includeList.size());
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
+		
+		logger.info("Presentment Extraction Process compled.");
 	}
 
-	// method for uploading presentment
 	public void uploadPresentment(String jobName) {
 		logger.debug(Literal.ENTERING);
 		try {
@@ -365,17 +374,20 @@ public class PresentmentJobService extends AbstractInterface {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.LEAVING);
 	}
 
-	public List<FinanceType> getFinanceTypeList() {
+	public List<FinanceType> getFinanceTypeList(String entityCode) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = null;
 		try {
-			sql = new StringBuilder("Select fintype, findivision");
-			sql.append(" from  RMTFinanceTypes ");
+			sql = new StringBuilder("Select rmt.fintype from rmtfinancetypes rmt ");
+			sql.append("inner join smtdivisiondetail smt on smt.divisionCode = rmt.findivision ");
+			sql.append("where smt.entitycode = :entityCode and rmt.finisactive = :active");
 
 			MapSqlParameterSource source = new MapSqlParameterSource();
+			source.addValue("entityCode", entityCode);
+			source.addValue("active", 1);
 			RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
 			return namedJdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
@@ -385,7 +397,7 @@ public class PresentmentJobService extends AbstractInterface {
 		return null;
 	}
 
-	public String getEntityCodes(String division) {
+	public List<String> getEntityCodes() {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = null;
 		try {
@@ -393,9 +405,8 @@ public class PresentmentJobService extends AbstractInterface {
 			sql.append("from  SMTDivisionDetail where divisioncode = :division ");
 
 			MapSqlParameterSource source = new MapSqlParameterSource();
-			source.addValue("division", division);
 
-			return namedJdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			return namedJdbcTemplate.queryForList(sql.toString(), source, String.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

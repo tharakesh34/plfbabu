@@ -436,7 +436,7 @@ public class MandateController {
 		mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		mandate.setIFSC(bankBranch.getIFSC());
 		mandate.setBankBranchID(bankBranch.getBankBranchID());
-		mandate.setInputDate(DateUtility.getAppDate());
+		mandate.setInputDate(SysParamUtil.getAppDate());
 		mandate.setLastMntBy(userDetails.getUserId());
 		mandate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		mandate.setSourceId(APIConstants.FINSOURCE_ID_API);

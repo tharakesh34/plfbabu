@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.finance.financemain;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,12 +61,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.AMedia;
+import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Checkbox;
@@ -83,7 +87,6 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.fasterxml.jackson.databind.cfg.ContextAttributes.Impl;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
@@ -91,6 +94,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.pennydrop.PennyDropDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BankDetail;
@@ -137,11 +141,14 @@ import com.pennant.webui.finance.payorderissue.PayOrderIssueDialogCtrl;
 import com.pennant.webui.finance.payorderissue.PayOrderIssueListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 import com.pennanttech.pff.external.BankAccountValidationService;
 
@@ -196,7 +203,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	//protected Textbox							phoneAreaCode;
 	protected Textbox phoneNumber;
 	protected East eastDocument;
-	protected Iframe docName;
+
+	protected Iframe disbDoc;
+	protected Button btnUploadDoc;
+	protected Textbox documentName;
+	private byte[] imagebyte;
 
 	protected Label label_liabilityHoldName;
 	protected Hbox hbox_liabilityHoldName;
@@ -291,6 +302,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Row row_disbdetails;
 	protected Row row_expensedetails;
 	private BankDetail bankdetail;
+	private DocumentDetailsDAO documentDetailsDAO;
 
 	/**
 	 * default constructor.<br>
@@ -548,11 +560,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 * when the "cancel" button is clicked. <br>
 	 * 
 	 * @param event
+	 * @throws InterruptedException
 	 */
-	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" + event.toString());
-		doCancel();
-		logger.debug("Leaving" + event.toString());
+	public void onClick$btnCancel(Event event) throws InterruptedException {
+		doDisbCancel();
 	}
 
 	/**
@@ -644,7 +655,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.btnSave.setVisible(true);
 				this.btnGetCustBeneficiary.setVisible(false);
 				readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_holdDisbIsActive"), this.holdDisbursement);
-
+				if (ImplementationConstants.DISB_PAID_CANCELLATION_ALLOW
+						&& DisbursementConstants.STATUS_PAID.equals(aFinAdvancePayments.getStatus())) {
+					this.btnDelete.setVisible(false);
+					this.btnSave.setVisible(false);
+					this.btnCancel.setVisible(true);
+				}
 			}
 			if (enqModule) {
 				doReadOnly();
@@ -930,16 +946,61 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	}
 
 	/**
-	 * Cancel the actual operation. <br>
-	 * <br>
-	 * Resets to the original status.<br>
+	 * Cancel a FinAdvancePaymentsDetail object from database.<br>
 	 * 
+	 * @throws InterruptedException
 	 */
-	private void doCancel() {
+	private void doDisbCancel() throws InterruptedException {
 		logger.debug("Entering");
-		doWriteBeanToComponents(this.finAdvancePayments.getBefImage());
-		doReadOnly();
-		this.btnCtrl.setInitEdit();
+		final FinAdvancePayments aFinAdvancePayments = new FinAdvancePayments();
+		BeanUtils.copyProperties(this.finAdvancePayments, aFinAdvancePayments);
+		String tranType = PennantConstants.TRAN_WF;
+
+		// Show a confirm box
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_cancel_this_record") + "\n"
+				+ Labels.getLabel("label_FinAdvancePaymentsDialog_PaymentSequence.value") + " : "
+				+ aFinAdvancePayments.getPaymentSeq();
+
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			if (StringUtils.isBlank(aFinAdvancePayments.getRecordType())) {
+				aFinAdvancePayments.setVersion(aFinAdvancePayments.getVersion() + 1);
+				aFinAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+
+				if (isWorkFlowEnabled()) {
+					aFinAdvancePayments.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+					aFinAdvancePayments.setNewRecord(true);
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFinAdvancePayments.getNextTaskId(),
+							aFinAdvancePayments);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
+				}
+			}
+
+			try {
+				if (isNewCustomer()) {
+					tranType = PennantConstants.TRAN_DEL;
+					AuditHeader auditHeader = newFinAdvancePaymentsProcess(aFinAdvancePayments, tranType);
+					auditHeader = ErrorControl.showErrorDetails(this.window_FinAdvancePaymentsDialog, auditHeader);
+					int retValue = auditHeader.getProcessStatus();
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+						if (!SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
+									null);
+						} else {
+							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
+									getPayOrderIssueDialogCtrl().payOrderIssueHeader.getvASRecordings());
+						}
+
+						closeDialog();
+					}
+				}
+
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
+			}
+
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1098,9 +1159,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		if (advPayList != null && !advPayList.isEmpty()) {
 			for (FinAdvancePayments advPay : advPayList) {
-				if (StringUtils.equals(advPay.getStatus(), DisbursementConstants.STATUS_CANCEL)
-						|| StringUtils.equals(advPay.getStatus(), DisbursementConstants.STATUS_REJECTED)
-						|| StringUtils.equals(PennantConstants.RCD_DEL, advPay.getRecordType())) {
+				String status = advPay.getStatus();
+				if (DisbursementConstants.STATUS_CANCEL.equals(status)
+						|| DisbursementConstants.STATUS_REJECTED.equals(status)
+						|| DisbursementConstants.STATUS_PAID_BUT_CANCELLED.equals(status)
+						|| PennantConstants.RCD_DEL.equals(advPay.getRecordType())) {
 					continue;
 				}
 				if (StringUtils.equalsIgnoreCase(advPay.getPaymentDetail(), DisbursementConstants.PAYMENT_DETAIL_VAS)) {
@@ -1145,14 +1208,40 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} else {
 			this.pennyDropResult.setValue("");
 		}
+		setDisbDocument(aFinAdvnancePayments);
 
-		//eastDocument
+		logger.debug("Leaving");
+	}
 
-		AMedia media = externalDocumentManager.getAMedia(documentDetails);
-		if (media != null) {
-			this.docName.setContent(media);
+	private void setDisbDocument(FinAdvancePayments aFinAdvnancePayments) {
+		if (aFinAdvnancePayments.getDocImage() == null) {
+			///eastDocument
+			AMedia media = externalDocumentManager.getAMedia(documentDetails);
+			if (media != null) {
+				this.disbDoc.setContent(media);
+				eastDocument.setVisible(true);
+				eastDocument.setTitle(documentDetails.getDocName());
+			} else {
+				String referenceId = String.valueOf(aFinAdvnancePayments.getPaymentId());
+				DocumentDetails documentDetails = documentDetailsDAO.getDocumentDetails(referenceId,
+						DisbursementConstants.DISB_DOC_TYPE, DisbursementConstants.DISB_MODULE,
+						TableType.MAIN_TAB.getSuffix());
+				if (documentDetails != null) {
+					AMedia amedia = externalDocumentManager.getAMedia(documentDetails);
+					eastDocument.setVisible(true);
+					imagebyte = amedia.getByteData();
+					this.disbDoc.setContent(amedia);
+					this.documentName.setValue(documentDetails.getDocName());
+				}
+			}
+		}
+		AMedia amedia = null;
+		if (aFinAdvnancePayments.getDocImage() != null) {
+			amedia = new AMedia(aFinAdvnancePayments.getDocumentName(), null, null, aFinAdvnancePayments.getDocImage());
+			imagebyte = aFinAdvnancePayments.getDocImage();
+			this.disbDoc.setContent(amedia);
+			this.documentName.setValue(aFinAdvnancePayments.getDocumentName());
 			eastDocument.setVisible(true);
-			eastDocument.setTitle(documentDetails.getDocName());
 		}
 
 		ArrayList<ValueLabel> vasReferenceList = null;
@@ -1596,6 +1685,20 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			aFinAdvancePayments.setVasReference(PennantConstants.List_Select);
 		}
 
+		// DocumentName
+		try {
+			aFinAdvancePayments.setDocumentName(this.documentName.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Document Image
+		try {
+			aFinAdvancePayments.setDocImage(this.imagebyte);
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		aFinAdvancePayments.setLinkedTranId(0);
 		doRemoveValidation();
 		doClearMessage();
@@ -1901,6 +2004,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.city.setValue("");
 		this.transactionRef.setValue("");
 		this.valueDate.setText("");
+		this.documentName.setValue("");
 		logger.debug("Leaving");
 	}
 
@@ -2644,6 +2748,64 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		return isDuplicate;
 	}
 
+	// Process for Document uploading
+	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
+		logger.debug("Entering");
+
+		Media media = event.getMedia();
+
+		List<DocType> documents = new ArrayList<>();
+		documents.add(DocType.PDF);
+		documents.add(DocType.JPEG);
+		documents.add(DocType.JPG);
+		documents.add(DocType.PNG);
+
+		if (!MediaUtil.isValid(media, documents)) {
+			MessageUtil.showError(
+					Labels.getLabel("upload_document_invalid", new String[] { "pdf or image(.jpeg/jpg/png)" }));
+			return;
+		}
+
+		browseDoc(media, this.documentName);
+		eastDocument.setVisible(true);
+		logger.debug("Leaving");
+	}
+
+	// Browse for Document uploading
+	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
+		logger.debug("Entering");
+
+		try {
+			String docType = "";
+			if (MediaUtil.isPdf(media)) {
+				docType = PennantConstants.DOC_TYPE_PDF;
+			} else if (MediaUtil.isImage(media)) {
+				docType = PennantConstants.DOC_TYPE_IMAGE;
+			}
+
+			// Process for Correct Format Document uploading
+			String fileName = media.getName();
+			byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
+			// Data Fill by QR Bar Code Reader
+			if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
+				this.disbDoc.setContent(
+						new AMedia("document.pdf", "pdf", "application/pdf", new ByteArrayInputStream(ddaImageData)));
+
+			} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
+				this.disbDoc.setContent(media);
+			}
+			this.disbDoc.setVisible(true);
+			textbox.setValue(fileName);
+			setImagebyte(media.getByteData());
+			finAdvancePayments.setDocumentName(fileName);
+			finAdvancePayments.setDocImage(getImagebyte());
+			finAdvancePayments.setDocType(docType);
+		} catch (Exception ex) {
+			logger.error("Exception: ", ex);
+		}
+		logger.debug("Leaving");
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -2843,4 +3005,21 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			}
 		}
 	}
+
+	public byte[] getImagebyte() {
+		return imagebyte;
+	}
+
+	public void setImagebyte(byte[] imagebyte) {
+		this.imagebyte = imagebyte;
+	}
+
+	public DocumentDetailsDAO getDocumentDetailsDAO() {
+		return documentDetailsDAO;
+	}
+
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
+
 }

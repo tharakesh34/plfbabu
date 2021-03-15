@@ -14,6 +14,14 @@ public class ReasonDetails implements Serializable {
 	@XmlElement
 	private String reasonCode;
 
+	public ReasonDetails copyEntity() {
+		ReasonDetails entity = new ReasonDetails();
+		entity.setHeaderId(this.headerId);
+		entity.setReasonId(this.reasonId);
+		entity.setReasonCode(this.reasonCode);
+		return entity;
+	}
+
 	public boolean isNew() {
 		return false;
 	}

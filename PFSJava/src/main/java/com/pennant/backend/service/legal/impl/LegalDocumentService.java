@@ -271,7 +271,7 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 				if ((legalDocument.getDocumentReference() == 0
 						|| legalDocument.getDocumentReference() == Long.MIN_VALUE)
 						&& legalDocument.getDocImage() != null) {
-
+					legalDocument.setCustId(legalDetail.getCustId());
 					legalDocument.setFinReference(legalDetail.getLoanReference());
 					saveDocument(DMSModule.FINANCE, DMSModule.LEGAL, legalDocument);
 

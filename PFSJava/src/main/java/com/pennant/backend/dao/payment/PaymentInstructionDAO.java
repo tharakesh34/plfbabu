@@ -68,4 +68,8 @@ public interface PaymentInstructionDAO extends BasicCrudDao<PaymentInstruction> 
 	int getAssignedPartnerBankCount(long partnerBankId, String type);
 
 	void updateStatus(PaymentInstruction instruction, String tableType);
+
+	long getPymntsCustId(long paymentId);
+
+	boolean isInstructionInProgress(String finReference);
 }

@@ -900,6 +900,10 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			dataMap.put(feeTypeCode + "_UGST_W", ugstTax.getWaivedTax());
 			dataMap.put(feeTypeCode + "_CESS_W", cessTax.getWaivedTax());
 
+			// TDS
+			dataMap.put(finFeeDetail.getFeeTypeCode() + "_TDS_N", finFeeDetail.getNetTDS());
+			dataMap.put(finFeeDetail.getFeeTypeCode() + "_TDS_P", finFeeDetail.getPaidTDS());
+
 			totPaidAmt = totPaidAmt.add(finFeeDetail.getPaidAmount());
 		}
 

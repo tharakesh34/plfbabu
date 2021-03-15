@@ -49,6 +49,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -65,6 +66,7 @@ public class ReferenceGenerator implements Serializable {
 	//private static NextidviewDAO	nextidviewDAO;
 	private static final String DEFAULT_FORMAT = "BBBB_PPP_SSSSSSS";
 	private static final String BRANCH = "B";
+	private static final String SWIFT_BRANCH = "A";
 	private static final String DIVISION = "D";
 	private static final String PRODUCT = "P";
 	private static final String LOANTYPE = "L";
@@ -93,6 +95,7 @@ public class ReferenceGenerator implements Serializable {
 
 		StringBuilder lonRef = new StringBuilder(StringUtils.trimToEmpty(prefix));
 		String branchCode = StringUtils.trimToEmpty(financeMain.getFinBranch());
+		String swiftbranchCode = StringUtils.trimToEmpty(financeMain.getSwiftBranchCode());
 		String productCode = StringUtils.trimToEmpty(financeMain.getFinCategory());
 		String divisionCode = StringUtils.trimToEmpty(financeType.getFinDivision());
 		String finType = StringUtils.trimToEmpty(financeType.getFinType());
@@ -104,6 +107,11 @@ public class ReferenceGenerator implements Serializable {
 				if (formatCode.startsWith(BRANCH)) {
 					appendLoanRef(lonRef, branchCode, formatCode);
 				}
+
+				if (ImplementationConstants.FINREFERENCE_ALW_SWIFT_CODE && formatCode.startsWith(SWIFT_BRANCH)) {
+					appendLoanRef(lonRef, swiftbranchCode, formatCode);
+				}
+
 				if (formatCode.startsWith(LOANTYPE)) {
 					appendLoanRef(lonRef, finType, formatCode);
 				}

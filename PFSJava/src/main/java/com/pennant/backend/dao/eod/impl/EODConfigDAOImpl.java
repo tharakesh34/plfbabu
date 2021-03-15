@@ -48,6 +48,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -341,7 +342,9 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 					return rs.getString("EODStartJobFrequency");
 				}
 			});
-
+			if (CollectionUtils.isEmpty(eodFrequency)) {
+				return null;
+			}
 			return eodFrequency.get(0);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
@@ -449,7 +452,9 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 					return rs.getString("ReminderFrequency");
 				}
 			});
-
+			if (CollectionUtils.isEmpty(eodFrequency)) {
+				return null;
+			}
 			return eodFrequency.get(0);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
@@ -477,7 +482,9 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 					return rs.getString("DelayFrequency");
 				}
 			});
-
+			if (CollectionUtils.isEmpty(eodFrequency)) {
+				return null;
+			}
 			return eodFrequency.get(0);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);

@@ -594,7 +594,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		aeEvent.setPostingUserBranch(postBranch);
 		aeEvent.setValueDate(advise.getValueDate());
-		aeEvent.setPostDate(advise.getPostDate());
+		aeEvent.setPostDate(SysParamUtil.getAppDate());
 		aeEvent.setEntityCode(financeMain.getEntityCode());
 
 		aeEvent.setBranch(financeMain.getFinBranch());

@@ -91,6 +91,32 @@ public class IRRFinanceType extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public IRRFinanceType copyEntity() {
+		IRRFinanceType entity = new IRRFinanceType();
+		entity.setIRRID(this.iRRID);
+		entity.setFinType(this.finType);
+		entity.setIRRIDName(this.iRRIDName);
+		entity.setFinTypeName(this.finTypeName);
+		entity.setIrrCode(this.irrCode);
+		entity.setIrrCodeDesc(this.irrCodeDesc);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("iRRIDName");

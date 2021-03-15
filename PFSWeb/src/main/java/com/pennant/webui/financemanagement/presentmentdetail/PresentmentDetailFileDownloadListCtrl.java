@@ -34,6 +34,7 @@ import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -88,7 +89,7 @@ public class PresentmentDetailFileDownloadListCtrl extends GFCBaseListCtrl<FileD
 				listBoxFileDownload, pagingFileDownloadList);
 		setItemRender(new FileDownloadListModelItemRenderer());
 
-		registerField("ID");
+		registerField("ID",SortOrder.DESC);
 		registerField("FileLocation");
 		registerField("FileName");
 		registerField("Status");

@@ -351,6 +351,10 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finStatus_header.setValue("Matured");
 		}
 
+		if (StringUtils.contains(enquiry.getRecordStatus(), "Reject") && !enquiry.isFinIsActive()) {
+			this.finStatus_header.setValue(Labels.getLabel("label_Rejected"));
+		}
+
 		String closingStatus = StringUtils.trimToEmpty(enquiry.getClosingStatus());
 		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Normal");

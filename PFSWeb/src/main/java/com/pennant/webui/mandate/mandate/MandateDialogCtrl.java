@@ -140,6 +140,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -445,7 +446,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.jointAccHolderName.setMaxlength(50);
 		this.startDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.expiryDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		this.inputDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.inputDate.setFormat(DateFormat.LONG_DATE_TIME.getPattern());
 
 		this.maxLimit.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.maxLimit.setScale(ccyFormatter);
@@ -1036,7 +1037,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aMandate.isNew()) {
 			this.btnCtrl.setInitNew();
-			this.inputDate.setValue(DateUtility.getAppDate());
+			Date appDate = SysParamUtil.getAppDate();
+			Date sysDate = DateUtil.getSysDate();
+
+			if (DateUtil.compare(appDate, sysDate) == 0) {
+				this.inputDate.setValue(sysDate);
+			} else {
+				this.inputDate.setValue(appDate);
+			}
 			doEdit();
 			// setFocus
 			this.custID.focus();
@@ -1453,13 +1461,21 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.approvalID.setValue(aMandate.getApprovalID());
 		this.recordStatus.setValue(aMandate.getRecordStatus());
 		if (aMandate.isNew()) {
-			this.inputDate.setValue(DateUtility.getAppDate());
+			Date appDate = SysParamUtil.getAppDate();
+			Date sysDate = DateUtil.getSysDate();
+			
+			if (DateUtil.compare(appDate, sysDate) == 0) {
+				this.inputDate.setValue(sysDate);
+			} else {
+				this.inputDate.setValue(appDate);
+			}
+			
 			this.active.setChecked(true);
 		} else {
 			this.inputDate.setValue(aMandate.getInputDate());
 		}
 
-		visibleDocFrame(aMandate.getDocImage());
+		//visibleDocFrame(aMandate.getDocImage());
 
 		logger.debug("Leaving");
 	}
@@ -1593,6 +1609,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					aMandate.getExternalRef(), custCif);
 			if (media != null) {
 				mandatedoc.setContent(media);
+			} else {
+				logger.info(
+						"Document is not found in External DMS for the specified Docref:" + aMandate.getExternalRef());
 			}
 		}
 		AMedia amedia = null;
@@ -1754,9 +1773,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 		// InputDate
 		try {
-
-			aMandate.setInputDate(
-					DateUtility.getDate(DateUtility.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
+			aMandate.setInputDate(this.inputDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

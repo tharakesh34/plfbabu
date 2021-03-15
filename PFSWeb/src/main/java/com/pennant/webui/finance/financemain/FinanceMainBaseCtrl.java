@@ -7921,7 +7921,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Finance Fee Details
 		if (finFeeDetailListCtrl != null) {
-			finFeeDetailListCtrl.processFeeDetails(aFinanceDetail.getFinScheduleData());
+			finFeeDetailListCtrl.processFeeDetails(aFinanceDetail.getFinScheduleData(), true);
 		}
 
 		// Document Details Saving
@@ -14713,6 +14713,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		String recordStatus = aFinanceMain.getRecordStatus();
+
 		try {
 
 			if (this.maturityDate.getValue() != null && this.numberOfTerms.isReadonly()) {
@@ -14816,8 +14819,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 
-				if (aFinanceMain.getRecordStatus() == null
-						|| PennantConstants.RCD_STATUS_SAVED.equals(aFinanceMain.getRecordStatus())) {
+				if (!PennantConstants.RCD_STATUS_SUBMITTED.equals(recordStatus)
+						&& !PennantConstants.RCD_STATUS_APPROVED.equals(recordStatus)) {
 					aFinanceMain.setNumberOfTerms(noterms);
 				} else {
 					aFinanceMain.setNumberOfTerms(FrequencyUtil.getTerms(aFinanceMain.getRepayFrq(),
@@ -15686,8 +15689,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
 						financeDisbursement.setQuickDisb(aFinanceSchData.getFinanceMain().isQuickDisb());
 					} else {
-						if (StringUtils.isBlank(aFinanceMain.getRecordStatus()) || StringUtils
-								.equals(PennantConstants.RCD_STATUS_APPROVED, aFinanceMain.getRecordStatus())) {
+						if (StringUtils.isBlank(recordStatus)
+								|| PennantConstants.RCD_STATUS_APPROVED.equals(recordStatus)) {
 							for (FinServiceInstruction finServiceInstruction : instructions) {
 								if (DateUtility.compare(finServiceInstruction.getFromDate(),
 										financeDisbursement.getDisbDate()) == 0) {

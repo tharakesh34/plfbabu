@@ -144,14 +144,15 @@ public class FinReceiptData implements Serializable {
 		entity.setSourceId(this.sourceId);
 		entity.setTotReceiptAmount(this.totReceiptAmount);
 		entity.setPaidNow(this.paidNow);
-		entity.setRepayMain(this.repayMain);
-		entity.setAllocationMap(this.allocationMap);
-		entity.setWaiverMap(this.waiverMap);
-		entity.setAllocationDescMap(this.allocationDescMap);
-		entity.setReceiptHeader(this.receiptHeader);
+		entity.setRepayMain(this.repayMain == null ? null : this.repayMain.copyEntity());
+		this.allocationMap.entrySet().stream().forEach(e -> entity.getAllocationMap().put(e.getKey(), e.getValue()));
+		this.waiverMap.entrySet().stream().forEach(e -> entity.getWaiverMap().put(e.getKey(), e.getValue()));
+		this.allocationDescMap.entrySet().stream()
+				.forEach(e -> entity.getAllocationDescMap().put(e.getKey(), e.getValue()));
+		entity.setReceiptHeader(this.receiptHeader == null ? null : this.receiptHeader.copyEntity());
 		entity.setFinanceDetail(this.financeDetail);
-		entity.setRepledgeDetail(this.repledgeDetail);
-		entity.setPromotion(this.promotion);
+		entity.setRepledgeDetail(this.repledgeDetail == null ? null : this.repledgeDetail.copyEntity());
+		entity.setPromotion(this.promotion == null ? null : this.promotion.copyEntity());
 		entity.setCashierTransaction(this.cashierTransaction);
 		entity.setCalReq(this.isCalReq);
 		entity.setExcessAvailable(this.excessAvailable);
@@ -171,13 +172,20 @@ public class FinReceiptData implements Serializable {
 		entity.setPresentment(this.isPresentment);
 		entity.setForeClosure(this.isForeClosure);
 		entity.setActualReceiptAmount(this.actualReceiptAmount);
-		entity.setAllocList(this.allocList);
-		entity.setOrgFinPftDtls(this.orgFinPftDtls);
-		entity.setFinFeeDetails(this.finFeeDetails);
-		entity.setInProcRchList(this.inProcRchList);
-		entity.setInProcRadList(this.inProcRadList);
-		entity.setErrorDetails(this.errorDetails);
-		entity.setInProcRepayments(this.inProcRepayments);
+		this.allocList.stream().forEach(e -> entity.getAllocList().add(e == null ? null : e.copyEntity()));
+		entity.setOrgFinPftDtls(this.orgFinPftDtls == null ? null : this.orgFinPftDtls.copyEntity());
+		this.finFeeDetails.stream().forEach(e -> entity.getFinFeeDetails().add(e == null ? null : e.copyEntity()));
+		if (inProcRchList != null) {
+			entity.setInProcRchList(new ArrayList<FinReceiptHeader>());
+			this.inProcRchList.stream().forEach(e -> entity.getInProcRchList().add(e == null ? null : e.copyEntity()));
+		}
+		if (inProcRadList != null) {
+			entity.setInProcRadList(new ArrayList<ReceiptAllocationDetail>());
+			this.inProcRadList.stream().forEach(e -> entity.getInProcRadList().add(e == null ? null : e.copyEntity()));
+		}
+		this.errorDetails.stream().forEach(e -> entity.getErrorDetails().add(e));
+		this.inProcRepayments.stream()
+				.forEach(e -> entity.getInProcRepayments().add(e == null ? null : e.copyEntity()));
 		entity.setEventFeePercent(this.isEventFeePercent);
 		entity.setEarlySettle(this.isEarlySettle);
 		entity.setAdjSchedule(this.isAdjSchedule);
@@ -185,10 +193,10 @@ public class FinReceiptData implements Serializable {
 		entity.setNewEventFeePercent(this.newEventFeePercent);
 		entity.setInitiation(this.isInitiation);
 		entity.setSetPaidValues(this.setPaidValues);
-		entity.setManAdvList(this.manAdvList);
-		entity.setExcessPayables(this.excessPayables);
+		this.manAdvList.stream().forEach(e -> entity.getManAdvList().add(e == null ? null : e.copyEntity()));
+		this.excessPayables.stream().forEach(e -> entity.getExcessPayables().add(e == null ? null : e.copyEntity()));
 		entity.setTdPriBal(this.tdPriBal);
-		entity.setLppFeeType(this.lppFeeType);
+		entity.setLppFeeType(this.lppFeeType == null ? null : this.lppFeeType.copyEntity());
 		entity.setForeClosureEnq(this.isForeClosureEnq);
 		return entity;
 	}

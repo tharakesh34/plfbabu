@@ -43,6 +43,7 @@
 
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -56,7 +57,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
  * Model class for the <b>FinanceMain table</b>.<br>
  * 
  */
-public class FinanceEnquiry implements java.io.Serializable {
+public class FinanceEnquiry implements Serializable {
 
 	private static final long serialVersionUID = -7702107666101609103L;
 	private String finReference = null;
@@ -139,6 +140,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private BigDecimal totalCpz = BigDecimal.ZERO;
 	private boolean finOcrRequired;
 	private String loanStsDesc;
+	private String recordStatus;
 
 	public FinanceEnquiry() {
 
@@ -180,6 +182,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 		excludeFields.add("excessAmtPaid");
 		excludeFields.add("totalCpz");
 		excludeFields.add("loanStsDesc");
+		excludeFields.add("recordStatus");
 		return excludeFields;
 	}
 
@@ -827,4 +830,11 @@ public class FinanceEnquiry implements java.io.Serializable {
 		this.loanStsDesc = loanStsDesc;
 	}
 
+	public String getRecordStatus() {
+		return recordStatus;
+	}
+
+	public void setRecordStatus(String recordStatus) {
+		this.recordStatus = recordStatus;
+	}
 }

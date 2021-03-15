@@ -624,4 +624,14 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		return null;
 	}
 
+	@Override
+	public boolean isPartnerBankCodeExistsByEntity(String entity, String partnerbankCode, String type) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(*) FROM PARTNERBANKS");
+		sql.append(type);
+		sql.append(" WHERE ENTITY = ? AND PARTNERBANKCODE = ?");
+
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { entity, partnerbankCode },
+				Integer.class) > 0 ? true : false;
+	}
 }

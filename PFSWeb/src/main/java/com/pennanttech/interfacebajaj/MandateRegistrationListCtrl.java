@@ -52,6 +52,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
@@ -89,6 +91,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
@@ -97,6 +100,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
@@ -180,6 +184,9 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	protected Listbox sortOperator_btnbranchDetails;
 	protected ExtendedCombobox entityCode;
 	protected Listbox sortOperator_entityCode;
+	protected ExtendedCombobox partnerBank;
+	protected Listbox sortOperator_partnerBank;
+	protected Row row_partnerBank;
 	private transient MandateService mandateService;
 	private transient boolean validationOn;
 	private Map<Long, String> mandateIdMap = new HashMap<Long, String>();
@@ -241,6 +248,10 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		registerField("maxLimit", listheader_Amount);
 		registerField("custShrtName", listheader_CustName, SortOrder.NONE);
 		registerField("entityCode", entityCode, SortOrder.NONE, sortOperator_entityCode, Operators.STRING);
+		if (ImplementationConstants.MANDATE_PTNRBNK_IN_DWNLD) {
+			registerField("PartnerBankId");
+			registerField("PartnerBankCode", partnerBank, SortOrder.NONE, sortOperator_partnerBank, Operators.STRING);
+		}
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -277,10 +288,59 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
 
+		if (ImplementationConstants.MANDATE_PTNRBNK_IN_DWNLD) {
+			this.row_partnerBank.setVisible(true);
+
+			this.partnerBank.setMaxlength(8);
+			this.partnerBank.setTextBoxWidth(135);
+			this.partnerBank.setMandatoryStyle(false);
+			this.partnerBank.setModuleName("PartnerBank");
+			this.partnerBank.setValueColumn("PartnerBankCode");
+			this.partnerBank.setDescColumn("PartnerBankName");
+			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+			this.partnerBank.setButtonDisabled(true);
+		}
+
 		if (ImplementationConstants.MANDATE_AUTO_DOWNLOAD
 				&& SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_DOWNLOAD_JOB_ENABLED)) {
 			this.btnDownload.setDisabled(true);
 		}
+	}
+
+	/**
+	 * Based On Entity field,Partner Bank will be Filtered
+	 * 
+	 * @param event
+	 */
+	public void onFulfill$entityCode(Event event) {
+		logger.debug("Entering");
+
+		Object dataObject = entityCode.getObject();
+		if (dataObject instanceof String) {
+			this.partnerBank.setButtonDisabled(true);
+			this.partnerBank.setMandatoryStyle(false);
+			this.partnerBank.setValue("");
+			this.partnerBank.setDescription("");
+		} else {
+			Entity details = (Entity) dataObject;
+			this.partnerBank.setObject("");
+			this.partnerBank.setValue("");
+			this.partnerBank.setDescription("");
+			if (details != null) {
+				this.partnerBank.setButtonDisabled(false);
+				this.partnerBank.setMandatoryStyle(true);
+				Filter[] filters = new Filter[1];
+				filters[0] = new Filter("Entity", details.getEntityCode(), Filter.OP_EQUAL);
+				this.partnerBank.setFilters(filters);
+			} else {
+				this.partnerBank.setValue("");
+				this.partnerBank.setDescription("");
+				this.partnerBank.setButtonDisabled(true);
+				this.partnerBank.setMandatoryStyle(false);
+			}
+
+		}
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -366,14 +426,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			lc.setParent(item);
 			lc = new Listcell(mandate.getAccType());
 			lc.setParent(item);
-			if (mandate.getMaxLimit() != null) {
-				lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
-						CurrencyUtil.getFormat(mandate.getMandateCcy())));
-			} else {
-				lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
-						CurrencyUtil.getFormat(mandate.getMandateCcy())));
-			}
-
+			lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
+					CurrencyUtil.getFormat(mandate.getMandateCcy())));
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 			lc.setParent(item);
@@ -556,6 +610,19 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			wve.add(we);
 		}
 
+		try {
+			if (StringUtils.isNotEmpty(this.entityCode.getValidatedValue())) {
+				if (!this.partnerBank.isReadonly() && ImplementationConstants.MANDATE_PTNRBNK_IN_DWNLD) {
+					this.partnerBank.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_DisbursementList_PartnerBank.value"),
+									PennantRegularExpressions.REGEX_DESCRIPTION, true));
+					this.partnerBank.getValue();
+				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 
 		if (wve.size() > 0) {
@@ -578,6 +645,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		this.toDate.setConstraint("");
 		this.entityCode.setConstraint("");
 		this.entityCode.setErrorMessage("");
+		this.partnerBank.setConstraint("");
+		this.partnerBank.setErrorMessage("");
 		logger.debug("Leaving ");
 
 	}
@@ -598,6 +667,12 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		this.toDate.setValue(null);
 		this.entityCode.setValue("");
 		this.entityCode.setDescColumn("");
+
+		this.partnerBank.setButtonDisabled(true);
+		this.partnerBank.setMandatoryStyle(false);
+		this.partnerBank.setValue("");
+		this.partnerBank.setDescColumn("");
+		
 
 		this.listheader_AccNumber.setSort("none");
 		this.listheader_AccType.setSort("none");

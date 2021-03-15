@@ -48,7 +48,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -127,7 +126,6 @@ import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.FeeType;
-import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -1745,7 +1743,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rch.getReceiptMode())) {
 			rch.setRealizationDate(rch.getValueDate());
-			rch.setReceivedDate(rch.getValueDate());
+			//rch.setReceivedDate(rch.getValueDate());
+			rch.setReceivedDate(rch.getReceiptDate());
 		}
 
 		finReceiptHeaderDAO.generatedReceiptID(rch);
@@ -2594,6 +2593,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			auditDetails.addAll(details);
 		}
 
+		//Dedup Check
+		if (!RepayConstants.PAYSTATUS_BOUNCE.equals(repayData.getReceiptHeader().getReceiptModeStatus())
+				&& !RepayConstants.PAYSTATUS_CANCEL.equals(repayData.getReceiptHeader().getReceiptModeStatus())) {
+			FinServiceInstruction fsi = new FinServiceInstruction();
+			FinReceiptHeader receiptHeader = repayData.getReceiptHeader();
+			FinReceiptDetail finReceiptDetail = receiptHeader.getReceiptDetails().get(0);
+			fsi.setFinReference(receiptHeader.getReference());
+			fsi.setValueDate(receiptHeader.getValueDate());
+			fsi.setAmount(receiptHeader.getReceiptAmount());
+			fsi.setTransactionRef(finReceiptDetail.getTransactionRef());
+			fsi.setPaymentMode(receiptHeader.getReceiptMode());
+			List<ErrorDetail> errors = dedupCheck(fsi);
+			if (CollectionUtils.isNotEmpty(errors)) {
+				auditHeader.setErrorDetails(errors.get(0));
+			}
+		}
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
@@ -2618,6 +2634,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinReceiptData repayData = (FinReceiptData) auditDetail.getModelData();
 		FinReceiptHeader finReceiptHeader = repayData.getReceiptHeader();
+		FinReceiptData receiptData = new FinReceiptData();
+
+		receiptData = getFinReceiptDataById(finReceiptHeader.getReference(), AccountEventConstants.ACCEVENT_EARLYPAY,
+				FinanceConstants.FINSER_EVENT_RECEIPT, "");
+		FinanceDetail financeDetail = receiptData.getFinanceDetail();
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceProfitDetail finPftDetail = finScheduleData.getFinPftDeatil();
 
 		FinReceiptHeader tempFinReceiptHeader = null;
 		if (finReceiptHeader.isWorkflow()) {
@@ -2773,6 +2796,22 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new ErrorDetail(PennantConstants.KEY_FIELD, "30538",
 		 * errParm, valueParm), usrLanguage)); } }
 		 */
+
+		String recordStatus = finReceiptHeader.getRecordStatus();
+		if ((StringUtils.equals(recordStatus, PennantConstants.RCD_STATUS_SAVED)
+				|| StringUtils.equals(recordStatus, PennantConstants.RCD_STATUS_SUBMITTED)
+				|| StringUtils.equals(recordStatus, PennantConstants.RCD_STATUS_APPROVED))) {
+
+			String[] parms = new String[2];
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
+				Date prvSchdDate = finPftDetail.getPrvRpySchDate();
+				if (finReceiptHeader.getValueDate().compareTo(prvSchdDate) < 0) {
+					parms[0] = DateUtility.formatToLongDate(finReceiptHeader.getValueDate());
+					parms[1] = DateUtility.formatToLongDate(prvSchdDate);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0012", parms)));
+				}
+			}
+		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !finReceiptHeader.isWorkflow()) {
@@ -3309,7 +3348,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-			// validate resioncode;
 			if (fsi.getEarlySettlementReason() != null && fsi.getEarlySettlementReason() > 0) {
 				ReasonCode reasonCode = reasonCodeDAO.getReasonCode(fsi.getEarlySettlementReason(), "_AView");
 				if (reasonCode == null) {
@@ -3446,6 +3484,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return receiptData;
 		}
 
+		//Dedup Check
+		finScheduleData.setErrorDetails(dedupCheck(fsi));
+		if (CollectionUtils.isNotEmpty(finScheduleData.getErrorDetails())) {
+			logger.info("Dedup Validation Failed.");
+			return receiptData;
+		}
+
 		if (fsi.isReceiptUpload() && !StringUtils.equals(fsi.getReqType(), "Post")) {
 			logger.debug("Leaving");
 			return receiptData;
@@ -3518,6 +3563,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String parm0 = null;
 		String parm1 = null;
 		boolean autoReceipt = false;
+
+		Date appDate = SysParamUtil.getAppDate();
+
 		if (financeDetail.getFinScheduleData().getFinPftDeatil() != null
 				&& StringUtils.equals(FinanceConstants.PRODUCT_CD,
 						financeDetail.getFinScheduleData().getFinPftDeatil().getFinCategory())
@@ -3692,6 +3740,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
+		if (methodCtg == 2) {
+			Date waiverDate = getLastWaiverDate(financeDetail.getFinReference(), appDate, fsi.getValueDate());
+			if (waiverDate != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = DateUtil.formatToLongDate(appDate);
+				valueParm[1] = DateUtil.formatToLongDate(waiverDate);
+
+				finScheduleData = setErrorToFSD(finScheduleData, "RU0099", valueParm[0], valueParm[1]);
+				return receiptData;
+			}
+		}
 		receiptData.getReceiptHeader().setReceivedFrom(fsi.getReceivedFrom());
 
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
@@ -4161,7 +4220,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		if (rch.getValueDate() == null) {
-			rch.setValueDate(rcd.getReceivedDate());
+			//rch.setValueDate(rcd.getReceivedDate());
+			rch.setValueDate(rcd.getValueDate());
 		}
 
 		String finReference = fsi.getFinReference();
@@ -4197,11 +4257,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// ================================================================================
 		// Back value validation will be with application date and received date
 		// validation with derived date
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
-			if (rcd.getReceivedDate().compareTo(derivedAppDate) > 0) {
-				finScheduleData = setErrorToFSD(finScheduleData, "RU0006", DateUtility.formatToLongDate(appDate));
-				return receiptData;
-			}
+		if (rcd.getReceivedDate().compareTo(derivedAppDate) > 0) {
+			finScheduleData = setErrorToFSD(finScheduleData, "RU0006", DateUtility.formatToLongDate(appDate));
+			return receiptData;
 		}
 
 		// Early settlement with Cheque/DD then value date must be <= derived
@@ -4249,39 +4307,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
-			if (methodCtg == 1 || methodCtg == 2) {
-				if (fsi.getValueDate().compareTo(DateUtility.addDays(DateUtility.getMonthStart(appDate), -1)) < 0) {
-					parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
-					parm1 = DateUtility.formatToLongDate(DateUtility.addDays(DateUtility.getMonthStart(appDate), -1));
-					finScheduleData = setErrorToFSD(finScheduleData, "RU0010", parm0, parm1);
-					return receiptData;
-				}
-
-				// Not allowing to do PP/ES before last Installment Date
-				List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
-				if (CollectionUtils.isNotEmpty(schdList)) {
-					Date curSchDate = schdList.get(0).getSchDate();
-					for (int i = 1; i <= schdList.size() - 1; i++) {
-
-						if (!schdList.get(i).isRepayOnSchDate() && !schdList.get(i).isPftOnSchDate()) {
-							continue;
-						}
-
-						if (schdList.get(i).getSchDate().compareTo(appDate) > 0) {
-							break;
-						}
-						curSchDate = schdList.get(i).getSchDate();
-					}
-
-					if (curSchDate != null && fsi.getValueDate().compareTo(curSchDate) < 0) {
-						parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
-						parm1 = DateUtility.formatToLongDate(curSchDate);
-						// parm2 = String.valueOf(paramDays);
-						finScheduleData = setErrorToFSD(finScheduleData, "RU0010", parm0, parm1);
-						return receiptData;
-					}
-				}
+		if (methodCtg == 1 || methodCtg == 2) {
+			if (fsi.getValueDate().compareTo(DateUtility.addDays(DateUtility.getMonthStart(appDate), -1)) < 0) {
+				parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
+				parm1 = DateUtility.formatToLongDate(DateUtility.addDays(DateUtility.getMonthStart(appDate), -1));
+				// parm2 = String.valueOf(paramDays);
+				finScheduleData = setErrorToFSD(finScheduleData, "RU0010", parm0, parm1);
+				return receiptData;
 			}
 		}
 
@@ -4294,45 +4326,28 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				finScheduleData = setErrorToFSD(finScheduleData, "RU0013", parm0, parm1);
 				return receiptData;
 			}
-			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
-				Date prvSchdDate = finPftDetail.getPrvRpySchDate();
-				if (fsi.getValueDate().compareTo(prvSchdDate) < 0) {
-					parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
-					parm1 = DateUtility.formatToLongDate(prvSchdDate);
-					finScheduleData = setErrorToFSD(finScheduleData, "RU0012", parm0, parm1);
-					return receiptData;
-				}
+
+			Date prvSchdDate = finPftDetail.getPrvRpySchDate();
+			if (fsi.getValueDate().compareTo(prvSchdDate) < 0) {
+				parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
+				parm1 = DateUtility.formatToLongDate(prvSchdDate);
+				finScheduleData = setErrorToFSD(finScheduleData, "RU0012", parm0, parm1);
+				return receiptData;
 			}
 
 			// Early Settlement OR Early Settlement Inquiry
-			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
-				if (methodCtg == 2 || methodCtg == 3) {
-					// last receipt date
-					Date lastReceivedDate = getMaxReceiptDate(fsi.getFinReference());
-					if (lastReceivedDate != null && fsi.getValueDate().compareTo(lastReceivedDate) < 0) {
-						parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
-						parm1 = DateUtility.formatToLongDate(lastReceivedDate);
-						finScheduleData = setErrorToFSD(finScheduleData, "RU0011", parm0, parm1);
-						return receiptData;
-					}
-				}
+			Date lastReceivedDate = null;
+			if (methodCtg == 2 || methodCtg == 3) {
+				lastReceivedDate = getMaxReceiptDate(fsi.getFinReference());
+			} else if (methodCtg == 1) {
+				lastReceivedDate = finReceiptDetailDAO.getMaxReceiptDate(finReference,
+						FinanceConstants.FINSER_EVENT_EARLYRPY, TableType.VIEW);
 			}
-
-			// Early Settlement OR Early Settlement Inquiry
-			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
-				Date lastReceivedDate = null;
-				if (methodCtg == 2 || methodCtg == 3) {
-					lastReceivedDate = getMaxReceiptDate(fsi.getFinReference());
-				} else if (methodCtg == 1) {
-					lastReceivedDate = finReceiptDetailDAO.getMaxReceiptDate(finReference,
-							FinanceConstants.FINSER_EVENT_EARLYRPY, TableType.VIEW);
-				}
-				if (lastReceivedDate != null && fsi.getValueDate().compareTo(lastReceivedDate) < 0) {
-					parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
-					parm1 = DateUtility.formatToLongDate(lastReceivedDate);
-					finScheduleData = setErrorToFSD(finScheduleData, "RU0011", parm0, parm1);
-					return receiptData;
-				}
+			if (lastReceivedDate != null && fsi.getValueDate().compareTo(lastReceivedDate) < 0) {
+				parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
+				parm1 = DateUtility.formatToLongDate(lastReceivedDate);
+				finScheduleData = setErrorToFSD(finScheduleData, "RU0011", parm0, parm1);
+				return receiptData;
 			}
 		}
 		// Instrumentwise Limits
@@ -4500,7 +4515,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		rch.setUserDetails(userDetails);
-		rch.setReceiptDate(rcd.getReceivedDate());
 
 		if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(fsi.getReceiptPurpose()) && fsi.isBckdtdWthOldDues()) {
 			Date derivedDate = getDerivedValueDate(receiptData, fsi, appDate);
@@ -4513,6 +4527,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rcd.setValueDate(rch.getValueDate());
 		rch.setRemarks(rcd.getRemarks());
 		rch.setSource(PennantConstants.FINSOURCE_ID_API);
+
+		if (fsi.isReceiptUpload()) {
+			rch.setReceiptDate(rcd.getReceivedDate());
+		} else {
+			rcd.setValueDate(rcd.getReceivedDate());
+			rch.setReceiptDate(SysParamUtil.getAppDate());
+		}
 
 		if (rch.getReceiptMode() != null && (rch.getSubReceiptMode() == null || rch.getSubReceiptMode().isEmpty())) {
 			rch.setSubReceiptMode(rch.getReceiptMode());
@@ -5726,6 +5747,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			allocate.setWaivedAmount(BigDecimal.ZERO);
 			allocate.setWaivedGST(BigDecimal.ZERO);
 			allocate.setTdsPaid(BigDecimal.ZERO);
+			allocate.setTdsWaived(BigDecimal.ZERO);
 		}
 		receiptCalculator.initiateReceipt(recData, false);
 		recData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(finSchdDtls);
@@ -6807,6 +6829,39 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	/**
+	 * Checking for duplicate receipt..
+	 * 
+	 * @param fsi
+	 * @return errors
+	 */
+	public List<ErrorDetail> dedupCheck(FinServiceInstruction fsi) {
+		List<Long> receiptIdList = finReceiptHeaderDAO.isDedupReceiptExists(fsi);
+
+		if (receiptIdList.isEmpty()) {
+			return new ArrayList<>();
+		}
+
+		List<ErrorDetail> errors = new ArrayList<>();
+
+		StringBuilder message = new StringBuilder();
+		message.append("Receipt for the Fin Reference {0} , Value Date {1}, Receipt Amount {2}");
+		message.append(" and Transaction Reference {3} already exists with Receipt Id {4} .");
+
+		String[] valueParm = new String[5];
+
+		valueParm[0] = fsi.getFinReference();
+		valueParm[1] = String.valueOf(fsi.getValueDate());
+		valueParm[2] = PennantApplicationUtil.amountFormate(fsi.getAmount(),
+				CurrencyUtil.getFormat(ImplementationConstants.BASE_CCY));
+		valueParm[3] = fsi.getTransactionRef();
+		valueParm[4] = String.valueOf(receiptIdList.get(0));
+
+		errors.add(new ErrorDetail("21005", message.toString(), valueParm));
+
+		return errors;
+	}
+
+	/**
 	 * Method for Fetching Tax Receivable for Accounting Purpose
 	 */
 	@Override
@@ -7304,27 +7359,22 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	@Override
-	public void getWaiverValidation(ReceiptUploadDetail rud) {
-		if (!FinanceConstants.EARLYSETTLEMENT.equals(rud.getReceiptPurpose())) {
-			return;
+	public ErrorDetail getWaiverValidation(String finReference, String receiptPurpose, Date valueDate) {
+		if (!(FinanceConstants.EARLYSETTLEMENT.equals(receiptPurpose)
+				|| FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(receiptPurpose))) {
+			return null;
 		}
 
-		List<FeeWaiverHeader> frh = getFeeWaiverHeaderEnqByFinRef(rud.getReference(), "");
-		if (CollectionUtils.isEmpty(frh)) {
-			return;
-		}
-
-		FeeWaiverHeader fwh = frh.stream().max(Comparator.comparing(v -> v.getValueDate())).get();
-
-		if (rud.getValueDate().compareTo(fwh.getValueDate()) >= 0) {
-			return;
+		Date lastWaiverDate = getLastWaiverDate(finReference, SysParamUtil.getAppDate(), valueDate);
+		if (lastWaiverDate == null) {
+			return null;
 		}
 
 		String[] valueParm = new String[2];
-		valueParm[0] = DateUtil.formatToLongDate(rud.getValueDate());
-		valueParm[1] = DateUtil.formatToLongDate(fwh.getValueDate());
+		valueParm[0] = DateUtil.formatToLongDate(valueDate);
+		valueParm[1] = DateUtil.formatToLongDate(lastWaiverDate);
 
-		rud.getErrorDetails().add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0099", valueParm)));
+		return ErrorUtil.getErrorDetail(new ErrorDetail("RU0099", valueParm));
 	}
 
 	@Override
@@ -7354,9 +7404,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		return finReceiptHeaderDAO.geFeeReceiptCountByExtReference(reference, receiptPurpose, extReference);
 	}
 
-	@Override
-	public List<FeeWaiverHeader> getFeeWaiverHeaderEnqByFinRef(String finReference, String type) {
-		return feeWaiverHeaderDAO.getFeeWaiverHeaderEnqByFinRef(finReference, type);
+	public Date getLastWaiverDate(String finReference, Date appDate, Date receiptDate) {
+		return feeWaiverHeaderDAO.getLastWaiverDate(finReference, appDate, receiptDate);
 	}
 
 	public TaxHeaderDetailsDAO getTaxHeaderDetailsDAO() {

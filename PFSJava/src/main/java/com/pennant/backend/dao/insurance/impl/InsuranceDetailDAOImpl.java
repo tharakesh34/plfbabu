@@ -305,9 +305,7 @@ public class InsuranceDetailDAOImpl extends SequenceDao<InsuranceDetails> implem
 	 * 
 	 */
 	@Override
-	public void updatePaymentStatus(InsurancePaymentInstructions instruction) {
-		logger.debug(Literal.ENTERING);
-
+	public int updatePaymentStatus(InsurancePaymentInstructions instruction) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Update INSURANCEPAYMENTINSTRUCTIONS");
@@ -321,10 +319,10 @@ public class InsuranceDetailDAOImpl extends SequenceDao<InsuranceDetails> implem
 		paramMap.addValue("REALIZATIONDATE", instruction.getRealizationDate());
 		paramMap.addValue("ID", instruction.getId());
 
-		logger.debug(Literal.SQL + sql);
-		this.jdbcTemplate.update(sql.toString(), paramMap);
+		logger.trace(Literal.SQL + sql.toString());
+		
+		return this.jdbcTemplate.update(sql.toString(), paramMap);
 
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -415,4 +413,52 @@ public class InsuranceDetailDAOImpl extends SequenceDao<InsuranceDetails> implem
 		logger.debug(Literal.LEAVING);
 
 	}
+
+	@Override
+	public InsurancePaymentInstructions getInsurancePaymentInstructionStatus(long id) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Status from INSURANCEPAYMENTINSTRUCTIONS");
+		sql.append(" Where id = ?");
+		logger.debug(Literal.SQL + sql.toString());
+	
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+				InsurancePaymentInstructions ipi = new InsurancePaymentInstructions();
+				ipi.setStatus(rs.getString(1));
+				return ipi;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record not found in INSURANCEPAYMENTINSTRUCTIONS table/view for the specified ID >> {} ", id);
+		}
+		
+		return null;
+	}
+
+	@Override
+	public InsurancePaymentInstructions getInsurancePaymentInstructionById(long id) {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT LINKEDTRANID, ID, PAYMENTAMOUNT, PAYMENTTYPE, PROVIDERID");
+		sql.append(", ENTITYCODE, PAYMENTCCY FROM INSURANCEPAYMENTINSTRUCTIONS");
+		sql.append("  WHERE ID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+				InsurancePaymentInstructions ipi = new InsurancePaymentInstructions();
+				ipi.setLinkedTranId(rs.getLong("LINKEDTRANID"));
+				ipi.setId(rs.getLong("ID"));
+				ipi.setPaymentAmount(rs.getBigDecimal("PAYMENTAMOUNT"));
+				ipi.setPaymentType(rs.getString("PAYMENTTYPE"));
+				ipi.setProviderId(rs.getLong("PROVIDERID"));
+				ipi.setEntityCode(rs.getString("ENTITYCODE"));
+				ipi.setEntityCode(rs.getString("PAYMENTCCY"));
+				return ipi;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record not found in INSURANCEPAYMENTINSTRUCTIONS table/view for the specified ID >> {} ", id);
+		}
+		return null;
+	}
+
 }

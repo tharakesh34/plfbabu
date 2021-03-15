@@ -1,5 +1,6 @@
 package com.pennant.webui.financemanagement.presentmentdetail;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -27,9 +28,12 @@ import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -106,7 +110,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE))
 						? true : false;
 
-		if (allowInstrumentType) {
+		if (allowInstrumentType || !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
 			this.rowInstrumentType.setVisible(true);
 			doSetFieldProperties();
 			grid_Default.setVisible(false);
@@ -121,7 +125,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			this.panelRows.setVisible(false);
 		}
 
-		if (!allowInstrumentType) {
+		if (!allowInstrumentType && ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
 			if (processExecution == null) {
 				processExecution = new ProcessExecution();
 				createPanel(processExecution, PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT);
@@ -183,14 +187,60 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		fillComboBox(this.instrumentType, "", PennantStaticListUtil.getMandateTypeList(), "");
-		logger.debug(Literal.LEAVING);
+		if (allowInstrumentType) {
+			fillComboBox(this.instrumentType, "", PennantStaticListUtil.getMandateTypeList(), "");
+			logger.debug(Literal.LEAVING);
 
-		if (ImplementationConstants.PRESENTMENT_AUTO_UPLOAD
-				&& (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED)
-						|| SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED))) {
-			this.btnSave.setDisabled(true);
+			if (ImplementationConstants.PRESENTMENT_AUTO_UPLOAD
+					&& (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED)
+							|| SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED))) {
+				this.btnSave.setDisabled(true);
+			}
+		} else if (!ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
+			defaultPaymentType = new ArrayList<ValueLabel>(1);
+			defaultPaymentType.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IST,
+					Labels.getLabel("label_Presentment_Default")));
+			fillComboBox(this.instrumentType, Labels.getLabel("label_Presentment_Default"), defaultPaymentType, "");
+			this.instrumentType.setSelectedIndex(1);
+			setConfigData();
+			this.instrumentType.setDisabled(true);
 		}
+
+	}
+
+	public void setConfigData() {
+		String instrumentTypeConfigName = "";
+		if (allowInstrumentType) {
+			String instType = "";
+
+			if ("#".equals(getComboboxValue(this.instrumentType))) {
+				return;
+			}
+
+			instType = this.instrumentType.getSelectedItem().getValue();
+			this.txtFileName.setValue("");
+
+			instrumentTypeConfigName = "PRESENTMENT_RESPONSE_";
+			instrumentTypeConfigName = instrumentTypeConfigName.concat(instType);
+
+		} else {
+			instrumentTypeConfigName = "PRESENTMENT_RESPONSE";
+		}
+
+		String configName = SysParamUtil.getValueAsString(instrumentTypeConfigName);
+		if (configName == null) {
+			configName = "PRESENTMENT_RESPONSE";
+		}
+
+		try {
+			config = dataEngineConfig.getConfigurationByName(configName);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+			return;
+		}
+		PRSENTMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution(configName);
+
+		doFillPanel(config, PRSENTMENT_FILE_IMPORT_STATUS);
 	}
 
 	/**
@@ -213,7 +263,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		}
 		txtFileName.setText(media.getName());
 
-		if (allowInstrumentType) {
+		if (allowInstrumentType || !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
 			String mediaName = media.getName();
 			String prefix = config.getFilePrefixName();
 			String extension = config.getFileExtension();
@@ -317,24 +367,31 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		if (allowInstrumentType) {
+		FinanceRepaymentsDAO frDAO = (FinanceRepaymentsDAO) SpringUtil.getBean("financeRepaymentsDAO");
+		PostingsPreparationUtil ppu = (PostingsPreparationUtil) SpringUtil.getBean("postingsPreparationUtil");
+
+		if (allowInstrumentType || !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
 			PresentmentDetailService service = (PresentmentDetailService) SpringUtil
 					.getBean("presentmentDetailService");
 			DataSource source = (DataSource) SpringUtil.getBean("dataSource");
 			NotificationService notificationService = (NotificationService) SpringUtil.getBean("notificationService");
 
-			PresentmentDetailExtract detailExtract = new PresentmentDetailExtract(source, service, notificationService);
-			detailExtract.setInstrumentType(this.instrumentType.getSelectedItem().getValue());
-			detailExtract.setUserDetails(getUserWorkspace().getLoggedInUser());
-			detailExtract.setStatus(PRSENTMENT_FILE_IMPORT_STATUS);
-			detailExtract.setMediaOnly(getMedia());
-			detailExtract.setPresentmentImportProcess(presentmentImportProcess);
-			detailExtract.setPresentmentRespValidation(presentmentRespValidation);
+			PresentmentDetailExtract pde = new PresentmentDetailExtract(source, service, notificationService);
+			pde.setInstrumentType(this.instrumentType.getSelectedItem().getValue());
+			pde.setUserDetails(getUserWorkspace().getLoggedInUser());
+			pde.setStatus(PRSENTMENT_FILE_IMPORT_STATUS);
+			pde.setMediaOnly(getMedia());
+			pde.setPresentmentImportProcess(presentmentImportProcess);
+			pde.setFinanceRepaymentsDAO(frDAO);
+			pde.setPostingsPreparationUtil(ppu);
+			pde.setPresentmentRespValidation(presentmentRespValidation);
 
-			Thread thread = new Thread(detailExtract);
+			Thread thread = new Thread(pde);
 			thread.start();
 			Thread.sleep(1000);
 		} else {
+			fileImport.setFinanceRepaymentsDAO(frDAO);
+			fileImport.setPostingsPreparationUtil(ppu);
 			if (processExecution.getChildren() != null) {
 				processExecution.getChildren().clear();
 			}
@@ -387,7 +444,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onTimer$timer(Event event) {
-		if (allowInstrumentType) {
+		if (allowInstrumentType || !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
 			List<Row> rows = this.panelRows.getChildren();
 			for (Row row : rows) {
 				List<Hbox> hboxs = row.getChildren();

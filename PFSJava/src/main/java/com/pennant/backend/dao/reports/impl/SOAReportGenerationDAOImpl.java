@@ -264,32 +264,31 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	 */
 	@Override
 	public List<FinODDetails> getFinODDetails(String finReference) {
-		logger.debug(Literal.ENTERING);
-
-		FinODDetails finODDetails = new FinODDetails();
-		finODDetails.setFinReference(finReference);
-		List<FinODDetails> finODDetailslist;
-
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(
-				" Select TotPenaltyAmt,TotWaived,TotPenaltyPaid,FinODSchdDate,FinODTillDate,LPIAmt, LPIPaid FROM FinODDetails");
-		sql.append(" Where TOtPenaltyAmt > 0 and FinReference = :FinReference");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, FinODSchdDate, FinODTillDate");
+		sql.append(", LPIAmt, LPIPaid, LPIWaived");
+		sql.append(" FROM FinODDetails");
+		sql.append(" Where FinReference = ? and (TotPenaltyAmt > ? or LPIAmt > ?)");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, finReference);
+			ps.setInt(2, 0);
+			ps.setInt(3, 0);
+		}, (rs, rowNum) -> {
+			FinODDetails fod = new FinODDetails();
+			fod.setTotPenaltyAmt(rs.getBigDecimal("TotPenaltyAmt"));
+			fod.setTotWaived(rs.getBigDecimal("TotWaived"));
+			fod.setTotPenaltyPaid(rs.getBigDecimal("TotPenaltyPaid"));
+			fod.setFinODSchdDate(JdbcUtil.getDate(rs.getDate("FinODSchdDate")));
+			fod.setFinODTillDate(JdbcUtil.getDate(rs.getDate("FinODTillDate")));
+			fod.setLPIAmt(rs.getBigDecimal("LPIAmt"));
+			fod.setLPIPaid(rs.getBigDecimal("LPIPaid"));
+			fod.setLPIWaived(rs.getBigDecimal("LPIWaived"));
 
-		try {
-			finODDetailslist = jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			finODDetailslist = new ArrayList<>();
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return finODDetailslist;
+			return fod;
+		});
 	}
 
 	/**
@@ -1458,6 +1457,38 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.debug(Literal.LEAVING);
 		return soa;
+	}
+
+	public Map<Long, Integer> getInstNumber(String finReference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" frd.receiptid, instnumber");
+		sql.append(" from FinScheduleDetails fsd");
+		sql.append(" INNER JOIN FinRepayDetails frd on  fsd.finreference = frd.finreference");
+		sql.append(" and fsd.schdate = frd.finschddate");
+		sql.append(" where fsd.schdate = (select Max(finschddate) from FinRepayDetails");
+		sql.append(" where receiptid= frd.receiptid) and fsd.finreference =  ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), ps -> {
+				ps.setString(1, finReference);
+			}, new ResultSetExtractor<Map<Long, Integer>>() {
+
+				@Override
+				public Map<Long, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
+					Map<Long, Integer> rcMap = new HashMap<>();
+					while (rs.next()) {
+						rcMap.put(rs.getLong("ReceiptId"), rs.getInt("InstNumber"));
+					}
+					return rcMap;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Records are not found in FinScheduleDetails table for the FinReference >> " + finReference);
+		}
+
+		return new HashMap<>();
 	}
 
 }

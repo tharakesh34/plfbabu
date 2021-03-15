@@ -61,7 +61,9 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.model.finance.ChequeDetail;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -322,6 +324,29 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(chequeDetail);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
+	}
+
+	@Override
+	public int updateChequeStatus(List<PresentmentDetail> presentments) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update ChequeDetail Set Chequestatus = ?");
+		sql.append(" where ChequeDetailsId = ?");
+		logger.trace(Literal.SQL + sql.toString());
+
+		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int index) throws SQLException {
+				PresentmentDetail pd = presentments.get(index);
+				ps.setString(1, PennantConstants.CHEQUESTATUS_PRESENT);
+				ps.setLong(2, pd.getMandateId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return presentments.size();
+			}
+		}).length;
 	}
 
 	@Override

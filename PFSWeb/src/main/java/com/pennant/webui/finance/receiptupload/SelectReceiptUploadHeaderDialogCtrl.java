@@ -630,7 +630,11 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 				}
 
 			}
-			receiptService.getWaiverValidation(rud);
+			ErrorDetail errorDetail = receiptService.getWaiverValidation(rud.getReference(), rud.getReceiptPurpose(),
+					rud.getValueDate());
+			if (errorDetail != null) {
+				rud.getErrorDetails().add(ErrorUtil.getErrorDetail(errorDetail));
+			}
 
 			rudList.add(rud);
 		}

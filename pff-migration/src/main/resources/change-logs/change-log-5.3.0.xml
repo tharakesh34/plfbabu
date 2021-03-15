@@ -4419,4 +4419,38 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="DE#183" author="Saikrishna.k">
+		<sql>
+			<![CDATA[
+				DELETE FROM SecRoleGroups WHERE grpid = (SELECT GrpId FROM SecGroups WHERE GrpCode = 'FIN_RECEIPT_ENQUIRY');
+			
+				INSERT INTO SecRoleGroups VALUES((SELECT MAX(RoleGrpID) + 1 FROM SecRoleGroups), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'FIN_RECEIPT_ENQUIRY'), (SELECT MAX(RoleID) FROM SecRoles WHERE RoleCd = 'ADMIN'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#143.4" author="Durgaprasad G">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTAMOUNTCODES WHERE  ALLOWEDEVENT = 'LATEPAY' AND  AMOUNTCODE='LPP_TDS_P';
+				DELETE FROM BMTAMOUNTCODES WHERE  ALLOWEDEVENT = 'REPAY' AND  AMOUNTCODE='LPP_TDS_P';
+				DELETE FROM BMTAMOUNTCODES WHERE  ALLOWEDEVENT = 'EARLYSTL' AND  AMOUNTCODE='LPP_TDS_P';
+				DELETE FROM BMTAMOUNTCODES WHERE  ALLOWEDEVENT = 'EARLYPAY' AND  AMOUNTCODE='LPP_TDS_P';
+				
+				INSERT INTO BMTAMOUNTCODES VALUES('LATEPAY',0,'LPP_TDS_P','PENALTY CHARGE TDS PAID',1,1,1000,CURRENT_TIMESTAMP,'APPROVED',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO BMTAMOUNTCODES VALUES('REPAY',0,'LPP_TDS_P','Paid Late Payment Penalty TDS',1,1,'1000',Current_TimeStamp,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES VALUES('EARLYSTL',0,'LPP_TDS_P','Paid Late Payment Penalty TDS',1,1,'1000',Current_TimeStamp,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES VALUES('EARLYPAY',0,'LPP_TDS_P','Paid Late Payment Penalty TDS',1,1,'1000',Current_TimeStamp,'Approved','','','','','','0');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#147_post" author="DurgaPrasad G">
+		<sql>
+			<![CDATA[
+			 delete from ErrorDetails where Code='RU0098';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

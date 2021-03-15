@@ -93,6 +93,7 @@ import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.core.TableType;
 
 public class RepaymentProcessUtil {
@@ -542,16 +543,18 @@ public class RepaymentProcessUtil {
 		extDataMap.putAll(prepareMovementMap(movements));
 
 		BigDecimal adjustedToReceipt = BigDecimal.ZERO;
-		adjustedToReceipt = rch.getTotalPastDues().getTotalPaid();
-		adjustedToReceipt = adjustedToReceipt.add(rch.getTotalRcvAdvises().getTotalPaid());
-		adjustedToReceipt = adjustedToReceipt.add(rch.getTotalBounces().getTotalPaid());
-		adjustedToReceipt = adjustedToReceipt.add(rch.getTotalFees().getTotalPaid());
+		adjustedToReceipt = rch.getTotalPastDues().getPaidAmount();
+		adjustedToReceipt = adjustedToReceipt.add(rch.getTotalRcvAdvises().getPaidAmount());
+		adjustedToReceipt = adjustedToReceipt.add(rch.getTotalBounces().getPaidAmount());
+		adjustedToReceipt = adjustedToReceipt.add(rch.getTotalFees().getPaidAmount());
 
 		BigDecimal toExcess = receiptAmount.subtract(adjustedToReceipt);
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, receiptPurpose)) {
 			adjustedToReceipt = adjustedToReceipt.add(toExcess);
 			toExcess = BigDecimal.ZERO;
 		}
+
+		amountCodes.setIntAdv(AdvanceType.hasAdvInterest(fm));
 
 		if (toExcess.compareTo(BigDecimal.ZERO) > 0) {
 			switch (rch.getExcessAdjustTo()) {
@@ -565,6 +568,7 @@ public class RepaymentProcessUtil {
 				extDataMap.put("ae_toSettlement", toExcess);
 				break;
 			case RepayConstants.EXCESSADJUSTTO_EXCESS:
+				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extDataMap.put("ae_toExcessAmt", toExcess);
 				break;
 
@@ -877,7 +881,7 @@ public class RepaymentProcessUtil {
 			invoiceDetail.setWaiver(false);
 			invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
 
-			long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
+			Long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
 
 			for (ManualAdviseMovements advMov : payPaidMovementList) {
 				if (advMov.getTaxHeader() != null) {
@@ -1014,6 +1018,21 @@ public class RepaymentProcessUtil {
 		taxes.setTaxType(taxType);
 		taxes.setTaxPerc(taxPerc);
 		return taxes;
+	}
+
+	private BigDecimal adjustExcessForAdvInt(FinReceiptHeader rch, AEAmountCodes amountCodes, BigDecimal toExcess) {
+		if (amountCodes.isIntAdv() && toExcess.compareTo(BigDecimal.ZERO) > 0) {
+			if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+				for (ReceiptAllocationDetail rad : rch.getAllocations()) {
+					String allocationType = rad.getAllocationType();
+					if (RepayConstants.ALLOCATION_FUT_TDS.equals(allocationType)) {
+						toExcess = toExcess.subtract(rad.getDueAmount());
+						toExcess = toExcess.subtract(rad.getDueAmount());
+					}
+				}
+			}
+		}
+		return toExcess;
 	}
 
 	/**
@@ -1204,209 +1223,132 @@ public class RepaymentProcessUtil {
 	}
 
 	private Map<String, BigDecimal> prepareMovementMap(List<ManualAdviseMovements> movements) {
+		Map<String, BigDecimal> movementMap = new HashMap<>();
 
-		// Summing Same Type of Fee Types to Single Field
-		HashMap<String, BigDecimal> movementMap = new HashMap<>();
+		addAmountToMap(movementMap, "bounceChargePaid", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_CGST_P", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_IGST_P", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_SGST_P", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_UGST_P", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_CESS_P", BigDecimal.ZERO);
 
-		FeeType bounceFee = null;
+		addAmountToMap(movementMap, "bounceChargeWaived", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_CGST_W", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_IGST_W", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_SGST_W", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_UGST_W", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_CESS_W", BigDecimal.ZERO);
 
-		for (int m = 0; m < movements.size(); m++) {
+		String bounceComponent = feeTypeDAO.getTaxComponent(RepayConstants.ALLOCATION_BOUNCE);
 
-			ManualAdviseMovements movement = movements.get(m);
-
-			BigDecimal amount = BigDecimal.ZERO;
-			String keyCode = null;
-
+		for (ManualAdviseMovements movement : movements) {
 			TaxHeader taxHeader = movement.getTaxHeader();
+
 			Taxes cgstTax = new Taxes();
 			Taxes sgstTax = new Taxes();
 			Taxes igstTax = new Taxes();
 			Taxes ugstTax = new Taxes();
 			Taxes cessTax = new Taxes();
+
 			List<Taxes> taxDetails = taxHeader.getTaxDetails();
-			if (taxHeader != null && CollectionUtils.isNotEmpty(taxDetails)) {
+
+			if (CollectionUtils.isNotEmpty(taxDetails)) {
 				for (Taxes taxes : taxDetails) {
-					if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+					switch (taxes.getTaxType()) {
+					case RuleConstants.CODE_CGST:
 						cgstTax = taxes;
-					} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+						break;
+					case RuleConstants.CODE_SGST:
 						sgstTax = taxes;
-					} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+						break;
+					case RuleConstants.CODE_IGST:
 						igstTax = taxes;
-					} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+						break;
+					case RuleConstants.CODE_UGST:
 						ugstTax = taxes;
-					} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+						break;
+					case RuleConstants.CODE_CESS:
 						cessTax = taxes;
+						break;
+
+					default:
+						break;
 					}
 				}
 			}
 
-			if (StringUtils.isEmpty(movement.getFeeTypeCode())
-					|| StringUtils.equals(movement.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
+			BigDecimal cgstPaid = cgstTax.getPaidTax();
+			BigDecimal sgstPaid = sgstTax.getPaidTax();
+			BigDecimal igstPaid = igstTax.getPaidTax();
+			BigDecimal ugstPaid = ugstTax.getPaidTax();
+			BigDecimal cessPaid = cessTax.getPaidTax();
 
-				if (bounceFee == null) {
-					bounceFee = feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
+			BigDecimal cgstWaived = cgstTax.getWaivedTax();
+			BigDecimal sgstWaived = sgstTax.getWaivedTax();
+			BigDecimal igstWaived = igstTax.getWaivedTax();
+			BigDecimal ugstWaived = ugstTax.getWaivedTax();
+			BigDecimal cessWaived = cessTax.getWaivedTax();
+
+			BigDecimal paidAmt = movement.getPaidAmount();
+			BigDecimal waivedAmt = movement.getWaivedAmount();
+			BigDecimal tdsPaid = movement.getTdsPaid();
+
+			BigDecimal totPaidGST = cgstPaid.add(sgstPaid).add(igstPaid).add(ugstPaid).add(cessPaid);
+			BigDecimal totWaivedGST = cgstWaived.add(sgstWaived).add(igstWaived).add(ugstWaived).add(cessWaived);
+
+			String feeTypeCode = movement.getFeeTypeCode();
+			String taxComponent = feeTypeDAO.getTaxComponent(feeTypeCode);
+
+			if (StringUtils.isEmpty(feeTypeCode) || RepayConstants.ALLOCATION_BOUNCE.equals(feeTypeCode)) {
+
+				if (taxComponent == null) {
+					taxComponent = bounceComponent;
+				}
+				if (bounceComponent == null) {
+					continue;
 				}
 
-				if (movementMap.containsKey("bounceChargePaid")) {
-					amount = movementMap.get("bounceChargePaid");
-				}
-
-				if (bounceFee != null) {
-					if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(bounceFee.getTaxComponent())) {
-
-						BigDecimal gst = cgstTax.getPaidTax().add(sgstTax.getPaidTax()).add(igstTax.getPaidTax())
-								.add(ugstTax.getPaidTax()).add(cessTax.getPaidTax());
-						movementMap.put("bounceChargePaid",
-								amount.add(movement.getPaidAmount().subtract(gst)).add(movement.getTdsPaid()));
-
-						BigDecimal waiverGst = cgstTax.getWaivedTax().add(sgstTax.getWaivedTax())
-								.add(igstTax.getWaivedTax()).add(ugstTax.getWaivedTax()).add(cessTax.getWaivedTax());
-						amount = BigDecimal.ZERO;
-						if (movementMap.containsKey("bounceChargeWaived")) {
-							amount = movementMap.get("bounceChargeWaived");
-						}
-						movementMap.put("bounceChargeWaived",
-								amount.add(movement.getWaivedAmount().subtract(waiverGst)));
-
-					} else {
-						movementMap.put("bounceChargePaid",
-								amount.add(movement.getPaidAmount()).add(movement.getTdsPaid()));
-						amount = BigDecimal.ZERO;
-						if (movementMap.containsKey("bounceChargeWaived")) {
-							amount = movementMap.get("bounceChargeWaived");
-						}
-						movementMap.put("bounceChargeWaived", amount.add(movement.getWaivedAmount()));
-					}
-				}
-				keyCode = "bounceCharge";
-			} else {
-
-				keyCode = movement.getFeeTypeCode();
-
-				if (movementMap.containsKey(keyCode + "_P")) {
-					amount = movementMap.get(keyCode + "_P");
-				}
-
-				ManualAdvise manualAdvise = manualAdviseDAO.getManualAdviseById(movement.getAdviseID(), "_AView");
-
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(manualAdvise.getTaxComponent())) {
-					BigDecimal gst = cgstTax.getPaidTax().add(sgstTax.getPaidTax()).add(igstTax.getPaidTax())
-							.add(ugstTax.getPaidTax()).add(cessTax.getPaidTax());
-					movementMap.put(keyCode + "_P",
-							amount.add(movement.getPaidAmount().subtract(gst)).add(movement.getTdsPaid()));
-
-					BigDecimal waiverGst = cgstTax.getWaivedTax().add(sgstTax.getWaivedTax())
-							.add(igstTax.getWaivedTax()).add(ugstTax.getWaivedTax()).add(cessTax.getWaivedTax());
-
-					amount = BigDecimal.ZERO;
-					if (movementMap.containsKey(keyCode + "_W")) {
-						amount = movementMap.get(keyCode + "_W");
-					}
-					movementMap.put(movement.getFeeTypeCode() + "_W",
-							amount.add(movement.getWaivedAmount().subtract(waiverGst)));
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
+					addAmountToMap(movementMap, "bounceChargePaid", paidAmt);
+					addAmountToMap(movementMap, "bounceChargeWaived", waivedAmt);
 				} else {
-					movementMap.put(keyCode + "_P", amount.add(movement.getPaidAmount()).add(movement.getTdsPaid()));
-					amount = BigDecimal.ZERO;
-					if (movementMap.containsKey(keyCode + "_W")) {
-						amount = movementMap.get(keyCode + "_W");
-					}
-					movementMap.put(movement.getFeeTypeCode() + "_W", amount.add(movement.getWaivedAmount()));
+					addAmountToMap(movementMap, "bounceChargePaid", paidAmt.add(totPaidGST));
+					addAmountToMap(movementMap, "bounceChargeWaived", waivedAmt.add(totWaivedGST));
 				}
+			} else {
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
+					addAmountToMap(movementMap, feeTypeCode + "_P", paidAmt);
+					addAmountToMap(movementMap, feeTypeCode + "_W", waivedAmt);
+				} else {
+					addAmountToMap(movementMap, feeTypeCode + "_P", paidAmt.add(totPaidGST));
+					addAmountToMap(movementMap, feeTypeCode + "_W", waivedAmt.add(totWaivedGST));
+				}
+			}
 
-			}
-			// Tax Details
-			// Paid GST Details
-			amount = BigDecimal.ZERO;
-			if (movementMap.containsKey(keyCode + "_CGST_P")) {
-				amount = movementMap.get(keyCode + "_CGST_P");
-			}
-			movementMap.put(keyCode + "_CGST_P", amount.add(cgstTax.getPaidTax()));
+			addAmountToMap(movementMap, feeTypeCode + "_CGST_P", cgstPaid);
+			addAmountToMap(movementMap, feeTypeCode + "_SGST_P", sgstPaid);
+			addAmountToMap(movementMap, feeTypeCode + "_IGST_P", igstPaid);
+			addAmountToMap(movementMap, feeTypeCode + "_UGST_P", ugstPaid);
+			addAmountToMap(movementMap, feeTypeCode + "_CESS_P", cessPaid);
 
-			amount = BigDecimal.ZERO;
-			if (movementMap.containsKey(keyCode + "_SGST_P")) {
-				amount = movementMap.get(keyCode + "_SGST_P");
-			}
-			movementMap.put(keyCode + "_SGST_P", amount.add(sgstTax.getPaidTax()));
+			addAmountToMap(movementMap, feeTypeCode + "_CGST_W", cgstWaived);
+			addAmountToMap(movementMap, feeTypeCode + "_SGST_W", sgstWaived);
+			addAmountToMap(movementMap, feeTypeCode + "_IGST_W", igstWaived);
+			addAmountToMap(movementMap, feeTypeCode + "_UGST_W", ugstWaived);
+			addAmountToMap(movementMap, feeTypeCode + "_CESS_W", cessWaived);
 
-			amount = BigDecimal.ZERO;
-			if (movementMap.containsKey(keyCode + "_IGST_P")) {
-				amount = movementMap.get(keyCode + "_IGST_P");
-			}
-			movementMap.put(keyCode + "_IGST_P", amount.add(igstTax.getPaidTax()));
-
-			amount = BigDecimal.ZERO;
-			if (movementMap.containsKey(keyCode + "_UGST_P")) {
-				amount = movementMap.get(keyCode + "_UGST_P");
-			}
-			movementMap.put(keyCode + "_UGST_P", amount.add(ugstTax.getPaidTax()));
-
-			amount = BigDecimal.ZERO;
-			if (movementMap.containsKey(keyCode + "_CESS_P")) {
-				amount = movementMap.get(keyCode + "_CESS_P");
-			}
-			movementMap.put(keyCode + "_CESS_P", amount.add(cessTax.getPaidTax()));
-
-			// Waiver GST Details
-			amount = BigDecimal.ZERO;
-			if (movementMap.containsKey(keyCode + "_CGST_W")) {
-				amount = movementMap.get(keyCode + "_CGST_W");
-			}
-			movementMap.put(keyCode + "_CGST_W", amount.add(cgstTax.getWaivedTax()));
-
-			amount = BigDecimal.ZERO;
-			if (movementMap.containsKey(keyCode + "_SGST_W")) {
-				amount = movementMap.get(keyCode + "_SGST_W");
-			}
-			movementMap.put(keyCode + "_SGST_W", amount.add(sgstTax.getWaivedTax()));
-
-			amount = BigDecimal.ZERO;
-			if (movementMap.containsKey(keyCode + "_IGST_W")) {
-				amount = movementMap.get(keyCode + "_IGST_W");
-			}
-			movementMap.put(keyCode + "_IGST_W", amount.add(igstTax.getWaivedTax()));
-
-			amount = BigDecimal.ZERO;
-			if (movementMap.containsKey(keyCode + "_UGST_W")) {
-				amount = movementMap.get(keyCode + "_UGST_W");
-			}
-			movementMap.put(keyCode + "_UGST_W", amount.add(ugstTax.getWaivedTax()));
-
-			amount = BigDecimal.ZERO;
-			if (movementMap.containsKey(keyCode + "_CESS_W")) {
-				amount = movementMap.get(keyCode + "_CESS_W");
-			}
-			movementMap.put(keyCode + "_CESS_W", amount.add(cessTax.getWaivedTax()));
-
-			if (movementMap.containsKey(keyCode + "_TDS_P")) {
-				amount = movementMap.get(keyCode + "_TDS_P");
-			}
-			movementMap.put(keyCode + "_TDS_P", amount.add(movement.getTdsPaid()));
+			addAmountToMap(movementMap, feeTypeCode + "_TDS_P", tdsPaid);
 		}
 
-		addZeroifNotContains(movementMap, "bounceChargePaid");
-		addZeroifNotContains(movementMap, "bounceCharge_CGST_P");
-		addZeroifNotContains(movementMap, "bounceCharge_IGST_P");
-		addZeroifNotContains(movementMap, "bounceCharge_SGST_P");
-		addZeroifNotContains(movementMap, "bounceCharge_UGST_P");
-		addZeroifNotContains(movementMap, "bounceCharge_CESS_P");
-		// Waiver GST Details
-		addZeroifNotContains(movementMap, "bounceChargeWaived");
-		addZeroifNotContains(movementMap, "bounceCharge_CGST_W");
-		addZeroifNotContains(movementMap, "bounceCharge_IGST_W");
-		addZeroifNotContains(movementMap, "bounceCharge_SGST_W");
-		addZeroifNotContains(movementMap, "bounceCharge_UGST_W");
-		addZeroifNotContains(movementMap, "bounceCharge_CESS_W");
 		return movementMap;
 	}
 
-	/**
-	 * Method for Preparation of Fees Data in Receipts
-	 * 
-	 * @param amountCodes
-	 * @param dataMap
-	 * @param finFeeDetailList
-	 * @return
-	 */
+	private void addAmountToMap(Map<String, BigDecimal> movementMap, String feeCode, BigDecimal amount) {
+		BigDecimal amt = movementMap.computeIfAbsent(feeCode, code -> BigDecimal.ZERO);
+
+		movementMap.put(feeCode, amt.add(amount));
+	}
+
 	private Map<String, BigDecimal> prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, BigDecimal> dataMap,
 			List<FinFeeDetail> finFeeDetailList, String payType) {
 		logger.debug(Literal.ENTERING);
@@ -1467,10 +1409,11 @@ public class RepaymentProcessUtil {
 							for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
 								for (ManualAdviseMovements movement : rcd.getAdvMovements()) {
 									if (allocationTo == movement.getAdviseID()) {
-										// Paid Details
+										//Paid Details
 										ma.setPaidAmount(ma.getPaidAmount().add(movement.getPaidAmount()));
 										ma.setTdsPaid(ma.getTdsPaid().add(movement.getTdsPaid()));
-										// Waiver Details
+										//advise.setPaidAmount(advise.getPaidAmount().subtract(advise.getTdsPaid()));
+										//Waiver Details
 										ma.setWaivedAmount(ma.getWaivedAmount().add(movement.getWaivedAmount()));
 
 										TaxHeader taxHeader = movement.getTaxHeader();
@@ -1511,7 +1454,7 @@ public class RepaymentProcessUtil {
 								}
 							}
 
-							ma.setBalanceAmt((ma.getPaidAmount().add(ma.getWaivedAmount())).negate());
+							ma.setBalanceAmt(ma.getPaidAmount().add(ma.getWaivedAmount()).negate());
 
 							// FIXME: PV. loan manual advise movements in receipts calculator
 							manualAdviseDAO.updateAdvPayment(ma, TableType.MAIN_TAB);
@@ -2198,7 +2141,8 @@ public class RepaymentProcessUtil {
 				case RepayConstants.ALLOCATION_ODC:
 					rpyQueueHeader.setPenalty(rpyQueueHeader.getPenalty().add(paidNow));
 					rpyQueueHeader.setPenaltyWaived(rpyQueueHeader.getPenaltyWaived().add(waivedNow));
-					extDataMap.put("LPP" + "_TDS", rad.getTdsPaid());
+					extDataMap.put("LPP_TDS_P", rad.getTdsPaid());
+					extDataMap.put("LPP_TDS_W", rad.getTdsWaived());
 					break;
 				case RepayConstants.ALLOCATION_FEE:
 					rpyQueueHeader.setFee(rpyQueueHeader.getFee().add(paidNow));
@@ -2253,7 +2197,7 @@ public class RepaymentProcessUtil {
 			List<FinanceScheduleDetail> scheduleDetails = fsd.getFinanceScheduleDetails();
 			List<FinFeeDetail> finFeeDetailList = financeDetail.getFinFeeDetails();
 			FinanceProfitDetail profitDetail = fsd.getFinPftDeatil();
-			String eventCode = getEventCode(rch.getReceiptPurpose());
+			String eventCode = getEventCode(rch.getReceiptPurpose(), rch.getReceiptMode());
 
 			returnList = repayPostingUtil.postingProcess(fm, scheduleDetails, finFeeDetailList, profitDetail,
 					rpyQueueHeader, eventCode, rch.getValueDate(), postDate);
@@ -2522,15 +2466,22 @@ public class RepaymentProcessUtil {
 	 * @param finEvent
 	 * @return
 	 */
-	private String getEventCode(String finEvent) {
-		if (StringUtils.equals(finEvent, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+	private String getEventCode(String finEvent, String receiptMode) {
+		switch (finEvent) {
+		case FinanceConstants.FINSER_EVENT_SCHDRPY:
+			if (ImplementationConstants.ALLOW_PRESENTMENT_STAGE_ACCOUNTING) {
+				if (RepayConstants.RECEIPTMODE_PRESENTMENT.equals(receiptMode)) {
+					return AccountEventConstants.ACCEVENT_PRSNT;
+				}
+			}
 			return AccountEventConstants.ACCEVENT_REPAY;
-		} else if (StringUtils.equals(finEvent, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+		case FinanceConstants.FINSER_EVENT_EARLYRPY:
 			return AccountEventConstants.ACCEVENT_EARLYPAY;
-		} else if (StringUtils.equals(finEvent, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		case FinanceConstants.FINSER_EVENT_EARLYSETTLE:
 			return AccountEventConstants.ACCEVENT_EARLYSTL;
+		default:
+			return "";
 		}
-		return "";
 	}
 
 	private Date getPostDate(Date appDate) {

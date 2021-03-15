@@ -16,12 +16,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.AMedia;
+import org.zkoss.zkplus.spring.SpringUtil;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pff.external.DocumentManagementService;
@@ -34,7 +39,7 @@ public class ExternalDocumentManager {
 
 	private DMSService dMSService;
 
-	public AMedia getAMedia(DocumentDetails documentDetails) {
+	public AMedia setDocContent(DocumentDetails documentDetails) {
 		AMedia amedia = null;
 		if (documentDetails == null) {
 			return amedia;
@@ -45,7 +50,8 @@ public class ExternalDocumentManager {
 		}
 
 		if (documentDetails.getDocImage() == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
-			documentDetails.setDocImage(dMSService.getById(documentDetails.getDocRefId()));
+			documentDetails.setDocImage(getDocumentImage(documentDetails.getDocRefId()));
+			amedia = new AMedia(documentDetails.getDocName(), null, null, documentDetails.getDocImage());
 		}
 
 		if (documentDetails.getDocImage() == null && StringUtils.isNotBlank(documentDetails.getDocUri())) {
@@ -72,7 +78,8 @@ public class ExternalDocumentManager {
 	}
 
 	public DocumentDetails getExternalDocument(String fileName, String docRefId, String reference) {
-		logger.debug(Literal.ENTERING);
+		logger.info("Get the document from External DMS File Name {}, Doc RefId {}, Reference {}", fileName, docRefId,
+				reference);
 
 		DocumentDetails returndetails = null;
 		if (documentManagementService == null) {
@@ -93,46 +100,54 @@ public class ExternalDocumentManager {
 			documentDetailList.add(details);
 		}
 
-		if (!documentDetailList.isEmpty()) {
-			DocumentDetails documentDet = documentDetailList.get(0);
-			if (documentDetailList.size() == 1) {
-				returndetails = documentDet;
-			} else {
-				try {
-					boolean isImage = false;
-					boolean isPDF = false;
+		if (documentDetailList.isEmpty()) {
+			logger.info("Docuemnt not found in Exterenal DMS.");
+			return returndetails;
+		}
 
-					for (DocumentDetails documentDetails : documentDetailList) {
-						URL u = new URL(documentDetails.getDocUri());
-						URLConnection uc = u.openConnection();
-						String contentType = StringUtils.trimToEmpty(uc.getContentType());
-						if (contentType.toUpperCase().contains("IMAGE")) {
-							isImage = true;
-							break;
-						} else if (contentType.toUpperCase().contains("PDF")) {
-							isPDF = true;
-							break;
-						}
+		DocumentDetails documentDet = documentDetailList.get(0);
+		if (documentDetailList.size() == 1) {
+			documentDet.setDocName(fileName);
+			documentDet.setDocImage(PennantApplicationUtil.decode(documentDet.getDocImage()));
+			returndetails = documentDet;
+		} else {
+			try {
+				boolean isImage = false;
+				boolean isPDF = false;
+
+				for (DocumentDetails documentDetails : documentDetailList) {
+					URL u = new URL(documentDetails.getDocUri());
+					URLConnection uc = u.openConnection();
+
+					String contentType = StringUtils.trimToEmpty(uc.getContentType());
+					if (contentType.toUpperCase().contains("IMAGE")) {
+						isImage = true;
+						break;
+					} else if (contentType.toUpperCase().contains("PDF")) {
+						isPDF = true;
+						break;
 					}
+				}
 
-					if (isImage) {
-						ByteArrayOutputStream outsream = mergeImages(documentDetailList);
+				if (isImage) {
+					try (ByteArrayOutputStream outsream = mergeImages(documentDetailList)) {
 						documentDet.setDocImage(outsream.toByteArray());
 						documentDet.setDocName("document.png");
-					} else if (isPDF) {
-						ByteArrayOutputStream outsream = mergePDF(documentDetailList);
+					}
+
+				} else if (isPDF) {
+					try (ByteArrayOutputStream outsream = mergePDF(documentDetailList)) {
 						documentDet.setDocImage(outsream.toByteArray());
 						documentDet.setDocName("document.pdf");
 					}
-					returndetails = documentDet;
-
-				} catch (Exception e) {
-					logger.debug(e);
 				}
+				returndetails = documentDet;
+
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 
-		logger.debug(Literal.LEAVING);
 		return returndetails;
 	}
 
@@ -183,7 +198,7 @@ public class ExternalDocumentManager {
 					pdfcopy.addPage(pdfcopy.getImportedPage(pdfreader, ++page));
 				}
 			} catch (Exception e) {
-				logger.debug(e);
+				logger.error(Literal.EXCEPTION, e);
 			}
 
 		}
@@ -222,6 +237,47 @@ public class ExternalDocumentManager {
 			}
 		}
 		return maxValue;
+	}
+
+	private static byte[] getDocumentImage(long docID) {
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<DocumentManager> searchObject = new JdbcSearchObject<DocumentManager>(DocumentManager.class);
+
+		searchObject.addFilterEqual("Id", docID);
+		searchObject.addTabelName("DocumentManager");
+		searchObject.addField("DocImage");
+		List<DocumentManager> documentManagers = pagedListService.getBySearchObject(searchObject);
+		if (documentManagers != null && !documentManagers.isEmpty()) {
+			return documentManagers.get(0).getDocImage();
+		}
+		return null;
+	}
+
+	public AMedia getAMedia(DocumentDetails documentDetails) {
+		AMedia amedia = null;
+		if (documentDetails == null) {
+			return amedia;
+		}
+
+		if (documentDetails.getDocImage() != null) {
+			amedia = new AMedia(documentDetails.getDocName(), null, null, documentDetails.getDocImage());
+		}
+
+		if (documentDetails.getDocImage() == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
+			documentDetails.setDocImage(dMSService.getById(documentDetails.getDocRefId()));
+			amedia = new AMedia(documentDetails.getDocName(), null, null, documentDetails.getDocImage());
+		}
+
+		if (documentDetails.getDocImage() == null && StringUtils.isNotBlank(documentDetails.getDocUri())) {
+			// Fetch document from interface
+			String custCif = documentDetails.getLovDescCustCIF();
+			DocumentDetails extdetail = getExternalDocument(documentDetails.getDocName(), documentDetails.getDocUri(),
+					custCif);
+			if (extdetail != null && extdetail.getDocImage() != null) {
+				amedia = new AMedia(extdetail.getDocName(), null, null, extdetail.getDocImage());
+			}
+		}
+		return amedia;
 	}
 
 	public void setdMSService(DMSService dMSService) {

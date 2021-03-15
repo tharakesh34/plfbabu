@@ -185,7 +185,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		logger.debug(Literal.ENTERING);
 
 		this.bounceCode.setMaxlength(8);
-		this.reason.setMaxlength(50);
+		this.reason.setMaxlength(150);
 		this.ruleID.setModuleName("Rule");
 		this.ruleID.setMandatoryStyle(true);
 		this.ruleID.setValueColumn("RuleCode");

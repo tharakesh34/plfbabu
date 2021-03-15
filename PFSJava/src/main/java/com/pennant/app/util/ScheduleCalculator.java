@@ -5048,7 +5048,13 @@ public class ScheduleCalculator {
 								calInt = CalculationUtil.calInterest(prvSchDate, curSchDate,
 										curSchd.getBalanceForPftCal(), curSchd.getPftDaysBasis(),
 										prvSchd.getCalculatedRate());
-								calInt = calInt.add(prvSchd.getProfitFraction());
+
+								if (calInt.add(prvSchd.getProfitFraction()).compareTo(BigDecimal.ZERO) <= 0) {
+									calInt = BigDecimal.ZERO;
+								} else {
+									calInt = calInt.add(prvSchd.getProfitFraction());
+								}
+
 								if (calInt.compareTo(BigDecimal.ZERO) > 0) {
 									calInt = CalculationUtil.roundAmount(calInt, finMain.getCalRoundingMode(),
 											finMain.getRoundingTarget());
@@ -5729,6 +5735,10 @@ public class ScheduleCalculator {
 		// If profit already paid do not touch the schedule profit.
 		if (curSchd.isSchPftPaid()) {
 			newProfit = curSchd.getSchdPftPaid();
+			if (prvSchd.getClosingBalance().compareTo(curSchd.getPrincipalSchd()) <= 0) {
+				newProfit = prvSchd.getProfitBalance().add(curSchd.getProfitCalc());
+				newProfit = newProfit.subtract(prvSchd.getCpzAmount());
+			}
 		} else if (curSchd.getPresentmentId() > 0) {
 
 			if (protectPftSchd) {
@@ -7930,7 +7940,10 @@ public class ScheduleCalculator {
 
 		} else if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_TILLMDT)) {
 			finMain.setRecalToDate(finSchdDetails.get(sdSize - 1).getSchDate());
-			//finMain.setEventFromDate(finMain.getRecalFromDate());
+			//FiXME ME Srikanth need to review  siva
+			if (!PROC_CHANGEGRACEEND.equals(recalPurpose) && !PROC_ADDDISBURSEMENT.equals(recalPurpose)) {
+				finMain.setEventFromDate(finMain.getRecalFromDate());
+			}
 		}
 
 		// Set maturity Date schedule amount

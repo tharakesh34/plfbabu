@@ -107,6 +107,62 @@ public class RepayMain implements java.io.Serializable {
 
 	}
 
+	public RepayMain copyEntity() {
+		RepayMain entity = new RepayMain();
+		entity.setFinReference(this.finReference);
+		entity.setFinCcy(this.finCcy);
+		entity.setProfitDaysBais(this.profitDaysBais);
+		entity.setFinType(this.finType);
+		entity.setLovDescFinTypeName(this.lovDescFinTypeName);
+		entity.setFinBranch(this.finBranch);
+		entity.setLovDescFinBranchName(this.lovDescFinBranchName);
+		entity.setCustID(this.custID);
+		entity.setLovDescCustCIF(this.lovDescCustCIF);
+		entity.setLovDescSalutationName(this.lovDescSalutationName);
+		entity.setLovDescCustFName(this.lovDescCustFName);
+		entity.setLovDescCustLName(this.lovDescCustLName);
+		entity.setLovDescCustShrtName(this.lovDescCustShrtName);
+		entity.setDateStart(this.dateStart);
+		entity.setDateMatuirty(this.dateMatuirty);
+		entity.setFinAmount(this.finAmount);
+		entity.setCurFinAmount(this.curFinAmount);
+		entity.setProfit(this.profit);
+		entity.setProfitBalance(this.profitBalance);
+		entity.setPrincipal(this.principal);
+		entity.setPrincipalBalance(this.principalBalance);
+		entity.setTotalCapitalize(this.totalCapitalize);
+		entity.setCapitalizeBalance(this.capitalizeBalance);
+		entity.setOverduePrincipal(this.overduePrincipal);
+		entity.setOverdueProfit(this.overdueProfit);
+		entity.setTotalFeeAmt(this.totalFeeAmt);
+		entity.setDateLastFullyPaid(this.dateLastFullyPaid);
+		entity.setDateNextPaymentDue(this.dateNextPaymentDue);
+		entity.setAccrued(this.accrued);
+		entity.setDownpayment(this.downpayment);
+		entity.setRepayAccountId(this.repayAccountId);
+		entity.setFinAccount(this.finAccount);
+		entity.setFinCustPftAccount(this.finCustPftAccount);
+		entity.setRepayAmountNow(this.repayAmountNow);
+		entity.setPrincipalPayNow(this.principalPayNow);
+		entity.setProfitPayNow(this.profitPayNow);
+		entity.setRefundNow(this.refundNow);
+		entity.setPendindODCharges(this.pendindODCharges);
+		entity.setLovDescFinFormatter(this.lovDescFinFormatter);
+		entity.setRepayAmountExcess(this.repayAmountExcess);
+		entity.setEarlyPayEffectOn(this.earlyPayEffectOn);
+		entity.setEarlyPay(this.earlyPay);
+		entity.setEarlyPayAmount(this.earlyPayAmount);
+		entity.setInsRefund(this.insRefund);
+		entity.setEarlyRepayNewSchd(this.earlyRepayNewSchd == null ? null : this.earlyRepayNewSchd.copyEntity());
+		entity.setEarlyPayOnSchDate(this.earlyPayOnSchDate);
+		entity.setEarlyPayNextSchDate(this.earlyPayNextSchDate);
+		entity.setRefundCalStartDate(this.refundCalStartDate);
+		entity.setPayApportionment(this.payApportionment);
+		entity.setProfitPaid(this.profitPaid);
+		entity.setPrincipalPaid(this.principalPaid);
+		return entity;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

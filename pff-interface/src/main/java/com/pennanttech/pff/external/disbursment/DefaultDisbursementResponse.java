@@ -472,7 +472,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 				try {
 					// For VAS Account postings
 					instruction.setUserDetails(loggedInUser);
-					paymentProcess.processInsPayments(instruction);
+					paymentProcess.processInsPayment(instruction);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 				}
@@ -675,7 +675,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 				try {
 					// For VAS Account postings
 					instruction.setUserDetails(loggedInUser);
-					paymentProcess.processInsPayments(instruction);
+					paymentProcess.processInsPayment(instruction);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 				}
@@ -711,7 +711,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 
 		if (PAID_STATUS.equals(status)) {
 			if (!DisbursementConstants.STATUS_AWAITCON.equals(finAdvPayments.getStatus())) {// for
-																								// paid
+																							// paid
 				throw new Exception("Payment is in " + getStatus(finAdvPayments.getStatus()) + " status");
 			}
 		} else if ("REJECTED".equals(status)) {// for rejected

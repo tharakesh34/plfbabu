@@ -43,7 +43,7 @@
 		<extends>datebox</extends>
 		<property>
 			<property-name>constraint</property-name>
-			<property-value>between 19000101 and 20700101: Please enter a valid date.</property-value>
+			<property-value>between 19000101 and 20900101: Please enter a valid date.</property-value>
 		</property>
 	</component>
 	<component>

@@ -10,43 +10,32 @@
 				.east-centered .z-east-collapsed { display: flex; flex-direction: column; justify-content: center; }
 				.east-centered .z-east-collapsed .z-borderlayout-icon { display: none; color: #fff !important; font-size: 13px;
 				z-index: 25;}
-				.z-icon-angle-double-right:before{content: "\f00d"; color: #fff;}
-				.east-centered .z-east-collapsed
-				.z-east-title { align-self: center;
+				.z-borderlayout-icon {background: #365b85;}
+				.z-icon-angle-double-right:before{content: "\f00d"; color: #fff; width: 100%; }
+				.z-icon-angle-double-right:hover {background: #bc5c5c !important; }
+				.east-centered .z-east-collapsed .z-east-title { align-self: center;
 				width: initial!important; transform-origin: center
-				center!important; padding: 0
-				10px; transform:
+				center!important; padding: 0 10px; transform:
 				rotate(90deg); color: #fff; background: #365b85; font-style: normal;
 				text-overflow:
-				ellipsis;
-				overflow: hidden; height: 21px; font-family: "PT
-				Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 13px;
-				white-space: nowrap;}
+				ellipsis; overflow: hidden; height: 21px;
+				font-family: "PT Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif;
+    			font-size: 13px; font-weight: 400; }
 
-				.z-east-header { font-family:
-				"PT Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size:
-				13px;
-				font-weight: normal; font-style: normal;
-				height: 25px; border-bottom: 1px solid #e3e3e3; padding: 6px
-				6px 5px;
-				line-height: 13px; overflow: hidden; cursor:
-				default; white-space: nowrap; background: #bc5c5c;
+				.z-east-header { font-family: "PT
+				Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 13px;
+				font-weight: normal; font-style: normal; height:
+				25px; border-bottom: 1px solid #e3e3e3; padding: 6px
+				6px 5px; line-height: 13px; overflow: hidden; cursor: default;
+				white-space: nowrap; background: #bc5c5c;
 				color: #fff; }
 
-				.z-tabs-content { display: table; width: 2000%
-				!important; height: 100% !important; border-collapse: separate;
-				border-spacing: 0; margin: 0; padding: 0;
-				list-style-image: none; list-style-position: outside;
-				list-style-type: none;
-				}
-
-				.z-borderlayout-icon:hover { color:
-				#fff; background:#bc5c5c;}
-
-				.z-groupbox-content { display: block; height: inherit;
-				border: 1px solid #c5c5c5; border-top-width: 0;
-				padding: 4px 3px 3px; overflow:
-				auto; zoom: 1; }
+				.z-tabs-content { display: table; width: 2000% !important;
+				height: 100% !important; border-collapse: separate;
+				border-spacing: 0; margin: 0; padding: 0; list-style-image: none;
+				list-style-position: outside;
+				list-style-type: none; }
+				.z-groupbox-content {overflow: auto;}
 
 			</style>
 			<borderlayout id="borderlayoutFinAdvancePayments" sclass="east-centered">
@@ -237,6 +226,12 @@
 											<space spacing="2px" />
 											<checkbox id="holdDisbursement" />
 										</hbox>
+										<label id="label_FinAdvancePaymentsDialog_DisbDoc" value="${c:l('label_FinAdvancePaymentsDialog_DisbDoc.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="documentName" width="150px" maxlength="200" readonly="true" />
+											<button upload="true" label="${c:l('btBrowse_label')}" id="btnUploadDoc" hflex="1" />
+										</hbox>
 									</row>
 								</rows>
 							</grid>
@@ -371,12 +366,12 @@
 						</groupbox>
 					</div>
 				</center>
-				<east id="eastDocument" title="Disbursement Document" size="40%" flex="true" open="false" collapsible="true"
+				<east id="eastDocument" title="DisbursementDocument" size="40%" flex="true" open="false" collapsible="true"
 					slidable="false" visible="false">
 					<borderlayout>
 						<center>
 							<div height="100%">
-								<iframe id="docName" width="100%" height="100%" />
+								<iframe id="disbDoc" width="100%" height="100%" />
 							</div>
 						</center>
 					</borderlayout>

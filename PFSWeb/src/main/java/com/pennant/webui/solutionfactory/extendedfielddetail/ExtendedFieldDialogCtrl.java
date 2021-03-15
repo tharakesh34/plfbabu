@@ -720,6 +720,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		this.pagingFieldDetList.setActivePage(0);
 		setTableName(this.extendedFieldDetailsList);
 		setExtendedFieldDetailsList(this.extendedFieldDetailsList);
+		this.extendedFieldHeader.setExtendedFieldDetails(this.extendedFieldDetailsList);
 		getExtendedFieldPagedListWrapper().initList(this.extendedFieldDetailsList, listBoxFieldDet, pagingFieldDetList);
 		this.listBoxFieldDet.setItemRenderer(new ExtendedFieldListItemRenderer());
 

@@ -141,4 +141,9 @@ public interface FinServiceInstRESTService {
 	@Path("/loanInstructionService/getChequeDetails/{finReference}")
 	public ChequeHeader getChequeDetails(@PathParam("finReference") String finReference) throws ServiceException;
 
+	@POST
+	@Path("/loanInstructionService/cancelDisbursementInstructions")
+	public WSReturnStatus cancelDisbursementInstructions(FinServiceInstruction finServiceInstRequest)
+			throws ServiceException;
+
 }

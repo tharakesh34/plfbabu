@@ -16,6 +16,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFeeRefundDAO;
@@ -146,6 +147,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			return auditHeader;
 		}
 		aeEvent.getAcSetIDList().add(accountingSetID);
+		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 		refundHeader.setLinkedTranId(aeEvent.getLinkedTranId());
 

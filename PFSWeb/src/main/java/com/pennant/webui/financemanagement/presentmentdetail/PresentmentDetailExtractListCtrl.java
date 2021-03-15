@@ -217,10 +217,11 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.ENTERING);
 
 		doRemoveValidation();
-		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS) {
+		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS
+				&& !mandateType.getSelectedItem().getValue().equals(MandateConstants.TYPE_NACH)) {
 			this.loanType
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_PresentmentDetailList_Product.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, true));
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, true));
 		}
 		this.mandateType
 				.setConstraint(new PTListValidator<>(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),
@@ -458,6 +459,10 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.ENTERING);
 
 		String code = mandateType.getSelectedItem().getValue();
+		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS
+				&& StringUtils.equals(code, MandateConstants.TYPE_NACH)) {
+			this.space_LoanType.setSclass("");
+		} 
 		if (MandateConstants.TYPE_EMANDATE.equals(code)) {
 			this.emandateSource.setValue("");
 			this.emandateSource.setDescColumn("");

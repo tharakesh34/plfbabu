@@ -187,6 +187,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		amountCodes.setPenaltyPaid(movement.getPaidAmount());
 		amountCodes.setPenaltyWaived(movement.getWaivedAmount());
 		amountCodes.setPaymentType(rpyQueueHeader.getPayType());
+		amountCodes.setLpiPaid(rpyQueueHeader.getLateProfit());
+		amountCodes.setLpiWaived(rpyQueueHeader.getLatePftWaived());
 		aeEvent.setPostRefId(rpyQueueHeader.getReceiptId());
 		aeEvent.setPostingId(fm.getPostingId());
 		aeEvent.setEOD(false);
@@ -342,6 +344,15 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 			if (rpyQueueHeader.getExtDataMap() != null) {
 				dataMap.putAll(rpyQueueHeader.getExtDataMap());
+			}
+		} else {
+			if (rpyQueueHeader.getExtDataMap() != null) {
+				if (rpyQueueHeader.getExtDataMap().containsKey("LPP_TDS_P")) {
+					dataMap.put("LPP_TDS_P", rpyQueueHeader.getExtDataMap().get("LPP_TDS_P"));
+				}
+				if (rpyQueueHeader.getExtDataMap().containsKey("LPP_TDS_N")) {
+					dataMap.put("LPP_TDS_N", rpyQueueHeader.getExtDataMap().get("LPP_TDS_N"));
+				}
 			}
 		}
 

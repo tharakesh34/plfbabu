@@ -40,6 +40,7 @@
 
 	<changeSet id="ST#1717.3.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -50,12 +51,13 @@
 			restart
 			start with ' || v_maxval;
 			end;
+		]]>
 		</sql>
 	</changeSet>
 
-
 	<changeSet id="ST#1717.4.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -68,12 +70,13 @@
 			with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.5.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+			<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.GRPID),0)+1
@@ -95,7 +98,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -112,6 +115,7 @@
 
 	<changeSet id="ST#1717.8.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -121,12 +125,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQSECGROUPRIGHTS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.9.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -137,12 +143,13 @@
 			sequence SEQSECGROUPRIGHTS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.10.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+			<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -167,7 +174,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -183,6 +190,7 @@
 
 	<changeSet id="ST#1717.13.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -192,12 +200,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQSECOPERATIONS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.14.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -209,12 +219,13 @@
 			restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.15.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+			<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.OPRID),0)+1
@@ -232,11 +243,11 @@
 			-9223372036854775808
 			MAXVALUE 9223372036854775807
 			CACHE ';
-
+			
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -252,6 +263,7 @@
 
 	<changeSet id="ST#1717.18.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -261,12 +273,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQSECOPERATIONROLES restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.19.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -277,12 +291,13 @@
 			sequence SEQSECOPERATIONROLES restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.20.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+			<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -306,7 +321,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -321,6 +336,7 @@
 
 	<changeSet id="ST#1717.23.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -330,12 +346,14 @@
 			EXECUTE IMMEDIATE 'alter sequence SEQSECROLES
 			restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.24.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -347,12 +365,13 @@
 			with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.25.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+			<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.ROLEID),0)+1
@@ -374,7 +393,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -389,6 +408,7 @@
 
 	<changeSet id="ST#1717.28.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -399,12 +419,14 @@
 			restart start
 			with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.29.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -416,12 +438,13 @@
 			with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.30.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+			<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.USRID),0)+1
@@ -444,7 +467,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -460,6 +483,7 @@
 
 	<changeSet id="ST#1717.33.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -469,12 +493,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQSECUSEROPERATIONS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.34.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -485,12 +511,13 @@
 			sequence SEQSECUSEROPERATIONS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.35.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+			<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.USROPRID),0)+1
@@ -512,7 +539,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -529,6 +556,7 @@
 
 	<changeSet id="ST#1717.38.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -538,12 +566,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQAMTAUTHORIZATION restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.39.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -554,12 +584,13 @@
 			sequence SEQAMTAUTHORIZATION restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.40.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+			<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -583,7 +614,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -599,6 +630,7 @@
 
 	<changeSet id="ST#1717.43.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -607,12 +639,14 @@
 			EXECUTE
 			IMMEDIATE 'alter sequence SEQAMTEXPENSETYPE restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.44.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -623,12 +657,13 @@
 			sequence SEQAMTEXPENSETYPE restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.45.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+			<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -652,7 +687,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -668,6 +703,7 @@
 
 	<changeSet id="ST#1717.48.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -677,12 +713,13 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQAMTVEHICLEDEALER restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
-
 	<changeSet id="ST#1717.49.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -693,12 +730,13 @@
 			sequence SEQAMTVEHICLEDEALER restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.50.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.DEALERID),0)+1
@@ -720,7 +758,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -736,6 +774,7 @@
 
 	<changeSet id="ST#1717.53.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -744,12 +783,13 @@
 			T;
 			EXECUTE IMMEDIATE 'alter sequence SEQAMTVEHICLEMANUFACTURER restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
-
 	<changeSet id="ST#1717.54.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -760,12 +800,13 @@
 			EXECUTE 'alter sequence SEQAMTVEHICLEMANUFACTURER restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.55.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -789,7 +830,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -805,6 +846,7 @@
 
 	<changeSet id="ST#1717.58.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -813,12 +855,14 @@
 			EXECUTE
 			IMMEDIATE 'alter sequence SEQAMTVEHICLEMODEL restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.59.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -829,12 +873,13 @@
 			'alter sequence SEQAMTVEHICLEMODEL restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.60.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -855,7 +900,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -872,6 +917,7 @@
 
 	<changeSet id="ST#1717.63.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -879,12 +925,14 @@
 			(select VEHICLEVERSIONID from AMTVEHICLEVERSION union all select VEHICLEVERSIONID from AMTVEHICLEVERSION_Temp) T;
 			EXECUTE IMMEDIATE 'alter sequence SEQAMTVEHICLEVERSION restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.64.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -896,12 +944,13 @@
 			'alter sequence SEQAMTVEHICLEVERSION restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.65.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -923,7 +972,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -939,6 +988,7 @@
 
 	<changeSet id="ST#1717.68.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -948,12 +998,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQACCOUNTTYPEGROUP restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.69.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -964,12 +1016,13 @@
 			SEQACCOUNTTYPEGROUP restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.70.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.GROUPID),0)+1
@@ -991,7 +1044,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1007,6 +1060,7 @@
 
 	<changeSet id="ST#1717.73.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1016,11 +1070,13 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQBMTAGGREMENTDEF restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.74.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1032,12 +1088,13 @@
 			SEQBMTAGGREMENTDEF restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.75.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.AGGID),0)+1
@@ -1060,7 +1117,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1076,6 +1133,7 @@
 
 	<changeSet id="ST#1717.78.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1085,12 +1143,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQBOUNCEREASONS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.79.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1101,12 +1161,13 @@
 			SEQBOUNCEREASONS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.80.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.BOUNCEID),0)+1
@@ -1129,7 +1190,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1145,6 +1206,7 @@
 
 	<changeSet id="ST#1717.83.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1154,12 +1216,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQBMTCHECKLIST restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.84.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1170,12 +1234,13 @@
 			SEQBMTCHECKLIST restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.85.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -1200,7 +1265,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1216,6 +1281,7 @@
 
 	<changeSet id="ST#1717.88.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1224,12 +1290,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQCOSTCENTERS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.89.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1240,12 +1308,13 @@
 			SEQCOSTCENTERS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.90.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -1270,7 +1339,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1286,6 +1355,7 @@
 
 	<changeSet id="ST#1717.93.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1295,12 +1365,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQDPDBUCKETSCONFIG restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.94.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1311,12 +1383,13 @@
 			sequence SEQDPDBUCKETSCONFIG restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.95.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.CONFIGID),0)+1
@@ -1338,7 +1411,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1353,6 +1426,7 @@
 
 	<changeSet id="ST#1717.98.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1362,12 +1436,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQDPDBUCKETS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.99.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1378,12 +1454,13 @@
 			SEQDPDBUCKETS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.100.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.BUCKETID),0)+1
@@ -1405,7 +1482,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1421,6 +1498,7 @@
 
 	<changeSet id="ST#1717.103.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1430,12 +1508,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQFINANCESTATUSCODES restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.104.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1446,12 +1526,13 @@
 			sequence SEQFINANCESTATUSCODES restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.105.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.STATUSID),0)+1
@@ -1474,7 +1555,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1490,6 +1571,7 @@
 
 	<changeSet id="ST#1717.108.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1500,12 +1582,14 @@
 			restart start
 			with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.109.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1517,12 +1601,13 @@
 			with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.110.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.IRRID),0)+1
@@ -1545,7 +1630,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1561,6 +1646,7 @@
 
 	<changeSet id="ST#1717.113.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1571,12 +1657,14 @@
 			SEQMMAGREEMENTS
 			restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.114.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1588,12 +1676,13 @@
 			restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.115.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.MMAID),0)+1
@@ -1615,7 +1704,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1631,6 +1720,7 @@
 
 	<changeSet id="ST#1717.118.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1640,12 +1730,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQNPABUCKETSCONFIG restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.119.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1656,12 +1748,13 @@
 			sequence SEQNPABUCKETSCONFIG restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.120.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.CONFIGID),0)+1
@@ -1683,7 +1776,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1698,6 +1791,7 @@
 
 	<changeSet id="ST#1717.123.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1707,12 +1801,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQNPABUCKETS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.124.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1723,12 +1819,13 @@
 			SEQNPABUCKETS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.125.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+			<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.BUCKETID),0)+1
@@ -1750,7 +1847,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1765,6 +1862,7 @@
 
 	<changeSet id="ST#1717.128.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1774,12 +1872,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQPINCODES restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.129.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1790,12 +1890,13 @@
 			restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.130.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -1820,7 +1921,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1836,6 +1937,7 @@
 
 	<changeSet id="ST#1717.133.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1844,12 +1946,14 @@
 			EXECUTE
 			IMMEDIATE 'alter sequence SEQPROFITCENTERS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.134.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1860,12 +1964,13 @@
 			sequence SEQPROFITCENTERS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.135.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -1889,7 +1994,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1905,6 +2010,7 @@
 
 	<changeSet id="ST#1717.138.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1915,12 +2021,14 @@
 			SEQREASONCATEGORY
 			restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.139.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -1933,12 +2041,13 @@
 			start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.140.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.ID),0)+1 from
@@ -1959,7 +2068,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1974,6 +2083,7 @@
 
 	<changeSet id="ST#1717.143.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -1984,12 +2094,14 @@
 			with ' ||
 			v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.144.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2001,12 +2113,13 @@
 			v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.145.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.ID),0)+1 from
@@ -2027,7 +2140,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2043,6 +2156,7 @@
 
 	<changeSet id="ST#1717.148.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2053,12 +2167,14 @@
 			restart
 			start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.149.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2071,12 +2187,13 @@
 			with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.150.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.ID),0)+1 from
@@ -2097,7 +2214,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2113,6 +2230,7 @@
 
 	<changeSet id="ST#1717.153.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2120,12 +2238,14 @@
 			(select SYSNOTIFICATIONID from SYSNOTIFICATION union all select SYSNOTIFICATIONID from SYSNOTIFICATION_Temp) T;
 			EXECUTE IMMEDIATE 'alter sequence SEQSYSNOTIFICATION restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.154.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2137,12 +2257,13 @@
 			'alter sequence SEQSYSNOTIFICATION restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.155.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -2164,7 +2285,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2181,6 +2302,7 @@
 
 	<changeSet id="ST#1717.158.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2189,12 +2311,14 @@
 			EXECUTE IMMEDIATE
 			'alter sequence SEQBANKBRANCHES restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.159.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2205,12 +2329,13 @@
 			sequence SEQBANKBRANCHES restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.160.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -2235,7 +2360,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2251,6 +2376,7 @@
 
 	<changeSet id="ST#1717.163.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2259,12 +2385,14 @@
 			T;
 			EXECUTE IMMEDIATE 'alter sequence SEQFCMTCOMMODITYINVENTORY restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.164.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2275,12 +2403,13 @@
 			EXECUTE 'alter sequence SEQFCMTCOMMODITYINVENTORY restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.165.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -2304,7 +2433,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2320,6 +2449,7 @@
 
 	<changeSet id="ST#1717.168.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2329,12 +2459,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQCUSTOMERGROUPS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.169.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2345,12 +2477,13 @@
 			SEQCUSTOMERGROUPS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.170.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -2375,7 +2508,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2391,6 +2524,7 @@
 
 	<changeSet id="ST#1717.173.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2400,12 +2534,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQDEDUPPARAMS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.174.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2416,12 +2552,13 @@
 			SEQDEDUPPARAMS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.175.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.QUERYID),0)+1
@@ -2443,7 +2580,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2458,6 +2595,7 @@
 
 	<changeSet id="ST#1717.178.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2467,12 +2605,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQEODCONFIG restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.179.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2483,12 +2623,13 @@
 			SEQEODCONFIG restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.180.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -2513,7 +2654,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2528,6 +2669,7 @@
 
 	<changeSet id="ST#1717.183.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2537,12 +2679,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQFEETYPES restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.184.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2553,12 +2697,13 @@
 			restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.185.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -2583,7 +2728,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2613,6 +2758,7 @@
 
 	<changeSet id="ST#1717.190.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2622,12 +2768,14 @@
 			EXECUTE IMMEDIATE 'alter sequence SEQFINCONTRIBUTORDETAIL restart start with ' ||
 			v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.191.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2639,12 +2787,13 @@
 			EXECUTE 'alter sequence SEQFINCONTRIBUTORDETAIL restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.192.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -2667,7 +2816,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2684,6 +2833,7 @@
 
 	<changeSet id="ST#1717.195.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2693,12 +2843,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQMANUALADVISE restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.196.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2709,12 +2861,13 @@
 			SEQMANUALADVISE restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.197.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.ADVISEID),0)+1
@@ -2737,7 +2890,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2753,6 +2906,7 @@
 
 	<changeSet id="ST#1717.200.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2761,12 +2915,14 @@
 			EXECUTE IMMEDIATE
 			'alter sequence SEQJVPOSTINGS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.201.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2777,12 +2933,13 @@
 			sequence SEQJVPOSTINGS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.202.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -2807,7 +2964,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2825,6 +2982,7 @@
 
 	<changeSet id="ST#1717.205.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2834,12 +2992,14 @@
 			EXECUTE IMMEDIATE
 			'alter sequence SEQFINCREDITREVIEWDETAILS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.206.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2850,12 +3010,13 @@
 			'alter sequence SEQFINCREDITREVIEWDETAILS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.207.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.DETAILID),0)+1
@@ -2877,7 +3038,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2894,6 +3055,7 @@
 
 	<changeSet id="ST#1717.210.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2903,12 +3065,14 @@
 			EXECUTE
 			IMMEDIATE 'alter sequence SEQFINCREDITREVIEWSUMMARY restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.211.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2919,12 +3083,13 @@
 			'alter sequence SEQFINCREDITREVIEWSUMMARY restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.212.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -2947,7 +3112,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2964,6 +3129,7 @@
 
 	<changeSet id="ST#1717.215.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -2973,12 +3139,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQFINSUSPHOLD restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.216.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -2989,12 +3157,13 @@
 			SEQFINSUSPHOLD restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.217.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -3019,7 +3188,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3038,6 +3207,7 @@
 
 	<changeSet id="ST#1717.220.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3047,12 +3217,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQMANAGERCHEQUES restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.221.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3063,12 +3235,13 @@
 			SEQMANAGERCHEQUES restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.222.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.CHEQUEID),0)+1
@@ -3091,7 +3264,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3108,6 +3281,7 @@
 
 	<changeSet id="ST#1717.225.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3117,12 +3291,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQPRESENTMENTDETAILS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.226.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3134,12 +3310,13 @@
 			SEQPRESENTMENTDETAILS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.227.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.ID),0)+1 from
@@ -3160,7 +3337,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3177,6 +3354,7 @@
 
 	<changeSet id="ST#1717.230.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3186,12 +3364,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQINVENTORYSETTLEMENT restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.231.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3203,12 +3383,13 @@
 			SEQINVENTORYSETTLEMENT restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.232.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.ID),0)+1 from
@@ -3228,7 +3409,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3246,6 +3427,7 @@
 
 	<changeSet id="ST#1717.235.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3255,12 +3437,14 @@
 			EXECUTE IMMEDIATE 'alter sequence SEQLEGALAPPLICANTDETAILS restart start with ' ||
 			v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.236.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3272,12 +3456,13 @@
 			EXECUTE 'alter sequence SEQLEGALAPPLICANTDETAILS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.237.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -3300,7 +3485,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3317,6 +3502,7 @@
 
 	<changeSet id="ST#1717.240.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3326,12 +3512,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQLEGALDETAILS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.241.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3342,12 +3530,13 @@
 			SEQLEGALDETAILS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.242.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.LEGALID),0)+1
@@ -3370,7 +3559,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3387,6 +3576,7 @@
 
 	<changeSet id="ST#1717.245.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3396,12 +3586,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQLEGALDOCUMENTS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.246.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3412,12 +3604,13 @@
 			SEQLEGALDOCUMENTS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.247.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.LEGALID),0)+1
@@ -3440,7 +3633,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3457,6 +3650,7 @@
 
 	<changeSet id="ST#1717.250.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3466,12 +3660,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQLEGALECDETAILS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.251.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3482,12 +3678,13 @@
 			SEQLEGALECDETAILS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.252.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -3512,7 +3709,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3528,6 +3725,7 @@
 
 	<changeSet id="ST#1717.255.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3537,12 +3735,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQLEGALNOTES restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.256.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3553,12 +3753,13 @@
 			SEQLEGALNOTES restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.257.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -3583,7 +3784,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3601,6 +3802,7 @@
 
 	<changeSet id="ST#1717.260.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3608,12 +3810,14 @@
 			(select LEGALPROPERTYID from LEGALPROPERTYDETAILS union all select LEGALPROPERTYID from LEGALPROPERTYDETAILS_Temp) T;
 			EXECUTE IMMEDIATE 'alter sequence SEQLEGALPROPERTYDETAILS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.261.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3625,12 +3829,13 @@
 			EXECUTE 'alter sequence SEQLEGALPROPERTYDETAILS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.262.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -3654,7 +3859,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3671,6 +3876,7 @@
 
 	<changeSet id="ST#1717.265.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3680,12 +3886,14 @@
 			LEGALPROPERTYTITLE_Temp) T;
 			EXECUTE IMMEDIATE 'alter sequence SEQLEGALPROPERTYTITLE restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.266.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3697,12 +3905,13 @@
 			EXECUTE 'alter sequence SEQLEGALPROPERTYTITLE restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.267.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -3725,7 +3934,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3742,6 +3951,7 @@
 
 	<changeSet id="ST#1717.270.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3751,12 +3961,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQLIMITDETAILS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.271.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3767,12 +3979,13 @@
 			SEQLIMITDETAILS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.272.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.DETAILID),0)+1
@@ -3795,7 +4008,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3812,6 +4025,7 @@
 
 	<changeSet id="ST#1717.275.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3821,12 +4035,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQLIMITHEADER restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.276.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3837,12 +4053,13 @@
 			SEQLIMITHEADER restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.277.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.HEADERID),0)+1
@@ -3865,7 +4082,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3882,6 +4099,7 @@
 
 	<changeSet id="ST#1717.280.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3892,12 +4110,14 @@
 			EXECUTE IMMEDIATE 'alter sequence SEQLIMITSTRUCTUREDETAILS restart start with ' ||
 			v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.281.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3909,12 +4129,13 @@
 			EXECUTE 'alter sequence SEQLIMITSTRUCTUREDETAILS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.282.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -3938,7 +4159,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -3954,6 +4175,7 @@
 
 	<changeSet id="ST#1717.285.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -3961,12 +4183,14 @@
 			(select FINREFDETAILID from LMTFACILITYREFDETAIL union all select FINREFDETAILID from LMTFACILITYREFDETAIL_Temp) T;
 			EXECUTE IMMEDIATE 'alter sequence SEQLMTFACILITYREFDETAIL restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.286.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -3976,12 +4200,13 @@
 			EXECUTE 'alter sequence SEQLMTFACILITYREFDETAIL restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.287.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -4005,7 +4230,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4023,6 +4248,7 @@
 
 	<changeSet id="ST#1717.290.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4031,12 +4257,14 @@
 			EXECUTE
 			IMMEDIATE 'alter sequence SEQLMTFINREFDETAIL restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.291.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4047,12 +4275,13 @@
 			'alter sequence SEQLMTFINREFDETAIL restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.292.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -4073,7 +4302,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4089,6 +4318,7 @@
 
 	<changeSet id="ST#1717.295.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4099,12 +4329,14 @@
 			start with '
 			|| v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.296.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4117,12 +4349,13 @@
 			v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.297.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.ID),0)+1 from
@@ -4142,7 +4375,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4160,6 +4393,7 @@
 
 	<changeSet id="ST#1717.300.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4169,12 +4403,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQNOTIFICATIONS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.301.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4187,12 +4423,13 @@
 			restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.302.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.RULEID),0)+1
@@ -4215,7 +4452,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4232,6 +4469,7 @@
 
 	<changeSet id="ST#1717.305.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4240,12 +4478,14 @@
 			EXECUTE
 			IMMEDIATE 'alter sequence SEQPAYMENTDETAILS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.306.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4258,12 +4498,13 @@
 			sequence SEQPAYMENTDETAILS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.307.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -4286,7 +4527,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4303,6 +4544,7 @@
 
 	<changeSet id="ST#1717.310.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4312,12 +4554,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQPAYMENTHEADER restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.311.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4328,12 +4572,13 @@
 			SEQPAYMENTHEADER restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.312.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -4358,7 +4603,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4376,6 +4621,7 @@
 
 	<changeSet id="ST#1717.315.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4384,12 +4630,14 @@
 			EXECUTE
 			IMMEDIATE 'alter sequence SEQRMTACCOUNTINGSET restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.316.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4400,12 +4648,13 @@
 			sequence SEQRMTACCOUNTINGSET restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.317.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -4427,7 +4676,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4444,6 +4693,7 @@
 
 	<changeSet id="ST#1717.320.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4453,12 +4703,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQRMTPRODUCTASSETS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.321.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4469,12 +4721,13 @@
 			SEQRMTPRODUCTASSETS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.322.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.ASSETID),0)+1
@@ -4496,7 +4749,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4514,6 +4767,7 @@
 
 	<changeSet id="ST#1717.325.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4522,12 +4776,14 @@
 			EXECUTE
 			IMMEDIATE 'alter sequence SEQRMTSCORINGGROUP restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.326.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4538,12 +4794,13 @@
 			sequence SEQRMTSCORINGGROUP restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.327.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -4567,7 +4824,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4584,6 +4841,7 @@
 
 	<changeSet id="ST#1717.330.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4592,12 +4850,14 @@
 			EXECUTE IMMEDIATE
 			'alter sequence SEQRMTSCORINGSLAB restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.331.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4608,12 +4868,13 @@
 			sequence SEQRMTSCORINGSLAB restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.332.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -4637,7 +4898,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4655,6 +4916,7 @@
 
 	<changeSet id="ST#1717.335.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4664,12 +4926,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQLIMITPARAMS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.336.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4680,12 +4944,13 @@
 			SEQLIMITPARAMS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.337.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.QUERYID),0)+1
@@ -4707,7 +4972,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4723,6 +4988,7 @@
 
 	<changeSet id="ST#1717.340.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4733,12 +4999,14 @@
 			start
 			with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.341.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4751,12 +5019,13 @@
 			v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.342.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.RULEID),0)+1
@@ -4779,7 +5048,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4797,6 +5066,7 @@
 
 	<changeSet id="ST#1717.345.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4806,12 +5076,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQDEVIATIONHEADER restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.346.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4822,12 +5094,13 @@
 			sequence SEQDEVIATIONHEADER restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.347.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -4852,7 +5125,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4870,6 +5143,7 @@
 
 	<changeSet id="ST#1717.350.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4880,12 +5154,14 @@
 			'alter
 			sequence SEQEXTENDEDFIELDHEADER restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.351.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4896,12 +5172,13 @@
 			sequence SEQEXTENDEDFIELDHEADER restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.352.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.MODULEID),0)+1
@@ -4924,7 +5201,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -4941,6 +5218,7 @@
 
 	<changeSet id="ST#1717.355.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -4950,12 +5228,14 @@
 			EXECUTE IMMEDIATE 'alter
 			sequence SEQEMPLOYERDETAIL restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.356.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -4966,12 +5246,13 @@
 			sequence SEQEMPLOYERDETAIL restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.357.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -4996,7 +5277,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5013,6 +5294,7 @@
 
 	<changeSet id="ST#1717.360.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -5022,12 +5304,14 @@
 			EXECUTE IMMEDIATE
 			'alter sequence SEQRMTLOVFIELDDETAIL restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.361.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5038,12 +5322,13 @@
 			sequence SEQRMTLOVFIELDDETAIL restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.362.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -5065,7 +5350,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5082,6 +5367,7 @@
 
 	<changeSet id="ST#1717.365.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -5091,12 +5377,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQAPI_CHANNEL_DETAILS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.366.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5108,12 +5396,13 @@
 			SEQAPI_CHANNEL_DETAILS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.367.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.ID),0)+1 from
@@ -5133,7 +5422,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5150,6 +5439,7 @@
 
 	<changeSet id="ST#1717.370.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -5159,12 +5449,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQBMTACADEMICS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.371.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5175,12 +5467,13 @@
 			SEQBMTACADEMICS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.372.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -5205,7 +5498,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5221,17 +5514,20 @@
 
 	<changeSet id="ST#1717.375.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
 			select COALESCE(max(RIGHTID),0)+1 into v_maxval from SECRIGHTS;
 			EXECUTE IMMEDIATE 'alter sequence SEQSECRIGHTS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.376.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5241,16 +5537,17 @@
 			EXECUTE 'alter sequence SEQSECRIGHTS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.377.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(RIGHTID),0)+1
-			from SECRIGHTS;;
+			from SECRIGHTS;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQSECRIGHTS]
@@ -5266,6 +5563,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5282,6 +5580,7 @@
 
 	<changeSet id="ST#1717.380.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -5289,11 +5588,13 @@
 			SECROLEGROUPS;
 			EXECUTE IMMEDIATE 'alter sequence SEQSECROLEGROUPS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.381.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5303,16 +5604,17 @@
 			EXECUTE 'alter sequence SEQSECROLEGROUPS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.382.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(ROLEGRPID),0)+1
-			from SECROLEGROUPS;;
+			from SECROLEGROUPS;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQSECROLEGROUPS]
@@ -5328,6 +5630,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5339,17 +5642,20 @@
 
 	<changeSet id="ST#1717.385.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
 			select COALESCE(max(ID),0)+1 into v_maxval from AMORTIZATIONLOG;
 			EXECUTE IMMEDIATE 'alter sequence SEQAMORTIZATIONLOG restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.386.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5359,16 +5665,17 @@
 			EXECUTE 'alter sequence SEQAMORTIZATIONLOG restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.387.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(ID),0)+1 from
-			AMORTIZATIONLOG;;
+			AMORTIZATIONLOG;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQAMORTIZATIONLOG]
@@ -5384,6 +5691,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5400,6 +5708,7 @@
 
 	<changeSet id="ST#1717.390.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -5407,12 +5716,14 @@
 			COLLATERALMARKLOG;
 			EXECUTE IMMEDIATE 'alter sequence SEQCOLLATERALMARKLOG restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.391.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5422,16 +5733,17 @@
 			EXECUTE 'alter sequence SEQCOLLATERALMARKLOG restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.392.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
-			@MAXNO=COALESCE(max(FINCOLLATERALID),0)+1 from COLLATERALMARKLOG;;
+			@MAXNO=COALESCE(max(FINCOLLATERALID),0)+1 from COLLATERALMARKLOG;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE
@@ -5447,6 +5759,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5463,6 +5776,7 @@
 
 	<changeSet id="ST#1717.395.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -5470,12 +5784,14 @@
 			DDAREFERENCELOG;
 			EXECUTE IMMEDIATE 'alter sequence SEQDDAREFERENCELOG restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.396.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5485,16 +5801,17 @@
 			EXECUTE 'alter sequence SEQDDAREFERENCELOG restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.397.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(SEQNO),0)+1 from
-			DDAREFERENCELOG;;
+			DDAREFERENCELOG;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQDDAREFERENCELOG]
@@ -5510,6 +5827,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5526,6 +5844,7 @@
 
 	<changeSet id="ST#1717.400.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -5533,12 +5852,14 @@
 			DDAFTRANSACTIONLOG;
 			EXECUTE IMMEDIATE 'alter sequence SEQDDAFTRANSACTIONLOG restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.401.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5548,16 +5869,17 @@
 			EXECUTE 'alter sequence SEQDDAFTRANSACTIONLOG restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.402.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(SEQNO),0)+1 from
-			DDAFTRANSACTIONLOG;;
+			DDAFTRANSACTIONLOG;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQDDAFTRANSACTIONLOG]
@@ -5573,6 +5895,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5589,6 +5912,7 @@
 
 	<changeSet id="ST#1717.405.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -5596,12 +5920,14 @@
 			DEALERRESPONSE;
 			EXECUTE IMMEDIATE 'alter sequence SEQDEALERRESPONSE restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.406.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5611,16 +5937,17 @@
 			EXECUTE 'alter sequence SEQDEALERRESPONSE restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.407.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
-			@MAXNO=COALESCE(max(DEALERRESPONSEID),0)+1 from DEALERRESPONSE;;
+			@MAXNO=COALESCE(max(DEALERRESPONSEID),0)+1 from DEALERRESPONSE;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE
@@ -5636,6 +5963,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5651,6 +5979,7 @@
 
 	<changeSet id="ST#1717.410.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -5658,11 +5987,13 @@
 			EXECUTE
 			IMMEDIATE 'alter sequence SEQNOTES restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.411.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5671,16 +6002,17 @@
 			EXECUTE 'alter sequence SEQNOTES restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.412.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(NOTEID),0)+1
-			from NOTES;;
+			from NOTES;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQNOTES]
@@ -5694,6 +6026,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5709,17 +6042,20 @@
 
 	<changeSet id="ST#1717.415.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
 			select COALESCE(max(SERIALNO),0)+1 into v_maxval from TATDETAILS;
 			EXECUTE IMMEDIATE 'alter sequence SEQTATDETAILS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.416.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5729,16 +6065,17 @@
 			EXECUTE 'alter sequence SEQTATDETAILS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.417.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(SERIALNO),0)+1
-			from TATDETAILS;;
+			from TATDETAILS;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQTATDETAILS]
@@ -5754,6 +6091,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5770,6 +6108,7 @@
 
 	<changeSet id="ST#1717.420.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -5777,11 +6116,13 @@
 			WORKFLOWDETAILS;
 			EXECUTE IMMEDIATE 'alter sequence SEQWORKFLOWDETAILS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.421.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5791,16 +6132,17 @@
 			EXECUTE 'alter sequence SEQWORKFLOWDETAILS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.422.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(WORKFLOWID),0)+1
-			from WORKFLOWDETAILS;;
+			from WORKFLOWDETAILS;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQWORKFLOWDETAILS]
@@ -5816,6 +6158,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5832,6 +6175,7 @@
 
 	<changeSet id="ST#1717.425.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -5839,11 +6183,13 @@
 			FINANCELIMITPROCESS;
 			EXECUTE IMMEDIATE 'alter sequence SEQFINANCELIMITPROCESS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.426.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5853,16 +6199,17 @@
 			EXECUTE 'alter sequence SEQFINANCELIMITPROCESS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.427.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(FINLIMITID),0)+1
-			from FINANCELIMITPROCESS;;
+			from FINANCELIMITPROCESS;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQFINANCELIMITPROCESS]
@@ -5877,6 +6224,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5893,6 +6241,7 @@
 
 	<changeSet id="ST#1717.430.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -5900,11 +6249,13 @@
 			FINCOMMODITYINVENTORY;
 			EXECUTE IMMEDIATE 'alter sequence SEQFINCOMMODITYINVENTORY restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.431.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5914,16 +6265,17 @@
 			EXECUTE 'alter sequence SEQFINCOMMODITYINVENTORY restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.432.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
-			@MAXNO=COALESCE(max(FININVENTORYID),0)+1 from FINCOMMODITYINVENTORY;;
+			@MAXNO=COALESCE(max(FININVENTORYID),0)+1 from FINCOMMODITYINVENTORY;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE
@@ -5939,6 +6291,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -5951,6 +6304,7 @@
 
 	<changeSet id="ST#1717.435.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -5958,11 +6312,13 @@
 			MANDATESSTATUS;
 			EXECUTE IMMEDIATE 'alter sequence SEQMANDATESSTATUS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.436.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -5972,16 +6328,17 @@
 			EXECUTE 'alter sequence SEQMANDATESSTATUS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.437.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(MANDATEID),0)+1
-			from MANDATESSTATUS;;
+			from MANDATESSTATUS;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQMANDATESSTATUS]
@@ -5997,6 +6354,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6012,30 +6370,40 @@
 	</changeSet>
 
 	<changeSet id="ST#1717.440.1" author="Murthy" dbms="oracle">
-		<sql splitStatements="false"> declare v_maxval INTEGER;
+		<sql splitStatements="false"> 
+		<![CDATA[
+			declare v_maxval INTEGER;
 			begin select COALESCE(max(TemplateId),0)+1 into v_maxval from
 			TEMPLATES; EXECUTE IMMEDIATE 'alter sequence SEQMAILTEMPLATE
 			restart start with ' || v_maxval; end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.441.1" author="Murthy" dbms="postgresql">
-		<sql splitStatements="false"> do $$ declare v_maxval
+		<sql splitStatements="false"> 
+		<![CDATA[
+		do $$ declare v_maxval
 			INTEGER; begin select COALESCE(max(TemplateId),0)+1 into v_maxval from
 			TEMPLATES; EXECUTE 'alter sequence SEQMAILTEMPLATE
 			restart start with ' || v_maxval; end; $$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.442.1" author="Murthy" dbms="mssql">
-		<sql splitStatements="false"> DECLARE @SQLCmd NVARCHAR(MAX);
+		<sql splitStatements="false"> 
+		<![CDATA[
+			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT; SELECT
 			@MAXNO=COALESCE(max(TemplateId),0)+1 from TEMPLATES; SET @SQLCmd = ' CREATE SEQUENCE
 			[dbo].[SEQMAILTEMPLATE]
 			AS [bigint]
 			START WITH ' + CAST( @MAXNO AS VARCHAR(30)) + 'INCREMENT BY 1 MINVALUE -9223372036854775808 MAXVALUE
 			9223372036854775807
-			CACHE '; EXEC SP_EXECUTESQL @SQLCmd;
+			CACHE '; 
+			EXEC SP_EXECUTESQL @SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6052,6 +6420,7 @@
 
 	<changeSet id="ST#1717.445.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -6059,11 +6428,13 @@
 			MANDATESTATUSUPDATE;
 			EXECUTE IMMEDIATE 'alter sequence SEQMANDATESTATUSUPDATE restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.446.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -6073,16 +6444,17 @@
 			EXECUTE 'alter sequence SEQMANDATESTATUSUPDATE restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.447.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+			<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(FILEID),0)+1
-			from MANDATESTATUSUPDATE;;
+			from MANDATESTATUSUPDATE;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQMANDATESTATUSUPDATE]
@@ -6097,6 +6469,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6113,17 +6486,20 @@
 
 	<changeSet id="ST#1717.450.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
 			select COALESCE(max(ID),0)+1 into v_maxval from REASONHEADER;
 			EXECUTE IMMEDIATE 'alter sequence SEQREASONHEADER restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.451.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -6132,16 +6508,17 @@
 			EXECUTE 'alter sequence SEQREASONHEADER restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.452.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(ID),0)+1 from
-			REASONHEADER;;
+			REASONHEADER;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQREASONHEADER]
@@ -6157,6 +6534,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6173,6 +6551,7 @@
 
 	<changeSet id="ST#1717.455.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -6180,11 +6559,13 @@
 			REPORTCONFIGURATION;
 			EXECUTE IMMEDIATE 'alter sequence SEQREPORTCONFIGURATION restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.456.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -6194,16 +6575,17 @@
 			EXECUTE 'alter sequence SEQREPORTCONFIGURATION restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.457.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(REPORTID),0)+1
-			from REPORTCONFIGURATION;;
+			from REPORTCONFIGURATION;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQREPORTCONFIGURATION]
@@ -6218,6 +6600,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6234,6 +6617,7 @@
 
 	<changeSet id="ST#1717.460.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -6241,11 +6625,13 @@
 			REPORTFILTERFIELDS;
 			EXECUTE IMMEDIATE 'alter sequence SEQREPORTFILTERFIELDS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.461.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -6255,16 +6641,17 @@
 			EXECUTE 'alter sequence SEQREPORTFILTERFIELDS restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.462.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(REPORTID),0)+1
-			from REPORTFILTERFIELDS;;
+			from REPORTFILTERFIELDS;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE [dbo].[SEQREPORTFILTERFIELDS]
@@ -6279,6 +6666,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6294,6 +6682,7 @@
 
 	<changeSet id="ST#1717.465.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -6303,12 +6692,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQPRESENTMENTHEADER restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.466.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -6320,12 +6711,13 @@
 			SEQPRESENTMENTHEADER restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.467.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.ID),0)+1 from
@@ -6346,7 +6738,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6363,6 +6755,7 @@
 
 	<changeSet id="ST#1717.470.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -6370,11 +6763,13 @@
 			BATCHFILEHEADER;
 			EXECUTE IMMEDIATE 'alter sequence SEQBATCHFILEHEADER restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.471.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -6384,17 +6779,18 @@
 			EXECUTE 'alter sequence SEQBATCHFILEHEADER restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.472.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
 			@MAXNO=COALESCE(max(ID),0)+1 from
-			BATCHFILEHEADER;;
+			BATCHFILEHEADER;
 
 			SET @SQLCmd = '
 			CREATE SEQUENCE
@@ -6412,6 +6808,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6424,11 +6821,11 @@
 		restart start with ' || v_maxval; end; </sql> </changeSet> <changeSet id="ST#1717.476.1" author="Murthy.y" dbms="postgresql"> 
 		<sql splitStatements="false"> do $$ declare v_maxval INTEGER; begin select COALESCE(max(T.ID),0)+1 into v_maxval from (select 
 		ID from WIFFINANCEMAIN union all select ID from WIFFINANCEMAIN_Temp) T; EXECUTE 'alter sequence SEQWIFFINANCEMAIN restart 
-		start with ' || v_maxval; end; $$; </sql> </changeSet> <changeSet id="ST#1717.477.1" author="Murthy.y" dbms="mssql"> <sql splitStatements="false"> 
-		DECLARE @SQLCmd NVARCHAR(MAX); DECLARE @MAXNO BIGINT; SELECT @MAXNO=COALESCE(max(T.ID),0)+1 from (select ID from WIFFINANCEMAIN 
-		union all select ID from WIFFINANCEMAIN_Temp) T; SET @SQLCmd = ' CREATE SEQUENCE [dbo].[SEQWIFFINANCEMAIN] AS [bigint] START 
-		WITH ' + CAST( @MAXNO AS VARCHAR(30)) + 'INCREMENT BY 1 MINVALUE -9223372036854775808 MAXVALUE 9223372036854775807 CACHE 
-		'; EXEC SP_EXECUTESQL @SQLCmd; </sql> </changeSet> -->
+		start with ' || v_maxval; end; $$; </sql> </changeSet> <changeSet id="ST#1717.477.1" author="Murthy.y" dbms="mssql"> <sql 
+		splitStatements="false"> DECLARE @SQLCmd NVARCHAR(MAX); DECLARE @MAXNO BIGINT; SELECT @MAXNO=COALESCE(max(T.ID),0)+1 from 
+		(select ID from WIFFINANCEMAIN union all select ID from WIFFINANCEMAIN_Temp) T; SET @SQLCmd = ' CREATE SEQUENCE [dbo].[SEQWIFFINANCEMAIN] 
+		AS [bigint] START WITH ' + CAST( @MAXNO AS VARCHAR(30)) + 'INCREMENT BY 1 MINVALUE -9223372036854775808 MAXVALUE 9223372036854775807 
+		CACHE '; EXEC SP_EXECUTESQL @SQLCmd; </sql> </changeSet> -->
 
 	<!-- SEQFACILITYDETAILS -->
 	<changeSet id="ST#1717.478.1" author="Murthy.y">
@@ -6442,6 +6839,7 @@
 
 	<changeSet id="ST#1717.480.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -6451,17 +6849,17 @@
 			select facilityref,startdate from
 			FacilityDetails_temp )t
 			where startdate in (select max(t2.startdate) from (select startdate from FacilityDetails
-			union
-			all
-			select startdate from FacilityDetails_temp)t2);
-
-
+																union all
+																select startdate from FacilityDetails_temp)t2);
+			 EXECUTE IMMEDIATE 'alter sequence SEQFACILITYDETAILS restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.481.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -6476,14 +6874,17 @@
 			from FacilityDetails
 			union all
 			select startdate from FacilityDetails_temp)t2);
+			EXECUTE 'alter sequence SEQFACILITYDETAILS restart start with ' || v_maxval;
+			
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.482.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=
@@ -6511,7 +6912,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6526,6 +6927,7 @@
 
 	<changeSet id="ST#1717.480.2" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -6542,11 +6944,13 @@
 			EXECUTE IMMEDIATE
 			'alter sequence SEQINVESTMENT restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.481.2" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -6565,12 +6969,13 @@
 			SEQINVESTMENT restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.482.2" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=
@@ -6601,7 +7006,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6617,6 +7022,7 @@
 
 	<changeSet id="ST#1717.490.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -6626,12 +7032,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQINSTRUMENTWISELIMIT restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.491.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -6643,12 +7051,13 @@
 			SEQINSTRUMENTWISELIMIT restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.492.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.ID),0)+1 from
@@ -6670,7 +7079,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6684,6 +7093,7 @@
 
 	<changeSet id="ST#1717.495.1" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -6693,12 +7103,14 @@
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQEXTINTERFACECONF restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.496.1" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -6711,12 +7123,13 @@
 			restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.497.1" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=COALESCE(max(T.ID),0)+1 from
@@ -6737,7 +7150,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6753,6 +7166,7 @@
 
 	<changeSet id="ST#1717.500" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -6770,12 +7184,14 @@
 			EXECUTE IMMEDIATE 'alter sequence SEQCOLLATERALSETUP restart start with ' ||
 			v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.501" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -6793,12 +7209,13 @@
 			EXECUTE 'alter sequence SEQCOLLATERALSETUP restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.502" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=
@@ -6826,7 +7243,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6842,6 +7259,7 @@
 
 	<changeSet id="ST#1717.505" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -6859,12 +7277,14 @@
 			EXECUTE IMMEDIATE 'alter sequence SEQVASREFERENCE restart start with ' ||
 			v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.506" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -6884,12 +7304,13 @@
 			EXECUTE 'alter sequence SEQVASREFERENCE restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.507" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=
@@ -6918,7 +7339,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -6935,6 +7356,7 @@
 
 	<changeSet id="ST#1717.510.1" author="Murthy" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -6942,12 +7364,14 @@
 			WIFCUSTOMERS;
 			EXECUTE IMMEDIATE 'alter sequence SEQWIFCUSTOMER restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.511.1" author="Murthy" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -6957,12 +7381,13 @@
 			EXECUTE 'alter sequence SEQWIFCUSTOMER restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.512.1" author="Murthy" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -6985,6 +7410,7 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -7000,6 +7426,7 @@
 
 	<changeSet id="ST#1717.515" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -7017,12 +7444,14 @@
 			SEQCAFREFERENCE restart start with ' ||
 			v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.516" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -7039,12 +7468,13 @@
 			EXECUTE 'alter sequence SEQCAFREFERENCE restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.517" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=
@@ -7074,6 +7504,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
+			]]>
 
 		</sql>
 	</changeSet>
@@ -7087,6 +7518,7 @@
 
 	<changeSet id="ST#1717.519" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -7096,11 +7528,13 @@
 			IMMEDIATE
 			'alter sequence SEQEXPENSETYPE restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.520" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -7112,12 +7546,13 @@
 			sequence SEQEXPENSETYPE restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.521" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -7139,7 +7574,7 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
 
@@ -7157,6 +7592,7 @@
 
 	<changeSet id="ST#1717.524" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -7166,11 +7602,13 @@
 			IMMEDIATE
 			'alter sequence SEQBENEFICIARY restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.525" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -7181,12 +7619,13 @@
 			sequence SEQBENEFICIARY restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1717.526" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
@@ -7210,17 +7649,18 @@
 			EXEC
 			SP_EXECUTESQL
 			@SQLCmd;
+			]]>
 
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1717.527" author="Murthy.y" dbms="oracle,postgresql">
-		<createSequence sequenceName="SEQMSCPOSTREF" startValue="1" maxValue="9223372036854775807"
-			incrementBy="1" />
+		<createSequence sequenceName="SEQMSCPOSTREF" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
 	</changeSet>
 
 	<changeSet id="ST#1717.528" author="Murthy.y" dbms="oracle">
 		<sql splitStatements="false">
+		<![CDATA[
 			declare
 			v_maxval INTEGER;
 			begin
@@ -7232,12 +7672,14 @@
 			EXECUTE IMMEDIATE 
 			'alter sequence SEQMSCPOSTREF restart start with ' || v_maxval;
 			end;
+			]]>
 		</sql>
 	</changeSet>
 
 
 	<changeSet id="ST#1717.529" author="Murthy.y" dbms="postgresql">
 		<sql splitStatements="false">
+		<![CDATA[
 			do $$
 			declare
 			v_maxval INTEGER;
@@ -7250,16 +7692,17 @@
 			EXECUTE 'alter sequence SEQMSCPOSTREF restart start with ' || v_maxval;
 			end;
 			$$;
+			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1717.530_pre" author="Murthy.y" dbms="mssql">
 		<dropTable tableName="SEQMSCPOSTREF" />
 	</changeSet>
 
 	<changeSet id="ST#1717.530" author="Murthy.y" dbms="mssql">
 		<sql splitStatements="false">
-
+		<![CDATA[
 			DECLARE @SQLCmd NVARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT @MAXNO=
@@ -7284,8 +7727,307 @@
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
-
+			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="PSD#168993_pre" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'paymentdetails');
+				select deps_save_and_drop_dependencies ('plf', 'paymentinstructions');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#168993.1" author="gopal.p">
+		<modifyDataType tableName="PaymentDetails" columnName="Amount" newDataType="decimal(18,0)" />
+	</changeSet>
+
+	<changeSet id="PSD#168993.2" author="gopal.p">
+		<modifyDataType tableName="PaymentInstructions" columnName="PaymentAmount" newDataType="decimal(18,0)" />
+	</changeSet>
+
+	<changeSet id="PSD#168993_post" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'paymentdetails');
+				select deps_restore_dependencies ('plf', 'paymentinstructions');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#141.1" author="DurgaPrasad G">
+		<sql>
+		<![CDATA[
+					
+			Delete from SecGrouprights where rightid in (Select rightid from Secrights Where rightname = 'menuItem_FinDeptReports_DisbursmentReport');
+			Delete from SecOperationRoles where OprID = (select OprID from SecOperations WHERE OprCode='FINANCE_DISBURSEMENT_REPORT') and RoleID = (select RoleID from SecRoles where RoleCd='FINANCE_DISBURSEMENT_REPORT');
+			Delete from SecOperations where OprCode = 'FINANCE_DISBURSEMENT_REPORT';
+			Delete from SecRoleGroups where GrpID = (select grpId from SecGroups WHERE GrpCode='FINANCE_DISBURSEMENT_REPORT') and RoleID = (select RoleID from SecRoles where RoleCd='FINANCE_DISBURSEMENT_REPORT');
+			Delete from SecRoles where  RoleCd = 'FINANCE_DISBURSEMENT_REPORT';
+			Delete from SecGroupRights where grpId = (select grpId from SecGroups WHERE GrpCode='FINANCE_DISBURSEMENT_REPORT') and RightID = (select RightID from SecRights where RightName='menuItem_FinDeptReports_DisbursmentReport');
+			Delete from SecGroups where GrpCode = 'FINANCE_DISBURSEMENT_REPORT';
+			Delete from SECRIGHTS where RIGHTNAME = 'menuItem_FinDeptReports_DisbursmentReport';
+												
+			Insert into SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+			values ((select max(RIGHTID)+1 from SECRIGHTS),0,'menuItem_FinDeptReports_DisbursmentReport','MENU',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			
+			Insert into SECGROUPS (GRPID,GRPCODE,GRPDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+			values ((select max(GRPID)+1 from SECGROUPS),'FINANCE_DISBURSEMENT_REPORT','Disbursement Download Report',0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0);
+			
+			Insert into SECGROUPRIGHTS(GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE, TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+			values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(Select GRPID from SECGROUPS where GRPCODE='FINANCE_DISBURSEMENT_REPORT'), 
+			(Select RIGHTID from SECRIGHTS where RIGHTNAME='menuItem_FinDeptReports_DisbursmentReport'),1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles),1,'FINANCE_DISBURSEMENT_REPORT','Disbursement Download Report','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FINANCE_DISBURSEMENT_REPORT'), (Select  RoleID  From SecRoles Where RoleCd='FINANCE_DISBURSEMENT_REPORT'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+							
+			INSERT INTO SecOperations values ((select MAX(OprID)+1 from SecOperations),'FINANCE_DISBURSEMENT_REPORT','Disbursement Download Report',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+			INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='FINANCE_DISBURSEMENT_REPORT'), (select RoleID from SecRoles where RoleCd='FINANCE_DISBURSEMENT_REPORT'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+				
+		]]>
+		</sql>
+	</changeSet>
+	<!-- <changeSet id="DE#141.2" author="pavankalyan.s"> <sql> <![CDATA[ Insert into SecUserOperations select row_number() 
+		over(order by UsrOprId)+UsrOprId UsrOprId, UsrId, OprId, "Version", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, 
+		TaskId, NextTaskId, RecordType, WorkflowId from ( select (select max(usrOprId) from secuseroperations)+1 UsrOprId , (Select 
+		OprID From SecOperations Where OprCode='FINANCE_DISBURSEMENT_REPORT') UsrId , (Select RoleId from SecRoles where RoleCd = 
+		'FINANCE_DISBURSEMENT_REPORT') OprId , 1 "Version" , 1000 LastMntBy , CURRENT_TIMESTAMP LastMntOn , 'Approved' RecordStatus 
+		, NULL RoleCode , NULL NextRoleCode , NULL TaskId , NULL NextTaskId , NULL RecordType , 0 WorkflowId from secoperationroles 
+		where roleid in ( select roleid from secrolegroups where grpid in ( select grpid from secgrouprights where rightid=(select 
+		rightid from secrights where rightname='menuItem_FinDeptReports_PastDue'))) ) T ]]> </sql> </changeSet> -->
+
+
+	<changeSet id="DE#199" author="Venkatesh.ch">
+		<sql>
+		<![CDATA[
+			delete from bmtamountcodes where allowedevent ='WRITEBK' and AmountCode ='ae_woPayAmt';
+
+			INSERT INTO BMTAmountCodes (AllowedEvent, AllowedRIA, AmountCode, AmountCodeDesc, AmountCodeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('WRITEBK', '0', 'ae_woPayAmt', 'WriteoffPayAmount', '1', 1, 1005, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="DE#200" author="pavankalyan.s">
+		<sql>
+		<![CDATA[
+            DELETE FROM REPORTFILTERFIELDS WHERE REPORTID=(SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_BounceorClearanceReport');
+            DELETE  FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_BounceorClearanceReport';
+            INSERT Into REPORTCONFIGURATION VALUES ((SELECT MAX(REPORTID)+1 FROM reportconfiguration), 'Excel:Bounce or Clearance Report', 'Bounce or Clearance Report', 1, 'BounceOrClearanceReport', 'dataSource', 1, 'menu_Item_BounceorClearanceReport', 1, 1000, NULL, NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 0, 1,0);
+            INSERT into REPORTFILTERFIELDS VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_BounceorClearanceReport'), 1, 'Product', 'LOVSEARCH', 'Product', 'm.FinType', NULL, 'FinanceType', 'getFinType', 'getFinType', 1, 0, 0, 0, 1, 1, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, NULL);
+   			INSERT into REPORTFILTERFIELDS VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_BounceorClearanceReport'), 2, 'Presentment Date', 'DATE', 'Presentment Date', 'm.SchDate', NULL, '---Select----', NULL, NULL, 0, 0, 0, 0, 2, 1, NULL, NULL, NULL, NULL, 150, 0, '=', 3, 1000, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, NULL);
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="DE#209.3" author="naveenkumar.a">
+		<sql>
+	<![CDATA[
+       	    delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_AdvanceReport');
+			delete from reportconfiguration where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_AdvanceReport');
+
+   			INSERT INTO REPORTCONFIGURATION VALUES ((SELECT MAX(REPORTID)+1 FROM reportconfiguration), 'Excel:Advance Report', 'Advance Report', 1, 'AdvanceReport', 'dataSource', 1, 'menu_Item_AdvanceReport', 1, 1000, NULL, NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 0, 1,0);
+			INSERT into REPORTFILTERFIELDS VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_AdvanceReport'), 1, 'Product', 'LOVSEARCH', 'Product', 'FM.FinType', '', 'FinanceType', 'getFinType', 'getFinTypeDesc', 1, 0, 0, 0, 1, 1, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', '', '', '', '', '', 0,CURRENT_TIMESTAMP, '');
+			
+	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#209.4" author="naveenkumar.a">
+		<sql>
+		<![CDATA[
+			delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_PDCExhaustReport');
+			delete from reportconfiguration where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_PDCExhaustReport');
+			
+			INSERT INTO REPORTCONFIGURATION VALUES((SELECT MAX(REPORTID)+1 FROM reportconfiguration), 'Excel:PDC Exhaust Report', 'PDC Exhaust Report', 1, 'PDCExhaustReport', 'dataSource', 1, 'menu_Item_PDCExhaustReport', 1, 1000, NULL, NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 0, 0,0);
+			INSERT into REPORTFILTERFIELDS VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_PDCExhaustReport'), 1, 'Product', 'LOVSEARCH', 'Product', 'FM.FinType', '', 'FinanceType', 'getFinType', 'getFinTypeDesc', 1, 0, 0, 0, 1, 1, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, '');
+			
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="DE#199.1" author="Venkatesh.ch">
+		<sql>
+		<![CDATA[
+ 		    UPDATE BMTAEEVENTS set Active = 1 where AEEventCode = 'WRITEBK';
+        ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="DE#221" author="Venkatesh.ch">
+		<comment> Selecting the TOTALCPZ value  </comment>
+		<createView replaceIfExists="true" viewName="FINANCEMAINTENANCE_VIEW">
+		<![CDATA[
+			SELECT T1.FINREFERENCE,
+			T1.FINBRANCH,
+			T1.FINTYPE,
+			T1.FINCCY,
+			T1.SCHEDULEMETHOD,
+			T1.PROFITDAYSBASIS,
+			T1.FINSTARTDATE,
+			T1.NUMBEROFTERMS,
+			T1.CUSTID,
+			T1.FINAMOUNT,
+			T1.MATURITYDATE,
+			T1.FINREPAYMENTAMOUNT,
+			T1.FINISACTIVE,
+			T1.BLACKLISTED,
+			T1.FEECHARGEAMT,
+			T1.INSURANCEAMT,
+			T1.GRACETERMS,
+			T1.ALLOWGRCPERIOD,
+			T1.GRCPERIODENDDATE,
+			T1.ALWMULTIDISB,
+			T1.DEFFERMENTS,
+			T1.NEXTROLECODE,
+			T1.RECORDSTATUS,
+			T1.RECORDTYPE,
+			T1.ALLOWGRCPFTRVW,
+			T1.ALLOWREPAYRVW,
+			T1.LASTREPAYDATE,
+			T1.LASTREPAYPFTDATE,
+			T1.ALLOWEDDEFRPYCHANGE,
+			T1.AVAILEDDEFRPYCHANGE,
+			T1.RCDMAINTAINSTS,
+			T1.MIGRATEDFINANCE,
+			T1.CLOSINGSTATUS,
+			T1.REPAYRATEBASIS,
+			T1.MANUALSCHEDULE,
+			T1.FINCURRASSETVALUE,
+			T1.TAKEOVERFINANCE,
+			T1.NEXTROLLOVERDATE,
+			T1.AVAILEDUNPLANEMI,
+			T1.AVAILEDREAGEH,
+			T1.MAXUNPLANNEDEMI,
+			T1.MAXREAGEHOLIDAYS,
+			T1.DOWNPAYMENT,
+			T1.PLANEMIHALW,
+			T1.CALTERMS,
+			T1.RATECHGANYDAY,
+			T1.FINASSETVALUE,
+			T2.CUSTCIF AS LOVDESCCUSTCIF,
+			T2.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+			T3.FINISALWDIFFERMENT AS LOVDESCFINALWDEFERMENT,
+			T3.FINDIVISION LOVDESCFINDIVISION,
+			T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+			T4.PRODUCTCATEGORY,
+			COALESCE(T5.ROLEDESC,  ${ADD.SCHEMA}FN_GET_ROLEDESC(T1.NEXTROLECODE)) AS LOVDESCREQUESTSTAGE,
+			COALESCE(T9.NOINST, 0) AS NOINST,
+		    T1.SAMPLINGREQUIRED,
+		    T1.ADVEMITERMS,
+		    T1.SANBSDSCHDLE,
+		    T1.PROMOTIONSEQID,
+		    T1.SVAMOUNT,
+		    T1.CBAMOUNT,
+		    T1.REPAYPFTFRQ,
+		    T1.TOTALCPZ
+			FROM FINANCEMAIN_TEMP T1
+			JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+			JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
+			LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+			JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
+			LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+			UNION ALL
+			SELECT T1.FINREFERENCE,
+			T1.FINBRANCH,
+			T1.FINTYPE,
+			T1.FINCCY,
+			T1.SCHEDULEMETHOD,
+			T1.PROFITDAYSBASIS,
+			T1.FINSTARTDATE,
+			T1.NUMBEROFTERMS,
+			T1.CUSTID,
+			T1.FINAMOUNT,
+			T1.MATURITYDATE,
+			T1.FINREPAYMENTAMOUNT,
+			T1.FINISACTIVE,
+			T1.BLACKLISTED,
+			T1.FEECHARGEAMT,
+			T1.INSURANCEAMT,
+			T1.GRACETERMS,
+			T1.ALLOWGRCPERIOD,
+			T1.GRCPERIODENDDATE,
+			T1.ALWMULTIDISB,
+			T1.DEFFERMENTS,
+			T1.NEXTROLECODE,
+			T1.RECORDSTATUS,
+			T1.RECORDTYPE,
+			T1.ALLOWGRCPFTRVW,
+			T1.ALLOWREPAYRVW,
+			T1.LASTREPAYDATE,
+			T1.LASTREPAYPFTDATE,
+			T1.ALLOWEDDEFRPYCHANGE,
+			T1.AVAILEDDEFRPYCHANGE,
+			T1.RCDMAINTAINSTS,
+			T1.MIGRATEDFINANCE,
+			T1.CLOSINGSTATUS,
+			T1.REPAYRATEBASIS,
+			T1.MANUALSCHEDULE,
+			T1.FINCURRASSETVALUE,
+			T1.TAKEOVERFINANCE,
+			T1.NEXTROLLOVERDATE,
+			T1.AVAILEDUNPLANEMI,
+			T1.AVAILEDREAGEH,
+			T1.MAXUNPLANNEDEMI,
+			T1.MAXREAGEHOLIDAYS,
+			T1.DOWNPAYMENT,
+			T1.PLANEMIHALW,
+			T1.CALTERMS,
+			T1.RATECHGANYDAY,
+			T1.FINASSETVALUE,
+			T2.CUSTCIF LOVDESCCUSTCIF,
+			T2.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+			T3.FINISALWDIFFERMENT AS LOVDESCFINALWDEFERMENT,
+			T3.FINDIVISION LOVDESCFINDIVISION,
+			T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+			T4.PRODUCTCATEGORY,
+			COALESCE(T5.ROLEDESC,  ${ADD.SCHEMA}FN_GET_ROLEDESC(T1.NEXTROLECODE)) AS LOVDESCREQUESTSTAGE,
+			COALESCE(T9.NOINST, 0) AS NOINST,
+			T1.SAMPLINGREQUIRED,
+			T1.ADVEMITERMS,
+			T1.SANBSDSCHDLE,
+			T1.PROMOTIONSEQID,
+			T1.SVAMOUNT,
+			T1.CBAMOUNT,
+			T1.REPAYPFTFRQ,
+			T1.TOTALCPZ
+			FROM FINANCEMAIN T1
+			JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+			JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
+			LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+			JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
+			LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+			WHERE NOT (EXISTS ( SELECT 1 AS EXPR1
+			FROM FINANCEMAIN_TEMP
+			WHERE FINANCEMAIN_TEMP.FINREFERENCE = T1.FINREFERENCE))
+		    ]]>
+	</createView>
+	</changeSet>
+
+	<changeSet id="DE#58.1" author="DurgaPrasad G">
+		<sql>
+		<![CDATA[
 		
+		    Delete from REPORTCONFIGURATION WHERE REPORTID=( SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE ='menu_Item_FeeAmzReferenceReport');
+
+            Delete from REPORTCONFIGURATION WHERE  REPORTID=( SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE ='menu_Item_FeeAmzLoanTypeReport');
+ 
+            INSERT INTO REPORTCONFIGURATION VALUES((SELECT MAX(REPORTID)+1 FROM reportconfiguration), 
+            'Excel: Fee Amortization Reference', 'Fee Amortization Reference', 1, 'FeeAmortizationDetailsRpt_Header', 'dataSource', 0, 'menu_Item_FeeAmzReferenceReport', 1, 1000, NULL, NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 0, 1,0);
+
+            INSERT INTO REPORTCONFIGURATION VALUES((SELECT MAX(REPORTID)+1 FROM reportconfiguration), 
+            'Excel: Fee Amortization Loan Type', 'Fee Amortization Loan Type', 1, 'FeeAmortizationDetailsRpt_Header_fintype', 'dataSource', 0, 'menu_Item_FeeAmzLoanTypeReport', 1, 1000, NULL, NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 0, 1,0);
+           
+		    Delete from Reportfilterfields Where Reportid = (select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport') 
+		    and FieldName In ('From Date','Date');
+		    
+		    Delete from Reportfilterfields Where Reportid = (select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport') 
+		    and FieldName In ('From Date','Date');
+		    
+		    Insert into reportfilterfields values((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport'),3,'From Date','DATERANGE',
+		    'From Date','T1.MONTHENDDATE','','---Select----','','',0,0,0,0,3,0,'','','','',150,0,'=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+		    
+		    Insert into reportfilterfields values((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport'),3,'From Date','DATERANGE',
+		    'From Date','T1.MONTHENDDATE','','---Select----','','',0,0,0,0,3,0,'','','','',150,0,'=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+		]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

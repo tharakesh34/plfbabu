@@ -6541,4 +6541,524 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="125.1_pre" author="pavankalyan.s" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'pincodes_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="125.1" author="pavankalyan.s">
+		<createView viewName="PINCODES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.PINCODEID,
+					T1.PINCODE,
+					T1.GROUPID,
+					T1.CITY,
+					T2.PCCITYNAME,
+					T2.PCCOUNTRY,
+					T4.COUNTRYDESC LOVDESCPCCOUNTRYNAME,
+					T2.PCPROVINCE,
+					T3.CPPROVINCENAME LOVDESCPCPROVINCENAME,
+					T1.AREANAME,
+					T1.ACTIVE,
+					T1.SERVICEABLE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T3.TAXSTATECODE GSTIN
+				FROM PINCODES_TEMP T1
+				JOIN RMTPROVINCEVSCITY T2 ON T1.CITY = T2.PCCITY
+				JOIN RMTCOUNTRYVSPROVINCE T3 ON T2.PCPROVINCE = T3.CPPROVINCE  AND T3.CPCOUNTRY = T2.PCCOUNTRY
+				JOIN BMTCOUNTRIES T4 ON T2.PCCOUNTRY = T4.COUNTRYCODE
+				UNION ALL
+				SELECT T1.PINCODEID,
+					T1.PINCODE,
+					T1.GROUPID,
+					T1.CITY,
+					T2.PCCITYNAME,
+					T2.PCCOUNTRY,
+					T4.COUNTRYDESC LOVDESCPCCOUNTRYNAMEE,
+					T2.PCPROVINCE,
+					T3.CPPROVINCENAME LOVDESCPCPROVINCENAME,
+					T1.AREANAME,
+					T1.ACTIVE,
+					T1.SERVICEABLE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T3.TAXSTATECODE GSTIN
+				FROM PINCODES T1
+				JOIN RMTPROVINCEVSCITY T2 ON T1.CITY = T2.PCCITY 
+				JOIN RMTCOUNTRYVSPROVINCE T3 ON T2.PCPROVINCE = T3.CPPROVINCE  AND T3.CPCOUNTRY = T2.PCCOUNTRY
+				JOIN BMTCOUNTRIES T4 ON T2.PCCOUNTRY = T4.COUNTRYCODE
+				WHERE T1.PINCODEID NOT IN (SELECT PINCODEID FROM PINCODES_TEMP);
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="125.1_post" author="pavankalyan.s" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'pincodes_view');
+			]]>
+		</sql>
+	</changeSet> 
+	
+	<changeSet id="DE#200" author="Vijaya.a">
+		<modifyDataType tableName="OFFLINEUSRMESSAGESBACKUP" columnName="TOUSRID" newDataType="VARCHAR(100)" />
+	</changeSet>
+	
+	<changeSet id="DE#200_post" author="Vijaya.a">
+		<modifyDataType tableName="OFFLINEUSRMESSAGESBACKUP" columnName="FROMUSRID" newDataType="VARCHAR(100)" />
+	</changeSet>
+	
+	<changeSet id="DE#201" author="Vijaya.a">
+		<modifyDataType tableName="PRESENTMENT_REQ_DETAILS_TEMP" columnName="PDC_BY_NAME" newDataType="VARCHAR(200)" />
+	</changeSet>
+	
+	<changeSet id="DE#201_post" author="Vijaya.a">
+		<modifyDataType tableName="PRESENTMENT_REQ_DETAILS" columnName="PDC_BY_NAME" newDataType="VARCHAR(200)" />
+	</changeSet>	
+
+	<changeSet id="DE#202_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'covenantsmaintenance_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#202" author="saisandeep.b" dbms="postgresql">
+		<createView viewName="COVENANTSMAINTENANCE_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					   T1.FINBRANCH,
+					   T1.FINTYPE,
+					   T1.FINCCY,
+					   T1.SCHEDULEMETHOD,
+					   T1.PROFITDAYSBASIS,
+					   T1.FINSTARTDATE,
+					   T1.NUMBEROFTERMS,
+					   T1.CUSTID,
+					   T1.FINAMOUNT,
+					   T1.MATURITYDATE,
+					   T1.FINREPAYMENTAMOUNT,
+					   T1.FINISACTIVE,
+					   T1.BLACKLISTED,
+					   T1.FEECHARGEAMT,
+					   T1.INSURANCEAMT,
+					   T1.GRACETERMS,
+					   T1.ALLOWGRCPERIOD,
+					   T1.GRCPERIODENDDATE,
+					   T1.ALWMULTIDISB,
+					   T1.DEFFERMENTS,
+					   T1.ALLOWGRCPFTRVW,
+					   T1.ALLOWREPAYRVW,
+					   T1.LASTREPAYDATE,
+					   T1.LASTREPAYPFTDATE,
+					   T1.ALLOWEDDEFRPYCHANGE,
+					   T1.AVAILEDDEFRPYCHANGE,
+					   T1.MIGRATEDFINANCE,
+					   T1.CLOSINGSTATUS,
+					   T1.REPAYRATEBASIS,
+					   T1.MANUALSCHEDULE,
+					   T1.FINCURRASSETVALUE,
+					   T1.TAKEOVERFINANCE,
+					   T1.NEXTROLLOVERDATE,
+					   T1.AVAILEDUNPLANEMI,
+					   T1.AVAILEDREAGEH,
+					   T1.MAXUNPLANNEDEMI,
+					   T1.MAXREAGEHOLIDAYS,
+					   T1.DOWNPAYMENT,
+					   T1.PLANEMIHALW,
+					   T1.CALTERMS,
+					   T1.RATECHGANYDAY,
+					   T1.FINASSETVALUE,
+					   T2.CUSTCIF LOVDESCCUSTCIF,
+					   T3.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					   T3.FINDIVISION LOVDESCFINDIVISION,
+					   T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					   T4.PRODUCTCATEGORY,
+					   COALESCE(T9.NOINST,0) NOINST,
+					   COALESCE(T5.ROLEDESC, ${ADD.SCHEMA}FN_GET_ROLEDESC(T10.NEXTROLECODE))  LOVDESCREQUESTSTAGE,
+					   T10.FINMAINTAINID,
+					   T10.EVENT  RCDMAINTAINSTS,
+					   T10.NEXTROLECODE,
+					   T10.RECORDSTATUS,
+					   T10.RECORDTYPE,
+					   T1.VERSION
+					   FROM FINMAINTAININSTRUCTIONS_TEMP T10
+					   JOIN FINANCEMAIN T1 ON T1.FINREFERENCE = T10.FINREFERENCE
+					   JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+					   JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
+					   LEFT JOIN SECROLES T5 ON T10.NEXTROLECODE = T5.ROLECD
+					   JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
+					   LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+					   WHERE T10.EVENT = 'Covenants'
+					   UNION ALL
+					   SELECT T1.FINREFERENCE,
+					   T1.FINBRANCH,
+					   T1.FINTYPE,
+					   T1.FINCCY,
+					   T1.SCHEDULEMETHOD,
+					   T1.PROFITDAYSBASIS,
+					   T1.FINSTARTDATE,
+					   T1.NUMBEROFTERMS,
+					   T1.CUSTID,
+					   T1.FINAMOUNT,
+					   T1.MATURITYDATE,
+					   T1.FINREPAYMENTAMOUNT,
+					   T1.FINISACTIVE,
+					   T1.BLACKLISTED,
+					   T1.FEECHARGEAMT,
+					   T1.INSURANCEAMT,
+					   T1.GRACETERMS,
+					   T1.ALLOWGRCPERIOD,
+					   T1.GRCPERIODENDDATE,
+					   T1.ALWMULTIDISB,
+					   T1.DEFFERMENTS,
+					   T1.ALLOWGRCPFTRVW,
+					   T1.ALLOWREPAYRVW,
+					   T1.LASTREPAYDATE,
+					   T1.LASTREPAYPFTDATE,
+					   T1.ALLOWEDDEFRPYCHANGE,
+					   T1.AVAILEDDEFRPYCHANGE,
+					   T1.MIGRATEDFINANCE,
+					   T1.CLOSINGSTATUS,
+					   T1.REPAYRATEBASIS,
+					   T1.MANUALSCHEDULE,
+					   T1.FINCURRASSETVALUE,
+					   T1.TAKEOVERFINANCE,
+					   T1.NEXTROLLOVERDATE,
+					   T1.AVAILEDUNPLANEMI,
+					   T1.AVAILEDREAGEH,
+					   T1.MAXUNPLANNEDEMI,
+					   T1.MAXREAGEHOLIDAYS,
+					   T1.DOWNPAYMENT,
+					   T1.PLANEMIHALW,
+					   T1.CALTERMS,
+					   T1.RATECHGANYDAY,
+					   T1.FINASSETVALUE,
+					   T2.CUSTCIF LOVDESCCUSTCIF,
+					   T3.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					   T3.FINDIVISION LOVDESCFINDIVISION,
+					   T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					   T4.PRODUCTCATEGORY,
+					   COALESCE(T9.NOINST,0) NOINST,
+					   NULL LOVDESCREQUESTSTAGE,
+					   NULL FINMAINTAINID,
+					   NULL RCDMAINTAINSTS,
+					   NULL NEXTROLECODE,
+					   NULL RECORDSTATUS,
+					   NULL RECORDTYPE,
+					   T1.VERSION
+	    			   FROM FINANCEMAIN T1
+        			   JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+       				    JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
+        			   LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+        			   JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
+        			   LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+					   WHERE NOT (EXISTS ( SELECT 1  EXPR1
+        			   FROM FINMAINTAININSTRUCTIONS_TEMP
+        			   WHERE FINMAINTAININSTRUCTIONS_TEMP.FINREFERENCE = T1.FINREFERENCE))
+       			    ]]>
+        </createView>
+	</changeSet>
+	
+	<changeSet id="DE#202_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'covenantsmaintenance_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#226.1.1" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				Delete from CategoryWiseEvents Where AEEVENTCODE= 'WRITEBK' and CATEGORYCODE= 'F';
+				INSERT INTO CategoryWiseEvents (AEEVENTCODE, CATEGORYCODE, ACTIVE, MANDATORY, SEQORDER) VALUES ('WRITEBK', 'F', 1, 0, (Select max(seqorder)+1 from CategoryWiseEvents Where CATEGORYCODE = 'F'));
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#226.2" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				Delete from BMTAEEVENTS where aeeventcode = 'WRITEBK';
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('WRITEBK', 'Finance Writeoff Book Keeping', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+					
+				Delete from BMTAmountCodes where AllowedEvent='WRITEBK';
+				INSERT INTO BMTAmountCodes (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('WRITEBK', '0', 'ae_woPayAmt', 'Actual Interest Balance till maturity ', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#185_pre" author="narendra.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'bouncereasons_temp');
+				select deps_save_and_drop_dependencies ('plf', 'bouncereasons');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#185.1" author="narendra.m">
+		<modifyDataType tableName="BOUNCEREASONS_TEMP" columnName="REASON" newDataType="VARCHAR(150)" />
+	</changeSet>
+
+	<changeSet id="DE#185.2" author="narendra.m">
+		<modifyDataType tableName="BOUNCEREASONS" columnName="REASON" newDataType="VARCHAR(150)" />
+	</changeSet>
+
+	<changeSet id="DE#185_Post" author="narendra.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+                select deps_restore_dependencies ('plf', 'bouncereasons_temp');
+                select deps_restore_dependencies ('plf', 'bouncereasons');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#245.4" author="narendra.m">
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE CODE = 'CV001';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('CV001', 'EN', 'E', 'Pending covanents to be uploaded before submit.', '', 'Approved', '', '', '', '', '', 0, null, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="6.4" author="gopalaswamy.m">
+		<createIndex tableName="FinLogEntryDetail" indexName="IDX_FLED_FINREF_PDATE">
+			<column name="FinReference" type="VARCHAR(8)" />
+			<column name="POSTDATE" type="DATETIME" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="DE#273_pre" author="narendra.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail_temp');
+				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#273" author="narendra.m">
+		<modifyDataType tableName="FinTaxDetail_temp" columnName="addrline1" newDataType="varchar(300)" />
+	</changeSet>
+	
+	<changeSet id="DE#273.1" author="narendra.m">
+		<modifyDataType tableName="FinTaxDetail" columnName="addrline1" newDataType="varchar(300)" />
+	</changeSet>
+	
+	<changeSet id="DE#273_post" author="narendra.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintaxdetail_temp');
+				select deps_restore_dependencies ('plf', 'fintaxdetail');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#273.1_pre" author="narendra.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fintaxuploaddetail_temp');
+				select deps_save_and_drop_dependencies ('plf', 'fintaxuploaddetail');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#273.1.1" author="narendra.m">
+		<modifyDataType tableName="FinTaxUploadDetail_temp" columnName="addrline1" newDataType="varchar(300)" />
+	</changeSet>
+	
+	<changeSet id="DE#273.1.2" author="narendra.m">
+		<modifyDataType tableName="FinTaxUploadDetail" columnName="addrline1" newDataType="varchar(300)" />
+	</changeSet>
+	
+	<changeSet id="DE#273.1_post" author="narendra.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintaxuploaddetail_temp');
+				select deps_restore_dependencies ('plf', 'fintaxuploaddetail');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#272_pre" author="narendra.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financeenquiry_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#272" author="narendra.m">
+		<createView viewName="FINANCEENQUIRY_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.FINBRANCH,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.FINSTARTDATE,
+					T1.CALTERMS NUMBEROFTERMS,
+					T1.CUSTID,
+					T1.FINAMOUNT,
+					T1.GRCPERIODENDDATE,
+					T1.MATURITYDATE,
+					T1.FINREPAYMENTAMOUNT,
+					T1.FINISACTIVE,
+					T1.ALLOWGRCPERIOD,
+					T1.DOWNPAYMENT,
+					T1.MIGRATEDFINANCE,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.FINCURRASSETVALUE,
+					T1.BLACKLISTED,
+					T1.FEECHARGEAMT,
+					T1.CLOSINGSTATUS,
+					T1.GRACETERMS,
+					T1.ALWMULTIDISB,
+					T1.DEFFERMENTS,
+					T1.FINSTATUS,
+					T1.MANDATEID,
+					T1.FINREPAYMETHOD,
+					T1.FINASSETVALUE,
+					T1.FINCURRASSETVALUE + T1.FEECHARGEAMT + T1.INSURANCEAMT FINANCINGAMOUNT,
+					T1.FINCURRASSETVALUE - T1.FINREPAYMENTAMOUNT + T1.FEECHARGEAMT + T1.INSURANCEAMT CURFINAMOUNT,
+					T2.FINTYPEDESC LOVDESCFINTYPENAME,
+					T2.FINSCHEDULEON LOVDESCFINSCHEDULEON,
+					T2.FINDIVISION LOVDESCFINDIVISION,
+					T2.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T2.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T3.CUSTCIF LOVDESCCUSTCIF,
+					T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T4.BRANCHDESC LOVDESCFINBRANCHNAME,
+					T5.CUSTTYPECTG,
+					COALESCE(T9.NOINST, 0)  NOINST,
+					T1.TOTALCPZ,
+					T1.ALWGRCADJ,
+					T1.ENDGRCPERIODAFTRFULLDISB,
+					T1.AUTOINCGRCENDDATE,
+					T1.RECORDSTATUS
+				FROM FINANCEMAIN_TEMP T1
+				JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+				JOIN CUSTOMERS T3 ON T1.CUSTID = T3.CUSTID
+				JOIN RMTBRANCHES T4 ON T1.FINBRANCH = T4.BRANCHCODE
+				JOIN RMTCUSTTYPES T5 ON T3.CUSTTYPECODE = T5.CUSTTYPECODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="DE#272_post" author="narendra.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financeenquiry_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#272.1_pre" author="narendra.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financeenquiry_view');
+		 	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#272.1" author="narendra.m">
+		<createView viewName="FINANCEENQUIRY_VIEW" replaceIfExists="true">
+		  <![CDATA[
+				SELECT t1.finreference,
+					T1.FINBRANCH,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.FINSTARTDATE,
+					T1.CALTERMS NUMBEROFTERMS,
+					T1.CUSTID,
+					T1.FINAMOUNT,
+					T1.GRCPERIODENDDATE,
+					T1.MATURITYDATE,
+					T1.FINREPAYMENTAMOUNT,
+					T1.FINISACTIVE,
+					T1.ALLOWGRCPERIOD,
+					T1.DOWNPAYMENT,
+					T1.MIGRATEDFINANCE,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.FINCURRASSETVALUE,
+					T1.BLACKLISTED,
+					T1.FEECHARGEAMT,
+					T1.CLOSINGSTATUS,
+					T1.GRACETERMS,
+					T1.ALWMULTIDISB,
+					T1.DEFFERMENTS,
+					T1.FINSTATUS ,
+					T1.MANDATEID,
+					T1.FINREPAYMETHOD,
+					T1.FINASSETVALUE,
+					T1.INSURANCEAMT,
+					T1.SANBSDSCHDLE,
+					T1.PROMOTIONSEQID,
+					T1.SVAMOUNT,
+					T1.CBAMOUNT,
+					(T1.FINCURRASSETVALUE+ T1.FEECHARGEAMT+T1.INSURANCEAMT) FINANCINGAMOUNT,
+					(T1.FINCURRASSETVALUE- T1.FINREPAYMENTAMOUNT+ T1.FEECHARGEAMT+T1.INSURANCEAMT) CURFINAMOUNT,
+					T2.FINTYPEDESC LOVDESCFINTYPENAME,
+					T2.FINSCHEDULEON LOVDESCFINSCHEDULEON,
+					T2.FINDIVISION LOVDESCFINDIVISION,
+					T2.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T2.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T3.CUSTCIF LOVDESCCUSTCIF,
+					T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T4.BRANCHDESC LOVDESCFINBRANCHNAME,
+					T5.CUSTTYPECTG,
+					COALESCE(T9.NOINST,0) NOINST,
+					T1.TOTALCPZ,
+					T1.ALWGRCADJ,
+					T1.ENDGRCPERIODAFTRFULLDISB,
+					T1.AUTOINCGRCENDDATE,
+					T1.RECORDSTATUS
+				FROM FINANCEMAIN T1
+				INNER JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+				INNER JOIN CUSTOMERS T3 ON T1.CUSTID = T3.CUSTID
+				INNER JOIN RMTBRANCHES T4 ON T1.FINBRANCH = T4.BRANCHCODE
+				INNER JOIN RMTCUSTTYPES T5 ON T3.CUSTTYPECODE = T5.CUSTTYPECODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="DE#272.1_post" author="narendra.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financeenquiry_view');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

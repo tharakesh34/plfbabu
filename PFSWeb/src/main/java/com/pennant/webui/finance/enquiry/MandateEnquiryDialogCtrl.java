@@ -51,7 +51,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -79,6 +78,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
@@ -91,6 +91,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.mandate.mandate.MandateListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -181,6 +182,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Label label_PartnerBank;
 	protected Combobox enquiryCombobox;
 	protected boolean disbEnquiry = false;
+	protected DMSService dMSService;
 
 	/**
 	 * default constructor.<br>
@@ -531,10 +533,10 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 			mandate.setDocImage(mandateService.getDocumentManImage(documentRef));
 		}
 
-		if (mandate.getDocImage() == null) {
-			this.btnViewMandateDoc.setDisabled(true);
-			this.btnViewMandateDoc.setTooltiptext(Labels.getLabel("label_Mandate_Document"));
-		}
+		/*
+		 * if (mandate.getDocImage() == null) { this.btnViewMandateDoc.setDisabled(true);
+		 * this.btnViewMandateDoc.setTooltiptext(Labels.getLabel("label_Mandate_Document")); }
+		 */
 
 		this.barCodeNumber.setValue(aMandate.getBarCodeNumber());
 		this.finReference.setValue(aMandate.getOrgReference());
@@ -603,22 +605,27 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	public void onClick$btnViewMandateDoc(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
-		try {
-			String custCIF = getMandate().getCustCIF();
-			byte[] docImage = getMandate().getDocImage();
-			Long documentRef = getMandate().getDocumentRef();
-			String externalRef = getMandate().getExternalRef();
-			String documentName = getMandate().getDocumentName();
+		logger.debug("Entering");
 
-			if (docImage == null && documentRef != null && documentRef > 0) {
-				mandate.setDocImage(mandateService.getDocumentManImage(documentRef));
-			} /*
-				 * else { if (docImage == null && StringUtils.isNotBlank(externalRef)) { DocumentDetails document =
-				 * externalDocumentManager.getExternalDocument(documentName, externalRef, custCIF); if (document !=
-				 * null) { mandate.setDocumentName(document.getDocName()); mandate.setDocImage(document.getDocImage());
-				 * } } }
-				 */
+		String custCIF = getMandate().getCustCIF();
+		String docUri = getMandate().getExternalRef();
+		Long docRefId = getMandate().getDocumentRef();
+		String docName = getMandate().getDocumentName();
+		byte[] docImage = getMandate().getDocImage();
+		try {
+
+			if (StringUtils.isNotBlank(docUri)) {
+				DocumentDetails dd = dMSService.getExternalDocument(custCIF, docName, docUri);
+				mandate.setDocumentName(dd.getDocName());
+				mandate.setDocImage(dd.getDocImage());
+			} else {
+				if (docImage == null) {
+					if (docRefId != null && docRefId != Long.MIN_VALUE) {
+						mandate.setDocImage(dMSService.getById(docRefId));
+					}
+				}
+			}
+
 			if (mandate.getDocImage() != null) {
 				HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("mandate", mandate);
@@ -671,5 +678,9 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	public MandateListCtrl getMandateListCtrl() {
 		return this.mandateListCtrl;
+	}
+
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 }

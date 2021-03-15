@@ -183,7 +183,9 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Penalty Payments, if any Payment calculations done
 		FinTaxIncomeDetail taxIncome = null;
 		if (rpyQueueHeader.getPenalty().compareTo(BigDecimal.ZERO) > 0
-				|| rpyQueueHeader.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0) {
+				|| rpyQueueHeader.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0
+				|| rpyQueueHeader.getLateProfit().compareTo(BigDecimal.ZERO) > 0
+				|| rpyQueueHeader.getLatePftWaived().compareTo(BigDecimal.ZERO) > 0) {
 			List<Object> returnList = doOverduePostings(aeEvent, finRepayQueueList, postDate, valuedate, financeMain,
 					rpyQueueHeader);
 
@@ -802,6 +804,9 @@ public class RepaymentPostingsUtil implements Serializable {
 			// Previous Month Amortization reset to Total Profit to avoid posting on closing Month End
 			pftDetail.setPrvMthAmz(pftDetail.getTotalPftSchd());
 
+		} else if (StringUtils.equals(financeMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_WRITEOFF)) {
+			financeMain.setFinIsActive(false);
+			financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_WRITEOFF);
 		} else {
 			financeMain.setFinIsActive(true);
 			financeMain.setClosedDate(null);

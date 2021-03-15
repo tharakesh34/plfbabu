@@ -69,4 +69,6 @@ public interface FinanceRepaymentsDAO {
 
 	long getNewRepayID();
 
+	Long getLinkedTranIdByReceipt(long receiptId, String type);
+
 }

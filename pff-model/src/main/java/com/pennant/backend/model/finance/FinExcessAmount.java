@@ -1,10 +1,11 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FinExcessAmount implements java.io.Serializable {
+public class FinExcessAmount implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private long excessID = 0;
@@ -15,14 +16,29 @@ public class FinExcessAmount implements java.io.Serializable {
 	private BigDecimal reservedAmt = BigDecimal.ZERO;
 	private BigDecimal balanceAmt = BigDecimal.ZERO;
 	private String rcdAction;
+	private FinExcessMovement excessMovement;
 
 	public FinExcessAmount() {
 		super();
 	}
 
+	public FinExcessAmount copyEntity() {
+		FinExcessAmount entity = new FinExcessAmount();
+		entity.setExcessID(this.excessID);
+		entity.setFinReference(this.finReference);
+		entity.setAmountType(this.amountType);
+		entity.setAmount(this.amount);
+		entity.setUtilisedAmt(this.utilisedAmt);
+		entity.setReservedAmt(this.reservedAmt);
+		entity.setBalanceAmt(this.balanceAmt);
+		entity.setRcdAction(this.rcdAction);
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("rcdAction");
+		excludeFields.add("excessMovement");
 		return excludeFields;
 	}
 
@@ -100,6 +116,14 @@ public class FinExcessAmount implements java.io.Serializable {
 
 	public void setRcdAction(String rcdAction) {
 		this.rcdAction = rcdAction;
+	}
+
+	public FinExcessMovement getExcessMovement() {
+		return excessMovement;
+	}
+
+	public void setExcessMovement(FinExcessMovement excessMovement) {
+		this.excessMovement = excessMovement;
 	}
 
 }

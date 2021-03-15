@@ -1529,7 +1529,7 @@ public class FinanceDataValidation {
 				finMain.setDsaCode(String.valueOf(vehicleDealer.getDealerId()));
 			}
 		}
-		if (finMain.getAccountsOfficerReference() != 0) {
+		if (StringUtils.isNotBlank(finMain.getAccountsOfficerReference())) {
 			/*
 			 * VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(finMain
 			 * .getAccountsOfficer()); if (vehicleDealer == null) { String[] valueParm = new String[1]; valueParm[0] =
@@ -1537,7 +1537,7 @@ public class FinanceDataValidation {
 			 * ErrorDetail("90501", valueParm))); }
 			 */
 			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(
-					String.valueOf(finMain.getAccountsOfficerReference()), VASConsatnts.VASAGAINST_PARTNER, "");
+					finMain.getAccountsOfficerReference(), VASConsatnts.VASAGAINST_PARTNER, "");
 			if (vehicleDealer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = String.valueOf(finMain.getAccountsOfficer());
@@ -2073,7 +2073,7 @@ public class FinanceDataValidation {
 
 						BigDecimal totAssignedPerc = collateralSetupService
 								.getAssignedPerc(collateralSetup.getCollateralRef(), "");// TODO:Add
-																																	// reference
+																																			// reference
 						curAssignValue = curAssignValue.add(collateralSetup.getBankValuation()
 								.multiply(collateralAssignment.getAssignPerc() == null ? BigDecimal.ZERO
 										: collateralAssignment.getAssignPerc())
@@ -3237,6 +3237,48 @@ public class FinanceDataValidation {
 					advPayment.setBeneficiaryName("");
 					advPayment.setiFSC(null);
 					advPayment.setPhoneNumber("");
+				}
+				// validate finance documents
+				if (advPayment.getDocImage() != null && advPayment.getDocImage().length >= 0) {
+					if (StringUtils.isBlank(advPayment.getDocumentName())) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "docName";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					}
+					if (StringUtils.isBlank(advPayment.getDocType())) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "docFormat";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					}
+					String docName = advPayment.getDocumentName().toLowerCase();
+					// document name has no extension
+					if (!docName.contains(".")) {
+						String[] valueParm = new String[1];
+						valueParm[0] = advPayment.getDocumentName();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90291", valueParm)));
+					}
+					// document name has only extension
+					else if (StringUtils.isEmpty(docName.substring(0, docName.lastIndexOf(".")))) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "Document Name";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					}
+					// document Name Extension validation
+					if (!docName.endsWith(PennantConstants.DOC_TYPE_PDF_EXT)
+							&& !docName.endsWith(PennantConstants.DOC_TYPE_JPG_EXT)
+							&& !docName.endsWith(PennantConstants.DOC_TYPE_PNG_EXT)) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "Document Extension available ext are: .pdf, .jpg, .png";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
+					}
+					if (!PennantConstants.DOC_TYPE_JPG.equalsIgnoreCase(advPayment.getDocType())
+							&& !PennantConstants.DOC_TYPE_PDF.equalsIgnoreCase(advPayment.getDocType())
+							&& !PennantConstants.DOC_TYPE_IMAGE.equalsIgnoreCase(advPayment.getDocType())
+							&& !PennantConstants.DOC_TYPE_PNG.equalsIgnoreCase(advPayment.getDocType())) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "docFormat, Available formats are: IMG, JPG, PDF, PNG,";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
+					}
 				}
 			}
 		}
@@ -5319,12 +5361,14 @@ public class FinanceDataValidation {
 							}
 
 							// validate fee schedule method
-							if (!finTypeFee.isAlwModifyFeeSchdMthd() && !StringUtils
-									.equals(feeDetail.getFeeScheduleMethod(), finTypeFee.getFeeScheduleMethod())) {
-								String[] valueParm = new String[1];
-								valueParm[0] = feeDetail.getFeeTypeCode();
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90246", valueParm)));
-								return errorDetails;
+							if (!AccountEventConstants.ACCEVENT_VAS_FEE.equals(feeDetail.getFinEvent())) {
+								if (!finTypeFee.isAlwModifyFeeSchdMthd() && !StringUtils
+										.equals(feeDetail.getFeeScheduleMethod(), finTypeFee.getFeeScheduleMethod())) {
+									String[] valueParm = new String[1];
+									valueParm[0] = feeDetail.getFeeTypeCode();
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90246", valueParm)));
+									return errorDetails;
+								}
 							}
 
 							// validate paid by Customer method

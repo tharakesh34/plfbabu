@@ -99,6 +99,54 @@ public class FinReceiptDetail implements Serializable {
 
 	}
 
+	public FinReceiptDetail copyEntity() {
+		FinReceiptDetail entity = new FinReceiptDetail();
+		entity.setReceiptID(this.receiptID);
+		entity.setReceiptSeqID(this.receiptSeqID);
+		entity.setReceiptType(this.receiptType);
+		entity.setPaymentTo(this.paymentTo);
+		entity.setPaymentType(this.paymentType);
+		entity.setPayAgainstID(this.payAgainstID);
+		entity.setPayOrder(this.payOrder);
+		entity.setAmount(this.amount);
+		entity.setFavourNumber(this.favourNumber);
+		entity.setValueDate(this.valueDate);
+		entity.setBankCode(this.bankCode);
+		entity.setBankCodeDesc(this.bankCodeDesc);
+		entity.setBankBranchID(this.bankBranchID);
+		entity.setiFSC(this.iFSC);
+		entity.setBranchDesc(this.branchDesc);
+		entity.setFavourName(this.favourName);
+		entity.setDepositDate(this.depositDate);
+		entity.setDepositNo(this.depositNo);
+		entity.setPaymentRef(this.paymentRef);
+		entity.setTransactionRef(this.transactionRef);
+		entity.setChequeAcNo(this.chequeAcNo);
+		entity.setFundingAc(this.fundingAc);
+		entity.setFundingAcCode(this.fundingAcCode);
+		entity.setFundingAcDesc(this.fundingAcDesc);
+		entity.setReceivedDate(this.receivedDate);
+		entity.setStatus(this.status);
+		entity.setRemarks(this.remarks);
+		entity.setLogKey(this.logKey);
+		entity.setDelRecord(this.delRecord);
+		entity.setPartnerBankAc(this.partnerBankAc);
+		entity.setPartnerBankAcType(this.partnerBankAcType);
+		entity.setReference(this.reference);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setFeeTypeDesc(this.feeTypeDesc);
+		entity.setNoReserve(this.noReserve);
+		entity.setNoManualReserve(this.noManualReserve);
+		entity.setReceiptPurpose(this.receiptPurpose);
+		entity.setPayAdvMovement(this.payAdvMovement == null ? null : this.payAdvMovement.copyEntity());
+		this.repayHeaders.stream().forEach(e -> entity.getRepayHeaders().add(e == null ? null : e.copyEntity()));
+		entity.setRepayHeader(this.repayHeader == null ? null : this.repayHeader.copyEntity());
+		this.advMovements.stream().forEach(e -> entity.getAdvMovements().add(e == null ? null : e.copyEntity()));
+		entity.setPartialPaidAMount(this.partialPaidAMount);
+		entity.setDueAmount(this.dueAmount);
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("noReserve");

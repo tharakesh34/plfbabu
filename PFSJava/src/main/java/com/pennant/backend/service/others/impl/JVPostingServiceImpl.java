@@ -42,9 +42,9 @@ import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.expenses.LegalExpensesDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
@@ -1479,7 +1479,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				for (JVPostingEntry entry : jVPosting.getJVPostingEntrysList()) {
 					entry.setPostingStatus(PennantConstants.POSTSTS_SUCCESS);
 					entry.setLinkedTranId(linkedTranId);
-					entry.setPostingDate(DateUtility.getAppDate());
+					entry.setPostingDate(SysParamUtil.getAppDate());
 				}
 			}
 			try {

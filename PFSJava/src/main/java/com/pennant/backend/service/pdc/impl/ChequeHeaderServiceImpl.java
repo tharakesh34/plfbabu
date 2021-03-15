@@ -53,20 +53,42 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
+import com.pennant.backend.dao.customermasters.CustEmployeeDetailDAO;
+import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
+import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
+import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
+import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
+import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
+import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
+import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
+import com.pennant.backend.dao.customermasters.CustomerGstDetailDAO;
+import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
+import com.pennant.backend.dao.customermasters.CustomerRatingDAO;
+import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.model.PrimaryAccount;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
+import com.pennant.backend.model.customermasters.BankInfoDetail;
+import com.pennant.backend.model.customermasters.CustCardSales;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerBankInfo;
+import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.CustomerGST;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
@@ -75,7 +97,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -86,6 +107,9 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
+import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
+import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
 
 /**
  * Service implementation for methods that depends on <b>ChequeHeader</b>.<br>
@@ -98,9 +122,25 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	private ChequeDetailDAO chequeDetailDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceTypeDAO financeTypeDAO;
-	private CustomerDetailsService customerDetailsService;
 	private JountAccountDetailDAO jountAccountDetailDAO;
 	private BankBranchDAO bankBranchDAO;
+	private CustomerDAO customerDAO;
+	private PrimaryAccountDAO primaryAccountDAO;
+	private CustomerEmploymentDetailDAO customerEmploymentDetailDAO;
+	private CustEmployeeDetailDAO custEmployeeDetailDAO;
+	private IncomeDetailDAO incomeDetailDAO;
+	private DirectorDetailDAO directorDetailDAO;
+	private CustomerRatingDAO customerRatingDAO;
+	private CustomerPhoneNumberDAO customerPhoneNumberDAO;
+	private CustomerEMailDAO customerEMailDAO;
+	private CustomerBankInfoDAO customerBankInfoDAO;
+	private CustomerGstDetailDAO customerGstDetailDAO;
+	private CustomerChequeInfoDAO customerChequeInfoDAO;
+	private ExternalLiabilityDAO externalLiabilityDAO;
+	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
+	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
+	private CustomerAddresDAO customerAddresDAO;
+	private CustomerDocumentDAO customerDocumentDAO;
 
 	/**
 	 * @return the auditHeaderDAO
@@ -139,10 +179,6 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
 	}
 
 	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
@@ -796,11 +832,99 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 		scheduleData.setFinanceMain(financeMain);
 		scheduleData.setFinanceType(financeType);
-		financeDetail.setCustomerDetails(
-				customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_View"));
+		financeDetail.setCustomerDetails(getCustomerDetailsbyID(financeMain.getCustID(), true, "_View"));
 		financeDetail.setJountAccountDetailList(jountAccountDetailDAO.getJountAccountDetailByFinnRef(finReference));
 		logger.debug(Literal.LEAVING);
 		return financeDetail;
+	}
+
+	private CustomerDetails getCustomerDetailsbyID(long id, boolean reqChildDetails, String type) {
+		logger.debug(Literal.ENTERING);
+
+		CustomerDetails cd = new CustomerDetails();
+		cd.setCustomer(customerDAO.getCustomerByID(id, type));
+		cd.setCustID(id);
+
+		Customer customer = cd.getCustomer();
+		PrimaryAccount primaryAccount = primaryAccountDAO.getPrimaryAccountDetails(customer.getCustCRCPR());
+
+		if (primaryAccount != null) {
+			customer.setPrimaryIdName(primaryAccount.getDocumentName());
+		}
+
+		if (!reqChildDetails) {
+			return cd;
+		}
+		if (ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS) {
+			cd.setEmploymentDetailsList(customerEmploymentDetailDAO.getCustomerEmploymentDetailsByID(id, type));
+		} else {
+			cd.setCustEmployeeDetail(custEmployeeDetailDAO.getCustEmployeeDetailById(id, type));
+		}
+		if (ImplementationConstants.ALLOW_CUSTOMER_INCOMES) {
+			cd.setCustomerIncomeList(incomeDetailDAO.getIncomesByCustomer(id, type));
+		}
+		// ### Ticket 126612 LMS > PDE > newly added shareholder are not
+		// displayed in PDE. Changed the condition to
+		// non individual.
+		if (StringUtils.isNotEmpty(customer.getCustCtgCode())
+				&& !StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+			if (ImplementationConstants.ALLOW_CUSTOMER_SHAREHOLDERS) {
+				cd.setCustomerDirectorList(directorDetailDAO.getCustomerDirectorByCustomer(id, type));
+			}
+			if (ImplementationConstants.ALLOW_CUSTOMER_RATINGS) {
+				cd.setRatingsList(customerRatingDAO.getCustomerRatingByCustomer(id, type));
+			}
+		}
+		cd.setCustomerDocumentsList(customerDocumentDAO.getCustomerDocumentByCustomer(id, type));
+		cd.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(id, type));
+		cd.setCustomerPhoneNumList(customerPhoneNumberDAO.getCustomerPhoneNumberByCustomer(id, type));
+		cd.setCustomerEMailList(customerEMailDAO.getCustomerEmailByCustomer(id, type));
+		cd.setCustomerBankInfoList(customerBankInfoDAO.getBankInfoByCustomer(id, type));
+		if (cd.getCustomerBankInfoList() != null && cd.getCustomerBankInfoList().size() > 0) {
+			for (CustomerBankInfo customerBankInfo : cd.getCustomerBankInfoList()) {
+				customerBankInfo.setBankInfoDetails(
+						customerBankInfoDAO.getBankInfoDetailById(customerBankInfo.getBankId(), type));
+
+				if (CollectionUtils.isNotEmpty(customerBankInfo.getBankInfoDetails())) {
+					for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+						bankInfoDetail.setBankInfoSubDetails(customerBankInfoDAO.getBankInfoSubDetailById(
+								bankInfoDetail.getBankId(), bankInfoDetail.getMonthYear(), type));
+					}
+				}
+			}
+		}
+		cd.setCustomerGstList(customerGstDetailDAO.getCustomerGSTById(id, type));
+
+		if (cd.getCustomerGstList() != null && cd.getCustomerGstList().size() > 0) {
+			for (CustomerGST customerGST : cd.getCustomerGstList()) {
+				customerGST.setCustomerGSTDetailslist(
+						customerGstDetailDAO.getCustomerGSTDetailsByCustomer(customerGST.getId(), type));
+			}
+		}
+		cd.setCustomerChequeInfoList(customerChequeInfoDAO.getChequeInfoByCustomer(id, type));
+
+		CustomerExtLiability liability = new CustomerExtLiability();
+		liability.setCustId(id);
+		cd.setCustomerExtLiabilityList(externalLiabilityDAO.getLiabilities(liability.getCustId(), type));
+
+		if (CollectionUtils.isNotEmpty(cd.getCustomerExtLiabilityList())) {
+			for (CustomerExtLiability extLiability : cd.getCustomerExtLiabilityList()) {
+				extLiability.setExtLiabilitiesPayments(
+						customerExtLiabilityDAO.getExtLiabilitySubDetailById(extLiability.getId(), type));
+			}
+		}
+
+		cd.setCustCardSales(customerCardSalesInfoDAO.getCardSalesInfoByCustomer(id, type));
+		if (cd.getCustCardSales() != null && cd.getCustCardSales().size() > 0) {
+			for (CustCardSales customerCardSalesInfo : cd.getCustCardSales()) {
+				customerCardSalesInfo.setCustCardMonthSales(
+						customerCardSalesInfoDAO.getCardSalesInfoSubDetailById(customerCardSalesInfo.getId(), type));
+			}
+		}
+		cd.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(id));
+
+		logger.debug(Literal.LEAVING);
+		return cd;
 	}
 
 	//ChequeValidations
@@ -1568,8 +1692,75 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		this.dMSService = dMSService;
 	}
 
-	@Autowired
 	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
 		this.bankBranchDAO = bankBranchDAO;
+	}
+
+	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
+		this.customerDocumentDAO = customerDocumentDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	public void setPrimaryAccountDAO(PrimaryAccountDAO primaryAccountDAO) {
+		this.primaryAccountDAO = primaryAccountDAO;
+	}
+
+	public void setCustomerEmploymentDetailDAO(CustomerEmploymentDetailDAO customerEmploymentDetailDAO) {
+		this.customerEmploymentDetailDAO = customerEmploymentDetailDAO;
+	}
+
+	public void setCustEmployeeDetailDAO(CustEmployeeDetailDAO custEmployeeDetailDAO) {
+		this.custEmployeeDetailDAO = custEmployeeDetailDAO;
+	}
+
+	public void setIncomeDetailDAO(IncomeDetailDAO incomeDetailDAO) {
+		this.incomeDetailDAO = incomeDetailDAO;
+	}
+
+	public void setDirectorDetailDAO(DirectorDetailDAO directorDetailDAO) {
+		this.directorDetailDAO = directorDetailDAO;
+	}
+
+	public void setCustomerRatingDAO(CustomerRatingDAO customerRatingDAO) {
+		this.customerRatingDAO = customerRatingDAO;
+	}
+
+	public void setCustomerPhoneNumberDAO(CustomerPhoneNumberDAO customerPhoneNumberDAO) {
+		this.customerPhoneNumberDAO = customerPhoneNumberDAO;
+	}
+
+	public void setCustomerEMailDAO(CustomerEMailDAO customerEMailDAO) {
+		this.customerEMailDAO = customerEMailDAO;
+	}
+
+	public void setCustomerBankInfoDAO(CustomerBankInfoDAO customerBankInfoDAO) {
+		this.customerBankInfoDAO = customerBankInfoDAO;
+	}
+
+	public void setCustomerGstDetailDAO(CustomerGstDetailDAO customerGstDetailDAO) {
+		this.customerGstDetailDAO = customerGstDetailDAO;
+	}
+
+	public void setCustomerChequeInfoDAO(CustomerChequeInfoDAO customerChequeInfoDAO) {
+		this.customerChequeInfoDAO = customerChequeInfoDAO;
+	}
+
+	public void setExternalLiabilityDAO(ExternalLiabilityDAO externalLiabilityDAO) {
+		this.externalLiabilityDAO = externalLiabilityDAO;
+	}
+
+	public void setCustomerCardSalesInfoDAO(CustomerCardSalesInfoDAO customerCardSalesInfoDAO) {
+		this.customerCardSalesInfoDAO = customerCardSalesInfoDAO;
+	}
+
+	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
+		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
+	}
+
+	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
+		this.customerAddresDAO = customerAddresDAO;
 	}
 }

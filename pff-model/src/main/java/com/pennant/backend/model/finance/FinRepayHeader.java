@@ -52,6 +52,48 @@ public class FinRepayHeader implements Serializable {
 		super();
 	}
 
+	public FinRepayHeader copyEntity() {
+		FinRepayHeader entity = new FinRepayHeader();
+		entity.setRepayID(this.repayID);
+		entity.setReceiptSeqID(this.receiptSeqID);
+		entity.setFinReference(this.finReference);
+		entity.setValueDate(this.valueDate);
+		entity.setFinEvent(this.finEvent);
+		entity.setRepayAmount(this.repayAmount);
+		entity.setPriAmount(this.priAmount);
+		entity.setPftAmount(this.pftAmount);
+		entity.setLatePftAmount(this.latePftAmount);
+		entity.setTotalPenalty(this.totalPenalty);
+		entity.setTotalRefund(this.totalRefund);
+		entity.setTotalWaiver(this.totalWaiver);
+		entity.setInsRefund(this.insRefund);
+		entity.setRepayAccountId(this.repayAccountId);
+		entity.setEarlyPayEffMtd(this.earlyPayEffMtd);
+		entity.setEarlyPayDate(this.earlyPayDate);
+		entity.setSchdRegenerated(this.schdRegenerated);
+		entity.setLinkedTranId(this.linkedTranId);
+		entity.setNewLinkedTranId(this.newLinkedTranId);
+		entity.setTotalIns(this.totalIns);
+		entity.setTotalSuplRent(this.totalSuplRent);
+		entity.setTotalIncrCost(this.totalIncrCost);
+		entity.setTotalSchdFee(this.totalSchdFee);
+		entity.setRealizeUnAmz(this.realizeUnAmz);
+		entity.setRealizeUnLPI(this.realizeUnLPI);
+		entity.setCpzChg(this.cpzChg);
+		entity.setAdviseAmount(this.adviseAmount);
+		entity.setPayApportionment(this.payApportionment);
+		entity.setFeeAmount(this.feeAmount);
+		entity.setExcessAmount(this.excessAmount);
+		entity.setPartialPaidAmount(this.partialPaidAmount);
+		entity.setFutPriAmount(this.futPriAmount);
+		entity.setFutPftAmount(this.futPftAmount);
+		this.repayScheduleDetails.stream()
+				.forEach(e -> entity.getRepayScheduleDetails().add(e == null ? null : e.copyEntity()));
+		entity.setTdsAmount(this.tdsAmount);
+		entity.setLpiAmount(this.lpiAmount);
+		return entity;
+	}
+
 	public long getRepayID() {
 		return repayID;
 	}

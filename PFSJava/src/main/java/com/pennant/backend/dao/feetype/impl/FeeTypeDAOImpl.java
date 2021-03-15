@@ -519,4 +519,19 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		return new ArrayList<>();
 	}
 
+	@Override
+	public String getTaxComponent(String feeTypeCode) {
+		String sql = "Select TaxComponent from FeeTypes Where FeeTypeCode = ?";
+
+		logger.trace(Literal.SQL + sql);
+
+		try {
+			return jdbcOperations.queryForObject(sql, new Object[] { feeTypeCode }, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Fee Type is not exists for the Specified Code >> {}", feeTypeCode);
+		}
+
+		return null;
+	}
+
 }

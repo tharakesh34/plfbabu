@@ -322,9 +322,10 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " where FinType=?";
+		String whereCond = " where FinType = ? and FinEvent = ?";
 
-		if (doCheckAuthority(aFinanceWorkFlow, whereCond, new Object[] { aFinanceWorkFlow.getFinType() })) {
+		if (doCheckAuthority(aFinanceWorkFlow, whereCond,
+				new Object[] { aFinanceWorkFlow.getFinType(), aFinanceWorkFlow.getFinEvent() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aFinanceWorkFlow.getWorkflowId() == 0) {
 				aFinanceWorkFlow.setWorkflowId(getWorkFlowId());

@@ -225,6 +225,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	protected Listheader listheader_AvailableLimit;
 	protected Listheader listheader_ODLimit;
 
+	// Tds Headers
+	protected Listheader listheader_ReceiptDialog_TDS;
+	protected Listheader listheader_ReceiptDialog_PaidTDS;
+
 	// Effective Schedule Tab Details
 	protected Label finSchType;
 	protected Label finSchCcy;
@@ -1184,6 +1188,15 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Entering");
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocationsSummary();
 		this.listBoxPastdues.getItems().clear();
+
+		if (allocationList.isEmpty()) {
+			return;
+		}
+		if (receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()) {
+			this.listheader_ReceiptDialog_TDS.setVisible(true);
+			this.listheader_ReceiptDialog_PaidTDS.setVisible(true);
+		}
+
 		// Get Receipt Purpose to Make Waiver amount Editable
 		String label = Labels.getLabel("label_RecceiptDialog_AllocationType_");
 		boolean isManAdv = false;
@@ -1253,7 +1266,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		addAmountCell(item, allocate.getTotRecv(), ("AllocateActualDue_" + idx), false);
 		// FIXME: PV. Pending code to get in process allocations
 		addAmountCell(item, allocate.getInProcess(), ("AllocateInProess_" + idx), true);
-		addAmountCell(item, allocate.getTotRecv(), ("AllocateCurDue_" + idx), true);
+		addAmountCell(item, allocate.getTdsDue(), ("AllocateTdsDue_" + idx), true);
+		addAmountCell(item, allocate.getTotalDue(), ("AllocateCurDue_" + idx), true);
 
 		// Editable Amount - Total Paid
 		lc = new Listcell();
@@ -1269,6 +1283,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		lc.appendChild(allocationPaid);
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
+
+		addAmountCell(item, allocate.getTdsPaid(), ("AllocateTdsPaid_" + idx), true);
 
 		lc = new Listcell();
 		CurrencyBox allocationWaived = new CurrencyBox();
@@ -1353,6 +1369,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		BigDecimal inProc = BigDecimal.ZERO;
 		BigDecimal paid = BigDecimal.ZERO;
 		BigDecimal waived = BigDecimal.ZERO;
+		BigDecimal tdsDue = BigDecimal.ZERO;
+		BigDecimal tdsPaid = BigDecimal.ZERO;
+
 		for (ReceiptAllocationDetail allocate : receiptData.getReceiptHeader().getAllocationsSummary()) {
 			if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_EMI)
 					|| StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_PFT)) {
@@ -1360,10 +1379,12 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			}
 			if (allocate.isEditable()) {
 				totRecv = totRecv.add(allocate.getTotRecv());
-				totDue = totDue.add(allocate.getTotRecv().add(allocate.getTotalPaid()));
+				totDue = totDue.add(allocate.getTotRecv().add(allocate.getTotalPaid()));//getTotalDue
 				inProc = inProc.add(allocate.getInProcess());
 				paid = paid.add(allocate.getPaidAmount());
 				waived = waived.add(allocate.getWaivedAmount());
+				tdsDue = tdsDue.add(allocate.getTdsDue());
+				tdsPaid = tdsPaid.add(allocate.getTdsPaid());
 			}
 
 		}
@@ -1371,10 +1392,12 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		receiptData.setTotReceiptAmount(totDue);
 		addAmountCell(item, totRecv, null, true);
 		addAmountCell(item, inProc, null, true);
+		addAmountCell(item, tdsDue, null, true);
 		addAmountCell(item, totDue, null, true);
 		addAmountCell(item, paid, null, true);
+		addAmountCell(item, tdsPaid, null, true);
 		addAmountCell(item, waived, null, true);
-		addAmountCell(item, totDue.subtract(paid).subtract(waived), null, true);
+		addAmountCell(item, totRecv.subtract(paid).subtract(waived), null, true);
 
 		this.listBoxPastdues.appendChild(item);
 	}
@@ -2733,6 +2756,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				dataMap.put(feeTypeCode + "_IGST_W", igstTax.getWaivedTax());
 				dataMap.put(feeTypeCode + "_UGST_W", ugstTax.getWaivedTax());
 				dataMap.put(feeTypeCode + "_CESS_W", cessTax.getWaivedTax());
+
+				// TDS
+				dataMap.put(feeTypeCode + "_TDS_N", finFeeDetail.getNetTDS());
+				dataMap.put(feeTypeCode + "_TDS_P", finFeeDetail.getPaidTDS());
 			}
 		}
 
@@ -3736,6 +3763,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 
 				}
+
+				if (tdsAmt.compareTo(BigDecimal.ZERO) <= 0) {
+					for (ReceiptAllocationDetail receiptAllocationDetail : receiptAllocationDetails) {
+						tdsAmt = tdsAmt.add(receiptAllocationDetail.getTdsDue());
+					}
+				}
+
 				setOrgReceiptData(receiptData);
 				//Other Charges
 				closureReport.setManualAdviceAmt(PennantApplicationUtil.formateAmount(receivableAmt, formatter));
@@ -3939,7 +3973,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		engine.mergeFields(closureReport);
 
 		showDocument(this.window_LoanClosureEnquiryDialog, template.getName(), SaveFormat.PDF, false, engine);
-
+		this.btnPrint.setVisible(false);
 		logger.debug("Leaving");
 	}
 

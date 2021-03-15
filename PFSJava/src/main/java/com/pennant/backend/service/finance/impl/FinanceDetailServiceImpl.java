@@ -4659,7 +4659,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetails.addAll(exdDetails);
 
 					insuranceDetailService.doApproveVASInsurance(finScheduleData.getVasRecordingList(),
-							financeMain.getUserDetails());
+							financeMain.getUserDetails(), financeDetail);
 
 				}
 
@@ -4709,7 +4709,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					FinLogEntryDetail entryDetail = new FinLogEntryDetail();
 					entryDetail.setFinReference(finScheduleData.getFinReference());
 					entryDetail.setEventAction(StringUtils.isBlank(financeDetail.getAccountingEventCode())
-							? AccountEventConstants.ACCEVENT_ADDDBSN : financeDetail.getAccountingEventCode());
+							? AccountEventConstants.ACCEVENT_ADDDBSN
+							: financeDetail.getAccountingEventCode());
 					entryDetail.setSchdlRecal(finScheduleData.getFinanceMain().isScheduleRegenerated());
 					entryDetail.setPostDate(curBDay);
 					entryDetail.setReversalCompleted(false);
@@ -9107,6 +9108,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				summary.setFinODTotWaived(finODDetails.getTotWaived());
 				summary.setFinODTotPenaltyPaid(finODDetails.getTotPenaltyPaid());
 				summary.setFinODTotPenaltyBal(finODDetails.getTotPenaltyBal());
+				if (summary.getFinCurODDays() != 0) {
+					summary.setFinCurODDays(finODDetails.getFinCurODDays());
+				}
 			}
 
 			if (ImplementationConstants.ALLOW_NPA_PROVISION) {

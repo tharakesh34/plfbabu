@@ -201,6 +201,7 @@ public class AgreementDetail {
 	 * Provides Customer Pan Number.
 	 */
 	private String panNumber = "";
+	private String custDocPanNumber = "";
 
 	private String custEmpStsCode = ""; // Customer Employee Status Code
 
@@ -1480,6 +1481,11 @@ public class AgreementDetail {
 	 * Provides First Term Installment Amount.
 	 */
 	private String firstInstAmount = ""; // First Term Installment Amount
+
+	/**
+	 * Provides First Term Installment Amount On Sanctioned Amount
+	 */
+	private String firstInstAmtOnSanAmt = ""; // First Term Installment Amount On Sanctioned Amount
 
 	/**
 	 * Provides Last Term Installment Amount.
@@ -3813,6 +3819,14 @@ public class AgreementDetail {
 		this.lastInstDate = lastInstDate;
 	}
 
+	public String getFirstInstAmtOnSanAmt() {
+		return firstInstAmtOnSanAmt;
+	}
+
+	public void setFirstInstAmtOnSanAmt(String firstInstAmtOnSanAmt) {
+		this.firstInstAmtOnSanAmt = firstInstAmtOnSanAmt;
+	}
+
 	public String getLastInstAmount() {
 		return lastInstAmount;
 	}
@@ -5525,6 +5539,14 @@ public class AgreementDetail {
 
 	public void setPanNumber(String panNumber) {
 		this.panNumber = panNumber;
+	}
+
+	public String getCustDocPanNumber() {
+		return custDocPanNumber;
+	}
+
+	public void setCustDocPanNumber(String custDocPanNumber) {
+		this.custDocPanNumber = custDocPanNumber;
 	}
 
 	public String getAccNumberMandate() {

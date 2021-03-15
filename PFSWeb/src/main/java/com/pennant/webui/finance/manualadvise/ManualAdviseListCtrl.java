@@ -132,6 +132,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		if (!enqiryModule) {
 			this.searchObject.addFilter(new Filter("BounceID", 0, Filter.OP_EQUAL));
 		} else {
+			this.searchObject.addFilter(new Filter("FeeTypeId", 0, Filter.OP_NOT_EQUAL));
 			this.help.setVisible(false);
 		}
 	}

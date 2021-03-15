@@ -77,6 +77,7 @@ import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
@@ -142,6 +143,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	private boolean fromLoanOrg;
 
 	protected Button btnSearchCustomerDetails;
+	private DMSService dMSService;
 
 	/**
 	 * default constructor.<br>
@@ -552,6 +554,21 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		RCUDocument details = (RCUDocument) event.getData();
 
 		DocumentManager docDetails = riskContainmentUnitService.getDocumentById(details.getDocumentRefId());
+
+		Long docRefId = details.getDocumentRefId();
+		String docName = details.getDocName();
+		String docUri = details.getDocumentUri();
+		if (StringUtils.isNotBlank(docUri)) {
+			DocumentDetails dd = dMSService.getExternalDocument(this.custCIF.getValue(), docName, docUri);
+			docDetails.setDocImage(dd.getDocImage());
+			details.setDocName(dd.getDocName());
+		} else {
+			if (docDetails.getDocImage() == null) {
+				if (docRefId != null && docRefId != Long.MIN_VALUE) {
+					docDetails.setDocImage(dMSService.getById(docRefId));
+				}
+			}
+		}
 
 		if (docDetails != null && docDetails.getDocImage() != null) {
 			downloadFile(details.getDocType(), docDetails.getDocImage(), details.getDocName());

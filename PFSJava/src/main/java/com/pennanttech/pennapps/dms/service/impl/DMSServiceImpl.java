@@ -15,6 +15,7 @@ import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.App;
@@ -26,6 +27,7 @@ import com.pennanttech.pennapps.dms.filesystem.DocumentFileSystem;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 public class DMSServiceImpl implements DMSService {
 	private static Logger logger = LogManager.getLogger(DMSServiceImpl.class);
@@ -40,6 +42,7 @@ public class DMSServiceImpl implements DMSService {
 	private DocumentFileSystem documentFileSystem;
 	private VASRecordingDAO vASRecordingDAO;
 	private SimpleAsyncTaskExecutor taskExecutor;
+	private ExternalDocumentManager externalDocumentManager;
 
 	@Override
 	public long save(DMSQueue dmsQueue) {
@@ -272,6 +275,15 @@ public class DMSServiceImpl implements DMSService {
 	}
 
 	@Override
+	public DocumentDetails getExternalDocument(String custCIF, String docName, String docUri) {
+		DocumentDetails detail = externalDocumentManager.getExternalDocument(docName, docUri, custCIF);
+		if (detail == null) {
+			detail = new DocumentDetails();
+		}
+		return detail;
+	}
+
+	@Override
 	public Long getCustomerIdByCollateral(String collateralRef) {
 		return collateralSetupDAO.getCustomerIdByCollateral(collateralRef);
 	}
@@ -317,4 +329,7 @@ public class DMSServiceImpl implements DMSService {
 		this.vASRecordingDAO = vASRecordingDAO;
 	}
 
+	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
+		this.externalDocumentManager = externalDocumentManager;
+	}
 }

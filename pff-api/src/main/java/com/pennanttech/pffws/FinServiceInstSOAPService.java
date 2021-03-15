@@ -55,4 +55,8 @@ public interface FinServiceInstSOAPService {
 	@WebResult(name = "finance")
 	public WSReturnStatus approveDisbursementResponse(DisbRequest disbRequest) throws ServiceException;
 
+	@WebResult(name = "finance")
+	public WSReturnStatus cancelDisbursementInstructions(
+			@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
+
 }

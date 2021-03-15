@@ -46,6 +46,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -149,6 +150,9 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 	@Override
 	public void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc) {
+		if (StringUtils.trimToNull(errorDesc) != null) {
+			errorDesc = (errorDesc.length() >= 1000) ? errorDesc.substring(0, 988) : errorDesc;
+		}
 		presentmentDetailDAO.updatePresentmentDetails(presentmentRef, status, errorCode, errorDesc);
 	}
 
@@ -161,8 +165,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	public void updatePresentmentIdAsZero(List<Long> presentmentIds) {
 		List<List<Long>> idList = new ArrayList<>(1);
 
-		if (presentmentIds.size() > PennantConstants.BULKPROCESSING_SIZE) {
-			idList = ListUtils.partition(presentmentIds, PennantConstants.BULKPROCESSING_SIZE);
+		if (presentmentIds.size() > PennantConstants.CHUNK_SIZE) {
+			idList = ListUtils.partition(presentmentIds, PennantConstants.CHUNK_SIZE);
 		} else {
 			idList.add(presentmentIds);
 		}
@@ -232,7 +236,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	}
 
 	@Override
-	public void updatePresentmentDetails(PresentmentHeader presentmentHeader) {
+	public void updatePresentmentDetails(PresentmentHeader ph) {
 		logger.debug(Literal.ENTERING);
 
 		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
@@ -241,21 +245,28 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			throw new AppException(Labels.getLabel("Amortization_EOD_Check"));
 		}
 
-		long presentmentId = presentmentHeader.getId();
-		long partnerBankId = presentmentHeader.getPartnerBankId();
-		String userAction = presentmentHeader.getUserAction();
+		long presentmentId = ph.getId();
+		long partnerBankId = ph.getPartnerBankId();
+		String userAction = ph.getUserAction();
 
-		if ("Save".equals(userAction)) {
-			savePresentmentData(presentmentHeader);
-		} else if ("Submit".equals(userAction)) {
-			submitPresentments(presentmentHeader);
-		} else if ("Approve".equals(userAction)) {
-			approvePresentments(presentmentHeader);
-		} else if ("Resubmit".equals(userAction)) {
+		switch (userAction) {
+		case "Save":
+			savePresentmentData(ph);
+			break;
+		case "Submit":
+			submitPresentments(ph);
+			break;
+		case "Approve":
+			approvePresentments(ph);
+			break;
+		case "Resubmit":
 			resubmitPresentments(presentmentId, partnerBankId);
-		} else if ("Cancel".equals(userAction)) {
+			break;
+		case "Cancel":
 			cancelPresentments(presentmentId);
+			break;
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -273,42 +284,41 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 				partnerBankId);
 	}
 
-	private void savePresentmentData(PresentmentHeader presentmentHeader) {
-		List<Long> includeList = presentmentHeader.getIncludeList();
-		List<Long> excludeList = presentmentHeader.getExcludeList();
-		long presentmentId = presentmentHeader.getId();
-		long partnerBankId = presentmentHeader.getPartnerBankId();
+	private void savePresentmentData(PresentmentHeader ph) {
+		List<Long> includeList = ph.getIncludeList();
+		List<Long> excludeList = ph.getExcludeList();
+		long id = ph.getId();
+		long partnerBankId = ph.getPartnerBankId();
 
+		int count = 0;
 		if (CollectionUtils.isNotEmpty(includeList)) {
-			this.presentmentDetailDAO.updatePresentmentDetials(presentmentId, includeList, 0);
+			count = count + this.presentmentDetailDAO.updatePresentmentDetials(id, includeList, 0);
 		}
 
 		if (CollectionUtils.isNotEmpty(excludeList)) {
-			this.presentmentDetailDAO.updatePresentmentDetials(presentmentId, excludeList,
+			count = count + this.presentmentDetailDAO.updatePresentmentDetials(id, excludeList,
 					RepayConstants.PEXC_MANUAL_EXCLUDE);
 		}
 
-		this.presentmentDetailDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED,
-				partnerBankId);
+		this.presentmentDetailDAO.updatePresentmentHeader(id, RepayConstants.PEXC_BATCH_CREATED, partnerBankId);
 	}
 
-	private void submitPresentments(PresentmentHeader presentmentHeader) {
-		List<Long> includeList = presentmentHeader.getIncludeList();
-		List<Long> excludeList = presentmentHeader.getExcludeList();
-		long presentmentId = presentmentHeader.getId();
-		long partnerBankId = presentmentHeader.getPartnerBankId();
+	private void submitPresentments(PresentmentHeader ph) {
+		List<Long> includeList = ph.getIncludeList();
+		List<Long> excludeList = ph.getExcludeList();
+		long id = ph.getId();
+		long partnerBankId = ph.getPartnerBankId();
 
+		int count = 0;
 		if (CollectionUtils.isNotEmpty(includeList)) {
-			this.presentmentDetailDAO.updatePresentmentDetials(presentmentId, includeList, 0);
+			count = count + this.presentmentDetailDAO.updatePresentmentDetials(id, includeList, 0);
 		}
 
 		if (CollectionUtils.isNotEmpty(excludeList)) {
-			this.presentmentDetailDAO.updatePresentmentDetials(presentmentId, excludeList,
+			count = count + this.presentmentDetailDAO.updatePresentmentDetials(id, excludeList,
 					RepayConstants.PEXC_MANUAL_EXCLUDE);
 		}
-
-		this.presentmentDetailDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_AWAITING_CONF,
-				partnerBankId);
+		this.presentmentDetailDAO.updatePresentmentHeader(id, RepayConstants.PEXC_AWAITING_CONF, partnerBankId);
 	}
 
 	private void resubmitPresentments(long presentmentId, long partnerBankId) {
@@ -316,13 +326,13 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 				partnerBankId);
 	}
 
-	private void approvePresentments(PresentmentHeader presentmentHeader) {
-		List<Long> excludeList = presentmentHeader.getExcludeList();
-		long presentmentId = presentmentHeader.getId();
+	private void approvePresentments(PresentmentHeader ph) {
+		List<Long> excludeList = ph.getExcludeList();
+		long presentmentId = ph.getId();
 
 		try {
 			if (CollectionUtils.isEmpty(excludeList)) {
-				processDetails(presentmentHeader);
+				processDetails(ph);
 				return;
 			}
 
@@ -332,7 +342,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 					.getPresentmensByExcludereason(presentmentId, RepayConstants.PEXC_MANUAL_EXCLUDE);
 
 			if (CollectionUtils.isEmpty(excludePresentmentList)) {
-				processDetails(presentmentHeader);
+				processDetails(ph);
 				return;
 			}
 
@@ -343,16 +353,16 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 				if (item.getExcessID() != 0) {
 					excessAmountList.add(item);
 
-					if (excessAmountList.size() == PennantConstants.BULKPROCESSING_SIZE) {
+					if (excessAmountList.size() == PennantConstants.CHUNK_SIZE) {
 						finExcessAmountDAO.batchUpdateExcessAmount(excessAmountList);
 						excessAmountList = new ArrayList<>();
 					}
 				}
 
-				if (MandateConstants.TYPE_PDC.equals(presentmentHeader.getMandateType())) {
+				if (MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
 					chequeStatusList.add(item.getMandateId());
 
-					if (chequeStatusList.size() == PennantConstants.BULKPROCESSING_SIZE) {
+					if (chequeStatusList.size() == PennantConstants.CHUNK_SIZE) {
 						chequeDetailDAO.batchUpdateChequeStatus(chequeStatusList, PennantConstants.CHEQUESTATUS_NEW);
 						chequeStatusList = new ArrayList<>();
 					}
@@ -367,7 +377,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 				chequeDetailDAO.batchUpdateChequeStatus(chequeStatusList, PennantConstants.CHEQUESTATUS_NEW);
 			}
 
-			processDetails(presentmentHeader);
+			processDetails(ph);
 
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
@@ -377,17 +387,15 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	private void cancelPresentments(long presentmentId) {
 		List<PresentmentDetail> list = this.presentmentDetailDAO.getPresentmentDetail(presentmentId, false);
 
-		if (list != null && !list.isEmpty()) {
-			for (PresentmentDetail item : list) {
-				if (item.getExcessID() != 0) {
-					finExcessAmountDAO.updateExcessAmount(item.getExcessID(), item.getAdvanceAmt());
-				}
-				updatePresentmentIdAsZero(item.getId());
+		for (PresentmentDetail pd : list) {
+			if (pd.getExcessID() != 0) {
+				finExcessAmountDAO.updateExcessAmount(pd.getExcessID(), pd.getAdvanceAmt());
+			}
+			updatePresentmentIdAsZero(pd.getId());
 
-				String paymentMode = this.presentmentDetailDAO.getPaymenyMode(item.getPresentmentRef());
-				if (MandateConstants.TYPE_PDC.equals(paymentMode)) {
-					updateChequeStatus(item.getMandateId(), PennantConstants.CHEQUESTATUS_NEW);
-				}
+			String paymentMode = this.presentmentDetailDAO.getPaymenyMode(pd.getPresentmentRef());
+			if (MandateConstants.TYPE_PDC.equals(paymentMode)) {
+				updateChequeStatus(pd.getMandateId(), PennantConstants.CHEQUESTATUS_NEW);
 			}
 		}
 		//reverse the excess movement
@@ -441,27 +449,24 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		return presentmentDetail;
 	}
 
-	/*
-	 * Extracting the Presentments from Various tables and saving into Presentments PresentmentHeader presentmentHeader
-	 */
 	@Override
-	public String savePresentmentDetails(PresentmentHeader presentmentHeader) throws Exception {
-		if (MandateConstants.TYPE_PDC.equals(presentmentHeader.getMandateType())) {
-			return savePDCPresentments(presentmentHeader);
+	public String savePresentmentDetails(PresentmentHeader ph) {
+		if (MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
+			return savePDCPresentments(ph);
 		}
-		return savePresentments(presentmentHeader);
+		return savePresentments(ph);
 	}
 
-	private String savePDCPresentments(PresentmentHeader presentmentHeader) throws Exception {
-		PresentmentDetailExtractService presentmentService = new PresentmentDetailExtractService(presentmentDetailDAO,
-				finExcessAmountDAO, chequeDetailDAO);
-		return presentmentService.savePDCPresentments(presentmentHeader);
+	private String savePDCPresentments(PresentmentHeader ph) {
+		PresentmentDetailExtractService ps = null;
+		ps = new PresentmentDetailExtractService(presentmentDetailDAO, finExcessAmountDAO, chequeDetailDAO);
+		return ps.extarctPDCPresentments(ph);
 	}
 
-	private String savePresentments(PresentmentHeader presentmentHeader) throws Exception {
-		PresentmentDetailExtractService presentmentService = new PresentmentDetailExtractService(presentmentDetailDAO,
-				finExcessAmountDAO, chequeDetailDAO);
-		return presentmentService.savePresentments(presentmentHeader);
+	private String savePresentments(PresentmentHeader ph) {
+		PresentmentDetailExtractService ps = null;
+		ps = new PresentmentDetailExtractService(presentmentDetailDAO, finExcessAmountDAO, chequeDetailDAO);
+		return ps.extarctPresentments(ph);
 	}
 
 	private void processDetails(PresentmentHeader presentmentHeader) {
@@ -976,6 +981,11 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	}
 
 	@Override
+	public FinanceMain getDefualtPostingDetails(String finReference, Date schDate) {
+		return presentmentDetailDAO.getDefualtPostingDetails(finReference, schDate);
+	}
+
+	@Override
 	public PresentmentDetail getPresentmentDetail(String presentmentRef) {
 		return presentmentDetailDAO.getPresentmentDetail(presentmentRef, "");
 	}
@@ -1086,6 +1096,26 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	public List<Long> getExcludeList(long id) {
 		return this.presentmentDetailDAO.getExcludeList(id);
 	}
+	
+	@Override
+	public void updatePresentmentDetail(String batchId, String pexcSuccess) {
+		presentmentDetailDAO.updatePresentmentDetail(batchId, pexcSuccess);
+	}
+
+	@Override
+	public String getPresementStatus(String presentmentRef) {
+		return presentmentDetailDAO.getPresementStatus(presentmentRef);
+	}
+	
+	@Override
+	public long getPresentmentId(String presentmentRef) {
+		return presentmentDetailDAO.getPresentmentId(presentmentRef);
+	}
+	
+	@Override
+	public void updatePresentmentDetail(String presentmentRef, String status, Long linkedTranId) {
+		presentmentDetailDAO.updatePresentmentDetail(presentmentRef, status, linkedTranId);
+	}
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
@@ -1095,4 +1125,5 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
+	
 }

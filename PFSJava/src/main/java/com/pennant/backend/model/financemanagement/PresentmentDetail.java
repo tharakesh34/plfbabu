@@ -43,24 +43,41 @@
 package com.pennant.backend.model.financemanagement;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
+@XmlType(propOrder = { "id", "finReference", "custCif", "finType", "schDate", "presentmentAmt", "presentmentRef",
+		"batchReference", "presentmentId", "status", "mandateType", })
+@XmlAccessorType(XmlAccessType.NONE)
 public class PresentmentDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-
+	@XmlElement(name = "presentmentId")
 	private long id = Long.MIN_VALUE;
+	@XmlElement(name = "presentmentHeaderId")
 	private long presentmentId = Long.MIN_VALUE;
+	@XmlElement
+	private String batchReference;
+
+	@XmlElement(name = "uniqueReference")
 	private String presentmentRef;
+	@XmlElement
 	private String finReference;
+	@XmlElement(name = "instDate")
 	private Date schDate;
 	private Date defSchdDate;
 	private long mandateId;
@@ -75,17 +92,24 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private long excessID;
 	private BigDecimal adviseAmt;
 	private int excludeReason;
+	@XmlElement(name = "amount")
 	private BigDecimal presentmentAmt;
 	private int emiNo;
 	private int schSeq;
 	private long bounceID;
 	private String bounceReason;
 	private Long manualAdviseId;
+	@XmlElement(name = "presentmentStatus")
 	private String status;
 	private boolean newRecord = false;
 	private String customerName;
+	@XmlElement(name = "cif")
+	private String custCif;
+
+	@XmlElement
 	private String finType;
 	private String finTypeDesc;
+	@XmlElement(name = "paymentMode")
 	private String mandateType;
 	private String mandateStatus;
 	private Date mandateExpiryDate;
@@ -110,6 +134,16 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private Date appDate;
 	private String bpiOrHoliday;
 	private String bpiTreatment;
+	private FinExcessAmount excessAmount;
+	private FinExcessAmount excessAmountReversal;
+	private List<PresentmentDetail> presements = new ArrayList<>();
+	private String bankCode;
+	private FinExcessAmount emiInAdvance;
+	private Long linkedTranId;
+
+	public PresentmentDetail() {
+		super();
+	}
 
 	//Added to check presentment type in Presentment Receipt process
 	private String presentmentType;
@@ -120,6 +154,74 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setMandateStatus(String mandateStatus) {
 		this.mandateStatus = mandateStatus;
+	}
+
+	public PresentmentDetail copyEntity() {
+		PresentmentDetail entity = new PresentmentDetail();
+		entity.setId(this.id);
+		entity.setPresentmentId(this.presentmentId);
+		entity.setPresentmentRef(this.presentmentRef);
+		entity.setFinReference(this.finReference);
+		entity.setSchDate(this.schDate);
+		entity.setDefSchdDate(this.defSchdDate);
+		entity.setMandateId(this.mandateId);
+		entity.setSchAmtDue(this.schAmtDue);
+		entity.setSchPriDue(this.schPriDue);
+		entity.setSchPftDue(this.schPftDue);
+		entity.setSchFeeDue(this.schFeeDue);
+		entity.setSchInsDue(this.schInsDue);
+		entity.setSchPenaltyDue(this.schPenaltyDue);
+		entity.setAdvanceAmt(this.advanceAmt);
+		entity.settDSAmount(this.tDSAmount);
+		entity.setExcessID(this.excessID);
+		entity.setAdviseAmt(this.adviseAmt);
+		entity.setExcludeReason(this.excludeReason);
+		entity.setPresentmentAmt(this.presentmentAmt);
+		entity.setEmiNo(this.emiNo);
+		entity.setSchSeq(this.schSeq);
+		entity.setBounceID(this.bounceID);
+		entity.setBounceReason(this.bounceReason);
+		entity.setManualAdviseId(this.manualAdviseId);
+		entity.setStatus(this.status);
+		entity.setNewRecord(this.newRecord);
+		entity.setCustomerName(this.customerName);
+		entity.setFinType(this.finType);
+		entity.setFinTypeDesc(this.finTypeDesc);
+		entity.setMandateType(this.mandateType);
+		entity.setMandateStatus(this.mandateStatus);
+		entity.setMandateExpiryDate(this.mandateExpiryDate);
+		entity.setFinCcy(this.finCcy);
+		entity.setEcsReturn(this.ecsReturn);
+		entity.setReceiptID(this.receiptID);
+		entity.setAccountNo(this.accountNo);
+		entity.setAcType(this.acType);
+		entity.setErrorCode(this.errorCode);
+		entity.setErrorDesc(this.errorDesc);
+		entity.setEntityCode(this.entityCode);
+		entity.setPartnerBankId(this.partnerBankId);
+		entity.setFinanceDetail(this.financeDetail);
+		entity.setGrcAdvType(this.grcAdvType);
+		entity.setAdvType(this.advType);
+		entity.setAdvStage(this.advStage);
+		entity.setGrcPeriodEndDate(this.grcPeriodEndDate);
+		entity.setAdvAdjusted(this.advAdjusted);
+		entity.setAppDate(this.appDate);
+		entity.setBpiOrHoliday(this.bpiOrHoliday);
+		entity.setBpiTreatment(this.bpiTreatment);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
 	}
 
 	public Set<String> getExcludeFields() {
@@ -137,6 +239,11 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("bpiOrHoliday");
 		excludeFields.add("bpiTreatment");
 		excludeFields.add("presentmentType");
+		excludeFields.add("excessAmount");
+		excludeFields.add("excessAmountReversal");
+		excludeFields.add("bankCode");
+		excludeFields.add("emiInAdvance");
+		excludeFields.add("linkedTranId");
 		return excludeFields;
 	}
 
@@ -164,6 +271,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setPresentmentId(long presentmentId) {
 		this.presentmentId = presentmentId;
+	}
+
+	public String getBatchReference() {
+		return batchReference;
+	}
+
+	public void setBatchReference(String batchReference) {
+		this.batchReference = batchReference;
 	}
 
 	public String getFinReference() {
@@ -356,6 +471,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
+	}
+
+	public String getCustCif() {
+		return custCif;
+	}
+
+	public void setCustCif(String custCif) {
+		this.custCif = custCif;
 	}
 
 	public String getFinTypeDesc() {
@@ -573,4 +696,51 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.presentmentType = presentmentType;
 	}
 
+	public FinExcessAmount getExcessAmount() {
+		return excessAmount;
+	}
+
+	public void setExcessAmount(FinExcessAmount excessAmount) {
+		this.excessAmount = excessAmount;
+	}
+
+	public FinExcessAmount getExcessAmountReversal() {
+		return excessAmountReversal;
+	}
+
+	public void setExcessAmountReversal(FinExcessAmount excessAmountReversal) {
+		this.excessAmountReversal = excessAmountReversal;
+	}
+
+	public List<PresentmentDetail> getPresements() {
+		return presements;
+	}
+
+	public void setPresements(List<PresentmentDetail> presements) {
+		this.presements = presements;
+	}
+
+	public String getBankCode() {
+		return bankCode;
+	}
+
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+
+	public FinExcessAmount getEmiInAdvance() {
+		return emiInAdvance;
+	}
+
+	public void setEmiInAdvance(FinExcessAmount emiInAdvance) {
+		this.emiInAdvance = emiInAdvance;
+	}
+
+	public Long getLinkedTranId() {
+		return linkedTranId;
+	}
+
+	public void setLinkedTranId(Long linkedTranId) {
+		this.linkedTranId = linkedTranId;
+	}
 }

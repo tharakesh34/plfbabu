@@ -743,10 +743,10 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			return;
 		}
 
-		List<String> listReceiptUploadId = new ArrayList<>();
+		List<Long> listReceiptUploadId = new ArrayList<>();
 		for (ReceiptUploadHeader receiptUploadHeader : listReceiptUploadHeader) {
 
-			listReceiptUploadId.add(String.valueOf(receiptUploadHeader.getUploadHeaderId()));
+			listReceiptUploadId.add(receiptUploadHeader.getUploadHeaderId());
 
 			receiptUploadHeader.setUploadProgress(ReceiptUploadConstants.RECEIPT_APPROVED);
 
@@ -775,7 +775,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			ReceiptUploadHeader receiptUploadHeader = receiptUploadHeaderService.getUploadHeaderById(id, false);
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " UploadHeaderId= :?";
+			String whereCond = " UploadHeaderId= ?";
 
 			if (doCheckAuthority(receiptUploadHeader, whereCond,
 					new Object[] { receiptUploadHeader.getUploadHeaderId() })) {
@@ -811,14 +811,11 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		return false;
 	}
 
-	private void doApprove(List<String> listReceiptUploadId) {
+	private void doApprove(List<Long> listReceiptUploadId) {
 
 		try {
 
-			String uploadIds = String.join(",", listReceiptUploadId);
-			//ReceiptUploadBatchAdmin.getInstance();
-			//ReceiptUploadBatchAdmin.setArgs(uploadIds);
-			Thread thread = new Thread(new ReceiptUploadThread(uploadIds));
+			Thread thread = new Thread(new ReceiptUploadThread(listReceiptUploadId));
 			thread.start();
 			Thread.sleep(1000);
 
@@ -828,27 +825,18 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 	}
 
 	public class ReceiptUploadThread implements Runnable {
-		String uploadId;
+		List<Long> listReceiptUploadId;
 
-		public ReceiptUploadThread(String uploadId) {
+		public ReceiptUploadThread(List<Long> listReceiptUploadId) {
 			super();
-			this.uploadId = uploadId;
+			this.listReceiptUploadId = listReceiptUploadId;
 		}
 
 		@Override
 		public void run() {
-			//ReceiptUploadBatchAdmin.startJob();
+			receiptUploadApprovalProcess.approveReceipts(listReceiptUploadId, getUserWorkspace().getLoggedInUser());
 
-			String[] list = StringUtils.trimToEmpty(uploadId).split(",");
-
-			List<Long> receiptUploadIdList = new ArrayList<>();
-			for (String item : list) {
-				receiptUploadIdList.add(Long.parseLong(item));
-			}
-
-			receiptUploadApprovalProcess.approveReceipts(receiptUploadIdList, getUserWorkspace().getLoggedInUser());
-
-			for (Long headerId : receiptUploadIdList) {
+			for (Long headerId : listReceiptUploadId) {
 				int[] statuscount = receiptUploadHeaderService.getHeaderStatusCnt(headerId);
 				receiptUploadHeaderService.uploadHeaderStatusCnt(headerId, statuscount[0], statuscount[1]);
 			}
@@ -1053,7 +1041,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aReceiptUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		aReceiptUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
 		aReceiptUploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReceiptUploadHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

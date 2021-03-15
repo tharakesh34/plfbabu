@@ -89,6 +89,7 @@ import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.approvalstatusenquiry.ApprovalStatusEnquiryDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
@@ -165,6 +166,7 @@ import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinOCRCapture;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -265,6 +267,7 @@ import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.rits.cloning.Cloner;
 
 public class AgreementGeneration extends GenericService<AgreementDetail> implements Serializable {
 	private static final long serialVersionUID = -2030216591697935342L;
@@ -587,6 +590,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					}
 
 					if (customerDocumentsList != null && !customerDocumentsList.isEmpty()) {
+						agreement.setCustDocPanNumber(PennantApplicationUtil.getPanNumber(customerDocumentsList));
 						String masterKeyCode = getMasterDefService().getMasterCode("DOC_TYPE", "PAN");
 						for (CustomerDocument customerDocument : customerDocumentsList) {
 							String docCategory = customerDocument.getCustDocCategory();
@@ -4630,6 +4634,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					PennantStaticListUtil.getAccountTypes()));
 			agreement.setFirstInstDate(DateUtil.formatToLongDate(fm.getNextRepayDate()));
 			agreement.setLastInstDate(DateUtil.formatToLongDate(fm.getMaturityDate()));
+			if (ImplementationConstants.AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT) {
+				getFirstInstAmtOnSanAmt(agreement, detail, formatter);
+			}
 			agreement.setFirstInstAmount(CurrencyUtil.format(fm.getFirstRepay(), formatter));
 			agreement.setLastInstAmount(CurrencyUtil.format(fm.getLastRepay(), formatter));
 			agreement.setSchdMethod(fm.getScheduleMethod());
@@ -4783,6 +4790,29 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		agreement.setGrcPeriod(String.valueOf(grcPeriod));
 		logger.debug(Literal.LEAVING);
 		return agreement;
+	}
+
+	private void getFirstInstAmtOnSanAmt(AgreementDetail agreement, FinanceDetail detail, int formatter) {
+		Cloner cloner = new Cloner();
+		FinScheduleData finScheduleData = cloner.deepClone(detail.getFinScheduleData());
+		List<FinanceDisbursement> disb = new ArrayList<FinanceDisbursement>();
+		disb = finScheduleData.getDisbursementDetails();
+		disb.get(0).setDisbAmount(finScheduleData.getFinanceMain().getFinAssetValue());
+		List<FinanceDisbursement> disbursement = new ArrayList<FinanceDisbursement>();
+		disbursement.add(disb.get(0));
+		finScheduleData.setDisbursementDetails(disbursement);
+		List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<>();
+		finScheduleData.setFinanceScheduleDetails(financeScheduleDetails);
+		finScheduleData.getFinanceMain().setFinAmount(finScheduleData.getFinanceMain().getFinAssetValue());
+		FinScheduleData scheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
+		scheduleData = ScheduleCalculator.getCalSchd(scheduleData, BigDecimal.ZERO);
+		for (FinanceScheduleDetail scheduledetail : scheduleData.getFinanceScheduleDetails()) {
+			if (scheduledetail.isRepayOnSchDate()) {
+				agreement.setFirstInstAmtOnSanAmt(
+						PennantApplicationUtil.amountFormate(scheduledetail.getRepayAmount(), formatter));
+				break;
+			}
+		}
 	}
 
 	/**

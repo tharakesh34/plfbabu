@@ -121,6 +121,52 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public FinTypeFees copyEntity() {
+		FinTypeFees entity = new FinTypeFees();
+		entity.setFinType(this.finType);
+		entity.setOriginationFee(this.originationFee);
+		entity.setFinEvent(this.finEvent);
+		entity.setFinEventDesc(this.finEventDesc);
+		entity.setFeeTypeID(this.feeTypeID);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setFeeTypeDesc(this.feeTypeDesc);
+		entity.setFeeOrder(this.feeOrder);
+		entity.setFeeScheduleMethod(this.feeScheduleMethod);
+		entity.setCalculationType(this.calculationType);
+		entity.setRuleCode(this.ruleCode);
+		entity.setRuleDesc(this.ruleDesc);
+		entity.setAmount(this.amount);
+		entity.setPercentage(this.percentage);
+		entity.setCalculateOn(this.calculateOn);
+		entity.setAlwDeviation(this.alwDeviation);
+		entity.setMaxWaiverPerc(this.maxWaiverPerc);
+		entity.setAlwModifyFee(this.alwModifyFee);
+		entity.setAlwModifyFeeSchdMthd(this.alwModifyFeeSchdMthd);
+		entity.setActive(this.active);
+		entity.setModuleId(this.moduleId);
+		entity.setReferenceId(this.referenceId);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setTaxApplicable(this.taxApplicable);
+		entity.setTaxComponent(this.taxComponent);
+		entity.setAlwPreIncomization(this.alwPreIncomization);
+		entity.setTdsReq(this.tdsReq);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("feeTypeCode");

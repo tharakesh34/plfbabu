@@ -141,7 +141,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(", FinCurODPri = :FinCurODPri, FinCurODPft = :FinCurODPft");
 		sql.append(", FinCurODDays = :FinCurODDays, TotPenaltyAmt = :TotPenaltyAmt, TotWaived = :TotWaived");
 		sql.append(", TotPenaltyPaid = :TotPenaltyPaid, TotPenaltyBal = :TotPenaltyBal, FinLMdfDate = :FinLMdfDate");
-		sql.append(", LPIAmt = :LPIAmt, LPIPaid = :LPIPaid, LPIBal = :LPIBal, LPIWaived = :LPIWaived");
+		sql.append(", LPIPaid = :LPIPaid, LPIBal = :LPIBal, LPIWaived = :LPIWaived");
 		sql.append(", LpCpz = :LpCpz, LpCpzAmount = :LpCpzAmount, LpCurCpzBal = :LpCurCpzBal");
 		sql.append(" where FinReference = :FinReference and FinODSchdDate = :FinODSchdDate");
 		return sql;

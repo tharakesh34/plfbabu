@@ -18,6 +18,18 @@ public class FinExcessMovement {
 		super();
 	}
 
+	public FinExcessMovement copyEntity() {
+		FinExcessMovement entity = new FinExcessMovement();
+		entity.setExcessID(this.excessID);
+		entity.setReceiptID(this.receiptID);
+		entity.setMovementType(this.movementType);
+		entity.setTranType(this.tranType);
+		entity.setAmount(this.amount);
+		entity.setMovementFrom(this.movementFrom);
+		entity.setSchDate(this.schDate);
+		return entity;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

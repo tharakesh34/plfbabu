@@ -37,6 +37,8 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
@@ -595,7 +597,8 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	}
 
 	@Override
-	public void doApproveVASInsurance(List<VASRecording> vasRecording, LoggedInUser loginUser) {
+	public void doApproveVASInsurance(List<VASRecording> vasRecording, LoggedInUser loginUser,
+			FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
 		//TODO:GANESH
@@ -629,22 +632,25 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 					payments.setNoOfReceivables(0);
 					payments.setLinkedTranId(0);
 					payments.setReceivableAmount(BigDecimal.ZERO);
-
 					payments.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					payments.setStatus(DisbursementConstants.STATUS_APPROVED);
 					payments.setPaymentCCy(SysParamUtil.getAppCurrency());
 					payments.setLastMntBy(loginUser.getUserId());
 					payments.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					payments.setUserDetails(loginUser);
+					FinAdvancePayments advancePayments = financeDetail.getAdvancePaymentsList().get(0);
+					if (financeDetail.isDisbStp()
+							|| DisbursementConstants.STATUS_AWAITCON.equals(advancePayments.getStatus())) {
+						payments.setStatus(DisbursementConstants.STATUS_AWAITCON);
+					} else {
+						payments.setStatus(DisbursementConstants.STATUS_APPROVED);
+					}
 
 					long id = this.insuranceDetailDAO.saveInsurancePayments(payments, TableType.MAIN_TAB);
 					vASRecordingDAO.updateVasStatus(vasDetail.getVasReference(), id);
-
 				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Override
@@ -659,7 +665,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 
 	@Override
 	public void updateInsuranceDetails(InsuranceDetails insuranceDetail, String tableType) {
-		getInsuranceDetailDAO().updateInsuranceDetails(insuranceDetail, tableType);
+		insuranceDetailDAO.updateInsuranceDetails(insuranceDetail, tableType);
 	}
 
 	@Override
@@ -708,8 +714,8 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	}
 
 	@Override
-	public void updatePaymentStatus(InsurancePaymentInstructions instruction) {
-		getInsuranceDetailDAO().updatePaymentStatus(instruction);
+	public int updatePaymentStatus(InsurancePaymentInstructions instruction) {
+		return insuranceDetailDAO.updatePaymentStatus(instruction);
 	}
 
 	// Getters and setters

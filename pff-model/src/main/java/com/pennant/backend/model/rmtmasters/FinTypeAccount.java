@@ -75,6 +75,34 @@ public class FinTypeAccount extends AbstractWorkflowEntity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 
+	public FinTypeAccount copyEntity() {
+		FinTypeAccount entity = new FinTypeAccount();
+		entity.setFinType(this.finType);
+		entity.setFinCcy(this.finCcy);
+		entity.setEvent(this.event);
+		entity.setAlwManualEntry(this.alwManualEntry);
+		entity.setAlwCustomerAccount(this.alwCustomerAccount);
+		entity.setAccountReceivable(this.accountReceivable);
+		entity.setDefaultAccNum(this.defaultAccNum);
+		entity.setCustAccountTypes(this.custAccountTypes);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public boolean isNew() {
 		return isNewRecord();
 	}

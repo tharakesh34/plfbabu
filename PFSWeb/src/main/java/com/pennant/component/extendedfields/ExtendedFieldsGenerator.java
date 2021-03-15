@@ -113,6 +113,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
 import com.pennant.UserWorkspace;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -1235,8 +1236,13 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			}
 
 			if (allownegative) {
-				decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
-						detail.isFieldMandatory(), allownegative, minValue, maxValue);
+				if (ImplementationConstants.ALLOW_NEGATIVE_VALUES_EXTFIELDS) {
+					decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
+							detail.isFieldMandatory(), allownegative, Math.pow(10, detail.getFieldLength()) - 1);
+				} else {
+					decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
+							detail.isFieldMandatory(), allownegative, minValue, maxValue);
+				}
 			} else {
 				decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
 						detail.isFieldMandatory(), allownegative, Math.pow(10, detail.getFieldLength()) - 1);

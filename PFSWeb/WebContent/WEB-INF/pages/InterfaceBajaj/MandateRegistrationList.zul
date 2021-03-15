@@ -115,6 +115,11 @@
 										<datebox id="toDate" width="171px" format="dd/MM/yyyy" />
 									</hbox>
 								</row>
+								<row id="row_partnerBank" visible="false">
+									<label id="label_PartnerBank" value="${c:l('label_MandateList_PartnerBank.value')}" />
+									<listbox id="sortOperator_partnerBank" width="43px" mold="select" rows="1" />
+									<extendedcombobox id="partnerBank" />
+								</row>
 							</rows>
 						</grid>
 

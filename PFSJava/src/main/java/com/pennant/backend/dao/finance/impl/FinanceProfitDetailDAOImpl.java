@@ -106,7 +106,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", FinStartDate, MaturityDate, ProductCategory, ExcessAmt, EmiInAdvance, PrvMthAmz");
 		sql.append(", PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv, PenaltyPaid");
 		sql.append(", PenaltyDue, GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, PrvMthGapIntAmz, SvAmount");
-		sql.append(", CbAmount, NOAutoIncGrcEnd, FirstRepayDate");
+		sql.append(", CbAmount, NOAutoIncGrcEnd, FirstRepayDate, PrvMthAcr");
 		sql.append(" from FinPftDetails");
 		sql.append(" Where FinReference = ?");
 
@@ -185,7 +185,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				fpd.setSvAmount(rs.getBigDecimal("SvAmount"));
 				fpd.setCbAmount(rs.getBigDecimal("CbAmount"));
 				fpd.setNOAutoIncGrcEnd(rs.getInt("NOAutoIncGrcEnd"));
-							fpd.setFirstRepayDate(rs.getTimestamp("FirstRepayDate"));
+				fpd.setFirstRepayDate(rs.getTimestamp("FirstRepayDate"));
+				fpd.setPrvMthAcr(rs.getBigDecimal("PrvMthAcr"));
 
 				return fpd;
 			});
@@ -343,7 +344,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ODPrincipal, ODProfit, PenaltyDue");
+		sql.append(" ODPrincipal, ODProfit, PenaltyDue, PftAccrued, MaturityDate");
 		sql.append(" from FinPftDetails");
 		sql.append(" Where FinReference = ?");
 
@@ -359,6 +360,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 							fpd.setODPrincipal(rs.getBigDecimal("ODPrincipal"));
 							fpd.setODProfit(rs.getBigDecimal("ODProfit"));
 							fpd.setPenaltyDue(rs.getBigDecimal("PenaltyDue"));
+							fpd.setPftAccrued(rs.getBigDecimal("PftAccrued"));
+							fpd.setMaturityDate(rs.getDate("MaturityDate"));
 
 							return fpd;
 						}

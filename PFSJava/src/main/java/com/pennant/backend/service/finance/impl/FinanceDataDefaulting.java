@@ -89,18 +89,20 @@ public class FinanceDataDefaulting {
 			}
 
 			//Get Customer information
-			if (customer == null) {
-				customer = customerDAO.getCustomerByCIF(finMain.getCustCIF(), "");
+			if (!StringUtils.equals("CRTSCHD", vldGroup)) {
 				if (customer == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finMain.getLovDescCustCIF();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90101", valueParm)));
-					finScheduleData.setErrorDetails(errorDetails);
-					return finDetail;
+					customer = customerDAO.getCustomerByCIF(finMain.getCustCIF(), "");
+					if (customer == null) {
+						String[] valueParm = new String[1];
+						valueParm[0] = finMain.getLovDescCustCIF();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90101", valueParm)));
+						finScheduleData.setErrorDetails(errorDetails);
+						return finDetail;
+					}
 				}
+				finMain.setCustID(customer.getCustID());
+				finDetail.getCustomerDetails().setCustomer(customer);
 			}
-			finMain.setCustID(customer.getCustID());
-			finDetail.getCustomerDetails().setCustomer(customer);
 		}
 
 		// Date formats

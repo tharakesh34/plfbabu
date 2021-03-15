@@ -47,6 +47,25 @@ public class FinODPenaltyRate implements Serializable {
 		super();
 	}
 
+	public FinODPenaltyRate copyEntity() {
+		FinODPenaltyRate entity = new FinODPenaltyRate();
+		entity.setFinReference(this.finReference);
+		entity.setFinEffectDate(this.finEffectDate);
+		entity.setApplyODPenalty(this.applyODPenalty);
+		entity.setODIncGrcDays(this.oDIncGrcDays);
+		entity.setODChargeType(this.oDChargeType);
+		entity.setODGraceDays(this.oDGraceDays);
+		entity.setODChargeCalOn(this.oDChargeCalOn);
+		entity.setODChargeAmtOrPerc(this.oDChargeAmtOrPerc);
+		entity.setODAllowWaiver(this.oDAllowWaiver);
+		entity.setODMaxWaiverPerc(this.oDMaxWaiverPerc);
+		entity.setoDMinCapAmount(this.oDMinCapAmount);
+		entity.setLogKey(this.logKey);
+		entity.setODRuleCode(this.oDRuleCode);
+		entity.setoDTDSReq(this.oDTDSReq);
+		return entity;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

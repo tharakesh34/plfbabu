@@ -530,6 +530,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		this.jdbcSearchObject.setFirstResult(start);
 		this.jdbcSearchObject.setMaxResults(getPageSize());
 		this.jdbcSearchObject.addTabelName(getModuleMapping().getLovTableName());
+		showOrder(this.jdbcSearchObject, getModuleMapping().getLovFields());
 
 		if (this.filters != null) {
 			for (int i = 0; i < filters.length; i++) {
@@ -574,4 +575,10 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
+	public void showOrder(JdbcSearchObject jdbcSearchObject, String[] lovFields) {
+		if (StringUtils.equals(getModuleMapping().getModuleName(), "FileBatchStatus")) {
+			this.jdbcSearchObject.addSort(lovFields[0], true);
+		}
+	}
 }

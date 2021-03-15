@@ -187,7 +187,7 @@
 									<label id="label_InputDate" value="${c:l('label_MandateDialog_InputDate.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<datebox id="inputDate" />
+										<datebox id="inputDate" width="170px"/>
 									</hbox>
 								</row>
 								<row visible="true">

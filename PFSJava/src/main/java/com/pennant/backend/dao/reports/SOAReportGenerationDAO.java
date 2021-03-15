@@ -154,4 +154,5 @@ public interface SOAReportGenerationDAO {
 
 	StatementOfAccount getCustGSTINDetails(String finReference);
 
+	Map<Long, Integer> getInstNumber(String finReference);
 }

@@ -857,6 +857,9 @@ public class AdvancePaymentService extends ServiceHelper {
 
 			if (excessAmount != null) {
 				advIntBalance = excessAmount.getBalanceAmt();
+				if (advIntBalance.compareTo(BigDecimal.ZERO) == 0) {
+					advIntBalance = excessAmount.getReservedAmt();
+				}
 			}
 		}
 

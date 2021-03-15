@@ -39,8 +39,6 @@ public class AutoExtractPresentmentJob implements Job, Serializable {
 	private static final String DEFAULT_JOB_FREQUENCY = "0 0/5 * 1/1 * ? *";
 	public static final String JOB_FREQUENCY = SMTParameterConstants.PRESENTMENT_AUTO_EXTRACT_JOB_FREQUENCY;
 
-	List<String> mandateTypes = new ArrayList<String>();
-
 	private PresentmentJobService jobService;
 
 	@Override
@@ -59,38 +57,39 @@ public class AutoExtractPresentmentJob implements Job, Serializable {
 			return;
 		}
 
-		List<FinanceType> finTypes = getExtractService(context).getFinanceTypeList();
+		List<String> entities = getExtractService(context).getEntityCodes();
 
-		if (CollectionUtils.isEmpty(finTypes)) {
+		if (CollectionUtils.isEmpty(entities)) {
 			return;
 		}
 
-		for (FinanceType finType : finTypes) {
-			for (String mandateType : mandateTypes) {
-				PresentmentHeader presentmentHeader = new PresentmentHeader();
-				if (mandateType.equals(MandateConstants.TYPE_NACH)) {
-					toDate = DateUtil.addDays(appDate, nachDateFreq);
-					fromDate = DateUtil.addDays(appDate, nachDateFreq);
-				} else if (mandateType.equals(MandateConstants.TYPE_PDC)) {
-					toDate = DateUtil.addDays(appDate, pdcDateFreq);
-					fromDate = DateUtil.addDays(appDate, pdcDateFreq);
-				}
-				presentmentHeader.setToDate(toDate);
-				presentmentHeader.setFromDate(fromDate);
-				presentmentHeader.setPresentmentType("P");
-				presentmentHeader.setMandateType(mandateType);
-				presentmentHeader.setLoanType(finType.getFinType());
-				String entityCode = getExtractService(context).getEntityCodes(finType.getFinDivision());
-				presentmentHeader.setEntityCode(entityCode);
+		for (String entityCode : entities) {
+			List<FinanceType> loanTypes = getExtractService(context).getFinanceTypeList(entityCode);
+			for (FinanceType loanType : loanTypes) {
+				for (String mandateType : mandateTypes) {
+					PresentmentHeader presentmentHeader = new PresentmentHeader();
+					if (mandateType.equals(MandateConstants.TYPE_NACH)) {
+						toDate = DateUtil.addDays(appDate, nachDateFreq);
+						fromDate = DateUtil.addDays(appDate, nachDateFreq);
+					} else if (mandateType.equals(MandateConstants.TYPE_PDC)) {
+						toDate = DateUtil.addDays(appDate, pdcDateFreq);
+						fromDate = DateUtil.addDays(appDate, pdcDateFreq);
+						presentmentHeader.setLoanType(loanType.getFinType());
+					}
+					presentmentHeader.setToDate(toDate);
+					presentmentHeader.setFromDate(fromDate);
+					presentmentHeader.setPresentmentType("P");
+					presentmentHeader.setMandateType(mandateType);
+					presentmentHeader.setEntityCode(entityCode);
 
-				try {
-					getExtractService(context).extractPresentment(presentmentHeader);
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
+					try {
+						getExtractService(context).extractPresentment(presentmentHeader);
+					} catch (Exception e) {
+						logger.error(Literal.EXCEPTION, e);
+					}
 				}
 			}
 		}
-
 	}
 
 	private PresentmentJobService getExtractService(JobExecutionContext context) {
@@ -116,6 +115,7 @@ public class AutoExtractPresentmentJob implements Job, Serializable {
 	}
 
 	public List<String> getMandateTypeList() {
+		List<String> mandateTypes = new ArrayList<String>();
 		mandateTypes.add(MandateConstants.TYPE_NACH);
 		mandateTypes.add(MandateConstants.TYPE_PDC);
 		return mandateTypes;

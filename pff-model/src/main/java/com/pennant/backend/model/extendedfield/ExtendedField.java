@@ -1,6 +1,7 @@
 package com.pennant.backend.model.extendedfield;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,6 +27,16 @@ public class ExtendedField implements Serializable {
 	@XmlElementWrapper(name = "extendedFields")
 	@XmlElement(name = "extendedField")
 	private List<ExtendedFieldData> extendedFieldDataList;
+
+	public ExtendedField copyEntity() {
+		ExtendedField entity = new ExtendedField();
+		if (extendedFieldDataList != null) {
+			entity.setExtendedFieldDataList(new ArrayList<ExtendedFieldData>());
+			this.extendedFieldDataList.stream()
+					.forEach(e -> entity.getExtendedFieldDataList().add(e == null ? null : e.copyEntity()));
+		}
+		return entity;
+	}
 
 	public List<ExtendedFieldData> getExtendedFieldDataList() {
 		return extendedFieldDataList;

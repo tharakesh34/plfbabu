@@ -1,6 +1,7 @@
 package com.pennant.backend.model.financemanagement;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,6 +55,46 @@ public class FinTypeVASProducts extends AbstractWorkflowEntity {
 		excludeFields.add("feePaymentMode");
 		excludeFields.add("vasReference");
 		return excludeFields;
+	}
+
+	public FinTypeVASProducts copyEntity() {
+		FinTypeVASProducts entity = new FinTypeVASProducts();
+		entity.setFinType(this.finType);
+		entity.setVasProduct(this.vasProduct);
+		entity.setVasProductDesc(this.vasProductDesc);
+		entity.setMandatory(this.mandatory);
+		entity.setMandatoryDesc(this.mandatoryDesc);
+		entity.setNewRecord(this.newRecord);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setProductType(this.productType);
+		entity.setProductCtg(this.productCtg);
+		entity.setRecAgainst(this.recAgainst);
+		entity.setProductCtgDesc(this.productCtgDesc);
+		entity.setManufacturerDesc(this.manufacturerDesc);
+		entity.setVasFee(this.vasFee);
+		this.auditDetailMap.entrySet().stream().forEach(e -> {
+			List<AuditDetail> newList = new ArrayList<AuditDetail>();
+			if (e.getValue() != null) {
+				e.getValue().forEach(
+						auditDetail -> newList.add(auditDetail == null ? null : auditDetail.getNewCopyInstance()));
+				entity.getAuditDetailMap().put(e.getKey(), newList);
+			} else
+				entity.getAuditDetailMap().put(e.getKey(), null);
+		});
+
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
 	}
 
 	public boolean isNew() {

@@ -1017,4 +1017,15 @@ public class CalculationUtil implements Serializable {
 		return totPaidGSTAmount;
 	}
 
+	public static BigDecimal getTotalWaivedGST(ManualAdvise manualAdvise) {
+		BigDecimal totWaivedGSTAmount = BigDecimal.ZERO;
+		totWaivedGSTAmount = totWaivedGSTAmount.add(manualAdvise.getWaivedCGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(manualAdvise.getWaivedSGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(manualAdvise.getWaivedUGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(manualAdvise.getWaivedIGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(manualAdvise.getWaivedCESS());
+
+		return totWaivedGSTAmount;
+	}
+
 }

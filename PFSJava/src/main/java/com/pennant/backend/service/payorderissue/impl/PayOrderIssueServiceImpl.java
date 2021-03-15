@@ -43,6 +43,7 @@
 package com.pennant.backend.service.payorderissue.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -96,6 +98,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.BankAccountValidationService;
@@ -865,7 +868,12 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				finAdvpay.setRecordType("");
 				// other
 				if (rcdType.equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					finAdvpay.setStatus(DisbursementConstants.STATUS_CANCEL);
+					if (ImplementationConstants.DISB_PAID_CANCELLATION_ALLOW
+							&& DisbursementConstants.STATUS_PAID.equals(finAdvpay.getStatus())) {
+						finAdvpay.setStatus(DisbursementConstants.STATUS_PAID_BUT_CANCELLED);
+					} else {
+						finAdvpay.setStatus(DisbursementConstants.STATUS_CANCEL);
+					}
 				} else if (!DisbursementConstants.STATUS_REVERSED.equals(finAdvpay.getStatus())) {
 					finAdvpay.setStatus(DisbursementConstants.STATUS_APPROVED);
 				}
@@ -874,6 +882,13 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			if (finAdvpay.isHoldDisbursement()) {
 				finAdvpay.setStatus(DisbursementConstants.STATUS_HOLD);
 			}
+
+			// Reverse the disbursement instruction postings for PAID BUT CANCEL Case.
+			if (ImplementationConstants.DISB_PAID_CANCELLATION_ALLOW
+					&& DisbursementConstants.STATUS_PAID_BUT_CANCELLED.equals(finAdvpay.getStatus())) {
+				postingsPreparationUtil.postReversalsByLinkedTranID(finAdvpay.getLinkedTranId());
+			}
+
 			if (save) {
 				count = count + 1;
 
@@ -884,6 +899,9 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 					}
 				}
 				finAdvancePaymentsDAO.save(finAdvpay, type);
+				if (finAdvpay.getDocImage() != null) {
+					saveDocumentDetails(finAdvpay);
+				}
 				if (StringUtils.isEmpty(type)) {
 					finAdvpay.setPaymentProcReq(true);
 				}
@@ -904,6 +922,9 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 						finAdvpay.setLinkedTranId(data.get(finAdvpay.getPaymentSeq()));
 					}
 					finAdvancePaymentsDAO.update(finAdvpay, type);
+					if (finAdvpay.getDocImage() != null) {
+						saveDocumentDetails(finAdvpay);
+					}
 
 					count = count + 1;
 					if (StringUtils.isEmpty(type)) {
@@ -917,6 +938,33 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		logger.debug(" Leaving ");
 		return auditDetails;
+	}
+
+	private void saveDocumentDetails(FinAdvancePayments finPayment) {
+
+		DocumentDetails details = new DocumentDetails();
+		details.setDocModule(DisbursementConstants.DISB_MODULE);
+		details.setDoctype(finPayment.getDocType());
+		details.setDocCategory(DisbursementConstants.DISB_DOC_TYPE);
+		details.setDocName(finPayment.getDocumentName());
+		details.setLastMntBy(finPayment.getLastMntBy());
+		details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		details.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		details.setFinEvent(FinanceConstants.FINSER_EVENT_BASICMAINTAIN);
+		details.setDocImage(finPayment.getDocImage());
+		details.setReferenceId(String.valueOf(finPayment.getPaymentId()));
+		details.setFinReference(finPayment.getFinReference());
+
+		saveDocument(DMSModule.FINANCE, DMSModule.DISBINST, details);
+		DocumentDetails oldDocumentDetails = documentDetailsDAO.getDocumentDetails(details.getReferenceId(),
+				details.getDocCategory(), details.getDocModule(), TableType.MAIN_TAB.getSuffix());
+
+		if (oldDocumentDetails != null && oldDocumentDetails.getDocId() != Long.MIN_VALUE) {
+			details.setDocId(oldDocumentDetails.getDocId());
+			documentDetailsDAO.update(details, TableType.MAIN_TAB.getSuffix());
+		} else {
+			documentDetailsDAO.save(details, TableType.MAIN_TAB.getSuffix());
+		}
 	}
 
 	public AuditDetail getAuditDetails(FinAdvancePayments finAdvancePayments, int auditSeq, String transType) {

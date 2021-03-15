@@ -4462,6 +4462,8 @@
 		<property name="pennyDropService" ref="pennyDropService" />
 		<property name="vASProviderAccDetailDAO" ref="vASProviderAccDetailDAO" />
 		<property name="vASConfigurationDAO" ref="vASConfigurationDAO" />
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+		<property name="dMSService" ref="dMSService" />
 	</bean>
 
 	<!--============ Fin Fee Details ============== -->
@@ -4568,6 +4570,7 @@
 		<property name="partnerBankService" ref="partnerBankService" />
 		<property name="paymentsProcessService" ref="paymentsProcessService" />
 		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="dMSService" ref="dMSService" />
 	</bean>
 
 
@@ -5635,6 +5638,7 @@
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="npaService" ref="npaService" />
+		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 	</bean>
 
 	<!--================= NPA-Service =================== -->
@@ -6719,6 +6723,7 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="executeLimitRebuild*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -7188,6 +7193,7 @@
 		<property name="finServiceInstrutionDAO" ref="finServiceInstructionDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="changeGraceEndService" ref="changeGraceEndService" />
+		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 	</bean>
 
 	<bean id="addDatedScheduleService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -7486,7 +7492,22 @@
 		<property name="financeCheckListReferenceDAO" ref="financeCheckListReferenceDAO" />
 		<property name="cityDAO" ref="cityDAO" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
-		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="primaryAccountDAO" ref="primaryAccountDAO" />
+		<property name="customerEmploymentDetailDAO" ref="customerEmploymentDetailDAO" />
+		<property name="custEmployeeDetailDAO" ref="custEmployeeDetailDAO" />
+		<property name="incomeDetailDAO" ref="incomeDetailDAO" />
+		<property name="directorDetailDAO" ref="directorDetailDAO" />
+		<property name="customerRatingDAO" ref="customerRatingDAO" />
+		<property name="customerPhoneNumberDAO" ref="customerPhoneNumberDAO" />
+		<property name="customerEMailDAO" ref="customerEMailDAO" />
+		<property name="customerBankInfoDAO" ref="customerBankInfoDAO" />
+		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
+		<property name="customerChequeInfoDAO" ref="customerChequeInfoDAO" />
+		<property name="externalLiabilityDAO" ref="externalLiabilityDAO" />
+		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
+		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="collateralStructureService" ref="collateralStructureService" />
 		<property name="currencyDAO" ref="currencyDAO" />
@@ -9077,7 +9098,7 @@
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="dMSService" ref="dMSService" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="documentTypeService" ref="documentTypeService" />
 	</bean>
 
@@ -9121,7 +9142,24 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
-		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="bankBranchDAO" ref="bankBranchDAO" />
+		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="primaryAccountDAO" ref="primaryAccountDAO" />
+		<property name="customerEmploymentDetailDAO" ref="customerEmploymentDetailDAO" />
+		<property name="custEmployeeDetailDAO" ref="custEmployeeDetailDAO" />
+		<property name="incomeDetailDAO" ref="incomeDetailDAO" />
+		<property name="directorDetailDAO" ref="directorDetailDAO" />
+		<property name="customerRatingDAO" ref="customerRatingDAO" />
+		<property name="customerPhoneNumberDAO" ref="customerPhoneNumberDAO" />
+		<property name="customerEMailDAO" ref="customerEMailDAO" />
+		<property name="customerBankInfoDAO" ref="customerBankInfoDAO" />
+		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
+		<property name="customerChequeInfoDAO" ref="customerChequeInfoDAO" />
+		<property name="externalLiabilityDAO" ref="externalLiabilityDAO" />
+		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
+		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
 		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
 	</bean>
 
@@ -11910,6 +11948,7 @@
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="documentFileSystem" ref="documentFileSystem" />
 		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
+		<property name="externalDocumentManager" ref="externalDocumentManager" />
 	</bean>
 
 	<bean id="dMSQueueDAO" class="com.pennanttech.pennapps.dms.dao.impl.DMSQueueDAOImpl" parent="sequenceDao" />

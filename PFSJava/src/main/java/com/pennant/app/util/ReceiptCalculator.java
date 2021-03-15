@@ -73,6 +73,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -87,6 +88,7 @@ import com.pennant.app.core.NPAService;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -97,6 +99,7 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -124,6 +127,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.rits.cloning.Cloner;
 
 public class ReceiptCalculator implements Serializable {
@@ -136,7 +140,6 @@ public class ReceiptCalculator implements Serializable {
 	private FeeTypeDAO feeTypeDAO;
 	private AccrualService accrualService;
 	private FeeCalculator feeCalculator;
-	private FinanceMain financeMain;
 	private LatePayMarkingService latePayMarkingService;
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
@@ -149,6 +152,7 @@ public class ReceiptCalculator implements Serializable {
 	public int tdsRoundingTarget = 0;
 	public BigDecimal tdsPerc = BigDecimal.ZERO;
 	public BigDecimal tdsMultiplier = BigDecimal.ZERO;
+	private FinODPenaltyRateDAO finODPenaltyRateDAO;
 
 	private static final String DESC_INC_TAX = " (Inclusive)";
 	private static final String DESC_EXC_TAX = " (Exclusive)";
@@ -388,6 +392,7 @@ public class ReceiptCalculator implements Serializable {
 							&& allocate.getAllocationTo() == alloc.getAllocationTo()) {
 						if (!receiptData.isForeClosure()) {
 							if (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_FEE)) {
+								allocate.setWaivedAmount(alloc.getWaivedAmount());
 								allocate.setPaidAmount(allocate.getDueAmount());
 								allocate.setPaidGST(allocate.getDueGST());
 								allocate.setTotalPaid(allocate.getDueAmount());
@@ -1081,6 +1086,16 @@ public class ReceiptCalculator implements Serializable {
 
 		// Penalty Tax Details
 		FeeType lppFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+
+		FinODPenaltyRate finODPenaltyRate = schdData.getFinODPenaltyRate();
+		if (finODPenaltyRate == null) {
+			finODPenaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(fm.getFinReference(), "_AView");
+		}
+
+		if (ObjectUtils.isNotEmpty(finODPenaltyRate) && !finODPenaltyRate.isoDTDSReq()) {
+			lppFeeType.setTdsReq(false);
+		}
+
 		String taxType = null;
 
 		if (lppFeeType != null && lppFeeType.isTaxApplicable()) {
@@ -1129,9 +1144,11 @@ public class ReceiptCalculator implements Serializable {
 			ReceiptAllocationDetail lpp = setAllocationRecord(rd, RepayConstants.ALLOCATION_ODC, 6, lppBal, desc, 0,
 					taxType, true, true);
 			if (lppFeeType.isTdsReq() && fm.isTDSApplicable()) {
-				lpp.setPercTds(tdsPerc);
-				lpp.setTdsReq(true);
-				lpp.setTdsDue(tdsAmount);
+				if (ObjectUtils.isNotEmpty(finODPenaltyRate) && finODPenaltyRate.isoDTDSReq()) {
+					lpp.setPercTds(tdsPerc);
+					lpp.setTdsReq(true);
+					lpp.setTdsDue(tdsAmount);
+				}
 			}
 			lpp.setTotalDue(lpp.getTotalDue().subtract(tdsAmount.add(lpp.getInProcess())));
 			allocations.add(lpp);
@@ -1559,6 +1576,8 @@ public class ReceiptCalculator implements Serializable {
 			}
 			partPayAmount = partPayAmount.subtract(rch.getTotalPastDues().getPaidAmount())
 					.subtract(rch.getTotalBounces().getPaidAmount()).subtract(rch.getTotalRcvAdvises().getPaidAmount());
+
+			partPayAmount = adjustAdvIntPayment(receiptData, partPayAmount);
 		}
 		if (receiptCtg < 2) {
 
@@ -1572,6 +1591,28 @@ public class ReceiptCalculator implements Serializable {
 		return partPayAmount;
 	}
 
+	private BigDecimal adjustAdvIntPayment(FinReceiptData receiptData, BigDecimal partPayAmount) {
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		AdvanceType advanceType = AdvanceType.getType(fm.getAdvType());
+		if (advanceType == AdvanceType.UF || advanceType == AdvanceType.UT || advanceType == AdvanceType.AF) {
+			if (partPayAmount.compareTo(BigDecimal.ZERO) > 0) {
+				for (ReceiptAllocationDetail rad : rch.getAllocations()) {
+					String allocationType = rad.getAllocationType();
+					if (RepayConstants.ALLOCATION_FUT_TDS.equals(allocationType)) {
+						partPayAmount = partPayAmount.subtract(rad.getDueAmount());
+						partPayAmount = partPayAmount.subtract(rad.getDueAmount());
+					}
+				}
+			}
+		}
+		return partPayAmount;
+	}
+
+	/**
+	 * Method for Calculation of Schedule payment based on Allocated Details from Receipts
+	 * 
+	 */
 	private FinReceiptData recalReceipt(FinReceiptData receiptData, boolean isPresentment) {
 		receiptData.setAdjSchedule(true);
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -1831,7 +1872,6 @@ public class ReceiptCalculator implements Serializable {
 		logger.debug(Literal.ENTERING);
 
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		setReceiptCategory(rch.getReceiptPurpose());
 		List<ReceiptAllocationDetail> allocationsList = rch.getAllocations();
 		List<FinODDetails> odList = receiptData.getFinanceDetail().getFinScheduleData().getFinODDetails();
@@ -2364,7 +2404,8 @@ public class ReceiptCalculator implements Serializable {
 			for (FinFeeDetail feeDtl : feeDtls) {
 				if (allocate.getAllocationTo() == -(feeDtl.getFeeTypeID())) {
 					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
-						feeDtl.setPaidAmountOriginal(allocate.getPaidAmount().subtract(allocate.getPaidGST()));
+						feeDtl.setPaidAmountOriginal(
+								allocate.getPaidAmount().add(allocate.getTdsPaid()).subtract(allocate.getPaidGST()));
 						feeDtl.setRemainingFeeOriginal(feeDtl.getActualAmountOriginal()
 								.subtract(allocate.getWaivedNow()).subtract(feeDtl.getPaidAmountOriginal()));
 					} else {
@@ -2388,6 +2429,7 @@ public class ReceiptCalculator implements Serializable {
 	}
 
 	public BigDecimal getPaidAmount(ReceiptAllocationDetail allocate, BigDecimal netAmount) {
+		setSMTParms(new EventProperties());
 		BigDecimal paidAmount = BigDecimal.ZERO;
 		BigDecimal totalPerc = allocate.getPercCGST().add(allocate.getPercSGST())
 				.add(allocate.getPercUGST().add(allocate.getPercIGST())).add(allocate.getPercCESS())
@@ -2885,6 +2927,7 @@ public class ReceiptCalculator implements Serializable {
 		}
 
 		nBalPft = balPft.subtract(tds);
+
 		if (balPft.compareTo(tds) <= 0) {
 			nBalPft = balPft;
 		}
@@ -4892,6 +4935,10 @@ public class ReceiptCalculator implements Serializable {
 
 	public void setNpaService(NPAService npaService) {
 		this.npaService = npaService;
+	}
+
+	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
+		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
 	}
 
 }

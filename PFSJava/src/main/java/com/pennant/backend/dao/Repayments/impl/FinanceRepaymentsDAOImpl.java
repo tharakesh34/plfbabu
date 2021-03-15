@@ -1174,4 +1174,21 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 		return finRepay;
 	}
+
+	@Override
+	public Long getLinkedTranIdByReceipt(long receiptId, String type) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select LinkedTranId from FinRepayDetails");
+		sql.append(" Where ReceiptID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptId }, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("LinkedTranId not found in FinRepayDetails for the specified ReceiptId >> {}", receiptId);
+		}
+		return null;
+	}
+
 }

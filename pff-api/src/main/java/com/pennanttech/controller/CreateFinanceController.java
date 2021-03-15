@@ -1193,6 +1193,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		// vas Details
+		String entityCode = divisionDetailDAO.getEntityCodeByDivision(finType.getFinDivision(), "");
 		for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
 			vasRecording.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			if (!moveLoanStage) {
@@ -1210,6 +1211,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			vasRecording.setNextRoleCode(financeMain.getNextRoleCode());
 			vasRecording.setTaskId(financeMain.getTaskId());
 			vasRecording.setNextTaskId(financeMain.getNextTaskId());
+			vasRecording.setEntityCode(entityCode);
 			// process Extended field details
 			List<ExtendedField> extendedFields = vasRecording.getExtendedDetails();
 			if (extendedFields != null) {
@@ -3031,7 +3033,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			vehicleDealer = vehicleDealerDao
 					.getVehicleDealerById(financeDetail.getFinScheduleData().getFinanceMain().getAccountsOfficer(), "");
 			financeDetail.getFinScheduleData().getFinanceMain()
-					.setAccountsOfficerReference(Long.valueOf(vehicleDealer.getDealerId()));
+					.setAccountsOfficerReference(String.valueOf(vehicleDealer.getDealerId()));
 		}
 
 		if (StringUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinanceMain().getDsaCode())) {

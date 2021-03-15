@@ -2509,9 +2509,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_BillingReport")
 				|| StringUtils.equals(reportMenuCode, "menu_Item_ACHPResentations")
 				|| StringUtils.equals(reportMenuCode, "menu_Item_PDCPResentation")
-				|| StringUtils.equals(reportMenuCode, "menu_Item_PDCExhaustReport")
-				|| StringUtils.equals(reportMenuCode, "menu_Item_CashflowReport")
-				|| StringUtils.equals(reportMenuCode, "menu_Item_AdvanceReport")) {
+				|| StringUtils.equals(reportMenuCode, "menu_Item_ODReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_LoanRegisterReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_CashflowReport")) {
 			String userDate = null;
 
 			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
@@ -2524,7 +2524,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				userDate = filters.get(0).getFieldValue();
 			}
 
-			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
+			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
 					userDate, null, null);
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_NoObjectionCertificate")) {

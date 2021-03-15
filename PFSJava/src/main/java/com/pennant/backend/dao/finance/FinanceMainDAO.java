@@ -130,8 +130,6 @@ public interface FinanceMainDAO {
 
 	boolean isFinReferenceExists(String id, String type, boolean isWIF);
 
-	void listUpdate(ArrayList<FinanceMain> financeMain, String type);
-
 	List<String> getFinanceMainListByBatch(Date curBD, Date nextBD, String type);
 
 	List<BigDecimal> getActualPftBal(String finReference, String type);

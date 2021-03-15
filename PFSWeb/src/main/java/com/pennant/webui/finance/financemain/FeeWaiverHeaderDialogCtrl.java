@@ -87,6 +87,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -985,9 +986,23 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				// Net balance
 				lc = new Listcell();// 12
 				Label netBal = new Label();
-				netBal.setValue(PennantApplicationUtil
-						.amountFormate(detail.getBalanceAmount().subtract(detail.getReceivedAmount()), ccyFormatter));
-				totNetBal = totNetBal.add(detail.getBalanceAmount().subtract(detail.getReceivedAmount()));
+				if (StringUtils.isNotEmpty(detail.getTaxComponent())
+						&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
+
+					BigDecimal netBalance = detail.getActualReceivable().subtract(detail.getReceivedAmount());
+
+					BigDecimal netAmt = netBalance.add(detail.getReceivableGST())
+							.subtract(detail.getCurrWaiverAmount());
+					netBal.setValue(PennantApplicationUtil.amountFormate(netAmt, ccyFormatter));
+
+					totNetBal = totNetBal.add(netAmt);
+
+				} else {
+					netBal.setValue(PennantApplicationUtil.amountFormate(
+							detail.getBalanceAmount().subtract(detail.getReceivedAmount()), ccyFormatter));
+
+					totNetBal = totNetBal.add(detail.getBalanceAmount().subtract(detail.getReceivedAmount()));
+				}
 				lc.appendChild(netBal);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -1169,9 +1184,31 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				// Net balance
 				lc = new Listcell();// 12
 				Label netBal = new Label();
-				netBal.setValue(PennantApplicationUtil
-						.amountFormate(detail.getBalanceAmount().subtract(detail.getReceivedAmount()), ccyFormatter));
-				totNetBal = totNetBal.add(detail.getBalanceAmount().subtract(detail.getReceivedAmount()));
+				if (StringUtils.isNotEmpty(detail.getTaxComponent())
+						&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
+
+					BigDecimal netBalance = detail.getActualReceivable().subtract(detail.getCurrActualWaiver());
+					netBalance = netBalance.subtract(detail.getReceivedAmount());
+					BigDecimal gstOnNetBal = GSTCalculator.getTotalGST(detail.getFinReference(), netBalance,
+							detail.getTaxComponent());
+
+					netBal.setValue(PennantApplicationUtil.amountFormate((netBalance.add(gstOnNetBal)), ccyFormatter));
+
+					if ((netBalance.add(gstOnNetBal)).compareTo(BigDecimal.ZERO) < 0) {
+						netBal.setValue(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, ccyFormatter));
+					} else {
+						totNetBal = totNetBal.add((netBalance.add(gstOnNetBal)));
+					}
+
+				} else {
+					netBal.setValue(PennantApplicationUtil.amountFormate(
+							detail.getBalanceAmount().subtract(detail.getReceivedAmount()), ccyFormatter));
+
+					if (detail.getBalanceAmount().subtract(detail.getReceivedAmount()).compareTo(BigDecimal.ZERO) < 0) {
+						netBal.setValue(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, ccyFormatter));
+					}
+					totNetBal = totNetBal.add(detail.getBalanceAmount().subtract(detail.getReceivedAmount()));
+				}
 				lc.appendChild(netBal);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -1250,7 +1287,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 			if (feeWaiverDetail.getAdviseId() == detail.getAdviseId()) {
 				//PSD#:145831
-				BigDecimal balanceAmount = detail.getReceivableAmount();
+				BigDecimal balanceAmount = detail.getBalanceAmount();
 				if (balanceAmount.compareTo(amount) == -1) {
 
 					throw new WrongValueException(currWaivedAmt,
@@ -1286,9 +1323,10 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		Map<String, BigDecimal> gstPercentages = getTaxPercentages(feeWaiverDetail.getFinReference());
 
 		if (feeWaiverDetail.isTaxApplicable()) {
-			TaxAmountSplit taxSplit = GSTCalculator.getInclusiveGST(waiverAmount, gstPercentages); // always taking as
-																									// Inclusive case
-																									// here
+			/* Always taking as Inclusive case here */
+			TaxAmountSplit taxSplit = GSTCalculator.getInclusiveGST(waiverAmount, gstPercentages);
+			GSTCalculator.calculateActualGST(feeWaiverDetail, taxSplit, gstPercentages);
+
 			feeWaiverDetail.setCurrActualWaiver(waiverAmount.subtract(taxSplit.gettGST()));
 			feeWaiverDetail.setCurrWaiverGST(taxSplit.gettGST());
 

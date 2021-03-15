@@ -168,7 +168,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean finIsAlwMD;
 	private long accountsOfficer;
 	@XmlElement(name = "accountsOfficer")
-	private long accountsOfficerReference;
+	private String accountsOfficerReference;
 	private String dsaCode;
 	@XmlElement(name = "dsaCode")
 	private String dsaCodeReference;
@@ -527,6 +527,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	// ===========================================
 	@XmlElement
 	private BigDecimal finAssetValue = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal finCurrAssetValue = BigDecimal.ZERO;
 	private Date nextDepDate;
 	private Date lastDepDate;
@@ -862,6 +863,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	//Disb based schedule
 	private boolean instBasedSchd;
 	private boolean ocrDeviation = false;
+	//Accounting related
+	private String partnerBankAcType;
+	private String partnerBankAc;
 
 	private EventProperties eventProperties = new EventProperties();
 
@@ -1097,11 +1101,492 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("returnDataSet");
 		excludeFields.add("ocrDeviation");
 		excludeFields.add("eventProperties");
+		//Accounting related
+		excludeFields.add("partnerBankAcType");
+		excludeFields.add("partnerBankAc");
 		return excludeFields;
 	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
+
+	public FinanceMain copyEntity() {
+		FinanceMain entity = new FinanceMain();
+		entity.setFinReference(this.finReference);
+		entity.setLinkedFinRef(this.linkedFinRef);
+		entity.setInvestmentRef(this.investmentRef);
+		entity.setFinType(this.finType);
+		entity.setLovDescFinTypeName(this.lovDescFinTypeName);
+		entity.setPromotionCode(this.promotionCode);
+		entity.setFinCcy(this.finCcy);
+		entity.setProfitDaysBasis(this.profitDaysBasis);
+		entity.setCustID(this.custID);
+		entity.setLovDescCustCIF(this.lovDescCustCIF);
+		entity.setLovDescCustShrtName(this.lovDescCustShrtName);
+		entity.setFinBranch(this.finBranch);
+		entity.setLovDescFinBranchName(this.lovDescFinBranchName);
+		entity.setFinBranchProvinceCode(this.finBranchProvinceCode);
+		entity.setFinStartDate(this.finStartDate);
+		entity.setFinContractDate(this.finContractDate);
+		entity.setFinAmount(this.finAmount);
+		entity.setDisbAccountId(this.disbAccountId);
+		entity.setRepayAccountId(this.repayAccountId);
+		entity.setFinCancelAc(this.finCancelAc);
+		entity.setFinWriteoffAc(this.finWriteoffAc);
+		entity.setMinDownPayPerc(this.minDownPayPerc);
+		entity.setDownPayment(this.downPayment);
+		entity.setAdvanceEMI(this.advanceEMI);
+		entity.setDownPayBank(this.downPayBank);
+		entity.setDownPaySupl(this.downPaySupl);
+		entity.setDownPayAccount(this.downPayAccount);
+		entity.setDefferments(this.defferments);
+		entity.setPlanDeferCount(this.planDeferCount);
+		entity.setFinPurpose(this.finPurpose);
+		entity.setLovDescFinPurposeName(this.lovDescFinPurposeName);
+		entity.setAllowGrcPeriod(this.allowGrcPeriod);
+		entity.setFinRepayMethod(this.finRepayMethod);
+		entity.setFinCommitmentRef(this.finCommitmentRef);
+		entity.setLovDescCommitmentRefName(this.lovDescCommitmentRefName);
+		entity.setDepreciationFrq(this.depreciationFrq);
+		entity.setFinIsActive(this.finIsActive);
+		entity.setFinRemarks(this.finRemarks);
+		entity.setInitiateUser(this.initiateUser);
+		entity.setInitiateDate(this.initiateDate);
+		entity.setMMAId(this.mMAId);
+		entity.setAgreeName(this.agreeName);
+		entity.setFinIsAlwMD(this.finIsAlwMD);
+		entity.setAccountsOfficer(this.accountsOfficer);
+		entity.setAccountsOfficerReference(this.accountsOfficerReference);
+		entity.setDsaCode(this.dsaCode);
+		entity.setDsaCodeReference(this.dsaCodeReference);
+		entity.setDsaName(this.dsaName);
+		entity.setDsaCodeDesc(this.dsaCodeDesc);
+		entity.setLovDescAccountsOfficer(this.lovDescAccountsOfficer);
+		entity.setLovDescSourceCity(this.lovDescSourceCity);
+		entity.setLovDescMobileNumber(this.lovDescMobileNumber);
+		entity.setLovDescFinProduct(this.lovDescFinProduct);
+		entity.setLovDescCustCRCPR(this.lovDescCustCRCPR);
+		entity.setLovDescCustPassportNo(this.lovDescCustPassportNo);
+		entity.setLovDescCustDOB(this.lovDescCustDOB);
+		entity.setLovDescRequestStage(this.lovDescRequestStage);
+		entity.setLovDescQueuePriority(this.lovDescQueuePriority);
+		entity.setLovDescMMAReference(this.lovDescMMAReference);
+		entity.setTDSApplicable(this.tDSApplicable);
+		entity.setDroplineFrq(this.droplineFrq);
+		entity.setFirstDroplineDate(this.firstDroplineDate);
+		entity.setPftServicingODLimit(this.pftServicingODLimit);
+		entity.setChequeOrDDAvailable(this.chequeOrDDAvailable);
+		entity.setNeftAvailable(this.neftAvailable);
+		entity.setApproved(this.approved);
+		entity.setSecurityDeposit(this.securityDeposit);
+		entity.setDeductFeeDisb(this.deductFeeDisb);
+		entity.setDeductInsDisb(this.deductInsDisb);
+		entity.setStepFinance(this.stepFinance);
+		entity.setStepType(this.stepType);
+		entity.setStepPolicy(this.stepPolicy);
+		entity.setLovDescStepPolicyName(this.lovDescStepPolicyName);
+		entity.setAlwManualSteps(this.alwManualSteps);
+		entity.setNoOfSteps(this.noOfSteps);
+		entity.setShariaApprovalReq(this.shariaApprovalReq);
+		entity.setShariaStatus(this.shariaStatus);
+		entity.setRejectStatus(this.rejectStatus);
+		entity.setRejectReason(this.rejectReason);
+		entity.setPaymentToBank(this.isPaymentToBank);
+		entity.setPayToDevSelCust(this.isPayToDevSelCust);
+		entity.setScheduleChange(this.scheduleChange);
+		entity.setAdjOrgBal(this.adjOrgBal);
+		entity.setRemBalForAdj(this.remBalForAdj);
+		entity.setDevFinCalReq(this.devFinCalReq);
+		entity.setResetNxtRpyInstReq(this.resetNxtRpyInstReq);
+		entity.setResetOrgBal(this.resetOrgBal);
+		entity.setLovDescEntityCode(this.lovDescEntityCode);
+		entity.setDeviationApproval(this.deviationApproval);
+		entity.setFinPreApprovedRef(this.finPreApprovedRef);
+		entity.setPreApprovalFinance(this.preApprovalFinance);
+		entity.setPreApprovalExpired(this.preApprovalExpired);
+		entity.setApplicationNo(this.applicationNo);
+		entity.setSwiftBranchCode(this.swiftBranchCode);
+		entity.setFinBranchContact(this.finBranchContact);
+		entity.setAllowDrawingPower(this.allowDrawingPower);
+		entity.setAllowRevolving(this.allowRevolving);
+		entity.setFinIsRateRvwAtGrcEnd(this.finIsRateRvwAtGrcEnd);
+		entity.setRateChange(this.rateChange);
+		entity.setGraceTerms(this.graceTerms);
+		entity.setGrcPeriodEndDate(this.grcPeriodEndDate);
+		entity.setGrcRateBasis(this.grcRateBasis);
+		entity.setGrcPftRate(this.grcPftRate);
+		entity.setGraceBaseRate(this.graceBaseRate);
+		entity.setGraceSpecialRate(this.graceSpecialRate);
+		entity.setGrcMargin(this.grcMargin);
+		entity.setGrcProfitDaysBasis(this.grcProfitDaysBasis);
+		entity.setGrcPftFrq(this.grcPftFrq);
+		entity.setNextGrcPftDate(this.nextGrcPftDate);
+		entity.setAllowGrcPftRvw(this.allowGrcPftRvw);
+		entity.setGrcPftRvwFrq(this.grcPftRvwFrq);
+		entity.setNextGrcPftRvwDate(this.nextGrcPftRvwDate);
+		entity.setAllowGrcCpz(this.allowGrcCpz);
+		entity.setGrcCpzFrq(this.grcCpzFrq);
+		entity.setNextGrcCpzDate(this.nextGrcCpzDate);
+		entity.setAllowGrcRepay(this.allowGrcRepay);
+		entity.setGrcSchdMthd(this.grcSchdMthd);
+		entity.setGrcMinRate(this.grcMinRate);
+		entity.setGrcMaxRate(this.grcMaxRate);
+		entity.setGrcMaxAmount(this.grcMaxAmount);
+		entity.setGrcFrqEditable(this.grcFrqEditable);
+		entity.setGrcAdvBaseRate(this.grcAdvBaseRate);
+		entity.setGrcAdvMargin(this.grcAdvMargin);
+		entity.setGrcAdvPftRate(this.grcAdvPftRate);
+		entity.setNumberOfTerms(this.numberOfTerms);
+		entity.setNOInst(this.NOInst);
+		entity.setReqRepayAmount(this.reqRepayAmount);
+		entity.setRepayRateBasis(this.repayRateBasis);
+		entity.setRepayProfitRate(this.repayProfitRate);
+		entity.setRepayBaseRate(this.repayBaseRate);
+		entity.setRepayBaseRateVal(this.repayBaseRateVal);
+		entity.setRepaySpecialRate(this.repaySpecialRate);
+		entity.setRepayMargin(this.repayMargin);
+		entity.setScheduleMethod(this.scheduleMethod);
+		entity.setRepayPftFrq(this.repayPftFrq);
+		entity.setNextRepayPftDate(this.nextRepayPftDate);
+		entity.setAllowRepayRvw(this.allowRepayRvw);
+		entity.setRepayRvwFrq(this.repayRvwFrq);
+		entity.setNextRepayRvwDate(this.nextRepayRvwDate);
+		entity.setAllowRepayCpz(this.allowRepayCpz);
+		entity.setRepayCpzFrq(this.repayCpzFrq);
+		entity.setNextRepayCpzDate(this.nextRepayCpzDate);
+		entity.setRepayFrq(this.repayFrq);
+		entity.setNextRepayDate(this.nextRepayDate);
+		entity.setMaturityDate(this.maturityDate);
+		entity.setFinRepayPftOnFrq(this.finRepayPftOnFrq);
+		entity.setRpyMinRate(this.rpyMinRate);
+		entity.setRpyMaxRate(this.rpyMaxRate);
+		entity.setRpyAdvBaseRate(this.rpyAdvBaseRate);
+		entity.setRpyAdvMargin(this.rpyAdvMargin);
+		entity.setRpyAdvPftRate(this.rpyAdvPftRate);
+		entity.setSupplementRent(this.supplementRent);
+		entity.setIncreasedCost(this.increasedCost);
+		entity.setCurSuplRent(this.curSuplRent);
+		entity.setCurIncrCost(this.curIncrCost);
+		entity.setFrqEditable(this.frqEditable);
+		entity.setRolloverFrq(this.rolloverFrq);
+		entity.setNextRolloverDate(this.nextRolloverDate);
+		entity.setCalRoundingMode(this.calRoundingMode);
+		entity.setRoundingTarget(this.roundingTarget);
+		entity.setAlwMultiDisb(this.alwMultiDisb);
+		entity.setPostingId(this.postingId);
+		entity.setAlwBPI(this.alwBPI);
+		entity.setBpiTreatment(this.bpiTreatment);
+		entity.setBpiPftDaysBasis(this.bpiPftDaysBasis);
+		entity.setPlanEMIHAlw(this.planEMIHAlw);
+		entity.setPlanEMIHAlwInGrace(this.planEMIHAlwInGrace);
+		entity.setPlanEMIHMethod(this.planEMIHMethod);
+		entity.setPlanEMIHMaxPerYear(this.planEMIHMaxPerYear);
+		entity.setPlanEMIHMax(this.planEMIHMax);
+		entity.setPlanEMIHLockPeriod(this.planEMIHLockPeriod);
+		entity.setPlanEMICpz(this.planEMICpz);
+		entity.setUnPlanEMIHLockPeriod(this.unPlanEMIHLockPeriod);
+		entity.setUnPlanEMICpz(this.unPlanEMICpz);
+		entity.setReAgeCpz(this.reAgeCpz);
+		entity.setMaxUnplannedEmi(this.maxUnplannedEmi);
+		entity.setMaxReAgeHolidays(this.maxReAgeHolidays);
+		entity.setProduct(this.product);
+		entity.setFeeChargeAmt(this.feeChargeAmt);
+		entity.setInsuranceAmt(this.insuranceAmt);
+		entity.setCurDisbursementAmt(this.curDisbursementAmt);
+		entity.setAnualizedPercRate(this.anualizedPercRate);
+		entity.setEffectiveRateOfReturn(this.effectiveRateOfReturn);
+		entity.setCpzAtGraceEnd(this.cpzAtGraceEnd);
+		entity.setTotalGracePft(this.totalGracePft);
+		entity.setTotalGraceCpz(this.totalGraceCpz);
+		entity.setTotalGrossGrcPft(this.totalGrossGrcPft);
+		entity.setTotalProfit(this.totalProfit);
+		entity.setTotalCpz(this.totalCpz);
+		entity.setTotalGrossPft(this.totalGrossPft);
+		entity.setTotalRepayAmt(this.totalRepayAmt);
+		entity.setCalculateRepay(this.calculateRepay);
+		entity.setEqualRepay(this.equalRepay);
+		entity.setCalGrcTerms(this.calGrcTerms);
+		entity.setCalGrcEndDate(this.calGrcEndDate);
+		entity.setCalTerms(this.calTerms);
+		entity.setCalMaturity(this.calMaturity);
+		entity.setFirstRepay(this.firstRepay);
+		entity.setLastRepay(this.lastRepay);
+		entity.setFinRepaymentAmount(this.finRepaymentAmount);
+		entity.setEventFromDate(this.eventFromDate);
+		entity.setEventToDate(this.eventToDate);
+		entity.setRecalFromDate(this.recalFromDate);
+		entity.setRecalToDate(this.recalToDate);
+		entity.setRecalType(this.recalType);
+		entity.setRecalSchdMethod(this.recalSchdMethod);
+		entity.setDesiredProfit(this.desiredProfit);
+		entity.setRvwRateApplFor(this.rvwRateApplFor);
+		entity.setLovDescAdjClosingBal(this.lovDescAdjClosingBal);
+		entity.setTotalPriAmt(this.totalPriAmt);
+		entity.setSchPriDue(this.schPriDue);
+		entity.setSchPftDue(this.schPftDue);
+		entity.setSchCalOnRvw(this.schCalOnRvw);
+		entity.setPastduePftCalMthd(this.pastduePftCalMthd);
+		entity.setDroppingMethod(this.droppingMethod);
+		entity.setRateChgAnyDay(this.rateChgAnyDay);
+		entity.setPastduePftMargin(this.pastduePftMargin);
+		entity.setPftCpzFromReset(this.pftCpzFromReset);
+		entity.setAllowedDefRpyChange(this.allowedDefRpyChange);
+		entity.setAvailedDefRpyChange(this.availedDefRpyChange);
+		entity.setAllowedDefFrqChange(this.allowedDefFrqChange);
+		entity.setAvailedDefFrqChange(this.availedDefFrqChange);
+		entity.setLastRepayDate(this.lastRepayDate);
+		entity.setLastRepayPftDate(this.lastRepayPftDate);
+		entity.setLastRepayRvwDate(this.lastRepayRvwDate);
+		entity.setLastRepayCpzDate(this.lastRepayCpzDate);
+		entity.setPftIntact(this.pftIntact);
+		entity.setAdjTerms(this.adjTerms);
+		entity.setAdjustClosingBal(this.isAdjustClosingBal);
+		entity.setOsPriBal(this.osPriBal);
+		entity.setFinAssetValue(this.finAssetValue);
+		entity.setFinCurrAssetValue(this.finCurrAssetValue);
+		entity.setNextDepDate(this.nextDepDate);
+		entity.setLastDepDate(this.lastDepDate);
+		entity.setFinSourceID(this.finSourceID);
+		entity.setRcdMaintainSts(this.rcdMaintainSts);
+		entity.setLovDescFinScheduleOn(this.lovDescFinScheduleOn);
+		entity.setClosingStatus(this.closingStatus);
+		entity.setFinApprovedDate(this.finApprovedDate);
+		entity.setLovDescTenorName(this.lovDescTenorName);
+		entity.setMigratedFinance(this.migratedFinance);
+		entity.setScheduleMaintained(this.scheduleMaintained);
+		entity.setScheduleRegenerated(this.scheduleRegenerated);
+		entity.setManualSchedule(this.manualSchedule);
+		entity.setTakeOverFinance(this.takeOverFinance);
+		entity.setFinStatus(this.finStatus);
+		entity.setFinStsReason(this.finStsReason);
+		entity.setCustDSR(this.custDSR);
+		entity.setCurFinAmount(this.curFinAmount);
+		entity.setFinancingAmount(this.financingAmount);
+		entity.setBpiAmount(this.bpiAmount);
+		entity.setAppDate(this.appDate);
+		entity.setLovDescFinancingAmount(this.lovDescFinancingAmount);
+		entity.setLovDescIsSchdGenerated(this.lovDescIsSchdGenerated);
+		entity.setLovDescProductCodeName(this.lovDescProductCodeName);
+		entity.setAvailCommitAmount(this.availCommitAmount);
+		entity.setJointCustId(this.jointCustId);
+		entity.setLovDescJointCustCIF(this.lovDescJointCustCIF);
+		entity.setLovDescJointCustShrtName(this.lovDescJointCustShrtName);
+		entity.setJointAccount(this.jointAccount);
+		entity.setFinAccount(this.finAccount);
+		entity.setFinCustPftAccount(this.finCustPftAccount);
+		entity.setLovDescAccruedTillLBD(this.lovDescAccruedTillLBD);
+		entity.setCustStsDescription(this.custStsDescription);
+		entity.setDedupFound(this.dedupFound);
+		entity.setSkipDedup(this.skipDedup);
+		entity.setProceedDedup(this.proceedDedup);
+		entity.setBlacklisted(this.blacklisted);
+		entity.setBlacklistOverride(this.blacklistOverride);
+		entity.setLimitValid(this.limitValid);
+		entity.setOverrideLimit(this.overrideLimit);
+		entity.setAmount(this.amount);
+		entity.setException(this.exception);
+		entity.setAmountBD(this.amountBD);
+		entity.setAmountUSD(this.amountUSD);
+		entity.setMaturity(this.maturity);
+		entity.setFundsAvailConfirmed(this.fundsAvailConfirmed);
+		entity.setPoliceCaseFound(this.policeCaseFound);
+		entity.setPoliceCaseOverride(this.policeCaseOverride);
+		entity.setChequeFound(this.chequeFound);
+		entity.setChequeOverride(this.chequeOverride);
+		entity.setScore(this.score);
+		entity.setSmecustomer(this.smecustomer);
+		entity.setCadrequired(this.cadrequired);
+		entity.setFeeExists(this.feeExists);
+		entity.setReceiptMode(this.receiptMode);
+		entity.setReceiptModeStatus(this.receiptModeStatus);
+		entity.setReceiptPurpose(this.receiptPurpose);
+		entity.setWaivedAmt(this.waivedAmt);
+		entity.setLovDescCustCoreBank(this.lovDescCustCoreBank);
+		entity.setLovDescCustFName(this.lovDescCustFName);
+		entity.setLovDescCustLName(this.lovDescCustLName);
+		entity.setLovDescSalutationName(this.lovDescSalutationName);
+		entity.setLovDescCustCtgCode(this.lovDescCustCtgCode);
+		entity.setNewRecord(this.newRecord);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setNextUserId(this.nextUserId);
+		entity.setNextUsrName(this.nextUsrName);
+		entity.setPriority(this.priority);
+		entity.setLovDescAssignMthd(this.lovDescAssignMthd);
+		if (lovDescBaseRoleCodeMap != null) {
+			entity.setLovDescBaseRoleCodeMap(new HashMap<String, String>());
+			this.lovDescBaseRoleCodeMap.entrySet().stream()
+					.forEach(e -> entity.getLovDescBaseRoleCodeMap().put(e.getKey(), e.getValue()));
+		}
+		entity.setLovDescFirstTaskOwner(this.lovDescFirstTaskOwner);
+		entity.setBankName(this.bankName);
+		entity.setBankNameDesc(this.bankNameDesc);
+		entity.setIban(this.iban);
+		entity.setAccountType(this.accountType);
+		entity.setDdaReferenceNo(this.ddaReferenceNo);
+		entity.setPftForSelectedPeriod(this.pftForSelectedPeriod);
+		entity.setMiscAmount(this.miscAmount);
+		entity.setIndexMisc(this.indexMisc);
+		entity.setCompareToExpected(this.compareToExpected);
+		entity.setCompareExpectedResult(this.compareExpectedResult);
+		entity.setCompareExpectIndex(this.compareExpectIndex);
+		entity.setCompareWith(this.compareWith);
+		entity.setProtectSchdPft(this.protectSchdPft);
+		entity.setSchdIndex(this.schdIndex);
+		entity.setIndexStart(this.indexStart);
+		entity.setIndexEnd(this.indexEnd);
+		entity.setNewMaturityIndex(this.newMaturityIndex);
+		entity.setReqMaturity(this.reqMaturity);
+		entity.setProcMethod(this.procMethod);
+		entity.setIfscCode(this.ifscCode);
+		entity.setReqTerms(this.reqTerms);
+		entity.setIncreaseTerms(this.increaseTerms);
+		entity.setLovDescFinDivision(this.lovDescFinDivision);
+		entity.setLovValue(this.lovValue);
+		entity.setFeeAccountId(this.feeAccountId);
+		entity.setFinLimitRef(this.finLimitRef);
+		entity.setLovDescLimitRefName(this.lovDescLimitRefName);
+		entity.setProductCategory(this.productCategory);
+		entity.setMandateID(this.mandateID);
+		entity.setRefundAmount(this.refundAmount);
+		this.errorDetails.stream().forEach(e -> entity.getErrorDetails().add(e));
+		if (lovDescNextUsersRolesMap != null) {
+			entity.setLovDescNextUsersRolesMap(new HashMap<String, String>());
+			this.lovDescNextUsersRolesMap.entrySet().stream()
+					.forEach(e -> entity.getLovDescNextUsersRolesMap().put(e.getKey(), e.getValue()));
+		}
+		this.secondaryAccount.stream()
+				.forEach(e -> entity.getSecondaryAccount().add(e == null ? null : e.copyEntity()));
+		entity.setSalesDepartment(this.salesDepartment);
+		entity.setSalesDepartmentDesc(this.salesDepartmentDesc);
+		entity.setDmaCode(this.dmaCode);
+		entity.setDmaCodeReference(this.dmaCodeReference);
+		entity.setDmaCodeDesc(this.dmaCodeDesc);
+		entity.setDmaName(this.dmaName);
+		entity.setReferralId(this.referralId);
+		entity.setReferralIdDesc(this.referralIdDesc);
+		entity.setEmployeeName(this.employeeName);
+		entity.setEmployeeNameDesc(this.employeeNameDesc);
+		entity.setQuickDisb(this.quickDisb);
+		entity.setWifReference(this.wifReference);
+		entity.setAvailedUnPlanEmi(this.availedUnPlanEmi);
+		entity.setAvailedReAgeH(this.availedReAgeH);
+		entity.setWorkFlowType(this.workFlowType);
+		entity.setNextRoleCodeDesc(this.nextRoleCodeDesc);
+		entity.setSecUsrFullName(this.secUsrFullName);
+		entity.setValidateMain(this.validateMain);
+		entity.setFirstDisbDate(this.firstDisbDate);
+		entity.setLastDisbDate(this.lastDisbDate);
+		entity.setDueBucket(this.dueBucket);
+		entity.setReAgeBucket(this.reAgeBucket);
+		entity.setFinCategory(this.finCategory);
+		entity.setStage(this.stage);
+		entity.setStatus(this.status);
+		entity.setRecalFee(this.recalFee);
+		entity.setRecalTerms(this.recalTerms);
+		entity.setBpiResetReq(this.bpiResetReq);
+		entity.setModifyBpi(this.modifyBpi);
+		entity.setRcu(this.rcu);
+		entity.setDedupMatch(this.dedupMatch);
+		entity.setHunterGo(this.hunterGo);
+		entity.setBureau(this.bureau);
+		entity.setRecalCGSTFee(this.recalCGSTFee);
+		entity.setRecalIGSTFee(this.recalIGSTFee);
+		entity.setRecalSGSTFee(this.recalSGSTFee);
+		entity.setRecalUGSTFee(this.recalUGSTFee);
+		entity.setEligibilityMethod(this.eligibilityMethod);
+		entity.setLovEligibilityMethod(this.lovEligibilityMethod);
+		entity.setLovDescEligibilityMethod(this.lovDescEligibilityMethod);
+		entity.setCollateralType(this.collateralType);
+		entity.setMarketValue(this.marketValue);
+		entity.setGuidedValue(this.guidedValue);
+		entity.setTotalExposure(this.totalExposure);
+		entity.setSamplingRequired(this.samplingRequired);
+		entity.setLegalRequired(this.legalRequired);
+		entity.setDepositProcess(this.depositProcess);
+		entity.setConnector(this.connector);
+		entity.setConnectorReference(this.connectorReference);
+		entity.setConnectorCode(this.connectorCode);
+		entity.setConnectorDesc(this.connectorDesc);
+		entity.setVanReq(this.vanReq);
+		entity.setVanCode(this.vanCode);
+		entity.setFixedRateTenor(this.fixedRateTenor);
+		entity.setFixedTenorRate(this.fixedTenorRate);
+		entity.setFixedTenorEndDate(this.fixedTenorEndDate);
+		entity.setProcessAttributes(this.processAttributes);
+		entity.setHigherDeviationApprover(this.higherDeviationApprover);
+		this.attributes.entrySet().stream().forEach(e -> entity.getAttributes().put(e.getKey(), e.getValue()));
+		entity.setRepayAmount(this.repayAmount);
+		entity.setEntityCode(this.entityCode);
+		entity.setEntityDesc(this.entityDesc);
+		entity.setBusinessVertical(this.businessVertical);
+		entity.setBusinessVerticalCode(this.businessVerticalCode);
+		entity.setBusinessVerticalDesc(this.businessVerticalDesc);
+		entity.setGrcAdvType(this.grcAdvType);
+		entity.setGrcAdvTerms(this.grcAdvTerms);
+		entity.setAdvType(this.advType);
+		entity.setAdvTerms(this.advTerms);
+		entity.setAdvStage(this.advStage);
+		entity.setAlwFlexi(this.alwFlexi);
+		entity.setFlexiAmount(this.flexiAmount);
+		entity.setChgDropLineSchd(this.chgDropLineSchd);
+		entity.setAssignmentId(this.assignmentId);
+		entity.setPromotionSeqId(this.promotionSeqId);
+		entity.setLoanCategory(this.loanCategory);
+		entity.setAllowSubvention(this.allowSubvention);
+		this.glSubHeadCodes.entrySet().stream().forEach(e -> entity.getGlSubHeadCodes().put(e.getKey(), e.getValue()));
+		entity.setClosedDate(this.closedDate);
+		entity.setRecalIdx(this.recalIdx);
+		entity.setAlwStrtPrdHday(this.alwStrtPrdHday);
+		entity.setMaxStrtPrdHdays(this.maxStrtPrdHdays);
+		entity.setStrtPrdHdays(this.strtPrdHdays);
+		entity.setStrtprdCpzMethod(this.strtprdCpzMethod);
+		entity.setOldFinReference(this.oldFinReference);
+		entity.setCoreBankId(this.coreBankId);
+		entity.setTdsPercentage(this.tdsPercentage);
+		entity.setTdsStartDate(this.tdsStartDate);
+		entity.setTdsEndDate(this.tdsEndDate);
+		entity.setTdsLimitAmt(this.tdsLimitAmt);
+		entity.setIntTdsAdjusted(this.intTdsAdjusted);
+		entity.setExtReference(this.extReference);
+		entity.setServiceName(this.serviceName);
+		entity.setSanBsdSchdle(this.sanBsdSchdle);
+		entity.setApplySanctionCheck(this.applySanctionCheck);
+		entity.setSvAmount(this.svAmount);
+		entity.setCbAmount(this.cbAmount);
+		entity.setbRRpyRvwFrq(this.bRRpyRvwFrq);
+		entity.setTotalFinAmount(this.totalFinAmount);
+		entity.setAppliedLoanAmt(this.appliedLoanAmt);
+		entity.setSkipRateReset(this.skipRateReset);
+		this.detailsList.stream().forEach(e -> entity.getDetailsList().add(e == null ? null : e.copyEntity()));
+		entity.setCancelRemarks(this.cancelRemarks);
+		entity.setExtendedFields(this.extendedFields);
+		entity.setHunterStatus(this.hunterStatus);
+		entity.setAutoRejectionDays(this.autoRejectionDays);
+		entity.setAutoApprove(this.autoApprove);
+		entity.setEodValueDate(this.eodValueDate);
+		entity.setSimulateAccounting(this.simulateAccounting);
+		if (returnDataSet != null) {
+			entity.setReturnDataSet(new ArrayList<ReturnDataSet>());
+			this.returnDataSet.stream().forEach(e -> entity.getReturnDataSet().add(e == null ? null : e.copyEntity()));
+		}
+		entity.setAlwGrcAdj(this.alwGrcAdj);
+		entity.setEndGrcPeriodAftrFullDisb(this.endGrcPeriodAftrFullDisb);
+		entity.setAutoIncGrcEndDate(this.autoIncGrcEndDate);
+		entity.setEventProperties(this.eventProperties);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
 
 	public FinanceMain() {
 		super();
@@ -5079,11 +5564,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.dsaCodeReference = dsaCodeReference;
 	}
 
-	public long getAccountsOfficerReference() {
+	public String getAccountsOfficerReference() {
 		return accountsOfficerReference;
 	}
 
-	public void setAccountsOfficerReference(long accountsOfficerReference) {
+	public void setAccountsOfficerReference(String accountsOfficerReference) {
 		this.accountsOfficerReference = accountsOfficerReference;
 	}
 
@@ -5118,12 +5603,29 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setOcrDeviation(boolean ocrDeviation) {
 		this.ocrDeviation = ocrDeviation;
 	}
+
 	public EventProperties getEventProperties() {
 		return eventProperties;
 	}
 
 	public void setEventProperties(EventProperties eventProperties) {
 		this.eventProperties = eventProperties;
+	}
+
+	public String getPartnerBankAcType() {
+		return partnerBankAcType;
+	}
+
+	public void setPartnerBankAcType(String partnerBankAcType) {
+		this.partnerBankAcType = partnerBankAcType;
+	}
+
+	public String getPartnerBankAc() {
+		return partnerBankAc;
+	}
+
+	public void setPartnerBankAc(String partnerBankAc) {
+		this.partnerBankAc = partnerBankAc;
 	}
 
 }

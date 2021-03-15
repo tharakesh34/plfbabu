@@ -507,7 +507,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		financeDisbursement = findetails.getFinScheduleData().getDisbursementDetails();
 		disbursementInstCtrl.setFinanceDisbursement(financeDisbursement);
 		disbursementInstCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
-		//disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
+		disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
 		if (CollectionUtils.isNotEmpty(findetails.getFinScheduleData().getFinFeeDetailList())) {
 			disbursementInstCtrl.setFinFeeDetailList(findetails.getFinScheduleData().getFinFeeDetailList());
 		}
@@ -528,7 +528,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		financeDisbursement = findetails.getFinScheduleData().getDisbursementDetails();
 		disbursementInstCtrl.setFinanceDisbursement(financeDisbursement);
 		disbursementInstCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
-		//disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
+		disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
 		if (CollectionUtils.isNotEmpty(findetails.getFinScheduleData().getFinFeeDetailList())) {
 			disbursementInstCtrl.setFinFeeDetailList(findetails.getFinScheduleData().getFinFeeDetailList());
 		}

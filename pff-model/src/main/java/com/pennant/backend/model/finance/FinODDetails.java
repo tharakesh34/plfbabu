@@ -173,6 +173,8 @@ public class FinODDetails implements Serializable {
 		entity.setLpCpzAmount(this.lpCpzAmount);
 		entity.setLpCurCpzBal(this.lpCurCpzBal);
 		entity.setLockODRecalCal(this.lockODRecalCal);
+		entity.setPaidNow(this.paidNow);
+		entity.setWaivedNow(this.waivedNow);
 		entity.setRcdAction(this.rcdAction);
 		return entity;
 	}

@@ -20,6 +20,7 @@ import com.pennant.backend.dao.rmtmasters.GSTRateDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.GSTRate;
@@ -396,12 +397,14 @@ public class GSTCalculator {
 
 		Branch branch = deriveGSTBranch(finBranch);
 
-		Province fromState = provinceDAO.getProvinceById(branch.getBranchCountry(), branch.getBranchProvince(), "");
+		if (branch != null) {
+			Province fromState = provinceDAO.getProvinceById(branch.getBranchCountry(), branch.getBranchProvince(), "");
 
-		if (fromState != null) {
-			gstExecutionMap.put("fromState", fromState.getCPProvince());
-			gstExecutionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
-			gstExecutionMap.put("fromStateGstExempted", fromState.isTaxExempted());
+			if (fromState != null) {
+				gstExecutionMap.put("fromState", fromState.getCPProvince());
+				gstExecutionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
+				gstExecutionMap.put("fromStateGstExempted", fromState.isTaxExempted());
+			}
 		}
 
 		String toStateCode = "";
@@ -552,4 +555,59 @@ public class GSTCalculator {
 		return gstAmount;
 	}
 
+	public static void calculateActualGST(FeeWaiverDetail detail, TaxAmountSplit taxSplit, Map<String, BigDecimal> gstPercentages) {
+		if (taxSplit == null) {
+			return;
+		}
+
+		if (detail == null) {
+			return;
+		}
+
+		TaxAmountSplit tas = null;
+
+		String taxComponent = detail.getTaxComponent();
+		BigDecimal taxableAmt = detail.getAdviseAmount().add(detail.getWaivedAmount());
+
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+			tas = GSTCalculator.getExclusiveGST(taxableAmt, gstPercentages);
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
+			tas = GSTCalculator.getInclusiveGST(taxableAmt, gstPercentages);
+		}
+
+		BigDecimal diffGST = BigDecimal.ZERO;
+
+		BigDecimal payableGST = taxSplit.gettGST().add(detail.getWaiverGST());
+
+		if (payableGST.compareTo(tas.gettGST()) > 0) {
+			diffGST = payableGST.subtract(tas.gettGST());
+			taxSplit.settGST(taxSplit.gettGST().subtract(diffGST));
+			taxSplit.setNetAmount(taxSplit.getNetAmount().subtract(diffGST));
+		}
+
+		if (diffGST.compareTo(BigDecimal.ZERO) == 0) {
+			return;
+		}
+
+		BigDecimal waivedTaxableAmt = detail.getWaivedAmount().add(detail.getWaiverGST());
+		TaxAmountSplit paidGSTSplit = GSTCalculator.getInclusiveGST(waivedTaxableAmt, gstPercentages);
+
+		BigDecimal prvCGst = paidGSTSplit.getcGST();
+		BigDecimal prvSGst = paidGSTSplit.getsGST();
+		BigDecimal prvIGst = paidGSTSplit.getiGST();
+		BigDecimal prvUGst = paidGSTSplit.getuGST();
+		BigDecimal prvCess = paidGSTSplit.getCess();
+
+		BigDecimal diffCGST = taxSplit.getcGST().add(prvCGst).subtract(tas.getcGST());
+		BigDecimal diffSGST = taxSplit.getsGST().add(prvSGst).subtract(tas.getsGST());
+		BigDecimal diffIGST = taxSplit.getiGST().add(prvIGst).subtract(tas.getiGST());
+		BigDecimal diffUGST = taxSplit.getuGST().add(prvUGst).subtract(tas.getuGST());
+		BigDecimal diffCESS = taxSplit.getCess().add(prvCess).subtract(tas.getCess());
+
+		taxSplit.setcGST(taxSplit.getcGST().subtract(diffCGST));
+		taxSplit.setsGST(taxSplit.getsGST().subtract(diffSGST));
+		taxSplit.setiGST(taxSplit.getiGST().subtract(diffIGST));
+		taxSplit.setuGST(taxSplit.getuGST().subtract(diffUGST));
+		taxSplit.setCess(taxSplit.getCess().subtract(diffCESS));
+	}
 }

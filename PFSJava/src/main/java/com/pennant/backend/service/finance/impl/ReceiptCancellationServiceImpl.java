@@ -1017,8 +1017,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		boolean alwSchdReversalByLog = false;
 		long postingId = postingsDAO.getPostingId();
-		String curStatus = finReceiptHeaderDAO.getReceiptModeStatus(receiptHeader.getReceiptID(), "");
-		Date appDate = DateUtility.getAppDate();
+		long receiptID = receiptHeader.getReceiptID();
+		String curStatus = finReceiptHeaderDAO.getReceiptModeStatus(receiptID, "");
+		Date appDate = SysParamUtil.getAppDate();
 
 		// Valid Check for Finance Reversal On Active Finance Or not with
 		// ValueDate CheckUp
@@ -1046,14 +1047,16 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// Posting Reversal Case Program Calling in Equation
 		// ============================================
 		long linkedTranID = 0;
-		FinanceDetail financeDetailTemp = null;
 		FeeType penalityFeeType = null;
-
-		List<ReturnDataSet> returnDataSets = postingsPreparationUtil
-				.postReversalsByPostRef(receiptHeader.getReceiptID(), postingId);
-		if (CollectionUtils.isNotEmpty(returnDataSets)) {
-			linkedTranID = returnDataSets.get(0).getLinkedTranId();
+		
+		if (!ImplementationConstants.ALLOW_PRESENTMENT_STAGE_ACCOUNTING) {
+			List<ReturnDataSet> returnDataSets = null;
+			returnDataSets = postingsPreparationUtil.postReversalsByPostRef(receiptID, postingId);
+			if (CollectionUtils.isNotEmpty(returnDataSets)) {
+				linkedTranID = returnDataSets.get(0).getLinkedTranId();
+			}
 		}
+		
 		if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
 			for (FinReceiptDetail detail : receiptHeader.getReceiptDetails()) {
 				if (StringUtils.equals(detail.getPaymentType(), receiptHeader.getReceiptMode())
@@ -1203,8 +1206,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					// unRealizeLpiGst.add(rpyHeader.getRealizeUnLPIGst());
 
 					// Update Profit Details for UnRealized LPP
-					FinTaxIncomeDetail taxIncome = finODAmzTaxDetailDAO
-							.getFinTaxIncomeDetail(receiptHeader.getReceiptID(), "LPP");
+					FinTaxIncomeDetail taxIncome = finODAmzTaxDetailDAO.getFinTaxIncomeDetail(receiptID, "LPP");
 					if (taxIncome != null) {
 						taxIncomeList.add(taxIncome);
 						unRealizeLpp = unRealizeLpp.add(taxIncome.getReceivedAmount());
@@ -1957,8 +1959,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			if (ImplementationConstants.DEPOSIT_PROC_REQ) {
 				if (RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
 
-					DepositMovements movement = depositDetailsDAO
-							.getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
+					DepositMovements movement = depositDetailsDAO.getDepositMovementsByReceiptId(receiptID, "_AView");
 					if (movement != null) {
 						// Find Amount of Deposited Request
 						BigDecimal reqAmount = BigDecimal.ZERO;
@@ -1994,24 +1995,23 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						|| RepayConstants.RECEIPTMODE_DD.equals(receiptHeader.getReceiptMode())) {
 
 					// Verify Cheque or DD Details exists in Deposited Cheques
-					DepositCheques depositCheque = depositChequesDAO
-							.getDepositChequeByReceiptID(receiptHeader.getReceiptID());
+					DepositCheques depositCheque = depositChequesDAO.getDepositChequeByReceiptID(receiptID);
 
 					if (depositCheque != null) {
 						if (depositCheque.getLinkedTranId() > 0) {
 							// Postings Reversal
 							postingsPreparationUtil.postReversalsByLinkedTranID(depositCheque.getLinkedTranId());
 							// Make Deposit Cheque to Reversal Status
-							depositChequesDAO.reverseChequeStatus(depositCheque.getMovementId(),
-									receiptHeader.getReceiptID(), depositCheque.getLinkedTranId());
+							depositChequesDAO.reverseChequeStatus(depositCheque.getMovementId(), receiptID,
+									depositCheque.getLinkedTranId());
 						} else {
 							logger.info("Postings Id is not available in deposit cheques");
 							throw new InterfaceException("CHQ001", "Issue with deposit details postings prepartion.");
 						}
 					} else {
 						// Available Decrease
-						DepositMovements movement = depositDetailsDAO
-								.getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
+						DepositMovements movement = depositDetailsDAO.getDepositMovementsByReceiptId(receiptID,
+								"_AView");
 						if (movement != null) {
 
 							// Find Amount of Deposited Request

@@ -66,6 +66,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SanctionBasedSchedule;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.AddTermsService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -284,6 +285,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
+		Date appDate = SysParamUtil.getAppDate();
 
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
@@ -312,7 +314,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					comboitem.setAttribute("toSpecifier", curSchd.getSpecifier());
 					comboitem.setValue(curSchd.getSchDate());
 					if (fillBefore != null && curSchd.getSchDate().compareTo(fillBefore) < 0) {
-						if (i != financeScheduleDetails.size() - 1) {
+						if (i != financeScheduleDetails.size() - 1 && curSchd.getSchDate().compareTo(appDate) > 0) {
 							dateCombobox.appendChild(comboitem);
 							if (getFinanceScheduleDetail() != null
 									&& curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) == 0) {

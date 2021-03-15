@@ -1462,7 +1462,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		boolean isCalcCompleted = true;
 		Date valuDate = receiptData.getReceiptHeader().getValueDate();
-		if (finMain.isFinIsActive() && DateUtility.compare(valuDate, maturityDate) < 0) {
+		if (finMain.isFinIsActive() && DateUtility.compare(valuDate, maturityDate) <= 0) {
 			if (receiptPurposeCtg > 0) {
 				isCalcCompleted = recalEarlyPaySchd(true);
 				if (isCalcCompleted) {
@@ -1989,6 +1989,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	private void changePaid() {
 		receiptData = getReceiptCalculator().setTotals(receiptData, 0);
+		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
+		receiptData.getReceiptHeader().setAllocationsSummary(allocationList);
+		try {
+			setSummaryData(true);
+		} catch (IllegalAccessException | InvocationTargetException | InterruptedException e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
 		setBalances();
 		doFillAllocationDetail();
 	}
@@ -2572,13 +2579,15 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			doWriteComponentsToBean();
 
 			// Accounting Details Validations
-			if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
-					&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
-				boolean validate = false;
-				validate = validateAccounting(validate);
-				if (validate && !isAccountingExecuted) {
-					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
-					return;
+			if (ImplementationConstants.RECEIPTS_SHOW_ACCOUNTING) {
+				if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
+						&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
+					boolean validate = false;
+					validate = validateAccounting(validate);
+					if (validate && !isAccountingExecuted) {
+						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
+						return;
+					}
 				}
 			}
 
@@ -3287,7 +3296,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		addDueFooter(formatter);
-		addExcessAmt();
+		if (receiptData.getRemBal() != BigDecimal.ZERO) {
+			addExcessAmt();
+		}
 
 		if (receiptData.getPaidNow()
 				.compareTo(receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getExcessAvailable())) > 0
@@ -3311,7 +3322,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	private void addExcessAmt() {
-		if (this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) > 0) {
+		if (this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) >= 0) {
 			Listitem item = new Listitem();
 			Listcell lc = null;
 			item = new Listitem();
@@ -5700,6 +5711,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmountOriginal());
 				dataMap.put(feeTypeCode + "_N", finFeeDetail.getNetAmount());
+
+				// TDS
+				dataMap.put(feeTypeCode + "_TDS_N", finFeeDetail.getNetTDS());
+				dataMap.put(feeTypeCode + "_TDS_P", finFeeDetail.getPaidTDS());
 
 				if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EXCESS)) {
 					payType = "EX_";

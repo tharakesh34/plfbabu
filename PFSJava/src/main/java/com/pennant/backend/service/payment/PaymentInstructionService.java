@@ -67,4 +67,6 @@ public interface PaymentInstructionService {
 	List<AuditDetail> processPaymentInstrDetails(List<AuditDetail> auditDetails, TableType type, String methodName);
 
 	void updateStatus(PaymentInstruction instruction, String tableType);
+
+	boolean isInstructionInProgress(String finReference);
 }

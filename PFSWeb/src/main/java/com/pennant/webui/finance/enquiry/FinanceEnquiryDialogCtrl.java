@@ -1127,7 +1127,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
 			}
 
-
 			this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 			fillComboBox(this.repayRateBasis, aFinanceMain.getRepayRateBasis(),
 					PennantStaticListUtil.getInterestRateType(false), "");
@@ -1187,7 +1186,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.nextRepayCpzDate_two.setValue(aFinanceMain.getNextRepayCpzDate());
 			this.nextRepayPftDate_two.setValue(aFinanceMain.getNextRepayPftDate());
 			this.finReference.setValue(aFinanceMain.getFinReference());
-			// KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
+			//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
 			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(aFinanceMain.getClosingStatus())) {
 				this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
 			} else {
@@ -1196,6 +1195,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				} else {
 					this.finStatus.setValue(Labels.getLabel("label_Matured"));
 				}
+			}
+
+			if (StringUtils.contains(aFinanceMain.getRecordStatus(), "Reject") && !aFinanceMain.isFinIsActive()) {
+				this.finStatus.setValue(Labels.getLabel("label_Rejected"));
 			}
 
 			String closingStatus = StringUtils.trimToEmpty(aFinanceMain.getClosingStatus());
@@ -1229,7 +1232,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.rowDefferments.setVisible(false);
 			}
 
-			//}
 		}
 		if (StringUtils.isNotBlank(aFinanceMain.getLinkedFinRef())) {
 			this.row_LinkedFinRef.setVisible(true);
@@ -1609,7 +1611,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (aFinanceMain.isTDSApplicable() && ImplementationConstants.ALLOW_TDS_ON_FEE) {
 			this.row_odAllowTDS.setVisible(true);
-			this.odTDSApplicable.setChecked(getFinScheduleData().getFinODPenaltyRate().isoDTDSReq());
+			if (getFinScheduleData().getFinODPenaltyRate() != null) {
+				this.odTDSApplicable.setChecked(getFinScheduleData().getFinODPenaltyRate().isoDTDSReq());
+			}
 		} else {
 			this.row_odAllowTDS.setVisible(false);
 		}

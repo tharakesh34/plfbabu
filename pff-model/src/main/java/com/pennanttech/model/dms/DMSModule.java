@@ -18,7 +18,8 @@ public enum DMSModule {
 	PD,
 	RCU,
 	OCR,
-	RECEIPT;
+	RECEIPT,
+	DISBINST;
 
 	public static DMSModule getModule(String module) {
 		for (DMSModule dmsModule : DMSModule.values()) {

@@ -69,6 +69,7 @@ import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinReceiptQueueLog;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -1378,6 +1379,33 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			isExists = true;
 		}
 		return isExists;
+	}
+
+	public List<Long> isDedupReceiptExists(FinServiceInstruction fsi) {
+		logger.info("Checking for duplicate receipt...");
+
+		boolean isOnline = StringUtils.isNotBlank(fsi.getTransactionRef());
+		StringBuilder sql = new StringBuilder("Select ReceiptID From FinReceiptHeader");
+		sql.append(" Where Reference = ?  AND ValueDate = ? AND ReceiptAmount = ?");
+		sql.append(" AND ReceiptModeStatus NOT IN ('B','C')");
+
+		if (isOnline) {
+			sql.append(" AND TransactionRef = ? ");
+		}
+		logger.trace(Literal.SQL + sql);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, fsi.getFinReference());
+			ps.setDate(index++, JdbcUtil.getDate(fsi.getValueDate()));
+			ps.setBigDecimal(index++, fsi.getAmount());
+			if (isOnline) {
+				ps.setString(index++, fsi.getTransactionRef());
+			}
+
+		}, (rs, roNum) -> {
+			return rs.getLong(1);
+		});
+
 	}
 
 }

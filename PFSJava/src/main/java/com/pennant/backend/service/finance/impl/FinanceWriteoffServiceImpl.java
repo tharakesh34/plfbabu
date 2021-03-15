@@ -60,6 +60,7 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -212,6 +213,11 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 					financeWriteoff.setCurODPft(detail.getODProfit());
 					financeWriteoff.setPenaltyAmount(detail.getPenaltyDue());
 				}
+
+				if (SysParamUtil.getAppDate().compareTo(detail.getMaturityDate()) < 0) {
+					financeWriteoff.setUnPaidSchdPft(detail.getPftAccrued());
+				}
+
 				Provision provision = getProvisionDAO().getProvisionById(finReference, TableType.MAIN_TAB, false);
 				if (provision != null) {
 					financeWriteoff.setProvisionedAmount(provision.getProvisionedAmt());
@@ -749,6 +755,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		Map<String, Object> dataMap = aeEvent.getDataMap();
+		aeEvent.getAeAmountCodes().setTotalWriteoff(financeWriteoff.getWriteoffPrincipal()
+				.add(financeWriteoff.getWriteoffProfit().add(financeWriteoff.getWrittenoffSchFee())));
 		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		financeWriteoff.getDeclaredFieldValues(dataMap);

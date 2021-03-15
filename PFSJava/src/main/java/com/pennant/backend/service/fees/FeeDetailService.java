@@ -437,6 +437,9 @@ public class FeeDetailService {
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
+		//PSD# to fix the concurrent issue
+		List<FinFeeDetail> finFeeDetailList = new ArrayList<>();
+
 		if (StringUtils.isBlank(financeMain.getPromotionCode()) || financeMain.getPromotionSeqId() == 0) {
 			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent,
 					isOrigination, FinanceConstants.MODULEID_FINTYPE));
@@ -448,9 +451,6 @@ public class FeeDetailService {
 
 		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-
-		// PSD# to fix the concurrent issue
-		List<FinFeeDetail> finFeeDetailList = new ArrayList<>();
 
 		// set FinType fees details
 		String finReference = finScheduleData.getFinanceMain().getFinReference();

@@ -346,7 +346,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		this.finReference.setTextBoxWidth(143);
 
 		this.taxNumber.setMaxlength(15);
-		this.addrLine1.setMaxlength(100);
+		this.addrLine1.setMaxlength(300);
 		this.addrLine2.setMaxlength(100);
 		this.addrLine3.setMaxlength(100);
 		this.addrLine4.setMaxlength(100);

@@ -75,13 +75,24 @@ public class Taxes extends AbstractWorkflowEntity {
 		entity.setTaxType(this.taxType);
 		entity.setTaxPerc(this.taxPerc);
 		entity.setNewRecord(this.newRecord);
-		entity.setBefImage(this.befImage);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
 		entity.setActualTax(this.actualTax);
 		entity.setPaidTax(this.paidTax);
 		entity.setNetTax(this.netTax);
 		entity.setRemFeeTax(this.remFeeTax);
 		entity.setWaivedTax(this.waivedTax);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
 		return entity;
 	}
 

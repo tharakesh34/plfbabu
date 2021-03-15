@@ -53,6 +53,45 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 
 	}
 
+	public FinanceRepayments copyEntity() {
+		FinanceRepayments entity = new FinanceRepayments();
+		entity.setFinReference(this.finReference);
+		entity.setFinPostDate(this.finPostDate);
+		entity.setFinRpyFor(this.finRpyFor);
+		entity.setFinPaySeq(this.finPaySeq);
+		entity.setLinkedTranId(this.linkedTranId);
+		entity.setFinRpyAmount(this.finRpyAmount);
+		entity.setFinSchdDate(this.finSchdDate);
+		entity.setFinValueDate(this.finValueDate);
+		entity.setFinBranch(this.finBranch);
+		entity.setFinType(this.finType);
+		entity.setFinCustID(this.finCustID);
+		entity.setReceiptId(this.receiptId);
+		entity.setPenaltyPaid(this.penaltyPaid);
+		entity.setPenaltyWaived(this.penaltyWaived);
+		entity.setFinSchdPriPaid(this.finSchdPriPaid);
+		entity.setFinSchdPftPaid(this.finSchdPftPaid);
+		entity.setFinSchdTdsPaid(this.finSchdTdsPaid);
+		entity.setFinTotSchdPaid(this.finTotSchdPaid);
+		entity.setFinFee(this.finFee);
+		entity.setFinWaiver(this.finWaiver);
+		entity.setFinRefund(this.finRefund);
+		entity.setSchdFeePaid(this.schdFeePaid);
+		entity.setSchdInsPaid(this.schdInsPaid);
+		entity.setSchdSuplRentPaid(this.schdSuplRentPaid);
+		entity.setSchdIncrCostPaid(this.schdIncrCostPaid);
+		entity.setLovDescSchdPriPaid(this.lovDescSchdPriPaid);
+		entity.setLovDescSchdPftPaid(this.lovDescSchdPftPaid);
+		entity.setRepayBal(this.RepayBal);
+		entity.setRepaypri(this.Repaypri);
+		entity.setRepayPft(this.RepayPft);
+		entity.setRepayPenal(this.RepayPenal);
+		entity.setRepayWaiver(this.RepayWaiver);
+		entity.setRepayRefund(this.RepayRefund);
+		entity.setWaiverId(this.waiverId);
+		return entity;
+	}
+
 	@Override
 	public boolean isNew() {
 		return false;

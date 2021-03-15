@@ -401,7 +401,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 */
 	@Override
 	public BankBranch getBankBrachByIFSC(String ifsc) {
-		return getBankBranchDAO().getBankBrachByIFSC(ifsc, "");
+		return bankBranchDAO.getBankBrachByIFSC(ifsc, "");
 	}
 
 	/**
@@ -413,7 +413,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 */
 	@Override
 	public BankBranch getBankBrachByCode(String bankCode, String branchCode) {
-		return getBankBranchDAO().getBankBrachByCode(bankCode, branchCode, "");
+		return bankBranchDAO.getBankBrachByCode(bankCode, branchCode, "");
 	}
 
 	@Override

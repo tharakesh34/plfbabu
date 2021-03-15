@@ -1,49 +1,30 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FeeWaiverHeaderDAOImpl.java                                          * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-11-2017    														*
- *                                                                  						*
- * Modified Date    :  			    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FeeWaiverHeaderDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-11-2017 * *
+ * Modified Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-11-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-11-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.finance.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -165,35 +146,22 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 	}
 
 	@Override
-	public List<FeeWaiverHeader> getFeeWaiverHeaderEnqByFinRef(String finReference, String type) {
-		logger.debug("Entering");
-		List<FeeWaiverHeader> feeWaiverHeaderList = new ArrayList<FeeWaiverHeader>();
+	public Date getLastWaiverDate(String finReference, Date appDate, Date receiptDate) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select max(ValueDate)");
+		sql.append(" from FeeWaiverHeader");
+		sql.append(" Where FinReference = ? and ValueDate >= ? and ValueDate < ?");
 
-		FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
-		feeWaiverHeader.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select WaiverId, FinReference, Event, Remarks,PostingDate,ValueDate,");
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,WorkflowId");
-		selectSql.append(" From FeeWaiverHeader");
-		selectSql.append(" Where FinReference = :FinReference");
-		selectSql.append(" order by WaiverId desc");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeWaiverHeader);
-		RowMapper<FeeWaiverHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FeeWaiverHeader.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			feeWaiverHeaderList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			feeWaiverHeaderList = null;
+			return this.jdbcOperations.queryForObject(sql.toString(),
+					new Object[] { finReference, receiptDate, appDate }, Date.class);
+		} catch (Exception e) {
+			//
 		}
-		feeWaiverHeader = null;
-		logger.debug("Leaving");
-		return feeWaiverHeaderList;
+
+		return null;
 	}
 
 	@Override
@@ -215,7 +183,8 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 			feeWaiverHeader.setWaiverId(getNextValue("SeqFeeWaiverHeader"));
 		}
 
-		// Execute the SQL, binding the arguments.public FeeWaiverHeader getFeeWaiverHeaderById(String finreference, long finmaintainId, String type)
+		// Execute the SQL, binding the arguments.public FeeWaiverHeader getFeeWaiverHeaderById(String finreference,
+		// long finmaintainId, String type)
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(feeWaiverHeader);
 
@@ -242,7 +211,7 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 
 		sql.append(" where WaiverId =:WaiverId");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -267,7 +236,7 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 		StringBuilder sql = new StringBuilder("delete From FeeWaiverHeader");
 		sql.append(tableType.getSuffix());
 		sql.append(" where WaiverId =:WaiverId");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

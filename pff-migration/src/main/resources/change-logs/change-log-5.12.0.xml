@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1929.1" author="sudheer.t">
+		<addColumn tableName="Presentmentdetails_Temp">
+			<column name="LinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1929.2" author="sudheer.t">
+		<addColumn tableName="Presentmentdetails">
+			<column name="LinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1929.3" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTAEEVENTS where aeeventcode='PRSNT'; 
+				INSERT INTO BMTAEEVENTS(AEEventCode, AEEventCodeDesc, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, Active)VALUES ('PRSNT', 'Presentment Installment', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+				
+				DELETE FROM BMTAMOUNTCODES Where ALLOWEDEVENT = 'PRSNT';				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_penalty','Penalty Amount',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_penaltyDue','Penalty Due',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_penaltyPaid','Penalty Paid',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_penaltyWaived','Penalty Waived',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_rpPft','Total Repay Interest now (P)',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_rpPri','Total Repay Principal now (P)',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_rpTot','Total Repay now (P+I)',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_schFeePay','Scheduled Fee',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_suplRentPay','Suplementary Rent',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_emiInAdvance','EMI in advance amount for payment/receipt',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_excessAmt','Excess amount for payment/receipt',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_FeeChargeAmt','Total Fee and Charges paid/scheduled now',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_incrCostPay','Increased Cost Paid',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_InsPay','Insurance amount paid',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_insRefund','Insurance amount refunded',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_instpft','Installment Interest',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_instpri','Installment Princiapl',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_insttot','Installment Total (P+I)',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_InsuranceAmt','Insurance amount scheduled',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_payableAdvise','Payable advise amount for payment/receipt',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_toExcessAmt','To Excess Amount',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_toEmiAdvance','To EMI Advance Amount',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_rpTds','TDS Amount',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceChargePaid','Bounce charges Paid',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceChargeWaived','Bounce charges Waived',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'PA_ReceiptAmount','Total Receipt Amount from Payable',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'EX_ReceiptAmount','Total Receipt Amount from Excess',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'PB_ReceiptAmount','Total Receipt Amount from Bank',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'EA_ReceiptAmount','Total Receipt Amount from EMIAdvance',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CGST_P','Bounce charge CGST paid',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_SGST_P','Bounce charge SGST paid',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_IGST_P','Bounce charge IGST paid',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_UGST_P','Bounce charge UGST paid',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_lpiPaid','LPI Paid Now',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_lpiWaived','LPI Waived Now',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_intAdjusted','Adjusted Advance Interest',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_intAdvAvailable','Available Advance Interest',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_intDue','Interest Due - Advance Interest',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_emiAdjusted','Adjusted Advance EMI',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_emiAdvAvailable','Available Advance EMI',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_emiDue','EMI Due - Advance EMI',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_advIntDue','Advance Interest Due',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'EAI_ReceiptAmount','Total Receipt Amount from Advance Interest',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'EAE_ReceiptAmount','Total Receipt Amount from Advance EMI',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CGST_W','Bounce charge CGST Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_SGST_W','Bounce charge SGST Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_IGST_W','Bounce charge IGST Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_UGST_W','Bounce charge UGST Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'LPP_CGST_P','Paid Late Payment Penalty CGST',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'LPP_SGST_P','Paid Late Payment Penalty SGST',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'LPP_UGST_P','Paid Late Payment Penalty UGST',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'LPP_IGST_P','Paid Late Payment Penalty IGST',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_intTdsAdjusted','TDS on Interest',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_emiTdsAdjusted','TDS on Interest',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_dueTds','TDS on Repayment',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CESS_P','Bounce charge CESS PAID Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CESS_N','Bounce charge CESS NET Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CESS_W','Bounce charge CESS WAIVER Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CESS_SCH','Bounce charge CESS SCHEDULE Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CESS_AF','Bounce charge CESS AF Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_rpPftPr','Total Repay Interest now (P).',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_rpTotPr','Total Repay now (P+I).',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'CACLT_ReceiptAmount','Cash Collateral',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'DSF_ReceiptAmount','Debt Service Fund',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_priPr','Total Principal Scheduled.',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_priSPr','Till Date Principal Scheduled.',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1929.4" author="sudheer.t">
+		<sql>
+			<![CDATA[
+			    DELETE FROM BMTAEEVENTS where aeeventcode='PRSNTRSP'; 
+			    INSERT INTO BMTAEEVENTS(AEEventCode, AEEventCodeDesc, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, Active)VALUES ('PRSNTRSP', 'Presentment Response', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+			    
+			    DELETE FROM BMTAMOUNTCODES where ALLOWEDEVENT = 'PRSNTRSP' and AMOUNTCODE = 'ae_presentmentAmt';			
+			    INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNTRSP', 0, 'ae_presentmentAmt', 'Presentment Response', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1929.5" author="sudheer.t">
+		<sql>
+			<![CDATA[
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNT' and CategoryCode ='C';
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNT' and CategoryCode ='F';
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNT' and CategoryCode ='O';
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNT' and CategoryCode ='S';
+			    
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNT', 'C', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNT', 'F', 1, 0, (select max(SeqOrder)+2 from CategoryWiseEvents));
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNT', 'O', 1, 0, (select max(SeqOrder)+3 from CategoryWiseEvents));
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNT', 'S', 1, 0, (select max(SeqOrder)+4 from CategoryWiseEvents));
+			    
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNTRSP' and CategoryCode ='C';
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNTRSP' and CategoryCode ='F';
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNTRSP' and CategoryCode ='O';
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNTRSP' and CategoryCode ='S';
+			    
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNTRSP', 'C', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNTRSP', 'F', 1, 0, (select max(SeqOrder)+2 from CategoryWiseEvents));
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNTRSP', 'O', 1, 0, (select max(SeqOrder)+3 from CategoryWiseEvents));
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNTRSP', 'S', 1, 0, (select max(SeqOrder)+4 from CategoryWiseEvents));  
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#395.1_pre" author="saiteja.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'int_mandate_request_view');
+		 	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#395.1" author="saiteja.r">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT m.mandateid,
+					m.documentname,
+					bd.bankshortcode bankcode,
+					bd.bankname,
+					CASE WHEN lb.branchcode IS NULL THEN cb.branchcode
+						ELSE lb.branchcode END branchcode,
+					CASE WHEN lb.branchdesc IS NULL THEN cb.branchdesc
+						ELSE lb.branchdesc END branchdesc,
+					cust.custcif,
+					cust.custshrtname,
+					cust.custcorebank,
+					ft.fintypedesc fintype,
+					fin.finreference,
+					COALESCE((( SELECT sum(t.totalamount) sum
+						FROM ( SELECT max(fsd.repayamount + fsd.feeschd) totalamount
+							FROM finscheduledetails fsd
+							JOIN plf.financemain fm ON fm.finreference::text = fsd.finreference::text AND fm.custid = m.custid
+                  			GROUP BY fm.finreference) t)) / ccy.ccyminorccyunits, 0::numeric) cust_emi,
+    				COALESCE((( SELECT sum(t.totalamount) sum
+           				FROM ( SELECT max(fsd.repayamount + fsd.feeschd) totalamount
+                   			FROM FinScheduleDetails fsd
+                  			WHERE (fsd.repayonschdate = 1 OR fsd.pftonschdate = 1) AND (fsd.finreference::text IN 
+                  				(SELECT financemain.finreference FROM financemain
+                          			WHERE financemain.mandateid = m.mandateid))
+                  			GROUP BY fsd.finreference) t)) / ccy.ccyminorccyunits, 0::numeric) emi,
+        			CASE m.openmandate WHEN 1 THEN 'new open ecs'::text
+            			ELSE 'no open ecs'::text END openmandate,
+    				m.accnumber,
+        			CASE WHEN m.acctype::text = '10'::text THEN 'savings account'::character varying
+            			WHEN m.acctype::text = '11'::text THEN 'current account'::character varying
+            			WHEN m.acctype::text = '11'::text THEN 'cash credit account'::character varying
+            			ELSE m.acctype END acctype,
+    				m.accholdername,
+    				bb.micr,
+    				bb.ifsc,
+    				bb.addofbranch,
+    				( SELECT min(finpftdetails.firstrepaydate) min FROM FinPftDetails
+          					WHERE (finpftdetails.finreference::text IN (SELECT financemain.finreference
+                   			FROM financemain WHERE financemain.mandateid = m.mandateid))) firstduedate,
+    				(SELECT max(finscheduledetails.schdate) max FROM FinScheduleDetails
+          					WHERE (finscheduledetails.repayonschdate = 1 OR finscheduledetails.pftonschdate = 1) AND
+          					 (finscheduledetails.finreference::text IN (SELECT financemain.finreference
+                   			FROM financemain WHERE financemain.mandateid = m.mandateid))) emienddate,
+    				COALESCE(m.maxlimit, 0::numeric) maxlimit,
+    				COALESCE(( SELECT sum(t.mandatedebitamount) sum FROM (SELECT max(finscheduledetails.repayamount + finscheduledetails.feeschd) mandatedebitamount
+							FROM FinScheduleDetails WHERE (finscheduledetails.repayonschdate = 1 OR finscheduledetails.pftonschdate = 1) 
+							AND (finscheduledetails.finreference::text IN (SELECT financemain.finreference FROM FinanceMain
+                          		WHERE financemain.mandateid = m.mandateid))
+                  			GROUP BY finscheduledetails.finreference) t), 0::numeric) / ccy.ccyminorccyunits debitamount,
+    				fin.numberofterms,
+				    m.periodicity,
+				    m.startdate,
+				    m.expirydate,
+				    fin.applicationno,
+				    m.mandatetype,
+				    m.status,
+				    m.inputdate,
+				    m.recordstatus,
+				    m.recordtype,
+				    m.mandateccy,
+				    COALESCE(ccy.ccyminorccyunits, 100::numeric) ccyminorccyunits,
+				    m.entitycode,
+				    cp.phonenumber,
+				    ce.custemail,
+				    pb.partnerbankname,
+				    m.lastmnton,
+				    bb.branchdesc bank_branch_name,
+				    et.entitydesc,
+				    pb.utilitycode,
+				    pb.sponsorbankcode,
+				    m.partnerbankid,
+				    pb.partnerbankcode
+   				FROM Mandates m
+				JOIN BankBranches bb ON bb.bankbranchid = m.bankbranchid
+				JOIN BmtBankDetail bd ON bd.bankcode::text = bb.bankcode::text
+				JOIN Customers cust ON cust.custid = m.custid
+				JOIN RmtBranches cb ON cb.branchcode::text = cust.custdftbranch::text
+				LEFT JOIN PartnerBanks pb ON pb.partnerbankid = m.partnerbankid
+				LEFT JOIN CustomerEmails ce ON ce.custid = cust.custid AND ce.custemailpriority = 5
+				LEFT JOIN CustomerPhoneNumbers cp ON cp.phonecustid = cust.custid AND cp.phonetypepriority = 5
+				LEFT JOIN RMTCurrencies ccy ON ccy.ccycode = m.mandateccy
+				LEFT JOIN FinanceMain fin ON m.orgreference::text = fin.finreference::text
+				LEFT JOIN RMTBranches lb ON lb.branchcode::text = fin.finbranch::text
+				LEFT JOIN RMTFinanceTypes ft ON fin.fintype::text = ft.fintype::text
+				LEFT JOIN Entity et ON m.entitycode::text = et.entitycode::text
+  				WHERE m.status::text = 'NEW'::text AND NOT (m.mandateid IN ( SELECT mandate_requests.mandateid
+           			FROM mandate_requests
+          			WHERE mandate_requests.status::text = 'AC'::text OR mandate_requests.status::text = 'NEW'::text));
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#395.1_post" author="saiteja.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'int_mandate_request_view');
+			]]>
+		</sql>
+	</changeSet>
+
+</databaseChangeLog>

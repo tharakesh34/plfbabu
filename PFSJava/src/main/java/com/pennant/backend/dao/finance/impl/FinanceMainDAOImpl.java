@@ -65,7 +65,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
@@ -1316,99 +1315,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		} else {
 			return true;
 		}
-	}
-
-	@Override
-	public void listUpdate(ArrayList<FinanceMain> financeMain, String type) {
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set NumberOfTerms = :NumberOfTerms, GraceTerms=:GraceTerms, ");
-		updateSql.append(" GrcPeriodEndDate = :GrcPeriodEndDate, AllowGrcPeriod = :AllowGrcPeriod,");
-		updateSql.append(" GraceBaseRate = :GraceBaseRate, GraceSpecialRate = :GraceSpecialRate,");
-		updateSql.append(" GrcPftRate = :GrcPftRate, GrcPftFrq = :GrcPftFrq,");
-		updateSql.append(" NextGrcPftDate = :NextGrcPftDate, AllowGrcPftRvw = :AllowGrcPftRvw,");
-		updateSql.append(" GrcPftRvwFrq = :GrcPftRvwFrq, NextGrcPftRvwDate = :NextGrcPftRvwDate,");
-		updateSql.append(" AllowGrcCpz = :AllowGrcCpz, GrcCpzFrq = :GrcCpzFrq, NextGrcCpzDate = :NextGrcCpzDate,");
-		updateSql.append(" RepayBaseRate = :RepayBaseRate, RepaySpecialRate = :RepaySpecialRate,");
-		updateSql.append(" RepayProfitRate = :RepayProfitRate, RepayFrq = :RepayFrq, NextRepayDate = :NextRepayDate,");
-		updateSql.append(" RepayPftFrq = :RepayPftFrq, NextRepayPftDate = :NextRepayPftDate,");
-		updateSql.append(" AllowRepayRvw = :AllowRepayRvw, RepayRvwFrq = :RepayRvwFrq,");
-		updateSql.append(" NextRepayRvwDate = :NextRepayRvwDate, AllowRepayCpz = :AllowRepayCpz,");
-		updateSql.append(" RepayCpzFrq = :RepayCpzFrq, NextRepayCpzDate = :NextRepayCpzDate,");
-		updateSql.append(" MaturityDate = :MaturityDate, CpzAtGraceEnd = :CpzAtGraceEnd, DownPayment = :DownPayment,");
-		updateSql.append(
-				" DownPayBank=:DownPayBank, DownPaySupl=:DownPaySupl, DownPayAccount=:DownPayAccount,  SecurityDeposit = :SecurityDeposit,");
-		updateSql.append(
-				" ReqRepayAmount = :ReqRepayAmount, TotalProfit = :TotalProfit,TotalCpz= :TotalCpz, TotalGrossPft = :TotalGrossPft,");
-		updateSql.append(
-				" TotalGracePft= :TotalGracePft,TotalGraceCpz= :TotalGraceCpz,TotalGrossGrcPft= :TotalGrossGrcPft,");
-		updateSql.append(
-				" TotalRepayAmt= :TotalRepayAmt, GrcRateBasis = :GrcRateBasis, RepayRateBasis = :RepayRateBasis, FinType = :FinType,");
-		updateSql.append(" FinRemarks = :FinRemarks, FinCcy = :FinCcy, ScheduleMethod = :ScheduleMethod,");
-		updateSql.append(" ProfitDaysBasis = :ProfitDaysBasis, ReqMaturity = :ReqMaturity, CalTerms = :CalTerms,");
-		updateSql.append(" CalMaturity = :CalMaturity, FirstRepay = :FirstRepay, LastRepay = :LastRepay,");
-		updateSql.append(" FinStartDate = :FinStartDate, FinAmount = :FinAmount,FinContractDate=:FinContractDate,");
-		updateSql.append(" FinRepaymentAmount = :FinRepaymentAmount, CustID = :CustID,Defferments = :Defferments, ");
-		updateSql.append(" PlanDeferCount= :PlanDeferCount, FinBranch =:FinBranch, FinSourceID= :FinSourceID,");
-		updateSql.append(" AllowedDefRpyChange= :AllowedDefRpyChange, AvailedDefRpyChange= :AvailedDefRpyChange,");
-		updateSql.append(" AllowedDefFrqChange= :AllowedDefFrqChange, AvailedDefFrqChange= :AvailedDefFrqChange,");
-		updateSql.append(" RecalType=:RecalType, FinIsActive= :FinIsActive,FinAssetValue= :FinAssetValue,");
-		updateSql.append(" disbAccountId= :disbAccountId, repayAccountId= :repayAccountId,FinPurpose=:FinPurpose,");
-		updateSql.append(
-				" LastRepayDate= :LastRepayDate,LastRepayPftDate= :LastRepayPftDate, FinStatus=:FinStatus, FinStsReason=:FinStsReason,");
-		updateSql.append(
-				" InitiateUser=:InitiateUser, LastRepayRvwDate= :LastRepayRvwDate, LastRepayCpzDate= :LastRepayCpzDate,AllowGrcRepay= :AllowGrcRepay,");
-		updateSql.append(
-				" BankName=:BankName, Iban=:Iban, AccountType=:AccountType, DdaReferenceNo=:DdaReferenceNo, GrcSchdMthd= :GrcSchdMthd, GrcMargin= :GrcMargin, RepayMargin= :RepayMargin,");
-		updateSql.append(
-				" FinCommitmentRef= :FinCommitmentRef, FinLimitRef=:FinLimitRef, DepreciationFrq= :DepreciationFrq, FinCurrAssetValue= :FinCurrAssetValue,");
-		updateSql.append(
-				" NextDepDate= :NextDepDate, LastDepDate= :LastDepDate,FinAccount=:FinAccount,FinCancelAc=:FinCancelAc,");
-		updateSql.append(" FinCustPftAccount= :FinCustPftAccount, ClosingStatus= :ClosingStatus, ");
-		updateSql.append(
-				" FinApprovedDate= :FinApprovedDate, FeeChargeAmt=:FeeChargeAmt, BpiAmount=:BpiAmount, DeductFeeDisb=:DeductFeeDisb, LimitValid= :LimitValid, OverrideLimit= :OverrideLimit,");
-		updateSql.append(" AnualizedPercRate =:AnualizedPercRate , EffectiveRateOfReturn =:EffectiveRateOfReturn , ");
-		updateSql.append(" FinRepayPftOnFrq =:FinRepayPftOnFrq , CustDSR=:CustDSR, ");
-		updateSql.append(
-				" JointAccount=:JointAccount,JointCustId=:JointCustId, DownPayAccount=:DownPayAccount,  SecurityDeposit =:SecurityDeposit, RcdMaintainSts=:RcdMaintainSts,");
-		updateSql.append(" FinRepayMethod=:FinRepayMethod, ");
-		updateSql.append(
-				" GrcProfitDaysBasis = :GrcProfitDaysBasis, StepFinance = :StepFinance, StepPolicy = :StepPolicy, StepType = :StepType,");
-		updateSql.append(
-				" AlwManualSteps = :AlwManualSteps, NoOfSteps = :NoOfSteps,  ManualSchedule=:ManualSchedule , TakeOverFinance=:TakeOverFinance ,");
-		updateSql.append(" LinkedFinRef=:LinkedFinRef,");
-		updateSql.append(
-				" GrcMinRate=:GrcMinRate, GrcMaxRate=:GrcMaxRate ,GrcMaxAmount=:GrcMaxAmount, RpyMinRate=:RpyMinRate, RpyMaxRate=:RpyMaxRate, ");
-		updateSql.append(" GrcAdvBaseRate=:GrcAdvBaseRate ,GrcAdvMargin=:GrcAdvMargin , ");
-		updateSql.append(
-				" GrcAdvPftRate=:GrcAdvPftRate ,RpyAdvBaseRate=:RpyAdvBaseRate ,RpyAdvMargin=:RpyAdvMargin ,RpyAdvPftRate=:RpyAdvPftRate ,");
-		updateSql.append(" SupplementRent=:SupplementRent , IncreasedCost=:IncreasedCost , RolloverFrq=:RolloverFrq, ");
-		updateSql.append(" NextRolloverDate=:NextRolloverDate, ShariaStatus = :ShariaStatus, DsaCode = :DsaCode, ");
-		updateSql.append(
-				" DroplineFrq= :DroplineFrq,FirstDroplineDate = :FirstDroplineDate,PftServicingODLimit = :PftServicingODLimit, AlwBPI=:AlwBPI , ");
-		updateSql.append(
-				" BpiTreatment=:BpiTreatment , PlanEMIHAlw=:PlanEMIHAlw , PlanEMIHAlwInGrace=:PlanEMIHAlwInGrace,PlanEMIHMethod=:PlanEMIHMethod , PlanEMIHMaxPerYear=:PlanEMIHMaxPerYear , ");
-		updateSql.append(
-				" PlanEMIHMax=:PlanEMIHMax , PlanEMIHLockPeriod=:PlanEMIHLockPeriod , PlanEMICpz=:PlanEMICpz , CalRoundingMode=:CalRoundingMode ,RoundingTarget=:RoundingTarget, AlwMultiDisb=:AlwMultiDisb, ApplicationNo=:ApplicationNo,");
-		updateSql.append(
-				" ReferralId =:ReferralId , DmaCode =:DmaCode , SalesDepartment =:SalesDepartment , QuickDisb =:QuickDisb , WifReference =:WifReference ,");
-		updateSql.append(
-				" UnPlanEMIHLockPeriod=:UnPlanEMIHLockPeriod , UnPlanEMICpz=:UnPlanEMICpz, ReAgeCpz=:ReAgeCpz, MaxUnplannedEmi=:MaxUnplannedEmi, MaxReAgeHolidays=:MaxReAgeHolidays ,AvailedUnPlanEmi=:AvailedUnPlanEmi, AvailedReAgeH=:AvailedReAgeH, ReAgeBucket=:ReAgeBucket, FinCategory=:FinCategory, ProductCategory=:ProductCategory, ");
-		updateSql.append(
-				" Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(
-				" TaskId = :TaskId, NextTaskId = :NextTaskId, NextUserId=:NextUserId, Priority=:Priority, RecordType = :RecordType, WorkflowId = :WorkflowId, MinDownPayPerc=:MinDownPayPerc");
-		updateSql.append(
-				" PromotionCode = :PromotionCode, AdvanceEMI = :AdvanceEMI, BpiPftDaysBasis= :BpiPftDaysBasis, FixedTenorRate=:FixedTenorRate, FixedRateTenor=:FixedRateTenor");
-		updateSql.append(", SanBsdSchdle=:SanBsdSchdle");
-		updateSql.append(" Where FinReference =:FinReference");
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(financeMain.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
 	}
 
 	@Override
@@ -2797,38 +2703,24 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return new ArrayList<>();
 	}
 
-	/**
-	 * Method for fetch total number of records i.e count
-	 * 
-	 * @param finReference
-	 * @param type
-	 * @param isWIF
-	 */
 	@Override
 	public int getFinanceCountById(String finReference, String type, boolean isWIF) {
-		logger.debug("Entering");
-
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) ");
+		StringBuilder sql = new StringBuilder("Select Count(*)");
 
 		if (!isWIF) {
-			selectSql.append(" From FinanceMain");
+			sql.append(" From FinanceMain");
 		} else {
-			selectSql.append(" From WIFFinanceMain");
+			sql.append(" From WIFFinanceMain");
 		}
 
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference AND FinIsActive = 1");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ? AND FinIsActive = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, 1 }, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
 			return 0;
 		}
 	}
@@ -3001,37 +2893,30 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	/**
 	 * Method for Update Basic Finance details
 	 * 
-	 * @param financeMain
+	 * @param fm
 	 * @param type
 	 * @return Integer
 	 */
 	@Override
-	public int updateFinanceBasicDetails(FinanceMain financeMain, String type) {
-		logger.debug("Entering");
+	public int updateFinanceBasicDetails(FinanceMain fm, String type) {
+		StringBuilder sql = new StringBuilder("Update  ");
+		sql.append("FinanceMain");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set DsaCode = ?, AccountsOfficer = ?, ReferralId = ?");
+		sql.append(", SalesDepartment = ?, DmaCode = ?");
+		sql.append(" Where FinReference = ?");
 
-		int recordCount = 0;
+		logger.trace(Literal.SQL + sql.toString());
 
-		StringBuilder updateSql = new StringBuilder("Update  ");
-		updateSql.append("FinanceMain");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set  DsaCode = :DsaCode , AccountsOfficer = :AccountsOfficer, ReferralId = :ReferralId, EmployeeName = :EmployeeName, ");
-		updateSql.append(" SalesDepartment = :SalesDepartment , DmaCode = :DmaCode");
-		updateSql.append(" Where FinReference =:FinReference");
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		try {
-			recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			recordCount = 0;
-		}
-		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-		}
-		logger.debug("Leaving");
-		return recordCount;
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, fm.getDsaCode());
+			ps.setLong(index++, fm.getAccountsOfficer());
+			ps.setString(index++, fm.getReferralId());
+			ps.setString(index++, fm.getSalesDepartment());
+			ps.setString(index++, fm.getDmaCode());
+			ps.setString(index++, fm.getFinReference());
+		});
 	}
 
 	@Override
