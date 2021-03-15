@@ -11549,16 +11549,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="54" author="Somasekhar">
-		<sql>
-			<![CDATA[
-						UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-						UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-						UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
-				]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="55" author="Somasekhar">
 		<sql>
 			<![CDATA[					
@@ -11596,18 +11586,6 @@
 						]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="58" author="Somasekhar">
-		<sql>
-					<![CDATA[
-	
-					UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-					UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-					UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
-					]]>
-		</sql>
-	</changeSet>
-
 
 	<changeSet id="59" author="Somasekhar">
 		<createTable tableName="VasMovementDetails">
@@ -16669,8 +16647,6 @@ UNION ALL
 	<changeSet id="8" author="saiDurga.v">
 		<sql>
 			<![CDATA[ 	
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(RightId) from SecRights);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerDialog_ckycOrRefNo','CustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
 				
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerDialog_otherReligion','CustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
@@ -16695,9 +16671,7 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'CustomerDialog_entityType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'CustomerDialog_custFlags'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'CustomerDialog_qualification'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(RightId) from SecRights);
+
 				]]>
 		</sql>
 	</changeSet>
@@ -16705,10 +16679,6 @@ UNION ALL
 	<changeSet id="15" author="madhuri.n">
 		<sql>
 			<![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-				
 				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'OCR_Maker','Group for OCR Maker', 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
 				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'OCR_Approver','Group for OCR Approver', 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_OCRHeaderDialog_btnNew','OCRHeaderDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
@@ -16736,9 +16706,7 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'OCR_Approver'), (Select RightID from SecRights where RightName = 'button_OCRHeaderDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'OCR_Approver'), (Select RightID from SecRights where RightName = 'menuItem_SystemMaster_OCRHeader'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId)  from SecGroupRights);
+
 			]]>
 		</sql>
 	</changeSet>
@@ -16763,10 +16731,7 @@ UNION ALL
 		<sql>
 			<comment>new rights added for Project Details</comment>
 			<![CDATA[
-	
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-					
+			
 					Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_registrationNumber','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 					Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_addressLine1','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 					Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_addressLine2','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
@@ -16807,9 +16772,6 @@ UNION ALL
 				    INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'button_BuilderProjcetDialog_btnNewProjectUnits'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'button_BuilderProjcetDialog_btnNewDocuments'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );	
 							
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-	
 				]]>
 		</sql>
 	</changeSet>
@@ -16818,9 +16780,7 @@ UNION ALL
 		<sql>
 			<comment>new rights added for Project Units</comment>
 			<![CDATA[
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-										
+											
 					Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),2,'button_ProjectUnitsDialog_btnNew','ProjectUnitsDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 					Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),2,'button_ProjectUnitsDialog_btnEdit','ProjectUnitsDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 					Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),2,'button_ProjectUnitsDialog_btnDelete','ProjectUnitsDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
@@ -16857,9 +16817,6 @@ UNION ALL
 					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'ProjectUnitsDialog_unitSuperBuiltUp'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 					
 					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_APPROVER'), (Select RightID from SecRights where RightName = 'button_ProjectUnitsDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );					
-					
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 			
 			]]>
 		</sql>
@@ -16885,37 +16842,25 @@ UNION ALL
 
 	<changeSet id="97" author="mangapathi">
 		<sql>
-			Update Seqsecrights Set SeqNo = (select max(rightid) from Secrights);
 
 			Insert into SECRIGHTS values ((select
 			max(rightid)+1 from
 			Secrights),3,'EmployerDetailDialog_EmpCategory','EmployerDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 
-			Update Seqsecrights Set SeqNo = (select max(rightid) from Secrights);
-
-			Update seqsecgrouprights Set SeqNo = (SELECT
-			MAX(A.ID)+1 FROM (select max(grprightid) ID from secgrouprights_temp UNION ALL select max(grprightid) ID from
-			secgrouprights) A);
-
 			INSERT INTO SecGroupRights values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid
 			from secgroups where grpcode='EMPLOYERDETAIL_MAKER'), (select RightID from SecRights WHERE
 			RightName='EmployerDetailDialog_EmpCategory'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
 
-			Update
-			seqsecgrouprights Set SeqNo = ( SELECT MAX(A.ID)+1 FROM ( select max(grprightid) ID from secgrouprights_temp UNION
-			ALL select max(grprightid) ID from secgrouprights) A);
 		</sql>
 	</changeSet>
 	
 		<changeSet id="106" author="lakshmi">
 		<sql>
 			<![CDATA[
-				Update Seqsecrights Set SeqNo = (select max(rightid) from Secrights);
-		
+				
 				Insert into SECRIGHTS values ((select max(rightid)+1 from Secrights),3, 'FinanceMainDialog_reqLoanAmt', 'FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 				Insert into SECRIGHTS values ((select max(rightid)+1 from Secrights),3, 'FinanceMainDialog_reqLoanTenor', 'FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
-	
-				Update Seqsecrights Set SeqNo = (select max(rightid) from Secrights);
+				
 			]]>
 
 		</sql>
@@ -16924,9 +16869,6 @@ UNION ALL
 	<changeSet id="115" author="rajesh.n">
 		<sql>
 				<![CDATA[ 	
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(RightId) from SecGroupRights);
-					Update SeqSecGroups set SeqNo = (Select max(GRPID) from SecGroups);
 					
 					INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'FinOCRDialog_btnNew_FinOCRStep','FinOCRDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
 					
@@ -16950,9 +16892,6 @@ UNION ALL
 					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_OCR_MAKER'), (Select RightID from SecRights where RightName = 'FinOCRDialog_customerPortion'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_OCR_MAKER'), (Select RightID from SecRights where RightName = 'FinOCRDialog_ocrApplicableOn'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 					
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(RightId) from SecGroupRights);
-					Update SeqSecGroups set SeqNo = (Select max(GRPID) from SecGroups);
 					]]>
 		</sql>
 	</changeSet>
@@ -16960,15 +16899,11 @@ UNION ALL
 	<changeSet id="117" author="rajesh.n">
 		<sql>
 				<![CDATA[ 	
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(RightId) from SecGroupRights);
 					
 					INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'FinanceMainDialog_finOCRRequired','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
 					
 					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'FinanceMainDialog_finOCRRequired'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 					
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(RightId) from SecGroupRights);
 				]]>
 		</sql>
 	</changeSet>
@@ -17010,9 +16945,6 @@ UNION ALL
 	<changeSet id="143" author="saiDurga.v">
 		<sql>
 			<![CDATA[ 	
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(grprightid) from SecGroupRights);
-				Update SeqSecGroups set SeqNo = (Select max(grpid) from SecGroups);
 				
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0,'menuItem_SystemMaster_Qualification','MENU',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_QualificationDialog_btnNew','QualificationDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
@@ -17038,9 +16970,6 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'QUALIFICATION_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_SystemMaster_Qualification'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'QUALIFICATION_APPROVER'), (Select RightID from SecRights where RightName = 'button_QualificationDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(grprightid) from SecGroupRights);
-				Update SeqSecGroups set SeqNo = (Select max(grpid) from SecGroups);
 				]]>
 		</sql>
 	</changeSet>
@@ -17073,7 +17002,6 @@ UNION ALL
 		<comment>ST#10_TK#63 </comment>
 		<sql>
 		 <![CDATA[
-			Update Seqsecrights Set SeqNo = (select max(rightid) from Secrights);
 			Insert into SECRIGHTS values ((select
 			max(rightid)+1 from
 			Secrights),3,'FinanceMainDialog_offerProduct','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
@@ -17097,19 +17025,7 @@ UNION ALL
 			Secrights),3,'FinanceMainDialog_leadSource','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			Insert into SECRIGHTS values ((select max(rightid)+1 from
 			Secrights),3,'FinanceMainDialog_poSource','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
-			Update Seqsecrights Set SeqNo = (select max(rightid) from Secrights);
 			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="218" author="lakshmi.n">
-		<sql>
-			<comment>ST#10_TK#63</comment>
-			<![CDATA[
-				Update seqsecgrouprights Set SeqNo = (SELECT MAX(a.ID)  FROM (select max(GRPRIGHTID) ID from Secgrouprights_Temp
-														UNION ALL
-														select max(GRPRIGHTID) ID from Secgrouprights) a);
-			 ]]>
 		</sql>
 	</changeSet>
 
@@ -17117,25 +17033,13 @@ UNION ALL
 		<sql>
 			<comment>ST#10_TK#63</comment>
 			<![CDATA[
-					Update Seqsecrights Set SeqNo = (select max(rightid)  from Secrights);
 					Insert into SECRIGHTS values ((select max(rightid)+1  from Secrights),3,'FinanceMainDialog_sourcingBranch','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 					Insert into SECRIGHTS values ((select max(rightid)+1  from Secrights),3,'FinanceMainDialog_sourChannelCategory','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 					Insert into SECRIGHTS values ((select max(rightid)+1  from Secrights),3,'FinanceMainDialog_asmName','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
-					Update Seqsecrights Set SeqNo = (select max(rightid)  from Secrights);
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="220" author="lakshmi.n">
-		<sql>
-			<comment>ST#10_TK#63</comment>
-			<![CDATA[
-	           Update seqsecgrouprights Set SeqNo = ( SELECT MAX(a.ID)  FROM (select max(GRPRIGHTID) ID from Secgrouprights_Temp
-											UNION ALL
-										 select max(GRPRIGHTID) ID from Secgrouprights) a);
-              ]]>
-		</sql>
-	</changeSet>
 
 	<!-- <changeSet id="221" author="Shinde.b" dbms="mssql">
 		<sql>
@@ -17293,14 +17197,10 @@ UNION ALL
 		<comment>ST#1_TK#4</comment>
 		<sql>
 			<![CDATA[ 	
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerDialog_vip','CustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
 				
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'CustomerDialog_vip'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
 				]]>
 		</sql>
 	</changeSet>
@@ -17325,7 +17225,6 @@ UNION ALL
 			<![CDATA[ 	
 			INSERT INTO SecGroupRights values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode='BFSD_ORIGINATION_MAKER'),(select RightID from SecRights WHERE RightName='CustomerDocumentDialog_remarks'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
 			update secRights set rolecode=null, nextrolecode=null ,taskid=null, nexttaskid=null,recordtype=null where rightname='CustomerDocumentDialog_remarks';
-			Update seqsecgrouprights Set SeqNo =  (select max(GRPRIGHTID) from Secgrouprights);
 			]]>
 		</sql>
 	</changeSet>
@@ -17619,14 +17518,10 @@ UNION ALL
 		<comment>ST#1_TK1 new rights added for builder company</comment>
 		<sql>
 				<![CDATA[	
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 				
 				Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_State','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_State'), 1, 1, 1000, current_timestamp, null, null, null, null, null, null, 0 );
-
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);							
+											
 				]]>
 		</sql>
 	</changeSet>
@@ -17644,9 +17539,7 @@ UNION ALL
 		<comment>ST#4_TK#17</comment>
 		<sql>
 				<![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
-				
+						
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'BlacklistCustomerDialog_CustAddrType','BlacklistCustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'BlacklistCustomerDialog_CustVid','BlacklistCustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'BlacklistCustomerDialog_CustDl','BlacklistCustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
@@ -17676,9 +17569,6 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BLACKLISTCUSTOMER_MAKER'), (Select RightID from SecRights where RightName = 'BlacklistCustomerDialog_CustCmd'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BLACKLISTCUSTOMER_MAKER'), (Select RightID from SecRights where RightName = 'BlacklistCustomerDialog_custGenderCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				
-				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
 				]]>
 		</sql>
 	</changeSet>
@@ -17687,14 +17577,10 @@ UNION ALL
 		<comment>ST#1_TK#7</comment>
 		<sql>
 			<![CDATA[	
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-				
+							
 				Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'CustomerExtLiabilityDialog_InstallmentCleared','CustomerExtLiabilityDialog',1,1000,current_timestamp,null,null,null,null,null,null,0);
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CustomerExtLiability_Maker'), (Select RightID from SecRights where RightName ='CustomerExtLiabilityDialog_InstallmentCleared'), 1, 1, 1000, current_timestamp, null, null, null, null, null, null, 0 );
 				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -17721,10 +17607,7 @@ UNION ALL
 		<comment>PLF_CORE_ST#6_TK#9</comment>
 		<sql>
 			 <![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
-				Update SeqSecGroups set SeqNo = (Select max(GRPID) from SecGroups);
-				
+								
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_FinOCRStepDialog_btnNew','FinOCRStepDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
 				
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_FinOCRStepDialog_btnSave','FinOCRStepDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
@@ -17746,10 +17629,7 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_OCR_Step_MAKER'), (Select RightID from SecRights where RightName = 'FinOCRStepDialog_contributor'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_OCR_Step_MAKER'), (Select RightID from SecRights where RightName = 'FinOCRStepDialog_customerContribution'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_OCR_Step_MAKER'), (Select RightID from SecRights where RightName = 'FinOCRStepDialog_financerContribution'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
-				Update SeqSecGroups set SeqNo = (Select max(GRPID) from SecGroups);
+			
 			   ]]>
 		</sql>
 	</changeSet>
@@ -17758,9 +17638,6 @@ UNION ALL
 		<comment>ST#6_TK#8</comment>
 		<sql>
 				<![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 				
 				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'OCRSteps_Maker','Group for OCR Steps Maker', 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_OCRDetailDialog_btnDelete','OCRDetailDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
@@ -17775,9 +17652,6 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'OCRSteps_Maker'), (Select RightID from SecRights where RightName = 'OCRDetailDialog_CustomerContribution'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'OCRSteps_Maker'), (Select RightID from SecRights where RightName = 'OCRDetailDialog_FinancierContribution'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId)  from SecGroupRights);
 				]]>
 		</sql>
 	</changeSet>
@@ -17804,14 +17678,10 @@ UNION ALL
 		<comment>ST#6_TK#8</comment>
 		<sql>
 			<![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-				
+								
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_OCRHeaderDialog_btnNew_OCRSteps','OCRHeaderDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'OCR_Maker'), (Select RightID from SecRights where RightName = 'button_OCRHeaderDialog_btnNew_OCRSteps'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId)  from SecGroupRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -17846,9 +17716,6 @@ UNION ALL
 	<changeSet id="344" author="rohit.s" dbms="postgresql,oracle">
 		<sql>
 		  <![CDATA[
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			Update SeqSecGroupRights set SeqNo = (Select
-			max(GrpRightId) from SecGroupRights);
 
 			Insert into SECRIGHTS values ((select max(RightId)+1 from
 			SecRights),3,'CustomerExtLiabilityDialog_RepayFromAccNo','CustomerExtLiabilityDialog',1,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
@@ -17887,9 +17754,6 @@ UNION ALL
 			SecGroups where GrpCode = 'CustomerExtLiability_Maker'), (Select RightID from SecRights where RightName =
 			'CustomerExtLiabilityDialog_MOB'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			Update SeqSecGroupRights set SeqNo = (Select
-			max(GrpRightId) from SecGroupRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -17897,10 +17761,7 @@ UNION ALL
 	<changeSet id="344" author="rohit.s" dbms="mssql">
 		<sql>
 		  <![CDATA[
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			Update SeqSecGroupRights set SeqNo = (Select
-			max(GrpRightId) from SecGroupRights);
-
+		  
 			Insert into SECRIGHTS values ((select max(RightId)+1 from
 			SecRights),3,'CustomerExtLiabilityDialog_RepayFromAccNo','CustomerExtLiabilityDialog',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
 			Insert into SECRIGHTS values ((select max(RightId)+1 from
@@ -17936,9 +17797,6 @@ UNION ALL
 			where GrpCode = 'CustomerExtLiability_Maker'), (Select RightID from SecRights where RightName =
 			'CustomerExtLiabilityDialog_MOB'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0 );
 
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			Update SeqSecGroupRights set SeqNo = (Select
-			max(GrpRightId) from SecGroupRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -18054,9 +17912,6 @@ UNION ALL
 	<changeSet id="367" author="rajesh.n">
 		<sql>
 		<![CDATA[
-		    Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-			Update SeqSecGroups  set SeqNo = (Select max(GrpId) from SecGroups);
 			
 			INSERT INTO SecGroups values ((select max(GRPID)+1  from SecGroups), 'Fin_OCR_Capture_Maker', 'WF Maker for FinOCR', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
 			INSERT INTO SecGroups values ((select max(GRPID)+1  from SecGroups), 'Fin_OCR_Capture_Approver', 'WF Approver for FinOCR', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
@@ -18082,9 +17937,7 @@ UNION ALL
 			INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Fin_OCR_Capture_Approver'), (Select RightID from SecRights where RightName = 'button_FinOCRCaptureDialog_btnNew'), 1, 1, 1000, current_timestamp, null, null, null, null, null, null, 0 );
 		   	INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Fin_OCR_Capture_Approver'), (Select RightID from SecRights where RightName = 'button_FinOCRCaptureDialog_btnEdit'), 1, 1, 1000, current_timestamp, null, null, null, null, null, null, 0 );
 			INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_OCR_MAKER'), (Select RightID from SecRights where RightName = 'FinOCRDialog_btnNew_FinOCRCapture'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-		    Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-			Update SeqSecGroups  set SeqNo = (Select max(GrpId) from SecGroups);
+			
 			 ]]>
 		</sql>
 	</changeSet>
@@ -18101,9 +17954,7 @@ UNION ALL
 	<changeSet id="369.0" author="rajesh.n">
 		<sql>
 			<![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-				
+					
 				INSERT INTO SecRights values ((select max(RIGHTID)+1 from SecRights), 3,'JountAccountDetailDialog_authoritySignatory','JountAccountDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
 				
 				INSERT INTO SecRights values ((select max(RIGHTID)+1 from SecRights), 3,'JountAccountDetailDialog_includeIncome','JountAccountDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
@@ -18112,8 +17963,6 @@ UNION ALL
 				
 				INSERT INTO SecGroupRights values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode='BFSD_ORIGINATION_MAKER'), (select RightID from SecRights WHERE RightName='JountAccountDetailDialog_includeIncome'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
 				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -18249,14 +18098,6 @@ UNION ALL
 			GrpCode='PANMapping_Approver'), (Select RoleID From SecRoles Where
 			RoleCd='MSTGRP1_APPROVER'),0,1000,current_timestamp,NULL,NULL,NULL,NULL,NULL,NULL,0);
 
-			UPDATE SEQSECRIGHTS SET SEQNO=
-			(SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-			UPDATE
-			SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT
-			MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
-			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		</sql>
 	</changeSet>
 	
@@ -18316,14 +18157,12 @@ UNION ALL
 	<changeSet id="381" author="Madhuri.n">
 		<sql>
 			<![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-
+			
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerDialog_custPhoneType','CustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerDialog_custPhoneNumber','CustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerDialog_custPhonePriority','CustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'CustomerDialog_custPhoneButtonDelete','CustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -18331,14 +18170,12 @@ UNION ALL
 	<changeSet id="382" author="Madhuri.n">
 		<sql>
 			<![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-
+			
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerDialog_custEmailType','CustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerDialog_custEmail','CustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerDialog_custEmailPriority','CustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'CustomerDialog_custEmailButtonDelete','CustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -18346,9 +18183,7 @@ UNION ALL
 	<changeSet id="383" author="rohith.s" dbms="postgresql,oracle">
 		<sql>  
 			<![CDATA[ 
-			    Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			    Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-
+			   
 				Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_commencementCertificateNo','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 				Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_commencementCertificateIssuingAuthority','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 				Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_TotalPlotArea','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
@@ -18370,9 +18205,7 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'BuilderProjcetDialog_RCUDone'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'BuilderProjcetDialog_ConstructionCompletionPercentage'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'BuilderProjcetDialog_DisbursalRecommendedPercentage'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+
 			]]>
 		</sql>
 	</changeSet>
@@ -18380,8 +18213,6 @@ UNION ALL
 	<changeSet id="383" author="rohith.s" dbms="mssql">
 		<sql>  
 			<![CDATA[ 
-			    Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			    Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 
 				Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_commencementCertificateNo','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 				Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_commencementCertificateIssuingAuthority','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
@@ -18404,9 +18235,7 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'BuilderProjcetDialog_RCUDone'), 1, 1, 1000, CURRENT_TIMESTAMP, '','','','','','', 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'BuilderProjcetDialog_ConstructionCompletionPercentage'), 1, 1, 1000, CURRENT_TIMESTAMP, '','','','','','', 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'BuilderProjcetDialog_DisbursalRecommendedPercentage'), 1, 1, 1000, CURRENT_TIMESTAMP, '','','','','','', 0 );
-				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+		
 			]]>
 		</sql>
 	</changeSet>
@@ -18422,11 +18251,9 @@ UNION ALL
 	<changeSet id="385" author="madhuri.n">
 		<sql>
 		<![CDATA[
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 
 			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'FinanceTaxDetailDialog_btnAddressCopy','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
 
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 		]]>
 		</sql>
 	</changeSet>
@@ -18464,8 +18291,6 @@ UNION ALL
 		<comment>ST#1 and TK#25</comment>
 		<sql>
 				<![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
 				
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'BlacklistCustomerDialog_Branch','BlacklistCustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'BlacklistCustomerDialog_AdditionalDateField','BlacklistCustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
@@ -18500,9 +18325,6 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BLACKLISTCUSTOMER_MAKER'), (Select RightID from SecRights where RightName = 'BlacklistCustomerDialog_AdditionalField12'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BLACKLISTCUSTOMER_MAKER'), (Select RightID from SecRights where RightName = 'BlacklistCustomerDialog_AdditionalField13'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				
-				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
 				]]>
 		</sql>
 	</changeSet>
@@ -18511,9 +18333,7 @@ UNION ALL
 		<comment>ST#1 and TK#25</comment>
 		<sql>
 			<![CDATA[
-			   Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-   			   Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-  
+			
 			   Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'ProjectUnitsDialog_AreaConsidered','ProjectUnitsDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			   Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'ProjectUnitsDialog_CarpetArea','ProjectUnitsDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			   Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'ProjectUnitsDialog_UnitBuiltUpArea','ProjectUnitsDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
@@ -18544,8 +18364,6 @@ UNION ALL
 			   INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'ProjectUnitsDialog_GST'), 1, 1, 1000, CURRENT_TIMESTAMP, '','','','','','', 0 );
 			   INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'ProjectUnitsDialog_Remarks'), 1, 1, 1000, CURRENT_TIMESTAMP, '','','','','','', 0 );
 			  
-			   Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			   Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 	]]>
 		</sql>
 	</changeSet>
@@ -18554,8 +18372,6 @@ UNION ALL
 		<comment>ST#1 and TK#25</comment>
 		<sql>
 			<![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 			  
 			   Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'ProjectUnitsDialog_AreaConsidered','ProjectUnitsDialog',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 			   Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'ProjectUnitsDialog_CarpetArea','ProjectUnitsDialog',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
@@ -18587,8 +18403,6 @@ UNION ALL
 			   INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'ProjectUnitsDialog_GST'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 			   INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'ProjectUnitsDialog_Remarks'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 			  
-			   Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			   Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -18597,15 +18411,11 @@ UNION ALL
 		<comment>ST#1 and TK#25</comment>
 		<sql>
 			<![CDATA[
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
 			
 			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'BlacklistCustomerDialog_Source','BlacklistCustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			
 			INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BLACKLISTCUSTOMER_MAKER'), (Select RightID from SecRights where RightName = 'BlacklistCustomerDialog_Source'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-			
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
+		
 			]]>
 		</sql>
 	</changeSet>
@@ -18614,15 +18424,11 @@ UNION ALL
 		<comment>ST#1 and TK#25</comment>
 		<sql>
 			<![CDATA[
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
 			
 			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'BlacklistCustomerDialog_Source','BlacklistCustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 			
 			INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BLACKLISTCUSTOMER_MAKER'), (Select RightID from SecRights where RightName = 'BlacklistCustomerDialog_Source'), 1, 1, 1000, CURRENT_TIMESTAMP,'','','','','','', 0 );
 			
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -18649,14 +18455,12 @@ UNION ALL
 		<comment>ST#1 and TK#24</comment>
 		<sql>
 			<![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+			
 				Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),2,'button_ManualAdviseDialog_btnNewDocuments','ManualAdviseDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 				Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),2,'button_ReceiptCancellationDialog_btnNewDocuments','ReceiptCancellationDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'MANUALADVISE_MAKER'), (Select RightID from SecRights where RightName = 'button_ManualAdviseDialog_btnNewDocuments'), 1, 1, 1000, CURRENT_TIMESTAMP, '','','','','','', 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RECEIPTCANCEL_MAKER'), (Select RightID from SecRights where RightName = 'button_ReceiptCancellationDialog_btnNewDocuments'), 1, 1, 1000, CURRENT_TIMESTAMP, '','','','','','',0);
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				
 			]]>
 		</sql>
 	</changeSet>
@@ -18675,12 +18479,10 @@ UNION ALL
 		<comment>ST#4_TK#156?</comment>
 		<sql>
 			<![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
+
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'BlacklistCustomerDialog_Address','BlacklistCustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BLACKLISTCUSTOMER_MAKER'), (Select RightID from SecRights where RightName = 'BlacklistCustomerDialog_Address'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
+				
 			]]>
 		</sql>
 	</changeSet>
@@ -18688,9 +18490,7 @@ UNION ALL
 	<changeSet id="401" author="rohith.s" dbms="postgresql,oracle">
 		<comment>ST#1_TK#170</comment>
 		<sql>
-			<![CDATA[
-		Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-		Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+			<![CDATA[		
 		Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_BeneficiaryName','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_IFSC','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_BankName','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
@@ -18701,7 +18501,6 @@ UNION ALL
 		INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'BuilderProjcetDialog_BankName'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 		INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'BuilderProjcetDialog_Branch'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 		INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'BuilderProjcetDialog_AccountNo'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-		Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights); Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 		]]>
 		</sql>
 	</changeSet>
@@ -18710,8 +18509,6 @@ UNION ALL
 		<comment>ST#1_TK#170</comment>
 		<sql>
 			<![CDATA[
-		Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-		Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 		Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_BeneficiaryName','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 		Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_IFSC','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 		Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderProjcetDialog_BankName','BuilderProjcetDialog',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
@@ -18722,7 +18519,6 @@ UNION ALL
 		INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'BuilderProjcetDialog_BankName'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0 );
 		INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'BuilderProjcetDialog_Branch'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0 );
 		INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERPROJCET_MAKER'), (Select RightID from SecRights where RightName = 'BuilderProjcetDialog_AccountNo'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0 );
-		Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights); Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 		]]>
 		</sql>
 	</changeSet>
@@ -18730,14 +18526,10 @@ UNION ALL
 	<changeSet id="402.0" author="rajesh.n" dbms="postgresql,oracle">
 		<sql>
             <![CDATA[
-            Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-            Update SeqSecGroupRights set SeqNo = (Select max(RightId) from SecRights);
-            
+     
             INSERT INTO SecRights Values ((select max(RightId)+1 from  SecRights),2,'button_ChequeDetailDialog_btnFetchAccountDetails','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
             INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CHEQUEDETAIL_MAKER'), (Select RightID from SecRights where RightName = 'button_ChequeDetailDialog_btnFetchAccountDetails'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-            
-            Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-            Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId)  from SecGroupRights);
+          
             ]]>
 		</sql>
 	</changeSet>
@@ -18745,14 +18537,10 @@ UNION ALL
 	<changeSet id="402.0" author="rajesh.n" dbms="mssql">
 		<sql>
             <![CDATA[
-            Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-            Update SeqSecGroupRights set SeqNo = (Select max(RightId) from SecRights);
-            
+        
             INSERT INTO SecRights Values ((select max(RightId)+1 from  SecRights),2,'button_ChequeDetailDialog_btnFetchAccountDetails','ChequeDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
             INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CHEQUEDETAIL_MAKER'), (Select RightID from SecRights where RightName = 'button_ChequeDetailDialog_btnFetchAccountDetails'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0 );
-            
-            Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-            Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId)  from SecGroupRights);
+          
             ]]>
 		</sql>
 	</changeSet>
@@ -18878,12 +18666,6 @@ UNION ALL
 			(Select MAX(RoleID) from SecRoles WHERE RoleCd = 'OPERATIONS_MANAGER'), 1, 1000, CURRENT_TIMESTAMP, 'Approved',' ','
 			',' ',' ',' ', 0);
 
-			Update SEQSECRIGHTS set SEQNO = (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW);
-			UPDATE SEQSECGROUPS SET SEQNO = (SELECT
-			MAX(GRPID) FROM SECGROUPS_VIEW);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM
-			SECGROUPRIGHTS_VIEW);
-			Update SEQSECROLEGROUPS set SeqNo = (SELECT MAX(RoleGrpID) from SECROLEGROUPS_VIEW);
            ]]>
 		</sql>
 	</changeSet>
@@ -18951,12 +18733,6 @@ UNION ALL
 			SECROLEGROUPS), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'FIN_DOWNSIZING_APPROVER'), (Select MAX(RoleID)
 			from SecRoles WHERE RoleCd = 'OPERATIONS_MANAGER'), 1, 1000, CURRENT_TIMESTAMP, 'Approved',' ',' ',' ',' ',' ', 0);
 
-			Update SEQSECRIGHTS set SEQNO = (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW);
-			UPDATE SEQSECGROUPS SET SEQNO = (SELECT
-			MAX(GRPID) FROM SECGROUPS_VIEW);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM
-			SECGROUPRIGHTS_VIEW);
-			Update SEQSECROLEGROUPS set SeqNo = (SELECT MAX(RoleGrpID) from SECROLEGROUPS_VIEW);
           ]]>
 		</sql>
 	</changeSet> -->
@@ -19020,10 +18796,7 @@ UNION ALL
 		<comment>ST#6_TK#32</comment>
 		<sql>
             <![CDATA[
-			
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-
+	
 					INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PMAY_Maker','Group for PMAY Maker', 1, 1000, CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0) ;
 					INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PMAY_Approver','Group for PMAY Approver', 1, 1000, CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0) ;
 											
@@ -19065,11 +18838,7 @@ UNION ALL
 					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PMAY_MAKER'), (Select RightID from SecRights where RightName = 'PmayDialog_ApplicationID'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 					
 					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PMAY_Approver'), (Select RightID from SecRights where RightName = 'button_PmayDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PMAY_Approver'), (Select RightID from SecRights where RightName = 'menu_Item_PMAY'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-					
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-					
+					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PMAY_Approver'), (Select RightID from SecRights where RightName = 'menu_Item_PMAY'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );				
 			
 			    ]]>
 		</sql>
@@ -19079,10 +18848,7 @@ UNION ALL
 		<comment>ST#6_TK#32</comment>
 		<sql>
             <![CDATA[
-			
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-
+		
 					INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PMAY_Maker','Group for PMAY Maker', 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
 					INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PMAY_Approver','Group for PMAY Approver', 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
 											
@@ -19125,11 +18891,7 @@ UNION ALL
 					
 					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PMAY_Approver'), (Select RightID from SecRights where RightName = 'button_PmayDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, ' ',' ',' ',' ',' ',' ', 0 );
 					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PMAY_Approver'), (Select RightID from SecRights where RightName = 'menu_Item_PMAY'), 1, 1, 1000, CURRENT_TIMESTAMP, ' ',' ',' ',' ',' ',' ', 0 );
-					
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-					
-			
+				
 			    ]]>
 		</sql>
 	</changeSet>
@@ -19167,12 +18929,8 @@ UNION ALL
 		<comment>ST#6_TK#32</comment>
 		<sql>
             <![CDATA[
-			    	Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 					INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0,'menu_Item_VerificationStsReport','MENU',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
 					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_ADMIN'), (Select RightID from SecRights where RightName = 'menu_Item_VerificationStsReport'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-				 	Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				  	Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);	
 			    ]]>
 		</sql>
 	</changeSet>
@@ -19252,14 +19010,10 @@ UNION ALL
 	<changeSet id="432" author="rajesh.n" dbms="postgresql,oracle">
 		<sql>
 			<![CDATA[
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 					INSERT INTO SecRights values ((select max(RIGHTID)+1 from SecRights), 2,'button_CustomerDialog_btnUploadExternalLiability','CustomerDialog',0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
 					INSERT INTO SecRights values ((select max(RIGHTID)+1 from SecRights), 2,'button_CustomerDialog_btnDownloadExternalLiability','CustomerDialog',0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
 					INSERT INTO SecGroupRights values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode='BFSD_ORIGINATION_MAKER'), (select RightID from SecRights WHERE RightName='button_CustomerDialog_btnUploadExternalLiability'),1,0,10000,current_timestamp,'Approved',null,null,null,null,null,0 );
 					INSERT INTO SecGroupRights values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode='BFSD_ORIGINATION_MAKER'), (select RightID from SecRights WHERE RightName='button_CustomerDialog_btnDownloadExternalLiability'),1,0,10000,current_timestamp,'Approved',null,null,null,null,null,0 );
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -19267,15 +19021,11 @@ UNION ALL
 	<changeSet id="433.0" author="rajesh.n" dbms="mssql">
 		<sql>
 			<![CDATA[
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-
+					
 					INSERT INTO SecRights values ((select max(RIGHTID)+1 from SecRights), 2,'button_CustomerDialog_btnUploadExternalLiability','CustomerDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
 					INSERT INTO SecRights values ((select max(RIGHTID)+1 from SecRights), 2,'button_CustomerDialog_btnDownloadExternalLiability','CustomerDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
 					INSERT INTO SecGroupRights values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode='BFSD_ORIGINATION_MAKER'), (select RightID from SecRights WHERE RightName='button_CustomerDialog_btnUploadExternalLiability'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
 					INSERT INTO SecGroupRights values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode='BFSD_ORIGINATION_MAKER'), (select RightID from SecRights WHERE RightName='button_CustomerDialog_btnDownloadExternalLiability'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -19327,11 +19077,8 @@ UNION ALL
 		<comment>ST#27 and TK#103</comment>
 		<sql>
 			<![CDATA[
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 
 					INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_FinancialSummaryDailog_VerificationStatusReport','FinancialSummaryDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
-
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 
 			]]>
 		</sql>
@@ -19341,9 +19088,7 @@ UNION ALL
 		<comment>secrights  data </comment>
 		<sql>
 			<![CDATA[
-				Update SeqSecGroups set SeqNo = (Select max(GrpId) from SecGroups);
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
+				
 				INSERT INTO SecGroups Values ((select max(GrpId)+1 from SecGroups), 'COVENANT_MAKER', 'Group for COVENANT maker', 1, '1000', CURRENT_TIMESTAMP, 'Approved','','','','','',0);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Remark','CovenantDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Remark'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
@@ -19353,8 +19098,7 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_ActualValue'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),2,'button_CovenantDialog_doocumRecieved','CovenantDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='COVENANT_MAKER'),(select RightId from secRights where RightName='button_CovenantDialog_doocumRecieved'),1,0,1000,current_timestamp, 'Approved',null,null,null,null,null,0);
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
+				
 			]]>
 		</sql>
 	</changeSet>
@@ -19364,9 +19108,6 @@ UNION ALL
 	<changeSet id="442" author="rajesh.n">
 		<sql>
 			<![CDATA[ 			
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
-					Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
 					
 					INSERT INTO SECGROUPS VALUES ((Select MAX(GrpID)+1 From SecGroups), 'VETTING_RECORDING_MAKER','Vetting Recording Maker', 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
 					INSERT INTO SECGROUPS VALUES ((Select MAX(GrpID)+1 From SecGroups), 'VETTING_RECORDING_APPROVER','Vetting Recording Approver', 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
@@ -19413,10 +19154,7 @@ UNION ALL
 					INSERT INTO SECGROUPRIGHTS VALUES((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'VETTING_RECORDING_APPROVER'), (Select RightID from SecRights where RightName = 'button_LegalVettingVerificationDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, ' ',' ',' ',' ',' ',' ', 0 );
 					INSERT INTO SECGROUPRIGHTS VALUES((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'VETTING_RECORDING_APPROVER'), (Select RightID from SecRights where RightName = 'menu_Item_LegalVetting_Initiation'), 1, 1, 1000, CURRENT_TIMESTAMP, ' ',' ',' ',' ',' ',' ', 0 );
 					INSERT INTO SECGROUPRIGHTS VALUES((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'VETTING_RECORDING_APPROVER'), (Select RightID from SecRights where RightName = 'menu_Item_LegalVettingVerification'), 1, 1, 1000, CURRENT_TIMESTAMP, ' ',' ',' ',' ',' ',' ', 0 );
-					
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);		
+				
 				]]>
 		</sql>
 	</changeSet>
@@ -19445,9 +19183,7 @@ UNION ALL
 <!-- 	<changeSet id="445" author="tejaswi.b">
 		<sql>
 	<![CDATA[
-			Update SEQSECRIGHTS set SeqNo = (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
-
+	
 			INSERT INTO SECRIGHTS VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTypeDialog_AutoIncrGrcEndDate', 'FinanceTypeDialog', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 			INSERT INTO	SECRIGHTS VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTypeDialog_GrcPeriodAftrFullDisb', 'FinanceTypeDialog', 1,	1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 			INSERT INTO SECRIGHTS VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTypeDialog_UnderConstruction', 'FinanceTypeDialog', 1,	1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
@@ -19466,8 +19202,6 @@ UNION ALL
 			INSERT INTO	SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE =	'BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE	RIGHTNAME = 'FinanceMainDialog_EndGrcPeriodAftrFullDisb'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 			INSERT INTO	SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE =	'BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE	RIGHTNAME = 'FinanceMainDialog_AutoIncGrcEndDate'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 
-			Update SEQSECRIGHTS set SeqNo = (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 			]]>
 		</sql>
 	</changeSet> -->
@@ -19542,9 +19276,6 @@ UNION ALL
 				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PMAY_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_PmayDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
 				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PMAY_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_PMAY'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
 				
-			    UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 		]]>
 		</sql>
 	</changeSet>
@@ -19612,8 +19343,6 @@ UNION ALL
 			INSERT INTO SECRIGHTS VALUES ((Select max(RightID)+1 from SECRIGHTS),3,'FeeReceiptDialog_AllocatePaid','FeeReceiptDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);			
 			INSERT INTO SecGroupRights( GrpRightID, GrpID, RightID, AccessType, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ) Values (  (select max(GrpRightID) + 1 from SecGroupRights) , (select GrpID from SECGROUPS where GrpCode ='FEERECEIPT_MAKER') , (select RightID from SecRights where RightName ='FeeReceiptDialog_AllocatePaid') ,1,1,1000,CURRENT_TIMESTAMP,'Approved' ,'' ,'' ,'' ,'' ,'' ,0 ) ;
 			
-			Update SeqSecRights Set SeqNo= (Select MAX(RIGHTID) + 1 from SecRights_View);
-			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights_View);
 			]]>
 		</sql>
 	</changeSet>
@@ -19636,9 +19365,7 @@ UNION ALL
 					
 					INSERT INTO SecGroupRights Values (  (select max(GrpRightID) + 1 from SecGroupRights) , (select GrpID from SECGROUPS where GrpCode ='RECEIPTCANCEL_MAKER') , (select RightID from SecRights where RightName ='ReceiptCancellationDialog_bounceCode') ,1,1,1000,CURRENT_TIMESTAMP,'Approved' ,'' ,'' ,'' ,'' ,'' ,0 ) ;
 					INSERT INTO SecGroupRights Values (  (select max(GrpRightID) + 1 from SecGroupRights) , (select GrpID from SECGROUPS where GrpCode ='RECEIPTCANCEL_MAKER') , (select RightID from SecRights where RightName ='ReceiptCancellationDialog_bounceRemarks') ,1,1,1000,CURRENT_TIMESTAMP,'Approved' ,'' ,'' ,'' ,'' ,'' ,0 ) ;
-					
-					Update SeqSecRights Set SeqNo= (Select MAX(RIGHTID) + 1 from SecRights_View);
-					Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights_View);
+				
 					]]>
 		</sql>
 	</changeSet>
@@ -19671,9 +19398,6 @@ UNION ALL
 					
 					INSERT INTO SecGroupRights Values (  (select max(GrpRightID) + 1 from SecGroupRights) , (select GrpID from SECGROUPS where GrpCode ='FinFeeRefund_Approver') , (select RightID from SecRights where RightName ='button_FinFeeRefundDialog_btnSave') ,1,1,1000,CURRENT_TIMESTAMP,'Approved' ,'' ,'' ,'' ,'' ,'' ,0 ) ;
 					
-					Update SeqSecRights Set SeqNo= (Select MAX(RIGHTID) + 1 from SecRights_View);
-					Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups_View);
-					Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights_View);
 				]]>
 		</sql>
 	</changeSet>
@@ -19696,7 +19420,6 @@ UNION ALL
 			<![CDATA[
 			INSERT INTO SecRoles  VALUES ((select max(RoleID)+1 from SecRoles),1,'FINFEEREFUND_MAKER','Maker for Fee Refund','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
 			INSERT INTO SecRoles  VALUES ((select max(RoleID)+1 from SecRoles),1,'FINFEEREFUND_APPROVER','Approver for Fee Refund','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
-			UPDATE SeqSecRoles SET SeqNo = (Select MAX(RoleID) + 1 from SecRoles_View);
 			]]>
 		</sql>
 	</changeSet>
@@ -19706,7 +19429,6 @@ UNION ALL
 			<![CDATA[
 				INSERT INTO SecRoleGroups VALUES((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FinFeeRefund_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='FINFEEREFUND_MAKER'),0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);			UPDATE SeqSecRoles SET SeqNo = (Select MAX(RoleID) + 1 from SecRoles_View);
 				INSERT INTO SecRoleGroups VALUES((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FinFeeRefund_Approver'), (Select  RoleID  From SecRoles Where RoleCd='FINFEEREFUND_APPROVER'),0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
-				UPDATE SeqSecRoleGroups SET SeqNo = (Select MAX(RoleID) + 1 from SecRoleGroups_View);
 					]]>
 		</sql>
 	</changeSet>-->
@@ -19728,9 +19450,6 @@ UNION ALL
 			
 			INSERT INTO SecGroupRights Values (  (select max(GrpRightID) + 1 from SecGroupRights) , (select GrpID from SECGROUPS where GrpCode ='FinFeeRefund_MAKER') , (select RightID from SecRights where RightName ='menuItem_Enquiry_FinFeeRefundEnquiry') ,1,1,1000,CURRENT_TIMESTAMP,'Approved' ,'' ,'' ,'' ,'' ,'' ,0 ) ;
 			INSERT INTO SecGroupRights Values (  (select max(GrpRightID) + 1 from SecGroupRights) , (select GrpID from SECGROUPS where GrpCode ='FinFeeRefund_Approver') , (select RightID from SecRights where RightName ='menuItem_Enquiry_FinFeeRefundEnquiry') ,1,1,1000,CURRENT_TIMESTAMP,'Approved' ,'' ,'' ,'' ,'' ,'' ,0 ) ;
-			
-			Update SeqSecRights Set SeqNo= (Select MAX(RIGHTID) + 1 from SecRights_View);
-			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights_View);
 			]]>
 		</sql>
 	</changeSet> -->
@@ -19829,8 +19548,6 @@ UNION ALL
 				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PMAY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_PmayDialog_btnFinalElgbty'),1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
 				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PMAY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_PmayDialog_btnPMAYElgbty'),1,0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
 				
-				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 			]]>
 		</sql>
 	</changeSet>
@@ -19880,9 +19597,7 @@ UNION ALL
 
 				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PMAY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_PmayEnquiry'),1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
 				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PMAY_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_PmayEnquiry'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-
-				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				
 			]]>
 		</sql>
 	</changeSet>
@@ -19890,9 +19605,6 @@ UNION ALL
 	<changeSet id="480" author="lakshmi">
 		<sql>
 		<![CDATA[
-	    
-		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 		
 		Delete from SecGroupRights Where Grpid IN (Select grpId From SecGroups where Grpcode = 'FINANCETYPE_MAKER') And Rightid IN (Select Rightid from secRights Where Rightname IN ('FinTypeFeesDialog_percType','FinTypeFeesDialog_percRule'));
 		Delete from SecRights Where Rightname IN ('FinTypeFeesDialog_percType','FinTypeFeesDialog_percRule');
@@ -19905,8 +19617,6 @@ UNION ALL
 
 		INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'FINANCETYPE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'FinTypeFeesDialog_percRule'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 
-		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 		]]>
 		</sql>
 	</changeSet>
@@ -19914,9 +19624,6 @@ UNION ALL
 	<changeSet id="481" author="lakshmi">
 		<sql>
 			<![CDATA[
-				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);		
 				
 				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS) , 0, 'menuItem_RulesFactory_FeePercRule','MENU',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
 				INSERT INTO SecRights Values ((Select MAX(RightID)+1 From SecRights), 2, 'button_RuleList_NewFeePerc', 'RuleList', 1, 1000, NULL, 'Approved',' ',' ',' ',' ',' ',0);
@@ -19938,10 +19645,6 @@ UNION ALL
 				INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'FEEPERCRULE_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, NULL, 'Approved',' ',' ',' ',' ',' ', 0);
 				INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'FEEPERCRULE_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, NULL, 'Approved',' ',' ',' ',' ',' ', 0);
 								
-				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
-				
 				]]>
 		</sql>
 	</changeSet>
@@ -20011,12 +19714,8 @@ UNION ALL
 		<comment>ST#40_TK#115</comment>
 		<sql>
             <![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0,'menu_Item_PMAYDetails','MENU',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_ADMIN'), (Select RightID from SecRights where RightName = 'menu_Item_PMAYDetails'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -20094,8 +19793,6 @@ UNION ALL
 		<comment>ST#40_TK#115</comment>
 		<sql>
             <![CDATA[
-				Update SEQSECRIGHTS set SeqNo = (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS);
-				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'FinanceMainDialog_gb_sourcingDetails','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'FinanceMainDialog_gb_basicDetails','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'FinanceMainDialog_gb_gracePeriodDetails','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
@@ -20107,9 +19804,6 @@ UNION ALL
 				INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'FinanceMainDialog_gb_gracePeriodDetails'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 				INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'FinanceMainDialog_gb_repaymentDetails'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 				INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'FinanceMainDialog_gb_OverDuePenalty'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-
-				Update SEQSECRIGHTS set SeqNo = (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS);
-				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 			]]>
 		</sql>
 	</changeSet>
@@ -20156,11 +19850,8 @@ UNION ALL
 		<comment>ST#42 and TK#117 </comment>
 		<sql>
 				<![CDATA[
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 		
 					INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0,'menu_Item_HunterUploadDialog','MENU',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
-		
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 		
 			]]>
 		</sql>
@@ -20169,10 +19860,8 @@ UNION ALL
 	<changeSet id="500" author="rajesh.n">
 		<sql>
 			<![CDATA[
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'FinanceMainDialog_FIVerificationValidityCheckRequired','FinanceMainDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
 			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'FinanceMainDialog_RCUVerificationValidityCheckRequired','FinanceMainDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -20224,15 +19913,11 @@ UNION ALL
 		<comment>ST#48 and TK#128</comment>
 		<sql>
 				<![CDATA[
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
 
 					INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'BlacklistCustomerDialog_AdditionalField14','BlacklistCustomerDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 
 					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BLACKLISTCUSTOMER_MAKER'), (Select RightID from SecRights where RightName = 'BlacklistCustomerDialog_AdditionalField14'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GRPRightId) from SecGroupRights);
 				]]>
 		</sql>
 	</changeSet>
@@ -20291,8 +19976,6 @@ UNION ALL
 		<comment>ST#524</comment>
 		<sql>
 				<![CDATA[
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 
 					
 					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_AlwPlannedEmiHolidayInGrace');
@@ -20307,8 +19990,6 @@ UNION ALL
 					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_AlwPlannedEmiHolidayInGrace'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LAP_SSO') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_AlwPlannedEmiHolidayInGrace'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 					
-					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 				]]>
 		</sql>
 	</changeSet>
@@ -20421,12 +20102,9 @@ UNION ALL
 	<changeSet id="607.0" author="rajesh.n">
 		<sql>
 			<![CDATA[
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'FeeReceiptDialog_bankBranch','FeeReceiptDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
 			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'FEERECEIPT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'FeeReceiptDialog_bankBranch'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);]]>
+			]]>
 		</sql>
 	</changeSet>
 
@@ -20563,8 +20241,6 @@ UNION ALL
 	<changeSet id="621" author="madhuri.n">
 		<sql>
 			<![CDATA[
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 				
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerBankInfoDialog_PhoneNumber','CustomerBankInfoDialog',0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0);
 				
@@ -20580,8 +20256,6 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'CustomerBankInfoDialog_AccountHolderName'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'LAP_SSO'), (Select RightID from SecRights where RightName = 'CustomerBankInfoDialog_AccountHolderName'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				
-				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId)  from SecGroupRights);
 			]]>
 		</sql>
 	</changeSet>
@@ -22916,17 +22590,13 @@ UNION ALL
 	<changeSet id="03" author="Ganesh.P">
 		<sql>
 			<![CDATA[
-				Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
-				Update seqSecGroupRights set SeqNo=(select max(GrpRightID) from SecGroupRights);
-				
+
 				INSERT INTO SECRIGHTS (RightID,RightType,RightName,Page,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId) VALUES ((Select Max(RightID)+1 From SECRIGHTS),3,'FinAdvancePaymentsDialog_vasReference','FinAdvancePaymentsDialog',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
 		
 				INSERT INTO SecGroupRights( GrpRightID, GrpID, RightID, AccessType, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ) Values (  (select max(GrpRightID) + 1 from SecGroupRights) , (select GrpID from SECGROUPS where GrpCode ='FinAdvancePayments_Maker') , (select RightID from SecRights where RightName ='FinAdvancePaymentsDialog_vasReference') ,1,1,1000,CURRENT_TIMESTAMP,'Approved' ,'' ,'' ,'' ,'' ,'' ,0 ) ;
 				INSERT INTO SecGroupRights( GrpRightID, GrpID, RightID, AccessType, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ) Values (  (select max(GrpRightID) + 1 from SecGroupRights) , (select GrpID from SECGROUPS where GrpCode ='CL_ORIGINATION_MAKER') , (select RightID from SecRights where RightName ='FinAdvancePaymentsDialog_vasReference') ,1,1,1000,CURRENT_TIMESTAMP,'Approved' ,'' ,'' ,'' ,'' ,'' ,0 ) ;
 				INSERT INTO SecGroupRights( GrpRightID, GrpID, RightID, AccessType, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ) Values (  (select max(GrpRightID) + 1 from SecGroupRights) , (select GrpID from SECGROUPS where GrpCode ='BFSD_ORIGINATION_MAKER') , (select RightID from SecRights where RightName ='FinAdvancePaymentsDialog_vasReference') ,1,1,1000,CURRENT_TIMESTAMP,'Approved' ,'' ,'' ,'' ,'' ,'' ,0 ) ;
-	
-				Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
-				Update seqSecGroupRights set SeqNo=(select max(GrpRightID) from SecGroupRights);
+				
 			]]>
 		</sql>
 	</changeSet>
@@ -31092,19 +30762,12 @@ UNION ALL
 			delete from secroles where rolecd = 'VETTING_MAKER';
 			delete from secroles where rolecd = 'VETTING_APPROVER';
 			
-			UPDATE SeqSecRoles SET SeqNo = (Select MAX(RoleID) + 1 from SecRoles_View);
-			
 			INSERT INTO SecRoles VALUES ((select max(RoleID) + 1 from SecRoles), 1, 'VETTING_MAKER', 'VETTING_MAKER', '', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			INSERT INTO SecRoles VALUES ((select max(RoleID) + 1 from SecRoles), 1, 'VETTING_APPROVER', 'VETTING_APPROVER', '', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-			
-			UPDATE SeqSecRoles SET SeqNo = (Select MAX(RoleID) + 1 from SecRoles_View);
-			
-			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 			
 			INSERT INTO SECROLEGROUPS values ((SELECT MAX(RoleGrpID)+1 from SECROLEGROUPS), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'VETTING_RECORDING_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'VETTING_MAKER'), 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			INSERT INTO SECROLEGROUPS values ((SELECT MAX(RoleGrpID)+1 from SECROLEGROUPS), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'VETTING_RECORDING_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'VETTING_APPROVER'), 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			
-			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		]]>
 		</sql>
 	</changeSet>
@@ -31121,7 +30784,6 @@ UNION ALL
 	<changeSet id="DE#003.1" author="Gopal.p">
 		<sql>  
 			<![CDATA[ 
-			    Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 				
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'CustomerDialog_custPhoneType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'CustomerDialog_custPhoneNumber'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
@@ -31132,8 +30794,7 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'CustomerDialog_custEmail'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'CustomerDialog_custEmailPriority'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'CustomerDialog_custEmailButtonDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
-				
-				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+			
 			]]>
 		</sql>
 	</changeSet>
