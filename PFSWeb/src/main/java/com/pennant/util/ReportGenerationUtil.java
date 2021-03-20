@@ -65,7 +65,6 @@ import org.zkoss.zhtml.Filedownload;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportCreationUtil;
@@ -286,7 +285,7 @@ public class ReportGenerationUtil implements Serializable {
 			reportArgumentsMap.put("userName", userName);
 			reportArgumentsMap.put("reportHeading", reportName);
 			reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
-			reportArgumentsMap.put("appDate", DateUtility.getAppDate());
+			reportArgumentsMap.put("appDate", SysParamUtil.getAppDate());
 			reportArgumentsMap.put("appCcy", SysParamUtil.getAppCurrency());
 			reportArgumentsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
 			reportArgumentsMap.put("unitParam", "Pff");
