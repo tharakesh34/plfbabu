@@ -1887,7 +1887,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_NEFT)
 				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_RTGS)
-				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_IMPS)) {
+				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_IMPS)
+				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_DIGITAL)) {
 
 			if (!this.transactionRef.isReadonly()) {
 				this.transactionRef.setConstraint(
