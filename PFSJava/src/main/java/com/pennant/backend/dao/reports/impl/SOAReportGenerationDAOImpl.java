@@ -694,6 +694,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(" Left Join CustomerPhoneNumbers T6 ON T1.CustID = T6.PhoneCustID  and PHONETYPEPRIORITY = 5");
 		selectSql.append(" Left Join CustomerEMails T7 on T7.CustID = T1.CustID and CustEmailPriority = 5");
 		selectSql.append(" Left Join BMTSalutations T8 ON T1.CustSalutationCode = T8.SalutationCode");
+		selectSql.append(" and T1.CustGenderCode = T8.SalutationGenderCode");
 		selectSql.append(" Where T1.CustID = :CustID");
 
 		logger.trace(Literal.SQL + selectSql.toString());
