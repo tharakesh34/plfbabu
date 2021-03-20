@@ -72,7 +72,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"noOfDependents", "custTypeCode", "custSector", "custSubSector", "custSegment", "custSubSegment",
 		"custIndustry", "custGroupID", "custParentCountry", "custRiskCountry", "custIsStaff", "custStaffID",
 		"custEmpSts", "custDSA", "custDSADept", "custAddlDec1", "subCategory", "casteId", "religionId",
-		"custShrtNameLclLng", "returnStatus", "custCRCPR" })
+		"custShrtNameLclLng", "returnStatus", "custCRCPR", "custResidentialSts" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class Customer extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 2198471029043076055L;
@@ -359,6 +359,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String lovDescNatureOfBusiness;
 	private String entityType;
 	private String lovDescEntityType;
+	@XmlElement
 	private String custResidentialSts;
 	private String lovDescCustResidentialSts;
 	private String qualification;

@@ -212,7 +212,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(", CustSuspTrigger, ApplicationNo, Dnd, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CasteId");
 		sql.append(", ReligionId, SubCategory, MarginDeviation, ResidentialStatus");
-		sql.append(", OtherCaste, OtherReligion, NatureOfBusiness, EntityType, CustResidentialSts, Qualification, Vip"); 
+		sql.append(", OtherCaste, OtherReligion, NatureOfBusiness, EntityType, CustResidentialSts, Qualification, Vip");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescCustTypeCodeName, LovDescCustMaritalStsName, LovDescCustEmpStsName");
@@ -238,13 +238,13 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
 				Customer c = new Customer();
-					c.setNatureOfBusiness(rs.getString("NatureOfBusiness"));
-					c.setQualification(rs.getString("Qualification"));
-					c.setOtherReligion(rs.getString("OtherReligion"));
-					c.setVip(rs.getBoolean("Vip"));
-					c.setCustResidentialSts(rs.getString("CustResidentialSts"));
-					c.setOtherCaste(rs.getString("OtherCaste"));
-					c.setEntityType(rs.getString("EntityType"));
+				c.setNatureOfBusiness(rs.getString("NatureOfBusiness"));
+				c.setQualification(rs.getString("Qualification"));
+				c.setOtherReligion(rs.getString("OtherReligion"));
+				c.setVip(rs.getBoolean("Vip"));
+				c.setCustResidentialSts(rs.getString("CustResidentialSts"));
+				c.setOtherCaste(rs.getString("OtherCaste"));
+				c.setEntityType(rs.getString("EntityType"));
 
 				c.setCustID(rs.getLong("CustID"));
 				c.setCustCIF(rs.getString("CustCIF"));
@@ -1587,12 +1587,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" fm.FinReference, fm.FinType, fm.FinStatus, fm.FinStartDate, fm.FinCcy, fm.FinAmount");
 		sql.append(", fm.DownPayment, fm.FeeChargeAmt, fm.FinCurrAssetValue, fm.InsuranceAmt");
 		sql.append(", fm.FinRepaymentAmount, fm.NumberOfTerms, ft.FintypeDesc as LovDescFinTypeName");
-		sql.append(", coalesce(t6.MaxinstAmount, 0) MaxInstAmount, csc.custstsdescription as loanStsDesc");
+		sql.append(", coalesce(t6.MaxinstAmount, 0) MaxInstAmount");
 		sql.append(" from FinanceMain fm");
 		sql.append(" inner join RMTfinanceTypes ft on ft.Fintype = fm.FinType");
 		sql.append(" left join (select FinReference, (NSchdPri+NSchdPft) MaxInstAmount");
 		sql.append(" from FinPftdetails) t6 on t6.FinReference = fm.Finreference");
-		sql.append(" left join BMTCustStatusCodes csc on csc.custstscode = fm.FinStatus");
 		sql.append(" where CustID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -2987,11 +2986,17 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		StringBuilder sql = new StringBuilder("select custCIF");
 		sql.append(" FROM  Customers");
 		sql.append("_View");
-		sql.append(" Where CustCRCPR =:CustCRCPR and CustCtgCode=:CustCtgCode");
+		sql.append(" Where CustCRCPR =:CustCRCPR");
+		if (custCtgCode != null) {
+			sql.append(" and CustCtgCode=:CustCtgCode");
+		}
+
 		logger.trace("Sql: " + sql.toString());
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("CustCRCPR", custCRCPR);
-		parameterSource.addValue("CustCtgCode", custCtgCode);
+		if (custCtgCode != null) {
+			parameterSource.addValue("CustCtgCode", custCtgCode);
+		}
 
 		try {
 			cifs = this.jdbcTemplate.queryForList(sql.toString(), parameterSource, String.class);

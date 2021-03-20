@@ -164,7 +164,6 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
-import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -836,10 +835,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		financeEnquiryList.addAll(getFinanceMainDAO().getAllFinanceDetailsByCustId(id));
 		customerDetails.setCustomerFinances(financeEnquiryList);
 
-		List<CustomerFinanceDetail> customerFinanceDetail = approvalStatusEnquiryService
-				.getListOfCustomerFinanceById(id, null);
-
-		customerDetails.setCustomerFinanceDetailList(customerFinanceDetail);
+		if (approvalStatusEnquiryService != null) {
+			customerDetails
+					.setCustomerFinanceDetailList(approvalStatusEnquiryService.getListOfCustomerFinanceById(id, null));
+		}
 
 		logger.debug(Literal.LEAVING);
 		return customerDetails;
@@ -1042,7 +1041,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 */
 	@Override
 	public CustomerDetails getApprovedCustomerById(long id) {
-		return getCustomerById(id, "_AView");
+		return getCustomerById(id, "");
 	}
 
 	/**
@@ -1457,7 +1456,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					customerDocument.setFinReference(financeMain.getFinReference());
 					customerDocument.setOfferId(StringUtils.trimToEmpty(financeMain.getOfferId()));
 					customerDocument.setApplicationNo(StringUtils.trimToEmpty(financeMain.getApplicationNo()));
-					customerDocument.setLovDescCustCIF(customerDetails.getCustomer().getCustCIF());
 					saveDocument(DMSModule.CUSTOMER, null, customerDocument);
 
 					customerDocumentDAO.save(customerDocument, tableType);
@@ -2768,6 +2766,31 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						auditDetail.setErrorDetail(errorDetail);
 					}
 				}
+			}
+
+			//Customer Residential Status validation
+			Customer customer = customerDetails.getCustomer();
+			if (customer != null) {
+				String custResidentialSts = customer.getCustResidentialSts();
+				if (StringUtils.isNotBlank(custResidentialSts)) {
+					final List<ValueLabel> residentialList = PennantStaticListUtil.getResidentialStsList();
+					boolean isSource = false;
+					for (ValueLabel source : residentialList) {
+						if (StringUtils.equals(custResidentialSts, source.getValue())) {
+							isSource = true;
+							break;
+						}
+					}
+					if (!isSource) {
+						ErrorDetail errorDetail = new ErrorDetail();
+						String[] valueParam = new String[2];
+						valueParam[0] = "custResidentialSts";
+						valueParam[1] = custResidentialSts;
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParam));
+						auditDetail.setErrorDetail(errorDetail);
+					}
+				}
+
 			}
 		} else {
 			if (customerDetails.getCustomerIncomeList() != null && customerDetails.getCustomerIncomeList().size() > 0) {
@@ -4438,36 +4461,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			errorParameters[0] = PennantJavaUtil.getLabel("label_CustCoreBank") + ":" + customer.getCustCoreBank();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errorParameters, null));
 		}
-		boolean isDuplicateCrcpr = false;
-		List<String> cifs = null;
+		//Checking duplicate CRCPR  with cust category
 		if (StringUtils.isNotBlank(customer.getCustCRCPR())//PSD#151343 while overriding customer getting pan validation from coapp screen
 				&& SysParamUtil.isAllowed(SMTParameterConstants.CUST_PAN_VALIDATION) && !customer.isSkipDedup()) {
-			String[] errorParameters = new String[2];
-			cifs = customerDAO.isDuplicateCRCPR(customer.getCustID(), customer.getCustCRCPR(),
-					customer.getCustCtgCode());
-			if (CollectionUtils.isNotEmpty(cifs)) {
-				for (String detail : cifs) {
-					if (!StringUtils.equals(customer.getCustCIF(), detail)) {
-						errorParameters[0] = PennantJavaUtil.getLabel("label_CustCRCPR") + ":"
-								+ PennantApplicationUtil.formatEIDNumber(customer.getCustCRCPR());
-						errorParameters[1] = PennantJavaUtil.getLabel("label_Cif") + ": {" + detail + "}";
-
-						auditDetail.setErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41018", errorParameters, null));
-					}
-				}
-			}
+			isDuplicateCRCPR(auditDetail, customer, false);
 		} else if (StringUtils.isNotBlank(customer.getCustCRCPR()) && !customer.isSkipDedup()) {
-			isDuplicateCrcpr = isDuplicateCrcpr(customer.getCustID(), customer.getCustCRCPR());
-			if (isDuplicateCrcpr) {
-				String[] errorParameters = new String[1];
-				errorParameters[0] = PennantJavaUtil.getLabel("label_CustTradeLicenseNumber") + ":"
-						+ customer.getCustCRCPR();
-
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errorParameters, null));
-			}
-
+			//Checking duplicate CRCPR with cust category
+			isDuplicateCRCPR(auditDetail, customer, true);
 		}
+
+		//PAN 4th Letter Mapping check
 		if (StringUtils.isNotBlank(customer.getCustCRCPR()) && StringUtils.isNotBlank(customer.getCustTypeCode())) {
 			String[] errorParameters = new String[2];
 			CustTypePANMapping custTypePANMapping = new CustTypePANMapping();
@@ -4531,14 +4534,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditDetail;
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Customer Ratings
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
 	private List<AuditDetail> processingRatingList(List<AuditDetail> auditDetails, String type, long custId) {
 
 		boolean saveRecord = false;
@@ -4624,14 +4619,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Customer Ratings
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
 	private List<AuditDetail> processingCustomerEmploymentDetailList(List<AuditDetail> auditDetails, String type,
 			long custId) {
 
@@ -4720,14 +4707,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Customer PRelations
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
 	private List<AuditDetail> processingIncomeList(List<AuditDetail> auditDetails, String type, long custId) {
 
 		boolean saveRecord = false;
@@ -4815,14 +4794,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Customer PRelations
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
 	private List<AuditDetail> processingEMailList(List<AuditDetail> auditDetails, String type, long custId) {
 
 		boolean saveRecord = false;
@@ -4908,14 +4879,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Customer Address
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
 	private List<AuditDetail> processingAddressList(List<AuditDetail> auditDetails, String type, long custId) {
 
 		boolean saveRecord = false;
@@ -5001,14 +4964,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Customer Documents
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
 	private List<AuditDetail> processingDocumentList(List<AuditDetail> auditDetails, String type, long custId) {
 
 		boolean saveRecord = false;
@@ -5103,14 +5058,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Customer Bank Information
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
 	private List<AuditDetail> processingBankInfoList(List<AuditDetail> auditDetails, String type, long custId) {
 
 		boolean saveRecord = false;
@@ -5242,13 +5189,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Bank Information Details
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @return
-	 */
 	private List<AuditDetail> processingBankInfoDetailList(List<AuditDetail> auditDetails, String type, long bankId) {
 
 		boolean saveRecord = false;
@@ -5334,13 +5274,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditDetails;
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Bank Information Details
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @return
-	 */
 	private void processingBankInfoSubDetailList(BankInfoDetail bankInfoDetail, String type, long bankId) {
 		logger.debug(Literal.ENTERING);
 
@@ -5572,14 +5505,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditDetails;
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Customer Bank Information
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
 	private List<AuditDetail> processingChequeInfoList(List<AuditDetail> auditDetails, String type, long custId) {
 
 		boolean saveRecord = false;
@@ -5665,14 +5590,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Customer Bank Information
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
 	private List<AuditDetail> processingExtLiabilityList(List<AuditDetail> auditDetails, String type, long custId) {
 
 		boolean saveRecord = false;
@@ -5791,14 +5708,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Customer PhoneNumbers
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
 	private List<AuditDetail> processingPhoneNumberList(List<AuditDetail> auditDetails, String type, long custId) {
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -5883,14 +5792,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Customer Address
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
 	private List<AuditDetail> processingDirectorList(List<AuditDetail> auditDetails, String type, long custId) {
 
 		boolean saveRecord = false;
@@ -6221,13 +6122,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 	}
 
-	/**
-	 * Common Method for Retrieving AuditDetails List
-	 * 
-	 * @param auditHeader
-	 * @param method
-	 * @return
-	 */
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -6337,14 +6231,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditHeader;
 	}
 
-	/**
-	 * Methods for Creating List of Audit Details with detailed fields
-	 * 
-	 * @param customerDetails
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
 	private List<AuditDetail> setRatingAuditData(CustomerDetails customerDetails, String auditTranType, String method) {
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -8339,6 +8225,28 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	@Override
 	public CustomerDetails getCustById(long id) {
 		return getCustomerById(id, "_AView");
+	}
+
+	private void isDuplicateCRCPR(AuditDetail auditDetail, Customer customer, boolean categoryReq) {
+		List<String> cifs;
+		String[] errorParameters = new String[2];
+		String custCtgCode = null;
+		if (categoryReq) {
+			custCtgCode = customer.getCustCtgCode();
+		}
+		cifs = customerDAO.isDuplicateCRCPR(customer.getCustID(), customer.getCustCRCPR(), custCtgCode);
+		if (CollectionUtils.isNotEmpty(cifs)) {
+			for (String detail : cifs) {
+				if (!StringUtils.equals(customer.getCustCIF(), detail)) {
+					errorParameters[0] = PennantJavaUtil.getLabel("label_CustCRCPR") + ":"
+							+ PennantApplicationUtil.formatEIDNumber(customer.getCustCRCPR());
+					errorParameters[1] = PennantJavaUtil.getLabel("label_Cif") + ": {" + detail + "}";
+
+					auditDetail.setErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41018", errorParameters, null));
+				}
+			}
+		}
 	}
 
 	public LovFieldDetailService getLovFieldDetailService() {
