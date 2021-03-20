@@ -115,6 +115,7 @@ import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.customermasters.Customer;
@@ -270,6 +271,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected ExtendedCombobox postBranch;
 	protected ExtendedCombobox cashierBranch;
 	protected ExtendedCombobox finDivision;
+	protected Combobox sourceofFund;
 
 	protected Label scheduleLabel;
 	protected Combobox effScheduleMethod;
@@ -408,6 +410,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	// For EarlySettlement Reason functionality
 	private ExtendedCombobox earlySettlementReason;
 	ReasonCode reasonCodeData;
+	private List<ValueLabel> sourceofFundList = PennantAppUtil.getFieldCodeList("SOURCE");
 
 	/**
 	 * default constructor.<br>
@@ -668,6 +671,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(true, this.cashierBranch);
 		readOnlyComponent(true, this.postBranch);
 		readOnlyComponent(true, this.finDivision);
+		this.sourceofFund.setDisabled(true);
 
 		appendScheduleMethod(receiptData.getReceiptHeader());
 
@@ -1250,6 +1254,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 			}
 		}
+		fillComboBox(this.sourceofFund, rch.getSourceofFund(), sourceofFundList, "");
 
 		setBalances();
 		checkByReceiptMode(rch.getReceiptMode(), false);

@@ -183,6 +183,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String bankCode;
 	private Date presentmentSchDate;
 	private boolean finTDSApplicable;
+	private String sourceofFund;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1705,6 +1706,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setFinTDSApplicable(boolean finTDSApplicable) {
 		this.finTDSApplicable = finTDSApplicable;
+	}
+
+	public String getSourceofFund() {
+		return sourceofFund;
+	}
+
+	public void setSourceofFund(String sourceofFund) {
+		this.sourceofFund = sourceofFund;
 	}
 
 }

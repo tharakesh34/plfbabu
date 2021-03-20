@@ -356,6 +356,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected ExtendedCombobox postBranch;
 	protected ExtendedCombobox cashierBranch;
 	protected ExtendedCombobox finDivision;
+	protected Combobox sourceofFund;
 
 	// Payable Details
 	protected Groupbox gb_Payable;
@@ -499,6 +500,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	ReasonCode reasonCodeData;
 
 	private FeeCalculator feeCalculator;
+	private List<ValueLabel> sourceofFundList = PennantAppUtil.getFieldCodeList("SOURCE");
 	private FeeTypeDAO feeTypeDAO;
 
 	private RepaymentProcessUtil repayProcessUtil;
@@ -1247,6 +1249,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(true, this.cashierBranch);
 		readOnlyComponent(true, this.postBranch);
 		readOnlyComponent(true, this.finDivision);
+		this.sourceofFund.setDisabled(true);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1267,6 +1270,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(true, this.cashierBranch);
 		readOnlyComponent(true, this.postBranch);
 		readOnlyComponent(true, this.finDivision);
+		readOnlyComponent(true, this.sourceofFund);
 
 		// Receipt Details
 		if (isUserAction) {
@@ -3169,6 +3173,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (isApprover()) {
 			appendAccountingDetailTab(true);
 		}
+		fillComboBox(this.sourceofFund, receiptHeader.getSourceofFund(), sourceofFundList, "");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -4603,6 +4608,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		//RecAppDate 
 		if (header.getRecAppDate() == null) {
 			header.setRecAppDate(curBussDate);
+		}
+
+		try {
+			header.setSourceofFund(getComboboxValue(this.sourceofFund));
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
 
 		doRemoveValidation();

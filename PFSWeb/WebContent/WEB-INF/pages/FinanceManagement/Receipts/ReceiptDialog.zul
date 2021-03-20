@@ -197,6 +197,11 @@
 												<row>
 													<label id="label_ReceiptDialog_CashierBranch" value="${c:l('label_ReceiptDialog_CashierBranch.value')}" />
 													<extendedcombobox id="cashierBranch" />
+													<label id="label_ReceiptDialog_SourceofFund" value="${c:l('label_ReceiptDialog_SourceofFund.value')}"/>
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="sourceofFund" width="180px"/>
+													</hbox>
 												</row>
 												<row visible="false">
 													<label id="label_ReceiptDialog_PostBranch" value="${c:l('label_ReceiptDialog_PostBranch.value')}" />

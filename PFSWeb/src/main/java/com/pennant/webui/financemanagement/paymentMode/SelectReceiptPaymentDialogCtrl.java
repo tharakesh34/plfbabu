@@ -61,6 +61,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -92,6 +93,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	protected Datebox receiptDate;
 	protected Datebox valueDate;
 	protected ExtendedCombobox referenceId;
+	protected Combobox sourceofFund;
 
 	protected Button btnProceed;
 	protected Button btnValidate;
@@ -315,6 +317,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
 		fillComboBox(this.receiptChannel, "", PennantStaticListUtil.getReceiptChannels(), "");
 		fillComboBox(this.subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), "");
+		fillComboBox(this.sourceofFund, "", PennantAppUtil.getFieldCodeList("SOURCE"), "");
 
 		this.module = getArgument("module");
 		if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)) {
@@ -859,6 +862,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		rch.setReceivedDate(fsi.getReceivedDate());
 		rcd.setValueDate(fsi.getValueDate());
 		rcd.setReceivedDate(fsi.getReceivedDate());
+		rch.setSourceofFund(getComboboxValue(this.sourceofFund));
 
 		receiptData = receiptService.validateDual(receiptData, methodCtg);
 	}

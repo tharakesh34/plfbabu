@@ -101,6 +101,13 @@
 									<label id="label_LoanClosurePayment_RefId" value="${c:l('label_LoanClosurePayment_RefId.value')}" style="padding-left:12px;" />
 									<extendedcombobox id="referenceId" width="250px" />
 								</row>
+								<row id="row_SourceofFund">
+									<label id="label_SourceofFund" value="${c:l('label_ReceiptPayment_SourceofFund.value')}" style="padding-left:12px;" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="sourceofFund" width="190px" />
+									</hbox>
+								</row>
 								<row id="row_receiptAmount" visible="true">
 									<label id="label_ReceiptPayment_ReceiptAmount" value="${c:l('label_ReceiptPayment_ReceiptAmount.value')}"
 										style="padding-left:12px;" />
