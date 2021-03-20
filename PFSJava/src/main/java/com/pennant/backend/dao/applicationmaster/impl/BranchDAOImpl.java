@@ -141,6 +141,10 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 				b.setPinCode(rs.getString("PinCode"));
 				b.setEntity(rs.getString("Entity"));
 				b.setClusterId(JdbcUtil.getLong(rs.getObject("ClusterId")));
+				//To fix FK Issue
+				if (b.getClusterId() <= 0) {
+					b.setClusterId(null);
+				}
 				b.setVersion(rs.getInt("Version"));
 				b.setLastMntBy(rs.getLong("LastMntBy"));
 				b.setLastMntOn(rs.getTimestamp("LastMntOn"));

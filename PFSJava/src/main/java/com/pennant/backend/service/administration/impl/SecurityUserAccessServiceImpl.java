@@ -246,7 +246,7 @@ public class SecurityUserAccessServiceImpl extends GenericService<SecurityUserAc
 
 	}
 
-	private List<Cluster> getClusters(String entity, String clusterType, long clusterId) {
+	private List<Cluster> getClusters(String entity, String clusterType, Long clusterId) {
 		return securityUserAccessDAO.getClusters(entity, clusterType, clusterId);
 	}
 
