@@ -535,8 +535,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			if (ImplementationConstants.ALLOW_FEES_RECALCULATE) {
 				setFinFeeDetailList(finFeeDetailActualList);
 				calculateFees(finFeeDetailActualList, financeDetail.getFinScheduleData(), financeDetail.getValueDate());
+			} else {
+				doFillFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailList());
 			}
-			doFillFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailList());
 		}
 
 		// Fee Receipts

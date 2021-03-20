@@ -635,6 +635,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Finance Receipt Details
 		scheduleData.setFinReceiptDetails(
 				getFinFeeDetailService().getFinReceiptDetais(finReference, financeMain.getCustID()));
+		List<Long> feeIds = new ArrayList<Long>();
 		//to load Upfront Fee Details by LeadId 
 		if (StringUtils.isNotEmpty(financeMain.getOfferId())) {
 			// Finance Fee Details
@@ -645,8 +646,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			} else {
 				scheduleData.setFinReceiptDetails(finReceiptDetails);
 			}
+			// Finance Fee Details by leadID
+			List<FinFeeDetail> feeDetails = finFeeDetailService.getFinFeeDetailById(financeMain.getOfferId(), false,
+					"_View");
+			//do check and override the fee's which are created against leadId
+			scheduleData.setFinFeeDetailList(feeDetails);
 		}
-		List<Long> feeIds = new ArrayList<Long>();
 		for (FinFeeDetail finFeeDetail : scheduleData.getFinFeeDetailList()) {
 			feeIds.add(finFeeDetail.getFeeID());
 		}
@@ -4709,8 +4714,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					FinLogEntryDetail entryDetail = new FinLogEntryDetail();
 					entryDetail.setFinReference(finScheduleData.getFinReference());
 					entryDetail.setEventAction(StringUtils.isBlank(financeDetail.getAccountingEventCode())
-							? AccountEventConstants.ACCEVENT_ADDDBSN
-							: financeDetail.getAccountingEventCode());
+							? AccountEventConstants.ACCEVENT_ADDDBSN : financeDetail.getAccountingEventCode());
 					entryDetail.setSchdlRecal(finScheduleData.getFinanceMain().isScheduleRegenerated());
 					entryDetail.setPostDate(curBDay);
 					entryDetail.setReversalCompleted(false);
