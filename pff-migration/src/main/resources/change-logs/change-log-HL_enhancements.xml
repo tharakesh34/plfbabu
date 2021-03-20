@@ -32932,6 +32932,37 @@ UNION ALL
 		</sql>
 	</changeSet>	
 	
+	<!-- HL changes merging from r149834(03/11/2020) start -->
+	
+	<changeSet id="641" author="rajesh.n">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTLovFieldCode WHERE FIELDCODE ='SOURCE';
+				INSERT INTO BMTLovFieldCode(FIELDCODE, FIELDCODEDESC, FIELDCODETYPE, FIELDEDIT, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('SOURCE', 'Source of Fund', 'String', 0, 1, 1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="642" author="rajesh.n">
+		<sql>
+			<![CDATA[
+				INSERT INTO SecRights (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) Values ((select max(RightId)+1 from SecRights), 0, 'menu_Item_PDCReport', 'MENU', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="643" author="rajesh.n">
+		<sql>
+			<![CDATA[
+				Insert into REPORTCONFIGURATION (REPORTID, REPORTNAME, REPORTHEADING, PROMPTREQUIRED, REPORTJASPERNAME, DATASOURCENAME, SHOWTEMPLIBRARY, MENUITEMCODE, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, ALWMULTIFORMAT, WHERECONDITION, SCHEDULEREQ) values ((select max(reportid)+1 from reportconfiguration), 'Excel:PDCReport', 'PDCReport', 1, 'PDCReport', 'dataSource', 0, 'menu_Item_PDCReport', 1, 1000, null, null, null, null, null, null, 0, current_timestamp, 0, 1, 0);
+						
+				Insert into REPORTFILTERFIELDS (REPORTID, FIELDID, FIELDNAME, FIELDTYPE, FIELDLABEL, FIELDDBNAME, APPUTILMETHODNAME, MODULENAME, LOVHIDDENFIELDMETHOD, LOVTEXTFIELDMETHOD, MULTISELECTSEARCH, FIELDLENGTH, FIELDMAXVALUE, FIELDMINVALUE, SEQORDER, MANDATORY, FIELDCONSTRAINT, FIELDERRORMESSAGE, WHERECONDITION, STATICVALUE, FIELDWIDTH, FILTERREQUIRED, DEFAULTFILTER, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, FILTERFILEDS) values ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_PDCReport'), 1, 'Loan Reference', 'TXT', 'Loan Reference', 'FM.FINREFERENCE', null, null, null, null, 0, 20, 0, 0, 1, 0, '', '', '', '', 250, 1, '%', 1, 1000, 'Approved', null, null, null, null, null, 0, current_timestamp, null);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<!-- HL changes merging from r149834(03/11/2020) end -->
+	
 	<!-- Receipt Level views handle in single place starts-->
 	
 	<changeSet id="HLV_1_pre" author="Gopal.p" dbms="postgresql">
