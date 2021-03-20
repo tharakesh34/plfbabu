@@ -2823,5 +2823,14 @@
 		</addColumn>
 	</changeSet>
 	
-		<!--  VAS DISBINST Functionality end -->
+	<!--  VAS DISBINST Functionality end -->
+	
+	<!-- HL changes merging from r149834(03/11/2020) start -->
+	
+	<changeSet id="319" author="rajesh.n">
+		<addColumn tableName="adtFinReceiptHeader">
+			<column name="sourceofFund" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
