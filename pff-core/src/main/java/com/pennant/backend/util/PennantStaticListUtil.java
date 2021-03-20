@@ -3610,6 +3610,8 @@ public class PennantStaticListUtil {
 					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_ReceiptMode_ESCROW")));
 			receiptModes.add(
 					new ValueLabel(RepayConstants.RECEIPTMODE_MOBILE, Labels.getLabel("label_ReceiptMode_MOBILE")));
+			receiptModes.add(
+					new ValueLabel(RepayConstants.RECEIPTMODE_DIGITAL, Labels.getLabel("label_ReceiptMode_DIGITAL")));
 			/*
 			 * receiptModes.add( new ValueLabel(RepayConstants.RECEIPTMODE_NACH,
 			 * Labels.getLabel("label_ReceiptMode_NACH")));
@@ -4428,6 +4430,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PaymentType_MOBILE")));
 			allPaymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_ONLINE,
 					Labels.getLabel("label_PaymentType_ONLINE")));
+			allPaymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DIGITAL,
+					Labels.getLabel("label_PaymentType_DIGITAL")));
 
 		}
 
@@ -5048,6 +5052,8 @@ public class PennantStaticListUtil {
 					.add(new ValueLabel(RepayConstants.RECEIPTMODE_IMPS, Labels.getLabel("label_SubReceiptMode_IMPS")));
 			subReceiptPaymentModes.add(
 					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_SubReceiptMode_ESCROW")));
+			subReceiptPaymentModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_DIGITAL,
+					Labels.getLabel("label_SubReceiptMode_DIGITAL")));
 			/*
 			 * subReceiptPaymentModes.add( new ValueLabel(RepayConstants.RECEIPTMODE_PAYTM,
 			 * Labels.getLabel("label_SubReceiptMode_PAYTM"))); subReceiptPaymentModes.add(new

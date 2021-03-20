@@ -3118,7 +3118,8 @@ public class FinServiceInstController extends SummaryDetailService {
 				&& !StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_NEFT)
 				&& !StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_RTGS)
 				&& !StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_IMPS)
-				&& !StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_ESCROW)) {
+				&& !StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_ESCROW)
+				&& !StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_DIGITAL)) {
 
 			String[] valueParm = new String[1];
 			valueParm[0] = "Invalid Payment Mode ";
@@ -3178,7 +3179,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		if (StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_NEFT)
 				|| StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_RTGS)
 				|| StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_IMPS)
-				|| StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_ESCROW)) {
+				|| StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_ESCROW)
+				|| StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_DIGITAL)) {
 
 			if (StringUtils.isBlank(finServInst.getReceiptDetail().getTransactionRef())) {
 				String[] valueParm = new String[1];
@@ -3375,14 +3377,16 @@ public class FinServiceInstController extends SummaryDetailService {
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_RTGS)
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_IMPS)
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ESCROW)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DIGITAL)) {
 
 			valueParm = new String[2];
 			valueParm[0] = "Receipt mode";
 			valueParm[1] = RepayConstants.RECEIPTMODE_CASH + "," + RepayConstants.RECEIPTMODE_CHEQUE + ","
 					+ RepayConstants.RECEIPTMODE_DD + "," + RepayConstants.RECEIPTMODE_NEFT + ","
 					+ RepayConstants.RECEIPTMODE_RTGS + "," + RepayConstants.RECEIPTMODE_IMPS + ","
-					+ RepayConstants.RECEIPTMODE_ESCROW + RepayConstants.RECEIPTMODE_ONLINE;
+					+ RepayConstants.RECEIPTMODE_ESCROW + RepayConstants.RECEIPTMODE_ONLINE + ","
+					+ RepayConstants.RECEIPTMODE_DIGITAL;
 			return APIErrorHandlerService.getFailedStatus("90281", valueParm);
 		}
 		FinReceiptDetail finReceiptDetail = fsi.getReceiptDetail();
@@ -3537,7 +3541,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_NEFT)
 				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_RTGS)
 				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_IMPS)
-				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ESCROW)) {
+				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ESCROW)
+				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DIGITAL)) {
 			if (StringUtils.isBlank(finReceiptDetail.getTransactionRef())) {
 				valueParm = new String[1];
 				valueParm[0] = "transactionRef";
