@@ -4843,8 +4843,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						continue;
 					}
 				}
-				if ("I".equals(ulAlcType) || "P".equals(ulAlcType)) {
-					emiPaidAmt = emiPaidAmt.add(ulAlc.getPaidAmount());
+				//FIXME:Satish.K
+				if ("I".equals(ulAlcType)) {
+					pftPaid = pftPaid.add(ulAlc.getPaidAmount());
+					emiWaivedAmt = emiWaivedAmt.add(ulAlc.getWaivedAmount());
+				}
+				//FIXME:Satish.K
+				if ("P".equals(ulAlcType)) {
+					priPaid = priPaid.add(ulAlc.getPaidAmount());
 					emiWaivedAmt = emiWaivedAmt.add(ulAlc.getWaivedAmount());
 				}
 				if ("FI".equals(ulAlcType)) {
