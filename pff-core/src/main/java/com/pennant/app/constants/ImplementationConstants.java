@@ -208,6 +208,7 @@ public class ImplementationConstants {
 		DISB_PAID_CANCELLATION_ALLOW = getValueAsBoolean(extensions, "DISB_PAID_CANCELLATION_ALLOW", false);
 		MANDATE_PTNRBNK_IN_DWNLD = getValueAsBoolean(extensions, "MANDATE_PTNRBNK_IN_DWNLD", false);
 		ALLOW_PRESENTMENT_STAGE_ACCOUNTING = getValueAsBoolean(extensions, "ALLOW_PRESENTMENT_STAGE_ACCOUNTING", false);
+		ALLOW_LOAN_VAS_RATIO_CALC = getValueAsBoolean(extensions, "ALLOW_LOAN_VAS_RATIO_CALC", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -448,6 +449,7 @@ public class ImplementationConstants {
 	public static boolean DISB_PAID_CANCELLATION_ALLOW;
 	public static boolean MANDATE_PTNRBNK_IN_DWNLD;
 	public static boolean ALLOW_PRESENTMENT_STAGE_ACCOUNTING;
+	public static boolean ALLOW_LOAN_VAS_RATIO_CALC;
 
 	public static String REPAY_HIERARCHY_METHOD;
 	public static String REPAY_INTEREST_HIERARCHY;

@@ -56,6 +56,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.VasMovementDetailDAO;
@@ -240,16 +241,45 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 
 		/* Ratio based division for Loan repay amount and Insurance amount. */
 
-		BigDecimal totalDisbAmt = PennantApplicationUtil.formateAmount(intCert.getFinCurrAssetvalue(), 2);
-		BigDecimal totalvasAmt = getTotalVasAmount(finReference, startDate, endDate);
+		if (ImplementationConstants.ALLOW_LOAN_VAS_RATIO_CALC) {
+			BigDecimal totalDisbAmt = PennantApplicationUtil.formateAmount(intCert.getFinCurrAssetvalue(), 2);
+			BigDecimal totalvasAmt = getTotalVasAmount(finReference, startDate, endDate);
 
-		BigDecimal loanRatio = getLoanRatio(totalDisbAmt, totalvasAmt);
-		BigDecimal vasRatio = getVasRatio(totalDisbAmt, totalvasAmt);
+			BigDecimal loanRatio = getLoanRatio(totalDisbAmt, totalvasAmt);
+			BigDecimal vasRatio = getVasRatio(totalDisbAmt, totalvasAmt);
 
-		intCert.setPriPaid(intCert.getFinSchdPriPaid().multiply(loanRatio));
-		intCert.setVasPriPaid(intCert.getFinSchdPriPaid().multiply(vasRatio));
-		intCert.setPftPaid(intCert.getFinSchdPftPaid().multiply(loanRatio));
-		intCert.setVasPftPaid(intCert.getFinSchdPftPaid().multiply(vasRatio));
+			BigDecimal priPaid = intCert.getFinSchdPriPaid();
+			BigDecimal pftPaid = intCert.getFinSchdPftPaid();
+			String paid;
+			if (summary.getFinSchdPriPaid() != null && summary.getFinSchdPftPaid() != null) {
+				paid = PennantApplicationUtil
+						.amountFormate(summary.getFinSchdPriPaid().add(summary.getFinSchdPftPaid()), format);
+			} else {
+				paid = "0.00";
+			}
+			schdPriPaid = PennantApplicationUtil.formateAmount(summary.getFinSchdPriPaid(), format);
+			schdPftPaid = PennantApplicationUtil.formateAmount(summary.getFinSchdPftPaid(), format);
+			if (isProvCert) {
+				pftPaid = (BigDecimal) amounts.get("profitschd");
+				priPaid = (BigDecimal) amounts.get("principalschd");
+				pftPaid = PennantApplicationUtil.formateAmount(pftPaid, format);
+				priPaid = PennantApplicationUtil.formateAmount(priPaid, format);
+				paid = String.valueOf(pftPaid.add(priPaid));
+				schdPriPaid = priPaid;
+				schdPftPaid = pftPaid;
+			}
+			BigDecimal principalPaid = priPaid.multiply(loanRatio);
+			BigDecimal principalPaidVAS = priPaid.multiply(vasRatio);
+			BigDecimal profitPaid = pftPaid.multiply(loanRatio);
+			BigDecimal profitPaidVAS = pftPaid.multiply(vasRatio);
+			intCert.setPriPaid(principalPaid.setScale(format, RoundingMode.HALF_UP));
+			intCert.setVasPriPaid(principalPaidVAS.setScale(format, RoundingMode.HALF_UP));
+			intCert.setPftPaid(profitPaid.setScale(format, RoundingMode.HALF_UP));
+			intCert.setVasPftPaid(profitPaidVAS.setScale(format, RoundingMode.HALF_UP));
+			intCert.setTotalPaid(paid);
+			intCert.setSchdPftPaid(String.valueOf(schdPftPaid));
+			intCert.setSchdPriPaid(String.valueOf(schdPriPaid));
+		}
 
 		logger.debug(Literal.LEAVING);
 		return intCert;

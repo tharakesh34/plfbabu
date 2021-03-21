@@ -272,10 +272,21 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			}
 
 			financeYearList = new ArrayList<ValueLabel>();
-			for (int i = 0; i <= years; i++) {
-				financeYearList.add(new ValueLabel(String.valueOf(Integer.valueOf(finStartDateYear) + i),
-						String.valueOf(Integer.valueOf(finStartDateYear) + i) + "-" + String.valueOf(
-								Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2)) + i + 1)));
+			if (years < 0 && finStartDateMonth < 4) {
+				years = years + 1;
+				for (int i = 0; i <= years; i++) {
+					financeYearList.add(new ValueLabel(String.valueOf(Integer.valueOf(finStartDateYear) + i - 1),
+							String.valueOf(Integer.valueOf(finStartDateYear) - 1) + "-" + String.valueOf(
+									Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2))
+											+ i)));
+				}
+			} else {
+				for (int i = 0; i <= years; i++) {
+					financeYearList.add(new ValueLabel(String.valueOf(Integer.valueOf(finStartDateYear) + i),
+							String.valueOf(Integer.valueOf(finStartDateYear) + i) + "-" + String.valueOf(
+									Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2)) + i
+											+ 1)));
+				}
 			}
 			fillComboBox(this.financeYear, "", financeYearList, "");
 		}
