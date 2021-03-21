@@ -28166,6 +28166,15 @@ UNION ALL
 		</addColumn>
 	</changeSet>
 	
+		
+	<changeSet id="888.1" author="rajesh.n" >
+		<sql>
+			<![CDATA[
+				update financemain set allowSubvention=0 where allowSubvention is null;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="888_pre" author="rajesh.n" dbms="postgresql,oracle">
 		<addDefaultValue columnName="allowSubvention" tableName="financemain" defaultValue="0"/>
 	</changeSet>
@@ -28182,6 +28191,14 @@ UNION ALL
 		<addColumn tableName="financemain_temp">
 			<column name="allowSubvention" type="boolean" defaultValue="0" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="889.1" author="rajesh.n" >
+		<sql>
+			<![CDATA[
+				update financemain_temp set allowSubvention=0 where allowSubvention is null;
+			]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="889_pre" author="rajesh.n" dbms="postgresql,oracle">

@@ -2952,21 +2952,85 @@
 			<column name="SchDate" type="datetime" >
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="NoOfDays" type="int" defaultValue="0">
+			<column name="NoOfDays" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="DiscountedPft" type="decimal(18,0)" defaultValue="0">
+			<column name="DiscountedPft" type="decimal(18,0)">
 				<constraints nullable="false" />
 			</column>
-			<column name="PresentValue" type="decimal(18,0)" defaultValue="0">
+			<column name="PresentValue" type="decimal(18,0)">
 				<constraints nullable="false" />
 			</column>
-			<column name="FutureValue" type="decimal(18,0)" defaultValue="0">
+			<column name="FutureValue" type="decimal(18,0)">
 				<constraints nullable="false" />
 			</column>
-			<column name="ClosingBal" type="decimal(18,0)" defaultValue="0">
+			<column name="ClosingBal" type="decimal(18,0)">
 				<constraints nullable="false" />
 			</column>	
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="322.1" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE adtSubventionScheduleDetail ADD CONSTRAINT DF_adtSubventionSchedD_NoOfDay DEFAULT 0 FOR NoOfDays;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="322.2" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="NoOfDays" tableName="adtSubventionScheduleDetail" defaultValue="0" />
+	</changeSet>
+
+	
+	<changeSet id="322.3" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE adtSubventionScheduleDetail ADD CONSTRAINT DF_adtSubventionSchedD_DiscPft DEFAULT 0 FOR DiscountedPft;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="322.4" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="DiscountedPft" tableName="adtSubventionScheduleDetail" defaultValue="0" />
+	</changeSet>
+	
+	
+	
+ 	<changeSet id="322.5" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE adtSubventionScheduleDetail ADD CONSTRAINT DF_adtSubventionSchedD_PresVal DEFAULT 0 FOR PresentValue;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="322.6" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="PresentValue" tableName="adtSubventionScheduleDetail" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="322.7" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE adtSubventionScheduleDetail ADD CONSTRAINT DF_adtSubventionSchedD_FutuVal DEFAULT 0 FOR FutureValue;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="322.8" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="FutureValue" tableName="adtSubventionScheduleDetail" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="322.9" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE adtSubventionScheduleDetail ADD CONSTRAINT DF_adtSubventionSchedD_ClosBal DEFAULT 0 FOR ClosingBal;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="322.10" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ClosingBal" tableName="adtSubventionScheduleDetail" defaultValue="0" />
+	</changeSet>
+	
 </databaseChangeLog>
