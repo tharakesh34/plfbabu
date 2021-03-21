@@ -44,10 +44,12 @@ package com.pennant.webui.applicationmaster.npaprovisionheader;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -75,6 +77,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
 import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -82,6 +85,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.applicationmaster.NPAProvisionHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -111,6 +115,8 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	protected Button btnCopyTo;
 	private transient NPAProvisionHeaderListCtrl nPAProvisionHeaderListCtrl;
 	private transient NPAProvisionHeaderService nPAProvisionHeaderService;
+	protected ExtendedCombobox npaTemplateType;
+	private List<ValueLabel> npaRulesList = new ArrayList<>();
 
 	/**
 	 * default constructor.<br>
@@ -189,15 +195,8 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		logger.debug(Literal.ENTERING);
 
 		this.entity.setMandatoryStyle(true);
-		this.entity.setModuleName("Entity");
-		this.entity.setValueColumn("entity");
-		this.entity.setDescColumn("entityName");
-		this.entity.setValidateColumns(new String[] { "entityCode" });
 		this.finType.setMandatoryStyle(true);
-		this.finType.setModuleName("FinanceType");
-		this.finType.setValueColumn("finType");
-		this.finType.setDescColumn("finTypeName");
-		this.finType.setValidateColumns(new String[] { "finType" });
+		this.npaTemplateType.setMandatoryStyle(true);
 
 		setStatusDetails();
 
@@ -341,6 +340,8 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		this.entity.setDescription(provisionHeader.getEntityName());
 		this.finType.setDescription(provisionHeader.getFinTypeName());
 		this.recordStatus.setValue(provisionHeader.getRecordStatus());
+		this.npaTemplateType.setValue(provisionHeader.getNpaTemplateCode());
+		this.npaTemplateType.setDescription(provisionHeader.getNpaTemplateCode());
 
 		doFillProvisionDetails(provisionHeader);
 
@@ -474,6 +475,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 
 		readOnlyComponent(true, this.entity);
 		readOnlyComponent(true, this.finType);
+		readOnlyComponent(true, this.npaTemplateType);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -500,6 +502,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 
 		readOnlyComponent(true, this.entity);
 		readOnlyComponent(true, this.finType);
+		readOnlyComponent(true, this.npaTemplateType);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -864,53 +867,26 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		getSpacing(lc_NPAPaymt, paymnt_Combobox, mandatory, stageOrder, "NPAPymntApprtn_");
 		item.appendChild(lc_NPAPaymt);
 
-		// Internal  Secured Percentage
-		Listcell lc_IntSecPerc = new Listcell();
-		Decimalbox intSecPerc_Dec = new Decimalbox();
-		intSecPerc_Dec.setId("IntSecPercDec_" + stageOrder);
-		readOnlyComponent(isReadOnly, intSecPerc_Dec);
-		intSecPerc_Dec.setValue(detail.getIntSecPerc());
-		intSecPerc_Dec.setWidth("50px");
-		intSecPerc_Dec.setMaxlength(5);
-		intSecPerc_Dec.setFormat(PennantConstants.percentageFormate2);
-		getSpacing(lc_IntSecPerc, intSecPerc_Dec, mandatory, stageOrder, "IntSecPercDec_");
-		item.appendChild(lc_IntSecPerc);
+		// Active
+		Listcell lc_ActiveCheckBox = new Listcell();
+		Checkbox active_CheckBox = new Checkbox();
+		active_CheckBox.setId("ActiveCheckBox_" + stageOrder);
+		readOnlyComponent(isReadOnly, active_CheckBox);
+		active_CheckBox.setChecked(detail.isActive());
+		active_CheckBox.setWidth("50px");
+		lc_ActiveCheckBox.appendChild(active_CheckBox);
+		item.appendChild(lc_ActiveCheckBox);
 
-		// Internal  UnSecured Percentage
-		Listcell lc_IntUnSecPerc = new Listcell();
-		Decimalbox intUnSecPerc_Dec = new Decimalbox();
-		intUnSecPerc_Dec.setId("IntUnSecPercDec_" + stageOrder);
-		readOnlyComponent(isReadOnly, intUnSecPerc_Dec);
-		intUnSecPerc_Dec.setValue(detail.getIntUnSecPerc());
-		intUnSecPerc_Dec.setWidth("50px");
-		intUnSecPerc_Dec.setMaxlength(5);
-		intUnSecPerc_Dec.setFormat(PennantConstants.percentageFormate2);
-		getSpacing(lc_IntUnSecPerc, intUnSecPerc_Dec, mandatory, stageOrder, "IntUnSecPercDec_");
-		item.appendChild(lc_IntUnSecPerc);
-
-		// Regularity  Secured  Percentage
-		Listcell lc_RegSecPerc = new Listcell();
-		Decimalbox regSecPerc_Dec = new Decimalbox();
-		regSecPerc_Dec.setId("RegSecPercDec_" + stageOrder);
-		readOnlyComponent(isReadOnly, regSecPerc_Dec);
-		regSecPerc_Dec.setValue(detail.getRegSecPerc());
-		regSecPerc_Dec.setWidth("50px");
-		regSecPerc_Dec.setMaxlength(5);
-		regSecPerc_Dec.setFormat(PennantConstants.percentageFormate2);
-		getSpacing(lc_RegSecPerc, regSecPerc_Dec, mandatory, stageOrder, "RegSecPercDec_");
-		item.appendChild(lc_RegSecPerc);
-
-		// Regularity  UnSecured Percentage
-		Listcell lc_RegUnSecPerc = new Listcell();
-		Decimalbox regUnSecPerc_Dec = new Decimalbox();
-		regUnSecPerc_Dec.setId("RegUnSecPercDec_" + stageOrder);
-		readOnlyComponent(isReadOnly, regUnSecPerc_Dec);
-		regUnSecPerc_Dec.setValue(detail.getRegUnSecPerc());
-		regUnSecPerc_Dec.setWidth("50px");
-		regUnSecPerc_Dec.setMaxlength(5);
-		regUnSecPerc_Dec.setFormat(PennantConstants.percentageFormate2);
-		getSpacing(lc_RegUnSecPerc, regUnSecPerc_Dec, mandatory, stageOrder, "RegUnSecPercDec_");
-		item.appendChild(lc_RegUnSecPerc);
+		// Provision Rule
+		Listcell lc_RuleComboBox = new Listcell();
+		Combobox rule_Combobox = new Combobox();
+		rule_Combobox.setId("NPARule_" + stageOrder);
+		readOnlyComponent(isReadOnly, rule_Combobox);
+		fillComboBox(rule_Combobox, String.valueOf(detail.getRuleId()), getNpaRulesList(), "");
+		rule_Combobox.setWidth("200px");
+		lc_RuleComboBox.appendChild(rule_Combobox);
+		getSpacing(lc_RuleComboBox, rule_Combobox, mandatory, stageOrder, "NPARule_");
+		item.appendChild(lc_RuleComboBox);
 
 		item.setId("listitem_" + stageOrder);
 		item.setAttribute("Object", detail);
@@ -953,6 +929,9 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 			Decimalbox regUnSecPerc = (Decimalbox) listBoxProvisionDeatils
 					.getFellowIfAny("RegUnSecPercDec_" + stageOrdrId);
 
+			Checkbox activeBox = (Checkbox) listBoxProvisionDeatils.getFellowIfAny("ActiveCheckBox_" + stageOrdrId);
+			Combobox rulebox = (Combobox) listBoxProvisionDeatils.getFellowIfAny("NPARule_" + stageOrdrId);
+
 			Clients.clearWrongValue(npaCheckBox);
 			Clients.clearWrongValue(dpdDays);
 			dpdDays.setErrorMessage("");
@@ -960,26 +939,15 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 			Clients.clearWrongValue(npaPymntApprtn);
 			npaPymntApprtn.setErrorMessage("");
 			npaPymntApprtn.setConstraint("");
-			Clients.clearWrongValue(intSecPerc);
-			intSecPerc.setErrorMessage("");
-			intSecPerc.setConstraint("");
-			Clients.clearWrongValue(intUnSecPerc);
-			intUnSecPerc.setErrorMessage("");
-			intUnSecPerc.setConstraint("");
-			Clients.clearWrongValue(regSecPerc);
-			regSecPerc.setErrorMessage("");
-			regSecPerc.setConstraint("");
-			Clients.clearWrongValue(regUnSecPerc);
-			regUnSecPerc.setErrorMessage("");
-			regUnSecPerc.setConstraint("");
+			Clients.clearWrongValue(activeBox);
+			Clients.clearWrongValue(rulebox);
+			rulebox.setErrorMessage("");
+			rulebox.setConstraint("");
 
 			detail.setNPAActive(npaCheckBox.isChecked());
 			detail.setDPDdays(dpdDays.intValue());
 			detail.setNPARepayApprtnmnt(getComboboxValue(npaPymntApprtn));
-			detail.setIntSecPerc(getDecimalValue(intSecPerc));
-			detail.setIntUnSecPerc(getDecimalValue(intUnSecPerc));
-			detail.setRegSecPerc(getDecimalValue(regSecPerc));
-			detail.setRegUnSecPerc(getDecimalValue(regUnSecPerc));
+			detail.setActive(activeBox.isChecked());
 
 			provisionDetailsList.add(detail);
 
@@ -1040,37 +1008,14 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 				throw new WrongValueException(npaPymntApprtn, Labels.getLabel("label_NPAPayemntType_Value"));
 			}
 
-			//Internal Secured Percentage
-			if (detail.getIntSecPerc().compareTo(BigDecimal.ZERO) <= 0) {
-				throw new WrongValueException(intSecPerc, Labels.getLabel("INTERN_PROV_NEGATIVE_PERCENT"));
-			} else if (detail.getIntSecPerc().compareTo(new BigDecimal(100)) > 0) {
-				throw new WrongValueException(intSecPerc, Labels.getLabel("NUMBER_MAXVALUE_PROV_EQ",
-						new String[] { Labels.getLabel("label_Int_Secure_Perc"), detail.getIntSecPerc().toString() }));
+			// NPA Rule
+			if (StringUtils.equals(PennantConstants.List_Select, rulebox.getSelectedItem().getValue().toString())) {
+				throw new WrongValueException(rulebox, Labels.getLabel("CHECK_NO_EMPTY",
+						new String[] { Labels.getLabel("label_SelectNPAProvisionHeaderDialog_NPAType.value") }));
 			}
 
-			//Internal UnSecured Percentage
-			if (detail.getIntUnSecPerc().compareTo(BigDecimal.ZERO) <= 0) {
-				throw new WrongValueException(intUnSecPerc, Labels.getLabel("INTERN_PROV_NEGATIVE_PERCENT"));
-			} else if (detail.getIntUnSecPerc().compareTo(new BigDecimal(100)) > 0) {
-				throw new WrongValueException(intUnSecPerc, Labels.getLabel("NUMBER_MAXVALUE_PROV_EQ", new String[] {
-						Labels.getLabel("label_Int_UnSecure_Perc"), detail.getIntUnSecPerc().toString() }));
-			}
+			detail.setRuleId(Long.valueOf(rulebox.getSelectedItem().getValue()));
 
-			//Regularity Secured Percentage
-			if (detail.getRegSecPerc().compareTo(BigDecimal.ZERO) <= 0) {
-				throw new WrongValueException(regSecPerc, Labels.getLabel("REG_PROV_NEGATIVE_PERCENT"));
-			} else if (detail.getRegSecPerc().compareTo(new BigDecimal(100)) > 0) {
-				throw new WrongValueException(regSecPerc, Labels.getLabel("NUMBER_MAXVALUE_PROV_EQ",
-						new String[] { Labels.getLabel("label_Reg_Secure_Perc"), detail.getRegSecPerc().toString() }));
-			}
-
-			//Regularity UnSecured Percentage
-			if (detail.getRegUnSecPerc().compareTo(BigDecimal.ZERO) <= 0) {
-				throw new WrongValueException(regUnSecPerc, Labels.getLabel("REG_PROV_NEGATIVE_PERCENT"));
-			} else if (detail.getRegUnSecPerc().compareTo(new BigDecimal(100)) > 0) {
-				throw new WrongValueException(regUnSecPerc, Labels.getLabel("NUMBER_MAXVALUE_PROV_EQ", new String[] {
-						Labels.getLabel("label_Reg_UnSecure_Perc"), detail.getRegUnSecPerc().toString() }));
-			}
 		}
 		logger.debug(Literal.LEAVING);
 
@@ -1098,22 +1043,14 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 						.getFellowIfAny("NPACheckBox_" + stageOrder);
 				Combobox npaPymn = (Combobox) listBoxProvisionDeatils.getFellowIfAny("NPAPymntApprtn_" + stageOrder);
 				Intbox dpdDays = (Intbox) listBoxProvisionDeatils.getFellowIfAny("DPDDays_" + stageOrder);
-				Decimalbox intSecPerc = (Decimalbox) listBoxProvisionDeatils
-						.getFellowIfAny("IntSecPercDec_" + stageOrder);
-				Decimalbox intUnSecPerc = (Decimalbox) listBoxProvisionDeatils
-						.getFellowIfAny("IntUnSecPercDec_" + stageOrder);
-				Decimalbox regSecPerc = (Decimalbox) listBoxProvisionDeatils
-						.getFellowIfAny("RegSecPercDec_" + stageOrder);
-				Decimalbox regUnSecPerc = (Decimalbox) listBoxProvisionDeatils
-						.getFellowIfAny("RegUnSecPercDec_" + stageOrder);
+				Checkbox activeBox = (Checkbox) listBoxProvisionDeatils.getFellowIfAny("ActiveCheckBox_" + stageOrder);
+				Combobox rulebox = (Combobox) listBoxProvisionDeatils.getFellowIfAny("NPARule_" + stageOrder);
 
 				unCheckNpaActive.setChecked(false);
+				activeBox.setChecked(false);
 				dpdDays.setValue(0);
 				fillComboBox(npaPymn, "", PennantStaticListUtil.getNPAPaymentTypes(), "");
-				intSecPerc.setValue(BigDecimal.ZERO);
-				intUnSecPerc.setValue(BigDecimal.ZERO);
-				regSecPerc.setValue(BigDecimal.ZERO);
-				regUnSecPerc.setValue(BigDecimal.ZERO);
+				fillComboBox(rulebox, "", getNpaRulesList(), "");
 			}
 		} else {
 
@@ -1310,6 +1247,17 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aNPAProvisionHeader.getBefImage(), aNPAProvisionHeader);
 		return new AuditHeader(getReference(), null, null, null, auditDetail, aNPAProvisionHeader.getUserDetails(),
 				getOverideMap());
+	}
+
+	// getting rules based on provision Module for combobox
+	public List<ValueLabel> getNpaRulesList() {
+		if (CollectionUtils.isEmpty(npaRulesList)) {
+			npaRulesList = nPAProvisionHeaderService
+					.getRuleByModuleAndEvent(RuleConstants.MODULE_PROVSN, RuleConstants.MODULE_PROVSN, "").stream()
+					.map(rule -> new ValueLabel(String.valueOf(rule.getId()), rule.getRuleCode()))
+					.collect(Collectors.toList());
+		}
+		return npaRulesList;
 	}
 
 	public void setNPAProvisionHeaderService(NPAProvisionHeaderService nPAProvisionHeaderService) {
