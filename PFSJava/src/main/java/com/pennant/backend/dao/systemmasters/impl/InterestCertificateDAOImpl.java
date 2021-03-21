@@ -298,7 +298,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 				" select sum(profitschd) as profitschd, sum(principalschd) as principalschd , sum(repayamount) as repayamount");
 		sql.append(" from finscheduledetails ");
 		sql.append(" Where FinReference = :FinReference");
-		sql.append(" and schdate >=:FinstartDate and schdate <=:FinEndDate and repayonschdate=1");
+		sql.append(" and schdate >=:FinstartDate and schdate <=:FinEndDate and repayonschdate=1  and InstNumber > 0");
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
