@@ -33799,6 +33799,431 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="888" author="rajesh.n">
+		<addColumn tableName="financemain">
+			<column name="allowSubvention" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="888_pre" author="rajesh.n" dbms="postgresql,oracle">
+		<addDefaultValue columnName="allowSubvention" tableName="financemain" defaultValue="0"/>
+	</changeSet>
+
+	<changeSet id="888_pre" author="rajesh.n">
+		<sql>
+			<![CDATA[
+				ALTER TABLE financemain ADD CONSTRAINT DF_FM_allowSubvention DEFAULT 0 FOR AllowSubvention;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="889" author="rajesh.n">
+		<addColumn tableName="financemain_temp">
+			<column name="allowSubvention" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="889_pre" author="rajesh.n" dbms="postgresql,oracle">
+		<addDefaultValue columnName="allowSubvention" tableName="financemain_temp" defaultValue="0"/>
+	</changeSet>
+
+	<changeSet id="889_pre" author="rajesh.n">
+		<sql>
+			<![CDATA[
+				ALTER TABLE financemain_temp ADD CONSTRAINT DF_FMT_allowSubvention DEFAULT 0 FOR AllowSubvention;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="890" author="rajesh.n">
+		<createTable tableName="SubventionDetails">
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Method" type="char(1)" />
+			<column name="Type" type="char(1)" />
+			<column name="Rate" type="decimal(13,9)" />
+			<column name="PeriodRate" type="decimal(13,9)" />
+			<column name="DiscountRate" type="decimal(13,9)" />
+			<column name="Tenure" type="int" />
+			<column name="StartDate" type="datetime" />
+			<column name="EndDate" type="datetime" />
+			<column name="subVentionAmt" type="bigint" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="890.1" author="rajesh.n">
+		<addPrimaryKey tableName="SubventionDetails" columnNames="FinReference"/>
+	</changeSet>
+	
+	<changeSet id="891" author="rajesh.n">
+		<createTable tableName="SubventionDetails_Temp">
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Method" type="char(1)" />
+			<column name="Type" type="char(1)" />
+			<column name="Rate" type="decimal(13,9)" />
+			<column name="PeriodRate" type="decimal(13,9)" />
+			<column name="DiscountRate" type="decimal(13,9)" />
+			<column name="Tenure" type="int" />
+			<column name="StartDate" type="datetime" />
+			<column name="EndDate" type="datetime" />
+			<column name="subVentionAmt" type="bigint" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="891.1" author="rajesh.n">
+		<addPrimaryKey tableName="SubventionDetails_Temp" columnNames="FinReference"/>
+	</changeSet>
+	
+	<changeSet id="892" author="rajesh.n">
+		<createTable tableName="SubventionScheduleDetail">
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DisbSeqID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchDate" type="datetime" >
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfDays" type="int" >
+			<constraints nullable="false" />
+			</column>
+			<column name="DiscountedPft" type="decimal(18,0)"  >
+			<constraints nullable="false" />
+			</column>
+			<column name="PresentValue" type="decimal(18,0)"  >
+			<constraints nullable="false" />
+			</column>
+			<column name="FutureValue" type="decimal(18,0)"  >
+			<constraints nullable="false" />
+			</column>
+			<column name="ClosingBal" type="decimal(18,0)"  >
+			<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="892_pre" author="rajesh.n">
+		<addPrimaryKey tableName="SubventionScheduleDetail" columnNames="FinReference,DisbSeqID,SchDate"/>
+	</changeSet>
+	
+	<changeSet id="892.1" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE SubventionScheduleDetail ADD CONSTRAINT DF_SubventionScheduleD_NoOfDay DEFAULT 0 FOR NoOfDays;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="892.2" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="NoOfDays" tableName="SubventionScheduleDetail" defaultValue="0" />
+	</changeSet>
+
+	
+	<changeSet id="892.3" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE SubventionScheduleDetail ADD CONSTRAINT DF_SubventionScheduleD_DiscPft DEFAULT 0 FOR DiscountedPft;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="892.4" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="DiscountedPft" tableName="SubventionScheduleDetail" defaultValue="0" />
+	</changeSet>
+	
+ 	<changeSet id="892.5" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE SubventionScheduleDetail ADD CONSTRAINT DF_SubventionScheduleD_PresVal DEFAULT 0 FOR PresentValue;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="892.6" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="PresentValue" tableName="SubventionScheduleDetail" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="892.7" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE SubventionScheduleDetail ADD CONSTRAINT DF_SubventionScheduleD_FutuVal DEFAULT 0 FOR FutureValue;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="892.8" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="FutureValue" tableName="SubventionScheduleDetail" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="892.9" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE SubventionScheduleDetail ADD CONSTRAINT DF_SubventionScheduleD_ClosBal DEFAULT 0 FOR ClosingBal;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="892.10" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ClosingBal" tableName="SubventionScheduleDetail" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="893" author="rajesh.n">
+		<createTable tableName="SubventionScheduleDetail_Temp">
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DisbSeqID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchDate" type="datetime" >
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfDays" type="int" >
+				<constraints nullable="false" />
+			</column>
+			<column name="DiscountedPft" type="decimal(18,0)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="PresentValue" type="decimal(18,0)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="FutureValue" type="decimal(18,0)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ClosingBal" type="decimal(18,0)" >
+				<constraints nullable="false" />
+			</column>	
+		</createTable>
+	</changeSet>  
+	
+	<changeSet id="893_pre" author="rajesh.n">
+		<addPrimaryKey tableName="SubventionScheduleDetail_Temp" columnNames="FinReference,DisbSeqID,SchDate"/>
+	</changeSet>
+	
+	<changeSet id="893.1" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE SubventionScheduleDetail_Temp ADD CONSTRAINT DF_SubventionScheduD_T_NoOfDay DEFAULT 0 FOR NoOfDays;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="893.2" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="NoOfDays" tableName="SubventionScheduleDetail_Temp" defaultValue="0" />
+	</changeSet>
+
+	
+	<changeSet id="893.3" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE SubventionScheduleDetail_Temp ADD CONSTRAINT DF_SubventionScheduleD_T_DisPf DEFAULT 0 FOR DiscountedPft;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="893.4" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="DiscountedPft" tableName="SubventionScheduleDetail_Temp" defaultValue="0" />
+	</changeSet>
+	
+ 	<changeSet id="893.5" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE SubventionScheduleDetail_Temp ADD CONSTRAINT DF_SubventionScheduleD_T_PreVa DEFAULT 0 FOR PresentValue;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="893.6" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="PresentValue" tableName="SubventionScheduleDetail_Temp" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="893.7" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE SubventionScheduleDetail_Temp ADD CONSTRAINT DF_SubventionScheduleD_T_FutVa DEFAULT 0 FOR FutureValue;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="893.8" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="FutureValue" tableName="SubventionScheduleDetail_Temp" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="893.9" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE SubventionScheduleDetail_Temp ADD CONSTRAINT DF_SubventionScheduleD_T_ClsBa DEFAULT 0 FOR ClosingBal;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="893.10" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ClosingBal" tableName="SubventionScheduleDetail_Temp" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="54" author="rajesh.n">
+		<createView viewName="SubventionDetails_AView" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.METHOD, 
+					T1.TYPE, 
+					T1.RATE, 
+					T1.PERIODRATE, 
+					T1.DISCOUNTRATE, 
+					T1.TENURE, 
+					T1.STARTDATE, 
+					T1.ENDDATE,		
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON,
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM SUBVENTIONDETAILS T1 
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="55" author="rajesh.n">
+		<createView viewName="SubventionDetails_View"  replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.METHOD, 
+					T1.TYPE, 
+					T1.RATE, 
+					T1.PERIODRATE, 
+					T1.DISCOUNTRATE, 
+					T1.TENURE, 
+					T1.STARTDATE, 
+					T1.ENDDATE,		
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON,
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM SUBVENTIONDETAILS_TEMP T1 
+				UNION ALL
+				SELECT T1.FINREFERENCE,
+					T1.METHOD, 
+					T1.TYPE, 
+					T1.RATE, 
+					T1.PERIODRATE, 
+					T1.DISCOUNTRATE, 
+					T1.TENURE, 
+					T1.STARTDATE, 
+					T1.ENDDATE,		
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON,
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM SUBVENTIONDETAILS T1 
+				WHERE NOT EXISTS (SELECT 1 FROM SUBVENTIONDETAILS_TEMP WHERE FINREFERENCE = T1.FINREFERENCE)
+			]]>
+	  	</createView>
+	</changeSet>
+	
+	<changeSet id="56" author="rajesh.n">
+		<createView viewName="SubventionScheduleDetail_AView" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.DISBSEQID, 
+					T1.SCHDATE, 
+					T1.NOOFDAYS, 
+					T1.DISCOUNTEDPFT, 
+					T1.PRESENTVALUE, 
+					T1.FUTUREVALUE, 
+					T1.CLOSINGBAL
+				FROM SUBVENTIONSCHEDULEDETAIL T1	
+			]]>			
+		</createView>
+ 	</changeSet>
+  
+	<changeSet id="57" author="rajesh.n">
+		<createView viewName="SubventionScheduleDetail_TView" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE, 
+					T1.DISBSEQID, 
+					T1.SCHDATE, 
+					T1.NOOFDAYS, 
+					T1.DISCOUNTEDPFT, 
+					T1.PRESENTVALUE, 
+					T1.FUTUREVALUE, 
+					T1.CLOSINGBAL
+				FROM SUBVENTIONSCHEDULEDETAIL_TEMP T1		
+			]]>
+		</createView>
+  	</changeSet>
+  
+  	<changeSet id="58" author="rajesh.n">
+		<createView viewName="SubventionScheduleDetail_View" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+			 		T1.DISBSEQID,
+			 		T1.SCHDATE,
+			 		T1.NOOFDAYS, 
+			 		T1.DISCOUNTEDPFT, 
+			 		T1.PRESENTVALUE, 
+			 		T1.FUTUREVALUE, 
+			 		T1.CLOSINGBAL
+				FROM SUBVENTIONSCHEDULEDETAIL_TEMP T1
+				UNION ALL		 
+				SELECT T1.FINREFERENCE,
+					T1.DISBSEQID,
+					T1.SCHDATE, 
+					T1.NOOFDAYS, 
+					T1.DISCOUNTEDPFT, 
+					T1.PRESENTVALUE, 
+					T1.FUTUREVALUE, 
+					T1.CLOSINGBAL
+				FROM SUBVENTIONSCHEDULEDETAIL T1
+				WHERE NOT EXISTS (SELECT 1 FROM SUBVENTIONSCHEDULEDETAIL_TEMP WHERE FINREFERENCE = T1.FINREFERENCE AND DISBSEQID = T1.DISBSEQID)
+			]]>			
+		</createView>
+  	</changeSet>
+ 
 	<!-- HL changes merging from r149834(03/11/2020) end -->
 	
 	

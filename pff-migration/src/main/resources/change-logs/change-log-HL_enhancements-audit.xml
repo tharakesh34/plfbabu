@@ -2872,4 +2872,101 @@
 
 	<!-- ST#1538 - NPA & Provision Enhancements Change Sets End -->
 	
+	<changeSet id="320" author="rajesh.n">
+		<addColumn tableName="adtfinancemain">
+			<column name="allowSubvention" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="320_pre" author="rajesh.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="allowSubvention" tableName="adtfinancemain" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="320_pre" author="rajesh.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE adtfinancemain ADD CONSTRAINT DF_adtfinancemain_allowSubvention DEFAULT 0 FOR allowSubvention;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="321" author="rajesh.n">
+		<createTable tableName="AdtSubventionDetails">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)"/>
+			<column name="Method" type="char(1)" />
+			<column name="Type" type="char(1)" />
+			<column name="Rate" type="decimal(13,9)" />
+			<column name="PeriodRate" type="decimal(13,9)" />
+			<column name="DiscountRate" type="decimal(13,9)" />
+			<column name="Tenure" type="int" />
+			<column name="StartDate" type="datetime" />
+			<column name="EndDate" type="datetime" />
+			<column name="subVentionAmt" type="bigint" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="322" author="rajesh.n">
+		<createTable tableName="adtSubventionScheduleDetail">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="FinReference" type="varchar(20)">
+			</column>
+			<column name="DisbSeqID" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="SchDate" type="datetime" >
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="NoOfDays" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="DiscountedPft" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="PresentValue" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="FutureValue" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="ClosingBal" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>	
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
