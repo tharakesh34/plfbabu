@@ -817,6 +817,7 @@ public class JavaScriptBuilder extends Groupbox {
 						}
 					}
 					resultTextboxCalcFields = buildCondition[count];
+					count++;
 				}
 
 				tbResult.setAttribute("calculatedFields", resultTextboxCalcFields);
@@ -861,6 +862,7 @@ public class JavaScriptBuilder extends Groupbox {
 						}
 					}
 					resultDecimalboxCalcFields = buildCondition[count];
+					count++;
 				}
 				deciamlboxResult.setAttribute("calculatedFields", resultDecimalboxCalcFields);
 			} else if (StringUtils.equals(RuleConstants.COMPONENTTYPE_STRING, jsRuleReturnType.getComponentType())) {

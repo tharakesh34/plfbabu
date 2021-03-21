@@ -9,6 +9,7 @@ public class ProvisionAmount {
 	private BigDecimal provisionPer = BigDecimal.ZERO;
 	private BigDecimal provisionAmtCal = BigDecimal.ZERO;
 	private String assetCode;
+	private Long ruleId;
 
 	public ProvisionAmount() {
 		super();
@@ -22,6 +23,7 @@ public class ProvisionAmount {
 		entity.setProvisionPer(this.provisionPer);
 		entity.setProvisionAmtCal(this.provisionAmtCal);
 		entity.setAssetCode(this.assetCode);
+		entity.setRuleId(this.ruleId);
 		return entity;
 	}
 
@@ -71,5 +73,13 @@ public class ProvisionAmount {
 
 	public void setAssetCode(String assetCode) {
 		this.assetCode = assetCode;
+	}
+
+	public Long getRuleId() {
+		return ruleId;
+	}
+
+	public void setRuleId(Long ruleId) {
+		this.ruleId = ruleId;
 	}
 }

@@ -81,6 +81,7 @@ import com.pennant.backend.model.rulefactory.JSRuleReturnType;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -482,7 +483,12 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			break;
 
 		case RuleConstants.MODULE_PROVSN:
-			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			this.row_DeviationType.setVisible(true);
+			this.label_DeviationType.setValue(Labels.getLabel("label_RuleDialog_provisionType.value"));
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_OBJECT);
+			this.rule.setDeviationType(DeviationConstants.DT_PERCENTAGE);
+			this.deviationType.setReadonly(true);
+			this.returnType.setReadonly(true);
 			break;
 
 		case RuleConstants.MODULE_REFUND:
@@ -1020,6 +1026,30 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 						jsRuleReturnTypeList.add(jsRuleReturnType);
 					}
+
+					if (RuleConstants.MODULE_PROVSN.equals(this.rule.getRuleModule())) {
+
+						jsRuleReturnType = new JSRuleReturnType();
+						jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_PERCENTAGE);
+						jsRuleReturnType.setResultLabel(" result.provPercentage = ");
+						jsRuleReturnTypeList.add(jsRuleReturnType);
+
+						jsRuleReturnType = new JSRuleReturnType();
+						jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_DECIMAL);
+						jsRuleReturnType.setResultLabel(" result.provAmount = ");
+						jsRuleReturnTypeList.add(jsRuleReturnType);
+
+						jsRuleReturnType = new JSRuleReturnType();
+						jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_PERCENTAGE);
+						jsRuleReturnType.setResultLabel(" result.vasProvPercentage = ");
+						jsRuleReturnTypeList.add(jsRuleReturnType);
+
+						jsRuleReturnType = new JSRuleReturnType();
+						jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_DECIMAL);
+						jsRuleReturnType.setResultLabel(" result.vasProvAmount = ");
+						jsRuleReturnTypeList.add(jsRuleReturnType);
+
+					}
 				}
 			}
 		}
@@ -1151,6 +1181,11 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 		readOnlyComponent(enqiryModule || isReadOnly("RuleDialog_ruleCodeDesc"), this.ruleCodeDesc);
 		readOnlyComponent(enqiryModule || isReadOnly("RuleDialog_revolving"), this.revolving);
+
+		if (RuleConstants.MODULE_PROVSN.equals(this.rule.getRuleModule())) {
+			this.returnType.setDisabled(true);
+			this.deviationType.setDisabled(true);
+		}
 
 		this.seqOrder.setReadonly(isReadOnly("RuleDialog_seqOrder"));
 		this.allowDeviation.setDisabled(isReadOnly("RuleDialog_allowDeviation"));

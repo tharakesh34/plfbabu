@@ -863,10 +863,11 @@ public class PennantJavaUtil {
 				new String[] { "AccountTypeGroup", "AccountTypeGroup_AView" }, acnTypeGrps_WF,
 				new String[] { "GroupCode", "GroupDescription" }, new Object[][] { { "GroupIsActive", "0", 1 } }, 400));
 
-		ModuleUtil.register("Mandate", new ModuleMapping("Mandate", Mandate.class,
-				new String[] { "Mandates", "Mandates_AView" }, manadateWF,
-				new String[] { "MandateID", "BankCode", "BankName", "BranchCode", "BranchDesc", "MICR", "IFSC" }, null,
-				750));
+		ModuleUtil.register("Mandate",
+				new ModuleMapping("Mandate",
+						Mandate.class, new String[] { "Mandates", "Mandates_AView" }, manadateWF, new String[] {
+								"MandateID", "BankCode", "BankName", "BranchCode", "BranchDesc", "MICR", "IFSC" },
+						null, 750));
 
 		ModuleUtil.register("MandateStatus",
 				new ModuleMapping("MandateStatus", MandateStatus.class,
@@ -1170,13 +1171,11 @@ public class PennantJavaUtil {
 						new String[] { "EntityCode", "BankCode", "ProviderId", "PaymentMode", "BankBranchID",
 								"AccountNumber", "ReceivableAdjustment", "ReconciliationAmount", "Active" },
 						null, 600));
-		ModuleUtil.register("InstrumentwiseLimit",
-				new ModuleMapping("InstrumentwiseLimit", InstrumentwiseLimit.class,
-						new String[] { "InstrumentwiseLimit", "InstrumentwiseLimit_AView" }, masterWF,
-						new String[] { "InstrumentMode", "PaymentMinAmtperTrans", "PaymentMaxAmtperTran",
-								"PaymentMaxAmtperDay", "ReceiptMinAmtperTran", "ReceiptMaxAmtperTran",
-								"ReceiptMaxAmtperDay" },
-						null, 600));
+		ModuleUtil.register("InstrumentwiseLimit", new ModuleMapping("InstrumentwiseLimit", InstrumentwiseLimit.class,
+				new String[] { "InstrumentwiseLimit", "InstrumentwiseLimit_AView" },
+				masterWF, new String[] { "InstrumentMode", "PaymentMinAmtperTrans", "PaymentMaxAmtperTran",
+						"PaymentMaxAmtperDay", "ReceiptMinAmtperTran", "ReceiptMaxAmtperTran", "ReceiptMaxAmtperDay" },
+				null, 600));
 		ModuleUtil.register("CustTypePANMapping",
 				new ModuleMapping("CustTypePANMapping", CustTypePANMapping.class,
 						new String[] { "CustTypePANMapping", "CustTypePANMapping_AView" }, masterWF,
@@ -1996,8 +1995,8 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("FinanceTaxDetail",
 				new ModuleMapping("FinanceTaxDetail", FinanceTaxDetail.class,
-						new String[] { "FinTaxDetail", "FinTaxDetail_AView" }, GST_WF,
-						new String[] { "FinReference", "ApplicableFor", "TaxExempted", "TaxNumber", "City", "PinCode" },
+						new String[] { "FinTaxDetail", "FinTaxDetail_AView" }, GST_WF, new String[] { "FinReference",
+								"ApplicableFor", "TaxExempted", "TaxNumber", "City", "PinCode" },
 						null, 600));
 
 		ModuleUtil.register("FinTaxUploadHeader",

@@ -121,14 +121,14 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 	private StringBuilder getSelectQuery(TableType tableType) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit, ProfitAccruedAndDue");
-		sql.append(", ProfitAccruedAndNotDue, CollateralValue, DueFromDate, LastFullyPaidDate, DueDays");
-		sql.append(", CurrBucket, Dpd, ProvisionDate, ProvisionedAmt");
-		sql.append(", AssetCode, AssetStageOrder, Npa, ManualProvision, LinkedTranId, ChgLinkedTranId");
-		sql.append(", Version, LastMntBy, LastMntOn");
-		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", ProfitAccruedAndNotDue, CollateralValue, DueFromDate, LastFullyPaidDate, DueDays, CurrBucket");
+		sql.append(", Dpd, ProvisionDate, ProvisionedAmt, AssetCode, AssetStageOrder, Npa, ManualProvision");
+		sql.append(", LinkedTranId, ChgLinkedTranId, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, NpaTemplateId");
 
 		if (tableType.getSuffix().toLowerCase().contains("view")) {
-			sql.append(", FinBranch, FinType, CustID, CustCIF, CustShrtName, FinIsActive");
+			sql.append(", FinBranch, FinType, CustID, CustCIF, CustShrtName, FinIsActive, NpaTemplateCode");
+			sql.append(", NpaTemplateDesc");
 		}
 		sql.append(" from PROVISIONS");
 		sql.append(tableType.getSuffix());
@@ -139,13 +139,12 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, ProvisionId, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit");
 		sql.append(", ProfitAccruedAndDue, ProfitAccruedAndNotDue, CollateralValue, DueFromDate, LastFullyPaidDate");
-		sql.append(", DueDays, CurrBucket, Dpd, ProvisionDate, ProvisionedAmt");
-		sql.append(", AssetCode, AssetStageOrder, Npa, ManualProvision, LinkedTranId, ChgLinkedTranId");
-		sql.append(", Version, LastMntBy, LastMntOn");
-		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", DueDays, CurrBucket, Dpd, ProvisionDate, ProvisionedAmt, AssetCode, AssetStageOrder, Npa");
+		sql.append(", ManualProvision, LinkedTranId, ChgLinkedTranId, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, NpaTemplateId");
 
 		if (tableType.getSuffix().toLowerCase().contains("view")) {
-			sql.append(", FinBranch, FinType, CustID, CustCIF, CustShrtName");
+			sql.append(", FinBranch, FinType, CustID, CustCIF, CustShrtName, NpaTemplateCode, NpaTemplateDesc");
 		}
 		sql.append(" from PROVISION_MOVEMENTS");
 		sql.append(tableType.getSuffix());
@@ -205,10 +204,10 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(", DueFromDate, LastFullyPaidDate, DueDays, CurrBucket, Dpd, ProvisionDate, ProvisionedAmt");
 		sql.append(", AssetCode, AssetStageOrder, Npa, ManualProvision, LinkedTranId, ChgLinkedTranId");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId");
+		sql.append(", RecordType, WorkflowId, NpaTemplateId");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?");
+		sql.append(", ?, ?, ?, ?");
 		sql.append(")");
 
 		jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
@@ -248,6 +247,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 				ps.setString(index++, provision.getNextTaskId());
 				ps.setString(index++, provision.getRecordType());
 				ps.setLong(index++, JdbcUtil.setLong(provision.getWorkflowId()));
+				ps.setLong(index++, JdbcUtil.setLong(provision.getNpaTemplateId()));
 			}
 		});
 
@@ -267,10 +267,10 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(", DueFromDate, LastFullyPaidDate, DueDays, CurrBucket, Dpd, ProvisionDate, ProvisionedAmt");
 		sql.append(", AssetCode, AssetStageOrder, Npa, ManualProvision, LinkedTranId, ChgLinkedTranId");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId");
+		sql.append(", RecordType, WorkflowId, NpaTemplateId");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?");
+		sql.append(", ?, ?, ?, ?");
 		sql.append(")");
 
 		jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
@@ -311,6 +311,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 				ps.setString(index++, provision.getNextTaskId());
 				ps.setString(index++, provision.getRecordType());
 				ps.setLong(index++, JdbcUtil.setLong(provision.getWorkflowId()));
+				ps.setLong(index++, JdbcUtil.setLong(provision.getNpaTemplateId()));
 			}
 		});
 
@@ -368,6 +369,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(", ProvisionedAmt = ?, AssetCode = ?, AssetStageOrder = ?, Npa = ?, ManualProvision = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(", NpaTemplateId = ?");
 		sql.append("  Where Id= ?");
 
 		return jdbcOperations.update(sql.toString(), ps -> {
@@ -400,6 +402,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setString(index++, prv.getNextTaskId());
 			ps.setString(index++, prv.getRecordType());
 			ps.setLong(index++, prv.getWorkflowId());
+			ps.setLong(index++, prv.getNpaTemplateId());
 			ps.setLong(index++, prv.getId());
 		});
 	}
@@ -485,6 +488,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			provision.setNextTaskId(rs.getString("NextTaskId"));
 			provision.setRecordType(rs.getString("RecordType"));
 			provision.setWorkflowId(rs.getLong("WorkflowId"));
+			provision.setNpaTemplateId(rs.getLong("NpaTemplateId"));
 
 			if (tableType.getSuffix().toLowerCase().contains("view")) {
 				provision.setFinBranch(rs.getString("FinBranch"));
@@ -493,6 +497,8 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 				provision.setCustCIF(rs.getString("CustCIF"));
 				provision.setCustShrtName(rs.getString("CustShrtName"));
 				//provision.setFinCcy(rs.getString("FinCcy"));
+				provision.setNpaTemplateCode(rs.getString("NpaTemplateCode"));
+				provision.setNpaTemplateDesc(rs.getString("NpaTemplateDesc"));
 			}
 
 			return provision;
@@ -513,7 +519,6 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		logger.trace(Literal.SQL + sql.toString());
 		ProvisionAmount provisionAmount = new ProvisionAmount();
 		provisionAmount.setProvisionId(provisionId);
-		;
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(provisionAmount);
 		jdbcTemplate.update(sql.toString(), paramSource);
 

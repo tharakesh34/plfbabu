@@ -32961,7 +32961,838 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<!-- ST#1538 - NPA & Provision Enhancements Change Sets Start -->
+
+	<changeSet id="ST#1538.1" author="GopalaSwamy.M">
+		<comment>Added NPA template for new enhancements</comment>
+		<addColumn tableName="ASSET_CLSSFICATN_HEADER">
+			<column name="NpaTemplateId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.2" author="GopalaSwamy.M">
+		<addForeignKeyConstraint constraintName="FK_ASST_TMPLTEID" baseTableName="ASSET_CLSSFICATN_HEADER"
+			baseColumnNames="NpaTemplateId" referencedColumnNames="Id" referencedTableName="NPA_TEMPLATE_TYPES" />
+	</changeSet>
+
+	<changeSet id="ST#1538.3" author="GopalaSwamy.M">
+		<comment>Added NPA template for new enhancements</comment>
+		<addColumn tableName="ASSET_CLSSFICATN_HEADER_TEMP">
+			<column name="NpaTemplateId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.4" author="GopalaSwamy.M">
+		<addForeignKeyConstraint constraintName="FK_ASST_T_TMPLTEID" baseTableName="ASSET_CLSSFICATN_HEADER_TEMP"
+			baseColumnNames="NpaTemplateId" referencedColumnNames="Id" referencedTableName="NPA_TEMPLATE_TYPES" />
+	</changeSet>
+
+	<changeSet id="ST#1538.5" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'asset_clssficatn_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.6" author="GopalaSwamy.M">
+		<createView replaceIfExists="true" viewName="ASSET_CLSSFICATN_HEADER_AVIEW">
+			<![CDATA[
+				SELECT T1.ID, 
+					T1.CODE, 
+					T1.DESCRIPTION,
+					T1.STAGEORDER,
+					T1.ACTIVE, 
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID,
+					T1.NPATEMPLATEID,
+					T2.CODE NPATEMPLATECODE,
+					T2.DESCRIPTION NPATEMPLATEDESC
+				FROM ASSET_CLSSFICATN_HEADER T1
+				LEFT JOIN NPA_TEMPLATE_TYPES T2 ON T2.ID = T1.NPATEMPLATEID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1538.7" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'asset_clssficatn_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.8_pre" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'asset_clssficatn_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.8" author="GopalaSwamy.M">
+		<createView replaceIfExists="true" viewName="ASSET_CLSSFICATN_HEADER_VIEW">
+			<![CDATA[
+				SELECT T1.ID,
+					T1.CODE, 
+					T1.DESCRIPTION,
+					T1.STAGEORDER,
+					T1.ACTIVE, 
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID,
+					T1.NPATEMPLATEID,
+					T2.CODE NPATEMPLATECODE,
+					T2.DESCRIPTION NPATEMPLATEDESC
+				FROM ASSET_CLSSFICATN_HEADER_TEMP T1
+				LEFT JOIN NPA_TEMPLATE_TYPES T2 ON T2.ID = T1.NPATEMPLATEID
+				UNION ALL
+				SELECT T1.ID,
+					T1.CODE, 
+					T1.DESCRIPTION,
+					T1.STAGEORDER,
+					T1.ACTIVE, 
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID,
+					T1.NPATEMPLATEID,
+					T2.CODE NPATEMPLATECODE,
+					T2.DESCRIPTION NPATEMPLATEDESC
+				FROM ASSET_CLSSFICATN_HEADER T1
+				LEFT JOIN NPA_TEMPLATE_TYPES T2 ON T2.ID = T1.NPATEMPLATEID
+        	 	WHERE NOT EXISTS (SELECT 1 FROM ASSET_CLSSFICATN_HEADER_TEMP WHERE ASSET_CLSSFICATN_HEADER_TEMP.CODE = T1.CODE)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1538.8_post" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'asset_clssficatn_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.9" author="GopalaSwamy.M">
+		<comment>Added NPA template for new enhancements</comment>
+		<addColumn tableName="NPA_PROVISION_HEADER">
+			<column name="NpaTemplateId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.10" author="GopalaSwamy.M">
+		<addForeignKeyConstraint constraintName="FK_NPA_TMPLTEID" baseTableName="NPA_PROVISION_HEADER"
+			baseColumnNames="NpaTemplateId" referencedColumnNames="Id" referencedTableName="NPA_TEMPLATE_TYPES" />
+	</changeSet>
+
+	<changeSet id="ST#1538.11" author="GopalaSwamy.M">
+		<comment>Added NPA template for new enhancements</comment>
+		<addColumn tableName="NPA_PROVISION_HEADER_TEMP">
+			<column name="NpaTemplateId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.12" author="GopalaSwamy.M">
+		<addForeignKeyConstraint constraintName="FK_NPA_T_TMPLTEID" baseTableName="NPA_PROVISION_HEADER_TEMP"
+			baseColumnNames="NpaTemplateId" referencedColumnNames="Id" referencedTableName="NPA_TEMPLATE_TYPES" />
+	</changeSet>
+
+	<changeSet id="ST#1538.13_pre" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'npa_provision_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.13" author="GopalaSwamy.M">
+		<createView replaceIfExists="true" viewName="NPA_PROVISION_HEADER_AVIEW">
+			<![CDATA[
+				SELECT T1.ID, 
+					T1.ENTITY, 
+					T1.FINTYPE,
+					T3.ENTITYDESC ENTITYNAME,
+					T2.FINTYPEDESC FINTYPENAME, 
+					T1.ACTIVE,
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID,
+					T1.NPATEMPLATEID,
+					T4.CODE NPATEMPLATECODE,
+					T4.DESCRIPTION NPATEMPLATEDESC
+				FROM NPA_PROVISION_HEADER T1
+				JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE 
+				JOIN ENTITY T3 ON T3.ENTITYCODE = T1.ENTITY
+				LEFT JOIN NPA_TEMPLATE_TYPES T4 ON T4.ID = T1.NPATEMPLATEID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1538.13_post" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'npa_provision_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.14_pre" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'npa_provision_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.14" author="GopalaSwamy.M">
+		<createView replaceIfExists="true" viewName="NPA_PROVISION_HEADER_VIEW">
+			<![CDATA[
+				SELECT T1.Id, 
+					T1.Entity, 
+					T1.FinType,
+					T3.EntityDesc EntityName,
+					T2.FintypeDesc FintypeName, 
+					T1.Active,
+					T1.Version, 
+					T1.LastMntBy, 
+					T1.LastMntOn, 
+					T1.RecordStatus, 
+					T1.RoleCode, 
+					T1.NextRoleCode, 
+					T1.TaskId, 
+					T1.NextTaskId, 
+					T1.RecordType, 
+					T1.WorkflowId,
+					T1.NpaTemplateId,
+					T4.Code NpaTemplateCode,
+					T4.Description NpaTemplateDesc
+				FROM NPA_PROVISION_HEADER_Temp T1
+				JOIN rmtfinancetypes t2 ON T1.FinType = t2.FinType 
+				JOIN entity t3 ON T3.EntityCode = t1.entity 
+				LEFT JOIN NPA_TEMPLATE_TYPES T4 ON T4.Id = T1.NpaTemplateId
+				UNION ALL
+				SELECT T1.Id, 
+					T1.Entity, 
+					T1.FinType,
+					T3.EntityDesc EntityName,
+					T2.FintypeDesc FintypeName , 
+					T1.Active,						
+					T1.Version, 
+					T1.LastMntBy, 
+					T1.LastMntOn, 
+					T1.RecordStatus, 
+					T1.RoleCode, 
+					T1.NextRoleCode, 
+					T1.TaskId, 
+					T1.NextTaskId, 
+					T1.RecordType, 
+					T1.WorkflowId,
+					T1.NpaTemplateId,
+					T4.Code NpaTemplateCode,
+					T4.Description NpaTemplateDesc
+				FROM NPA_PROVISION_HEADER T1
+				JOIN rmtfinancetypes t2 ON T2.FinType = t1.FinType 
+				JOIN entity t3 ON T3.entitycode = t1.entity 
+				LEFT JOIN NPA_TEMPLATE_TYPES T4 ON T4.Id = T1.NpaTemplateId
+				WHERE NOT EXISTS (SELECT 1 FROM NPA_PROVISION_HEADER_Temp WHERE NPA_PROVISION_HEADER_Temp.Entity = T1.Entity 
+					and NPA_PROVISION_HEADER_Temp.FinType = T1.FinType and NPA_PROVISION_HEADER_Temp.NpaTemplateId = T1.NpaTemplateId )
+				]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1538.14_post" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'npa_provision_header_view');
+			]]>
+
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.15" author="GopalaSwamy.M">
+		<addColumn tableName="NPA_PROVISION_DETAILS">
+			<column name="RuleId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.16" author="GopalaSwamy.M">
+		<addForeignKeyConstraint constraintName="FK_PROVDTLS_RULEID" baseTableName="NPA_PROVISION_DETAILS"
+			baseColumnNames="RuleId" referencedColumnNames="RuleId" referencedTableName="RULES" />
+	</changeSet>
+
+	<changeSet id="ST#1538.17" author="GopalaSwamy.M">
+		<addColumn tableName="NPA_PROVISION_DETAILS_TEMP">
+			<column name="RuleId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.18" author="GopalaSwamy.M">
+		<addForeignKeyConstraint constraintName="FK_PROVDTLS_T_RULEID" baseTableName="NPA_PROVISION_DETAILS_TEMP"
+			baseColumnNames="RuleId" referencedColumnNames="RuleId" referencedTableName="RULES" />
+	</changeSet>
+
+	<changeSet id="ST#1538.19" author="GopalaSwamy.M">
+		<addColumn tableName="NPA_PROVISION_DETAILS">
+			<column name="Active" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.20" author="GopalaSwamy.M">
+		<addColumn tableName="NPA_PROVISION_DETAILS_TEMP">
+			<column name="Active" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.21" author="GopalaSwamy.M">
+		<sql>
+			<![CDATA[
+			    UPDATE NPA_PROVISION_DETAILS Set Active = 0;
+				UPDATE NPA_PROVISION_DETAILS_TEMP Set Active = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.22" author="GopalaSwamy.M" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Active" tableName="NPA_PROVISION_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="Active" tableName="NPA_PROVISION_DETAILS_TEMP" defaultValue="0" />
+	</changeSet>
+
+
+	<changeSet id="ST#1538.22" author="GopalaSwamy.M" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE NPA_PROVISION_DETAILS ADD CONSTRAINT DF_NPA_PROVISION_DTL_ACT DEFAULT 0 FOR Active;
+				
+				ALTER TABLE NPA_PROVISION_DETAILS_Temp ADD CONSTRAINT DF_NPA_PROVISION_DTL_T_ACT DEFAULT 0 FOR Active;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.23_pre" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'npa_provision_details_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.23" author="GopalaSwamy.M">
+		<createView replaceIfExists="true" viewName="NPA_PROVISION_DETAILS_AVIEW">
+			<![CDATA[
+				SELECT T1.ID, 
+					T1.HEADERID, 
+					T1.ASSETCLASSIFICATIONID,
+					T1.NPAACTIVE,
+					T1.DPDDAYS,
+					T1.NPAREPAYAPPRTNMNT,
+					T1.INTSECPERC,
+					T1.INTUNSECPERC,
+					T1.REGSECPERC,
+					T1.REGUNSECPERC,
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID,
+                    T3.ID ASSETHEADERID,
+                    T3.CODE AS ASSETCODE,
+                    T3.STAGEORDER AS ASSETSTAGEORDER,
+                    T1.RULEID,
+                    T1.ACTIVE
+				FROM NPA_PROVISION_DETAILS T1 
+				JOIN NPA_PROVISION_HEADER T2 ON T2.ID = T1.HEADERID
+				JOIN ASSET_CLSSFICATN_HEADER T3 ON T3.ID = T1.ASSETCLASSIFICATIONID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1538.23_post" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'npa_provision_details_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.24_pre" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'npa_provision_details_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.24" author="GopalaSwamy.M">
+		<createView replaceIfExists="true" viewName="NPA_PROVISION_DETAILS_VIEW">
+			<![CDATA[
+				SELECT T1.ID, 
+					T1.HEADERID, 
+					T1.ASSETCLASSIFICATIONID,
+					T1.NPAACTIVE,
+					T1.DPDDAYS,
+					T1.NPAREPAYAPPRTNMNT,
+					T1.INTSECPERC,
+					T1.INTUNSECPERC,
+					T1.REGSECPERC,
+					T1.REGUNSECPERC,
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID,
+                    T3.CODE AS ASSETCODE,
+                    T3.STAGEORDER AS ASSETSTAGEORDER,
+                    T1.RULEID,
+                    T1.ACTIVE
+				FROM NPA_PROVISION_DETAILS_TEMP T1
+				JOIN NPA_PROVISION_HEADER_TEMP T2 ON T1.HEADERID = T2.ID
+				JOIN ASSET_CLSSFICATN_HEADER T3 ON T1.ASSETCLASSIFICATIONID = T3.ID
+				UNION ALL
+				SELECT T1.ID, 
+					T1.HEADERID, 
+					T1.ASSETCLASSIFICATIONID,
+					T1.NPAACTIVE,
+					T1.DPDDAYS,
+					T1.NPAREPAYAPPRTNMNT,
+					T1.INTSECPERC,
+					T1.INTUNSECPERC,
+					T1.REGSECPERC,
+					T1.REGUNSECPERC,
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID,
+                    T3.CODE AS ASSETCODE,
+                    T3.STAGEORDER AS ASSETSTAGEORDER,
+                    T1.RULEID,
+                    T1.ACTIVE
+				FROM NPA_PROVISION_DETAILS T1
+				JOIN NPA_PROVISION_HEADER T2 ON T1.HEADERID = T2.ID
+				JOIN ASSET_CLSSFICATN_HEADER T3 ON T1.ASSETCLASSIFICATIONID = T3.ID
+				WHERE NOT EXISTS (SELECT 1 FROM NPA_PROVISION_DETAILS_TEMP WHERE   NPA_PROVISION_DETAILS_TEMP.ID = T1.ID )
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1538.24_post" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'npa_provision_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.25" author="GopalaSwamy.M">
+		<dropUniqueConstraint tableName="ASSET_CLSSFICATN_HEADER" uniqueColumns="StageOrder"
+			constraintName="UK_AST_CLSFN_HEADER_STGORDR" />
+	</changeSet>
+
+	<changeSet id="ST#1538.26" author="GopalaSwamy.M">
+		<dropUniqueConstraint tableName="ASSET_CLSSFICATN_HEADER_TEMP" uniqueColumns="StageOrder"
+			constraintName="UK_AST_CLSFN_HEADER_STGORDR_T" />
+	</changeSet>
+
+	<changeSet id="ST#1538.27" author="GopalaSwamy.M">
+		<addUniqueConstraint columnNames="StageOrder,NpaTemplateId" constraintName="UK_AST_STGORDR_TID"
+			tableName="ASSET_CLSSFICATN_HEADER" />
+	</changeSet>
+
+	<changeSet id="ST#1538.28" author="GopalaSwamy.M">
+		<addUniqueConstraint columnNames="StageOrder,NpaTemplateId" constraintName="UK_AST_STGORDR_TID_T"
+			tableName="ASSET_CLSSFICATN_HEADER_TEMP" />
+	</changeSet>
+
+	<changeSet id="ST#1538.29" author="GopalaSwamy.M">
+		<dropUniqueConstraint tableName="NPA_PROVISION_HEADER" uniqueColumns="FinType"
+			constraintName="UK_NPA_PRVSN_HEADER_FINTYPE" />
+	</changeSet>
+
+	<changeSet id="ST#1538.30" author="GopalaSwamy.M">
+		<dropUniqueConstraint tableName="NPA_PROVISION_HEADER_TEMP" uniqueColumns="FinType"
+			constraintName="UK_NPA_PRVSN_HEADER_FINTYPE_T" />
+	</changeSet>
+
+	<changeSet id="ST#1538.31" author="GopalaSwamy.M">
+		<addUniqueConstraint columnNames="FinType,NpaTemplateId" constraintName="UK_AST_FTYP_TID"
+			tableName="NPA_PROVISION_HEADER" />
+	</changeSet>
+
+	<changeSet id="ST#1538.32" author="GopalaSwamy.M">
+		<addUniqueConstraint columnNames="FinType,NpaTemplateId" constraintName="UK_AST_FTYP_TID_T"
+			tableName="NPA_PROVISION_HEADER_TEMP" />
+	</changeSet>
+
+	<changeSet id="ST#1538.33" author="GopalaSwamy.M">
+		<comment>Added NPA template for new enhancements</comment>
+		<addColumn tableName="PROVISIONS">
+			<column name="NpaTemplateId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.34" author="GopalaSwamy.M">
+		<addForeignKeyConstraint constraintName="FK_PROV_TMPLTEID" baseTableName="PROVISIONS"
+			baseColumnNames="NpaTemplateId" referencedColumnNames="Id" referencedTableName="NPA_TEMPLATE_TYPES" />
+	</changeSet>
+
+	<changeSet id="ST#1538.35" author="GopalaSwamy.M">
+		<comment>Added NPA template for new enhancements</comment>
+		<addColumn tableName="PROVISIONS_TEMP">
+			<column name="NpaTemplateId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.36" author="GopalaSwamy.M">
+		<addForeignKeyConstraint constraintName="FK_PROV_TMPLTEID_T" baseTableName="PROVISIONS_TEMP"
+			baseColumnNames="NpaTemplateId" referencedColumnNames="Id" referencedTableName="NPA_TEMPLATE_TYPES" />
+	</changeSet>
+
+	<changeSet id="ST#1538.37" author="GopalaSwamy.M">
+		<comment>Added NPA template for new enhancements</comment>
+		<addColumn tableName="PROVISION_MOVEMENTS">
+			<column name="NpaTemplateId" type="bigint" />
+		</addColumn>
+
+	</changeSet>
+
+	<changeSet id="ST#1538.38" author="GopalaSwamy.M">
+		<addForeignKeyConstraint constraintName="FK_PROV_M_TMPLTEID" baseTableName="PROVISION_MOVEMENTS"
+			baseColumnNames="NpaTemplateId" referencedColumnNames="Id" referencedTableName="NPA_TEMPLATE_TYPES" />
+	</changeSet>
+
+	<changeSet id="ST#1538.39_pre" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'provisions_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.39" author="GopalaSwamy.M">
+		<createView viewName="PROVISIONS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT PA.ID
+					, PA.FINREFERENCE
+					, CLOSINGBALANCE
+					, OUTSTANDPRINCIPAL
+					, OUTSTANDPROFIT
+					, PROFITACCRUEDANDDUE
+					, PROFITACCRUEDANDNOTDUE
+					, COLLATERALVALUE
+					, DUEFROMDATE
+					, LASTFULLYPAIDDATE
+					, CURRBUCKET
+					, DUEDAYS
+					, DPD
+					, PROVISIONDATE
+					, PROVISIONEDAMT
+					, ASSETCODE
+					, ASSETSTAGEORDER
+					, NPA
+					, MANUALPROVISION
+					, LINKEDTRANID
+					, CHGLINKEDTRANID
+					, PA.VERSION
+					, PA.LASTMNTBY
+					, PA.LASTMNTON
+					, PA.RECORDSTATUS
+					, PA.ROLECODE
+					, PA.NEXTROLECODE
+					, PA.TASKID
+					, PA.NEXTTASKID
+					, PA.RECORDTYPE
+					, PA.WORKFLOWID 
+					, FM.FINTYPE
+					, FM.FINBRANCH
+					, FM.FINISACTIVE
+					, C.CUSTID
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, PA.NPATEMPLATEID
+					, NP.CODE NPATEMPLATECODE
+					, NP.DESCRIPTION NPATEMPLATEDESC
+				FROM PROVISIONS_TEMP PA
+				INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = PA.FINREFERENCE
+				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
+				LEFT JOIN NPA_TEMPLATE_TYPES NP ON NP.ID = PA.NPATEMPLATEID
+				UNION ALL
+				SELECT PA.ID
+					, PA.FINREFERENCE
+					, CLOSINGBALANCE
+					, OUTSTANDPRINCIPAL
+					, OUTSTANDPROFIT
+					, PROFITACCRUEDANDDUE
+					, PROFITACCRUEDANDNOTDUE
+					, COLLATERALVALUE
+					, DUEFROMDATE
+					, LASTFULLYPAIDDATE
+					, CURRBUCKET
+					, DUEDAYS
+					, DPD
+					, PROVISIONDATE
+					, PROVISIONEDAMT
+					, ASSETCODE
+					, ASSETSTAGEORDER
+					, NPA
+					, MANUALPROVISION
+					, LINKEDTRANID
+					, CHGLINKEDTRANID
+					, PA.VERSION
+					, PA.LASTMNTBY
+					, PA.LASTMNTON
+					, PA.RECORDSTATUS
+					, PA.ROLECODE
+					, PA.NEXTROLECODE
+					, PA.TASKID
+					, PA.NEXTTASKID
+					, PA.RECORDTYPE
+					, PA.WORKFLOWID 
+					, FM.FINTYPE
+					, FM.FINBRANCH
+					, FM.FINISACTIVE
+					, C.CUSTID
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, PA.NPATEMPLATEID
+					, NP.CODE NPATEMPLATECODE
+					, NP.DESCRIPTION NPATEMPLATEDESC
+				FROM PROVISIONS PA
+				INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = PA.FINREFERENCE
+				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
+				LEFT JOIN NPA_TEMPLATE_TYPES NP ON NP.ID = PA.NPATEMPLATEID
+				WHERE NOT (EXISTS ( SELECT 1 FROM PROVISIONS_TEMP WHERE PROVISIONS_TEMP.ID = PA.ID))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1538.39_post" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'provisions_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.40_pre" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'provisions_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.40" author="Vijayakumar.k">
+		<createView viewName="PROVISIONS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT PA.ID
+					, PA.FINREFERENCE
+					, CLOSINGBALANCE
+					, OUTSTANDPRINCIPAL
+					, OUTSTANDPROFIT
+					, PROFITACCRUEDANDDUE
+					, PROFITACCRUEDANDNOTDUE
+					, COLLATERALVALUE
+					, DUEFROMDATE
+					, LASTFULLYPAIDDATE
+					, CURRBUCKET
+					, DUEDAYS
+					, DPD
+					, PROVISIONDATE
+					, PROVISIONEDAMT
+					, ASSETCODE
+					, ASSETSTAGEORDER
+					, NPA
+					, MANUALPROVISION
+					, LINKEDTRANID
+					, CHGLINKEDTRANID
+					, PA.VERSION
+					, PA.LASTMNTBY
+					, PA.LASTMNTON
+					, PA.RECORDSTATUS
+					, PA.ROLECODE
+					, PA.NEXTROLECODE
+					, PA.TASKID
+					, PA.NEXTTASKID
+					, PA.RECORDTYPE
+					, PA.WORKFLOWID 
+					, FM.FINTYPE
+					, FM.FINBRANCH
+					, FM.FINISACTIVE
+					, C.CUSTID
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, PA.NPATEMPLATEID
+					, NP.CODE NPATEMPLATECODE
+					, NP.DESCRIPTION NPATEMPLATEDESC
+				FROM PROVISIONS PA
+				INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = PA.FINREFERENCE
+				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
+				LEFT JOIN NPA_TEMPLATE_TYPES NP ON NP.ID = PA.NPATEMPLATEID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1538.40_post" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'provisions_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.41_pre" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'provision_movements_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.41" author="GopalaSwamy.M">
+		<createView viewName="PROVISION_MOVEMENTS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT PA.ID
+					, PA.FINREFERENCE
+					, CLOSINGBALANCE
+					, OUTSTANDPRINCIPAL
+					, OUTSTANDPROFIT
+					, PROFITACCRUEDANDDUE
+					, PROFITACCRUEDANDNOTDUE
+					, COLLATERALVALUE
+					, DUEFROMDATE
+					, LASTFULLYPAIDDATE
+					, CURRBUCKET
+					, DUEDAYS
+					, DPD
+					, PROVISIONDATE
+					, PROVISIONEDAMT
+					, ASSETCODE
+					, ASSETSTAGEORDER
+					, NPA
+					, MANUALPROVISION
+					, LINKEDTRANID
+					, CHGLINKEDTRANID
+					, PA.VERSION
+					, PA.LASTMNTBY
+					, PA.LASTMNTON
+					, PA.RECORDSTATUS
+					, PA.ROLECODE
+					, PA.NEXTROLECODE
+					, PA.TASKID
+					, PA.NEXTTASKID
+					, PA.RECORDTYPE
+					, PA.WORKFLOWID 
+					, FM.FINTYPE
+					, FM.FINBRANCH
+					, C.CUSTID
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, PA.NPATEMPLATEID
+					, NP.CODE NPATEMPLATECODE
+					, NP.DESCRIPTION NPATEMPLATEDESC
+				FROM PROVISION_MOVEMENTS PA
+				INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = PA.FINREFERENCE
+				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
+				LEFT JOIN NPA_TEMPLATE_TYPES NP ON NP.ID = PA.NPATEMPLATEID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1538.41_post" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'provision_movements_view');
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="ST#1538.42" author="GopalaSwamy.M">
+		<sql>
+			<![CDATA[
+				DELETE FROM  rbfielddetails WHERE rbmodule = 'PROVSN' and rbfldname = 'SecuredLoan';
+				DELETE FROM  rbfielddetails WHERE rbmodule = 'PROVSN' and rbfldname = 'AssetStage';
+				DELETE FROM  rbfielddetails WHERE rbmodule = 'PROVSN' and rbfldname = 'PropertyType';
+				DELETE FROM  rbfielddetails WHERE rbmodule = 'PROVSN' and rbfldname = 'InsuranceAmount';
+				DELETE FROM  rbfielddetails WHERE rbmodule = 'PROVSN' and rbfldname = 'OutstandingAmount';
+				DELETE FROM  rbfielddetails WHERE rbmodule = 'PROVSN' and rbfldname = 'OverduePrincipal';
+				DELETE FROM  rbfielddetails WHERE rbmodule = 'PROVSN' and rbfldname = 'OverdueInterest';
+				DELETE FROM  rbfielddetails WHERE rbmodule = 'PROVSN' and rbfldname = 'FuturePrincipal';
+				DELETE FROM  rbfielddetails WHERE rbmodule = 'PROVSN' and rbfldname = 'UndisbursedAmount';
+				
+				INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds, modulecode) VALUES ('PROVSN','PROVSN','SecuredLoan','Check Loan is Secured or Not','nchar','1','0','1',' ','static,global',' ');	
+				INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds, modulecode) VALUES ('PROVSN','PROVSN','AssetStage','Asset classification Stage','nvarchar','8','0','1',' ','static,global',' ');
+				INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds, modulecode) VALUES ('PROVSN','PROVSN','PropertyType','Property type','nvarchar','21','0','1',' ','static,global',' ');
+				INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds, modulecode) VALUES ('PROVSN','PROVSN','InsuranceAmount','Total Insurance Amount','Decimal','18','1','0',' ','static,global,calvalue','  ');
+				INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds, modulecode) VALUES ('PROVSN','PROVSN','OutstandingAmount','Total Outstanding amount','Decimal','18','1','0',' ','static,global,calvalue','  ');
+				INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds, modulecode) VALUES ('PROVSN','PROVSN','OverduePrincipal','Total Overdue Principal','Decimal','18','1','0',' ','static,global,calvalue','  ');
+				INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds, modulecode) VALUES ('PROVSN','PROVSN','OverdueInterest','Total Overdue Interest','Decimal','18','1','0',' ','static,global,calvalue','  ');
+				INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds, modulecode) VALUES ('PROVSN','PROVSN','FuturePrincipal','Total Future Principal','Decimal','18','1','0',' ','static,global,calvalue','  ');
+				INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds, modulecode) VALUES ('PROVSN','PROVSN','UndisbursedAmount','Undisbursed amount','Decimal','18','1','0',' ','static,global,calvalue','  ');
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1538.43" author="GopalaSwamy.M">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='ASSETCLASSIFICATIONHEADER_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AssetClassificationHeaderDialog_NPAType');
+				DELETE FROM SecRights where RightName='AssetClassificationHeaderDialog_NPAType';
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) Values ((select max(RightId)+1 from SecRights), 3, 'AssetClassificationHeaderDialog_NPAType', 'AssetClassificationHeaderDialog', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0) ;
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'ASSETCLASSIFICATIONHEADER_MAKER'), (Select RightID from SecRights where RightName = 'AssetClassificationHeaderDialog_NPAType'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- ST#1538 - NPA & Provision Enhancements Change Sets End -->
+	
 	<!-- HL changes merging from r149834(03/11/2020) end -->
+	
+	
 	
 	<!-- Receipt Level views handle in single place starts-->
 	

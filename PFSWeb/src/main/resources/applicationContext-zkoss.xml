@@ -5905,10 +5905,15 @@
 		<property name="provisionService" ref="provisionService" />
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="nPAProvisionHeaderService" ref="nPAProvisionHeaderService" />
+		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 	<bean id="manualProvisioningDialogCtrl" class="com.pennant.webui.applicationmaster.manualprovisioning.ManualProvisioningDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="provisionService" ref="provisionService" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
+		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
 	</bean>
 	
 	<!--============ DMS Retreival Process ============== -->

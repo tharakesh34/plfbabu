@@ -82,6 +82,7 @@
 		<property name="nPAProvisionHeaderDAO" ref="nPAProvisionHeaderDAO" />
 		<property name="nPAProvisionDetailDAO" ref="nPAProvisionDetailDAO" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
+		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
 	</bean>
 
 	<!-- NPAProvisionHeader -->

@@ -139,9 +139,7 @@ public class AssetClassificationHeaderListCtrl extends GFCBaseListCtrl<AssetClas
 		registerField("id");
 		registerField("code", listheader_Code, SortOrder.NONE, code, sortOperator_Code, Operators.STRING);
 		registerField("description", listheader_Description);
-		registerField("description");
 		registerField("stageOrder", listheader_StageOrder);
-		registerField("stageOrder");
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.

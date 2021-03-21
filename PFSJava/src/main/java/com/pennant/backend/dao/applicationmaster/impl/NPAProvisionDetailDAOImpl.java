@@ -117,6 +117,7 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 		sql.append(" Id, HeaderId, AssetClassificationId, NPAActive, DPDdays, NPARepayApprtnmnt, IntSecPerc");
 		sql.append(", IntUnSecPerc, RegSecPerc, RegUnSecPerc, Version, LastMntOn, LastMntBy, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", RuleId, Active");
 		if (StringUtils.containsIgnoreCase(tableType.getSuffix(), "view")) {
 			sql.append(", AssetCode, AssetStageOrder");
 		}
@@ -155,6 +156,8 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 				pd.setNextTaskId(rs.getString("NextTaskId"));
 				pd.setRecordType(rs.getString("RecordType"));
 				pd.setWorkflowId(rs.getLong("WorkflowId"));
+				pd.setRuleId(rs.getLong("RuleId"));
+				pd.setActive(rs.getBoolean("Active"));
 
 				if (StringUtils.containsIgnoreCase(tableType.getSuffix(), "view")) {
 					pd.setAssetCode(rs.getString("AssetCode"));
@@ -189,13 +192,13 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 		sql.append("(id, headerId, assetClassificationId, nPAActive, dPDdays, nPARepayApprtnmnt, ");
 		sql.append(" intSecPerc, intUnSecPerc, regSecPerc, regUnSecPerc, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, RuleId, Active)");
 
 		sql.append(" values(");
 		sql.append(" :id, :headerId, :assetClassificationId, :nPAActive, :dPDdays, :nPARepayApprtnmnt, ");
 		sql.append(" :intSecPerc, :intUnSecPerc, :regSecPerc, :regUnSecPerc, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, ");
-		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :RuleId, :Active)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -224,7 +227,7 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 		sql.append(" intUnSecPerc = :intUnSecPerc, regSecPerc = :regSecPerc, regUnSecPerc = :regUnSecPerc, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, RuleId = :RuleId, Active = :Active");
 		sql.append(" where id = :Id ");
 
 		// Execute the SQL, binding the arguments.
@@ -286,12 +289,12 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 		sql.append("(id, headerId, assetClassificationId, nPAActive, dPDdays, nPARepayApprtnmnt, ");
 		sql.append(" intSecPerc, intUnSecPerc, regSecPerc, regUnSecPerc, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		sql.append("  TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append("  TaskId, NextTaskId, RecordType, WorkflowId, RuleId, Active)");
 		sql.append(" values(");
 		sql.append(" :id, :headerId, :assetClassificationId, :nPAActive, :dPDdays, :nPARepayApprtnmnt, ");
 		sql.append(" :intSecPerc, :intUnSecPerc, :regSecPerc, :regUnSecPerc, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, ");
-		sql.append("  :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append("  :NextTaskId, :RecordType, :WorkflowId, :RuleId, :Active)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -337,11 +340,10 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, headerId, assetClassificationId, npaactive, dPDdays, nPARepayApprtnmnt, ");
-		sql.append(" intSecPerc, intUnSecPerc, regSecPerc, regUnSecPerc, ");
-
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" id, headerId, assetClassificationId, npaactive, dPDdays, nPARepayApprtnmnt");
+		sql.append(", intSecPerc, intUnSecPerc, regSecPerc, regUnSecPerc");
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId,RecordType, WorkflowId, RuleId, Active");
 
 		if (tableType.getSuffix().contains("View")) {
 			sql.append(", assetCode, assetStageOrder");

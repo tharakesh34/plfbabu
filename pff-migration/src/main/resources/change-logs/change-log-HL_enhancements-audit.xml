@@ -2825,12 +2825,51 @@
 	
 	<!--  VAS DISBINST Functionality end -->
 	
-	<!-- HL changes merging from r149834(03/11/2020) start -->
-	
 	<changeSet id="319" author="rajesh.n">
 		<addColumn tableName="adtFinReceiptHeader">
 			<column name="sourceofFund" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
+	
+	<!-- ST#1538 - NPA & Provision Enhancements Change Sets Start -->
+
+	<changeSet id="ST#1538.1" author="GopalaSwamy.M">
+		<comment>Added NPA template for new enhancements</comment>
+		<addColumn tableName="ADTASSET_CLSSFICATN_HEADER">
+			<column name="NpaTemplateId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.2" author="GopalaSwamy.M">
+		<comment>Added NPA template for new enhancements</comment>
+		<addColumn tableName="ADTNPA_PROVISION_HEADER">
+			<column name="NpaTemplateId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.3" author="GopalaSwamy.M">
+		<addColumn tableName="ADTNPA_PROVISION_DETAILS">
+			<column name="RuleId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.4" author="GopalaSwamy.M">
+		<addColumn tableName="ADTNPA_PROVISION_DETAILS">
+			<column name="Active" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1538.5" author="GopalaSwamy.M" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Active" tableName="ADTNPA_PROVISION_DETAILS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1538.6" author="GopalaSwamy.M">
+		<comment>Added NPA template for new enhancements</comment>
+		<addColumn tableName="ADTPROVISIONS">
+			<column name="NpaTemplateId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<!-- ST#1538 - NPA & Provision Enhancements Change Sets End -->
 	
 </databaseChangeLog>

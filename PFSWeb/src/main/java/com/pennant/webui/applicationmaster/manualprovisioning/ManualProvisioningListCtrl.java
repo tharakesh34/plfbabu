@@ -1,7 +1,9 @@
 package com.pennant.webui.applicationmaster.manualprovisioning;
 
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -16,13 +18,16 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.service.applicationmaster.NPAProvisionHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.financemanagement.ProvisionService;
+import com.pennant.backend.util.ProvisionConstants;
 import com.pennant.webui.applicationmaster.manualprovisioning.model.ManualProvisioningListItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -64,6 +69,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 	private transient ProvisionService provisionService;
 	private transient FinanceDetailService financeDetailService;
 	private transient NPAProvisionHeaderService nPAProvisionHeaderService;
+	private transient CustomerDAO customerDAO;
 
 	public ManualProvisioningListCtrl() {
 		super();
@@ -114,7 +120,6 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);
 		registerField("finType", listheader_FinType, SortOrder.NONE, finType, sortOperator_FinType, Operators.STRING);
-		registerField("CustShrtName");
 		registerField("finIsActive");
 		registerField("CustShrtName", listheader_CustName);
 		registerField("manualProvision", listheader_ManualProvisioning);
@@ -201,18 +206,35 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 				finType = finPftDetail.getFinType();
 
 			}
+			Customer customer = customerDAO.getCustomerByID(finPftDetail.getCustId());
+
+			if (customer != null) {
+				provision.setCustCtgCode(customer.getCustCtgCode());
+			}
+
 			provision.setFinType(finType);
 			financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(false);
 			if (financeDetail != null) {
 				provision.setFinanceDetail(financeDetail);
 			}
 
-			NPAProvisionHeader npaHeader = this.nPAProvisionHeaderService.getNPAHeaderByFinType(provision.getFinType(),
-					TableType.AVIEW);
+			List<NPAProvisionHeader> npaProvisionHeadersList = this.nPAProvisionHeaderService
+					.getNPAProvisionsListByFintype(provision.getFinType(), TableType.AVIEW);
 
-			if (npaHeader != null) {
-				provision.setNpaHeader(npaHeader);
+			for (NPAProvisionHeader npaProvisionHeader : npaProvisionHeadersList) {
+
+				if (StringUtils.equals(ProvisionConstants.PROVISION_BOOKS_INT,
+						npaProvisionHeader.getNpaTemplateCode())) {
+					provision.setNpaIntHeader(npaProvisionHeader);
+				}
+
+				if (StringUtils.equals(ProvisionConstants.PROVISION_BOOKS_REG,
+						npaProvisionHeader.getNpaTemplateCode())) {
+					provision.setNpaRegHeader(npaProvisionHeader);
+				}
+
 			}
+
 		}
 		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  finreference = ");
@@ -324,5 +346,9 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 
 	public void setnPAProvisionHeaderService(NPAProvisionHeaderService nPAProvisionHeaderService) {
 		this.nPAProvisionHeaderService = nPAProvisionHeaderService;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
 	}
 }

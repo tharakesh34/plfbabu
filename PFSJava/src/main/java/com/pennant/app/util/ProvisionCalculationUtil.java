@@ -72,6 +72,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class ProvisionCalculationUtil implements Serializable {
 	private static final long serialVersionUID = 193855810060181970L;
@@ -340,9 +341,9 @@ public class ProvisionCalculationUtil implements Serializable {
 		//provision.setProvisionCalDate(valueDate);
 		//	provision.setPrincipalDue(aeAmountCodes.getPriAB());
 		//provision.setProfitDue(aeAmountCodes.getPftAB());
-		Date curBussDate = DateUtility.getAppDate();
-		provision.setDueFromDate(DateUtility.addDays(curBussDate, -aeAmountCodes.getODDays()));
-		provision.setLastFullyPaidDate(DateUtility.addDays(curBussDate, -aeAmountCodes.getDaysFromFullyPaid()));
+		Date curBussDate = SysParamUtil.getAppDate();
+		provision.setDueFromDate(DateUtil.addDays(curBussDate, -aeAmountCodes.getODDays()));
+		provision.setLastFullyPaidDate(DateUtil.addDays(curBussDate, -aeAmountCodes.getDaysFromFullyPaid()));
 
 		logger.debug("Leaving");
 		return provision;

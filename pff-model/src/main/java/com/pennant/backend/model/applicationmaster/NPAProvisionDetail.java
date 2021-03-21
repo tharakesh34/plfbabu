@@ -78,6 +78,8 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 	private String assetCode;
 	private int assetStageOrder;
 	private boolean newPrvDetail;
+	private Long ruleId;
+	private boolean active;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -114,6 +116,8 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 		entity.setAssetCode(this.assetCode);
 		entity.setAssetStageOrder(this.assetStageOrder);
 		entity.setNewPrvDetail(this.newPrvDetail);
+		entity.setRuleId(this.ruleId);
+		entity.setActive(this.active);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -303,4 +307,19 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 		this.newPrvDetail = newPrvDetail;
 	}
 
+	public Long getRuleId() {
+		return ruleId;
+	}
+
+	public void setRuleId(Long ruleId) {
+		this.ruleId = ruleId;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 }

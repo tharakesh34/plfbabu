@@ -524,7 +524,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		boolean isNew = false;
 
 		if (!isNPAActive()) {
-			MessageUtil.showError("Please select atleast one NPA checkbox.");
+			MessageUtil.showError(Labels.getLabel("label_NPAProvisionHeaderDialog_Error_NPA"));
 			return;
 		}
 
@@ -859,7 +859,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		paymnt_Combobox.setId("NPAPymntApprtn_" + stageOrder);
 		readOnlyComponent(isReadOnly, paymnt_Combobox);
 		fillComboBox(paymnt_Combobox, detail.getNPARepayApprtnmnt(), PennantStaticListUtil.getNPAPaymentTypes(), "");
-		paymnt_Combobox.setWidth("50px");
+		paymnt_Combobox.setWidth("100px");
 
 		getSpacing(lc_NPAPaymt, paymnt_Combobox, mandatory, stageOrder, "NPAPymntApprtn_");
 		item.appendChild(lc_NPAPaymt);
@@ -1221,8 +1221,14 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		logger.debug(Literal.ENTERING);
 
 		if (doClose(this.btnSave.isVisible())) {
+			//code added to copy current screen changes
+			NPAProvisionHeader aNPAProvisionHeader = new NPAProvisionHeader();
+			BeanUtils.copyProperties(this.nPAProvisionHeader, aNPAProvisionHeader);
+			doWriteComponentsToBean(aNPAProvisionHeader);
+			List<NPAProvisionDetail> listNPAProvisionDetail = getProvisionDetails();
+			aNPAProvisionHeader.setProvisionDetailsList(listNPAProvisionDetail);
 			Events.postEvent("onClick$button_NPAProvisionHeaderList_NewNPAProvisionHeader",
-					nPAProvisionHeaderListCtrl.window_NPAProvisionHeaderList, this.nPAProvisionHeader);
+					nPAProvisionHeaderListCtrl.window_NPAProvisionHeaderList, aNPAProvisionHeader);
 		}
 
 		logger.debug(Literal.LEAVING);

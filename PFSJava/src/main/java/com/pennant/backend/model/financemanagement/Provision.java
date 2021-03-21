@@ -104,6 +104,22 @@ public class Provision extends AbstractWorkflowEntity {
 	private Provision befImage;
 	private Provision oldProvision;
 	private LoggedInUser userDetails;
+	private Long ruleId;
+	private String custCtgCode;
+	private boolean secured;
+	private String product;
+	private BigDecimal insuranceAmount;
+	private boolean insuranceComponent;
+	private String propertyType;
+	private NPAProvisionHeader npaIntHeader;
+	private NPAProvisionHeader npaRegHeader;
+	private Long npaTemplateId;
+	private String npaTemplateCode;
+	private String npaTemplateDesc;
+	private BigDecimal overDuePrincipal = BigDecimal.ZERO;
+	private BigDecimal overDueProfit = BigDecimal.ZERO;
+	private BigDecimal futureRpyPri = BigDecimal.ZERO;
+	private BigDecimal unDisbursedAmount = BigDecimal.ZERO;
 
 	public Provision() {
 		super();
@@ -127,6 +143,21 @@ public class Provision extends AbstractWorkflowEntity {
 		excludeFields.add("finType");
 		excludeFields.add("provisionRate");
 		excludeFields.add("finIsActive");
+		excludeFields.add("ruleId");
+		excludeFields.add("custCtgCode");
+		excludeFields.add("secured");
+		excludeFields.add("product");
+		excludeFields.add("insuranceAmount");
+		excludeFields.add("insuranceComponent");
+		excludeFields.add("propertyType");
+		excludeFields.add("npaIntHeader");
+		excludeFields.add("npaRegHeader");
+		excludeFields.add("npaTemplateCode");
+		excludeFields.add("npaTemplateDesc");
+		excludeFields.add("overDuePrincipal");
+		excludeFields.add("overDueProfit");
+		excludeFields.add("futureRpyPri");
+		excludeFields.add("unDisbursedAmount");
 
 		return excludeFields;
 	}
@@ -173,6 +204,22 @@ public class Provision extends AbstractWorkflowEntity {
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setOldProvision(this.oldProvision == null ? null : this.oldProvision.copyEntity());
 		entity.setUserDetails(this.userDetails);
+		entity.setRuleId(this.ruleId);
+		entity.setCustCtgCode(this.custCtgCode);
+		entity.setSecured(this.secured);
+		entity.setProduct(this.product);
+		entity.setInsuranceAmount(this.insuranceAmount);
+		entity.setInsuranceComponent(this.insuranceComponent);
+		entity.setPropertyType(this.propertyType);
+		entity.setNpaIntHeader(this.npaIntHeader == null ? null : this.npaIntHeader.copyEntity());
+		entity.setNpaRegHeader(this.npaRegHeader == null ? null : this.npaRegHeader.copyEntity());
+		entity.setNpaTemplateId(this.npaTemplateId);
+		entity.setNpaTemplateCode(this.npaTemplateCode);
+		entity.setNpaTemplateDesc(this.npaTemplateDesc);
+		entity.setOverDuePrincipal(this.overDuePrincipal);
+		entity.setOverDueProfit(this.overDueProfit);
+		entity.setFutureRpyPri(this.futureRpyPri);
+		entity.setUnDisbursedAmount(this.unDisbursedAmount);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -506,4 +553,133 @@ public class Provision extends AbstractWorkflowEntity {
 	public void setFinIsActive(boolean finIsActive) {
 		this.finIsActive = finIsActive;
 	}
+
+	public Long getRuleId() {
+		return ruleId;
+	}
+
+	public void setRuleId(Long ruleId) {
+		this.ruleId = ruleId;
+	}
+
+	public String getCustCtgCode() {
+		return custCtgCode;
+	}
+
+	public void setCustCtgCode(String custCtgCode) {
+		this.custCtgCode = custCtgCode;
+	}
+
+	public String getProduct() {
+		return product;
+	}
+
+	public void setProduct(String product) {
+		this.product = product;
+	}
+
+	public BigDecimal getInsuranceAmount() {
+		return insuranceAmount;
+	}
+
+	public void setInsuranceAmount(BigDecimal insuranceAmount) {
+		this.insuranceAmount = insuranceAmount;
+	}
+
+	public String getPropertyType() {
+		return propertyType;
+	}
+
+	public void setPropertyType(String propertyType) {
+		this.propertyType = propertyType;
+	}
+
+	public NPAProvisionHeader getNpaIntHeader() {
+		return npaIntHeader;
+	}
+
+	public void setNpaIntHeader(NPAProvisionHeader npaIntHeader) {
+		this.npaIntHeader = npaIntHeader;
+	}
+
+	public NPAProvisionHeader getNpaRegHeader() {
+		return npaRegHeader;
+	}
+
+	public void setNpaRegHeader(NPAProvisionHeader npaRegHeader) {
+		this.npaRegHeader = npaRegHeader;
+	}
+
+	public Long getNpaTemplateId() {
+		return npaTemplateId;
+	}
+
+	public void setNpaTemplateId(Long npaTemplateId) {
+		this.npaTemplateId = npaTemplateId;
+	}
+
+	public String getNpaTemplateCode() {
+		return npaTemplateCode;
+	}
+
+	public void setNpaTemplateCode(String npaTemplateCode) {
+		this.npaTemplateCode = npaTemplateCode;
+	}
+
+	public String getNpaTemplateDesc() {
+		return npaTemplateDesc;
+	}
+
+	public void setNpaTemplateDesc(String npaTemplateDesc) {
+		this.npaTemplateDesc = npaTemplateDesc;
+	}
+
+	public boolean isSecured() {
+		return secured;
+	}
+
+	public void setSecured(boolean secured) {
+		this.secured = secured;
+	}
+
+	public boolean isInsuranceComponent() {
+		return insuranceComponent;
+	}
+
+	public void setInsuranceComponent(boolean insuranceComponent) {
+		this.insuranceComponent = insuranceComponent;
+	}
+
+	public BigDecimal getOverDuePrincipal() {
+		return overDuePrincipal;
+	}
+
+	public void setOverDuePrincipal(BigDecimal overDuePrincipal) {
+		this.overDuePrincipal = overDuePrincipal;
+	}
+
+	public BigDecimal getOverDueProfit() {
+		return overDueProfit;
+	}
+
+	public void setOverDueProfit(BigDecimal overDueProfit) {
+		this.overDueProfit = overDueProfit;
+	}
+
+	public BigDecimal getFutureRpyPri() {
+		return futureRpyPri;
+	}
+
+	public void setFutureRpyPri(BigDecimal futureRpyPri) {
+		this.futureRpyPri = futureRpyPri;
+	}
+
+	public BigDecimal getUnDisbursedAmount() {
+		return unDisbursedAmount;
+	}
+
+	public void setUnDisbursedAmount(BigDecimal unDisbursedAmount) {
+		this.unDisbursedAmount = unDisbursedAmount;
+	}
+
 }

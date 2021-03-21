@@ -16,4 +16,8 @@ public class ProvisionConstants {
 	public static final String PROVISION_BOOKS_INT_SEC = "INT_SEC";
 	public static final String PROVISION_BOOKS_INT_UN_SEC = "INT_UN_SEC";
 
+	public static final String PROVISION_BOOKS_INS = "_INS";
+	public static final String PROVISION_BOOKS_REG_INS = "REG_INS";
+	public static final String PROVISION_BOOKS_INT_INS = "INT_INS";
+
 }

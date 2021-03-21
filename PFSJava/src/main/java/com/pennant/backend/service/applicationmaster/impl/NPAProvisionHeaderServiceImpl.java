@@ -57,12 +57,14 @@ import com.pennant.backend.dao.applicationmaster.AssetClassificationHeaderDAO;
 import com.pennant.backend.dao.applicationmaster.NPAProvisionDetailDAO;
 import com.pennant.backend.dao.applicationmaster.NPAProvisionHeaderDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.applicationmaster.AssetClassificationDetail;
 import com.pennant.backend.model.applicationmaster.AssetClassificationHeader;
 import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
 import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.NPAProvisionHeaderService;
 import com.pennant.backend.util.PennantConstants;
@@ -82,6 +84,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 	private NPAProvisionHeaderDAO nPAProvisionHeaderDAO;
 	private NPAProvisionDetailDAO nPAProvisionDetailDAO;
 	private AssetClassificationHeaderDAO assetClassificationHeaderDAO;
+	private RuleDAO ruleDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -368,12 +371,13 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 
 		// Check the unique keys.
 		if (nPAProvisionHeader.isNew() && nPAProvisionHeaderDAO.isDuplicateKey(nPAProvisionHeader.getId(),
-				nPAProvisionHeader.getEntity(), nPAProvisionHeader.getFinType(),
+				nPAProvisionHeader.getEntity(), nPAProvisionHeader.getFinType(), nPAProvisionHeader.getNpaTemplateId(),
 				nPAProvisionHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_Entity") + ": " + nPAProvisionHeader.getEntity();
-			parameters[1] = PennantJavaUtil.getLabel("label_FinType") + ": " + nPAProvisionHeader.getFinType();
+			parameters[1] = PennantJavaUtil.getLabel("label_FinType") + ": " + nPAProvisionHeader.getFinType()
+					+ " with " + nPAProvisionHeader.getNpaTemplateCode();
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
@@ -430,6 +434,36 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 		return provisionHeader;
 	}
 
+	@Override
+	public NPAProvisionHeader getNewNPAProvisionHeaderByTemplate(NPAProvisionHeader provisionHeader,
+			TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		List<AssetClassificationHeader> headerList = this.assetClassificationHeaderDAO
+				.getAssetClassificationHeaderByTemplate(provisionHeader.getNpaTemplateId(),
+						TableType.AVIEW.getSuffix());
+
+		if (CollectionUtils.isEmpty(headerList)) {
+			return provisionHeader;
+		}
+
+		List<NPAProvisionDetail> provisionDeatilsList = new ArrayList<NPAProvisionDetail>();
+
+		headerList.forEach(header -> {
+
+			NPAProvisionDetail provisionDetail = new NPAProvisionDetail();
+			provisionDetail.setAssetClassificationId(header.getId());
+			provisionDetail.setAssetCode(header.getCode());
+			provisionDetail.setAssetStageOrder(header.getStageOrder());
+			provisionDeatilsList.add(provisionDetail);
+		});
+
+		provisionHeader.setProvisionDetailsList(provisionDeatilsList);
+
+		logger.debug(Literal.LEAVING);
+		return provisionHeader;
+	}
+
 	/**
 	 * Getting provision header details
 	 */
@@ -448,35 +482,8 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 			return provisionHeader;
 		}
 
-		List<AssetClassificationDetail> detailsList = this.assetClassificationHeaderDAO
-				.getAssetClassificationDetails(provisionHeader.getFinType(), TableType.AVIEW);
-
-		if (CollectionUtils.isNotEmpty(detailsList) && CollectionUtils.isNotEmpty(provisionDetailsList)) {
-			for (AssetClassificationDetail detail : detailsList) {
-				boolean rcdExists = false;
-				for (NPAProvisionDetail npaProvisionDetail : provisionDetailsList) {
-					if (npaProvisionDetail.getAssetClassificationId() == detail.getHeaderId()) {
-						rcdExists = true;
-						break;
-					}
-				}
-				if (!rcdExists) {
-					AssetClassificationHeader classificationHeader = this.assetClassificationHeaderDAO
-							.getAssetClassificationHeader(detail.getHeaderId(), TableType.AVIEW.getSuffix());
-					if (classificationHeader != null) {
-						NPAProvisionDetail provisionDetail = new NPAProvisionDetail();
-						provisionDetail.setAssetClassificationId(classificationHeader.getId());
-						provisionDetail.setAssetCode(classificationHeader.getCode());
-						provisionDetail.setAssetStageOrder(classificationHeader.getStageOrder());
-						provisionDetail.setNewPrvDetail(true);
-						provisionDetailsList.add(provisionDetail);
-					}
-				}
-			}
-		}
-
-		logger.debug(Literal.LEAVING);
 		provisionHeader.setProvisionDetailsList(provisionDetailsList);
+		logger.debug(Literal.LEAVING);
 		return provisionHeader;
 	}
 
@@ -820,8 +827,8 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 	}
 
 	@Override
-	public boolean getIsFinTypeExists(String finType, TableType type) {
-		return nPAProvisionHeaderDAO.getIsFinTypeExists(finType, type);
+	public boolean getIsFinTypeExists(String finType, Long npaTemplateId, TableType type) {
+		return nPAProvisionHeaderDAO.getIsFinTypeExists(finType, npaTemplateId, type);
 	}
 
 	@Override
@@ -829,30 +836,43 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 		return nPAProvisionDetailDAO.getNPAProvisionDetailList(id, view);
 	}
 
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
+	}
+
 	@Override
-	public NPAProvisionHeader getNPAHeaderByFinType(String finType, TableType view) {
-		logger.debug(Literal.ENTERING);
+	public List<Rule> getRuleByModuleAndEvent(String module, String event, String type) {
+		return ruleDAO.getRuleByModuleAndEvent(module, event, type);
+	}
 
-		NPAProvisionHeader provisionHeader = this.nPAProvisionHeaderDAO.getNPAProvisionByFintype(finType, view);
+	@Override
+	public List<NPAProvisionHeader> getNPAProvisionsListByFintype(String finType, TableType tableType) {
 
-		List<NPAProvisionDetail> provisionDetailsList = this.nPAProvisionDetailDAO
-				.getNPAProvisionDetailList(provisionHeader.getId(), view);
-		if (CollectionUtils.isNotEmpty(provisionDetailsList)) {
-			for (NPAProvisionDetail detail : provisionDetailsList) {
+		List<NPAProvisionHeader> npaProvisionHeaderList = nPAProvisionHeaderDAO.getNPAProvisionsListByFintype(finType,
+				tableType);
 
-				AssetClassificationHeader classificationHeader = this.assetClassificationHeaderDAO
-						.getAssetClassificationHeader(detail.getAssetClassificationId(), TableType.AVIEW.getSuffix());
-				if (classificationHeader != null) {
-					detail.setAssetClassificationId(classificationHeader.getId());
-					detail.setAssetCode(classificationHeader.getCode());
-					detail.setAssetStageOrder(classificationHeader.getStageOrder());
+		for (NPAProvisionHeader provisionHeader : npaProvisionHeaderList) {
+			List<NPAProvisionDetail> provisionDetailsList = this.nPAProvisionDetailDAO
+					.getNPAProvisionDetailList(provisionHeader.getId(), tableType);
+			if (CollectionUtils.isNotEmpty(provisionDetailsList)) {
+				for (NPAProvisionDetail detail : provisionDetailsList) {
+
+					AssetClassificationHeader classificationHeader = this.assetClassificationHeaderDAO
+							.getAssetClassificationHeader(detail.getAssetClassificationId(),
+									TableType.AVIEW.getSuffix());
+					if (classificationHeader != null) {
+						detail.setAssetClassificationId(classificationHeader.getId());
+						detail.setAssetCode(classificationHeader.getCode());
+						detail.setAssetStageOrder(classificationHeader.getStageOrder());
+					}
 				}
 			}
-		}
 
-		logger.debug(Literal.LEAVING);
-		provisionHeader.setProvisionDetailsList(provisionDetailsList);
-		return provisionHeader;
+			logger.debug(Literal.LEAVING);
+			provisionHeader.setProvisionDetailsList(provisionDetailsList);
+
+		}
+		return npaProvisionHeaderList;
 	}
 
 }

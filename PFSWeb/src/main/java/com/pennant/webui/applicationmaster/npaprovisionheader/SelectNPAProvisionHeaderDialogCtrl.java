@@ -95,15 +95,15 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 
 		this.entity.setMandatoryStyle(true);
 		this.entity.setModuleName("Entity");
-		this.entity.setValueColumn("entityCode");
-		this.entity.setDescColumn("entityDesc");
-		this.entity.setValidateColumns(new String[] { "entityCode" });
+		this.entity.setValueColumn("EntityCode");
+		this.entity.setDescColumn("EntityDesc");
+		this.entity.setValidateColumns(new String[] { "EntityCode" });
 
 		this.finType.setMandatoryStyle(true);
 		this.finType.setModuleName("FinanceType");
-		this.finType.setValueColumn("finType");
-		this.finType.setDescColumn("finTypeName");
-		this.finType.setValidateColumns(new String[] { "finType" });
+		this.finType.setValueColumn("FinType");
+		this.finType.setDescColumn("FinTypeDesc");
+		this.finType.setValidateColumns(new String[] { "FinType" });
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -165,7 +165,8 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 		this.nPAProvisionHeader.setFinType(this.finType.getValue());
 		this.nPAProvisionHeader.setEntity(this.entity.getValue());
 		finTypeLabel = nPAProvisionHeader.getFinType() + " ";
-		isExists = this.nPAProvisionHeaderService.getIsFinTypeExists(nPAProvisionHeader.getFinType(), TableType.VIEW);
+		isExists = this.nPAProvisionHeaderService.getIsFinTypeExists(nPAProvisionHeader.getFinType(),
+				nPAProvisionHeader.getNpaTemplateId(), TableType.VIEW);
 
 		if (isExists) {
 			MessageUtil.showError(finTypeLabel.concat(Labels.getLabel("label_FinType_AlreadyExists")));

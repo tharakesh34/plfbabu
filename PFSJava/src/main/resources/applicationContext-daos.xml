@@ -5646,6 +5646,8 @@
 		<property name="nPAProvisionHeaderDAO" ref="nPAProvisionHeaderDAO" />
 		<property name="nPAProvisionDetailDAO" ref="nPAProvisionDetailDAO" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
+		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
+		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!--================= Holiday Util =================== -->
@@ -8321,7 +8323,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-	<!-- NPAProvisionHeader -->
+<!-- NPAProvisionHeader -->
 	<bean id="nPAProvisionHeaderDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPAProvisionHeaderDAOImpl"
 		parent="sequenceDao" />
 
@@ -8348,6 +8350,7 @@
 		<property name="nPAProvisionDetailDAO" ref="nPAProvisionDetailDAO" />
 		<property name="assetClassificationHeaderDAO" ref="assetClassificationHeaderDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!-- NPAProvisionDetail -->
@@ -12032,6 +12035,7 @@
 	<bean id="dataEngineConfig" class="com.pennanttech.dataengine.config.DataEngineConfig">
 		<constructor-arg ref="dataSource" />
 	</bean>
+	
 	<!-- AssetClassificationHeader -->
 	<bean id="assetClassificationHeaderDAO" class="com.pennant.backend.dao.applicationmaster.impl.AssetClassificationHeaderDAOImpl"
 		parent="sequenceDao" />
