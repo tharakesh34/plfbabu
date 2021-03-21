@@ -922,6 +922,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		}
 		List<FinFeeDetail> paidFeeList = null;
+		String finDivision = null;
 		if (StringUtils.isNotBlank(finServInst.getFinReference())) {
 			String finReference = finServInst.getFinReference();
 
@@ -941,6 +942,9 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			finServInst.setCustID(financeMain.getCustID());
 			finServInst.setFinType(financeMain.getFinType());
 			finServInst.setCurrency(financeMain.getFinCcy());
+			finServInst.setFromBranch(financeMain.getFinBranch());
+			finServInst.setToBranch(userDetails.getBranchCode());
+			finDivision = financeMain.getLovDescFinDivision();
 		} else {
 			paidFeeList = finServInst.getFinFeeDetails();
 		}
@@ -978,6 +982,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		header.setFinBranch(finServInst.getFromBranch());
 		header.setPostBranch(finServInst.getFromBranch());
 		header.setCashierBranch(finServInst.getToBranch());
+		header.setFinDivision(finDivision);
 
 		WorkFlowDetails workFlowDetails = null;
 		String roleCode = null;
