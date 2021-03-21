@@ -1323,6 +1323,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (financeSummary != null) {
 
 			this.finOverDueDays.setValue(financeSummary.getFinCurODDays());
+			this.finOverDueStatus.setValue(getFinScheduleData().getFinanceMain().getFinStatus());
 			this.provision_AssetStage.setValue(financeSummary.getAssetCode());
 
 			if (PennantConstants.WORFLOW_MODULE_CD.equals(aFinanceMain.getLovDescProductCodeName())) {
