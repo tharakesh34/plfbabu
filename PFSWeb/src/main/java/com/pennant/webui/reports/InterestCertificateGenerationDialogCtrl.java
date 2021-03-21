@@ -275,17 +275,18 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			if (years < 0 && finStartDateMonth < 4) {
 				years = years + 1;
 				for (int i = 0; i <= years; i++) {
-					financeYearList.add(new ValueLabel(String.valueOf(Integer.valueOf(finStartDateYear) + i - 1),
-							String.valueOf(Integer.valueOf(finStartDateYear) - 1) + "-" + String.valueOf(
-									Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2))
-											+ i)));
+					String newValue = String.valueOf(Integer.valueOf(finStartDateYear) + i - 1);
+					String newLabel = String.valueOf(Integer.valueOf(finStartDateYear) - 1) + "-" + String
+							.valueOf(Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2)) + i);
+					financeYearList.add(new ValueLabel(newValue, newLabel));
 				}
 			} else {
 				for (int i = 0; i <= years; i++) {
 					financeYearList.add(new ValueLabel(String.valueOf(Integer.valueOf(finStartDateYear) + i),
-							String.valueOf(Integer.valueOf(finStartDateYear) + i) + "-" + String.valueOf(
-									Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2)) + i
-											+ 1)));
+							String.valueOf(Integer.valueOf(finStartDateYear) + i) + "-"
+									+ String.valueOf(
+											Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2))
+													+ i + 1)));
 				}
 			}
 			fillComboBox(this.financeYear, "", financeYearList, "");
@@ -380,11 +381,11 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			throw new WrongValuesException(wvea);
 		}
 
-		int year  = Integer.parseInt(getComboboxValue(this.financeYear));
-		
+		int year = Integer.parseInt(getComboboxValue(this.financeYear));
+
 		Date startDate = DateUtil.getDate(year, 3, 1);
-		Date endDate = DateUtil.getDate(year+1, 2, 31);
-		
+		Date endDate = DateUtil.getDate(year + 1, 2, 31);
+
 		boolean isProvCert = false;
 		if ("provisional".equalsIgnoreCase(getArgument("module"))) {
 			isProvCert = true;
