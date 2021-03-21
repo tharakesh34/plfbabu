@@ -469,7 +469,7 @@ public class NPAService extends ServiceHelper {
 	public boolean isNAPRepayHierarchyReq(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		Provision provision = provisionDAO.getProvisionById(finReference, TableType.MAIN_TAB, false);
+		Provision provision = provisionDAO.getProvisionById(finReference, TableType.AVIEW, false);
 		if (provision == null) {
 			return false;
 		}
