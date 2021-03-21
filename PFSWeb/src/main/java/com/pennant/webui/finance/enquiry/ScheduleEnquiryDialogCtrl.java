@@ -82,6 +82,7 @@ import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
@@ -436,6 +437,23 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 				finRender.render(map, prvSchDetail, true, false, true, finScheduleData.getFinFeeDetailList(), showRate,
 						false);
 				break;
+			}
+
+			//SubventionDetails
+			if (finScheduleData.getFinanceMain().isAllowSubvention()) {
+				String listBoxHeight = this.borderLayoutHeight - 270 + "px";
+				if (CollectionUtils.isNotEmpty(finScheduleData.getDisbursementDetails())) {
+					boolean subventionSchedule = false;
+					for (FinanceDisbursement disbursement : finScheduleData.getDisbursementDetails()) {
+						if (CollectionUtils.isNotEmpty(disbursement.getSubventionSchedules())) {
+							subventionSchedule = true;
+							break;
+						}
+					}
+					if (subventionSchedule) {
+						finRender.renderSubvention(finScheduleData, listBoxHeight);
+					}
+				}
 			}
 		}
 

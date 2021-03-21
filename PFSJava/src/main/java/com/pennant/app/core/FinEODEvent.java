@@ -19,6 +19,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.model.finance.SubventionDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.Provision;
@@ -85,6 +86,7 @@ public class FinEODEvent implements Serializable {
 	private List<RepayInstruction> orgRepayInsts = new ArrayList<>(1);
 	private List<FinanceScheduleDetail> orgFinSchdDetails = new ArrayList<>(1);
 	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<>();
+	private SubventionDetail subventionDetail = new SubventionDetail();
 
 	public FinEODEvent copyEntity() {
 		FinEODEvent entity = new FinEODEvent();
@@ -137,6 +139,8 @@ public class FinEODEvent implements Serializable {
 		this.orgRepayInsts.stream().forEach(e -> entity.getOrgRepayInsts().add(e.copyEntity()));
 		this.orgFinSchdDetails.stream().forEach(e -> entity.getOrgFinSchdDetails().add(e.copyEntity()));
 		this.finServiceInstructions.stream().forEach(e -> entity.getFinServiceInstructions().add(e.copyEntity()));
+		entity.setSubventionDetail(this.subventionDetail == null ? null : this.subventionDetail.copyEntity());
+
 		return entity;
 	}
 
@@ -561,5 +565,13 @@ public class FinEODEvent implements Serializable {
 
 	public void setFinServiceInstructions(List<FinServiceInstruction> finServiceInstructions) {
 		this.finServiceInstructions = finServiceInstructions;
+	}
+
+	public SubventionDetail getSubventionDetail() {
+		return subventionDetail;
+	}
+
+	public void setSubventionDetail(SubventionDetail subventionDetail) {
+		this.subventionDetail = subventionDetail;
 	}
 }

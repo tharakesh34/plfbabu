@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,8 +66,15 @@ import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listhead;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Space;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -85,6 +93,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceScheduleReportData;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
+import com.pennant.backend.model.finance.SubventionScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
@@ -3713,6 +3722,260 @@ public class FinScheduleListItemRenderer implements Serializable {
 			break;
 		}
 		return color;
+	}
+
+	/**
+	 * Method for Rendering SubventionDetails based on Disbursement
+	 * 
+	 * @param aFinSchData
+	 */
+	public void renderSubvention(FinScheduleData aFinSchData, String listBoxHeight) {
+		logger.debug("Entering");
+
+		int formatter = CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
+
+		// Setting existing tabs   at schedule dialog page
+		Tabs tbInSchDialog = (Tabs) window.getFellowIfAny("tabsIndexCenter");
+
+		//Setting existing tab panels  at schedule dialog page
+		Tabpanels tbpnlsInSchDialog = (Tabpanels) window.getFellowIfAny("tabpanelsBoxIndexCenter");
+
+		//if  tbInSchDialog has sub vention tab  removing and panels also
+
+		if (tbInSchDialog.getFellowIfAny("Tab_finSchSubvenSchd") != null) {
+
+			Tabpanel tabpan = (Tabpanel) tbpnlsInSchDialog.getFellowIfAny("Tbpan_subVenschd");
+			tabpan.getChildren().clear();
+			tbpnlsInSchDialog.removeChild(tabpan);
+
+			Tab clearTab = (Tab) tbInSchDialog.getFellowIfAny("Tab_finSchSubvenSchd");
+			clearTab.getChildren().clear();
+
+			tbInSchDialog.removeChild(clearTab);
+
+		}
+
+		// creating  tab dynamically 
+		Tab subvenTab = new Tab(Labels.getLabel("listheader_finSchduleDetailDialog_Tab_SubventionDetails"));
+		subvenTab.setId("Tab_finSchSubvenSchd");
+
+		Tabpanel subVenschdPanel = new Tabpanel();
+		subVenschdPanel.setId("Tbpan_subVenschd");
+
+		Tabpanels subVenschdPanels = new Tabpanels();
+
+		Tabbox tabbox = new Tabbox();
+
+		Tabs tabs = new Tabs();
+
+		for (FinanceDisbursement disbursement : aFinSchData.getDisbursementDetails()) {
+
+			// creating tab
+			Tab tab = new Tab();
+			tab.setId("Tab_FinSubVenSchdDetails" + disbursement.getDisbSeq());
+			tab.setLabel("T" + disbursement.getDisbSeq() + " / "
+					+ PennantAppUtil.amountFormate(disbursement.getDisbAmount(), PennantConstants.defaultCCYDecPos));
+
+			tab.setParent(tabs);
+
+			tabs.setParent(tabbox);
+
+			// creating tab panel for every tab
+			Tabpanel panel = new Tabpanel();
+			panel.setId("TabPanel_SubVenSchd" + disbursement.getDisbSeq());
+			//panel.setHeight(400 + "px");
+			panel.setStyle("overflow:auto");
+
+			Listbox lstBox = new Listbox();
+			lstBox.setHeight(listBoxHeight);
+			//lstBox.setStyle("overflow:auto");
+
+			Listhead lsthead = new Listhead();
+			lsthead.setStyle("padding:0px;position:relative;");
+
+			getListHeadersForSubeventions(lsthead);
+
+			if (CollectionUtils.isNotEmpty(disbursement.getSubventionSchedules())) {
+				int serilNo = 0;
+				boolean bpiCase = false;
+				String pftDays = null;
+				SubventionScheduleDetail oldSubSchedule = null;
+				if (CollectionUtils.isNotEmpty(aFinSchData.getFinanceScheduleDetails())) {
+					pftDays = aFinSchData.getFinanceScheduleDetails().get(0).getPftDaysBasis();
+				}
+				if (aFinSchData.getFinanceMain().isAlwBPI()
+						&& !FinanceConstants.BPI_NO.equals(aFinSchData.getFinanceMain().getBpiTreatment())
+						&& StringUtils.isNotBlank(pftDays)) {
+					bpiCase = true;
+				}
+				for (SubventionScheduleDetail newSubSchedule : disbursement.getSubventionSchedules()) {
+
+					if (bpiCase) {
+						if (serilNo == 0) {
+							oldSubSchedule = newSubSchedule;
+							serilNo = serilNo + 1;
+							continue;
+						} else if (serilNo == 1) {
+							//No of Days
+							newSubSchedule.setNoOfDays(newSubSchedule.getNoOfDays() + oldSubSchedule.getNoOfDays());
+							//Discount Pft
+							newSubSchedule.setDiscountedPft(
+									newSubSchedule.getDiscountedPft().add(oldSubSchedule.getDiscountedPft()));
+							//Present Value
+							newSubSchedule.setPresentValue(
+									newSubSchedule.getPresentValue().add(oldSubSchedule.getPresentValue()));
+							//Future Value
+							newSubSchedule.setFutureValue(
+									newSubSchedule.getFutureValue().add(oldSubSchedule.getFutureValue()));
+							//Closing Balance
+							newSubSchedule
+									.setClosingBal(newSubSchedule.getClosingBal().add(oldSubSchedule.getClosingBal()));
+							doFillListBoxforSubSchdules(formatter, lstBox, newSubSchedule, serilNo);
+							serilNo = serilNo + 1;
+							continue;
+						} else {
+							doFillListBoxforSubSchdules(formatter, lstBox, newSubSchedule, serilNo);
+							serilNo = serilNo + 1;
+						}
+					} else {
+						serilNo = serilNo + 1;
+						doFillListBoxforSubSchdules(formatter, lstBox, newSubSchedule, serilNo);
+					}
+				}
+			}
+
+			lstBox.appendChild(lsthead);
+			lstBox.setParent(panel);
+			panel.setParent(subVenschdPanels);
+		}
+		subVenschdPanels.setParent(tabbox);
+		tabbox.setParent(subVenschdPanel);
+		subVenschdPanel.setParent(tbpnlsInSchDialog);
+		subvenTab.setParent(tbInSchDialog);
+		logger.debug("Leaving");
+	}
+
+	private void getListHeadersForSubeventions(Listhead lsthead) {
+		logger.debug("Entering");
+
+		Listheader listHeader = null;
+
+		listHeader = new Listheader();
+		listHeader.setLabel(Labels.getLabel("listheader_finSchduleDetailDialog_installNo"));
+		lsthead.appendChild(listHeader);
+
+		listHeader = new Listheader();
+		listHeader.setLabel(Labels.getLabel("listheader_finSchduleDetailDialog_Date"));
+		lsthead.appendChild(listHeader);
+
+		listHeader = new Listheader();
+		listHeader.setLabel(Labels.getLabel("listheader_finSchduleDetailDialog_Days"));
+		//listHeader.setVisible(ImplementationConstants.SUBVENTION_NO_OF_DAYS);FIXME
+		lsthead.appendChild(listHeader);
+
+		listHeader = new Listheader();
+		listHeader.setLabel(Labels.getLabel("listheader_finSchduleDetailDialog_DiscountedInterest"));
+		listHeader.setStyle("text-align:right;");
+		lsthead.appendChild(listHeader);
+
+		listHeader = new Listheader();
+		listHeader.setLabel(Labels.getLabel("listheader_finSchduleDetailDialog_PresentValue"));
+		listHeader.setStyle("text-align:right;");
+		lsthead.appendChild(listHeader);
+
+		listHeader = new Listheader();
+		listHeader.setLabel(Labels.getLabel("listheader_finSchduleDetailDialog_FutureValue"));
+		listHeader.setStyle("text-align:right;");
+		lsthead.appendChild(listHeader);
+
+		listHeader = new Listheader();
+		listHeader.setLabel(Labels.getLabel("listheader_finSchduleDetailDialog_ClosingBalance"));
+		listHeader.setStyle("text-align:right;");
+		lsthead.appendChild(listHeader);
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for Rendering Schedule Frequency Insurance Details
+	 * 
+	 * @param aFinSchData
+	 * @param formatter
+	 * @param insSchList
+	 * @param listbox
+	 */
+	private void doFillListBoxforSubSchdules(int formatter, Listbox listbox, SubventionScheduleDetail SubScheDetail,
+			int serail) {
+		logger.debug("Entering");
+
+		listitem = new Listitem();
+		Listcell lc = null;
+
+		//Installment No
+		lc = new Listcell(String.valueOf(serail));
+		lc.setStyle("font-weight:bold;cursor:default;");
+		listitem.appendChild(lc);
+
+		// Date
+		lc = new Listcell(DateUtility.formatToLongDate(SubScheDetail.getSchDate()));
+		lc.setStyle("font-weight:bold;cursor:default;");
+		listitem.appendChild(lc);
+
+		//days
+		lc = new Listcell(String.valueOf(SubScheDetail.getNoOfDays()));
+		lc.setStyle("font-weight:bold;cursor:default;");
+		listitem.appendChild(lc);
+
+		// Discounted Interest
+		lc = new Listcell(PennantAppUtil.amountFormate(SubScheDetail.getDiscountedPft(), formatter));
+		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
+		listitem.appendChild(lc);
+
+		// Present Value
+		lc = new Listcell(PennantAppUtil.amountFormate(SubScheDetail.getPresentValue(), formatter));
+		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
+		listitem.appendChild(lc);
+
+		//Future Value
+		lc = new Listcell(PennantAppUtil.amountFormate(SubScheDetail.getFutureValue(), formatter));
+		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
+		listitem.appendChild(lc);
+
+		// Closing Balance
+		lc = new Listcell(PennantAppUtil.amountFormate(SubScheDetail.getClosingBal(), formatter));
+		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
+		listitem.appendChild(lc);
+
+		listbox.appendChild(listitem);
+
+		logger.debug("Leaving");
+	}
+
+	public void removeSubvention() {
+		logger.debug("Entering");
+
+		// Setting existing tabs   at schedule dialog page
+		Tabs tbInSchDialog = (Tabs) window.getFellowIfAny("tabsIndexCenter");
+
+		//Setting existing tab panels  at schedule dialog page
+		Tabpanels tbpnlsInSchDialog = (Tabpanels) window.getFellowIfAny("tabpanelsBoxIndexCenter");
+
+		//if  tbInSchDialog has sub vention tab  removing and panels also
+
+		if (tbInSchDialog.getFellowIfAny("Tab_finSchSubvenSchd") != null) {
+
+			Tabpanel tabpan = (Tabpanel) tbpnlsInSchDialog.getFellowIfAny("Tbpan_subVenschd");
+			tabpan.getChildren().clear();
+			tbpnlsInSchDialog.removeChild(tabpan);
+
+			Tab clearTab = (Tab) tbInSchDialog.getFellowIfAny("Tab_finSchSubvenSchd");
+			clearTab.getChildren().clear();
+
+			tbInSchDialog.removeChild(clearTab);
+
+		}
+
+		logger.debug("Leaving");
 	}
 
 	public FinScheduleData getFinScheduleData() {

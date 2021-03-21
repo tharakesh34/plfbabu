@@ -369,6 +369,8 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> purgEnvList = getPurgEnvironment();
 	private static List<ValueLabel> purgTypeList = getPurgType();
 	private static List<ValueLabel> purgActionList = getPurgAction();
+	private static List<ValueLabel> interestSubventionTypeList;
+	private static List<ValueLabel> interestSubventionMethodList;
 
 	/**
 	 * Gets the list of applications.
@@ -5837,6 +5839,34 @@ public class PennantStaticListUtil {
 			purgActionList.add(new ValueLabel("2", Labels.getLabel("label_DeleteData")));
 		}
 		return purgActionList;
+	}
+
+	public static List<ValueLabel> getInterestSubventionType() {
+		if (interestSubventionTypeList != null) {
+			return interestSubventionTypeList;
+		}
+
+		interestSubventionTypeList = new ArrayList<ValueLabel>(2);
+		interestSubventionTypeList.add(new ValueLabel(FinanceConstants.INTEREST_SUBVENTION_TYPE_PARTIAL,
+				Labels.getLabel("label_interest_subvention_type_partial")));
+		interestSubventionTypeList.add(new ValueLabel(FinanceConstants.INTEREST_SUBVENTION_TYPE_FULL,
+				Labels.getLabel("label_interest_subvention_type_full")));
+
+		return interestSubventionTypeList;
+	}
+
+	public static List<ValueLabel> getInterestSubventionMethod() {
+		if (interestSubventionMethodList != null) {
+			return interestSubventionMethodList;
+		}
+
+		interestSubventionMethodList = new ArrayList<ValueLabel>(2);
+		interestSubventionMethodList.add(new ValueLabel(FinanceConstants.INTEREST_SUBVENTION_METHOD_UPFRONT,
+				Labels.getLabel("label_interest_subvention_method_DeductUpfront")));
+		interestSubventionMethodList.add(new ValueLabel(FinanceConstants.INTEREST_SUBVENTION_METHOD_MONTHLY,
+				Labels.getLabel("label_interest_subvention_method_monthly")));
+
+		return interestSubventionMethodList;
 	}
 
 }

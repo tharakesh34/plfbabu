@@ -81,6 +81,10 @@ public class LoadFinanceData extends ServiceHelper {
 
 			finEODEvent.setFinExcessAmounts(finExcessAmountDAO.getAllExcessAmountsByRef(finReference, ""));
 
+			if (fm.isAllowSubvention()) {
+				finEODEvent.setSubventionDetail(subventionDetailDAO.getSubventionDetail(finReference, ""));
+			}
+
 			setEventFlags(custEODEvent, finEODEvent);
 			custEODEvent.getFinEODEvents().add(finEODEvent);
 

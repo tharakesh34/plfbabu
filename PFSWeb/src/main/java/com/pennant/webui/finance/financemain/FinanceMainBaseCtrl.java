@@ -253,6 +253,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceHeader;
 import com.pennant.backend.model.finance.SecondaryAccount;
+import com.pennant.backend.model.finance.SubventionDetail;
 import com.pennant.backend.model.finance.TATDetail;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
@@ -589,8 +590,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Combobox grcPftDaysBasis;
 	protected Row grcPftFrqRow;
 	protected FrequencyBox gracePftFrq;
+	protected Label label_FinanceMainDialog_GracePftFrq;
 	protected Datebox nextGrcPftDate;
 	protected Datebox nextGrcPftDate_two;
+	protected Label label_FinanceMainDialog_NextGrcPftDate;
 	protected Row grcPftRvwFrqRow;
 	protected FrequencyBox gracePftRvwFrq;
 	protected Datebox nextGrcPftRvwDate;
@@ -1202,6 +1205,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label label_FinanceMainDialog_ParentLoanReference;
 	@Autowired
 	private CovenantsService covenantsService;
+
+	//SubventionDetails
+	protected Groupbox gb_SubventionDetails;
+	protected Checkbox subventionAllowed;
+	protected Combobox subventionType;
+	protected Combobox subventionMethod;
+	protected Decimalbox subventionRate;
+	protected Decimalbox subventionperiodRateByCust;
+	protected Decimalbox subventionDiscountRate;
+	protected Intbox subventionTenure;
+	protected Intbox subventionTenure_two;
+	protected Datebox subventionEndDate;
+	protected Datebox subventionEndDate_two;
+	private SubventionDetail oldSubventionDetail;
 
 	/**
 	 * default constructor.<br>
@@ -4598,6 +4615,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.numberOfTerms_two.setValue(aFinanceMain.getNumberOfTerms());
 		}
 
+		//FinanceMain Details ---> Start SubVention Details
+		this.subventionAllowed.setChecked(aFinanceMain.isAllowSubvention());
+		if (aFinanceMain.isAllowSubvention()) {
+			this.gb_SubventionDetails.setVisible(true);
+			SubventionDetail detail = aFinanceDetail.getFinScheduleData().getSubventionDetail();
+			setOldSubventionDetail(detail);
+
+			if (detail != null) {
+				this.subventionEndDate_two.setValue(detail.getEndDate());
+				this.subventionTenure_two.setValue(detail.getTenure());
+				this.subventionTenure.setValue(detail.getTenure());
+			}
+
+			doSetSubventionDetail(detail);
+		} else {
+			this.gb_SubventionDetails.setVisible(false);
+		}
+		// FinanceMain Details ---> End SubVention Details
+
 		// Rollover Finance Details
 		if (aFinanceDetail.getRolledoverFinanceHeader() != null) {
 
@@ -6456,6 +6492,28 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
+		//SubventionDetails
+		if (this.gb_SubventionDetails.isVisible() && this.subventionAllowed.isChecked()
+				&& this.allowGrace.isChecked()) {
+			if (!this.subventionRate.isReadonly()) {
+				this.subventionRate.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_SubventionDetailDialog_Rate.value"), 2, true, false, 0, 100));
+			}
+			if (!this.subventionDiscountRate.isReadonly()) {
+				this.subventionDiscountRate.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_SubventionDetailDialog_DiscountRate.value"), 2, true, false, 0, 100));
+			}
+			if (!this.subventionType.isDisabled()) {
+				this.subventionType
+						.setConstraint(new StaticListValidator(PennantStaticListUtil.getInterestSubventionType(),
+								Labels.getLabel("label_SubventionDetailDialog_Type.value")));
+			}
+			if (!this.subventionTenure.isReadonly() && this.subventionTenure.intValue() == 0) {
+				this.subventionTenure.setConstraint(new PTNumberValidator(
+						Labels.getLabel("label_SubventionDetailDialog_Tenure.value"), true, false));
+			}
+		}
+
 		// FinanceMain Details Tab ---> 1. Basic Details
 
 		if (!this.finReference.isReadonly() && !financeType.isFinIsGenRef()) {
@@ -7193,6 +7251,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			fillComboBox(this.planEmiMethod, FinanceConstants.PLANEMIHMETHOD_FRQ,
 					PennantStaticListUtil.getPlanEmiHolidayMethod(), "");
 			onCheckPlannedEmiholiday(getComboboxValue(this.planEmiMethod), false);
+
+			//SubventionDetails
+			fillComboBox(subventionType, "", PennantStaticListUtil.getInterestSubventionType(), "");
+			fillComboBox(subventionMethod, "", PennantStaticListUtil.getInterestSubventionMethod(), "");
+			this.subventionRate.setValue(BigDecimal.ZERO);
+			this.subventionperiodRateByCust.setValue(BigDecimal.ZERO);
+			this.subventionDiscountRate.setValue(BigDecimal.ZERO);
+			this.subventionTenure.setValue(0);
+			this.subventionEndDate.setValue(null);
+			readOnlyComponent(true, this.subventionType);
+			readOnlyComponent(true, this.subventionMethod);
+			readOnlyComponent(true, this.subventionRate);
+			readOnlyComponent(true, this.subventionperiodRateByCust);
+			readOnlyComponent(true, this.subventionDiscountRate);
+			readOnlyComponent(true, this.subventionTenure);
+			readOnlyComponent(true, this.subventionEndDate);
+			readOnlyComponent(true, this.subventionAllowed);
+			this.subventionAllowed.setChecked(false);
 		}
 
 		if (onCheckProc) {
@@ -7571,6 +7647,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			eventCode = PennantApplicationUtil.getEventCode(aFinanceMain.getFinStartDate());
 		}
 		aFinanceDetail.setAccountingEventCode(eventCode);
+
+		//SubventionDetails
+		resetSubventionDetail(aFinScheduleData);
 
 		// Extended Field validations
 		if (aFinanceDetail.getExtendedFieldHeader() != null && extendedFieldCtrl != null) {
@@ -9744,6 +9823,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				allagrDataset = null;
 
 			}
+		}
+
+		//SubventionDetails
+		SubventionDetail subventionDetail = aFinanceDetail.getFinScheduleData().getSubventionDetail();
+		if (subventionDetail != null) {
+			subventionDetail.setFinReference(afinanceMain.getFinReference());
+			subventionDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			subventionDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			subventionDetail.setWorkflowId(afinanceMain.getWorkflowId());
+			subventionDetail.setTaskId(taskId);
+			subventionDetail.setNextTaskId(nextTaskId);
+			subventionDetail.setRoleCode(getRole());
+			subventionDetail.setNextRoleCode(nextRoleCode);
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -24110,6 +24202,245 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.oldVar_finAssetValue = this.finAssetValue.getActualValue();
 	}
 
+	/**
+	 * subventionAllowed checkbox event
+	 * 
+	 * @param event
+	 */
+	public void onCheck$subventionAllowed(Event event) {
+		logger.debug(Literal.ENTERING);
+		doSetSubventionDetail(null);
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onChange$subventionType(Event event) {
+		logger.debug(Literal.ENTERING);
+		changeSubventionType();
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void changeSubventionType() {
+		String subventionMethod = this.subventionMethod.getSelectedItem().getValue();
+
+		if (FinanceConstants.INTEREST_SUBVENTION_METHOD_UPFRONT.equals(subventionMethod)) {
+
+			String subventionType = this.subventionType.getSelectedItem().getValue();
+
+			if (FinanceConstants.INTEREST_SUBVENTION_TYPE_FULL.equals(subventionType)) {
+				if (this.gracePftRate.getValue() != null
+						&& BigDecimal.ZERO.compareTo(this.gracePftRate.getValue()) == 1) {
+					this.subventionRate.setValue(this.gracePftRate.getValue());
+				} else if (this.graceRate.getEffRateValue() != null
+						&& BigDecimal.ZERO.compareTo(this.graceRate.getEffRateValue()) == -1) {
+					this.subventionRate.setValue(this.graceRate.getEffRateValue());
+				} else {
+					this.subventionRate.setValue(BigDecimal.ZERO);
+				}
+				readOnlyComponent(true, this.subventionRate);
+				this.subventionperiodRateByCust.setValue(BigDecimal.ZERO);
+
+			} else if (FinanceConstants.INTEREST_SUBVENTION_TYPE_PARTIAL.equals(subventionType)) {
+				readOnlyComponent(isReadOnly("FinanceMainDialog_subventionRate"), this.subventionRate);
+				if (this.gracePftRate.getValue() != null
+						&& BigDecimal.ZERO.compareTo(this.gracePftRate.getValue()) == 1) {
+					this.subventionperiodRateByCust
+							.setValue(this.gracePftRate.getValue().subtract(this.subventionRate.getValue()));
+				} else if (this.graceRate.getEffRateValue() != null
+						&& BigDecimal.ZERO.compareTo(this.graceRate.getEffRateValue()) == -1) {
+					this.subventionperiodRateByCust
+							.setValue(this.graceRate.getEffRateValue().subtract(this.subventionRate.getValue()));
+				} else {
+					this.subventionperiodRateByCust.setValue(BigDecimal.ZERO);
+				}
+			} else {
+				this.subventionRate.setValue(BigDecimal.ZERO);
+				readOnlyComponent(isReadOnly("FinanceMainDialog_subventionRate"), this.subventionRate);
+			}
+		}
+	}
+
+	public void onChange$subventionTenure(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		this.nextGrcPftDate_two.setErrorMessage("");
+		this.nextGrcPftDate_two.setConstraint("");
+
+		if (!this.nextGrcPftDate.isReadonly() && StringUtils.isNotEmpty(this.gracePftFrq.getValue())
+				&& FrequencyUtil.validateFrequency(this.gracePftFrq.getValue()) == null) {
+			this.nextGrcPftDate_two
+					.setConstraint(new PTDateValidator(this.label_FinanceMainDialog_NextGrcPftDate.getValue(), true));
+		}
+
+		ArrayList<WrongValueException> wve = new ArrayList<>();
+
+		try {
+			if (this.nextGrcPftDate.getValue() != null) {
+				this.nextGrcPftDate_two.setValue(this.nextGrcPftDate.getValue());
+			}
+			if (StringUtils.isNotEmpty(this.gracePftFrq.getValue())
+					&& FrequencyUtil.validateFrequency(this.gracePftFrq.getValue()) == null) {
+				List<Calendar> scheduleDateList = null;
+				scheduleDateList = FrequencyUtil
+						.getNextDate(this.gracePftFrq.getValue(), this.subventionTenure.intValue(),
+								this.nextGrcPftDate_two.getValue(), HolidayHandlerTypes.MOVE_NONE, true, 0)
+						.getScheduleList();
+				if (scheduleDateList != null) {
+					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+					this.subventionEndDate.setValue(calendar.getTime());
+				}
+
+				this.subventionTenure_two.setValue(this.subventionTenure.intValue());
+				this.subventionEndDate_two.setValue(this.subventionEndDate.getValue());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+
+			this.subventionTenure.setValue(0);
+			this.subventionEndDate.setValue(null);
+		}
+
+		this.subventionTenure_two.setValue(this.subventionTenure.intValue());
+		this.subventionEndDate_two.setValue(this.subventionEndDate.getValue());
+
+		showErrorDetails(wve, financeTypeDetailsTab);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onChange$subventionRate(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		changeSubventionRate();
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void changeSubventionRate() {
+		String subventionMethod = this.subventionMethod.getSelectedItem().getValue();
+
+		if (FinanceConstants.INTEREST_SUBVENTION_METHOD_UPFRONT.equals(subventionMethod)) {
+			String subventionType = this.subventionType.getSelectedItem().getValue();
+			if (FinanceConstants.INTEREST_SUBVENTION_TYPE_PARTIAL.equals(subventionType)) {
+				if (this.gracePftRate.getValue() != null
+						&& BigDecimal.ZERO.compareTo(this.gracePftRate.getValue()) == 1) {
+					this.subventionperiodRateByCust
+							.setValue(this.gracePftRate.getValue().subtract(this.subventionRate.getValue()));
+				} else if (this.graceRate.getEffRateValue() != null
+						&& BigDecimal.ZERO.compareTo(this.graceRate.getEffRateValue()) == -1) {
+					this.subventionperiodRateByCust
+							.setValue(this.graceRate.getEffRateValue().subtract(this.subventionRate.getValue()));
+				}
+			} else {
+				this.subventionperiodRateByCust.setValue(BigDecimal.ZERO);
+			}
+		}
+	}
+
+	public void onChange$gracePftRate(Event event) {
+		logger.debug(Literal.ENTERING);
+		if (this.subventionAllowed.isChecked() && FinanceConstants.INTEREST_SUBVENTION_TYPE_FULL
+				.equals(this.subventionType.getSelectedItem().getValue())) {
+			this.subventionRate.setValue(this.gracePftRate.getValue());
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void doSetSubventionDetail(SubventionDetail detail) {
+		boolean disabled = false;
+		if (!this.subventionAllowed.isChecked()) {
+			disabled = true;
+			fillComboBox(subventionType, "", PennantStaticListUtil.getInterestSubventionType(), "");
+			fillComboBox(subventionMethod, "", PennantStaticListUtil.getInterestSubventionMethod(), "");
+			this.subventionRate.setValue(BigDecimal.ZERO);
+			this.subventionperiodRateByCust.setValue(BigDecimal.ZERO);
+			this.subventionDiscountRate.setValue(BigDecimal.ZERO);
+			this.subventionTenure.setValue(0);
+			this.subventionEndDate.setValue(null);
+			this.subventionTenure_two.setValue(0);
+			this.subventionEndDate_two.setValue(null);
+		} else if (detail != null) {
+			fillComboBox(subventionType, detail.getType(), PennantStaticListUtil.getInterestSubventionType(), "");
+			fillComboBox(subventionMethod, detail.getMethod(), PennantStaticListUtil.getInterestSubventionMethod(), "");
+			this.subventionRate.setValue(detail.getRate());
+			this.subventionperiodRateByCust.setValue(detail.getPeriodRate());
+			this.subventionDiscountRate.setValue(detail.getDiscountRate());
+			this.subventionTenure.setValue(detail.getTenure());
+			this.subventionEndDate.setValue(detail.getEndDate());
+			this.subventionTenure_two.setValue(detail.getTenure());
+			this.subventionEndDate_two.setValue(detail.getEndDate());
+		} else {
+
+			this.subventionperiodRateByCust.setValue(BigDecimal.ZERO);
+			this.subventionTenure.setValue(0);
+			this.subventionEndDate.setValue(null);
+			this.subventionTenure_two.setValue(0);
+			this.subventionEndDate_two.setValue(null);
+
+			fillComboBox(subventionType, "", PennantStaticListUtil.getInterestSubventionType(), "");
+			fillComboBox(subventionMethod, FinanceConstants.INTEREST_SUBVENTION_METHOD_UPFRONT,
+					PennantStaticListUtil.getInterestSubventionMethod(), "");
+			this.subventionRate.setValue(BigDecimal.ZERO);
+			this.subventionDiscountRate.setValue(BigDecimal.ZERO);
+		}
+
+		//For Servicing Events
+		if (StringUtils.isNotBlank(this.moduleDefiner)) {
+			disabled = true;
+			readOnlyComponent(true, this.subventionAllowed);
+		}
+
+		if (disabled) {
+			readOnlyComponent(disabled, this.subventionType);
+			readOnlyComponent(disabled, this.subventionMethod);
+			readOnlyComponent(disabled, this.subventionRate);
+			readOnlyComponent(disabled, this.subventionperiodRateByCust);
+			readOnlyComponent(disabled, this.subventionDiscountRate);
+			readOnlyComponent(disabled, this.subventionTenure);
+			readOnlyComponent(disabled, this.subventionEndDate);
+		} else {
+			if (FinanceConstants.INTEREST_SUBVENTION_TYPE_FULL.equals(getComboboxValue(this.subventionType))) {
+				readOnlyComponent(true, this.subventionRate);
+			} else {
+				readOnlyComponent(isReadOnly("FinanceMainDialog_subventionRate"), this.subventionRate);
+			}
+			readOnlyComponent(true, this.subventionperiodRateByCust);
+			readOnlyComponent(true, this.subventionMethod);
+			readOnlyComponent(true, this.subventionEndDate);
+			readOnlyComponent(isReadOnly("FinanceMainDialog_subventionType"), this.subventionType);
+			readOnlyComponent(isReadOnly("FinanceMainDialog_subventionDiscountRate"), this.subventionDiscountRate);
+			readOnlyComponent(isReadOnly("FinanceMainDialog_subventionTenure"), this.subventionTenure);
+		}
+	}
+
+	private void resetSubventionDetail(FinScheduleData aFinScheduleData) {
+		logger.debug(Literal.ENTERING);
+
+		SubventionDetail oldSubventionDetail = getOldSubventionDetail();
+		SubventionDetail newSubventionDetail = aFinScheduleData.getSubventionDetail();
+		boolean subventionAllowed = this.subventionAllowed.isChecked();
+
+		if (oldSubventionDetail == null) {
+			if (!subventionAllowed) {
+				aFinScheduleData.setSubventionDetail(null);
+			} else {
+				newSubventionDetail.setNewRecord(true);
+				newSubventionDetail.setVersion(1);
+				newSubventionDetail.setRecordType(PennantConstants.RCD_ADD);
+				aFinScheduleData.setSubventionDetail(newSubventionDetail);
+			}
+		} else {
+			if (!subventionAllowed) {
+				newSubventionDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+				aFinScheduleData.setSubventionDetail(newSubventionDetail);
+			} else {
+				newSubventionDetail.setNewRecord(false);
+				newSubventionDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				aFinScheduleData.setSubventionDetail(newSubventionDetail);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	public List<String> getAssignCollateralRef() {
 		return assignCollateralRef;
 	}
@@ -24320,4 +24651,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.financeExtCreditReviewSpreadSheetCtrl = financeExtCreditReviewSpreadSheetCtrl;
 	}
 
+	public SubventionDetail getOldSubventionDetail() {
+		return oldSubventionDetail;
+	}
+
+	public void setOldSubventionDetail(SubventionDetail oldSubventionDetail) {
+		this.oldSubventionDetail = oldSubventionDetail;
+	}
 }

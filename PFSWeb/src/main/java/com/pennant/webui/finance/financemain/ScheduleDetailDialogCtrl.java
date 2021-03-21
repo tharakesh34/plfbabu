@@ -55,6 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1142,6 +1143,28 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					logger.error("Exception: ", e);
 				}
 			}
+		}
+
+		//SubventionDetails
+		if (financeMain.isAllowSubvention()) {
+			String listBoxHeight = this.borderLayoutHeight - 270 + "px";
+			if (isWIF) {
+				listBoxHeight = this.borderLayoutHeight - 130 + "px";
+			}
+			if (CollectionUtils.isNotEmpty(aFinSchData.getDisbursementDetails())) {
+				boolean subventionSchedule = false;
+				for (FinanceDisbursement disbursement : aFinSchData.getDisbursementDetails()) {
+					if (CollectionUtils.isNotEmpty(disbursement.getSubventionSchedules())) {
+						subventionSchedule = true;
+						break;
+					}
+				}
+				if (subventionSchedule) {
+					finRender.renderSubvention(aFinSchData, listBoxHeight);
+				}
+			}
+		} else {
+			finRender.removeSubvention();
 		}
 
 		if (StringUtils.isNotBlank(moduleDefiner)) {

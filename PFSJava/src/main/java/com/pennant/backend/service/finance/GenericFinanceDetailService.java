@@ -212,6 +212,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennant.subvention.service.SubventionService;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -314,6 +315,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected CovenantsDAO covenantsDAO;
 	protected ManualAdviseDAO manualAdviseDAO;
 	protected AccountingSetDAO accountingSetDAO;
+	protected SubventionService subventionService;
 
 	public GenericFinanceDetailService() {
 		super();
@@ -2580,6 +2582,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		getFinanceDisbursementDAO().deleteByFinReference(scheduleData.getFinReference(), tableType, isWIF, 0);
 		getRepayInstructionDAO().deleteByFinReference(scheduleData.getFinReference(), tableType, isWIF, 0);
 
+		if (StringUtils.isBlank(tableType) || "_Temp".equalsIgnoreCase(tableType)) {
+			subventionService.deleteByFinReference(scheduleData.getFinReference(), tableType);
+		}
+
 		// Fee Charge Details & Finance Overdue PenaltyRate Details
 		if (StringUtils.isNotBlank(tableType) || isWIF) {
 			getFinFeeChargesDAO().deleteChargesBatch(scheduleData.getFinReference(), finEvent, isWIF, tableType);
@@ -2616,6 +2622,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		getFinanceScheduleDetailDAO().saveList(finDetail.getFinanceScheduleDetails(), tableType, isWIF);
+		subventionService.savSubvnetion(finDetail, tableType);
 
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();
@@ -3846,4 +3853,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
 		this.accountingSetDAO = accountingSetDAO;
 	}
+
+	public void setSubventionService(SubventionService subventionService) {
+		this.subventionService = subventionService;
+	}
+
 }

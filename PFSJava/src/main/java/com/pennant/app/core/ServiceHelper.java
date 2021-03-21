@@ -77,6 +77,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
+import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionMovementDAO;
@@ -144,6 +145,7 @@ abstract public class ServiceHelper implements Serializable {
 	protected ExtendedFieldDetailsService extendedFieldDetailsService;
 	protected FinExcessAmountDAO finExcessAmountDAO;
 	protected FinLogEntryDetailDAO finLogEntryDetailDAO;
+	protected SubventionDetailDAO subventionDetailDAO;
 
 	@Autowired
 	protected EODConfigDAO eodConfigDAO;
@@ -439,6 +441,10 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setProvisionMovementDAO(ProvisionMovementDAO provisionMovementDAO) {
 		this.provisionMovementDAO = provisionMovementDAO;
+	}
+
+	public void setSubventionDetailDAO(SubventionDetailDAO subventionDetailDAO) {
+		this.subventionDetailDAO = subventionDetailDAO;
 	}
 
 }

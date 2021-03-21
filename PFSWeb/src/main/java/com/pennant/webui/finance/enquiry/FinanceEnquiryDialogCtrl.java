@@ -121,6 +121,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.SubventionDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.reason.details.ReasonHeader;
@@ -580,6 +581,19 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Checkbox alwLoanSplit;
 	protected Textbox parentLoanReference;
 	protected Label label_FinanceMainDialog_ParentLoanReference;
+
+	//SubventionDetails
+	protected Groupbox gb_SubventionDetails;
+	protected Checkbox subventionAllowed;
+	protected Combobox subventionType;
+	protected Combobox subventionMethod;
+	protected Decimalbox subventionRate;
+	protected Decimalbox subventionperiodRateByCust;
+	protected Decimalbox subventionDiscountRate;
+	protected Intbox subventionTenure;
+	protected Intbox subventionTenure_two;
+	protected Datebox subventionEndDate;
+	protected Datebox subventionEndDate_two;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -1318,6 +1332,24 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				waivedAmt = waivedAmt.add(detail.getSchdPftWaiver());
 			}
 		}
+
+		//FinanceMain Details ---> Start SubVention Details
+		this.subventionAllowed.setChecked(aFinanceMain.isAllowSubvention());
+		if (aFinanceMain.isAllowSubvention()) {
+			this.gb_SubventionDetails.setVisible(true);
+			SubventionDetail detail = getFinScheduleData().getSubventionDetail();
+			if (detail != null) {
+				this.subventionEndDate_two.setValue(detail.getEndDate());
+				this.subventionTenure_two.setValue(detail.getTenure());
+				this.subventionTenure.setValue(detail.getTenure());
+			}
+
+			doSetSubventionDetail(detail);
+		} else {
+			this.gb_SubventionDetails.setVisible(false);
+		}
+		// FinanceMain Details ---> End SubVention Details
+
 		// FInance Summary Details
 		FinanceSummary financeSummary = getFinScheduleData().getFinanceSummary();
 		if (financeSummary != null) {
@@ -2732,10 +2764,70 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/** new code to display chart by skipping jsps code end */
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	private void doSetSubventionDetail(SubventionDetail detail) {
+		boolean disabled = false;
+		if (!this.subventionAllowed.isChecked()) {
+			disabled = true;
+			fillComboBox(subventionType, "", PennantStaticListUtil.getInterestSubventionType(), "");
+			fillComboBox(subventionMethod, "", PennantStaticListUtil.getInterestSubventionMethod(), "");
+			this.subventionRate.setValue(BigDecimal.ZERO);
+			this.subventionperiodRateByCust.setValue(BigDecimal.ZERO);
+			this.subventionDiscountRate.setValue(BigDecimal.ZERO);
+			this.subventionTenure.setValue(0);
+			this.subventionEndDate.setValue(null);
+			this.subventionTenure_two.setValue(0);
+			this.subventionEndDate_two.setValue(null);
+		} else if (detail != null) {
+			fillComboBox(subventionType, detail.getType(), PennantStaticListUtil.getInterestSubventionType(), "");
+			fillComboBox(subventionMethod, detail.getMethod(), PennantStaticListUtil.getInterestSubventionMethod(), "");
+			this.subventionRate.setValue(detail.getRate());
+			this.subventionperiodRateByCust.setValue(detail.getPeriodRate());
+			this.subventionDiscountRate.setValue(detail.getDiscountRate());
+			this.subventionTenure.setValue(detail.getTenure());
+			this.subventionEndDate.setValue(detail.getEndDate());
+			this.subventionTenure_two.setValue(detail.getTenure());
+			this.subventionEndDate_two.setValue(detail.getEndDate());
+		} else {
+
+			this.subventionperiodRateByCust.setValue(BigDecimal.ZERO);
+			this.subventionTenure.setValue(0);
+			this.subventionEndDate.setValue(null);
+			this.subventionTenure_two.setValue(0);
+			this.subventionEndDate_two.setValue(null);
+
+			fillComboBox(subventionType, "", PennantStaticListUtil.getInterestSubventionType(), "");
+			fillComboBox(subventionMethod, FinanceConstants.INTEREST_SUBVENTION_METHOD_UPFRONT,
+					PennantStaticListUtil.getInterestSubventionMethod(), "");
+			this.subventionRate.setValue(BigDecimal.ZERO);
+			this.subventionDiscountRate.setValue(BigDecimal.ZERO);
+		}
+
+		disabled = true;
+		readOnlyComponent(true, this.subventionAllowed);
+
+		if (disabled) {
+			readOnlyComponent(disabled, this.subventionType);
+			readOnlyComponent(disabled, this.subventionMethod);
+			readOnlyComponent(disabled, this.subventionRate);
+			readOnlyComponent(disabled, this.subventionperiodRateByCust);
+			readOnlyComponent(disabled, this.subventionDiscountRate);
+			readOnlyComponent(disabled, this.subventionTenure);
+			readOnlyComponent(disabled, this.subventionEndDate);
+		} else {
+			if (FinanceConstants.INTEREST_SUBVENTION_TYPE_FULL.equals(getComboboxValue(this.subventionType))) {
+				readOnlyComponent(true, this.subventionRate);
+			} else {
+				readOnlyComponent(isReadOnly("FinanceMainDialog_subventionRate"), this.subventionRate);
+			}
+			readOnlyComponent(true, this.subventionperiodRateByCust);
+			readOnlyComponent(true, this.subventionMethod);
+			readOnlyComponent(true, this.subventionEndDate);
+			readOnlyComponent(isReadOnly("FinanceMainDialog_subventionType"), this.subventionType);
+			readOnlyComponent(isReadOnly("FinanceMainDialog_subventionDiscountRate"), this.subventionDiscountRate);
+			readOnlyComponent(isReadOnly("FinanceMainDialog_subventionTenure"), this.subventionTenure);
+		}
+	}
+
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}

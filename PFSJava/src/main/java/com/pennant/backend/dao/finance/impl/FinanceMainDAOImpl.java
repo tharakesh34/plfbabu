@@ -717,7 +717,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", CampaignName, ExistingLanRefNo, LeadSource, PoSource , Rsa, Verification");
 			sql.append(", SourcingBranch, SourChannelCategory, AsmName, OfferId");
 			sql.append(", Pmay, AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
-			sql.append(", parentRef, loanSplitted, AlwLoanSplit, InstBasedSchd");
+			sql.append(", parentRef, loanSplitted, AlwLoanSplit, InstBasedSchd, AllowSubvention");
 
 		}
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
@@ -740,7 +740,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", ?, ?, ?, ? , ?, ?");
 			sql.append(", ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?");
-			sql.append(", ?, ?, ?, ?");
+			sql.append(", ?, ?, ?, ?, ?");
 
 		}
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -1013,6 +1013,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setBoolean(index++, fm.isLoanSplitted());
 					ps.setBoolean(index++, fm.isAlwLoanSplit());
 					ps.setBoolean(index++, fm.isInstBasedSchd());
+					ps.setBoolean(index++, fm.isAllowSubvention());
 
 				}
 				ps.setInt(index++, fm.getVersion());
@@ -6166,7 +6167,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", BaseProduct, ProcessType, BureauTimeSeries, CampaignName, ExistingLanRefNo, OfferId");
 			sql.append(", LeadSource, PoSource, Rsa, Verification, SourcingBranch, SourChannelCategory, AsmName");
 			sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate,InstBasedSchd, ParentRef");
-			sql.append(", AlwLoanSplit, LoanSplitted, Pmay");
+			sql.append(", AlwLoanSplit, LoanSplitted, Pmay, AllowSubvention");
 		}
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -6479,6 +6480,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setAlwLoanSplit(rs.getBoolean("AlwLoanSplit"));
 				fm.setLoanSplitted(rs.getBoolean("LoanSplitted"));
 				fm.setPmay(rs.getBoolean("Pmay"));
+				fm.setAllowSubvention(rs.getBoolean("AllowSubvention"));
 			}
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {

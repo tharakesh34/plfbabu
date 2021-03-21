@@ -70,6 +70,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.IRRScheduleDetail;
 import com.pennant.backend.model.finance.ProjectedAccrual;
+import com.pennant.backend.model.finance.SubventionScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
@@ -141,6 +142,16 @@ public class AccrualService extends ServiceHelper {
 		}
 
 		if (isAmzPostToday) {
+			// If Subvention exists on Loan, calculate Subvention accrual amounts based on schedules
+			if (fm.isAllowSubvention() && pfd.isSvnAcrCalReq()) {
+				Date accrualDate = custEODEvent.getEodValueDate();
+				BigDecimal svnPftAmount = calculateSvnPftAmount(fm, accrualDate);
+				pfd.setSvnPftAmount(svnPftAmount);
+				// Subvention calculation required on Next cycles?(In Future)
+				if (DateUtil.compare(fm.getGrcPeriodEndDate(), accrualDate) < 0) {
+					pfd.setSvnAcrCalReq(false);
+				}
+			}
 			postAccruals(finEODEvent, custEODEvent);
 		}
 		logger.info("Calculating Accruals for FinReference >>{} completed.", finReference);
@@ -1117,6 +1128,55 @@ public class AccrualService extends ServiceHelper {
 		}
 
 		fpd.setGapIntAmz(totIrrAmz.subtract(fpd.getPftAmz()));
+	}
+
+	private BigDecimal calculateSvnPftAmount(FinanceMain fm, Date accrualDate) {
+		String finReference = fm.getFinReference();
+		List<SubventionScheduleDetail> list = subventionDetailDAO.getSubventionScheduleDetails(finReference, 0, "");
+
+		SubventionScheduleDetail svnPrvSchd = null;
+		SubventionScheduleDetail svnCurSchd = null;
+		BigDecimal svnPftAmount = BigDecimal.ZERO;
+
+		for (int i = 0; i < list.size(); i++) {
+
+			svnCurSchd = list.get(i);
+
+			if (i == 0) {
+				svnPrvSchd = svnCurSchd;
+				svnPftAmount = svnPftAmount.add(svnCurSchd.getPresentValue());
+				continue;
+			} else {
+				svnPrvSchd = list.get(i - 1);
+			}
+
+			if (svnCurSchd.getDisbSeqID() != svnPrvSchd.getDisbSeqID()) {
+				svnPrvSchd = svnCurSchd;
+				svnPftAmount = svnPftAmount.add(svnCurSchd.getPresentValue());
+				continue;
+			}
+
+			if (DateUtil.compare(svnCurSchd.getSchDate(), accrualDate) > 0
+					&& DateUtil.compare(fm.getGrcPeriodEndDate(), accrualDate) > 0) {
+
+				if (DateUtil.compare(svnPrvSchd.getSchDate(), accrualDate) > 0) {
+					continue;
+				}
+				int days = getNoDays(svnPrvSchd.getSchDate(), accrualDate);
+				int daysInCurPeriod = getNoDays(svnPrvSchd.getSchDate(), svnCurSchd.getSchDate());
+
+				BigDecimal amzForCal = svnCurSchd.getPresentValue();
+				BigDecimal pftAmz = amzForCal.multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 9,
+						RoundingMode.HALF_DOWN);
+				pftAmz = CalculationUtil.roundAmount(pftAmz, RoundingMode.HALF_DOWN.name(), 0);
+
+				svnPftAmount = svnPftAmount.add(pftAmz);
+			} else {
+				svnPftAmount = svnPftAmount.add(svnCurSchd.getPresentValue());
+			}
+
+		}
+		return svnPftAmount;
 	}
 
 	public void setFinanceSuspHeadDAO(FinanceSuspHeadDAO financeSuspHeadDAO) {

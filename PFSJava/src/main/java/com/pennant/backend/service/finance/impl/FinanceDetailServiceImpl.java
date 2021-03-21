@@ -112,7 +112,6 @@ import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.finance.LowerTaxDeductionDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RolledoverFinanceDAO;
-import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.dao.finance.financialSummary.DealRecommendationMeritsDAO;
 import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RecommendationNotesDetailsDAO;
@@ -218,7 +217,6 @@ import com.pennant.backend.model.finance.ProspectCustomer;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceHeader;
-import com.pennant.backend.model.finance.SubventionScheduleDetail;
 import com.pennant.backend.model.finance.TATDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
@@ -453,7 +451,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired(required = false)
 	private NotificationService notificationService;
 	private FinExcessAmountDAO finExcessAmountDAO;
-	private SubventionDetailDAO subventionDetailDAO;
 	private LowerTaxDeductionDAO lowerTaxDeductionDAO;
 	@Autowired(required = false)
 	private HunterService hunterService;
@@ -896,6 +893,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeDetail.setFinOCRHeader(finOCRHeaderService.getFinOCRHeaderByRef(finReference, "_View"));
 		// PMAY
 		financeDetail.setPmay(pmayService.getPMAY(finReference, "_View"));
+
+		subventionService.setSubventionDetails(scheduleData, "_View");
 
 		logger.debug(Literal.LEAVING);
 		return financeDetail;
@@ -1879,6 +1878,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Finance Disbursement Details
 		scheduleData.setDisbursementDetails(
 				getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
+		subventionService.setSubventionScheduleDetails(scheduleData, type);
 
 		// Finance Repayments Instruction Details
 		scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
@@ -1963,6 +1963,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Finance Disbursement Details
 			scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference,
 					isWIF ? "_View" : type, isWIF));
+
+			subventionService.setSubventionDetails(scheduleData, "_View");
+			subventionService.setSubventionScheduleDetails(scheduleData, type);
 
 			// Finance Repayments Instruction Details
 			scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, isWIF));
@@ -3075,6 +3078,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditDetails.addAll(finOptionService.doProcess(finOptions, tableType, auditTranType, false));
 		}
 
+		// SubventionDetails
+		if (financeDetail.getFinScheduleData().getSubventionDetail() != null
+				&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
+						|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("SubventionDetails");
+			details = subventionService.processSubventionDetails(details, tableType, financeDetail);
+			auditDetails.addAll(details);
+		}
+
 		if (!isWIF) {
 			processLimitSaveOrUpdate(aAuditHeader, false);
 		}
@@ -4103,6 +4115,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(details);
 			}
 
+			// SubventionDetails
+			if (financeDetail.getFinScheduleData().getSubventionDetail() != null
+					&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
+							|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))) {
+				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("SubventionDetails");
+				subventionService.delete(financeDetail.getFinScheduleData().getSubventionDetail(), TableType.MAIN_TAB);
+				auditDetails.addAll(details);
+			}
+
 			if (financeDetail.getFinAssetEvaluation() != null) {
 				auditDetails.add(getFinAssetEvaluationService().delete(financeDetail.getFinAssetEvaluation(), "",
 						auditHeader.getAuditTranType()));
@@ -5097,6 +5118,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(details);
 			}
 
+			// SubventionDetails
+			if (financeDetail.getFinScheduleData().getSubventionDetail() != null
+					&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
+							|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))) {
+				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("SubventionDetails");
+				details = subventionService.processSubventionDetails(details, TableType.MAIN_TAB, financeDetail);
+				auditDetails.addAll(details);
+			}
+
 			// Finance Fee Details
 			if (!financeDetail.isExtSource()) {
 				if (CollectionUtils.isNotEmpty(finFeeDetails)) {
@@ -5358,6 +5388,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						getFinInsurancesDAO().deleteFreqBatch(insurance.getInsId(), isWIF, "_Temp");
 					}
 					auditDetailList.addAll(details);
+				}
+
+				// SubventionDetails
+				if (financeDetail.getFinScheduleData().getSubventionDetail() != null
+						&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
+								|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))) {
+					subventionService.delete(financeDetail.getFinScheduleData().getSubventionDetail(),
+							TableType.TEMP_TAB);
 				}
 
 				if (financeDetail.getFinanceCollaterals() != null) {
@@ -6964,7 +7002,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		//Fin OCR Details
 		//=========================
-		if (fd.getFinOCRHeader() != null && finOCRHeaderService != null) {
+		if (fm.isFinOcrRequired() && fd.getFinOCRHeader() != null && finOCRHeaderService != null) {
 			auditDetails.addAll(finOCRHeaderService.processFinOCRHeader(auditHeader, "doReject"));
 		}
 
@@ -7231,6 +7269,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (details != null) {
 					auditDetails.addAll(details);
 				}
+			}
+
+			// SubventionDetails
+			if (fd.getFinScheduleData().getSubventionDetail() != null && (StringUtils.isBlank(fd.getModuleDefiner())
+					|| FinanceConstants.FINSER_EVENT_ORG.equals(fd.getModuleDefiner()))) {
+				List<AuditDetail> details = fd.getAuditDetailMap().get("SubventionDetails");
+				subventionService.delete(fd.getFinScheduleData().getSubventionDetail(), TableType.TEMP_TAB);
+				auditDetails.addAll(details);
 			}
 
 			if (fd.getFinanceCollaterals() != null) {
@@ -8190,6 +8236,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
+		// SubventionDetails ,if grace tenure less than subvention tenure
+		if ((StringUtils.isBlank(financeDetail.getModuleDefiner())
+				|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))
+				&& financeMain.isAllowSubvention()
+				&& financeDetail.getFinScheduleData().getSubventionDetail().getTenure() > financeMain.getGraceTerms()) {
+
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "60222", errParm, valueParm), usrLanguage));
+		}
+
 		getFinMandateService().validateMandate(auditDetail, financeDetail);
 		if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
 			// getFinMandateService().promptMandate(auditDetail,
@@ -8329,6 +8385,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getLowerTaxDeductionDetails())) {
 			auditDetailMap.put("LowerTaxDeductionDetails", setLTDAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("LowerTaxDeductionDetails"));
+		}
+
+		// SubventionDetails
+		if (financeDetail.getFinScheduleData().getSubventionDetail() != null
+				&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
+						|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))) {
+			if (financeDetail.getFinScheduleData().getSubventionDetail() != null) {
+				auditDetailMap.put("SubventionDetails",
+						subventionService.setSubventionDetailsAuditData(financeDetail, auditTranType, method));
+				auditDetails.addAll(auditDetailMap.get("SubventionDetails"));
+			}
 		}
 
 		financeDetail.setAuditDetailMap(auditDetailMap);
@@ -8987,6 +9054,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		finSchData.setDisbursementDetails(
 				getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
+		subventionService.setSubventionScheduleDetails(finSchData, type);
 		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
 
 		if (logKey == 0) {
@@ -9054,6 +9122,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Disbursement Details
 		finSchData.setDisbursementDetails(
 				getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
+
+		subventionService.setSubventionDetails(finSchData, type);
+		subventionService.setSubventionScheduleDetails(finSchData, type);
 
 		// Repay instructions
 		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
@@ -9162,32 +9233,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeMain.setEntityDesc(finMain.getEntityDesc());
 		}
 
-		if (financeMain.isAllowSubvention()) {
-			// Disbursement Details
-			List<FinanceDisbursement> disbursementDetails = financeDisbursementDAO
-					.getFinanceDisbursementDetails(finReference, type, false);
-			scheduleData.setDisbursementDetails(disbursementDetails);
-			if (CollectionUtils.isNotEmpty(disbursementDetails)) {
-				for (FinanceDisbursement disbursement : disbursementDetails) {
-					List<SubventionScheduleDetail> subventionScheduleDetails = subventionDetailDAO
-							.getSubventionScheduleDetails(disbursement.getFinReference(), disbursement.getDisbSeq(),
-									type);
-					disbursement.setSubventionSchedules(subventionScheduleDetails);
-				}
-			}
-
-			scheduleData.setSubventionDetail(
-					subventionDetailDAO.getSubventionDetail(financeMain.getFinReference(), "_View"));
-		} else {
-			scheduleData.setSubventionDetail(null);
-		}
-
 		// Repay instructions
 		scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
 
 		// Finance Disbursement Details
 		scheduleData.setDisbursementDetails(
 				financeDisbursementDAO.getFinanceDisbursementDetails(finReference, type, false));
+
+		subventionService.setSubventionScheduleDetails(scheduleData, type);
 
 		// Finance Type
 		scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(financeMain.getFinType(), type));
@@ -11045,7 +11098,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Override
 	public List<FinanceDisbursement> getFinanceDisbursements(String finReferecne, String type, boolean isWIF) {
-		return getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReferecne, type, isWIF);
+		List<FinanceDisbursement> fdd = financeDisbursementDAO.getFinanceDisbursementDetails(finReferecne, type, isWIF);
+		// SubventionDetails
+		subventionService.setSubventionScheduleDetails(fdd, type);
+		return fdd;
 	}
 
 	@Override
@@ -12337,11 +12393,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
-	@Autowired(required = false)
-	public void setSubventionDetailDAO(SubventionDetailDAO subventionDetailDAO) {
-		this.subventionDetailDAO = subventionDetailDAO;
 	}
 
 	@Autowired
