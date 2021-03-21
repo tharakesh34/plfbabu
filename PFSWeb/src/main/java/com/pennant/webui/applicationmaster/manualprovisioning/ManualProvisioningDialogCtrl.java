@@ -181,6 +181,17 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		this.internalStage.setMaxlength(8);
 		this.newRegStage.setMaxlength(20);
 		this.newInternalStage.setMaxlength(20);
+		if (provision.getFinanceDetail() != null) {
+			String finCcy = provision.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy();
+			format = CurrencyUtil.getFormat(finCcy);
+		}
+		this.finAmount.setProperties(false, format);
+		this.pricipalOutstanding.setProperties(false, format);
+		this.totalOverdue.setProperties(false, format);
+		this.regProvisionAmount.setProperties(false, format);
+		this.internalProvisionAmount.setProperties(false, format);
+		this.newRegProvisionAmount.setProperties(false, format);
+		this.newInternalProvisionAmount.setProperties(false, format);
 
 		if (StringUtils.equals(ProvisionConstants.PROVISION_BOOKS_REG,
 				SysParamUtil.getValueAsString(SMTParameterConstants.PROVISION_BOOKS))) {
