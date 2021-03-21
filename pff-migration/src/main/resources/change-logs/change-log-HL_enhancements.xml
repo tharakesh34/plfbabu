@@ -33790,6 +33790,15 @@ UNION ALL
 
 	<!-- ST#1538 - NPA & Provision Enhancements Change Sets End -->
 	
+	<changeSet id="646" author="rajesh.n">
+		<sql>
+			<![CDATA[
+				delete from SMTPARAMETERS where sysparmcode='KYC_ADD_PRIORITY_REQ_ONLY';
+				delete from SMTPARAMETERS where sysparmcode='CHANGE_PAYMENT_AMT_DFLT_TO_MTRTY_DATE';
+			]]>
+		</sql>
+	</changeSet>
+	
 	<!-- HL changes merging from r149834(03/11/2020) end -->
 	
 	
