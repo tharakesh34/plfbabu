@@ -2294,6 +2294,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		// validate customer basic(personal info) details
 		auditDetail = validatePersonalInfo(auditDetail, customerDetails.getCustomer());
 
+		//Validate Customer Salutation Code
+				auditDetail = validateSalutationCode(customer, auditDetail);
+
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
 			for (ErrorDetail errDetail : auditDetail.getErrorDetails()) {
 				if (StringUtils.isNotBlank(errDetail.getCode())) {
@@ -3413,13 +3416,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return errorDetail;
 	}
 
-	/**
-	 * validate customer personal details.
-	 * 
-	 * @param auditDetail
-	 * @param customer
-	 * @return AuditDetail
-	 */
 	private AuditDetail validatePersonalInfo(AuditDetail auditDetail, Customer customer) {
 		logger.debug(Literal.ENTERING);
 
@@ -3698,15 +3694,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditDetail;
 	}
 
-	/**
-	 * Validate code or Id value with available masters in system.
-	 * 
-	 * @param tableName
-	 * @param columnName
-	 * @param value
-	 * 
-	 * @return WSReturnStatus
-	 */
 	private ErrorDetail validateMasterCode(String moduleName, Object fieldValue) {
 		logger.debug(Literal.ENTERING);
 
@@ -8377,6 +8364,31 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	@Override
 	public boolean isDuplicateCrcpr(long custId, String custCRCPR, String custCtgCode) {
 		return customerDAO.isDuplicateCrcpr(custId, custCRCPR, custCtgCode);
+	}
+	
+	private AuditDetail validateSalutationCode(Customer customer, AuditDetail auditDetail) {
+		String custSalCode = customer.getCustSalutationCode();
+		String custGendCode = customer.getCustGenderCode();
+		if (custGendCode == null || custSalCode == null) {
+			return auditDetail;
+		}
+
+		int salutationByCount = salutationDAO.getSalutationByCount(custSalCode, custGendCode);
+
+		if (salutationByCount > 0) {
+			return auditDetail;
+		}
+
+		ErrorDetail errorDetail = new ErrorDetail();
+		String[] valueParm = new String[2];
+
+		valueParm[0] = Labels.getLabel("label_DirectorDetailDialog_CustSalutationCode.value") + " " + custSalCode;
+		valueParm[1] = Labels.getLabel("label_DirectorDetailDialog_CustGenderCode.value") + " " + custGendCode;
+
+		errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90329", "", valueParm));
+		auditDetail.setErrorDetail(errorDetail);
+
+		return auditDetail;
 	}
 
 	public GenderDAO getGenderDAO() {
