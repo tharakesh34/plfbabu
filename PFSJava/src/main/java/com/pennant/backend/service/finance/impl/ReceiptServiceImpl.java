@@ -4030,6 +4030,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String parm0 = null;
 		String parm1 = null;
 		boolean isAllocationFound = false;
+		String receiptPurpose = fsi.getReceiptPurpose();
 
 		if (ulAllocations != null && !ulAllocations.isEmpty()) {
 			isAllocationFound = true;
@@ -4044,8 +4045,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		// for Manual allocationType for earlySettelment
-		if (RepayConstants.ALLOCATIONTYPE_MANUAL.equals(allocationType) && isAllocationFound) {
+		// for Manual allocationType for earlySettelment && Below condition added for Receipt Upload
+		if (RepayConstants.ALLOCATIONTYPE_MANUAL.equals(allocationType) && isAllocationFound
+				&& FinanceConstants.EARLYSETTLEMENT.equals(receiptPurpose)) {
 			for (UploadAlloctionDetail alc : ulAllocations) {
 				String allocationType2 = alc.getAllocationType();
 
