@@ -263,9 +263,9 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 				years = years + 1;
 			}
 
-			if (appDateMonth >= finStartDateMonth && appDateYear.equals(finStartDateYear)) {
+			if (appDateMonth > finStartDateMonth) {
 				years = years - 1;
-			} else if (appDateDay == finStartDateDay && appDateDay >= finStartDateDay) {
+			} else if (appDateDay == finStartDateDay && appDateDay >= finStartDateDay && years > 0) {
 				years = years - 1;
 			} else if (appDateMonth < 4) {
 				years = years - 1;
@@ -273,14 +273,18 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 
 			financeYearList = new ArrayList<ValueLabel>();
 			if (years < 0 && finStartDateMonth < 4) {
-				years = years + 1;
+				//if finstartDate and appDate both are equal then we are not allowing to count years
+				if (DateUtility.compare(appDate, finStartDate) > 0) {
+					years = years + 1;
+				}
 				for (int i = 0; i <= years; i++) {
 					String newValue = String.valueOf(Integer.valueOf(finStartDateYear) + i - 1);
 					String newLabel = String.valueOf(Integer.valueOf(finStartDateYear) - 1) + "-" + String
 							.valueOf(Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2)) + i);
 					financeYearList.add(new ValueLabel(newValue, newLabel));
 				}
-			} else {
+			} else if (!(finStartDateYear.equals(appDateYear) && !(finStartDateMonth < 4))) {
+				//if FinstartDateYear & appDateYear both are equal & finstartDateMonth less than 4 we are not adding into list...
 				for (int i = 0; i <= years; i++) {
 					financeYearList.add(new ValueLabel(String.valueOf(Integer.valueOf(finStartDateYear) + i),
 							String.valueOf(Integer.valueOf(finStartDateYear) + i) + "-"
