@@ -209,7 +209,7 @@ public class ImplementationConstants {
 		MANDATE_PTNRBNK_IN_DWNLD = getValueAsBoolean(extensions, "MANDATE_PTNRBNK_IN_DWNLD", false);
 		ALLOW_PRESENTMENT_STAGE_ACCOUNTING = getValueAsBoolean(extensions, "ALLOW_PRESENTMENT_STAGE_ACCOUNTING", false);
 		ALLOW_LOAN_VAS_RATIO_CALC = getValueAsBoolean(extensions, "ALLOW_LOAN_VAS_RATIO_CALC", false);
-		PROPERTYTYPE_REQUIRED_NPA_CALC = getValueAsBoolean(extensions, "PROPERTYTYPE_REQUIRED_NPA_CALC", false);
+		ALLOW_ED_FIELDS_IN_NPA = getValueAsBoolean(extensions, "ALLOW_ED_FIELDS_IN_NPA", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -451,7 +451,7 @@ public class ImplementationConstants {
 	public static boolean MANDATE_PTNRBNK_IN_DWNLD;
 	public static boolean ALLOW_PRESENTMENT_STAGE_ACCOUNTING;
 	public static boolean ALLOW_LOAN_VAS_RATIO_CALC;
-	public static boolean PROPERTYTYPE_REQUIRED_NPA_CALC;
+	public static boolean ALLOW_ED_FIELDS_IN_NPA;
 
 	public static String REPAY_HIERARCHY_METHOD;
 	public static String REPAY_INTEREST_HIERARCHY;

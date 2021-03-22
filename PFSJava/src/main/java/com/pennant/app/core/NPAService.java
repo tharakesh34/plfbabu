@@ -319,7 +319,8 @@ public class NPAService extends ServiceHelper {
 	}
 
 	private void getPropertyType(Provision provision, Map<String, Object> dataMap) {
-		if (!ImplementationConstants.PROPERTYTYPE_REQUIRED_NPA_CALC) {
+		if (!ImplementationConstants.ALLOW_ED_FIELDS_IN_NPA || extendedFieldServiceHook == null
+				|| extendedFieldRenderDAO == null) {
 			return;
 		}
 
@@ -331,17 +332,15 @@ public class NPAService extends ServiceHelper {
 		colAssRef.addAll(collateralAssignmentDAO.getCollateralAssignmentByFinRef(reference, moduleName, "_CTView"));
 
 		for (CollateralAssignment ca : colAssRef) {
-			if (extendedFieldServiceHook != null && extendedFieldRenderDAO != null) {
-				String tableName = CollateralConstants.MODULE_NAME + "_" + ca.getCollateralType() + "_ED";
-				String colRef = ca.getCollateralRef();
-				List<Map<String, Object>> list = extendedFieldRenderDAO.getExtendedFieldMap(colRef, tableName, "");
+			String tableName = CollateralConstants.MODULE_NAME + "_" + ca.getCollateralType() + "_ED";
+			String colRef = ca.getCollateralRef();
+			List<Map<String, Object>> list = extendedFieldRenderDAO.getExtendedFieldMap(colRef, tableName, "");
 
-				if (CollectionUtils.isEmpty(list)) {
-					continue;
-				}
-
-				extendedFieldServiceHook.setExtendedFields(dataMap, CollateralConstants.MODULE_NAME, list);
+			if (CollectionUtils.isEmpty(list)) {
+				continue;
 			}
+
+			extendedFieldServiceHook.setExtendedFields(dataMap, CollateralConstants.MODULE_NAME, list);
 		}
 	}
 
