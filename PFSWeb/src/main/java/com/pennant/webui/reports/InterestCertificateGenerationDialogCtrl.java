@@ -265,7 +265,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 
 			if (appDateMonth > finStartDateMonth) {
 				years = years - 1;
-			} else if (appDateDay == finStartDateDay && appDateDay >= finStartDateDay && years > 0) {
+			} else if ((appDateDay == finStartDateDay || appDateDay >= finStartDateDay) && years > 0) {
 				years = years - 1;
 			} else if (appDateMonth < 4) {
 				years = years - 1;
