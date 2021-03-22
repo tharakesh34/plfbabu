@@ -2,6 +2,7 @@ package com.pennant.app.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -2440,6 +2441,8 @@ public class RepaymentProcessUtil {
 				disbursement.setDisbIsActive(true);
 				disbursement.setDisbDisbursed(true);
 				disbursement.setLogKey(logKey);
+				disbursement.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				disbursement.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
 			}
 
 			financeDisbursementDAO.saveList(scheduleData.getDisbursementDetails(), tableType, false);

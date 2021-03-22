@@ -42,6 +42,7 @@ package com.pennant.backend.service.finance.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -69,6 +70,7 @@ import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
@@ -89,6 +91,7 @@ import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceRepayPriority;
@@ -1237,13 +1240,15 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		if (logKey != 0) {
 			// Finance Disbursement Details
 			mapDateSeq = new HashMap<Date, Integer>();
-			Date curBDay = DateUtility.getAppDate();
-			for (int i = 0; i < scheduleData.getDisbursementDetails().size(); i++) {
-				scheduleData.getDisbursementDetails().get(i).setFinReference(scheduleData.getFinReference());
-				scheduleData.getDisbursementDetails().get(i).setDisbReqDate(curBDay);
-				scheduleData.getDisbursementDetails().get(i).setDisbIsActive(true);
-				scheduleData.getDisbursementDetails().get(i).setDisbDisbursed(true);
-				scheduleData.getDisbursementDetails().get(i).setLogKey(logKey);
+			Date curBDay = SysParamUtil.getAppDate();
+			for (FinanceDisbursement fd : scheduleData.getDisbursementDetails()) {
+				fd.setFinReference(scheduleData.getFinReference());
+				fd.setDisbReqDate(curBDay);
+				fd.setDisbIsActive(true);
+				fd.setDisbDisbursed(true);
+				fd.setLogKey(logKey);
+				fd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				fd.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
 			}
 			getFinanceDisbursementDAO().saveList(scheduleData.getDisbursementDetails(), tableType, false);
 

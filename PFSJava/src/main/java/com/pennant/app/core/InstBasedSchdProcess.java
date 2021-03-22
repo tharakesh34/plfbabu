@@ -19,7 +19,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.batchProcessStatus.BatchProcessStatusDAO;
@@ -313,7 +312,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();
-		Date curBDay = DateUtility.getAppDate();
+		Date curBDay = SysParamUtil.getAppDate();
 
 		for (FinanceDisbursement disbursement : finDetail.getDisbursementDetails()) {
 			disbursement.setFinReference(finDetail.getFinReference());
@@ -321,6 +320,9 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 			disbursement.setDisbIsActive(true);
 			disbursement.setDisbDisbursed(true);
 			disbursement.setLogKey(0);
+			//LastMnton  and LastMnt By
+			disbursement.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			disbursement.setLastMntBy(userDetails.getUserId());
 
 			if (disbursement.getInstructionUID() == Long.MIN_VALUE) {
 				disbursement.setInstructionUID(0);

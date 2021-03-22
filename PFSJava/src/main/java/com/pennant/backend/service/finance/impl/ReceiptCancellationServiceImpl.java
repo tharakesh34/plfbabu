@@ -37,6 +37,7 @@ package com.pennant.backend.service.finance.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -110,6 +111,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -147,8 +149,8 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -283,7 +285,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * table. based on the module workFlow Configuration. by using FinReceiptHeaderDAO's update method 3) Audit the
 	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader (auditHeader)
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -352,7 +355,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * workFlow table by using finReceiptHeaderDAO.delete with parameters finReceiptHeader,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader (auditHeader)
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 */
@@ -405,7 +409,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * FinReceiptHeader. Audit the record in to AuditHeader and AdtFinReceiptHeader by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader (auditHeader)
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws Exception
 	 * @throws AccountNotFoundException
@@ -683,7 +688,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * for any mismatch conditions Fetch the error details from finReceiptHeaderDAO.getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader (auditHeader)
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -728,12 +734,12 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + valueParm[0];
 
 		if (receiptHeader.isNew()) { // for New record or new record into work
-										// flow
+											// flow
 
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
 				if (beFinReceiptHeader != null) { // Record Already Exists in
-													// the
+														// the
 													// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
@@ -760,7 +766,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				// and delete
 
 				if (beFinReceiptHeader == null) { // if records not exists in
-													// the
+														// the
 													// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
@@ -1048,7 +1054,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// ============================================
 		long linkedTranID = 0;
 		FeeType penalityFeeType = null;
-		
+
 		if (!ImplementationConstants.ALLOW_PRESENTMENT_STAGE_ACCOUNTING) {
 			List<ReturnDataSet> returnDataSets = null;
 			returnDataSets = postingsPreparationUtil.postReversalsByPostRef(receiptID, postingId);
@@ -1056,7 +1062,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				linkedTranID = returnDataSets.get(0).getLinkedTranId();
 			}
 		}
-		
+
 		if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
 			for (FinReceiptDetail detail : receiptHeader.getReceiptDetails()) {
 				if (StringUtils.equals(detail.getPaymentType(), receiptHeader.getReceiptMode())
@@ -2486,8 +2492,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	/**
 	 * Method to get Schedule related data.
 	 * 
-	 * @param finReference (String)
-	 * @param isWIF        (boolean)
+	 * @param finReference
+	 *            (String)
+	 * @param isWIF
+	 *            (boolean)
 	 **/
 	private FinScheduleData getFinSchDataByFinRef(String finReference, long logKey, String type) {
 		logger.debug("Entering");
@@ -2539,13 +2547,15 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();
-		Date curBDay = DateUtility.getAppDate();
-		for (int i = 0; i < finDetail.getDisbursementDetails().size(); i++) {
-			finDetail.getDisbursementDetails().get(i).setFinReference(finDetail.getFinanceMain().getFinReference());
-			finDetail.getDisbursementDetails().get(i).setDisbReqDate(curBDay);
-			finDetail.getDisbursementDetails().get(i).setDisbIsActive(true);
-			finDetail.getDisbursementDetails().get(i).setDisbDisbursed(true);
-			finDetail.getDisbursementDetails().get(i).setLogKey(logKey);
+		Date curBDay = SysParamUtil.getAppDate();
+		for (FinanceDisbursement fd : finDetail.getDisbursementDetails()) {
+			fd.setFinReference(finDetail.getFinanceMain().getFinReference());
+			fd.setDisbReqDate(curBDay);
+			fd.setDisbIsActive(true);
+			fd.setDisbDisbursed(true);
+			fd.setLogKey(logKey);
+			fd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			fd.setLastMntBy(finDetail.getFinanceMain().getLastMntBy());
 		}
 		financeDisbursementDAO.saveList(finDetail.getDisbursementDetails(), tableType, false);
 

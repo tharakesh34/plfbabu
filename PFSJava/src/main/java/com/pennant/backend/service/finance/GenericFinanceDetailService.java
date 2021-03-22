@@ -43,6 +43,7 @@ package com.pennant.backend.service.finance;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -2633,6 +2634,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			disbursement.setDisbIsActive(true);
 			disbursement.setDisbDisbursed(true);
 			disbursement.setLogKey(logKey);
+			disbursement.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			disbursement.setLastMntBy(finDetail.getFinanceMain().getLastMntBy());
 
 			if (disbursement.getInstructionUID() == Long.MIN_VALUE) {
 				disbursement.setInstructionUID(instructionUID);

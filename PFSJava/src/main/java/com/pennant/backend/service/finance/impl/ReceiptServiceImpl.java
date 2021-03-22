@@ -140,6 +140,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -2537,11 +2538,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (logKey != 0 || saveDisb) {
 			// Finance Disbursement Details
 			mapDateSeq = new HashMap<Date, Integer>();
-			for (int i = 0; i < scheduleData.getDisbursementDetails().size(); i++) {
-				scheduleData.getDisbursementDetails().get(i).setFinReference(scheduleData.getFinReference());
-				scheduleData.getDisbursementDetails().get(i).setDisbIsActive(true);
-				scheduleData.getDisbursementDetails().get(i).setDisbDisbursed(true);
-				scheduleData.getDisbursementDetails().get(i).setLogKey(logKey);
+			for (FinanceDisbursement fd : scheduleData.getDisbursementDetails()) {
+				fd.setFinReference(scheduleData.getFinReference());
+				fd.setDisbIsActive(true);
+				fd.setDisbDisbursed(true);
+				fd.setLogKey(logKey);
+				fd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				fd.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
 			}
 			financeDisbursementDAO.saveList(scheduleData.getDisbursementDetails(), tableType, false);
 
