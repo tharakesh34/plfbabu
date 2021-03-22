@@ -5649,6 +5649,7 @@
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
 		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 	</bean>
 
 	<!--================= Holiday Util =================== -->

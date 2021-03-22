@@ -47,18 +47,22 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.NPAProvisionDetailDAO;
 import com.pennant.backend.dao.applicationmaster.NPAProvisionHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
+import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
 import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
+import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -70,11 +74,14 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.rulefactory.RuleResult;
+import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
 public class NPAService extends ServiceHelper {
 	private static final long serialVersionUID = 6161809223570900644L;
@@ -85,6 +92,8 @@ public class NPAService extends ServiceHelper {
 	private CollateralAssignmentDAO collateralAssignmentDAO;
 	private RuleDAO ruleDAO;
 	private VASRecordingDAO vASRecordingDAO;
+	private ExtendedFieldService extendedFieldServiceHook;
+	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 
 	/**
 	 * Default constructor
@@ -266,13 +275,13 @@ public class NPAService extends ServiceHelper {
 		dataMap.put("isSecuredLoan", provision.isSecured());
 		dataMap.put("AssetStage", provision.getAssetStageOrder());
 		dataMap.put("InsuranceAmount", provision.getInsuranceAmount());
-		dataMap.put("PropertyType", provision.getPropertyType()); //FIX ME
 
 		dataMap.put("OutstandingAmount", provision.getClosingBalance());
 		dataMap.put("FuturePrincipal", provision.getFutureRpyPri());
 		dataMap.put("OverduePrincipal", provision.getOverDuePrincipal());
 		dataMap.put("OverdueInterest", provision.getOverDueProfit());
 		dataMap.put("UndisbursedAmount", provision.getUnDisbursedAmount()); //FIX ME
+		getPropertyType(provision, dataMap);
 
 		// Calculating Provision Amount
 		Object result = RuleExecutionUtil.executeRule(provRule.getSQLRule(), dataMap, provision.getFinCcy(),
@@ -307,6 +316,33 @@ public class NPAService extends ServiceHelper {
 
 		}
 		provisionAmountsList.addAll(insuranceProvAmountList);
+	}
+
+	private void getPropertyType(Provision provision, Map<String, Object> dataMap) {
+		if (!ImplementationConstants.PROPERTYTYPE_REQUIRED_NPA_CALC) {
+			return;
+		}
+
+		List<CollateralAssignment> colAssRef;
+		String moduleName = FinanceConstants.MODULE_NAME;
+		String reference = provision.getFinReference();
+
+		colAssRef = collateralAssignmentDAO.getCollateralAssignmentByFinRef(reference, moduleName, "_AView");
+		colAssRef.addAll(collateralAssignmentDAO.getCollateralAssignmentByFinRef(reference, moduleName, "_CTView"));
+
+		for (CollateralAssignment ca : colAssRef) {
+			if (extendedFieldServiceHook != null && extendedFieldRenderDAO != null) {
+				String tableName = CollateralConstants.MODULE_NAME + "_" + ca.getCollateralType() + "_ED";
+				String colRef = ca.getCollateralRef();
+				List<Map<String, Object>> list = extendedFieldRenderDAO.getExtendedFieldMap(colRef, tableName, "");
+
+				if (CollectionUtils.isEmpty(list)) {
+					continue;
+				}
+
+				extendedFieldServiceHook.setExtendedFields(dataMap, CollateralConstants.MODULE_NAME, list);
+			}
+		}
 	}
 
 	private Provision getProvision(FinEODEvent finEODEvent, String provisionBooks) throws SQLException {
@@ -723,6 +759,19 @@ public class NPAService extends ServiceHelper {
 
 	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
 		this.vASRecordingDAO = vASRecordingDAO;
+	}
+
+	public ExtendedFieldService getExtendedFieldServiceHook() {
+		return extendedFieldServiceHook;
+	}
+
+	@Autowired(required = false)
+	public void setExtendedFieldServiceHook(ExtendedFieldService extendedFieldServiceHook) {
+		this.extendedFieldServiceHook = extendedFieldServiceHook;
+	}
+
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
 	}
 
 }
