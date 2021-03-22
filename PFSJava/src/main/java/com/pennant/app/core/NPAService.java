@@ -321,6 +321,7 @@ public class NPAService extends ServiceHelper {
 	private void getPropertyType(Provision provision, Map<String, Object> dataMap) {
 		if (!ImplementationConstants.ALLOW_ED_FIELDS_IN_NPA || extendedFieldServiceHook == null
 				|| extendedFieldRenderDAO == null) {
+			dataMap.put("PropertyType", provision.getPropertyType());
 			return;
 		}
 
