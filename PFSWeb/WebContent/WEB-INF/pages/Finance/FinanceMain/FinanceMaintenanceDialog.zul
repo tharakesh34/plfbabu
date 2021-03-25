@@ -163,6 +163,10 @@
 														<space spacing="2px" />
 														<checkbox id="tDSApplicable" checked="false" />
 													</hbox>
+													<label id="label_FinanceMainDialog_TDSType" value="${c:l('label_FinanceMainDialog_TDSType.value')}" />
+													<hbox>
+														<combobox id="cbTdsType" width="180px" readonly="true" visible="false" />
+													</hbox>
 												</row>
 												<row id="row_downPayBank" visible="false">
 													<label id="label_FinanceMainDialog_DownPayBank" value="${c:l('label_FinanceMainDialog_DownPayBank.value')}" />

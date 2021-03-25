@@ -124,7 +124,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		sql.append(", AllocationType, UploadStatus, Reason, ExcessAdjustTo, EffectSchdMethod, Remarks");
 		sql.append(", ValueDate, ReceivedDate, ReceiptMode, FundingAc, PaymentRef, FavourNumber, BankCode");
 		sql.append(", ChequeAcNo ChequeNo, TransactionRef, Status, DepositDate, RealizationDate, InstrumentDate");
-		sql.append(", ExtReference, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId");
+		sql.append(", ExtReference, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId, TdsAmount");
 		sql.append(" From ReceiptUploadDetails");
 		sql.append(" Where UploadheaderId = ? And UploadDetailId = ? ");
 
@@ -166,6 +166,8 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 						ca.setReceivedFrom(rs.getString("ReceivedFrom"));
 						ca.setPanNumber(rs.getString("PanNumber"));
 						ca.setCollectionAgentId(rs.getLong("CollectionAgentId"));
+						ca.setTdsAmount(rs.getBigDecimal("TdsAmount"));
+						
 						return ca;
 					});
 		} catch (EmptyResultDataAccessException e) {
@@ -189,10 +191,10 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		sql.append(", UploadStatus, Reason, RootId, ExcessAdjustTo, EffectSchdMethod, Remarks, ValueDate");
 		sql.append(", ReceivedDate, ReceiptMode, FundingAc, PaymentRef, FavourNumber, BankCode, ChequeAcNo");
 		sql.append(", TransactionRef, Status, DepositDate, RealizationDate, InstrumentDate, ExtReference");
-		sql.append(", SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId");
+		sql.append(", SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId, TdsAmount");
 		sql.append(") Values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?");
+		sql.append(", ?, ?, ?, ?");
 		sql.append(")");
 
 		logger.trace(Literal.SQL, sql.toString());
@@ -231,6 +233,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			ps.setString(index++, rud.getReceivedFrom());
 			ps.setString(index++, rud.getPanNumber());
 			ps.setLong(index++, JdbcUtil.setLong(rud.getCollectionAgentId()));
+			ps.setBigDecimal(index++, rud.getTdsAmount());
 
 		});
 

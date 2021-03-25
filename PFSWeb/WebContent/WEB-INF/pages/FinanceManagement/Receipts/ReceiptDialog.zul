@@ -231,6 +231,10 @@
 													<label value="${c:l('label_ReceiptDialog_ReceiptAmount.value')}" />
 													<currencyBox id="receiptAmount" />
 												</row>
+												<row>
+													<label value="${c:l('label_ReceiptPayment_tDSAmount.value')}" />
+													<currencyBox id="tDSAmount" />
+												</row>
 												<row id="row_knockOff_Type" visible="false">
 													<label id="label_ReceiptPayment_KnockOffType" value="${c:l('label_ReceiptPayment_KnockOffType.value')}" />
 													<hbox>

@@ -3033,4 +3033,50 @@
 		<addDefaultValue columnName="ClosingBal" tableName="adtSubventionScheduleDetail" defaultValue="0" />
 	</changeSet>
 	
+	<!-- ST#158-TDS Type at Receipt Level changes start -->
+	
+	<changeSet id="323" author="rajesh.n">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="tdsType" type="varchar(8)" defaultValue="#" />
+		</addColumn>
+	</changeSet>
+
+	 <changeSet id="323.1" author="rajesh.n">
+		<sql>
+			<![CDATA[
+				update AdtRMTFinanceTypes set tdsType='#' where  tdsType is null;
+			]]>
+		</sql>
+	</changeSet> 
+	
+	<changeSet id="324" author="rajesh.n">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="tdsType" type="varchar(8)" defaultValue="#" />
+		</addColumn>
+	</changeSet>
+
+	 <changeSet id="324.1" author="rajesh.n">
+		<sql>
+			<![CDATA[
+				update AdtFinanceMain set tdsType='#' where  tdsType is null;
+			]]>
+		</sql>
+	</changeSet> 
+		
+	<changeSet id="325" author="rajesh.n">
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="tdsAmount" type="decimal(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	 <changeSet id="325.1" author="rajesh.n">
+		<sql>
+			<![CDATA[
+				update AdtFinReceiptHeader set tdsAmount='0' where  tdsAmount is null;
+			]]>
+		</sql>
+	</changeSet> 	
+	
+	<!-- ST#158-TDS Type at Receipt Level changes end -->
+	
 </databaseChangeLog>

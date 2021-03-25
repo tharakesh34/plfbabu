@@ -1068,4 +1068,9 @@ public class PennantConstants {
 	public static final String method_save = "SAVE";
 	public static final String method_Update = "UPDATE";
 	public static final int NUMBER_OF_TERMS_LENGTH = 4;
+
+	//TDS 
+	public static final String TDS_AUTO = "AUTO";
+	public static final String TDS_MANUAL = "MANUAL";
+	public static final String TDS_USER_SELECTION = "USER";
 }

@@ -468,7 +468,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ReceiptID, ReceiptModeStatus, ReceiptDate, ReceiptMode, BounceDate");
-		sql.append(", ReceiptPurpose, RefWaiverAmt, RecAppDate, ReceivedDate, ValueDate");
+		sql.append(", ReceiptPurpose, RefWaiverAmt, RecAppDate, ReceivedDate, ValueDate, TDSAmount");
 		sql.append(" From FinReceiptHeader");
 		sql.append(" Where Reference = ?");
 
@@ -498,6 +498,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 					frh.setRecAppDate(JdbcUtil.getDate(rs.getDate("RecAppDate")));
 					frh.setReceivedDate(JdbcUtil.getDate(rs.getDate("ReceivedDate")));
 					frh.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
+					frh.setTdsAmount(rs.getBigDecimal("TDSAmount"));
 
 					return frh;
 				}

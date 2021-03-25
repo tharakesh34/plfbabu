@@ -323,6 +323,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Intbox finDftTerms; // autoWired
 	protected Space space_cbfinRepayMethod;
 	protected Combobox cbfinRepayMethod; // autoWired
+	protected Combobox cbTdsType; // autoWired
+	protected Label label_FinanceTypeDialog_TDSType; // autoWired
 	protected Space space_allowedRpyMethods;
 	protected Textbox allowedRpyMethods; // autoWired
 	protected Button btnSearchRpyMethod; // autoWired
@@ -658,6 +660,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	private List<ValueLabel> vanAllocationMethodsList = PennantStaticListUtil.getVanAllocationMethods();
 	FinanceType fintypeLTVCheck = null;
 	private List<ValueLabel> loanPurposeList = PennantStaticListUtil.getLoanPurposeTypes();
+	private List<ValueLabel> tdsTypeList = PennantStaticListUtil.getTdsTypes();
 
 	//Disb based schedule
 	protected Checkbox instBasedSchd;
@@ -1846,6 +1849,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		this.specificLoanPurposes.setValue(aFinanceType.getSpecificLoanPurposes());
 		doCheckLoanPurposeproperties();
+		checkTDSApplicableChecked();
 
 		logger.debug("Leaving doWriteBeanToComponents()");
 	}
@@ -4044,6 +4048,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			if (isValidComboValue(this.cbTdsType, Labels.getLabel("label_FinanceTypeDialog_TDSType.Value"))) {
+				aFinanceType.setTdsType(getComboboxValue(this.cbTdsType));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		showErrorDetails(wve, extendedDetails);
 		logger.debug(Literal.LEAVING);
 	}
@@ -4451,6 +4462,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 							StringUtils.equals(loanPurpose, PennantConstants.SPECIFIC)));
 		}
 
+		if (this.tDSApplicable.isChecked() && getComboboxValue(this.cbTdsType).equals(PennantConstants.List_Select)) {
+			if (!this.cbTdsType.isDisabled()) {
+				this.cbTdsType.setConstraint(
+						new StaticListValidator(tdsTypeList, Labels.getLabel("label_FinanceTypeDialog_TDSType.value")));
+			}
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -4512,6 +4530,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.defaultOCR.setConstraint("");
 		this.allowedLoanPurposes.setConstraint("");
 		this.specificLoanPurposes.setConstraint("");
+		this.cbTdsType.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -4918,6 +4937,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finMaxTerm.setReadonly(isTrue);
 		this.finDftTerms.setReadonly(isTrue);
 		this.cbfinRepayMethod.setDisabled(isTrue);
+		this.cbTdsType.setDisabled(isTrue);
 		this.finIsAlwPartialRpy.setDisabled(isTrue);
 		this.finIsAlwDifferment.setDisabled(isTrue);
 		this.finMaxDifferment.setDisabled(isTrue);
@@ -5174,6 +5194,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finDftTerms.setText("");
 		this.finRpyFrq.setValue("");
 		this.cbfinRepayMethod.setSelectedIndex(0);
+		this.cbTdsType.setSelectedIndex(0);
 		this.allowedRpyMethods.setValue("");
 		this.finIsAlwDifferment.setChecked(false);
 		this.finMaxDifferment.setValue(0);
@@ -6134,6 +6155,21 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.space_ApplicableTo.setSclass("");
 				this.btnSearchtdsApplicableTo.setVisible(false);
 			}
+		}
+		// TDS Type
+		if (this.tDSApplicable.isChecked()) {
+			this.label_FinanceTypeDialog_TDSType.setVisible(true);
+			this.cbTdsType.setVisible(true);
+			this.cbTdsType.setDisabled(isCompReadonly);
+			fillComboBox(this.cbTdsType, getFinanceType().getTdsType(), tdsTypeList, "");
+		} else {
+			Comboitem comboitem = new Comboitem();
+			comboitem.setValue(PennantConstants.List_Select);
+			this.cbTdsType.appendChild(comboitem);
+			this.cbTdsType.setSelectedItem(comboitem);
+			this.label_FinanceTypeDialog_TDSType.setVisible(false);
+			this.cbTdsType.setVisible(false);
+			this.cbTdsType.setDisabled(true);
 		}
 	}
 
@@ -7597,6 +7633,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finMaxDifferment.setErrorMessage("");
 		this.finRpyFrq.setErrorMessage("");
 		this.cbfinRepayMethod.setErrorMessage("");
+		this.cbTdsType.setErrorMessage("");
 		this.finODRpyTries.setErrorMessage("");
 		this.downPayRule.setErrorMessage("");
 		this.planEmiHLockPeriod.setErrorMessage("");

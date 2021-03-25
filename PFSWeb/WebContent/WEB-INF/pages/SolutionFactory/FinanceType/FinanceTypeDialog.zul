@@ -271,6 +271,16 @@
 													<space spacing="2px" />
 													<checkbox id="tDSApplicable" checked="false" />
 												</hbox>
+												<label id="label_FinanceTypeDialog_TDSType"
+													value="${c:l('label_FinanceTypeDialog_TDSType.value')}" />
+												<hbox>
+													<combobox
+														id="cbTdsType" width="180px" readonly="true"
+														visible="false" />
+												</hbox>
+											</row>
+											
+											<row>
 												<label id="label_FinanceTypeDialog_tDSAllowToModify"
 													value="${c:l('label_FinanceTypeDialog_tDSAllowToModify.value')}" visible="false" />
 												<hbox>

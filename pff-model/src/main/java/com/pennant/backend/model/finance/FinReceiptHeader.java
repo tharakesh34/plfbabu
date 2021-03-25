@@ -184,6 +184,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private Date presentmentSchDate;
 	private boolean finTDSApplicable;
 	private String sourceofFund;
+	private BigDecimal tdsAmount = BigDecimal.ZERO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -451,6 +452,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		entity.setReceivedDate(this.receivedDate);
 		entity.setBankCode(this.bankCode);
 		entity.setFinTDSApplicable(this.finTDSApplicable);
+		entity.setSourceofFund(this.sourceofFund);
+		entity.setTdsAmount(this.tdsAmount);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -1714,6 +1717,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setSourceofFund(String sourceofFund) {
 		this.sourceofFund = sourceofFund;
+	}
+	
+	public BigDecimal getTdsAmount() {
+		return tdsAmount;
+	}
+
+	public void setTdsAmount(BigDecimal tdsAmount) {
+		this.tdsAmount = tdsAmount;
 	}
 
 }

@@ -503,7 +503,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 					&& fsHeaderKeys.contains("DEPOSITDATE") && fsHeaderKeys.contains("REALIZATIONDATE")
 					&& fsHeaderKeys.contains("INSTRUMENTDATE") && fsHeaderKeys.contains("PANNUMBER")
 					&& fsHeaderKeys.contains("EXTERNALREF") && fsHeaderKeys.contains("COLLECTIONAGENT")
-					&& fsHeaderKeys.contains("RECEIVEDFROM"))) {
+					&& fsHeaderKeys.contains("RECEIVEDFROM") && fsHeaderKeys.contains("TDSAMOUNT"))) {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_Format_NotAllowed.value"));
 				return false;
 			}
@@ -1037,6 +1037,34 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			rud.setReceivedFrom(strValue);
 		}
 
+		// TDS Amount
+		strValue = getCellStringValue(rchRow, 27);
+		if (StringUtils.isBlank(strValue)) {
+			strValue = "0";
+		}
+
+		try {
+			BigDecimal precisionAmount = new BigDecimal(strValue);
+			precisionAmount = precisionAmount.multiply(BigDecimal.valueOf(100));
+			BigDecimal tdsAmount = precisionAmount;
+
+			precisionAmount = precisionAmount.setScale(0, RoundingMode.HALF_DOWN);
+			if (precisionAmount.compareTo(tdsAmount) != 0) {
+				tdsAmount = tdsAmount.setScale(0, RoundingMode.HALF_DOWN);
+				setErrorToRUD(rud, "RU0040", "Minor Currency (Decimals) in [TDSAMOUNT] ");
+				rud.setTdsAmount(tdsAmount);
+			} else {
+				rud.setTdsAmount(precisionAmount);
+			}
+
+			if (precisionAmount.compareTo(BigDecimal.ZERO) < 0) {
+				setErrorToRUD(rud, "RU0040", "[TDSAMOUNT] with value <0 ");
+			}
+		} catch (Exception e) {
+			rud.setTdsAmount(BigDecimal.ZERO);
+			setErrorToRUD(rud, "RU0040", "[TDSAMOUNT] ");
+		}
+
 		if (rud.getErrorDetails() == null || rud.getErrorDetails().isEmpty()) {
 			rud.setUploadStatus(PennantConstants.UPLOAD_STATUS_SUCCESS);
 			rud.setReason("");
@@ -1304,6 +1332,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 				continue;
 			}
 
+			rud.setReceiptAmount(rud.getReceiptAmount().add(rud.getTdsAmount()));
 			FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, this.entity.getValidatedValue());
 			fsi.setReqType("Inquiry");
 			fsi.setReceiptUpload(true);

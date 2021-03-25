@@ -45,6 +45,7 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 	private String extReference = "";
 	private Long collectionAgentId;
 	private String receivedFrom = "";
+	private BigDecimal tdsAmount = BigDecimal.ZERO;
 	private LoggedInUser loggedInUser;
 
 	private List<UploadAlloctionDetail> listAllocationDetails = new ArrayList<>();
@@ -345,5 +346,13 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 
 	public void setErrorDetails(List<ErrorDetail> errorDetails) {
 		this.errorDetails = errorDetails;
+	}
+	
+	public BigDecimal getTdsAmount() {
+		return tdsAmount;
+	}
+
+	public void setTdsAmount(BigDecimal tdsAmount) {
+		this.tdsAmount = tdsAmount;
 	}
 }

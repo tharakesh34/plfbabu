@@ -868,6 +868,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String partnerBankAc;
 
 	private EventProperties eventProperties = new EventProperties();
+	private String tdsType;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1104,6 +1105,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		//Accounting related
 		excludeFields.add("partnerBankAcType");
 		excludeFields.add("partnerBankAc");
+		excludeFields.add("tdsType");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -1574,6 +1576,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setEndGrcPeriodAftrFullDisb(this.endGrcPeriodAftrFullDisb);
 		entity.setAutoIncGrcEndDate(this.autoIncGrcEndDate);
 		entity.setEventProperties(this.eventProperties);
+		entity.setTdsType(this.tdsType);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -5626,6 +5629,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setPartnerBankAc(String partnerBankAc) {
 		this.partnerBankAc = partnerBankAc;
+	}
+	
+	public String getTdsType() {
+		return tdsType;
+	}
+
+	public void setTdsType(String tdsType) {
+		this.tdsType = tdsType;
 	}
 
 }

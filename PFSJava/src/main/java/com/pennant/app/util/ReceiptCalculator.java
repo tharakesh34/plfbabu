@@ -2921,8 +2921,9 @@ public class ReceiptCalculator implements Serializable {
 			balAmount = allocatePft.getPaidAvailable();
 		}
 
+		FinanceMain fm = finScheduleData.getFinanceMain();
 		if (curSchd.isTDSApplicable()) {
-			tds = getTDS(finScheduleData.getFinanceMain(), curSchd.getProfitSchd());
+			tds = getTDS(fm, curSchd.getProfitSchd());
 			tds = tds.subtract(curSchd.getTDSPaid());
 		}
 
@@ -2940,7 +2941,7 @@ public class ReceiptCalculator implements Serializable {
 
 		nBalPft = nBalPft.subtract(npftWaived);
 		if (curSchd.isTDSApplicable()) {
-			tdsWaived = getNetOffTDS(finScheduleData.getFinanceMain(), npftWaived).subtract(npftWaived);
+			tdsWaived = getNetOffTDS(fm, npftWaived).subtract(npftWaived);
 			if (tdsWaived.compareTo(tds) > 0) {
 				tdsWaived = tds;
 			}
@@ -2955,8 +2956,8 @@ public class ReceiptCalculator implements Serializable {
 			} else {
 				paidNow = balAmount;
 				if (curSchd.isTDSApplicable()) {
-					BigDecimal pftNow = getNetOffTDS(finScheduleData.getFinanceMain(), paidNow);
-					tdsPaidNow = pftNow.subtract(paidNow);
+					BigDecimal pftNow = getNetOffTDS(finScheduleData.getFinanceMain(), balAmount);
+					tdsPaidNow = pftNow.subtract(balAmount);
 				}
 			}
 		}
@@ -4550,6 +4551,7 @@ public class ReceiptCalculator implements Serializable {
 				pftNow = balPft;
 				pftPaid = pftPaid.subtract(pftNow);
 			}
+			
 			if (curSchd.isTDSApplicable()) {
 				tdsNow = getTDS(fsd.getFinanceMain(), pftNow);
 			}

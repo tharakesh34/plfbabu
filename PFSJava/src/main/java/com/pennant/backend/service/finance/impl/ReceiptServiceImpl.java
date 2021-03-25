@@ -3440,6 +3440,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			FinReceiptHeader rch = receiptData.getReceiptHeader();
 			rch.setReference(finReference);
 			rch.setReceiptAmount(amount);
+			BigDecimal tdsAmount = new BigDecimal(
+					PennantApplicationUtil.amountFormate(fsi.getTdsAmount(), 2).replaceAll(",", ""));
+			rch.setTdsAmount(tdsAmount);
 			rch.setReceiptPurpose(receiptPurpose);
 			if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
@@ -3860,6 +3863,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
+		if (finScheduleData.getFinanceMain() != null) {
+			if (fsi.getTdsAmount().compareTo(BigDecimal.ZERO) > 0 && !StringUtils
+					.equalsIgnoreCase(finScheduleData.getFinanceMain().getTdsType(), PennantConstants.TDS_MANUAL)) {
+				finScheduleData = setErrorToFSD(finScheduleData, "RU00060", null);
+				return receiptData;
+			}
+		}
+		
 		receiptData = validateDual(receiptData, methodCtg);
 
 		return receiptData;
@@ -5247,6 +5258,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		fsi.setReceivedFrom(rud.getReceivedFrom());
 		fsi.setPanNumber(rud.getPanNumber());
 		fsi.setUploadDetailId(rud.getUploadDetailId());
+		fsi.setTdsAmount(rud.getTdsAmount());
 
 		if (StringUtils.equals(rud.getStatus(), "A")) {
 			fsi.setReceiptdetailExits(false);

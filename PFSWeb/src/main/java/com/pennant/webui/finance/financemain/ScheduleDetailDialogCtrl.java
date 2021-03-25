@@ -1459,12 +1459,13 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			}
 		}
 
-		if (!financeMain.isTDSApplicable()) {
-			this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(false);
-		} else {
-			this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(true);
+		this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(false);
+		if (financeMain.isTDSApplicable()) {
+			if (StringUtils.equalsIgnoreCase(financeMain.getTdsType(), PennantConstants.TDS_AUTO)) {
+				this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(true);
+			}
 		}
-
+		
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 			this.listheader_AvailableLimit.setVisible(true);
 			this.listheader_ODLimit.setVisible(true);

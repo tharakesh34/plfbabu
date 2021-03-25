@@ -493,6 +493,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected ExtendedCombobox dsaCode;
 	protected Hbox hbox_tdsApplicable;
 	protected Checkbox tDSApplicable;
+	protected Combobox cbTdsType;
 	protected Row row_tDSPercentage;
 	protected Row row_tDSEndDate;
 	protected Decimalbox tDSPercentage;
@@ -799,6 +800,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected transient String oldVar_depreciationFrq;
 	protected transient Date oldVar_finStartDate;
 	protected transient boolean oldVar_tDSApplicable;
+	protected transient int oldVar_cbTdsType;
 	protected transient boolean oldVar_odTDSApplicable;
 	protected transient BigDecimal oldVar_finAssetValue;
 	protected transient BigDecimal oldVar_finCurrAssetValue;
@@ -1205,6 +1207,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label label_FinanceMainDialog_ParentLoanReference;
 	@Autowired
 	private CovenantsService covenantsService;
+	private Label label_FinanceMainDialog_TDSType;
+	private List<ValueLabel> tdsTypeList = PennantStaticListUtil.getTdsTypes();
 
 	//SubventionDetails
 	protected Groupbox gb_SubventionDetails;
@@ -5808,6 +5812,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.oldVar_planDeferCount = this.planDeferCount.intValue();
 		this.oldVar_depreciationFrq = this.depreciationFrq.getValue();
 		this.oldVar_tDSApplicable = this.tDSApplicable.isChecked();
+		this.oldVar_cbTdsType = this.cbTdsType.getSelectedIndex();
 		this.oldVar_odTDSApplicable = this.odTDSApplicable.isChecked();
 		this.oldVar_manualSchedule = this.manualSchedule.isChecked();
 
@@ -5976,6 +5981,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			return true;
 		}
 		if (this.oldVar_tDSApplicable != this.tDSApplicable.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_cbTdsType != this.cbTdsType.getSelectedIndex()) {
 			return true;
 		}
 		if (this.oldVar_odTDSApplicable != this.odTDSApplicable.isChecked()) {
@@ -6988,6 +6996,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.tDSApplicable.isChecked() && financeType.isTdsAllowToModify() && this.row_tDSEndDate.isVisible()) {
 			this.tDSEndDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_tDSEndDate.value"), true));
+		}
+
+		if (this.tDSApplicable.isChecked() && getComboboxValue(this.cbTdsType).equals(PennantConstants.List_Select)) {
+			if (!this.cbTdsType.isDisabled()) {
+				this.cbTdsType.setConstraint(
+						new StaticListValidator(tdsTypeList, Labels.getLabel("label_FinanceMainDialog_TDSType.value")));
+			}
 		}
 
 		if (!this.reqLoanTenor.isReadonly()) {
@@ -10680,11 +10695,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 		String allowTaxDeduction = SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
 
+		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 		if (PennantConstants.YES.equals(allowTaxDeduction)) {
 			if (this.tDSApplicable.isChecked()) {
 				this.row_tDSPercentage.setVisible(true);
 
-				if (getFinanceDetail().getFinScheduleData().getFinanceType().isTdsAllowToModify()) {
+				if (financeType.isTdsAllowToModify()) {
 					this.row_tDSEndDate.setVisible(true);
 					this.label_FinanceMainDialog_TDSLimitAmt.setVisible(true);
 					this.tDSLimitAmt.setVisible(true);
@@ -10701,6 +10717,35 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.tDSPercentage.setValue(BigDecimal.ZERO);
 				this.tDSLimitAmt.setValue(BigDecimal.ZERO);
 			}
+		}
+
+		// TDS Type
+		if (this.tDSApplicable.isChecked()) {
+			String excludeFields = "," + PennantConstants.TDS_USER_SELECTION + ",";
+			fillComboBox(this.cbTdsType, PennantConstants.List_Select, tdsTypeList, excludeFields);
+			if (financeType.isTdsApplicable()) {
+				this.cbTdsType.setVisible(true);
+				this.label_FinanceMainDialog_TDSType.setVisible(true);
+				this.cbTdsType.setDisabled(true);
+				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+				fillComboBox(this.cbTdsType, financeMain.getTdsType(), tdsTypeList, excludeFields);
+				if (financeMain.isNewRecord()) {
+					if (StringUtils.equalsIgnoreCase(financeType.getTdsType(), PennantConstants.TDS_USER_SELECTION)) {
+						this.cbTdsType.setDisabled(isReadOnly("FinanceMainDialog_TDSType"));
+						fillComboBox(this.cbTdsType, PennantConstants.List_Select, tdsTypeList, excludeFields);
+					} else {
+						fillComboBox(this.cbTdsType, financeType.getTdsType(), tdsTypeList, excludeFields);
+					}
+				}
+			}
+		} else {
+			Comboitem comboitem = new Comboitem();
+			comboitem.setValue(PennantConstants.List_Select);
+			this.cbTdsType.appendChild(comboitem);
+			this.cbTdsType.setSelectedItem(comboitem);
+			this.label_FinanceMainDialog_TDSType.setVisible(false);
+			this.cbTdsType.setVisible(false);
+			this.cbTdsType.setDisabled(true);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -15904,6 +15949,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				aFinanceSchData.setLowerTaxDeductionDetails(lowerTaxDeduction);
 			}
 		}
+		
+		try {
+			if (isValidComboValue(this.cbTdsType, Labels.getLabel("label_FinanceMainDialog_TDSType.Value"))) {
+				aFinanceMain.setTdsType(getComboboxValue(this.cbTdsType));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		// FinanceMain Details Tab Validation Error Throwing
 		if (!getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_CONVENTIONAL)) {
@@ -16900,6 +16953,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,PFTCAP,");
 		}
 
+		if (getComboboxValue(this.cbTdsType).equals(PennantConstants.List_Select)
+				&& (!StringUtils.equalsIgnoreCase(financeType.getTdsType(), PennantConstants.TDS_USER_SELECTION))) {
+
+			fillComboBox(this.cbTdsType, financeType.getTdsType(), PennantStaticListUtil.getTdsTypes(),
+					"," + PennantConstants.TDS_USER_SELECTION + ",");
+		}
+		
 		if (getComboboxValue(this.cbProfitDaysBasis).equals(PennantConstants.List_Select)) {
 			fillComboBox(this.cbProfitDaysBasis, financeType.getFinDaysCalType(),
 					PennantStaticListUtil.getProfitDaysBasis(), "");

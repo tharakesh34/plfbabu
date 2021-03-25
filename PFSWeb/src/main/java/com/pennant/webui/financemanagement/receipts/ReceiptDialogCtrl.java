@@ -299,6 +299,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Datebox receiptDate;
 	protected Datebox receivedDate;
 	protected CurrencyBox receiptAmount;
+	protected CurrencyBox tDSAmount;
 	protected Combobox excessAdjustTo;
 	protected Decimalbox remBalAfterAllocation;
 	protected Decimalbox custPaid;
@@ -888,6 +889,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.paidByCustomer.setFormat(amountFormat);
 		this.receiptAmount.setProperties(true, formatter);
+		this.tDSAmount.setProperties(false, formatter);
 		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		this.cancelReason.setModuleName("RejectDetail");
@@ -3009,6 +3011,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		this.receiptAmount.setValue(PennantApplicationUtil
 				.formateAmount(rch.getReceiptAmount().subtract(receiptData.getExcessAvailable()), formatter));
+		this.tDSAmount.setValue(PennantApplicationUtil.formateAmount(rch.getTdsAmount(), formatter));
+		this.tDSAmount.setDisabled(true);
 		if (isEarlySettle) {
 			this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(rch.getReceiptAmount(), formatter));
 		}
@@ -3306,13 +3310,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (receiptData.getPaidNow()
-				.compareTo(receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getExcessAvailable())) > 0
+				.compareTo(receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getReceiptHeader().getTdsAmount()).add(receiptData.getExcessAvailable())) > 0
 				&& !receiptData.isForeClosure()) {
 			ErrorDetail errorDetails = null;
 			String[] valueParm = new String[1];
 			String[] errParm = new String[2];
 			errParm[0] = PennantApplicationUtil.amountFormate(
-					receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getExcessAvailable()),
+					receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getReceiptHeader().getTdsAmount()).add(receiptData.getExcessAvailable()),
 					PennantConstants.defaultCCYDecPos);
 			errParm[1] = PennantApplicationUtil.amountFormate(receiptData.getPaidNow(),
 					PennantConstants.defaultCCYDecPos);
@@ -4378,6 +4382,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			header.setTdsAmount(PennantApplicationUtil.unFormateAmount(tDSAmount.getValidateValue(), finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		if (effScheduleMethod.isVisible()) {
 			try {
 				header.setEffectSchdMethod(getComboboxValue(effScheduleMethod));
@@ -5613,6 +5624,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
+		// Accounting for Manual TDS
+		amountCodes.setManualTds(receiptData.getReceiptHeader().getTdsAmount());
+		
 		if (getAccountingDetailDialogCtrl() != null) {
 			getAccountingDetailDialogCtrl().doFillAccounting(returnSetEntries);
 			getAccountingDetailDialogCtrl().getFinanceDetail().setReturnDataSetList(returnSetEntries);
@@ -6448,11 +6462,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		if (receiptData.getPaidNow().compareTo(rch.getReceiptAmount().add(receiptData.getExcessAvailable())) > 0) {
+		if (receiptData.getPaidNow().compareTo(rch.getReceiptAmount().add(rch.getTdsAmount()).add(receiptData.getExcessAvailable())) > 0) {
 			String[] args = new String[2];
 
 			args[0] = PennantApplicationUtil.amountFormate(receiptData.getPaidNow(), formatter);
-			args[1] = PennantApplicationUtil.amountFormate(rch.getReceiptAmount(), formatter);
+			args[1] = PennantApplicationUtil.amountFormate(rch.getReceiptAmount().add(rch.getTdsAmount()).add(receiptData.getExcessAvailable()), formatter);
 			MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt", args));
 			return false;
 		}

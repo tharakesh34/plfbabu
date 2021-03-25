@@ -74,6 +74,8 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
@@ -93,6 +95,7 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -136,6 +139,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -219,6 +223,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private Label label_FinanceMainDialog_FinType;
 	private Label label_FinanceMainDialog_FinReference;
 	private Label label_FinanceMainDialog_FinBranch;
+	protected Combobox cbTdsType;
+	private Label label_FinanceMainDialog_TDSType;
+	private List<ValueLabel> tdsTypeList = PennantStaticListUtil.getTdsTypes();
 
 	/**
 	 * default constructor.<br>
@@ -745,6 +752,30 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(), format));
 		setNetFinanceAmount(true);
 
+		// TDS Type Changes
+		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+		if (this.tDSApplicable.isChecked()) {
+			String excludeFields = "," + PennantConstants.TDS_USER_SELECTION + ",";
+			fillComboBox(this.cbTdsType, aFinanceMain.getTdsType(), tdsTypeList, excludeFields);
+			if (financeType.isTdsApplicable()
+					&& StringUtils.equalsIgnoreCase(financeType.getTdsType(), PennantConstants.TDS_USER_SELECTION)) {
+				this.cbTdsType.setVisible(true);
+				this.label_FinanceMainDialog_TDSType.setVisible(true);
+				this.cbTdsType.setDisabled(isReadOnly("FinanceMainDialog_TDSType"));
+			} else {
+				this.cbTdsType.setVisible(true);
+				this.cbTdsType.setDisabled(true);
+			}
+		} else {
+			Comboitem comboitem = new Comboitem();
+			comboitem.setValue(PennantConstants.List_Select);
+			this.cbTdsType.appendChild(comboitem);
+			this.cbTdsType.setSelectedItem(comboitem);
+			this.label_FinanceMainDialog_TDSType.setVisible(false);
+			this.cbTdsType.setVisible(false);
+			this.cbTdsType.setDisabled(true);
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -994,6 +1025,14 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
+		try {
+			if (isValidComboValue(this.cbTdsType, Labels.getLabel("label_FinanceMainDialog_TDSType.Value"))) {
+				aFinanceMain.setTdsType(getComboboxValue(this.cbTdsType));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		aFinanceMain.setManualSchedule(this.manualSchedule.isChecked());
 		// FinanceMain Details Tab Validation Error Throwing
 		showErrorDetails(wve, financeTypeDetailsTab);
@@ -1705,6 +1744,13 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							new PTStringValidator(Labels.getLabel("label_FinanceMaintenanceDialog_IBAN.value"),
 									PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 				}
+			}
+		}
+		
+		if (this.tDSApplicable.isChecked() && getComboboxValue(this.cbTdsType).equals(PennantConstants.List_Select)) {
+			if (!this.cbTdsType.isDisabled()) {
+				this.cbTdsType.setConstraint(
+						new StaticListValidator(tdsTypeList, Labels.getLabel("label_FinanceMainDialog_TDSType.value")));
 			}
 		}
 

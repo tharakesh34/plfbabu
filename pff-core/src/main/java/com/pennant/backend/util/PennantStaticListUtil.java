@@ -371,6 +371,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> purgActionList = getPurgAction();
 	private static List<ValueLabel> interestSubventionTypeList;
 	private static List<ValueLabel> interestSubventionMethodList;
+	private static List<ValueLabel> tdsTypesList;
 
 	/**
 	 * Gets the list of applications.
@@ -5867,6 +5868,20 @@ public class PennantStaticListUtil {
 				Labels.getLabel("label_interest_subvention_method_monthly")));
 
 		return interestSubventionMethodList;
+	}
+	
+	public static List<ValueLabel> getTdsTypes() {
+		if (tdsTypesList != null) {
+			return tdsTypesList;
+		}
+
+		tdsTypesList = new ArrayList<ValueLabel>(3);
+		tdsTypesList.add(new ValueLabel(PennantConstants.TDS_AUTO, Labels.getLabel("label_TDSType_Auto")));
+		tdsTypesList.add(new ValueLabel(PennantConstants.TDS_MANUAL, Labels.getLabel("label_TDSType_Manual")));
+		tdsTypesList.add(
+				new ValueLabel(PennantConstants.TDS_USER_SELECTION, Labels.getLabel("label_TDSType_UserSelection")));
+
+		return tdsTypesList;
 	}
 
 }

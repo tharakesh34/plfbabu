@@ -1484,6 +1484,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String rHTdsAdjust = "TDS Adjustment"; //17
 		String rHPaymentBouncedFor = "Payment Bounced For "; //9
 		String rHTdsAdjustReversal = "TDS Adjustment Reversal "; //18
+		String rHManualTdsAmount = "TDS Received vide Receipt No "; //10
+		String rHManualTdsReversalAmount = "TDS Reversal vide Receipt No "; //10
 
 		//FinFeeDetails
 		String finFeeDetailOrgination = "- Due "; //14
@@ -2044,9 +2046,35 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								soaTransactionReports.add(soaTranReport);
 							}
 
+							// Manual TDS
+							if (finReceiptHeader.getTdsAmount().compareTo(BigDecimal.ZERO) > 0) {
+								soaTranReport = new SOATransactionReport();
+								soaTranReport.setEvent(rHManualTdsAmount.concat(String.valueOf(receiptID)));
+								soaTranReport.setTransactionDate(receiptDate);
+								soaTranReport.setValueDate(receiptDate);
+								soaTranReport.setCreditAmount(finReceiptHeader.getTdsAmount());
+								soaTranReport.setDebitAmount(BigDecimal.ZERO);
+								soaTranReport.setPriority(10);
+								soaTransactionReports.add(soaTranReport);
+							}
+
+							// Cancelled Manual TDS
+							if (finReceiptHeader.getTdsAmount().compareTo(BigDecimal.ZERO) > 0
+									&& "B".equalsIgnoreCase(finReceiptDetail.getStatus())
+									|| "C".equalsIgnoreCase(finReceiptDetail.getStatus())) {
+								soaTranReport = new SOATransactionReport();
+								soaTranReport.setEvent(rHManualTdsReversalAmount.concat(String.valueOf(receiptID)));
+								soaTranReport.setTransactionDate(receiptDate);
+								soaTranReport.setValueDate(receiptDate);
+								soaTranReport.setCreditAmount(BigDecimal.ZERO);
+								soaTranReport.setDebitAmount(finReceiptHeader.getTdsAmount());
+								soaTranReport.setPriority(10);
+								soaTransactionReports.add(soaTranReport);
+							}
+
 							//Cancelled Receipt's Details
 							if (SysParamUtil.isAllowed(SMTParameterConstants.SOA_SHOW_CANCEL_RECEIPT)
-									&& StringUtils.equals(receiptModeStatus, RepayConstants.PAYSTATUS_CANCEL)) {
+									&& RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeStatus)) {
 								soaTransactionReports.add(soaTranReport);
 								SOATransactionReport cancelReport = new SOATransactionReport();
 								BeanUtils.copyProperties(cancelReport, soaTranReport);

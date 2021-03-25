@@ -113,6 +113,11 @@
 										style="padding-left:12px;" />
 									<currencyBox id="receiptAmount" width="125px" />
 								</row>
+								<row id="row_tDSAmount" visible="false">
+									<label id="label_ReceiptPayment_tDSAmount" value="${c:l('label_ReceiptPayment_tDSAmount.value')}"
+										style="padding-left:12px;" />
+									<currencyBox id="tDSAmount"	width="125px" />
+								</row>
 								<row>
 									<label id="label_ReceiptPayment_ReceiptDate" value="${c:l('label_ReceiptPayment_Receipt_Date.value')}"
 										style="padding-left:12px;" />

@@ -119,7 +119,9 @@ public class ScheduleGenerator {
 		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 
-			curSchd.setTDSApplicable(financeMain.isTDSApplicable());
+			if (financeMain.isTDSApplicable() && PennantConstants.TDS_AUTO.equalsIgnoreCase(financeMain.getTdsType())) {
+				curSchd.setTDSApplicable(financeMain.isTDSApplicable());
+			}
 
 			if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
 				curSchd.setActRate(financeMain.getGrcPftRate());
@@ -299,7 +301,9 @@ public class ScheduleGenerator {
 				}
 			}
 
-			curSchd.setTDSApplicable(financeMain.isTDSApplicable());
+			if (financeMain.isTDSApplicable() && PennantConstants.TDS_AUTO.equalsIgnoreCase(financeMain.getTdsType())) {
+				curSchd.setTDSApplicable(financeMain.isTDSApplicable());
+			}
 
 			if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) < 0) {
 

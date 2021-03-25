@@ -129,11 +129,11 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", ActFinReceipt, FinDivision, PostBranch, ReasonCode, CancelRemarks, KnockOffType");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId, RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate");
-		sql.append(", PartnerBankId, PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate, SourceofFund");
+		sql.append(", PartnerBankId, PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate, SourceofFund, TdsAmount");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -206,6 +206,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setDate(index++, JdbcUtil.getDate(rh.getRecAppDate()));
 			ps.setDate(index++, JdbcUtil.getDate(rh.getReceivedDate()));
 			ps.setString(index++, rh.getSourceofFund());
+			ps.setBigDecimal(index++, rh.getTdsAmount());
 		});
 
 		return rh.getId();
@@ -239,6 +240,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", TransactionRef = :TransactionRef, DepositDate = :DepositDate, PartnerBankId = :PartnerBankId");
 		sql.append(", PrvReceiptPurpose = :PrvReceiptPurpose, ReceiptSource = :ReceiptSource");
 		sql.append(", RecAppDate = :RecAppDate, ReceivedDate = :ReceivedDate, ExtReference = :ExtReference");
+		sql.append(", SourceofFund = :SourceofFund, TdsAmount = :TdsAmount");
 		sql.append(" Where ReceiptID =:ReceiptID");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -302,7 +304,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", KnockOffType, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(", RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate, PartnerBankId");
-		sql.append(", PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate, SourceofFund");
+		sql.append(", PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate, SourceofFund, TdsAmount");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc");
@@ -1237,6 +1239,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			rh.setRecAppDate(rs.getDate("RecAppDate"));
 			rh.setReceivedDate(rs.getDate("ReceivedDate"));
 			rh.setSourceofFund(rs.getString("SourceofFund"));
+			rh.setTdsAmount(rs.getBigDecimal("TdsAmount"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				rh.setFinType(rs.getString("FinType"));

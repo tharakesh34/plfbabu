@@ -514,6 +514,7 @@ public class RepaymentProcessUtil {
 		amountCodes.setPaymentType(rcd.getPaymentType());
 		amountCodes.setBusinessvertical(fm.getBusinessVerticalCode());
 		amountCodes.setEntitycode(entityCode);
+		amountCodes.setManualTds(rch.getTdsAmount());
 
 		if (StringUtils.isNotBlank(fm.getPromotionCode())
 				&& (fm.getPromotionSeqId() != null && fm.getPromotionSeqId() == 0)) {

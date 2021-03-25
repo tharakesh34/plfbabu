@@ -451,6 +451,12 @@
 														<space spacing="2px" />
 														<checkbox id="tDSApplicable" checked="false" />
 													</hbox>
+													<label id="label_FinanceMainDialog_TDSType" value="${c:l('label_FinanceMainDialog_TDSType.value')}" />
+													<hbox>
+														<combobox id="cbTdsType" width="180px" readonly="true" visible="false" />
+													</hbox>
+												</row>
+												<row>
 													<label id="label_FinanceMainDialog_SecondaryAccount" value="${c:l('label_FinanceMainDialog_SecondaryAccount.value')}" />
 													<hbox>
 														<space spacing="2px" />

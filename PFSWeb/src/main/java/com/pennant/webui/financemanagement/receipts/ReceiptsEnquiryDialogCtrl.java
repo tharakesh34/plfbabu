@@ -229,6 +229,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Datebox receiptDate;
 	protected Datebox receivedDate;
 	protected CurrencyBox receiptAmount;
+	protected CurrencyBox tDSAmount;
 	protected Combobox excessAdjustTo;
 	protected Decimalbox remBalAfterAllocation;
 	protected Decimalbox custPaid;
@@ -585,6 +586,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.paidByCustomer.setFormat(amountFormat);
 		this.receiptAmount.setProperties(true, formatter);
+		this.tDSAmount.setProperties(false, formatter);
 		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		this.cancelReason.setModuleName("RejectDetail");
@@ -1191,6 +1193,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receivedDate.setValue(rch.getReceivedDate());
 		this.receiptAmount.setValue(rch.getReceiptAmount());
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(rch.getReceiptAmount(), formatter));
+		this.tDSAmount.setValue(PennantApplicationUtil.formateAmount(rch.getTdsAmount(), formatter));
+		this.tDSAmount.setDisabled(true);
 
 		this.receivedFrom.setValue(rch.getReceivedFrom());
 		this.panNumber.setValue(rch.getPanNumber());

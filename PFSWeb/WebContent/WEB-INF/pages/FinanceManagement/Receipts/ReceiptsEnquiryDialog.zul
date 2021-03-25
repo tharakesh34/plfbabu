@@ -177,6 +177,10 @@
 													<currencyBox id="receiptAmount" disabled="true" />
 												</row>
 												<row>
+													<label value="${c:l('label_ReceiptPayment_tDSAmount.value')}" />
+													<currencyBox id="tDSAmount" />
+												</row>
+												<row>
 												<label id="label_ReceiptPayment_ReceivedDate" value="${c:l('label_ReceiptPayment_ReceivedDate.value')}" />
 													<hbox>
 														<space spacing="2px" />

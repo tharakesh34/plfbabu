@@ -242,6 +242,7 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal prvMthAcr = BigDecimal.ZERO;
 
 	private BigDecimal vasInstAmt = BigDecimal.ZERO;
+	private BigDecimal manualTds = BigDecimal.ZERO;
 
 	public AEAmountCodes() {
 		super();
@@ -1930,6 +1931,14 @@ public class AEAmountCodes implements Serializable {
 
 	public void setPrvMthAcr(BigDecimal prvMthAcr) {
 		this.prvMthAcr = prvMthAcr;
+	}
+	
+	public BigDecimal getManualTds() {
+		return manualTds;
+	}
+
+	public void setManualTds(BigDecimal manualTds) {
+		this.manualTds = manualTds;
 	}
 
 }
