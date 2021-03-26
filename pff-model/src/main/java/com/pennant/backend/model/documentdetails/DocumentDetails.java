@@ -17,7 +17,8 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "referenceId", "docCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName",
-		"custDocIssuedOn", "custDocExpDate", "docPurpose", "docName", "doctype", "docImage", "docUri" })
+		"custDocIssuedOn", "custDocExpDate", "docPurpose", "docName", "doctype", "docImage", "docUri",
+		"docReceivedDate", "docOriginal", "docReceived", "remarks" })
 @XmlRootElement(name = "DocumentDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
@@ -63,8 +64,11 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private DocumentDetails befImage;
 	private LoggedInUser userDetails;
 	private boolean newRecord = false;
+	@XmlElement
 	private Date docReceivedDate;
+	@XmlElement
 	private boolean docReceived;
+	@XmlElement
 	private boolean docOriginal;
 	private String docBarcode;
 	private String password;
@@ -72,6 +76,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private Long pdfMappingRef;
 	private String pdfPassWord;
 	private boolean docIsPdfExtRequired = false;
+	@XmlElement
 	private String remarks;
 
 	@XmlElement
