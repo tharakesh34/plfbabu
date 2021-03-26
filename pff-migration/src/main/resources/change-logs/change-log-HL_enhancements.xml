@@ -18041,78 +18041,6 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="34.1_pre" author="Madhuri.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'loanreport_view');
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="34.1" author="Madhuri.n">
-		<createView viewName="LOANREPORT_VIEW" replaceIfExists="true">
-			<![CDATA[		
-				SELECT F.FINREFERENCE,
-					C.CUSTSHRTNAME,
-					C.CUSTCIF,
-					CTG.CUSTCTGDESC,
-					F.FINTYPE,
-					F.FINPURPOSE,
-					LP.LOANPURPOSEDESC,
-					F.REPAYPROFITRATE,
-					F.FINASSETVALUE,
-					F.FINCURRASSETVALUE,
-					F.CALMATURITY,
-					F.MATURITYDATE,
-					F.FINSTARTDATE,
-					PFT.CURREDUCINGRATE,
-					PFT.FINISACTIVE,
-					F.ALLOWGRCPERIOD,
-					F.REPAYRATEBASIS,
-					F.REPAYBASERATE,
-					F.FINCCY,
-					F.REPAYSPECIALRATE,
-					F.REPAYMARGIN,
-					F.RPYMINRATE,
-					F.RPYMAXRATE,
-					F.NUMBEROFTERMS,
-					F.CLOSEDDATE,
-					PFT.AMZTILLLBD,
-					FT.FINDIVISION,
-					PFT.TOTALPFTCPZ,
-					C.CUSTCTGCODE,
-					F.NEXTREPAYDATE,
-					PFT.PFTAMZ,
-					FT.ROUNDINGMODE,
-					PFT.PRVMTHAMZ,
-					F.GRACETERMS,
-					CA.CASTEDESC,
-					CP.CPPROVINCENAME,
-					F.QUICKDISB,
-					F.FINAMOUNT,
-					F.ROUNDINGTARGET
-				FROM FINANCEMAIN F
-				JOIN RMTFINANCETYPES FT ON F.FINTYPE=FT.FINTYPE
-				JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
-				JOIN RMTBRANCHES RB ON F.FINBRANCH=RB.BRANCHCODE
-				JOIN RMTCOUNTRYVSPROVINCE CP ON (RB.BRANCHPROVINCE=CP.CPPROVINCE 
-												AND RB.BRANCHCOUNTRY = CP.CPCOUNTRY)
-				LEFT JOIN CASTE CA ON C.CASTEID=CA.CASTEID
-				LEFT JOIN LOANPURPOSES LP ON LP.LOANPURPOSECODE=F.FINPURPOSE
-				JOIN BMTCUSTCATEGORIES CTG ON C.CUSTCTGCODE = CTG.CUSTCTGCODE
-				JOIN FINPFTDETAILS PFT ON F.FINREFERENCE = PFT.FINREFERENCE
-			]]>
-		</createView>
-	</changeSet>
-	
-	<changeSet id="34.1_post" author="Madhuri.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'loanreport_view');
-			]]>
-		</sql>
-	</changeSet>
 	
 	<changeSet id="32_pre" author="rajesh.n" dbms="postgresql">
 		<sql>
@@ -25407,6 +25335,81 @@ UNION ALL
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'int_mandate_request_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="84_pre" author="rajesh.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'loanreport_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="84" author="rajesh.n">
+		<createView viewName="LOANREPORT_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT F.FINREFERENCE,
+					C.CUSTSHRTNAME,
+					C.CUSTCIF,
+					CTG.CUSTCTGDESC,
+					F.FINTYPE,
+					F.FINPURPOSE,
+					LP.LOANPURPOSEDESC,
+					F.REPAYPROFITRATE,
+					F.FINASSETVALUE,
+					F.FINCURRASSETVALUE,
+					F.CALMATURITY,
+					F.MATURITYDATE,
+					F.FINSTARTDATE,
+					PFT.CURREDUCINGRATE,
+					PFT.FINISACTIVE,
+					F.ALLOWGRCPERIOD,
+					F.REPAYRATEBASIS,
+					F.REPAYBASERATE,
+					F.FINCCY,
+					F.REPAYSPECIALRATE,
+					F.REPAYMARGIN,
+					F.RPYMINRATE,
+					F.RPYMAXRATE,
+					F.NUMBEROFTERMS,
+					F.CLOSEDDATE,
+					PFT.AMZTILLLBD,
+					FT.FINDIVISION,
+					PFT.TOTALPFTCPZ,
+					C.CUSTCTGCODE,
+					F.NEXTREPAYDATE,
+					PFT.PFTAMZ,
+					FT.ROUNDINGMODE,
+					PFT.PRVMTHAMZ,
+					F.GRACETERMS,
+					CA.CASTEDESC,
+					CP.CPPROVINCENAME,
+					F.QUICKDISB,
+					F.FINAMOUNT,
+					F.ROUNDINGTARGET
+				FROM FINANCEMAIN F
+				JOIN RMTFINANCETYPES FT ON F.FINTYPE=FT.FINTYPE
+				JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
+				JOIN RMTBRANCHES RB ON F.FINBRANCH=RB.BRANCHCODE
+				JOIN RMTCOUNTRYVSPROVINCE CP ON (RB.BRANCHPROVINCE=CP.CPPROVINCE
+				AND RB.BRANCHCOUNTRY = CP.CPCOUNTRY)
+				LEFT JOIN CASTE CA ON C.CASTEID=CA.CASTEID
+				LEFT JOIN LOANPURPOSES LP ON LP.LOANPURPOSECODE=F.FINPURPOSE
+				JOIN BMTCUSTCATEGORIES CTG ON C.CUSTCTGCODE = CTG.CUSTCTGCODE
+				JOIN FINPFTDETAILS PFT ON F.FINREFERENCE = PFT.FINREFERENCE
+				JOIN (SELECT DISTINCT FA.FINREFERENCE FROM FINADVANCEPAYMENTS FA
+					JOIN FINDISBURSEMENTDETAILS FD ON (FA.FINREFERENCE=FD.FINREFERENCE) WHERE STATUS IN('PAID','REALIZED')
+					) T1 ON T1.FINREFERENCE= F.FINREFERENCE
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="84_post" author="rajesh.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'loanreport_view');
 			]]>
 		</sql>
 	</changeSet>
