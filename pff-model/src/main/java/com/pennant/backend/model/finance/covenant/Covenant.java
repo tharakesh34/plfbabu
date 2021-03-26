@@ -25,8 +25,9 @@ public class Covenant extends CovenantType {
 	private boolean internalUse;
 	@XmlElement
 	private Date extendedDate;
-	@XmlElement
+	@XmlElement(name = "description")
 	private String remarks;
+	@XmlElement(name = "remarks")
 	private String additionalField1;
 	@XmlElement(name = "standardValue")
 	private String additionalField2;
