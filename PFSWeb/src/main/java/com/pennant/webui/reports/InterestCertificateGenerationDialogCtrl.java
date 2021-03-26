@@ -285,6 +285,12 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 				}
 			} else if (!(finStartDateYear.equals(appDateYear) && !(finStartDateMonth < 4))) {
 				//if FinstartDateYear & appDateYear both are equal & finstartDateMonth less than 4 we are not adding into list...
+				if (years >= 1 && DateUtility.getYearsBetween(finStartDate, appDate) >= 1 && appDateMonth < 4
+						&& appDateDay != finStartDateDay) {
+					//if years greater than or equal to 1 and appdate less than 4 and appdateday not equal to finstartday than subtract years - 1
+					//i.e@03-01-2020 to 15-01-2022 i.e@2019-20,2020-21
+					years = years - 1;
+				}
 				for (int i = 0; i <= years; i++) {
 					financeYearList.add(new ValueLabel(String.valueOf(Integer.valueOf(finStartDateYear) + i),
 							String.valueOf(Integer.valueOf(finStartDateYear) + i) + "-"
