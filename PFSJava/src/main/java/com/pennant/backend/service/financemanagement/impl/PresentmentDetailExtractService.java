@@ -331,6 +331,10 @@ public class PresentmentDetailExtractService {
 		} else if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_REPRESENTMENT, ph.getPresentmentType())) {
 			presentmentDetailDAO.extactPDCRePresentments(ph, this);
 		}
+		
+		if (!ph.getPresentments().isEmpty()) {
+			save(ph);
+		}
 
 		if (ph.getGroups().isEmpty()) {
 			return PennantJavaUtil.getLabel("label_PresentmentSearchMessage");
@@ -469,8 +473,8 @@ public class PresentmentDetailExtractService {
 		if (excessAmount != null) {
 			emiInAdvanceAmt = excessAmount.getBalanceAmt();
 			pd.setExcessID(excessAmount.getExcessID());
+			excessAmount.setAmount(emiInAdvanceAmt);
 			pd.setEmiInAdvance(excessAmount);
-			pd.setExcessAmount(excessAmount);
 		} else {
 			emiInAdvanceAmt = BigDecimal.ZERO;
 		}

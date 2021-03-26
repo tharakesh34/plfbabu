@@ -5274,8 +5274,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 
-			if (!isWIF && (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
-					|| (auditHeader.getApiHeader() == null) || StringUtils.isNotBlank(financeMain.getServiceName()))) {
+			if (!isWIF && !financeDetail.isDirectFinalApprove()
+					&& (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
+							|| (auditHeader.getApiHeader() == null)
+							|| StringUtils.isNotBlank(financeMain.getServiceName()))) {
 				// Additional Field Details Deletion in _Temp Table
 				// =======================================
 				doDeleteAddlFieldDetails(financeDetail, "_Temp");
@@ -5403,169 +5405,187 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							"_Temp", auditTranType));
 				}
 				/*
-				 * //Deleting FinancailSummary RisksAndMitigants Details List<RisksAndMitigants> risksAndMitigants =
-				 * financeDetail.getRisksAndMitigantsList(); if (CollectionUtils.isNotEmpty(risksAndMitigants)) {
-				 * auditDetails.addAll(risksAndMitigantsService.delete( risksAndMitigants, TableType.TEMP_TAB,
-				 * auditTranType)); } //Deleting FinancailSummary SanctionConditions Details List<SanctionConditions>
-				 * sanctionConditions = financeDetail.getSanctionDetailsList(); if
+				 * //Deleting FinancailSummary RisksAndMitigants Details
+				 * List<RisksAndMitigants> risksAndMitigants =
+				 * financeDetail.getRisksAndMitigantsList(); if
+				 * (CollectionUtils.isNotEmpty(risksAndMitigants)) {
+				 * auditDetails.addAll(risksAndMitigantsService.delete(
+				 * risksAndMitigants, TableType.TEMP_TAB, auditTranType)); }
+				 * //Deleting FinancailSummary SanctionConditions Details
+				 * List<SanctionConditions> sanctionConditions =
+				 * financeDetail.getSanctionDetailsList(); if
 				 * (CollectionUtils.isNotEmpty(sanctionConditions)) {
-				 * auditDetails.addAll(sanctionConditionsService.delete( sanctionConditions, TableType.TEMP_TAB,
-				 * auditTranType)); } //Deleting FinancailSummary DealRecommendationMerits Details
+				 * auditDetails.addAll(sanctionConditionsService.delete(
+				 * sanctionConditions, TableType.TEMP_TAB, auditTranType)); }
+				 * //Deleting FinancailSummary DealRecommendationMerits Details
 				 * List<DealRecommendationMerits> dealRecommendationMerits =
 				 * financeDetail.getDealRecommendationMeritsDetailsList(); if
 				 * (CollectionUtils.isNotEmpty(dealRecommendationMerits)) {
-				 * auditDetails.addAll(dealRecommendationMeritsService.delete( dealRecommendationMerits,
-				 * TableType.TEMP_TAB, auditTranType)); } //Deleting FinancailSummary DueDiligence Details
-				 * List<DueDiligenceDetails> dueDiligenceDetails = financeDetail.getDueDiligenceDetailsList(); if
+				 * auditDetails.addAll(dealRecommendationMeritsService.delete(
+				 * dealRecommendationMerits, TableType.TEMP_TAB,
+				 * auditTranType)); } //Deleting FinancailSummary DueDiligence
+				 * Details List<DueDiligenceDetails> dueDiligenceDetails =
+				 * financeDetail.getDueDiligenceDetailsList(); if
 				 * (CollectionUtils.isNotEmpty(dueDiligenceDetails)) {
-				 * auditDetails.addAll(dueDiligenceDetailsService.delete( dueDiligenceDetails, TableType.TEMP_TAB,
-				 * auditTranType)); } //Deleting FinancailSummary DealRecommendationMerits Details
+				 * auditDetails.addAll(dueDiligenceDetailsService.delete(
+				 * dueDiligenceDetails, TableType.TEMP_TAB, auditTranType)); }
+				 * //Deleting FinancailSummary DealRecommendationMerits Details
 				 * 
 				 * 
-				 * //Deleting FinancailSummary Synopsis Details if (financeDetail.getSynopsisDetails() != null) {
-				 * auditDetailList.add(getSynopsisDetailsService().delete( financeDetail.getSynopsisDetails(),
-				 * TableType.TEMP_TAB, auditTranType)); }
+				 * //Deleting FinancailSummary Synopsis Details if
+				 * (financeDetail.getSynopsisDetails() != null) {
+				 * auditDetailList.add(getSynopsisDetailsService().delete(
+				 * financeDetail.getSynopsisDetails(), TableType.TEMP_TAB,
+				 * auditTranType)); }
 				 */
 
 			}
 
 			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
 					|| auditHeader.getApiHeader() == null || StringUtils.isNotBlank(financeMain.getServiceName())) {
+				if (!financeDetail.isDirectFinalApprove()) {
+					// Fin Fee Details Deletion
+					if (CollectionUtils.isNotEmpty(finFeeDetails)) {
+						auditDetailList
+								.addAll(getFinFeeDetailService().delete(finFeeDetails, "_Temp", auditTranType, isWIF));
+					}
 
-				// Fin Fee Details Deletion
-				if (CollectionUtils.isNotEmpty(finFeeDetails)) {
-					auditDetailList
-							.addAll(getFinFeeDetailService().delete(finFeeDetails, "_Temp", auditTranType, isWIF));
+					// Fin Fee Receipt Details Deletion
+					/*
+					 * //TODO:GANESH NEED TO REMOVE if
+					 * (financeDetail.getFinScheduleData().getFinFeeReceipts()
+					 * != null) {
+					 * auditDetailList.addAll(getFinFeeDetailService().
+					 * deleteFinFeeReceipts(
+					 * financeDetail.getFinScheduleData().getFinFeeReceipts(),
+					 * "_Temp", auditHeader.getAuditTranType())); }
+					 */
+
+					// Step Details Deletion
+					// =======================================
+					getFinanceStepDetailDAO().deleteList(financeMain.getFinReference(), isWIF, "_Temp");
+
+					// Delete Finance Premium Details
+					// =======================================
+					if (StringUtils.equals(FinanceConstants.PRODUCT_SUKUK, productCode)) {
+						// FIXME : DataSet Removal to be worked on if it
+						// requires in
+						// future
+					}
+
+					// Delete Finance Overdraft Details
+					// =======================================
+					if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
+							&& finScheduleData.getOverdraftScheduleDetails().size() > 0) {
+						getOverdraftScheduleDetailDAO().deleteByFinReference(financeMain.getFinReference(), "_Temp",
+								isWIF);
+					}
+
+					// Finance Flag Details
+					if (financeDetail.getFinFlagsDetails() != null && !financeDetail.getFinFlagsDetails().isEmpty()) {
+						List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinFlagsDetail");
+						getFinFlagDetailsDAO().deleteList(financeMain.getFinReference(), FinanceConstants.MODULE_NAME,
+								"_Temp");
+						auditDetailList.addAll(details);
+					}
+
+					// Delete Finance IRR Values
+					deleteFinIRR(financeMain.getFinReference(), TableType.TEMP_TAB);
+
+					// Finance Main Details
+					// =======================================
+					getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, true);
 				}
 
-				// Fin Fee Receipt Details Deletion
-				/*
-				 * //TODO:GANESH NEED TO REMOVE if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null) {
-				 * auditDetailList.addAll(getFinFeeDetailService().deleteFinFeeReceipts(
-				 * financeDetail.getFinScheduleData().getFinFeeReceipts(), "_Temp", auditHeader.getAuditTranType())); }
-				 */
+				// tasks # >>Start Advance EMI and DSF
+				String grcAdvType = financeMain.getGrcAdvType();
+				String repayAdvType = financeMain.getAdvType();
 
-				// Step Details Deletion
-				// =======================================
-				getFinanceStepDetailDAO().deleteList(financeMain.getFinReference(), isWIF, "_Temp");
+				AdvancePaymentDetail advPay = financeDetail.getAdvancePaymentDetail();
+				if ((grcAdvType != null || repayAdvType != null) && advPay != null) {
+					advPay.setInstructionUID(serviceUID);
 
-				// Delete Finance Premium Details
-				// =======================================
-				if (StringUtils.equals(FinanceConstants.PRODUCT_SUKUK, productCode)) {
-					// FIXME : DataSet Removal to be worked on if it requires in
-					// future
+					// If Advance Payment updation Required
+					if (AdvancePaymentUtil.advPayUpdateReq(moduleDefiner)) {
+						advancePaymentService.processAdvancePayment(advPay, moduleDefiner, financeMain.getLastMntBy());
+					}
+
+					// Saving of Advance Payment Detail
+					advancePaymentService.save(financeDetail.getAdvancePaymentDetail());
+
 				}
 
-				// Delete Finance Overdraft Details
-				// =======================================
-				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
-						&& finScheduleData.getOverdraftScheduleDetails().size() > 0) {
-					getOverdraftScheduleDetailDAO().deleteByFinReference(financeMain.getFinReference(), "_Temp", isWIF);
-				}
-
-				// Finance Flag Details
-				if (financeDetail.getFinFlagsDetails() != null && !financeDetail.getFinFlagsDetails().isEmpty()) {
-					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinFlagsDetail");
-					getFinFlagDetailsDAO().deleteList(financeMain.getFinReference(), FinanceConstants.MODULE_NAME,
-							"_Temp");
-					auditDetailList.addAll(details);
-				}
-
-				// Delete Finance IRR Values
-				deleteFinIRR(financeMain.getFinReference(), TableType.TEMP_TAB);
-
-				// Finance Main Details
-				// =======================================
-				getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, true);
-			}
-
-			// tasks # >>Start Advance EMI and DSF
-			String grcAdvType = financeMain.getGrcAdvType();
-			String repayAdvType = financeMain.getAdvType();
-
-			AdvancePaymentDetail advPay = financeDetail.getAdvancePaymentDetail();
-			if ((grcAdvType != null || repayAdvType != null) && advPay != null) {
-				advPay.setInstructionUID(serviceUID);
-
-				// If Advance Payment updation Required
-				if (AdvancePaymentUtil.advPayUpdateReq(moduleDefiner)) {
-					advancePaymentService.processAdvancePayment(advPay, moduleDefiner, financeMain.getLastMntBy());
-				}
-
-				// Saving of Advance Payment Detail
-				advancePaymentService.save(financeDetail.getAdvancePaymentDetail());
-
-			}
-
-			if ((grcAdvType != null || repayAdvType != null)) {
-				if (FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)) {
-					processAdvancePayment(finFeeDetails, finScheduleData);
-				} else if (ImplementationConstants.ALW_ADV_INTEMI_ADVICE_CREATION) {
-					if (FinanceConstants.FINSER_EVENT_RATECHG.equals(moduleDefiner)
-							|| FinanceConstants.BULK_RATE_CHG.equals(moduleDefiner)
-							|| FinanceConstants.FINSER_EVENT_ADDTERM.equals(moduleDefiner)
-							|| FinanceConstants.FINSER_EVENT_RMVTERM.equals(moduleDefiner)
-							|| FinanceConstants.FINSER_EVENT_CANCELDISB.equals(moduleDefiner)
-							|| FinanceConstants.FINSER_EVENT_CHGPFT.equals(moduleDefiner)
-							|| FinanceConstants.FINSER_EVENT_CHGFRQ.equals(moduleDefiner)
-							|| FinanceConstants.FINSER_EVENT_CANCELFIN.equals(moduleDefiner)
-							|| FinanceConstants.FINSER_EVENT_PLANNEDEMI.equals(moduleDefiner)
-							|| FinanceConstants.FINSER_EVENT_UNPLANEMIH.equals(moduleDefiner)
-							|| FinanceConstants.FINSER_EVENT_RESCHD.equals(moduleDefiner)
-							|| FinanceConstants.FINSER_EVENT_RECALCULATE.equals(moduleDefiner)
-							|| FinanceConstants.FINSER_EVENT_CHGRPY.equals(moduleDefiner)) {
-						processAdvancePayment(finScheduleData);
+				if ((grcAdvType != null || repayAdvType != null)) {
+					if (FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)) {
+						processAdvancePayment(finFeeDetails, finScheduleData);
+					} else if (ImplementationConstants.ALW_ADV_INTEMI_ADVICE_CREATION) {
+						if (FinanceConstants.FINSER_EVENT_RATECHG.equals(moduleDefiner)
+								|| FinanceConstants.BULK_RATE_CHG.equals(moduleDefiner)
+								|| FinanceConstants.FINSER_EVENT_ADDTERM.equals(moduleDefiner)
+								|| FinanceConstants.FINSER_EVENT_RMVTERM.equals(moduleDefiner)
+								|| FinanceConstants.FINSER_EVENT_CANCELDISB.equals(moduleDefiner)
+								|| FinanceConstants.FINSER_EVENT_CHGPFT.equals(moduleDefiner)
+								|| FinanceConstants.FINSER_EVENT_CHGFRQ.equals(moduleDefiner)
+								|| FinanceConstants.FINSER_EVENT_CANCELFIN.equals(moduleDefiner)
+								|| FinanceConstants.FINSER_EVENT_PLANNEDEMI.equals(moduleDefiner)
+								|| FinanceConstants.FINSER_EVENT_UNPLANEMIH.equals(moduleDefiner)
+								|| FinanceConstants.FINSER_EVENT_RESCHD.equals(moduleDefiner)
+								|| FinanceConstants.FINSER_EVENT_RECALCULATE.equals(moduleDefiner)
+								|| FinanceConstants.FINSER_EVENT_CHGRPY.equals(moduleDefiner)) {
+							processAdvancePayment(finScheduleData);
+						}
 					}
 				}
-			}
-			// tasks # >>End Advance EMI and DSF
+				// tasks # >>End Advance EMI and DSF
 
-			// Mail Alert Notification for Customer/Dealer/Provider...etc
-			Notification notification = new Notification();
-			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
-			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
-			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_SP);
-			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_DSAN);
-			notification.setModule("LOAN_ORG");
-			String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner;
-			notification.setSubModule(finEvent);
-			notification.setKeyReference(financeMain.getFinReference());
-			notification.setStage(PennantConstants.REC_ON_APPR);
-			notification.setReceivedBy(financeMain.getLastMntBy());
-			financeMain.setWorkflowId(tempWorkflowId);
-			try {
+				// Mail Alert Notification for Customer/Dealer/Provider...etc
+				Notification notification = new Notification();
+				notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
+				notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
+				notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_SP);
+				notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_DSAN);
+				notification.setModule("LOAN_ORG");
+				String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG
+						: moduleDefiner;
+				notification.setSubModule(finEvent);
+				notification.setKeyReference(financeMain.getFinReference());
+				notification.setStage(PennantConstants.REC_ON_APPR);
+				notification.setReceivedBy(financeMain.getLastMntBy());
+				financeMain.setWorkflowId(tempWorkflowId);
+				try {
 
-				if (notificationService != null) {
-					notificationService.sendNotifications(notification, financeDetail, financeMain.getFinType(),
-							financeDetail.getDocumentDetailsList());
+					if (notificationService != null) {
+						notificationService.sendNotifications(notification, financeDetail, financeMain.getFinType(),
+								financeDetail.getDocumentDetailsList());
+					}
+
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
+				if (!recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
+					financeMain.setWorkflowId(0);
 				}
 
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-			if (!recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
-				financeMain.setWorkflowId(0);
-			}
+				// Saving the reasons
+				saveReasonDetails(financeDetail);
 
-			// Saving the reasons
-			saveReasonDetails(financeDetail);
+				// Calling External CMS API system.
+				processPayments(financeDetail);
 
-			// Calling External CMS API system.
-			processPayments(financeDetail);
+				// Auto Payable creation for Cash back process (DBD/MBD)
+				cashBackProcessService.createCashBackAdvice(financeMain, financeDetail.getPromotion(), curBDay);
 
-			// Auto Payable creation for Cash back process (DBD/MBD)
-			cashBackProcessService.createCashBackAdvice(financeMain, financeDetail.getPromotion(), curBDay);
+				FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
+				FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
+				auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
+						tempfinanceMain.getBefImage(), tempfinanceMain));
+				auditHeader.setAuditDetails(auditDetailList);
 
-			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
-			FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
-			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
-					tempfinanceMain.getBefImage(), tempfinanceMain));
-			auditHeader.setAuditDetails(auditDetailList);
-
-			// Adding audit as deleted from Temp table
-			if (!isWIF) {
-				getAuditHeaderDAO().addAudit(auditHeader);
+				// Adding audit as deleted from Temp table
+				if (!isWIF) {
+					getAuditHeaderDAO().addAudit(auditHeader);
+				}
 			}
 		}
 

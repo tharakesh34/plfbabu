@@ -13,7 +13,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.WSReturnStatus;
@@ -25,6 +27,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.ws.model.presentment.PresentmentResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -208,7 +211,10 @@ public class PresentmentServiceController {
 
 		PresentmentDetailExtract detailExtract = new PresentmentDetailExtract(dataSource, presentmentDetailService,
 				notificationService);
-
+		PostingsPreparationUtil ppu = (PostingsPreparationUtil) SpringBeanUtil.getBean("postingsPreparationUtil");
+		FinanceRepaymentsDAO frDAO = (FinanceRepaymentsDAO) SpringBeanUtil.getBean("financeRepaymentsDAO");
+		detailExtract.setPostingsPreparationUtil(ppu);
+		detailExtract.setFinanceRepaymentsDAO(frDAO);
 		try {
 			detailExtract.clearTables();
 
@@ -222,7 +228,7 @@ public class PresentmentServiceController {
 				valueParm[3] = presentment.getBatchId();
 				return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 			}
-			
+
 			if (RepayConstants.PEXC_SUCCESS.equals(status) || RepayConstants.PEXC_BOUNCE.equals(status)) {
 				String[] valueParm = new String[4];
 				valueParm[0] = "The Presentment with";
@@ -231,7 +237,7 @@ public class PresentmentServiceController {
 				valueParm[3] = "already processed";
 				return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 			}
-			
+
 			PresentmentDetail presentmentDetail = presentmentDetailDAO.getPresentmentDetail(presentment.getBatchId());
 
 			if (presentmentDetail != null && SysParamUtil.getAppDate().compareTo(presentmentDetail.getSchDate()) < 0) {
@@ -240,6 +246,15 @@ public class PresentmentServiceController {
 				valueParm[1] = "proceed with schedule date";
 				valueParm[2] = "greater than";
 				valueParm[3] = "application bussiness date";
+				return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+			}
+
+			if (!presentmentDetail.getFinReference().equals(presentment.getAgreementNo())) {
+				String[] valueParm = new String[4];
+				valueParm[0] = "FinReference";
+				valueParm[1] = "is Invalid";
+				valueParm[2] = ":";
+				valueParm[3] = presentment.getAgreementNo();
 				return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 			}
 

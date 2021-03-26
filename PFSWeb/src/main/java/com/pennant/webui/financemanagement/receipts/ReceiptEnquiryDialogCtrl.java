@@ -824,7 +824,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			String reportName = "GOLDLOAN_CashierReceipt";
 			String templatePath = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/";
 			String templateName = reportName + PennantConstants.DOC_TYPE_WORD_EXT;
-			AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
+			AgreementEngine engine = new AgreementEngine(templatePath);
 			engine.setTemplate(templateName);
 			engine.loadTemplate();
 			reportName = "CashierReceipt";

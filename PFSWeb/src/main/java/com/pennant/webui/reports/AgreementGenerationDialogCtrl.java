@@ -26,7 +26,6 @@ import com.aspose.words.SaveFormat;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.AgreementDetail;
@@ -324,8 +323,7 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		String agreement = PennantConstants.AGREEMENT_GEN;
-		String templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
-		AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
+		AgreementEngine engine = new AgreementEngine();
 		String refNo = agreementGeneration.getCustCIF();
 		String reportName = refNo + "_" + agreement;
 		engine.setTemplate(agreement);

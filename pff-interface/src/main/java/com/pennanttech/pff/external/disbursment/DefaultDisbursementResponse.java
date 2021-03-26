@@ -714,7 +714,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 																							// paid
 				throw new Exception("Payment is in " + getStatus(finAdvPayments.getStatus()) + " status");
 			}
-		} else if ("REJECTED".equals(status)) {// for rejected
+		} else if ("REJECTED".equalsIgnoreCase(status) || "REJECT".equalsIgnoreCase(status) || "R".equals(status)) {// for rejected
 			if (!DisbursementConstants.STATUS_AWAITCON.equals(finAdvPayments.getStatus())) {
 				throw new Exception("Payment is in " + getStatus(finAdvPayments.getStatus()) + " status cannot reject");
 			}

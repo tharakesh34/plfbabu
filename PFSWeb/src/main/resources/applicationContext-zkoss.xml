@@ -5924,4 +5924,12 @@
 	<property name="loanMasterReportService" ref="loanMasterReportService" />
 	</bean>
 	
-</beans>
+		
+		<bean id="rateChangeUploadDialogCtrl" class="com.pennant.webui.finance.upload.RateChangeUploadDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+		<property name="rateChangeUploadService" ref="rateChangeUploadService" />
+	</bean>
+		
+</beans> 
+

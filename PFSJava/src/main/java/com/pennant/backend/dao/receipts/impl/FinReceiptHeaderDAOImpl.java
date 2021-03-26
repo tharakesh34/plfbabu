@@ -1392,7 +1392,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		boolean isOnline = StringUtils.isNotBlank(fsi.getTransactionRef());
 		StringBuilder sql = new StringBuilder("Select ReceiptID From FinReceiptHeader");
 		sql.append(" Where Reference = ?  AND ValueDate = ? AND ReceiptAmount = ?");
-		sql.append(" AND ReceiptModeStatus NOT IN ('B','C')");
+		sql.append(" AND ReceiptModeStatus = ?");
 
 		if (isOnline) {
 			sql.append(" AND TransactionRef = ? ");
@@ -1403,6 +1403,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, fsi.getFinReference());
 			ps.setDate(index++, JdbcUtil.getDate(fsi.getValueDate()));
 			ps.setBigDecimal(index++, fsi.getAmount());
+			ps.setString(index++, RepayConstants.PAYSTATUS_REALIZED);
 			if (isOnline) {
 				ps.setString(index++, fsi.getTransactionRef());
 			}

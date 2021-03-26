@@ -1,6 +1,7 @@
 package com.pennanttech.pff.api.ws.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -9,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -22,6 +24,8 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.api.controller.DisbursementController;
 import com.pennanttech.pff.api.ws.DisbursementRESTService;
 import com.pennanttech.pff.api.ws.DisbursementSOAPService;
@@ -282,13 +286,25 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 				valueParam[0] = "disbInstId";
 				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
 			}
+			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbRequest.getDisbType())
+					|| DisbursementConstants.PAYMENT_TYPE_DD.equals(disbRequest.getDisbType())) {
+				if (disbRequest.getClearingDate() == null) {
+					String[] valueParam = new String[1];
+					valueParam[0] = "ClearingDate";
+					return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+				}
+				if (disbRequest.getClearingDate().compareTo(SysParamUtil.getAppDate()) < 0) {
+					String valueParm[] = new String[4];
+					String clearingDate = DateUtil.format(disbRequest.getClearingDate(), DateFormat.FULL_DATE);
 
-			if (disbRequest.getClearingDate() == null) {
-				String[] valueParam = new String[1];
-				valueParam[0] = "ClearingDate";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+					valueParm[0] = "Clearing Date: " + clearingDate;
+					valueParm[1] = "is";
+					valueParm[2] = "Invalid";
+					valueParm[3] = "";
+
+					return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+				}
 			}
-
 			if (StringUtils.isBlank(disbRequest.getStatus())) {
 				String[] valueParam = new String[1];
 				valueParam[0] = "Status";
@@ -340,13 +356,54 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 						valueParam[0] = "ChequeNo";
 						return APIErrorHandlerService.getFailedStatus("90502", valueParam);
 					}
+					if (disbRequest.getChequeNumber().length() > 6) {
+						String valueParm[] = new String[4];
+						valueParm[0] = "Cheque Number Values: " + disbRequest.getChequeNumber();
+						valueParm[1] = "Should be";
+						valueParm[2] = "Less than or Equal To";
+						valueParm[3] = "Six";
+						return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+					}
 				}
 			}
 
-			if (disbRequest.getDisbursementDate() == null) {
+			Date disbursementDate = disbRequest.getDisbursementDate();
+			if (disbursementDate == null) {
 				String[] valueParam = new String[1];
 				valueParam[0] = "disbursementDate";
 				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+			}
+			if (disbursementDate.compareTo(SysParamUtil.getAppDate()) < 0) {
+				String valueParm[] = new String[4];
+				String disbDate = DateUtil.format(disbursementDate, DateFormat.FULL_DATE);
+				valueParm[0] = "disbursementDate: " + disbDate;
+				valueParm[1] = "Should be";
+				valueParm[2] = "App Date";
+				valueParm[3] = "";
+				return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+			}
+			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbRequest.getPaymentType())
+					|| DisbursementConstants.PAYMENT_TYPE_DD.equals(disbRequest.getPaymentType())) {
+
+				if (disbRequest.getClearingDate().compareTo(disbursementDate) != 0) {
+					String valueParm[] = new String[4];
+					String disbDate = DateUtil.format(disbursementDate, DateFormat.FULL_DATE);
+					String clearingDate = DateUtil.format(disbRequest.getClearingDate(), DateFormat.FULL_DATE);
+					valueParm[0] = "disbursementDate: " + disbDate;
+					valueParm[1] = "and ClearingDate: " + clearingDate;
+					valueParm[2] = "Should be Equal";
+					valueParm[3] = "";
+					return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+				}
+				if (disbursementDate.compareTo(SysParamUtil.getAppDate()) != 0) {
+					String valueParm[] = new String[4];
+					String disbDate = DateUtil.format(disbursementDate, DateFormat.FULL_DATE);
+					valueParm[0] = "disbursementDate: " + disbDate;
+					valueParm[1] = "Should be AppDate";
+					valueParm[2] = "";
+					valueParm[3] = "";
+					return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+				}
 			}
 
 			String channel = disbRequest.getChannel();

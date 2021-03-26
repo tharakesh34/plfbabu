@@ -340,11 +340,10 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			return;
 		}
 
-		AgreementEngine engine = null;
 		try {
+			AgreementEngine engine = new AgreementEngine();
 
 			String finReference = list.get(0).getFinRef();
-			engine = new AgreementEngine(finPurpose);
 			engine.setTemplate(data.getLovDescAggReportName());
 			engine.loadTemplate();
 
@@ -371,6 +370,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					Filedownload.save(new AMedia(fileName.toString(), "msword", "application/msword", bytes));
 				}
 			}
+			engine.close();
 
 		} catch (Exception e) {
 			if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
@@ -382,11 +382,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				MessageUtil.showError(e);
 			}
 
-		} finally {
-			if (engine != null) {
-				engine.close();
-			}
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 

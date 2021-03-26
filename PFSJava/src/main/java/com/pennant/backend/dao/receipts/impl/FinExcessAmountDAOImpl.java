@@ -562,7 +562,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				FinExcessAmount ex = emiInAdvance.get(index);
 				ps.setBigDecimal(1, ex.getAmount());
 				ps.setBigDecimal(2, ex.getAmount());
-				ps.setLong(3, ex.getId());
+				ps.setLong(3, ex.getExcessID());
 			}
 
 			@Override
@@ -612,7 +612,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				FinExcessAmount ex = excess.get(index);
 				ps.setBigDecimal(1, ex.getAmount());
 				ps.setBigDecimal(2, ex.getAmount());
-				ps.setLong(3, ex.getId());
+				ps.setLong(3, ex.getExcessID());
 			}
 
 			@Override

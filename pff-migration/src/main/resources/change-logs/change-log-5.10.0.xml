@@ -6607,7 +6607,7 @@
 				JOIN RMTPROVINCEVSCITY T2 ON T1.CITY = T2.PCCITY 
 				JOIN RMTCOUNTRYVSPROVINCE T3 ON T2.PCPROVINCE = T3.CPPROVINCE  AND T3.CPCOUNTRY = T2.PCCOUNTRY
 				JOIN BMTCOUNTRIES T4 ON T2.PCCOUNTRY = T4.COUNTRYCODE
-				WHERE T1.PINCODEID NOT IN (SELECT PINCODEID FROM PINCODES_TEMP);
+				WHERE T1.PINCODEID NOT IN (SELECT PINCODEID FROM PINCODES_TEMP)
 			]]>
 		</createView>
 	</changeSet>
@@ -7057,6 +7057,54 @@
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financeenquiry_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="0.1" author="Murthy.y" dbms="oracle">
+		<sql splitStatements="false">
+		<![CDATA[
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(HEADER_ID),0)+1 into v_maxval from DISBURSEMENT_REQUESTS;
+			EXECUTE IMMEDIATE 'alter sequence SEQ_DISBURSEMENT_REQ_HEADER
+			restart
+			start with ' || v_maxval;
+			end;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="0.1" author="Murthy.y" dbms="postgresql">
+		<sql splitStatements="false">
+		<![CDATA[
+			do $$
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(HEADER_ID),0)+1 into v_maxval from DISBURSEMENT_REQUESTS;
+			EXECUTE 'alter sequence SEQ_DISBURSEMENT_REQ_HEADER restart
+			start
+			with ' || v_maxval;
+			end;
+			$$;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="0.1" author="Murthy.y" dbms="mssql">
+		<sql splitStatements="false">
+			<![CDATA[
+				DECLARE @SQLCmd NVARCHAR(MAX);
+				DECLARE @Seq BIGINT;
+				SELECT @Seq=COALESCE(max(HEADER_ID),0)+1 from DISBURSEMENT_REQUESTS;
+			
+				SET @SQLCmd = '
+				ALTER SEQUENCE SEQ_DISBURSEMENT_REQ_HEADER
+				RESTART WITH ' + CAST( @Seq AS VARCHAR(30));
+			
+				EXEC SP_EXECUTESQL  @SQLCmd;
 			]]>
 		</sql>
 	</changeSet>

@@ -806,6 +806,7 @@
 			<menuItem id="menu_Item_MandatesFileImport" zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateDataImport.zul"
 				rightName="menuItem_DataEngine_MandateUpload" />
 		</menu>
+
 		<menu id="menu_Category_PresentmentDetails">
 			<menuItem id="menu_Item_PresentmentExtractDetail" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailExtractList.zul"
 				rightName="menuItem_PresentmentDetail_PresentmentExtract" />
@@ -845,7 +846,10 @@
 				rightName="menuItem_MiscPostingUpload" />
 			<menuItem id="menu_Item_MiscPostingUploadApproval" zulNavigation="/WEB-INF/pages/Finance/Uploads/UploadList.zul?module=MA"
 				rightName="menuItem_MiscPostingUploadApproval" />
-
+				<!-- RateChangeUpload -->
+			<menuItem id="menu_Item_RateChangeUpload" zulNavigation="/WEB-INF/pages/Finance/Uploads/RateChangeUpload.zul"
+				rightName="menu_Item_RateChangeUpload" />
+			
 		</menu>
 		<menuItem id="menu_Item_LenderUpload" zulNavigation="/WEB-INF/pages/LenderUpload/LenderDataUpload.zul"
 			rightName="menuItem_LenderUpload" />

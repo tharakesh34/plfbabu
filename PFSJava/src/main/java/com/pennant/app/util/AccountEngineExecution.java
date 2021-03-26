@@ -359,7 +359,13 @@ public class AccountEngineExecution implements Serializable {
 		//Late pay and Repay will be coming separately and will have same linked tranID.
 		int seq = aeEvent.getTransOrder();
 
-		Date custAppdate = customerDAO.getCustAppDate(aeEvent.getCustID());
+		if (!aeEvent.isEOD()) {
+			if (aeEvent.getCustID() <= 0) {
+				aeEvent.setCustAppDate(aeEvent.getPostDate());
+			} else {
+				aeEvent.setCustAppDate(customerDAO.getCustAppDate(aeEvent.getCustID()));
+			}
+		}
 
 		for (TransactionEntry transactionEntry : entries) {
 			returnDataSet = new ReturnDataSet();
@@ -489,18 +495,12 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setPostDate(aeEvent.getPostDate());
 			returnDataSet.setAppDate(aeEvent.getAppDate());
 			returnDataSet.setAppValueDate(aeEvent.getAppValueDate());
+			returnDataSet.setCustAppDate(aeEvent.getCustAppDate());
+		
 			if (aeEvent.isEOD()) {
 				returnDataSet.setPostCategory(AccountConstants.POSTING_CATEGORY_EOD);
-				returnDataSet.setCustAppDate(aeEvent.getCustAppDate());
-			} else {
-				//TODO: Cash Management Change check it once
-				if (aeEvent.getCustID() <= 0) {
-					returnDataSet.setCustAppDate(returnDataSet.getPostDate());
-				} else {
-					returnDataSet.setCustAppDate(custAppdate);
-				}
-			}
-
+			} 
+			
 			returnDataSets.add(returnDataSet);
 			if (newEntries != null) {
 				returnDataSets.addAll(newEntries);

@@ -16,7 +16,6 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.UploadEvent;
-import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
@@ -48,6 +47,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.interfacebajaj.fileextract.service.FileExtractService;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -367,14 +367,15 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		FinanceRepaymentsDAO frDAO = (FinanceRepaymentsDAO) SpringUtil.getBean("financeRepaymentsDAO");
-		PostingsPreparationUtil ppu = (PostingsPreparationUtil) SpringUtil.getBean("postingsPreparationUtil");
+		FinanceRepaymentsDAO frDAO = (FinanceRepaymentsDAO) SpringBeanUtil.getBean("financeRepaymentsDAO");
+		PostingsPreparationUtil ppu = (PostingsPreparationUtil) SpringBeanUtil.getBean("postingsPreparationUtil");
 
 		if (allowInstrumentType || !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
-			PresentmentDetailService service = (PresentmentDetailService) SpringUtil
+			PresentmentDetailService service = (PresentmentDetailService) SpringBeanUtil
 					.getBean("presentmentDetailService");
-			DataSource source = (DataSource) SpringUtil.getBean("dataSource");
-			NotificationService notificationService = (NotificationService) SpringUtil.getBean("notificationService");
+			DataSource source = (DataSource) SpringBeanUtil.getBean("dataSource");
+			NotificationService notificationService = (NotificationService) SpringBeanUtil
+					.getBean("notificationService");
 
 			PresentmentDetailExtract pde = new PresentmentDetailExtract(source, service, notificationService);
 			pde.setInstrumentType(this.instrumentType.getSelectedItem().getValue());

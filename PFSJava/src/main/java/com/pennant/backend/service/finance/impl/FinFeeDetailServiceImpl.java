@@ -944,7 +944,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					&& (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent()))) {
 				if (!isRcdType || PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(finFeeDetail.getRecordType())) {
 					finFeeDetail.setNewRecord(false);
-					finFeeDetail.setRecordType("");
 				} else if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(finFeeDetail.getRecordType())) {
 					finFeeDetail.setNewRecord(true);
 				}
@@ -1086,7 +1085,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			List<Long> feeIds = new ArrayList<Long>(1);
 			for (FinFeeDetail finFeeDetail : feeDetails) {
 				//If we Select VAS Fee Payment Mode as Cash or Cheque getting error "Fees not paid"
-				if (!finFeeDetail.getFinEvent().equalsIgnoreCase("VASFEE")) {
+				if (!AccountEventConstants.ACCEVENT_VAS_FEE.equalsIgnoreCase(finFeeDetail.getFinEvent())) {
 					feeIds.add(finFeeDetail.getFeeID());
 					if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) != 0) {
 						totalPaidFee = totalPaidFee.add(finFeeDetail.getPaidAmount());

@@ -1373,8 +1373,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		BigDecimal tdsPaid = BigDecimal.ZERO;
 
 		for (ReceiptAllocationDetail allocate : receiptData.getReceiptHeader().getAllocationsSummary()) {
-			if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_EMI)
-					|| StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_PFT)) {
+			String allocationType = allocate.getAllocationType();
+			if (RepayConstants.ALLOCATION_EMI.equals(allocationType)
+					|| RepayConstants.ALLOCATION_FUT_PFT.equals(allocationType)
+					|| RepayConstants.ALLOCATION_PFT.equals(allocationType)) {
 				allocate.setEditable(true);
 			}
 			if (allocate.isEditable()) {

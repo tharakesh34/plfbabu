@@ -120,6 +120,18 @@ public class DisbursementController {
 				return disbDetail;
 			}
 
+			if (!finAdvancePayments.getFinReference().equals(disb.getFinReference())) {
+				String valueParm[] = new String[4];
+				valueParm[0] = "Finreference: " + finAdvancePayments.getFinReference();
+				valueParm[1] = "is Not Matched with";
+				valueParm[2] = "the Existing";
+				valueParm[3] = "disbInstId";
+				returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
+				disbDetail.setReturnStatus(returnStatus);
+
+				return disbDetail;
+			}
+
 			request.getFinAdvancePayments().add(disb);
 			request.setRequestSource(PennantConstants.FINSOURCE_ID_API);
 		}
@@ -205,6 +217,26 @@ public class DisbursementController {
 					valueParm[3] = "";
 					return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 
+				}
+
+				/* validations for the DisbType Cheque and DD verifying from the DB */
+				String disbType = disb.getDisbType();
+				if (("C".equals(disbType) || DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbType))) {
+					disbType = DisbursementConstants.PAYMENT_TYPE_CHEQUE;
+				} else if ("D".equals(disbType) || DisbursementConstants.PAYMENT_TYPE_DD.equals(disbType)) {
+					disbType = DisbursementConstants.PAYMENT_TYPE_DD;
+				} else if ("N".equals(disbType) || DisbursementConstants.PAYMENT_TYPE_NEFT.equals(disbType)) {
+					disbType = DisbursementConstants.PAYMENT_TYPE_NEFT;
+				}
+
+				if (!request.getDisbType().equals(disbType)) {
+					String valueParm[] = new String[4];
+					valueParm[0] = "Given DisbType: " + request.getDisbType();
+					valueParm[1] = "is Incorrect ";
+					valueParm[2] = "";
+					valueParm[3] = "";
+
+					return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 				}
 
 				int count = 0;

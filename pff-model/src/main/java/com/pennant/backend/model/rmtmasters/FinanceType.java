@@ -362,7 +362,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean alwChgPureTerms;
 	private boolean alwCloBefDUe;
 	private String finTypeClassification;
-	private boolean allowPftBal;
+	private boolean allowPftBal = true;
 	private boolean grcAdjReq;
 	private boolean grcPeriodAftrFullDisb;
 	private boolean autoIncrGrcEndDate;

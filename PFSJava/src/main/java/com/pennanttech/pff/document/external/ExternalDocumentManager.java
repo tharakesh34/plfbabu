@@ -14,14 +14,12 @@ import javax.imageio.ImageIO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zkplus.spring.SpringUtil;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfCopy;
-import com.itextpdf.text.pdf.PdfReader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.service.PagedListService;
@@ -179,31 +177,22 @@ public class ExternalDocumentManager {
 		return outsream;
 	}
 
-	public ByteArrayOutputStream mergePDF(List<DocumentDetails> documentDetailList)
-			throws IOException, DocumentException {
+	public ByteArrayOutputStream mergePDF(List<DocumentDetails> documentDetailList) throws IOException {
+		PDFMergerUtility pdfMerge = new PDFMergerUtility();
+		pdfMerge.setDestinationStream(new ByteArrayOutputStream());
 
-		ByteArrayOutputStream outsream = new ByteArrayOutputStream();
-		Document document = new Document();
-		PdfCopy pdfcopy = new PdfCopy(document, outsream);
-		document.open();
 		for (DocumentDetails details : documentDetailList) {
-			try {
-				PdfReader pdfreader = null;
-				String docUri = details.getDocUri();
-				String password = StringUtils.trimToEmpty(details.getPassword());
+			String docUri = details.getDocUri();
+			URL u = new URL(docUri);
+			URLConnection uc = u.openConnection();
 
-				pdfreader = new PdfReader(docUri, password.getBytes());
-				int number_of_pages = pdfreader.getNumberOfPages();
-				for (int page = 0; page < number_of_pages;) {
-					pdfcopy.addPage(pdfcopy.getImportedPage(pdfreader, ++page));
-				}
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-
+			//String password = StringUtils.trimToEmpty(details.getPassword());
+			pdfMerge.addSource(uc.getInputStream());
 		}
-		document.close();
-		return outsream;
+
+		pdfMerge.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+
+		return (ByteArrayOutputStream) pdfMerge.getDestinationStream();
 
 	}
 

@@ -3724,7 +3724,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				valueParam[0] = "PaymentId";
 				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
 			}
-			FinAdvancePayments finAdv = finAdvancePaymensDAO.getFinAdvancePaymentsById(finAdvancePayments, "");
+			FinAdvancePayments finAdv = finAdvancePaymensDAO.getFinAdvancePaymentsById(finAdvancePayments, "_AView");
 
 			if (finAdv == null) {
 				String[] valueParam = new String[1];
@@ -3802,11 +3802,10 @@ public class FinServiceInstController extends SummaryDetailService {
 				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
 			}
 
-			if (DisbursementConstants.STATUS_REJECTED.equals(insPayInst.getStatus())
-					|| DisbursementConstants.STATUS_PAID.equals(insPayInst.getStatus())) {
+			if (!DisbursementConstants.STATUS_AWAITCON.equals(insPayInst.getStatus())) {
 				String[] valueParam = new String[1];
-				valueParam[0] = "PaymentId";
-				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
+				valueParam[0] = "Insurance status already updated";
+				return APIErrorHandlerService.getFailedStatus("21005", valueParam);
 			}
 
 			InsurancePaymentInstructions instruction = insuranceDetailDAO.getInsurancePaymentInstructionById(paymentId);
@@ -3833,7 +3832,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 
 			} else {
-				if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
 					AEEvent aeEvent = new AEEvent();
 					aeEvent.setLinkedTranId(instruction.getLinkedTranId());
 					List<ReturnDataSet> list = postingsPreparationUtil

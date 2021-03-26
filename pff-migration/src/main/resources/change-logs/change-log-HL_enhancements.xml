@@ -16397,127 +16397,6 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="624.1_pre" author="Manoj.P" dbms="postgresql">
-		<sql>
-		<![CDATA[
-			select deps_save_and_drop_dependencies ('plf', 'int_mandate_request_view');
-		]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="624.1" author="Manoj.P">
-		<createView viewName="Int_Mandate_Request_view" replaceIfExists="true">
-			<![CDATA[			
-			 	SELECT m.mandateid,
-		    		m.documentname,
-		    		bd.bankshortcode AS bankcode,
-				    bd.bankname,
-		        CASE WHEN lb.branchcode IS NULL THEN cb.branchcode
-		        	ELSE lb.branchcode
-		        END AS branchcode,
-		        CASE WHEN lb.branchdesc IS NULL THEN cb.branchdesc
-		            ELSE lb.branchdesc
-		        END AS branchdesc,
-			    cust.custcif,
-			    cust.custshrtname,
-			    cust.custcorebank,
-		    	ft.fintypedesc AS fintype,
-			    fin.finreference,
-			    COALESCE((( SELECT sum(t.totalamount) AS sum
-		           FROM ( SELECT max(fsd.repayamount + fsd.feeschd) AS totalamount
-		                   FROM finscheduledetails fsd
-		                     JOIN financemain fm ON fm.finreference = fsd.finreference AND fm.custid = m.custid
-		                  GROUP BY fm.finreference) t)) / ccy.ccyminorccyunits, 0) AS cust_emi,
-			    COALESCE((( SELECT sum(t.totalamount) AS sum
-		           FROM ( SELECT max(fsd.repayamount + fsd.feeschd) AS totalamount
-		                   FROM finscheduledetails fsd
-		                  WHERE (fsd.repayonschdate = 1 OR fsd.pftonschdate = 1) AND (fsd.finreference IN ( SELECT financemain.finreference
-		                           FROM financemain
-		                          WHERE financemain.mandateid = m.mandateid))
-		                  GROUP BY fsd.finreference) t)) / ccy.ccyminorccyunits, 0) AS emi,
-		        CASE m.openmandate
-		            WHEN 1 THEN 'new open ecs'
-		            ELSE 'no  open ecs'
-		        END AS openmandate,
-			    m.accnumber,
-		        CASE
-		            WHEN m.acctype = '10' THEN 'savings account'
-		            WHEN m.acctype = '11' THEN 'current account'
-		            WHEN m.acctype = '11' THEN 'cash credit account'
-		            ELSE m.acctype
-		        END AS acctype,
-		   			m.accholdername,
-				    bb.micr,
-				    bb.ifsc,
-				    bb.addofbranch,
-		    		(SELECT min(finpftdetails.firstrepaydate) AS min
-		        	   FROM finpftdetails
-			          WHERE (finpftdetails.finreference IN ( SELECT financemain.finreference
-		                   FROM financemain
-		                  WHERE financemain.mandateid = m.mandateid))) AS firstduedate,
-			    	(SELECT max(finscheduledetails.schdate) AS max
-			           FROM finscheduledetails
-		    	      WHERE (finscheduledetails.repayonschdate = 1 OR finscheduledetails.pftonschdate = 1) AND (finscheduledetails.finreference IN ( SELECT financemain.finreference
-		                   FROM financemain
-		                  WHERE financemain.mandateid = m.mandateid))) AS emienddate,
-		    		COALESCE(m.maxlimit, 0) AS maxlimit,
-			    	COALESCE(( SELECT sum(t.mandatedebitamount) AS sum
-			           FROM ( SELECT max(finscheduledetails.repayamount + finscheduledetails.feeschd) AS mandatedebitamount
-		                   FROM finscheduledetails
-		                  WHERE (finscheduledetails.repayonschdate = 1 OR finscheduledetails.pftonschdate = 1) AND (finscheduledetails.finreference IN ( SELECT financemain.finreference
-		                           FROM financemain
-		                          WHERE financemain.mandateid = m.mandateid))
-		                  GROUP BY finscheduledetails.finreference) t), 0) / ccy.ccyminorccyunits AS debitamount,
-				    fin.numberofterms,
-				    m.periodicity,
-			    	m.startdate,
-			    	m.expirydate,
-				    fin.applicationno,
-				    m.mandatetype,
-				    m.status,
-		    		m.inputdate,
-				    m.recordstatus,
-				    m.recordtype,
-				    m.mandateccy,
-		    		COALESCE(ccy.ccyminorccyunits, 100) AS ccyminorccyunits,
-			    	m.entitycode,
-				    cp.phonenumber,
-				    ce.custemail,
-			    	pb.partnerbankname,
-				    m.lastmnton,
-			    	bb.branchdesc AS bank_branch_name,
-				    et.entitydesc,
-				    pb.utilitycode,
-			    	pb.sponsorbankcode,
-				    pb.branchifsccode
-			   FROM mandates m
-			   JOIN bankbranches bb ON bb.bankbranchid = m.bankbranchid
-		       JOIN bmtbankdetail bd ON bd.bankcode = bb.bankcode
-		       JOIN customers cust ON cust.custid = m.custid
-		       JOIN rmtbranches cb ON cb.branchcode = cust.custdftbranch
-		       LEFT JOIN partnerbanks pb ON pb.partnerbankid = m.partnerbankid
-		       LEFT JOIN customeremails ce ON ce.custid = cust.custid AND ce.custemailpriority = 5
-		       LEFT JOIN customerphonenumbers cp ON cp.phonecustid = cust.custid AND cp.phonetypepriority = 5
-		       LEFT JOIN rmtcurrencies ccy ON ccy.ccycode = m.mandateccy
-		       LEFT JOIN financemain fin ON m.orgreference = fin.finreference
-		       LEFT JOIN rmtbranches lb ON lb.branchcode = fin.finbranch
-		       LEFT JOIN rmtfinancetypes ft ON fin.fintype = ft.fintype
-		       LEFT JOIN entity et ON m.entitycode = et.entitycode
-		  	   WHERE m.status = 'NEW' AND NOT (m.mandateid IN ( SELECT mandate_requests.mandateid
-		           FROM mandate_requests
-		          WHERE mandate_requests.status = 'AC' OR mandate_requests.status = 'NEW'))
-			]]>		
-		</createView>
-	</changeSet>
-	
-	<changeSet id="ST#624.1_post" author="Manoj.P" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'int_mandate_request_view');
-			]]>
-		</sql>
-	</changeSet>
 	
 	<changeSet id="830.0" author="rajesh.n">
 		<addNotNullConstraint tableName="PMAY" columnName="finreference" columnDataType="varchar(20)" />
@@ -19856,118 +19735,6 @@ UNION ALL
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'verification_tv_view');	
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.10.1_pre" author="Gopal.p" dbms="postgresql">
-		<sql> 
-		<![CDATA[ 
-			select deps_save_and_drop_dependencies ('plf', 'int_mandate_request_view'); 
-		]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.10.1" author="Gopal.p">
-		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
-			<![CDATA[
-				SELECT M.MANDATEID,
-					M.DOCUMENTNAME,
-					BD.BANKSHORTCODE BANKCODE,
-					BD.BANKNAME,
-					CASE WHEN LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE
-						ELSE LB.BRANCHCODE END BRANCHCODE,
-					CASE WHEN LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC
-						ELSE LB.BRANCHDESC END BRANCHDESC,
-					CUST.CUSTCIF,
-					CUST.CUSTSHRTNAME,
-					CUST.CUSTCOREBANK,
-					FT.FINTYPEDESC FINTYPE,
-					FIN.FINREFERENCE,
-					COALESCE((( SELECT SUM(T.TOTALAMOUNT) SUM
-						FROM ( SELECT MAX(FSD.REPAYAMOUNT + FSD.FEESCHD) TOTALAMOUNT
-							FROM FINSCHEDULEDETAILS FSD
-							JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID
-                  			GROUP BY FM.FINREFERENCE) T)) / CCY.CCYMINORCCYUNITS, 0) CUST_EMI,
-    				COALESCE((( SELECT SUM(T.TOTALAMOUNT) SUM
-           				FROM ( SELECT MAX(FSD.REPAYAMOUNT + FSD.FEESCHD) TOTALAMOUNT
-                   			FROM FINSCHEDULEDETAILS FSD
-                  			WHERE (FSD.REPAYONSCHDATE = 1 OR FSD.PFTONSCHDATE = 1) AND (FSD.FINREFERENCE::TEXT IN 
-                  				(SELECT FINANCEMAIN.FINREFERENCE FROM FINANCEMAIN
-                          			WHERE FINANCEMAIN.MANDATEID = M.MANDATEID))
-                  			GROUP BY FSD.FINREFERENCE) T)) / CCY.CCYMINORCCYUNITS, 0) EMI,
-        			CASE M.OPENMANDATE WHEN 1 THEN 'NEW OPEN ECS'
-            			ELSE 'NO OPEN ECS' END OPENMANDATE,
-    				M.ACCNUMBER,
-        			CASE WHEN M.ACCTYPE = '10' THEN 'SAVINGS ACCOUNT'
-            			WHEN M.ACCTYPE = '11' THEN 'CURRENT ACCOUNT'
-            			WHEN M.ACCTYPE = '11' THEN 'CASH CREDIT ACCOUNT'
-            			ELSE M.ACCTYPE END ACCTYPE,
-    				M.ACCHOLDERNAME,
-    				BB.MICR,
-    				BB.IFSC,
-    				BB.ADDOFBRANCH,
-    				( SELECT MIN(FINPFTDETAILS.FIRSTREPAYDATE) MIN FROM FINPFTDETAILS
-          					WHERE (FINPFTDETAILS.FINREFERENCE IN (SELECT FINANCEMAIN.FINREFERENCE
-                   			FROM FINANCEMAIN WHERE FINANCEMAIN.MANDATEID = M.MANDATEID))) FIRSTDUEDATE,
-    				(SELECT MAX(FINSCHEDULEDETAILS.SCHDATE) MAX FROM FINSCHEDULEDETAILS
-          					WHERE (FINSCHEDULEDETAILS.REPAYONSCHDATE = 1 OR FINSCHEDULEDETAILS.PFTONSCHDATE = 1) AND
-          					 (FINSCHEDULEDETAILS.FINREFERENCE IN (SELECT FINANCEMAIN.FINREFERENCE
-                   			FROM FINANCEMAIN WHERE FINANCEMAIN.MANDATEID = M.MANDATEID))) EMIENDDATE,
-    				COALESCE(M.MAXLIMIT, 0) MAXLIMIT,
-    				COALESCE(( SELECT SUM(T.MANDATEDEBITAMOUNT) SUM FROM (SELECT MAX(FINSCHEDULEDETAILS.REPAYAMOUNT + FINSCHEDULEDETAILS.FEESCHD) MANDATEDEBITAMOUNT
-							FROM FINSCHEDULEDETAILS WHERE (FINSCHEDULEDETAILS.REPAYONSCHDATE = 1 OR FINSCHEDULEDETAILS.PFTONSCHDATE = 1) 
-							AND (FINSCHEDULEDETAILS.FINREFERENCE IN (SELECT FINANCEMAIN.FINREFERENCE FROM FINANCEMAIN
-                          		WHERE FINANCEMAIN.MANDATEID = M.MANDATEID))
-                  			GROUP BY FINSCHEDULEDETAILS.FINREFERENCE) T), 0) / CCY.CCYMINORCCYUNITS DEBITAMOUNT,
-    				FIN.NUMBEROFTERMS,
-				    M.PERIODICITY,
-				    M.STARTDATE,
-				    M.EXPIRYDATE,
-				    FIN.APPLICATIONNO,
-				    M.MANDATETYPE,
-				    M.STATUS,
-				    M.INPUTDATE,
-				    M.RECORDSTATUS,
-				    M.RECORDTYPE,
-				    M.MANDATECCY,
-				    COALESCE(CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS,
-				    M.ENTITYCODE,
-				    CP.PHONENUMBER,
-				    CE.CUSTEMAIL,
-				    PB.PARTNERBANKNAME,
-				    M.LASTMNTON,
-				    BB.BRANCHDESC BANK_BRANCH_NAME,
-				    ET.ENTITYDESC,
-				    PB.UTILITYCODE,
-				    PB.SPONSORBANKCODE,
-				    M.PARTNERBANKID,
-				    PB.PARTNERBANKCODE,
-				    PB.BRANCHIFSCCODE
-   				FROM MANDATES M
-				JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
-				JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
-				JOIN CUSTOMERS CUST ON CUST.CUSTID = M.CUSTID
-				JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH
-				LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
-				LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CUST.CUSTID AND CE.CUSTEMAILPRIORITY = 5
-				LEFT JOIN CUSTOMERPHONENUMBERS CP ON CP.PHONECUSTID = CUST.CUSTID AND CP.PHONETYPEPRIORITY = 5
-				LEFT JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
-				LEFT JOIN FINANCEMAIN FIN ON M.ORGREFERENCE = FIN.FINREFERENCE
-				LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH
-				LEFT JOIN RMTFINANCETYPES FT ON FIN.FINTYPE = FT.FINTYPE
-				LEFT JOIN ENTITY ET ON M.ENTITYCODE = ET.ENTITYCODE
-  				WHERE M.STATUS = 'NEW' AND NOT (M.MANDATEID IN ( SELECT MANDATE_REQUESTS.MANDATEID
-           			FROM MANDATE_REQUESTS
-          			WHERE MANDATE_REQUESTS.STATUS = 'AC' OR MANDATE_REQUESTS.STATUS = 'NEW'));
-			]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.10.1_post" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-					select deps_restore_dependencies ('plf', 'int_mandate_request_view');	
 			]]>
 		</sql>
 	</changeSet>
@@ -25531,6 +25298,118 @@ UNION ALL
 	</changeSet>
 	
 	<!-- ST#158-TDS Type at Receipt Level changes end -->
+	
+	<changeSet id="ST#395.1_pre" author="saiteja.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'int_mandate_request_view');
+		 	]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#395.1" author="saiteja.r">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT M.MANDATEID,
+					M.DOCUMENTNAME,
+					BD.BANKSHORTCODE BANKCODE,
+					BD.BANKNAME,
+					CASE WHEN LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE
+						ELSE LB.BRANCHCODE END BRANCHCODE,
+					CASE WHEN LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC
+						ELSE LB.BRANCHDESC END BRANCHDESC,
+					CUST.CUSTCIF,
+					CUST.CUSTSHRTNAME,
+					CUST.CUSTCOREBANK,
+					FT.FINTYPEDESC FINTYPE,
+					FIN.FINREFERENCE,
+					COALESCE((( SELECT SUM(T.TOTALAMOUNT) SUM
+						FROM ( SELECT MAX(FSD.REPAYAMOUNT + FSD.FEESCHD) TOTALAMOUNT
+							FROM FINSCHEDULEDETAILS FSD
+							JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID
+                  			GROUP BY FM.FINREFERENCE) T)) / CCY.CCYMINORCCYUNITS, 0) CUST_EMI,
+    				COALESCE((( SELECT SUM(T.TOTALAMOUNT) SUM
+           				FROM ( SELECT MAX(FSD.REPAYAMOUNT + FSD.FEESCHD) TOTALAMOUNT
+                   			FROM FINSCHEDULEDETAILS FSD
+                  			WHERE (FSD.REPAYONSCHDATE = 1 OR FSD.PFTONSCHDATE = 1) AND (FSD.FINREFERENCE IN 
+                  				(SELECT FINANCEMAIN.FINREFERENCE FROM FINANCEMAIN
+                          			WHERE FINANCEMAIN.MANDATEID = M.MANDATEID))
+                  			GROUP BY FSD.FINREFERENCE) T)) / CCY.CCYMINORCCYUNITS, 0) EMI,
+        			CASE M.OPENMANDATE WHEN 1 THEN 'NEW OPEN ECS'
+            			ELSE 'NO OPEN ECS' END OPENMANDATE,
+    				M.ACCNUMBER,
+        			CASE WHEN M.ACCTYPE = '10' THEN 'SAVINGS ACCOUNT'
+            			WHEN M.ACCTYPE = '11' THEN 'CURRENT ACCOUNT'
+            			WHEN M.ACCTYPE = '11' THEN 'CASH CREDIT ACCOUNT'
+            			ELSE M.ACCTYPE END ACCTYPE,
+    				M.ACCHOLDERNAME,
+    				BB.MICR,
+    				BB.IFSC,
+    				BB.ADDOFBRANCH,
+    				( SELECT MIN(FINPFTDETAILS.FIRSTREPAYDATE) MIN FROM FINPFTDETAILS
+          					WHERE (FINPFTDETAILS.FINREFERENCE IN (SELECT FINANCEMAIN.FINREFERENCE
+                   			FROM FINANCEMAIN WHERE FINANCEMAIN.MANDATEID = M.MANDATEID))) FIRSTDUEDATE,
+    				(SELECT MAX(FINSCHEDULEDETAILS.SCHDATE) MAX FROM FINSCHEDULEDETAILS
+          					WHERE (FINSCHEDULEDETAILS.REPAYONSCHDATE = 1 OR FINSCHEDULEDETAILS.PFTONSCHDATE = 1) AND
+          					 (FINSCHEDULEDETAILS.FINREFERENCE IN (SELECT FINANCEMAIN.FINREFERENCE
+                   			FROM FINANCEMAIN WHERE FINANCEMAIN.MANDATEID = M.MANDATEID))) EMIENDDATE,
+    				COALESCE(M.MAXLIMIT, 0) MAXLIMIT,
+    				COALESCE(( SELECT SUM(T.MANDATEDEBITAMOUNT) SUM FROM (SELECT MAX(FINSCHEDULEDETAILS.REPAYAMOUNT + FINSCHEDULEDETAILS.FEESCHD) MANDATEDEBITAMOUNT
+							FROM FINSCHEDULEDETAILS WHERE (FINSCHEDULEDETAILS.REPAYONSCHDATE = 1 OR FINSCHEDULEDETAILS.PFTONSCHDATE = 1) 
+							AND (FINSCHEDULEDETAILS.FINREFERENCE IN (SELECT FINANCEMAIN.FINREFERENCE FROM FINANCEMAIN
+                          		WHERE FINANCEMAIN.MANDATEID = M.MANDATEID))
+                  			GROUP BY FINSCHEDULEDETAILS.FINREFERENCE) T), 0) / CCY.CCYMINORCCYUNITS DEBITAMOUNT,
+    				FIN.NUMBEROFTERMS,
+				    M.PERIODICITY,
+				    M.STARTDATE,
+				    M.EXPIRYDATE,
+				    FIN.APPLICATIONNO,
+				    M.MANDATETYPE,
+				    M.STATUS,
+				    M.INPUTDATE,
+				    M.RECORDSTATUS,
+				    M.RECORDTYPE,
+				    M.MANDATECCY,
+				    COALESCE(CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS,
+				    M.ENTITYCODE,
+				    CP.PHONENUMBER,
+				    CE.CUSTEMAIL,
+				    PB.PARTNERBANKNAME,
+				    M.LASTMNTON,
+				    BB.BRANCHDESC BANK_BRANCH_NAME,
+				    ET.ENTITYDESC,
+				    PB.UTILITYCODE,
+				    PB.SPONSORBANKCODE,
+				    M.PARTNERBANKID,
+				    PB.PARTNERBANKCODE,
+				    PB.BRANCHIFSCCODE
+   				FROM MANDATES M
+				JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+				JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				JOIN CUSTOMERS CUST ON CUST.CUSTID = M.CUSTID
+				JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH
+				LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
+				LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CUST.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERPHONENUMBERS CP ON CP.PHONECUSTID = CUST.CUSTID AND CP.PHONETYPEPRIORITY = 5
+				LEFT JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+				LEFT JOIN FINANCEMAIN FIN ON M.ORGREFERENCE = FIN.FINREFERENCE
+				LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH
+				LEFT JOIN RMTFINANCETYPES FT ON FIN.FINTYPE = FT.FINTYPE
+				LEFT JOIN ENTITY ET ON M.ENTITYCODE = ET.ENTITYCODE
+  				WHERE M.STATUS = 'NEW' AND NOT (M.MANDATEID IN ( SELECT MANDATE_REQUESTS.MANDATEID
+           			FROM MANDATE_REQUESTS
+          			WHERE MANDATE_REQUESTS.STATUS = 'AC' OR MANDATE_REQUESTS.STATUS = 'NEW'))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#395.1_post" author="saiteja.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'int_mandate_request_view');
+			]]>
+		</sql>
+	</changeSet>
 	
 	<!-- Receipt Level views handle in single place starts-->
 	

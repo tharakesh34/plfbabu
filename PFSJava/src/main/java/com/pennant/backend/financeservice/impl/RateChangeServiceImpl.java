@@ -27,6 +27,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class RateChangeServiceImpl extends GenericService<FinServiceInstruction> implements RateChangeService {
@@ -127,6 +128,15 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		String finReference = finSrvInst.getFinReference();
 
 		FinanceMain financeMain = financeMainDAO.getFinanceBasicDetailByRef(finReference, isWIF);
+		
+		if (StringUtils.equals(UploadConstants.RATE_CHANGE_UPLOAD, finSrvInst.getReqFrom())) {
+			finSrvInst.setToDate(financeMain.getMaturityDate());
+			finSrvInst.setPftDaysBasis(financeMain.getProfitDaysBasis());
+
+			if (StringUtils.isBlank(finSrvInst.getBaseRate())) {
+				finSrvInst.setBaseRate(null);
+			}
+		}
 
 		// validate from date with finStart date and maturity date
 		if (DateUtility.compare(finSrvInst.getFromDate(), DateUtility.getAppDate()) < 0
@@ -140,7 +150,7 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		}
 
 		// validate to date
-		if (finSrvInst.getToDate().compareTo(financeMain.getMaturityDate()) >= 0
+		if (finSrvInst.getToDate().compareTo(financeMain.getMaturityDate()) > 0
 				|| finSrvInst.getToDate().compareTo(finSrvInst.getFromDate()) < 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "ToDate";

@@ -27,7 +27,7 @@
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
  * 10-8-2011      Pennant	                 0.1                                            * 
  *                                                                                          * 
@@ -534,6 +534,11 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		if (getSecurityRole().isNewRecord()) {
 			this.roleApp.setDisabled(false);
 			this.btnCancel.setVisible(false);
+		} else if (PennantConstants.RCD_STATUS_SUBMITTED.equals(securityRole.getRecordStatus())) {
+			this.roleApp.setDisabled(true);
+			this.roleCd.setReadonly(true);
+			this.btnCancel.setVisible(true);
+			this.roleDesc.setDisabled(true);
 		} else {
 			this.roleApp.setDisabled(true);
 			this.roleCd.setReadonly(true);

@@ -535,10 +535,10 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 				sheetName = finDivision + "_" + sheetName;
 			}
 
-			AgreementEngine engine = new AgreementEngine(sheetName);
+			AgreementEngine engine = new AgreementEngine();
 			String refNo = detail.getFinScheduleData().getFinanceMain().getFinReference();
 			String reportName = refNo + "_TermSheet.docx";
-			engine.setTemplate("");
+			engine.setTemplate(sheetName);
 			// engine.loadTemplateWithFontSize(11);
 			engine.mergeFields(indicativeTermDetail);
 			byte[] docData = engine.getDocumentInByteArray(SaveFormat.PDF);

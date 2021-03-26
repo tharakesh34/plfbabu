@@ -2719,7 +2719,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		legalDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 		legalDetail = legalDetailService.formatLegalDetails(legalDetail);
 		String fileName = template.concat(PennantConstants.DOC_TYPE_PDF_EXT);
-		AgreementEngine engine = new AgreementEngine("");
+		AgreementEngine engine = new AgreementEngine();
 		engine.setTemplate(templateName);
 		engine.loadTemplate();
 		engine.mergeFields(legalDetail);

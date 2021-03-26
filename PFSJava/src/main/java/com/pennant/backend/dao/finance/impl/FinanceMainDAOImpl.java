@@ -3534,7 +3534,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		source.addValue("FinReference", finReference);
 
 		StringBuilder selectSql = new StringBuilder(
-				"SELECT FM.FinReference, FM.MaturityDate, FT.Ratechganyday, FM.ProductCategory ");
+				"SELECT FM.FinReference, FM.MaturityDate,  FM.profitDaysBasis, FT.Ratechganyday, FM.ProductCategory ");
 
 		if (isWIF) {
 			selectSql.append(" From WIFFinanceMain FM");

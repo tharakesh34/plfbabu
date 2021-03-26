@@ -893,6 +893,7 @@ public class PennantConstants {
 	public static final String SETTLEMENT_REQUEST_DOWNLOAD = "SETTLEMENT_REQUEST_DOWNLOAD";
 	public static final String SUBVENTION_REQUEST_UPLOAD = "SUBVENTION_REQUEST_UPLOAD";
 	public static final String SUBVENTION_REQUEST_DOWNLOAD = "SUBVENTION_REQUEST_DOWNLOAD";
+	public static final String RATE_CHANGE_UPLOAD = "RATE_CHANGE_UPLOAD";
 
 	public static final String PROCESS_PRESENTMENT = "P";
 	public static final String PROCESS_REPRESENTMENT = "R";

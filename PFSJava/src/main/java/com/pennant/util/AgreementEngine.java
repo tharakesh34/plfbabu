@@ -1,6 +1,7 @@
 package com.pennant.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.document.generator.TemplateEngine;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -33,32 +35,13 @@ public class AgreementEngine {
 	private static final Logger logger = LogManager.getLogger(AgreementEngine.class);
 	private TemplateEngine templateEngine;
 
-	public AgreementEngine(String assetCode) throws Exception {
-		logger.debug(Literal.ENTERING);
-		String templatePath = getTemplatePath(assetCode);
+	public AgreementEngine() throws Exception {
+		String templatePath = App.getResourcePath(PathUtil.FINANCE_AGREEMENTS);
 		templateEngine = new TemplateEngine(templatePath, templatePath);
-		logger.debug(Literal.LEAVING);
 	}
 
-	public String getTemplatePath(String assetCode) {
-
-		String templatePath = "";
-		/**
-		 * Disabling the assetCode functionality as assetCode is no longer considered in loan process. As discussed with
-		 * Raju. This functionality is moved to collateral and associated at customer side.
-		 * 
-		 */
-		/*
-		 * if(StringUtils.isBlank(assetCode)){ templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS); }else{
-		 * templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS)+"/"+assetCode; }
-		 */
-		templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
-		logger.debug("Template Path:" + templatePath);
-		return templatePath;
-	}
-
-	public AgreementEngine(String templateSite, String documentSite) throws Exception {
-		templateEngine = new TemplateEngine(templateSite, documentSite);
+	public AgreementEngine(String templatePath) throws Exception {
+		templateEngine = new TemplateEngine(templatePath, templatePath);
 	}
 
 	public void loadTemplate() throws Exception {
@@ -134,6 +117,12 @@ public class AgreementEngine {
 	}
 
 	public void setTemplate(String name) {
+		String parent = templateEngine.getTemplateSite();
+		if (!new File((parent.concat(File.separator).concat(name))).exists()) {
+			throw new AppException(
+					name + " template does not exist's in [" + parent + "] location, please configure the same.");
+		}
+
 		templateEngine.setTemplate(name);
 	}
 
@@ -141,10 +130,8 @@ public class AgreementEngine {
 		return templateEngine.getDocument();
 	}
 
-	// TODO: Review
 	public void appendToMasterDocument() throws Exception {
 		templateEngine.appendToMasterDocument();
-		// document = new Document(template.getPath());
 	}
 
 	public Document getMasterDocument() {

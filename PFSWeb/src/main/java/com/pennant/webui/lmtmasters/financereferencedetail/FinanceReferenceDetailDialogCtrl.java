@@ -1128,6 +1128,11 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			// save it to database
 			aFinanceReferenceDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			aFinanceReferenceDetail.setRecordType(PennantConstants.RCD_ADD);
+
+			if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(aFinanceReferenceDetail.getFinEvent())) {
+				aFinanceReferenceDetail.setRecordType("");
+			}
+
 			if (StringUtils.isNotEmpty(tranType)) {
 				doProcess(aFinanceReferenceDetail, tranType);
 			}

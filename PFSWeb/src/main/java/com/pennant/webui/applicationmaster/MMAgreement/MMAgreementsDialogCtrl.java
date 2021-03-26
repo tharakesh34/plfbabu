@@ -1752,7 +1752,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			throws IllegalArgumentException, InterruptedException {
 		try {
 			String templatePath = PathUtil.getPath(PathUtil.MMA_AGREEMENTS);
-			AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
+			AgreementEngine engine = new AgreementEngine(templatePath);
 			String refNo = aAgreementDetail.getCustCIF();
 			String reportName = refNo + "_" + agreementType;
 			engine.setTemplate(agreementType);

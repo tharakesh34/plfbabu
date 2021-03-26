@@ -42,6 +42,9 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -361,5 +364,28 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 		}
 
 		return null;
+	}
+
+	@Override
+	public List<Entity> getEntites() {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT EntityCode, EntityDesc");
+		sql.append(" FROM Entity");
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+				Entity et = new Entity();
+				et.setEntityCode(rs.getString("EntityCode"));
+				et.setEntityDesc(rs.getString("EntityDesc"));
+				return et;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+
+		logger.debug("Leaving");
+		return new ArrayList<>();
 	}
 }

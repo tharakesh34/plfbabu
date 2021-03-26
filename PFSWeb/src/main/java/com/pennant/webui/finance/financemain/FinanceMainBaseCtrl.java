@@ -9256,7 +9256,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 					String templateName = template.concat(PennantConstants.DOC_TYPE_WORD_EXT);
 					String fileName = template.concat(PennantConstants.DOC_TYPE_PDF_EXT);
-					AgreementEngine engine = new AgreementEngine("");
+					AgreementEngine engine = new AgreementEngine();
 					engine.setTemplate(templateName);
 					engine.loadTemplate();
 					engine.mergeFields(legalDetail);
@@ -9336,8 +9336,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		for (FinanceReferenceDetail financeReferenceDetail : getFinanceDetail().getAggrementList()) {
 			if (StringUtils.equals(financeReferenceDetail.getLovDescCodelov(), PennantConstants.CASDOC)) {
 
-				AgreementEngine engine = new AgreementEngine(
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getFinPurpose());
+				AgreementEngine engine = new AgreementEngine();
 				engine.setTemplate("CreditAssessmentSheet" + PennantConstants.DOC_TYPE_WORD_EXT);
 				engine.loadTemplate();
 				engine.mergeFields(agreementGeneration.getAggrementData(getFinanceDetail(),
@@ -14014,15 +14013,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// FinanceMain Details tab ---> 2. Grace Period Details
 		try {
-			if (this.gracePeriodEndDate.getValue() != null) {
-				this.gracePeriodEndDate_two.setValue(this.gracePeriodEndDate.getValue());
-			}
+			if (StringUtils.isEmpty(moduleDefiner)
+					|| FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)
+					|| FinanceConstants.FINSER_EVENT_CHGGRCEND.equals(moduleDefiner)) {
+				if (this.gracePeriodEndDate.getValue() != null) {
+					this.gracePeriodEndDate_two.setValue(this.gracePeriodEndDate.getValue());
+				}
 
-			if (this.gracePeriodEndDate_two.getValue() != null) {
-
-				aFinanceMain.setGrcPeriodEndDate(DateUtility.getDate(
-						DateUtility.format(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
-
+				if (this.gracePeriodEndDate_two.getValue() != null) {
+					aFinanceMain.setGrcPeriodEndDate(DateUtility.getDate(
+							DateUtil.format(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -23128,7 +23129,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				} else {
 					templateName = frefdata.getLovDescAggReportName();
 				}
-				AgreementEngine engine = new AgreementEngine(aggPath);
+				AgreementEngine engine = new AgreementEngine();
 				engine.setTemplate(templateName);
 				engine.loadTemplate();
 				engine.mergeFields(detail);

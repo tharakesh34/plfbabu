@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.applicationmaster;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennanttech.pff.core.TableType;
@@ -66,5 +68,7 @@ public interface EntityDAO extends BasicCrudDao<Entity> {
 	Entity getEntityByFinDivision(String divisionCode, String type);
 
 	Entity getEntityByFinType(String finType, String type);
+	
+	List<Entity> getEntites();
 
 }

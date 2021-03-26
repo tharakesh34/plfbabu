@@ -294,12 +294,11 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private void generateDocument(FinanceDetail financeDetail, DocumentDetails docDetails,
 			AgreementDetail agreementDetail) {
-		String aggPath = "";
 		String docName = docDetails.getDocName();
 		String docType = docDetails.getDoctype();
 		AgreementEngine engine;
 		try {
-			engine = new AgreementEngine(aggPath);
+			engine = new AgreementEngine();
 			engine.setTemplate(docName);
 			engine.loadTemplate();
 			engine.mergeFields(agreementDetail);

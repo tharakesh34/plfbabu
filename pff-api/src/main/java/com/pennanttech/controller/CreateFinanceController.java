@@ -802,14 +802,16 @@ public class CreateFinanceController extends SummaryDetailService {
 				String finReference = lmain.getFinReference();
 				String aggName = StringUtils.trimToEmpty(frefdata.getLovDescNamelov());
 				String reportName = "";
-				String aggPath = "", templateName = "";
+
+				String templateName = null;
 				if (StringUtils.trimToEmpty(frefdata.getLovDescAggReportName()).contains("/")) {
 					String aggRptName = StringUtils.trimToEmpty(frefdata.getLovDescAggReportName());
 					templateName = aggRptName.substring(aggRptName.lastIndexOf("/") + 1, aggRptName.length());
 				} else {
 					templateName = frefdata.getLovDescAggReportName();
 				}
-				AgreementEngine engine = new AgreementEngine(aggPath);
+
+				AgreementEngine engine = new AgreementEngine();
 				engine.setTemplate(templateName);
 				engine.loadTemplate();
 				engine.mergeFields(detail);
@@ -4235,7 +4237,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			String aggPath = "", templateName = "";
 
 			templateName = agrementDef.getAggReportName();
-			AgreementEngine engine = new AgreementEngine(aggPath);
+			AgreementEngine engine = new AgreementEngine();
 			engine.setTemplate(templateName);
 			engine.loadTemplate();
 			engine.mergeFields(agrData);

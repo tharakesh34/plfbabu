@@ -449,7 +449,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 						templateName = data.getLovDescAggReportName();
 					}
 
-					AgreementEngine engine = new AgreementEngine(aggPath);
+					AgreementEngine engine = new AgreementEngine();
 					engine.setTemplate(templateName);
 					engine.loadTemplate();
 
@@ -479,16 +479,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 					engine = null;
 				}
 			} catch (Exception e) {
-				if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
-						|| e.getMessage().equals("Template site does not exist.")
-						|| e.getMessage().equals("Template does not exist."))) {
-					// throw new Exception("Template does not exists.Please
-					// configure Template.");
-					AppException exception = new AppException("Template does not exists.Please configure Template.");
-					MessageUtil.showError(exception);
-				} else {
-					MessageUtil.showError(e);
-				}
+				MessageUtil.showError(e);
 			}
 		} else {
 
@@ -508,7 +499,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 					aggPath = "";
 					templateName = data.getLovDescAggReportName();
 				}
-				AgreementEngine engine = new AgreementEngine(aggPath);
+				AgreementEngine engine = new AgreementEngine();
 				engine.setTemplate(templateName);
 				engine.loadTemplate();
 

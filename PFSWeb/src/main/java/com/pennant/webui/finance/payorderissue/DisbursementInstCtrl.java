@@ -70,7 +70,10 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.configuration.VASConfigurationDAO;
+import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -107,6 +110,8 @@ public class DisbursementInstCtrl {
 	private List<FinanceDisbursement> approvedDisbursments;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private DocumentDetails documentDetails;
+	private VASConfigurationDAO vASConfigurationDAO;
+	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
 
 	private DMSService dMSService;
 
@@ -286,8 +291,8 @@ public class DisbursementInstCtrl {
 
 					String paytype = detail.getPaymentType();
 
-					if (paytype.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
-							|| paytype.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {
+					if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paytype)
+							|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paytype)) {
 						bankName = detail.getBankName();
 						custName = detail.getLiabilityHoldName();
 						accoountNum = detail.getLlReferenceNo();
@@ -328,6 +333,80 @@ public class DisbursementInstCtrl {
 					item.setAttribute("data", detail);
 					ComponentsCtrl.applyForward(item, "onDoubleClick=onFinAdvancePaymentsItemDoubleClicked");
 					listbox.appendChild(item);
+				}
+
+				if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB) && key == 1) {
+					if (vasRecordingList != null && vasRecordingList.size() > 0) {
+						for (VASRecording vasDetail : vasRecordingList) {
+
+							VASConfiguration configuration = vasDetail.getVasConfiguration();
+
+							if (configuration == null) {
+								configuration = this.vASConfigurationDAO
+										.getVASConfigurationByCode(vasDetail.getProductCode(), "");
+							}
+
+							VASProviderAccDetail vasProviderAccDetail = vASProviderAccDetailDAO
+									.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(),
+											vasDetail.getEntityCode(), "_view");
+							if (vasProviderAccDetail != null) {
+								Listitem item = new Listitem();
+								lc = new Listcell("");
+								lc.setParent(item);
+								lc = new Listcell(vasProviderAccDetail.getProviderDesc());
+								lc.setParent(item);
+								lc = new Listcell(vasProviderAccDetail.getPaymentMode());
+								lc.setParent(item);
+
+								lc = new Listcell(vasProviderAccDetail.getBankName());
+								lc.setParent(item);
+								lc = new Listcell(vasProviderAccDetail.getProviderDesc());
+								lc.setParent(item);
+
+								lc = new Listcell(vasProviderAccDetail.getAccountNumber());
+								lc.setParent(item);
+
+								if (!DisbursementConstants.STATUS_REJECTED.equals(vasDetail.getInsStatus())) {
+									grandTotal = grandTotal.add(vasDetail.getFee());
+									subTotal = subTotal.add(vasDetail.getFee());
+								}
+
+								lc = new Listcell(PennantApplicationUtil.amountFormate(vasDetail.getFee(), ccyFormat));
+								lc.setParent(item);
+
+								if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
+									lc = new Listcell(vasDetail.getInsStatus());
+								} else {
+									lc = new Listcell(PennantConstants.RECORD_TYPE_NEW);
+
+								}
+								lc.setParent(item);
+
+								if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
+									lc = new Listcell(PennantConstants.RCD_STATUS_APPROVED);
+
+								} else {
+									lc = new Listcell("");
+								}
+								lc.setParent(item);
+
+								if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
+									lc = new Listcell("");
+
+								} else {
+									lc = new Listcell(PennantConstants.RCD_ADD);
+								}
+
+								lc.setParent(item);
+
+								item.setAttribute("data", vasProviderAccDetail);
+								ComponentsCtrl.applyForward(item,
+										"onDoubleClick=onFinAdvancePaymentsItemDoubleClicked");
+								listbox.appendChild(item);
+							}
+
+						}
+					}
 				}
 
 				if (subtotalRequired) {
@@ -408,8 +487,8 @@ public class DisbursementInstCtrl {
 
 					String paytype = detail.getPaymentType();
 
-					if (paytype.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
-							|| paytype.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {
+					if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paytype)
+							|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paytype)) {
 						bankName = detail.getBankName();
 						custName = detail.getLiabilityHoldName();
 						accoountNum = detail.getLlReferenceNo();
@@ -665,7 +744,7 @@ public class DisbursementInstCtrl {
 		if (DisbursementConstants.STATUS_AWAITCON.equals(status)) {
 			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)
 					|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType)) {
-				return true;
+				return false;
 			}
 			return false;
 		}
@@ -859,5 +938,12 @@ public class DisbursementInstCtrl {
 	public void setModuleDefiner(String moduleDefiner) {
 		this.moduleDefiner = moduleDefiner;
 	}
-
+	
+	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
+		this.vASConfigurationDAO = vASConfigurationDAO;
+	}
+	
+	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
+		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
+	}
 }

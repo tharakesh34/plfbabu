@@ -900,7 +900,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	@Override
 	public DisbursementRequest getDisbRequest(long id) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT ID, FINREFERENCE, DISBURSEMENT_ID, CHANNEL, STATUS");
+		sql.append("SELECT ID, FINREFERENCE, DISBURSEMENT_ID, CHANNEL, STATUS, DISBURSEMENT_TYPE");
 		sql.append(" FROM DISBURSEMENT_REQUESTS");
 		sql.append(" WHERE ID = ?");
 
@@ -915,11 +915,12 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				dr.setPaymentId(rs.getLong("DISBURSEMENT_ID"));
 				dr.setChannel(rs.getString("CHANNEL"));
 				dr.setStatus(rs.getString("STATUS"));
+				dr.setDisbType(rs.getString("DISBURSEMENT_TYPE"));
 
 				return dr;
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record is not available in DISBURSEMENT_REQUESTS table for the specified Id >> {}", id);
 			return null;
 		}
 	}

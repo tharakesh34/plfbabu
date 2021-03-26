@@ -182,39 +182,39 @@
 					COALESCE((( SELECT sum(t.totalamount) sum
 						FROM ( SELECT max(fsd.repayamount + fsd.feeschd) totalamount
 							FROM finscheduledetails fsd
-							JOIN plf.financemain fm ON fm.finreference::text = fsd.finreference::text AND fm.custid = m.custid
-                  			GROUP BY fm.finreference) t)) / ccy.ccyminorccyunits, 0::numeric) cust_emi,
+							JOIN financemain fm ON fm.finreference = fsd.finreference AND fm.custid = m.custid
+                  			GROUP BY fm.finreference) t)) / ccy.ccyminorccyunits, 0) cust_emi,
     				COALESCE((( SELECT sum(t.totalamount) sum
            				FROM ( SELECT max(fsd.repayamount + fsd.feeschd) totalamount
                    			FROM FinScheduleDetails fsd
-                  			WHERE (fsd.repayonschdate = 1 OR fsd.pftonschdate = 1) AND (fsd.finreference::text IN 
+                  			WHERE (fsd.repayonschdate = 1 OR fsd.pftonschdate = 1) AND (fsd.finreference IN 
                   				(SELECT financemain.finreference FROM financemain
                           			WHERE financemain.mandateid = m.mandateid))
-                  			GROUP BY fsd.finreference) t)) / ccy.ccyminorccyunits, 0::numeric) emi,
-        			CASE m.openmandate WHEN 1 THEN 'new open ecs'::text
-            			ELSE 'no open ecs'::text END openmandate,
+                  			GROUP BY fsd.finreference) t)) / ccy.ccyminorccyunits, 0) emi,
+        			CASE m.openmandate WHEN 1 THEN 'new open ecs'
+            			ELSE 'no open ecs' END openmandate,
     				m.accnumber,
-        			CASE WHEN m.acctype::text = '10'::text THEN 'savings account'::character varying
-            			WHEN m.acctype::text = '11'::text THEN 'current account'::character varying
-            			WHEN m.acctype::text = '11'::text THEN 'cash credit account'::character varying
+        			CASE WHEN m.acctype = '10' THEN 'savings account'
+            			WHEN m.acctype = '11' THEN 'current account'
+            			WHEN m.acctype = '11' THEN 'cash credit account'
             			ELSE m.acctype END acctype,
     				m.accholdername,
     				bb.micr,
     				bb.ifsc,
     				bb.addofbranch,
     				( SELECT min(finpftdetails.firstrepaydate) min FROM FinPftDetails
-          					WHERE (finpftdetails.finreference::text IN (SELECT financemain.finreference
+          					WHERE (finpftdetails.finreference IN (SELECT financemain.finreference
                    			FROM financemain WHERE financemain.mandateid = m.mandateid))) firstduedate,
     				(SELECT max(finscheduledetails.schdate) max FROM FinScheduleDetails
           					WHERE (finscheduledetails.repayonschdate = 1 OR finscheduledetails.pftonschdate = 1) AND
-          					 (finscheduledetails.finreference::text IN (SELECT financemain.finreference
+          					 (finscheduledetails.finreference IN (SELECT financemain.finreference
                    			FROM financemain WHERE financemain.mandateid = m.mandateid))) emienddate,
-    				COALESCE(m.maxlimit, 0::numeric) maxlimit,
+    				COALESCE(m.maxlimit, 0) maxlimit,
     				COALESCE(( SELECT sum(t.mandatedebitamount) sum FROM (SELECT max(finscheduledetails.repayamount + finscheduledetails.feeschd) mandatedebitamount
 							FROM FinScheduleDetails WHERE (finscheduledetails.repayonschdate = 1 OR finscheduledetails.pftonschdate = 1) 
-							AND (finscheduledetails.finreference::text IN (SELECT financemain.finreference FROM FinanceMain
+							AND (finscheduledetails.finreference IN (SELECT financemain.finreference FROM FinanceMain
                           		WHERE financemain.mandateid = m.mandateid))
-                  			GROUP BY finscheduledetails.finreference) t), 0::numeric) / ccy.ccyminorccyunits debitamount,
+                  			GROUP BY finscheduledetails.finreference) t), 0) / ccy.ccyminorccyunits debitamount,
     				fin.numberofterms,
 				    m.periodicity,
 				    m.startdate,
@@ -226,7 +226,7 @@
 				    m.recordstatus,
 				    m.recordtype,
 				    m.mandateccy,
-				    COALESCE(ccy.ccyminorccyunits, 100::numeric) ccyminorccyunits,
+				    COALESCE(ccy.ccyminorccyunits, 100) ccyminorccyunits,
 				    m.entitycode,
 				    cp.phonenumber,
 				    ce.custemail,
@@ -240,20 +240,20 @@
 				    pb.partnerbankcode
    				FROM Mandates m
 				JOIN BankBranches bb ON bb.bankbranchid = m.bankbranchid
-				JOIN BmtBankDetail bd ON bd.bankcode::text = bb.bankcode::text
+				JOIN BmtBankDetail bd ON bd.bankcode = bb.bankcode
 				JOIN Customers cust ON cust.custid = m.custid
-				JOIN RmtBranches cb ON cb.branchcode::text = cust.custdftbranch::text
+				JOIN RmtBranches cb ON cb.branchcode = cust.custdftbranch
 				LEFT JOIN PartnerBanks pb ON pb.partnerbankid = m.partnerbankid
 				LEFT JOIN CustomerEmails ce ON ce.custid = cust.custid AND ce.custemailpriority = 5
 				LEFT JOIN CustomerPhoneNumbers cp ON cp.phonecustid = cust.custid AND cp.phonetypepriority = 5
 				LEFT JOIN RMTCurrencies ccy ON ccy.ccycode = m.mandateccy
-				LEFT JOIN FinanceMain fin ON m.orgreference::text = fin.finreference::text
-				LEFT JOIN RMTBranches lb ON lb.branchcode::text = fin.finbranch::text
-				LEFT JOIN RMTFinanceTypes ft ON fin.fintype::text = ft.fintype::text
-				LEFT JOIN Entity et ON m.entitycode::text = et.entitycode::text
-  				WHERE m.status::text = 'NEW'::text AND NOT (m.mandateid IN ( SELECT mandate_requests.mandateid
+				LEFT JOIN FinanceMain fin ON m.orgreference = fin.finreference
+				LEFT JOIN RMTBranches lb ON lb.branchcode = fin.finbranch
+				LEFT JOIN RMTFinanceTypes ft ON fin.fintype = ft.fintype
+				LEFT JOIN Entity et ON m.entitycode = et.entitycode
+  				WHERE m.status = 'NEW' AND NOT (m.mandateid IN ( SELECT mandate_requests.mandateid
            			FROM mandate_requests
-          			WHERE mandate_requests.status::text = 'AC'::text OR mandate_requests.status::text = 'NEW'::text));
+          			WHERE mandate_requests.status = 'AC' OR mandate_requests.status = 'NEW'))
 			]]>
 		</createView>
 	</changeSet>
@@ -265,5 +265,21 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="PSD#169840.1" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'C';
+    			DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'F';
+    			DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'O';
+    			DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'S';
+    
+    			INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'C', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
+    			INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'F', 1, 0, (select max(SeqOrder)+2 from CategoryWiseEvents));
+    			INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'O', 1, 0, (select max(SeqOrder)+3 from CategoryWiseEvents));
+    			INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'S', 1, 0, (select max(SeqOrder)+4 from CategoryWiseEvents));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

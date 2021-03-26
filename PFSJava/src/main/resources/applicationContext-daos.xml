@@ -3340,7 +3340,8 @@
 		</property>
 	</bean>
 
-	<bean name="financeDetailServiceTarget" class="com.pennant.backend.service.finance.impl.FinanceDetailServiceImpl" parent="genericFinanceDetailService">
+	<bean name="financeDetailServiceTarget" class="com.pennant.backend.service.finance.impl.FinanceDetailServiceImpl"
+		parent="genericFinanceDetailService">
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -12038,7 +12039,7 @@
 	<bean id="dataEngineConfig" class="com.pennanttech.dataengine.config.DataEngineConfig">
 		<constructor-arg ref="dataSource" />
 	</bean>
-	
+
 	<!-- AssetClassificationHeader -->
 	<bean id="assetClassificationHeaderDAO" class="com.pennant.backend.dao.applicationmaster.impl.AssetClassificationHeaderDAOImpl"
 		parent="sequenceDao" />
@@ -12584,5 +12585,24 @@
 	<bean name="subventionService" class="com.pennant.subvention.service.SubventionService">
 		<property name="subventionDetailDAO" ref="subventionDetailDAO" />
 	</bean>
+
+	<bean id="rateChangeUploadDAO" class="com.pennant.backend.dao.finance.impl.RateChangeUploadDAOImpl" parent="basicDao" />
+
+	<bean name="rateChangeUploadService" class="com.pennant.pff.service.RateChangeupload.RateChangeUploadService">
+		<property name="dataSource" ref="dataSource" />
+		<property name="rateChangeUploadProcess" ref="rateChangeUploadProcess" />
+		<property name="rateChangeUploadDAO" ref="rateChangeUploadDAO" />
+		<property name="entityDAO" ref="entityDAO" />
+	</bean>
+
+	<bean name="rateChangeUploadProcess" class="com.pennant.pff.service.RateChangeupload.RateChangeUploadProcess"
+		parent="basicDao">
+		<property name="rateChangeUploadDAO" ref="rateChangeUploadDAO" />
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="rateChangeService" ref="rateChangeService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+
+	</bean>
+
 </beans>
 

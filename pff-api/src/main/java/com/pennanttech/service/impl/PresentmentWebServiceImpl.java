@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -36,6 +38,7 @@ public class PresentmentWebServiceImpl implements PresentmentRestService, Presen
 	private PresentmentDetailService presentmentDetailService;
 	private PresentmentServiceController presentmentServiceController;
 	private PartnerBankService partnerBankService;
+	private BounceReasonDAO bounceReasonDAO;
 
 	@Override
 	public PresentmentResponse extractPresentmentDetails(PresentmentHeader header) throws ServiceException {
@@ -331,6 +334,17 @@ public class PresentmentWebServiceImpl implements PresentmentRestService, Presen
 			valueParm[3] = "less than 15";
 			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 		}
+		if (RepayConstants.PEXC_FAILURE.equals(status)) {
+			BounceReason bounceReason = bounceReasonDAO.getBounceReasonByReturnCode(returnReason, "");
+			if (bounceReason == null) {
+				String[] valueParm = new String[4];
+				valueParm[0] = "Reject";
+				valueParm[1] = "Reason";
+				valueParm[2] = "is";
+				valueParm[3] = "Invalid";
+				return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+			}
+		}
 		WSReturnStatus wsReturnStatus = presentmentServiceController.uploadPresentment(presentment);
 
 		logger.debug(Literal.LEAVING);
@@ -350,6 +364,11 @@ public class PresentmentWebServiceImpl implements PresentmentRestService, Presen
 	@Autowired
 	public void setPartnerBankService(PartnerBankService partnerBankService) {
 		this.partnerBankService = partnerBankService;
+	}
+
+	@Autowired
+	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
+		this.bounceReasonDAO = bounceReasonDAO;
 	}
 
 }
