@@ -69,7 +69,7 @@
 								<label id="label_OCRDialog_CustomerPortion" value="${c:l('label_OCRDialog_CustomerPortion.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<intbox id="customerPortion" width="72px" />
+									<decimalbox id="customerPortion" width="72px" />
 								</hbox>
 								<label id="label_OCRDialog_OCRType" value="${c:l('label_OCRDialog_OCRType.value')}"
 									visible="true" />

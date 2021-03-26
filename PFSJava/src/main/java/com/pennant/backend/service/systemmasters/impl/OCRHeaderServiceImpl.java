@@ -1,5 +1,6 @@
 package com.pennant.backend.service.systemmasters.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -466,10 +467,10 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
-		int custPortionHeader = 0;
-		int finPortionHeader = 0;
-		int totalCustPortion = 0;
-		int totalFinPortion = 0;
+		BigDecimal custPortionHeader = BigDecimal.ZERO;
+		BigDecimal finPortionHeader = BigDecimal.ZERO;
+		BigDecimal totalCustPortion = BigDecimal.ZERO;
+		BigDecimal totalFinPortion = BigDecimal.ZERO;
 
 		// Get the model object.
 		OCRHeader ocrHeader = (OCRHeader) auditDetail.getModelData();
@@ -488,7 +489,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 				&& !PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(ocrHeader.getRecordType())) {
 			if (StringUtils.equals(PennantConstants.SEGMENTED_VALUE, ocrHeader.getOcrType())) {
 				custPortionHeader = ocrHeader.getCustomerPortion();
-				finPortionHeader = 100 - custPortionHeader;
+				finPortionHeader = new BigDecimal(100).subtract(custPortionHeader);
 				//checking ocr step details are available or not
 				if (CollectionUtils.isEmpty(ocrHeader.getOcrDetailList())) {
 					String[] valueParm = new String[1];
@@ -502,19 +503,19 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 								|| PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(ocrDetail.getRecordType())) {
 							continue;
 						}
-						totalCustPortion += ocrDetail.getCustomerContribution();
-						totalFinPortion += ocrDetail.getFinancerContribution();
+						totalCustPortion = totalCustPortion.add(ocrDetail.getCustomerContribution());
+						totalFinPortion = totalFinPortion.add(ocrDetail.getFinancerContribution());
 					}
 
 					String[] valueParm = new String[2];
 					String message = "Total ";
 					//check header customer portion value is equal with total payable by customer step's value
-					if (custPortionHeader != totalCustPortion) {
+					if (!(custPortionHeader.compareTo(totalCustPortion) == 0)) {
 						valueParm[0] = message.concat(Labels.getLabel("listheader_OCRSteps_PayableByCustomer.label"));
 						valueParm[1] = String.valueOf(custPortionHeader);
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
 						return auditDetail;
-					} else if (finPortionHeader != totalFinPortion) { //check header customer portion value is equal with total payable by customer step's value
+					} else if (!(finPortionHeader.compareTo(totalFinPortion) == 0)) { //check header customer portion value is equal with total payable by customer step's value
 						valueParm[0] = message.concat(Labels.getLabel("listheader_OCRSteps_PayableByFinancier.label"));
 						valueParm[1] = String.valueOf(finPortionHeader);
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
@@ -522,8 +523,8 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 					}
 
 					//both cust and financer contributions should equal to 100
-					int total = totalCustPortion + totalFinPortion;
-					if (total != 100) {
+					BigDecimal total = totalCustPortion.add(totalFinPortion);
+					if (total.compareTo(new BigDecimal(100)) != 0) {
 						valueParm[0] = message.concat(Labels.getLabel("listheader_OCRSteps_PayableByCustomer.label")
 								.concat(", ").concat(Labels.getLabel("listheader_OCRSteps_PayableByFinancier.label")));
 						valueParm[1] = String.valueOf(total);

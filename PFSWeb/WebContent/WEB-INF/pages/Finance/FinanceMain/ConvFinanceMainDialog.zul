@@ -577,18 +577,6 @@
 														<textbox id="offerId" width="180px" />
 													</hbox>
 												</row>
-												<row id="row_AllowLoanTypes" visible="true">
-													<label id="label_FinanceMainDialog_AllowLoanSplit" value="${c:l('label_FinanceMainDialog_AllowLoanSplit.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<checkbox id="alwLoanSplit" checked="false" />
-													</hbox>
-													<label id="label_FinanceMainDialog_ParentLoanReference" value="${c:l('label_FinanceMainDialog_ParentLoanReference.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<extendedcombobox id="parentLoanReference" />
-													</hbox>
-												</row>
 											</rows>
 										</grid>
 									</groupbox>
@@ -698,6 +686,26 @@
 													<hbox>
 														<space spacing="2px" id="space_sourChannelCategory" />
 														<combobox id="sourChannelCategory" />
+													</hbox>
+												</row>
+												<row id="row_AllowLoanTypes" visible="true">
+													<label
+														id="label_FinanceMainDialog_AllowLoanSplit"
+														value="${c:l('label_FinanceMainDialog_AllowLoanSplit.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="alwLoanSplit" checked="false" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_ParentLoanReference"
+														value="${c:l('label_FinanceMainDialog_ParentLoanReference.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<extendedcombobox
+															id="parentLoanReference" />
 													</hbox>
 												</row>
 											</rows>

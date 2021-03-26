@@ -374,13 +374,13 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 		logger.debug(Literal.ENTERING);
 		// Get the model object.
 		FinOCRHeader finOCRHeader = (FinOCRHeader) auditDetail.getModelData();
-		int custPortionHeader = 0;
-		int finPortionHeader = 0;
-		int totalCustPortion = 0;
-		int totalFinPortion = 0;
+		BigDecimal custPortionHeader = BigDecimal.ZERO;
+		BigDecimal finPortionHeader = BigDecimal.ZERO;
+		BigDecimal totalCustPortion = BigDecimal.ZERO;
+		BigDecimal totalFinPortion = BigDecimal.ZERO;
 		if (StringUtils.equals(PennantConstants.SEGMENTED_VALUE, finOCRHeader.getOcrType())) {
 			custPortionHeader = finOCRHeader.getCustomerPortion();
-			finPortionHeader = 100 - custPortionHeader;
+			finPortionHeader = new BigDecimal(100).subtract(custPortionHeader);
 			//checking ocr step details are available or not
 			if (CollectionUtils.isEmpty(finOCRHeader.getOcrDetailList())) {
 				String[] valueParm = new String[1];
@@ -394,19 +394,19 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 							|| PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(finOCRDetail.getRecordType())) {
 						continue;
 					}
-					totalCustPortion += finOCRDetail.getCustomerContribution();
-					totalFinPortion += finOCRDetail.getFinancerContribution();
+					totalCustPortion = totalCustPortion.add(finOCRDetail.getCustomerContribution());
+					totalFinPortion = totalFinPortion.add(finOCRDetail.getFinancerContribution());
 				}
 
 				String[] valueParm = new String[2];
 				String message = "Total ";
 				//check header customer portion value is equal with total payable by customer step's value
-				if (custPortionHeader != totalCustPortion) {
+				if ((custPortionHeader.compareTo(totalCustPortion)) != 0) {
 					valueParm[0] = message.concat(Labels.getLabel("listheader_FinOCRDialog_PayableByCustomer.label"));
 					valueParm[1] = String.valueOf(custPortionHeader);
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
 					return auditDetail;
-				} else if (finPortionHeader != totalFinPortion) { //check header customer portion value is equal with total payable by customer step's value
+				} else if ((finPortionHeader.compareTo(totalFinPortion)) != 0) { //check header customer portion value is equal with total payable by customer step's value
 					valueParm[0] = message.concat(Labels.getLabel("listheader_FinOCRDialog_PayableByFinancer.label"));
 					valueParm[1] = String.valueOf(finPortionHeader);
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
@@ -414,8 +414,8 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 				}
 
 				//both cust and financer contributions should equal to 100
-				int total = totalCustPortion + totalFinPortion;
-				if (total != 100) {
+				BigDecimal total = totalCustPortion.add(totalFinPortion);
+				if (total.compareTo(new BigDecimal(100)) != 0) {
 					valueParm[0] = message.concat(Labels.getLabel("listheader_FinOCRDialog_PayableByCustomer.label")
 							.concat(", ").concat(Labels.getLabel("listheader_FinOCRDialog_PayableByFinancer.label")));
 					valueParm[1] = String.valueOf(total);

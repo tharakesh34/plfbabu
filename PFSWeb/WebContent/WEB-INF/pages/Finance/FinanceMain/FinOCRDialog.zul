@@ -42,7 +42,7 @@
 												<label id="label_CustomerPortion" value="${c:l('label_FinOCRDialog_CustomerPortion.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
-													<intbox id="customerPortion" width="150px" />
+													<decimalbox id="customerPortion" width="150px" />
 												</hbox>
 												<label id="label_OCRType" value="${c:l('label_FinOCRDialog_OCRType.value')}" />
 												<hbox>

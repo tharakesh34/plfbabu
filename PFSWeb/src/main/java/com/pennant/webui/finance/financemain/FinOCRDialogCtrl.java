@@ -26,9 +26,9 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Groupbox;
-import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -84,7 +84,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	protected Button btnNew_FinOCRStep;
 	protected ExtendedCombobox ocrID;
 	protected Textbox ocrDescription;
-	protected Intbox customerPortion;
+	protected Decimalbox customerPortion;
 	protected Combobox ocrType;
 	protected CurrencyBox totalDemand;
 	protected CurrencyBox totalReceivable;
@@ -289,7 +289,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			this.ocrID.setFilters(new Filter[] { new Filter("OcrID", detailsList, Filter.OP_IN) });
 		}
 		this.ocrDescription.setMaxlength(100);
-		this.customerPortion.setMaxlength(ccyFormatter);
+		this.customerPortion.setMaxlength(6);
 		this.totalDemand.setProperties(true, ccyFormatter);
 		this.totalReceivable.setDisabled(true);
 		this.totalReceivable.setProperties(true, ccyFormatter);
@@ -301,7 +301,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		this.ocrTotalDemand.setDisabled(true);
 		this.ocrTotalDemand.setProperties(true, ccyFormatter);
 		this.ocrTotalPaid.setDisabled(true);
-		this.ocrTotalPaid.setScale(ccyFormatter);
+		this.ocrTotalPaid.setProperties(true, ccyFormatter);
 		this.tdTotalDemand.setDisabled(true);
 		this.tdTotalReceivable.setDisabled(true);
 		logger.debug(Literal.LEAVING);
@@ -550,7 +550,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 
 		BigDecimal demandAmt = BigDecimal.ZERO;
 		BigDecimal ocrpaid = BigDecimal.ZERO;
-		int custPortion = aFinOCRHeader.getCustomerPortion();
+		BigDecimal custPortion = aFinOCRHeader.getCustomerPortion();
 		BigDecimal finAmount = BigDecimal.ZERO;
 		BigDecimal totalDemandRaised = BigDecimal.ZERO;
 
@@ -709,7 +709,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		boolean finc = false;
 		for (FinOCRDetail finOCRDetail : getFinOCRDetailList()) {
 
-			if (finOCRDetail.getCustomerContribution() != 0) {
+			if (finOCRDetail.getCustomerContribution().compareTo(BigDecimal.ZERO) != 0) {
 				BigDecimal cust = getCurrentTranchAmount(ocrtotalDemand, finOCRDetail.getCustomerContribution());
 				cumcustsum = cumcustsum.add(cust);
 				total = total.add(cust);
@@ -720,7 +720,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 					break;
 				}
 			}
-			if (finOCRDetail.getFinancerContribution() != 0) {
+			if (finOCRDetail.getFinancerContribution().compareTo(BigDecimal.ZERO) != 0) {
 				BigDecimal fin = getCurrentTranchAmount(ocrtotalDemand, finOCRDetail.getFinancerContribution());
 				cumfincsum = cumfincsum.add(fin);
 				total = total.add(fin);
@@ -752,8 +752,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		boolean finc = false;
 		//BigDecimal disbAmount = getDisbAmount(financeDetail);
 		for (FinOCRDetail finOCRDetail : aFinOCRHeader.getOcrDetailList()) {
-
-			if (finOCRDetail.getCustomerContribution() != 0) {
+			if (finOCRDetail.getCustomerContribution().compareTo(BigDecimal.ZERO) != 0) {
 				BigDecimal cust = getCurrentTranchAmount(ocrtotalDemand, finOCRDetail.getCustomerContribution());
 				cumcustsum = cumcustsum.add(cust);
 				total = total.add(cust);
@@ -764,7 +763,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 					break;
 				}
 			}
-			if (finOCRDetail.getFinancerContribution() != 0) {
+			if (finOCRDetail.getFinancerContribution().compareTo(BigDecimal.ZERO) != 0) {
 				BigDecimal fin = getCurrentTranchAmount(ocrtotalDemand, finOCRDetail.getFinancerContribution());
 				cumfincsum = cumfincsum.add(fin);
 				total = total.add(fin);
@@ -896,8 +895,8 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		}
 
 		if (!this.customerPortion.isReadonly()) {
-			this.customerPortion.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_FinOCRDialog_CustomerPortion.value"), null, true, false));
+			this.customerPortion.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_FinOCRDialog_CustomerPortion.value"), PennantConstants.defaultCCYDecPos, true, false, 0, 100));
 		}
 
 		if (!this.totalDemand.isReadonly()) {
@@ -1052,8 +1051,8 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	 */
 	public void doFillFinOCRStepDetails(List<FinOCRDetail> finOCRDetailList) {
 		logger.debug(Literal.ENTERING);
-		int totalCust = 0;
-		int totalFin = 0;
+		BigDecimal totalCust = BigDecimal.ZERO;
+		BigDecimal totalFin = BigDecimal.ZERO;
 		this.listBoxFinOCRSteps.getItems().clear();
 		setFinOCRDetailList(finOCRDetailList);
 		if (finOCRDetailList != null && !finOCRDetailList.isEmpty()) {
@@ -1067,19 +1066,19 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 				//skipping the cancel and DELETE records
 				if (!PennantConstants.RCD_DEL.equalsIgnoreCase(detail.getRecordType())
 						&& !PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(detail.getRecordType())) {
-					totalCust += detail.getCustomerContribution();
-					totalFin += detail.getFinancerContribution();
+					totalCust = totalCust.add(detail.getCustomerContribution());
+					totalFin = totalFin.add(detail.getFinancerContribution());
 				}
 
 				String custContribution = "--";
-				if (detail.getCustomerContribution() > 0) {
+				if (detail.getCustomerContribution().compareTo(BigDecimal.ZERO) > 0) {
 					custContribution = String.valueOf(detail.getCustomerContribution()).concat("%");
 				}
 				lc = new Listcell(custContribution);
 				lc.setParent(item);
 
 				String finContribution = "--";
-				if (detail.getFinancerContribution() > 0) {
+				if (detail.getFinancerContribution().compareTo(BigDecimal.ZERO) > 0) {
 					finContribution = String.valueOf(detail.getFinancerContribution()).concat("%");
 				}
 
@@ -1145,7 +1144,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 
 	private FinOCRHeader getFinOCRHeaderData() {
 		if (finOCRHeader != null) {
-			finOCRHeader.setCustomerPortion(this.customerPortion.intValue());
+			finOCRHeader.setCustomerPortion(this.customerPortion.getValue());
 		}
 		return finOCRHeader;
 
@@ -1468,11 +1467,10 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		}
 	}
 
-	private BigDecimal getCurrentTranchAmount(BigDecimal demand, int customerPortion) {
+	private BigDecimal getCurrentTranchAmount(BigDecimal demand, BigDecimal customerPortion) {
 		BigDecimal amount = BigDecimal.ZERO;
 		if (finOCRHeader != null) {
-			amount = demand.multiply(new BigDecimal(customerPortion)).divide(new BigDecimal(100), ccyFormatter,
-					RoundingMode.HALF_DOWN);
+			amount = demand.multiply(customerPortion).divide(new BigDecimal(100), ccyFormatter, RoundingMode.HALF_DOWN);
 		}
 		return amount;
 	}

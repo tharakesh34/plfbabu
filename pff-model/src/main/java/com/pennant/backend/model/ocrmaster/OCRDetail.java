@@ -1,5 +1,7 @@
 package com.pennant.backend.model.ocrmaster;
 
+import java.math.BigDecimal;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -8,8 +10,8 @@ public class OCRDetail extends AbstractWorkflowEntity implements Comparable<OCRD
 	private long detailID = Long.MIN_VALUE;
 	private long headerID = Long.MIN_VALUE;
 	private int stepSequence;
-	private int customerContribution;
-	private int financerContribution;
+	private BigDecimal customerContribution = BigDecimal.ZERO;
+	private BigDecimal financerContribution = BigDecimal.ZERO;
 	private String contributor;
 	private boolean newRecord = false;
 	private String lovValue;
@@ -45,19 +47,19 @@ public class OCRDetail extends AbstractWorkflowEntity implements Comparable<OCRD
 		this.stepSequence = stepSequence;
 	}
 
-	public int getCustomerContribution() {
+	public BigDecimal getCustomerContribution() {
 		return customerContribution;
 	}
 
-	public void setCustomerContribution(int customerContribution) {
+	public void setCustomerContribution(BigDecimal customerContribution) {
 		this.customerContribution = customerContribution;
 	}
 
-	public int getFinancerContribution() {
+	public BigDecimal getFinancerContribution() {
 		return financerContribution;
 	}
 
-	public void setFinancerContribution(int financerContribution) {
+	public void setFinancerContribution(BigDecimal financerContribution) {
 		this.financerContribution = financerContribution;
 	}
 

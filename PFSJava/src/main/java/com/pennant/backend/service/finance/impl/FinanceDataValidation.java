@@ -466,7 +466,7 @@ public class FinanceDataValidation {
 								finOCRHeader.setOcrDescription(finOCRHeaderTemp.getOcrDescription());
 							}
 							//check CustomerPorsion is Passed in the request if not override with Master Data 
-							if (finOCRHeader.getCustomerPortion() <= 0) {
+							if (finOCRHeader.getCustomerPortion().compareTo(BigDecimal.ZERO) <= 0) {
 								finOCRHeader.setCustomerPortion(finOCRHeaderTemp.getCustomerPortion());
 							}
 							//check OCR Type is Passed in the request if not override with Master Data 
@@ -488,7 +488,7 @@ public class FinanceDataValidation {
 						}
 					}
 					//customerPortion
-					if (finOCRHeader.getCustomerPortion() <= 0) {
+					if (finOCRHeader.getCustomerPortion().compareTo(BigDecimal.ZERO) <= 0) {
 						valueParm[0] = "customerPortion";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 						return errorDetails;

@@ -30,7 +30,7 @@ public class FinOCRHeader extends AbstractWorkflowEntity {
 	@XmlElement
 	private String ocrDescription;
 	@XmlElement
-	private int customerPortion;
+	private BigDecimal customerPortion = BigDecimal.ZERO;
 	@XmlElement
 	private String ocrType;
 	@XmlElement
@@ -91,12 +91,12 @@ public class FinOCRHeader extends AbstractWorkflowEntity {
 		this.ocrDescription = ocrDescription;
 	}
 
-	public int getCustomerPortion() {
+	public BigDecimal getCustomerPortion() {
 		return customerPortion;
 	}
 
-	public void setCustomerPortion(int custPortion) {
-		this.customerPortion = custPortion;
+	public void setCustomerPortion(BigDecimal customerPortion) {
+		this.customerPortion = customerPortion;
 	}
 
 	public String getOcrType() {

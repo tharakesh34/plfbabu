@@ -1,5 +1,6 @@
 package com.pennant.webui.ocrmaster.ocrheader;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Space;
@@ -45,8 +47,8 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 	protected Window window_OCRDetailDialog;
 	protected Intbox stepSequence;
 	protected Combobox contributor;
-	protected Intbox customerContribution;
-	protected Intbox financerContribution;
+	protected Decimalbox customerContribution;
+	protected Decimalbox financerContribution;
 	protected Label label_OCRDetailDialog_Contributor;
 	protected Space spaceCustContribution;
 	protected Space spaceFinContribution;
@@ -142,8 +144,8 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 		logger.debug(Literal.ENTERING);
 		this.stepSequence.setMaxlength(2);
 		this.contributor.setMaxlength(30);
-		this.customerContribution.setMaxlength(2);
-		this.financerContribution.setMaxlength(2);
+		this.customerContribution.setMaxlength(6);
+		this.financerContribution.setMaxlength(6);
 		this.customerContribution.setReadonly(true);
 		this.financerContribution.setReadonly(true);
 		logger.debug(Literal.LEAVING);
@@ -717,8 +719,8 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 			this.spaceFinContribution.setSclass("");
 			this.customerContribution.setReadonly(true);
 			this.financerContribution.setReadonly(true);
-			this.customerContribution.setValue(0);
-			this.financerContribution.setValue(0);
+			this.customerContribution.setValue(BigDecimal.ZERO);
+			this.financerContribution.setValue(BigDecimal.ZERO);
 		} else if (getComboboxValue(this.contributor).equals(PennantConstants.CUSTOMER_CONTRIBUTION)) {
 			this.financerContribution.setConstraint("");
 			this.financerContribution.setErrorMessage("");
@@ -727,7 +729,7 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 			this.spaceCustContribution.setSclass(PennantConstants.mandateSclass);
 			this.financerContribution.setReadonly(true);
 			this.customerContribution.setReadonly(isReadOnly("OCRDetailDialog_CustomerContribution"));
-			this.financerContribution.setValue(0);
+			this.financerContribution.setValue(BigDecimal.ZERO);
 		} else {
 			this.customerContribution.setConstraint("");
 			this.customerContribution.setErrorMessage("");
@@ -736,7 +738,7 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 			this.spaceFinContribution.setSclass(PennantConstants.mandateSclass);
 			this.customerContribution.setReadonly(true);
 			this.financerContribution.setReadonly(isReadOnly("OCRDetailDialog_FinancierContribution"));
-			this.customerContribution.setValue(0);
+			this.customerContribution.setValue(BigDecimal.ZERO);
 		}
 	}
 
@@ -782,17 +784,17 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 	 * @return
 	 */
 	private AuditHeader validateOCRSteps(List<OCRDetail> ocrDetailList, OCRDetail aOCRDetail, AuditHeader auditHeader) {
-		int customerPortion = 0;
-		int financerPortion = 0;
-		int totalExtCustomer = 0;
-		int totalExtFinancer = 0;
+		BigDecimal customerPortion = BigDecimal.ZERO;
+		BigDecimal financerPortion = BigDecimal.ZERO;
+		BigDecimal totalExtCustomer = BigDecimal.ZERO;
+		BigDecimal totalExtFinancer = BigDecimal.ZERO;
 		String message = "Total ";
 		String[] valueParm = new String[2];
 
 		// Header contribution splitting 
 		if (ocrHeader != null) {
 			//100 – value entered at header section against field "Customer Portion (%)".
-			financerPortion = 100 - getOcrHeader().getCustomerPortion();
+			financerPortion = new BigDecimal(100).subtract(getOcrHeader().getCustomerPortion());
 			customerPortion = getOcrHeader().getCustomerPortion();
 		}
 		if (!CollectionUtils.isEmpty(ocrDetailList)) {
@@ -802,22 +804,22 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 					continue;
 				}
 				if (aOCRDetail.getStepSequence() != ocrDetail.getStepSequence()) {
-					totalExtCustomer += ocrDetail.getCustomerContribution();
-					totalExtFinancer += ocrDetail.getFinancerContribution();
+					totalExtCustomer = totalExtCustomer.add(ocrDetail.getCustomerContribution());
+					totalExtFinancer = totalExtFinancer.add(ocrDetail.getFinancerContribution());
 				}
 			}
 		}
 
-		totalExtCustomer += aOCRDetail.getCustomerContribution();
-		totalExtFinancer += aOCRDetail.getFinancerContribution();
+		totalExtCustomer = totalExtCustomer.add(aOCRDetail.getCustomerContribution());
+		totalExtFinancer = totalExtFinancer.add(aOCRDetail.getFinancerContribution());
 
-		if (totalExtCustomer > customerPortion
+		if (totalExtCustomer.compareTo(customerPortion) >= 1
 				&& PennantConstants.CUSTOMER_CONTRIBUTION.equals(aOCRDetail.getContributor())) {
 			valueParm[0] = message.concat(Labels.getLabel("label_OCRDetailDialog_CustomerContribution.value"));
 			valueParm[1] = String.valueOf(customerPortion);
 			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
 			return auditHeader;
-		} else if (totalExtFinancer > financerPortion
+		} else if (totalExtFinancer.compareTo(financerPortion) >= 1
 				&& PennantConstants.FINANCER_CONTRIBUTION.equals(aOCRDetail.getContributor())) {
 			valueParm[0] = message.concat(Labels.getLabel("label_OCRDetailDialog_FinancierContribution.value"));
 			valueParm[1] = String.valueOf(financerPortion);

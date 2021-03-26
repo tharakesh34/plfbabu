@@ -1,5 +1,6 @@
 package com.pennant.backend.model.finance;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,9 +23,9 @@ public class FinOCRDetail extends AbstractWorkflowEntity implements Comparable<F
 	@XmlElement
 	private int stepSequence;
 	@XmlElement
-	private int customerContribution;
+	private BigDecimal customerContribution;
 	@XmlElement
-	private int financerContribution;
+	private BigDecimal financerContribution;
 	private boolean newRecord = false;
 	private FinOCRDetail befImage;
 	private LoggedInUser userDetails;
@@ -85,19 +86,19 @@ public class FinOCRDetail extends AbstractWorkflowEntity implements Comparable<F
 		this.detailID = ocrDetailID;
 	}
 
-	public int getCustomerContribution() {
+	public BigDecimal getCustomerContribution() {
 		return customerContribution;
 	}
 
-	public void setCustomerContribution(int customerContribution) {
+	public void setCustomerContribution(BigDecimal customerContribution) {
 		this.customerContribution = customerContribution;
 	}
 
-	public int getFinancerContribution() {
+	public BigDecimal getFinancerContribution() {
 		return financerContribution;
 	}
 
-	public void setFinancerContribution(int financerContribution) {
+	public void setFinancerContribution(BigDecimal financerContribution) {
 		this.financerContribution = financerContribution;
 	}
 

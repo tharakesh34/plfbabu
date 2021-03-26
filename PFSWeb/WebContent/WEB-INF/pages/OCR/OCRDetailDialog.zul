@@ -68,12 +68,12 @@
 								<label id="label_OCRDetailDialog_CustomerContribution" value="${c:l('label_OCRDetailDialog_CustomerContribution.value')}" />
 								<hbox>
 									<space id="spaceCustContribution" spacing="2px" />
-									<intbox id="customerContribution" width="72px" />
+									<decimalbox id="customerContribution" width="72px" />
 								</hbox>
 								<label id="label_OCRDetailDialog_FinancerContribution" value="${c:l('label_OCRDetailDialog_FinancierContribution.value')}" />
 								<hbox>
 									<space id="spaceFinContribution" spacing="2px" />
-									<intbox id="financerContribution" width="72px" />
+									<decimalbox id="financerContribution" width="72px" />
 								</hbox>
 							</row>
 						</rows>

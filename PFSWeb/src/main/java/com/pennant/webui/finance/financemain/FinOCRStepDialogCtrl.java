@@ -1,5 +1,6 @@
 package com.pennant.webui.finance.financemain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Window;
@@ -27,7 +29,7 @@ import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.Constraint.PTNumberValidator;
+import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -44,8 +46,8 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	protected Window windowFinOCRStepDialog;
 	protected Intbox stepSequence;
 	protected Combobox contributor;
-	protected Intbox customerContribution;
-	protected Intbox financerContribution;
+	protected Decimalbox customerContribution;
+	protected Decimalbox financerContribution;
 	protected Space spaceCustomerContribution;
 	protected Space spaceFinancerContribution;
 	private FinOCRDetail finOCRDetail;
@@ -377,13 +379,15 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 		if (!this.customerContribution.isReadonly() && this.spaceCustomerContribution.isVisible()) {
-			this.customerContribution.setConstraint(new PTNumberValidator(
-					Labels.getLabel("label_FinOCRStepDialog_CustomerContribution.value"), true, false, 1, 99));
+			this.customerContribution.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_FinOCRStepDialog_CustomerContribution.value"),
+							PennantConstants.defaultCCYDecPos, true, false, 0, 100));
 		}
 
 		if (!this.financerContribution.isReadonly() && this.spaceFinancerContribution.isVisible()) {
-			this.financerContribution.setConstraint(new PTNumberValidator(
-					Labels.getLabel("label_FinOCRStepDialog_FinancerContribution.value"), true, false, 1, 99));
+			this.financerContribution.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_FinOCRStepDialog_FinancerContribution.value"),
+							PennantConstants.defaultCCYDecPos, true, false, 0, 100));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -496,8 +500,8 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	public void doClear() {
 		logger.debug("Entering");
 		this.contributor.setValue("");
-		this.customerContribution.setValue(0);
-		this.financerContribution.setValue(0);
+		this.customerContribution.setValue(BigDecimal.ZERO);
+		this.financerContribution.setValue(BigDecimal.ZERO);
 		logger.debug("Leaving");
 	}
 
@@ -623,17 +627,17 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	 */
 	private AuditHeader validateOCRSteps(List<FinOCRDetail> finOCRDetailList, FinOCRDetail aFinOCRDetail,
 			AuditHeader auditHeader) {
-		int customerPortion = 0;
-		int financerPortion = 0;
-		int totalExtCustomer = 0;
-		int totalExtFinancer = 0;
+		BigDecimal customerPortion = BigDecimal.ZERO;
+		BigDecimal financerPortion = BigDecimal.ZERO;
+		BigDecimal totalExtCustomer = BigDecimal.ZERO;
+		BigDecimal totalExtFinancer = BigDecimal.ZERO;
 		String message = "Total ";
 		String[] valueParm = new String[2];
 
 		// Header contribution splitting 
 		if (getFinOCRHeader() != null) {
 			//100 – value entered at header section against field "Customer Portion (%)".
-			financerPortion = 100 - getFinOCRHeader().getCustomerPortion();
+			financerPortion = new BigDecimal(100).subtract(getFinOCRHeader().getCustomerPortion());
 			customerPortion = getFinOCRHeader().getCustomerPortion();
 		}
 		if (!CollectionUtils.isEmpty(finOCRDetailList)) {
@@ -643,22 +647,22 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 					continue;
 				}
 				if (aFinOCRDetail.getStepSequence() != finOCRDetail.getStepSequence()) {
-					totalExtCustomer += finOCRDetail.getCustomerContribution();
-					totalExtFinancer += finOCRDetail.getFinancerContribution();
+					totalExtCustomer = totalExtCustomer.add(finOCRDetail.getCustomerContribution());
+					totalExtFinancer = totalExtFinancer.add(finOCRDetail.getFinancerContribution());
 				}
 			}
 		}
 
-		totalExtCustomer += aFinOCRDetail.getCustomerContribution();
-		totalExtFinancer += aFinOCRDetail.getFinancerContribution();
+		totalExtCustomer = totalExtFinancer.add(aFinOCRDetail.getCustomerContribution());
+		totalExtFinancer = totalExtFinancer.add(aFinOCRDetail.getFinancerContribution());
 
-		if (totalExtCustomer > customerPortion
+		if (totalExtCustomer.compareTo(customerPortion) > 1
 				&& PennantConstants.CUSTOMER_CONTRIBUTION.equals(aFinOCRDetail.getContributor())) {
 			valueParm[0] = message.concat(Labels.getLabel("label_FinOCRStepDialog_CustomerContribution.value"));
 			valueParm[1] = String.valueOf(customerPortion);
 			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
 			return auditHeader;
-		} else if (totalExtFinancer > financerPortion
+		} else if (totalExtFinancer.compareTo(financerPortion) > 1
 				&& PennantConstants.FINANCER_CONTRIBUTION.equals(aFinOCRDetail.getContributor())) {
 			valueParm[0] = message.concat(Labels.getLabel("label_FinOCRStepDialog_FinancerContribution.value"));
 			valueParm[1] = String.valueOf(financerPortion);
@@ -706,7 +710,7 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 			this.spaceFinancerContribution.setSclass("");
 			this.financerContribution.setErrorMessage("");
 			this.financerContribution.setReadonly(true);
-			this.financerContribution.setValue(0);
+			this.financerContribution.setValue(BigDecimal.ZERO);
 		} else if (PennantConstants.FINANCER_CONTRIBUTION.equals(contributor)) {
 			this.financerContribution.setReadonly(isReadOnly("FinOCRStepDialog_financerContribution"));
 			this.spaceFinancerContribution.setVisible(true);
@@ -714,7 +718,7 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 			this.spaceCustomerContribution.setVisible(false);
 			this.spaceCustomerContribution.setSclass("");
 			this.customerContribution.setErrorMessage("");
-			this.customerContribution.setValue(0);
+			this.customerContribution.setValue(BigDecimal.ZERO);
 			this.customerContribution.setReadonly(true);
 		}
 	}

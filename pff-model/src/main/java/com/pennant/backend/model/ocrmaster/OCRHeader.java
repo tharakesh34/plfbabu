@@ -1,5 +1,6 @@
 package com.pennant.backend.model.ocrmaster;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ public class OCRHeader extends AbstractWorkflowEntity {
 	private long headerID = Long.MIN_VALUE;
 	private String ocrID;
 	private String ocrDescription;
-	private int customerPortion;
+	private BigDecimal customerPortion = BigDecimal.ZERO;
 	private String ocrType;
 	private boolean active;
 	private List<OCRDetail> ocrDetailList = new ArrayList<>();
@@ -62,11 +63,11 @@ public class OCRHeader extends AbstractWorkflowEntity {
 		this.ocrDescription = ocrDescription;
 	}
 
-	public int getCustomerPortion() {
+	public BigDecimal getCustomerPortion() {
 		return customerPortion;
 	}
 
-	public void setCustomerPortion(int customerPortion) {
+	public void setCustomerPortion(BigDecimal customerPortion) {
 		this.customerPortion = customerPortion;
 	}
 

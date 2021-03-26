@@ -66,12 +66,12 @@
 								<label id="labelCustomerContribution " value="${c:l('label_FinOCRStepDialog_CustomerContribution.value')}" />
 								<hbox>
 									<space spacing="2px" id="spaceCustomerContribution" />
-									<intbox id="customerContribution" width="150px" />
+									<decimalbox id="customerContribution" width="150px" />
 								</hbox>
 								<label id="labelFinancerContribution" value="${c:l('label_FinOCRStepDialog_FinancerContribution.value')}" />
 								<hbox>
 									<space spacing="2px" id="spaceFinancerContribution" />
-									<intbox id="financerContribution" width="150px" />
+									<decimalbox id="financerContribution" width="150px" />
 								</hbox>
 							</row>
 						</rows>

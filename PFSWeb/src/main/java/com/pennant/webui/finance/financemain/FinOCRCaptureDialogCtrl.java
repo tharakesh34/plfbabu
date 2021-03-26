@@ -393,7 +393,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		this.uploadedfileName.setValue(afinOCRCapture.getFileName());
 		setDocbyte(afinOCRCapture.getDocImage());
 		if (finOCRHeader != null) {
-			int percentage = finOCRHeader.getCustomerPortion();
+			BigDecimal percentage = finOCRHeader.getCustomerPortion();
 			getCurrentTranchAmount(afinOCRCapture.getDemandAmount(), percentage);
 		}
 
@@ -404,17 +404,16 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		BigDecimal demand = this.builderDemand.getActualValue();
 		demand = PennantApplicationUtil.unFormateAmount(demand, ccyFormatter);
 		if (finOCRHeader != null) {
-			int percentage = finOCRHeader.getCustomerPortion();
+			BigDecimal percentage = finOCRHeader.getCustomerPortion();
 			getCurrentTranchAmount(demand, percentage);
 		}
 	}
 
-	private BigDecimal getCurrentTranchAmount(BigDecimal demand, int customerPortion) {
+	private BigDecimal getCurrentTranchAmount(BigDecimal demand, BigDecimal customerPortion) {
 		BigDecimal amout = BigDecimal.ZERO;
 		if (finOCRHeader != null) {
 
-			amout = demand.multiply((new BigDecimal(customerPortion)).divide(new BigDecimal(100), ccyFormatter,
-					RoundingMode.HALF_DOWN));
+			amout = demand.multiply(customerPortion.divide(new BigDecimal(100), ccyFormatter, RoundingMode.HALF_DOWN));
 		}
 		return amout;
 	}

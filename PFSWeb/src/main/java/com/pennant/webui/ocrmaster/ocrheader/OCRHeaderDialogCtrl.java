@@ -1,5 +1,6 @@
 package com.pennant.webui.ocrmaster.ocrheader;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,8 +23,8 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
-import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -58,9 +59,10 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 
 	protected Uppercasebox ocrID;
 	protected Textbox ocrDescription;
-	protected Intbox customerPortion;
+	protected Decimalbox customerPortion;
 	protected Combobox ocrType;
-	protected Checkbox active; 
+	//protected Checkbox splitApplicable;
+	protected Checkbox active; // autoWired
 	protected Label label_OCRDialog_OCRType;
 	protected Groupbox ocrSteps;
 	protected Button btnNew_OCRSteps;
@@ -69,11 +71,11 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	// ServiceDAOs / Domain Classes
 	private OCRHeader ocrHeader;
 	private transient OCRHeaderService ocrHeaderService;
-	private transient OCRHeaderListCtrl ocrHeaderListCtrl; 
+	private transient OCRHeaderListCtrl ocrHeaderListCtrl; // overHanded per parameter
 	private transient boolean validationOn;
 
 	private final List<ValueLabel> ocrApplicableList = PennantStaticListUtil.getOCRApplicableList();
-	private List<OCRDetail> ocrDetailList = new ArrayList<>();
+	private List<OCRDetail> ocrDetailList = new ArrayList<OCRDetail>();
 	private String moduleType = "";
 
 	/**
@@ -150,7 +152,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		logger.debug(Literal.ENTERING);
 		this.ocrID.setMaxlength(20);
 		this.ocrDescription.setMaxlength(100);
-		this.customerPortion.setMaxlength(2);
+		this.customerPortion.setMaxlength(6);
 		this.ocrType.setMaxlength(30);
 
 		if (isWorkFlowEnabled()) {
@@ -527,8 +529,9 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		this.ocrDescription.setReadonly(isReadOnly("OCRHeaderDialog_OCRDescription"));
 		this.customerPortion.setReadonly(isReadOnly("OCRHeaderDialog_CustomerPortion"));
 		this.ocrType.setDisabled(isReadOnly("OCRHeaderDialog_OCRApplicableOn"));
+		//this.splitApplicable.setDisabled(isReadOnly("OCRHeaderDialog_SplitApplicable"));
 		this.active.setDisabled(isReadOnly("OCRHeaderDialog_Active"));
-		this.btnNew_OCRSteps.setVisible(!isReadOnly("button_OCRHeaderDialog_btnNew_OCRSteps")); 
+		this.btnNew_OCRSteps.setVisible(!isReadOnly("button_OCRHeaderDialog_btnNew_OCRSteps")); //fix me
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -556,6 +559,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		this.ocrDescription.setReadonly(true);
 		this.customerPortion.setReadonly(true);
 		this.ocrType.setDisabled(true);
+		//this.splitApplicable.setDisabled(true);
 		this.active.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
@@ -959,8 +963,8 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	// OCR details rendering
 	public void doFillOCRDetails(List<OCRDetail> list) {
 		logger.debug(Literal.ENTERING);
-		int totalCustContribution = 0;
-		int totalFinContribution = 0;
+		BigDecimal totalCustContribution = BigDecimal.ZERO;
+		BigDecimal totalFinContribution = BigDecimal.ZERO;
 		this.listBoxOCRStepsDetail.getItems().clear();
 		setOcrDetailList(list);
 		if (list != null && !list.isEmpty()) {
@@ -973,19 +977,19 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 
 				if (!PennantConstants.RCD_DEL.equalsIgnoreCase(details.getRecordType())
 						&& !PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(details.getRecordType())) {
-					totalCustContribution += details.getCustomerContribution();
-					totalFinContribution += details.getFinancerContribution();
+					totalCustContribution = totalCustContribution.add(details.getCustomerContribution());
+					totalFinContribution = totalFinContribution.add(details.getFinancerContribution());
 				}
 
 				String custContribution = "--";
-				if (details.getCustomerContribution() > 0) {
+				if (details.getCustomerContribution().compareTo(BigDecimal.ZERO) >= 1) {
 					custContribution = String.valueOf(details.getCustomerContribution()).concat("%");
 				}
 				lc = new Listcell(custContribution);
 				lc.setParent(item);
 
 				String finContribution = "--";
-				if (details.getFinancerContribution() > 0) {
+				if (details.getFinancerContribution().compareTo(BigDecimal.ZERO) >= 1) {
 					finContribution = String.valueOf(details.getFinancerContribution()).concat("%");
 				}
 				lc = new Listcell(finContribution);
