@@ -274,7 +274,8 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			financeYearList = new ArrayList<ValueLabel>();
 			if (years < 0 && finStartDateMonth < 4) {
 				//if finstartDate and appDate both are equal then we are not allowing to count years
-				if (DateUtility.compare(appDate, finStartDate) > 0) {
+				// if AppDate is greater than or equal to 4 adding years with 1
+				if (DateUtility.compare(appDate, finStartDate) > 0 && appDateMonth >= 4) {
 					years = years + 1;
 				}
 				for (int i = 0; i <= years; i++) {
