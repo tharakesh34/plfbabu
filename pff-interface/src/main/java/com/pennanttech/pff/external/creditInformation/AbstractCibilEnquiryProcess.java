@@ -2206,6 +2206,9 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		case "10":
 			settledStatus = "Account Purchased and Restructured";
 			break;
+		case "11":
+			settledStatus = "Restructured due to Natural Calamity";
+			break;
 
 		default:
 			break;
