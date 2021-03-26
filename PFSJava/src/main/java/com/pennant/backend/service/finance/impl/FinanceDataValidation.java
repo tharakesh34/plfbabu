@@ -1618,16 +1618,17 @@ public class FinanceDataValidation {
 		}
 		// Validate Connecter
 		if (StringUtils.isNotBlank(finMain.getConnectorReference())) {
-			VehicleDealer vehicleDealer = vehicleDealerService
-					.getApprovedVehicleDealerById(finMain.getConnectorReference(), "CONN", "");
+			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(finMain.getConnector());
+			String[] valueParm = new String[1];
 			if (vehicleDealer == null) {
-				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(finMain.getConnector());
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+			} else if (vehicleDealer != null && !"CONN".equals(vehicleDealer.getDealerType())) {
 				valueParm[0] = String.valueOf(finMain.getConnector());
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
 			} else {
 				finMain.setConnector(vehicleDealer.getDealerId());
-			}
-		}
+			}}
 		// validate finance branch
 		if (isCreateLoan || StringUtils.isNotBlank(finMain.getFinBranch())) {
 			Branch branch = branchDAO.getBranchById(finMain.getFinBranch(), "");
