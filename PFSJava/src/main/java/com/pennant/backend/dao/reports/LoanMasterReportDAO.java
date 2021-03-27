@@ -8,7 +8,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.LoanReport;
 
 public interface LoanMasterReportDAO {
-	public List<LoanReport> getLoanReports(String finReference);
+	public List<LoanReport> getLoanReports(String finReference, Date fromDate, Date toDate);
 
 	List<FinanceScheduleDetail> getFinScheduleDetails(String id, String type);
 

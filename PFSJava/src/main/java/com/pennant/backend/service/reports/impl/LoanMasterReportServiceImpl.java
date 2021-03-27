@@ -4,15 +4,17 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -40,6 +42,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.LoanReport;
 import com.pennant.backend.model.finance.VasMovementDetail;
+import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.service.reports.LoanMasterReportService;
 import com.pennant.backend.util.CollateralConstants;
@@ -47,16 +50,14 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
-public class LoanMasterReportServiceImpl implements LoanMasterReportService {
-	private static final Logger logger = LogManager.getLogger(LoanMasterReportServiceImpl.class);
+public class LoanMasterReportServiceImpl extends GenericService<LoanReport> implements LoanMasterReportService {
 	private static final String VAS = "VAS";
 	private static final String LOAN = "LOAN";
+	private static final Logger logger = Logger.getLogger(LoanMasterReportServiceImpl.class);
 	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private transient VASRecordingDAO vASRecordingDAO;
 	private transient VasMovementDetailDAO vasMovementDetailDAO;
@@ -77,44 +78,57 @@ public class LoanMasterReportServiceImpl implements LoanMasterReportService {
 	@Autowired(required = false)
 	private ExtendedFieldService extendedFieldServiceHook;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
-	private int formater = CurrencyUtil.getFormat("");
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
-	private Date appDate = SysParamUtil.getAppDate();
+	private int formater = 2;
 
 	@Override
-	public List<LoanReport> getLoanReports(String finReference) {
+	public List<LoanReport> getLoanReports(String finReference, Date fromDate, Date toDate) {
+		Date appDate = SysParamUtil.getAppDate();
 		//for active and closed/matured/ loans
-		List<LoanReport> loanReports = loanMasterReportDAO.getLoanReports(finReference);
-		for (LoanReport loanReport : loanReports) {
+		List<LoanReport> loanReports = loanMasterReportDAO.getLoanReports(finReference, fromDate, toDate);
+		if (CollectionUtils.isNotEmpty(loanReports)) {
+			return process(appDate, loanReports);
+		}
+		return null;
+
+	}
+
+	private List<LoanReport> process(Date appDate, List<LoanReport> loanReports) {
+		//Parallel calls for Performance Improve
+		IntStream.range(0, loanReports.size()).parallel().forEach(i -> {
+			LoanReport loanReport = loanReports.get(i);
+			//for (LoanReport loanReport : loanReports) {
+			formater = CurrencyUtil.getFormat(loanReport.getFinCcy());
+			//To Set First and Last Disbursement Date
 			List<FinanceDisbursement> financeDisbursements = financeDisbursementDAO
 					.getFinanceDisbursementDetails(loanReport.getFinReference(), "", false);
-			int i = 0;
-			for (FinanceDisbursement financeDisbursement : financeDisbursements) {
-				//Setting First Disbursement Date
-				if (financeDisbursement.getDisbSeq() == 1 && financeDisbursement.getDisbDate() != null) {
-					loanReport.setFirstDisbDate(financeDisbursement.getDisbDate());
-				}
-				if (financeDisbursement.getDisbSeq() > i) {
-					i = financeDisbursement.getDisbSeq();
-				}
-				if (i == financeDisbursement.getDisbSeq() && financeDisbursement.getDisbDate() != null) {
-					//Setting Last Disbursement Date
-					loanReport.setLastDisbDate(financeDisbursement.getDisbDate());
-				}
+			if (CollectionUtils.isNotEmpty(financeDisbursements)) {
+				//Sort the list
+				Collections.sort(financeDisbursements, new Comparator<FinanceDisbursement>() {
+					@Override
+					public int compare(FinanceDisbursement a, FinanceDisbursement b) {
+						return a.getDisbSeq() - b.getDisbSeq();
+					}
+				});
+				int size = financeDisbursements.size();
+				loanReport.setFirstDisbDate(financeDisbursements.get(0).getDisbDate());
+				loanReport.setLastDisbDate(financeDisbursements.get(size - 1).getDisbDate());
 			}
-			List<CollateralAssignment> collateralAssignmentByFinRef;
-			collateralAssignmentByFinRef = collateralAssignmentDAO.getCollateralAssignmentByFinRef(
-					loanReport.getFinReference(), FinanceConstants.MODULE_NAME, "_AView");
+
+			List<CollateralAssignment> assignments;
+			assignments = collateralAssignmentDAO.getCollateralAssignmentByFinRef(loanReport.getFinReference(),
+					FinanceConstants.MODULE_NAME, "_AView");
 			//If Collateral is created from loan and it is not approved
-			collateralAssignmentByFinRef.addAll(collateralAssignmentDAO.getCollateralAssignmentByFinRef(
-					loanReport.getFinReference(), FinanceConstants.MODULE_NAME, "_CTView"));
+			assignments.addAll(collateralAssignmentDAO.getCollateralAssignmentByFinRef(loanReport.getFinReference(),
+					FinanceConstants.MODULE_NAME, "_CTView"));
+
 			StringBuilder idS = new StringBuilder();
 			BigDecimal prpValue = BigDecimal.ZERO;
-			for (CollateralAssignment collateralAssignment : collateralAssignmentByFinRef) {
-				String propertyValue = PennantApplicationUtil
-						.amountFormate(collateralAssignment.getCollateralValue(), formater).replace(",", "");
-				prpValue = prpValue.add(new BigDecimal(propertyValue));
+			for (CollateralAssignment collateralAssignment : assignments) {
+				BigDecimal propertyValue = PennantApplicationUtil
+						.formateAmount(collateralAssignment.getCollateralValue(), formater);
+				prpValue = prpValue.add(propertyValue);
 				if (idS.length() > 0) {
 					idS.append(",");
 				}
@@ -135,17 +149,33 @@ public class LoanMasterReportServiceImpl implements LoanMasterReportService {
 			}
 			//Setting Property Value
 			loanReport.setPropertyValue(prpValue);
-			Map<String, BigDecimal> amountsByRef = getAmountsByRef(loanReport.getFinReference(),
-					loanReport.getDisbursementAmount());
+			//Schedule Details
+			List<FinanceScheduleDetail> scheduleDetails = financeScheduleDetailDAO
+					.getFinScheduleDetails(loanReport.getFinReference(), "", false);
+			//VAS Recordings
+			List<VASRecording> vasRecordings = vASRecordingService
+					.getLoanReportVasRecordingByRef(loanReport.getFinReference());
+			//Amounts
+			Map<String, BigDecimal> amountsByRef = getAmountsByRef(loanReport, scheduleDetails, vasRecordings);
+
 			//Setting OutStanding Loan & ADV
 			loanReport.setOutstandingAmt_Loan_Adv(amountsByRef.get("LOAN"));
 			//Setting OutStanding VAS
 			loanReport.setOustandingAmt_LI_GI(amountsByRef.get("VAS"));
 			// Setting Original Tenure
 			loanReport.setOriginalTenure(loanReport.getNumberOfTerms());
-			// Setting Revised Tenure
-			int revisedTenure = loanMasterReportDAO.getRevisedTenure(loanReport.getFinReference());
-			loanReport.setRevisedTenure(revisedTenure);
+
+			if (CollectionUtils.isNotEmpty(scheduleDetails)) {
+				int revisedTenure = 0;
+				for (FinanceScheduleDetail detail : scheduleDetails) {
+					// Setting Revised Tenure specifier not in ('G','E') and instnumber > 0
+					if ((!"G".equals(detail.getSpecifier()) || !"E".equals(detail.getSpecifier()))
+							&& detail.getInstNumber() > 0) {
+						revisedTenure = revisedTenure + 1;
+					}
+					loanReport.setRevisedTenure(revisedTenure);
+				}
+			}
 			List<FinODDetails> finODBalByFinRef = finODDetailsDAO.getFinODBalByFinRef(loanReport.getFinReference());
 			BigDecimal odPrincipal = BigDecimal.ZERO;
 			BigDecimal odProfit = BigDecimal.ZERO;
@@ -157,20 +187,6 @@ public class LoanMasterReportServiceImpl implements LoanMasterReportService {
 			loanReport.setLoanDebtors_Principal(odPrincipal);
 			//Setting LoanDebtors Interest
 			loanReport.setLoanDebtors_Interest(odProfit);
-
-			BigDecimal sanctionAmt = BigDecimal.ZERO;
-			//Subtracting Downsized amount from FinAssetValue
-			sanctionAmt = loanReport.getSanctioAmount();
-			List<VASRecording> loanReportVasRecordingByRef = vASRecordingService
-					.getLoanReportVasRecordingByRef(loanReport.getFinReference());
-			BigDecimal sanctionAmountVas = BigDecimal.ZERO;
-			if (!loanReportVasRecordingByRef.isEmpty()) {
-				for (VASRecording vasRecording : loanReportVasRecordingByRef) {
-					sanctionAmountVas = sanctionAmountVas.add(vasRecording.getFee());
-				}
-			}
-			loanReport.setSanctioAmount(sanctionAmt);
-			loanReport.setSanctionAmountVAS(sanctionAmountVas);
 			BigDecimal originalROI = getOriginalROI(loanReport);
 			loanReport.setOriginalROI(originalROI);
 			//Need to call ED post hook
@@ -184,43 +200,10 @@ public class LoanMasterReportServiceImpl implements LoanMasterReportService {
 				}
 
 			}
-			BigDecimal revisedROI = getRevisedROI(loanReport);
+			BigDecimal revisedROI = getRevisedROI(scheduleDetails);
 			loanReport.setRevisedROI(revisedROI);
-			BigDecimal intrstAccrual = BigDecimal.ZERO;
-			if (loanReport.isLoanStatus()) {
-				//getting the schedule details <= appdate 
-				List<FinanceScheduleDetail> details = loanMasterReportDAO
-						.getScheduleDetail(loanReport.getFinReference(), appDate);
-				if (CollectionUtils.isNotEmpty(details)) {
-					//Prv Schedule Date
-					FinanceScheduleDetail prvSchd = details.get(0);
-					//Getting the next schedule due date
-					FinanceScheduleDetail currSchd = loanMasterReportDAO.getNextSchPayment(loanReport.getFinReference(),
-							prvSchd.getSchDate());
-					//if appdate >maturity date so we don't have next due date
-					if (currSchd == null) {
-						//If Maturity Schedule was not paid
-						if (!prvSchd.isSchPftPaid() && !prvSchd.isSchPriPaid()) {
-							//maturity Date
-							currSchd = prvSchd;
-							if (details.size() > 1) {
-								//previous schedule from maturity date 
-								prvSchd = details.get(1);
-							}
-							intrstAccrual = calProfitAmz(currSchd, prvSchd, prvSchd.getSchDate(), appDate, loanReport);
-						} else {
-							intrstAccrual = BigDecimal.ZERO;
-						}
-					} else {
-						intrstAccrual = calProfitAmz(currSchd, prvSchd, prvSchd.getSchDate(), appDate, loanReport);
-					}
-				}
-			}
-			//Making negative values as zero
-			if (intrstAccrual.compareTo(BigDecimal.ZERO) < 0) {
-				intrstAccrual = BigDecimal.ZERO;
-			}
-			loanReport.setIntrestAcrrualAmt(intrstAccrual);
+			//Calculate Interest Accrual Last Due Date to till Date
+			interestAccrual(appDate, loanReport, scheduleDetails);
 			int maxPendingOverDueDays = loanMasterReportDAO.getMaxPendingOverDuePayment(loanReport.getCustCIF());
 			loanReport.setDpd(maxPendingOverDueDays);
 
@@ -245,15 +228,81 @@ public class LoanMasterReportServiceImpl implements LoanMasterReportService {
 					loanReport.setDisbTag("Part");
 				}
 			}
-		}
-
+		});
 		return loanReports;
 	}
 
-	@Override
-	public Map<String, BigDecimal> getAmountsByRef(String finReference, BigDecimal finCurrAssetValue) {
+	private void interestAccrual(Date appDate, LoanReport loanReport, List<FinanceScheduleDetail> schdDetails) {
+		Date accrualDate = appDate;
+		if (loanReport.isLoanStatus()) {
+			//getting the schedule details <= appdate 
+			if (CollectionUtils.isNotEmpty(schdDetails)) {
+				FinanceScheduleDetail prvSchd = null;
+				FinanceScheduleDetail curSchd = null;
+				FinanceScheduleDetail nextSchd = null;
+				Date prvSchdDate = null;
+				Date curSchdDate = null;
+				Date nextSchdDate = null;
+				BigDecimal pftAmz = BigDecimal.ZERO;
+				BigDecimal totalPftAmz = BigDecimal.ZERO;
+				BigDecimal schdPftPaid = BigDecimal.ZERO;
+				for (int j = 0; j < schdDetails.size(); j++) {
+					curSchd = schdDetails.get(j);
+					curSchdDate = curSchd.getSchDate();
+
+					if (j == 0) {
+						prvSchd = curSchd;
+					} else {
+						prvSchd = schdDetails.get(j - 1);
+					}
+
+					prvSchdDate = prvSchd.getSchDate();
+
+					// Next details: in few cases  there might be schedules present even after the maturity date. ex: when calculating the fees
+					if (DateUtil.compare(curSchdDate, loanReport.getMaturityDate()) == 0
+							|| j == schdDetails.size() - 1) {
+						nextSchd = curSchd;
+					} else {
+						nextSchd = schdDetails.get(j + 1);
+					}
+
+					nextSchdDate = nextSchd.getSchDate();
+					//Sum of SchdPftPaid
+					schdPftPaid = schdPftPaid.add(curSchd.getSchdPftPaid());
+					// Amortization
+					if (DateUtil.compare(curSchdDate, accrualDate) < 0) {
+						pftAmz = curSchd.getProfitCalc();
+						totalPftAmz = totalPftAmz.add(pftAmz);
+					} else if (DateUtil.compare(accrualDate, prvSchdDate) > 0
+							&& DateUtil.compare(accrualDate, nextSchdDate) <= 0) {
+						int days = DateUtil.getDaysBetween(prvSchdDate, accrualDate);
+						int daysInCurPeriod = DateUtil.getDaysBetween(prvSchdDate, curSchdDate);
+
+						BigDecimal amzForCal = curSchd.getProfitCalc()
+								.add(curSchd.getProfitFraction().subtract(prvSchd.getProfitFraction()));
+						pftAmz = amzForCal.multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 9,
+								RoundingMode.HALF_DOWN);
+						pftAmz = pftAmz.add(prvSchd.getProfitFraction());
+						pftAmz = CalculationUtil.roundAmount(pftAmz, loanReport.getRoundingMode(),
+								loanReport.getRoundingTarget());
+						totalPftAmz = totalPftAmz.add(pftAmz);
+					} else {
+						//Do Nothing
+					}
+				}
+				//Removing SchdPftPaid from total Profit Amz
+				totalPftAmz = totalPftAmz.subtract(schdPftPaid);
+				loanReport.setIntrestAcrrualAmt(totalPftAmz);
+			}
+		}
+	}
+
+	public Map<String, BigDecimal> getAmountsByRef(LoanReport loanReport, List<FinanceScheduleDetail> details,
+			List<VASRecording> vasRecordings) {
 		logger.debug(Literal.ENTERING);
 		try {
+			String finReference = loanReport.getFinReference();
+			BigDecimal finCurrAssetValue = loanReport.getDisbursementAmount();
 			List<FinFeeDetail> finFeeDetailByFinRef = getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false,
 					"");
 			BigDecimal remainingFee = BigDecimal.ZERO;
@@ -265,9 +314,10 @@ public class LoanMasterReportServiceImpl implements LoanMasterReportService {
 			//total disbursement amount
 			totalDisbAmt = PennantApplicationUtil.formateAmount(finCurrAssetValue, formater);
 			totalDisbAmt = totalDisbAmt.add(PennantApplicationUtil.formateAmount(remainingFee, formater));
-			processVasRecordingDetails(finReference);
+			processVasRecordingDetails(finReference, vasRecordings);
+			loanReport.setSanctionAmountVAS(totalvasAmt);
 			calculateRatio();
-			processScheduleDetails(finReference);
+			processScheduleDetails(finReference, details);
 			outStandingAmts.put(LOAN, loanOutStanding);
 			outStandingAmts.put(VAS, vasOutStanding);
 			resetAmounts();
@@ -295,14 +345,17 @@ public class LoanMasterReportServiceImpl implements LoanMasterReportService {
 		}
 	}
 
-	private void processScheduleDetails(String finReference) {
+	private void processScheduleDetails(String finReference, List<FinanceScheduleDetail> details) {
 		logger.debug(Literal.ENTERING);
-		List<FinanceScheduleDetail> details = financeScheduleDetailDAO.getFinScheduleDetailsBySchPriPaid(finReference,
-				"", false);
 		BigDecimal schdPriPaid = BigDecimal.ZERO;
+		Date prvsDate = null;
 		if (CollectionUtils.isNotEmpty(details)) {
-			Date prvsDate = details.get(0).getSchDate();
-			for (FinanceScheduleDetail financeScheduleDetail : details) {
+			for (int i = 0; i < details.size(); i++) {
+				FinanceScheduleDetail financeScheduleDetail = details.get(i);
+				if (!financeScheduleDetail.isSchPriPaid()) {
+					continue;
+				}
+				prvsDate = financeScheduleDetail.getSchDate();
 				schdPriPaid = PennantApplicationUtil.formateAmount(financeScheduleDetail.getSchdPriPaid(), formater);
 				if (schdPriPaid.compareTo(BigDecimal.ZERO) > 0) {
 					checkVASMovement(financeScheduleDetail.getSchDate(), prvsDate);
@@ -318,7 +371,6 @@ public class LoanMasterReportServiceImpl implements LoanMasterReportService {
 						vasOutStanding = totalvasAmt;
 					}
 				}
-				prvsDate = financeScheduleDetail.getSchDate();
 			}
 		}
 
@@ -359,9 +411,8 @@ public class LoanMasterReportServiceImpl implements LoanMasterReportService {
 
 	}
 
-	private void processVasRecordingDetails(String finReference) {
+	private void processVasRecordingDetails(String finReference, List<VASRecording> recordings) {
 		logger.debug(Literal.ENTERING);
-		List<VASRecording> recordings = vASRecordingDAO.getVASRecordingsByLinkRef(finReference, "");
 		//calculate totalVasAmt
 		if (CollectionUtils.isNotEmpty(recordings)) {
 			for (VASRecording vasRecording : recordings) {
@@ -406,48 +457,15 @@ public class LoanMasterReportServiceImpl implements LoanMasterReportService {
 
 	}
 
-	private BigDecimal getRevisedROI(LoanReport loanReport) {
-		String selectQuery = "Select calculatedrate from FinScheduleDetails";
-		String whereClause = " where finreference=? ORDER BY SchDate desc";
-		if (loanReport.getRevisedROI().compareTo(BigDecimal.ZERO) <= 0) {
-			if (App.DATABASE == Database.SQL_SERVER) {
-				selectQuery = "Select top 1 calculatedrate from FinScheduleDetails ";
-			} else if (App.DATABASE == Database.ORACLE) {
-				whereClause = whereClause.concat(" limit 1");
-			} else if (App.DATABASE == Database.POSTGRES) {
-				whereClause = whereClause.concat(" fetch first 1 record only");
+	private BigDecimal getRevisedROI(List<FinanceScheduleDetail> scheduleDetails) {
+		if (CollectionUtils.isNotEmpty(scheduleDetails)) {
+			FinanceScheduleDetail detail = scheduleDetails.get(scheduleDetails.size() - 1);
+			if (detail != null) {
+				return detail.getCalculatedRate();
 			}
-			FinanceScheduleDetail finSchDetailOrderBySchDate = financeScheduleDetailDAO
-					.getFinSchDetailOrderBySchDate(selectQuery, whereClause, loanReport.getFinReference());
-			loanReport.setRevisedROI(finSchDetailOrderBySchDate.getCalculatedRate());
 		}
-		return loanReport.getRevisedROI();
+		return BigDecimal.ZERO;
 
-	}
-
-	/**
-	 * Method for calculate part of the profit, Rounding calculation not required.
-	 * 
-	 * @param schdDetail
-	 * @param monthEnd
-	 * @return
-	 * 
-	 */
-	private BigDecimal calProfitAmz(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd, Date date1,
-			Date date2, LoanReport finMain) {
-
-		BigDecimal pftAmz = BigDecimal.ZERO;
-
-		int days = DateUtil.getDaysBetween(date1, date2);
-		int daysInCurPeriod = DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchd.getSchDate());
-
-		BigDecimal amzForCal = curSchd.getProfitCalc()
-				.add(curSchd.getProfitFraction().subtract(prvSchd.getProfitFraction()));
-		pftAmz = amzForCal.multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 9,
-				RoundingMode.HALF_DOWN);
-		pftAmz = pftAmz.add(prvSchd.getProfitFraction());
-		pftAmz = CalculationUtil.roundAmount(pftAmz, finMain.getRoundingMode(), finMain.getRoundingTarget());
-		return pftAmz;
 	}
 
 	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {

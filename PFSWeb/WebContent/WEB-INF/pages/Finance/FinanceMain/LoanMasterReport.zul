@@ -5,48 +5,57 @@
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window>
-		<window id="window_LoanMasterReport" border="normal" title="${c:l('label_LoanMasterReport.title')}" width="800px" height="150px"
-			sizable="false" apply="${loanMasterReportCtrl}">
+	<window id="window_LoanMasterReport" border="normal" apply="${loanMasterReportCtrl}" width="100%" height="100%"
+		sizable="false">
+		<borderlayout id="borderLayout_LoanMasterReport">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 
-			<borderlayout id="borderLayout_loanMasterReport">
-				<center border="none" autoscroll="true">
-					<grid id="dymanicFieldsGrid" sclass="GridLayoutNoBorder" fixedLayout="true"
-						style="padding-left:25px;border:none;">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center" sclass="toolbar-center">
+							<button id="btnSearch" label="${c:l('label_Filter')}"
+							autodisable="btnRefresh,btnClose"
+							tooltiptext="${c:l('btnSearch.tooltiptext')}" sclass="z-toolbarbutton" />
+							<button id="btnRefresh" label="${c:l('label_Refresh')}"
+							autodisable="btnSearch,btnClose"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="true">
+				<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true">
 						<columns>
-							<column width="22%" />
-							<column />
+							<column width="150px" />
 							<column />
 						</columns>
-						<rows >
-							<row height="20px" />
+						<rows>
 							<row>
-							<label id="label_LoanMasterReport_LoanReference" value="${c:l('label_LoanMasterReport_LoanReference.value')}" />
+								<label id="label_LoanMasterReport_LoanReference" value="${c:l('label_LoanMasterReport_LoanReference.value')}" />
 								<extendedcombobox id="finReference" />
+							</row>
+							<row>
+								<label id="label_LoanMasterReport_LoanStartYear" value="${c:l('label_LoanMasterReport_LoanStartYear.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<intbox id="loanStartYear" width="100px" maxlength="50" />
+							</hbox>
 							</row>
 						</rows>
 					</grid>
-				</center>
-				<south border="none" margins="1,0,0,0" size="30px" splittable="false">
-					<div id="divSouth" align="left" width="100%">
-						<grid>
-							<rows>
-								<row valign="middle">
-									<hbox align="start">
-										<button id="btnSearch" height="20" label="${c:l('btnSearch.label')}" tooltiptext="${c:l('btnSearch.tooltiptext')}"
-											sclass="z-toolbarbutton" autodisable="btnSearch,btnClear,btnClose" />
-										<button id="btnClear" height="20" label="${c:l('btnRefresh.label')}" tooltiptext="${c:l('btnClear.tooltiptext')}"
-											sclass="z-toolbarbutton" autodisable="btnSearch,btnClear,btnClose" />
-										<button id="btnClose" height="20" label="${c:l('btnClose.label')}" tooltiptext="${c:l('btnClose.tooltiptext')}"
-											sclass="z-toolbarbutton" autodisable="btnSearch,btnClear,btnClose" />
-										<label id="label_SecurityUserSearchResult" />
-									</hbox>
-								</row>
-							</rows>
-						</grid>
-					</div>
-				</south>
-			</borderlayout>
-		</window>
+				</groupbox>
+			</center>
+		</borderlayout>
 	</window>
 </zk>

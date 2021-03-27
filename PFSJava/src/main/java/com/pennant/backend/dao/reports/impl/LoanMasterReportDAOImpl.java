@@ -31,84 +31,88 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> implements LoanMasterReportDAO {
 	private static Logger logger = LogManager.getLogger(LoanMasterReportDAOImpl.class);
 	FinanceScheduleDetailDAOImpl daoImpl = new FinanceScheduleDetailDAOImpl();
 
 	@Override
-	public List<LoanReport> getLoanReports(String finreference) {
-		logger.debug(Literal.ENTERING);
-		List<LoanReport> loanReport = null;
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select lr.* from loanReport_view lr INNER JOIN ");
-		selectSql.append("LoanMasterReport_MVIEW lm on (lr.finreference = lm.finreference) ");
+	public List<LoanReport> getLoanReports(String finreference, Date fromDate, Date toDate) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, CustShrtName, CustCif, CustCtgDesc, CustCtgCode, LoanPurposeDesc");
+		sql.append(", RepayProfitRate, CustCtgDesc, FinType, FinAssetValue, FinCurrAssetValue, FinIsActive");
+		sql.append(", FinStartDate, CalMaturity, NumberOfTerms, AllowGrcPeriod, RepayRateBasis");
+		sql.append(", RepayBaseRate, Finccy, RepaySpecialRate, RepayMargin, RpyMinRate, RpymaxRate");
+		sql.append(", FinDivision, TotalPftCpz, NextRepayDate, RoundingMode, GraceTerms, CasteDesc");
+		sql.append(", CpProvinceName, QuickDisb, FinAmount, RoundingTarget, MaturityDate");
+		sql.append(" From LoanReport_View");
+
 		if (StringUtils.isNotBlank(finreference)) {
-			selectSql.append("where lr.finreference= ?");
+			sql.append(" Where FinReference = ?");
+		} else if (fromDate != null && toDate != null) {
+			sql.append(" Where FinStartDate >= ? and FinStartDate <= ?");
 		}
-		logger.trace(Literal.SQL + selectSql.toString());
-		try {
-			loanReport = this.jdbcOperations.query(selectSql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					if (StringUtils.isNotBlank(finreference)) {
-						ps.setString(1, finreference);
-					}
-				}
-			}, new RowMapper<LoanReport>() {
-				@Override
-				public LoanReport mapRow(ResultSet rs, int rowNum) throws SQLException {
-					LoanReport loanReport = new LoanReport();
-					loanReport.setFinReference(rs.getString("FinReference"));
-					loanReport.setCustName(rs.getString("CustShrtName"));
-					loanReport.setCustCIF(rs.getString("CustCif"));
-					loanReport.setCustCategory(rs.getString("CustCtgDesc"));
-					loanReport.setCustomerType(rs.getString("custctgcode"));
-					loanReport.setProductDescription(rs.getString("loanpurposedesc"));
-					loanReport.setOriginalROI(rs.getBigDecimal("RepayProfitRate"));
-					loanReport.setCustCategory(rs.getString("CustCtgDesc"));
-					loanReport.setFinType(rs.getString("FinType"));
-					loanReport.setSanctioAmount(rs.getBigDecimal("FinAssetValue"));
-					loanReport.setDisbursementAmount(rs.getBigDecimal("FinCurrAssetValue"));
-					loanReport.setLoanStatus(rs.getBoolean("FinIsActive"));
-					loanReport.setFinStartDate(rs.getDate("FinStartDate"));
-					loanReport.setCalMaturity(rs.getDate("CalMaturity"));
-					loanReport.setNumberOfTerms(rs.getInt("numberOfTerms"));
-					loanReport.setAlwGrcPeriod(rs.getBoolean("allowGrcPeriod"));
-					loanReport.setRepayRateBasis(rs.getString("repayRateBasis"));
-					loanReport.setRepayBaseRate(rs.getString("repayBaseRate"));
-					loanReport.setFinCcy(rs.getString("finccy"));
-					loanReport.setRepaySpecialRate(rs.getString("repaySpecialRate"));
-					loanReport.setRepayMargin(rs.getBigDecimal("repaymargin"));
-					loanReport.setRpyMinRate(rs.getBigDecimal("rpyMinRate"));
-					loanReport.setRpyMaxRate(rs.getBigDecimal("rpymaxRate"));
 
-					BigDecimal unDisbAmnt = BigDecimal.ZERO;
-					if (loanReport.getSanctioAmount() != null) {
-						unDisbAmnt = loanReport.getSanctioAmount().subtract(loanReport.getDisbursementAmount());
-					}
-					loanReport.setUnDisbursedAmount(unDisbAmnt);
-					loanReport.setEntity(rs.getString("FinDivision"));
-					loanReport.setCaptilizedIntrest(rs.getBigDecimal("TotalPftCpz"));
-					loanReport.setNextRepayDate(rs.getDate("nextRepayDate"));
-					loanReport.setRoundingMode(rs.getString("roundingMode"));
-					loanReport.setPrvMthAmz(rs.getBigDecimal("PrvMthAmz"));
-					loanReport.setPftAmz(rs.getBigDecimal("pftamz"));
-					loanReport.setGraceTerms(rs.getInt("GraceTerms"));
-					loanReport.setCaste(rs.getString("castedesc"));
-					loanReport.setBranchState(rs.getString("cpprovincename"));
-					loanReport.setQuickDisb(rs.getBoolean("quickDisb"));
-					loanReport.setFinAmount(rs.getBigDecimal("finAmount"));
-					loanReport.setRoundingTarget(rs.getInt("RoundingTarget"));
-					return loanReport;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return loanReport;
+		logger.trace(Literal.SQL + sql.toString());
 
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				if (StringUtils.isNotBlank(finreference)) {
+					ps.setString(1, finreference);
+				} else if (fromDate != null && toDate != null) {
+					ps.setDate(1, DateUtil.getSqlDate(fromDate));
+					ps.setDate(2, DateUtil.getSqlDate(toDate));
+				}
+			}
+		}, new RowMapper<LoanReport>() {
+			@Override
+			public LoanReport mapRow(ResultSet rs, int rowNum) throws SQLException {
+				LoanReport loanReport = new LoanReport();
+				loanReport.setFinReference(rs.getString("FinReference"));
+				loanReport.setCustName(rs.getString("CustShrtName"));
+				loanReport.setCustCIF(rs.getString("CustCif"));
+				loanReport.setCustCategory(rs.getString("CustCtgDesc"));
+				loanReport.setCustomerType(rs.getString("CustCtgCode"));
+				loanReport.setProductDescription(rs.getString("LoanPurposeDesc"));
+				loanReport.setOriginalROI(rs.getBigDecimal("RepayProfitRate"));
+				loanReport.setCustCategory(rs.getString("CustCtgDesc"));
+				loanReport.setFinType(rs.getString("FinType"));
+				loanReport.setSanctioAmount(rs.getBigDecimal("FinAssetValue"));
+				loanReport.setDisbursementAmount(rs.getBigDecimal("FinCurrAssetValue"));
+				loanReport.setLoanStatus(rs.getBoolean("FinIsActive"));
+				loanReport.setFinStartDate(rs.getDate("FinStartDate"));
+				loanReport.setCalMaturity(rs.getDate("CalMaturity"));
+				loanReport.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+				loanReport.setAlwGrcPeriod(rs.getBoolean("AllowGrcPeriod"));
+				loanReport.setRepayRateBasis(rs.getString("RepayRateBasis"));
+				loanReport.setRepayBaseRate(rs.getString("RepayBaseRate"));
+				loanReport.setFinCcy(rs.getString("Finccy"));
+				loanReport.setRepaySpecialRate(rs.getString("RepaySpecialRate"));
+				loanReport.setRepayMargin(rs.getBigDecimal("RepayMargin"));
+				loanReport.setRpyMinRate(rs.getBigDecimal("RpyMinRate"));
+				loanReport.setRpyMaxRate(rs.getBigDecimal("RpymaxRate"));
+
+				BigDecimal unDisbAmnt = BigDecimal.ZERO;
+				if (loanReport.getSanctioAmount() != null) {
+					unDisbAmnt = loanReport.getSanctioAmount().subtract(loanReport.getDisbursementAmount());
+				}
+				loanReport.setUnDisbursedAmount(unDisbAmnt);
+				loanReport.setEntity(rs.getString("FinDivision"));
+				loanReport.setCaptilizedIntrest(rs.getBigDecimal("TotalPftCpz"));
+				loanReport.setNextRepayDate(rs.getDate("NextRepayDate"));
+				loanReport.setRoundingMode(rs.getString("roundingMode"));
+				loanReport.setGraceTerms(rs.getInt("GraceTerms"));
+				loanReport.setCaste(rs.getString("CasteDesc"));
+				loanReport.setBranchState(rs.getString("CpProvinceName"));
+				loanReport.setQuickDisb(rs.getBoolean("QuickDisb"));
+				loanReport.setFinAmount(rs.getBigDecimal("FinAmount"));
+				loanReport.setRoundingTarget(rs.getInt("RoundingTarget"));
+				loanReport.setMaturityDate(rs.getDate("MaturityDate"));
+				return loanReport;
+			}
+		});
 	}
 
 	@Override
@@ -260,27 +264,35 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 
 	@Override
 	public List<FinanceScheduleDetail> getScheduleDetail(String finReference, Date curBussDate) {
-		logger.debug(Literal.ENTERING);
-		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
-		financeScheduleDetail.setFinReference(finReference);
-		financeScheduleDetail.setSchDate(curBussDate);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" SchdPftPaid, SchdPriPaid, SchPftPaid, SchPriPaid");
+		sql.append(", FinReference, SchDate, ProfitSchd, PrincipalSchd");
+		sql.append(", ProfitCalc, ProfitFraction, NoOfDays, InstNumber");
+		sql.append(" From FinScheduleDetails");
+		sql.append(" Where FinReference = ?");
 
-		StringBuilder selectSql = new StringBuilder("Select schdpftpaid, schdpripaid,schpftpaid, schpripaid  ");
-		selectSql.append(" FinReference, SchDate, ProfitSchd, PrincipalSchd,ProfitCalc,ProfitFraction,noofdays");
-		selectSql.append(" FROM FinScheduleDetails Where FinReference =:FinReference ");
-		selectSql.append(" AND SchDate<=:SchDate order by SchDate desc");
-		logger.debug(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
-		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceScheduleDetail.class);
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug(Literal.LEAVING);
-		return null;
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, finReference);
+		}, (rs, i) -> {
+			FinanceScheduleDetail fsd = new FinanceScheduleDetail();
+
+			fsd.setSchdPftPaid(rs.getBigDecimal("SchdPftPaid"));
+			fsd.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
+			fsd.setSchPftPaid(rs.getBoolean("SchPftPaid"));
+			fsd.setSchPriPaid(rs.getBoolean("SchPriPaid"));
+			fsd.setFinReference(rs.getString("FinReference"));
+			fsd.setSchDate(JdbcUtil.getDate(rs.getDate("SchDate")));
+			fsd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
+			fsd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
+			fsd.setProfitCalc(rs.getBigDecimal("ProfitCalc"));
+			fsd.setProfitFraction(rs.getBigDecimal("ProfitFraction"));
+			fsd.setNoOfDays(rs.getInt("NoOfDays"));
+			fsd.setInstNumber(rs.getInt("InstNumber"));
+
+			return fsd;
+		});
 	}
 
 	@Override

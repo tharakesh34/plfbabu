@@ -60,8 +60,6 @@ public class LoanReport extends AbstractWorkflowEntity {
 	private BigDecimal sanctionAmountVAS;
 	private Date nextRepayDate;
 	private String roundingMode;
-	private BigDecimal pftAmz;
-	private BigDecimal prvMthAmz;
 	private int dpd;
 	private int graceTerms;
 	private String branchState;
@@ -71,6 +69,7 @@ public class LoanReport extends AbstractWorkflowEntity {
 	private BigDecimal finAmount = BigDecimal.ZERO;
 	private int roundingTarget;
 	private String lovValue;
+	private Date maturityDate;
 
 	public String getLovValue() {
 		return lovValue;
@@ -492,22 +491,6 @@ public class LoanReport extends AbstractWorkflowEntity {
 		this.roundingMode = roundingMode;
 	}
 
-	public BigDecimal getPftAmz() {
-		return pftAmz;
-	}
-
-	public void setPftAmz(BigDecimal pftAmz) {
-		this.pftAmz = pftAmz;
-	}
-
-	public BigDecimal getPrvMthAmz() {
-		return prvMthAmz;
-	}
-
-	public void setPrvMthAmz(BigDecimal prvMthAmz) {
-		this.prvMthAmz = prvMthAmz;
-	}
-
 	public int getDpd() {
 		return dpd;
 	}
@@ -578,6 +561,14 @@ public class LoanReport extends AbstractWorkflowEntity {
 
 	public void setFinType(String finType) {
 		this.finType = finType;
+	}
+
+	public Date getMaturityDate() {
+		return maturityDate;
+	}
+
+	public void setMaturityDate(Date maturityDate) {
+		this.maturityDate = maturityDate;
 	}
 
 }

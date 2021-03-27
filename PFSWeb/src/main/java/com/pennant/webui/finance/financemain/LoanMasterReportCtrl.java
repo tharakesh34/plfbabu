@@ -28,7 +28,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Filedownload;
-import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -41,6 +41,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.equation.util.DateUtility;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
@@ -50,7 +51,7 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 	protected Window window_LoanMasterReport;
 	protected Borderlayout borderLayout_loanMasterReport;
 	protected ExtendedCombobox finReference;
-	protected Tabbox tabbox;
+	protected Intbox loanStartYear;
 	protected Button btnClear;
 	private LoanMasterReportService loanMasterReportService;
 	private int formater = CurrencyUtil.getFormat("");
@@ -76,7 +77,6 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 
 		// Set the page level components.
 		setPageComponents(window_LoanMasterReport);
-		tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
 		doSetFieldProperties();
 		logger.debug(Literal.LEAVING);
 	}
@@ -89,7 +89,6 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
-		tabbox.getSelectedTab().close();
 	}
 
 	/**
@@ -100,8 +99,32 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 	 */
 	public void onClick$btnSearch(Event event) throws Exception {
 		logger.debug(Literal.ENTERING + event.toString());
-		List<LoanReport> loanReports = loanMasterReportService.getLoanReports(this.finReference.getValue());
-		downloadLoanMasterReport(loanReports);
+		String finRef = this.finReference.getValue();
+		Integer year = loanStartYear.getValue();
+		String startYearLabel = Labels.getLabel("label_LoanMasterReport_LoanStartYear.value");
+		if ((StringUtils.isBlank(finRef) && year == null) || (StringUtils.isNotBlank(finRef) && year != null)) {
+			String loanLabel = Labels.getLabel("label_LoanMasterReport_LoanReference.value");
+			MessageUtil.showError("Either " + loanLabel + " or " + startYearLabel + " should be mandatory");
+			return;
+		}
+		int appYear = DateUtil.getYear(appDate);
+		Date fromDate = null;
+		Date toDate = null;
+		if (year != null && year > 0) {
+			if (year > appYear) {
+				MessageUtil.showError(Labels.getLabel("NUMBER_MAXVALUE_EQ",
+						new String[] { startYearLabel, String.valueOf(appYear) }));
+				return;
+			}
+			fromDate = DateUtility.getUtilDate("01-01-" + year, "dd-MM-yyyy");
+			toDate = DateUtility.getUtilDate("31-12-" + year, "dd-MM-yyyy");
+		}
+		List<LoanReport> loanReports = loanMasterReportService.getLoanReports(finRef, fromDate, toDate);
+		if (CollectionUtils.isNotEmpty(loanReports)) {
+			downloadLoanMasterReport(loanReports);
+		} else {
+			MessageUtil.showInfo("label_LoanMasterReportSearchMessage");
+		}
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
@@ -204,6 +227,7 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 		logger.debug(Literal.ENTERING);
 		this.finReference.setProperties("LoanMasterReport", "FinReference", null, false, 20);
 		this.finReference.setTextBoxWidth(130);
+		this.finReference.setMandatoryStyle(true);
 		logger.debug(Literal.LEAVING);
 	}
 
