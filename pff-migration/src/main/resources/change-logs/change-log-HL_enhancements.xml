@@ -25339,7 +25339,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="84_pre" author="rajesh.n" dbms="postgresql">
+	<changeSet id="85_pre" author="rajesh.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'loanreport_view');
@@ -25347,7 +25347,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="84" author="rajesh.n">
+	<changeSet id="85" author="rajesh.n">
 		<createView viewName="LOANREPORT_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT F.FINREFERENCE,
@@ -25399,14 +25399,14 @@ UNION ALL
 				LEFT JOIN LOANPURPOSES LP ON LP.LOANPURPOSECODE=F.FINPURPOSE
 				JOIN BMTCUSTCATEGORIES CTG ON C.CUSTCTGCODE = CTG.CUSTCTGCODE
 				JOIN FINPFTDETAILS PFT ON F.FINREFERENCE = PFT.FINREFERENCE
-				JOIN (SELECT DISTINCT FA.FINREFERENCE FROM FINADVANCEPAYMENTS FA
+				LEFT JOIN (SELECT DISTINCT FA.FINREFERENCE FROM FINADVANCEPAYMENTS FA
 					JOIN FINDISBURSEMENTDETAILS FD ON (FA.FINREFERENCE=FD.FINREFERENCE) WHERE STATUS IN('PAID','REALIZED')
 					) T1 ON T1.FINREFERENCE= F.FINREFERENCE
 			]]>
 		</createView>
 	</changeSet>
 	
-	<changeSet id="84_post" author="rajesh.n" dbms="postgresql">
+	<changeSet id="85_post" author="rajesh.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'loanreport_view');
